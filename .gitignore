@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+*.egg
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Captures & large binaries (keep samples small if committed)
+*.pcap
+*.pcapng
+captures/*.log
+*.zip
+
+# Local secrets / employer-only dumps (never commit)
+secrets/
+*.lic
+# Employer source materials stay local only — do not push to public GitHub
+requirement/
+
+# Thesis build artifacts
+thesis/**/*.aux
+thesis/**/*.log
+thesis/**/*.out
+thesis/**/*.toc
+thesis/**/*.synctex.gz
+thesis/**/*~
+
+# Temp extract / local notes
+**/_filelist.txt
+**/__tmp__/
