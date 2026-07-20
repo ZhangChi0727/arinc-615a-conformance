@@ -21,15 +21,15 @@ The repo has **three end products**. Software and thesis are the main parallel w
 
 | | |
 |---|---|
-| **Goal** | Dual-role (DLS/THW) simulator + test engine for ARINC 615A (+ minimal 665) |
-| **Success looks like** | Runnable software; automated Pass/Fail; loopback + mutation verification green |
+| **Goal** | Dual-role (DLS/THW) simulator + configurable test sets for ARINC 615A (+ minimal 665, 664 LU input) |
+| **Success looks like** | Stable protocol simulator + iterable/configurable test sets; base test set proves conformance; mutation verification proves detection |
 | **Primary folder** | `src/`, `tests/`, `configs/`, `scripts/` |
 | **Plan document** | [`PROJECT_PLAN.md`](PROJECT_PLAN.md) |
 | **Tone** | Implementation, APIs, milestones, bugs |
 | **May use** | Internal names (OHMS, IDU…) in private notes under `docs/work/` |
 | **Does not need** | Literature survey, research questions, academic contribution claims |
 
-**Typical activities:** implement TFTP → 615A session → 665 codec → scenarios → CLI/report.
+**Typical activities:** implement TFTP → 615A session → 665 codec → L4 engine (selector/injector/verdict) → 664 LU generator → test sets → CLI/report.
 
 ---
 
@@ -55,6 +55,8 @@ The repo has **three end products**. Software and thesis are the main parallel w
 |---|---|---|
 | Protocol understanding (`docs/study/`) | `src/` implementation | Argument & narrative in `thesis/` |
 | Verification-point ideas | Executable verification scenarios in `tests/` / configs | Formal requirements model in thesis §3 |
+| Base test set (615A conformance) | `configs/test_sets/base/` — YAML-driven, no code changes to add cases | Derived from standard; formalized in §3 |
+| Extended test set (project-specific) | `configs/test_sets/extended/` — varies by client ICD | Project requirements mapped to VPs |
 | Validation runs | CI / pytest / reports under `artifacts/` (optional) | Tables/figures in thesis §5–6 |
 
 **Rule of thumb:**  

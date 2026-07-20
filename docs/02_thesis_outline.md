@@ -36,7 +36,7 @@ Company deliverables (需求文档, 测试指南, etc.) may **reuse** the same t
 > How can a **controllable, dual-role (DLS/THW) simulation environment**, grounded in TFTP and ARINC 615A (plus minimal 665 load packaging), systematically expose **protocol-level** conformant and non-conformant behavior—beyond project-specific ICD spot checks?
 
 **Claim to defend:**  
-A role-switchable simulator plus an explicit verification-point catalog and mutation-style negative cases constitutes a reusable **conformance verification method**, not merely a one-sided loader or target stub.
+A configurable, software-independent test set methodology, combined with mutation verification to prove detection capability, provides a rigorous framework for demonstrating ARINC 615A protocol conformance — not merely a one-sided loader or target stub.
 
 ---
 
@@ -46,9 +46,9 @@ Length is flexible (e.g. long paper ~15–40 pages, or short monograph). Prefer 
 
 ### Abstract
 - Problem: load/download verification often stays at program ICD level.  
-- Method: dual-role simulation + 615A session model + minimal 665 codec + Pass/Fail catalog.  
-- Results: loopback + mutation experiments (optional HW/simulator cross-check).  
-- Contribution: architecture + catalog + empirical evidence.
+- Method: configurable test set methodology (base + extended) + decomposed L4 engine (selector/injector/verdict) + 664 LU data generation + mutation verification.  
+- Results: base test set execution proves conformance; mutation verification proves detection capability.  
+- Contribution: test set methodology + L4 architecture + empirical evidence that passing the complete base test set implies protocol conformance.
 
 ### 1. Introduction
 1.1 Engineering context: why standardized data load matters in civil avionics  
@@ -65,25 +65,30 @@ Length is flexible (e.g. long paper ~15–40 pages, or short monograph). Prefer 
 2.5 Related tools and prior art; positioning of this work  
 
 ### 3. Conformance Requirements Model
-*(Academic “what must be true,” not a company 需求文档 dump)*  
+*(Academic "what must be true," not a company 需求文档 dump)*  
 3.1 Roles and use cases (DLS-mode, THW-mode, self-test)  
 3.2 Requirement domains (session, options, list transfer, data, status, 665 checks, errors, timing)  
-3.3 Verification-point formalism: precondition / stimulus / expected / verdict / standard reference  
-3.4 Scope boundaries and non-goals  
+3.3 **Base test set** — 615A protocol conformance (derived from ARINC 615A standard)  
+3.4 **Extended test set** — project-specific requirements (derived from client ICD; varies by project)  
+3.5 Verification-point formalism: precondition / stimulus / expected / verdict / standard reference  
+3.6 Scope boundaries and non-goals
 
 ### 4. Method and System Design
 4.1 Method overview: dual-role simulation as the experimental instrument  
-4.2 Layered architecture (I/O → TFTP → 615A → 665 → scenario engine → verdict/report)  
+4.2 Layered architecture (I/O → TFTP → 615A → 665 → L4 engine → verdict/report)  
 4.3 Role Controller and role-agnostic protocol core *(central design contribution)*  
-4.4 Fault injection and oracle design  
-4.5 Implementation notes (prototype language, interfaces) — keep subordinate to method  
+4.4 **L4 engine decomposition** — selector (reads test set config) → injector (applies faults) → verdict (evaluates against oracle)  
+4.5 **664 LU data generator** — produces valid ARINC 664 load units as test input  
+4.6 Fault injection and oracle design  
+4.7 Implementation notes (prototype language, interfaces) — keep subordinate to method  
 
 ### 5. Experiments and Results
-5.1 Setup: loopback topology; metrics (verdict accuracy, coverage of catalog)  
-5.2 Nominal scenarios (both role directions)  
-5.3 Mutation / negative scenarios (e.g. bad check value, wrong block rollover, ignored blksize, missing status)  
-5.4 Optional external peer (loader simulator / LRU) if available — clearly labeled as supplementary  
-5.5 Threats to validity  
+5.1 Setup: loopback topology; metrics (verdict accuracy, coverage of base test set)  
+5.2 **Base test set execution** — all nominal scenarios (both role directions); proves conformance if all pass  
+5.3 **Mutation verification** — inject faults (bad check value, wrong block rollover, ignored blksize, missing status); proves detection capability  
+5.4 **Extended test set** (optional) — project-specific scenarios if client ICD available  
+5.5 Optional external peer (loader simulator / LRU) if available — clearly labeled as supplementary  
+5.6 Threats to validity  
 
 ### 6. Discussion
 6.1 What the results imply for protocol-level V&V practice  
@@ -109,9 +114,9 @@ RFCs, ARINC 615A/665 (public), TFTP/loader literature, conformance-testing metho
 ## Contributions (draft — refine after experiments)
 
 1. **Problem framing:** distinguish protocol conformance verification from program ICD testing for 615A-class load paths.  
-2. **Method:** dual-role (DLS/THW) simulation with a shared, role-agnostic TFTP/615A core.  
-3. **Artifact:** executable prototype + explicit verification-point / oracle model (incl. minimal 665 checks).  
-4. **Evidence:** loopback and mutation results showing detection of known non-conformances.
+2. **Method:** configurable test set methodology — base test set (615A standard-derived) + extended test set (project ICD-derived); adding new test cases requires no code changes.  
+3. **Artifact:** executable prototype with decomposed L4 engine (selector/injector/verdict), 664 LU data generator, and role-agnostic TFTP/615A core.  
+4. **Evidence:** proof that passing the complete base test set implies protocol conformance, demonstrated via loopback + mutation verification showing detection of known faults.
 
 ---
 
@@ -130,9 +135,9 @@ RFCs, ARINC 615A/665 (public), TFTP/loader literature, conformance-testing metho
 
 | Thesis section | Engineering work |
 |---|---|
-| §2–3 | Phase 0 study + verification-point catalog |
-| §4 | Architecture + Role Controller + prototype |
-| §5–6 | Validation tiers (loopback, mutation, optional HW) |
+| §2–3 | Phase 0 study + base/extended test set definitions |
+| §4 | Architecture + L4 decomposition + Role Controller + 664 LU generator + prototype |
+| §5–6 | Validation tiers (base test set, mutation verification, extended test set, optional HW) |
 
 The **software remains the experimental platform** of the academic thesis—not the thesis’s only purpose as a “graduation deliverable.”
 

@@ -80,7 +80,7 @@ td { padding: 0.5em 0.8em; border-bottom: 1px solid rgba(255,255,255,0.08); font
   </div>
   <div class="card card-green">
     <h3>核心主张</h3>
-    <p>一个角色可切换的仿真器 + 显式验证点/判定模型 + 变异式负面用例，构成一套可复用的 <span class="highlight">符合性验证方法</span>，而不仅仅是单侧的加载器或目标桩。</p>
+    <p>一套可配置的、软件无关的测试集方法论，结合变异验证证明检测能力，为 ARINC 615A 协议符合性提供严格的验证框架——而不仅仅是单侧的加载器或目标桩。</p>
   </div>
   <div class="reason">
     双角色设计使得同一工具既能当 DLS 也能当 THW，可在单机上完成自环测试（loopback），无需等待真实硬件到位即可开展验证实验。
@@ -97,8 +97,9 @@ td { padding: 0.5em 0.8em; border-bottom: 1px solid rgba(255,255,255,0.08); font
       <ul>
         <li>双角色仿真器</li>
         <li>TFTP/615A/665 协议栈</li>
-        <li>场景引擎 + 故障注入</li>
-        <li>自动化 Pass/Fail 判定</li>
+        <li>L4 引擎（选择器/注入器/判定器）</li>
+        <li>可配置测试集（基础 + 扩展）</li>
+        <li>664 LU 数据生成器</li>
       </ul>
     </div>
     <div class="card">
@@ -146,13 +147,13 @@ td { padding: 0.5em 0.8em; border-bottom: 1px solid rgba(255,255,255,0.08); font
     <div>
       <h3>分层架构</h3>
       <div class="card" style="padding:0.6em 1em; margin:0.3em 0;">
-        <p><span class="tag">L4</span> 场景引擎 → 故障注入 → 判定/报告</p>
+        <p><span class="tag">L4</span> 选择器 → 注入器 → 判定器 → 报告</p>
       </div>
       <div class="card" style="padding:0.6em 1em; margin:0.3em 0;">
         <p><span class="tag">L3</span> ARINC 615A 会话层（虚拟文件状态机）</p>
       </div>
       <div class="card" style="padding:0.6em 1em; margin:0.3em 0;">
-        <p><span class="tag">L2</span> ARINC 665 LSAP 编解码（最小）</p>
+        <p><span class="tag">L2</span> ARINC 665 LSAP + 664 LU 数据生成</p>
       </div>
       <div class="card" style="padding:0.6em 1em; margin:0.3em 0;">
         <p><span class="tag">L1</span> TFTP 核心（RFC 1350 + 选项 + 回绕→1）</p>
@@ -232,7 +233,9 @@ td { padding: 0.5em 0.8em; border-bottom: 1px solid rgba(255,255,255,0.08); font
     <tr><td>C3</td><td>615A DOWNLOAD 会话</td><td>待开始</td><td>.LNO→.LNL/.LNA→数据+.LNS</td></tr>
     <tr><td>C4</td><td>615A UPLOAD（最小）</td><td>待开始</td><td>Init + list/status 足够一个标称装载</td></tr>
     <tr><td>C5</td><td>最小 665 编解码</td><td>待开始</td><td>.LUH 构建/校验; THW ID 不匹配检测</td></tr>
-    <tr><td>C6</td><td>场景引擎 + 故障注入</td><td>待开始</td><td>可执行场景目录; JSON 判定报告</td></tr>
+    <tr><td>C6a</td><td>测试集框架</td><td>待开始</td><td>YAML 测试集模式定义；基础测试集 >= 10 用例</td></tr>
+    <tr><td>C6b</td><td>L4 引擎分解</td><td>待开始</td><td>选择器/注入器/判定器独立工作；运行器编排</td></tr>
+    <tr><td>C6c</td><td>664 LU 生成器</td><td>待开始</td><td>生成有效 664 LU 数据；集成到 DOWNLOAD/UPLOAD</td></tr>
     <tr><td>C7</td><td>自环验证套件</td><td>待开始</td><td>DLS↔THW localhost 全绿</td></tr>
     <tr><td>C8</td><td>变异验证套件</td><td>待开始</td><td>已知坏对端被正确检出</td></tr>
   </table>
@@ -324,12 +327,14 @@ td { padding: 0.5em 0.8em; border-bottom: 1px solid rgba(255,255,255,0.08); font
       <li>自环 Operator DOWNLOAD（标称场景）在两种角色分配下均 Pass</li>
       <li>至少 <span class="highlight">4 个变异用例</span> 正确判定 Fail 并给出清晰原因</li>
       <li>最小 LSAP 校验值错误被正确拒绝/标记</li>
+      <li>基础测试集包含 >= 10 个验证点覆盖核心 615A 操作</li>
+      <li>测试集为配置驱动（YAML）；新增用例无需修改 Python 代码</li>
       <li>每次运行产出机器可读报告（JSON）</li>
       <li>README 记录 &lt;10 步即可运行自环测试</li>
     </ol>
   </div>
   <div class="reason">
-    MVP 标准聚焦于"方法是否可行"而非"功能是否完整"。5 条标准覆盖了正向验证、负向验证、判定可信度、可重复性和可用性。
+    MVP 标准聚焦于"方法是否可行"而非"功能是否完整"。7 条标准覆盖了正向验证、负向验证、判定可信度、测试集完整性、可配置性、可重复性和可用性。
   </div>
 </div>
 
@@ -384,8 +389,8 @@ td { padding: 0.5em 0.8em; border-bottom: 1px solid rgba(255,255,255,0.08); font
     <h3 style="font-size:1.4em;">Phase 0 v0.1 — 完成</h3>
     <p style="margin-top:1em; font-size:1.1em;">✅ 研究方向明确 · 架构设计锁定 · 工程骨架就绪</p>
     <p style="margin-top:1.5em; font-size:1.2em; color:#4fc3f7;">核心思路：</p>
-    <p style="font-size:1.1em; margin-top:0.5em;">双角色仿真 + 显式验证点模型 + 变异式负面用例</p>
-    <p style="font-size:1.1em;">= 可复用的 ARINC 615A 协议符合性验证方法</p>
+    <p style="font-size:1.1em; margin-top:0.5em;">可配置测试集（基础 + 扩展）+ L4 引擎分解 + 变异验证</p>
+    <p style="font-size:1.1em;">= 证明基础测试集全通过即协议符合性</p>
   </div>
   <div style="text-align:center; margin-top:2em; color:#888;">
     <p>感谢聆听 · 欢迎讨论</p>

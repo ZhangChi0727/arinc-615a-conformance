@@ -37,9 +37,9 @@ src/
   a615a_sim/           # installable package root
     tftp/              # RFC 1350 + options + rollover-to-1
     session/           # 615A virtual-file state machines
-    lsap/              # minimal 665 codec
+    lsap/              # minimal 665 codec + 664 LU data generator
     roles/             # Role Controller (DLS / THW)
-    engine/            # scenario runner, fault injection, verification verdicts
+    engine/            # L4: selector + injector + verdict + runner
     report/            # JSON / text verification reports
     cli.py             # entry point
 tests/
@@ -47,6 +47,9 @@ tests/
   integration/         # loopback DLS↔THW
   scenarios/           # conformance verification scenarios (mutation etc.)
 configs/
+  test_sets/
+    base/              # Base test set — 615A protocol conformance (standard-derived)
+    extended/          # Extended test set — project-specific (varies by client)
   examples/            # sample peer addresses, scenario YAML/JSON
 scripts/
   run_loopback.py      # quick demo
@@ -66,7 +69,9 @@ artifacts/             # local run outputs (gitignored reports OK)
 | **C3** | 615A session (Operator DOWNLOAD) | `.LNO`→`.LNL`/`.LNA`→data + `.LNS` side channel | |
 | **C4** | 615A UPLOAD (minimal happy path) | Init + list/status family enough for one nominal load | |
 | **C5** | Minimal 665 codec | Build/parse `.LUH`; check value; THW ID mismatch detect | |
-| **C6** | Engine + verification scenarios | Catalog scenarios executable; JSON verdict report | |
+| **C6a** | Test set framework | YAML test set schema defined; base test set has >= 10 cases covering core 615A operations | |
+| **C6b** | L4 decomposition complete | Selector, injector, verdict engine work independently; runner orchestrates them | |
+| **C6c** | 664 LU generator | Can generate valid 664 LU data; integrates with DOWNLOAD/UPLOAD sessions | |
 | **C7** | Loopback verification suite | DLS-mode ↔ THW-mode on localhost green | |
 | **C8** | Mutation verification suite | Known-bad peers detected (rollover, checksum, blksize, status) | |
 | **C9** *(optional)* | External peer | Talk to OHMS simulator / real THW when available | |
@@ -80,9 +85,14 @@ artifacts/             # local run outputs (gitignored reports OK)
 |---|---|
 | Runnable CLI tool | `src/a615a_sim/` |
 | Unit + integration tests | `tests/` |
+| Base test set (615A conformance) | `configs/test_sets/base/` |
+| Extended test set (project-specific) | `configs/test_sets/extended/` |
+| 664 LU data generator | `src/a615a_sim/lsap/lu_generator.py` |
 | Example configs / scenarios | `configs/examples/` |
 | Design notes for implementers | `docs/design/` (create when coding starts) |
 | Work-only notes (ICD names, KPI) | `docs/work/` (not for public thesis) |
+
+**Final product = stable protocol simulator + iterable/configurable test sets**
 
 Company-facing documents (需求、测试指南) may be **exported later** from design notes + scenario catalog; they are **not** the driver of this plan.
 
@@ -96,7 +106,9 @@ MVP is complete when:
 2. At least **four** mutation verification cases Fail correctly with clear verdict reasons.  
 3. Minimal LSAP with wrong check value is rejected (or flagged) per oracle.  
 4. One machine-readable report (JSON) produced per run.  
-5. README documents how to run loopback verification in &lt;10 steps.
+5. Base test set contains >= 10 verification points covering core 615A operations.  
+6. Test sets are config-driven (YAML); adding new cases requires no Python code changes.  
+7. README documents how to run loopback verification in &lt;10 steps.
 
 ---
 

@@ -16,16 +16,16 @@ Related: [`TRACKS.md`](TRACKS.md) · [`PROJECT_PLAN.md`](PROJECT_PLAN.md) · [`d
 
 ## 2. Claim to defend
 
-A role-switchable simulator, an explicit verification-point/oracle model, and mutation-style negative cases form a reusable **conformance verification method** for 615A-class load paths—not merely a one-sided loader or target stub.
+A configurable, software-independent test set methodology, combined with mutation verification to prove detection capability, provides a rigorous framework for demonstrating ARINC 615A protocol conformance — not merely a one-sided loader or target stub.
 
 ---
 
 ## 3. Contributions (draft)
 
 1. **Framing** — Protocol conformance vs program ICD testing for data-load paths.  
-2. **Method** — Dual-role simulation with a shared, role-agnostic TFTP/615A core.  
-3. **Artifact** — Executable prototype + oracle/verification-point model (minimal 665).  
-4. **Evidence** — Loopback + mutation results demonstrating detection of known faults.
+2. **Method** — Configurable test set methodology: base test set (615A protocol conformance, standard-derived) + extended test set (project-specific requirements, ICD-derived).  
+3. **Artifact** — Executable prototype with decomposed L4 engine (selector → injector → verdict), 664 LU data generator, and role-agnostic TFTP/615A core.  
+4. **Evidence** — Proof that passing the complete base test set implies protocol conformance, demonstrated via loopback + mutation verification showing detection of known faults.
 
 ---
 
@@ -36,9 +36,9 @@ A role-switchable simulator, an explicit verification-point/oracle model, and mu
 | | Abstract | Problem, method, results, contribution |
 | 1 | Introduction | Context, gap, RQ, scope, contributions |
 | 2 | Background & related work | Stack, 615A, 665 (minimal), conformance theory, prior tools |
-| 3 | Conformance requirements model | Domains, VP formalism, boundaries |
-| 4 | Method & system design | Dual-role method, architecture, Role Controller, oracles |
-| 5 | Experiments & results | Setup, nominal, mutation, optional external peer, threats to validity |
+| 3 | Conformance requirements model | Base test set (615A standard), extended test set (project ICD), VP formalism, boundaries |
+| 4 | Method & system design | Dual-role method, L4 decomposition (selector/injector/verdict), Role Controller, 664 LU generator |
+| 5 | Experiments & results | Setup, base test set execution, mutation verification, extended test set (optional), external peer (optional), threats to validity |
 | 6 | Discussion | Implications, complementarity to ICD testing, limits |
 | 7 | Conclusion | Answer RQ; future work |
 | | References / optional appendix | Standards, captures, condensed VP tables |
@@ -74,7 +74,7 @@ Detail and confidentiality notes: `docs/02_thesis_outline.md`.
 ## 7. Bridge from Code track (evidence pipeline)
 
 ```
-Track A (C7 loopback, C8 mutation verification)
+Track A (C6a test set framework, C6b L4 decomposition, C6c 664 LU generator, C7 loopback, C8 mutation verification)
         → artifacts/reports/*.json
         → thesis/figures/ + §5 tables
         → discussion in §6
