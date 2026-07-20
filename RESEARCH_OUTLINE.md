@@ -16,7 +16,7 @@ Related: [`TRACKS.md`](TRACKS.md) · [`PROJECT_PLAN.md`](PROJECT_PLAN.md) · [`d
 
 ## 2. Claim to defend
 
-A role-switchable simulator, an explicit test-point/oracle model, and mutation-style negative cases form a reusable **conformance verification method** for 615A-class load paths—not merely a one-sided loader or target stub.
+A role-switchable simulator, an explicit verification-point/oracle model, and mutation-style negative cases form a reusable **conformance verification method** for 615A-class load paths—not merely a one-sided loader or target stub.
 
 ---
 
@@ -24,7 +24,7 @@ A role-switchable simulator, an explicit test-point/oracle model, and mutation-s
 
 1. **Framing** — Protocol conformance vs program ICD testing for data-load paths.  
 2. **Method** — Dual-role simulation with a shared, role-agnostic TFTP/615A core.  
-3. **Artifact** — Executable prototype + oracle/test-point model (minimal 665).  
+3. **Artifact** — Executable prototype + oracle/verification-point model (minimal 665).  
 4. **Evidence** — Loopback + mutation results demonstrating detection of known faults.
 
 ---
@@ -36,12 +36,12 @@ A role-switchable simulator, an explicit test-point/oracle model, and mutation-s
 | | Abstract | Problem, method, results, contribution |
 | 1 | Introduction | Context, gap, RQ, scope, contributions |
 | 2 | Background & related work | Stack, 615A, 665 (minimal), conformance theory, prior tools |
-| 3 | Conformance requirements model | Domains, TP formalism, boundaries |
+| 3 | Conformance requirements model | Domains, VP formalism, boundaries |
 | 4 | Method & system design | Dual-role method, architecture, Role Controller, oracles |
 | 5 | Experiments & results | Setup, nominal, mutation, optional external peer, threats to validity |
 | 6 | Discussion | Implications, complementarity to ICD testing, limits |
 | 7 | Conclusion | Answer RQ; future work |
-| | References / optional appendix | Standards, captures, condensed TP tables |
+| | References / optional appendix | Standards, captures, condensed VP tables |
 
 Detail and confidentiality notes: `docs/02_thesis_outline.md`.
 
@@ -53,7 +53,7 @@ Detail and confidentiality notes: `docs/02_thesis_outline.md`.
 |---|---|---|
 | **T0** | Freeze RQ + title + scope bullets | This file + outline agree |
 | **T1** | Related-work notes (annotated bib) | `thesis/notes/related_work.md` |
-| **T2** | Requirements model draft (§3) | Formal TP table in `thesis/` or `docs/requirements/` |
+| **T2** | Requirements model draft (§3) | Formal VP table in `thesis/` or `docs/requirements/` |
 | **T3** | Method section draft (§4) | Architecture + Role Controller argued |
 | **T4** | Experiment plan | What will be measured before coding finishes |
 | **T5** | Results write-up (§5) | Uses Track A C7–C8 outputs |
@@ -74,7 +74,7 @@ Detail and confidentiality notes: `docs/02_thesis_outline.md`.
 ## 7. Bridge from Code track (evidence pipeline)
 
 ```
-Track A (C7 loopback, C8 mutation)
+Track A (C7 loopback, C8 mutation verification)
         → artifacts/reports/*.json
         → thesis/figures/ + §5 tables
         → discussion in §6

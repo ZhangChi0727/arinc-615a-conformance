@@ -36,7 +36,7 @@ Company deliverables (需求文档, 测试指南, etc.) may **reuse** the same t
 > How can a **controllable, dual-role (DLS/THW) simulation environment**, grounded in TFTP and ARINC 615A (plus minimal 665 load packaging), systematically expose **protocol-level** conformant and non-conformant behavior—beyond project-specific ICD spot checks?
 
 **Claim to defend:**  
-A role-switchable simulator plus an explicit test-point catalog and mutation-style negative cases constitutes a reusable **conformance verification method**, not merely a one-sided loader or target stub.
+A role-switchable simulator plus an explicit verification-point catalog and mutation-style negative cases constitutes a reusable **conformance verification method**, not merely a one-sided loader or target stub.
 
 ---
 
@@ -68,7 +68,7 @@ Length is flexible (e.g. long paper ~15–40 pages, or short monograph). Prefer 
 *(Academic “what must be true,” not a company 需求文档 dump)*  
 3.1 Roles and use cases (DLS-mode, THW-mode, self-test)  
 3.2 Requirement domains (session, options, list transfer, data, status, 665 checks, errors, timing)  
-3.3 Test-point formalism: precondition / stimulus / expected / verdict / standard reference  
+3.3 Verification-point formalism: precondition / stimulus / expected / verdict / standard reference  
 3.4 Scope boundaries and non-goals  
 
 ### 4. Method and System Design
@@ -100,7 +100,7 @@ Length is flexible (e.g. long paper ~15–40 pages, or short monograph). Prefer 
 RFCs, ARINC 615A/665 (public), TFTP/loader literature, conformance-testing methodology papers.
 
 ### Appendix (optional)
-- Condensed test-point tables  
+- Condensed verification-point tables  
 - Annotated capture fragments  
 - Minimal algorithm / state-machine figures  
 
@@ -110,7 +110,7 @@ RFCs, ARINC 615A/665 (public), TFTP/loader literature, conformance-testing metho
 
 1. **Problem framing:** distinguish protocol conformance verification from program ICD testing for 615A-class load paths.  
 2. **Method:** dual-role (DLS/THW) simulation with a shared, role-agnostic TFTP/615A core.  
-3. **Artifact:** executable prototype + explicit test-point / oracle model (incl. minimal 665 checks).  
+3. **Artifact:** executable prototype + explicit verification-point / oracle model (incl. minimal 665 checks).  
 4. **Evidence:** loopback and mutation results showing detection of known non-conformances.
 
 ---
@@ -130,7 +130,7 @@ RFCs, ARINC 615A/665 (public), TFTP/loader literature, conformance-testing metho
 
 | Thesis section | Engineering work |
 |---|---|
-| §2–3 | Phase 0 study + test-point catalog |
+| §2–3 | Phase 0 study + verification-point catalog |
 | §4 | Architecture + Role Controller + prototype |
 | §5–6 | Validation tiers (loopback, mutation, optional HW) |
 

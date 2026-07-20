@@ -22,7 +22,7 @@ The repo has **three end products**. Software and thesis are the main parallel w
 | | |
 |---|---|
 | **Goal** | Dual-role (DLS/THW) simulator + test engine for ARINC 615A (+ minimal 665) |
-| **Success looks like** | Runnable software; automated Pass/Fail; loopback + mutation tests green |
+| **Success looks like** | Runnable software; automated Pass/Fail; loopback + mutation verification green |
 | **Primary folder** | `src/`, `tests/`, `configs/`, `scripts/` |
 | **Plan document** | [`PROJECT_PLAN.md`](PROJECT_PLAN.md) |
 | **Tone** | Implementation, APIs, milestones, bugs |
@@ -54,12 +54,13 @@ The repo has **three end products**. Software and thesis are the main parallel w
 | Shared | Owned by Code | Owned by Thesis |
 |---|---|---|
 | Protocol understanding (`docs/study/`) | `src/` implementation | Argument & narrative in `thesis/` |
-| Test-point ideas | Executable scenarios in `tests/` / configs | Formal requirements model in thesis §3 |
+| Verification-point ideas | Executable verification scenarios in `tests/` / configs | Formal requirements model in thesis §3 |
 | Validation runs | CI / pytest / reports under `artifacts/` (optional) | Tables/figures in thesis §5–6 |
 
 **Rule of thumb:**  
-- If you are asking “does the packet match the state machine?” → **Code track**.  
-- If you are asking “does this answer the research question?” → **Thesis track**.
+- If you are asking "does the packet match the state machine?" → **Code track**.  
+- If you are asking "does this answer the research question?" → **Thesis track**.
+- If you are asking "does this peer conform to the standard?" → **Verification**.
 
 ---
 

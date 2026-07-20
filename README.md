@@ -20,7 +20,7 @@ How code vs thesis work is split: **[TRACKS.md](TRACKS.md)**.
 ├── configs/examples/    # Sample configs
 ├── tutorial/            # Hands-on tutorial entry
 ├── docs/study/          # Phase 0 lessons & glossary
-├── docs/requirements/   # Test-point drafts
+├── docs/requirements/   # Verification-point drafts
 ├── docs/design/         # Engineering design notes
 ├── thesis/              # Drafts, notes, figures
 ├── PROJECT_PLAN.md      # Software milestones
