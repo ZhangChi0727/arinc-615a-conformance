@@ -33,10 +33,10 @@ Company deliverables (需求文档, 测试指南, etc.) may **reuse** the same t
 
 ## Core research question
 
-> How can a **controllable, dual-role (DLS/THW) simulation environment**, grounded in TFTP and ARINC 615A (plus minimal 665 load packaging), systematically expose **protocol-level** conformant and non-conformant behavior—beyond project-specific ICD spot checks?
+> How can a **project-agnostic conformance verification method**, based on a series of stable test points derived from the ARINC 615A standard, fully prove protocol conformance while remaining compatible with project-specific extended test requirements?
 
 **Claim to defend:**  
-A configurable, software-independent test set methodology, combined with mutation verification to prove detection capability, provides a rigorous framework for demonstrating ARINC 615A protocol conformance — not merely a one-sided loader or target stub.
+A project-agnostic conformance verification method, built on a stable set of verification points derived from the ARINC 615A standard, can fully prove protocol conformance when all points pass. This method is compatible with project-specific extended test sets without compromising the base conformance proof. The software architecture (dual-role simulator, L4 engine, etc.) is our implementation vehicle, not the innovation itself.
 
 ---
 
@@ -45,10 +45,10 @@ A configurable, software-independent test set methodology, combined with mutatio
 Length is flexible (e.g. long paper ~15–40 pages, or short monograph). Prefer **tight argument** over chapter padding.
 
 ### Abstract
-- Problem: load/download verification often stays at program ICD level.  
-- Method: configurable test set methodology (base + extended) + decomposed L4 engine (selector/injector/verdict) + 664 LU data generation + mutation verification.  
-- Results: base test set execution proves conformance; mutation verification proves detection capability.  
-- Contribution: test set methodology + L4 architecture + empirical evidence that passing the complete base test set implies protocol conformance.
+- Problem: load/download verification often stays at program ICD level; no project-agnostic method exists to fully prove 615A protocol conformance.  
+- Method: a conformance verification method based on stable verification points (base test set, standard-derived) with compatibility for project-specific extended test sets.  
+- Results: base test set execution proves conformance; mutation verification proves the test set can detect non-conformance.  
+- Contribution: the verification method itself (project-agnostic, stable test points, extensible); the software prototype is engineering work that implements the method.
 
 ### 1. Introduction
 1.1 Engineering context: why standardized data load matters in civil avionics  
@@ -64,23 +64,24 @@ Length is flexible (e.g. long paper ~15–40 pages, or short monograph). Prefer 
 2.4 Conformance / interoperability testing concepts  
 2.5 Related tools and prior art; positioning of this work  
 
-### 3. Conformance Requirements Model
-*(Academic "what must be true," not a company 需求文档 dump)*  
-3.1 Roles and use cases (DLS-mode, THW-mode, self-test)  
-3.2 Requirement domains (session, options, list transfer, data, status, 665 checks, errors, timing)  
-3.3 **Base test set** — 615A protocol conformance (derived from ARINC 615A standard)  
-3.4 **Extended test set** — project-specific requirements (derived from client ICD; varies by project)  
-3.5 Verification-point formalism: precondition / stimulus / expected / verdict / standard reference  
+### 3. Conformance Verification Method
+*(The innovation — a project-agnostic method, not a software architecture description)*  
+3.1 Method overview: stable verification points derived from the ARINC 615A standard; base test set proves conformance; extended test set accommodates project-specific requirements  
+3.2 Verification-point formalism: precondition / stimulus / expected / verdict / standard reference  
+3.3 **Base test set** — stable, project-agnostic, derived from 615A standard (the conformance proof)  
+3.4 **Extended test set** — project-specific, ICD-derived, varies by client (does not alter base proof)  
+3.5 Conformance proof argument: why passing all base verification points implies protocol conformance  
 3.6 Scope boundaries and non-goals
 
-### 4. Method and System Design
-4.1 Method overview: dual-role simulation as the experimental instrument  
+### 4. System Design (Engineering Work)
+*(How we implement the method — not the contribution itself)*  
+4.1 Implementation overview: dual-role simulator as the experimental instrument  
 4.2 Layered architecture (I/O → TFTP → 615A → 665 → L4 engine → verdict/report)  
-4.3 Role Controller and role-agnostic protocol core *(central design contribution)*  
-4.4 **L4 engine decomposition** — selector (reads test set config) → injector (applies faults) → verdict (evaluates against oracle)  
-4.5 **664 LU data generator** — produces valid ARINC 664 load units as test input  
+4.3 Role Controller and role-agnostic protocol core  
+4.4 L4 engine decomposition — selector → injector → verdict  
+4.5 664 LU data generator — produces valid ARINC 664 load units as test input  
 4.6 Fault injection and oracle design  
-4.7 Implementation notes (prototype language, interfaces) — keep subordinate to method  
+4.7 Implementation notes (prototype language, interfaces) — subordinate to the method  
 
 ### 5. Experiments and Results
 5.1 Setup: loopback topology; metrics (verdict accuracy, coverage of base test set)  
@@ -113,10 +114,10 @@ RFCs, ARINC 615A/665 (public), TFTP/loader literature, conformance-testing metho
 
 ## Contributions (draft — refine after experiments)
 
-1. **Problem framing:** distinguish protocol conformance verification from program ICD testing for 615A-class load paths.  
-2. **Method:** configurable test set methodology — base test set (615A standard-derived) + extended test set (project ICD-derived); adding new test cases requires no code changes.  
-3. **Artifact:** executable prototype with decomposed L4 engine (selector/injector/verdict), 664 LU data generator, and role-agnostic TFTP/615A core.  
-4. **Evidence:** proof that passing the complete base test set implies protocol conformance, demonstrated via loopback + mutation verification showing detection of known faults.
+1. **Method (innovation):** A project-agnostic conformance verification method based on stable verification points derived from the ARINC 615A standard. The base test set fully proves protocol conformance; extended test sets accommodate project-specific requirements without altering the base proof.  
+2. **Framing:** Distinguishing protocol conformance verification (standard-derived, project-agnostic) from program ICD testing (project-specific, interface-level).  
+3. **Artifact (engineering work):** An executable prototype that implements the method — dual-role simulator, L4 engine (selector/injector/verdict), 664 LU data generator. This is our work, not the innovation.  
+4. **Evidence:** Empirical proof that (a) passing the complete base test set implies protocol conformance, and (b) mutation verification confirms the test set can detect non-conformance.
 
 ---
 
@@ -135,9 +136,9 @@ RFCs, ARINC 615A/665 (public), TFTP/loader literature, conformance-testing metho
 
 | Thesis section | Engineering work |
 |---|---|
-| §2–3 | Phase 0 study + base/extended test set definitions |
-| §4 | Architecture + L4 decomposition + Role Controller + 664 LU generator + prototype |
-| §5–6 | Validation tiers (base test set, mutation verification, extended test set, optional HW) |
+| §2–3 | Phase 0 study + base/extended test set definitions (the method) |
+| §4 | Software architecture + prototype (the implementation of the method) |
+| §5–6 | Experiments: base test set execution, mutation verification, extended test set (the evidence) |
 
 The **software remains the experimental platform** of the academic thesis—not the thesis’s only purpose as a “graduation deliverable.”
 

@@ -10,22 +10,22 @@ Related: [`TRACKS.md`](TRACKS.md) · [`PROJECT_PLAN.md`](PROJECT_PLAN.md) · [`d
 
 ## 1. Research question
 
-> How can a **controllable, dual-role (DLS/THW) simulation environment**, grounded in TFTP and ARINC 615A (with minimal ARINC 665 packaging support), systematically expose **protocol-level** conformant and non-conformant behavior—beyond project-specific ICD spot checks?
+> How can a **project-agnostic conformance verification method**, based on a series of stable test points derived from the ARINC 615A standard, fully prove protocol conformance while remaining compatible with project-specific extended test requirements?
 
 ---
 
 ## 2. Claim to defend
 
-A configurable, software-independent test set methodology, combined with mutation verification to prove detection capability, provides a rigorous framework for demonstrating ARINC 615A protocol conformance — not merely a one-sided loader or target stub.
+A project-agnostic conformance verification method, built on a stable set of verification points derived from the ARINC 615A standard, can fully prove protocol conformance when all points pass. This method is compatible with project-specific extended test sets without compromising the base conformance proof. The software architecture (dual-role simulator, L4 engine, etc.) is our implementation vehicle, not the innovation itself.
 
 ---
 
 ## 3. Contributions (draft)
 
-1. **Framing** — Protocol conformance vs program ICD testing for data-load paths.  
-2. **Method** — Configurable test set methodology: base test set (615A protocol conformance, standard-derived) + extended test set (project-specific requirements, ICD-derived).  
-3. **Artifact** — Executable prototype with decomposed L4 engine (selector → injector → verdict), 664 LU data generator, and role-agnostic TFTP/615A core.  
-4. **Evidence** — Proof that passing the complete base test set implies protocol conformance, demonstrated via loopback + mutation verification showing detection of known faults.
+1. **Method (innovation):** A project-agnostic conformance verification method based on stable verification points derived from the ARINC 615A standard. The base test set fully proves protocol conformance; extended test sets accommodate project-specific requirements without altering the base proof.
+2. **Framing:** Distinguishing protocol conformance verification (standard-derived, project-agnostic) from program ICD testing (project-specific, interface-level).
+3. **Artifact (engineering work):** An executable prototype that implements the method — dual-role simulator, L4 engine (selector/injector/verdict), 664 LU data generator. This is our work, not the innovation.
+4. **Evidence:** Empirical proof that (a) passing the complete base test set implies protocol conformance, and (b) mutation verification confirms the test set can detect non-conformance.
 
 ---
 
@@ -36,9 +36,9 @@ A configurable, software-independent test set methodology, combined with mutatio
 | | Abstract | Problem, method, results, contribution |
 | 1 | Introduction | Context, gap, RQ, scope, contributions |
 | 2 | Background & related work | Stack, 615A, 665 (minimal), conformance theory, prior tools |
-| 3 | Conformance requirements model | Base test set (615A standard), extended test set (project ICD), VP formalism, boundaries |
-| 4 | Method & system design | Dual-role method, L4 decomposition (selector/injector/verdict), Role Controller, 664 LU generator |
-| 5 | Experiments & results | Setup, base test set execution, mutation verification, extended test set (optional), external peer (optional), threats to validity |
+| 3 | Conformance verification method | Stable verification points (base test set, standard-derived); extended test set (project-specific); VP formalism; conformance proof argument |
+| 4 | System design (engineering work) | Dual-role simulator, L4 engine, Role Controller, 664 LU generator — implementation of the method, not the contribution |
+| 5 | Experiments & results | Base test set execution (conformance proof), mutation verification (detection proof), extended test set (optional), threats to validity |
 | 6 | Discussion | Implications, complementarity to ICD testing, limits |
 | 7 | Conclusion | Answer RQ; future work |
 | | References / optional appendix | Standards, captures, condensed VP tables |
@@ -54,7 +54,7 @@ Detail and confidentiality notes: `docs/02_thesis_outline.md`.
 | **T0** | Freeze RQ + title + scope bullets | This file + outline agree |
 | **T1** | Related-work notes (annotated bib) | `thesis/notes/related_work.md` |
 | **T2** | Requirements model draft (§3) | Formal VP table in `thesis/` or `docs/requirements/` |
-| **T3** | Method section draft (§4) | Architecture + Role Controller argued |
+| **T3** | Method section draft (§4) | Conformance verification method argued; software architecture described as implementation |
 | **T4** | Experiment plan | What will be measured before coding finishes |
 | **T5** | Results write-up (§5) | Uses Track A C7–C8 outputs |
 | **T6** | Discussion + conclusion | Limits & future work honest |
