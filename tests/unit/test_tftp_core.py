@@ -213,3 +213,145 @@ class TestTransferTimeout:
                 read_file(("127.0.0.1", port), "nope.bin", timeout=0.5)
         finally:
             blackhole.close()
+
+
+# ---------------------------------------------------------------------------
+# Edge cases: exact-multiple file size, duplicate DATA, wrong TID
+# ---------------------------------------------------------------------------
+class TestExactMultipleBlksize:
+    """RFC 1350 §5: a final DATA packet shorter than blksize terminates the
+    transfer. When the file size is an exact multiple of blksize, an extra
+    zero-length DATA packet must be sent. Previously this case hung forever.
+    """
+
+    def test_read_exact_multiple_default_blksize(self):
+        port = _free_port()
+        payload = b"A" * (512 * 5)  # exact multiple of default blksize
+        stop = threading.Event()
+        srv = serve_read(lambda fn: payload, ("127.0.0.1", port), timeout=3.0, stop_event=stop)
+        try:
+            result = read_file(("127.0.0.1", port), "exact.bin", timeout=3.0)
+            assert result == payload
+        finally:
+            stop.set()
+            srv.join(timeout=2)
+
+    def test_read_exact_multiple_small_blksize(self):
+        port = _free_port()
+        blksize = 32
+        payload = b"B" * (blksize * 8)  # exact multiple
+        stop = threading.Event()
+        srv = serve_read(
+            lambda fn: payload,
+            ("127.0.0.1", port),
+            options={"blksize": str(blksize)},
+            timeout=3.0,
+            stop_event=stop,
+        )
+        try:
+            result = read_file(
+                ("127.0.0.1", port),
+                "exact_small.bin",
+                options={"blksize": str(blksize)},
+                timeout=3.0,
+            )
+            assert result == payload
+        finally:
+            stop.set()
+            srv.join(timeout=2)
+
+    def test_write_exact_multiple_default_blksize(self):
+        port = _free_port()
+        payload = b"C" * (512 * 4)  # exact multiple
+        received = {}
+        stop = threading.Event()
+        srv = serve_write(
+            lambda fn, data: received.update({fn: data}),
+            ("127.0.0.1", port),
+            timeout=3.0,
+            stop_event=stop,
+        )
+        try:
+            write_file(("127.0.0.1", port), "exact_w.bin", payload, timeout=3.0)
+            time.sleep(0.2)
+            assert received.get("exact_w.bin") == payload
+        finally:
+            stop.set()
+            srv.join(timeout=2)
+
+    def test_write_exact_multiple_small_blksize(self):
+        port = _free_port()
+        blksize = 16
+        payload = b"D" * (blksize * 16)  # exact multiple
+        received = {}
+        stop = threading.Event()
+        srv = serve_write(
+            lambda fn, data: received.update({fn: data}),
+            ("127.0.0.1", port),
+            options={"blksize": str(blksize)},
+            timeout=3.0,
+            stop_event=stop,
+        )
+        try:
+            write_file(
+                ("127.0.0.1", port),
+                "exact_w_small.bin",
+                payload,
+                options={"blksize": str(blksize)},
+                timeout=3.0,
+            )
+            time.sleep(0.2)
+            assert received.get("exact_w_small.bin") == payload
+        finally:
+            stop.set()
+            srv.join(timeout=2)
+
+
+class TestDuplicateData:
+    """Server retransmits a DATA block when its ACK is lost. The client must
+    re-ACK but must NOT append the duplicate (otherwise the file is corrupted).
+    """
+
+    def test_read_survives_duplicate_data(self):
+        """Inject a duplicate DATA block on the server side and verify the
+        client reassembles the file correctly."""
+        import struct
+        from a615a_sim.tftp.packet import DATA, OP_ACK
+
+        port = _free_port()
+        payload = b"X" * 200  # single block, < blksize
+        stop = threading.Event()
+
+        # Custom server: send DATA(1), then duplicate DATA(1), then wait for ACKs
+        def _serve_dup():
+            sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            sock.bind(("127.0.0.1", port))
+            sock.settimeout(3.0)
+            try:
+                # Wait for RRQ
+                data, client = sock.recvfrom(65535)
+                # Send DATA(1) twice (simulating lost ACK)
+                pkt1 = DATA(1, payload).encode()
+                sock.sendto(pkt1, client)
+                sock.sendto(pkt1, client)
+                # Collect two ACKs
+                acks = 0
+                ack_prefix = struct.pack("!H", OP_ACK)
+                while acks < 2:
+                    try:
+                        msg, _ = sock.recvfrom(65535)
+                        if len(msg) == 4 and msg[:2] == ack_prefix:
+                            acks += 1
+                    except socket.timeout:
+                        break
+            finally:
+                sock.close()
+
+        srv = threading.Thread(target=_serve_dup, daemon=True)
+        srv.start()
+        try:
+            result = read_file(("127.0.0.1", port), "dup.bin", timeout=3.0)
+            assert result == payload  # not payload * 2
+        finally:
+            stop.set()
+            srv.join(timeout=2)

@@ -18,6 +18,7 @@ from .packet import (
     RRQ,
     WRQ,
     DecodeError,
+    ERR_UNKNOWN_TID,
     next_block,
 )
 from .transport import Address, Transport, TransportError
@@ -26,6 +27,10 @@ from .transport import Address, Transport, TransportError
 DEFAULT_BLKSIZE = 512
 DEFAULT_TIMEOUT = 5.0
 DEFAULT_RETRIES = 3
+
+
+class TransferError(Exception):
+    """Raised when a TFTP transfer fails at the protocol level."""
 
 
 # ---------------------------------------------------------------------------
@@ -48,24 +53,30 @@ def read_file(
     try:
         # Bind to an ephemeral port
         tp.bind(("0.0.0.0", 0))
-        tid = tp.socket.getsockname()
 
         rrq = RRQ(filename, mode, opts)
         tp.send_packet(server_addr, rrq)
 
         blksize = int(opts.get("blksize", DEFAULT_BLKSIZE))
-        current_block = 0
         chunks: list[bytes] = []
+        last_block = -1  # last DATA block number appended (duplicate detection)
         negotiated = True  # expecting OACK or first DATA
+        rrq_attempts = 0
 
         while True:
             try:
                 from_addr, pkt = tp.recv_packet()
             except TransportError:
+                # Retransmit RRQ if we have not yet seen any response
+                if last_block == -1 and rrq_attempts < max_retries:
+                    rrq_attempts += 1
+                    tp.send_packet(server_addr, rrq)
+                    continue
                 raise TransportError("Timed out waiting for server response")
 
-            # Ignore packets from wrong TID
+            # Wrong TID — send ERROR(5) per RFC 1350 §4 and keep waiting
             if from_addr != server_addr:
+                tp.send_packet(from_addr, ERROR(ERR_UNKNOWN_TID, "Unknown TID"))
                 continue
 
             if isinstance(pkt, ERROR):
@@ -75,22 +86,27 @@ def read_file(
                 # Accept negotiated options
                 if "blksize" in pkt.options:
                     blksize = int(pkt.options["blksize"])
-                ack = ACK(0)
-                tp.send_packet(server_addr, ack)
+                tp.send_packet(server_addr, ACK(0))
                 negotiated = False
-                current_block = 0
+                last_block = 0
+                continue
+
+            if isinstance(pkt, OACK):
+                # Late OACK after first DATA — ignore
                 continue
 
             if isinstance(pkt, DATA):
-                # First DATA after RRQ — if no OACK, use defaults
                 if negotiated:
                     negotiated = False
 
-                current_block = pkt.block_num
-                chunks.append(pkt.data)
+                if pkt.block_num == last_block:
+                    # Duplicate DATA (server retransmit) — re-ACK, do not append
+                    tp.send_packet(server_addr, ACK(pkt.block_num))
+                    continue
 
-                ack = ACK(current_block)
-                tp.send_packet(server_addr, ack)
+                last_block = pkt.block_num
+                chunks.append(pkt.data)
+                tp.send_packet(server_addr, ACK(pkt.block_num))
 
                 # Last block: data shorter than blksize
                 if len(pkt.data) < blksize:
@@ -125,7 +141,6 @@ def write_file(
         tp.send_packet(server_addr, wrq)
 
         blksize = int(opts.get("blksize", DEFAULT_BLKSIZE))
-        expected_ack = 0
         negotiated = True
 
         # Wait for ACK(0) or OACK before sending data
@@ -136,6 +151,7 @@ def write_file(
                 raise TransportError("Timed out waiting for WRQ response")
 
             if from_addr != server_addr:
+                tp.send_packet(from_addr, ERROR(ERR_UNKNOWN_TID, "Unknown TID"))
                 continue
 
             if isinstance(pkt, ERROR):
@@ -156,6 +172,7 @@ def write_file(
         # Send data blocks
         offset = 0
         block_num = 0
+        sent_terminator = False
         while offset < len(data) or block_num == 0:
             chunk = data[offset : offset + blksize]
             block_num = next_block(block_num) if block_num > 0 else 1
@@ -163,7 +180,15 @@ def write_file(
             tp.send_with_retry(server_addr, data_pkt, block_num, max_retries, timeout)
             offset += blksize
             if len(chunk) < blksize:
+                sent_terminator = True
                 break
+
+        # RFC 1350 §5: if file is an exact multiple of blksize, send a final
+        # zero-length DATA packet to signal end-of-transfer.
+        if not sent_terminator:
+            block_num = next_block(block_num)
+            term_pkt = DATA(block_num, b"")
+            tp.send_with_retry(server_addr, term_pkt, block_num, max_retries, timeout)
     finally:
         tp.close()
 
@@ -187,12 +212,14 @@ def serve_read(
     opts = options or {}
     stop = stop_event or threading.Event()
 
-    def _serve() -> None:
-        tp = Transport(timeout=timeout)
-        try:
-            tp.bind(listen_addr)
-            server_addr = tp.socket.getsockname()
+    # Bind synchronously so the caller can send to the listen port immediately
+    # without racing the server thread's bind() (avoids ConnectionResetError
+    # on Windows when a client datagram arrives before bind completes).
+    tp = Transport(timeout=timeout)
+    tp.bind(listen_addr)
 
+    def _serve() -> None:
+        try:
             # Wait for RRQ
             while not stop.is_set():
                 try:
@@ -226,8 +253,8 @@ def serve_read(
                     tp.send_packet(client_addr, oack)
                     # Wait for ACK(0)
                     try:
-                        _, ack_pkt = tp.recv_packet()
-                        if not isinstance(ack_pkt, ACK) or ack_pkt.block_num != 0:
+                        ack_from, ack_pkt = tp.recv_packet()
+                        if ack_from != client_addr or not isinstance(ack_pkt, ACK) or ack_pkt.block_num != 0:
                             return
                     except TransportError:
                         return
@@ -235,6 +262,7 @@ def serve_read(
             # Send data blocks
             offset = 0
             block_num = 0
+            sent_terminator = False
             while offset < len(file_data) or block_num == 0:
                 chunk = file_data[offset : offset + blksize]
                 block_num = next_block(block_num) if block_num > 0 else 1
@@ -245,7 +273,18 @@ def serve_read(
                     return
                 offset += blksize
                 if len(chunk) < blksize:
+                    sent_terminator = True
                     break
+
+            # RFC 1350 §5: send a final zero-length DATA packet when file size
+            # is an exact multiple of blksize.
+            if not sent_terminator:
+                block_num = next_block(block_num)
+                term_pkt = DATA(block_num, b"")
+                try:
+                    tp.send_with_retry(client_addr, term_pkt, block_num, max_retries, timeout)
+                except TransportError:
+                    return
         finally:
             tp.close()
 
@@ -272,11 +311,12 @@ def serve_write(
     opts = options or {}
     stop = stop_event or threading.Event()
 
-    def _serve() -> None:
-        tp = Transport(timeout=timeout)
-        try:
-            tp.bind(listen_addr)
+    # Bind synchronously (see serve_read for rationale).
+    tp = Transport(timeout=timeout)
+    tp.bind(listen_addr)
 
+    def _serve() -> None:
+        try:
             # Wait for WRQ
             while not stop.is_set():
                 try:
@@ -313,6 +353,7 @@ def serve_write(
             # Receive data blocks
             chunks: list[bytes] = []
             expected_block = 1
+            last_acked_block = 0  # ACK(0) (or OACK) was the last ACK sent
             while True:
                 try:
                     from_addr, dpkt = tp.recv_packet()
@@ -320,6 +361,7 @@ def serve_write(
                     return
 
                 if from_addr != client_addr:
+                    tp.send_packet(from_addr, ERROR(ERR_UNKNOWN_TID, "Unknown TID"))
                     continue
 
                 if isinstance(dpkt, ERROR):
@@ -328,17 +370,19 @@ def serve_write(
                 if not isinstance(dpkt, DATA):
                     continue
 
-                if dpkt.block_num != expected_block:
-                    # Send error for wrong block
+                if dpkt.block_num == expected_block:
+                    chunks.append(dpkt.data)
+                    tp.send_packet(client_addr, ACK(expected_block))
+                    last_acked_block = expected_block
+                    if len(dpkt.data) < blksize:
+                        break
+                    expected_block = next_block(expected_block)
+                elif dpkt.block_num == last_acked_block:
+                    # Duplicate DATA (our ACK was lost) — re-ACK, do not append
+                    tp.send_packet(client_addr, ACK(last_acked_block))
+                else:
                     tp.send_packet(client_addr, ERROR(0, "Block sequence error"))
                     return
-
-                chunks.append(dpkt.data)
-                tp.send_packet(client_addr, ACK(expected_block))
-
-                if len(dpkt.data) < blksize:
-                    break
-                expected_block = next_block(expected_block)
 
             data_receiver(pkt.filename, b"".join(chunks))
         finally:
@@ -347,10 +391,3 @@ def serve_write(
     t = threading.Thread(target=_serve, daemon=True)
     t.start()
     return t
-
-
-# ---------------------------------------------------------------------------
-# Exceptions
-# ---------------------------------------------------------------------------
-class TransferError(Exception):
-    """Raised when a TFTP transfer fails at the protocol level."""
