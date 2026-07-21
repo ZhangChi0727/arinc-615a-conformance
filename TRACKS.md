@@ -1,19 +1,29 @@
-# Tracks: Software · Tutorial · Thesis
+# Tracks: Tutorial → Software → Thesis
 
-The repo has **three end products**. Software and thesis are the main parallel workstreams; tutorial is the shared on-ramp.
+The project follows a **sequential workflow**: tutorials first, then software engineering, then thesis. Tutorial is the starting point — not a parallel track.
 
 ```
-                    ┌─────────────────────┐
-                    │  Tutorial / study     │
-                    │  docs/study, tutorial │
-                    └──────────┬──────────┘
-               ┌───────────────┴───────────────┐
-               ▼                               ▼
-    ┌─────────────────────┐       ┌─────────────────────┐
-    │  TRACK A — Software  │       │  TRACK B — Thesis    │
-    │  src/, tests/        │       │  thesis/, research   │
-    └─────────────────────┘       └─────────────────────┘
+    ┌─────────────────────────┐
+    │  1. Tutorial / Study     │
+    │  664 → 665 → 615A        │
+    │  docs/study, tutorial    │
+    └────────────┬────────────┘
+                 │
+        Stable tutorials + test docs
+                 │
+    ┌────────────┴────────────┐
+    ▼                         ▼
+    ┌───────────────┐  ┌───────────────────┐
+    │ 2. Software    │  │ 3. Thesis          │
+    │  Engineering   │  │  Methodology       │
+    │  src/, tests/  │  │  Summary           │
+    └───────────────┘  └───────────────────┘
 ```
+
+**Workflow:**
+1. **Tutorial** — Study protocols (664, 665, 615A); figure out how to verify conformance; form stable tutorials with test docs. Refer to high-level thesis and docs as research basis.
+2. **Software** — Implement the conformance verification tool based on stable tutorials.
+3. **Thesis** — Summarize the academic or engineering verification methodology from software engineering practice.
 
 ---
 
@@ -21,15 +31,15 @@ The repo has **three end products**. Software and thesis are the main parallel w
 
 | | |
 |---|---|
-| **Goal** | Dual-role (DLS/THW) simulator + test engine for ARINC 615A (+ minimal 665) |
-| **Success looks like** | Runnable software; automated Pass/Fail; loopback + mutation tests green |
+| **Goal** | Dual-role (DLS/THW) simulator + configurable test sets for ARINC 615A (+ minimal 665, 664 LU input) |
+| **Success looks like** | Stable protocol simulator + iterable/configurable test sets; base test set proves conformance; mutation verification proves detection |
 | **Primary folder** | `src/`, `tests/`, `configs/`, `scripts/` |
 | **Plan document** | [`PROJECT_PLAN.md`](PROJECT_PLAN.md) |
 | **Tone** | Implementation, APIs, milestones, bugs |
 | **May use** | Internal names (OHMS, IDU…) in private notes under `docs/work/` |
 | **Does not need** | Literature survey, research questions, academic contribution claims |
 
-**Typical activities:** implement TFTP → 615A session → 665 codec → scenarios → CLI/report.
+**Typical activities:** implement TFTP → 615A session → 665 codec → L4 engine (selector/injector/verdict) → 664 LU generator → test sets → CLI/report.
 
 ---
 
@@ -54,12 +64,15 @@ The repo has **three end products**. Software and thesis are the main parallel w
 | Shared | Owned by Code | Owned by Thesis |
 |---|---|---|
 | Protocol understanding (`docs/study/`) | `src/` implementation | Argument & narrative in `thesis/` |
-| Test-point ideas | Executable scenarios in `tests/` / configs | Formal requirements model in thesis §3 |
+| Verification-point ideas | Executable verification scenarios in `tests/` / configs | Formal requirements model in thesis §3 |
+| Base test set (615A conformance) | `configs/test_sets/base/` — YAML-driven, no code changes to add cases | Derived from standard; formalized in §3 |
+| Extended test set (project-specific) | `configs/test_sets/extended/` — compatible with specific project ICD test requirements; varies by client | Project ICD requirements mapped to VPs |
 | Validation runs | CI / pytest / reports under `artifacts/` (optional) | Tables/figures in thesis §5–6 |
 
 **Rule of thumb:**  
-- If you are asking “does the packet match the state machine?” → **Code track**.  
-- If you are asking “does this answer the research question?” → **Thesis track**.
+- If you are asking "does the packet match the state machine?" → **Code track**.  
+- If you are asking "does this answer the research question?" → **Thesis track**.
+- If you are asking "does this peer conform to the standard?" → **Verification**.
 
 ---
 

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Phase 0 v0.1 汇报 — ARINC 615A 协议符合性验证</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; background: #1a1a2e; color: #eee; }
+.slide { width: 100vw; height: 100vh; display: none; flex-direction: column; justify-content: center; padding: 5vh 8vw; position: relative; overflow: hidden; }
+.slide.active { display: flex; }
+.slide::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: linear-gradient(180deg, #4fc3f7, #29b6f6, #0288d1); }
+h1 { font-size: 2.4em; color: #4fc3f7; margin-bottom: 0.4em; }
+h2 { font-size: 1.8em; color: #4fc3f7; margin-bottom: 0.5em; }
+h3 { font-size: 1.3em; color: #81d4fa; margin-bottom: 0.3em; }
+p, li { font-size: 1.15em; line-height: 1.7; color: #ddd; }
+ul { padding-left: 1.5em; }
+li { margin-bottom: 0.4em; }
+.subtitle { font-size: 1.3em; color: #aaa; margin-bottom: 1em; }
+.highlight { color: #ffd54f; font-weight: bold; }
+.card { background: rgba(255,255,255,0.06); border-radius: 10px; padding: 1.2em 1.5em; margin: 0.5em 0; border-left: 4px solid #4fc3f7; }
+.card-warn { border-left-color: #ffd54f; }
+.card-green { border-left-color: #66bb6a; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2em; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1em; }
+.tag { display: inline-block; background: #0288d1; color: #fff; padding: 0.15em 0.6em; border-radius: 4px; font-size: 0.85em; margin-right: 0.4em; }
+.tag-green { background: #2e7d32; }
+.tag-yellow { background: #f57f17; }
+.nav { position: fixed; bottom: 2vh; right: 3vw; font-size: 0.9em; color: #666; z-index: 100; }
+.nav button { background: #333; color: #aaa; border: 1px solid #555; padding: 0.4em 1em; margin-left: 0.3em; cursor: pointer; border-radius: 4px; font-size: 0.9em; }
+.nav button:hover { background: #4fc3f7; color: #000; }
+.page-num { position: fixed; bottom: 2vh; left: 3vw; color: #555; font-size: 0.85em; }
+table { width: 100%; border-collapse: collapse; margin: 0.5em 0; }
+th { background: rgba(79,195,247,0.15); color: #4fc3f7; text-align: left; padding: 0.5em 0.8em; font-size: 1em; }
+td { padding: 0.5em 0.8em; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.95em; color: #ccc; }
+.reason { background: rgba(255,213,79,0.08); border-left: 3px solid #ffd54f; padding: 0.6em 1em; margin-top: 0.6em; font-size: 0.95em; }
+.reason::before { content: '💡 决策理由：'; font-weight: bold; color: #ffd54f; }
+.arrow { color: #4fc3f7; font-size: 1.5em; text-align: center; margin: 0.3em 0; }
+</style>
+</head>
+<body>
+
+<!-- Slide 1: Title -->
+<div class="slide active" id="s1">
+  <h1>ARINC 615A 协议符合性验证实施方案</h1>
+  <p class="subtitle">Phase 0 · Version 0.1 · 阶段汇报</p>
+  <div class="card" style="margin-top:2em;">
+    <p><strong>项目名称：</strong>面向 ARINC 615A 数据加载协议符合性验证的双角色仿真方法</p>
+    <p style="margin-top:0.5em;"><strong>当前状态：</strong>Phase 0 完成 — 项目骨架搭建、研究规划冻结、技术路线确定</p>
+  </div>
+  <p style="margin-top:2em; color:#888;">汇报内容：为什么这样规划？做了什么？下一步怎么走？</p>
+</div>
+
+<!-- Slide 2: Background & Problem -->
+<div class="slide" id="s2">
+  <h2>1. 背景与问题</h2>
+  <div class="card">
+    <h3>工程背景</h3>
+    <p>民用航空电子系统中，ARINC 615A 是标准化的数据加载协议（基于 TFTP/UDP）。设备在交付和维护时需通过数据加载器（DLS）对目标硬件（THW）进行软件/数据装载。</p>
+  </div>
+  <div class="card card-warn">
+    <h3>核心问题</h3>
+    <p>当前验证多停留在 <span class="highlight">项目级 ICD 功能测试</span> 层面，缺乏对 <span class="highlight">协议级符合性</span> 的系统化验证手段。</p>
+    <ul style="margin-top:0.5em;">
+      <li>ICD 测试只验证"能不能用"，不验证"是否符合标准"</li>
+      <li>缺少可控的、可重复的负面测试（mutation）能力</li>
+      <li>现有工具多为单向（仅 DLS 或仅 THW），无法自环验证</li>
+    </ul>
+  </div>
+  <div class="reason">
+    协议符合性验证能发现 ICD 测试无法覆盖的边界行为（如块号回绕、选项协商失败、状态码异常），是 ICD 测试的补充而非替代。
+  </div>
+</div>
+
+<!-- Slide 3: Research Question & Goal -->
+<div class="slide" id="s3">
+  <h2>2. 研究问题与目标</h2>
+  <div class="card">
+    <h3>研究问题 (RQ)</h3>
+    <p style="font-style:italic; font-size:1.1em;">"如何构建一个可控的双角色（DLS/THW）仿真环境，基于 TFTP 和 ARINC 615A（含最小 ARINC 665 支持），系统化地暴露协议级的符合/不符合行为——超越项目级 ICD 的逐点检查？"</p>
+  </div>
+  <div class="card card-green">
+    <h3>核心主张</h3>
+    <p>一套可配置的、软件无关的测试集方法论，结合变异验证证明检测能力，为 ARINC 615A 协议符合性提供严格的验证框架——而不仅仅是单侧的加载器或目标桩。</p>
+  </div>
+  <div class="reason">
+    双角色设计使得同一工具既能当 DLS 也能当 THW，可在单机上完成自环测试（loopback），无需等待真实硬件到位即可开展验证实验。
+  </div>
+</div>
+
+<!-- Slide 4: Three-Track Architecture -->
+<div class="slide" id="s4">
+  <h2>3. 三条工作线架构</h2>
+  <div class="grid3">
+    <div class="card">
+      <h3>Track A — 软件工程</h3>
+      <p><span class="tag">实现</span></p>
+      <ul>
+        <li>双角色仿真器</li>
+        <li>TFTP/615A/665 协议栈</li>
+        <li>L4 引擎（选择器/注入器/判定器）</li>
+        <li>可配置测试集（基础 + 扩展）</li>
+        <li>664 LU 数据生成器</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Track B — 学术论文</h3>
+      <p><span class="tag tag-yellow">论证</span></p>
+      <ul>
+        <li>研究问题 → 方法 → 实验</li>
+        <li>符合性需求模型</li>
+        <li>实验结果与讨论</li>
+        <li>工程师视角的学术贡献</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Tutorial — 共享基础</h3>
+      <p><span class="tag tag-green">学习</span></p>
+      <ul>
+        <li>协议标准研读笔记</li>
+        <li>术语表 / 缩略语</li>
+        <li>为 Track A/B 提供知识基础</li>
+      </ul>
+    </div>
+  </div>
+  <div class="reason">
+    分离"工程实现"与"学术论证"避免互相干扰：代码可以独立迭代，论文可以独立构思，共享知识基础避免重复学习。这是经过验证的研究型项目管理模式。
+  </div>
+</div>
+
+<!-- Slide 5: Key Design Decisions -->
+<div class="slide" id="s5">
+  <h2>4. 关键设计决策及理由</h2>
+  <table>
+    <tr><th>决策</th><th>选择</th><th>理由</th></tr>
+    <tr><td>角色设计</td><td>双角色可切换</td><td>单机自环验证，不依赖外部硬件；同一协议核心复用于两端，减少实现不一致风险</td></tr>
+    <tr><td>实现语言</td><td>Python 优先</td><td>快速原型迭代；标准库含 TFTP 基础；后续可选 C/C++ 优化热路径</td></tr>
+    <tr><td>665 范围</td><td>最小支持</td><td>仅需 .LUH 构建/校验和 THW ID 检查即可支撑判定；完整 665 超出符合性验证必要范围</td></tr>
+    <tr><td>验证策略</td><td>自环 + 变异验证</td><td>自环验证基本功能正确性；变异验证验证能否检出已知不符合行为；无需真实硬件即可证明方法有效</td></tr>
+    <tr><td>保密处理</td><td>论文用通用术语</td><td>DLS/THW 等通用名称用于公开文本；OHMS/IDU 等内部名称仅存于私有笔记</td></tr>
+  </table>
+</div>
+
+<!-- Slide 6: Architecture Design -->
+<div class="slide" id="s6">
+  <h2>5. 软件架构设计</h2>
+  <div class="grid2">
+    <div>
+      <h3>分层架构</h3>
+      <div class="card" style="padding:0.6em 1em; margin:0.3em 0;">
+        <p><span class="tag">L4</span> 选择器 → 注入器 → 判定器 → 报告</p>
+      </div>
+      <div class="card" style="padding:0.6em 1em; margin:0.3em 0;">
+        <p><span class="tag">L3</span> ARINC 615A 会话层（虚拟文件状态机）</p>
+      </div>
+      <div class="card" style="padding:0.6em 1em; margin:0.3em 0;">
+        <p><span class="tag">L2</span> ARINC 665 LSAP + 664 LU 数据生成</p>
+      </div>
+      <div class="card" style="padding:0.6em 1em; margin:0.3em 0;">
+        <p><span class="tag">L1</span> TFTP 核心（RFC 1350 + 选项 + 回绕→1）</p>
+      </div>
+      <div class="card" style="padding:0.6em 1em; margin:0.3em 0;">
+        <p><span class="tag">L0</span> UDP 网络 I/O</p>
+      </div>
+    </div>
+    <div>
+      <h3>核心设计贡献</h3>
+      <div class="card card-green">
+        <h3>Role Controller（角色控制器）</h3>
+        <p>同一套协议核心引擎，通过角色切换在 DLS 模式与 THW 模式之间切换。</p>
+        <p style="margin-top:0.5em;"><strong>优势：</strong></p>
+        <ul>
+          <li>两端行为一致，减少实现偏差</li>
+          <li>自环测试只需一个进程</li>
+          <li>测试覆盖两种角色分配</li>
+        </ul>
+      </div>
+      <div class="reason">
+        角色无关的协议核心是本方案的核心创新点：传统工具分别实现 DLS 和 THW，容易出现两端理解不一致的问题。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 7: Repository Structure -->
+<div class="slide" id="s7">
+  <h2>6. 项目结构（已完成）</h2>
+  <div class="grid2">
+    <div>
+      <h3>目录布局</h3>
+      <div class="card" style="font-family: monospace; font-size: 0.9em; line-height: 1.5;">
+        <p>src/a615a_sim/ <span class="tag tag-green">✓ C0</span></p>
+        <p>&nbsp;&nbsp;├── __init__.py</p>
+        <p>&nbsp;&nbsp;└── cli.py</p>
+        <p>tests/unit/ <span class="tag tag-green">✓</span></p>
+        <p>&nbsp;&nbsp;└── test_skeleton.py</p>
+        <p>docs/study/ <span class="tag tag-green">✓</span></p>
+        <p>&nbsp;&nbsp;└── 00_INDEX.md</p>
+        <p>docs/design/ <span class="tag">待建</span></p>
+        <p>configs/examples/</p>
+        <p>pyproject.toml <span class="tag tag-green">✓</span></p>
+      </div>
+    </div>
+    <div>
+      <h3>工程化决策</h3>
+      <div class="card">
+        <p><strong>包管理：</strong>pyproject.toml + setuptools</p>
+        <p style="margin-top:0.3em; color:#aaa;">→ 现代 Python 标准，无遗留 setup.py</p>
+      </div>
+      <div class="card">
+        <p><strong>零外部依赖：</strong>dependencies = []</p>
+        <p style="margin-top:0.3em; color:#aaa;">→ 最小化安装障碍；dev 仅需 pytest</p>
+      </div>
+      <div class="card">
+        <p><strong>Python ≥ 3.10：</strong></p>
+        <p style="margin-top:0.3em; color:#aaa;">→ 使用现代类型语法（X | Y）；广泛可用</p>
+      </div>
+      <div class="card">
+        <p><strong>CLI 入口：</strong>a615a-sim 命令</p>
+        <p style="margin-top:0.3em; color:#aaa;">→ pip install 即可用；支持 --role 参数预留</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 8: Milestones & Status -->
+<div class="slide" id="s8">
+  <h2>7. 里程碑与当前状态</h2>
+  <table>
+    <tr><th>ID</th><th>里程碑</th><th>状态</th><th>说明</th></tr>
+    <tr><td><strong>C0</strong></td><td>仓库骨架 + 包可导入</td><td><span class="tag tag-green">✓ 完成</span></td><td>cli --help 可运行；smoke test 通过</td></tr>
+    <tr><td>C1</td><td>TFTP 核心实现</td><td><span class="tag tag-yellow">待开始</span></td><td>RRQ/WRQ/DATA/ACK/OACK; 超时重传; 块号回绕</td></tr>
+    <tr><td>C2</td><td>角色无关传输 API</td><td>待开始</td><td>同一引擎支持 client/server</td></tr>
+    <tr><td>C3</td><td>615A DOWNLOAD 会话</td><td>待开始</td><td>.LNO→.LNL/.LNA→数据+.LNS</td></tr>
+    <tr><td>C4</td><td>615A UPLOAD（最小）</td><td>待开始</td><td>Init + list/status 足够一个标称装载</td></tr>
+    <tr><td>C5</td><td>最小 665 编解码</td><td>待开始</td><td>.LUH 构建/校验; THW ID 不匹配检测</td></tr>
+    <tr><td>C6a</td><td>测试集框架</td><td>待开始</td><td>YAML 测试集模式定义；基础测试集 >= 10 用例</td></tr>
+    <tr><td>C6b</td><td>L4 引擎分解</td><td>待开始</td><td>选择器/注入器/判定器独立工作；运行器编排</td></tr>
+    <tr><td>C6c</td><td>664 LU 生成器</td><td>待开始</td><td>生成有效 664 LU 数据；集成到 DOWNLOAD/UPLOAD</td></tr>
+    <tr><td>C7</td><td>自环验证套件</td><td>待开始</td><td>DLS↔THW localhost 全绿</td></tr>
+    <tr><td>C8</td><td>变异验证套件</td><td>待开始</td><td>已知坏对端被正确检出</td></tr>
+  </table>
+  <p style="margin-top:0.8em; color:#81d4fa;">论文 Track：T0（冻结 RQ + 标题 + 范围）已完成 ✓</p>
+</div>
+
+<!-- Slide 9: Phase 0 Deliverables -->
+<div class="slide" id="s9">
+  <h2>8. Phase 0 交付物清单</h2>
+  <div class="grid2">
+    <div>
+      <h3>✅ 已完成</h3>
+      <div class="card card-green">
+        <ul>
+          <li><strong>项目规划文档</strong> — PROJECT_PLAN.md</li>
+          <li><strong>工作线划分</strong> — TRACKS.md</li>
+          <li><strong>研究大纲</strong> — RESEARCH_OUTLINE.md</li>
+          <li><strong>论文大纲</strong> — docs/02_thesis_outline.md</li>
+          <li><strong>学习索引</strong> — docs/study/00_INDEX.md</li>
+          <li><strong>代码骨架</strong> — C0 里程碑达成</li>
+          <li><strong>构建配置</strong> — pyproject.toml</li>
+          <li><strong>冒烟测试</strong> — test_skeleton.py</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3>Phase 0 的价值</h3>
+      <div class="card">
+        <p><strong>1. 方向锁定</strong></p>
+        <p style="color:#aaa;">明确了研究问题和核心主张，避免后续返工</p>
+      </div>
+      <div class="card">
+        <p><strong>2. 架构预置</strong></p>
+        <p style="color:#aaa;">分层架构和角色控制器设计已确定，为 C1-C8 铺路</p>
+      </div>
+      <div class="card">
+        <p><strong>3. 工程基础</strong></p>
+        <p style="color:#aaa;">包结构、测试框架、CLI 入口已就绪，可立即开始功能开发</p>
+      </div>
+      <div class="card">
+        <p><strong>4. 学术定位</strong></p>
+        <p style="color:#aaa;">论文章节结构、贡献声明、证据管道已规划</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 10: Why This Approach -->
+<div class="slide" id="s10">
+  <h2>9. 为什么这样规划与实施？</h2>
+  <div class="grid2">
+    <div>
+      <div class="card">
+        <h3>① 为什么是"符合性验证"而非"功能测试"？</h3>
+        <p>功能测试回答"设备能否正常工作"；符合性验证回答"设备是否遵循标准"。前者是项目需求，后者是行业标准要求。两者互补，但层次不同。</p>
+      </div>
+      <div class="card">
+        <h3>② 为什么双角色而非单侧工具？</h3>
+        <p>单侧工具需要真实对端才能测试；双角色设计允许自环验证，加速开发迭代，且能系统性覆盖两端行为。</p>
+      </div>
+      <div class="card">
+        <h3>③ 为什么变异验证？</h3>
+        <p>仅验证"正常情况通过"不能证明工具有效。通过注入已知缺陷（坏校验值、错误块号、忽略选项），验证工具能正确判定 Fail，才能证明验证方法的可信度。</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>④ 为什么 Python 优先？</h3>
+        <p>Phase 0 目标是验证方法可行性，不是生产部署。Python 的快速迭代能力让我们聚焦协议逻辑而非内存管理。性能热点可后续用 C 替换。</p>
+      </div>
+      <div class="card">
+        <h3>⑤ 为什么最小 665 而非完整实现？</h3>
+        <p>符合性验证的核心在 615A 会话层。665 仅需足够支撑判定（.LUH 构建、校验值、THW ID），完整实现超出本研究必要范围。</p>
+      </div>
+      <div class="card">
+        <h3>⑥ 为什么论文与代码分离？</h3>
+        <p>代码追求"能跑"，论文追求"能论证"。分离避免代码里程碑被写作需求拖累，也避免论文变成"开发日志"。两者通过共享的验证点和实验结果连接。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 11: MVP Definition -->
+<div class="slide" id="s11">
+  <h2>10. MVP 完成标准</h2>
+  <div class="card card-green">
+    <h3>最小可行产品 (MVP) 定义</h3>
+    <ol style="font-size:1.1em; line-height:2;">
+      <li>自环 Operator DOWNLOAD（标称场景）在两种角色分配下均 Pass</li>
+      <li>至少 <span class="highlight">4 个变异用例</span> 正确判定 Fail 并给出清晰原因</li>
+      <li>最小 LSAP 校验值错误被正确拒绝/标记</li>
+      <li>基础测试集包含 >= 10 个验证点覆盖核心 615A 操作</li>
+      <li>测试集为配置驱动（YAML）；新增用例无需修改 Python 代码</li>
+      <li>每次运行产出机器可读报告（JSON）</li>
+      <li>README 记录 &lt;10 步即可运行自环测试</li>
+    </ol>
+  </div>
+  <div class="reason">
+    MVP 标准聚焦于"方法是否可行"而非"功能是否完整"。7 条标准覆盖了正向验证、负向验证、判定可信度、测试集完整性、可配置性、可重复性和可用性。
+  </div>
+</div>
+
+<!-- Slide 12: Next Steps -->
+<div class="slide" id="s12">
+  <h2>11. 下一步计划</h2>
+  <div class="grid2">
+    <div>
+      <h3>Track A — 代码</h3>
+      <div class="card">
+        <p><span class="tag tag-yellow">Next</span> <strong>C1: TFTP 核心实现</strong></p>
+        <ul style="margin-top:0.5em;">
+          <li>RRQ/WRQ/DATA/ACK/ERROR/OACK</li>
+          <li>超时重传机制</li>
+          <li>块号回绕→1 处理</li>
+          <li>单元测试覆盖</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p><span class="tag">Then</span> <strong>C2: 角色无关传输 API</strong></p>
+        <p style="color:#aaa;">同一引擎支持 client/server 模式</p>
+      </div>
+    </div>
+    <div>
+      <h3>Track B — 论文</h3>
+      <div class="card">
+        <p><span class="tag tag-yellow">Next</span> <strong>T1: 相关工作调研</strong></p>
+        <ul style="margin-top:0.5em;">
+          <li>ARINC 615A/665 标准文献</li>
+          <li>符合性测试方法论</li>
+          <li>现有工具对比分析</li>
+        </ul>
+      </div>
+      <div class="card">
+        <p><span class="tag">Then</span> <strong>T2: 需求模型草案</strong></p>
+        <p style="color:#aaa;">形式化验证点表格</p>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:1em;">
+    <h3>待确认的开放选择</h3>
+    <p>1. 论文形式：独立技术论文 vs 期刊/会议论文 vs 内部学术风格报告？</p>
+    <p>2. 665 可见度：标题保留"最小支持"还是降级为子节？</p>
+    <p>3. FIND/INFORMATION 操作：纳入实验范围还是明确列为未来工作？</p>
+  </div>
+</div>
+
+<!-- Slide 13: Summary -->
+<div class="slide" id="s13">
+  <h2>12. 总结</h2>
+  <div class="card card-green" style="text-align:center; padding:2em;">
+    <h3 style="font-size:1.4em;">Phase 0 v0.1 — 完成</h3>
+    <p style="margin-top:1em; font-size:1.1em;">✅ 研究方向明确 · 架构设计锁定 · 工程骨架就绪</p>
+    <p style="margin-top:1.5em; font-size:1.2em; color:#4fc3f7;">核心思路：</p>
+    <p style="font-size:1.1em; margin-top:0.5em;">可配置测试集（基础 + 扩展）+ L4 引擎分解 + 变异验证</p>
+    <p style="font-size:1.1em;">= 证明基础测试集全通过即协议符合性</p>
+  </div>
+  <div style="text-align:center; margin-top:2em; color:#888;">
+    <p>感谢聆听 · 欢迎讨论</p>
+  </div>
+</div>
+
+<!-- Navigation -->
+<div class="page-num" id="pageNum">1 / 13</div>
+<div class="nav">
+  <button onclick="prevSlide()">◀ 上一页</button>
+  <button onclick="nextSlide()">下一页 ▶</button>
+</div>
+
+<script>
+let current = 1;
+const total = 13;
+function showSlide(n) {
+  current = n;
+  document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+  document.getElementById('s' + n).classList.add('active');
+  document.getElementById('pageNum').textContent = n + ' / ' + total;
+}
+function nextSlide() { if (current < total) { current++; showSlide(current); } }
+function prevSlide() { if (current > 1) { current--; showSlide(current); } }
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+  if (e.key === 'ArrowLeft') prevSlide();
+});
+</script>
+</body>
+</html>
