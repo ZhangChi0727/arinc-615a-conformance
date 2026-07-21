@@ -1,19 +1,29 @@
-# Tracks: Software · Tutorial · Thesis
+# Tracks: Tutorial → Software → Thesis
 
-The repo has **three end products**. Software and thesis are the main parallel workstreams; tutorial is the shared on-ramp.
+The project follows a **sequential workflow**: tutorials first, then software engineering, then thesis. Tutorial is the starting point — not a parallel track.
 
 ```
-                    ┌─────────────────────┐
-                    │  Tutorial / study     │
-                    │  docs/study, tutorial │
-                    └──────────┬──────────┘
-               ┌───────────────┴───────────────┐
-               ▼                               ▼
-    ┌─────────────────────┐       ┌─────────────────────┐
-    │  TRACK A — Software  │       │  TRACK B — Thesis    │
-    │  src/, tests/        │       │  thesis/, research   │
-    └─────────────────────┘       └─────────────────────┘
+    ┌─────────────────────────┐
+    │  1. Tutorial / Study     │
+    │  664 → 665 → 615A        │
+    │  docs/study, tutorial    │
+    └────────────┬────────────┘
+                 │
+        Stable tutorials + test docs
+                 │
+    ┌────────────┴────────────┐
+    ▼                         ▼
+    ┌───────────────┐  ┌───────────────────┐
+    │ 2. Software    │  │ 3. Thesis          │
+    │  Engineering   │  │  Methodology       │
+    │  src/, tests/  │  │  Summary           │
+    └───────────────┘  └───────────────────┘
 ```
+
+**Workflow:**
+1. **Tutorial** — Study protocols (664, 665, 615A); figure out how to verify conformance; form stable tutorials with test docs. Refer to high-level thesis and docs as research basis.
+2. **Software** — Implement the conformance verification tool based on stable tutorials.
+3. **Thesis** — Summarize the academic or engineering verification methodology from software engineering practice.
 
 ---
 
@@ -56,7 +66,7 @@ The repo has **three end products**. Software and thesis are the main parallel w
 | Protocol understanding (`docs/study/`) | `src/` implementation | Argument & narrative in `thesis/` |
 | Verification-point ideas | Executable verification scenarios in `tests/` / configs | Formal requirements model in thesis §3 |
 | Base test set (615A conformance) | `configs/test_sets/base/` — YAML-driven, no code changes to add cases | Derived from standard; formalized in §3 |
-| Extended test set (project-specific) | `configs/test_sets/extended/` — varies by client ICD | Project requirements mapped to VPs |
+| Extended test set (project-specific) | `configs/test_sets/extended/` — compatible with specific project ICD test requirements; varies by client | Project ICD requirements mapped to VPs |
 | Validation runs | CI / pytest / reports under `artifacts/` (optional) | Tables/figures in thesis §5–6 |
 
 **Rule of thumb:**  

@@ -22,7 +22,7 @@ A project-agnostic conformance verification method, built on a stable set of ver
 
 ## 3. Contributions (draft)
 
-1. **Method (innovation):** A project-agnostic conformance verification method based on stable verification points derived from the ARINC 615A standard. The base test set fully proves protocol conformance; extended test sets accommodate project-specific requirements without altering the base proof.
+1. **Method (innovation):** A project-agnostic conformance verification method based on stable verification points derived from the ARINC 615A standard. The base test set fully proves protocol conformance; extended test sets are compatible with specific project ICD test requirements without altering the base proof.
 2. **Framing:** Distinguishing protocol conformance verification (standard-derived, project-agnostic) from program ICD testing (project-specific, interface-level).
 3. **Artifact (engineering work):** An executable prototype that implements the method — dual-role simulator, L4 engine (selector/injector/verdict), 664 LU data generator. This is our work, not the innovation.
 4. **Evidence:** Empirical proof that (a) passing the complete base test set implies protocol conformance, and (b) mutation verification confirms the test set can detect non-conformance.
@@ -52,7 +52,7 @@ Detail and confidentiality notes: `docs/02_thesis_outline.md`.
 | ID | Milestone | Done when |
 |---|---|---|
 | **T0** | Freeze RQ + title + scope bullets | This file + outline agree |
-| **T1** | Related-work notes (annotated bib) | `thesis/notes/related_work.md` |
+| **T1** | Related-work notes (annotated bib) | `thesis/notes/related_work.md` — high-level thesis and docs as research basis |
 | **T2** | Requirements model draft (§3) | Formal VP table in `thesis/` or `docs/requirements/` |
 | **T3** | Method section draft (§4) | Conformance verification method argued; software architecture described as implementation |
 | **T4** | Experiment plan | What will be measured before coding finishes |
@@ -71,16 +71,21 @@ Detail and confidentiality notes: `docs/02_thesis_outline.md`.
 
 ---
 
-## 7. Bridge from Code track (evidence pipeline)
+## 7. Project workflow and research basis
 
-```
-Track A (C6a test set framework, C6b L4 decomposition, C6c 664 LU generator, C7 loopback, C8 mutation verification)
-        → artifacts/reports/*.json
-        → thesis/figures/ + §5 tables
-        → discussion in §6
-```
+**Workflow:**
+1. **Tutorial** — Study protocols (664, 665, 615A); figure out how to verify conformance; form stable tutorials with test docs. Refer to high-level thesis and docs as research basis.
+2. **Software** — Implement the conformance verification tool based on stable tutorials.
+3. **Thesis** — Summarize the academic or engineering verification methodology from software engineering practice.
 
-Thesis may start T0–T4 **before** code MVP; T5 **requires** experimental runs.
+**Research basis:** When collecting and organizing tutorials, refer to high-level thesis and docs (conformance testing theory, protocol verification literature, ARINC standards) as the theoretical foundation. The tutorials bridge between high-level theory and hands-on protocol understanding.
+
+**Evidence pipeline:**
+```
+High-level thesis/docs → Tutorials (664/665/615A) → Stable test docs
+    → Software engineering (C0–C8) → artifacts/reports/*.json
+    → Thesis §5 tables/figures → §6 discussion
+```
 
 ---
 

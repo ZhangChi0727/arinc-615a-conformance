@@ -58,18 +58,21 @@ Length is flexible (e.g. long paper ~15–40 pages, or short monograph). Prefer 
 1.5 Paper organization  
 
 ### 2. Background and Related Work
+*(Grounded in tutorial-driven protocol study; high-level thesis and docs as research basis)*  
 2.1 Protocol stack: Ethernet/AFDX context → UDP → TFTP → 615A → 665 (comparison, not encyclopedia)  
 2.2 ARINC 615A operations and session model (UPLOAD/DOWNLOAD; virtual files; status)  
 2.3 ARINC 665 LSAP essentials (only fields needed for oracles)  
-2.4 Conformance / interoperability testing concepts  
-2.5 Related tools and prior art; positioning of this work  
+2.4 ARINC 664 Loadable Unit data format (as input to 615A transfers)  
+2.5 Conformance / interoperability testing concepts  
+2.6 Related tools and prior art; positioning of this work  
+2.7 High-level thesis and docs as research basis for tutorial-driven protocol study  
 
 ### 3. Conformance Verification Method
 *(The innovation — a project-agnostic method, not a software architecture description)*  
 3.1 Method overview: stable verification points derived from the ARINC 615A standard; base test set proves conformance; extended test set accommodates project-specific requirements  
 3.2 Verification-point formalism: precondition / stimulus / expected / verdict / standard reference  
 3.3 **Base test set** — stable, project-agnostic, derived from 615A standard (the conformance proof)  
-3.4 **Extended test set** — project-specific, ICD-derived, varies by client (does not alter base proof)  
+3.4 **Extended test set** — project-specific, compatible with specific project ICD test requirements; varies by client (does not alter base proof)  
 3.5 Conformance proof argument: why passing all base verification points implies protocol conformance  
 3.6 Scope boundaries and non-goals
 
@@ -134,13 +137,16 @@ RFCs, ARINC 615A/665 (public), TFTP/loader literature, conformance-testing metho
 
 ## Alignment with the software project (still valid)
 
+**Project workflow:** Tutorial (664/665/615A study) → Software engineering → Thesis (methodology summary)
+
 | Thesis section | Engineering work |
 |---|---|
+| §2 | Tutorial-driven protocol study (grounded in high-level thesis/docs as research basis) |
 | §2–3 | Phase 0 study + base/extended test set definitions (the method) |
 | §4 | Software architecture + prototype (the implementation of the method) |
 | §5–6 | Experiments: base test set execution, mutation verification, extended test set (the evidence) |
 
-The **software remains the experimental platform** of the academic thesis—not the thesis’s only purpose as a “graduation deliverable.”
+The **software remains the experimental platform** of the academic thesis—not the thesis’s only purpose as a “graduation deliverable.” The **thesis summarizes** the verification methodology from the software engineering practice.
 
 ---
 
