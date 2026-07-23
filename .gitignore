@@ -20,6 +20,12 @@ build/
 Thumbs.db
 desktop.ini
 
+# Qoder auto-generated content
+.qoder/
+
+# Accidental skill copies (prevent future occurrences)
+?USERPROFILE/
+
 # Captures & large binaries (keep samples small if committed)
 *.pcap
 *.pcapng
