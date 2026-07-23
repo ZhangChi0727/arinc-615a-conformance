@@ -51,7 +51,33 @@ Each review should end with one of:
 
 Repository-wide merge still requires green CI and project branch-protection rules.
 
+## Severity bands (Must / Should / Nice)
+
+Every methodology or research review should classify findings as:
+
+| Band | Meaning |
+|------|---------|
+| **Must** | Theory error or merge blocker — fix before merge |
+| **Should** | Quality improvement — track for a follow-up PR (do not block if scoped out) |
+| **Nice** | Deferred polish |
+
+Avoid treating every PR as a perfect paper revision.
+
+## Theory debt
+
+Each PR should be checked for **new theory debt**:
+
+> A working definition adopted to move the project forward that is **not** the final theoretical form and must be refined in a later PR.
+
+Theory debt is **not** necessarily an error, but it **must be recorded** (e.g. in `docs/review/DESIGN_DECISIONS.md` or `docs/proposal/PR0004_METHODOLOGY_REFINEMENT.md`) so it is not forgotten.
+
+Examples currently acknowledged:
+- DTMC as an interpretation model pending Protocol Evidence Graph formalization (PR #4)
+- Relationship between HMM latent dynamics and the protocol graph
+- Operational estimation of conditional path confidence \(P(v_i\mid v_{i-1})\)
+
 ## Review artifacts
 
 - Store durable review write-ups under `docs/review/` (e.g. `PR0002_REVIEW.md`).
 - Record lasting design choices in `docs/review/DESIGN_DECISIONS.md`.
+- Record methodology follow-ups in `docs/proposal/PR0004_METHODOLOGY_REFINEMENT.md`.
