@@ -1,0 +1,84 @@
+# Verification Case Template
+# Copy this file to create a new VC and fill in the fields
+# See references/schema.md for field definitions and enum values
+
+# =============================================================================
+# IDENTIFICATION
+# =============================================================================
+case_id: "VC-XXXX-XXX-000"  # Format: VC-[PROTOCOL]-[CATEGORY]-[SEQ]
+title: "Short descriptive title"
+description: |
+  Detailed description of what this verification case tests.
+  Include the specific behavior or requirement being verified.
+tags: []  # Keywords for filtering, e.g., [tftp, wrq, oack]
+version: 1
+
+# =============================================================================
+# TRACEABILITY
+# =============================================================================
+requirement_id: "TBD"  # Format TBD after protocol study
+coverage_analysis: |
+  Describe which aspects of the requirement are covered by this VC.
+  Example: "Covers WRQ format validation, OACK generation, timeout handling"
+verification_procedure_id: "VP-XXXX-000"  # 1:1 relationship with procedure
+
+# =============================================================================
+# CLASSIFICATION
+# =============================================================================
+# verification_method: A (Analysis) / I (Inspection) / T (Test) / D (Demonstration)
+verification_method: T
+
+# test_type: Functional / Boundary / Fault / Performance / Stress
+test_type: Functional
+
+# priority: Critical / High / Medium / Low
+priority: Medium
+
+# function_allocation: DLS (Data Load System) / THW (Target Hardware)
+function_allocation: DLS
+
+# verification_site: Lab / Field / Simulation / Bench
+verification_site: Simulation
+
+# =============================================================================
+# EXECUTION SPECIFICATION
+# =============================================================================
+preconditions: |
+  Describe setup requirements before execution.
+  Example: "DLS and THW initialized, network connection established"
+
+detail_steps:
+  - "Step 1: Describe first action"
+  - "Step 2: Describe second action"
+  - "Step 3: Describe verification action"
+
+expected_result: |
+  Describe the expected outcome and pass/fail criteria.
+  Example: "OACK received within 3 seconds with correct parameters"
+
+postconditions: |
+  Describe expected system state after execution.
+  Example: "Connection ready for data transfer"
+
+# For complex procedures, use external document:
+# procedure_document: "docs/procedures/VP-XXXX-000.md"
+# detail_steps: "See procedure document"
+
+# =============================================================================
+# WORKFLOW (managed by system)
+# =============================================================================
+# verification_status: Verified / Not Verified
+verification_status: Not Verified
+
+# approval_status: For Credit / Pending Review / Rejected
+approval_status: Pending Review
+
+created_by: ""  # Author name
+created_at: ""  # YYYY-MM-DD
+reviewed_by: null
+reviewed_at: null
+
+# =============================================================================
+# NOTES (optional)
+# =============================================================================
+# Add any additional notes, comments, or references here
