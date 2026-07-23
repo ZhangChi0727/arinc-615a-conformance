@@ -1,7 +1,7 @@
 # Academic Thesis Outline — ARINC 615A / 665 Conformance Verification  
 *(Engineer’s perspective — **not** a Master’s graduation thesis)*
 
-Status: **v1.2** — confirmed: academic thesis from an engineer’s perspective.  
+Status: **v1.3** — confirmed: academic thesis from an engineer’s perspective; probabilistic extension added.  
 **Repo pointers:** research workstream → [`RESEARCH_OUTLINE.md`](../RESEARCH_OUTLINE.md); code vs thesis split → [`TRACKS.md`](../TRACKS.md); engineering milestones → [`PROJECT_PLAN.md`](../PROJECT_PLAN.md).
 
 ---
@@ -46,9 +46,9 @@ Length is flexible (e.g. long paper ~15–40 pages, or short monograph). Prefer 
 
 ### Abstract
 - Problem: load/download verification often stays at program ICD level; no project-agnostic method exists to fully prove 615A protocol conformance.  
-- Method: a conformance verification method based on stable verification points (base test set, standard-derived) with compatibility for project-specific extended test sets.  
-- Results: base test set execution proves conformance; mutation verification proves the test set can detect non-conformance.  
-- Contribution: the verification method itself (project-agnostic, stable test points, extensible); the software prototype is engineering work that implements the method.
+- Method: a conformance verification method based on stable verification points (base test set, standard-derived) with compatibility for project-specific extended test sets; enhanced with layered DTMC/HMM-based confidence quantification.  
+- Results: base test set execution proves conformance; mutation verification proves detection; probabilistic model quantifies confidence and enables fault localization.  
+- Contribution: the verification method itself (project-agnostic, stable test points, extensible, quantitatively confident, diagnostically capable); the software prototype is engineering work that implements the method.
 
 ### 1. Introduction
 1.1 Engineering context: why standardized data load matters in civil avionics  
@@ -74,7 +74,9 @@ Length is flexible (e.g. long paper ~15–40 pages, or short monograph). Prefer 
 3.3 **Base test set** — stable, project-agnostic, derived from 615A standard (the conformance proof)  
 3.4 **Extended test set** — project-specific, compatible with specific project ICD test requirements; varies by client (does not alter base proof)  
 3.5 Conformance proof argument: why passing all base verification points implies protocol conformance  
-3.6 Scope boundaries and non-goals
+3.6 **Probabilistic confidence quantification** — layered DTMC/HMM model; verification confidence semantics; conservative parameter estimation from self-loop and mutation data  
+3.7 **FMEA/FMEDA integration** — per-transition failure mode catalog; diagnostic coverage; Viterbi-based fault localization on verification failure  
+3.8 Scope boundaries and non-goals
 
 ### 4. System Design (Engineering Work)
 *(How we implement the method — not the contribution itself)*  
@@ -90,9 +92,11 @@ Length is flexible (e.g. long paper ~15–40 pages, or short monograph). Prefer 
 5.1 Setup: loopback topology; metrics (verdict accuracy, coverage of base test set)  
 5.2 **Base test set execution** — all nominal scenarios (both role directions); proves conformance if all pass  
 5.3 **Mutation verification** — inject faults (bad check value, wrong block rollover, ignored blksize, missing status); proves detection capability  
-5.4 **Extended test set** (optional) — project-specific scenarios if client ICD available  
-5.5 Optional external peer (loader simulator / LRU) if available — clearly labeled as supplementary  
-5.6 Threats to validity  
+5.4 **Confidence metric computation** — per-layer confidence vector, path-level confidence, weakest-link lower bound from self-loop and mutation data  
+5.5 **Fault localization demonstration** — inject known fault, observe Viterbi localization accuracy vs. FMEA prediction  
+5.6 **Extended test set** (optional) — project-specific scenarios if client ICD available  
+5.7 Optional external peer (loader simulator / LRU) if available — clearly labeled as supplementary  
+5.8 Threats to validity  
 
 ### 6. Discussion
 6.1 What the results imply for protocol-level V&V practice  
@@ -119,8 +123,9 @@ RFCs, ARINC 615A/665 (public), TFTP/loader literature, conformance-testing metho
 
 1. **Method (innovation):** A project-agnostic conformance verification method based on stable verification points derived from the ARINC 615A standard. The base test set fully proves protocol conformance; extended test sets accommodate project-specific requirements without altering the base proof.  
 2. **Framing:** Distinguishing protocol conformance verification (standard-derived, project-agnostic) from program ICD testing (project-specific, interface-level).  
-3. **Artifact (engineering work):** An executable prototype that implements the method — dual-role simulator, L4 engine (selector/injector/verdict), 664 LU data generator. This is our work, not the innovation.  
-4. **Evidence:** Empirical proof that (a) passing the complete base test set implies protocol conformance, and (b) mutation verification confirms the test set can detect non-conformance.
+3. **Quantification (innovation):** A probabilistic confidence model based on layered DTMC/HMM with verification-confidence semantics, providing quantified conformance evidence and FMEA/FMEDA-integrated fault localization via Viterbi inference.  
+4. **Artifact (engineering work):** An executable prototype that implements the method — dual-role simulator, L4 engine (selector/injector/verdict), 664 LU data generator. This is our work, not the innovation.  
+5. **Evidence:** Empirical proof that (a) passing the complete base test set implies protocol conformance, (b) mutation verification confirms detection capability, and (c) confidence metrics quantify the degree of assurance.
 
 ---
 
@@ -143,8 +148,9 @@ RFCs, ARINC 615A/665 (public), TFTP/loader literature, conformance-testing metho
 |---|---|
 | §2 | Tutorial-driven protocol study (grounded in high-level thesis/docs as research basis) |
 | §2–3 | Phase 0 study + base/extended test set definitions (the method) |
+| §3.6–3.7 | Layered DTMC/HMM model + FMEA table design (the quantification) |
 | §4 | Software architecture + prototype (the implementation of the method) |
-| §5–6 | Experiments: base test set execution, mutation verification, extended test set (the evidence) |
+| §5–6 | Experiments: base test set execution, mutation verification, confidence computation, fault localization (the evidence) |
 
 The **software remains the experimental platform** of the academic thesis—not the thesis’s only purpose as a “graduation deliverable.” The **thesis summarizes** the verification methodology from the software engineering practice.
 
