@@ -37,6 +37,9 @@ secrets/
 *.lic
 # Employer source materials stay local only — do not push to public GitHub
 requirement/
+# Training decks / large slides (keep tutorials text-based on public GitHub)
+tutorial/**/*.pptx
+*.pptx
 
 # Thesis build artifacts
 thesis/**/*.aux
