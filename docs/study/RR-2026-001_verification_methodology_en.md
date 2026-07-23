@@ -4,9 +4,9 @@
 
 | | |
 |---|---|
-| **Version** | 2.0 |
+| **Version** | 2.1 |
 | **Date** | 2026-07-23 |
-| **Status** | Reviewed (Phase 1–5 + Probabilistic Extension) |
+| **Status** | PR #2 Must fixes (HMM / aggregation / weakest-link / Def.5 scope); DTMC retained as interpretation model (theory debt → PR #4) |
 | **Classification** | Internal — Academic Research |
 
 ---
@@ -279,7 +279,7 @@ CLAIM: IUT conforms to ARINC 615A specification
 **Def. 2 (VC):** vc = (id, pre, stimulus, expected, verdict, ref), ref ∈ CRS(S)  
 **Def. 3 (VCS):** VCS = {vc₁, ..., vcₘ}  
 **Def. 4 (Coverage):** VCS covers CRS(S) iff ∀r ∈ CRS(S), ∃vc ∈ VCS : vc.ref = r  
-**Def. 5 (Conformance Evidence):** If VCS covers CRS(S) ∧ all vc verdict = PASS → IUT demonstrates conformance within CRS scope + fault model  
+**Def. 5 (Conformance Evidence):** Under the assumed Conformance Requirement Set CRS(S) and fault model F, if the VCS covers CRS(S) and every verification case verdict is PASS, then this constitutes **sufficient evidence to claim protocol conformance within the scope of CRS(S) and F** — not an unrestricted proof over all possible behaviors or faults outside F.
 **Def. 6 (Adequacy):** VCS adequate for F iff ∀m ∈ (F \ equiv), ∃vc ∈ VCS : vc kills m
 
 ### 5.3 Limitations
@@ -331,6 +331,8 @@ The ARINC 615A protocol stack is modeled per layer. The TFTP layer (representati
 
 ### 6.3 Layered DTMC Architecture
 
+**Role of the DTMC in this revision (PR #2):** The layered DTMC is retained as an **interpretation model** — a structured way to narrate protocol phases and to organize epistemic confidence labels along legal transitions. It is **not** claimed here as the sole, final mathematical foundation of conformance proof (that remains Def. 1–6 + coverage + mutation adequacy). Further abstraction (e.g. Protocol Evidence Graph / labeled transition graph without requiring a stochastic kernel) is recorded as **theory debt for PR #4**.
+
 **Design principles:**
 1. Each protocol layer (UDP, TFTP, 615A, 665, 664) has an independent sub-state machine
 2. Unified chain with role tagging (DLS/THW) — one model, two role perspectives
@@ -376,33 +378,52 @@ Clopper-Pearson: θ ∈ [Beta⁻¹(α/2; c, n−c+1), Beta⁻¹(1−α/2; c+1, n
 
 ### 6.5 HMM Formulation
 
-The verification process is naturally a Hidden Markov Model:
+The verification process is modeled as a Hidden Markov Model. **Hidden states, observations, and parameters must not be conflated:**
 
-- **Hidden states:** IUT's true conformance status θ₁, θ₂, ..., θₙ (unobservable)
-- **Observations:** Test results X₁, X₂, ..., Xₙ ∈ {PASS, FAIL}
-- **Emission probability:** P(Xₖ = PASS | θₖ = conforming) = θₖ
-- **Transition probability:** P(θₖ₊₁ | θₖ) given by the DTMC structure
+| Concept | Symbol | Role |
+|---------|--------|------|
+| **Hidden state** | \(Z_k\) | Latent implementation conformance / fault class at step \(k\) (unobservable) |
+| **Observation** | \(X_k\) | Test verdict at step \(k\): \(X_k \in \{\mathrm{PASS},\mathrm{FAIL}\}\) |
+| **Parameters** | \(\theta\) | Model parameters only: initial distribution, transition kernel, emission kernel — **not** the hidden state |
 
-**Available inference:**
-- **Forward algorithm:** Compute P(observation sequence | model) → path-level confidence
-- **Viterbi algorithm:** On failure, find most likely fault state sequence → fault localization
-- **Baum-Welch (EM):** Parameter learning from data — used only when data is sufficient; conservative constraints applied
+**Example hidden-state alphabet (extensible):**  
+\(\{ \mathrm{Conforming},\ \mathrm{RetryFault},\ \mathrm{TimeoutFault},\ \mathrm{SequenceFault},\ \mathrm{FileIntegrityFault},\ \ldots \}\).
+
+**Emission (illustrative, to be calibrated):**  
+\(P(X_k=\mathrm{PASS}\mid Z_k=\mathrm{Conforming})=1-\alpha\),  
+\(P(X_k=\mathrm{PASS}\mid Z_k\neq\mathrm{Conforming})=\beta\),  
+where \(\alpha\) is a false-FAIL rate and \(\beta\) is an escape / missed-detection rate (bounded using mutation evidence where available).
+
+**Transition:** \(P(Z_{k+1}\mid Z_k)\) is a separate latent dynamics kernel (fault persistence / recovery assumptions). It is **not** identified with per-state epistemic confidence labels used in §6.6; the layered DTMC in §6.3 remains an **interpretation model** for protocol structure and confidence narration (see Theory Debt → PR #4 for further formalization).
+
+**Available inference (once \(\theta\) is fixed):**
+- **Forward algorithm:** likelihood of an observation sequence under the HMM
+- **Viterbi algorithm:** on failure, most likely hidden-state path → fault localization aid
+- **Baum-Welch (EM):** parameter learning only with sufficient data and conservative constraints (e.g. lower bounds on \(\beta\) from mutation escapes)
 
 ### 6.6 Confidence Metrics
 
 **Metric 1 — Weakest link (conservative lower bound):**
-C_protocol = min_l min_s θ_s
+\[
+C_{\mathrm{protocol}} = \min_{\ell}\min_{s} \theta_{s}^{(\ell)}
+\]
+**Justification (safety / conservative assurance):** This metric is **intentionally conservative**. In safety-engineering and assurance practice, a chain of obligations is often bounded by its weakest verified link: if any critical verified element has low epistemic confidence, the overall claim should not exceed that lower bound. Metric 1 is therefore a **Conservative Assurance Metric**, not an estimate of average behavior. Unverified elements (\(\theta=\bot\)) are excluded from the \(\min\) or force the claim to remain incomplete (policy must be stated when reporting).
 
-**Metric 2 — Path product (Markov decomposition):**
-For critical path S0→S1→S2→S3_first→S3_mid^(k)→S3_last→S5:
-C_path = ∏ θ_s (product over path states)
+**Metric 2 — Path confidence along the verification evidence graph (conditional accumulation):**
+Let a critical verification path induce an ordered evidence sequence \(v_0,v_1,\ldots,v_m\) (states or transition checks visited by the VCs). Path confidence is accumulated **conditionally along this evidence graph**, not by assuming mutually independent events:
+\[
+C_{\mathrm{path}} = \prod_{i=1}^{m} P(v_i \mid v_{i-1})
+\]
+where \(P(v_i\mid v_{i-1})\) denotes the epistemic confidence assigned to step \(i\) given that step \(i-1\) has been accepted under the layered interpretation model (operationally instantiated by the estimated confidence label for the corresponding edge/state transition).  
 
-This requires only the Markov property (conditional independence given current state), NOT global independence.
+**Explicit non-claim:** We do **not** treat \(\{v_i\}\) as unconditionally independent Bernoulli trials. A naive product of unrelated marginals \(\prod \theta_i\) without the conditional/evidence-graph reading is **disallowed** as a conformance metric.
 
 **Metric 3 — Layered confidence vector:**
-C = (C_UDP, C_TFTP, C_615A, C_665, C_664)ᵀ
+\[
+C = (C_{\mathrm{UDP}}, C_{\mathrm{TFTP}}, C_{\mathrm{615A}}, C_{\mathrm{665}}, C_{\mathrm{664}})^{\mathsf{T}}
+\]
 
-Reporting: Metrics 1 and 2 simultaneously. Metric 1 for safety-critical lower bound; Metric 2 for per-operation confidence.
+Reporting: Metrics 1 and 2 simultaneously. Metric 1 for safety-critical lower bound; Metric 2 for per-operation path confidence under the conditional accumulation rule.
 
 ### 6.7 FMEA/FMEDA Integration and Fault Localization
 
@@ -412,7 +433,7 @@ Each transition (sᵢ → sⱼ) has associated failure modes, local/global effec
 **FMEDA quantification:**
 DC_i = (failure modes detected by VCs) / (total failure modes for transition i)
 
-Relationship to mutation testing: mutation score ≈ diagnostic coverage DC.
+Relationship to mutation testing: mutation score is used as an **empirical estimator** of diagnostic coverage DC (not a mathematical identity).
 
 **Fault localization on failure (Viterbi + FMEA):**
 1. Observe failure sequence X₁, ..., Xₖ, Xₖ₊₁ = FAIL
