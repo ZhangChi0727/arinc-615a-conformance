@@ -1,7 +1,7 @@
 # Academic Thesis Outline — ARINC 615A / 665 Conformance Verification  
 *(Engineer’s perspective — **not** a Master’s graduation thesis)*
 
-Status: **v1.3** — confirmed: academic thesis from an engineer’s perspective; probabilistic extension added.  
+Status: **v1.4** — PR #4 reframing: Test-and-Analysis dual-path verification (DO-178C §6.4); title precision; multi-protocol positioning.  
 **Repo pointers:** research workstream → [`RESEARCH_OUTLINE.md`](../RESEARCH_OUTLINE.md); code vs thesis split → [`TRACKS.md`](../TRACKS.md); engineering milestones → [`PROJECT_PLAN.md`](../PROJECT_PLAN.md).
 
 ---
@@ -24,10 +24,12 @@ Company deliverables (需求文档, 测试指南, etc.) may **reuse** the same t
 ## Working titles
 
 **English:**  
-*A Dual-Role Simulation Approach to Conformance Verification of the ARINC 615A Data Load Protocol (with Minimal ARINC 665 Support)*
+*A Conformance Verification Methodology for the ARINC 615A Data Load Protocol: Requirements-Based Testing and Probabilistic Confidence Analysis*
 
 **Chinese:**  
-*面向 ARINC 615A 数据加载协议符合性验证的双角色仿真方法（含 ARINC 665 最小支持）*
+*面向 ARINC 615A 数据加载协议符合性的验证方法论：基于需求的测试与概率置信分析*
+
+**Note:** Title uses “Requirements-Based Testing” (DO-178C §6.4.4.2 standard term) to precisely describe the Testing contribution. “Verification Methodology” is the umbrella covering both Testing and Analysis.
 
 ---
 
@@ -68,15 +70,15 @@ Length is flexible (e.g. long paper ~15–40 pages, or short monograph). Prefer 
 2.7 High-level thesis and docs as research basis for tutorial-driven protocol study  
 
 ### 3. Conformance Verification Method
-*(The innovation — a project-agnostic method, not a software architecture description)*  
-3.1 Method overview: stable verification points derived from the ARINC 615A standard; base test set proves conformance; extended test set accommodates project-specific requirements  
+*(The innovation — a project-agnostic methodology comprising two complementary DO-178C §6.4 verification methods)*  
+3.1 Method overview: Test-and-Analysis dual-path; stable verification points derived from the ARINC 615A standard  
 3.2 Verification-point formalism: precondition / stimulus / expected / verdict / standard reference  
-3.3 **Base test set** — stable, project-agnostic, derived from 615A standard (the conformance proof)  
-3.4 **Extended test set** — project-specific, compatible with specific project ICD test requirements; varies by client (does not alter base proof)  
+3.3 **Requirements-Based Testing** (§4–5 of RR-2026-001) — five-stage derivation; base/extended VCS separation; coverage validation; mutation adequacy proof  
+3.4 **Probabilistic Confidence Analysis** (§6 of RR-2026-001) — layered DTMC/HMM model; verification confidence semantics; conservative parameter estimation  
 3.5 Conformance proof argument: why passing all base verification points implies protocol conformance  
-3.6 **Probabilistic confidence quantification** — layered DTMC/HMM model; verification confidence semantics; conservative parameter estimation from self-loop and mutation data  
-3.7 **FMEA/FMEDA integration** — per-transition failure mode catalog; diagnostic coverage; Viterbi-based fault localization on verification failure  
-3.8 Scope boundaries and non-goals
+3.6 **FMEA/FMEDA integration** — per-transition failure mode catalog; diagnostic coverage; Viterbi-based fault localization  
+3.7 **Test-and-Analysis relationship** — complementary, not sequential; Testing produces evidence, Analysis interprets it (DO-178C §6.4)  
+3.8 Scope boundaries and non-goals; multi-protocol generalization discussion
 
 ### 4. System Design (Engineering Work)
 *(How we implement the method — not the contribution itself)*  
@@ -121,9 +123,9 @@ RFCs, ARINC 615A/665 (public), TFTP/loader literature, conformance-testing metho
 
 ## Contributions (draft — refine after experiments)
 
-1. **Method (innovation):** A project-agnostic conformance verification method based on stable verification points derived from the ARINC 615A standard. The base test set fully proves protocol conformance; extended test sets accommodate project-specific requirements without altering the base proof.  
-2. **Framing:** Distinguishing protocol conformance verification (standard-derived, project-agnostic) from program ICD testing (project-specific, interface-level).  
-3. **Quantification (innovation):** A probabilistic confidence model based on layered DTMC/HMM with verification-confidence semantics, providing quantified conformance evidence and FMEA/FMEDA-integrated fault localization via Viterbi inference.  
+1. **Method (innovation):** A project-agnostic conformance verification methodology comprising Requirements-Based Testing (five-stage derivation, base/extended VCS, mutation adequacy) and Probabilistic Confidence Analysis (layered DTMC/HMM, FMEA/FMEDA, Viterbi fault localization) — two complementary DO-178C §6.4 verification methods.  
+2. **Framing:** Distinguishing protocol conformance verification (standard-derived, project-agnostic) from program ICD testing (project-specific, interface-level); Test-and-Analysis dual-path structure.  
+3. **Quantification (innovation):** A probabilistic confidence model with verification-confidence semantics (Bayesian epistemic), providing quantified conformance evidence and FMEA/FMEDA-integrated fault localization via Viterbi inference.  
 4. **Artifact (engineering work):** An executable prototype that implements the method — dual-role simulator, L4 engine (selector/injector/verdict), 664 LU data generator. This is our work, not the innovation.  
 5. **Evidence:** Empirical proof that (a) passing the complete base test set implies protocol conformance, (b) mutation verification confirms detection capability, and (c) confidence metrics quantify the degree of assurance.
 
@@ -147,8 +149,9 @@ RFCs, ARINC 615A/665 (public), TFTP/loader literature, conformance-testing metho
 | Thesis section | Engineering work |
 |---|---|
 | §2 | Tutorial-driven protocol study (grounded in high-level thesis/docs as research basis) |
-| §2–3 | Phase 0 study + base/extended test set definitions (the method) |
-| §3.6–3.7 | Layered DTMC/HMM model + FMEA table design (the quantification) |
+| §2–3 | Phase 0 study + Requirements-Based Testing method (five-stage derivation) |
+| §3.4–3.6 | Probabilistic Confidence Analysis: DTMC/HMM + FMEA table design |
+| §3.7 | Test-and-Analysis relationship (DO-178C §6.4 framing) |
 | §4 | Software architecture + prototype (the implementation of the method) |
 | §5–6 | Experiments: base test set execution, mutation verification, confidence computation, fault localization (the evidence) |
 

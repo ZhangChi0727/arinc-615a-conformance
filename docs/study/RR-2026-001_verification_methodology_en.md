@@ -1,25 +1,27 @@
-# A Methodology for Systematic Verification Case Set Generation from Protocol Requirement Specifications: Theoretical Foundations and Application to ARINC 615A Conformance Verification
+# A Conformance Verification Methodology for the ARINC 615A Protocol: Requirements-Based Testing and Probabilistic Confidence Analysis
 
 **Research Report RR-2026-001**
 
 | | |
 |---|---|
-| **Version** | 2.1 |
+| **Version** | 3.0 |
 | **Date** | 2026-07-23 |
-| **Status** | PR #2 Must fixes (HMM / aggregation / weakest-link / Def.5 scope); DTMC retained as interpretation model (theory debt → PR #4) |
+| **Status** | PR #4: Test-and-Analysis reframing; title change; theoretical mapping; numerical examples; FMEA dictionary; terminology alignment |
 | **Classification** | Internal — Academic Research |
 
 ---
 
 ## Abstract
 
-Protocol conformance verification in avionics data loading remains largely ad hoc, relying on project-specific ICD testing without a systematic method to prove protocol-level compliance. This report presents a project-agnostic methodology for generating a verification case set (VCS) from a protocol requirement specification, such that complete coverage of the requirement set constitutes sufficient evidence of conformance. The methodology integrates five established theoretical pillars: (1) the ISO/IEC 9646 conformance testing derivation chain, (2) ETSI test purpose formulation, (3) FSM-based coverage criteria (W/Wp/HSI methods), (4) ioco conformance theory, and (5) mutation-based test adequacy validation. We propose a five-stage derivation process — requirement extraction, test purpose derivation, verification case specification, coverage validation, and adequacy proof — and formalize it with six definitions. The method is instantiated for the ARINC 615A data load protocol, with a base/extended VCS separation mirroring ISO 9646 conformance classes. A structured assurance argument justifies the claim that passing all base verification cases provides high-confidence conformance evidence within a stated fault model.
+Protocol conformance verification in avionics data loading remains largely ad hoc, relying on project-specific ICD testing without a systematic method to prove protocol-level compliance. This report presents a **conformance verification methodology** for the ARINC 615A data load protocol, comprising two complementary verification methods aligned with DO-178C §6.4: **Requirements-Based Testing** (§4–5) and **Probabilistic Confidence Analysis** (§6).
 
-As a quantitative extension, we introduce a probabilistic conformance confidence model based on layered Discrete-Time Markov Chains (DTMC) and Hidden Markov Models (HMM). The transition matrix entries are interpreted as *verification confidence* (Bayesian epistemic measure), not intrinsic IUT behavioral probabilities. Each protocol layer (UDP, TFTP, 615A, 665, 664) is modeled as an independent sub-state machine with role tagging and block-type segmentation. Parameters are estimated conservatively from self-loop verification data and mutation testing results, avoiding unvalidated independence assumptions. The framework further integrates FMEA/FMEDA for failure mode analysis and Viterbi-based fault localization upon verification failure.
+The Testing component integrates five established theoretical pillars: (1) the ISO/IEC 9646 conformance testing derivation chain, (2) ETSI test purpose formulation, (3) FSM-based coverage criteria (W/Wp/HSI methods), (4) ioco conformance theory, and (5) mutation-based test adequacy validation. We propose a five-stage derivation process — requirement extraction, test purpose derivation, verification case specification, coverage validation, and adequacy proof — and formalize it with six definitions. The method is instantiated for the ARINC 615A data load protocol, with a base/extended VCS separation mirroring ISO 9646 conformance classes. A structured assurance argument justifies the claim that passing all base verification cases provides high-confidence conformance evidence within a stated fault model.
 
-The novelty lies not in any single technique but in their systematic integration into a transferable, auditable method for data load protocol conformance, now enhanced with quantitative confidence assessment and diagnostic capability.
+The Analysis component introduces a probabilistic conformance confidence model based on layered Discrete-Time Markov Chains (DTMC) and Hidden Markov Models (HMM). The transition matrix entries are interpreted as *verification confidence* (Bayesian epistemic measure), not intrinsic IUT behavioral probabilities. Each protocol layer (UDP, TFTP, 615A, 665, 664) is modeled as an independent sub-state machine with role tagging and block-type segmentation. Parameters are estimated conservatively from self-loop verification data and mutation testing results, avoiding unvalidated independence assumptions. The framework further integrates FMEA/FMEDA for failure mode analysis and Viterbi-based fault localization upon verification failure.
 
-**Keywords:** protocol conformance verification, verification case generation, requirement coverage, ARINC 615A, mutation testing, ISO/IEC 9646, conformance testing methodology, Markov chain, Hidden Markov Model, verification confidence, FMEA, fault localization
+The novelty lies not in any single technique but in their systematic integration into a transferable, auditable verification methodology — combining requirements-based testing with probabilistic confidence analysis — for data load protocol conformance.
+
+**Keywords:** protocol conformance verification, requirements-based testing, probabilistic confidence analysis, verification case derivation, requirement coverage, ARINC 615A, mutation testing, ISO/IEC 9646, DO-178C, Markov chain, Hidden Markov Model, verification confidence, FMEA, fault localization
 
 ---
 
@@ -128,6 +130,20 @@ Our verification cases are **sampled test traces** checking whether IUT response
 **Key insight:** "A test suite T is complete w.r.t. fault model F if, for every non-equivalent mutant M ∈ F, ∃t ∈ T that distinguishes the specification from M" (Bochmann, 1991; Petrenko, 2016).
 
 We adopt a **requirement-driven** approach (not pure FSM traversal) because ARINC 615A is specified in natural language + tables, and requirement coverage is auditable. Completeness is **validated** via mutation/fault injection.
+
+### 2.6 Theoretical Foundation → Method Mapping
+
+The five theoretical pillars in §2.1–2.5 each support specific stages of the Testing methodology (§4–5). The Analysis component (§6) introduces independent mathematical tools not derived from §2.
+
+| Theoretical Pillar | Supported Stage(s) | Role |
+|--------------------|--------------------|------|
+| ISO/IEC 9646 (§2.1) | §4.1–4.7 (full pipeline) | Derivation chain: Standard → CRS → TP → ATS → Executable; conformance classes → base/extended separation |
+| ETSI TR 102 840 (§2.2) | §4.2–4.4 | Surjective mapping rule (each requirement ≥ 1 test purpose); operational derivation process |
+| EFSM model (§2.3) | §4.5 (coverage L2/L3) | State/transition coverage criteria; also the modeling language for §6 layered state machines |
+| ioco theory (§2.4) | §5 (formal argument) | VCs as sampled test traces approximating ioco conformance; theoretical anchor for Def. 5 |
+| FSM mutation testing (§2.5) | §4.6 (adequacy proof) | W/Wp/HSI transition coverage guarantees; mutation adequacy as finite fault model bound |
+
+**Key observation:** All of §2 supports the **Testing** component (§4–5). The **Analysis** component (§6) introduces an independent mathematical toolkit (DTMC, HMM, Bayesian estimation, FMEA/FMEDA) not derived from §2. The two components are complementary verification methods per DO-178C §6.4 (see §5.5).
 
 ---
 
@@ -254,6 +270,18 @@ L1+L2+L3 = minimum conformance proof; L4+L5 = strengthened; L6 = system-level.
 
 Extended VCs are additive; they do not modify or invalidate the base proof.
 
+### 4.8 Human Intervention vs. Automation
+
+| Stage | Human Intervention | Automatable | Semi-automatable |
+|-------|-------------------|-------------|------------------|
+| §4.2 Requirement Extraction | Interpret normative clauses; classify (functional/data/timing/error/session); judge "shall" scope | ID assignment; standard reference recording; formatting | — |
+| §4.3 Test Purpose Derivation | Derive TPs from requirements (domain knowledge); judge positive/negative/boundary adequacy | — | Template-based TP derivation (positive/negative/boundary heuristics); human review required |
+| §4.4 VC Specification | Design preconditions, stimuli, expected results, verdict criteria (protocol expertise) | Schema formatting; ID generation; cross-referencing; YAML→Excel export | Template-based VC draft from TP; human review before finalization |
+| §4.5 Coverage Validation | Interpret coverage gaps; decide if gaps are acceptable | Coverage matrix construction; surjectivity check; L1–L6 metric computation; gap reporting | — |
+| §4.6 Adequacy Proof | Design fault model (protocol knowledge); interpret surviving mutants | Mutant generation (given fault model); mutant execution; mutation score computation | Mutant prioritization |
+
+**Pattern:** Stages closer to specification interpretation (1–3) require more human expertise; stages closer to execution and computation (4–5) are more automatable. The Analysis component (§6) is fully automatable in execution (state tracking, parameter estimation, confidence computation, Viterbi localization), but state machine design and result interpretation require human judgment.
+
 ---
 
 ## 5. Formal Argument
@@ -288,6 +316,34 @@ CLAIM: IUT conforms to ARINC 615A specification
 2. Fault-model-dependent (guarantee bounded by model)
 3. Specification-dependent (ambiguity affects interpretation)
 4. Temporal limitations (timing conformance needs specialized measurement)
+
+### 5.5 Verification Method Classification (Test vs. Analysis)
+
+DO-178C §6.4 defines four verification methods: Test, Analysis, Review, and Demonstration. This methodology employs two:
+
+| DO-178C Method | This Methodology | Scope |
+|----------------|-----------------|-------|
+| **Test** | §4–5: Requirements-Based Testing | Generate VCs → execute against IUT → pass/fail verdicts → coverage validation → mutation adequacy |
+| **Analysis** | §6: Probabilistic Confidence Analysis | Quantify confidence from test evidence → FMEA/FMEDA diagnosis → Viterbi fault localization |
+| Review | Not in scope | Code/design inspection |
+| Demonstration | Not in scope | Functional observation without detailed measurement |
+
+**Relationship:** Testing and Analysis are **complementary, not sequential**. Testing produces evidence (verdicts, traces); Analysis interprets that evidence (confidence metrics, fault diagnosis). Analysis does not generate new test executions — it evaluates existing results.
+
+```
+              Conformance Verification
+              ╱                       ╲
+    Testing (§4–5)              Analysis (§6)
+         │                            │
+   Execute VCs → verdicts      Quantify confidence → diagnose
+         │                            │
+         └────── Evidence ────────────┘
+              ╲                       ╱
+           Conformance Claim
+        (scoped to CRS + F)
+```
+
+**Implication for the document title:** The methodology is not merely "verification case generation" (which covers only §4) but a complete verification methodology comprising Testing and Analysis.
 
 ---
 
@@ -435,6 +491,19 @@ DC_i = (failure modes detected by VCs) / (total failure modes for transition i)
 
 Relationship to mutation testing: mutation score is used as an **empirical estimator** of diagnostic coverage DC (not a mathematical identity).
 
+**FMEA ↔ Mutation Mapping Dictionary (template):**
+
+| Transition | Failure Mode ID | Failure Mode | Local Effect | Global Effect | Severity | Detecting VC | Mutant Operator | Detected? |
+|------------|----------------|--------------|--------------|---------------|----------|-------------|-----------------|----------|
+| S1→S2 | FM-TFTP-01 | OACK ignored | blksize stays default | Transfer may fail on large files | Medium | VC-TFTP-NEG-003 | Remove OACK handling | Yes |
+| S3_mid→S3_mid | FM-TFTP-02 | Block counter not incremented | Duplicate DATA sent | Receiver rejects; transfer stalls | High | VC-TFTP-XFER-007 | Freeze block_num | Yes |
+| S3_roll→S3_first | FM-TFTP-03 | Rollover 65535→0 instead of →1 | Sequence error at receiver | Transfer aborted | High | VC-TFTP-ROLL-001 | next_block returns 0 | Yes |
+| S3'_mid→S3_mid | FM-TFTP-04 | Retransmit with wrong block number | Receiver sequence error | Transfer aborted | High | VC-TFTP-RETX-002 | Corrupt retransmit block_num | Yes |
+| S4→S4' | FM-TFTP-05 | Duplicate DATA appended | Data corruption | File integrity failure | Critical | VC-TFTP-DUP-001 | Remove duplicate check | Yes |
+| S1→S6 | FM-TFTP-06 | Timeout not enforced | Hangs indefinitely | Session never completes | Medium | VC-TFTP-TMO-001 | Set timeout=∞ | Yes |
+
+*This table is a template; the complete dictionary is populated per protocol layer during VC development (see PR #5 engineering scope).*
+
 **Fault localization on failure (Viterbi + FMEA):**
 1. Observe failure sequence X₁, ..., Xₖ, Xₖ₊₁ = FAIL
 2. Viterbi algorithm → most likely fault state s*
@@ -473,19 +542,70 @@ Model (DTMC/HMM) → Execute VCs → PASS: compute confidence metrics
 5. **Model determinism:** Protocol specification is deterministic; probability describes epistemic uncertainty only
 6. **Fault model bounded:** Detection guarantee holds only within the stated fault model
 
+### 6.10 Numerical Toy Example
+
+**Scenario:** TFTP layer, state S3_mid (middle block transfer), self-loop verification with n = 50 repeated executions.
+
+**Step 1 — Parameter estimation:**
+- Observed: c = 48 PASS, 2 FAIL out of n = 50
+- Frequentist estimate: θ̂ = 48/50 = 0.96
+- 95% Clopper-Pearson CI: θ ∈ [0.863, 0.995]
+- Jeffreys posterior (if n were small): Beta(48.5, 2.5), posterior mean = 48.5/51 = 0.951
+
+**Step 2 — Weakest-link metric (Metric 1):**
+Suppose per-layer minimum confidences after full VCS execution:
+
+| Layer | min θ_s | Limiting state |
+|-------|---------|----------------|
+| UDP | 0.99 | U1' (retransmit) |
+| TFTP | 0.96 | S3_mid (middle block) |
+| 615A | 0.98 | A3 (transfer active) |
+| 665 | 1.00 | — (all pass) |
+| 664 | 1.00 | — (all pass) |
+
+C_protocol = min(0.99, 0.96, 0.98, 1.00, 1.00) = **0.96** (limited by TFTP S3_mid)
+
+**Step 3 — Path confidence (Metric 2):**
+Critical DOWNLOAD path: S0→S1→S2→S3_first→S3_mid→S3_last→S5
+
+| Step | Transition | P(v_i \| v_{i-1}) |
+|------|-----------|-------------------|
+| 1 | S0→S1 | 0.99 |
+| 2 | S1→S2 | 0.98 |
+| 3 | S2→S3_first | 0.99 |
+| 4 | S3_first→S3_mid | 0.97 |
+| 5 | S3_mid→S3_last | 0.96 |
+| 6 | S3_last→S5 | 0.99 |
+
+C_path = 0.99 × 0.98 × 0.99 × 0.97 × 0.96 × 0.99 = **0.893**
+
+**Step 4 — Layered confidence vector (Metric 3):**
+C = (0.99, 0.96, 0.98, 1.00, 1.00)ᵀ
+
+**Interpretation:**
+- Metric 1 (0.96): Conservative lower bound — "we are at least 96% confident in the weakest verified element"
+- Metric 2 (0.893): Path-level confidence — "the probability that the entire DOWNLOAD path is correctly implemented, given conditional evidence accumulation"
+- Metric 3: Identifies TFTP as the limiting layer; directs future verification effort to S3_mid self-loop sampling
+
+**Mutation evidence integration:**
+If mutation testing on S3_mid yields mutation score = 5/5 (all mutants killed), this provides evidence that DC(S3_mid) ≥ 1.0 within the stated fault model, strengthening the confidence in θ̂ = 0.96 (the 2 FAILs are likely environmental, not conformance failures).
+
 ---
 
 ## 7. Positioning and Novelty
 
 | Aspect | ISO 9646 | ETSI/TTCN | DO-178C | **This method** |
-|--------|----------|-----------|---------|-----------------|
+|--------|----------|-----------|---------|------------------|
 | Domain | OSI protocols | Telecom | Airborne SW | Data load protocols |
 | Derivation | Std → ATS | Std → TTCN | Req → Test | Std → VCS |
 | Coverage | Req + PICS | TP coverage | Req + structural | Req + state + transition + mutation |
 | Proof | Implicit | Implicit | Structural | Explicit argument + mutation |
 | Extensibility | Conformance classes | Profiles | N/A | Base/Extended separation |
+| Verification methods | Test only | Test only | Test + Analysis + Review + Demo | **Test + Analysis** (complementary) |
+| Quantification | None | None | Structural coverage | Probabilistic confidence + FMEA diagnosis |
+| Multi-protocol | Per-protocol ATS | Per-protocol suite | Per-project | **Method is protocol-agnostic; instantiated for 615A** |
 
-**Novelty:** Systematic integration of established techniques into a project-agnostic, auditable method with: (1) explicit conformance argument, (2) mutation-based adequacy proof, (3) formal base/extended non-interference, (4) domain instantiation for ARINC 615A, (5) **probabilistic confidence quantification via layered DTMC/HMM with conservative data-driven estimation**, (6) **FMEA/FMEDA-integrated fault localization via Viterbi inference**.
+**Novelty:** Systematic integration of established techniques into a project-agnostic, auditable verification methodology with: (1) explicit conformance argument, (2) mutation-based adequacy proof, (3) formal base/extended non-interference, (4) domain instantiation for ARINC 615A, (5) **probabilistic confidence quantification via layered DTMC/HMM with conservative data-driven estimation**, (6) **FMEA/FMEDA-integrated fault localization via Viterbi inference**, (7) **Test-and-Analysis dual-path verification aligned with DO-178C §6.4**.
 
 ---
 
@@ -501,23 +621,39 @@ Model (DTMC/HMM) → Execute VCs → PASS: compute confidence metrics
 | 6 | Optimal granularity for per-layer sub-state machines? | Model tractability |
 | 7 | How to validate the Markov property empirically per layer? | Model validity |
 | 8 | SPRT stopping thresholds for self-loop verification? | Test efficiency |
+| 9 | How to extend coverage criteria for timing-critical protocols (L7 timing coverage)? | Multi-protocol generalization |
+| 10 | How to adapt the methodology for stateless/message-based protocols (e.g., raw CAN)? | Multi-protocol generalization |
+| 11 | Can the methodology be instantiated for ARINC 825 (CAN bus) as a second protocol instance? | Generalization evidence |
 
 ---
 
 ## 9. Conclusions and Next Steps
 
-This report establishes the theoretical foundations for a systematic VCS generation methodology, extended with a probabilistic confidence quantification framework. The five-stage derivation, grounded in ISO 9646, ioco theory, and mutation testing, provides a rigorous yet practical framework for ARINC 615A conformance verification. The layered DTMC/HMM extension transforms binary pass/fail verdicts into quantified confidence metrics with diagnostic capability.
+This report establishes a **conformance verification methodology** for the ARINC 615A data load protocol, comprising two complementary verification methods: Requirements-Based Testing (§4–5) and Probabilistic Confidence Analysis (§6). The five-stage derivation, grounded in ISO 9646, ioco theory, and mutation testing, provides a rigorous yet practical framework for protocol conformance verification. The layered DTMC/HMM extension transforms binary pass/fail verdicts into quantified confidence metrics with diagnostic capability.
 
-**Immediate next steps:**
+The methodology is designed to be **protocol-agnostic** in its derivation process, coverage criteria, and analytical framework; ARINC 615A serves as the sole protocol instance in this work. Generalization to other protocols (e.g., ARINC 825, automotive bus protocols) is identified as future research.
+
+**Immediate next steps (research/theory — PR #4 scope):**
 1. Instantiate Stage 1: extract complete CRS from ARINC 615A
 2. Build coverage matrix against existing VCs; identify gaps
 3. Define protocol-specific fault model
-4. Draft thesis §3 using Definitions 1–6 + probabilistic extension
+4. Draft thesis §3 using Definitions 1–6 + Test-and-Analysis framing
 5. Execute mutation verification on prototype
-6. **Complete per-layer sub-state machine modeling (TFTP first, then 615A/UDP/665/664)**
-7. **Design FMEA table template linking transitions → failure modes → VCs → mutants**
-8. **Implement self-loop verification data collection in simulator**
-9. **Compute example confidence metrics from prototype execution data**
+
+**Engineering next steps (PR #5 scope — after theory frozen):**
+6. Complete per-layer sub-state machine modeling (TFTP first, then 615A/UDP/665/664)
+7. Populate FMEA ↔ mutation mapping dictionary per layer
+8. Implement self-loop verification data collection in simulator
+9. Compute confidence metrics from prototype execution data
+10. Calibrate emission probabilities (α, β) from experimental data
+11. Build TFTP EFSM formal model for L2/L3 coverage automation
+12. Integrate VC skill → simulator → coverage → mutation pipeline
+
+**Future research (beyond PR #5):**
+13. ARINC 825 (CAN bus) as second protocol instance
+14. Timing coverage criteria (L7) for real-time protocols
+15. Stateless/message-based protocol adaptation
+16. Protocol Evidence Graph formalization (TD-01)
 
 ---
 

@@ -56,3 +56,31 @@ Append new entries; do not rewrite history—add superseding entries instead.
 **Why:** Matches the project’s academic-thesis framing (engineer perspective).  
 **Date:** 2026-07  
 **Status:** Active
+
+---
+
+## DD-007 — Test-and-Analysis dual-path verification (DO-178C §6.4)
+
+**Decision:** Frame the methodology as two complementary verification methods per DO-178C §6.4: **Testing** (§4–5, Requirements-Based Testing) and **Analysis** (§6, Probabilistic Confidence Analysis). The document title reflects both: “Conformance Verification Methodology … Requirements-Based Testing and Probabilistic Confidence Analysis.”  
+**Why:** §4–5 produce evidence (verdicts, traces); §6 interprets that evidence (confidence metrics, fault diagnosis). They are complementary, not sequential. This framing aligns with DO-178C’s recognized verification method taxonomy and clarifies that the methodology is more than “test case generation.”  
+**Terminology discipline:** “Testing” (capitalized/compound) = verification method; “unit test” / “integration test” (always qualified) = software development activity.  
+**Date:** 2026-07  
+**Status:** Active
+
+---
+
+## DD-008 — ARINC 615A as sole protocol instance; multi-protocol as future research
+
+**Decision:** Keep ARINC 615A as the **sole protocol instance** in this work. ARINC 825 (CAN bus), timing coverage (L7), and stateless/message-based protocol adaptation are identified as **future research** (beyond PR #5).  
+**Why:** The method is designed to be protocol-agnostic in derivation process, coverage criteria, and analytical framework. However, adding a second instance requires separate theoretical work (timing model, stateless adaptation) that would dilute the current contribution. A single well-developed instance with explicit generalization discussion is stronger for a thesis than two shallow instances.  
+**Date:** 2026-07  
+**Status:** Active
+
+---
+
+## DD-009 — Executable instantiation scope and PR separation
+
+**Decision:** Separate research/theory (PR #4) from engineering/data (PR #5). PR #4 freezes the theoretical architecture; PR #5 implements: EFSM formal model, emission calibration, self-loop data collection, FMEA dictionary population, and VC→simulator→coverage→mutation pipeline. Protocol Evidence Graph formalization remains theory debt (TD-01), classified as Analysis math work.  
+**Why:** Theory must be stable before engineering commits to implementation. Mixing theoretical revisions with engineering changes in one PR creates review complexity and risks circular dependencies.  
+**Date:** 2026-07  
+**Status:** Active
