@@ -1,61 +1,72 @@
-# ARINC 615A / 665 Protocol Conformance
+# ARINC 615A Test-and-Analysis Conformance Verification
 
-Civil-aviation **data-load protocol conformance**: a dual-role simulation tool, a beginner tutorial path, and an academic thesis (engineer’s perspective).
+Research and engineering repository for an auditable ARINC 615A conformance
+verification methodology and its dual-role experimental instrument.
 
-| Pillar | Folder / docs | Outcome |
-|---|---|---|
-| **Software** | `src/`, `tests/`, `configs/` · [PROJECT_PLAN.md](PROJECT_PLAN.md) | Dual-role (DLS/THW) ARINC 615A simulator (+ minimal 665) |
-| **Tutorial** | `tutorial/`, `docs/study/` | From network basics → TFTP → 615A → run a demo |
-| **Thesis** | `thesis/`, [RESEARCH_OUTLINE.md](RESEARCH_OUTLINE.md) | Academic argument + experiments using the tool |
+The repository is governed by frozen methodology baseline
+[`RB-2026-001-v4.1`](docs/BASELINE.md). The baseline defines two complementary
+paths:
 
-How code vs thesis work is split: **[TRACKS.md](TRACKS.md)**.
+- **Test:** derive and execute requirement-based Verification Cases;
+- **Analysis:** evaluate traceability, coverage, bounded fault detection,
+  uncertainty, and diagnosis.
 
----
+Review and Inspection gates control the artifacts and claims produced by both
+paths.
 
-## Repository layout
+## Start here
 
+| Need | Document |
+|---|---|
+| Understand what is frozen | [`docs/BASELINE.md`](docs/BASELINE.md) |
+| Read the methodology | [English report](docs/study/RR-2026-001_test_analysis_conformance_methodology_en.md) · [中文报告](docs/study/RR-2026-001_测试分析符合性验证方法论_zh.md) |
+| See the integrated program | [`PROJECT_PLAN.md`](PROJECT_PLAN.md) |
+| Plan research and experiments | [`docs/research/RESEARCH_PLAN.md`](docs/research/RESEARCH_PLAN.md) |
+| Implement the instrument | [`docs/engineering/IMPLEMENTATION_PLAN.md`](docs/engineering/IMPLEMENTATION_PLAN.md) |
+| Navigate all documents | [`docs/README.md`](docs/README.md) |
+
+## Repository structure
+
+```text
+src/                    verification instrument
+tests/                  unit, contract, integration, and scenarios
+configs/                schemas, cases, and controlled examples
+artifacts/              local/generated experimental evidence
+docs/
+  study/                frozen methodology and study material
+  research/             research, experiment, and claim control
+  engineering/          implementation plan
+  requirements/         applicability, CRS, TP, VC, traceability
+  design/               EFSM and software design
+  review/               gates, decisions, and review records
+  management/           change and risk control
+  proposal/             historical/proposed changes
+thesis/                 publication drafts, notes, and figures
+tutorial/               learning and operational walkthroughs
 ```
-├── src/a615a_sim/       # Software (Python package)
-├── tests/               # Unit / integration / scenarios
-├── configs/examples/    # Sample configs
-├── tutorial/            # Hands-on tutorial entry
-├── docs/study/          # Phase 0 lessons & glossary
-├── docs/requirements/   # Verification-point drafts
-├── docs/design/         # Engineering design notes
-├── thesis/              # Drafts, notes, figures
-├── PROJECT_PLAN.md      # Software milestones
-├── RESEARCH_OUTLINE.md  # Research / thesis outline
-└── TRACKS.md            # Code ↔ Thesis division
-```
 
----
+## Current state
 
-## Quick start (software skeleton)
+| Area | State |
+|---|---|
+| Methodology | v4.1 frozen as a research-method baseline |
+| Empirical assurance | T0–T3 not yet earned; evidence work starts at RG0/RG1 |
+| Engineering | TFTP core skeleton and tests exist; 48 tests currently pass |
+| Repository governance | Program, research, implementation, experiment, risk, and change plans established |
+
+## Quick start
 
 ```bash
-# from repo root
 python -m pip install -e ".[dev]"
 python -m a615a_sim.cli --help
 pytest
 ```
 
-Implementation milestones: [PROJECT_PLAN.md](PROJECT_PLAN.md).
+## Evidence and confidentiality
 
----
-
-## Status
-
-| Area | Status |
-|---|---|
-| Repo structure & plans | Ready |
-| Software | Skeleton (`a615a-sim` CLI) |
-| Tutorial lessons | Index in `docs/study/` — lessons being restored |
-| Thesis | Outline ready; prose not started |
-
----
-
-## License / confidentiality
-
-- Cite **public** ARINC / RFC materials in the thesis.  
-- Do **not** commit employer-only ICD text or proprietary training binaries.  
-- Use generic terms (DLS, THW) in public thesis drafts under `thesis/`.
+- Do not commit proprietary ARINC or employer-only ICD text.
+- Use stable source references and hashes in public CRS artifacts.
+- Keep project-specific names and private notes under `docs/work/`.
+- Do not call a result “conformance proof,” “diagnostic coverage,” or a
+  “conformance probability” unless the relevant claim and gate requirements are
+  satisfied.

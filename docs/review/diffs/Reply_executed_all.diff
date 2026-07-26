@@ -1,0 +1,499 @@
+# Reply.md execution — combined diff
+# PR #2 Must: 5a40bbba2a08...d1ceb2b7183d
+# PR #3 docs: a089a451045a...300eeab69611
+
+##### PR #2 Must #####
+diff --git a/.gitignore b/.gitignore
+index 7f97eb8..bda97ee 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -37,6 +37,9 @@ secrets/
+ *.lic
+ # Employer source materials stay local only — do not push to public GitHub
+ requirement/
++# Training decks / large slides (keep tutorials text-based on public GitHub)
++tutorial/**/*.pptx
++*.pptx
+ 
+ # Thesis build artifacts
+ thesis/**/*.aux
+diff --git a/docs/study/RR-2026-001_verification_methodology_en.md b/docs/study/RR-2026-001_verification_methodology_en.md
+index 98d8c3b..a9312f3 100644
+--- a/docs/study/RR-2026-001_verification_methodology_en.md
++++ b/docs/study/RR-2026-001_verification_methodology_en.md
+@@ -4,9 +4,9 @@
+ 
+ | | |
+ |---|---|
+-| **Version** | 2.0 |
++| **Version** | 2.1 |
+ | **Date** | 2026-07-23 |
+-| **Status** | Reviewed (Phase 1–5 + Probabilistic Extension) |
++| **Status** | PR #2 Must fixes (HMM / aggregation / weakest-link / Def.5 scope); DTMC retained as interpretation model (theory debt → PR #4) |
+ | **Classification** | Internal — Academic Research |
+ 
+ ---
+@@ -279,7 +279,7 @@ CLAIM: IUT conforms to ARINC 615A specification
+ **Def. 2 (VC):** vc = (id, pre, stimulus, expected, verdict, ref), ref ∈ CRS(S)  
+ **Def. 3 (VCS):** VCS = {vc₁, ..., vcₘ}  
+ **Def. 4 (Coverage):** VCS covers CRS(S) iff ∀r ∈ CRS(S), ∃vc ∈ VCS : vc.ref = r  
+-**Def. 5 (Conformance Evidence):** If VCS covers CRS(S) ∧ all vc verdict = PASS → IUT demonstrates conformance within CRS scope + fault model  
++**Def. 5 (Conformance Evidence):** Under the assumed Conformance Requirement Set CRS(S) and fault model F, if the VCS covers CRS(S) and every verification case verdict is PASS, then this constitutes **sufficient evidence to claim protocol conformance within the scope of CRS(S) and F** — not an unrestricted proof over all possible behaviors or faults outside F.
+ **Def. 6 (Adequacy):** VCS adequate for F iff ∀m ∈ (F \ equiv), ∃vc ∈ VCS : vc kills m
+ 
+ ### 5.3 Limitations
+@@ -331,6 +331,8 @@ The ARINC 615A protocol stack is modeled per layer. The TFTP layer (representati
+ 
+ ### 6.3 Layered DTMC Architecture
+ 
++**Role of the DTMC in this revision (PR #2):** The layered DTMC is retained as an **interpretation model** — a structured way to narrate protocol phases and to organize epistemic confidence labels along legal transitions. It is **not** claimed here as the sole, final mathematical foundation of conformance proof (that remains Def. 1–6 + coverage + mutation adequacy). Further abstraction (e.g. Protocol Evidence Graph / labeled transition graph without requiring a stochastic kernel) is recorded as **theory debt for PR #4**.
++
+ **Design principles:**
+ 1. Each protocol layer (UDP, TFTP, 615A, 665, 664) has an independent sub-state machine
+ 2. Unified chain with role tagging (DLS/THW) — one model, two role perspectives
+@@ -376,33 +378,52 @@ Clopper-Pearson: θ ∈ [Beta⁻¹(α/2; c, n−c+1), Beta⁻¹(1−α/2; c+1, n
+ 
+ ### 6.5 HMM Formulation
+ 
+-The verification process is naturally a Hidden Markov Model:
++The verification process is modeled as a Hidden Markov Model. **Hidden states, observations, and parameters must not be conflated:**
++
++| Concept | Symbol | Role |
++|---------|--------|------|
++| **Hidden state** | \(Z_k\) | Latent implementation conformance / fault class at step \(k\) (unobservable) |
++| **Observation** | \(X_k\) | Test verdict at step \(k\): \(X_k \in \{\mathrm{PASS},\mathrm{FAIL}\}\) |
++| **Parameters** | \(\theta\) | Model parameters only: initial distribution, transition kernel, emission kernel — **not** the hidden state |
++
++**Example hidden-state alphabet (extensible):**  
++\(\{ \mathrm{Conforming},\ \mathrm{RetryFault},\ \mathrm{TimeoutFault},\ \mathrm{SequenceFault},\ \mathrm{FileIntegrityFault},\ \ldots \}\).
++
++**Emission (illustrative, to be calibrated):**  
++\(P(X_k=\mathrm{PASS}\mid Z_k=\mathrm{Conforming})=1-\alpha\),  
++\(P(X_k=\mathrm{PASS}\mid Z_k\neq\mathrm{Conforming})=\beta\),  
++where \(\alpha\) is a false-FAIL rate and \(\beta\) is an escape / missed-detection rate (bounded using mutation evidence where available).
+ 
+-- **Hidden states:** IUT's true conformance status θ₁, θ₂, ..., θₙ (unobservable)
+-- **Observations:** Test results X₁, X₂, ..., Xₙ ∈ {PASS, FAIL}
+-- **Emission probability:** P(Xₖ = PASS | θₖ = conforming) = θₖ
+-- **Transition probability:** P(θₖ₊₁ | θₖ) given by the DTMC structure
++**Transition:** \(P(Z_{k+1}\mid Z_k)\) is a separate latent dynamics kernel (fault persistence / recovery assumptions). It is **not** identified with per-state epistemic confidence labels used in §6.6; the layered DTMC in §6.3 remains an **interpretation model** for protocol structure and confidence narration (see Theory Debt → PR #4 for further formalization).
+ 
+-**Available inference:**
+-- **Forward algorithm:** Compute P(observation sequence | model) → path-level confidence
+-- **Viterbi algorithm:** On failure, find most likely fault state sequence → fault localization
+-- **Baum-Welch (EM):** Parameter learning from data — used only when data is sufficient; conservative constraints applied
++**Available inference (once \(\theta\) is fixed):**
++- **Forward algorithm:** likelihood of an observation sequence under the HMM
++- **Viterbi algorithm:** on failure, most likely hidden-state path → fault localization aid
++- **Baum-Welch (EM):** parameter learning only with sufficient data and conservative constraints (e.g. lower bounds on \(\beta\) from mutation escapes)
+ 
+ ### 6.6 Confidence Metrics
+ 
+ **Metric 1 — Weakest link (conservative lower bound):**
+-C_protocol = min_l min_s θ_s
++\[
++C_{\mathrm{protocol}} = \min_{\ell}\min_{s} \theta_{s}^{(\ell)}
++\]
++**Justification (safety / conservative assurance):** This metric is **intentionally conservative**. In safety-engineering and assurance practice, a chain of obligations is often bounded by its weakest verified link: if any critical verified element has low epistemic confidence, the overall claim should not exceed that lower bound. Metric 1 is therefore a **Conservative Assurance Metric**, not an estimate of average behavior. Unverified elements (\(\theta=\bot\)) are excluded from the \(\min\) or force the claim to remain incomplete (policy must be stated when reporting).
+ 
+-**Metric 2 — Path product (Markov decomposition):**
+-For critical path S0→S1→S2→S3_first→S3_mid^(k)→S3_last→S5:
+-C_path = ∏ θ_s (product over path states)
++**Metric 2 — Path confidence along the verification evidence graph (conditional accumulation):**
++Let a critical verification path induce an ordered evidence sequence \(v_0,v_1,\ldots,v_m\) (states or transition checks visited by the VCs). Path confidence is accumulated **conditionally along this evidence graph**, not by assuming mutually independent events:
++\[
++C_{\mathrm{path}} = \prod_{i=1}^{m} P(v_i \mid v_{i-1})
++\]
++where \(P(v_i\mid v_{i-1})\) denotes the epistemic confidence assigned to step \(i\) given that step \(i-1\) has been accepted under the layered interpretation model (operationally instantiated by the estimated confidence label for the corresponding edge/state transition).  
+ 
+-This requires only the Markov property (conditional independence given current state), NOT global independence.
++**Explicit non-claim:** We do **not** treat \(\{v_i\}\) as unconditionally independent Bernoulli trials. A naive product of unrelated marginals \(\prod \theta_i\) without the conditional/evidence-graph reading is **disallowed** as a conformance metric.
+ 
+ **Metric 3 — Layered confidence vector:**
+-C = (C_UDP, C_TFTP, C_615A, C_665, C_664)ᵀ
++\[
++C = (C_{\mathrm{UDP}}, C_{\mathrm{TFTP}}, C_{\mathrm{615A}}, C_{\mathrm{665}}, C_{\mathrm{664}})^{\mathsf{T}}
++\]
+ 
+-Reporting: Metrics 1 and 2 simultaneously. Metric 1 for safety-critical lower bound; Metric 2 for per-operation confidence.
++Reporting: Metrics 1 and 2 simultaneously. Metric 1 for safety-critical lower bound; Metric 2 for per-operation path confidence under the conditional accumulation rule.
+ 
+ ### 6.7 FMEA/FMEDA Integration and Fault Localization
+ 
+@@ -412,7 +433,7 @@ Each transition (sᵢ → sⱼ) has associated failure modes, local/global effec
+ **FMEDA quantification:**
+ DC_i = (failure modes detected by VCs) / (total failure modes for transition i)
+ 
+-Relationship to mutation testing: mutation score ≈ diagnostic coverage DC.
++Relationship to mutation testing: mutation score is used as an **empirical estimator** of diagnostic coverage DC (not a mathematical identity).
+ 
+ **Fault localization on failure (Viterbi + FMEA):**
+ 1. Observe failure sequence X₁, ..., Xₖ, Xₖ₊₁ = FAIL
+diff --git "a/docs/study/RR-2026-001_\351\252\214\350\257\201\347\224\250\344\276\213\347\224\237\346\210\220\346\226\271\346\263\225\350\256\272_zh.md" "b/docs/study/RR-2026-001_\351\252\214\350\257\201\347\224\250\344\276\213\347\224\237\346\210\220\346\226\271\346\263\225\350\256\272_zh.md"
+index 78a7f04..bfe7182 100644
+--- "a/docs/study/RR-2026-001_\351\252\214\350\257\201\347\224\250\344\276\213\347\224\237\346\210\220\346\226\271\346\263\225\350\256\272_zh.md"
++++ "b/docs/study/RR-2026-001_\351\252\214\350\257\201\347\224\250\344\276\213\347\224\237\346\210\220\346\226\271\346\263\225\350\256\272_zh.md"
+@@ -4,9 +4,9 @@
+ 
+ | | |
+ |---|---|
+-| **版本** | 2.0 |
++| **版本** | 2.1 |
+ | **日期** | 2026-07-23 |
+-| **状态** | 已审（第 1–5 阶段 + 概率扩展） |
++| **状态** | PR #2 Must 修订（HMM / 置信聚合 / 最弱环节 / 定义5 范围）；DTMC 保留为解释性模型（理论债务 → PR #4） |
+ | **密级** | 内部——学术研究 |
+ 
+ ---
+@@ -279,7 +279,7 @@ L1+L2+L3 = 最低符合性证明；L4+L5 = 加强证明；L6 = 系统级置信
+ **定义 2 (VC)：** vc = (id, pre, stimulus, expected, verdict, ref)，ref ∈ CRS(S)  
+ **定义 3 (VCS)：** VCS = {vc₁, ..., vcₘ}  
+ **定义 4 (覆盖)：** VCS 覆盖 CRS(S) 当且仅当 ∀r ∈ CRS(S), ∃vc ∈ VCS : vc.ref = r  
+-**定义 5 (符合性证据)：** 若 VCS 覆盖 CRS(S) 且所有 vc 判定 = PASS → IUT 在 CRS 范围 + 故障模型内展示符合性  
++**定义 5 (符合性证据)：** 在所假定的符合性需求集 CRS(S) 与故障模型 F 之下，若 VCS 覆盖 CRS(S) 且全部验证用例判定均为 PASS，则构成**在 CRS(S) 与 F 范围内主张协议符合性的充分证据**——而非对一切可能行为、或对 F 之外故障的无限制证明。
+ **定义 6 (充分性)：** VCS 对 F 充分当且仅当 ∀m ∈ (F \ 等价体), ∃vc ∈ VCS : vc 杀死 m
+ 
+ ### 5.3 局限性
+@@ -331,6 +331,8 @@ ARINC 615A 协议栈按层建模。TFTP 层（代表性示例）的完整状态
+ 
+ ### 6.3 分层 DTMC 架构
+ 
++**本修订（PR #2）中 DTMC 的定位：** 分层 DTMC **保留为解释性模型（interpretation model）**——用于叙述协议阶段，并沿合法转移组织认识置信标签。此处**不**将其宣称为符合性证明的唯一、最终数学基础（证明基础仍为定义 1–6 + 覆盖 + 变异充分性）。进一步抽象（例如 Protocol Evidence Graph / 不要求随机核的带标签迁移图）记为 **理论债务，留待 PR #4**。
++
+ **设计原则：**
+ 1. 每个协议层（UDP、TFTP、615A、665、664）拥有独立子状态机
+ 2. 统一链 + 角色标记（DLS/THW）——一个模型，两个角色视角
+@@ -359,38 +361,58 @@ ARINC 615A 协议栈按层建模。TFTP 层（代表性示例）的完整状态
+ 
+ ### 6.5 HMM 形式化
+ 
+-验证过程自然构成隐马尔科夫模型：
++验证过程建模为隐马尔科夫模型。**隐状态、观测与参数不得混为一谈：**
++
++| 概念 | 符号 | 角色 |
++|------|------|------|
++| **隐状态** | \(Z_k\) | 第 \(k\) 步不可观测的实现符合/故障类 |
++| **观测** | \(X_k\) | 第 \(k\) 步测试裁决，\(X_k \in \{\mathrm{PASS},\mathrm{FAIL}\}\) |
++| **参数** | \(\theta\) | 仅指模型参数：初值分布、转移核、发射核——**不是**隐状态本身 |
++
++**示例隐状态字母表（可扩展）：**  
++\(\{ \mathrm{Conforming},\ \mathrm{RetryFault},\ \mathrm{TimeoutFault},\ \mathrm{SequenceFault},\ \mathrm{FileIntegrityFault},\ \ldots \}\)。
++
++**发射（示意，待标定）：**  
++\(P(X_k=\mathrm{PASS}\mid Z_k=\mathrm{Conforming})=1-\alpha\)，  
++\(P(X_k=\mathrm{PASS}\mid Z_k\neq\mathrm{Conforming})=\beta\)，  
++其中 \(\alpha\) 为误判 FAIL 率，\(\beta\) 为漏检/逃逸率（可在有变异证据时取保守上界）。
+ 
+-- **隐状态：** IUT 真实符合度 θ₁, θ₂, ..., θₙ（不可观测）
+-- **观测：** 测试结果 X₁, X₂, ..., Xₙ ∈ {PASS, FAIL}
+-- **发射概率：** P(Xₖ = PASS | θₖ = conforming) = θₖ
+-- **转移概率：** P(θₖ₊₁ | θₖ) 由 DTMC 结构给出
++**转移：** \(P(Z_{k+1}\mid Z_k)\) 是独立的隐动态核（故障持续/恢复假设），**不得**与 §6.6 中的认识置信标签等同；§6.3 的分层 DTMC 仍作为协议结构与置信叙述的**解释性模型**（进一步形式化见理论债务 → PR #4）。
+ 
+-**可用推断：**
+-- **前向算法：** 计算 P(观测序列 | 模型) → 路径级置信度
+-- **Viterbi 算法：** 失败时找最可能故障状态序列 → 故障定位
+-- **Baum-Welch (EM)：** 从数据学习参数——仅在数据充分时使用，施加保守约束
++**可用推断（在 \(\theta\) 固定后）：**
++- **前向算法：** 观测序列在 HMM 下的似然
++- **Viterbi 算法：** 失败时最可能隐状态路径 → 辅助故障定位
++- **Baum-Welch (EM)：** 仅在数据充分且带保守约束时用于参数学习
+ 
+ ### 6.6 置信度指标
+ 
+ **指标 1——最弱环节（保守下界）：**
+-C_protocol = min_l min_s θ_s
++\[
++C_{\mathrm{protocol}} = \min_{\ell}\min_{s} \theta_{s}^{(\ell)}
++\]
++**理由（安全工程 / 保守保证）：** 该指标**故意取保守**。在安全工程与保证实践中，一串义务常以**最弱已验证环节**为界：任一关键已验证要素的认识置信偏低，则总体主张不应超过该下界。因此指标 1 是**保守保证度量（Conservative Assurance Metric）**，而非平均行为的估计。未验证要素（\(\theta=\bot\)）应从 \(\min\) 中排除，或使定量主张保持不完整（报告时须声明政策）。
+ 
+-**指标 2——路径乘积（马尔科夫分解）：**
+-C_path = ∏ θ_s（关键路径上各状态乘积）
++**指标 2——沿验证证据图的路径置信（条件累积）：**
++设关键验证路径诱导有序证据序列 \(v_0,v_1,\ldots,v_m\)（VC 访问的状态或转移检查）。路径置信沿该**证据图条件累积**，而非假定事件相互独立：
++\[
++C_{\mathrm{path}} = \prod_{i=1}^{m} P(v_i \mid v_{i-1})
++\]
++其中 \(P(v_i\mid v_{i-1})\) 表示在接受第 \(i-1\) 步之后，对第 \(i\) 步的认识置信（操作上由对应边/状态转移的估计置信标签实例化）。
+ 
+-仅需马尔科夫性质（给定当前状态后条件独立），不需全局独立。
++**明确非声称：** **不**将 \(\{v_i\}\) 当作无条件独立的伯努利试验。禁止将无条件边缘量的朴素乘积 \(\prod \theta_i\)（缺少条件/证据图解读）用作符合性度量。
+ 
+ **指标 3——分层置信度向量：**
+-C = (C_UDP, C_TFTP, C_615A, C_665, C_664)ᵀ
++\[
++C = (C_{\mathrm{UDP}}, C_{\mathrm{TFTP}}, C_{\mathrm{615A}}, C_{\mathrm{665}}, C_{\mathrm{664}})^{\mathsf{T}}
++\]
+ 
+-报告方式：同时给出指标 1 和 2。指标 1 用于安全关键下界；指标 2 用于每操作置信度。
++报告方式：同时给出指标 1 与 2。指标 1 用于安全关键下界；指标 2 用于条件累积规则下的每操作路径置信。
+ 
+ ### 6.7 FMEA/FMEDA 集成与故障定位
+ 
+ **每转移 FMEA：** 每个转移 (sᵢ → sⱼ) 关联失效模式、局部/全局影响、严重度 (S)、检测手段（VC 引用）、诊断覆盖率 (DC)。
+ 
+-**FMEDA 量化：** DC_i = 被 VC 检测的失效模式数 / 该转移全部失效模式数。变异分数 ≈ 诊断覆盖率 DC。
++**FMEDA 量化：** DC_i = 被 VC 检测的失效模式数 / 该转移全部失效模式数。变异分数用作诊断覆盖率 DC 的**经验估计量**（非数学恒等式）。
+ 
+ **失败时故障定位（Viterbi + FMEA）：**
+ 1. 观测失败序列 X₁, ..., Xₖ, Xₖ₊₁ = FAIL
+diff --git "a/tutorial/\346\230\276\346\216\247\347\263\273\347\273\237\346\225\260\346\215\256\345\212\240\350\275\275\344\270\213\350\275\275\345\212\237\350\203\275\346\265\213\350\257\225\345\237\271\350\256\255.pptx" "b/tutorial/\346\230\276\346\216\247\347\263\273\347\273\237\346\225\260\346\215\256\345\212\240\350\275\275\344\270\213\350\275\275\345\212\237\350\203\275\346\265\213\350\257\225\345\237\271\350\256\255.pptx"
+deleted file mode 100644
+index 6d27695..0000000
+Binary files "a/tutorial/\346\230\276\346\216\247\347\263\273\347\273\237\346\225\260\346\215\256\345\212\240\350\275\275\344\270\213\350\275\275\345\212\237\350\203\275\346\265\213\350\257\225\345\237\271\350\256\255.pptx" and /dev/null differ
+
+##### PR #3 process docs #####
+diff --git a/docs/proposal/PR0004_METHODOLOGY_REFINEMENT.md b/docs/proposal/PR0004_METHODOLOGY_REFINEMENT.md
+new file mode 100644
+index 0000000..5108f4b
+--- /dev/null
++++ b/docs/proposal/PR0004_METHODOLOGY_REFINEMENT.md
+@@ -0,0 +1,51 @@
++# Proposal — PR #4 Methodology Refinement
++
++**Status:** Backlog (after PR #2 Must merge)  
++**Scope:** Mathematical / methodological formalization only — **no** repository restructuring.
++
++---
++
++## Objective
++
++Resolve **theory debt** left explicit in RR-2026-001 v2.1:
++
++- Keep advancing quantified confidence and diagnosis;
++- Reposition (not necessarily delete) the DTMC as an interpretation model vs. a Protocol Evidence Graph / labeled transition graph;
++- Unify emission probability, EFSM coverage artifacts, FMEA↔mutation maps, numerical examples, EN/ZH parity.
++
++---
++
++## In scope (Should from Reply.md)
++
++| Item | Notes |
++|------|--------|
++| DTMC repositioning | Interpretation model → optional Protocol Evidence Graph abstraction |
++| Protocol Evidence Graph | Labeled graph; avoid requiring stochastic kernels for epistemic labels |
++| Emission probability unification | Calibrate \(\alpha,\beta\); document estimation |
++| EFSM for 615A session | Make L2/L3 coverage operational beyond TFTP-only sketch |
++| FMEA ↔ mutation mapping | Replace informal “≈ DC” with explicit dictionary |
++| Numerical toy examples | Worked \(\theta\), CI, \(C_{wl}\), \(C_{path}\) |
++| EN/ZH synchronization | After each math edit |
++
++## Out of scope
++
++- Repository terminology/architecture/review process (PR #3)
++- Software implementation of session layer (separate engineering PRs)
++- Changing research questions wholesale
++
++---
++
++## Theory debt register (seed)
++
++| ID | Temporary working definition | Intended refinement |
++|----|------------------------------|---------------------|
++| TD-01 | Layered DTMC as interpretation model | Evidence-graph formalization; clarify non-kernel epistemic labels |
++| TD-02 | HMM latent dynamics vs protocol graph | Separate kernels; relate \(Z_k\) path to visited edges |
++| TD-03 | Conditional path confidence \(P(v_i\|v_{i-1})\) | Fully specify estimation from experiments |
++| TD-04 | Unverified \(\theta=\bot\) reporting policy | Choose and freeze P3a vs P3b |
++
++---
++
++## Merge dependency
++
++Do **not** start implementation work for PR #4 until PR #2 Must items are on `main` (or explicitly waived).
+diff --git a/docs/review/REVIEW_GUIDELINE.md b/docs/review/REVIEW_GUIDELINE.md
+index 640381a..1198409 100644
+--- a/docs/review/REVIEW_GUIDELINE.md
++++ b/docs/review/REVIEW_GUIDELINE.md
+@@ -51,7 +51,33 @@ Each review should end with one of:
+ 
+ Repository-wide merge still requires green CI and project branch-protection rules.
+ 
++## Severity bands (Must / Should / Nice)
++
++Every methodology or research review should classify findings as:
++
++| Band | Meaning |
++|------|---------|
++| **Must** | Theory error or merge blocker — fix before merge |
++| **Should** | Quality improvement — track for a follow-up PR (do not block if scoped out) |
++| **Nice** | Deferred polish |
++
++Avoid treating every PR as a perfect paper revision.
++
++## Theory debt
++
++Each PR should be checked for **new theory debt**:
++
++> A working definition adopted to move the project forward that is **not** the final theoretical form and must be refined in a later PR.
++
++Theory debt is **not** necessarily an error, but it **must be recorded** (e.g. in `docs/review/DESIGN_DECISIONS.md` or `docs/proposal/PR0004_METHODOLOGY_REFINEMENT.md`) so it is not forgotten.
++
++Examples currently acknowledged:
++- DTMC as an interpretation model pending Protocol Evidence Graph formalization (PR #4)
++- Relationship between HMM latent dynamics and the protocol graph
++- Operational estimation of conditional path confidence \(P(v_i\mid v_{i-1})\)
++
+ ## Review artifacts
+ 
+ - Store durable review write-ups under `docs/review/` (e.g. `PR0002_REVIEW.md`).
+ - Record lasting design choices in `docs/review/DESIGN_DECISIONS.md`.
++- Record methodology follow-ups in `docs/proposal/PR0004_METHODOLOGY_REFINEMENT.md`.
+diff --git a/docs/review/Reply.md b/docs/review/Reply.md
+new file mode 100644
+index 0000000..f213f5c
+--- /dev/null
++++ b/docs/review/Reply.md
+@@ -0,0 +1,151 @@
++不过，我有三点补充，我希望你让 Grok 一并执行。
++
++------
++
++# 1. 我完全赞同新增 "Must / Should / Nice"
++
++这是我上一轮没有明确做好的地方。
++
++研究项目最大的风险就是：
++
++> 每个 PR 都想做到完美。
++
++实际上应该像论文 Revision 一样：
++
++- **Must**：理论错误、阻塞 Merge。
++- **Should**：提升质量，但不阻塞。
++- **Nice**：以后再做。
++
++因此我建议以后所有 Review Bundle 都采用这个结构。
++
++------
++
++# 2. 我建议保留 DTMC，但调整其定位（这是我唯一的重要补充）
++
++Grok 提到：
++
++> 取消/弱化「认知置信度 = DTMC 转移核」的命名（改为协议图 + 边/点标签）
++
++**我部分同意，但不建议完全取消 DTMC。**
++
++我认为应该修改为：
++
++- **PR #2**：保留 DTMC 作为"解释性模型（interpretation model）"，不要把它作为唯一数学基础。
++- **PR #4**：再讨论是否需要进一步抽象为 Protocol Evidence Graph 或带标签的状态迁移图。
++
++原因是：
++
++目前 RR 中已经有相当多内容围绕 DTMC 展开，如果现在完全替换，会导致文档大面积重写，不符合我们"一个 PR 一个主题"的原则。
++
++因此，我建议把这一项放入 **Should（PR #4）**，而不是现在修改。
++
++------
++
++# 3. 关于 "全部通过 ⇒ 符合"（我希望再加强一点）
++
++Grok 提到：
++
++> Def.5 /「全部通过 ⇒ 符合」等表述加上 CRS + 故障模型 F 范围。
++
++**我认为这是必须修改（Must），而且建议措辞再严格一点。**
++
++我建议不要写：
++
++> Passing all verification points proves conformance.
++
++而改为类似：
++
++> Under the assumed Conformance Requirement Set (CRS) and fault model F, passing all verification points constitutes sufficient evidence to claim protocol conformance within the scope of CRS and F.
++
++这样实际上限定了证明的适用范围：
++
++- CRS 完整；
++- Fault Model 已定义；
++- Claim 是"在该范围内"成立。
++
++这会大幅降低未来论文审稿时被质疑"过度声称（overclaim）"的风险。
++
++------
++
++# 我建议采用下面这个最终执行计划
++
++## PR #2（立即执行）
++
++Merge 条件：
++
++### Must
++
++- ✅ C0（删除不应公开的 PPT）
++- ✅ M-1（HMM 定义）
++- ✅ M-2（Confidence Aggregation）
++- ✅ M-3（Weakest Link）
++- ✅ Def.5 增加 CRS/Fault Model 的适用范围说明
++
++### Should（记录到 PR #4）
++
++- DTMC 的定位调整（不是删除，而是重新定位）
++- Protocol Evidence Graph
++- Emission Probability 的统一
++- EFSM
++- FMEA 映射
++- 数值示例
++- 中英文统一
++
++### Nice
++
++全部延期。
++
++------
++
++## PR #3（Repository）
++
++完全按 Proposal 做。
++
++我没有新的意见。
++
++------
++
++## PR #4（Methodology Refinement）
++
++这是我建议新增的名称。
++
++只讨论：
++
++- 数学模型；
++- Protocol Graph；
++- Bayesian；
++- HMM；
++- Confidence；
++- 不涉及 Repository。
++
++------
++
++## 我最后只有一个原则希望加入 Review Guideline
++
++以后每个 PR 我都会检查一项：
++
++> **是否引入了新的理论债务（Theory Debt）。**
++
++理论债务指的是：
++
++- 为了推进项目，暂时采用了一个可以工作的定义；
++- 但它不是最终理论形式，需要后续 PR 修正。
++
++例如目前：
++
++- DTMC 的定位；
++- Evidence Graph；
++- HMM 与协议状态的关系；
++
++这些都属于**理论债务**，不是错误，但应明确记录，避免以后遗忘。
++
++------
++
++**因此，我的结论是：**
++
++**我认可 Grok 的整体意见，并建议按它的方案执行。**唯一需要补充的是：
++
++1. **不要在 PR #2 删除 DTMC，只调整其理论定位，并把进一步重构放到 PR #4。**
++2. **Def.5 的修改应明确限定在 CRS 与 Fault Model 的作用域内，避免过度声称。**
++
++除此之外，我没有需要阻止执行的意见，建议按照这个计划推进。
+\ No newline at end of file

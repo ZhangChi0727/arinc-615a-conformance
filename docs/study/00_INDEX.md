@@ -1,22 +1,29 @@
-# Study materials index (shared foundation)
+# Study and Methodology Index
 
-Feeds **both** Track A (code) and Track B (thesis). Not company KPI docs.
+The frozen methodology is authoritative. Tutorial lessons are supporting
+material and must identify which baseline/tool release they explain.
 
-| Order | Document | Status |
-|---|---|---|
-| 0 | [`glossary_abbreviations.md`](glossary_abbreviations.md) | To restore / extend |
-| 1 | `phase0_lesson0_network_basics.md` | To restore (Ethernet→IP→UDP→TFTP→615A→665) |
-| 2 | `phase0_lesson1_tftp.md` | To restore |
-| 3 | `phase0_lesson2_615a_download.md` | To restore |
-| 4 | Lesson 3 — 665 minimal | Not started |
-
-## Research Reports
+## Research reports
 
 | ID | Title | Language | Status |
 |---|---|---|---|
-| RR-2026-001 | [Verification Case Set Generation Methodology (EN)](RR-2026-001_verification_methodology_en.md) | English | v1.0 reviewed |
-| RR-2026-001 | [验证用例集生成方法论 (中文)](RR-2026-001_验证用例生成方法论_zh.md) | 中文 | v1.0 已审 |
+| RR-2026-001 | [A Test-and-Analysis Methodology for ARINC 615A Conformance Verification](RR-2026-001_test_analysis_conformance_methodology_en.md) | English | v4.1 frozen methodology baseline |
+| RR-2026-001 | [面向 ARINC 615A 符合性验证的测试—分析方法论](RR-2026-001_测试分析符合性验证方法论_zh.md) | 中文 | v4.1 同步译本 |
 
-Slide deck (optional): `Phase0_ARINC615A_Study.pptx` — regenerate later via `scripts/`.
+Baseline declaration: [`../BASELINE.md`](../BASELINE.md)
 
-If a lesson file is missing, ask in chat to restore it from the Phase 0 study sessions.
+Controlled terminology: [`../terminology.md`](../terminology.md)
+
+## Planned study sequence
+
+| Order | Topic | Status | Must connect to |
+|---|---|---|---|
+| 0 | Vocabulary and abbreviations | Use controlled terminology | `docs/terminology.md` |
+| 1 | Ethernet/IP/UDP/TFTP foundations | Planned | observation boundary |
+| 2 | TFTP state, retry, duplicate, timeout, rollover | Planned | EFSM and obligations |
+| 3 | ARINC 615A DOWNLOAD/UPLOAD | Planned | CRS and base VCs |
+| 4 | Minimal ARINC 665/664 constraints | Planned | scoped data oracles |
+| 5 | Execute and inspect one VC | Planned | evidence manifest and verdicts |
+| 6 | Coverage/mutation interpretation | Planned | T0–T2 claim boundaries |
+
+Missing lessons are planned work, not broken required dependencies.

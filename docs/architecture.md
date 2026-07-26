@@ -1,56 +1,99 @@
-# Research Architecture
+# Research and Verification Architecture
 
-Authoritative overview of the research workflow (not the software module tree).  
-Implementation details live under `PROJECT_PLAN.md` and `src/`; this document describes the **method pipeline**.
+| Field | Value |
+|---|---|
+| **Version** | 2.0 |
+| **Status** | Baseline-aligned |
+| **Governing method** | RB-2026-001-v4.1 |
 
+## End-to-end control flow
+
+```text
+Standard + applicability + observation boundary
+                     |
+                     v
+          CRS and obligation model
+                     |
+          +----------+----------+
+          |                     |
+          v                     v
+   Observable EFSM       Test Purposes / VCs
+          |                     |
+          +----------+----------+
+                     v
+             Test execution path
+        configuration -> stimulus -> oracle
+                     |
+                     v
+        verdicts + traces + measurements
+                     |
+                     v
+              Analysis path
+ traceability | coverage | faults | uncertainty | diagnosis
+                     |
+                     v
+          scoped assurance argument
+                     |
+                     v
+           engineering/research decision
 ```
-ARINC Specification (public standard)
-        │
-        ▼
-Requirement Extraction          →  CRS / Requirement Items
-        │
-        ▼
-Verification Point              →  testable obligations + oracles
-        │
-        ▼
-Requirement Model               →  coverage relations, protocol graphs / EFSM views
-        │
-        ▼
-Test Case (Verification Case)   →  preconditions, stimulus, expected, verdict
-        │
-        ▼
-Execution                       →  dual-role simulator / peers / lab
-        │
-        ▼
-Evidence                        →  logs, traces, Pass/Fail records
-        │
-        ▼
-Confidence                      →  optional quantitative assurance metrics
-        │
-        ▼
-Conformance Claim               →  scoped to CRS + fault model (+ project class)
-```
 
-## Base vs extended
+Review and Inspection gates act across the flow. They do not replace dynamic
+execution or quantitative analysis.
 
-| Path | Source | Role |
-|------|--------|------|
-| Base | ARINC 615A (and agreed supporting RFCs/665 minimal scope) | Project-agnostic conformance claim |
-| Extended | Project ICD / customer extras | Additive assurance; must not rewrite base cases |
+## Controlled objects
 
-## Where artifacts live
+| Object | Canonical form | Owner |
+|---|---|---|
+| Applicability | PICS-like declaration | Requirements |
+| CRS | Versioned requirement items and source hashes | Requirements |
+| Protocol model | Observable EFSM/IOLTS | Modeling |
+| Traceability | \(\rho_{RT}\), \(\rho_{TV}\), model-target relations | Method |
+| Verification case | Preconditions, stimulus, oracle, reset, evidence schema | Test |
+| Evidence | Immutable run and analysis datasets | Engineering/experiment |
+| Inference model | Registered likelihood, calibration, diagnosis model | Analysis |
+| Claim | Claim ID, tier, scope, evidence, gate decision | Governance |
 
-| Stage | Typical location |
-|-------|------------------|
-| Study / methodology | `docs/study/` |
-| Terminology | `docs/terminology.md` |
-| Engineering plan | `PROJECT_PLAN.md` |
-| Research outline | `RESEARCH_OUTLINE.md` |
-| Cases / templates | `configs/` |
-| Software instrument | `src/`, `tests/` |
-| Thesis prose | `thesis/` |
+## Gates
 
-## Non-goals of this document
+| Artifact progression | Static gate | Evidence gate |
+|---|---|---|
+| Scope enters CRS work | RG0 | G0 |
+| CRS enters modeling | RG1 | — |
+| Model/trace enters case derivation | RG2 | G1 preparation |
+| VCs/oracles enter implementation | RG3 | G1 |
+| Tool/config enters execution | RG4 | G2 |
+| Evidence enters analysis/publication | RG5 | G3–G6 as applicable |
+| Claim enters release | RG6 | achieved G0–G7 |
 
-- Does not redefine probabilistic formulas (see research reports under `docs/study/`).
-- Does not replace module-level software design docs under `docs/design/`.
+## Base and extended VCS
+
+The base VCS is derived from the controlled applicable standard requirements.
+The extended VCS is project-specific and additive. Results, configuration, and
+claims for the two sets remain distinguishable. Adding extended cases cannot
+repair missing base traceability or silently change the base claim.
+
+## Version spine
+
+Every run and derived result must identify:
+
+\[
+(\text{baseline},S,P,O,\text{CRS},G,V,\text{IUT},E,\text{tool},\text{experiment}).
+\]
+
+The tuple is implemented as manifest identifiers, not inferred from folder
+names or the latest Git commit.
+
+## Repository realization
+
+| Architecture layer | Location |
+|---|---|
+| Baseline/method | `docs/BASELINE.md`, `docs/study/` |
+| Research control | `docs/research/` |
+| Requirements and traceability | `docs/requirements/`, future `configs/` schemas |
+| Model/design | `docs/design/` |
+| Instrument | `src/a615a_sim/` |
+| Automated checks | `tests/` |
+| Experiment evidence | `artifacts/experiments/` or controlled external store |
+| Review/change/risk | `docs/review/`, `docs/management/` |
+| Publication | `thesis/` |

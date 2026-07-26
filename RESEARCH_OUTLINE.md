@@ -1,104 +1,62 @@
-# Research Outline — Track B (Academic Thesis, Engineer’s Perspective)
+# Research and Publication Outline
 
-Status: **v0.1**  
-Related: [`TRACKS.md`](TRACKS.md) · [`PROJECT_PLAN.md`](PROJECT_PLAN.md) · [`docs/02_thesis_outline.md`](docs/02_thesis_outline.md)
+| Field | Value |
+|---|---|
+| **Version** | 2.0 |
+| **Status** | Aligned with RB-2026-001-v4.1 |
+| **Detailed research plan** | [`docs/research/RESEARCH_PLAN.md`](docs/research/RESEARCH_PLAN.md) |
 
-> This is **not** a Master’s graduation thesis outline.  
-> It is an **academic thesis** written from an engineer’s perspective: research question, method, artifact as experimental platform, evidence, discussion.
+## Working title
 
----
+**English:** *A Test-and-Analysis Methodology for ARINC 615A Conformance Verification*
 
-## 1. Research question
+**Chinese:** *面向 ARINC 615A 符合性验证的测试—分析方法论*
 
-> How can a **project-agnostic conformance verification method**, based on a series of stable test points derived from the ARINC 615A standard, fully prove protocol conformance while remaining compatible with project-specific extended test requirements?
+## Central question
 
----
+> How can complementary requirements-based Test and bounded evidence Analysis
+> produce auditable, reproducible, and engineering-useful ARINC 615A
+> conformance decisions?
 
-## 2. Claim to defend
+The report's RQ1–RQ6 decompose this question into derivation, coverage, bounded
+adequacy, evidence interpretation, diagnosis, and transferability.
 
-A project-agnostic conformance verification method, built on a stable set of verification points derived from the ARINC 615A standard, can fully prove protocol conformance when all points pass. This method is compatible with project-specific extended test sets without compromising the base conformance proof. The software architecture (dual-role simulator, L4 engine, etc.) is our implementation vehicle, not the innovation itself.
+## Contributions to evaluate
 
----
+1. an auditable many-to-many standard→TP→VC derivation framework;
+2. a closed Test-and-Analysis verification loop;
+3. an assurance argument separating traceability, execution, detection
+   adequacy, and calibrated interpretation;
+4. a finite-fault-domain evaluation with held-out faults;
+5. Review and Inspection gates that connect scientific discipline to
+   engineering release control;
+6. a reproducible instrument and artifact chain;
+7. conditional evidence about calibration, diagnosis, and transferability.
 
-## 3. Contributions (draft)
+These are research propositions until supported by the claim/evidence matrix.
 
-1. **Method (innovation):** A project-agnostic conformance verification method based on stable verification points derived from the ARINC 615A standard. The base test set fully proves protocol conformance; extended test sets are compatible with specific project ICD test requirements without altering the base proof.
-2. **Framing:** Distinguishing protocol conformance verification (standard-derived, project-agnostic) from program ICD testing (project-specific, interface-level).
-3. **Artifact (engineering work):** An executable prototype that implements the method — dual-role simulator, L4 engine (selector/injector/verdict), 664 LU data generator. This is our work, not the innovation.
-4. **Evidence:** Empirical proof that (a) passing the complete base test set implies protocol conformance, and (b) mutation verification confirms the test set can detect non-conformance.
+## Publication structure
 
----
+| Section | Purpose |
+|---|---|
+| Abstract | Problem, method, achieved evidence, contribution, boundaries |
+| 1 Introduction | Engineering problem, research gap, questions, value |
+| 2 Background | ARINC 615A scope, conformance theory, verification methods |
+| 3 Methodology | Test/Analysis loop, objects, tiers, formal core |
+| 4 Research instrument | Dual-role peer, VC engine, evidence provenance |
+| 5 Evaluation design | Baselines, held-out faults, calibration, controls |
+| 6 Results | Traceability, execution, adequacy, optional T3/diagnosis |
+| 7 Discussion | Academic and engineering implications, validity, transfer |
+| 8 Conclusion | Answers limited to achieved gates |
+| Appendices | Schemas, condensed matrices, reproduction instructions |
 
-## 4. Paper / monograph structure
+## Writing order
 
-| § | Title | Purpose |
-|---|---|---|
-| | Abstract | Problem, method, results, contribution |
-| 1 | Introduction | Context, gap, RQ, scope, contributions |
-| 2 | Background & related work | Stack, 615A, 665 (minimal), conformance theory, prior tools |
-| 3 | Conformance verification method | Stable verification points (base test set, standard-derived); extended test set (project-specific); VP formalism; conformance proof argument |
-| 4 | System design (engineering work) | Dual-role simulator, L4 engine, Role Controller, 664 LU generator — implementation of the method, not the contribution |
-| 5 | Experiments & results | Base test set execution (conformance proof), mutation verification (detection proof), extended test set (optional), threats to validity |
-| 6 | Discussion | Implications, complementarity to ICD testing, limits |
-| 7 | Conclusion | Answer RQ; future work |
-| | References / optional appendix | Standards, captures, condensed VP tables |
+1. freeze introduction, background boundaries, and method from the baseline;
+2. draft experiment protocol before collecting confirmatory evidence;
+3. write instrument details against released engineering versions;
+4. generate results from controlled datasets and scripts;
+5. write discussion and conclusion only after claim/evidence review.
 
-Detail and confidentiality notes: `docs/02_thesis_outline.md`.
-
----
-
-## 5. Thesis workstream (writing milestones)
-
-| ID | Milestone | Done when |
-|---|---|---|
-| **T0** | Freeze RQ + title + scope bullets | This file + outline agree |
-| **T1** | Related-work notes (annotated bib) | `thesis/notes/related_work.md` — high-level thesis and docs as research basis |
-| **T2** | Requirements model draft (§3) | Formal VP table in `thesis/` or `docs/requirements/` |
-| **T3** | Method section draft (§4) | Conformance verification method argued; software architecture described as implementation |
-| **T4** | Experiment plan | What will be measured before coding finishes |
-| **T5** | Results write-up (§5) | Uses Track A C7–C8 outputs |
-| **T6** | Discussion + conclusion | Limits & future work honest |
-| **T7** | Full draft polish | Generic names only; refs consistent |
-
----
-
-## 6. What thesis work is *not*
-
-- Filling school 开题/答辩 templates or page quotas.  
-- Pasting company KPI forms or internal ICD text.  
-- Treating “tool finished” as automatically “thesis finished” without experiments/discussion.  
-- Career mapping (e.g. automotive J1939) inside the thesis body.
-
----
-
-## 7. Project workflow and research basis
-
-**Workflow:**
-1. **Tutorial** — Study protocols (664, 665, 615A); figure out how to verify conformance; form stable tutorials with test docs. Refer to high-level thesis and docs as research basis.
-2. **Software** — Implement the conformance verification tool based on stable tutorials.
-3. **Thesis** — Summarize the academic or engineering verification methodology from software engineering practice.
-
-**Research basis:** When collecting and organizing tutorials, refer to high-level thesis and docs (conformance testing theory, protocol verification literature, ARINC standards) as the theoretical foundation. The tutorials bridge between high-level theory and hands-on protocol understanding.
-
-**Evidence pipeline:**
-```
-High-level thesis/docs → Tutorials (664/665/615A) → Stable test docs
-    → Software engineering (C0–C8) → artifacts/reports/*.json
-    → Thesis §5 tables/figures → §6 discussion
-```
-
----
-
-## 8. Open choices (confirm soon)
-
-1. **Venue / length** — long standalone thesis, journal/conference paper, or internal academic-style report?  
-2. **665 visibility** — keep in title as “minimal support,” or demote to a subsection?  
-3. **FIND / INFORMATION** — in experimental scope, or explicit future work?
-
----
-
-## 9. Next thesis action
-
-1. Confirm the three open choices above.  
-2. Draft Abstract + §1 Introduction skeleton under `thesis/drafts/`.  
-3. Keep implementation chatter in `PROJECT_PLAN.md` / issues — not in thesis prose.
+Implementation completion is not a publication result by itself, and a PASS
+suite is not an unrestricted conformance proof.
