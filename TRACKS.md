@@ -1,88 +1,53 @@
-# Tracks: Tutorial → Software → Thesis
+# Workstreams and Artifact Flow
 
-The project follows a **sequential workflow**: tutorials first, then software engineering, then thesis. Tutorial is the starting point — not a parallel track.
+The project is no longer managed as “tutorial first, software second, thesis
+last.” It uses synchronized workstreams governed by the same frozen baseline.
 
-```
-    ┌─────────────────────────┐
-    │  1. Tutorial / Study     │
-    │  664 → 665 → 615A        │
-    │  docs/study, tutorial    │
-    └────────────┬────────────┘
-                 │
-        Stable tutorials + test docs
-                 │
-    ┌────────────┴────────────┐
-    ▼                         ▼
-    ┌───────────────┐  ┌───────────────────┐
-    │ 2. Software    │  │ 3. Thesis          │
-    │  Engineering   │  │  Methodology       │
-    │  src/, tests/  │  │  Summary           │
-    └───────────────┘  └───────────────────┘
+```text
+                 Frozen methodology baseline
+                            |
+       +--------------------+--------------------+
+       |                    |                    |
+Requirements/model     Engineering/Test      Research/Analysis
+       |                    |                    |
+       +---------> controlled evidence <---------+
+                            |
+                 Review and Inspection gates
+                            |
+             engineering decision + publication
 ```
 
-**Workflow:**
-1. **Tutorial** — Study protocols (664, 665, 615A); figure out how to verify conformance; form stable tutorials with test docs. Refer to high-level thesis and docs as research basis.
-2. **Software** — Implement the conformance verification tool based on stable tutorials.
-3. **Thesis** — Summarize the academic or engineering verification methodology from software engineering practice.
-
----
-
-## TRACK A — Code / engineering tool
-
-| | |
-|---|---|
-| **Goal** | Dual-role (DLS/THW) simulator + configurable test sets for ARINC 615A (+ minimal 665, 664 LU input) |
-| **Success looks like** | Stable protocol simulator + iterable/configurable test sets; base test set proves conformance; mutation verification proves detection |
-| **Primary folder** | `src/`, `tests/`, `configs/`, `scripts/` |
-| **Plan document** | [`PROJECT_PLAN.md`](PROJECT_PLAN.md) |
-| **Tone** | Implementation, APIs, milestones, bugs |
-| **May use** | Internal names (OHMS, IDU…) in private notes under `docs/work/` |
-| **Does not need** | Literature survey, research questions, academic contribution claims |
-
-**Typical activities:** implement TFTP → 615A session → 665 codec → L4 engine (selector/injector/verdict) → 664 LU generator → test sets → CLI/report.
-
----
-
-## TRACK B — Academic thesis (engineer’s perspective)
-
-| | |
-|---|---|
-| **Goal** | Defend a **research question** with method + experiments (not a graduation-school template) |
-| **Success looks like** | Clear RQ → related work → method → results → discussion; cite public standards |
-| **Primary folder** | `thesis/` |
-| **Outline document** | [`RESEARCH_OUTLINE.md`](RESEARCH_OUTLINE.md) (detail also in `docs/02_thesis_outline.md`) |
-| **Tone** | Problem, gap, contribution, validity |
-| **Must use** | Generic terms in public text (DLS, THW, member LRU) |
-| **Does not need** | Full production GUI, every KPI form, school page quotas |
-
-**Typical activities:** refine RQ, survey related work, define oracle model, report experiments from Track A.
-
----
-
-## How they connect (briefly)
-
-| Shared | Owned by Code | Owned by Thesis |
+| Workstream | Owns | Does not own |
 |---|---|---|
-| Protocol understanding (`docs/study/`) | `src/` implementation | Argument & narrative in `thesis/` |
-| Verification-point ideas | Executable verification scenarios in `tests/` / configs | Formal requirements model in thesis §3 |
-| Base test set (615A conformance) | `configs/test_sets/base/` — YAML-driven, no code changes to add cases | Derived from standard; formalized in §3 |
-| Extended test set (project-specific) | `configs/test_sets/extended/` — compatible with specific project ICD test requirements; varies by client | Project ICD requirements mapped to VPs |
-| Validation runs | CI / pytest / reports under `artifacts/` (optional) | Tables/figures in thesis §5–6 |
+| Requirements/model | applicability, CRS, EFSM, trace relations | tool behavior or statistical claims |
+| Engineering/Test | executable VCs, instrument, environments, verdict evidence | interpretation beyond achieved gates |
+| Research/Analysis | adequacy, uncertainty, diagnosis, validity | rewriting raw observations |
+| Governance/review | baselines, risks, changes, gate decisions | authoring artifacts it independently approves |
+| Publication/tutorial | communication and reproducible teaching | creating new unsupported claims |
 
-**Rule of thumb:**  
-- If you are asking "does the packet match the state machine?" → **Code track**.  
-- If you are asking "does this answer the research question?" → **Thesis track**.
-- If you are asking "does this peer conform to the standard?" → **Verification**.
+## Shared configuration spine
 
----
+Every downstream artifact should reference:
 
-## Suggested weekly rhythm (example)
+```text
+baseline_id
+standard_edition
+applicability_id
+crs_version
+model_version
+vcs_version
+iut_version
+tool_version
+environment_id
+experiment_id
+```
 
-| Day focus | Track |
-|---|---|
-| Study / standards reading | Shared → feeds both |
-| Implement or fix a milestone | Code |
-| Write 1–2 pages or refine outline | Thesis |
-| Run experiments, paste results into thesis | Bridge (Code produces, Thesis consumes) |
+This spine connects requirements to execution, analysis, engineering release,
+and publication without relying on document prose alone.
 
-Keep commits separable when possible: `feat(tftp): ...` vs `docs(thesis): ...`.
+## Working rule
+
+- Questions about normative obligation or scope go upstream to requirements.
+- Questions about observable behavior or verdict production go to Test.
+- Questions about sufficiency, uncertainty, or diagnosis go to Analysis.
+- Questions about whether a claim may be released go to the applicable gate.

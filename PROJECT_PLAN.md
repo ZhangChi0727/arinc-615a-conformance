@@ -1,131 +1,115 @@
-# Project Plan — Track A (Code / Engineering Tool)
+# Integrated Project Plan
 
-Status: **v0.1**  
-Related: [`TRACKS.md`](TRACKS.md) · [`RESEARCH_OUTLINE.md`](RESEARCH_OUTLINE.md)
-
----
-
-## 1. Product goal
-
-Build a **dual-role protocol conformance simulation environment** that can act as:
-
-- **DLS-mode** — Data Loader (drive tests against a Target Hardware), and/or  
-- **THW-mode** — Target Hardware (be driven by a Data Loader),
-
-for **ARINC 615A** over TFTP/UDP, with **minimal ARINC 665** support (valid `.LUH` / `.LUP` build & check).
-
-**Non-goals (for now):** full 665 media-set manufacturing, ARINC 615-3/429 path, production-grade GUI, claiming ASPICE certification.
-
----
-
-## 2. Locked decisions
-
-| Topic | Decision |
+| Field | Value |
 |---|---|
-| Roles | Both, switchable (Role Controller) |
-| Language | Python first; optional C/C++ TFTP later |
-| 665 scope | Minimal |
-| Validation | Self-loopback + mutation verification required; real simulator/HW optional |
-| Confidentiality | Real names OK in `docs/work/`; genericize in thesis |
+| **Plan ID** | IPP-2026-001 |
+| **Version** | 1.0 |
+| **Status** | Active |
+| **Baseline** | RB-2026-001-v4.1 |
+| **Planning horizon** | Baseline freeze through second-protocol replication |
 
----
+## 1. Mission
 
-## 3. Repository layout (code-facing)
+Produce, evaluate, and operationalize a Test-and-Analysis methodology that
+supports bounded, reproducible ARINC 615A conformance decisions and generates
+credible scientific and engineering evidence.
 
-```
-src/
-  a615a_sim/           # installable package root
-    tftp/              # RFC 1350 + options + rollover-to-1
-    session/           # 615A virtual-file state machines
-    lsap/              # minimal 665 codec + 664 LU data generator
-    roles/             # Role Controller (DLS / THW)
-    engine/            # L4: selector + injector + verdict + runner
-    report/            # JSON / text verification reports
-    cli.py             # entry point
-tests/
-  unit/                # tftp, lsap, parsers
-  integration/         # loopback DLS↔THW
-  scenarios/           # conformance verification scenarios (mutation etc.)
-configs/
-  test_sets/
-    base/              # Base test set — 615A protocol conformance (standard-derived)
-    extended/          # Extended test set — project-specific (varies by client)
-  examples/            # sample peer addresses, scenario YAML/JSON
-scripts/
-  run_loopback.py      # quick demo
-  build_pptx.py        # optional study deck rebuild
-artifacts/             # local run outputs (gitignored reports OK)
-```
+## 2. Success criteria
 
----
+The program succeeds when:
 
-## 4. Milestones (code only)
+1. the applicable CRS and observation boundary are controlled;
+2. every applicable verification obligation is traceable to reviewed VCs;
+3. the instrument produces reproducible, provenance-complete evidence;
+4. held-out faults provide an honest measure of bounded detection adequacy;
+5. probabilistic or diagnostic claims are released only after their gates pass;
+6. scientific results and engineering releases use the same versioned artifacts;
+7. transferability wording matches the presence or absence of replication.
 
-| ID | Milestone | Done when | Approx. |
+## 3. Workstreams
+
+| Workstream | Owner role | Canonical plan | Primary outputs |
 |---|---|---|---|
-| **C0** | Repo skeleton + package importable | `python -m a615a_sim.cli --help` works | Week 0 |
-| **C1** | TFTP core | RRQ/WRQ/DATA/ACK/ERROR/OACK; timeout retry; rollover→1; unit tests | |
-| **C2** | Role-agnostic transfer API | Same engine used as client or server | |
-| **C3** | 615A session (Operator DOWNLOAD) | `.LNO`→`.LNL`/`.LNA`→data + `.LNS` side channel | |
-| **C4** | 615A UPLOAD (minimal happy path) | Init + list/status family enough for one nominal load | |
-| **C5** | Minimal 665 codec | Build/parse `.LUH`; check value; THW ID mismatch detect | |
-| **C6a** | Test set framework | YAML test set schema defined; base test set has >= 10 cases covering core 615A operations | |
-| **C6b** | L4 decomposition complete | Selector, injector, verdict engine work independently; runner orchestrates them | |
-| **C6c** | 664 LU generator | Can generate valid 664 LU data; integrates with DOWNLOAD/UPLOAD sessions | |
-| **C7** | Loopback verification suite | DLS-mode ↔ THW-mode on localhost green | |
-| **C8** | Mutation verification suite | Known-bad peers detected (rollover, checksum, blksize, status) | |
-| **C9** *(optional)* | External peer | Talk to OHMS simulator / real THW when available | |
-| **C10** *(stretch)* | Native TFTP hot path | C/C++ optional optimization | |
+| W0 Governance | Project/research lead | `docs/BASELINE.md`, `docs/management/` | baseline, decisions, risks, gates |
+| W1 Requirements | Requirements researchers | `docs/research/RESEARCH_PLAN.md` | applicability, CRS, obligation model |
+| W2 Modeling and VCS | Method/test researchers | research + architecture docs | EFSM, traces, TPs, VCs, oracles |
+| W3 Instrument | Engineering lead | `docs/engineering/IMPLEMENTATION_PLAN.md` | simulator, engine, evidence writer |
+| W4 Experiments | Experiment/statistics lead | `docs/research/EXPERIMENT_PLAN.md` | registrations, raw/derived evidence |
+| W5 Analysis | Research team | report §§6–8 | coverage, mutation, calibration, diagnosis |
+| W6 Publication | Research lead | `RESEARCH_OUTLINE.md`, `thesis/` | papers, thesis, replication report |
+| W7 Tutorial | Technical educator | `tutorial/`, `docs/study/` | reproducible learning/runbooks |
 
----
+Roles may be held by the same person, but independent review is required where
+the baseline specifies it.
 
-## 5. Intermediate engineering products
+## 4. Integrated roadmap
 
-| Product | Location |
-|---|---|
-| Runnable CLI tool | `src/a615a_sim/` |
-| Unit + integration tests | `tests/` |
-| Base test set (615A conformance) | `configs/test_sets/base/` |
-| Extended test set (project-specific) | `configs/test_sets/extended/` |
-| 664 LU data generator | `src/a615a_sim/lsap/lu_generator.py` |
-| Example configs / scenarios | `configs/examples/` |
-| Design notes for implementers | `docs/design/` (create when coding starts) |
-| Work-only notes (ICD names, KPI) | `docs/work/` (not for public thesis) |
+| Stage | Main work | Exit products | Required decisions |
+|---|---|---|---|
+| P0 Baseline | Freeze method and repository control | RB-2026-001-v4.1, plans, risks | Baseline accepted |
+| P1 Scope/CRS | Applicability, observation boundary, dual extraction | CRS, adjudication, source manifest | RG0, RG1, G0 |
+| P2 Model/VCS | EFSM, traces, obligations, cases, oracles | Model package, base VCS | RG2, RG3, G1; T0 |
+| P3 Instrument | Runner, roles, reset, logging, evidence | Reproducible end-to-end run | RG4, G2 readiness |
+| P4 T1 execution | Execute controlled VCS | Raw evidence, verdict report | G2; T1 result |
+| P5 T2 adequacy | Development and held-out fault study | Mutation and held-out report | RG5, G3; T2 result |
+| P6 Optional T3/diagnosis | Calibration, dependence, classifiers | Sensitivity and diagnostic reports | G4–G6 |
+| P7 Transfer | Second protocol instance | Replication and comparative analysis | G7 |
 
-**Final product = stable protocol simulator + iterable/configurable test sets**
+Stages are evidence-driven, not calendar-driven. Parallel implementation is
+allowed only when it does not pre-empt an unresolved upstream gate.
 
-Company-facing documents (需求、测试指南) may be **exported later** from design notes + scenario catalog; they are **not** the driver of this plan.
+## 5. Near-term execution backlog
 
----
+### Baseline release
 
-## 6. Definition of Done (MVP)
+- approve and commit the baseline manifest and control documents;
+- update the active PR to replace the superseded v3.0 report;
+- create the recommended baseline tag after merge;
+- archive or label historical theory proposals as superseded.
 
-MVP is complete when:
+### First research increment
 
-1. Loopback Operator DOWNLOAD (nominal) Passes in both role assignments (who is DLS/THW).  
-2. At least **four** mutation verification cases Fail correctly with clear verdict reasons.  
-3. Minimal LSAP with wrong check value is rejected (or flagged) per oracle.  
-4. One machine-readable report (JSON) produced per run.  
-5. Base test set contains >= 10 verification points covering core 615A operations.  
-6. Test sets are config-driven (YAML); adding new cases requires no Python code changes.  
-7. README documents how to run loopback verification in &lt;10 steps.
+- create the applicability-declaration schema;
+- create the CRS item schema without proprietary text fields;
+- define dual-review extraction instructions and adjudication form;
+- register EXP-001;
+- conduct RG0 scope review.
 
----
+### First engineering increment
 
-## 7. Dependencies on Track B (thesis)
+- add schema validation and example objects;
+- preserve the existing 48-test green baseline;
+- document current TFTP behavior and gaps against E1;
+- add an evidence-manifest schema before new session implementation.
 
-Code track **does not wait** for finished thesis prose.  
-Thesis track **consumes** Code milestones C7–C8 results for experiments.
+## 6. Management cadence
 
-Shared inputs both need early:
+| Cadence | Activity | Output |
+|---|---|---|
+| Weekly | Workstream review | completed work, blockers, next evidence |
+| Per PR | Repository, engineering, methodology, and/or research review | explicit outcome and gate impact |
+| Per gate | Independent gate review | signed findings and decision |
+| Monthly | Risk and scope review | updated risk register and residual risks |
+| Per experiment | Registration then result review | deviations and reproducibility record |
+| Per release | Claim/evidence audit | approved wording and manifest |
 
-- Phase 0 study notes → `docs/study/`  
-- Draft verification-point list → `docs/requirements/verification_points.md` (to create)
+## 7. Definition of done
 
----
+A work item is done only when:
 
-## 8. Next code action
+- its artifact exists at the controlled path;
+- acceptance criteria and relevant tests pass;
+- versions and upstream/downstream trace links are recorded;
+- review findings are closed or explicitly accepted;
+- risks and deviations are updated;
+- claim wording remains within the achieved assurance tier.
 
-1. Create `src/a615a_sim` package skeleton (C0).  
-2. Implement TFTP unit tests + minimal server/client on localhost (C1).  
-3. Do **not** start thesis chapter drafting inside `src/`.
+## 8. Dependencies and constraints
+
+- Access to controlled ARINC 615A material is required for P1–P2.
+- Public repository artifacts must not reproduce proprietary clauses.
+- T3 depends on representative calibration instances and may legitimately remain
+  unavailable.
+- External peer or hardware access improves external validity but does not
+  replace controlled loopback, oracle, and provenance checks.
+- P7 needs a separately selected and resourced second protocol.

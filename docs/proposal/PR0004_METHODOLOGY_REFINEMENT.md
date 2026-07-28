@@ -1,6 +1,11 @@
 # Proposal — PR #4 Methodology Refinement
 
-**Status:** Backlog (after PR #2 Must merge)  
+> **Status: Superseded by RB-2026-001-v4.1.** This document is retained as a
+> historical proposal. Current methodology and theory-debt decisions are in
+> [`../BASELINE.md`](../BASELINE.md) and
+> [`../review/DESIGN_DECISIONS.md`](../review/DESIGN_DECISIONS.md).
+
+**Status:** Backlog (after PR #2 Must merge)
 **Scope:** Mathematical / methodological formalization only — **no** repository restructuring.
 
 ---

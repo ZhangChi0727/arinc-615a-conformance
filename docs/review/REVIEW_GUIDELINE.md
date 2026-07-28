@@ -1,83 +1,83 @@
-# Review Guideline
+# Review and Gate Guideline
 
-Standardize future pull-request reviews. A single PR may receive more than one review type.
+| Field | Value |
+|---|---|
+| **Version** | 2.0 |
+| **Status** | Baseline-aligned |
+| **Source** | RR-2026-001 v4.1 §4.10 |
 
 ## Review types
 
-### 1. Repository Review
+| Type | Focus |
+|---|---|
+| Repository | placement, naming, links, confidentiality, baseline references |
+| Engineering | behavior, interfaces, tests, reproducibility, tool failure modes |
+| Methodology | requirements, models, oracles, fault domain, mathematical semantics |
+| Research | questions, hypotheses, baselines, validity, citations, claim strength |
+| Evidence | provenance, exclusions, calculations, raw-to-derived reproduction |
+| Claim release | correspondence between wording, achieved tier, risks, and gates |
 
-Checks structure, naming, docs placement, secrets/binaries policy, and consistency with `TRACKS.md` / `README.md`.
+One PR or gate may require several review types.
 
-Typical questions:
-- Are new files in the right track (`src/` vs `docs/` vs `thesis/`)?
-- Are proprietary or oversized binaries excluded?
-- Do cross-links resolve?
+## RG0–RG6
 
-### 2. Engineering Review
+| Gate | Entry | Required reviewers | Approval focus |
+|---|---|---|---|
+| RG0 Scope | standard, roles, services, applicability, observation draft | method + engineering | feasible, bounded scope |
+| RG1 CRS | dual extraction and adjudication | requirements + independent method | source, atomicity, applicability |
+| RG2 Model/trace | EFSM and mappings | protocol + method | observability, consistency, completeness |
+| RG3 VC/oracle | cases, oracle, reset, evidence schema | test + independent protocol | executability and verdict validity |
+| RG4 Execution | IUT/tool/environment configuration | engineering + test | control, dry run, tool validity |
+| RG5 Evidence | raw and derived packages | evidence + analysis | provenance, exclusions, reproduction |
+| RG6 Claim | assurance argument and proposed wording | independent research + engineering authority | achieved gates and residual risk |
 
-Checks code, tests, CI, APIs, and implementability against `PROJECT_PLAN.md`.
-
-Typical questions:
-- Do tests fail for the right reasons?
-- Is the change scoped to the stated milestone?
-- Any regressions in TFTP/session behavior?
-
-### 3. Methodology Review
-
-Checks verification-method soundness: requirement→case derivation, coverage claims, fault model, base/extended separation.
-
-Typical questions:
-- Are coverage and conformance claims scoped?
-- Are definitions consistent with `docs/terminology.md`?
-- Any unjustified statistical independence or over-strong proof language?
-
-### 4. Research Review
-
-Checks academic framing: RQ, related work, novelty boundary, thesis outline alignment, citation hygiene.
-
-Typical questions:
-- Is the contribution claimed clearly (method vs software instrument)?
-- Confidentiality / genericization respected in public text?
+Independence means the reviewer did not solely author the judgment being
+approved. A small team may use role separation and a recorded second pass.
 
 ## Outcomes
 
-Each review should end with one of:
+Use exactly:
 
-| Outcome | Meaning |
-|---------|---------|
-| **APPROVED** | No blocking issues for this review type |
-| **APPROVED WITH COMMENTS** | Non-blocking improvements suggested |
-| **REQUEST CHANGES** | Blocking issues must be resolved before merge (for that concern) |
+- `APPROVE`;
+- `APPROVE WITH ACTIONS`;
+- `REWORK`.
 
-Repository-wide merge still requires green CI and project branch-protection rules.
+`APPROVE WITH ACTIONS` must identify owners and deadlines and cannot be used for
+an unresolved mathematical error, invalid oracle, missing provenance, or
+overstated claim.
 
-## Severity bands (Must / Should / Nice)
+## Finding severity
 
-Every methodology or research review should classify findings as:
+| Severity | Meaning |
+|---|---|
+| Must | Blocks the gate or merge |
+| Should | Required follow-up with named owner |
+| Nice | Optional improvement |
 
-| Band | Meaning |
-|------|---------|
-| **Must** | Theory error or merge blocker — fix before merge |
-| **Should** | Quality improvement — track for a follow-up PR (do not block if scoped out) |
-| **Nice** | Deferred polish |
+## Gate record
 
-Avoid treating every PR as a perfect paper revision.
+Store durable records as `docs/review/gates/GR-<gate>-<date>-<artifact>.md`:
+
+```text
+artifact and version
+baseline and applicable claim IDs
+reviewers and independence statement
+entry criteria
+findings and dispositions
+residual risks
+decision
+sign-off date
+```
 
 ## Theory debt
 
-Each PR should be checked for **new theory debt**:
+Theory debt is permitted only when:
 
-> A working definition adopted to move the project forward that is **not** the final theoretical form and must be refined in a later PR.
+- it does not contradict the frozen baseline;
+- it is irrelevant to the current released claim;
+- it has an owner, trigger, and destination;
+- claim wording excludes the unresolved theory.
 
-Theory debt is **not** necessarily an error, but it **must be recorded** (e.g. in `docs/review/DESIGN_DECISIONS.md` or `docs/proposal/PR0004_METHODOLOGY_REFINEMENT.md`) so it is not forgotten.
-
-Examples currently acknowledged:
-- DTMC as an interpretation model pending Protocol Evidence Graph formalization (PR #4)
-- Relationship between HMM latent dynamics and the protocol graph
-- Operational estimation of conditional path confidence \(P(v_i\mid v_{i-1})\)
-
-## Review artifacts
-
-- Store durable review write-ups under `docs/review/` (e.g. `PR0002_REVIEW.md`).
-- Record lasting design choices in `docs/review/DESIGN_DECISIONS.md`.
-- Record methodology follow-ups in `docs/proposal/PR0004_METHODOLOGY_REFINEMENT.md`.
+DTMC edge-confidence, first-order path products, and HMM-based localization are
+not active baseline mechanisms. They may re-enter only through baseline change
+control supported by appropriate data and validation.
