@@ -3,9 +3,9 @@
 | Field | Value |
 |---|---|
 | **Plan ID** | EIP-2026-001 |
-| **Version** | 1.0 |
+| **Version** | 1.1 |
 | **Status** | Approved for staged implementation |
-| **Methodology baseline** | RB-2026-001-v4.1 |
+| **Methodology baseline** | RB-2026-001-v4.2 |
 
 ## Engineering objective
 
@@ -42,9 +42,10 @@ Case catalog -> selector -> runner -> protocol peer/IUT
 | Requirement/model schemas | IDs, applicability, obligations, trace relations | `configs/schemas/`, `docs/requirements/` |
 | TFTP core | Packets, options, retry, duplicate, timeout, rollover | `src/a615a_sim/tftp/` |
 | 615A session | DOWNLOAD/UPLOAD observable state machines | `src/a615a_sim/session/` |
+| Timing model | clocks, guards, invariants, resets, timing obligations | `src/a615a_sim/timing/` |
 | Minimal data artifacts | Only 665/664 constraints required by the frozen scope | `src/a615a_sim/lsap/` |
 | Role controller | DLS/THW mode without duplicating protocol logic | `src/a615a_sim/roles/` |
-| Verification engine | Selection, injection, oracle, verdict, reset, run control | `src/a615a_sim/engine/` |
+| Verification engine | Selection, injection, robust discrete/timing oracle, verdict, reset, run control | `src/a615a_sim/engine/` |
 | Evidence writer | Immutable run manifest, traces, measurements, verdicts | `src/a615a_sim/evidence/` |
 | Analysis tools | Coverage, mutation, intervals, calibration, diagnosis | `src/a615a_sim/analysis/` |
 | CLI/reporting | Reproducible commands and human/machine reports | `src/a615a_sim/cli.py`, `src/a615a_sim/report/` |
@@ -55,10 +56,10 @@ Case catalog -> selector -> runner -> protocol peer/IUT
 |---|---|---|---|
 | E0 | Baseline schemas and IDs | Schema tests; example CRS/TP/VC round-trip | RG1 |
 | E1 | TFTP protocol core hardening | Unit tests for nominal, duplicate, retry, wrong-TID, rollover | Engineering review |
-| E2 | Observable 615A EFSM | Reviewed state variables, transitions, guards, trace map | RG2 |
-| E3 | VC engine and oracle API | Deterministic examples for all four verdicts; reset tests | RG3 |
-| E4 | Dual-role loopback instrument | Reproducible DOWNLOAD/UPLOAD runs and manifest | RG4/G2 |
-| E5 | Coverage and mutation pipeline | B0–B3 reports; invalid/equivalent handling; held-out split | G3 |
+| E2 | Clock-augmented observable 615A EFSM | Reviewed states, data/clock guards, invariants, resets, timing catalog, trace map | RG2 |
+| E3 | VC engine and robust oracle API | Discrete and interval-timing examples for all four verdicts; boundary/reset tests | RG3 |
+| E4 | Dual-role loopback timing instrument | Reproducible DOWNLOAD/UPLOAD runs; monotonic timestamps, error budget, manifest | RG4/G2 |
+| E5 | Coverage and mutation pipeline | B0/B1/B2-U/B2-T/B3 reports; invalid/equivalent handling; held-out split | G3 |
 | E6 | Evidence integrity and reporting | Raw-to-derived reproduction from clean checkout | RG5 |
 | E7 | Optional calibration and diagnosis | Held-out evaluation and sensitivity reports | G4–G6 |
 
@@ -67,6 +68,10 @@ Case catalog -> selector -> runner -> protocol peer/IUT
 - every execution records baseline, CRS, model, VCS, IUT, tool, and environment versions;
 - PASS/FAIL/INCONCLUSIVE/ERROR remain distinct end to end;
 - oracles are testable independently of the runner;
+- time is measured from a declared monotonic source; timestamp source,
+  resolution, observation points, and uncertainty budget are evidence;
+- timing PASS requires the complete observation interval to be contained in the
+  allowed interval; invalid timing instrumentation produces ERROR;
 - reset and isolation are explicit case operations;
 - base and extended VCS results are separable;
 - raw evidence is append-only; transformations create derived artifacts;
@@ -77,10 +82,10 @@ Case catalog -> selector -> runner -> protocol peer/IUT
 
 | Level | Purpose |
 |---|---|
-| Unit | Packet, guard, oracle, schema, statistic, and serialization correctness |
+| Unit | Packet, data/clock guard, clock reset, robust oracle, schema, statistic, and serialization correctness |
 | Contract | Stable interfaces between runner, peer, oracle, and evidence writer |
-| Integration | DLS↔THW sessions, resets, failures, and evidence provenance |
-| Scenario | Requirement-derived VCs and mutation detection |
+| Integration | DLS↔THW sessions, timer/reset behavior, failures, and evidence provenance |
+| Scenario | Requirement-derived discrete/timed VCs and mutation detection |
 | Reproduction | Rebuild a published table from a clean environment |
 
 CI must test supported Python versions and reject schema, traceability, or
@@ -94,3 +99,24 @@ evidence-manifest violations once those validators exist.
 - the package is reproduced on a clean checkout;
 - no empirical claim exceeds T1;
 - known limitations and deviations are recorded.
+
+---
+
+## 中文版
+
+### 工程目标与架构
+
+实现一套可复现验证仪器：执行测试路径、产生可分析证据，并强制执行 v4.2 的范围、时序和门禁语义。主要组件包括需求/模型 schema、TFTP 核心、615A 会话、时钟与时序义务模型、双角色控制器、VC 引擎、稳健 oracle、证据写入、覆盖/变异/时序/校准/诊断分析和 CLI 报告。
+
+### 增量
+
+- E0：基线 schema 和 ID；
+- E1：TFTP 核心加固；
+- E2：带时钟 615A EFSM，包括数据/时钟守卫、不变量、复位和时序目录；
+- E3：离散与区间时序 oracle API，覆盖四类判定和边界/复位测试；
+- E4：双角色环回时序仪器，保存单调时间戳、误差预算和 manifest；
+- E5–E7：覆盖/变异、证据复现及可选校准/诊断。
+
+### 横向要求
+
+每次执行记录完整版本链；四类判定端到端分离；oracle 可独立测试；时间来自声明的单调源；时间戳源、分辨率、位置和误差预算属于证据；只有完整观测区间包含于允许区间时才可判时序 PASS；仪器无效必须判 ERROR；原始证据只追加，派生产物保留全部输入和脚本版本。

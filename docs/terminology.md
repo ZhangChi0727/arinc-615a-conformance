@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| **Version** | 2.0 |
+| **Version** | 2.1 |
 | **Status** | Baseline-controlled |
-| **Authority** | RB-2026-001-v4.1 |
+| **Authority** | RB-2026-001-v4.2 |
 
 ## Core verification terms
 
@@ -24,6 +24,11 @@
 | **Evidence** | Versioned raw or derived records supporting a named claim, including provenance and conditions. |
 | **Coverage** | Degree to which a named target set is addressed; not itself a conformance probability. |
 | **Conformance** | Agreement with the declared applicable requirements under the stated observation, environment, and claim scope. |
+| **Timed trace** | Ordered observable events paired with timestamps from a declared monotonic time basis. |
+| **Timing obligation** | Requirement-defined trigger, response, cancellation/silence, lower/upper bounds, units, and clock-reset semantics. |
+| **Measurement-error budget** | Auditable bound on applicable clock, timestamp, scheduling, capture, and path uncertainty. |
+| **Robust timing oracle** | Interval-based rule: PASS only when the observation interval is contained in the allowed interval; FAIL only when disjoint; overlap is INCONCLUSIVE. |
+| **Run-order dependence** | Drift, clustering, warm-up, shared state, or another effect that makes repeated executions dependent. |
 
 ## Verification activities
 
@@ -57,7 +62,7 @@
 |---|---|
 | **DLS** | Data Loader System: loader-side ARINC 615A peer. |
 | **THW** | Target Hardware: target-side ARINC 615A peer. |
-| **EFSM** | Extended Finite State Machine containing control states, variables, guards, actions, inputs, and outputs. |
+| **Clock-augmented EFSM** | EFSM extended with clocks, clock guards, state invariants, and clock resets for deterministic timed conformance. |
 | **PICS-like declaration** | Project applicability artifact analogous in purpose to a Protocol Implementation Conformance Statement. |
 
 ## Usage rules
@@ -71,3 +76,15 @@
   validated stochastic kernel.
 - HMM is a candidate temporal diagnostic model, not a baseline synonym for the
   protocol model.
+- Do not call a point timestamp an exact timing result when a nonzero
+  measurement-error budget applies.
+
+---
+
+## 中文版
+
+核心术语：IUT 是固定实现及配置；适用性声明确定角色、服务、选项和排除项；观测边界限定可用于判定的报文、时序、状态、日志和环境现象；CRS 是带受控来源和解释的原子适用需求；TP 描述待验证义务；VC 是可执行的前置条件、刺激、oracle、追踪、目标、重置、时序/误差 schema 和证据 schema；VCS 是受控 VC 集。
+
+时序术语：**时戳迹**是采用声明单调时间基准的事件—时间戳序列；**时序义务**必须定义触发、响应、取消/静默、上下界、单位和时钟复位；**测量误差预算**是时钟、时间戳、调度、捕获和路径不确定性的可审计界；**稳健时序 oracle**仅在观测区间完全包含于允许区间时判 PASS，二者不相交时判 FAIL，部分重叠时判 INCONCLUSIVE；无效时间链判 ERROR；**运行顺序依赖**包括漂移、聚类、预热和共享状态。
+
+带时钟 EFSM 是加入时钟、时钟守卫、状态不变量和时钟复位的 EFSM，用于确定性时序符合性。它不是 DTMC，也不是 HMM。HMM 只有在隐状态确实随物理时间演化且数据、可识别性和比较性能充分时才是可选诊断模型。

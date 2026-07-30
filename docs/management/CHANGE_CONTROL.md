@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | **Process ID** | CMP-2026-001 |
-| **Applies to** | RB-2026-001-v4.1 and controlled descendants |
+| **Applies to** | RB-2026-001-v4.2 and controlled descendants |
 | **Owner** | Research lead |
 
 ## Change classes
@@ -49,4 +49,12 @@ Create `docs/management/changes/CR-YYYY-NNN.md` containing:
 - raw evidence changes require provenance and reproduction checks;
 - squash only when the resulting commit preserves useful baseline and gate IDs.
 
-Recommended baseline tag after approval: `research-baseline/RB-2026-001-v4.1`.
+Recommended baseline tag after approval: `research-baseline/RB-2026-001-v4.2`.
+
+---
+
+## 中文版
+
+变更分为：不改变语义的编辑变更；符合基线的新 CRS/VC/变异体/结果等产物变更；改变标准解释、oracle、适用性或等价判断的解释变更；改变 RQ、范围、形式语义、保证层级或门禁的基线变更。数学修正和时序语义变化必须作为基线变更，不得伪装成编辑修订。
+
+基线变更请求必须记录触发问题、受影响条款和下游产物、科学/工程影响、备选方案、迁移/重评计划、评审处理以及批准后的版本和日期。发布后的基线不可原地修改；每个证据包记录精确基线 ID。

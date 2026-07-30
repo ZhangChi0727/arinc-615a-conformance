@@ -14,6 +14,9 @@
 | R-10 | Scope expansion delays core evidence | High | Medium | FIND/INFORMATION, full 665, GUI added early | Enforce baseline scope and CR process | Project lead | RG0 |
 | R-11 | Research and implementation versions drift | Medium | High | Evidence lacks baseline/CRS/VCS IDs | Machine-readable manifests and release checklist | Configuration owner | RG5 |
 | R-12 | Second-protocol replication is never completed | Medium | Medium | Transferability deferred without owner | Keep C-XFER explicitly unsupported; schedule R5 separately | Research lead | G7 |
+| R-13 | Timing semantics are incomplete or paired to the wrong events | Medium | Critical | Ambiguous trigger/reset/cancellation or inconsistent reviewers | Timing-obligation schema, source trace, independent RG1–RG3 review | Method owner | RG1–RG3 |
+| R-14 | Timing instrument creates false precision | Medium | Critical | Boundary verdicts change with capture point/resolution | Monotonic clock, timestamp-chain validation, explicit error budget, robust interval oracle | Engineering lead | RG3–RG5/G2 |
+| R-15 | Timing runs are dependent or drift over time | Medium | High | Autocorrelation, batch/order effects, warm-up or cross-session timer state | Randomization, reset checks, batch metadata, drift diagnostics, mixed/cluster models | Experiment lead | RG4–RG5/G4 |
 
 ## Review cadence
 
@@ -21,3 +24,9 @@
 - escalate Critical-impact risks immediately;
 - close a risk only with evidence, not elapsed time;
 - record accepted residual risk in the applicable gate decision.
+
+---
+
+## 中文版
+
+风险登记表控制标准解释、观测边界、oracle、故障代表性、重复运行依赖、校准偏差、诊断泄漏、工具误判、保密、范围蔓延、版本漂移和第二协议延期。v4.2 新增：R-13 时序触发/复位/取消/配对语义不完整；R-14 时间戳链或误差预算制造虚假精度；R-15 执行顺序、批次、预热或跨会话计时器导致时序依赖/漂移。它们分别由时序 schema 和独立评审、单调时钟及稳健区间 oracle、随机化/重置/批次元数据和混合/聚类模型缓解。

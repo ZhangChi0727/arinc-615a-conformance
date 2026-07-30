@@ -151,3 +151,37 @@ assurance argument.
 
 **Date:** 2026-07-26
 **Status:** Active
+
+---
+
+## DD-012 — Add deterministic timed conformance without restoring stochastic protocol semantics
+
+**Decision:** Adopt `RB-2026-001-v4.2`. Extend the observable EFSM with clocks,
+clock guards, invariants, and resets; represent executions as timestamped
+traces; and use an interval-based robust timing oracle with an explicit
+measurement-error budget. Co-locate the Chinese translation after each key
+English document rather than maintaining parallel language files.
+
+**Why:** Timing obligations are already in scope, but v4.1 did not give them a
+complete mathematical or measurement semantics. A point-threshold oracle can
+create false precision near a boundary. Co-located translations reduce
+structural drift. Protocol topology remains deterministic/nondeterministic as
+declared and is not converted into a DTMC or HMM.
+
+**Date:** 2026-07-30
+
+**Status:** Proposed by CR-2026-001; becomes active when the v4.2 baseline PR is
+approved and merged. Supersedes DD-007 only as the current baseline identifier;
+DD-010 remains active.
+
+### 中文
+
+采用 `RB-2026-001-v4.2`：在可观测 EFSM 中加入时钟、时钟守卫、不变量和复位；将执行表示为带时戳迹；以显式测量误差预算驱动区间式稳健时序 oracle；关键英文文档末尾直接附中文译本。原因是 v4.1 已将时序义务纳入范围，却没有完整数学和测量语义，点阈值会在边界制造虚假精度。该决定不恢复 DTMC/HMM 协议语义。
+
+---
+
+## 中文版
+
+本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
+
+DD-012 提议用 v4.2 取代 v4.1 作为当前基线标识，同时保持 DD-010 有效：加入确定性时序语义和误差感知 oracle，但不把协议图变成随机过程。该决定仅在本 PR 通过独立方法与主张评审并合并后生效。

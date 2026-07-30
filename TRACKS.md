@@ -51,3 +51,9 @@ and publication without relying on document prose alone.
 - Questions about observable behavior or verdict production go to Test.
 - Questions about sufficiency, uncertainty, or diagnosis go to Analysis.
 - Questions about whether a claim may be released go to the applicable gate.
+
+---
+
+## 中文版
+
+项目不采用“先教程、再软件、最后论文”的串行模式，而由同一冻结基线治理需求/模型、工程/测试、研究/分析、治理/评审和发布/教程工作流。共享版本脊柱包括基线、标准版本、适用性、CRS、带时钟模型、VCS、IUT、工具、时钟/环境和实验 ID。规范义务问题回到需求，观测和判定问题回到测试，充分性/不确定性/诊断问题回到分析，主张发布问题回到门禁。

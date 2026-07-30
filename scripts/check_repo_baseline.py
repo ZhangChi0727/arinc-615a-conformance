@@ -1,4 +1,4 @@
-"""Validate repository documentation against RB-2026-001-v4.1."""
+"""Validate repository documentation against RB-2026-001-v4.2."""
 
 from __future__ import annotations
 
@@ -8,24 +8,46 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EN_REPORT = ROOT / "docs/study/RR-2026-001_test_analysis_conformance_methodology_en.md"
-ZH_REPORT = ROOT / "docs/study/RR-2026-001_测试分析符合性验证方法论_zh.md"
+REPORT = ROOT / "docs/study/RR-2026-001_test_analysis_conformance_methodology.md"
+ZH_MARKER = "\n# 中文版\n"
+APPENDED_ZH_RE = re.compile(r"^#{1,2} 中文版$", re.MULTILINE)
 
 REQUIRED = [
+    ROOT / "README.md",
+    ROOT / "PROJECT_PLAN.md",
+    ROOT / "RESEARCH_OUTLINE.md",
+    ROOT / "TRACKS.md",
     ROOT / "docs/BASELINE.md",
     ROOT / "docs/README.md",
-    EN_REPORT,
-    ZH_REPORT,
-    ROOT / "PROJECT_PLAN.md",
+    ROOT / "docs/02_thesis_outline.md",
+    ROOT / "docs/architecture.md",
+    ROOT / "docs/terminology.md",
+    REPORT,
     ROOT / "docs/research/RESEARCH_PLAN.md",
     ROOT / "docs/research/EXPERIMENT_PLAN.md",
     ROOT / "docs/research/CLAIM_EVIDENCE_MATRIX.md",
     ROOT / "docs/engineering/IMPLEMENTATION_PLAN.md",
+    ROOT / "docs/requirements/CRS_SCHEMA.md",
+    ROOT / "docs/requirements/README.md",
+    ROOT / "docs/requirements/TRACEABILITY_SCHEMA.md",
+    ROOT / "docs/requirements/APPLICABILITY_TEMPLATE.md",
+    ROOT / "docs/design/EVIDENCE_MANIFEST.md",
+    ROOT / "docs/design/README.md",
+    ROOT / "docs/review/REVIEW_GUIDELINE.md",
+    ROOT / "docs/review/DESIGN_DECISIONS.md",
+    ROOT / "docs/review/GATE_RECORD_TEMPLATE.md",
     ROOT / "docs/management/CHANGE_CONTROL.md",
     ROOT / "docs/management/RISK_REGISTER.md",
+    ROOT / "docs/management/changes/CR-2026-001.md",
+    ROOT / "docs/study/00_INDEX.md",
+    ROOT / "scripts/README.md",
 ]
 
+BILINGUAL = REQUIRED
+
 LEGACY_FILENAMES = {
+    "RR-2026-001_test_analysis_conformance_methodology_en.md",
+    "RR-2026-001_测试分析符合性验证方法论_zh.md",
     "RR-2026-001_verification_methodology_en.md",
     "RR-2026-001_验证用例生成方法论_zh.md",
 }
@@ -35,7 +57,8 @@ H2_RE = re.compile(r"^## ", re.MULTILINE)
 H3_RE = re.compile(r"^### ", re.MULTILINE)
 MATH_OPEN_RE = re.compile(r"^\\\[$", re.MULTILINE)
 MATH_CLOSE_RE = re.compile(r"^\\\]$", re.MULTILINE)
-TAG_RE = re.compile(r"\\tag\{(\d+)}")
+NUMERIC_TAG_RE = re.compile(r"\\tag\{(\d+)}")
+TIMED_TAG_RE = re.compile(r"\\tag\{(T\d+)}")
 FENCE_RE = re.compile(r"^```", re.MULTILINE)
 
 
@@ -43,14 +66,14 @@ def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def report_shape(path: Path) -> tuple[int, int, int, int, list[str], int]:
-    text = read(path)
+def report_shape(text: str) -> tuple[int, int, int, int, list[str], list[str], int]:
     return (
         len(H2_RE.findall(text)),
         len(H3_RE.findall(text)),
         len(MATH_OPEN_RE.findall(text)),
         len(MATH_CLOSE_RE.findall(text)),
-        TAG_RE.findall(text),
+        NUMERIC_TAG_RE.findall(text),
+        TIMED_TAG_RE.findall(text),
         len(FENCE_RE.findall(text)),
     )
 
@@ -89,25 +112,62 @@ def main() -> int:
         return 1
 
     baseline = read(ROOT / "docs/BASELINE.md")
-    if "RB-2026-001-v4.1" not in baseline:
-        errors.append("docs/BASELINE.md does not declare RB-2026-001-v4.1")
+    if "RB-2026-001-v4.2" not in baseline:
+        errors.append("docs/BASELINE.md does not declare RB-2026-001-v4.2")
 
-    en_shape = report_shape(EN_REPORT)
-    zh_shape = report_shape(ZH_REPORT)
+    for path in BILINGUAL:
+        if not APPENDED_ZH_RE.search(read(path)):
+            errors.append(
+                f"key document has no appended Chinese version: {path.relative_to(ROOT)}"
+            )
+
+    report = read(REPORT)
+    if report.count(ZH_MARKER) != 1:
+        errors.append("methodology report must contain exactly one '# 中文版' marker")
+        en_text, zh_text = report, ""
+    else:
+        en_text, zh_text = report.split(ZH_MARKER, 1)
+
+    en_shape = report_shape(en_text)
+    zh_shape = report_shape(zh_text)
     if en_shape != zh_shape:
         errors.append(f"EN/ZH report structure differs: EN={en_shape}, ZH={zh_shape}")
 
-    expected_tags = [str(number) for number in range(1, 15)]
-    if en_shape[4] != expected_tags:
-        errors.append(f"equation tags are not 1..14: {en_shape[4]}")
+    expected_numeric = [str(number) for number in range(1, 15)]
+    expected_timed = [f"T{number}" for number in range(1, 6)]
+    if en_shape[4] != expected_numeric:
+        errors.append(f"numeric equation tags are not 1..14: {en_shape[4]}")
+    if en_shape[5] != expected_timed:
+        errors.append(f"timed equation tags are not T1..T5: {en_shape[5]}")
     if en_shape[2] != en_shape[3]:
-        errors.append("display-math delimiters are unbalanced")
-    if en_shape[5] % 2:
-        errors.append("code fences are unbalanced")
+        errors.append("English display-math delimiters are unbalanced")
+    if zh_shape[2] != zh_shape[3]:
+        errors.append("Chinese display-math delimiters are unbalanced")
+    if en_shape[6] % 2 or zh_shape[6] % 2:
+        errors.append("code fences are unbalanced in one or both report sections")
+
+    required_report_terms = {
+        "clock-augmented observable EFSM",
+        "measurement-error budget",
+        "Robust timing verdict",
+        "逻辑序列",
+        "测量误差预算",
+        "稳健时序判定",
+    }
+    for term in required_report_terms:
+        if term not in report:
+            errors.append(f"methodology report is missing required v4.2 term: {term}")
 
     for legacy in LEGACY_FILENAMES:
         if (ROOT / "docs/study" / legacy).exists():
-            errors.append(f"legacy report filename still exists: {legacy}")
+            errors.append(f"legacy/parallel report filename still exists: {legacy}")
+
+    parallel_reports = list((ROOT / "docs/study").glob("RR-2026*_zh.md"))
+    for path in parallel_reports:
+        errors.append(
+            f"parallel Chinese report is prohibited; append it in the source file: "
+            f"{path.relative_to(ROOT)}"
+        )
 
     errors.extend(local_link_errors())
 
@@ -118,9 +178,10 @@ def main() -> int:
         return 1
 
     print(
-        "RB-2026-001-v4.1 validation passed: "
-        f"H2={en_shape[0]}, H3={en_shape[1]}, "
-        f"math_blocks={en_shape[2]}, equation_tags=1..14"
+        "RB-2026-001-v4.2 validation passed: "
+        f"per-language H2={en_shape[0]}, H3={en_shape[1]}, "
+        f"math_blocks={en_shape[2]}, equation_tags=1..14,T1..T5, "
+        f"bilingual_docs={len(BILINGUAL)}"
     )
     return 0
 
