@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "docs/study/RR-2026-001_test_analysis_conformance_methodology.md"
 ZH_MARKER = "\n# 中文版\n"
-APPENDED_ZH_RE = re.compile(r"^#{1,2} 中文版$", re.MULTILINE)
+APPENDED_ZH_RE = re.compile(r"^# 中文版$", re.MULTILINE)
 
 REQUIRED = [
     ROOT / "README.md",
@@ -36,6 +36,7 @@ REQUIRED = [
     ROOT / "docs/review/REVIEW_GUIDELINE.md",
     ROOT / "docs/review/DESIGN_DECISIONS.md",
     ROOT / "docs/review/GATE_RECORD_TEMPLATE.md",
+    ROOT / "docs/review/PR6_BASELINE_REVIEW_CHECKLIST.md",
     ROOT / "docs/management/CHANGE_CONTROL.md",
     ROOT / "docs/management/RISK_REGISTER.md",
     ROOT / "docs/management/changes/CR-2026-001.md",
@@ -66,7 +67,7 @@ def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
-def report_shape(text: str) -> tuple[int, int, int, int, list[str], list[str], int]:
+def document_shape(text: str) -> tuple[int, int, int, int, list[str], list[str], int]:
     return (
         len(H2_RE.findall(text)),
         len(H3_RE.findall(text)),
@@ -115,23 +116,29 @@ def main() -> int:
     if "RB-2026-001-v4.2" not in baseline:
         errors.append("docs/BASELINE.md does not declare RB-2026-001-v4.2")
 
+    bilingual_shapes: dict[Path, tuple[tuple, tuple]] = {}
     for path in BILINGUAL:
-        if not APPENDED_ZH_RE.search(read(path)):
+        text = read(path)
+        markers = APPENDED_ZH_RE.findall(text)
+        if len(markers) != 1 or text.count(ZH_MARKER) != 1:
             errors.append(
-                f"key document has no appended Chinese version: {path.relative_to(ROOT)}"
+                f"key document must contain exactly one H1 '# 中文版' boundary: "
+                f"{path.relative_to(ROOT)}"
+            )
+            en_text, zh_text = text, ""
+        else:
+            en_text, zh_text = text.split(ZH_MARKER, 1)
+
+        en_document_shape = document_shape(en_text)
+        zh_document_shape = document_shape(zh_text)
+        bilingual_shapes[path] = (en_document_shape, zh_document_shape)
+        if en_document_shape != zh_document_shape:
+            errors.append(
+                f"EN/ZH controlled structure differs in {path.relative_to(ROOT)}: "
+                f"EN={en_document_shape}, ZH={zh_document_shape}"
             )
 
-    report = read(REPORT)
-    if report.count(ZH_MARKER) != 1:
-        errors.append("methodology report must contain exactly one '# 中文版' marker")
-        en_text, zh_text = report, ""
-    else:
-        en_text, zh_text = report.split(ZH_MARKER, 1)
-
-    en_shape = report_shape(en_text)
-    zh_shape = report_shape(zh_text)
-    if en_shape != zh_shape:
-        errors.append(f"EN/ZH report structure differs: EN={en_shape}, ZH={zh_shape}")
+    en_shape, zh_shape = bilingual_shapes[REPORT]
 
     expected_numeric = [str(number) for number in range(1, 15)]
     expected_timed = [f"T{number}" for number in range(1, 6)]
@@ -154,6 +161,7 @@ def main() -> int:
         "测量误差预算",
         "稳健时序判定",
     }
+    report = read(REPORT)
     for term in required_report_terms:
         if term not in report:
             errors.append(f"methodology report is missing required v4.2 term: {term}")

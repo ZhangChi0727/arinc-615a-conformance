@@ -352,6 +352,23 @@ a_j@t_j\land L_r\le\Delta t_{ij}\le U_r,
 
 with explicitly defined cancellation, competing-response, and no-response semantics. A requirement with no minimum delay uses \(L_r=0\). Silence through the deadline is a timed observation, not missing data.
 
+For an observation horizon \(t_H\), encode an active obligation with no observed
+response by the distinguished trace event \(\bot_r@t_H\):
+
+\[
+\bot_r@t_H
+\ \Longleftrightarrow\
+\mathrm{active}_r(i,t_H)
+\land (t_H-t_i>U_r)
+\land
+\nexists j>i:\bigl(a_j\in\mathrm{Resp}_r\bigr)\land(t_i<t_j\le t_H).
+\]
+
+Here \(\mathrm{active}_r(i,t_H)\) excludes a requirement-defined cancellation
+or superseding trigger. The strict inequality is required when a response at
+\(U_r\) is admissible; an open upper boundary must instead use the
+requirement's declared boundary convention.
+
 The clock-augmented observable EFSM is:
 
 \[
@@ -375,14 +392,19 @@ Timing observations are not exact. Let:
 \qquad
 I_{\mathrm{obs}}=
 [\widehat{\Delta t}_{ij}-\varepsilon_{ij},
- \widehat{\Delta t}_{ij}+\varepsilon_{ij}],
+ \widehat{\Delta t}_{ij}+\varepsilon_{ij}]
+\cap D_r,
 \tag{T4}
 \]
 
 where \(\varepsilon_{ij}\) is a justified bound covering the applicable clock,
 timestamp, scheduling, capture, and path uncertainties. Components may be
 removed only when a common-clock or measurement design demonstrably cancels
-them.
+them. The physical domain is \(D_r=[0,\infty)\) only when non-negative delay is
+a reviewed property of the trigger/response and timestamp design; otherwise
+\(D_r=\mathbb{R}\). If the intersection is empty, the observation contradicts
+the declared measurement model and the execution is `ERROR`, not a clamped
+verdict.
 
 For the allowed interval \(I_r=[L_r,U_r]\), the robust timing oracle is:
 
@@ -400,6 +422,11 @@ If the time source, timestamp chain, trigger/response pairing, or declared
 error bound is invalid, the execution is `ERROR`, not `INCONCLUSIVE`.
 This set-containment rule is deliberately conservative near a boundary:
 measurement resolution cannot be converted into false precision.
+For \(\bot_r@t_H\), a no-response `FAIL` is robust only when the earliest
+admissible elapsed horizon satisfies
+\(\widehat{\Delta t}_{iH}-\varepsilon_{iH}>U_r\) and the obligation remains
+active; otherwise the result is `INCONCLUSIVE` or `ERROR` according to the
+preceding rules.
 
 Every applicable timing requirement must trace to:
 
@@ -850,6 +877,13 @@ P\left(\bigcap_{j=1}^{J}\{C_j=1\}\mid \mathcal{E}\right)
 \tag{13}
 \]
 
+Equation (13) assumes that every \(p_j\) is itself a defensible marginal for
+the target proposition and evidence regime. A common uncalibrated instrument
+bias can shift several marginals together; the algebraic Fréchet bounds do not
+remove that shared measurement bias. The project must model or bound the
+common bias, recalibrate with independent reference evidence, or withhold the
+joint scalar claim.
+
 Therefore:
 
 - \(\min_j p_j\) is an **upper**, not lower, bound on joint conformance;
@@ -1189,6 +1223,8 @@ These gates define what the project may claim at each stage. Engineering progres
 - Equivalent-mutant classification may be subjective.
 - Multiple comparisons and class imbalance may inflate diagnostic conclusions.
 - Point estimates without uncertainty can overstate evidence.
+- A common uncalibrated instrument bias can couple multiple estimated
+  marginals; Fréchet bounds on those estimates do not restore validity.
 
 Mitigations include dual review, adjudication logs, held-out faults, negative-result preservation, sensitivity analysis, replication packages, and a second protocol instance.
 
@@ -1307,8 +1343,10 @@ The methodology therefore provides a research baseline and an engineering operat
 | \(G_T\) | Clock-augmented observable EFSM specification |
 | \(C\) | Finite set of model clocks |
 | \(\sigma_T\) | Timestamped observable trace |
+| \(\bot_r@t_H\) | Active timing obligation with no response observed through horizon \(t_H\) |
 | \(I_r=[L_r,U_r]\) | Requirement-defined admissible timing interval |
 | \(I_{\mathrm{obs}}\) | Observation interval after applying the measurement-error bound |
+| \(D_r\) | Reviewed physical domain of the measured delay; normally \([0,\infty)\) only when justified |
 | \(\varepsilon_{ij}\) | Justified timing-measurement error bound |
 | \(\mathcal{M}_{\mathrm{exec}}\) | Buildable and executable mutant set |
 | \(\mathcal{M}_{\mathrm{equiv}}\) | Executable mutants equivalent within the observation scope |
@@ -1765,6 +1803,20 @@ a_j@t_j\land L_r\le\Delta t_{ij}\le U_r,
 
 并且必须显式定义取消、竞争响应和无响应语义。没有最小延迟的需求取 \(L_r=0\)。持续静默直至截止时间本身是时序观测，不是缺失数据。
 
+对观测终点 \(t_H\)，用特殊迹事件 \(\bot_r@t_H\) 编码义务仍有效但未观测到响应：
+
+\[
+\bot_r@t_H
+\ \Longleftrightarrow\
+\mathrm{active}_r(i,t_H)
+\land (t_H-t_i>U_r)
+\land
+\nexists j>i:\bigl(a_j\in\mathrm{Resp}_r\bigr)\land(t_i<t_j\le t_H).
+\]
+
+其中 \(\mathrm{active}_r(i,t_H)\) 排除需求所定义的取消事件或替代触发。当
+\(U_r\) 时刻的响应仍合法时必须使用严格不等式；若上界为开区间，则必须采用需求明确声明的边界约定。
+
 带时钟的可观测 EFSM 定义为：
 
 \[
@@ -1788,11 +1840,13 @@ G_T=(Q,q_0,X,C,\Sigma_I,\Sigma_O,\Delta_T,\mathrm{Inv}),
 \qquad
 I_{\mathrm{obs}}=
 [\widehat{\Delta t}_{ij}-\varepsilon_{ij},
- \widehat{\Delta t}_{ij}+\varepsilon_{ij}],
+ \widehat{\Delta t}_{ij}+\varepsilon_{ij}]
+\cap D_r,
 \tag{T4}
 \]
 
-其中 \(\varepsilon_{ij}\) 是有依据的误差界，覆盖适用的时钟、时间戳、调度、捕获和路径不确定性。只有在共同时间源或测量设计能够证明某分量被抵消时，才能从预算中删除该分量。
+其中 \(\varepsilon_{ij}\) 是有依据的误差界，覆盖适用的时钟、时间戳、调度、捕获和路径不确定性。只有在共同时间源或测量设计能够证明某分量被抵消时，才能从预算中删除该分量。只有当触发/响应关系和时间戳设计经评审确认延迟物理上非负时，才取
+\(D_r=[0,\infty)\)；否则取 \(D_r=\mathbb{R}\)。若交集为空，则观测与声明的测量模型矛盾，本次执行应记为 `ERROR`，不得通过截断强行产生判定。
 
 对允许区间 \(I_r=[L_r,U_r]\)，稳健时序 oracle 为：
 
@@ -1806,7 +1860,10 @@ I_{\mathrm{obs}}=
 \tag{T5}
 \]
 
-如果时间源、时间戳链、触发/响应配对或声明的误差界无效，则本次执行为 `ERROR`，而不是 `INCONCLUSIVE`。该集合包含规则在边界附近刻意保持保守，禁止把测量分辨率包装成虚假精度。
+如果时间源、时间戳链、触发/响应配对或声明的误差界无效，则本次执行为 `ERROR`，而不是 `INCONCLUSIVE`。该集合包含规则在边界附近刻意保持保守，禁止把测量分辨率包装成虚假精度。对
+\(\bot_r@t_H\)，只有在义务保持有效且最早可能经过时间满足
+\(\widehat{\Delta t}_{iH}-\varepsilon_{iH}>U_r\) 时，才能稳健地判定“无响应
+FAIL”；否则按前述规则判为 `INCONCLUSIVE` 或 `ERROR`。
 
 每条适用时序需求都必须追踪到：
 
@@ -2252,6 +2309,9 @@ P\left(\bigcap_{j=1}^{J}\{C_j=1\}\mid \mathcal{E}\right)
 \tag{13}
 \]
 
+式（13）要求每个 \(p_j\) 本身都是针对目标命题和证据制度的可辩护边际概率。共同的未校准仪表偏差可能同时移动多个边际；代数上的 Fréchet
+界不会消除这种共享测量偏差。项目必须对共同偏差建模或给出界限、使用独立参考证据重新校准，或者不发布联合标量主张。
+
 因此：
 
 - \(\min_j p_j\) 是联合符合概率的**上界**，不是下界；
@@ -2576,6 +2636,8 @@ I_r=[100,120]\ \mathrm{ms}
 - 等价变异体分类可能带有主观性。
 - 多重比较和类别不平衡可能夸大诊断结论。
 - 不带不确定性的点估计可能夸大证据。
+- 共同的未校准仪表偏差可能耦合多个估计边际；对这些估计应用
+  Fréchet 界并不能恢复其有效性。
 
 缓解措施包括双人评审、裁决日志、留出故障、保存负向结果、敏感性分析、复现包和第二协议实例。
 
@@ -2694,8 +2756,10 @@ analysis/
 | \(G_T\) | 带时钟的可观测 EFSM 规范 |
 | \(C\) | 有限模型时钟集合 |
 | \(\sigma_T\) | 带时间戳的可观测迹 |
+| \(\bot_r@t_H\) | 义务保持有效但直到观测终点 \(t_H\) 仍未观测到响应 |
 | \(I_r=[L_r,U_r]\) | 需求定义的允许时序区间 |
 | \(I_{\mathrm{obs}}\) | 应用测量误差界后的观测区间 |
+| \(D_r\) | 经评审的延迟物理定义域；仅在有依据时通常取 \([0,\infty)\) |
 | \(\varepsilon_{ij}\) | 有依据的时序测量误差界 |
 | \(\mathcal{M}_{\mathrm{exec}}\) | 可构建且可执行的变异体集合 |
 | \(\mathcal{M}_{\mathrm{equiv}}\) | 在观测范围内等价的可执行变异体集合 |

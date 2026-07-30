@@ -45,8 +45,14 @@ the claim after observing results.
 
 ---
 
-## 中文版
+# 中文版
 
 本矩阵控制报告、发布和论文允许使用的主张。C-T0 要求全部适用义务追踪到已评审可执行用例；C-T1 只说明命名有效执行中观测到可接受行为；C-TIME 只说明在声明误差预算下，观测区间满足命名时序义务；C-T2 限于声明评价故障集；C-T3 依赖独立校准、先验和依赖敏感性；诊断、迁移和工程复现各有独立证据与门禁。
 
+## 措辞规则
+
 时序允许措辞为“在误差预算……下，观测区间包含于需求区间……”。存在非零测量不确定性时，不得说“测得点时间精确满足边界”。状态只能按 `Planned → Evidence Collected → In Review → Supported/Not Supported/Incomplete` 转移；否定和不完整结果不得通过事后改写主张删除。
+
+## 状态转换
+
+主张从 Planned 经 Evidence Collected 和 In Review 到 Supported、Not Supported 或 Incomplete；每次转换都必须记录证据、门禁、偏差和批准者，不能把工程进度当作证据晋级。
