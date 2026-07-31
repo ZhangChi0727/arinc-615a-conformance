@@ -3,16 +3,21 @@
 | Field | Value |
 |---|---|
 | **Plan ID** | RP-2026-001 |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Status** | Approved for baseline execution |
 | **Methodology baseline** | RB-2026-001-v4.2 |
-| **Primary report** | [`../study/RR-2026-001_test_analysis_conformance_methodology.md`](../study/RR-2026-001_test_analysis_conformance_methodology.md) |
+| **Primary report** | [`../methodology/RR-2026-001_test_analysis_conformance_methodology.md`](../methodology/RR-2026-001_test_analysis_conformance_methodology.md) |
 
 ## Objective
 
 Evaluate whether an auditable Test-and-Analysis workflow can produce useful,
 bounded, and reproducible ARINC 615A conformance evidence while improving
 engineering traceability, defect detection, diagnosis, and release decisions.
+
+Research consumes engineering observations only through immutable,
+version-complete evidence manifests. It may propose upstream changes through
+CR/DD, but neither analysis code nor publication prose silently changes method
+contracts or raw observations.
 
 ## Research questions and work packages
 
@@ -114,7 +119,7 @@ negative evidence.
 
 ## 目标
 
-研究目标是评价一条可审计测试—分析流程能否产生有用、有边界且可复现的 ARINC 615A 离散与时序符合性证据，并改善追踪、故障检测、诊断和发布决策。RQ1–RQ6 继续覆盖导出、覆盖、有限充分性、证据解释、诊断和可迁移性；RQ2 的模型对象升级为带时钟 EFSM 和时序义务目录。
+研究目标是评价一条可审计测试—分析流程能否产生有用、有边界且可复现的 ARINC 615A 离散与时序符合性证据，并改善追踪、故障检测、诊断和发布决策。RQ1–RQ6 继续覆盖导出、覆盖、有限充分性、证据解释、诊断和可迁移性；RQ2 的模型对象升级为带时钟 EFSM 和时序义务目录。研究只通过不可变、版本完整的证据清单消费工程观测；它可以通过 CR/DD 提议上游变化，但分析代码或出版叙述不得静默修改方法契约或原始观测。
 
 ## 研究问题与工作包
 

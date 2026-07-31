@@ -19,10 +19,12 @@ paths.
 | Need | Document |
 |---|---|
 | Understand what is frozen | [`docs/BASELINE.md`](docs/BASELINE.md) |
-| Read the methodology | [Bilingual report: English + 中文](docs/study/RR-2026-001_test_analysis_conformance_methodology.md) |
+| Read the methodology | [Bilingual report: English + 中文](docs/methodology/RR-2026-001_test_analysis_conformance_methodology.md) |
 | See the integrated program | [`PROJECT_PLAN.md`](PROJECT_PLAN.md) |
 | Plan research and experiments | [`docs/research/RESEARCH_PLAN.md`](docs/research/RESEARCH_PLAN.md) |
 | Implement the instrument | [`docs/engineering/IMPLEMENTATION_PLAN.md`](docs/engineering/IMPLEMENTATION_PLAN.md) |
+| Learn verification foundations | [`tutorial/common/README.md`](tutorial/common/README.md) |
+| Follow the ARINC 615A instance path | [`tutorial/arinc615a/README.md`](tutorial/arinc615a/README.md) |
 | Navigate all documents | [`docs/README.md`](docs/README.md) |
 
 ## Repository structure
@@ -33,7 +35,7 @@ tests/                  unit, contract, integration, and scenarios
 configs/                schemas, cases, and controlled examples
 artifacts/              local/generated experimental evidence
 docs/
-  study/                frozen methodology and study material
+  methodology/          authoritative method and formal semantics
   research/             research, experiment, and claim control
   engineering/          implementation plan
   requirements/         applicability, CRS, TP, VC, traceability
@@ -42,7 +44,9 @@ docs/
   management/           change and risk control
   proposal/             historical/proposed changes
 thesis/                 publication drafts, notes, and figures
-tutorial/               learning and operational walkthroughs
+tutorial/
+  common/               protocol-independent verification foundations
+  arinc615a/            version-pinned ARINC 615A instance walkthroughs
 ```
 
 ## Current state
@@ -85,7 +89,7 @@ pytest
 
 ## 从这里开始
 
-阅读顺序：先看[基线声明](docs/BASELINE.md)，再看[中英合并研究报告](docs/study/RR-2026-001_test_analysis_conformance_methodology.md)，随后按需进入[项目计划](PROJECT_PLAN.md)、[研究计划](docs/research/RESEARCH_PLAN.md)和[工程实施计划](docs/engineering/IMPLEMENTATION_PLAN.md)。
+阅读顺序：先看[基线声明](docs/BASELINE.md)，再看[中英合并研究报告](docs/methodology/RR-2026-001_test_analysis_conformance_methodology.md)，随后按需进入[项目计划](PROJECT_PLAN.md)、[研究计划](docs/research/RESEARCH_PLAN.md)、[工程实施计划](docs/engineering/IMPLEMENTATION_PLAN.md)、[通用验证教程](tutorial/common/README.md)和[ARINC 615A 实例教程](tutorial/arinc615a/README.md)。
 
 ## 仓库结构
 
@@ -94,9 +98,10 @@ src/                    验证工具
 tests/                  单元、契约、集成和场景测试
 configs/                schema、用例和受控示例
 artifacts/              本地/生成的实验证据
-docs/                   方法、研究、工程、需求、设计、评审和管理
+docs/                   方法论、研究、工程、需求、设计、评审和管理
 thesis/                 论文草稿、笔记和图表
-tutorial/               学习与操作教程
+tutorial/common/        协议无关的验证基础
+tutorial/arinc615a/     绑定版本的 ARINC 615A 实例教程
 ```
 
 ## 当前状态

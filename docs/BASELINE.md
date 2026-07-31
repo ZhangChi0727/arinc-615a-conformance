@@ -5,7 +5,7 @@
 | **Baseline ID** | RB-2026-001-v4.2 |
 | **Proposed effective date** | 2026-07-30 |
 | **Status** | In Review — becomes the frozen methodology baseline after approval and merge |
-| **Authoritative bilingual report** | [`study/RR-2026-001_test_analysis_conformance_methodology.md`](study/RR-2026-001_test_analysis_conformance_methodology.md) |
+| **Authoritative bilingual report** | [`methodology/RR-2026-001_test_analysis_conformance_methodology.md`](methodology/RR-2026-001_test_analysis_conformance_methodology.md) |
 
 ## Meaning of “frozen”
 
@@ -25,6 +25,9 @@ The following are frozen unless changed through the process in
 - the formal traceability, finite-fault-domain, repeatability, and calibrated-inference semantics;
 - the RG0–RG6 Review/Inspection gates and G0–G7 evidence gates;
 - the rule that empirical results may strengthen only the claims supported by passed gates.
+- the ownership, boundary-contract, dependency-direction, and traceability rules
+  connecting methodology research, engineering implementation, publication,
+  and the two tutorial paths in `TRACKS.md` and `architecture.md`.
 
 ## What remains open
 
@@ -58,14 +61,18 @@ Historical documents remain evidence of project evolution; they are not normativ
 
 | Control item | Canonical location |
 |---|---|
-| Methodology | `docs/study/RR-2026-001_test_analysis_conformance_methodology.md` |
+| Methodology | `docs/methodology/RR-2026-001_test_analysis_conformance_methodology.md` |
 | Terminology | `docs/terminology.md` |
+| Workstream ownership and dependency contracts | `TRACKS.md` |
 | Program plan | `PROJECT_PLAN.md` |
 | Research plan | `docs/research/RESEARCH_PLAN.md` |
 | Experiment plan | `docs/research/EXPERIMENT_PLAN.md` |
 | Claim/evidence control | `docs/research/CLAIM_EVIDENCE_MATRIX.md` |
 | Engineering implementation | `docs/engineering/IMPLEMENTATION_PLAN.md` |
 | Research architecture | `docs/architecture.md` |
+| Evidence interface | `docs/design/EVIDENCE_MANIFEST.md` |
+| Publication workspace | `RESEARCH_OUTLINE.md`, `thesis/` |
+| Tutorial entry points | `tutorial/common/`, `tutorial/arinc615a/` |
 | Review gates | `docs/review/REVIEW_GUIDELINE.md` |
 | Decisions | `docs/review/DESIGN_DECISIONS.md` |
 | Change control | `docs/management/CHANGE_CONTROL.md` |
@@ -91,7 +98,7 @@ Historical documents remain evidence of project evolution; they are not normativ
 | **基线 ID** | RB-2026-001-v4.2 |
 | **拟生效日期** | 2026-07-30 |
 | **状态** | 评审中——批准并合并后成为冻结方法论基线 |
-| **权威双语报告** | [`study/RR-2026-001_test_analysis_conformance_methodology.md`](study/RR-2026-001_test_analysis_conformance_methodology.md) |
+| **权威双语报告** | [`methodology/RR-2026-001_test_analysis_conformance_methodology.md`](methodology/RR-2026-001_test_analysis_conformance_methodology.md) |
 
 ## “冻结”的含义
 
@@ -105,6 +112,7 @@ Historical documents remain evidence of project evolution; they are not normativ
 - 带时钟 EFSM、带时戳迹、稳健时序 oracle 和测量不确定性语义；
 - T0–T3 层级、RG0–RG6 评审门和 G0–G7 证据门；
 - 经验结果只能强化已通过门禁所支持的主张。
+- `TRACKS.md` 与 `architecture.md` 规定的方法论研究、工程实现、出版及两条教程路径之间的所有权、边界契约、依赖方向和追踪规则。
 
 ## 尚待完成
 
@@ -116,7 +124,7 @@ Historical documents remain evidence of project evolution; they are not normativ
 
 ## 基线清单
 
-方法论、术语、项目/研究/实验/工程计划、主张—证据矩阵、适用性/CRS/追踪模板、架构/证据设计、评审门与决策、变更控制和风险登记均位于本声明列出的受控路径。历史材料保留演进证据，不具有现行规范效力。
+方法论、术语、工作流依赖契约、项目/研究/实验/工程计划、主张—证据矩阵、适用性/CRS/追踪模板、架构/证据设计、出版工作区、通用/615A 教程入口、评审门与决策、变更控制和风险登记均位于本声明列出的受控路径。历史材料保留演进证据，不具有现行规范效力。
 
 ## 基线接受检查
 

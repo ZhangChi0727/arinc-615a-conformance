@@ -13,7 +13,7 @@
 | **Editorial** | spelling, formatting, link repair with no semantic effect | document owner |
 | **Artifact** | new CRS item, VC, mutant, result, or implementation conforming to baseline | applicable gate owner |
 | **Interpretive** | changed standard interpretation, oracle, applicability, or equivalence decision | independent methodology review |
-| **Baseline** | changed RQ, scope, formal semantics, assurance tier, or gate rule | formal CR and RG6-style independent approval |
+| **Baseline** | changed RQ, scope, formal semantics, assurance tier, gate rule, domain ownership, or cross-domain contract | formal CR and RG6-style independent approval |
 
 ## Baseline change request
 
@@ -38,6 +38,8 @@ Create `docs/management/changes/CR-YYYY-NNN.md` containing:
 5. Every released evidence package records the exact baseline identifier.
 6. A baseline version is immutable after its release commit/tag; subsequent
    changes create a new version.
+7. A cross-domain interface change identifies affected producers, consumers,
+   trace fields, migrations, and tutorial/publication references.
 
 ## Git and PR policy
 
@@ -55,7 +57,7 @@ Recommended baseline tag after approval: `research-baseline/RB-2026-001-v4.2`.
 
 # 中文版
 
-变更分为：不改变语义的编辑变更；符合基线的新 CRS/VC/变异体/结果等产物变更；改变标准解释、oracle、适用性或等价判断的解释变更；改变 RQ、范围、形式语义、保证层级或门禁的基线变更。数学修正和时序语义变化必须作为基线变更，不得伪装成编辑修订。
+变更分为：不改变语义的编辑变更；符合基线的新 CRS/VC/变异体/结果等产物变更；改变标准解释、oracle、适用性或等价判断的解释变更；改变 RQ、范围、形式语义、保证层级、门禁、领域所有权或跨领域契约的基线变更。数学修正和时序语义变化必须作为基线变更，不得伪装成编辑修订。
 
 ## 变更类别
 
@@ -67,7 +69,7 @@ Recommended baseline tag after approval: `research-baseline/RB-2026-001-v4.2`.
 
 ## 规则
 
-数学修正、时序语义、oracle、适用性和保证层级变化不得伪装成编辑；既有证据不得仅通过改标签迁移；解释冲突必须进入裁决和风险记录。
+数学修正、时序语义、oracle、适用性和保证层级变化不得伪装成编辑；既有证据不得仅通过改标签迁移；解释冲突必须进入裁决和风险记录。跨领域接口变化必须标明受影响生产者、消费者、追踪字段、迁移以及教程/出版引用。
 
 ## Git 与 PR 政策
 

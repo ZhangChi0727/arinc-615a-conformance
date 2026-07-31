@@ -6,9 +6,11 @@ This directory is organized by decision purpose. Start with the frozen
 | Area | Purpose | Canonical entry |
 |---|---|---|
 | **Baseline** | What is frozen and authoritative | [`BASELINE.md`](BASELINE.md) |
-| **Methodology** | Formal Test-and-Analysis research report | [`study/00_INDEX.md`](study/00_INDEX.md) |
+| **Methodology** | Formal Test-and-Analysis method, semantics, and controlled report | [`methodology/00_INDEX.md`](methodology/00_INDEX.md) |
 | **Research** | Questions, hypotheses, experiments, claims, evidence | [`research/RESEARCH_PLAN.md`](research/RESEARCH_PLAN.md) |
 | **Engineering** | Instrument and verification-pipeline implementation | [`engineering/IMPLEMENTATION_PLAN.md`](engineering/IMPLEMENTATION_PLAN.md) |
+| **Publication** | Manuscripts, figures, notes, and replication reports | [`../thesis/README.md`](../thesis/README.md) |
+| **Tutorials** | Downstream teaching and reproducible instance walkthroughs | [`../tutorial/README.md`](../tutorial/README.md) |
 | **Management** | Change control and risk governance | [`management/CHANGE_CONTROL.md`](management/CHANGE_CONTROL.md) |
 | **Architecture** | End-to-end research and artifact flow | [`architecture.md`](architecture.md) |
 | **Requirements** | Applicability, CRS, TP/VC traceability | [`requirements/README.md`](requirements/README.md) |
@@ -49,7 +51,7 @@ configuration, dataset, and provenance.
 
 # 中文版
 
-文档按决策用途组织：基线说明冻结内容；方法报告定义正式语义；研究目录管理问题、实验和主张；工程目录管理工具实现；需求目录管理适用性、CRS 和追踪；设计目录管理带时钟 EFSM、schema 和接口；评审/管理目录管理门禁、决策、变更和风险。历史提案不是当前权威。
+文档按决策用途组织：基线说明冻结内容；`docs/methodology/` 定义正式方法语义；`docs/research/` 管理问题、实验、分析和主张；`docs/engineering/`、`src/` 与 `tests/` 管理工程实现；`thesis/` 承载受主张—证据门约束的出版材料；`tutorial/common/` 与 `tutorial/arinc615a/` 仅作为下游教学和复现路径。需求目录管理适用性、CRS 和追踪；设计目录管理带时钟 EFSM、schema 和接口；评审/管理目录管理门禁、决策、变更和风险。历史提案不是当前权威。
 
 ## 文档生命周期
 

@@ -52,3 +52,6 @@ thesis/**/*~
 # Temp extract / local notes
 **/_filelist.txt
 **/__tmp__/
+
+# Local research sources retained for analysis but never published
+local-references/

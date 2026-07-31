@@ -20,8 +20,10 @@ python scripts/check_repo_baseline.py
 ```
 
 It validates required baseline files, local document links, appended Chinese
-versions in key documents, per-language report structure, mathematical
-delimiters, numeric and timed equation numbering, and legacy/parallel filenames.
+versions and structural parity in controlled documents, mathematical delimiters,
+numeric and timed equation numbering, the methodology-directory migration, and
+required architecture/traceability contract terms. Ignored local research
+sources are outside the public-baseline link graph.
 
 ---
 
@@ -35,4 +37,4 @@ delimiters, numeric and timed equation numbering, and legacy/parallel filenames.
 python scripts/check_repo_baseline.py
 ```
 
-它还验证全部双语受控文档使用统一 H1 边界，并对中英文 H2/H3、数学块、公式标签和代码围栏执行结构对等检查。结构门禁不能证明翻译语义正确，语义对等仍必须记录在逐文件人工评审清单中。
+它还验证全部双语受控文档使用统一 H1 边界，并对中英文 H2/H3、数学块、公式标签和代码围栏执行结构对等检查，同时检查方法论目录迁移以及架构/追踪契约的关键字段。本地忽略的研究素材不进入公开基线链接图。结构门禁不能证明翻译语义正确，语义对等仍必须记录在逐文件人工评审清单中。

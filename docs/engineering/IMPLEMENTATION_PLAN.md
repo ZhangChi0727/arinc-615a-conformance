@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | **Plan ID** | EIP-2026-001 |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Status** | Approved for staged implementation |
 | **Methodology baseline** | RB-2026-001-v4.2 |
 
@@ -75,6 +75,10 @@ Case catalog -> selector -> runner -> protocol peer/IUT
 - reset and isolation are explicit case operations;
 - base and extended VCS results are separable;
 - raw evidence is append-only; transformations create derived artifacts;
+- method inputs are imported through versioned schemas and semantic contracts;
+  internal Python APIs are not research or tutorial interfaces;
+- exported evidence manifests carry the upstream artifact versions and stable
+  IDs required by research, publication, and executable tutorials;
 - stochastic tools record seeds and repeated-seed results;
 - proprietary standard text never enters public fixtures.
 
@@ -133,7 +137,7 @@ evidence-manifest violations once those validators exist.
 
 ## 横向工程要求
 
-每次执行记录完整版本链；四类判定端到端分离；oracle 可独立测试；时间来自声明的单调源；时间戳源、分辨率、位置和误差预算属于证据；只有完整观测区间包含于允许区间时才可判时序 PASS；仪器无效必须判 ERROR；原始证据只追加，派生产物保留全部输入和脚本版本。
+每次执行记录完整版本链；四类判定端到端分离；oracle 可独立测试；时间来自声明的单调源；时间戳源、分辨率、位置和误差预算属于证据；只有完整观测区间包含于允许区间时才可判时序 PASS；仪器无效必须判 ERROR；原始证据只追加，派生产物保留全部输入和脚本版本。方法输入只通过版本化 schema 和语义契约导入，Python 内部 API 不是研究或教程接口；导出的证据清单必须携带研究、出版和可执行教程所需的上游版本与稳定 ID。
 
 ## 质量策略
 

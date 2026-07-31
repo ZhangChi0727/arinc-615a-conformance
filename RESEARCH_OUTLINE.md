@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| **Version** | 2.1 |
+| **Version** | 2.2 |
 | **Status** | Aligned with RB-2026-001-v4.2 |
 | **Detailed research plan** | [`docs/research/RESEARCH_PLAN.md`](docs/research/RESEARCH_PLAN.md) |
 
@@ -57,7 +57,9 @@ These are research propositions until supported by the claim/evidence matrix.
 2. draft experiment protocol before collecting confirmatory evidence;
 3. write instrument details against released engineering versions;
 4. generate results from controlled datasets and scripts;
-5. write discussion and conclusion only after claim/evidence review.
+5. record the baseline, experiment, evidence-manifest, analysis, and gate IDs
+   for every reported result;
+6. write discussion and conclusion only after claim/evidence review.
 
 Implementation completion is not a publication result by itself, and a PASS
 suite is not an unrestricted conformance proof.
@@ -86,4 +88,4 @@ suite is not an unrestricted conformance proof.
 
 ## 写作顺序
 
-必须先冻结引言边界和方法、再在收集验证性证据前完成实验协议、随后依据受控工程版本和数据生成结果，最后经主张—证据评审撰写讨论和结论。实现完成或测试 PASS 本身不是论文结果或无限定符合性证明。
+必须先冻结引言边界和方法、再在收集验证性证据前完成实验协议、随后依据受控工程版本和数据生成结果；每项报告结果必须记录基线、实验、证据清单、分析和门禁 ID，最后经主张—证据评审撰写讨论和结论。实现完成或测试 PASS 本身不是论文结果或无限定符合性证明。

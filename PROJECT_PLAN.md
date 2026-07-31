@@ -3,7 +3,7 @@
 | Field | Value |
 |---|---|
 | **Plan ID** | IPP-2026-001 |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Status** | Active |
 | **Baseline** | RB-2026-001-v4.2 |
 | **Planning horizon** | Baseline freeze through second-protocol replication |
@@ -25,21 +25,24 @@ The program succeeds when:
 4. the instrument produces reproducible, provenance-complete timestamped evidence;
 5. held-out discrete and timing faults provide an honest measure of bounded detection adequacy;
 6. probabilistic or diagnostic claims are released only after their gates pass;
-7. scientific results and engineering releases use the same versioned artifacts;
-8. transferability wording matches the presence or absence of replication.
+7. scientific results, engineering releases, publications, and tutorials cite
+   their upstream artifact IDs and applicable gate records;
+8. cross-workstream dependencies use the controlled contracts in `TRACKS.md`
+   rather than implementation internals or implicit “latest” state;
+9. transferability wording matches the presence or absence of replication.
 
 ## 3. Workstreams
 
 | Workstream | Owner role | Canonical plan | Primary outputs |
 |---|---|---|---|
 | W0 Governance | Project/research lead | `docs/BASELINE.md`, `docs/management/` | baseline, decisions, risks, gates |
-| W1 Requirements | Requirements researchers | `docs/research/RESEARCH_PLAN.md` | applicability, CRS, obligation model |
-| W2 Modeling and VCS | Method/test researchers | research + architecture docs | clock-augmented EFSM, timed traces, TPs, VCs, robust oracles |
+| W1 Requirements | Requirements researchers | `docs/requirements/`, `docs/research/RESEARCH_PLAN.md` | applicability, CRS, obligation model |
+| W2 Methodology and modeling | Method researchers | `docs/methodology/`, `docs/research/`, `docs/architecture.md` | formal semantics, clock-augmented EFSM, trace relations, TPs, VCs, robust oracles |
 | W3 Instrument | Engineering lead | `docs/engineering/IMPLEMENTATION_PLAN.md` | simulator, engine, evidence writer |
 | W4 Experiments | Experiment/statistics lead | `docs/research/EXPERIMENT_PLAN.md` | registrations, raw/derived evidence |
 | W5 Analysis | Research team | report §§6–8 | discrete/timed coverage, mutation, dependence, calibration, diagnosis |
-| W6 Publication | Research lead | `RESEARCH_OUTLINE.md`, `thesis/` | papers, thesis, replication report |
-| W7 Tutorial | Technical educator | `tutorial/`, `docs/study/` | reproducible learning/runbooks |
+| W6 Publication | Research lead | `RESEARCH_OUTLINE.md`, `thesis/` | papers, thesis, replication report tied to reviewed claims |
+| W7 Tutorial | Technical educator | `tutorial/common/`, `tutorial/arinc615a/` | version-pinned teaching, exercises, and runbooks |
 
 Roles may be held by the same person, but independent review is required where
 the baseline specifies it.
@@ -119,6 +122,9 @@ A work item is done only when:
 - External peer or hardware access improves external validity but does not
   replace controlled loopback, oracle, and provenance checks.
 - P7 needs a separately selected and resourced second protocol.
+- Workstreams may share identifiers and evidence only through the contracts in
+  `TRACKS.md`; research and tutorials must not import mutable implementation
+  internals, and engineering must not promote scientific claims.
 
 ---
 
@@ -130,17 +136,18 @@ A work item is done only when:
 
 ## 2. 成功准则
 
-项目成功要求：适用 CRS 和观测边界受控；所有义务可追踪至已评审 VC；每条时序义务具备触发/响应语义、时钟模型、边界分区和误差预算；工具产生来源完整的带时戳证据；留出离散/时序故障诚实评价有限检测能力；概率、诊断和可迁移性措辞只能由相应门禁晋级。
+项目成功要求：适用 CRS 和观测边界受控；所有义务可追踪至已评审 VC；每条时序义务具备触发/响应语义、时钟模型、边界分区和误差预算；工具产生来源完整的带时戳证据；留出离散/时序故障诚实评价有限检测能力；概率、诊断和可迁移性措辞只能由相应门禁晋级；科学结果、工程发布、论文和教程均引用其上游产物 ID 与适用门禁记录，并且跨工作流依赖只通过 `TRACKS.md` 定义的受控契约发生。
 
 ## 3. 工作流
 
 - W0 治理：基线、变更、风险和门禁；
 - W1 需求：适用性、CRS 和义务模型；
-- W2 模型/VCS：带时钟 EFSM、时戳迹、TP、VC 和稳健 oracle；
+- W2 方法论/模型：形式语义、带时钟 EFSM、迹关系、TP、VC 和稳健 oracle；
 - W3 工具：运行器、时钟、误差预算、证据写入；
 - W4 实验：注册、原始/派生证据；
 - W5 分析：离散/时序覆盖、变异、依赖、校准和诊断；
-- W6/W7：论文、复现和教程。
+- W6 出版：与已评审主张绑定的论文、学位论文和复现报告；
+- W7 教程：分为通用验证教程和 ARINC 615A 实例教程，仅消费具名基线、工具发布和稳定示例。
 
 ## 4. 综合路线
 
@@ -170,4 +177,4 @@ A work item is done only when:
 
 ## 8. 依赖与约束
 
-P1–P2 依赖受控 ARINC 615A 材料；公开产物不得泄露专有条款。T3 依赖代表性校准实例，可以合法地保持不可用。外部同行或硬件提高外部有效性，但不能替代受控 oracle 和来源检查；P7 需要单独选择并投入第二协议。
+P1–P2 依赖受控 ARINC 615A 材料；公开产物不得泄露专有条款。T3 依赖代表性校准实例，可以合法地保持不可用。外部同行或硬件提高外部有效性，但不能替代受控 oracle 和来源检查；P7 需要单独选择并投入第二协议。各工作流只能通过 `TRACKS.md` 定义的契约共享标识与证据；研究和教程不得导入可变实现内部结构，工程不得自行晋级科学主张。

@@ -180,6 +180,30 @@ DD-010 remains active.
 
 ---
 
+## DD-013 — Separate product domains through controlled, traceable contracts
+
+**Decision:** Treat methodology research/publication, engineering
+implementation, and verification tutorials as distinct product domains. Keep
+governance and controlled requirements as their shared contract layer. Move the
+authoritative report from `docs/study/` to `docs/methodology/`; separate common
+and ARINC 615A tutorial entry points; and require cross-domain dependencies to
+identify upstream artifact versions and applicable gate records. Publication
+and tutorials remain downstream. Evidence-driven feedback changes an upstream
+contract only through CR/DD and Review control.
+
+**Why:** Complete independence is neither possible nor useful: research needs
+engineering evidence, engineering implements method semantics, and tutorials
+explain both. Explicit direction and trace records reduce accidental coupling
+without breaking the integrated verification loop.
+
+**Date:** 2026-07-31
+
+**Status:** Proposed by CR-2026-002 as part of the v4.2 baseline PR; becomes
+active with DD-012 when the PR receives its required independent approvals and
+is merged.
+
+---
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -235,3 +259,9 @@ DD-012 提议用 v4.2 取代 v4.1 作为当前基线标识，同时保持 DD-010
 ### 中文
 
 本节是英文 DD-012 内嵌中文说明的对应结构；最终独立评审结论必须由评审者记录，作者不能自行把 Proposed 改为 Active。
+
+## DD-013——通过受控可追踪契约分离产品领域
+
+把方法论研究/出版、工程实现和验证教程视为不同产品领域，以治理和受控需求作为共享契约层。权威报告从 `docs/study/` 迁移至 `docs/methodology/`；通用教程和 ARINC 615A 教程使用不同入口；跨领域依赖必须标明上游产物版本和适用门禁记录。出版和教程保持下游地位；证据反馈只有通过 CR/DD 与评审控制才能修改上游契约。
+
+完全独立既不可能也无益：研究需要工程证据，工程实现方法语义，教程解释二者。明确依赖方向与追踪记录能够在不破坏综合验证闭环的情况下减少偶然耦合。本决定由 CR-2026-002 随 v4.2 基线 PR 提议，仅在完成必需独立批准并合并后与 DD-012 同时生效。

@@ -8,7 +8,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-REPORT = ROOT / "docs/study/RR-2026-001_test_analysis_conformance_methodology.md"
+METHODOLOGY_DIR = ROOT / "docs/methodology"
+REPORT = METHODOLOGY_DIR / "RR-2026-001_test_analysis_conformance_methodology.md"
 ZH_MARKER = "\n# 中文版\n"
 APPENDED_ZH_RE = re.compile(r"^# 中文版$", re.MULTILINE)
 
@@ -40,7 +41,12 @@ REQUIRED = [
     ROOT / "docs/management/CHANGE_CONTROL.md",
     ROOT / "docs/management/RISK_REGISTER.md",
     ROOT / "docs/management/changes/CR-2026-001.md",
-    ROOT / "docs/study/00_INDEX.md",
+    ROOT / "docs/management/changes/CR-2026-002.md",
+    METHODOLOGY_DIR / "00_INDEX.md",
+    ROOT / "thesis/README.md",
+    ROOT / "tutorial/README.md",
+    ROOT / "tutorial/common/README.md",
+    ROOT / "tutorial/arinc615a/README.md",
     ROOT / "scripts/README.md",
 ]
 
@@ -62,6 +68,25 @@ NUMERIC_TAG_RE = re.compile(r"\\tag\{(\d+)}")
 TIMED_TAG_RE = re.compile(r"\\tag\{(T\d+)}")
 FENCE_RE = re.compile(r"^```", re.MULTILINE)
 
+REQUIRED_ARCHITECTURE_TERMS = {
+    ROOT / "TRACKS.md": {
+        "Boundary contracts",
+        "evidence_manifest_id",
+        "gate_record_id",
+        "tutorial/common/",
+        "tutorial/arinc615a/",
+    },
+    ROOT / "docs/architecture.md": {
+        "Domain boundaries and traceable dependencies",
+        "This controlled feedback is not a direct reverse dependency.",
+    },
+    ROOT / "tutorial/README.md": {
+        "explains_baseline",
+        "explains_tool_release",
+        "normative: false",
+    },
+}
+
 
 def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
@@ -82,7 +107,7 @@ def document_shape(text: str) -> tuple[int, int, int, int, list[str], list[str],
 def local_link_errors() -> list[str]:
     errors: list[str] = []
     for source in ROOT.rglob("*.md"):
-        if ".git" in source.parts:
+        if ".git" in source.parts or "local-references" in source.parts:
             continue
         text = read(source)
         for match in LINK_RE.finditer(text):
@@ -167,15 +192,33 @@ def main() -> int:
             errors.append(f"methodology report is missing required v4.2 term: {term}")
 
     for legacy in LEGACY_FILENAMES:
-        if (ROOT / "docs/study" / legacy).exists():
+        if (METHODOLOGY_DIR / legacy).exists():
             errors.append(f"legacy/parallel report filename still exists: {legacy}")
 
-    parallel_reports = list((ROOT / "docs/study").glob("RR-2026*_zh.md"))
+    parallel_reports = list(METHODOLOGY_DIR.glob("RR-2026*_zh.md"))
     for path in parallel_reports:
         errors.append(
             f"parallel Chinese report is prohibited; append it in the source file: "
             f"{path.relative_to(ROOT)}"
         )
+
+    legacy_study_dir = ROOT / "docs/study"
+    if legacy_study_dir.exists():
+        legacy_study_files = [path for path in legacy_study_dir.rglob("*") if path.is_file()]
+        for path in legacy_study_files:
+            errors.append(
+                f"legacy docs/study artifact still exists; use docs/methodology or "
+                f"tutorial/: {path.relative_to(ROOT)}"
+            )
+
+    for path, terms in REQUIRED_ARCHITECTURE_TERMS.items():
+        text = read(path)
+        for term in terms:
+            if term not in text:
+                errors.append(
+                    f"architecture contract term missing from "
+                    f"{path.relative_to(ROOT)}: {term}"
+                )
 
     errors.extend(local_link_errors())
 
