@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| **Version** | 2.0 |
+| **Version** | 2.1 |
 | **Status** | Baseline-controlled |
-| **Authority** | RB-2026-001-v4.1 |
+| **Authority** | RB-2026-001-v4.2 |
 
 ## Core verification terms
 
@@ -24,6 +24,11 @@
 | **Evidence** | Versioned raw or derived records supporting a named claim, including provenance and conditions. |
 | **Coverage** | Degree to which a named target set is addressed; not itself a conformance probability. |
 | **Conformance** | Agreement with the declared applicable requirements under the stated observation, environment, and claim scope. |
+| **Timed trace** | Ordered observable events paired with timestamps from a declared monotonic time basis. |
+| **Timing obligation** | Requirement-defined trigger, response, cancellation/supersession, correlation and pairing policy, concurrency/silence, endpoint inclusivity, units, and clock-reset semantics. |
+| **Measurement-error budget** | Versioned, environment-specific auditable bound whose sourced components distinguish resolution, accuracy/drift, timestamp insertion, scheduling, capture, processing, synchronization, independent error, and shared bias. |
+| **Robust timing oracle** | Interval-based rule: PASS only when the observation interval is contained in the allowed interval; FAIL only when disjoint; overlap is INCONCLUSIVE. |
+| **Run-order dependence** | Drift, clustering, warm-up, shared state, or another effect that makes repeated executions dependent. |
 
 ## Verification activities
 
@@ -57,7 +62,7 @@
 |---|---|
 | **DLS** | Data Loader System: loader-side ARINC 615A peer. |
 | **THW** | Target Hardware: target-side ARINC 615A peer. |
-| **EFSM** | Extended Finite State Machine containing control states, variables, guards, actions, inputs, and outputs. |
+| **Clock-augmented EFSM** | EFSM extended with clocks, clock guards, state invariants, and clock resets for deterministic timed conformance. |
 | **PICS-like declaration** | Project applicability artifact analogous in purpose to a Protocol Implementation Conformance Statement. |
 
 ## Usage rules
@@ -71,3 +76,33 @@
   validated stochastic kernel.
 - HMM is a candidate temporal diagnostic model, not a baseline synonym for the
   protocol model.
+- Do not call a point timestamp an exact timing result when a nonzero
+  measurement-error budget applies.
+
+---
+
+# 中文版
+
+核心术语：`conformance` 译为“符合性”，`verification` 译为“验证”，`validation` 译为“确认/有效性确认”，三者不得混用；`verdict` 译为“判定结果”，`INCONCLUSIVE` 译为“无法判定”，`ERROR` 表示执行/工具错误。IUT 是固定实现及配置；适用性声明确定角色、服务、选项和排除项；观测边界限定可用于判定的报文、时序、状态、日志和环境现象；CRS 是带受控来源和解释的原子适用需求；TP 描述待验证义务；VC 是可执行的前置条件、刺激、oracle、追踪、目标、重置、时序/误差 schema 和证据 schema；VCS 是受控 VC 集。
+
+## 核心验证术语
+
+IUT、适用性声明、观测边界、CRS、TP、VC 和 VCS 采用上述受控含义；“覆盖”必须指明需求、义务、状态、转移、守卫、数据分区或时序分区对象。
+
+## 验证活动
+
+Test 通过受控执行产生观察，Analysis 评价覆盖、充分性、不确定性和诊断，Review 对工作产品进行技术判断，Inspection 按准则检查静态产物，Demonstration 仅说明操作表现，不能替代 Test 或 Analysis。
+
+## 保证与定量术语
+
+时序术语：**时戳迹**是采用声明单调时间基准的事件—时间戳序列；**时序义务**必须定义触发、响应、取消/替代、关联与配对、并发/静默、端点包含性、单位和时钟复位；**测量误差预算**是版本化且限定适用环境的可审计误差界，其有来源的分量必须区分分辨率、精度/漂移、时间戳插入、调度、捕获、处理、同步、独立误差和公共偏差；**稳健时序 oracle**仅在观测区间完全包含于允许区间时判 PASS，二者不相交时判 FAIL，部分重叠时判 INCONCLUSIVE；无效时间链判 ERROR；**运行顺序依赖**包括漂移、聚类、预热和共享状态。
+
+T0–T3 分别表示追踪完备、命名有效执行中的观测符合性、声明有限故障域内的有界检测充分性和经校准的概率解释；不得把变异分数、重复 PASS 率或后验概率互相替代，也不得把“有界检测充分性”增强为“完整检测能力”。
+
+## 协议角色
+
+ARINC 615A 实例必须显式声明目标 IUT 角色、对端角色、DOWNLOAD/UPLOAD 等服务以及适用选项；角色名不能代替能力声明。
+
+## 使用规则
+
+带时钟 EFSM 是加入时钟、时钟守卫、状态不变量和时钟复位的 EFSM，用于确定性时序符合性。它不是 DTMC，也不是 HMM。HMM 只有在隐状态确实随物理时间演化且数据、可识别性和比较性能充分时才是可选诊断模型。

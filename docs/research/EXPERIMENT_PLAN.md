@@ -3,9 +3,9 @@
 | Field | Value |
 |---|---|
 | **Plan ID** | EXP-PLAN-2026-001 |
-| **Version** | 1.0 |
+| **Version** | 1.1 |
 | **Status** | Baseline protocol; individual experiments require registration |
-| **Governing report** | RR-2026-001 v4.1 §§8–12 |
+| **Governing report** | RR-2026-001 v4.2 §§8–12 |
 
 ## Experiment registry
 
@@ -38,6 +38,8 @@ in `registration.yaml`.
 - primary and secondary outcomes;
 - sample-size or stopping rationale;
 - randomization, reset, isolation, and seed policy;
+- time source, timestamp locations, resolution, trigger/response pairing,
+  clock-reset semantics, and timing-error budget where timing is observed;
 - planned statistical model and uncertainty interval;
 - deviation handling and applicable gates.
 
@@ -51,12 +53,13 @@ changes. Do not use agreement alone as evidence of semantic correctness.
 
 ### EXP-002 — Coverage and derivation comparison
 
-Compare B0–B3 from RR-2026-001:
+Compare the following baselines from RR-2026-001:
 
 - B0 existing engineering/ICD set;
 - B1 traceability only;
-- B2 requirement plus EFSM obligation coverage;
-- B3 B2 refined using development mutants.
+- B2-U requirement plus untimed EFSM obligation coverage;
+- B2-T B2-U plus clock-augmented EFSM, timing partitions, and robust timing oracle;
+- B3 B2-T refined using development mutants.
 
 Primary outcomes are obligation coverage and held-out detection. Report VCS
 size, derivation effort, execution time, review findings, and rework.
@@ -68,21 +71,33 @@ development and held-out instances separate, and report every survivor.
 The evaluation population is \(\mathcal M_{\mathrm{eval}}\); no result is
 generalized beyond it without a separately justified sampling model.
 
-### EXP-004 — Operational repeatability
+### EXP-004 — Deterministic timed conformance
+
+For each selected timing obligation, register trigger/response/cancellation and
+silence semantics, \(L_r,U_r\), units, time source, timestamp chain, clock
+resets, and an auditable error budget. Exercise early, nominal, boundary, late,
+and no-response partitions as applicable. Compare B2-U with B2-T, evaluate
+robust versus naive point-threshold verdicts against controlled timing truth,
+and evaluate held-out timing faults. Report every timing
+PASS/FAIL/INCONCLUSIVE/ERROR and preserve the observation interval and boundary
+margin.
+
+### EXP-005 — Operational repeatability
 
 For selected obligations, execute valid repeated runs under a declared regime.
 Report \(c_j/n_j\), exact intervals, INCONCLUSIVE/ERROR counts, order effects,
-clustering checks, and reset integrity. This study estimates operational PASS
-probability, not conformance belief.
+clustering checks, drift, clock metadata, and reset integrity. For timing
+obligations, define success only through the robust timing oracle. This study
+estimates operational PASS probability, not conformance belief.
 
-### EXP-005 — Calibration and probabilistic interpretation
+### EXP-006 — Calibration and probabilistic interpretation
 
 Use independently adjudicated conforming and held-out nonconforming instances
 to estimate true-PASS and false-PASS rates. Propagate parameter uncertainty and
 evaluate prior sensitivity. If calibration is unrepresentative or too small,
 stop at T2.
 
-### EXP-006 — Failure diagnosis
+### EXP-007 — Failure diagnosis
 
 Evaluate simple interpretable baselines before temporal models. Split by fault
 instance, report macro metrics and abstention, and prohibit HMM use unless the
@@ -106,3 +121,68 @@ An experiment result may enter a thesis, paper, or release claim only when:
 3. applicable RG5/G4/G5/G6 records are approved;
 4. wording matches the achieved assurance tier;
 5. negative and inconclusive results remain visible.
+
+---
+
+# 中文版
+
+## 实验登记册
+
+登记册列出 EXP-001 至 EXP-007 的负责人、状态、RQ、基线、主要结局和门禁，并保存被取消或得到否定结果的实验。
+
+```text
+artifacts/experiments/EXP-YYYY-NNN/
+  registration.yaml
+  environment.json
+  cases.json
+  raw/
+  derived/
+  scripts/
+  results.md
+  deviations.md
+  review/
+```
+
+大型或保密原始数据可以存放在 Git 之外，但 registration 必须保存不可变标识、校验和、访问分类和保留位置。
+
+## 必需注册字段
+
+每项实验都要记录 ID、负责人、日期、假设/RQ、基线/CRS/模型/VCS/IUT/工具/环境版本、实验与抽样单位、纳入排除规则、开发/留出划分、主要结局、停止理由、随机化/重置/隔离/种子、统计模型、偏差和门禁。观察时序时还必须记录时间源、时间戳位置和分辨率、触发/响应配对、时钟复位及误差预算。
+
+## 核心研究
+
+### EXP-001——需求提取可复现性
+
+- EXP-001：双人独立需求提取、分歧和裁决；
+
+### EXP-002——覆盖与导出比较
+
+- EXP-002：比较 B0、B1、B2-U、B2-T 和 B3 的义务覆盖、规模、工时和留出检测；
+
+### EXP-003——有限故障域充分性
+
+- EXP-003：预注册有限故障域，分离开发/留出实例并报告全部存活体；
+
+### EXP-004——确定性时序符合性
+
+- EXP-004：确定性时序符合性。注册触发/响应/取消/静默语义和 \([L_r,U_r]\)，覆盖过早、标称、边界、过晚及无响应，比较稳健 oracle 与朴素点阈值，并使用留出时序故障；
+
+### EXP-005——运行重复性
+
+- EXP-005：运行重复性。报告区间、顺序、聚类、漂移、时钟元数据和重置完整性；
+
+### EXP-006——校准与概率解释
+
+- EXP-006：仅用独立符合/不符合实例进行校准；不足时停留在 T2；
+
+### EXP-007——故障诊断
+
+- EXP-007：先评价简单可解释诊断基线，只有满足物理状态含义、可识别性、数据量和性能条件时才使用 HMM。
+
+## 分析控制
+
+预注册主要指标和方向；开发/留出分离；报告排除、无效/等价故障和全部否定结果；时序分析检查顺序、批次、聚类和漂移；多重比较和类别不平衡必须显式处理。
+
+## 实验发布门
+
+只有注册和偏差完整、原始到派生证据可复现、适用门禁获批、措辞与层级一致且负向/不确定结果仍可见时，实验结果才能进入论文或发布主张。
