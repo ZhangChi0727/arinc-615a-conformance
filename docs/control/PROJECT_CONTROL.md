@@ -4,8 +4,8 @@
 |---|---|
 | **Plan ID** | IPP-2026-001 |
 | **Version** | 1.3 |
-| **Status** | Approved by GR-PR7-RB-2026-001-v4.2.1; effective on merge of PR #7 |
-| **Baseline** | RB-2026-001-v4.2.1 approved pending merge; method semantics inherited unchanged from v4.2 |
+| **Status** | Active under effective and frozen RB-2026-001-v4.2.1 |
+| **Baseline** | RB-2026-001-v4.2.1; method semantics inherited unchanged from v4.2 |
 | **Planning horizon** | Baseline freeze through second-protocol replication |
 
 ## 1. Mission
@@ -70,10 +70,9 @@ allowed only when it does not pre-empt an unresolved upstream gate.
 
 - retain RB-2026-001-v4.2 and its PR #6 release provenance as the frozen
   methodological predecessor;
-- independently review CR-2026-003, DD-014, relocation completeness, reader
-  reporting, bilingual parity, and validator coverage for v4.2.1;
-- merge PR #7 only after its gate findings close and final-head CI passes;
-- capture the merge/release commit and optional recommended tag after merge;
+- retain the completed CR-2026-003, DD-014, relocation, reader-report,
+  bilingual-parity, and validator review trace for v4.2.1;
+- use `BRR-RB-2026-001-v4.2.1` to identify the PR #7 release commit and tag;
 - do not relabel v4.1/v4.2 evidence merely because repository paths changed.
 
 ### First research increment
@@ -196,9 +195,9 @@ are easier to read.
 
 ### 基线发布
 
-RB-2026-001-v4.2 及 PR #6 发布来源作为冻结方法论前序保留；独立评审
-CR-2026-003、DD-014、v4.2.1 迁移完整性、读者报告、双语对等及校验器覆盖；只有发现关闭且
-最终 head CI 通过后才合并 PR #7；合并后捕获合并/发布提交及可选推荐标签；不得仅因仓库路径变化而重标
+RB-2026-001-v4.2 及 PR #6 发布来源作为冻结方法论前序保留；保留已完成的 CR-2026-003、
+DD-014、v4.2.1 迁移、读者报告、双语对等及校验器评审轨迹；通过
+`BRR-RB-2026-001-v4.2.1` 标识 PR #7 发布提交与标签；不得仅因仓库路径变化而重标
 v4.1/v4.2 证据。
 
 ### 第一研究增量

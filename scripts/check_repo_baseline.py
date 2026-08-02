@@ -1,4 +1,4 @@
-"""Validate the RB-2026-001-v4.2.1 information-architecture candidate."""
+"""Validate the effective RB-2026-001-v4.2.1 repository baseline."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 METHODOLOGY_DIR = ROOT / "docs/research/methodology"
 REPORT = METHODOLOGY_DIR / "RR-2026-001_test_analysis_conformance_methodology.md"
 BASELINE = ROOT / "docs/control/baselines/RB-2026-001-v4.2.1.md"
+RELEASE_RECORD = ROOT / "docs/control/baselines/BRR-RB-2026-001-v4.2.1.md"
 CURRENT_REPORT_DIR = ROOT / "artifacts/reports/current"
 READER_REPORT = CURRENT_REPORT_DIR / "RPT-2026-002_information_architecture_v4.2.1.md"
 PR7_GATE = ROOT / "docs/control/gates/GR-PR7-RB-2026-001-v4.2.1.md"
@@ -25,6 +26,7 @@ REQUIRED = [
     ROOT / "docs/control/baselines/RB-2026-001-v4.2.md",
     ROOT / "docs/control/baselines/BRR-RB-2026-001-v4.2.md",
     BASELINE,
+    RELEASE_RECORD,
     ROOT / "docs/control/contracts/ARCHITECTURE.md",
     ROOT / "docs/control/contracts/DOMAIN_BOUNDARIES.md",
     ROOT / "docs/control/contracts/TERMINOLOGY.md",
@@ -359,7 +361,7 @@ def main() -> int:
         return 1
 
     print(
-        "RB-2026-001-v4.2.1 candidate validation passed: "
+        "RB-2026-001-v4.2.1 validation passed: "
         f"per-language H2={en_shape[0]}, H3={en_shape[1]}, "
         f"math_blocks={en_shape[2]}, equation_tags=1..14,T1..T5, "
         f"bilingual_docs={len(BILINGUAL)}"
