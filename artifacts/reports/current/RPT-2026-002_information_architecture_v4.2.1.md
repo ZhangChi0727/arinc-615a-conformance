@@ -5,10 +5,10 @@
 | Audience | readers, reviewers, engineering and research stakeholders |
 | Update | repository information architecture and reporting system |
 | Method basis | RR-2026-001 v4.2, unchanged |
-| Candidate package | RB-2026-001-v4.2.1 |
-| Status | Approved by GR-PR7-RB-2026-001-v4.2.1; current on merge of PR #7 |
+| Current package | RB-2026-001-v4.2.1 |
+| Status | Effective and frozen; released by PR #7 |
 
-Controlled sources: [candidate baseline](../../../docs/control/baselines/RB-2026-001-v4.2.1.md),
+Controlled sources: [current baseline](../../../docs/control/baselines/RB-2026-001-v4.2.1.md),
 [change request](../../../docs/control/changes/CR-2026-003.md),
 [project control](../../../docs/control/PROJECT_CONTROL.md), and
 [v4.2 release record](../../../docs/control/baselines/BRR-RB-2026-001-v4.2.md).
@@ -55,8 +55,8 @@ The new arrangement does not claim empirical conformance, mutation adequacy,
 diagnostic performance, or calibrated probability. Those claims remain
 unearned until their named experiments and gates pass. GR-PR7-RB-2026-001-v4.2.1
 confirmed complete relocation, link integrity, bilingual parity, validator
-coverage, and absence of semantic methodology change. The package remains
-non-effective and non-frozen until PR #7 is merged.
+coverage, and absence of semantic methodology change. The package became
+effective and frozen when PR #7 was merged.
 
 ---
 
@@ -67,10 +67,10 @@ non-effective and non-frozen until PR #7 is merged.
 | 读者 | 读者、评审者、工程及研究相关方 |
 | 更新 | 仓库信息架构与报告体系 |
 | 方法基础 | RR-2026-001 v4.2，未修改 |
-| 候选包 | RB-2026-001-v4.2.1 |
-| 状态 | 已由 GR-PR7-RB-2026-001-v4.2.1 批准；PR #7 合并时成为当前发布 |
+| 当前包 | RB-2026-001-v4.2.1 |
+| 状态 | 已生效并冻结；由 PR #7 发布 |
 
-受控来源：[候选基线](../../../docs/control/baselines/RB-2026-001-v4.2.1.md)、
+受控来源：[当前基线](../../../docs/control/baselines/RB-2026-001-v4.2.1.md)、
 [变更请求](../../../docs/control/changes/CR-2026-003.md)、
 [项目控制](../../../docs/control/PROJECT_CONTROL.md)和
 [v4.2 发布记录](../../../docs/control/baselines/BRR-RB-2026-001-v4.2.md)。
@@ -106,4 +106,4 @@ G0–G7 证据门。权威数学报告仍为 RR-2026-001 v4.2。本次更新只�
 
 新结构不主张已经获得经验符合性、变异充分性、诊断性能或校准概率。这些主张在具名实验
 与门禁通过前仍未获得。GR-PR7-RB-2026-001-v4.2.1 已确认迁移完整、链接有效、中英文对等、
-校验器覆盖充分且方法论语义没有变化。在 PR #7 合并前，该包仍不生效、不冻结。
+校验器覆盖充分且方法论语义没有变化。该包已在 PR #7 合并时生效并冻结。

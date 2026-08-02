@@ -204,9 +204,8 @@ the merge of PR #6. Product domains are coupled only through controlled contract
 tutorials are non-normative, publication cannot modify methodology, and
 upstream-changing feedback enters through CR/DD and Review control.
 
-The locations established by this decision are reorganized by approved
-DD-014/CR-2026-003 when PR #7 is merged, without changing the dependency
-semantics.
+The locations established by this decision were reorganized by active
+DD-014/CR-2026-003 through PR #7, without changing the dependency semantics.
 
 ---
 
@@ -227,8 +226,8 @@ weakening traceability.
 
 **Date:** 2026-08-02
 
-**Status:** Approved by `GR-PR7-RB-2026-001-v4.2.1`; effective when PR #7 is
-merged. The review confirmed relocation completeness, link integrity,
+**Status:** Active. Approved by `GR-PR7-RB-2026-001-v4.2.1` and made effective
+by the merge of PR #7. The review confirmed relocation completeness, link integrity,
 bilingual parity, validator coverage, and no change to RR-2026-001 v4.2
 mathematical or methodological semantics.
 
@@ -294,7 +293,7 @@ DD-012 已由 `GR-PR6-RB-2026-001-v4.2` 批准，并已在 PR #6 合并时生效
 
 把方法论研究/出版、工程实现和验证教程视为不同产品领域，以治理和受控需求作为共享契约层。权威报告从 `docs/study/` 迁移至 `docs/methodology/`；通用教程和 ARINC 615A 教程使用不同入口；跨领域依赖必须标明上游产物版本和适用门禁记录。出版和教程保持下游地位；证据反馈只有通过 CR/DD 与评审控制才能修改上游契约。
 
-完全独立既不可能也无益：研究需要工程证据，工程实现方法语义，教程解释二者。明确依赖方向与追踪记录能够在不破坏综合验证闭环的情况下减少偶然耦合。本决定已由 `GR-PR6-RB-2026-001-v4.2` 批准，并已在 PR #6 合并时与 DD-012 同时生效。产品域通过受控契约耦合；教程不具规范性，出版不得反向修改方法论，改变上游契约的反馈必须通过 CR/DD 和评审控制进入。该决定建立的路径在 PR #7 合并时由已批准 DD-014/CR-2026-003 重组，但依赖语义不变。
+完全独立既不可能也无益：研究需要工程证据，工程实现方法语义，教程解释二者。明确依赖方向与追踪记录能够在不破坏综合验证闭环的情况下减少偶然耦合。本决定已由 `GR-PR6-RB-2026-001-v4.2` 批准，并已在 PR #6 合并时与 DD-012 同时生效。产品域通过受控契约耦合；教程不具规范性，出版不得反向修改方法论，改变上游契约的反馈必须通过 CR/DD 和评审控制进入。该决定建立的路径已由生效的 DD-014/CR-2026-003 经 PR #7 重组，但依赖语义不变。
 
 ## DD-014——分离读者发布面与开发者控制平面
 
@@ -305,5 +304,5 @@ DD-012 已由 `GR-PR6-RB-2026-001-v4.2` 批准，并已在 PR #6 合并时生效
 
 读者需要连贯的发布叙述，开发者则需要原子记录、所有权和审计历史。分离两个界面可以减少
 导航噪声，同时不压平保证论证或削弱追踪。本决定已由 `GR-PR7-RB-2026-001-v4.2.1`
-批准，并在 PR #7 合并时生效。独立评审已确认迁移完整、链接有效、中英文对等、校验器覆盖充分，且
+批准，并已随 PR #7 合并生效。独立评审已确认迁移完整、链接有效、中英文对等、校验器覆盖充分，且
 RR-2026-001 v4.2 的数学与方法论语义未改变。
