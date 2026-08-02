@@ -31,7 +31,7 @@ separate from confirmatory tables. Implementation completion or a PASS suite is
 not itself a publication result or unrestricted conformance proof.
 
 If manuscript work exposes a method defect, it opens a CR/DD; it does not edit
-the frozen meaning through publication prose.
+the controlled baseline meaning through publication prose.
 
 ---
 

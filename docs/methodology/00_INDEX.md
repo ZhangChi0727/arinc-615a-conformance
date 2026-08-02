@@ -1,15 +1,16 @@
 # Methodology Index
 
 This directory contains the authoritative Test-and-Analysis methodology and its
-formal semantics. The proposed v4.2 package remains in review and becomes
-frozen only after approval and merge. Research plans, engineering internals,
+formal semantics. The v4.2 package is approved by
+`GR-PR6-RB-2026-001-v4.2` and becomes frozen only after PR #6 is merged.
+Research plans, engineering internals,
 publication drafts, and tutorials are intentionally outside this directory.
 
 ## Controlled report
 
 | ID | Title | Language | Status |
 |---|---|---|---|
-| RR-2026-001 | [A Test-and-Analysis Methodology for ARINC 615A Conformance Verification / 面向 ARINC 615A 符合性验证的测试—分析方法论](RR-2026-001_test_analysis_conformance_methodology.md) | English + 中文 | v4.2 proposed bilingual methodology baseline; approval pending |
+| RR-2026-001 | [A Test-and-Analysis Methodology for ARINC 615A Conformance Verification / 面向 ARINC 615A 符合性验证的测试—分析方法论](RR-2026-001_test_analysis_conformance_methodology.md) | English + 中文 | v4.2 approved; effective/frozen on merge of PR #6 |
 
 Baseline declaration: [`../BASELINE.md`](../BASELINE.md)
 
@@ -35,13 +36,13 @@ change control.
 
 # 中文版
 
-本目录只承载权威测试—分析方法论及其形式语义。v4.2 提议包仍在评审中，只有批准并合并后才会冻结。研究计划、工程内部结构、出版草稿和教程均有意放在本目录之外。
+本目录只承载权威测试—分析方法论及其形式语义。v4.2 已由 `GR-PR6-RB-2026-001-v4.2` 批准，只有 PR #6 合并后才会生效并冻结。研究计划、工程内部结构、出版草稿和教程均有意放在本目录之外。
 
 ## 受控报告
 
 | ID | 标题 | 语言 | 状态 |
 |---|---|---|---|
-| RR-2026-001 | [面向 ARINC 615A 符合性验证的测试—分析方法论 / A Test-and-Analysis Methodology for ARINC 615A Conformance Verification](RR-2026-001_test_analysis_conformance_methodology.md) | English + 中文 | v4.2 提议双语方法论基线；等待批准 |
+| RR-2026-001 | [面向 ARINC 615A 符合性验证的测试—分析方法论 / A Test-and-Analysis Methodology for ARINC 615A Conformance Verification](RR-2026-001_test_analysis_conformance_methodology.md) | English + 中文 | v4.2 已批准；PR #6 合并后生效并冻结 |
 
 基线声明：[`../BASELINE.md`](../BASELINE.md)
 

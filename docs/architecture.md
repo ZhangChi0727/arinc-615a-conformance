@@ -49,7 +49,7 @@ and controlled requirements acting as a shared contract layer:
 | Domain | Authoritative inputs | Owned outputs | Required outward references |
 |---|---|---|---|
 | Methodology research and publication | baseline, applicability, CRS/source hashes, registered protocols | formal semantics, analyses, claim decisions, papers | baseline/report version, experiment/evidence IDs, gate records |
-| Engineering implementation | frozen method contracts, controlled schemas and cases | tool releases, executable VCs, immutable evidence manifests | baseline, model/VCS, tool/config/environment versions |
+| Engineering implementation | approved/effective method contracts, controlled schemas and cases | tool releases, executable VCs, immutable evidence manifests | baseline, model/VCS, tool/config/environment versions |
 | Verification tutorials | named method baseline; named tool release and examples when executable | common teaching modules and ARINC 615A walkthroughs | explained baseline, tool release if used, example/evidence IDs |
 
 Dependencies are directional. Engineering imports method contracts but not

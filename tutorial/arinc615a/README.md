@@ -5,7 +5,7 @@
 | **Tutorial type** | `arinc615a` |
 | **Status** | Planned architecture; executable lessons await controlled artifacts |
 | **Normative** | No |
-| **Explains baseline** | RB-2026-001-v4.2 proposed |
+| **Explains baseline** | RB-2026-001-v4.2 approved; effective on merge of PR #6 |
 | **Explains tool release** | Not assigned |
 
 ## Scope and prerequisites
@@ -48,7 +48,7 @@ claims, terminology, and examples are reconciled with these contracts.
 | **教程类型** | `arinc615a` |
 | **状态** | 架构已规划；可执行课程等待受控产物 |
 | **规范性** | 否 |
-| **解释基线** | RB-2026-001-v4.2 提议版 |
+| **解释基线** | RB-2026-001-v4.2 已批准；PR #6 合并后生效 |
 | **解释工具发布** | 尚未指定 |
 
 ## 范围与先修条件

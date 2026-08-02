@@ -3,8 +3,8 @@
 | Field | Value |
 |---|---|
 | **Baseline ID** | RB-2026-001-v4.2 |
-| **Proposed effective date** | 2026-07-30 |
-| **Status** | In Review — becomes the frozen methodology baseline after approval and merge |
+| **Approval date** | 2026-08-02 |
+| **Status** | Approved by GR-PR6-RB-2026-001-v4.2 — becomes effective and frozen when PR #6 is merged |
 | **Authoritative bilingual report** | [`methodology/RR-2026-001_test_analysis_conformance_methodology.md`](methodology/RR-2026-001_test_analysis_conformance_methodology.md) |
 
 ## Meaning of “frozen”
@@ -96,8 +96,8 @@ Historical documents remain evidence of project evolution; they are not normativ
 | 字段 | 内容 |
 |---|---|
 | **基线 ID** | RB-2026-001-v4.2 |
-| **拟生效日期** | 2026-07-30 |
-| **状态** | 评审中——批准并合并后成为冻结方法论基线 |
+| **批准日期** | 2026-08-02 |
+| **状态** | 已由 GR-PR6-RB-2026-001-v4.2 批准——PR #6 合并后生效并成为冻结方法论基线 |
 | **权威双语报告** | [`methodology/RR-2026-001_test_analysis_conformance_methodology.md`](methodology/RR-2026-001_test_analysis_conformance_methodology.md) |
 
 ## “冻结”的含义

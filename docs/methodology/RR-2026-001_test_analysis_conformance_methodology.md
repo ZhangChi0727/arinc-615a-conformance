@@ -8,7 +8,7 @@
 |---|---|
 | **Version** | 4.2 research baseline |
 | **Date** | 2026-07-30 |
-| **Status** | Proposed normative research baseline; becomes frozen after change approval; empirical claims remain conditional on §10 |
+| **Status** | Approved by GR-PR6-RB-2026-001-v4.2; becomes effective/frozen on merge of PR #6; empirical claims remain conditional on §10 |
 | **Primary instance** | ARINC 615A DOWNLOAD/UPLOAD services over TFTP |
 | **Classification** | Internal — Academic Research |
 | **Normative language** | The English section is authoritative; a synchronized Chinese translation is appended to this file |
@@ -1500,7 +1500,7 @@ https://doi.org/10.59161/JCGM106-2012
 |---|---|
 | **版本** | 4.2 研究基线 |
 | **日期** | 2026-07-30 |
-| **状态** | 拟议规范性研究基线；变更批准后冻结；经验性主张受 §10 证据门约束 |
+| **状态** | 已由 GR-PR6-RB-2026-001-v4.2 批准；PR #6 合并后生效并冻结；经验性主张受 §10 证据门约束 |
 | **主要实例** | 基于 TFTP 的 ARINC 615A DOWNLOAD/UPLOAD 服务 |
 | **密级** | 内部——学术研究 |
 | **规范语言** | 同一文件中的英文部分为权威版本；本部分为同步中文译本 |

@@ -170,9 +170,10 @@ declared and is not converted into a DTMC or HMM.
 
 **Date:** 2026-07-30
 
-**Status:** Proposed by CR-2026-001; becomes active when the v4.2 baseline PR is
-approved and merged. Supersedes DD-007 only as the current baseline identifier;
-DD-010 remains active.
+**Status:** Approved by `GR-PR6-RB-2026-001-v4.2`; effective when PR #6 is
+merged. At that time v4.2 supersedes v4.1 as the current methodology baseline
+identifier, while DD-010 remains active. v4.1 evidence is not automatically
+relabelled as v4.2 evidence.
 
 ### 中文
 
@@ -198,9 +199,10 @@ without breaking the integrated verification loop.
 
 **Date:** 2026-07-31
 
-**Status:** Proposed by CR-2026-002 as part of the v4.2 baseline PR; becomes
-active with DD-012 when the PR receives its required independent approvals and
-is merged.
+**Status:** Approved by `GR-PR6-RB-2026-001-v4.2`; effective when PR #6 is
+merged. Product domains are coupled only through controlled contracts;
+tutorials are non-normative, publication cannot modify methodology, and
+upstream-changing feedback enters through CR/DD and Review control.
 
 ---
 
@@ -254,14 +256,14 @@ Review 与 Inspection 控制静态产物和主张，而非被强行并入动态 
 
 ## DD-012——加入确定性时序符合性而不恢复随机协议语义
 
-DD-012 提议用 v4.2 取代 v4.1 作为当前基线标识，同时保持 DD-010 有效：加入确定性时序语义和误差感知 oracle，但不把协议图变成随机过程。该决定仅在本 PR 通过独立方法与主张评审并合并后生效。
+DD-012 已由 `GR-PR6-RB-2026-001-v4.2` 批准，并在 PR #6 合并时生效：届时 v4.2 取代 v4.1 作为当前方法论基线标识，同时保持 DD-010 有效；加入确定性时序语义和误差感知 oracle，但不把协议图变成随机过程。v4.1 证据不得自动改标为 v4.2 证据。
 
 ### 中文
 
-本节是英文 DD-012 内嵌中文说明的对应结构；最终独立评审结论必须由评审者记录，作者不能自行把 Proposed 改为 Active。
+本节是英文 DD-012 内嵌中文说明的对应结构；独立评审结论已记录，但合并前不得提前改为 Active。
 
 ## DD-013——通过受控可追踪契约分离产品领域
 
 把方法论研究/出版、工程实现和验证教程视为不同产品领域，以治理和受控需求作为共享契约层。权威报告从 `docs/study/` 迁移至 `docs/methodology/`；通用教程和 ARINC 615A 教程使用不同入口；跨领域依赖必须标明上游产物版本和适用门禁记录。出版和教程保持下游地位；证据反馈只有通过 CR/DD 与评审控制才能修改上游契约。
 
-完全独立既不可能也无益：研究需要工程证据，工程实现方法语义，教程解释二者。明确依赖方向与追踪记录能够在不破坏综合验证闭环的情况下减少偶然耦合。本决定由 CR-2026-002 随 v4.2 基线 PR 提议，仅在完成必需独立批准并合并后与 DD-012 同时生效。
+完全独立既不可能也无益：研究需要工程证据，工程实现方法语义，教程解释二者。明确依赖方向与追踪记录能够在不破坏综合验证闭环的情况下减少偶然耦合。本决定已由 `GR-PR6-RB-2026-001-v4.2` 批准，仅在 PR #6 合并后与 DD-012 同时生效。产品域通过受控契约耦合；教程不具规范性，出版不得反向修改方法论，改变上游契约的反馈必须通过 CR/DD 和评审控制进入。

@@ -5,7 +5,7 @@
 | **Tutorial type** | `common` |
 | **Status** | Planned architecture; lesson content not yet approved |
 | **Normative** | No |
-| **Wording baseline** | RB-2026-001-v4.2 proposed |
+| **Wording baseline** | RB-2026-001-v4.2 approved; effective on merge of PR #6 |
 
 ## Scope
 
@@ -44,7 +44,7 @@ stable lesson ID; duplicated prose is avoided.
 | **教程类型** | `common` |
 | **状态** | 架构已规划；课程内容尚未批准 |
 | **规范性** | 否 |
-| **措辞基线** | RB-2026-001-v4.2 提议版 |
+| **措辞基线** | RB-2026-001-v4.2 已批准；PR #6 合并后生效 |
 
 ## 范围
 

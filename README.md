@@ -4,8 +4,9 @@ Research and engineering repository for an auditable ARINC 615A conformance
 verification methodology and its dual-role experimental instrument.
 
 The repository is governed by methodology baseline
-[`RB-2026-001-v4.2`](docs/BASELINE.md), currently in review and frozen only
-after approval and merge. The baseline defines two complementary paths:
+[`RB-2026-001-v4.2`](docs/BASELINE.md), approved by
+`GR-PR6-RB-2026-001-v4.2` and frozen only after PR #6 is merged. The baseline
+defines two complementary paths:
 
 - **Test:** derive and execute requirement-based Verification Cases;
 - **Analysis:** evaluate traceability, discrete and timed coverage, bounded
@@ -18,7 +19,7 @@ paths.
 
 | Need | Document |
 |---|---|
-| Understand what is frozen | [`docs/BASELINE.md`](docs/BASELINE.md) |
+| Understand baseline status and authority | [`docs/BASELINE.md`](docs/BASELINE.md) |
 | Read the methodology | [Bilingual report: English + 中文](docs/methodology/RR-2026-001_test_analysis_conformance_methodology.md) |
 | See the integrated program | [`PROJECT_PLAN.md`](PROJECT_PLAN.md) |
 | Plan research and experiments | [`docs/research/RESEARCH_PLAN.md`](docs/research/RESEARCH_PLAN.md) |
@@ -53,7 +54,7 @@ tutorial/
 
 | Area | State |
 |---|---|
-| Methodology | v4.2 proposed with deterministic timed-conformance semantics; approval pending |
+| Methodology | v4.2 approved with deterministic timed-conformance semantics; effective/frozen on merge of PR #6 |
 | Empirical assurance | T0–T3 not yet earned; evidence work starts at RG0/RG1 |
 | Engineering | TFTP core skeleton and tests exist; 48 tests currently pass |
 | Repository governance | Program, research, implementation, experiment, risk, and change plans established |
@@ -81,7 +82,7 @@ pytest
 
 本仓库用于研究并实现可审计的 ARINC 615A 测试—分析符合性验证方法。当前受
 [`RB-2026-001-v4.2`](docs/BASELINE.md)
-治理；v4.2 仍在评审，只有批准并合并后才冻结：
+治理；v4.2 已由 `GR-PR6-RB-2026-001-v4.2` 批准，只有 PR #6 合并后才生效并冻结：
 
 - **测试路径：** 从适用需求导出并执行验证用例，产生离散判定、带时戳迹和测量证据；
 - **分析路径：** 评价追踪、离散/时序覆盖、有限故障检测、测量不确定性、运行依赖和诊断；
@@ -106,7 +107,7 @@ tutorial/arinc615a/     绑定版本的 ARINC 615A 实例教程
 
 ## 当前状态
 
-方法论 v4.2 已提出但尚待批准；T0–T3 经验保证尚未获得；当前工程骨架的 48 项测试通过；项目、研究、实施、实验、风险和变更计划已建立。
+方法论 v4.2 已批准、等待 PR #6 合并生效；T0–T3 经验保证尚未获得；当前工程骨架的 48 项测试通过；项目、研究、实施、实验、风险和变更计划已建立。
 
 ## 快速开始
 

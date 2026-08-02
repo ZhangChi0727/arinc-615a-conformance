@@ -1,11 +1,12 @@
 # Documentation Map
 
-This directory is organized by decision purpose. Start with the frozen
-[`BASELINE.md`](BASELINE.md), not with historical proposals.
+This directory is organized by decision purpose. Start with the lifecycle and
+authority declared in [`BASELINE.md`](BASELINE.md), not with historical
+proposals.
 
 | Area | Purpose | Canonical entry |
 |---|---|---|
-| **Baseline** | What is frozen and authoritative | [`BASELINE.md`](BASELINE.md) |
+| **Baseline** | What is approved/effective and authoritative | [`BASELINE.md`](BASELINE.md) |
 | **Methodology** | Formal Test-and-Analysis method, semantics, and controlled report | [`methodology/00_INDEX.md`](methodology/00_INDEX.md) |
 | **Research** | Questions, hypotheses, experiments, claims, evidence | [`research/RESEARCH_PLAN.md`](research/RESEARCH_PLAN.md) |
 | **Engineering** | Instrument and verification-pipeline implementation | [`engineering/IMPLEMENTATION_PLAN.md`](engineering/IMPLEMENTATION_PLAN.md) |

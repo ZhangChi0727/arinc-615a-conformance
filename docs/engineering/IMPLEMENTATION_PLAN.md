@@ -43,7 +43,7 @@ Case catalog -> selector -> runner -> protocol peer/IUT
 | TFTP core | Packets, options, retry, duplicate, timeout, rollover | `src/a615a_sim/tftp/` |
 | 615A session | DOWNLOAD/UPLOAD observable state machines | `src/a615a_sim/session/` |
 | Timing model | clocks, guards, invariants, resets, timing obligations | `src/a615a_sim/timing/` |
-| Minimal data artifacts | Only 665/664 constraints required by the frozen scope | `src/a615a_sim/lsap/` |
+| Minimal data artifacts | Only 665/664 constraints required by the controlled scope | `src/a615a_sim/lsap/` |
 | Role controller | DLS/THW mode without duplicating protocol logic | `src/a615a_sim/roles/` |
 | Verification engine | Selection, injection, robust discrete/timing oracle, verdict, reset, run control | `src/a615a_sim/engine/` |
 | Evidence writer | Immutable run manifest, traces, measurements, verdicts | `src/a615a_sim/evidence/` |
