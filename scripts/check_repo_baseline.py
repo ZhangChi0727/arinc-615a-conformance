@@ -105,6 +105,17 @@ REQUIRED_ARCHITECTURE_TERMS = {
     },
 }
 
+REQUIRED_BASELINE_LINKS = {
+    ROOT / "docs/control/baselines/RB-2026-001-v4.2.md": {
+        "[`docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md`](../../research/methodology/RR-2026-001_test_analysis_conformance_methodology.md)",
+        "[`docs/control/CHANGE_CONTROL.md`](../CHANGE_CONTROL.md)",
+    },
+    BASELINE: {
+        "[`docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md`](../../research/methodology/RR-2026-001_test_analysis_conformance_methodology.md)",
+        "[`docs/control/CHANGE_CONTROL.md`](../CHANGE_CONTROL.md)",
+    },
+}
+
 
 def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
@@ -136,10 +147,18 @@ def local_link_errors() -> list[str]:
             if not path_part:
                 continue
             target = (source.parent / path_part).resolve()
+            try:
+                relative_target = target.relative_to(ROOT)
+            except ValueError:
+                errors.append(
+                    f"{source.relative_to(ROOT)} -> {link} "
+                    f"(target escapes repository root: {target})"
+                )
+                continue
             if not target.exists():
                 errors.append(
                     f"{source.relative_to(ROOT)} -> {link} "
-                    f"(missing {target.relative_to(ROOT)})"
+                    f"(missing {relative_target})"
                 )
     return errors
 
@@ -259,6 +278,15 @@ def main() -> int:
                 errors.append(
                     f"architecture contract term missing from "
                     f"{path.relative_to(ROOT)}: {term}"
+                )
+
+    for path, links in REQUIRED_BASELINE_LINKS.items():
+        text = read(path)
+        for link in links:
+            if link not in text:
+                errors.append(
+                    f"canonical baseline link missing from {path.relative_to(ROOT)}: "
+                    f"{link}"
                 )
 
     manifest_text = read(ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md")

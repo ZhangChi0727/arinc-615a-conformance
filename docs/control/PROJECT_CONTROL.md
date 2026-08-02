@@ -68,12 +68,13 @@ allowed only when it does not pre-empt an unresolved upstream gate.
 
 ### Baseline release
 
-- review and approve `CR-2026-001` and the v4.2 baseline package;
-- merge the baseline PR only after the mathematical, bilingual, and governance
-  review gates pass;
-- create the recommended baseline tag after merge;
-- migrate downstream identifiers and re-evaluate timing claims instead of
-  relabeling v4.1 evidence.
+- retain RB-2026-001-v4.2 and its PR #6 release provenance as the frozen
+  methodological predecessor;
+- independently review CR-2026-003, DD-014, relocation completeness, reader
+  reporting, bilingual parity, and validator coverage for v4.2.1;
+- merge PR #7 only after its gate findings close and final-head CI passes;
+- capture the merge/release commit and optional recommended tag after merge;
+- do not relabel v4.1/v4.2 evidence merely because repository paths changed.
 
 ### First research increment
 
@@ -195,7 +196,10 @@ are easier to read.
 
 ### 基线发布
 
-评审并批准 CR-2026-001 和 v4.2 基线包；只有数学、双语和治理门禁均通过后才能合并；合并后建立基线标签；既有 v4.1 证据不得改标，时序主张必须迁移或重评。
+RB-2026-001-v4.2 及 PR #6 发布来源作为冻结方法论前序保留；独立评审
+CR-2026-003、DD-014、v4.2.1 迁移完整性、读者报告、双语对等及校验器覆盖；只有发现关闭且
+最终 head CI 通过后才合并 PR #7；合并后捕获合并/发布提交及可选推荐标签；不得仅因仓库路径变化而重标
+v4.1/v4.2 证据。
 
 ### 第一研究增量
 
