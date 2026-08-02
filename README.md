@@ -1,63 +1,63 @@
-# ARINC 615A Test-and-Analysis Conformance Verification
+# ARINC 615A Conformance Verification
 
-Research and engineering repository for an auditable ARINC 615A conformance
-verification methodology and its dual-role experimental instrument.
+This repository develops an auditable Test-and-Analysis methodology and a
+dual-role engineering instrument for scoped ARINC 615A conformance
+verification. Review and Inspection gates control the artifacts and claims
+produced by both paths.
 
-The repository is governed by methodology baseline
-[`RB-2026-001-v4.2`](docs/BASELINE.md), approved by
-`GR-PR6-RB-2026-001-v4.2` and frozen only after PR #6 is merged. The baseline
-defines two complementary paths:
+## Current reader release
 
-- **Test:** derive and execute requirement-based Verification Cases;
-- **Analysis:** evaluate traceability, discrete and timed coverage, bounded
-  fault detection, measurement uncertainty, repeated-run dependence, and diagnosis.
+The single reader-facing entry for this update is the bilingual
+[`RPT-2026-002 Information Architecture and Reporting Baseline`](artifacts/reports/current/RPT-2026-002_information_architecture_v4.2.1.md).
+It explains what is established, what remains unearned, and where the
+supporting controlled records reside.
 
-Review and Inspection gates control the artifacts and claims produced by both
-paths.
+The frozen mathematical and methodological content remains
+[`RR-2026-001 v4.2`](docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md).
+The proposed `RB-2026-001-v4.2.1` changes repository information architecture
+and reporting control only; it does not change equations, timed semantics,
+assurance tiers, or claim rules.
 
-## Start here
+## Developer control entry points
 
-| Need | Document |
-|---|---|
-| Understand baseline status and authority | [`docs/BASELINE.md`](docs/BASELINE.md) |
-| Read the methodology | [Bilingual report: English + 中文](docs/methodology/RR-2026-001_test_analysis_conformance_methodology.md) |
-| See the integrated program | [`PROJECT_PLAN.md`](PROJECT_PLAN.md) |
-| Plan research and experiments | [`docs/research/RESEARCH_PLAN.md`](docs/research/RESEARCH_PLAN.md) |
-| Implement the instrument | [`docs/engineering/IMPLEMENTATION_PLAN.md`](docs/engineering/IMPLEMENTATION_PLAN.md) |
-| Learn verification foundations | [`tutorial/common/README.md`](tutorial/common/README.md) |
-| Follow the ARINC 615A instance path | [`tutorial/arinc615a/README.md`](tutorial/arinc615a/README.md) |
-| Navigate all documents | [`docs/README.md`](docs/README.md) |
+| Product line | Control document | Responsibility |
+|---|---|---|
+| Project governance | [`PROJECT_CONTROL.md`](docs/control/PROJECT_CONTROL.md) | baselines, contracts, changes, gates, risks, releases, and reporting |
+| Methodology research and publication | [`RESEARCH_CONTROL.md`](docs/research/RESEARCH_CONTROL.md) | method, experiments, claims, and publication inputs |
+| Engineering instrument | [`ENGINEERING_CONTROL.md`](docs/engineering/ENGINEERING_CONTROL.md) | implementation increments, tests, schemas, and evidence production |
+| Verification tutorials | [`TUTORIAL_CONTROL.md`](docs/tutorial/TUTORIAL_CONTROL.md) | protocol-independent and ARINC 615A learning products |
+
+These four documents are navigation and control surfaces. Atomic records such
+as change requests, decisions, gate records, experiment protocols, evidence
+manifests, and increment assurance records remain separate and versioned.
 
 ## Repository structure
 
 ```text
-src/                    verification instrument
-tests/                  unit, contract, integration, and scenarios
-configs/                schemas, cases, and controlled examples
-artifacts/              local/generated experimental evidence
-docs/
-  methodology/          authoritative method and formal semantics
-  research/             research, experiment, and claim control
-  engineering/          implementation plan
-  requirements/         applicability, CRS, TP, VC, traceability
-  design/               clock-augmented EFSM, evidence, and software design
-  review/               gates, decisions, and review records
-  management/           change and risk control
-  proposal/             historical/proposed changes
-thesis/                 publication drafts, notes, and figures
-tutorial/
-  common/               protocol-independent verification foundations
-  arinc615a/            version-pinned ARINC 615A instance walkthroughs
+README.md                 only reader-facing document at repository root
+pyproject.toml             Python package/build/test metadata (machine-facing)
+.github/ and .gitignore    automation and repository configuration
+src/                       verification instrument source
+tests/                     executable engineering checks
+configs/                   controlled machine-readable inputs and templates
+scripts/                   maintenance and validation automation
+docs/                      developer control plane
+  control/                 project governance and shared contracts
+  research/                methodology, experiments, claims, publication inputs
+  engineering/             implementation control, design, increments
+  tutorial/                tutorial control and source plans
+artifacts/                 all reader-facing and generated deliverables
+  reports/current/         exactly one current reader update
+  reports/archive/         superseded reader reports
+  tutorials/               published tutorial outputs
+  releases/                distributable release packages
+  evidence/                generated evidence packages (normally not committed)
+local-references/          ignored local research inputs; never published
 ```
 
-## Current state
-
-| Area | State |
-|---|---|
-| Methodology | v4.2 approved with deterministic timed-conformance semantics; effective/frozen on merge of PR #6 |
-| Empirical assurance | T0–T3 not yet earned; evidence work starts at RG0/RG1 |
-| Engineering | TFTP core skeleton and tests exist; 48 tests currently pass |
-| Repository governance | Program, research, implementation, experiment, risk, and change plans established |
+`pyproject.toml` remains at the root because Python packaging, editable
+installation, test discovery, and development tools locate project metadata
+there by convention. It is executable configuration, not a reader report.
 
 ## Quick start
 
@@ -65,49 +65,69 @@ tutorial/
 python -m pip install -e ".[dev]"
 python -m a615a_sim.cli --help
 pytest
+python scripts/check_repo_baseline.py
 ```
 
-## Evidence and confidentiality
-
-- Do not commit proprietary ARINC or employer-only ICD text.
-- Use stable source references and hashes in public CRS artifacts.
-- Keep project-specific names and private notes under `docs/work/`.
-- Do not call a result “conformance proof,” “diagnostic coverage,” or a
-  “conformance probability” unless the relevant claim and gate requirements are
-  satisfied.
+Do not commit proprietary ARINC or employer-only ICD text. A passing test suite
+is engineering evidence, not by itself a conformance proof or a scientific
+result.
 
 ---
 
 # 中文版
 
-本仓库用于研究并实现可审计的 ARINC 615A 测试—分析符合性验证方法。当前受
-[`RB-2026-001-v4.2`](docs/BASELINE.md)
-治理；v4.2 已由 `GR-PR6-RB-2026-001-v4.2` 批准，只有 PR #6 合并后才生效并冻结：
+本仓库研究并实现一种可审计的 ARINC 615A 测试—分析符合性验证方法。测试与分析相互补充，
+评审与检查门控制二者产生的产物及可发布主张。
 
-- **测试路径：** 从适用需求导出并执行验证用例，产生离散判定、带时戳迹和测量证据；
-- **分析路径：** 评价追踪、离散/时序覆盖、有限故障检测、测量不确定性、运行依赖和诊断；
-- **评审与检查：** 控制需求、带时钟模型、oracle、时钟/误差预算、证据和发布主张。
+## 当前读者发布
 
-## 从这里开始
+本次更新唯一的面向读者入口是双语
+[`RPT-2026-002 信息架构与报告基线`](artifacts/reports/current/RPT-2026-002_information_architecture_v4.2.1.md)。
+它说明已经建立的内容、尚未获得的保证以及支撑性受控记录的位置。
 
-阅读顺序：先看[基线声明](docs/BASELINE.md)，再看[中英合并研究报告](docs/methodology/RR-2026-001_test_analysis_conformance_methodology.md)，随后按需进入[项目计划](PROJECT_PLAN.md)、[研究计划](docs/research/RESEARCH_PLAN.md)、[工程实施计划](docs/engineering/IMPLEMENTATION_PLAN.md)、[通用验证教程](tutorial/common/README.md)和[ARINC 615A 实例教程](tutorial/arinc615a/README.md)。
+冻结的数学与方法论内容仍为
+[`RR-2026-001 v4.2`](docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md)。
+候选 `RB-2026-001-v4.2.1` 只改变仓库信息架构和报告控制，不修改公式、时序语义、
+保证层级或主张规则。
+
+## 开发者控制入口
+
+| 产品支线 | 控制文档 | 职责 |
+|---|---|---|
+| 项目治理 | [`PROJECT_CONTROL.md`](docs/control/PROJECT_CONTROL.md) | 基线、契约、变更、门禁、风险、发布和报告 |
+| 方法论研究与出版 | [`RESEARCH_CONTROL.md`](docs/research/RESEARCH_CONTROL.md) | 方法、实验、主张和出版输入 |
+| 工程工具 | [`ENGINEERING_CONTROL.md`](docs/engineering/ENGINEERING_CONTROL.md) | 实现增量、测试、schema 和证据生产 |
+| 验证教程 | [`TUTORIAL_CONTROL.md`](docs/tutorial/TUTORIAL_CONTROL.md) | 通用及 ARINC 615A 学习产品 |
+
+这四份文档是导航和控制界面。变更请求、设计决策、门禁记录、实验方案、证据清单和增量
+保证记录等原子记录继续独立保存并受版本控制。
 
 ## 仓库结构
 
 ```text
-src/                    验证工具
-tests/                  单元、契约、集成和场景测试
-configs/                schema、用例和受控示例
-artifacts/              本地/生成的实验证据
-docs/                   方法论、研究、工程、需求、设计、评审和管理
-thesis/                 论文草稿、笔记和图表
-tutorial/common/        协议无关的验证基础
-tutorial/arinc615a/     绑定版本的 ARINC 615A 实例教程
+README.md                 根目录唯一面向读者的文档
+pyproject.toml             面向机器的 Python 包、构建和测试元数据
+.github/ 和 .gitignore     自动化与仓库配置
+src/                       验证工具源码
+tests/                     可执行工程检查
+configs/                   受控机器可读输入及模板
+scripts/                   维护与验证自动化
+docs/                      面向开发者的控制平面
+  control/                 项目治理及共享契约
+  research/                方法论、实验、主张和出版输入
+  engineering/             实现控制、设计和增量
+  tutorial/                教程控制及源计划
+artifacts/                 全部面向读者及生成的交付物
+  reports/current/         唯一当前读者更新
+  reports/archive/         已被替代的读者报告
+  tutorials/               已发布教程产物
+  releases/                可分发发布包
+  evidence/                生成证据包（通常不提交）
+local-references/          被忽略的本地研究输入，不发布
 ```
 
-## 当前状态
-
-方法论 v4.2 已批准、等待 PR #6 合并生效；T0–T3 经验保证尚未获得；当前工程骨架的 48 项测试通过；项目、研究、实施、实验、风险和变更计划已建立。
+`pyproject.toml` 留在根目录，是因为 Python 打包、可编辑安装、测试发现和开发工具按约定
+从项目根查找这些元数据。它是可执行配置，不是面向读者的报告。
 
 ## 快速开始
 
@@ -115,8 +135,8 @@ tutorial/arinc615a/     绑定版本的 ARINC 615A 实例教程
 python -m pip install -e ".[dev]"
 python -m a615a_sim.cli --help
 pytest
+python scripts/check_repo_baseline.py
 ```
 
-## 证据与保密
-
-公开仓库不得提交专有 ARINC 或雇主 ICD 原文。没有通过相应证据门时，不得使用“全面证明符合”“诊断覆盖率”或“符合性概率”等超范围措辞。
+不得提交专有 ARINC 或雇主内部 ICD 原文。测试套件通过属于工程证据，本身既不是符合性
+证明，也不是科学研究结果。

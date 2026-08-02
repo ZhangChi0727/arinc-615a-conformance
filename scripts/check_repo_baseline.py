@@ -1,4 +1,4 @@
-"""Validate repository documentation against RB-2026-001-v4.2."""
+"""Validate the RB-2026-001-v4.2.1 information-architecture candidate."""
 
 from __future__ import annotations
 
@@ -9,49 +9,60 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-METHODOLOGY_DIR = ROOT / "docs/methodology"
+METHODOLOGY_DIR = ROOT / "docs/research/methodology"
 REPORT = METHODOLOGY_DIR / "RR-2026-001_test_analysis_conformance_methodology.md"
+BASELINE = ROOT / "docs/control/baselines/RB-2026-001-v4.2.1.md"
+CURRENT_REPORT_DIR = ROOT / "artifacts/reports/current"
+READER_REPORT = CURRENT_REPORT_DIR / "RPT-2026-002_information_architecture_v4.2.1.md"
 ZH_MARKER = "\n# 中文版\n"
 APPENDED_ZH_RE = re.compile(r"^# 中文版$", re.MULTILINE)
 
 REQUIRED = [
     ROOT / "README.md",
-    ROOT / "PROJECT_PLAN.md",
-    ROOT / "RESEARCH_OUTLINE.md",
-    ROOT / "TRACKS.md",
-    ROOT / "docs/BASELINE.md",
-    ROOT / "docs/README.md",
-    ROOT / "docs/02_thesis_outline.md",
-    ROOT / "docs/architecture.md",
-    ROOT / "docs/terminology.md",
+    ROOT / "docs/control/PROJECT_CONTROL.md",
+    ROOT / "docs/control/CHANGE_CONTROL.md",
+    ROOT / "docs/control/baselines/RB-2026-001-v4.2.md",
+    ROOT / "docs/control/baselines/BRR-RB-2026-001-v4.2.md",
+    BASELINE,
+    ROOT / "docs/control/contracts/ARCHITECTURE.md",
+    ROOT / "docs/control/contracts/DOMAIN_BOUNDARIES.md",
+    ROOT / "docs/control/contracts/TERMINOLOGY.md",
+    ROOT / "docs/control/contracts/APPLICABILITY_TEMPLATE.md",
+    ROOT / "docs/control/contracts/CRS_SCHEMA.md",
+    ROOT / "docs/control/contracts/TRACEABILITY_SCHEMA.md",
+    ROOT / "docs/control/contracts/REQUIREMENTS_GUIDE.md",
+    ROOT / "docs/control/decisions/DESIGN_DECISIONS.md",
+    ROOT / "docs/control/gates/GATE_RECORD_TEMPLATE.md",
+    ROOT / "docs/control/gates/REVIEW_GUIDELINE.md",
+    ROOT / "docs/control/gates/PR6_BASELINE_REVIEW_CHECKLIST.md",
+    ROOT / "docs/control/gates/GR-PR6-RB-2026-001-v4.2.md",
+    ROOT / "docs/control/risks/RISK_REGISTER.md",
+    ROOT / "docs/control/changes/CR-2026-001.md",
+    ROOT / "docs/control/changes/CR-2026-002.md",
+    ROOT / "docs/control/changes/CR-2026-003.md",
     REPORT,
-    ROOT / "docs/research/RESEARCH_PLAN.md",
+    ROOT / "docs/research/RESEARCH_CONTROL.md",
     ROOT / "docs/research/EXPERIMENT_PLAN.md",
     ROOT / "docs/research/CLAIM_EVIDENCE_MATRIX.md",
-    ROOT / "docs/engineering/IMPLEMENTATION_PLAN.md",
-    ROOT / "docs/requirements/CRS_SCHEMA.md",
-    ROOT / "docs/requirements/README.md",
-    ROOT / "docs/requirements/TRACEABILITY_SCHEMA.md",
-    ROOT / "docs/requirements/APPLICABILITY_TEMPLATE.md",
-    ROOT / "docs/design/EVIDENCE_MANIFEST.md",
-    ROOT / "docs/design/README.md",
-    ROOT / "docs/review/REVIEW_GUIDELINE.md",
-    ROOT / "docs/review/DESIGN_DECISIONS.md",
-    ROOT / "docs/review/GATE_RECORD_TEMPLATE.md",
-    ROOT / "docs/review/PR6_BASELINE_REVIEW_CHECKLIST.md",
-    ROOT / "docs/management/CHANGE_CONTROL.md",
-    ROOT / "docs/management/RISK_REGISTER.md",
-    ROOT / "docs/management/changes/CR-2026-001.md",
-    ROOT / "docs/management/changes/CR-2026-002.md",
-    METHODOLOGY_DIR / "00_INDEX.md",
-    ROOT / "thesis/README.md",
-    ROOT / "tutorial/README.md",
-    ROOT / "tutorial/common/README.md",
-    ROOT / "tutorial/arinc615a/README.md",
-    ROOT / "scripts/README.md",
+    METHODOLOGY_DIR / "METHODOLOGY_CATALOG.md",
+    ROOT / "docs/research/publication/RESEARCH_OUTLINE.md",
+    ROOT / "docs/research/publication/PUBLICATION_GUIDE.md",
+    ROOT / "docs/engineering/ENGINEERING_CONTROL.md",
+    ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md",
+    ROOT / "docs/engineering/design/DESIGN_GUIDE.md",
+    ROOT / "docs/engineering/SCRIPT_CATALOG.md",
+    ROOT / "docs/engineering/EXAMPLE_CONFIG_GUIDE.md",
+    ROOT / "docs/engineering/increments/IAR_TEMPLATE.md",
+    ROOT / "docs/tutorial/TUTORIAL_CONTROL.md",
+    ROOT / "docs/tutorial/sources/COMMON_TUTORIAL_PLAN.md",
+    ROOT / "docs/tutorial/sources/ARINC615A_TUTORIAL_PLAN.md",
+    READER_REPORT,
 ]
 
-BILINGUAL = REQUIRED
+BILINGUAL_EXEMPT = {
+    ROOT / "docs/control/gates/GR-PR6-RB-2026-001-v4.2.md",
+}
+BILINGUAL = [path for path in REQUIRED if path not in BILINGUAL_EXEMPT]
 
 LEGACY_FILENAMES = {
     "RR-2026-001_test_analysis_conformance_methodology_en.md",
@@ -71,21 +82,26 @@ FENCE_RE = re.compile(r"^```", re.MULTILINE)
 JSON_FENCE_RE = re.compile(r"```json\s*\n(.*?)\n```", re.DOTALL)
 
 REQUIRED_ARCHITECTURE_TERMS = {
-    ROOT / "TRACKS.md": {
+    ROOT / "docs/control/contracts/DOMAIN_BOUNDARIES.md": {
         "Boundary contracts",
         "evidence_manifest_id",
         "gate_record_id",
-        "tutorial/common/",
-        "tutorial/arinc615a/",
+        "Common Verification Tutorial",
+        "ARINC 615A Tutorial",
     },
-    ROOT / "docs/architecture.md": {
+    ROOT / "docs/control/contracts/ARCHITECTURE.md": {
         "Domain boundaries and traceable dependencies",
         "This controlled feedback is not a direct reverse dependency.",
     },
-    ROOT / "tutorial/README.md": {
+    ROOT / "docs/tutorial/TUTORIAL_CONTROL.md": {
         "explains_baseline",
         "explains_tool_release",
         "normative: false",
+    },
+    ROOT / "docs/control/PROJECT_CONTROL.md": {
+        "reader release surface",
+        "developer control plane",
+        "artifacts/reports/current/",
     },
 }
 
@@ -139,9 +155,32 @@ def main() -> int:
         print("\n".join(errors), file=sys.stderr)
         return 1
 
-    baseline = read(ROOT / "docs/BASELINE.md")
-    if "RB-2026-001-v4.2" not in baseline:
-        errors.append("docs/BASELINE.md does not declare RB-2026-001-v4.2")
+    baseline = read(BASELINE)
+    if "RB-2026-001-v4.2.1" not in baseline:
+        errors.append(f"{BASELINE.relative_to(ROOT)} does not declare RB-2026-001-v4.2.1")
+
+    root_markdown = sorted(ROOT.glob("*.md"))
+    if root_markdown != [ROOT / "README.md"]:
+        errors.append(
+            "README.md must be the only root Markdown document: "
+            + ", ".join(path.name for path in root_markdown)
+        )
+
+    nested_readmes = sorted(
+        path for path in ROOT.rglob("README.md")
+        if path != ROOT / "README.md"
+        and "local-references" not in path.parts
+        and not any(part.startswith(".") for part in path.relative_to(ROOT).parts)
+    )
+    for path in nested_readmes:
+        errors.append(f"subdirectory README is prohibited: {path.relative_to(ROOT)}")
+
+    current_reader_reports = sorted(CURRENT_REPORT_DIR.glob("*"))
+    current_reader_reports = [path for path in current_reader_reports if path.is_file()]
+    if current_reader_reports != [READER_REPORT]:
+        errors.append(
+            "artifacts/reports/current must contain exactly the declared reader report"
+        )
 
     bilingual_shapes: dict[Path, tuple[tuple, tuple]] = {}
     for path in BILINGUAL:
@@ -209,8 +248,8 @@ def main() -> int:
         legacy_study_files = [path for path in legacy_study_dir.rglob("*") if path.is_file()]
         for path in legacy_study_files:
             errors.append(
-                f"legacy docs/study artifact still exists; use docs/methodology or "
-                f"tutorial/: {path.relative_to(ROOT)}"
+                f"legacy docs/study artifact still exists; use "
+                f"docs/research/methodology or docs/tutorial: {path.relative_to(ROOT)}"
             )
 
     for path, terms in REQUIRED_ARCHITECTURE_TERMS.items():
@@ -222,7 +261,7 @@ def main() -> int:
                     f"{path.relative_to(ROOT)}: {term}"
                 )
 
-    manifest_text = read(ROOT / "docs/design/EVIDENCE_MANIFEST.md")
+    manifest_text = read(ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md")
     manifest_examples = JSON_FENCE_RE.findall(manifest_text)
     if len(manifest_examples) != 2:
         errors.append("evidence manifest must contain exactly two JSON examples")
@@ -289,7 +328,7 @@ def main() -> int:
         return 1
 
     print(
-        "RB-2026-001-v4.2 validation passed: "
+        "RB-2026-001-v4.2.1 candidate validation passed: "
         f"per-language H2={en_shape[0]}, H3={en_shape[1]}, "
         f"math_blocks={en_shape[2]}, equation_tags=1..14,T1..T5, "
         f"bilingual_docs={len(BILINGUAL)}"
