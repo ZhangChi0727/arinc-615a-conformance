@@ -6,7 +6,7 @@
 | Update | repository information architecture and reporting system |
 | Method basis | RR-2026-001 v4.2, unchanged |
 | Candidate package | RB-2026-001-v4.2.1 |
-| Status | Candidate reader release; independent review pending |
+| Status | Approved by GR-PR7-RB-2026-001-v4.2.1; current on merge of PR #7 |
 
 Controlled sources: [candidate baseline](../../../docs/control/baselines/RB-2026-001-v4.2.1.md),
 [change request](../../../docs/control/changes/CR-2026-003.md),
@@ -53,10 +53,10 @@ work becomes discoverable and reportable.
 
 The new arrangement does not claim empirical conformance, mutation adequacy,
 diagnostic performance, or calibrated probability. Those claims remain
-unearned until their named experiments and gates pass. Before v4.2.1 freezes,
-an independent review must confirm complete relocation, link integrity,
-bilingual parity, validator coverage, and absence of semantic methodology
-change.
+unearned until their named experiments and gates pass. GR-PR7-RB-2026-001-v4.2.1
+confirmed complete relocation, link integrity, bilingual parity, validator
+coverage, and absence of semantic methodology change. The package remains
+non-effective and non-frozen until PR #7 is merged.
 
 ---
 
@@ -68,7 +68,7 @@ change.
 | 更新 | 仓库信息架构与报告体系 |
 | 方法基础 | RR-2026-001 v4.2，未修改 |
 | 候选包 | RB-2026-001-v4.2.1 |
-| 状态 | 候选读者发布；等待独立评审 |
+| 状态 | 已由 GR-PR7-RB-2026-001-v4.2.1 批准；PR #7 合并时成为当前发布 |
 
 受控来源：[候选基线](../../../docs/control/baselines/RB-2026-001-v4.2.1.md)、
 [变更请求](../../../docs/control/changes/CR-2026-003.md)、
@@ -105,5 +105,5 @@ G0–G7 证据门。权威数学报告仍为 RR-2026-001 v4.2。本次更新只�
 ## 5. 当前边界与下一门禁
 
 新结构不主张已经获得经验符合性、变异充分性、诊断性能或校准概率。这些主张在具名实验
-与门禁通过前仍未获得。v4.2.1 冻结前，独立评审必须确认迁移完整、链接有效、中英文对等、
-校验器覆盖充分且方法论语义没有变化。
+与门禁通过前仍未获得。GR-PR7-RB-2026-001-v4.2.1 已确认迁移完整、链接有效、中英文对等、
+校验器覆盖充分且方法论语义没有变化。在 PR #7 合并前，该包仍不生效、不冻结。

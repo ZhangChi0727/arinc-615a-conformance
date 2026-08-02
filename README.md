@@ -14,9 +14,10 @@ supporting controlled records reside.
 
 The frozen mathematical and methodological content remains
 [`RR-2026-001 v4.2`](docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md).
-The proposed `RB-2026-001-v4.2.1` changes repository information architecture
-and reporting control only; it does not change equations, timed semantics,
-assurance tiers, or claim rules.
+The approved `RB-2026-001-v4.2.1` candidate changes repository information
+architecture and reporting control only; it becomes effective when PR #7 is
+merged and does not change equations, timed semantics, assurance tiers, or
+claim rules.
 
 ## Developer control entry points
 
@@ -87,8 +88,8 @@ result.
 
 冻结的数学与方法论内容仍为
 [`RR-2026-001 v4.2`](docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md)。
-候选 `RB-2026-001-v4.2.1` 只改变仓库信息架构和报告控制，不修改公式、时序语义、
-保证层级或主张规则。
+已批准的 `RB-2026-001-v4.2.1` 候选包只改变仓库信息架构和报告控制，在 PR #7 合并时生效，
+不修改公式、时序语义、保证层级或主张规则。
 
 ## 开发者控制入口
 

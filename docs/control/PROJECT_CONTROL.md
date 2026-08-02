@@ -4,8 +4,8 @@
 |---|---|
 | **Plan ID** | IPP-2026-001 |
 | **Version** | 1.3 |
-| **Status** | Candidate under CR-2026-003 |
-| **Baseline** | RB-2026-001-v4.2.1 candidate; method semantics inherited from v4.2 |
+| **Status** | Approved by GR-PR7-RB-2026-001-v4.2.1; effective on merge of PR #7 |
+| **Baseline** | RB-2026-001-v4.2.1 approved pending merge; method semantics inherited unchanged from v4.2 |
 | **Planning horizon** | Baseline freeze through second-protocol replication |
 
 ## 1. Mission

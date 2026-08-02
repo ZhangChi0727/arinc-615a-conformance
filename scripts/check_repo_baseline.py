@@ -14,6 +14,7 @@ REPORT = METHODOLOGY_DIR / "RR-2026-001_test_analysis_conformance_methodology.md
 BASELINE = ROOT / "docs/control/baselines/RB-2026-001-v4.2.1.md"
 CURRENT_REPORT_DIR = ROOT / "artifacts/reports/current"
 READER_REPORT = CURRENT_REPORT_DIR / "RPT-2026-002_information_architecture_v4.2.1.md"
+PR7_GATE = ROOT / "docs/control/gates/GR-PR7-RB-2026-001-v4.2.1.md"
 ZH_MARKER = "\n# 中文版\n"
 APPENDED_ZH_RE = re.compile(r"^# 中文版$", re.MULTILINE)
 
@@ -36,6 +37,7 @@ REQUIRED = [
     ROOT / "docs/control/gates/REVIEW_GUIDELINE.md",
     ROOT / "docs/control/gates/PR6_BASELINE_REVIEW_CHECKLIST.md",
     ROOT / "docs/control/gates/GR-PR6-RB-2026-001-v4.2.md",
+    PR7_GATE,
     ROOT / "docs/control/risks/RISK_REGISTER.md",
     ROOT / "docs/control/changes/CR-2026-001.md",
     ROOT / "docs/control/changes/CR-2026-002.md",
@@ -61,6 +63,7 @@ REQUIRED = [
 
 BILINGUAL_EXEMPT = {
     ROOT / "docs/control/gates/GR-PR6-RB-2026-001-v4.2.md",
+    PR7_GATE,
 }
 BILINGUAL = [path for path in REQUIRED if path not in BILINGUAL_EXEMPT]
 
