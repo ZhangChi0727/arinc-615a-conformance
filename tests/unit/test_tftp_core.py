@@ -162,14 +162,15 @@ class TestLoopbackWrite:
 
 
 # ---------------------------------------------------------------------------
-# Block rollover (ARINC 615A: 65535 -> 1)
+# Multi-block transfer progression
 # ---------------------------------------------------------------------------
-class TestBlockRollover:
-    def test_rollover_with_small_blksize(self):
-        """Force many blocks with tiny blksize to exercise block numbering.
+class TestMultiBlockProgression:
+    def test_many_blocks_with_small_blksize(self):
+        """Exercise ordinary multi-block progression with a tiny block size.
 
-        We can't practically send 65535 blocks in a unit test, but we verify
-        the transfer works correctly across many blocks with a small blksize.
+        The 65535 -> 1 boundary rule is tested separately against the pure
+        ``next_block`` logic in ``test_tftp_packet.py``. This integration test
+        makes no rollover claim.
         """
         port = _free_port()
         blksize = 16
@@ -187,7 +188,7 @@ class TestBlockRollover:
         try:
             result = read_file(
                 ("127.0.0.1", port),
-                "rollover.bin",
+                "many-blocks.bin",
                 options={"blksize": str(blksize)},
                 timeout=5.0,
             )
