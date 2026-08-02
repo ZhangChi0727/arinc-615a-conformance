@@ -32,13 +32,23 @@ increment E0.
     "trigger": "",
     "response": "",
     "cancellation": "",
+    "supersedingTrigger": "",
+    "correlationKey": "",
+    "pairingPolicy": "unique_key|fifo|most_recent|declared",
+    "concurrencyPolicy": "replace|concurrent|declared",
     "silenceSemantics": "",
     "lowerBound": null,
     "upperBound": null,
     "unit": "s|ms|us|ns",
     "clockStart": "",
     "clockResets": [],
-    "boundaryInclusivity": "closed|declared",
+    "lowerBoundary": "closed|open|unbounded",
+    "upperBoundary": "closed|open|unbounded",
+    "errorBudgetRef": {
+      "id": "",
+      "version": "",
+      "environmentId": ""
+    },
     "sourceReference": ""
   },
   "status": "draft|adjudicated|approved|retired",
@@ -57,14 +67,18 @@ increment E0.
   inseparable, in which case the rationale is recorded.
 - an item with a `timing` obligation has a complete `timing` object; `null`
   lower/upper bounds mean absent bounds, not unknown values;
-- trigger, response, cancellation/silence, inclusivity, units, clock start and
-  resets are reviewed semantic fields, not inferred from test code.
+- trigger, response, cancellation, supersession, correlation/pairing,
+  concurrency, silence, endpoint inclusivity, units, clock start/reset, and the
+  applicable error-budget reference are reviewed semantic fields, not inferred
+  from test code;
+- an ambiguous trigger/response/cancellation match is invalid measurement
+  configuration and produces `ERROR`, not an IUT `FAIL`.
 
 ---
 
 # 中文版
 
-每个 CRS 项包含稳定 ID、标准版本和来源、文本 hash、批准释义、模态、适用表达式、类别、解释、义务、状态和评审记录。含 `timing` 义务的条目还必须完整定义触发、响应、取消、静默语义、上下界、单位、计时开始、复位、边界包含性和来源引用。`null` 表示该界不存在，不能表示“未知”。这些字段必须经需求/方法评审，不得由测试代码反推。
+每个 CRS 项包含稳定 ID、标准版本和来源、文本 hash、批准释义、模态、适用表达式、类别、解释、义务、状态和评审记录。含 `timing` 义务的条目还必须完整定义触发、响应、取消、替代触发、关联键、配对/并发策略、静默语义、上下界及端点包含性、单位、计时开始、复位、适用误差预算引用和来源引用。`null` 表示该界不存在，不能表示“未知”。这些字段必须经需求/方法评审，不得由测试代码反推。
 
 ```json
 {
@@ -94,13 +108,23 @@ increment E0.
     "trigger": "",
     "response": "",
     "cancellation": "",
+    "supersedingTrigger": "",
+    "correlationKey": "",
+    "pairingPolicy": "unique_key|fifo|most_recent|declared",
+    "concurrencyPolicy": "replace|concurrent|declared",
     "silenceSemantics": "",
     "lowerBound": null,
     "upperBound": null,
     "unit": "s|ms|us|ns",
     "clockStart": "",
     "clockResets": [],
-    "boundaryInclusivity": "closed|declared",
+    "lowerBoundary": "closed|open|unbounded",
+    "upperBoundary": "closed|open|unbounded",
+    "errorBudgetRef": {
+      "id": "",
+      "version": "",
+      "environmentId": ""
+    },
     "sourceReference": ""
   },
   "status": "draft|adjudicated|approved|retired",
@@ -110,4 +134,4 @@ increment E0.
 
 ## 不变量
 
-ID 唯一且不得重用；来源和版本强制；公开产物仅保存 hash 或批准释义；每个已批准适用条目至少含一个义务；解释或适用性变化必须形成新评审版本；复合规范语句原则上拆分。含 `timing` 义务的项目必须有完整时序对象，空上下界表示该界不存在而不是未知；触发、响应、取消/静默、边界包含性、单位和时钟启动/复位均是经评审语义，不能由测试代码推断。
+ID 唯一且不得重用；来源和版本强制；公开产物仅保存 hash 或批准释义；每个已批准适用条目至少含一个义务；解释或适用性变化必须形成新评审版本；复合规范语句原则上拆分。含 `timing` 义务的项目必须有完整时序对象，空上下界表示该界不存在而不是未知；触发、响应、取消、替代、关联/配对、并发、静默、端点包含性、单位、时钟启动/复位和误差预算引用均是经评审语义，不能由测试代码推断。歧义配对属于测量配置无效并产生 `ERROR`，不得记作 IUT `FAIL`。

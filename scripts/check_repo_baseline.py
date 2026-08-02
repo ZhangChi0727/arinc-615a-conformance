@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -67,6 +68,7 @@ MATH_CLOSE_RE = re.compile(r"^\\\]$", re.MULTILINE)
 NUMERIC_TAG_RE = re.compile(r"\\tag\{(\d+)}")
 TIMED_TAG_RE = re.compile(r"\\tag\{(T\d+)}")
 FENCE_RE = re.compile(r"^```", re.MULTILINE)
+JSON_FENCE_RE = re.compile(r"```json\s*\n(.*?)\n```", re.DOTALL)
 
 REQUIRED_ARCHITECTURE_TERMS = {
     ROOT / "TRACKS.md": {
@@ -218,6 +220,64 @@ def main() -> int:
                 errors.append(
                     f"architecture contract term missing from "
                     f"{path.relative_to(ROOT)}: {term}"
+                )
+
+    manifest_text = read(ROOT / "docs/design/EVIDENCE_MANIFEST.md")
+    manifest_examples = JSON_FENCE_RE.findall(manifest_text)
+    if len(manifest_examples) != 2:
+        errors.append("evidence manifest must contain exactly two JSON examples")
+    else:
+        parsed_manifests: list[dict] = []
+        for language, example in zip(("English", "Chinese"), manifest_examples):
+            try:
+                parsed_manifests.append(json.loads(example))
+            except json.JSONDecodeError as exc:
+                errors.append(f"{language} evidence-manifest JSON is invalid: {exc}")
+        if len(parsed_manifests) == 2:
+            if parsed_manifests[0] != parsed_manifests[1]:
+                errors.append("English/Chinese evidence-manifest examples differ")
+            required_manifest_fields = {
+                "manifestId",
+                "baselineId",
+                "sourceCommit",
+                "requirementSetId",
+                "crsVersion",
+                "modelId",
+                "modelVersion",
+                "verificationCaseSetId",
+                "vcsVersion",
+                "verificationCaseId",
+                "toolVersion",
+                "environmentId",
+                "upstreamArtifactRefs",
+                "executionStatus",
+                "clock",
+                "rawEvidenceRefs",
+                "derivedEvidenceRefs",
+                "gateRecordRefs",
+                "verdict",
+            }
+            missing = required_manifest_fields - parsed_manifests[0].keys()
+            if missing:
+                errors.append(
+                    "evidence manifest is missing required fields: "
+                    + ", ".join(sorted(missing))
+                )
+            error_budget = parsed_manifests[0].get("clock", {}).get("errorBudget", {})
+            required_budget_fields = {
+                "id",
+                "version",
+                "environmentId",
+                "boundNs",
+                "combinationRule",
+                "commonBiasTreatment",
+                "components",
+            }
+            missing_budget = required_budget_fields - error_budget.keys()
+            if missing_budget:
+                errors.append(
+                    "evidence error budget is missing required fields: "
+                    + ", ".join(sorted(missing_budget))
                 )
 
     errors.extend(local_link_errors())

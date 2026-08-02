@@ -25,8 +25,8 @@
 | **Coverage** | Degree to which a named target set is addressed; not itself a conformance probability. |
 | **Conformance** | Agreement with the declared applicable requirements under the stated observation, environment, and claim scope. |
 | **Timed trace** | Ordered observable events paired with timestamps from a declared monotonic time basis. |
-| **Timing obligation** | Requirement-defined trigger, response, cancellation/silence, lower/upper bounds, units, and clock-reset semantics. |
-| **Measurement-error budget** | Auditable bound on applicable clock, timestamp, scheduling, capture, and path uncertainty. |
+| **Timing obligation** | Requirement-defined trigger, response, cancellation/supersession, correlation and pairing policy, concurrency/silence, endpoint inclusivity, units, and clock-reset semantics. |
+| **Measurement-error budget** | Versioned, environment-specific auditable bound whose sourced components distinguish resolution, accuracy/drift, timestamp insertion, scheduling, capture, processing, synchronization, independent error, and shared bias. |
 | **Robust timing oracle** | Interval-based rule: PASS only when the observation interval is contained in the allowed interval; FAIL only when disjoint; overlap is INCONCLUSIVE. |
 | **Run-order dependence** | Drift, clustering, warm-up, shared state, or another effect that makes repeated executions dependent. |
 
@@ -83,7 +83,7 @@
 
 # 中文版
 
-核心术语：IUT 是固定实现及配置；适用性声明确定角色、服务、选项和排除项；观测边界限定可用于判定的报文、时序、状态、日志和环境现象；CRS 是带受控来源和解释的原子适用需求；TP 描述待验证义务；VC 是可执行的前置条件、刺激、oracle、追踪、目标、重置、时序/误差 schema 和证据 schema；VCS 是受控 VC 集。
+核心术语：`conformance` 译为“符合性”，`verification` 译为“验证”，`validation` 译为“确认/有效性确认”，三者不得混用；`verdict` 译为“判定结果”，`INCONCLUSIVE` 译为“无法判定”，`ERROR` 表示执行/工具错误。IUT 是固定实现及配置；适用性声明确定角色、服务、选项和排除项；观测边界限定可用于判定的报文、时序、状态、日志和环境现象；CRS 是带受控来源和解释的原子适用需求；TP 描述待验证义务；VC 是可执行的前置条件、刺激、oracle、追踪、目标、重置、时序/误差 schema 和证据 schema；VCS 是受控 VC 集。
 
 ## 核心验证术语
 
@@ -95,9 +95,9 @@ Test 通过受控执行产生观察，Analysis 评价覆盖、充分性、不确
 
 ## 保证与定量术语
 
-时序术语：**时戳迹**是采用声明单调时间基准的事件—时间戳序列；**时序义务**必须定义触发、响应、取消/静默、上下界、单位和时钟复位；**测量误差预算**是时钟、时间戳、调度、捕获和路径不确定性的可审计界；**稳健时序 oracle**仅在观测区间完全包含于允许区间时判 PASS，二者不相交时判 FAIL，部分重叠时判 INCONCLUSIVE；无效时间链判 ERROR；**运行顺序依赖**包括漂移、聚类、预热和共享状态。
+时序术语：**时戳迹**是采用声明单调时间基准的事件—时间戳序列；**时序义务**必须定义触发、响应、取消/替代、关联与配对、并发/静默、端点包含性、单位和时钟复位；**测量误差预算**是版本化且限定适用环境的可审计误差界，其有来源的分量必须区分分辨率、精度/漂移、时间戳插入、调度、捕获、处理、同步、独立误差和公共偏差；**稳健时序 oracle**仅在观测区间完全包含于允许区间时判 PASS，二者不相交时判 FAIL，部分重叠时判 INCONCLUSIVE；无效时间链判 ERROR；**运行顺序依赖**包括漂移、聚类、预热和共享状态。
 
-T0–T3 分别表示追踪/方法完备、有效执行证据、有限故障域检测充分性和经校准的概率解释；不得把变异分数、重复 PASS 率或后验概率互相替代。
+T0–T3 分别表示追踪完备、命名有效执行中的观测符合性、声明有限故障域内的有界检测充分性和经校准的概率解释；不得把变异分数、重复 PASS 率或后验概率互相替代，也不得把“有界检测充分性”增强为“完整检测能力”。
 
 ## 协议角色
 

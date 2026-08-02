@@ -341,16 +341,33 @@ Let an observed timed trace be:
 
 where timestamps use a declared monotonic time basis. For a trigger event
 \(a_i\) and its requirement-defined response \(a_j\), define
-\(\Delta t_{ij}=t_j-t_i\). A bounded response obligation is:
+\(\Delta t_{ij}=t_j-t_i\). Each requirement declares an admissible set
+\(I_r\), including the inclusivity of each finite endpoint. A bounded response
+obligation is:
 
 \[
 a_i@t_i\Longrightarrow
 \exists j>i:
-a_j@t_j\land L_r\le\Delta t_{ij}\le U_r,
+a_j@t_j\land \Delta t_{ij}\in I_r,
 \tag{T2}
 \]
 
-with explicitly defined cancellation, competing-response, and no-response semantics. A requirement with no minimum delay uses \(L_r=0\). Silence through the deadline is a timed observation, not missing data.
+The timing catalog defines event predicates
+\(\mathrm{Trig}_r\), \(\mathrm{Resp}_r\), \(\mathrm{Cancel}_r\), and
+\(\mathrm{Supersede}_r\), plus a correlation key and an explicit pairing policy
+(for example unique-key, FIFO, or most-recent). A trigger creates a distinct
+active obligation instance. A response discharges only the active instance
+selected by the declared key and pairing policy; an ambiguous or invalid match
+is `ERROR`, not an IUT `FAIL`. A matching cancellation closes the selected
+instance as cancelled at its trace index, so later silence cannot produce a
+no-response `FAIL`. Unless the requirement explicitly permits concurrent
+instances, a superseding trigger closes the old instance as superseded and
+starts a new instance with a new clock origin. Cancellation and supersession
+are obligation dispositions, not timing verdicts, and remain in the trace.
+Equal timestamps are ordered by trace index, so an event can affect an
+obligation only when its index is later than the trigger. A requirement with no
+minimum delay uses \(L_r=0\). Silence through the deadline is a timed
+observation, not missing data.
 
 For an observation horizon \(t_H\), encode an active obligation with no observed
 response by the distinguished trace event \(\bot_r@t_H\):
@@ -364,10 +381,14 @@ response by the distinguished trace event \(\bot_r@t_H\):
 \nexists j>i:\bigl(a_j\in\mathrm{Resp}_r\bigr)\land(t_i<t_j\le t_H).
 \]
 
-Here \(\mathrm{active}_r(i,t_H)\) excludes a requirement-defined cancellation
-or superseding trigger. The strict inequality is required when a response at
-\(U_r\) is admissible; an open upper boundary must instead use the
-requirement's declared boundary convention.
+Here \(\mathrm{active}_r(i,t_H)\) means that the instance created at index
+\(i\) has not been discharged, cancelled, or superseded under those matching
+rules through horizon \(t_H\). The displayed strict inequality defines
+\(\bot_r@t_H\) for a closed upper bound, where a response exactly at \(U_r\)
+is admissible. For an open upper bound, the corresponding expiry test is
+\(t_H-t_i\ge U_r\). Thus \(\bot_r@t_H\) is a formal observation of an expired,
+still-active obligation with no matching response, not a synonym for an absent
+log record.
 
 The clock-augmented observable EFSM is:
 
@@ -397,16 +418,26 @@ I_{\mathrm{obs}}=
 \tag{T4}
 \]
 
-where \(\varepsilon_{ij}\) is a justified bound covering the applicable clock,
-timestamp, scheduling, capture, and path uncertainties. Components may be
-removed only when a common-clock or measurement design demonstrably cancels
-them. The physical domain is \(D_r=[0,\infty)\) only when non-negative delay is
+where \(\varepsilon_{ij}\) is a justified bound from a reviewed, versioned
+budget applicable to the declared environment and measurement path. The budget
+enumerates clock resolution/quantization, clock accuracy and drift, timestamp
+insertion location, scheduler latency, network-capture latency, software-layer
+processing latency, inter-device synchronization error, and common path or
+instrument bias. Each component records its source, bound, sign model, and
+correlation class. Algebraically common terms may be removed only when the same
+error enters both timestamps with the same sign and the reviewed measurement
+design demonstrates cancellation. Independence alone does not justify
+root-sum-square reduction of a worst-case conformance bound; independent
+components and shared bias remain distinguished, and any probabilistic
+combination is reported separately from \(\varepsilon_{ij}\). The physical
+domain is \(D_r=[0,\infty)\) only when non-negative delay is
 a reviewed property of the trigger/response and timestamp design; otherwise
 \(D_r=\mathbb{R}\). If the intersection is empty, the observation contradicts
 the declared measurement model and the execution is `ERROR`, not a clamped
 verdict.
 
-For the allowed interval \(I_r=[L_r,U_r]\), the robust timing oracle is:
+For the declared allowed interval \(I_r\), whether closed, open, or half-open,
+the robust timing oracle is:
 
 \[
 \mathrm{TimingVerdict}_r=
@@ -422,18 +453,22 @@ If the time source, timestamp chain, trigger/response pairing, or declared
 error bound is invalid, the execution is `ERROR`, not `INCONCLUSIVE`.
 This set-containment rule is deliberately conservative near a boundary:
 measurement resolution cannot be converted into false precision.
-For \(\bot_r@t_H\), a no-response `FAIL` is robust only when the earliest
-admissible elapsed horizon satisfies
+For \(\bot_r@t_H\) with a closed upper bound, a no-response `FAIL` is robust
+only when the earliest admissible elapsed horizon satisfies
 \(\widehat{\Delta t}_{iH}-\varepsilon_{iH}>U_r\) and the obligation remains
-active; otherwise the result is `INCONCLUSIVE` or `ERROR` according to the
-preceding rules.
+active. For an open upper bound, the corresponding test is
+\(\widehat{\Delta t}_{iH}-\varepsilon_{iH}\ge U_r\). Otherwise the result is
+`INCONCLUSIVE` or `ERROR` according to the preceding rules. In particular, a
+nominal timeout smaller than the measurement-error margin is not a `FAIL`.
 
 Every applicable timing requirement must trace to:
 
-- its trigger, response, cancellation, and silence semantics;
+- its trigger, response, cancellation, supersession, correlation/pairing,
+  concurrency, and silence semantics;
 - \(L_r,U_r\), units, clock start/reset events, and source reference;
 - the observation points and monotonic time basis;
-- a reviewed uncertainty budget \(\varepsilon_{ij}\);
+- a reviewed error-budget ID/version, applicable environment, component sources,
+  correlation/common-bias rationale, and resulting \(\varepsilon_{ij}\);
 - early, nominal, boundary, late, and no-response partitions as applicable.
 
 ### 3.7 Finite fault domain
@@ -1792,16 +1827,17 @@ G=(Q,q_0,X,\Sigma_I,\Sigma_O,\Delta)
 \]
 
 其中时间戳使用已声明的单调时间基准。对触发事件 \(a_i\) 及需求定义的响应事件 \(a_j\)，令
-\(\Delta t_{ij}=t_j-t_i\)。有界响应义务为：
+\(\Delta t_{ij}=t_j-t_i\)。每条需求声明允许集合 \(I_r\)，包括每个有限端点是否包含。有界响应义务为：
 
 \[
 a_i@t_i\Longrightarrow
 \exists j>i:
-a_j@t_j\land L_r\le\Delta t_{ij}\le U_r,
+a_j@t_j\land \Delta t_{ij}\in I_r,
 \tag{T2}
 \]
 
-并且必须显式定义取消、竞争响应和无响应语义。没有最小延迟的需求取 \(L_r=0\)。持续静默直至截止时间本身是时序观测，不是缺失数据。
+时序目录必须定义事件谓词 \(\mathrm{Trig}_r\)、\(\mathrm{Resp}_r\)、
+\(\mathrm{Cancel}_r\) 和 \(\mathrm{Supersede}_r\)，以及关联键和显式配对策略（例如唯一键、FIFO 或最近触发）。一次触发创建一个独立有效义务实例。响应只能解除由声明的关联键和配对策略选中的有效实例；配对歧义或无效属于 `ERROR`，不是 IUT `FAIL`。匹配的取消事件在其迹索引处把所选实例终止为“已取消”，之后的静默不得产生无响应 `FAIL`。除非需求明确允许并发实例，替代触发会把旧实例终止为“已替代”，并以新的时钟原点创建新实例。取消和替代是义务处置而不是时序判定，且必须保留在迹中。相同时间戳按迹索引排序；事件只有在索引晚于触发时才能影响该义务。没有最小延迟的需求取 \(L_r=0\)。持续静默直至截止时间本身是时序观测，不是缺失数据。
 
 对观测终点 \(t_H\)，用特殊迹事件 \(\bot_r@t_H\) 编码义务仍有效但未观测到响应：
 
@@ -1814,8 +1850,7 @@ a_j@t_j\land L_r\le\Delta t_{ij}\le U_r,
 \nexists j>i:\bigl(a_j\in\mathrm{Resp}_r\bigr)\land(t_i<t_j\le t_H).
 \]
 
-其中 \(\mathrm{active}_r(i,t_H)\) 排除需求所定义的取消事件或替代触发。当
-\(U_r\) 时刻的响应仍合法时必须使用严格不等式；若上界为开区间，则必须采用需求明确声明的边界约定。
+其中 \(\mathrm{active}_r(i,t_H)\) 表示索引 \(i\) 创建的实例截至 \(t_H\) 尚未按上述匹配规则被响应解除、取消或替代。式中的严格不等式定义闭合上界情形，此时恰在 \(U_r\) 的响应仍合格；开上界的对应到期条件为 \(t_H-t_i\ge U_r\)。因此 \(\bot_r@t_H\) 是“已经到期、仍有效且没有匹配响应”的正式观测，不是缺少日志记录的同义词。
 
 带时钟的可观测 EFSM 定义为：
 
@@ -1845,10 +1880,10 @@ I_{\mathrm{obs}}=
 \tag{T4}
 \]
 
-其中 \(\varepsilon_{ij}\) 是有依据的误差界，覆盖适用的时钟、时间戳、调度、捕获和路径不确定性。只有在共同时间源或测量设计能够证明某分量被抵消时，才能从预算中删除该分量。只有当触发/响应关系和时间戳设计经评审确认延迟物理上非负时，才取
+其中 \(\varepsilon_{ij}\) 来自经评审、版本化且适用于声明环境和测量路径的误差预算。预算逐项列出时钟分辨率/量化、时钟精度与漂移、时间戳插入位置、调度延迟、网络捕获延迟、软件层处理延迟、设备间同步误差，以及公共路径或仪器偏差；每个分量记录来源、界限、符号模型和相关类别。只有同一误差以相同符号进入两个时间戳，且经评审的测量设计证明其代数相消时，才能删除公共项。独立性本身不能证明最坏情况符合性误差界可以采用均方根合成；独立分量和公共偏差必须区分，任何概率合成也必须与 \(\varepsilon_{ij}\) 分开报告。只有当触发/响应关系和时间戳设计经评审确认延迟物理上非负时，才取
 \(D_r=[0,\infty)\)；否则取 \(D_r=\mathbb{R}\)。若交集为空，则观测与声明的测量模型矛盾，本次执行应记为 `ERROR`，不得通过截断强行产生判定。
 
-对允许区间 \(I_r=[L_r,U_r]\)，稳健时序 oracle 为：
+对声明的允许区间 \(I_r\)（闭、开或半开均可），稳健时序 oracle 为：
 
 \[
 \mathrm{TimingVerdict}_r=
@@ -1860,17 +1895,18 @@ I_{\mathrm{obs}}=
 \tag{T5}
 \]
 
-如果时间源、时间戳链、触发/响应配对或声明的误差界无效，则本次执行为 `ERROR`，而不是 `INCONCLUSIVE`。该集合包含规则在边界附近刻意保持保守，禁止把测量分辨率包装成虚假精度。对
+如果时间源、时间戳链、触发/响应配对或声明的误差界无效，则本次执行为 `ERROR`，而不是 `INCONCLUSIVE`。该集合包含规则在边界附近刻意保持保守，禁止把测量分辨率包装成虚假精度。闭合上界下，对
 \(\bot_r@t_H\)，只有在义务保持有效且最早可能经过时间满足
 \(\widehat{\Delta t}_{iH}-\varepsilon_{iH}>U_r\) 时，才能稳健地判定“无响应
-FAIL”；否则按前述规则判为 `INCONCLUSIVE` 或 `ERROR`。
+FAIL”；开上界的对应条件为
+\(\widehat{\Delta t}_{iH}-\varepsilon_{iH}\ge U_r\)。否则按前述规则判为 `INCONCLUSIVE` 或 `ERROR`。特别是，名义超时量小于测量误差余量时不得判 `FAIL`。
 
 每条适用时序需求都必须追踪到：
 
-- 触发、响应、取消和静默语义；
+- 触发、响应、取消、替代、关联/配对、并发和静默语义；
 - \(L_r,U_r\)、单位、时钟启动/复位事件和来源引用；
 - 观测点和单调时间基准；
-- 经评审的误差预算 \(\varepsilon_{ij}\)；
+- 经评审的误差预算 ID/版本、适用环境、分量来源、相关性/公共偏差理由及最终 \(\varepsilon_{ij}\)；
 - 适用的过早、标称、边界、过晚和无响应分区。
 
 ### 3.7 有限故障域
