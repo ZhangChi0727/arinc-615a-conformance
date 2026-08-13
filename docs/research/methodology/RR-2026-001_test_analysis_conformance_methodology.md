@@ -188,6 +188,18 @@ The protocol model is not an evidence model. An edge in the protocol graph denot
 
 ### 2.3 Assurance tiers
 
+> **v4.3 supersession note.** Under candidate baseline `RB-2026-001-v4.3`
+> ([`CR-2026-004`](../../../docs/control/changes/CR-2026-004.md)), the single
+> T0–T3 ladder below is superseded by two orthogonal axes:
+> certification-oriented assurance states **A0–A4** and research-evidence maturity
+> states **R0–R5**. A single execution `PASS` no longer automatically satisfies an
+> objective or supports a claim; objective and compliance status are reviewed
+> conclusions. Mutation, calibration, diagnosis, and transferability become
+> research-only and do not grant certification status. The T0–T3 descriptions
+> are retained below as the historical wording and are still valid only under the
+> `RB-2026-001-v4.2` baseline; they are not silently relabeled in v4.3.
+> Mathematical and timed-conformance semantics are unchanged.
+
 | Tier | Claim | Minimum supporting artifacts |
 |---|---|---|
 | **T0 — Traceability** | Every applicable requirement is linked to at least one executable case | CRS, TP/VC relations |
@@ -195,7 +207,7 @@ The protocol model is not an evidence model. An edge in the protocol graph denot
 | **T2 — Bounded detection adequacy** | The VCS distinguishes the specification from every non-equivalent member of the declared evaluated fault set | T1 + mutation/fault results |
 | **T3 — Calibrated evidence** | Evidence changes belief in specified conformance propositions according to a validated observation model | T2 + calibration and sensitivity analysis |
 
-Higher tiers do not erase the boundaries of lower tiers. A Tier T3 number cannot compensate for missing traceability or invalid executions.
+Higher tiers do not erase the boundaries of lower tiers. A Tier T3 number cannot compensate for missing traceability or invalid executions. Under v4.3, T0 corresponds to A1 traceable definition, T1 to A2/A3 valid evidence and reviewed objective satisfaction, and T2/T3 to R2–R5 research maturity, not to higher certification-oriented assurance.
 
 ---
 
@@ -708,6 +720,18 @@ Each gate produces signed findings and one of `APPROVE`, `APPROVE WITH ACTIONS`,
 
 ## 5. Assurance Argument
 
+> **v4.3 supersession note.** Under candidate baseline `RB-2026-001-v4.3`
+> ([`CR-2026-004`](../../../docs/control/changes/CR-2026-004.md)), the argument
+> below is reinterpreted through the certification-oriented chain: obligation →
+> Verification Objective → verification activity → evidence → reviewed Objective
+> Satisfaction → Compliance Evidence Index. The claims C0–C6 still describe the
+> engineering substance but are reclassified: C1–C3 map to assurance states
+> A1–A3, while C4–C5 (detection adequacy and calibration) are research-evidence
+> claims mapped to R2–R5 and are not higher certification-oriented assurance
+> tiers. The mathematical propositions 1–3 below are unchanged; only their
+> role in the assurance argument is clarified. Internal gates are project-defined
+> and are not authority review gates.
+
 ### 5.1 Top-level claim
 
 > For the fixed standard edition \(S\), applicability declaration \(P\), observation boundary \(O\), controlled environments \(E\), and evaluated fault set \(\mathcal{M}_{\mathrm{eval}}\), the recorded evidence supports the claim that the IUT exhibited behavior accepted by all validly executed base verification cases and that the VCS detected every evaluated non-equivalent fault member it was claimed to cover.
@@ -775,6 +799,16 @@ This follows directly from the definition of `Kill` in Equation (3). The proposi
 ---
 
 ## 6. Quantitative Evidence Without Semantic Conflation
+
+> **v4.3 supersession note.** Under candidate baseline `RB-2026-001-v4.3`, the
+> calibrated conformance belief of section 6.3 is classified as a
+> **research-evidence** claim (R4 maturity), not a certification-oriented
+> assurance claim. Failure to reach a calibrated interpretation does not block
+> certification-oriented closure (A4). A calibrated posterior is not required to
+> establish ordinary protocol verification evidence, and Bayesian or statistical
+> calibration is not a certification objective. The equations and measurement
+> semantics of this section are unchanged; only their classification within the
+> assurance model is clarified by v4.3.
 
 ### 6.1 Three quantities that must remain distinct
 
@@ -1694,6 +1728,14 @@ ARINC 665 和 ARINC 664 可以作为环境假设或测试数据约束出现。�
 
 ### 2.3 保证层级
 
+> **v4.3 超越说明。** 在候选基线 `RB-2026-001-v4.3`
+> （[`CR-2026-004`](../../../docs/control/changes/CR-2026-004.md)）下，下方的
+> 单一 T0–T3 阶梯被两个正交轴超越：面向认证保证状态 **A0–A4** 与研究证据成熟度
+> 状态 **R0–R5**。单个执行 `PASS` 不再自动满足目标或支持主张；目标状态与合规状态
+> 为受评审结论。突变、校准、诊断和迁移性转为仅研究扩展，不授予认证状态。下方 T0–T3
+> 描述作为历史措辞保留，仅对 `RB-2026-001-v4.2` 基线有效；v4.3 中不静默重标。
+> 数学与时序符合性语义不变。
+
 | 层级 | 主张 | 最低支持产物 |
 |---|---|---|
 | **T0——追踪性** | 每条适用需求均关联至少一个可执行用例 | CRS、TP/VC 关系 |
@@ -1701,7 +1743,7 @@ ARINC 665 和 ARINC 664 可以作为环境假设或测试数据约束出现。�
 | **T2——有限检测充分性** | VCS 能区分规范和声明评价故障集中每个非等价成员 | T1 + 变异/故障结果 |
 | **T3——校准证据** | 证据依据经过验证的观测模型改变对符合性命题的信念 | T2 + 校准和敏感性分析 |
 
-高层级不能抵消低层级的缺失。任何 T3 数字都不能弥补追踪性缺失或无效执行。
+高层级不能抵消低层级的缺失。任何 T3 数字都不能弥补追踪性缺失或无效执行。在 v4.3 下，T0 对应 A1 可追踪定义，T1 对应 A2/A3 有效证据与受评审目标满足，T2/T3 对应 R2–R5 研究成熟度，而非更高面向认证保证。
 
 ---
 
@@ -2161,6 +2203,14 @@ w_m\mathbf{1}[\exists v\in V:\mathrm{Kill}(v,m)]}
 
 ## 5. 保证论证
 
+> **v4.3 超越说明。** 在候选基线 `RB-2026-001-v4.3`
+> （[`CR-2026-004`](../../../docs/control/changes/CR-2026-004.md)）下，下述
+> 论证通过面向认证的链条重新解释：义务→验证目标→验证活动→证据→受评审的目标满足→
+> 合规证据索引。主张 C0–C6 仍描述工程实质，但其分类被重划：C1–C3 映射到保证状态
+> A1–A3，而 C4–C5（检测充分性和校准）为研究证据主张，映射到 R2–R5，不是更高面向
+> 认证保证层级。下方数学命题 1–3 不变；仅澄清其在保证论证中的角色。内部门为项目
+> 自定义，非权威评审门。
+
 ### 5.1 顶层主张
 
 > 对于固定标准版本 \(S\)、适用性声明 \(P\)、观测边界 \(O\)、受控环境 \(E\) 和评价故障集 \(\mathcal{M}_{\mathrm{eval}}\)，记录证据支持以下主张：IUT 对所有有效执行的基础验证用例表现出 oracle 可接受行为，且 VCS 检测到了其声明覆盖的每个已评价非等价故障成员。
@@ -2228,6 +2278,11 @@ C0  范围受限符合性证据足以支持声明用途。
 ---
 
 ## 6. 避免语义混淆的定量证据
+
+> **v4.3 超越说明。** 在候选基线 `RB-2026-001-v4.3` 下，6.3 节的校准符合性信念被
+> 归类为**研究证据**主张（R4 成熟度），而非面向认证保证主张。未达校准解释不阻塞
+> 面向认证的关闭（A4）。建立普通协议验证证据无需校准后验，贝叶斯或统计校准不是认证
+> 目标。本节的方程与测量语义不变；只有其在保证模型中的分类由 v4.3 澄清。
 
 ### 6.1 必须区分的三种量
 

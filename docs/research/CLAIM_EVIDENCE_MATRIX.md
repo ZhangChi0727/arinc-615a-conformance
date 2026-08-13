@@ -39,6 +39,23 @@ converted; they remain valid only under their historical baseline wording.
 Research maturity does not grant certification status. Failure to reach `R4` or
 `R5` does not block `A4`.
 
+## Superseded historical claims
+
+These historical claims were defined under `RB-2026-001-v4.2`. They are
+superseded by v4.3 and are not silently relabeled. They remain valid only under
+their historical baseline wording and are retained for traceability.
+
+| Historical claim | v4.3 replacement | Note |
+|---|---|---|
+| C-T0 | A-TRACE | traceability now traces to reviewed objectives |
+| C-T1 | A-EXEC, A-OBJ | execution validity and reviewed satisfaction are separated |
+| C-TIME | E-TIME | engineering claim, now distinct from assurance status |
+| C-T2 | R-MUT, R-HOLDOUT | research-only, not a higher assurance tier |
+| C-T3 | R-CAL | research-only; does not block A4 |
+| C-DIAG | R-DIAG | research-only |
+| C-XFER | R-XFER | research-only, second-protocol replication |
+| C-ENG | E-REPRO | engineering claim
+
 ## Wording rules
 
 Use:
@@ -90,6 +107,21 @@ E-TIME：在声明测量误差预算下，命名时序义务对指定执行得�
 ## 研究主张
 
 R-MUT：VCS 检测到声明评价的有效非等价变异体或故障集；R-HOLDOUT：留出故障检测性能已测量；R-CAL：证据解释在声明观测模型下已校准；R-DIAG：声明故障类在留出性能下定位；R-XFER：指定方法要素在第二协议实例上复现。研究成熟度不授予认证状态；未达 `R4`/`R5` 不阻塞 `A4`。
+
+## 已超越的历史主张
+
+下列历史主张定义于 `RB-2026-001-v4.2`。它们于 v4.3 被超越，且不静默重标。仅在历史基线措辞下有效，保留以供追踪。
+
+| 历史主张 | v4.3 替代 | 说明 |
+|---|---|---|
+| C-T0 | A-TRACE | 追踪性现追踪到已评审目标 |
+| C-T1 | A-EXEC、A-OBJ | 执行有效性与受评审满足分离 |
+| C-TIME | E-TIME | 工程主张，现与保证状态分离 |
+| C-T2 | R-MUT、R-HOLDOUT | 仅研究，非更高保证层级 |
+| C-T3 | R-CAL | 仅研究；不阻塞 A4 |
+| C-DIAG | R-DIAG | 仅研究 |
+| C-XFER | R-XFER | 仅研究，第二协议复现 |
+| C-ENG | E-REPRO | 工程主张
 
 ## 措辞规则
 
