@@ -74,6 +74,11 @@ path or hyperlink improves navigation but does not replace the trace record.
 | Evidence | Immutable run and analysis datasets | Engineering/experiment |
 | Inference model | Registered likelihood, calibration, diagnosis model | Analysis |
 | Claim | Claim ID, tier, scope, evidence, gate decision | Governance |
+| Verification Objective | Requirement refs, type, acceptance criteria, methods, closure rule | Method |
+| Objective Satisfaction Record | Supporting manifests/analyses, status, review record | Governance |
+| Compliance Evidence Index | Top reviewer-facing index of claims to evidence | Governance |
+| Test Conformity | Test article, setup, and procedure conformity status | Engineering |
+| Problem / Deviation | Type, disposition, closure rationale, review record | Governance |
 
 ## Gates
 
@@ -120,6 +125,25 @@ names or the latest Git commit.
 | Publication inputs and reader reports | `docs/research/publication/`, `artifacts/reports/` |
 | Common tutorial | `docs/tutorial/sources/COMMON_TUTORIAL_PLAN.md`, `artifacts/tutorials/` |
 | ARINC 615A tutorial | `docs/tutorial/sources/ARINC615A_TUTORIAL_PLAN.md`, `artifacts/tutorials/` |
+
+## Certification-oriented evidence model (`RB-2026-001-v4.3`)
+
+```text
+L0 Certification / Normative Basis
+L1 Applicability + Conformance Requirement Set
+L2 Verification Objective
+L3 Verification Definition -> Test Purpose / VC / Analysis / Review
+L4 Controlled Execution -> IUT / Setup / Tool / Environment / Procedure
+L5 Evidence -> Raw / Derived / Configuration / Timing / Deviations
+L6 Objective Satisfaction
+L7 Compliance Evidence Package / Compliance Argument
+```
+
+Under v4.3 the historical T0–T3 ladder is superseded by orthogonal
+certification-oriented assurance states A0–A4 and research-evidence maturity
+states R0–R5. These are project-defined states, not FAA, EASA, CAAC, RTCA, SAE,
+or EUROCAE authority levels; research maturity does not grant certification
+status.
 
 ---
 
@@ -187,3 +211,18 @@ RG0–RG6 控制静态产物和主张，G0–G7 控制证据层级；缺失上�
 与出版输入；`src/`、`tests/`、`configs/` 和 `docs/engineering/` 承载工具及其受控输入；
 `docs/tutorial/` 承载两条教程的控制和源计划；`artifacts/` 承载读者报告、已发布教程、发布包
 和生成证据。根 README 是唯一读者入口，四份控制文档是开发者入口。
+
+## 面向认证的证据模型（`RB-2026-001-v4.3`）
+
+```text
+L0 认证 / 规范基础
+L1 适用性 + 符合性需求集
+L2 验证目标
+L3 验证定义 -> 测试目的 / VC / 分析 / 评审
+L4 受控执行 -> IUT / 装置 / 工具 / 环境 / 规程
+L5 证据 -> 原始 / 派生 / 配置 / 时序 / 偏差
+L6 目标满足
+L7 合规证据包 / 合规论证
+```
+
+在 v4.3 下，历史 T0–T3 阶梯由正交的面向认证保证状态 A0–A4 与研究证据成熟度状态 R0–R5 替代。这些是项目自定义状态，不是 FAA、EASA、CAAC、RTCA、SAE 或 EUROCAE 的权威层级；研究成熟度不授予认证状态。

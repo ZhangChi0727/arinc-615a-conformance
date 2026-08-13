@@ -71,6 +71,11 @@ tool_version
 environment_id
 experiment_id
 evidence_manifest_id
+verification_objective_id
+objective_satisfaction_id
+compliance_evidence_index_id
+test_conformity_ref
+problem_closure_id
 claim_id
 gate_record_id
 ```
@@ -158,6 +163,11 @@ tool_version
 environment_id
 experiment_id
 evidence_manifest_id
+verification_objective_id
+objective_satisfaction_id
+compliance_evidence_index_id
+test_conformity_ref
+problem_closure_id
 claim_id
 gate_record_id
 ```
