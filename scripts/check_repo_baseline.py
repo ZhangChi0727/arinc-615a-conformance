@@ -1,4 +1,4 @@
-"""Validate the effective RB-2026-001-v4.2.1 repository baseline."""
+"""Validate the effective RB-2026-001-v4.2.1 baseline and the v4.3 candidate."""
 
 from __future__ import annotations
 
@@ -16,6 +16,17 @@ RELEASE_RECORD = ROOT / "docs/control/baselines/BRR-RB-2026-001-v4.2.1.md"
 CURRENT_REPORT_DIR = ROOT / "artifacts/reports/current"
 READER_REPORT = CURRENT_REPORT_DIR / "RPT-2026-002_information_architecture_v4.2.1.md"
 PR7_GATE = ROOT / "docs/control/gates/GR-PR7-RB-2026-001-v4.2.1.md"
+V43_BASELINE = ROOT / "docs/control/baselines/RB-2026-001-v4.3.md"
+V43_CR = ROOT / "docs/control/changes/CR-2026-004.md"
+V43_CONTRACTS = [
+    ROOT / "docs/control/contracts/VERIFICATION_OBJECTIVE.md",
+    ROOT / "docs/control/contracts/OBJECTIVE_SATISFACTION_RECORD.md",
+    ROOT / "docs/control/contracts/COMPLIANCE_EVIDENCE_INDEX.md",
+    ROOT / "docs/control/contracts/TEST_CONFORMITY_RECORD.md",
+    ROOT / "docs/control/contracts/PROBLEM_CLOSURE_RECORD.md",
+]
+V43_LITERATURE = ROOT / "docs/research/methodology/CERTIFICATION_EVIDENCE_BASIS.md"
+REFERENCE_CATALOG = ROOT / "docs/research/reference_catalog.yaml"
 ZH_MARKER = "\n# 中文版\n"
 APPENDED_ZH_RE = re.compile(r"^# 中文版$", re.MULTILINE)
 
@@ -44,6 +55,10 @@ REQUIRED = [
     ROOT / "docs/control/changes/CR-2026-001.md",
     ROOT / "docs/control/changes/CR-2026-002.md",
     ROOT / "docs/control/changes/CR-2026-003.md",
+    V43_CR,
+    V43_BASELINE,
+    V43_LITERATURE,
+    *V43_CONTRACTS,
     REPORT,
     ROOT / "docs/research/RESEARCH_CONTROL.md",
     ROOT / "docs/research/EXPERIMENT_PLAN.md",
@@ -141,7 +156,9 @@ def document_shape(text: str) -> tuple[int, int, int, int, list[str], list[str],
 def local_link_errors() -> list[str]:
     errors: list[str] = []
     for source in ROOT.rglob("*.md"):
-        if ".git" in source.parts or "local-references" in source.parts:
+        if "local-references" in source.parts:
+            continue
+        if any(part.startswith(".") for part in source.relative_to(ROOT).parts):
             continue
         text = read(source)
         for match in LINK_RE.finditer(text):
@@ -328,6 +345,13 @@ def main() -> int:
                 "derivedEvidenceRefs",
                 "gateRecordRefs",
                 "verdict",
+                "verificationObjectiveRefs",
+                "testArticleConformityRef",
+                "testSetupConformityRef",
+                "procedureConformityRef",
+                "problemRefs",
+                "deviationRefs",
+                "tool",
             }
             missing = required_manifest_fields - parsed_manifests[0].keys()
             if missing:
@@ -335,6 +359,11 @@ def main() -> int:
                     "evidence manifest is missing required fields: "
                     + ", ".join(sorted(missing))
                 )
+            if parsed_manifests[0].get("manifestVersion") != "1.3":
+                errors.append("evidence manifest manifestVersion must be 1.3")
+            tool = parsed_manifests[0].get("tool", {})
+            if "qualificationStatus" not in tool:
+                errors.append("evidence manifest tool block requires qualificationStatus")
             error_budget = parsed_manifests[0].get("clock", {}).get("errorBudget", {})
             required_budget_fields = {
                 "id",
@@ -353,6 +382,36 @@ def main() -> int:
                 )
 
     errors.extend(local_link_errors())
+
+    if not REFERENCE_CATALOG.exists():
+        errors.append("missing optional reference catalog (recommended for v4.3)")
+
+    traceability = read(ROOT / "docs/control/contracts/TRACEABILITY_SCHEMA.md")
+    for term in (
+        "rho_BR",
+        "rho_RO",
+        "rho_OM",
+        "rho_EO",
+        "rho_OC",
+        "NOT_INSTANTIATED_IN_PROTOCOL_ONLY_STUDY",
+    ):
+        if term not in traceability:
+            errors.append(f"v4.3 traceability relation missing: {term}")
+
+    claims = read(ROOT / "docs/research/CLAIM_EVIDENCE_MATRIX.md")
+    for term in ("A-BASIS", "A-COMP", "A-OBJ", "E-TIME", "R-MUT", "R-XFER"):
+        if term not in claims:
+            errors.append(f"v4.3 claim-evidence matrix missing claim: {term}")
+
+    v43_baseline_text = read(V43_BASELINE)
+    if "RB-2026-001-v4.3" not in v43_baseline_text:
+        errors.append("v4.3 baseline does not declare RB-2026-001-v4.3")
+    if "certification-oriented does not mean certification-approved" not in v43_baseline_text:
+        errors.append("v4.3 baseline is missing a required non-claim")
+
+    v43_cr_text = read(V43_CR)
+    if "CR-2026-004" not in v43_cr_text:
+        errors.append("CR-2026-004 does not declare CR-2026-004")
 
     if errors:
         print("Baseline validation failed:", file=sys.stderr)
