@@ -1,0 +1,131 @@
+# Reference catalog for the certification-oriented evidence architecture.
+# Optional for v4.3; machine-readable anchor for the literature basis.
+# authorityLevel values: regulatory_guidance | standard | academic | engineering_practice
+# projectUsage: certification-oriented | engineering | research
+
+- referenceId: REF-FAA-8110-49A
+  title: FAA Order 8110.49A
+  authorityLevel: regulatory_guidance
+  roles:
+    - certification_review
+    - lifecycle_data_review
+    - configuration
+    - conformity_inspection
+  supports:
+    - A-BASIS
+    - A-TRACE
+    - A-EXEC
+    - A-OBJ
+  projectUsage: certification-oriented methodological anchor
+
+- referenceId: REF-FAA-AC-20-115D
+  title: FAA AC 20-115D
+  authorityLevel: regulatory_guidance
+  roles:
+    - software_airworthiness
+    - development_assurance
+  supports:
+    - A-BASIS
+    - A-TRACE
+  projectUsage: certification-oriented methodological anchor
+
+- referenceId: REF-EASA-AMC-20-115D
+  title: EASA AMC 20-115D
+  authorityLevel: regulatory_guidance
+  roles:
+    - software_airworthiness
+    - development_assurance
+  supports:
+    - A-BASIS
+    - A-TRACE
+  projectUsage: certification-oriented methodological anchor
+
+- referenceId: REF-ARP4754A
+  title: SAE ARP4754A
+  authorityLevel: standard
+  roles:
+    - system_development_assurance
+    - traceability
+  supports:
+    - A-BASIS
+    - A-TRACE
+    - A-OBJ
+  projectUsage: certification-oriented methodological anchor
+
+- referenceId: REF-DO-178C
+  title: RTCA DO-178C / EUROCAE ED-12C
+  authorityLevel: standard
+  roles:
+    - software_verification
+    - lifecycle_evidence
+  supports:
+    - A-TRACE
+    - A-EXEC
+    - A-OBJ
+  projectUsage: certification-oriented methodological anchor
+
+- referenceId: REF-DO-330
+  title: RTCA DO-330 / EUROCAE ED-215
+  authorityLevel: standard
+  roles:
+    - tool_qualification
+  supports:
+    - A-EXEC
+  projectUsage: certification-oriented context only; qualification not claimed
+
+- referenceId: REF-ISO-9646
+  title: ISO/IEC 9646 (Conformance Testing Methodology and Framework)
+  authorityLevel: standard
+  roles:
+    - conformance_testing
+    - abstract_test_suite
+  supports:
+    - A-TRACE
+    - A-EXEC
+  projectUsage: certification-oriented methodological anchor
+
+- referenceId: REF-ALUR-DILL-1994
+  title: A Theory of Timed Automata
+  authorityLevel: academic
+  roles:
+    - formal_timing_model
+  supports:
+    - E-TIME
+  projectUsage: engineering/research formal basis
+
+- referenceId: REF-TRETMANS-IOCO
+  title: Tretmans ioco conformance testing
+  authorityLevel: academic
+  roles:
+    - formal_conformance
+  supports:
+    - A-TRACE
+  projectUsage: engineering/research formal basis
+
+- referenceId: REF-JCGM-100
+  title: JCGM 100 (GUM)
+  authorityLevel: standard
+  roles:
+    - measurement_uncertainty
+  supports:
+    - E-TIME
+  projectUsage: engineering measurement basis
+
+- referenceId: REF-MUTATION-TESTING
+  title: Mutation testing literature
+  authorityLevel: academic
+  roles:
+    - adequacy_evaluation
+  supports:
+    - R-MUT
+    - R-HOLDOUT
+  projectUsage: research-only
+
+- referenceId: REF-NASA-SE-HANDBOOK
+  title: NASA Systems Engineering Handbook
+  authorityLevel: engineering_practice
+  roles:
+    - evidence_architecture
+  supports:
+    - A-BASIS
+  projectUsage: engineering best practice, not an aviation authority basis

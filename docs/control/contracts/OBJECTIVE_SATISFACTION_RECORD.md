@@ -1,0 +1,112 @@
+# Objective Satisfaction Record Contract
+
+| Field | Value |
+|---|---|
+| **Version** | 1.0 |
+| **Baseline** | RB-2026-001-v4.3 |
+| **Classification** | A — certification-grounded |
+| **Related object** | Verification Objective |
+
+An Objective Satisfaction Record (OSR) records the reviewed conclusion that a
+Verification Objective is closed by controlled evidence. It is not an automatic
+aggregation of execution verdicts.
+
+## Conceptual schema
+
+```yaml
+objectiveSatisfactionRecordId: OSR-...
+objectiveId: VO-...
+objectiveVersion: ...
+
+supportingExecutionManifests: []
+supportingAnalysisRefs: []
+supportingReviewRefs: []
+supportingProblemClosureRefs: []
+
+objectiveStatus:
+  - SATISFIED
+  - NOT_SATISFIED
+  - OPEN
+  - INCOMPLETE
+
+rationale: ...
+
+openProblems: []
+deviations: []
+
+reviewedBy: ...
+reviewRecordRef: ...
+```
+
+## Rules
+
+- objective satisfaction is a reviewed conclusion, not an automatic aggregation;
+- `INCONCLUSIVE` or invalid supporting executions must not silently disappear;
+- open major problems prevent `SATISFIED` unless a controlled disposition
+  explicitly allows otherwise and is recorded;
+- evidence version mismatch invalidates the closure record;
+- a case-level `PASS` never automatically promotes an objective to `SATISFIED`.
+
+## Status semantics
+
+`SATISFIED`, `NOT_SATISFIED`, `OPEN`, and `INCOMPLETE` are objective-level
+states and are distinct from the execution-level `PASS`, `FAIL`,
+`INCONCLUSIVE`, and `ERROR` verdicts and from compliance claim status. No
+automatic state promotion across layers is permitted.
+
+## Non-claims
+
+These states are project-defined and are not FAA, EASA, CAAC, RTCA, SAE, or
+EUROCAE authority assurance levels.
+
+---
+
+# 中文版
+
+| 字段 | 内容 |
+|---|---|
+| **版本** | 1.0 |
+| **基线** | RB-2026-001-v4.3 |
+| **分类** | A——面向认证 |
+| **相关对象** | 验证目标 |
+
+目标满足记录（OSR）记录由受控证据关闭某验证目标的受评审结论。它不是执行判定的自动聚合。
+
+## 概念 schema
+
+```yaml
+objectiveSatisfactionRecordId: OSR-...
+objectiveId: VO-...
+objectiveVersion: ...
+
+supportingExecutionManifests: []
+supportingAnalysisRefs: []
+supportingReviewRefs: []
+supportingProblemClosureRefs: []
+
+objectiveStatus:
+  - SATISFIED
+  - NOT_SATISFIED
+  - OPEN
+  - INCOMPLETE
+
+rationale: ...
+
+openProblems: []
+deviations: []
+
+reviewedBy: ...
+reviewRecordRef: ...
+```
+
+## 规则
+
+目标满足是受评审结论而非自动聚合；`INCONCLUSIVE` 或无效支持执行不得静默消失；除非受控处置明确允许并已记录，否则未解决重大问题禁止 `SATISFIED`；证据版本不匹配使关闭记录失效；用例级 `PASS` 不得自动将目标晋级为 `SATISFIED`。
+
+## 状态语义
+
+`SATISFIED`、`NOT_SATISFIED`、`OPEN`、`INCOMPLETE` 为目标级状态，区别于执行级 `PASS`、`FAIL`、`INCONCLUSIVE`、`ERROR` 判定与合规主张状态。禁止跨层自动状态晋级。
+
+## 非主张
+
+这些状态为项目自定义，不是 FAA、EASA、CAAC、RTCA、SAE 或 EUROCAE 的权威保证层级。
