@@ -40,6 +40,11 @@ Create `docs/control/changes/CR-YYYY-NNN.md` containing:
    changes create a new version.
 7. A cross-domain interface change identifies affected producers, consumers,
    trace fields, migrations, and tutorial/publication references.
+8. Under `RB-2026-001-v4.3`, certification-oriented assurance states (A0–A4)
+   and research-evidence maturity states (R0–R5) are orthogonal; reaching R4 or
+   R5 is not a certification requirement, and failing to reach them does not
+   block A4. Internal assurance gates are not FAA, EASA, CAAC, RTCA, SAE, or
+   EUROCAE authority review gates.
 
 ## Git and PR policy
 
@@ -51,7 +56,8 @@ Create `docs/control/changes/CR-YYYY-NNN.md` containing:
 - raw evidence changes require provenance and reproduction checks;
 - squash only when the resulting commit preserves useful baseline and gate IDs.
 
-Recommended baseline tag after approval: `research-baseline/RB-2026-001-v4.2`.
+Recommended baseline tag after approval: `research-baseline/RB-2026-001-v4.2`;
+candidate for v4.3: `RB-2026-001-v4.3`.
 
 ---
 
@@ -69,7 +75,7 @@ Recommended baseline tag after approval: `research-baseline/RB-2026-001-v4.2`.
 
 ## 规则
 
-数学修正、时序语义、oracle、适用性和保证层级变化不得伪装成编辑；既有证据不得仅通过改标签迁移；解释冲突必须进入裁决和风险记录。跨领域接口变化必须标明受影响生产者、消费者、追踪字段、迁移以及教程/出版引用。
+数学修正、时序语义、oracle、适用性和保证层级变化不得伪装成编辑；既有证据不得仅通过改标签迁移；解释冲突必须进入裁决和风险记录。跨领域接口变化必须标明受影响生产者、消费者、追踪字段、迁移以及教程/出版引用。在 `RB-2026-001-v4.3` 下，A0–A4 与 R0–R5 正交；达到 R4/R5 非认证要求，未达不阻塞 A4。内部保证门不是 FAA、EASA、CAAC、RTCA、SAE 或 EUROCAE 的权威评审门。
 
 ## Git 与 PR 政策
 

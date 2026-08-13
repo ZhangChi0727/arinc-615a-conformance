@@ -9,6 +9,9 @@ Baseline-aligned engineering and model design lives here.
 | VC/oracle | schemas, discrete/robust timing verdict logic, error budget, reset/isolation, evidence fields | RG3 |
 | Tool architecture | interfaces, failure modes, configuration control | RG4 |
 | Evidence package | manifest, raw/derived layout, provenance checks | RG4/RG5 |
+| Verification objective and closure | objective schema, objective satisfaction, compliance index | RG2/RG6 |
+| Test conformity | test article, setup, and procedure conformity records | RG4 |
+| Problem and deviation closure | problem records, dispositions, closure review | RG5/RG6 |
 | Analysis pipeline | discrete/timed coverage, mutation, dependence, statistics, diagnosis contracts | RG5 |
 
 Design notes are not approved merely by being committed. Each controlled design

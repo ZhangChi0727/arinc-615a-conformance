@@ -3,9 +3,9 @@
 | Field | Value |
 |---|---|
 | **Plan ID** | IPP-2026-001 |
-| **Version** | 1.3 |
-| **Status** | Active under effective and frozen RB-2026-001-v4.2.1 |
-| **Baseline** | RB-2026-001-v4.2.1; method semantics inherited unchanged from v4.2 |
+| **Version** | 1.4 |
+| **Status** | Active under effective and frozen RB-2026-001-v4.2.1; v4.3 candidate under CR-2026-004 |
+| **Baseline** | RB-2026-001-v4.2.1 effective; RB-2026-001-v4.3 candidate; method semantics inherited unchanged from v4.2 |
 | **Planning horizon** | Baseline freeze through second-protocol replication |
 
 ## 1. Mission
@@ -74,6 +74,18 @@ allowed only when it does not pre-empt an unresolved upstream gate.
   bilingual-parity, and validator review trace for v4.2.1;
 - use `BRR-RB-2026-001-v4.2.1` to identify the PR #7 release commit and tag;
 - do not relabel v4.1/v4.2 evidence merely because repository paths changed.
+
+### v4.3 candidate baseline
+
+- advance CR-2026-004: introduce Verification Objectives, Objective
+  Satisfaction Records, a Compliance Evidence Index, test conformity records,
+  and problem/deviation closure records;
+- supersede the T0–T3 ladder with orthogonal A0–A4 assurance and R0–R5 research
+  maturity states; keep timed-conformance mathematics unchanged;
+- mutation, calibration, diagnosis, and cross-protocol replication remain
+  research-only and do not block certification-oriented closure;
+- keep the PR in Draft until an independent baseline review approves v4.3;
+- do not promote any existing empirical claim by the restructuring alone.
 
 ### First research increment
 

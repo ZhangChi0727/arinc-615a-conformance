@@ -3,9 +3,9 @@
 | Field | Value |
 |---|---|
 | **Plan ID** | RP-2026-001 |
-| **Version** | 1.2 |
-| **Status** | Approved for baseline execution |
-| **Methodology baseline** | RB-2026-001-v4.2 |
+| **Version** | 1.3 |
+| **Status** | Approved for baseline execution; v4.3 candidate under CR-2026-004 |
+| **Methodology baseline** | RB-2026-001-v4.2 effective; RB-2026-001-v4.3 candidate |
 | **Primary report** | [`methodology/RR-2026-001_test_analysis_conformance_methodology.md`](methodology/RR-2026-001_test_analysis_conformance_methodology.md) |
 
 ## Objective
@@ -18,6 +18,14 @@ Research consumes engineering observations only through immutable,
 version-complete evidence manifests. It may propose upstream changes through
 CR/DD, but neither analysis code nor publication prose silently changes method
 contracts or raw observations.
+
+Under `RB-2026-001-v4.3`, research questions are grouped into core
+methodological research, engineering evaluation, and research-only evaluation.
+Mutation adequacy, held-out detection, calibration, diagnosis, and
+transferability are research-only extensions: they do not grant certification
+status, and failure to reach the R4 or R5 maturity states does not block
+certification-oriented closure (A4). No hypothesis may imply that mutation or
+Bayesian calibration is necessary for certification-oriented assurance.
 
 ## Research questions and work packages
 
@@ -120,6 +128,8 @@ negative evidence.
 ## 目标
 
 研究目标是评价一条可审计测试—分析流程能否产生有用、有边界且可复现的 ARINC 615A 离散与时序符合性证据，并改善追踪、故障检测、诊断和发布决策。RQ1–RQ6 继续覆盖导出、覆盖、有限充分性、证据解释、诊断和可迁移性；RQ2 的模型对象升级为带时钟 EFSM 和时序义务目录。研究只通过不可变、版本完整的证据清单消费工程观测；它可以通过 CR/DD 提议上游变化，但分析代码或出版叙述不得静默修改方法契约或原始观测。
+
+在 `RB-2026-001-v4.3` 下，研究问题分为核心方法论研究、工程评价和仅研究评价三类。突变充分性、留出检测、校准、诊断和迁移性为仅研究扩展：它们不授予认证状态，未达 R4 或 R5 成熟度不阻塞面向认证的关闭（A4）。任何假设不得暗示突变或贝叶斯校准为面向认证保证所必需。
 
 ## 研究问题与工作包
 
