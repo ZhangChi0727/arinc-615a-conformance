@@ -1485,6 +1485,25 @@ https://doi.org/10.59161/JCGM106-2012
 
 *AI-assisted research disclosure: AI tools assisted with drafting and consistency checking. Mathematical claims, standard interpretations, references, and experimental conclusions require accountable human review. The report does not state that a reference has been verified unless its bibliographic metadata and the cited proposition have both been checked.*
 
+## 15. v4.3 Certification-Oriented Evidence Architecture
+
+Under candidate baseline `RB-2026-001-v4.3`, this report's mathematics and
+timed-conformance semantics are inherited unchanged; equations 1–14 and timed
+equations T1–T5 are not modified. The architecture is extended with a
+certification-oriented evidence model: requirement → Verification Objective →
+verification definition → controlled execution → Execution Evidence Manifest →
+Objective Satisfaction → Compliance Evidence Index.
+
+The T0–T3 ladder of section 2.3 is superseded by two orthogonal axes:
+certification-oriented assurance states A0–A4 and research-evidence maturity
+states R0–R5. Execution verdict, objective status, and compliance status are
+distinct; no `PASS` automatically satisfies an objective or supports a claim.
+Mutation adequacy, calibration, diagnosis, and transferability are
+research-only and do not grant certification status. These states are
+project-defined and are not authority assurance levels. See
+[`CERTIFICATION_EVIDENCE_BASIS.md`](CERTIFICATION_EVIDENCE_BASIS.md) and the
+compliance/objective contracts under `docs/control/contracts/`.
+
 ---
 
 # 中文版
@@ -2894,3 +2913,9 @@ https://doi.org/10.59161/JCGM106-2012
 ---
 
 *AI 辅助研究披露：AI 工具协助完成草拟和一致性检查。数学主张、标准解释、参考文献和实验结论均须由可问责的人类评审者复核。只有在书目信息和所支持命题均已检查后，报告才可声明某条引用已经验证。*
+
+## 15. 面向认证的 v4.3 证据架构
+
+在候选基线 `RB-2026-001-v4.3` 下，本报告的数学与时序符合性语义原样继承；式 1–14 与时序式 T1–T5 不变。架构扩展为面向认证的证据模型：需求→验证目标→验证定义→受控执行→执行证据清单→目标满足→合规证据索引。
+
+第 2.3 节的 T0–T3 阶梯由两个正交轴替代：面向认证保证状态 A0–A4 与研究证据成熟度状态 R0–R5。执行判定、目标状态与合规状态相互区别；任何 `PASS` 不得自动满足目标或支持主张。突变充分性、校准、诊断和迁移性为仅研究扩展，不授予认证状态。这些状态为项目自定义，非权威保证层级。见 [`CERTIFICATION_EVIDENCE_BASIS.md`](CERTIFICATION_EVIDENCE_BASIS.md) 及 `docs/control/contracts/` 下的合规/目标契约。
