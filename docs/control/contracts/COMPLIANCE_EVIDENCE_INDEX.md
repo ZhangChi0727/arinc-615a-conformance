@@ -4,13 +4,19 @@
 |---|---|
 | **Version** | 1.0 |
 | **Baseline** | RB-2026-001-v4.3 |
-| **Classification** | A — certification-grounded |
+| **Classification** | ARINC/Profile candidate — certification-oriented |
+| **Generic correspondence** | Claim: NOT-DETERMINED; primary relation `indexes` |
+| **Authority acceptance** | NOT ESTABLISHED |
 | **Role** | first reviewer-facing evidence index |
 
-The Compliance Evidence Index (CEI) is the top reviewer-facing evidence
-artifact. It lets a reviewer navigate from a compliance claim down to
+The Compliance Evidence Index (CEI) is the first local reviewer-facing evidence
+index. It lets a reviewer navigate from a compliance claim down to
 objectives, activities, executions, evidence, problems, and conclusions. The
 Execution Evidence Manifest is not the top-level compliance artifact.
+
+The CEI only indexes these records. CEI completeness does not make it a Claim,
+Argument, Evidence Item, or Evidence Architecture, and does not establish claim
+truth, sufficiency, compliance, or authority acceptance.
 
 ## Evidence hierarchy
 
@@ -78,10 +84,16 @@ all possible implementation behavior.
 |---|---|
 | **版本** | 1.0 |
 | **基线** | RB-2026-001-v4.3 |
-| **分类** | A——面向认证 |
+| **分类** | ARINC/Profile 候选——面向认证 |
+| **Generic 对应** | Claim：NOT-DETERMINED；主关系 `indexes` |
+| **权威接受** | 尚未建立 |
 | **角色** | 首份面向审查的证据索引 |
 
-合规证据索引（CEI）是顶层面向审查的证据产物。它让审查者从合规主张向下导航至目标、活动、执行、证据、问题与结论。执行证据清单不是顶层合规产物。
+合规证据索引（CEI）是首份本地面向评审的证据索引。它让评审者从合规主张向下导航至
+目标、活动、执行、证据、问题与结论；执行证据清单不是顶层合规产物。
+
+CEI 只索引这些记录。CEI 完整不使其成为 Claim、Argument、Evidence Item 或 Evidence
+Architecture，也不建立主张真实性、充分性、合规性或权威接受。
 
 ## 证据层次
 

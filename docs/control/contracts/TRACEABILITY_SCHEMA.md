@@ -1,12 +1,12 @@
 # Traceability Schema
 
-Traceability is relational and many-to-many. Under `RB-2026-001-v4.3`, relations
-are split into two groups: core assurance relations and engineering/research
-extension relations. Core relations form the certification-oriented chain from
-requirement to compliance claim; extension relations support model-based and
-research activities and must not be presented as certification-mandatory links.
+Traceability is relational and many-to-many. Under the `RB-2026-001-v4.3`
+migration candidate, all `rho_*` relations below are local ARINC/Profile trace
+relations. They are not Generic GVS Core relations. Their direction is fixed,
+but cardinalities and external GVS correspondence remain open to independent
+review. Relations are split into local assurance and engineering/research groups.
 
-## Core assurance relations
+## ARINC/Profile assurance relations
 
 | Relation | Source | Target | Required metadata |
 |---|---|---|---|
@@ -22,6 +22,12 @@ research activities and must not be presented as certification-mandatory links.
 `rho_BR` may remain `NOT_INSTANTIATED_IN_PROTOCOL_ONLY_STUDY` when no
 aircraft-level certification requirement is instantiated. Do not fabricate
 aircraft-level certification requirements in the protocol-only study.
+
+This chain is a local trace view. A link records a candidate relation; it does
+not automatically establish a Verification Basis Element, Verification
+Obligation, Evidence Item, Objective Satisfaction, Claim support, compliance,
+or authority acceptance. External correspondence is `NOT-DETERMINED` unless a
+reviewed mapping record states otherwise.
 
 ## Engineering and research extension relations
 
@@ -64,13 +70,19 @@ source version and generation command.
 
 # 中文版
 
-追踪关系是多对多关系。在 `RB-2026-001-v4.3` 下，关系分为两组：核心保证关系和工程/研究扩展关系。核心关系构成从需求到合规主张的面向认证链条；扩展关系支持基于模型与研究活动，且不得被表述为认证强制链接。
+追踪关系是多对多关系。在 `RB-2026-001-v4.3` 迁移候选下，下列全部 `rho_*` 都是本地
+ARINC/Profile 追踪关系，不是 Generic GVS Core 关系。方向已固定，但基数和外部 GVS 对应
+仍待独立评审。关系分为本地保证关系与工程/研究关系。
 
-## 核心保证关系
+## ARINC/Profile 保证关系
 
 `rho_BR` 从更高层需求/基础到协议需求；`rho_RA` 从协议需求到适用 CRS 项；`rho_RO` 从 CRS 需求/义务到验证目标；`rho_OM` 从验证目标到验证方法/测试目的/分析/评审；`rho_TV` 从测试目的到验证用例；`rho_VE` 从验证用例执行到证据记录/执行证据清单；`rho_EO` 从证据/验证记录到目标满足记录；`rho_OC` 从验证目标到合规主张。
 
 当未实例化航空器级认证需求时，`rho_BR` 可保留为 `NOT_INSTANTIATED_IN_PROTOCOL_ONLY_STUDY`。在仅协议研究中不得编造航空器级认证需求。
+
+该链只是本地追踪视图。存在链接不会自动建立 Verification Basis Element、Verification
+Obligation、Evidence Item、Objective Satisfaction、Claim support、compliance 或 authority
+acceptance。除非受评审映射另有规定，外部对应状态为 `NOT-DETERMINED`。
 
 ## 工程与研究扩展关系
 

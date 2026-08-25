@@ -4,11 +4,14 @@
 |---|---|
 | **Version** | 1.0 |
 | **Baseline** | RB-2026-001-v4.3 |
-| **Classification** | A — certification-grounded |
+| **Classification** | ARINC Profile/Binding candidate — certification-oriented |
+| **Generic correspondence** | Configuration/provenance role: NOT-DETERMINED |
+| **Authority acceptance** | NOT ESTABLISHED |
 | **Roles** | IUT, test setup, procedure |
 
-This record implements certification-oriented test-conformity discipline. The
-project explicitly states: certification-credit use is not claimed.
+This local record applies certification-oriented test-conformity discipline to
+Profile/Binding configuration and provenance. It does not establish external
+Configuration equivalence, authority conformity, or certification credit.
 
 ## Conceptual schema
 
@@ -66,10 +69,13 @@ established under an applicable qualification basis.
 |---|---|
 | **版本** | 1.0 |
 | **基线** | RB-2026-001-v4.3 |
-| **分类** | A——面向认证 |
+| **分类** | ARINC Profile/Binding 候选——面向认证 |
+| **Generic 对应** | Configuration/来源角色：NOT-DETERMINED |
+| **权威接受** | 尚未建立 |
 | **角色** | IUT、测试装置、规程 |
 
-本记录实现面向认证的测试符合性纪律。项目明确声明：不主张认证信用。
+本地记录把面向认证的测试符合性纪律用于 Profile/Binding 配置与来源；它不建立外部
+Configuration 等价、权威符合性或认证信用。
 
 ## 概念 schema
 

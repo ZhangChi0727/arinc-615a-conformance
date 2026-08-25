@@ -4,12 +4,18 @@
 |---|---|
 | **Version** | 1.0 |
 | **Baseline** | RB-2026-001-v4.3 |
-| **Classification** | A — certification-grounded |
+| **Classification** | ARINC/Profile project candidate — certification-oriented |
+| **Generic correspondence** | composite Anomaly/Change/Impact/Decision: NOT-DETERMINED |
+| **Authority acceptance** | NOT ESTABLISHED |
 | **Replaces** | unstructured `deviations: []` concept |
 
 Problems and deviations are controlled, traceable objects rather than free-text
 flags. Open major problems prevent objective satisfaction unless a controlled
 disposition explicitly allows otherwise.
+
+This local composite may overlap external Anomaly, Change, Impact, and Decision
+roles, but equivalence is `NOT-DETERMINED`. Closure is a project disposition,
+not method compatibility or authority acceptance.
 
 ## Conceptual schema
 
@@ -72,10 +78,15 @@ conformity decisions or grant certification credit.
 |---|---|
 | **版本** | 1.0 |
 | **基线** | RB-2026-001-v4.3 |
-| **分类** | A——面向认证 |
+| **分类** | ARINC/Profile 项目候选——面向认证 |
+| **Generic 对应** | Anomaly/Change/Impact/Decision 复合：NOT-DETERMINED |
+| **权威接受** | 尚未建立 |
 | **替代** | 非结构化 `deviations: []` 概念 |
 
 问题与偏差是受控、可追踪的对象，而非自由文本标记。除非受控处置明确允许，未解决重大问题禁止目标满足。
+
+本地复合工件可能与外部 Anomaly、Change、Impact 和 Decision 角色重叠，但等价性为
+`NOT-DETERMINED`。关闭属于项目处置，不代表方法兼容或权威接受。
 
 ## 概念 schema
 

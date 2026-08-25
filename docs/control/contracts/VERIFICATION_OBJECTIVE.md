@@ -4,7 +4,9 @@
 |---|---|
 | **Version** | 1.0 |
 | **Baseline** | RB-2026-001-v4.3 |
-| **Classification** | A — certification-grounded |
+| **Classification** | ARINC/Profile candidate — certification-oriented |
+| **Generic correspondence** | VerificationObligation: NOT-DETERMINED |
+| **Authority acceptance** | NOT ESTABLISHED |
 | **Supersedes** | none (new layer above Test Purpose) |
 
 A Verification Objective (VO) states what fact must be demonstrated to close a
@@ -78,9 +80,10 @@ reviewRecordRefs: []
 
 ## Classification note
 
-This object is certification-grounded (class A): it aligns with objective,
-activity, evidence, review, and satisfaction logic used in aviation
-development-assurance. It does not claim authority approval.
+This is a local ARINC/Profile candidate object. It may correspond to a
+VerificationObligation role, but equivalence and Generic definition authority
+are `NOT-DETERMINED`. Its aviation-oriented structure does not establish
+authority approval or make the object part of the Generic GVS Core.
 
 ## Non-claims
 
@@ -97,7 +100,9 @@ development-assurance. It does not claim authority approval.
 |---|---|
 | **版本** | 1.0 |
 | **基线** | RB-2026-001-v4.3 |
-| **分类** | A——面向认证 |
+| **分类** | ARINC/Profile 候选——面向认证 |
+| **Generic 对应** | VerificationObligation：NOT-DETERMINED |
+| **权威接受** | 尚未建立 |
 | **替代** | 无（位于测试目的之上的新层） |
 
 验证目标（VO）声明为关闭所引用需求义务而必须证明的事实。测试用例本身不是保证目标：一个需求在关闭前可能需要多项测试、分析、检查或评审活动。
@@ -162,7 +167,9 @@ reviewRecordRefs: []
 
 ## 分类说明
 
-本对象属面向认证类（A 类）：与航空开发保证中的目标、活动、证据、评审与满足逻辑一致。不主张适航批准。
+本对象是本地 ARINC/Profile 候选。它可能对应 VerificationObligation 角色，但等价性和
+Generic 定义权均为 `NOT-DETERMINED`。其面向航空的结构不建立权威批准，也不使该对象
+成为 Generic GVS Core 的一部分。
 
 ## 非主张
 

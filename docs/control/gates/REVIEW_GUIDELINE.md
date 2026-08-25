@@ -8,8 +8,10 @@
 
 Internal project assurance gates are inspired by lifecycle review and
 independent assurance principles. They are not FAA, EASA, CAAC, RTCA, SAE, or
-EUROCAE authority review gates. Under `RB-2026-001-v4.3`, assurance gates govern
-A0–A4 artifacts and research gates govern R0–R5 claims; reaching R4 or R5 is not
+EUROCAE authority review gates. Under `RB-2026-001-v4.3`, RG0–RG6, G0–G7,
+A0–A4, and R0–R5 are ARINC/Profile/project candidate taxonomies, not Generic
+GVS Core or authority levels. Local assurance gates govern A0–A4 artifacts and
+research gates govern R0–R5 claims; reaching R4 or R5 is not
 a certification requirement and does not block A4.
 
 ## Review types
@@ -96,7 +98,7 @@ control supported by appropriate data and validation.
 
 评审类型包括仓库、工程、方法、研究、证据和主张发布。RG0 固定范围；RG1 裁决 CRS；RG2 评审带时钟 EFSM、时序目录和追踪；RG3 评审 VC、稳健 oracle、时钟/复位/误差 schema；RG4 检查 IUT、工具、时钟、时间戳链、环境和试运行；RG5 检查带时戳原始/派生证据及可复现性；RG6 控制主张发布。
 
-内部项目保证门受生命周期评审与独立保证原则启发，但不是 FAA、EASA、CAAC、RTCA、SAE 或 EUROCAE 的权威评审门。在 `RB-2026-001-v4.3` 下，保证门治理 A0–A4 产物，研究门治理 R0–R5 主张；达到 R4 或 R5 非认证要求，且不阻塞 A4。
+内部项目保证门受生命周期评审与独立保证原则启发，但不是 FAA、EASA、CAAC、RTCA、SAE 或 EUROCAE 的权威评审门。在 `RB-2026-001-v4.3` 下，RG0–RG6、G0–G7、A0–A4 和 R0–R5 均为 ARINC/Profile/项目候选 taxonomy，不是 Generic GVS Core 或权威层级。保证门治理 A0–A4 产物，研究门治理 R0–R5 主张；达到 R4 或 R5 非认证要求，且不阻塞 A4。
 
 ## 评审类型
 

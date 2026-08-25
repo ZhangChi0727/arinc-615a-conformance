@@ -4,12 +4,18 @@
 |---|---|
 | **Version** | 1.0 |
 | **Baseline** | RB-2026-001-v4.3 |
-| **Classification** | A — certification-grounded |
+| **Classification** | ARINC/Profile candidate — certification-oriented |
+| **Generic correspondence** | composite Result/SufficiencyAssessment/Decision/Claim linkage: NOT-DETERMINED |
+| **Authority acceptance** | NOT ESTABLISHED |
 | **Related object** | Verification Objective |
 
 An Objective Satisfaction Record (OSR) records the reviewed conclusion that a
 Verification Objective is closed by controlled evidence. It is not an automatic
 aggregation of execution verdicts.
+
+The OSR is an instance composite, not one asserted Generic GVS Core object or a
+generic sufficiency algorithm. Evidence characterization, sufficiency reasoning,
+decision, and claim linkage remain explicit and independently reviewable.
 
 ## Conceptual schema
 
@@ -67,10 +73,15 @@ EUROCAE authority assurance levels.
 |---|---|
 | **版本** | 1.0 |
 | **基线** | RB-2026-001-v4.3 |
-| **分类** | A——面向认证 |
+| **分类** | ARINC/Profile 候选——面向认证 |
+| **Generic 对应** | Result/SufficiencyAssessment/Decision/Claim linkage 复合：NOT-DETERMINED |
+| **权威接受** | 尚未建立 |
 | **相关对象** | 验证目标 |
 
 目标满足记录（OSR）记录由受控证据关闭某验证目标的受评审结论。它不是执行判定的自动聚合。
+
+OSR 是实例复合工件，不被声明为单个 Generic GVS Core 对象或通用充分性算法。证据表征、
+充分性推理、决定和主张链接保持显式且可独立评审。
 
 ## 概念 schema
 

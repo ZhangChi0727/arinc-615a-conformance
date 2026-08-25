@@ -5,6 +5,12 @@ obligations, and traceability artifacts.
 It is governed by RG0–RG3 and must not contain proprietary standard text in a
 public repository.
 
+For v4.3 these are ARINC Conformance-Testing Profile/Product Binding candidate
+artifacts. A PICS-like declaration controls applicability and the resulting CRS
+population; it is not itself Verification Basis. An applicable CRS item may play
+a candidate typed-basis role, while VO and Test Purpose correspondence with
+external method objects remains `NOT-DETERMINED` pending review.
+
 ## Planned controlled artifacts
 
 | Artifact | Suggested file | Gate |
@@ -44,6 +50,11 @@ cancellation/silence, bounds, units, clock start/resets, inclusivity, and source
 # 中文版
 
 本目录负责适用性、CRS、离散/时序 TP/VC 导出、时序义务和追踪。公开仓库不得保存专有标准原文。CRS 的时序义务必须定义触发、响应、取消/静默、界限、单位、时钟开始/复位、边界包含性和来源；时序义务目录在 RG1/RG2 受控。存在链接不等于覆盖，义务、稳健 oracle 和误差预算仍需评审。
+
+对 v4.3 而言，这些是 ARINC Conformance-Testing Profile/Product Binding 候选产物。
+PICS-like 声明控制适用性及由此产生的 CRS 总体，但本身不是 Verification Basis。适用 CRS
+项可能承担候选 typed-basis role；VO 与 Test Purpose 对外部方法对象的对应在评审前保持
+`NOT-DETERMINED`。
 
 ## 计划中的受控产物
 
