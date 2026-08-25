@@ -1,5 +1,6 @@
-# Reference catalog for the certification-oriented evidence architecture.
-# Optional for v4.3; machine-readable anchor for the literature basis.
+# Instance-side candidate reference catalog for the ARINC Profile/Binding migration.
+# Optional for v4.3; does not replace external-method normative research or grant
+# Generic promotion rights. Unstudied sources cannot mandate objects/gates/states.
 # authorityLevel values: regulatory_guidance | standard | academic | engineering_practice
 # projectUsage: certification-oriented | engineering | research
 

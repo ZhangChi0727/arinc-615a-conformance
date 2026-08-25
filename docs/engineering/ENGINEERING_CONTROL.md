@@ -4,8 +4,8 @@
 |---|---|
 | **Plan ID** | EIP-2026-001 |
 | **Version** | 1.3 |
-| **Status** | Approved for staged implementation; v4.3 candidate under CR-2026-004 |
-| **Methodology baseline** | RB-2026-001-v4.2 effective; RB-2026-001-v4.3 candidate |
+| **Status** | Approved under effective v4.2; GVS-bound v4.3 migration candidate under CR-2026-004 |
+| **Methodology baseline** | RB-2026-001-v4.2 effective; v4.3 candidate bound to external MethodDefinitionCommit `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
 
 ## Engineering objective
 
@@ -13,6 +13,12 @@ Build a reproducible verification instrument that implements the Test path,
 produces analysis-ready evidence, and enforces the baseline's scope and gate
 semantics. The software is an experimental and engineering instrument; its
 existence alone is not evidence of conformance.
+
+For v4.3, engineering realizes only the ARINC Product Binding under a selected
+Profile and Project Configuration. It consumes the external Core as read-only,
+does not redefine Generic objects, and must record method/Profile/Binding/
+Configuration identities. `TMP-PC-ARINC615A-01` remains `NOT YET ESTABLISHED`;
+no execution or compatibility result is inferred from migration documents.
 
 ## Target architecture
 
@@ -108,8 +114,8 @@ evidence-manifest violations once those validators exist.
 - RG0–RG4 are approved;
 - at least one end-to-end VC preserves a complete evidence package;
 - the package is reproduced on a clean checkout;
-- no empirical claim exceeds the achieved certification-oriented or research
-  maturity state (no T0–T3 ladder is assumed; v4.3 uses A0–A4 and R0–R5);
+- no empirical claim exceeds the achieved local ARINC/Profile assurance or
+  research candidate state (A0–A4 and R0–R5 are not Generic/authority levels);
 - known limitations and deviations are recorded.
 
 ---
@@ -119,6 +125,11 @@ evidence-manifest violations once those validators exist.
 ## 工程目标
 
 实现一套可复现验证仪器：执行测试路径、产生可分析证据，并强制执行 v4.2 的范围、时序和门禁语义。主要组件包括需求/模型 schema、TFTP 核心、615A 会话、时钟与时序义务模型、双角色控制器、VC 引擎、稳健 oracle、证据写入、覆盖/变异/时序/校准/诊断分析和 CLI 报告。
+
+对 v4.3 而言，工程只在选定 Profile 与 Project Configuration 下实现 ARINC Product
+Binding。它只读消费外部 Core，不重定义 Generic 对象，并必须记录 method/Profile/Binding/
+Configuration 身份。`TMP-PC-ARINC615A-01` 仍为 `NOT YET ESTABLISHED`；不得从迁移文档
+推断执行或兼容性结果。
 
 ## 目标架构
 

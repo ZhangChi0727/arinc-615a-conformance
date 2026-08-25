@@ -6,11 +6,15 @@
 | Product/version | named engineering or research increment |
 | Source commit | immutable Git commit |
 | Governing baseline | exact baseline ID |
+| External method binding | binding ID and immutable MethodDefinitionCommit |
+| Profile / Product Binding | temporary or stable IDs and versions |
+| Project Configuration | controlled ID/version or `NOT YET ESTABLISHED` |
 | Inputs | requirement, applicability, CRS, verification objective, model, VCS, tool/config/environment IDs |
 | Evidence | test results, raw/derived evidence, execution evidence manifest, test conformity, problem closure IDs |
 | Conformance | test article, setup, and procedure conformity status; tool qualification status |
 | Review state | gate records, open deviations, accepted risks |
 | Release decision | accepted, rejected, conditional, or not submitted |
+| Compatibility / evaluation | `NOT-DETERMINED` / `NOT-EXERCISED` unless separately reviewed evidence changes them |
 
 ## Required assurance narrative
 
@@ -37,11 +41,15 @@ retain limitations and link the underlying evidence manifest and gate record.
 | 产品/版本 | 具名工程或研究增量 |
 | 源提交 | 不可变 Git 提交 |
 | 治理基线 | 精确基线 ID |
+| 外部方法绑定 | 绑定 ID 与不可变 MethodDefinitionCommit |
+| Profile / Product Binding | 临时或稳定 ID 及版本 |
+| Project Configuration | 受控 ID/版本或 `NOT YET ESTABLISHED` |
 | 输入 | 需求、适用性、CRS、验证目标、模型、VCS、工具/配置/环境 ID |
 | 证据 | 测试结果、原始/派生证据、执行证据清单、测试件符合性与问题关闭 ID |
 | 符合性 | 测试件、装置与规程符合性状态；工具鉴定状态 |
 | 评审状态 | 门禁记录、开放偏差和已接受风险 |
 | 发布决定 | 接受、拒绝、有条件接受或未提交 |
+| 兼容性 / 评价 | 除非独立受评审证据改变，否则为 `NOT-DETERMINED` / `NOT-EXERCISED` |
 
 ## 必需保证叙述
 

@@ -4,12 +4,15 @@
 |---|---|
 | **Version** | 1.0 |
 | **Baseline** | RB-2026-001-v4.3 |
-| **Purpose** | separate authority/development-assurance basis from research literature |
+| **Purpose** | instance-side candidate literature basis; separate authority/development-assurance sources from research literature |
 
-This document groups the evidence basis for the certification-oriented
-architecture. Authority guidance is distinguished from academic papers, and
-research-only literature is labeled accordingly. Nothing here asserts that the
-project has obtained authority approval.
+This document is an instance-side candidate literature basis for the ARINC
+Profile/Binding migration. It does not replace normative research owned by the
+external method repository and grants no Generic promotion rights. Authority
+guidance is distinguished from academic papers and research-only literature is
+labeled accordingly. A source not studied proposition by proposition cannot
+support a mandatory object, gate, state, or certification claim. Nothing here
+asserts method compatibility or authority approval.
 
 ## Airworthiness and development-assurance guidance
 
@@ -92,9 +95,11 @@ Engineering best practice only, not an aviation authority basis.
 |---|---|
 | **版本** | 1.0 |
 | **基线** | RB-2026-001-v4.3 |
-| **目的** | 将权威/开发保证基础与研究文献分离 |
+| **目的** | 实例侧候选文献基础；将权威/开发保证来源与研究文献分离 |
 
-本文档汇总面向认证架构的证据基础。权威指南与学术论文相区分，仅研究类文献据此标注。此处不含项目已获权威批准的任何表述。
+本文档是 ARINC Profile/Binding 迁移的实例侧候选文献基础，不替代外部方法仓库拥有的规范
+研究，也不产生 Generic 晋级权。权威指南与学术论文相区分，仅研究类文献据此标注。未经
+逐命题研究的来源不得支持强制对象、门、状态或认证主张；此处不声称方法兼容或权威批准。
 
 ## 适航与开发保证指南
 

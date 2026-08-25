@@ -1,10 +1,11 @@
 # Execution Evidence Manifest Contract
 
-Under `RB-2026-001-v4.3`, the Evidence Manifest is redefined as the
-**Execution Evidence Manifest (EEM)**: an execution-level evidence artifact
-that sits below the Objective Satisfaction Record and the Compliance Evidence
-Index. An EEM alone does not satisfy an objective or support a compliance
-claim; those are reviewed conclusions.
+Under the `RB-2026-001-v4.3` migration candidate, the local Evidence Manifest
+is named the **Execution Evidence Manifest (EEM)**. Its Generic correspondence
+is `NOT-DETERMINED`: it is first a provenance container/execution record, not an
+automatically admitted Evidence Item. A raw record, manifest, Result, or PASS
+does not by itself satisfy an objective, support a claim, establish compliance,
+or obtain authority acceptance.
 
 Every execution and derived analysis package records at least:
 
@@ -150,7 +151,10 @@ Every execution and derived analysis package records at least:
 
 # 中文版
 
-在 `RB-2026-001-v4.3` 下，证据清单被重定义为**执行证据清单（EEM）**：位于目标满足记录与合规证据索引之下的执行级证据产物。EEM 本身不满足目标、不支持合规主张；这些是受评审结论。
+在 `RB-2026-001-v4.3` 迁移候选下，本地证据清单命名为**执行证据清单（EEM）**。
+其 Generic 对应为 `NOT-DETERMINED`：它首先是来源容器/执行记录，不是自动准入的 Evidence
+Item。raw record、manifest、Result 或 PASS 本身不满足目标、不支持主张、不建立合规，
+也不取得权威接受。
 
 每个执行/分析包至少记录 manifest、基线、源提交、标准、适用性、需求/CRS、模型、VCS/VC 集、IUT、工具、环境、实验、运行、执行状态、种子、开始/结束、判定、门禁记录和带 hash 的原始/派生证据。v1.3 在 v1.2 基础上增加验证目标引用、测试件/装置/规程符合性引用、问题与偏差引用及工具鉴定状态，以支持面向认证的目标与关闭层。工具鉴定信用不隐含；默认 `qualificationStatus` 为 `NOT_CLAIMED`，除非在适用鉴定基础上建立。
 

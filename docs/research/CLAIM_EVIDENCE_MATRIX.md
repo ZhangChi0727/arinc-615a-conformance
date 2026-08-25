@@ -2,12 +2,14 @@
 
 This matrix controls what may be stated in reports, releases, and thesis text.
 Status is earned by evidence; implementation progress alone cannot promote it.
-Under `RB-2026-001-v4.3`, the historical `C-T0…C-T3` ladder is superseded by
-domain-specific claims split into certification-oriented assurance,
-engineering, and research categories. Historical T0–T3 labels are not silently
-converted; they remain valid only under their historical baseline wording.
+The `RB-2026-001-v4.3` migration candidate proposes local ARINC/Profile claim
+categories for certification-oriented assurance, engineering, and instance
+research. They have no active authority before merge, are not Generic GVS Core
+claims, and have external correspondence `NOT-DETERMINED`. Historical T0–T3
+labels are not silently converted and remain valid only under their frozen
+baseline wording.
 
-## Certification-oriented assurance claims
+## ARINC/Profile certification-oriented claim candidates
 
 | Claim ID | Permitted claim | Required evidence | Assurance state |
 |---|---|---|---|
@@ -41,9 +43,10 @@ Research maturity does not grant certification status. Failure to reach `R4` or
 
 ## Superseded historical claims
 
-These historical claims were defined under `RB-2026-001-v4.2`. They are
-superseded by v4.3 and are not silently relabeled. They remain valid only under
-their historical baseline wording and are retained for traceability.
+These historical claims were defined under `RB-2026-001-v4.2`. The unmerged
+v4.3 candidate proposes the following migration destinations but does not
+supersede or silently relabel them. They remain valid only under their
+historical baseline wording and are retained for traceability.
 
 | Historical claim | v4.3 replacement | Note |
 |---|---|---|
@@ -94,9 +97,12 @@ permitted.
 
 # 中文版
 
-本矩阵控制报告、发布和论文允许使用的主张。状态由证据获得，实现进度本身不能晋级。在 `RB-2026-001-v4.3` 下，历史 `C-T0…C-T3` 阶梯由按领域拆分的主张替代：面向认证保证、工程与研究。历史 T0–T3 标签不静默转换，仅在其历史基线措辞下有效。
+本矩阵控制报告、发布和论文允许使用的主张。状态由证据获得，实现进度本身不能晋级。
+`RB-2026-001-v4.3` 迁移候选提出本地 ARINC/Profile 的面向认证、工程和实例研究主张类别；
+合并前不具有生效权威，不是 Generic GVS Core 主张，外部对应为 `NOT-DETERMINED`。
+历史 T0–T3 不静默转换，仅在冻结历史基线措辞下有效。
 
-## 面向认证保证主张
+## ARINC/Profile 面向认证候选主张
 
 A-BASIS：受控的标准、适用性与配置基础存在；A-TRACE：适用需求与义务可追踪至已评审验证目标与活动；A-EXEC：命名验证执行在受控配置下有效且证据完整；A-OBJ：命名验证目标由受评审证据满足；A-COMP：命名协议级合规主张由完整受控证据包支持。`A4` 不依赖研究成熟度 `R4` 或 `R5`。
 
@@ -110,7 +116,8 @@ R-MUT：VCS 检测到声明评价的有效非等价变异体或故障集；R-HOL
 
 ## 已超越的历史主张
 
-下列历史主张定义于 `RB-2026-001-v4.2`。它们于 v4.3 被超越，且不静默重标。仅在历史基线措辞下有效，保留以供追踪。
+下列历史主张定义于 `RB-2026-001-v4.2`。未合并的 v4.3 只提出下列迁移目的地，不超越
+也不静默重标历史主张。它们仅在历史基线措辞下有效，并保留以供追踪。
 
 | 历史主张 | v4.3 替代 | 说明 |
 |---|---|---|
