@@ -44,8 +44,9 @@ identities. A different method commit requires an explicit baseline change.
 | Product binding | `TMP-PB-ARINC615A-01`, version `0.1-candidate` |
 | Project configuration | `TMP-PC-ARINC615A-01`, status `NOT YET ESTABLISHED` |
 | Cross-repository binding | `TMP-XRB-ARINC615A-01` |
-| Effective ARINC release | `RB-2026-001-v4.2.1` |
-| Effective ARINC tag commit | `3299e6dae83424862f75a4c1d09b91b80d9d8b00` |
+| Effective ARINC tag | `RB-2026-001-v4.2.1` |
+| Effective ARINC release commit | `3299e6dae83424862f75a4c1d09b91b80d9d8b00` |
+| Repository control-state commit before migration | `0ce96f701159fd4156d5e5e9889360f53977a61b` |
 | Candidate starting head | `53a98447bcfa862f082ce443d69115067d3ff2f1` |
 | Candidate PR | [PR #9](https://github.com/ZhangChi0727/arinc-615a-conformance/pull/9) |
 
@@ -131,8 +132,9 @@ Product Binding、Project Configuration、实例工程、实例研究和实例�
 | Product Binding | `TMP-PB-ARINC615A-01`，版本 `0.1-candidate` |
 | Project Configuration | `TMP-PC-ARINC615A-01`，状态 `NOT YET ESTABLISHED` |
 | 跨仓库绑定 | `TMP-XRB-ARINC615A-01` |
-| 当前有效 ARINC 发布 | `RB-2026-001-v4.2.1` |
-| 当前有效 ARINC 标签提交 | `3299e6dae83424862f75a4c1d09b91b80d9d8b00` |
+| 当前有效 ARINC 标签 | `RB-2026-001-v4.2.1` |
+| 当前有效 ARINC 发布提交 | `3299e6dae83424862f75a4c1d09b91b80d9d8b00` |
+| 迁移前仓库控制状态提交 | `0ce96f701159fd4156d5e5e9889360f53977a61b` |
 | 候选起始 head | `53a98447bcfa862f082ce443d69115067d3ff2f1` |
 | 候选 PR | [PR #9](https://github.com/ZhangChi0727/arinc-615a-conformance/pull/9) |
 

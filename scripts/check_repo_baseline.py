@@ -10,7 +10,9 @@ named constants so baseline evolution does not require editing this file.
 from __future__ import annotations
 
 import json
+import hashlib
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -45,6 +47,10 @@ EVIDENCE_MANIFEST_PATH = ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md"
 TRACEABILITY_PATH = CONTRACTS_DIR / "TRACEABILITY_SCHEMA.md"
 CLAIMS_PATH = RESEARCH / "CLAIM_EVIDENCE_MATRIX.md"
 REFERENCE_CATALOG_PATH = RESEARCH / "reference_catalog.yaml"
+EXTERNAL_BINDING_PATH = CONTRACTS_DIR / "EXTERNAL_GVS_BINDING.md"
+INSTANCE_MAPPING_PATH = CONTRACTS_DIR / "GVS_INSTANCE_MAPPING.md"
+PROFILE_BINDING_PATH = CONTRACTS_DIR / "ARINC615A_PROFILE_BINDING_CONFIGURATION.md"
+MIGRATION_HANDOFF_PATH = CONTROL / "reviews" / "PR9_GVS_MIGRATION_REVIEW_HANDOFF.md"
 
 # Structural invariant directories (content checked by presence, not version).
 REQUIRED_FIXED_FILES = [
@@ -58,11 +64,15 @@ REQUIRED_FIXED_FILES = [
     CONTRACTS_DIR / "CRS_SCHEMA.md",
     CONTRACTS_DIR / "TRACEABILITY_SCHEMA.md",
     CONTRACTS_DIR / "REQUIREMENTS_GUIDE.md",
+    EXTERNAL_BINDING_PATH,
+    INSTANCE_MAPPING_PATH,
+    PROFILE_BINDING_PATH,
     CONTROL / "decisions" / "DESIGN_DECISIONS.md",
     GATES_DIR / "GATE_RECORD_TEMPLATE.md",
     GATES_DIR / "REVIEW_GUIDELINE.md",
     GATES_DIR / "PR6_BASELINE_REVIEW_CHECKLIST.md",
     CONTROL / "risks" / "RISK_REGISTER.md",
+    MIGRATION_HANDOFF_PATH,
     RESEARCH / "RESEARCH_CONTROL.md",
     RESEARCH / "EXPERIMENT_PLAN.md",
     RESEARCH / "CLAIM_EVIDENCE_MATRIX.md",
@@ -164,6 +174,26 @@ REQUIRED_V43_CLAIMS = ("A-BASIS", "A-COMP", "A-OBJ", "E-TIME", "R-MUT", "R-XFER"
 V43_BASELINE_PREFIX = "RB-2026-001-v4.3"
 V43_NONCLAIM_PHRASE = "certification-oriented does not mean certification-approved"
 
+# Immutable GVS/instance identities for the reviewed migration candidate.
+METHOD_DEFINITION_COMMIT = "48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b"
+LEGACY_RELEASE_TAG = "RB-2026-001-v4.2.1"
+LEGACY_RELEASE_COMMIT = "3299e6dae83424862f75a4c1d09b91b80d9d8b00"
+CONTROL_STATE_COMMIT = "0ce96f701159fd4156d5e5e9889360f53977a61b"
+PR9_STARTING_HEAD = "53a98447bcfa862f082ce443d69115067d3ff2f1"
+ALLOWED_MAPPING_STATUSES = {
+    "NOT-DETERMINED", "CANDIDATE", "PARTIAL", "CONFLICT", "OUT-OF-SCOPE",
+}
+EXPECTED_HIGH_RISK_MAPPINGS = {
+    "applicable CRS item": ("candidate-correspondence", "CANDIDATE"),
+    "Verification Objective": ("candidate-correspondence", "NOT-DETERMINED"),
+    "Evidence Manifest / execution record": ("candidate-correspondence", "NOT-DETERMINED"),
+    "Objective Satisfaction Record": ("candidate-correspondence", "NOT-DETERMINED"),
+    "Compliance Evidence Index": ("indexes", "NOT-DETERMINED"),
+    "Project Configuration `TMP-PC-ARINC615A-01`": ("instantiates", "CANDIDATE"),
+}
+REPORT_DISPLAY_MATH_BLOCKS = 94
+REPORT_DISPLAY_MATH_SHA256 = "2050040b3d2572f5eca3b9b7b93fed472e7e236e1951f8c88702534dbe3a24cb"
+
 
 def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
@@ -253,6 +283,199 @@ def collect_required(errors: list[str]) -> tuple[list[Path], Path | None, Path |
         required.append(reader_report)
 
     return required, None, reader_report, []
+
+
+def display_math_fingerprint(text: str) -> tuple[int, str]:
+    blocks = re.findall(r"(?ms)^\\\[$.*?^\\\]$", text)
+    payload = "\n".join(blocks).encode("utf-8")
+    return len(blocks), hashlib.sha256(payload).hexdigest()
+
+
+def validate_gvs_binding(errors: list[str]) -> None:
+    binding = read(EXTERNAL_BINDING_PATH)
+    required_binding_values = (
+        "TMP-XRB-ARINC615A-01",
+        "TMP-ARINC615A-01",
+        "TMP-CTP-ARINC615A-01",
+        "TMP-PB-ARINC615A-01",
+        "TMP-PC-ARINC615A-01",
+        METHOD_DEFINITION_COMMIT,
+        LEGACY_RELEASE_TAG,
+        LEGACY_RELEASE_COMMIT,
+        CONTROL_STATE_COMMIT,
+        PR9_STARTING_HEAD,
+        "NOT-DETERMINED",
+        "NOT-EXERCISED",
+        "NOT YET ESTABLISHED",
+    )
+    for value in required_binding_values:
+        if value not in binding:
+            errors.append(f"external GVS binding is missing controlled value: {value}")
+
+    if re.search(
+        r"complex-system-verification-assurance/(?:blob|tree)/(?:main|master|latest)(?:/|$)",
+        binding,
+        re.IGNORECASE,
+    ):
+        errors.append("external GVS binding uses a mutable method-repository locator")
+    if re.search(r"(?:^|[\s`'\"(])(?:[A-Za-z]:[\\/]|file://)", binding, re.MULTILINE):
+        errors.append("external GVS binding contains a machine-local path")
+    if "196cfc" in binding:
+        errors.append("external GVS binding uses the pre-merge method parent 196cfc")
+
+    # Every occurrence of the method SHA in controlled documentation must sit
+    # in an explicit external method-definition/binding context.
+    context_terms = (
+        "methoddefinitioncommit", "candidate gvs core", "external method",
+        "method commit", "method merge", "method pr", "method object", "methodology baseline",
+        "commit-bound locator", "instance registry", "instance_registry", "方法提交", "方法合并", "方法 pr", "方法对象", "外部 core",
+        "外部方法", "candidate gvs core", "methoddefinitioncommit",
+    )
+    for source in ROOT.rglob("*.md"):
+        if "local-references" in source.parts:
+            continue
+        lines = read(source).splitlines()
+        for index, line in enumerate(lines):
+            if METHOD_DEFINITION_COMMIT not in line:
+                continue
+            window = " ".join(lines[max(0, index - 2): index + 3]).lower()
+            if not any(term in window for term in context_terms):
+                errors.append(
+                    "method SHA lacks explicit method-definition context: "
+                    f"{source.relative_to(ROOT)}:{index + 1}"
+                )
+
+
+def validate_instance_mapping(errors: list[str]) -> None:
+    english = read(INSTANCE_MAPPING_PATH).split(ZH_MARKER, 1)[0]
+    rows: dict[str, tuple[str, str, str]] = {}
+    for line in english.splitlines():
+        if not re.match(r"^\| M\d{2} \|", line):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) != 9:
+            errors.append(f"mapping row has {len(cells)} columns, expected 9: {line}")
+            continue
+        row_id, _, local_object, relation, status, *_ = cells
+        relation = relation.strip("`")
+        status = status.strip("`")
+        if row_id in rows:
+            errors.append(f"duplicate mapping row ID: {row_id}")
+        rows[row_id] = (local_object, relation, status)
+        if not relation or re.search(r"\s(?:and|or|/)\s", relation):
+            errors.append(f"mapping row {row_id} must have exactly one primary relation")
+        if status not in ALLOWED_MAPPING_STATUSES:
+            errors.append(f"mapping row {row_id} has prohibited status: {status}")
+
+    if len(rows) != 17:
+        errors.append(f"expected 17 English instance-mapping rows, found {len(rows)}")
+    by_object = {local: (relation, status) for local, relation, status in rows.values()}
+    for local_object, expected in EXPECTED_HIGH_RISK_MAPPINGS.items():
+        if by_object.get(local_object) != expected:
+            errors.append(
+                f"high-risk mapping differs for {local_object}: "
+                f"expected {expected}, found {by_object.get(local_object)}"
+            )
+
+
+def validate_candidate_semantics(errors: list[str]) -> None:
+    candidate_paths = [
+        ROOT / "README.md", CONTROL / "PROJECT_CONTROL.md", CONTROL / "CHANGE_CONTROL.md",
+        BASELINES_DIR / "RB-2026-001-v4.3.md", CHANGES_DIR / "CR-2026-004.md",
+        CONTRACTS_DIR / "ARCHITECTURE.md", CONTRACTS_DIR / "TRACEABILITY_SCHEMA.md",
+        INSTANCE_MAPPING_PATH, PROFILE_BINDING_PATH, MIGRATION_HANDOFF_PATH,
+        RESEARCH / "CLAIM_EVIDENCE_MATRIX.md", REPORT_PATH,
+        ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md",
+    ]
+    combined = "\n".join(read(path) for path in candidate_paths)
+    if re.search(r"certification-grounded", combined, re.IGNORECASE):
+        errors.append("active v4.3 candidate surfaces still use certification-grounded")
+
+    scoped_terms = {
+        "L0–L7": ("ARINC", "Profile", "not Generic"),
+        "A0–A4": ("ARINC", "Profile", "not Generic"),
+        "R0–R5": ("ARINC", "Profile", "not Generic"),
+        "RG0–RG6": ("ARINC", "Profile", "non-Generic"),
+        "G0–G7": ("ARINC", "Profile", "non-Generic"),
+    }
+    mapping_and_handoff = read(INSTANCE_MAPPING_PATH) + read(MIGRATION_HANDOFF_PATH)
+    for taxonomy, qualifiers in scoped_terms.items():
+        if taxonomy not in mapping_and_handoff:
+            errors.append(f"candidate taxonomy is missing: {taxonomy}")
+        for qualifier in qualifiers:
+            if qualifier.lower() not in mapping_and_handoff.lower():
+                errors.append(f"candidate taxonomy scope is missing qualifier: {qualifier}")
+
+    required_nonpromotion = (
+        "CEI is an index and not Claim, Argument, Evidence Item, or Evidence Architecture",
+        "PASS cannot automatically promote Evidence, Objective Satisfaction, Claim support, compliance, or authority acceptance",
+        "compatibility is `NOT-DETERMINED`",
+        "instance evaluation is `NOT-EXERCISED`",
+    )
+    handoff = read(MIGRATION_HANDOFF_PATH)
+    for phrase in required_nonpromotion:
+        if phrase.lower() not in handoff.lower():
+            errors.append(f"migration handoff is missing non-promotion rule: {phrase}")
+
+
+def validate_reference_catalog(errors: list[str]) -> None:
+    text = read(REFERENCE_CATALOG_PATH)
+    entries = re.split(r"(?m)^- referenceId: ", text)[1:]
+    identifiers: set[str] = set()
+    allowed_authorities = {
+        "regulatory_guidance", "standard", "academic", "engineering_practice",
+    }
+    for entry in entries:
+        identifier = entry.splitlines()[0].strip()
+        if identifier in identifiers:
+            errors.append(f"duplicate reference catalog ID: {identifier}")
+        identifiers.add(identifier)
+        for field in ("title:", "authorityLevel:", "roles:", "supports:", "projectUsage:"):
+            if not re.search(rf"(?m)^  {re.escape(field)}", entry):
+                errors.append(f"reference {identifier} is missing YAML field {field}")
+        authority = re.search(r"(?m)^  authorityLevel: ([^\s]+)$", entry)
+        if authority and authority.group(1) not in allowed_authorities:
+            errors.append(
+                f"reference {identifier} has invalid authorityLevel: {authority.group(1)}"
+            )
+    if not entries:
+        errors.append("reference catalog contains no YAML entries")
+
+
+def validate_tracked_hygiene(errors: list[str]) -> None:
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "-z"], cwd=ROOT, check=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        )
+    except (OSError, subprocess.CalledProcessError) as exc:
+        errors.append(f"cannot enumerate tracked artifacts: {exc}")
+        return
+    tracked = [Path(item.decode("utf-8")) for item in result.stdout.split(b"\0") if item]
+    prohibited_parts = {"__pycache__", ".pytest_cache", "local-references"}
+    credential_patterns = (
+        re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
+        re.compile(r"\bgh[pousr]_[A-Za-z0-9]{30,}\b"),
+        re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+    )
+    for relative in tracked:
+        if prohibited_parts.intersection(relative.parts) or relative.suffix in {".pyc", ".pyo"}:
+            errors.append(f"prohibited generated/private artifact is tracked: {relative}")
+            continue
+        path = ROOT / relative
+        if path.suffix.lower() not in {".md", ".py", ".yaml", ".yml", ".json", ".toml"}:
+            continue
+        try:
+            text = read(path)
+        except UnicodeDecodeError:
+            continue
+        if relative != Path("scripts/check_repo_baseline.py") and re.search(
+            r"(?:C:\\Users\\|/home/[^/]+/|file://)", text
+        ):
+            errors.append(f"tracked text exposes a machine/private path: {relative}")
+        for pattern in credential_patterns:
+            if pattern.search(text):
+                errors.append(f"possible credential/private key in tracked text: {relative}")
 
 
 def main() -> int:
@@ -345,6 +568,12 @@ def main() -> int:
     for term in REQUIRED_REPORT_TERMS:
         if term not in report_text:
             errors.append(f"methodology report is missing required term: {term}")
+    math_count, math_digest = display_math_fingerprint(report_text)
+    if math_count != REPORT_DISPLAY_MATH_BLOCKS or math_digest != REPORT_DISPLAY_MATH_SHA256:
+        errors.append(
+            "methodology display mathematics changed from the frozen v4.2.1 payload: "
+            f"blocks={math_count}, sha256={math_digest}"
+        )
 
     for legacy in LEGACY_FILENAMES:
         if (METHODOLOGY_DIR / legacy).exists():
@@ -425,6 +654,13 @@ def main() -> int:
 
     if not REFERENCE_CATALOG_PATH.exists():
         errors.append("missing optional reference catalog (recommended for v4.3)")
+    else:
+        validate_reference_catalog(errors)
+
+    validate_gvs_binding(errors)
+    validate_instance_mapping(errors)
+    validate_candidate_semantics(errors)
+    validate_tracked_hygiene(errors)
 
     traceability = read(TRACEABILITY_PATH)
     for term in REQUIRED_V43_TRACEABILITY_TERMS:
