@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| **Version** | 2.2 |
-| **Status** | Baseline-aligned |
-| **Governing method** | RB-2026-001-v4.2 |
+| **Version** | 2.3-candidate |
+| **Status** | Effective v4.2 architecture plus v4.3 GVS-bound migration candidate |
+| **Governing method** | RB-2026-001-v4.2 effective; external Candidate GVS Core at `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` for v4.3 migration |
 
 ## End-to-end control flow
 
@@ -80,6 +80,9 @@ path or hyperlink improves navigation but does not replace the trace record.
 | Test Conformity | Test article, setup, and procedure conformity status | Engineering |
 | Problem / Deviation | Type, disposition, closure rationale, review record | Governance |
 
+For v4.3 these objects are ARINC Profile/Binding/project candidates. Generic
+object authority remains external; local labels do not amend the GVS Core.
+
 ## Gates
 
 | Artifact progression | Static gate | Evidence gate |
@@ -126,7 +129,7 @@ names or the latest Git commit.
 | Common tutorial | `docs/tutorial/sources/COMMON_TUTORIAL_PLAN.md`, `artifacts/tutorials/` |
 | ARINC 615A tutorial | `docs/tutorial/sources/ARINC615A_TUTORIAL_PLAN.md`, `artifacts/tutorials/` |
 
-## Certification-oriented evidence model (`RB-2026-001-v4.3`)
+## ARINC 615A certification-evidence view (`RB-2026-001-v4.3` candidate)
 
 ```text
 L0 Certification / Normative Basis
@@ -139,11 +142,11 @@ L6 Objective Satisfaction
 L7 Compliance Evidence Package / Compliance Argument
 ```
 
-Under v4.3 the historical T0–T3 ladder is superseded by orthogonal
-certification-oriented assurance states A0–A4 and research-evidence maturity
-states R0–R5. These are project-defined states, not FAA, EASA, CAAC, RTCA, SAE,
-or EUROCAE authority levels; research maturity does not grant certification
-status.
+L0–L7 are an ARINC 615A Profile candidate view, not Generic architecture.
+A0–A4, R0–R5, RG, and G are ARINC/Profile/project candidate states and gates,
+not Generic GVS Core or FAA, EASA, CAAC, RTCA, SAE, or EUROCAE authority levels.
+The view is governed by the four-layer
+[`Profile/Binding/Configuration contract`](ARINC615A_PROFILE_BINDING_CONFIGURATION.md).
 
 ---
 
@@ -212,7 +215,7 @@ RG0–RG6 控制静态产物和主张，G0–G7 控制证据层级；缺失上�
 `docs/tutorial/` 承载两条教程的控制和源计划；`artifacts/` 承载读者报告、已发布教程、发布包
 和生成证据。根 README 是唯一读者入口，四份控制文档是开发者入口。
 
-## 面向认证的证据模型（`RB-2026-001-v4.3`）
+## ARINC 615A 面向认证证据视图（`RB-2026-001-v4.3` 候选）
 
 ```text
 L0 认证 / 规范基础
@@ -225,4 +228,7 @@ L6 目标满足
 L7 合规证据包 / 合规论证
 ```
 
-在 v4.3 下，历史 T0–T3 阶梯由正交的面向认证保证状态 A0–A4 与研究证据成熟度状态 R0–R5 替代。这些是项目自定义状态，不是 FAA、EASA、CAAC、RTCA、SAE 或 EUROCAE 的权威层级；研究成熟度不授予认证状态。
+L0–L7 是 ARINC 615A Profile 候选视图，不是 Generic 架构。A0–A4、R0–R5、RG 和 G
+都是 ARINC/Profile/项目候选状态与门，不是 Generic GVS Core，也不是 FAA、EASA、CAAC、
+RTCA、SAE 或 EUROCAE 权威层级。该视图受
+[`Profile/Binding/Configuration 契约`](ARINC615A_PROFILE_BINDING_CONFIGURATION.md) 治理。
