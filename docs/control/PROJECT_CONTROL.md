@@ -4,8 +4,8 @@
 |---|---|
 | **Plan ID** | IPP-2026-001 |
 | **Version** | 1.4 |
-| **Status** | Active under effective and frozen RB-2026-001-v4.2.1; v4.3 candidate under CR-2026-004 |
-| **Baseline** | RB-2026-001-v4.2.1 effective; RB-2026-001-v4.3 candidate; method semantics inherited unchanged from v4.2 |
+| **Status** | Active under effective and frozen RB-2026-001-v4.2.1; GVS-bound v4.3 migration candidate under CR-2026-004 |
+| **Baseline** | RB-2026-001-v4.2.1 effective; RB-2026-001-v4.3 migration candidate bound to MethodDefinitionCommit `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
 | **Planning horizon** | Baseline freeze through second-protocol replication |
 
 ## 1. Mission
@@ -77,15 +77,22 @@ allowed only when it does not pre-empt an unresolved upstream gate.
 
 ### v4.3 candidate baseline
 
-- advance CR-2026-004: introduce Verification Objectives, Objective
-  Satisfaction Records, a Compliance Evidence Index, test conformity records,
-  and problem/deviation closure records;
-- supersede the T0–T3 ladder with orthogonal A0–A4 assurance and R0–R5 research
-  maturity states; keep timed-conformance mathematics unchanged;
-- mutation, calibration, diagnosis, and cross-protocol replication remain
-  research-only and do not block certification-oriented closure;
-- keep the PR in Draft until an independent baseline review approves v4.3;
-- do not promote any existing empirical claim by the restructuring alone.
+- establish `TMP-XRB-ARINC615A-01` through
+  [`EXTERNAL_GVS_BINDING.md`](contracts/EXTERNAL_GVS_BINDING.md), bound to the
+  immutable Candidate GVS Core definition at
+  `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b`;
+- limit this repository's authority to the ARINC 615A Profile, Product Binding,
+  Project Configuration, instance engineering, instance research, and instance
+  evidence;
+- migrate Verification Objectives, Objective Satisfaction Records, the
+  Compliance Evidence Index, Evidence Manifests, test conformity, and problem
+  closure without redefining generic method objects;
+- treat L0–L7, A0–A4, R0–R5, RG, and G as ARINC Profile/project candidate
+  semantics, pending independent review;
+- keep compatibility `NOT-DETERMINED`, evaluation `NOT-EXERCISED`, and PR #9
+  Draft until the independent migration review completes;
+- do not promote any existing empirical, compatibility, certification, or
+  authority-acceptance claim by the restructuring alone.
 
 ### First research increment
 
@@ -214,7 +221,14 @@ v4.1/v4.2 证据。
 
 ### v4.3 候选基线
 
-推进 CR-2026-004：引入验证目标、目标满足记录、合规证据索引、测试符合性记录和问题/偏差关闭记录；以正交的 A0–A4 保证与 R0–R5 研究成熟度状态替代 T0–T3 阶梯，且不改变时序符合性数学；突变、校准、诊断和跨协议复现保持为仅研究扩展，不阻塞面向认证的关闭；PR 保持 Draft 直至独立基线评审批准 v4.3；重构本身不晋级任何既有经验主张。
+通过 [`EXTERNAL_GVS_BINDING.md`](contracts/EXTERNAL_GVS_BINDING.md) 建立
+`TMP-XRB-ARINC615A-01`，并固定绑定 Candidate GVS Core 提交
+`48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b`。本仓库只对 ARINC 615A
+Profile、Product Binding、Project Configuration、实例工程、实例研究和实例证据负责。
+VO、OSR、CEI、Evidence Manifest、测试符合性和问题关闭按实例语义迁移，不重定义通用
+方法对象；L0–L7、A0–A4、R0–R5、RG 和 G 均作为 ARINC Profile/项目候选语义。
+兼容性保持 `NOT-DETERMINED`，评价保持 `NOT-EXERCISED`，PR #9 在独立迁移评审完成前
+保持 Draft；重构本身不晋级任何经验、兼容性、认证或权威接受主张。
 
 ### 第一研究增量
 
