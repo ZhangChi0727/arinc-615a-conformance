@@ -9,8 +9,9 @@
 | **External method commit** | `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
 | **Compatibility / evaluation** | `NOT-DETERMINED` / `NOT-EXERCISED` |
 | **Reviewed head / outcome** | `d189383a27ebad8051c1483146e3f005b33e2c40` / REWORK |
+| **Correction content head** | `5660823` (three ordinary correction commits; remote CI passed) |
 | **Reviewer / date** | Identity not supplied in review work order / 2026-08-26 |
-| **Correction status** | IN PROGRESS — EXTERNAL REREVIEW PENDING; PR REMAINS DRAFT |
+| **Correction status** | CORRECTIONS COMPLETE — EXTERNAL REREVIEW PENDING; PR REMAINS DRAFT |
 
 ## 1. Review boundary
 
@@ -46,9 +47,18 @@ ordinary commits in order:
 4. `docs: synchronize ARINC research engineering and reader surfaces`;
 5. `test: validate GVS binding and ARINC migration governance`.
 
+The REWORK corrections then add these ordinary commits in order:
+
+6. `docs: close PR9 mapping and object-semantics review findings` (`c7dd594`);
+7. `docs: repair PR9 acceptance bilingual and risk governance` (`48a256f`);
+8. `test: enforce PR9 cross-repository semantic reconciliation` (`5660823`);
+9. `docs: synchronize PR9 independent rereview handoff` (status only).
+
 The independent review stopped at `d189383a27ebad8051c1483146e3f005b33e2c40`
-with `REWORK`. Rereview is strictly the range `d189383...<new-head>` plus a
-regression check of final PR state and immutable identities.
+with `REWORK`. Rereview is strictly the range `d189383...HEAD` at the final PR
+head plus a regression check of final PR state and immutable identities. The
+content-correction boundary is `d189383...5660823`; the final status-only commit
+does not assert approval or close any finding.
 
 ## 3. REWORK finding disposition
 
@@ -157,8 +167,9 @@ findings, and any Framework Change Proposal. PR #9 merge alone must not set
 | **外部方法提交** | `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
 | **兼容性 / 评价** | `NOT-DETERMINED` / `NOT-EXERCISED` |
 | **受评审 head / 结论** | `d189383a27ebad8051c1483146e3f005b33e2c40` / REWORK |
+| **修正内容 head** | `5660823`（三笔普通修正提交；远程 CI 已通过） |
 | **评审者 / 日期** | 工作单未提供身份 / 2026-08-26 |
-| **修正状态** | 进行中——等待外部复审；PR 保持 Draft |
+| **修正状态** | 修正完成——等待外部复审；PR 保持 Draft |
 
 ## 1. 评审边界
 
@@ -189,8 +200,16 @@ T1–T5、稳健时序判定和测量误差语义刻意保持不变。
 4. `docs: synchronize ARINC research engineering and reader surfaces`；
 5. `test: validate GVS binding and ARINC migration governance`。
 
+REWORK 后再按顺序追加以下普通修正提交：
+
+6. `docs: close PR9 mapping and object-semantics review findings`（`c7dd594`）；
+7. `docs: repair PR9 acceptance bilingual and risk governance`（`48a256f`）；
+8. `test: enforce PR9 cross-repository semantic reconciliation`（`5660823`）；
+9. `docs: synchronize PR9 independent rereview handoff`（仅同步状态）。
+
 独立评审在 `d189383a27ebad8051c1483146e3f005b33e2c40` 给出 `REWORK`。复审范围严格限定为
-`d189383...<new-head>`，并回归检查最终 PR 状态和不可变身份。
+最终 PR head 上的 `d189383...HEAD`，并回归检查最终 PR 状态和不可变身份。内容修正边界为
+`d189383...5660823`；最后一笔纯状态提交不主张批准，也不关闭任何 finding。
 
 ## 3. REWORK finding 处置
 
