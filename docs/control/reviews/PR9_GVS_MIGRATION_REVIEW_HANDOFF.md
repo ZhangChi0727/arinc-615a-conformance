@@ -8,11 +8,14 @@
 | **State at handoff** | DRAFT; OPEN; NOT APPROVED; NOT MERGED |
 | **External method commit** | `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
 | **Compatibility / evaluation** | `NOT-DETERMINED` / `NOT-EXERCISED` |
-| **Reviewer / date / outcome** | UNASSIGNED / NOT RECORDED / PENDING |
+| **Reviewed head / outcome** | `d189383a27ebad8051c1483146e3f005b33e2c40` / REWORK |
+| **Reviewer / date** | Identity not supplied in review work order / 2026-08-26 |
+| **Correction status** | IN PROGRESS — EXTERNAL REREVIEW PENDING; PR REMAINS DRAFT |
 
 ## 1. Review boundary
 
-Review only whether the five ordinary correction commits faithfully migrate
+Review only whether the five initial ordinary correction commits and the
+post-REWORK ordinary correction commits faithfully migrate
 the existing eight-commit PR #9 proposal into the external Candidate GVS Core
 authority boundary. Do not treat this document review as protocol execution,
 compatibility approval, certification credit, authority acceptance, or a review
@@ -43,14 +46,30 @@ ordinary commits in order:
 4. `docs: synchronize ARINC research engineering and reader surfaces`;
 5. `test: validate GVS binding and ARINC migration governance`.
 
-## 3. Semantic review checklist
+The independent review stopped at `d189383a27ebad8051c1483146e3f005b33e2c40`
+with `REWORK`. Rereview is strictly the range `d189383...<new-head>` plus a
+regression check of final PR state and immutable identities.
+
+## 3. REWORK finding disposition
+
+| Finding | Required correction | Local disposition | Rereview state |
+|---|---|---|---|
+| F-01 | Close all 18 method rows; separate Case/Procedure, legacy/candidate, active/future Configuration; no status strengthening | `GVS_INSTANCE_MAPPING.md` v0.2: 18/18 reconciliation plus explicit instance-only rows | PENDING EXTERNAL REREVIEW |
+| F-02 | Replace stale nonexistent numbered-section references with stable criteria | `CR-2026-004` owns AC-01…AC-12; baseline links only that set | PENDING EXTERNAL REREVIEW |
+| F-03 | Synchronize bilingual CR control metadata | English/Chinese class, baseline, status, trigger identity, method semantics, and MethodDefinitionCommit synchronized; human semantic-equivalence confirmation still required | PENDING EXTERNAL REREVIEW |
+| F-04 | Correct Observation/Oracle/Result relation | PBC and mapping now require Observation → Oracle evaluation → Result and state Result is not Observation | PENDING EXTERNAL REREVIEW |
+| F-05 | Remove raw/manifest→Evidence/OSR/Claim shortcuts | Architecture, OSR, CEI, and mapping require characterization, Argument/SufficiencyAssessment, Decision, and versioned Claim refs | PENDING EXTERNAL REREVIEW |
+| A-01 | Register cross-repository migration risks | Risk Register R-17…R-22 adds indicators, mitigation, owners, gates, and residual dispositions | PENDING EXTERNAL REREVIEW |
+
+## 4. Semantic review checklist
 
 - [ ] Generic GVS Core authority exists only in the external, commit-bound method definition.
 - [ ] Core → Profile → Product Binding → Project Configuration ownership is directional and has no silent reverse coupling.
 - [ ] PICS-like declaration is not Verification Basis; applicable CRS correspondence is only candidate.
 - [ ] VO and Test Purpose do not claim established Generic equivalence.
-- [ ] Oracle and verdict/Result remain separate.
-- [ ] Observation/raw record, manifest, Result, Evidence Item, Argument use, and Claim remain separate.
+- [ ] Method-side mapping coverage is 18/18; Case/Procedure and legacy/candidate identities remain separate; extra local rows are explicit.
+- [ ] Controlled relation is Observation → Oracle evaluation → Result; Result is not Observation.
+- [ ] Observation/raw record, manifest, Result, characterized Evidence Item, Argument/SufficiencyAssessment, Decision, and versioned Claim remain separate.
 - [ ] OSR remains a local composite; no generic sufficiency algorithm is claimed.
 - [ ] CEI is an index and not Claim, Argument, Evidence Item, or Evidence Architecture.
 - [ ] Test Conformity and Problem Closure do not imply authority acceptance.
@@ -60,7 +79,7 @@ ordinary commits in order:
 - [ ] Existing v4.2.1 evidence and historical T0–T3 labels were not retroactively changed.
 - [ ] Public artifacts contain no proprietary standard text, credentials, private paths, or employer-only material.
 
-## 4. Evaluation readiness, not results
+## 5. Evaluation readiness, not results
 
 | Evaluation characteristic | Current preparation status | Required next evidence |
 |---|---|---|
@@ -78,7 +97,7 @@ ordinary commits in order:
 
 These rows are preparation states, never simulated evaluation observations.
 
-## 5. Finding classification and disposition
+## 6. Finding classification and disposition
 
 Classify each finding as exactly one of: `instance-specific defect`, `binding
 defect`, `profile-contract ambiguity`, `core insufficiency`, `core
@@ -87,7 +106,7 @@ Record artifact/line, severity, rationale, owner, proposed disposition, and
 closure evidence. A Core-directed finding is only Framework Change Proposal
 input; it does not amend the method repository from this PR.
 
-## 6. Required commands and independent records
+## 7. Required commands and independent records
 
 The reviewer should reproduce:
 
@@ -102,7 +121,12 @@ Attach the exact candidate head, command outputs, findings, dispositions,
 reviewer identity, independence statement, date, and one outcome:
 `APPROVE`, `APPROVE WITH ACTIONS`, or `REWORK`.
 
-## 7. Merge conditions, stops, and third handshake
+Also search for the previously stale numbered acceptance-section references;
+the expected result is zero matches. A no-match grep exit is not a repository
+failure. The rereviewer must also record manual English/Chinese semantic-
+equivalence review for CR-2026-004.
+
+## 8. Merge conditions, stops, and third handshake
 
 Do not mark PR #9 Ready or merge until identity, semantic, provenance, privacy,
 CI, and independent-review checks all pass; every blocking finding is closed;
@@ -132,11 +156,13 @@ findings, and any Framework Change Proposal. PR #9 merge alone must not set
 | **交接状态** | DRAFT；OPEN；未批准；未合并 |
 | **外部方法提交** | `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
 | **兼容性 / 评价** | `NOT-DETERMINED` / `NOT-EXERCISED` |
-| **评审者 / 日期 / 结论** | 未分配 / 未记录 / 待定 |
+| **受评审 head / 结论** | `d189383a27ebad8051c1483146e3f005b33e2c40` / REWORK |
+| **评审者 / 日期** | 工作单未提供身份 / 2026-08-26 |
+| **修正状态** | 进行中——等待外部复审；PR 保持 Draft |
 
 ## 1. 评审边界
 
-只评审五笔普通 correction commits 是否把既有八提交 PR #9 提案忠实迁入外部 Candidate
+只评审最初五笔及 REWORK 后普通 correction commits 是否把既有八提交 PR #9 提案忠实迁入外部 Candidate
 GVS Core 权威边界。不得把文档评审当作协议执行、兼容性批准、认证信用、权威接受或对专有
 ARINC 条款内容的评审。
 
@@ -163,14 +189,29 @@ T1–T5、稳健时序判定和测量误差语义刻意保持不变。
 4. `docs: synchronize ARINC research engineering and reader surfaces`；
 5. `test: validate GVS binding and ARINC migration governance`。
 
-## 3. 语义评审清单
+独立评审在 `d189383a27ebad8051c1483146e3f005b33e2c40` 给出 `REWORK`。复审范围严格限定为
+`d189383...<new-head>`，并回归检查最终 PR 状态和不可变身份。
+
+## 3. REWORK finding 处置
+
+| Finding | 必需修正 | 本地处置 | 复审状态 |
+|---|---|---|---|
+| F-01 | 闭合方法侧 18 行，分离 Case/Procedure、legacy/candidate、active/future Configuration，禁止加强状态 | `GVS_INSTANCE_MAPPING.md` v0.2 建立 18/18 闭合及显式 instance-only 行 | 等待外部复审 |
+| F-02 | 以稳定准则替代已失效的不存在编号章节引用 | `CR-2026-004` 唯一拥有 AC-01…AC-12；基线只链接该集合 | 等待外部复审 |
+| F-03 | 同步 CR 双语控制元数据 | 变更类别、基线、状态、触发身份、方法语义和 MethodDefinitionCommit 已同步；仍需人工语义对等确认 | 等待外部复审 |
+| F-04 | 修正 Observation/Oracle/Result | PBC 与映射要求 Observation → Oracle evaluation → Result，并声明 Result 不是 Observation | 等待外部复审 |
+| F-05 | 消除 raw/manifest→Evidence/OSR/Claim 短路 | Architecture、OSR、CEI 与映射要求表征、Argument/SufficiencyAssessment、Decision 与版本化 Claim 引用 | 等待外部复审 |
+| A-01 | 登记跨仓库迁移风险 | 风险登记册 R-17…R-22 增加信号、缓解、owner、gate 与剩余风险处置 | 等待外部复审 |
+
+## 4. 语义评审清单
 
 - [ ] Generic GVS Core 权威只存在于提交绑定的外部方法定义；
 - [ ] Core → Profile → Product Binding → Project Configuration 单向依赖且无静默反向耦合；
 - [ ] PICS-like 声明不是 Verification Basis，适用 CRS 对应仅为候选；
 - [ ] VO 与 Test Purpose 不声称已建立 Generic 等价；
-- [ ] Oracle 与 verdict/Result 分离；
-- [ ] Observation/raw、manifest、Result、Evidence Item、Argument 使用和 Claim 分离；
+- [ ] 方法侧映射覆盖 18/18；Case/Procedure 与 legacy/candidate 身份分离；额外本地行显式标识；
+- [ ] 受控关系是 Observation → Oracle evaluation → Result；Result 不是 Observation；
+- [ ] Observation/raw、manifest、Result、经表征 Evidence Item、Argument/SufficiencyAssessment、Decision 和版本化 Claim 分离；
 - [ ] OSR 保持本地复合工件，不声称通用充分性算法；
 - [ ] CEI 只是索引，不是 Claim、Argument、Evidence Item 或 Evidence Architecture；
 - [ ] Test Conformity 与 Problem Closure 不暗示权威接受；
@@ -180,7 +221,7 @@ T1–T5、稳健时序判定和测量误差语义刻意保持不变。
 - [ ] 既有 v4.2.1 证据和历史 T0–T3 未被回溯修改；
 - [ ] 公开产物不含专有标准原文、凭据、私有路径或雇主内部材料。
 
-## 4. 评价就绪状态，而非结果
+## 5. 评价就绪状态，而非结果
 
 | 评价特性 | 当前准备状态 | 所需后续证据 |
 |---|---|---|
@@ -198,7 +239,7 @@ T1–T5、稳健时序判定和测量误差语义刻意保持不变。
 
 这些行是准备状态，绝不是模拟的评价观测。
 
-## 5. Finding 分类与处置
+## 6. Finding 分类与处置
 
 每项 finding 恰好归为：`instance-specific defect`、`binding defect`、
 `profile-contract ambiguity`、`core insufficiency`、`core overconstraint`、
@@ -206,7 +247,7 @@ T1–T5、稳健时序判定和测量误差语义刻意保持不变。
 拟议处置和关闭证据。指向 Core 的 finding 只是 Framework Change Proposal 输入，不由本 PR
 修改方法仓库。
 
-## 6. 必需命令与独立记录
+## 7. 必需命令与独立记录
 
 评审者应复现：
 
@@ -220,7 +261,10 @@ git diff --check 53a98447bcfa862f082ce443d69115067d3ff2f1...HEAD
 附上精确候选 head、命令输出、finding/处置、评审者身份、独立性声明、日期及 `APPROVE`、
 `APPROVE WITH ACTIONS` 或 `REWORK` 之一。
 
-## 7. 合并条件、停止与第三次握手
+另行搜索此前失效的编号接受章节引用，预期零匹配；grep 的无匹配退出码不代表仓库失败。
+复审者还必须记录对 CR-2026-004 英中语义对等的人工检查。
+
+## 8. 合并条件、停止与第三次握手
 
 在身份、语义、来源、隐私、CI 和独立评审全部通过、阻塞 finding 全部关闭、PR 描述写明不可变
 绑定与非主张且批准 head 未变化前，不得将 PR #9 转 Ready 或合并。
