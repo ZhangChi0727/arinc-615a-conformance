@@ -19,6 +19,17 @@
 | R-15 | Timing runs are dependent or drift over time | Medium | High | Autocorrelation, batch/order effects, warm-up or cross-session timer state | Randomization, reset checks, batch metadata, drift diagnostics, mixed/cluster models | Experiment lead | RG4–RG5/G4 |
 | R-16 | Cross-domain contract or tutorial drift | Medium | High | A paper/tutorial cites “latest,” omits artifact IDs, imports implementation internals, or changes verdict wording | Version/trace spine, non-normative tutorial marker, link/contract validation, CR/DD feedback | Configuration owner | RG5–RG6 |
 
+## Cross-repository migration risks
+
+| ID | Risk | Probability | Impact | Leading indicator | Mitigation / response | Owner | Trigger gate | Residual-risk disposition |
+|---|---|---:|---:|---|---|---|---|---|
+| R-17 | Method SHA/object-version drift or wrong immutable locator | Medium | Critical | Binding SHA/version differs across contracts, PR, or method register | Lock full SHA and object versions; validate commit-bound URLs; independent identity check | Configuration owner | Migration review / AC-01 | Open; blocks approval on any mismatch |
+| R-18 | Mapping omission, silent status strengthening, or fabricated external locator | Medium | Critical | Coverage below 18/18, reused Case/Procedure row, unknown role name, or stronger local status | Source-row reconciliation schema, protected row expectations, negative tests, independent mapping review | Method liaison | Migration review / AC-02 | Open; blocks compatibility and approval |
+| R-19 | Profile/Binding taxonomy reverse-defines or shadows the external Core | Medium | Critical | Local taxonomy described as Generic, or Core change appears only in instance repository | Directional ownership contract; instance-only row marker; route Core findings through Framework Change Proposal | Architecture owner | Architecture review / AC-03 | Open; no Core promotion accepted in PR #9 |
+| R-20 | Execution, compatibility, or evaluation begins before Project Configuration exists | Medium | Critical | Run/evaluation claim lacks controlled IUT/setup/procedure/tool/clock values | Enforce `NOT YET ESTABLISHED`; configuration gate blocks runs and evaluation-state change | Engineering lead | RG4 / AC-03 | Open; execution and evaluation prohibited |
+| R-21 | Migration merge is treated as compatibility/evaluation or third-handshake completion | Medium | High | PR/tag wording uses compatible, exercised, or handshake-complete without separate records | Lock `NOT-DETERMINED`/`NOT-EXERCISED`; enforce release order and separate method-repository change | Project lead | Release review / AC-12 | Open; residual claim limited to migration only |
+| R-22 | English/Chinese controlled semantics drift | Medium | High | Metadata, trigger, status, object relation, or acceptance wording differs by language | Canonical field comparison, bilingual negative tests, and explicit human semantic-equivalence review | Documentation owner | Migration review / AC-05 | Open; structural parity alone is insufficient |
+
 ## Review cadence
 
 - review at every RG gate and monthly during active implementation;
@@ -31,6 +42,16 @@
 # 中文版
 
 风险登记表控制标准解释、观测边界、oracle、故障代表性、重复运行依赖、校准偏差、诊断泄漏、工具误判、保密、范围蔓延、版本漂移和第二协议延期。v4.2 新增：R-13 时序触发/复位/取消/配对语义不完整；R-14 时间戳链或误差预算制造虚假精度；R-15 执行顺序、批次、预热或跨会话计时器导致时序依赖/漂移；R-16 论文/教程引用“最新”状态、遗漏产物 ID、导入实现内部结构或改变判定措辞而导致跨领域契约漂移。它们分别由时序 schema 和独立评审、单调时钟及稳健区间 oracle、随机化/重置/批次元数据和混合/聚类模型，以及版本/追踪脊柱、非规范教程标记、契约校验与 CR/DD 反馈缓解。
+
+## 跨仓库迁移风险
+
+R-17 控制方法 SHA/对象版本漂移或错误定位；R-18 控制映射遗漏、状态静默加强和伪外部
+locator；R-19 控制 Profile/Binding taxonomy 反向定义 Core；R-20 在 Project Configuration
+未建立时禁止执行、兼容性或评价；R-21 禁止把 migration merge 当作兼容性/评价或第三次握手；
+R-22 控制英中受控语义漂移。它们分别由 Configuration owner、Method liaison、Architecture
+owner、Engineering lead、Project lead 和 Documentation owner 负责，并在 AC-01、AC-02、
+AC-03/RG4、AC-12 与 AC-05 触发。任何身份/映射/Core 反向定义/提前评价缺陷都阻塞批准；
+结构对等不能单独接受双语剩余风险。
 
 ## 评审节奏
 

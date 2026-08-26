@@ -188,6 +188,16 @@ The protocol model is not an evidence model. An edge in the protocol graph denot
 
 ### 2.3 Assurance tiers
 
+> **v4.3 migration classification note.** Candidate baseline
+> `RB-2026-001-v4.3` ([`CR-2026-004`](../../../docs/control/changes/CR-2026-004.md))
+> binds an external Candidate GVS Core and proposes A0–A4 and R0–R5 only as
+> local ARINC/Profile candidate taxonomies. Their Generic correspondence is
+> `NOT-DETERMINED`; they do not silently convert T0–T3 or create authority
+> levels. The T0–T3 text below remains frozen v4.2 methodology. Result, Evidence
+> Item, Objective Satisfaction, Claim, compliance, and authority acceptance are
+> not automatically promoted. Mathematical and timed-conformance semantics are
+> unchanged.
+
 | Tier | Claim | Minimum supporting artifacts |
 |---|---|---|
 | **T0 — Traceability** | Every applicable requirement is linked to at least one executable case | CRS, TP/VC relations |
@@ -195,7 +205,7 @@ The protocol model is not an evidence model. An edge in the protocol graph denot
 | **T2 — Bounded detection adequacy** | The VCS distinguishes the specification from every non-equivalent member of the declared evaluated fault set | T1 + mutation/fault results |
 | **T3 — Calibrated evidence** | Evidence changes belief in specified conformance propositions according to a validated observation model | T2 + calibration and sensitivity analysis |
 
-Higher tiers do not erase the boundaries of lower tiers. A Tier T3 number cannot compensate for missing traceability or invalid executions.
+Higher tiers do not erase the boundaries of lower tiers. A Tier T3 number cannot compensate for missing traceability or invalid executions. The v4.3 candidate records possible local migration destinations in the claim matrix, but no T0–T3-to-A/R equivalence is established.
 
 ---
 
@@ -708,6 +718,18 @@ Each gate produces signed findings and one of `APPROVE`, `APPROVE WITH ACTIONS`,
 
 ## 5. Assurance Argument
 
+> **v4.3 migration classification note.** Under candidate baseline `RB-2026-001-v4.3`
+> ([`CR-2026-004`](../../../docs/control/changes/CR-2026-004.md)), the argument
+> below is retained while a local ARINC/Profile candidate chain is proposed: obligation →
+> Verification Objective → verification activity → evidence → reviewed Objective
+> Satisfaction → Compliance Evidence Index. The claims C0–C6 still describe the
+> engineering substance but are reclassified: C1–C3 map to assurance states
+> A1–A3, while C4–C5 (detection adequacy and calibration) are research-evidence
+> claims proposed for R2–R5 and are not higher certification-oriented assurance
+> tiers. These mappings have no Generic authority and remain review candidates.
+> The mathematical propositions 1–3 below are unchanged. Internal gates are
+> project/Profile candidates and are not authority review gates.
+
 ### 5.1 Top-level claim
 
 > For the fixed standard edition \(S\), applicability declaration \(P\), observation boundary \(O\), controlled environments \(E\), and evaluated fault set \(\mathcal{M}_{\mathrm{eval}}\), the recorded evidence supports the claim that the IUT exhibited behavior accepted by all validly executed base verification cases and that the VCS detected every evaluated non-equivalent fault member it was claimed to cover.
@@ -775,6 +797,17 @@ This follows directly from the definition of `Kill` in Equation (3). The proposi
 ---
 
 ## 6. Quantitative Evidence Without Semantic Conflation
+
+> **v4.3 migration classification note.** Under candidate baseline `RB-2026-001-v4.3`, the
+> calibrated conformance belief of section 6.3 is classified as a
+> **research-evidence** claim (R4 maturity), not a certification-oriented
+> assurance claim. Failure to reach a calibrated interpretation does not block
+> certification-oriented closure (A4). A calibrated posterior is not required to
+> establish ordinary protocol verification evidence, and Bayesian or statistical
+> calibration is not a certification objective. The equations and measurement
+> semantics of this section are unchanged; only their classification within the
+> local ARINC/Profile claim model is proposed by v4.3; Generic correspondence
+> and compatibility remain `NOT-DETERMINED`.
 
 ### 6.1 Three quantities that must remain distinct
 
@@ -1485,6 +1518,24 @@ https://doi.org/10.59161/JCGM106-2012
 
 *AI-assisted research disclosure: AI tools assisted with drafting and consistency checking. Mathematical claims, standard interpretations, references, and experimental conclusions require accountable human review. The report does not state that a reference has been verified unless its bibliographic metadata and the cited proposition have both been checked.*
 
+## 15. v4.3 GVS-Bound ARINC Profile/Binding Migration Candidate
+
+Candidate baseline `RB-2026-001-v4.3` leaves this report's equations 1–14,
+timed equations T1–T5, robust verdict, and measurement-error semantics
+unchanged. It binds the ARINC instance to the external Candidate GVS Core at
+`48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` and separates external Core,
+local Conformance-Testing Profile, ARINC 615A Product Binding, and future
+Project Configuration.
+
+VO, OSR, CEI, EEM, L0–L7, A0–A4, R0–R5, RG, and G remain local
+ARINC/Profile/project candidates. Their Generic correspondence is
+`NOT-DETERMINED`; compatibility is `NOT-DETERMINED` and instance evaluation is
+`NOT-EXERCISED`. Raw records, manifests, Results, PASS, Objective Satisfaction,
+claims, compliance, and authority acceptance remain distinct. See the
+[`external binding`](../../../docs/control/contracts/EXTERNAL_GVS_BINDING.md),
+[`instance mapping`](../../../docs/control/contracts/GVS_INSTANCE_MAPPING.md),
+and Profile/Binding/Configuration contract.
+
 ---
 
 # 中文版
@@ -1675,6 +1726,13 @@ ARINC 665 和 ARINC 664 可以作为环境假设或测试数据约束出现。�
 
 ### 2.3 保证层级
 
+> **v4.3 迁移分类说明。** 候选基线 `RB-2026-001-v4.3`
+> （[`CR-2026-004`](../../../docs/control/changes/CR-2026-004.md)）下，下方的
+> 外部 Candidate GVS Core 被固定绑定；A0–A4 与 R0–R5 只作为本地 ARINC/Profile
+> 候选 taxonomy，其 Generic 对应为 `NOT-DETERMINED`，不静默转换 T0–T3，也不构成
+> 权威层级。下方 T0–T3 仍是冻结 v4.2 方法。Result、Evidence Item、Objective
+> Satisfaction、Claim、compliance 与 authority acceptance 不自动晋级。数学与时序语义不变。
+
 | 层级 | 主张 | 最低支持产物 |
 |---|---|---|
 | **T0——追踪性** | 每条适用需求均关联至少一个可执行用例 | CRS、TP/VC 关系 |
@@ -1682,7 +1740,7 @@ ARINC 665 和 ARINC 664 可以作为环境假设或测试数据约束出现。�
 | **T2——有限检测充分性** | VCS 能区分规范和声明评价故障集中每个非等价成员 | T1 + 变异/故障结果 |
 | **T3——校准证据** | 证据依据经过验证的观测模型改变对符合性命题的信念 | T2 + 校准和敏感性分析 |
 
-高层级不能抵消低层级的缺失。任何 T3 数字都不能弥补追踪性缺失或无效执行。
+高层级不能抵消低层级的缺失。任何 T3 数字都不能弥补追踪性缺失或无效执行。v4.3 候选在主张矩阵中记录可能的本地迁移目的地，但尚未建立 T0–T3 与 A/R 的等价关系。
 
 ---
 
@@ -2142,6 +2200,14 @@ w_m\mathbf{1}[\exists v\in V:\mathrm{Kill}(v,m)]}
 
 ## 5. 保证论证
 
+> **v4.3 迁移分类说明。** 在候选基线 `RB-2026-001-v4.3`
+> （[`CR-2026-004`](../../../docs/control/changes/CR-2026-004.md)）下，下述
+> 保留原论证，同时提出本地 ARINC/Profile 候选链：义务→验证目标→验证活动→证据→受评审的目标满足→
+> 合规证据索引。主张 C0–C6 仍描述工程实质，但其分类被重划：C1–C3 映射到保证状态
+> A1–A3，而 C4–C5（检测充分性和校准）为研究证据主张，映射到 R2–R5，不是更高面向
+> 认证保证层级。这些映射没有 Generic 权威，仍待评审。下方数学命题 1–3 不变；内部门为
+> 项目/Profile 候选，非权威评审门。
+
 ### 5.1 顶层主张
 
 > 对于固定标准版本 \(S\)、适用性声明 \(P\)、观测边界 \(O\)、受控环境 \(E\) 和评价故障集 \(\mathcal{M}_{\mathrm{eval}}\)，记录证据支持以下主张：IUT 对所有有效执行的基础验证用例表现出 oracle 可接受行为，且 VCS 检测到了其声明覆盖的每个已评价非等价故障成员。
@@ -2209,6 +2275,12 @@ C0  范围受限符合性证据足以支持声明用途。
 ---
 
 ## 6. 避免语义混淆的定量证据
+
+> **v4.3 迁移分类说明。** 在候选基线 `RB-2026-001-v4.3` 下，6.3 节的校准符合性信念被
+> 归类为**研究证据**主张（R4 成熟度），而非面向认证保证主张。未达校准解释不阻塞
+> 面向认证的关闭（A4）。建立普通协议验证证据无需校准后验，贝叶斯或统计校准不是认证
+> 目标。本节方程与测量语义不变；v4.3 只提出本地 ARINC/Profile 主张模型，Generic 对应
+> 与兼容性保持 `NOT-DETERMINED`。
 
 ### 6.1 必须区分的三种量
 
@@ -2894,3 +2966,16 @@ https://doi.org/10.59161/JCGM106-2012
 ---
 
 *AI 辅助研究披露：AI 工具协助完成草拟和一致性检查。数学主张、标准解释、参考文献和实验结论均须由可问责的人类评审者复核。只有在书目信息和所支持命题均已检查后，报告才可声明某条引用已经验证。*
+
+## 15. GVS 绑定的 v4.3 ARINC Profile/Binding 迁移候选
+
+候选基线 `RB-2026-001-v4.3` 不改变本报告的式 1–14、时序式 T1–T5、稳健判定和测量
+误差语义。它把 ARINC 实例绑定到外部 Candidate GVS Core 提交
+`48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b`，并分离外部 Core、本地
+Conformance-Testing Profile、ARINC 615A Product Binding 与未来 Project Configuration。
+
+VO、OSR、CEI、EEM、L0–L7、A0–A4、R0–R5、RG 和 G 都是本地 ARINC/Profile/项目
+候选。其 Generic 对应和兼容性均为 `NOT-DETERMINED`，实例评价为 `NOT-EXERCISED`。
+raw record、manifest、Result、PASS、Objective Satisfaction、claim、compliance 与 authority
+acceptance 始终有别。见 [`外部绑定`](../../../docs/control/contracts/EXTERNAL_GVS_BINDING.md)、
+[`实例映射`](../../../docs/control/contracts/GVS_INSTANCE_MAPPING.md) 和 Profile/Binding/Configuration 契约。

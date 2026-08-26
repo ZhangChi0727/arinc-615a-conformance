@@ -2,9 +2,9 @@
 
 | Field | Value |
 |---|---|
-| **Version** | 2.2 |
-| **Status** | Baseline-aligned |
-| **Governing method** | RB-2026-001-v4.2 |
+| **Version** | 2.3-candidate |
+| **Status** | Effective v4.2 architecture plus v4.3 GVS-bound migration candidate |
+| **Governing method** | RB-2026-001-v4.2 effective; external Candidate GVS Core at `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` for v4.3 migration |
 
 ## End-to-end control flow
 
@@ -71,9 +71,20 @@ path or hyperlink improves navigation but does not replace the trace record.
 | Protocol model | Clock-augmented observable EFSM/timed IOLTS | Modeling |
 | Traceability | \(\rho_{RT}\), \(\rho_{TV}\), model-target relations | Method |
 | Verification case | Preconditions, stimulus, robust oracle, timing/error schema, reset, evidence schema | Test |
-| Evidence | Immutable run and analysis datasets | Engineering/experiment |
+| Observation / raw record | Immutable run/analysis datasets plus identity and provenance | Engineering/experiment |
+| Result | Versioned Oracle output over controlled Observations | Engineering/analysis |
+| Evidence Item | Record admitted only after identity, provenance, applicability, credibility, and admission characterization | Evidence review |
 | Inference model | Registered likelihood, calibration, diagnosis model | Analysis |
-| Claim | Claim ID, tier, scope, evidence, gate decision | Governance |
+| Argument / SufficiencyAssessment | Explicit reasoning from admitted Evidence Items to a bounded conclusion | Independent review |
+| Claim / Decision | Versioned claim, scope, decision authority, limitations, and review record | Governance |
+| Verification Objective | Requirement refs, type, acceptance criteria, methods, closure rule | Method |
+| Objective Satisfaction Record | Result, characterized Evidence Item, sufficiency/Argument, Decision, and review refs | Governance |
+| Compliance Evidence Index | Navigation to versioned Claim/Argument/Decision/OSR/Evidence records; no decision authority | Governance |
+| Test Conformity | Test article, setup, and procedure conformity status | Engineering |
+| Problem / Deviation | Type, disposition, closure rationale, review record | Governance |
+
+For v4.3 these objects are ARINC Profile/Binding/project candidates. Generic
+object authority remains external; local labels do not amend the GVS Core.
 
 ## Gates
 
@@ -121,6 +132,25 @@ names or the latest Git commit.
 | Common tutorial | `docs/tutorial/sources/COMMON_TUTORIAL_PLAN.md`, `artifacts/tutorials/` |
 | ARINC 615A tutorial | `docs/tutorial/sources/ARINC615A_TUTORIAL_PLAN.md`, `artifacts/tutorials/` |
 
+## ARINC 615A certification-evidence view (`RB-2026-001-v4.3` candidate)
+
+```text
+L0 Certification / Normative Basis
+L1 Applicability + Conformance Requirement Set
+L2 Verification Objective
+L3 Verification Definition -> Test Purpose / VC / Analysis / Review
+L4 Controlled Execution -> IUT / Setup / Tool / Environment / Procedure
+L5 Evidence -> Raw / Derived / Configuration / Timing / Deviations
+L6 Objective Satisfaction
+L7 Compliance Evidence Package / Compliance Argument
+```
+
+L0–L7 are an ARINC 615A Profile candidate view, not Generic architecture.
+A0–A4, R0–R5, RG, and G are ARINC/Profile/project candidate states and gates,
+not Generic GVS Core or FAA, EASA, CAAC, RTCA, SAE, or EUROCAE authority levels.
+The view is governed by the four-layer
+[`Profile/Binding/Configuration contract`](ARINC615A_PROFILE_BINDING_CONFIGURATION.md).
+
 ---
 
 # 中文版
@@ -161,7 +191,10 @@ names or the latest Git commit.
 
 ## 受控对象
 
-受控对象包括适用性、CRS、带时钟协议模型、追踪关系、含时序/误差 schema 的 VC、不可变证据、独立注册的推断模型和由门禁控制的主张。每次运行和派生结果必须记录
+受控对象包括适用性、CRS、带时钟协议模型、追踪关系、含时序/误差 schema 的 VC、
+Observation/raw record、Oracle 产生的 Result、经身份/来源/适用性/可信度/准入表征的 Evidence
+Item、显式 Argument/SufficiencyAssessment、版本化 Decision/Claim 以及只提供导航的 CEI。
+raw dataset、manifest 或 PASS 不会自行晋级为 Evidence、满足结论或 Claim。每次运行和派生结果必须记录
 
 \[
 (\text{基线},S,P,O,\text{CRS},G_T,V,\text{IUT},E,\text{时钟},\text{工具},\text{实验}).
@@ -187,3 +220,21 @@ RG0–RG6 控制静态产物和主张，G0–G7 控制证据层级；缺失上�
 与出版输入；`src/`、`tests/`、`configs/` 和 `docs/engineering/` 承载工具及其受控输入；
 `docs/tutorial/` 承载两条教程的控制和源计划；`artifacts/` 承载读者报告、已发布教程、发布包
 和生成证据。根 README 是唯一读者入口，四份控制文档是开发者入口。
+
+## ARINC 615A 面向认证证据视图（`RB-2026-001-v4.3` 候选）
+
+```text
+L0 认证 / 规范基础
+L1 适用性 + 符合性需求集
+L2 验证目标
+L3 验证定义 -> 测试目的 / VC / 分析 / 评审
+L4 受控执行 -> IUT / 装置 / 工具 / 环境 / 规程
+L5 证据 -> 原始 / 派生 / 配置 / 时序 / 偏差
+L6 目标满足
+L7 合规证据包 / 合规论证
+```
+
+L0–L7 是 ARINC 615A Profile 候选视图，不是 Generic 架构。A0–A4、R0–R5、RG 和 G
+都是 ARINC/Profile/项目候选状态与门，不是 Generic GVS Core，也不是 FAA、EASA、CAAC、
+RTCA、SAE 或 EUROCAE 权威层级。该视图受
+[`Profile/Binding/Configuration 契约`](ARINC615A_PROFILE_BINDING_CONFIGURATION.md) 治理。

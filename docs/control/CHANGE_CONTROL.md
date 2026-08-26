@@ -40,6 +40,19 @@ Create `docs/control/changes/CR-YYYY-NNN.md` containing:
    changes create a new version.
 7. A cross-domain interface change identifies affected producers, consumers,
    trace fields, migrations, and tutorial/publication references.
+8. Under the `RB-2026-001-v4.3` migration candidate, L0–L7, A0–A4,
+   R0–R5, RG, and G are ARINC Profile/project candidate semantics, not Generic
+   GVS Core definitions. Internal gates are not FAA, EASA, CAAC, RTCA, SAE, or
+   EUROCAE authority review gates.
+9. External method dependencies use a full immutable commit and commit-bound
+   locators recorded in `contracts/EXTERNAL_GVS_BINDING.md`; branch names and
+   mutable `main` links are not controlled identities.
+10. Changing the method commit, temporary instance identifiers, ownership
+    boundary, compatibility status, evaluation status, or object-migration
+    semantics is a baseline change requiring impact analysis and independent
+    review.
+11. Until independent review closes, compatibility remains `NOT-DETERMINED`,
+    evaluation remains `NOT-EXERCISED`, and the migration PR remains Draft.
 
 ## Git and PR policy
 
@@ -51,7 +64,8 @@ Create `docs/control/changes/CR-YYYY-NNN.md` containing:
 - raw evidence changes require provenance and reproduction checks;
 - squash only when the resulting commit preserves useful baseline and gate IDs.
 
-Recommended baseline tag after approval: `research-baseline/RB-2026-001-v4.2`.
+Recommended baseline tag after approval: `research-baseline/RB-2026-001-v4.2`;
+candidate for v4.3: `RB-2026-001-v4.3`.
 
 ---
 
@@ -69,7 +83,7 @@ Recommended baseline tag after approval: `research-baseline/RB-2026-001-v4.2`.
 
 ## 规则
 
-数学修正、时序语义、oracle、适用性和保证层级变化不得伪装成编辑；既有证据不得仅通过改标签迁移；解释冲突必须进入裁决和风险记录。跨领域接口变化必须标明受影响生产者、消费者、追踪字段、迁移以及教程/出版引用。
+数学修正、时序语义、oracle、适用性和保证层级变化不得伪装成编辑；既有证据不得仅通过改标签迁移；解释冲突必须进入裁决和风险记录。跨领域接口变化必须标明受影响生产者、消费者、追踪字段、迁移以及教程/出版引用。在 `RB-2026-001-v4.3` 迁移候选下，L0–L7、A0–A4、R0–R5、RG 和 G 都是 ARINC Profile/项目候选语义，不是 Generic GVS Core 定义。外部方法依赖必须在 `contracts/EXTERNAL_GVS_BINDING.md` 中记录完整不可变提交和提交绑定链接；分支名及可变 `main` 链接不是受控身份。改变方法提交、临时实例 ID、所有权边界、兼容性状态、评价状态或对象迁移语义属于基线变更。独立评审关闭前，兼容性保持 `NOT-DETERMINED`、评价保持 `NOT-EXERCISED`，迁移 PR 保持 Draft。内部保证门不是 FAA、EASA、CAAC、RTCA、SAE 或 EUROCAE 的权威评审门。
 
 ## Git 与 PR 政策
 

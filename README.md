@@ -18,6 +18,17 @@ The frozen mathematical and methodological content remains
 changes repository information architecture and reporting control only and
 does not change equations, timed semantics, assurance tiers, or claim rules.
 
+A migration candidate `RB-2026-001-v4.3` is in progress under
+[`CR-2026-004`](docs/control/changes/CR-2026-004.md). It binds this repository to
+the immutable Candidate GVS Core definition at
+`48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b`, while assigning this repository
+authority only for the ARINC 615A Profile, Product Binding, Project
+Configuration, instance engineering, instance research, and instance evidence.
+The controlled [`external GVS binding`](docs/control/contracts/EXTERNAL_GVS_BINDING.md)
+keeps compatibility `NOT-DETERMINED` and instance evaluation `NOT-EXERCISED`.
+PR #9 remains Draft until independent review; the migration earns no authority
+approval, certification credit, compatibility result, or empirical result.
+
 ## Developer control entry points
 
 | Product line | Control document | Responsibility |
@@ -89,6 +100,15 @@ result.
 [`RR-2026-001 v4.2`](docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md)。
 `RB-2026-001-v4.2.1` 现为已生效并冻结的仓库基线。它只改变仓库信息架构和报告控制，
 不修改公式、时序语义、保证层级或主张规则。
+
+迁移候选基线 `RB-2026-001-v4.3` 正在 [`CR-2026-004`](docs/control/changes/CR-2026-004.md)
+下推进。它把本仓库绑定到提交
+`48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` 的不可变 Candidate GVS Core，
+同时将本仓库的权威范围限定为 ARINC 615A Profile、Product Binding、Project
+Configuration、实例工程、实例研究和实例证据。受控的
+[`外部 GVS 绑定`](docs/control/contracts/EXTERNAL_GVS_BINDING.md) 将兼容性保持为
+`NOT-DETERMINED`、实例评价保持为 `NOT-EXERCISED`。PR #9 在独立评审前保持
+Draft；此次迁移不取得权威批准、认证信用、兼容性结论或经验结果。
 
 ## 开发者控制入口
 

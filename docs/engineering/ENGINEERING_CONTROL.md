@@ -3,9 +3,9 @@
 | Field | Value |
 |---|---|
 | **Plan ID** | EIP-2026-001 |
-| **Version** | 1.2 |
-| **Status** | Approved for staged implementation |
-| **Methodology baseline** | RB-2026-001-v4.2 |
+| **Version** | 1.3 |
+| **Status** | Approved under effective v4.2; GVS-bound v4.3 migration candidate under CR-2026-004 |
+| **Methodology baseline** | RB-2026-001-v4.2 effective; v4.3 candidate bound to external MethodDefinitionCommit `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
 
 ## Engineering objective
 
@@ -13,6 +13,12 @@ Build a reproducible verification instrument that implements the Test path,
 produces analysis-ready evidence, and enforces the baseline's scope and gate
 semantics. The software is an experimental and engineering instrument; its
 existence alone is not evidence of conformance.
+
+For v4.3, engineering realizes only the ARINC Product Binding under a selected
+Profile and Project Configuration. It consumes the external Core as read-only,
+does not redefine Generic objects, and must record method/Profile/Binding/
+Configuration identities. `TMP-PC-ARINC615A-01` remains `NOT YET ESTABLISHED`;
+no execution or compatibility result is inferred from migration documents.
 
 ## Target architecture
 
@@ -80,7 +86,14 @@ Case catalog -> selector -> runner -> protocol peer/IUT
 - exported evidence manifests carry the upstream artifact versions and stable
   IDs required by research, publication, and executable tutorials;
 - stochastic tools record seeds and repeated-seed results;
-- proprietary standard text never enters public fixtures.
+- proprietary standard text never enters public fixtures;
+- the verification engine produces a case verdict only; it must not decide
+  objective satisfaction or compliance automatically—those are reviewed artifacts;
+- evidence manifests carry verification-objective refs, test
+  article/setup/procedure conformity refs, problem refs, and tool qualification
+  status, so an Execution Evidence Manifest alone never closes an objective;
+- tool qualification credit is not claimed; the default `qualificationStatus` is
+  `NOT_CLAIMED` unless an applicable qualification basis is established.
 
 ## Quality strategy
 
@@ -101,7 +114,8 @@ evidence-manifest violations once those validators exist.
 - RG0–RG4 are approved;
 - at least one end-to-end VC preserves a complete evidence package;
 - the package is reproduced on a clean checkout;
-- no empirical claim exceeds T1;
+- no empirical claim exceeds the achieved local ARINC/Profile assurance or
+  research candidate state (A0–A4 and R0–R5 are not Generic/authority levels);
 - known limitations and deviations are recorded.
 
 ---
@@ -111,6 +125,11 @@ evidence-manifest violations once those validators exist.
 ## 工程目标
 
 实现一套可复现验证仪器：执行测试路径、产生可分析证据，并强制执行 v4.2 的范围、时序和门禁语义。主要组件包括需求/模型 schema、TFTP 核心、615A 会话、时钟与时序义务模型、双角色控制器、VC 引擎、稳健 oracle、证据写入、覆盖/变异/时序/校准/诊断分析和 CLI 报告。
+
+对 v4.3 而言，工程只在选定 Profile 与 Project Configuration 下实现 ARINC Product
+Binding。它只读消费外部 Core，不重定义 Generic 对象，并必须记录 method/Profile/Binding/
+Configuration 身份。`TMP-PC-ARINC615A-01` 仍为 `NOT YET ESTABLISHED`；不得从迁移文档
+推断执行或兼容性结果。
 
 ## 目标架构
 
@@ -137,7 +156,7 @@ evidence-manifest violations once those validators exist.
 
 ## 横向工程要求
 
-每次执行记录完整版本链；四类判定端到端分离；oracle 可独立测试；时间来自声明的单调源；时间戳源、分辨率、位置和误差预算属于证据；只有完整观测区间包含于允许区间时才可判时序 PASS；仪器无效必须判 ERROR；原始证据只追加，派生产物保留全部输入和脚本版本。方法输入只通过版本化 schema 和语义契约导入，Python 内部 API 不是研究或教程接口；导出的证据清单必须携带研究、出版和可执行教程所需的上游版本与稳定 ID。
+每次执行记录完整版本链；四类判定端到端分离；oracle 可独立测试；时间来自声明的单调源；时间戳源、分辨率、位置和误差预算属于证据；只有完整观测区间包含于允许区间时才可判时序 PASS；仪器无效必须判 ERROR；原始证据只追加，派生产物保留全部输入和脚本版本。方法输入只通过版本化 schema 和语义契约导入，Python 内部 API 不是研究或教程接口；导出的证据清单必须携带研究、出版和可执行教程所需的上游版本与稳定 ID。验证引擎只产生用例判定，不得自动决定目标满足或合规——这些是受评审产物；证据清单须携带验证目标引用、测试件/装置/规程符合性引用、问题引用和工具鉴定状态，使执行证据清单本身不关闭目标；除非在适用鉴定基础上建立，工具鉴定默认 `qualificationStatus` 为 `NOT_CLAIMED`。
 
 ## 质量策略
 
