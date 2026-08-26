@@ -71,12 +71,15 @@ path or hyperlink improves navigation but does not replace the trace record.
 | Protocol model | Clock-augmented observable EFSM/timed IOLTS | Modeling |
 | Traceability | \(\rho_{RT}\), \(\rho_{TV}\), model-target relations | Method |
 | Verification case | Preconditions, stimulus, robust oracle, timing/error schema, reset, evidence schema | Test |
-| Evidence | Immutable run and analysis datasets | Engineering/experiment |
+| Observation / raw record | Immutable run/analysis datasets plus identity and provenance | Engineering/experiment |
+| Result | Versioned Oracle output over controlled Observations | Engineering/analysis |
+| Evidence Item | Record admitted only after identity, provenance, applicability, credibility, and admission characterization | Evidence review |
 | Inference model | Registered likelihood, calibration, diagnosis model | Analysis |
-| Claim | Claim ID, tier, scope, evidence, gate decision | Governance |
+| Argument / SufficiencyAssessment | Explicit reasoning from admitted Evidence Items to a bounded conclusion | Independent review |
+| Claim / Decision | Versioned claim, scope, decision authority, limitations, and review record | Governance |
 | Verification Objective | Requirement refs, type, acceptance criteria, methods, closure rule | Method |
-| Objective Satisfaction Record | Supporting manifests/analyses, status, review record | Governance |
-| Compliance Evidence Index | Top reviewer-facing index of claims to evidence | Governance |
+| Objective Satisfaction Record | Result, characterized Evidence Item, sufficiency/Argument, Decision, and review refs | Governance |
+| Compliance Evidence Index | Navigation to versioned Claim/Argument/Decision/OSR/Evidence records; no decision authority | Governance |
 | Test Conformity | Test article, setup, and procedure conformity status | Engineering |
 | Problem / Deviation | Type, disposition, closure rationale, review record | Governance |
 
@@ -188,7 +191,10 @@ The view is governed by the four-layer
 
 ## 受控对象
 
-受控对象包括适用性、CRS、带时钟协议模型、追踪关系、含时序/误差 schema 的 VC、不可变证据、独立注册的推断模型和由门禁控制的主张。每次运行和派生结果必须记录
+受控对象包括适用性、CRS、带时钟协议模型、追踪关系、含时序/误差 schema 的 VC、
+Observation/raw record、Oracle 产生的 Result、经身份/来源/适用性/可信度/准入表征的 Evidence
+Item、显式 Argument/SufficiencyAssessment、版本化 Decision/Claim 以及只提供导航的 CEI。
+raw dataset、manifest 或 PASS 不会自行晋级为 Evidence、满足结论或 Claim。每次运行和派生结果必须记录
 
 \[
 (\text{基线},S,P,O,\text{CRS},G_T,V,\text{IUT},E,\text{时钟},\text{工具},\text{实验}).

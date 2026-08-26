@@ -1,118 +1,171 @@
-# Temporary GVS Instance Mapping
+# Temporary GVS Instance Reconciliation Mapping
 
 | Field | Value |
 |---|---|
 | **Register ID** | TMP-MAP-ARINC615A-01 |
-| **Version** | 0.1-candidate |
+| **Version** | 0.2-candidate |
 | **Method instance** | `TMP-ARINC615A-01` |
 | **MethodDefinitionCommit** | `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
+| **Method mapping register** | `arinc_615a_object_mapping_register.md`, version 0.2, 18 controlled source rows |
 | **Source proposal** | PR #9 starting head `53a98447bcfa862f082ce443d69115067d3ff2f1` |
 | **Compatibility** | NOT-DETERMINED |
-| **Review status** | PENDING INDEPENDENT REVIEW |
+| **Review status** | REWORK CORRECTIONS COMPLETE — EXTERNAL REREVIEW PENDING |
 
-## 1. Mapping rule
+## 1. Reconciliation rule
 
-This is an instance-side realization/binding matrix, not a copy of the external
-Core or a declaration of equivalence. Direction is always **ARINC object → one
-primary relation → Framework candidate/role**. Every row has exactly one
-primary relation and one status from `NOT-DETERMINED`, `CANDIDATE`, `PARTIAL`,
-`CONFLICT`, or `OUT-OF-SCOPE`. Missing research or identity is
-`NOT-DETERMINED`, not `CONFLICT`.
+This is an instance-side reconciliation matrix, not a Core copy, equivalence
+claim, or compatibility result. The first table contains exactly one disposition
+for each of the external method register's 18 controlled rows, in the same
+order. Active v4.2.1 objects and PR #9 candidates retain distinct source
+identities. Direction is always **ARINC object → one primary relation → external
+candidate/role**. Relations and statuses reproduce the method-side row without
+strengthening it.
 
-## 2. Candidate mapping population
+Allowed statuses are `NOT-DETERMINED`, `CANDIDATE`, `PARTIAL`, `CONFLICT`, and
+`OUT-OF-SCOPE`. Missing identity or research is `NOT-DETERMINED`, not
+`CONFLICT`. Additional local taxonomies appear only in the separate
+**instance-only additional rows** table and cannot hide a missing source row.
 
-| Row | External candidate/role locator | Local ARINC object | Primary relation | Status | Rationale | Open dependency | Migration impact | Review |
-|---|---|---|---|---|---|---|---|---|
-| M01 | `Applicability/Profile Declaration` | PICS-like declaration | `realizes` | `CANDIDATE` | controls capability/applicability and applicable CRS population; is not Verification Basis | ISO/IEC 9646 Task 002 and Profile review | retain declaration separately from basis items | pending |
-| M02 | `VerificationBasisElement` | applicable CRS item | `candidate-correspondence` | `CANDIDATE` | an applicable normative item may play a typed basis role; no frozen Core class is asserted | source-locator and typed-role review | preserve locator/applicability provenance | pending |
-| M03 | `VerificationObligation` | Verification Objective | `candidate-correspondence` | `NOT-DETERMINED` | local VO may address an obligation role, but equivalence and Generic ownership are unreviewed | method and instance semantic review | keep VO as ARINC/Profile object | pending |
-| M04 | `VerificationCase` | Test Purpose | `candidate-correspondence` | `NOT-DETERMINED` | Test Purpose correspondence is not presumed | ISO/IEC 9646 Task 002 | keep TP and VC distinct | pending |
-| M05 | `VerificationCase` | Verification Case / procedure | `instantiates` | `CANDIDATE` | Binding/engineering realizes executable case and procedure roles | case/procedure/configuration review | separate reusable procedure from run values | pending |
-| M06 | `Oracle` | discrete/timing rule | `implements` | `CANDIDATE` | rule evaluates observations; concrete parameters belong to Binding/Configuration | Oracle interface review | version rule and parameters separately | pending |
-| M07 | `Result` | verdict | `instantiates` | `CANDIDATE` | verdict is an evaluated result, not the Oracle | result-state review | preserve rule inputs and result separately | pending |
-| M08 | `Observation` | packet trace / timestamp / log | `instantiates` | `CANDIDATE` | captured facts are observations/raw records with provenance | evidence characterization policy | prohibit automatic Evidence admission | pending |
-| M09 | `Evidence` | Evidence Manifest / execution record | `candidate-correspondence` | `NOT-DETERMINED` | manifest is a provenance container; evidence role requires explicit characterization | Evidence admission/credibility study | keep raw record, manifest, Result, and Evidence Item distinct | pending |
-| M10 | `SufficiencyAssessment` | Objective Satisfaction Record | `candidate-correspondence` | `NOT-DETERMINED` | OSR combines Result, sufficiency reasoning, Decision, and Claim linkage; it is not one Core object | RQ4 and instance semantic review | retain composite nature and reviewed closure | pending |
-| M11 | `Claim` | Compliance Evidence Index | `indexes` | `NOT-DETERMINED` | CEI is reviewer-facing navigation; it is not Claim, Argument, or Evidence Architecture | instance migration and independent review | preserve index-only role | pending |
-| M12 | `Configuration` | Test Conformity Record | `candidate-correspondence` | `NOT-DETERMINED` | local configuration/provenance/conformity artifact does not establish authority conformity | identity/version and Profile review | link to configuration without authority promotion | pending |
-| M13 | `Anomaly/Change/Impact` | Problem/Deviation Closure Record | `candidate-correspondence` | `NOT-DETERMINED` | local composite closure overlaps several lifecycle roles without established equivalence | lifecycle/state/authority review | keep state transitions explicit | pending |
-| M14 | `Obligation/Coverage aspect` | L0–L7 ARINC evidence view | `classifies` | `CANDIDATE` | useful ARINC/Profile view; not Generic architecture | Profile review | label every use local candidate | pending |
-| M15 | `Assurance/research extension points` | A0–A4 and R0–R5 | `specializes` | `CANDIDATE` | ARINC/Profile assurance and instance research taxonomy; not authority or Core levels | Profile and claim review | prevent Generic/authority promotion | pending |
-| M16 | `CompositeGate` | RG0–RG6 / G0–G7 | `specializes` | `CANDIDATE` | project/Profile gate package may specialize review/decision flow; compatibility is unreviewed | CompositeGate compatibility review | retain internal-gate non-claim | pending |
-| M17 | `Configuration` | Project Configuration `TMP-PC-ARINC615A-01` | `instantiates` | `CANDIDATE` | a future concrete run configuration may instantiate the role | actual controlled values | status remains NOT YET ESTABLISHED | pending |
+## 2. Method-side 18-row reconciliation
 
-No row is compatibility-approved. PR #9-derived rows remain unmerged external
-candidates with no active semantic authority until independent migration review
-and release. Future row changes require immutable identities, rationale,
-dependency, impact, and review.
+| Source row | External candidate/role locator | Local ARINC object | Source baseline | Primary relation | Status | Rationale | Open dependency | Migration impact | Review |
+|---|---|---|---|---|---|---|---|---|---|
+| R01 | `Applicability/Profile Declaration` | PICS-like declaration | active v4.2.1 | `realizes` | `CANDIDATE` | controls capability/applicability and applicable CRS population; is not Verification Basis | ISO/IEC 9646 Task 002; Profile review | retain declaration separately from basis items | pending |
+| R02 | `VerificationBasisElement` | applicable CRS item | active v4.2.1 | `candidate-correspondence` | `CANDIDATE` | an applicable normative item may play a typed basis role; no frozen Core class is asserted | Task 002 and mapping review | preserve CRS locator and applicability provenance | pending |
+| R03 | `VerificationObligation` | current ARINC requirement-obligation aspect | active v4.2.1 | `no-direct-correspondence` | `NOT-DETERMINED` | legacy structure exposes no controlled identity whose semantics can be compared | obligation identity/semantics review | do not retrofit a stable ID into the frozen legacy baseline | pending |
+| R04 | `VerificationObligation` | PR #9 Verification Objective | PR #9 / v4.3 candidate | `candidate-correspondence` | `NOT-DETERMINED` | VO may address the missing intermediary, but semantics remain unmerged and unreviewed | instance migration/compatibility review | UNMERGED EXTERNAL CANDIDATE — NO ACTIVE SEMANTIC AUTHORITY | pending |
+| R05 | `Obligation/Coverage aspect` | functional/state/timing and related classifications | active v4.2.1 | `classifies` | `CANDIDATE` | local classifications may qualify obligation/coverage views without becoming a universal Core level | Task 002 and coverage study | keep T0–T3/Profile taxonomy out of Generic promotion | pending |
+| R06 | `VerificationStrategy` | Test-and-Analysis allocation | active v4.2.1 | `realizes` | `PARTIAL` | allocation covers only a bounded strategy-decision subset | strategy criteria and rationale review | retain omitted environment/coverage/evidence decisions | pending |
+| R07 | `VerificationCase` | VC | active v4.2.1 | `instantiates` | `CANDIDATE` | VC is a candidate case realization; Test Purpose equivalence is not presumed | Task 002 Test Purpose study | map Test Purpose only after locator-backed study | pending |
+| R08 | `VerificationProcedure` | procedure | active v4.2.1 | `instantiates` | `CANDIDATE` | executable steps may instantiate the procedure role | procedure/configuration review | separate reusable procedure from run configuration | pending |
+| R09 | `Observation` | packet trace/timestamp/log | active v4.2.1 | `instantiates` | `CANDIDATE` | captured facts are observations/raw records with provenance | evidence characterization rules | do not auto-promote trace/log to Evidence | pending |
+| R10 | `Result` | verdict | active v4.2.1 | `instantiates` | `CANDIDATE` | verdict is an evaluated Result, not Observation or the Oracle rule | Oracle/Result review | preserve Observation, rule, and Result separately | pending |
+| R11 | `Oracle` | discrete/robust timing rule | active v4.2.1 | `implements` | `CANDIDATE` | rule evaluates controlled Observations against expected constraints and produces a Result | ISO-G04 and Task 002 | version rule and parameters in Binding/Configuration | pending |
+| R12 | `Evidence` | characterized execution/analysis record | active v4.2.1 | `candidate-correspondence` | `NOT-DETERMINED` | raw records require identity, provenance, applicability, credibility, and admission characterization before Evidence role | Evidence admission/credibility study | manifests remain provenance containers, not automatic Evidence Items | pending |
+| R13 | `Argument` | scoped assurance reasoning | active v4.2.1 | `realizes` | `PARTIAL` | some reasoning may support a scope; full Argument equivalence is not shown | Claim/Argument boundary review | retain explicit inference and limitations | pending |
+| R14 | `Claim` | PR #9 CEI claim entry candidate | PR #9 / v4.3 candidate | `indexes` | `NOT-DETERMINED` | CEI navigates to a versioned Claim/Decision; it is not Claim, Argument, or Evidence Architecture | instance migration and independent review | UNMERGED EXTERNAL CANDIDATE — NO ACTIVE SEMANTIC AUTHORITY | pending |
+| R15 | `CompositeGate` | RG/G gate package | PR #9 / v4.3 candidate | `specializes` | `NOT-DETERMINED` | decomposition and compatibility with CompositeGate are unreviewed | CompositeGate compatibility review | UNMERGED EXTERNAL CANDIDATE — NO ACTIVE SEMANTIC AUTHORITY | pending |
+| R16 | `Configuration` | IUT/setup/procedure identity | active v4.2.1 | `instantiates` | `CANDIDATE` | the active identity bundle may instantiate the candidate Configuration role | identity/version contract | keep legacy identity distinct from future Project Configuration | pending |
+| R17 | `Anomaly/Change/Impact` | Problem Closure plus CR/DD | active v4.2.1 | `candidate-correspondence` | `NOT-DETERMINED` | overlap may exist, but lifecycle/state/authority equivalence is unknown | change/closure review | preserve legacy states and map transitions explicitly | pending |
+| R18 | `SufficiencyAssessment` | PR #9 OSR/claim-review candidate | PR #9 / v4.3 candidate | `candidate-correspondence` | `NOT-DETERMINED` | OSR may contribute to sufficiency reasoning but is not assumed equivalent to one Core object | RQ4 semantics and instance review | UNMERGED EXTERNAL CANDIDATE — NO ACTIVE SEMANTIC AUTHORITY | pending |
 
-## 3. Mandatory semantic separations
+Coverage of the external controlled population is **18/18**. No local row is
+reused to conceal two external roles: `VerificationCase` and
+`VerificationProcedure` have independent identities and dispositions.
 
-- applicability declaration is not a basis item;
-- basis/requirement is not automatically a Verification Obligation;
-- Test Purpose is not automatically a Verification Case;
-- Oracle is not verdict/result;
-- raw record and manifest are not automatically Evidence Items;
-- Evidence characterization is not Argument use;
-- objective status, claim support, compliance status, and authority acceptance
-  are different states;
-- binding compatibility is not empirical instance evaluation.
+## 3. Instance-only additional rows
+
+These rows describe local v4.3 artifacts that are not separate rows in the
+method-side register. `Row class = INSTANCE-ONLY-ADDITIONAL` is mandatory. A
+real external role is named only as a review target; `no-direct-correspondence /
+NOT-DETERMINED` means no correspondence is asserted.
+
+| Local row | Row class | External review-target locator | Local ARINC object | Source baseline | Primary relation | Status | Rationale | Open dependency | Migration impact | Review |
+|---|---|---|---|---|---|---|---|---|---|---|
+| A01 | `INSTANCE-ONLY-ADDITIONAL` | `VerificationCase` | Test Purpose | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | Test Purpose is not preassigned to VerificationCase | ISO/IEC 9646 Task 002 | retain TP and VC separately | pending |
+| A02 | `INSTANCE-ONLY-ADDITIONAL` | `Evidence` | Execution Evidence Manifest | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | manifest is a provenance container, not an admitted Evidence Item | Evidence characterization policy | add characterized Evidence refs outside manifest identity | pending |
+| A03 | `INSTANCE-ONLY-ADDITIONAL` | `Configuration` | Test Conformity Record | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | local conformity/provenance record is not authority conformity or a Core Configuration | identity/Configuration review | retain as Profile/Binding control | pending |
+| A04 | `INSTANCE-ONLY-ADDITIONAL` | `Argument` | L0–L7 ARINC evidence view | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | view spans basis, objective, execution, evidence, satisfaction, and argument; no single Core role corresponds | Profile architecture review | label strictly instance/Profile view | pending |
+| A05 | `INSTANCE-ONLY-ADDITIONAL` | `SufficiencyAssessment` | A0–A4 ARINC assurance states | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | local assurance taxonomy is not a Generic extension point or authority level | Profile/claim review | prohibit Generic/authority promotion | pending |
+| A06 | `INSTANCE-ONLY-ADDITIONAL` | `SufficiencyAssessment` | R0–R5 instance research maturity | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | research maturity is local and does not determine assurance or certification state | research/claim review | keep research and assurance states orthogonal | pending |
+| A07 | `INSTANCE-ONLY-ADDITIONAL` | `Configuration` | future Project Configuration `TMP-PC-ARINC615A-01` | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | no controlled values exist, so no Configuration instance is established | actual controlled values | status remains NOT YET ESTABLISHED; prohibit execution/evaluation | pending |
+
+## 4. Mandatory semantic chain
+
+```text
+Observation/raw record
+  → Oracle evaluation
+  → Result/verdict
+  → identity/provenance/applicability/credibility/admission characterization
+  → Evidence Item
+  → Argument / SufficiencyAssessment
+  → reviewed Decision / versioned Claim
+```
+
+Applicability declaration is not a basis item; basis/requirement is not
+automatically a Verification Obligation; Test Purpose is not automatically a
+VerificationCase; manifest or PASS is not automatically Evidence or Objective
+Satisfaction; CEI indexes but does not decide; compatibility is not empirical
+instance evaluation. L0–L7, A0–A4, and R0–R5 are not Generic GVS Core levels.
 
 ---
 
 # 中文版
 
-# 临时 GVS 实例映射
+# 临时 GVS 实例闭合映射
 
 | 字段 | 值 |
 |---|---|
 | **登记册 ID** | TMP-MAP-ARINC615A-01 |
-| **版本** | 0.1-candidate |
+| **版本** | 0.2-candidate |
 | **方法实例** | `TMP-ARINC615A-01` |
 | **MethodDefinitionCommit** | `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
+| **方法映射登记册** | `arinc_615a_object_mapping_register.md`，版本 0.2，18 个受控源行 |
 | **源提案** | PR #9 起始 head `53a98447bcfa862f082ce443d69115067d3ff2f1` |
 | **兼容性** | NOT-DETERMINED |
-| **评审状态** | 等待独立评审 |
+| **评审状态** | REWORK 修正完成——等待外部复审 |
 
-## 1. 映射规则
+## 1. 闭合规则
 
-本文件是实例侧 realization/binding matrix，不是外部 Core 副本或等价声明。方向始终为
-“ARINC 对象 → 唯一 primary relation → Framework candidate/role”。每行恰有一个主关系，
-状态只能是 `NOT-DETERMINED`、`CANDIDATE`、`PARTIAL`、`CONFLICT` 或 `OUT-OF-SCOPE`。
-缺少研究或身份时使用 `NOT-DETERMINED`，不得误用 `CONFLICT`。
+本文件是实例侧 reconciliation matrix，不是 Core 副本、等价主张或兼容性结果。第一张表按
+相同顺序对外部方法登记册 18 个受控行逐一且唯一处置。active v4.2.1 对象与 PR #9 候选保留
+不同来源身份。方向始终为“ARINC 对象 → 唯一主关系 → 外部候选/角色”，关系与状态复现方法侧
+行，不得静默加强。允许状态为 `NOT-DETERMINED`、`CANDIDATE`、`PARTIAL`、`CONFLICT` 和
+`OUT-OF-SCOPE`。其它本地 taxonomy 只进入独立附加表，不能掩盖源行遗漏。
 
-## 2. 候选映射总体
+## 2. 方法侧 18 行闭合
 
-| 行 | 外部候选/角色定位 | 本地 ARINC 对象 | 主关系 | 状态 | 理由 | 开放依赖 | 迁移影响 | 评审 |
-|---|---|---|---|---|---|---|---|---|
-| M01 | `Applicability/Profile Declaration` | PICS-like declaration | `realizes` | `CANDIDATE` | 控制能力/适用性及适用 CRS 总体；不是 Verification Basis | ISO/IEC 9646 Task 002 与 Profile 评审 | 声明与 basis item 分离 | 待审 |
-| M02 | `VerificationBasisElement` | applicable CRS item | `candidate-correspondence` | `CANDIDATE` | 适用规范项可能承担 typed basis role；不声称冻结 Core class | 来源定位与 typed-role 评审 | 保留定位和适用性来源 | 待审 |
-| M03 | `VerificationObligation` | Verification Objective | `candidate-correspondence` | `NOT-DETERMINED` | VO 可能承担义务角色，但等价和 Generic 所有权未经评审 | 方法与实例语义评审 | VO 保持 ARINC/Profile 对象 | 待审 |
-| M04 | `VerificationCase` | Test Purpose | `candidate-correspondence` | `NOT-DETERMINED` | 不预设 Test Purpose 对应关系 | ISO/IEC 9646 Task 002 | TP 与 VC 分离 | 待审 |
-| M05 | `VerificationCase` | Verification Case / procedure | `instantiates` | `CANDIDATE` | Binding/工程实现可执行 case 与 procedure 角色 | case/procedure/configuration 评审 | 可复用规程与运行值分离 | 待审 |
-| M06 | `Oracle` | discrete/timing rule | `implements` | `CANDIDATE` | 规则评价观测；具体参数属于 Binding/Configuration | Oracle 接口评审 | 规则与参数分别版本化 | 待审 |
-| M07 | `Result` | verdict | `instantiates` | `CANDIDATE` | verdict 是评价结果，不是 Oracle | 结果状态评审 | 规则输入与结果分离 | 待审 |
-| M08 | `Observation` | packet trace / timestamp / log | `instantiates` | `CANDIDATE` | 捕获事实是带来源的观测/原始记录 | 证据表征政策 | 禁止自动准入 Evidence | 待审 |
-| M09 | `Evidence` | Evidence Manifest / execution record | `candidate-correspondence` | `NOT-DETERMINED` | manifest 是来源容器；Evidence 角色需要显式表征 | 证据准入/可信度研究 | 区分 raw、manifest、Result 与 Evidence Item | 待审 |
-| M10 | `SufficiencyAssessment` | Objective Satisfaction Record | `candidate-correspondence` | `NOT-DETERMINED` | OSR 组合 Result、充分性推理、Decision 与 Claim 链接，不是单个 Core 对象 | RQ4 与实例语义评审 | 保留复合属性与受评审关闭 | 待审 |
-| M11 | `Claim` | Compliance Evidence Index | `indexes` | `NOT-DETERMINED` | CEI 仅供评审导航，不是 Claim、Argument 或 Evidence Architecture | 实例迁移与独立评审 | 保留仅索引角色 | 待审 |
-| M12 | `Configuration` | Test Conformity Record | `candidate-correspondence` | `NOT-DETERMINED` | 本地配置/来源/符合性工件不建立权威符合性 | 身份/版本及 Profile 评审 | 链接配置但不晋级权威 | 待审 |
-| M13 | `Anomaly/Change/Impact` | Problem/Deviation Closure Record | `candidate-correspondence` | `NOT-DETERMINED` | 本地复合关闭跨多个生命周期角色，未建立等价 | 生命周期/状态/权威评审 | 显式保留状态转换 | 待审 |
-| M14 | `Obligation/Coverage aspect` | L0–L7 ARINC evidence view | `classifies` | `CANDIDATE` | 有用的 ARINC/Profile 视图；不是 Generic 架构 | Profile 评审 | 每次使用标记为本地候选 | 待审 |
-| M15 | `Assurance/research extension points` | A0–A4 and R0–R5 | `specializes` | `CANDIDATE` | ARINC/Profile 保证和实例研究 taxonomy；不是权威/Core 层级 | Profile 与主张评审 | 禁止 Generic/权威晋级 | 待审 |
-| M16 | `CompositeGate` | RG0–RG6 / G0–G7 | `specializes` | `CANDIDATE` | 项目/Profile 门包可能特化评审/决定流；兼容性未经评审 | CompositeGate 兼容性评审 | 保留内部门非主张 | 待审 |
-| M17 | `Configuration` | Project Configuration `TMP-PC-ARINC615A-01` | `instantiates` | `CANDIDATE` | 未来具体运行配置可以实例化该角色 | 实际受控值 | 状态保持 NOT YET ESTABLISHED | 待审 |
+| 源行 | 外部候选/角色定位 | 本地 ARINC 对象 | 来源基线 | 主关系 | 状态 | 理由 | 开放依赖 | 迁移影响 | 评审 |
+|---|---|---|---|---|---|---|---|---|---|
+| R01 | `Applicability/Profile Declaration` | PICS-like declaration | active v4.2.1 | `realizes` | `CANDIDATE` | 控制适用性与 CRS 总体；不是 Verification Basis | Task 002；Profile 评审 | 声明与 basis item 分离 | 待审 |
+| R02 | `VerificationBasisElement` | applicable CRS item | active v4.2.1 | `candidate-correspondence` | `CANDIDATE` | 可能承担 typed basis role；不声称冻结 Core class | Task 002 与映射评审 | 保留定位与适用性来源 | 待审 |
+| R03 | `VerificationObligation` | current ARINC requirement-obligation aspect | active v4.2.1 | `no-direct-correspondence` | `NOT-DETERMINED` | legacy 结构没有可比较语义的受控身份 | 义务身份/语义评审 | 不向冻结基线补造 ID | 待审 |
+| R04 | `VerificationObligation` | PR #9 Verification Objective | PR #9 / v4.3 candidate | `candidate-correspondence` | `NOT-DETERMINED` | VO 可能承担中介角色，但语义未评审 | 实例迁移/兼容性评审 | 未合并候选——无生效权威 | 待审 |
+| R05 | `Obligation/Coverage aspect` | functional/state/timing and related classifications | active v4.2.1 | `classifies` | `CANDIDATE` | 本地分类可限定 obligation/coverage，不成为通用 Core 层级 | Task 002 与 coverage 研究 | 禁止 taxonomy 晋级 Generic | 待审 |
+| R06 | `VerificationStrategy` | Test-and-Analysis allocation | active v4.2.1 | `realizes` | `PARTIAL` | 只覆盖有界策略决定子集 | 策略准则评审 | 保留未覆盖决定 | 待审 |
+| R07 | `VerificationCase` | VC | active v4.2.1 | `instantiates` | `CANDIDATE` | VC 是候选 case；不预设 TP 等价 | Task 002 | TP 需独立研究 | 待审 |
+| R08 | `VerificationProcedure` | procedure | active v4.2.1 | `instantiates` | `CANDIDATE` | 可执行步骤可能实例化 procedure | procedure/configuration 评审 | procedure 与运行配置分离 | 待审 |
+| R09 | `Observation` | packet trace/timestamp/log | active v4.2.1 | `instantiates` | `CANDIDATE` | 捕获事实是 Observation/raw record | Evidence 表征规则 | 禁止自动晋级 Evidence | 待审 |
+| R10 | `Result` | verdict | active v4.2.1 | `instantiates` | `CANDIDATE` | verdict 是 Result，不是 Observation 或 Oracle | Oracle/Result 评审 | 三者分离 | 待审 |
+| R11 | `Oracle` | discrete/robust timing rule | active v4.2.1 | `implements` | `CANDIDATE` | 评价 Observation 并产生 Result | ISO-G04 与 Task 002 | 版本化规则/参数 | 待审 |
+| R12 | `Evidence` | characterized execution/analysis record | active v4.2.1 | `candidate-correspondence` | `NOT-DETERMINED` | raw 承担 Evidence 前需身份、来源、适用性、可信度与准入表征 | Evidence 准入研究 | manifest 不自动成为 Evidence Item | 待审 |
+| R13 | `Argument` | scoped assurance reasoning | active v4.2.1 | `realizes` | `PARTIAL` | 部分推理可能支持限定范围；未证明完整等价 | Claim/Argument 评审 | 保留推断与限制 | 待审 |
+| R14 | `Claim` | PR #9 CEI claim entry candidate | PR #9 / v4.3 candidate | `indexes` | `NOT-DETERMINED` | CEI 导航到版本化 Claim/Decision，不是 Claim/Argument/Architecture | 实例迁移评审 | 未合并候选——无生效权威 | 待审 |
+| R15 | `CompositeGate` | RG/G gate package | PR #9 / v4.3 candidate | `specializes` | `NOT-DETERMINED` | 分解与兼容性未经评审 | CompositeGate 评审 | 未合并候选——无生效权威 | 待审 |
+| R16 | `Configuration` | IUT/setup/procedure identity | active v4.2.1 | `instantiates` | `CANDIDATE` | active 身份组合可能实例化 Configuration | 身份/版本契约 | 与未来配置分离 | 待审 |
+| R17 | `Anomaly/Change/Impact` | Problem Closure plus CR/DD | active v4.2.1 | `candidate-correspondence` | `NOT-DETERMINED` | 生命周期/状态/权威等价未知 | 变更/关闭评审 | 保留 legacy 状态 | 待审 |
+| R18 | `SufficiencyAssessment` | PR #9 OSR/claim-review candidate | PR #9 / v4.3 candidate | `candidate-correspondence` | `NOT-DETERMINED` | OSR 可能参与充分性推理，不预设单一 Core 等价 | RQ4 与实例评审 | 未合并候选——无生效权威 | 待审 |
 
-没有任何行已通过兼容性评审。PR #9 派生行在独立迁移评审和发布前保持未合并外部候选，
-不具有生效语义权威。未来改行必须具备不可变身份、理由、依赖、影响和评审。
+外部受控总体覆盖为 **18/18**。`VerificationCase` 与 `VerificationProcedure` 有独立身份和处置。
 
-## 3. 强制语义分离
+## 3. 仅实例附加行
 
-- 适用性声明不是 basis item；
-- basis/requirement 不自动成为 Verification Obligation；
-- Test Purpose 不自动成为 Verification Case；
-- Oracle 不是 verdict/result；
-- raw record 和 manifest 不自动成为 Evidence Item；
-- Evidence 表征不是 Argument 使用；
-- objective、claim support、compliance 与 authority acceptance 状态不同；
-- binding compatibility 不是经验实例评价。
+下列本地产物在方法侧登记册中没有独立源行，必须标记 `INSTANCE-ONLY-ADDITIONAL`；真实外部
+角色只作为评审目标，`no-direct-correspondence / NOT-DETERMINED` 表示不声称对应。
+
+| 本地行 | 行类别 | 外部评审目标定位 | 本地 ARINC 对象 | 来源基线 | 主关系 | 状态 | 理由 | 开放依赖 | 迁移影响 | 评审 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| A01 | `INSTANCE-ONLY-ADDITIONAL` | `VerificationCase` | Test Purpose | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | TP 不预设为 VerificationCase | Task 002 | TP/VC 分离 | 待审 |
+| A02 | `INSTANCE-ONLY-ADDITIONAL` | `Evidence` | Execution Evidence Manifest | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | manifest 是来源容器，不是准入 Evidence Item | Evidence 表征政策 | 另行引用 characterized Evidence | 待审 |
+| A03 | `INSTANCE-ONLY-ADDITIONAL` | `Configuration` | Test Conformity Record | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | 本地记录不是权威符合性或 Core Configuration | Configuration 评审 | 保持 Profile/Binding 控制 | 待审 |
+| A04 | `INSTANCE-ONLY-ADDITIONAL` | `Argument` | L0–L7 ARINC evidence view | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | 跨多个角色，无单一 Core 对应 | Profile 架构评审 | 严格标为实例/Profile 视图 | 待审 |
+| A05 | `INSTANCE-ONLY-ADDITIONAL` | `SufficiencyAssessment` | A0–A4 ARINC assurance states | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | 本地 taxonomy 不是 Generic extension point/权威层级 | Profile/claim 评审 | 禁止晋级 | 待审 |
+| A06 | `INSTANCE-ONLY-ADDITIONAL` | `SufficiencyAssessment` | R0–R5 instance research maturity | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | 本地研究状态不决定保证/认证 | research/claim 评审 | 与保证状态正交 | 待审 |
+| A07 | `INSTANCE-ONLY-ADDITIONAL` | `Configuration` | future Project Configuration `TMP-PC-ARINC615A-01` | PR #9 / v4.3 candidate | `no-direct-correspondence` | `NOT-DETERMINED` | 无受控值，未建立 Configuration 实例 | 实际受控值 | 保持 NOT YET ESTABLISHED；禁止评价 | 待审 |
+
+## 4. 强制语义链
+
+```text
+Observation/raw record
+  → Oracle evaluation
+  → Result/verdict
+  → identity/provenance/applicability/credibility/admission characterization
+  → Evidence Item
+  → Argument / SufficiencyAssessment
+  → reviewed Decision / versioned Claim
+```
+
+适用性声明不是 basis item；basis/requirement 不自动成为 VerificationObligation；Test Purpose
+不自动成为 VerificationCase；manifest 或 PASS 不自动成为 Evidence 或 Objective Satisfaction；
+CEI 只索引、不裁决；compatibility 不是经验实例评价。
+L0–L7、A0–A4 和 R0–R5 不是 Generic GVS Core 层级。

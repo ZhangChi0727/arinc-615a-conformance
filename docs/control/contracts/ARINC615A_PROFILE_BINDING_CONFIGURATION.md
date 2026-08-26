@@ -41,8 +41,9 @@ define observable protocol objects, roles, states, timing, and boundaries; bind
 the clock-augmented EFSM/timed IOLTS; and provide executable cases, procedures,
 Oracle implementations, adapters, and evidence mappings.
 
-An Oracle specifies a decision rule; a verdict/result is an observation produced
-by applying it. A PASS does not automatically close a Verification Objective,
+An Oracle specifies an evaluation rule; applying it to controlled
+Observation(s) produces a Result/verdict. A Result is not an Observation. A PASS
+does not automatically close a Verification Objective,
 support a claim, establish compliance, or obtain authority acceptance.
 
 ## 4. Project Configuration policy
@@ -110,8 +111,8 @@ Product Binding 为限定范围的 ARINC 615A 对象实现 Profile。它可以�
 前提下引用受控标准定位符，定义可观测协议对象、角色、状态、时序与边界，绑定带时钟 EFSM/
 timed IOLTS，并提供可执行用例、规程、Oracle 实现、适配器及证据映射。
 
-Oracle 规定判定规则；verdict/result 是应用规则产生的观测结果。PASS 不自动关闭 VO、支持
-主张、建立合规或取得权威接受。
+Oracle 规定评价规则；将其应用于受控 Observation 后产生 Result/verdict。Result 不是
+Observation。PASS 不自动关闭 VO、支持主张、建立合规或取得权威接受。
 
 ## 4. Project Configuration 政策
 

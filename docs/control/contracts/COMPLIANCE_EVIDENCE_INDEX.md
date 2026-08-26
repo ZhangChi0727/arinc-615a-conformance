@@ -21,19 +21,11 @@ truth, sufficiency, compliance, or authority acceptance.
 ## Evidence hierarchy
 
 ```text
-Compliance Evidence Index
-    |
-    v
-Objective Satisfaction Records
-    |
-    v
-Verification Records
-    |
-    v
-Execution Evidence Manifests
-    |
-    v
-Raw / Derived Evidence
+Compliance Evidence Index (navigation only)
+    → versioned Claim + status Decision + Argument
+    → Objective Satisfaction + SufficiencyAssessment
+    → characterized Evidence Items + Results
+    → Observation / Raw Records + provenance manifests
 ```
 
 ## Conceptual schema
@@ -45,15 +37,22 @@ applicabilityId: ...
 requirementSetId: ...
 crsVersion: ...
 
-claims:
-  - claimId: ...
+claimEntries:
+  - claimRef: CLM-...
+    claimVersion: ...
+    argumentRef: ARG-...
+    statusDecisionRef: DEC-...
+    asOfVersion: ...
     requirementRefs: []
     objectiveRefs: []
     objectiveSatisfactionRefs: []
-    evidenceManifestRefs: []
+    sufficiencyAssessmentRefs: []
+    evidenceItemRefs: []
+    resultRefs: []
+    provenanceManifestRefs: []
     deviationRefs: []
     problemRefs: []
-    status:
+    statusSnapshot:
       - SUPPORTED
       - NOT_SUPPORTED
       - OPEN
@@ -63,8 +62,10 @@ claims:
 
 ## Rules
 
-- a claim becomes `SUPPORTED` only through referenced objective satisfaction
-  records, executions, and a complete controlled evidence package;
+- the authoritative Claim and status Decision live outside the CEI; the index
+  copies a status snapshot only from `statusDecisionRef` and never decides it;
+- every snapshot carries `claimRef`, `claimVersion`, `statusDecisionRef`, and
+  `asOfVersion`, plus the referenced Argument/OSR/Evidence chain;
 - `NOT_ASSESSED` is a valid state and must not be hidden;
 - the index references stable artifact IDs and versions, never informal "latest";
 - limitations and non-claims accompany every released claim.
@@ -98,19 +99,11 @@ Architecture，也不建立主张真实性、充分性、合规性或权威接�
 ## 证据层次
 
 ```text
-合规证据索引
-    |
-    v
-目标满足记录
-    |
-    v
-验证记录
-    |
-    v
-执行证据清单
-    |
-    v
-原始 / 派生证据
+合规证据索引（只导航）
+    → 版本化 Claim + 状态 Decision + Argument
+    → Objective Satisfaction + SufficiencyAssessment
+    → 经表征 Evidence Item + Result
+    → Observation / Raw Record + 来源 manifest
 ```
 
 ## 概念 schema
@@ -122,15 +115,22 @@ applicabilityId: ...
 requirementSetId: ...
 crsVersion: ...
 
-claims:
-  - claimId: ...
+claimEntries:
+  - claimRef: CLM-...
+    claimVersion: ...
+    argumentRef: ARG-...
+    statusDecisionRef: DEC-...
+    asOfVersion: ...
     requirementRefs: []
     objectiveRefs: []
     objectiveSatisfactionRefs: []
-    evidenceManifestRefs: []
+    sufficiencyAssessmentRefs: []
+    evidenceItemRefs: []
+    resultRefs: []
+    provenanceManifestRefs: []
     deviationRefs: []
     problemRefs: []
-    status:
+    statusSnapshot:
       - SUPPORTED
       - NOT_SUPPORTED
       - OPEN
@@ -140,7 +140,10 @@ claims:
 
 ## 规则
 
-主张只有在通过所引用的目标满足记录、执行和完整受控证据包时才成为 `SUPPORTED`；`NOT_ASSESSED` 是有效状态且不得隐藏；索引引用稳定产物 ID 和版本，绝不引用非正式的“最新”；每个已发布主张都附有限制与非主张。
+权威 Claim 与状态 Decision 位于 CEI 之外；索引只从 `statusDecisionRef` 复制状态快照，不在
+CEI 内裁决。每个快照必须带 `claimRef`、`claimVersion`、`statusDecisionRef`、`asOfVersion`
+以及所引用的 Argument/OSR/Evidence 链；`NOT_ASSESSED` 是有效状态且不得隐藏；索引只引用
+稳定 ID/版本，不引用“最新”；每个已发布主张都附有限制与非主张。
 
 ## 非主张
 
