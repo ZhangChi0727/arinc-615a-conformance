@@ -183,14 +183,37 @@ PR9_STARTING_HEAD = "53a98447bcfa862f082ce443d69115067d3ff2f1"
 ALLOWED_MAPPING_STATUSES = {
     "NOT-DETERMINED", "CANDIDATE", "PARTIAL", "CONFLICT", "OUT-OF-SCOPE",
 }
-EXPECTED_HIGH_RISK_MAPPINGS = {
-    "applicable CRS item": ("candidate-correspondence", "CANDIDATE"),
-    "Verification Objective": ("candidate-correspondence", "NOT-DETERMINED"),
-    "Evidence Manifest / execution record": ("candidate-correspondence", "NOT-DETERMINED"),
-    "Objective Satisfaction Record": ("candidate-correspondence", "NOT-DETERMINED"),
-    "Compliance Evidence Index": ("indexes", "NOT-DETERMINED"),
-    "Project Configuration `TMP-PC-ARINC615A-01`": ("instantiates", "CANDIDATE"),
+METHOD_MAPPING_EXPECTED = {
+    "R01": ("Applicability/Profile Declaration", "PICS-like declaration", "active v4.2.1", "realizes", "CANDIDATE"),
+    "R02": ("VerificationBasisElement", "applicable CRS item", "active v4.2.1", "candidate-correspondence", "CANDIDATE"),
+    "R03": ("VerificationObligation", "current ARINC requirement-obligation aspect", "active v4.2.1", "no-direct-correspondence", "NOT-DETERMINED"),
+    "R04": ("VerificationObligation", "PR #9 Verification Objective", "PR #9 / v4.3 candidate", "candidate-correspondence", "NOT-DETERMINED"),
+    "R05": ("Obligation/Coverage aspect", "functional/state/timing and related classifications", "active v4.2.1", "classifies", "CANDIDATE"),
+    "R06": ("VerificationStrategy", "Test-and-Analysis allocation", "active v4.2.1", "realizes", "PARTIAL"),
+    "R07": ("VerificationCase", "VC", "active v4.2.1", "instantiates", "CANDIDATE"),
+    "R08": ("VerificationProcedure", "procedure", "active v4.2.1", "instantiates", "CANDIDATE"),
+    "R09": ("Observation", "packet trace/timestamp/log", "active v4.2.1", "instantiates", "CANDIDATE"),
+    "R10": ("Result", "verdict", "active v4.2.1", "instantiates", "CANDIDATE"),
+    "R11": ("Oracle", "discrete/robust timing rule", "active v4.2.1", "implements", "CANDIDATE"),
+    "R12": ("Evidence", "characterized execution/analysis record", "active v4.2.1", "candidate-correspondence", "NOT-DETERMINED"),
+    "R13": ("Argument", "scoped assurance reasoning", "active v4.2.1", "realizes", "PARTIAL"),
+    "R14": ("Claim", "PR #9 CEI claim entry candidate", "PR #9 / v4.3 candidate", "indexes", "NOT-DETERMINED"),
+    "R15": ("CompositeGate", "RG/G gate package", "PR #9 / v4.3 candidate", "specializes", "NOT-DETERMINED"),
+    "R16": ("Configuration", "IUT/setup/procedure identity", "active v4.2.1", "instantiates", "CANDIDATE"),
+    "R17": ("Anomaly/Change/Impact", "Problem Closure plus CR/DD", "active v4.2.1", "candidate-correspondence", "NOT-DETERMINED"),
+    "R18": ("SufficiencyAssessment", "PR #9 OSR/claim-review candidate", "PR #9 / v4.3 candidate", "candidate-correspondence", "NOT-DETERMINED"),
 }
+INSTANCE_ADDITIONAL_EXPECTED = {
+    "A01": ("VerificationCase", "Test Purpose"),
+    "A02": ("Evidence", "Execution Evidence Manifest"),
+    "A03": ("Configuration", "Test Conformity Record"),
+    "A04": ("Argument", "L0–L7 ARINC evidence view"),
+    "A05": ("SufficiencyAssessment", "A0–A4 ARINC assurance states"),
+    "A06": ("SufficiencyAssessment", "R0–R5 instance research maturity"),
+    "A07": ("Configuration", "future Project Configuration `TMP-PC-ARINC615A-01`"),
+}
+EXTERNAL_ROLE_LOCATORS = {row[0] for row in METHOD_MAPPING_EXPECTED.values()}
+ACCEPTANCE_IDS = {f"AC-{number:02d}" for number in range(1, 13)}
 REPORT_DISPLAY_MATH_BLOCKS = 94
 REPORT_DISPLAY_MATH_SHA256 = "2050040b3d2572f5eca3b9b7b93fed472e7e236e1951f8c88702534dbe3a24cb"
 
@@ -346,36 +369,232 @@ def validate_gvs_binding(errors: list[str]) -> None:
                 )
 
 
-def validate_instance_mapping(errors: list[str]) -> None:
-    english = read(INSTANCE_MAPPING_PATH).split(ZH_MARKER, 1)[0]
-    rows: dict[str, tuple[str, str, str]] = {}
-    for line in english.splitlines():
-        if not re.match(r"^\| M\d{2} \|", line):
-            continue
-        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
-        if len(cells) != 9:
-            errors.append(f"mapping row has {len(cells)} columns, expected 9: {line}")
-            continue
-        row_id, _, local_object, relation, status, *_ = cells
-        relation = relation.strip("`")
-        status = status.strip("`")
-        if row_id in rows:
-            errors.append(f"duplicate mapping row ID: {row_id}")
-        rows[row_id] = (local_object, relation, status)
-        if not relation or re.search(r"\s(?:and|or|/)\s", relation):
-            errors.append(f"mapping row {row_id} must have exactly one primary relation")
-        if status not in ALLOWED_MAPPING_STATUSES:
-            errors.append(f"mapping row {row_id} has prohibited status: {status}")
+def mapping_reconciliation_errors(text: str) -> list[str]:
+    """Validate source-row closure and instance-only additions from supplied text."""
+    errors: list[str] = []
+    english = text.split(ZH_MARKER, 1)[0]
+    source_rows: dict[str, tuple[str, str, str, str, str]] = {}
+    additional_rows: dict[str, tuple[str, str]] = {}
 
-    if len(rows) != 17:
-        errors.append(f"expected 17 English instance-mapping rows, found {len(rows)}")
-    by_object = {local: (relation, status) for local, relation, status in rows.values()}
-    for local_object, expected in EXPECTED_HIGH_RISK_MAPPINGS.items():
-        if by_object.get(local_object) != expected:
-            errors.append(
-                f"high-risk mapping differs for {local_object}: "
-                f"expected {expected}, found {by_object.get(local_object)}"
+    for line in english.splitlines():
+        if re.match(r"^\| R\d{2} \|", line):
+            cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+            if len(cells) != 10:
+                errors.append(f"method reconciliation row must have 10 columns: {line}")
+                continue
+            row_id, role, local_object, source, relation, status, *_ = cells
+            value = (
+                role.strip("`"), local_object, source,
+                relation.strip("`"), status.strip("`"),
             )
+            if row_id in source_rows:
+                errors.append(f"duplicate method reconciliation row: {row_id}")
+            source_rows[row_id] = value
+            if value[4] not in ALLOWED_MAPPING_STATUSES:
+                errors.append(f"method row {row_id} has prohibited status: {value[4]}")
+        elif re.match(r"^\| A\d{2} \|", line):
+            cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+            if len(cells) != 11:
+                errors.append(f"instance-only mapping row must have 11 columns: {line}")
+                continue
+            row_id, row_class, role, local_object, _, relation, status, *_ = cells
+            role = role.strip("`")
+            relation = relation.strip("`")
+            status = status.strip("`")
+            if row_id in additional_rows:
+                errors.append(f"duplicate instance-only mapping row: {row_id}")
+            additional_rows[row_id] = (role, local_object)
+            if row_class.strip("`") != "INSTANCE-ONLY-ADDITIONAL":
+                errors.append(f"additional row {row_id} lacks INSTANCE-ONLY-ADDITIONAL class")
+            if role not in EXTERNAL_ROLE_LOCATORS:
+                errors.append(f"additional row {row_id} uses unknown external role locator: {role}")
+            if (relation, status) != ("no-direct-correspondence", "NOT-DETERMINED"):
+                errors.append(
+                    f"additional row {row_id} must remain no-direct-correspondence / "
+                    f"NOT-DETERMINED, found {relation} / {status}"
+                )
+
+    for row_id, expected in METHOD_MAPPING_EXPECTED.items():
+        if source_rows.get(row_id) != expected:
+            errors.append(
+                f"method source row {row_id} is missing or strengthened: "
+                f"expected {expected}, found {source_rows.get(row_id)}"
+            )
+    unexpected_source = set(source_rows) - set(METHOD_MAPPING_EXPECTED)
+    if unexpected_source:
+        errors.append(f"unexpected method source rows: {sorted(unexpected_source)}")
+
+    for row_id, expected in INSTANCE_ADDITIONAL_EXPECTED.items():
+        if additional_rows.get(row_id) != expected:
+            errors.append(
+                f"instance-only row {row_id} differs: expected {expected}, "
+                f"found {additional_rows.get(row_id)}"
+            )
+    unexpected_additional = set(additional_rows) - set(INSTANCE_ADDITIONAL_EXPECTED)
+    if unexpected_additional:
+        errors.append(f"unexpected instance-only rows: {sorted(unexpected_additional)}")
+
+    if source_rows.get("R07", (None,))[0] == source_rows.get("R08", (None,))[0]:
+        errors.append("VerificationCase and VerificationProcedure are not independent rows")
+    if source_rows.get("R03", (None, None, None))[2] == source_rows.get("R04", (None, None, None))[2]:
+        errors.append("legacy and candidate VerificationObligation sources are not separated")
+    return errors
+
+
+def acceptance_criteria_errors(baseline_text: str, cr_text: str) -> list[str]:
+    errors: list[str] = []
+    cr_english = cr_text.split(ZH_MARKER, 1)[0]
+    ids = set(re.findall(r"(?m)^\| (AC-\d{2}) \|", cr_english))
+    if ids != ACCEPTANCE_IDS:
+        errors.append(f"controlled acceptance IDs differ: expected {sorted(ACCEPTANCE_IDS)}, found {sorted(ids)}")
+    if "## Controlled acceptance criteria" not in cr_text or "## 受控接受准则" not in cr_text:
+        errors.append("controlled acceptance section/anchor is missing in one language")
+    if "CR-2026-004.md#controlled-acceptance-criteria" not in baseline_text:
+        errors.append("English baseline does not link the authoritative acceptance anchor")
+    if "CR-2026-004.md#受控接受准则" not in baseline_text:
+        errors.append("Chinese baseline does not link the authoritative acceptance anchor")
+    stale_reference = re.compile(r"(?:section\s+2" + "1|第\s*2" + "1\s*节)", re.IGNORECASE)
+    if stale_reference.search(baseline_text + "\n" + cr_text):
+        errors.append("stale nonexistent numbered acceptance-section reference remains")
+    return errors
+
+
+def cr_bilingual_metadata_errors(text: str) -> list[str]:
+    errors: list[str] = []
+    if ZH_MARKER not in text:
+        return ["CR bilingual boundary is missing"]
+    english, chinese = text.split(ZH_MARKER, 1)
+    english_meta = english.split("## Problem", 1)[0]
+    chinese_meta = chinese.split("## 问题", 1)[0]
+    checks = {
+        "change class": (
+            ("external method binding", "ownership", "migration", "traceability"),
+            ("外部方法绑定", "所有权", "迁移", "追踪"),
+        ),
+        "candidate baseline": (("RB-2026-001-v4.3",), ("RB-2026-001-v4.3",)),
+        "prior baseline": (("RB-2026-001-v4.2.1",), ("RB-2026-001-v4.2.1",)),
+        "method semantics": (("1–14", "T1–T5", "unchanged"), ("1–14", "T1–T5", "不变")),
+        "status": (("Migration candidate", "Draft", "independent migration review"), ("迁移候选", "Draft", "独立迁移评审")),
+        "trigger": (("PR #14", "pre-framework PR #9", "Candidate GVS Core"), ("PR #14", "pre-framework PR #9", "Candidate GVS Core")),
+        "method commit": ((METHOD_DEFINITION_COMMIT,), (METHOD_DEFINITION_COMMIT,)),
+    }
+    for label, (english_terms, chinese_terms) in checks.items():
+        if not all(term.lower() in english_meta.lower() for term in english_terms):
+            errors.append(f"English CR metadata differs for {label}")
+        if not all(term.lower() in chinese_meta.lower() for term in chinese_terms):
+            errors.append(f"Chinese CR metadata differs for {label}")
+    return errors
+
+
+def observation_result_errors(pbc_text: str, handoff_text: str) -> list[str]:
+    errors: list[str] = []
+    normalized_pbc = re.sub(r"\s+", " ", pbc_text)
+    required = (
+        "applying it to controlled Observation(s) produces a Result/verdict",
+        "A Result is not an Observation",
+        "应用于受控 Observation 后产生 Result/verdict",
+        "Result 不是 Observation",
+    )
+    for phrase in required:
+        if phrase not in normalized_pbc:
+            errors.append(f"PBC is missing Observation/Oracle/Result rule: {phrase}")
+    if "Observation → Oracle evaluation → Result" not in handoff_text:
+        errors.append("review handoff lacks Observation → Oracle evaluation → Result")
+    prohibited = (
+        re.compile(r"verdict/result\s+is\s+an\s+observation", re.IGNORECASE),
+        re.compile(r"verdict/result\s+是[^。\n]*观测", re.IGNORECASE),
+    )
+    if any(pattern.search(pbc_text) for pattern in prohibited):
+        errors.append("PBC incorrectly defines Result/verdict as Observation")
+    return errors
+
+
+def evidence_chain_errors(
+    architecture_text: str, osr_text: str, cei_text: str, manifest_text: str,
+) -> list[str]:
+    errors: list[str] = []
+    required_by_artifact = {
+        "Architecture": (
+            "| Observation / raw record |", "| Result |", "| Evidence Item |",
+            "| Argument / SufficiencyAssessment |", "| Claim / Decision |",
+        ),
+        "OSR": (
+            "supportingResultRefs", "supportingEvidenceItems", "admissionDecisionRef",
+            "credibilityAssessmentRef", "sufficiencyAssessmentRef", "argumentRef",
+            "decisionRef", "decisionVersion", "provenance only; never direct satisfaction",
+        ),
+        "CEI": (
+            "claimRef", "claimVersion", "argumentRef", "statusDecisionRef",
+            "asOfVersion", "evidenceItemRefs", "resultRefs", "statusSnapshot",
+            "never decides it",
+        ),
+        "Evidence Manifest": (
+            "provenance container/execution record", "automatically admitted Evidence Item",
+            "does not by itself satisfy an objective",
+        ),
+    }
+    texts = {
+        "Architecture": architecture_text,
+        "OSR": osr_text,
+        "CEI": cei_text,
+        "Evidence Manifest": manifest_text,
+    }
+    for artifact, terms in required_by_artifact.items():
+        for term in terms:
+            if term not in texts[artifact]:
+                errors.append(f"{artifact} is missing evidence-chain control: {term}")
+    bilingual_schema_fields = {
+        "OSR": (
+            "supportingResultRefs", "supportingEvidenceItems", "admissionDecisionRef",
+            "credibilityAssessmentRef", "sufficiencyAssessmentRef", "argumentRef",
+            "decisionRef", "decisionVersion",
+        ),
+        "CEI": (
+            "claimRef", "claimVersion", "argumentRef", "statusDecisionRef",
+            "asOfVersion", "evidenceItemRefs", "resultRefs", "statusSnapshot",
+        ),
+    }
+    for artifact, fields in bilingual_schema_fields.items():
+        schema_blocks = re.findall(r"```yaml\s*\n(.*?)\n```", texts[artifact], re.DOTALL)
+        if len(schema_blocks) != 2:
+            errors.append(f"{artifact} must contain exactly two bilingual YAML schemas")
+            continue
+        for language, schema in zip(("English", "Chinese"), schema_blocks):
+            for field in fields:
+                if field not in schema:
+                    errors.append(
+                        f"{artifact} {language} schema is missing evidence-chain field: {field}"
+                    )
+    prohibited = (
+        "| Evidence | Immutable run and analysis datasets |",
+        "a claim becomes `SUPPORTED`",
+    )
+    combined = architecture_text + "\n" + cei_text
+    for phrase in prohibited:
+        if phrase in combined:
+            errors.append(f"evidence/claim shortcut remains: {phrase}")
+    return errors
+
+
+def validate_instance_mapping(errors: list[str]) -> None:
+    errors.extend(mapping_reconciliation_errors(read(INSTANCE_MAPPING_PATH)))
+
+
+def validate_cross_repository_semantics(errors: list[str]) -> None:
+    errors.extend(acceptance_criteria_errors(
+        read(BASELINES_DIR / "RB-2026-001-v4.3.md"),
+        read(CHANGES_DIR / "CR-2026-004.md"),
+    ))
+    errors.extend(cr_bilingual_metadata_errors(read(CHANGES_DIR / "CR-2026-004.md")))
+    errors.extend(observation_result_errors(
+        read(PROFILE_BINDING_PATH), read(MIGRATION_HANDOFF_PATH),
+    ))
+    errors.extend(evidence_chain_errors(
+        read(CONTRACTS_DIR / "ARCHITECTURE.md"),
+        read(CONTRACTS_DIR / "OBJECTIVE_SATISFACTION_RECORD.md"),
+        read(CONTRACTS_DIR / "COMPLIANCE_EVIDENCE_INDEX.md"),
+        read(EVIDENCE_MANIFEST_PATH),
+    ))
 
 
 def validate_candidate_semantics(errors: list[str]) -> None:
@@ -659,6 +878,7 @@ def main() -> int:
 
     validate_gvs_binding(errors)
     validate_instance_mapping(errors)
+    validate_cross_repository_semantics(errors)
     validate_candidate_semantics(errors)
     validate_tracked_hygiene(errors)
 
