@@ -453,7 +453,10 @@ def acceptance_criteria_errors(baseline_text: str, cr_text: str) -> list[str]:
         errors.append("English baseline does not link the authoritative acceptance anchor")
     if "CR-2026-004.md#受控接受准则" not in baseline_text:
         errors.append("Chinese baseline does not link the authoritative acceptance anchor")
-    stale_reference = re.compile(r"(?:section\s+2" + "1|第\s*2" + "1\s*节)", re.IGNORECASE)
+    stale_reference = re.compile(
+        r"(?:section\s+2" + "1" + r"|第\s*2" + "1" + r"\s*节)",
+        re.IGNORECASE,
+    )
     if stale_reference.search(baseline_text + "\n" + cr_text):
         errors.append("stale nonexistent numbered acceptance-section reference remains")
     return errors

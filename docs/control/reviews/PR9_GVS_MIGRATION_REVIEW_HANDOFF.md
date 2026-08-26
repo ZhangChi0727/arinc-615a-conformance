@@ -10,8 +10,10 @@
 | **Compatibility / evaluation** | `NOT-DETERMINED` / `NOT-EXERCISED` |
 | **Reviewed head / outcome** | `d189383a27ebad8051c1483146e3f005b33e2c40` / REWORK |
 | **Correction content head** | `5660823` (three ordinary correction commits; remote CI passed) |
-| **Reviewer / date** | Identity not supplied in review work order / 2026-08-26 |
-| **Correction status** | CORRECTIONS COMPLETE — EXTERNAL REREVIEW PENDING; PR REMAINS DRAFT |
+| **Limited-rereview head / outcome** | `eb088d77d743ca7b62abbc858f8ddb43ba6142ab` / APPROVE WITH ACTIONS |
+| **Rereviewer / independence / date** | OpenAI Codex, independent AI reviewer / recorded in the rereview statement supplied by the repository owner as not participating in the four post-REWORK correction commits and reproducing the immutable diff / 2026-08-26 |
+| **Human AC-05 sign-off** | REQUIRED ON FINAL HEAD; NOT YET RECORDED |
+| **Correction status** | F-01–F-05 AND A-01 VERIFIED CLOSED AT `eb088d7`; RR-A02 CORRECTED IN THE FINAL TECHNICAL COMMIT; FINAL-HEAD CI AND HUMAN SIGN-OFF PENDING; PR REMAINS DRAFT |
 
 ## 1. Review boundary
 
@@ -53,6 +55,8 @@ The REWORK corrections then add these ordinary commits in order:
 7. `docs: repair PR9 acceptance bilingual and risk governance` (`48a256f`);
 8. `test: enforce PR9 cross-repository semantic reconciliation` (`5660823`);
 9. `docs: synchronize PR9 independent rereview handoff` (status only).
+10. `test: close PR9 limited-rereview actions` (RR-A02 and handoff; final
+    technical commit).
 
 The independent review stopped at `d189383a27ebad8051c1483146e3f005b33e2c40`
 with `REWORK`. Rereview is strictly the range `d189383...HEAD` at the final PR
@@ -60,16 +64,23 @@ head plus a regression check of final PR state and immutable identities. The
 content-correction boundary is `d189383...5660823`; the final status-only commit
 does not assert approval or close any finding.
 
-## 3. REWORK finding disposition
+## 3. Limited-rereview finding disposition
 
 | Finding | Required correction | Local disposition | Rereview state |
 |---|---|---|---|
-| F-01 | Close all 18 method rows; separate Case/Procedure, legacy/candidate, active/future Configuration; no status strengthening | `GVS_INSTANCE_MAPPING.md` v0.2: 18/18 reconciliation plus explicit instance-only rows | PENDING EXTERNAL REREVIEW |
-| F-02 | Replace stale nonexistent numbered-section references with stable criteria | `CR-2026-004` owns AC-01…AC-12; baseline links only that set | PENDING EXTERNAL REREVIEW |
-| F-03 | Synchronize bilingual CR control metadata | English/Chinese class, baseline, status, trigger identity, method semantics, and MethodDefinitionCommit synchronized; human semantic-equivalence confirmation still required | PENDING EXTERNAL REREVIEW |
-| F-04 | Correct Observation/Oracle/Result relation | PBC and mapping now require Observation → Oracle evaluation → Result and state Result is not Observation | PENDING EXTERNAL REREVIEW |
-| F-05 | Remove raw/manifest→Evidence/OSR/Claim shortcuts | Architecture, OSR, CEI, and mapping require characterization, Argument/SufficiencyAssessment, Decision, and versioned Claim refs | PENDING EXTERNAL REREVIEW |
-| A-01 | Register cross-repository migration risks | Risk Register R-17…R-22 adds indicators, mitigation, owners, gates, and residual dispositions | PENDING EXTERNAL REREVIEW |
+| F-01 | Close all 18 method rows; separate Case/Procedure, legacy/candidate, active/future Configuration; no status strengthening | `GVS_INSTANCE_MAPPING.md` v0.2: 18/18 reconciliation plus explicit instance-only rows | VERIFIED CLOSED AT `eb088d7` |
+| F-02 | Replace stale nonexistent numbered-section references with stable criteria | `CR-2026-004` owns AC-01…AC-12; baseline links only that set | VERIFIED CLOSED AT `eb088d7` |
+| F-03 | Synchronize bilingual CR control metadata | English/Chinese control metadata and normative semantics were checked paragraph by paragraph in the limited AI rereview with no substantive drift found; this does not satisfy the separate literal human-confirmation gate in AC-05 | VERIFIED CLOSED AT `eb088d7`; AC-05 HUMAN SIGN-OFF OPEN |
+| F-04 | Correct Observation/Oracle/Result relation | PBC and mapping require Observation → Oracle evaluation → Result and state Result is not Observation | VERIFIED CLOSED AT `eb088d7` |
+| F-05 | Remove raw/manifest→Evidence/OSR/Claim shortcuts | Architecture, OSR, CEI, and mapping require characterization, Argument/SufficiencyAssessment, Decision, and versioned Claim refs | VERIFIED CLOSED AT `eb088d7` |
+| A-01 | Register cross-repository migration risks | Risk Register R-17…R-22 adds indicators, mitigation, owners, gates, and residual dispositions | VERIFIED CLOSED AT `eb088d7` |
+| RR-A02 | Eliminate the invalid-escape `SyntaxWarning` and enforce strict compilation in CI | regex fragments are raw strings; CI runs `python -W error::SyntaxWarning -m compileall -q src scripts tests` on Python 3.10–3.12 | CORRECTED; FINAL-HEAD CI PENDING |
+
+No new semantic Must finding was reported in the limited rereview. Its
+`APPROVE WITH ACTIONS` outcome is content approval of `eb088d7`, not final-head
+approval. Rereview only `eb088d7...<final-head>` for RR-A02 and regression, then
+attach the final approval to the unchanged final head as a GitHub Review. Do not
+add an approval-status commit after that review: any new head invalidates AC-11.
 
 ## 4. Semantic review checklist
 
@@ -122,7 +133,7 @@ The reviewer should reproduce:
 
 ```text
 python scripts/check_repo_baseline.py
-python -m compileall -q src scripts tests
+python -W error::SyntaxWarning -m compileall -q src scripts tests
 pytest
 git diff --check 53a98447bcfa862f082ce443d69115067d3ff2f1...HEAD
 ```
@@ -140,8 +151,11 @@ equivalence review for CR-2026-004.
 
 Do not mark PR #9 Ready or merge until identity, semantic, provenance, privacy,
 CI, and independent-review checks all pass; every blocking finding is closed;
-the PR description names the immutable binding and non-claims; and the approved
-candidate head is unchanged.
+AC-05 has a named natural-person confirmation on the final head; the PR
+description names the immutable binding and non-claims; and the approved
+candidate head is unchanged. The authoritative final approval record belongs
+to the GitHub Review attached to that head, not to a post-approval repository
+status commit.
 
 Stop immediately and retain Draft if identities differ, the external Core must
 be copied or changed locally, ownership cannot be separated, compatibility or
@@ -168,8 +182,10 @@ findings, and any Framework Change Proposal. PR #9 merge alone must not set
 | **兼容性 / 评价** | `NOT-DETERMINED` / `NOT-EXERCISED` |
 | **受评审 head / 结论** | `d189383a27ebad8051c1483146e3f005b33e2c40` / REWORK |
 | **修正内容 head** | `5660823`（三笔普通修正提交；远程 CI 已通过） |
-| **评审者 / 日期** | 工作单未提供身份 / 2026-08-26 |
-| **修正状态** | 修正完成——等待外部复审；PR 保持 Draft |
+| **限定复审 head / 结论** | `eb088d77d743ca7b62abbc858f8ddb43ba6142ab` / APPROVE WITH ACTIONS |
+| **复审者 / 独立性 / 日期** | OpenAI Codex，独立 AI 评审者 / 仓库所有者提供的复审声明记录其未参与 REWORK 后四笔修正提交，并对不可变 diff 独立复现检查 / 2026-08-26 |
+| **AC-05 自然人签署** | 最终 Head 上必须完成；尚未记录 |
+| **修正状态** | F-01～F-05 与 A-01 已在 `eb088d7` 验证关闭；RR-A02 已在最后一笔技术提交中修正；等待最终 Head CI 与自然人签署；PR 保持 Draft |
 
 ## 1. 评审边界
 
@@ -206,21 +222,28 @@ REWORK 后再按顺序追加以下普通修正提交：
 7. `docs: repair PR9 acceptance bilingual and risk governance`（`48a256f`）；
 8. `test: enforce PR9 cross-repository semantic reconciliation`（`5660823`）；
 9. `docs: synchronize PR9 independent rereview handoff`（仅同步状态）。
+10. `test: close PR9 limited-rereview actions`（RR-A02 与 handoff；最后一笔技术提交）。
 
 独立评审在 `d189383a27ebad8051c1483146e3f005b33e2c40` 给出 `REWORK`。复审范围严格限定为
 最终 PR head 上的 `d189383...HEAD`，并回归检查最终 PR 状态和不可变身份。内容修正边界为
 `d189383...5660823`；最后一笔纯状态提交不主张批准，也不关闭任何 finding。
 
-## 3. REWORK finding 处置
+## 3. 限定复审 finding 处置
 
 | Finding | 必需修正 | 本地处置 | 复审状态 |
 |---|---|---|---|
-| F-01 | 闭合方法侧 18 行，分离 Case/Procedure、legacy/candidate、active/future Configuration，禁止加强状态 | `GVS_INSTANCE_MAPPING.md` v0.2 建立 18/18 闭合及显式 instance-only 行 | 等待外部复审 |
-| F-02 | 以稳定准则替代已失效的不存在编号章节引用 | `CR-2026-004` 唯一拥有 AC-01…AC-12；基线只链接该集合 | 等待外部复审 |
-| F-03 | 同步 CR 双语控制元数据 | 变更类别、基线、状态、触发身份、方法语义和 MethodDefinitionCommit 已同步；仍需人工语义对等确认 | 等待外部复审 |
-| F-04 | 修正 Observation/Oracle/Result | PBC 与映射要求 Observation → Oracle evaluation → Result，并声明 Result 不是 Observation | 等待外部复审 |
-| F-05 | 消除 raw/manifest→Evidence/OSR/Claim 短路 | Architecture、OSR、CEI 与映射要求表征、Argument/SufficiencyAssessment、Decision 与版本化 Claim 引用 | 等待外部复审 |
-| A-01 | 登记跨仓库迁移风险 | 风险登记册 R-17…R-22 增加信号、缓解、owner、gate 与剩余风险处置 | 等待外部复审 |
+| F-01 | 闭合方法侧 18 行，分离 Case/Procedure、legacy/candidate、active/future Configuration，禁止加强状态 | `GVS_INSTANCE_MAPPING.md` v0.2 建立 18/18 闭合及显式 instance-only 行 | 已在 `eb088d7` 验证关闭 |
+| F-02 | 以稳定准则替代已失效的不存在编号章节引用 | `CR-2026-004` 唯一拥有 AC-01…AC-12；基线只链接该集合 | 已在 `eb088d7` 验证关闭 |
+| F-03 | 同步 CR 双语控制元数据 | 限定 AI 复审逐段检查中英文控制元数据与规范性语义，未发现实质偏移；这不能满足 AC-05 字面要求的独立自然人确认门 | 已在 `eb088d7` 验证关闭；AC-05 自然人签署仍开放 |
+| F-04 | 修正 Observation/Oracle/Result | PBC 与映射要求 Observation → Oracle evaluation → Result，并声明 Result 不是 Observation | 已在 `eb088d7` 验证关闭 |
+| F-05 | 消除 raw/manifest→Evidence/OSR/Claim 短路 | Architecture、OSR、CEI 与映射要求表征、Argument/SufficiencyAssessment、Decision 与版本化 Claim 引用 | 已在 `eb088d7` 验证关闭 |
+| A-01 | 登记跨仓库迁移风险 | 风险登记册 R-17…R-22 增加信号、缓解、owner、gate 与剩余风险处置 | 已在 `eb088d7` 验证关闭 |
+| RR-A02 | 消除无效转义 `SyntaxWarning` 并在 CI 强制严格编译 | 正则片段全部使用 raw string；CI 在 Python 3.10–3.12 执行 `python -W error::SyntaxWarning -m compileall -q src scripts tests` | 已修正；等待最终 Head CI |
+
+限定复审未报告新的语义性 Must finding。其 `APPROVE WITH ACTIONS` 是对
+`eb088d7` 的内容批准，不是对最终 Head 的批准。只复审 `eb088d7...<final-head>` 中
+RR-A02 与回归结果，然后以 GitHub Review 把最终批准附着到未变化的最终 Head。批准后不得再
+增加状态提交，否则 AC-11 会使批准失效。
 
 ## 4. 语义评审清单
 
@@ -272,7 +295,7 @@ REWORK 后再按顺序追加以下普通修正提交：
 
 ```text
 python scripts/check_repo_baseline.py
-python -m compileall -q src scripts tests
+python -W error::SyntaxWarning -m compileall -q src scripts tests
 pytest
 git diff --check 53a98447bcfa862f082ce443d69115067d3ff2f1...HEAD
 ```
@@ -285,8 +308,10 @@ git diff --check 53a98447bcfa862f082ce443d69115067d3ff2f1...HEAD
 
 ## 8. 合并条件、停止与第三次握手
 
-在身份、语义、来源、隐私、CI 和独立评审全部通过、阻塞 finding 全部关闭、PR 描述写明不可变
-绑定与非主张且批准 head 未变化前，不得将 PR #9 转 Ready 或合并。
+在身份、语义、来源、隐私、CI 和独立评审全部通过、阻塞 finding 全部关闭、具名自然人在最终
+Head 完成 AC-05 确认、PR 描述写明不可变绑定与非主张且批准 head 未变化前，不得将 PR #9
+转 Ready 或合并。权威最终批准记录应是附着于该 Head 的 GitHub Review，而不是批准后再提交
+仓库状态变更。
 
 如身份不符、必须在本地复制/改变外部 Core、无法分层、无证据晋级兼容性/评价、数学或时序
 语义改变、出现专有材料、测试失败或评审要求方法侧修改，应立即停止并保持 Draft。获批 PR #9
