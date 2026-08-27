@@ -5,8 +5,9 @@
 | Review target | Draft PR #10, branch `codex/acknowledge-gvs-third-handshake` |
 | Candidate baseline | `RB-2026-001-v4.3.1` |
 | Starting commit | `523d42bf03a1135b3d63a00bfb47d3b879d3927e` |
-| Final review head | `NOT YET ESTABLISHED` |
-| Review status | `REVIEW PENDING` |
+| Correction-range base | `14d0049fa35d124baa5e584ad67d5fd6ce7425a7` |
+| Final review head | Resolve the immutable new final head from GitHub after this handoff commit is pushed |
+| Review status | `CORRECTIONS COMPLETE — LIMITED REREVIEW PENDING` |
 | Required merge mode | Ordinary two-parent merge; second parent must equal the approved final head |
 | Candidate release tag | `v4.3.1`; prohibited before approval, merge, and successful post-merge CI |
 
@@ -17,6 +18,40 @@ third-handshake compatibility disposition. It does not reopen the v4.3
 migration review, alter R01–R18 or A01–A07 semantics, execute an instance
 evaluation, establish Project Configuration, revise the Candidate GVS Core, or
 change protocol mathematics or evidence.
+
+## Correction rereview boundary and GD-01
+
+The limited correction rereview range is:
+
+```text
+14d0049fa35d124baa5e584ad67d5fd6ce7425a7..<new final head reported by GitHub>
+```
+
+GD-01 is a fixed project-owner decision: method disposition
+`c02330d21fe2d3e89e7e2d6352872d52461a6dda` is accepted and is not a finding or
+review target here. This correction does not reopen, modify, or write back to
+the method repository.
+
+The correction adds these ordinary commits after `14d0049`:
+
+1. `7d4d5b4` — `docs: close PR10 acknowledgement review findings`;
+2. `809069a` — `test: enforce PR10 row review and bilingual hygiene`;
+3. `docs: synchronize PR10 correction rereview handoff` — this handoff commit.
+
+## Correction finding disposition
+
+| Finding | Correction evidence | State |
+|---|---|---|
+| PR10-F01 | All English and Chinese R01–R18/A01–A07 Review cells cite `c02330d…`, Q-01–Q-09, unchanged relation/status, and pending local review; relation/status comparison to v4.3 is unchanged for 25/25 rows | CORRECTED; LIMITED REREVIEW PENDING |
+| PR10-F02 | Both literal `` `n `` corruptions were removed and the Markdown heading/list structure restored | CORRECTED; LIMITED REREVIEW PENDING |
+| PR10-F03 | Binding Review platform/body semantics and the seven-item baseline Controlled content link set are equivalent in English and Chinese | CORRECTED; LIMITED REREVIEW PENDING |
+| PR10-A01 | Validator gates V-01–V-03 and eight new real-text negative tests reject all specified regressions | CORRECTED; LIMITED REREVIEW PENDING |
+
+Automated validation confirms controlled fields and structures only. It cannot
+replace the final independent natural-person approval, which must attach to the
+unchanged final GitHub PR head. Do not add an approval-status commit afterward.
+Annotated tag `v4.3.1` remains prohibited until approval, ordinary merge, and
+successful post-merge CI.
 
 ## Immutable identity checklist
 
@@ -66,11 +101,11 @@ method-repository artifact belongs in the change.
 
 | Check | Required result | Actual result |
 |---|---|---|
-| `python -m compileall -q scripts tests` | PASS | PASS |
+| `python -W error::SyntaxWarning -m compileall -q src scripts tests` | PASS | PASS |
 | `python scripts/check_repo_baseline.py` | PASS | PASS |
-| `python -m pytest tests/unit/test_repo_baseline_semantics.py -q` | PASS | PASS |
-| Full repository test suite | PASS | PASS |
-| Negative identity/status/mapping tests | PASS | PASS |
+| `python -m pytest tests/unit/test_repo_baseline_semantics.py -q` | PASS | 22 passed |
+| Full repository test suite | PASS | 70 passed |
+| Negative identity/status/mapping/Markdown/bilingual tests | PASS | PASS |
 | `git diff --check` | PASS | PASS |
 | Link and tracked-hygiene checks | PASS | PASS |
 | GitHub pull-request CI | SUCCESS | PENDING |
@@ -84,7 +119,7 @@ second parent → wait for post-merge CI → create and verify annotated tag
 `v4.3.1` → delete the temporary branch. The validator cannot automate the
 natural-person approval decision.
 
-Current disposition: **REVIEW PENDING — KEEP DRAFT**.
+Current disposition: **CORRECTIONS COMPLETE — LIMITED REREVIEW PENDING — KEEP DRAFT**.
 
 ---
 
@@ -97,8 +132,9 @@ Current disposition: **REVIEW PENDING — KEEP DRAFT**.
 | 评审目标 | Draft PR #10，分支 `codex/acknowledge-gvs-third-handshake` |
 | 候选基线 | `RB-2026-001-v4.3.1` |
 | 起始提交 | `523d42bf03a1135b3d63a00bfb47d3b879d3927e` |
-| 最终评审 head | `NOT YET ESTABLISHED` |
-| 评审状态 | `REVIEW PENDING` |
+| 修正范围基点 | `14d0049fa35d124baa5e584ad67d5fd6ce7425a7` |
+| 最终评审 head | 推送本交接提交后，从 GitHub 解析不可变新 final head |
+| 评审状态 | `修正完成——等待限定复审` |
 | 必需合并方式 | 普通两父合并；第二父必须等于已批准最终 head |
 | 候选发布标签 | `v4.3.1`；批准、合并及合并后 CI 成功前禁止创建 |
 
@@ -107,6 +143,37 @@ Current disposition: **REVIEW PENDING — KEEP DRAFT**.
 本评审只确认方法仓库已完成的第三次握手兼容性处置。它不重新打开 v4.3 迁移评审，不改变
 R01–R18 或 A01–A07 语义，不执行实例评价，不建立 Project Configuration，不修订 Candidate
 GVS Core，也不改变协议数学或证据。
+
+## 修正复审边界与 GD-01
+
+限定修正复审范围为：
+
+```text
+14d0049fa35d124baa5e584ad67d5fd6ce7425a7..<new final head reported by GitHub>
+```
+
+GD-01 是项目所有者的固定决定：方法处置
+`c02330d21fe2d3e89e7e2d6352872d52461a6dda` 已被接受，不是本轮 finding 或复审目标。
+本修正不重新打开、修改或回写方法仓库。
+
+`14d0049` 后追加以下普通提交：
+
+1. `7d4d5b4`——`docs: close PR10 acknowledgement review findings`；
+2. `809069a`——`test: enforce PR10 row review and bilingual hygiene`；
+3. `docs: synchronize PR10 correction rereview handoff`——本交接提交。
+
+## 修正 finding 处置
+
+| Finding | 修正证据 | 状态 |
+|---|---|---|
+| PR10-F01 | 英中 R01–R18/A01–A07 全部 Review 单元格均引用 `c02330d…`、Q-01～Q-09、关系/状态不变及本地评审待完成；与 v4.3 比较，25/25 行 relation/status 不变 | 已修正；等待限定复审 |
+| PR10-F02 | 两处字面 `` `n `` 损坏均已清除，Markdown 标题/列表结构恢复 | 已修正；等待限定复审 |
+| PR10-F03 | binding 的 Review 平台/正文语义及 baseline 七项受控内容链接集合实现中英文等价 | 已修正；等待限定复审 |
+| PR10-A01 | 校验器 V-01～V-03 与八个新增真实文本负例拒绝全部指定回归 | 已修正；等待限定复审 |
+
+自动校验只确认受控字段与结构，不能替代最终独立自然人批准；该批准必须附着于不再变化的
+GitHub PR final head。批准后不得新增“批准状态提交”。在批准、普通合并和合并后 CI 成功前，
+仍禁止创建 annotated tag `v4.3.1`。
 
 ## 不可变身份检查表
 
@@ -148,11 +215,11 @@ CI；本交接与 Draft PR 描述。受保护标准原文、PDF、原始证据�
 
 | 检查 | 必需结果 | 实际结果 |
 |---|---|---|
-| `python -m compileall -q scripts tests` | PASS | PASS |
+| `python -W error::SyntaxWarning -m compileall -q src scripts tests` | PASS | PASS |
 | `python scripts/check_repo_baseline.py` | PASS | PASS |
-| `python -m pytest tests/unit/test_repo_baseline_semantics.py -q` | PASS | PASS |
-| 全仓库测试 | PASS | PASS |
-| 身份/状态/映射负例 | PASS | PASS |
+| `python -m pytest tests/unit/test_repo_baseline_semantics.py -q` | PASS | 22 passed |
+| 全仓库测试 | PASS | 70 passed |
+| 身份/状态/映射/Markdown/双语负例 | PASS | PASS |
 | `git diff --check` | PASS | PASS |
 | 链接与跟踪卫生 | PASS | PASS |
 | GitHub pull-request CI | SUCCESS | PENDING |
@@ -163,4 +230,4 @@ CI；本交接与 Draft PR 描述。受保护标准原文、PDF、原始证据�
 都会使批准失效。批准后顺序为：Ready → 普通合并 → 核验第二父 → 等待合并后 CI → 创建并
 核验 annotated tag `v4.3.1` → 删除临时分支。校验器不能自动替代自然人批准判断。
 
-当前处置：**REVIEW PENDING — KEEP DRAFT**。
+当前处置：**修正完成——等待限定复审——保持 Draft**。
