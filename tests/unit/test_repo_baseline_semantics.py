@@ -187,4 +187,94 @@ def test_acknowledgement_rejects_false_native_approval_state() -> None:
     parts = list(acknowledgement_texts())
     parts[5] = parts[5].replace("Platform state `COMMENTED`", "Platform state `APPROVED`", 1)
     errors = ack_errors(tuple(parts))
-    assert any("natural-person review truth is missing" in error for error in errors)
+    assert any("handoff English method review truth is missing: COMMENTED" in error for error in errors)
+
+
+def test_pr10_mapping_rejects_bare_english_pending_review() -> None:
+    text = source("docs/control/contracts/GVS_INSTANCE_MAPPING.md")
+    controlled = (
+        f"method disposition `{baseline.METHOD_DISPOSITION_COMMIT}`; "
+        "Q-01–Q-09 apply; relation/status unchanged; "
+        "local acknowledgement review pending"
+    )
+    broken = text.replace(controlled, "pending", 1)
+    errors = baseline.mapping_reconciliation_errors(broken)
+    assert any("English mapping row R01 Review is still bare pending" in error for error in errors)
+
+
+def test_pr10_mapping_rejects_bare_chinese_pending_review() -> None:
+    text = source("docs/control/contracts/GVS_INSTANCE_MAPPING.md")
+    controlled = (
+        f"方法处置 `{baseline.METHOD_DISPOSITION_COMMIT}`；适用 Q-01～Q-09；"
+        "关系/状态不变；本地确认评审待完成"
+    )
+    broken = text.replace(controlled, "待审", 1)
+    errors = baseline.mapping_reconciliation_errors(broken)
+    assert any("Chinese mapping row R01 Review is still bare pending" in error for error in errors)
+
+
+def test_pr10_acknowledgement_rejects_literal_markdown_line_break_damage() -> None:
+    parts = list(acknowledgement_texts())
+    parts[3] = parts[3].replace("## Controlled content\n", "## Controlled content`n- ", 1)
+    assert any(
+        "baseline contains literal Markdown line-break damage" in error
+        for error in ack_errors(tuple(parts))
+    )
+
+    parts = list(acknowledgement_texts())
+    parts[0] += "\nDamaged paragraph`r\n"
+    assert any(
+        "binding contains literal Markdown line-break damage" in error
+        for error in ack_errors(tuple(parts))
+    )
+
+
+def test_pr10_acknowledgement_rejects_missing_chinese_commented_state() -> None:
+    parts = list(acknowledgement_texts())
+    english, chinese = parts[0].split(baseline.ZH_MARKER, 1)
+    parts[0] = english + baseline.ZH_MARKER + chinese.replace("`COMMENTED`", "`OMITTED`", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("binding Chinese method review truth is missing: COMMENTED" in error for error in errors)
+
+
+def test_pr10_acknowledgement_rejects_missing_chinese_approve_outcome() -> None:
+    parts = list(acknowledgement_texts())
+    english, chinese = parts[0].split(baseline.ZH_MARKER, 1)
+    parts[0] = english + baseline.ZH_MARKER + chinese.replace("`APPROVE`", "`OMITTED`", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("binding Chinese method review truth is missing: APPROVE" in error for error in errors)
+
+
+def test_pr10_acknowledgement_rejects_missing_chinese_controlled_content_link() -> None:
+    parts = list(acknowledgement_texts())
+    english, chinese = parts[3].split(baseline.ZH_MARKER, 1)
+    missing_link_line = (
+        "- [`docs/control/CHANGE_CONTROL.md`](../CHANGE_CONTROL.md)\n"
+    )
+    parts[3] = english + baseline.ZH_MARKER + chinese.replace(missing_link_line, "", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("must contain exactly seven links" in error for error in errors)
+    assert any("Controlled content link targets differ" in error for error in errors)
+
+
+def test_pr10_mapping_review_rejects_relation_status_strengthening_language() -> None:
+    text = source("docs/control/contracts/GVS_INSTANCE_MAPPING.md")
+    broken = text.replace("relation/status unchanged", "relation/status upgraded", 1)
+    errors = baseline.mapping_reconciliation_errors(broken)
+    assert any(
+        "English mapping row R01 Review lacks controlled reference: relation/status unchanged"
+        in error
+        for error in errors
+    )
+
+
+def test_pr10_acknowledgement_rejects_state_promotion_on_controlled_text() -> None:
+    parts = list(acknowledgement_texts())
+    parts[3] = parts[3].replace("NOT-EXERCISED", "INSTANCE-EXERCISED", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("prohibited promotion: INSTANCE-EXERCISED" in error for error in errors)
+
+    parts = list(acknowledgement_texts())
+    parts[3] = parts[3].replace("NOT YET ESTABLISHED", "ESTABLISHED", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("baseline English controlled acknowledgement value is missing" in error for error in errors)
