@@ -145,12 +145,16 @@ Product Binding、Project Configuration、实例工程、实例研究和实例�
 
 分支名和 `main` 链接仅供发现，不构成绑定身份。改用其它方法提交必须经过显式基线变更。
 
-### 2.1 受评审处置身份`n`n上述定义定位符保持绑定 MethodDefinitionCommit
+### 2.1 受评审处置身份
+
+上述定义定位符保持绑定 MethodDefinitionCommit
 `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b`。独立的受评审处置绑定
 MethodCompatibilityDispositionCommit `c02330d21fe2d3e89e7e2d6352872d52461a6dda` 及其
 [提交绑定兼容性记录](https://github.com/ZhangChi0727/complex-system-verification-assurance/blob/c02330d21fe2d3e89e7e2d6352872d52461a6dda/docs/08_validation/arinc_615a_third_handshake_compatibility_disposition.md)。
 方法合并是普通两父合并，第二父为已批准 head
-`37fb88329abaea8f7127da96a66c0ac5d7525543`。
+`37fb88329abaea8f7127da96a66c0ac5d7525543`。关联的具名评审如实记录为 GitHub 平台状态
+`COMMENTED`、Review 正文结论 `APPROVE`；不得将其表述为 GitHub 平台原生
+`APPROVED` 评审。
 
 ## 3. 实例身份元组
 
