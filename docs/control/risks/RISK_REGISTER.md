@@ -29,6 +29,7 @@
 | R-20 | Execution, compatibility, or evaluation begins before Project Configuration exists | Medium | Critical | Run/evaluation claim lacks controlled IUT/setup/procedure/tool/clock values | Enforce `NOT YET ESTABLISHED`; configuration gate blocks runs and evaluation-state change | Engineering lead | RG4 / AC-03 | Open; execution and evaluation prohibited |
 | R-21 | Migration merge is treated as compatibility/evaluation or third-handshake completion | Medium | High | PR/tag wording uses compatible, exercised, or handshake-complete without separate records | Lock `NOT-DETERMINED`/`NOT-EXERCISED`; enforce release order and separate method-repository change | Project lead | Release review / AC-12 | Open; residual claim limited to migration only |
 | R-22 | English/Chinese controlled semantics drift | Medium | High | Metadata, trigger, status, object relation, or acceptance wording differs by language | Canonical field comparison, bilingual negative tests, and explicit human semantic-equivalence review | Documentation owner | Migration review / AC-05 | Open; structural parity alone is insufficient |
+| R-23 | Method definition, compatibility disposition, ARINC release, or acknowledgement merge identity is conflated | Medium | Critical | One SHA is reused for two identity roles, a mutable locator appears, or v4.3.1 is tagged before its gate | Four-part immutable identity chain, negative tests, independent review, ordinary-merge second-parent check, and post-merge tag gate | Configuration owner | v4.3.1 review / CR-2026-005 AC-01–AC-03, AC-12 | Open; any mismatch blocks release |
 
 ## Review cadence
 
@@ -48,7 +49,7 @@
 R-17 控制方法 SHA/对象版本漂移或错误定位；R-18 控制映射遗漏、状态静默加强和伪外部
 locator；R-19 控制 Profile/Binding taxonomy 反向定义 Core；R-20 在 Project Configuration
 未建立时禁止执行、兼容性或评价；R-21 禁止把 migration merge 当作兼容性/评价或第三次握手；
-R-22 控制英中受控语义漂移。它们分别由 Configuration owner、Method liaison、Architecture
+R-22 控制英中受控语义漂移；R-23 控制方法定义、兼容性处置、ARINC 来源发布和确认合并身份混淆。它们分别由 Configuration owner、Method liaison、Architecture
 owner、Engineering lead、Project lead 和 Documentation owner 负责，并在 AC-01、AC-02、
 AC-03/RG4、AC-12 与 AC-05 触发。任何身份/映射/Core 反向定义/提前评价缺陷都阻塞批准；
 结构对等不能单独接受双语剩余风险。

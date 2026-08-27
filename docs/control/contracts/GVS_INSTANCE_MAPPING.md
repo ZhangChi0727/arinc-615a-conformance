@@ -3,13 +3,16 @@
 | Field | Value |
 |---|---|
 | **Register ID** | TMP-MAP-ARINC615A-01 |
-| **Version** | 0.2-candidate |
+| **Version** | 0.3-candidate |
 | **Method instance** | `TMP-ARINC615A-01` |
 | **MethodDefinitionCommit** | `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
+| **MethodCompatibilityDispositionCommit** | `c02330d21fe2d3e89e7e2d6352872d52461a6dda` |
 | **Method mapping register** | `arinc_615a_object_mapping_register.md`, version 0.2, 18 controlled source rows |
 | **Source proposal** | PR #9 starting head `53a98447bcfa862f082ce443d69115067d3ff2f1` |
-| **Compatibility** | NOT-DETERMINED |
-| **Review status** | REWORK CORRECTIONS COMPLETE — EXTERNAL REREVIEW PENDING |
+| **Compatibility** | REVIEWED-COMPATIBLE-WITH-QUALIFICATION — Q-01–Q-09 |
+| **Instance evaluation** | NOT-EXERCISED |
+| **Project Configuration** | NOT YET ESTABLISHED |
+| **Review status** | METHOD DISPOSITION ACKNOWLEDGED — LOCAL INDEPENDENT REVIEW PENDING |
 
 ## 1. Reconciliation rule
 
@@ -26,6 +29,15 @@ Allowed statuses are `NOT-DETERMINED`, `CANDIDATE`, `PARTIAL`, `CONFLICT`, and
 `CONFLICT`. Additional local taxonomies appear only in the separate
 **instance-only additional rows** table and cannot hide a missing source row.
 
+## 1.1 Third-handshake disposition acknowledgement
+
+MethodCompatibilityDispositionCommit
+`c02330d21fe2d3e89e7e2d6352872d52461a6dda` confirmed all 18 method rows and
+all 7 instance-only rows without changing a primary relation or row status.
+Source labels containing “PR #9 / v4.3 candidate” remain historical provenance,
+not current merge-state assertions. Q-01–Q-09 remain mandatory; in particular,
+`NOT-DETERMINED` and `PARTIAL` rows stay open, evaluation stays
+`NOT-EXERCISED`, and configuration stays `NOT YET ESTABLISHED`.
 ## 2. Method-side 18-row reconciliation
 
 | Source row | External candidate/role locator | Local ARINC object | Source baseline | Primary relation | Status | Rationale | Open dependency | Migration impact | Review |
@@ -97,13 +109,16 @@ instance evaluation. L0–L7, A0–A4, and R0–R5 are not Generic GVS Core leve
 | 字段 | 值 |
 |---|---|
 | **登记册 ID** | TMP-MAP-ARINC615A-01 |
-| **版本** | 0.2-candidate |
+| **版本** | 0.3-candidate |
 | **方法实例** | `TMP-ARINC615A-01` |
 | **MethodDefinitionCommit** | `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
+| **MethodCompatibilityDispositionCommit** | `c02330d21fe2d3e89e7e2d6352872d52461a6dda` |
 | **方法映射登记册** | `arinc_615a_object_mapping_register.md`，版本 0.2，18 个受控源行 |
 | **源提案** | PR #9 起始 head `53a98447bcfa862f082ce443d69115067d3ff2f1` |
-| **兼容性** | NOT-DETERMINED |
-| **评审状态** | REWORK 修正完成——等待外部复审 |
+| **兼容性** | REVIEWED-COMPATIBLE-WITH-QUALIFICATION——受 Q-01–Q-09 限定 |
+| **实例评价** | NOT-EXERCISED |
+| **Project Configuration** | NOT YET ESTABLISHED |
+| **评审状态** | 已确认方法处置——等待本地独立评审 |
 
 ## 1. 闭合规则
 
@@ -113,6 +128,13 @@ instance evaluation. L0–L7, A0–A4, and R0–R5 are not Generic GVS Core leve
 行，不得静默加强。允许状态为 `NOT-DETERMINED`、`CANDIDATE`、`PARTIAL`、`CONFLICT` 和
 `OUT-OF-SCOPE`。其它本地 taxonomy 只进入独立附加表，不能掩盖源行遗漏。
 
+## 1.1 第三次握手处置确认
+
+MethodCompatibilityDispositionCommit
+`c02330d21fe2d3e89e7e2d6352872d52461a6dda` 在不改变任何主关系或行状态的前提下确认
+18 个方法行及 7 个仅实例行。包含“PR #9 / v4.3 candidate”的来源标签是历史来源记录，不是
+当前合并状态主张。Q-01–Q-09 仍为强制限定；尤其是 `NOT-DETERMINED` 和 `PARTIAL` 行保持
+开放、评价保持 `NOT-EXERCISED`、配置保持 `NOT YET ESTABLISHED`。
 ## 2. 方法侧 18 行闭合
 
 | 源行 | 外部候选/角色定位 | 本地 ARINC 对象 | 来源基线 | 主关系 | 状态 | 理由 | 开放依赖 | 迁移影响 | 评审 |
