@@ -106,3 +106,85 @@ def test_evidence_chain_check_rejects_missing_control_refs() -> None:
         "statusDecisionRef" in error
         for error in baseline.evidence_chain_errors(architecture, osr, broken_cei, manifest)
     )
+
+def acknowledgement_texts() -> tuple[str, str, str, str, str, str]:
+    return (
+        source("docs/control/contracts/EXTERNAL_GVS_BINDING.md"),
+        source("docs/control/contracts/GVS_INSTANCE_MAPPING.md"),
+        source("docs/control/contracts/ARINC615A_PROFILE_BINDING_CONFIGURATION.md"),
+        source("docs/control/baselines/RB-2026-001-v4.3.1.md"),
+        source("docs/control/changes/CR-2026-005.md"),
+        source("docs/control/reviews/PR10_GVS_DISPOSITION_ACK_REVIEW_HANDOFF.md"),
+    )
+
+
+def ack_errors(parts: tuple[str, str, str, str, str, str]) -> list[str]:
+    return baseline.third_handshake_acknowledgement_errors(*parts)
+
+
+def test_acknowledgement_rejects_swapped_method_identities() -> None:
+    parts = list(acknowledgement_texts())
+    parts[0] = parts[0].replace(
+        f"| **MethodDefinitionCommit** | `{baseline.METHOD_DEFINITION_COMMIT}` |",
+        f"| **MethodDefinitionCommit** | `{baseline.METHOD_DISPOSITION_COMMIT}` |",
+        1,
+    ).replace(
+        f"| **MethodCompatibilityDispositionCommit** | `{baseline.METHOD_DISPOSITION_COMMIT}` |",
+        f"| **MethodCompatibilityDispositionCommit** | `{baseline.METHOD_DEFINITION_COMMIT}` |",
+        1,
+    )
+    errors = ack_errors(tuple(parts))
+    assert any("binding MethodDefinitionCommit identity differs" in error for error in errors)
+    assert any("binding MethodCompatibilityDispositionCommit identity differs" in error for error in errors)
+
+
+def test_acknowledgement_rejects_wrong_arinc_release_identity() -> None:
+    parts = list(acknowledgement_texts())
+    parts[3] = parts[3].replace(baseline.ARINC_V43_RELEASE_COMMIT, "0" * 40)
+    errors = ack_errors(tuple(parts))
+    assert any("baseline is missing controlled identity" in error for error in errors)
+
+
+def test_acknowledgement_rejects_missing_qualification() -> None:
+    parts = list(acknowledgement_texts())
+    parts[4] = parts[4].replace("| Q-09 |", "| Q-X9 |", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("qualification IDs differ" in error for error in errors)
+
+
+def test_acknowledgement_rejects_evaluation_or_configuration_promotion() -> None:
+    parts = list(acknowledgement_texts())
+    parts[1] = parts[1].replace("NOT-EXERCISED", "INSTANCE-EXERCISED", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("mapping controlled Instance evaluation differs" in error for error in errors)
+    assert any("prohibited promotion: INSTANCE-EXERCISED" in error for error in errors)
+
+    parts = list(acknowledgement_texts())
+    parts[2] = parts[2].replace("NOT YET ESTABLISHED", "ESTABLISHED", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("PBC controlled Project Configuration differs" in error for error in errors)
+
+
+def test_acknowledgement_rejects_mutable_or_wrong_commit_bound_locator() -> None:
+    parts = list(acknowledgement_texts())
+    parts[0] = parts[0].replace(
+        f"/blob/{baseline.METHOD_DEFINITION_COMMIT}/",
+        "/blob/main/",
+        1,
+    )
+    assert any("wrong or mutable commit-bound association" in error for error in ack_errors(tuple(parts)))
+
+    parts = list(acknowledgement_texts())
+    parts[0] = parts[0].replace(
+        f"/blob/{baseline.METHOD_DEFINITION_COMMIT}/docs/02_verification_framework/generic_verification_suite_core.md",
+        f"/blob/{baseline.METHOD_DISPOSITION_COMMIT}/docs/02_verification_framework/generic_verification_suite_core.md",
+        1,
+    )
+    assert any("wrong or mutable commit-bound association" in error for error in ack_errors(tuple(parts)))
+
+
+def test_acknowledgement_rejects_false_native_approval_state() -> None:
+    parts = list(acknowledgement_texts())
+    parts[5] = parts[5].replace("Platform state `COMMENTED`", "Platform state `APPROVED`", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("natural-person review truth is missing" in error for error in errors)

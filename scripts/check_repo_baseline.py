@@ -51,6 +51,7 @@ EXTERNAL_BINDING_PATH = CONTRACTS_DIR / "EXTERNAL_GVS_BINDING.md"
 INSTANCE_MAPPING_PATH = CONTRACTS_DIR / "GVS_INSTANCE_MAPPING.md"
 PROFILE_BINDING_PATH = CONTRACTS_DIR / "ARINC615A_PROFILE_BINDING_CONFIGURATION.md"
 MIGRATION_HANDOFF_PATH = CONTROL / "reviews" / "PR9_GVS_MIGRATION_REVIEW_HANDOFF.md"
+ACK_HANDOFF_PATH = CONTROL / "reviews" / "PR10_GVS_DISPOSITION_ACK_REVIEW_HANDOFF.md"
 
 # Structural invariant directories (content checked by presence, not version).
 REQUIRED_FIXED_FILES = [
@@ -73,6 +74,7 @@ REQUIRED_FIXED_FILES = [
     GATES_DIR / "PR6_BASELINE_REVIEW_CHECKLIST.md",
     CONTROL / "risks" / "RISK_REGISTER.md",
     MIGRATION_HANDOFF_PATH,
+    ACK_HANDOFF_PATH,
     RESEARCH / "RESEARCH_CONTROL.md",
     RESEARCH / "EXPERIMENT_PLAN.md",
     RESEARCH / "CLAIM_EVIDENCE_MATRIX.md",
@@ -176,6 +178,15 @@ V43_NONCLAIM_PHRASE = "certification-oriented does not mean certification-approv
 
 # Immutable GVS/instance identities for the reviewed migration candidate.
 METHOD_DEFINITION_COMMIT = "48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b"
+METHOD_DISPOSITION_COMMIT = "c02330d21fe2d3e89e7e2d6352872d52461a6dda"
+METHOD_APPROVED_HEAD = "37fb88329abaea8f7127da96a66c0ac5d7525543"
+ARINC_V43_RELEASE_COMMIT = "523d42bf03a1135b3d63a00bfb47d3b879d3927e"
+ARINC_V43_RELEASE_TAG = "v4.3"
+ACK_BASELINE_ID = "RB-2026-001-v4.3.1"
+ACK_DISPOSITION = "REVIEWED-COMPATIBLE-WITH-QUALIFICATION"
+ACK_QUALIFICATION_IDS = {f"Q-{number:02d}" for number in range(1, 10)}
+ACK_BASELINE_PATH = BASELINES_DIR / "RB-2026-001-v4.3.1.md"
+ACK_CHANGE_PATH = CHANGES_DIR / "CR-2026-005.md"
 LEGACY_RELEASE_TAG = "RB-2026-001-v4.2.1"
 LEGACY_RELEASE_COMMIT = "3299e6dae83424862f75a4c1d09b91b80d9d8b00"
 CONTROL_STATE_COMMIT = "0ce96f701159fd4156d5e5e9889360f53977a61b"
@@ -323,11 +334,12 @@ def validate_gvs_binding(errors: list[str]) -> None:
         "TMP-PB-ARINC615A-01",
         "TMP-PC-ARINC615A-01",
         METHOD_DEFINITION_COMMIT,
-        LEGACY_RELEASE_TAG,
-        LEGACY_RELEASE_COMMIT,
-        CONTROL_STATE_COMMIT,
-        PR9_STARTING_HEAD,
-        "NOT-DETERMINED",
+        METHOD_DISPOSITION_COMMIT,
+        METHOD_APPROVED_HEAD,
+        ARINC_V43_RELEASE_COMMIT,
+        ARINC_V43_RELEASE_TAG,
+        ACK_BASELINE_ID,
+        ACK_DISPOSITION,
         "NOT-EXERCISED",
         "NOT YET ESTABLISHED",
     )
@@ -578,6 +590,154 @@ def evidence_chain_errors(
             errors.append(f"evidence/claim shortcut remains: {phrase}")
     return errors
 
+
+def controlled_table_value(text: str, field: str) -> str | None:
+    """Return one English control-table value; duplicates are an error upstream."""
+    english = text.split(ZH_MARKER, 1)[0]
+    matches = re.findall(
+        rf"(?m)^\| \*\*{re.escape(field)}\*\* \| (.*?) \|$", english,
+    )
+    return matches[0] if len(matches) == 1 else None
+
+
+def third_handshake_acknowledgement_errors(
+    binding_text: str,
+    mapping_text: str,
+    pbc_text: str,
+    baseline_text: str,
+    change_text: str,
+    handoff_text: str,
+) -> list[str]:
+    """Validate the cross-repository acknowledgement without awarding approval."""
+    errors: list[str] = []
+    documents = {
+        "binding": binding_text,
+        "mapping": mapping_text,
+        "PBC": pbc_text,
+        "baseline": baseline_text,
+        "change": change_text,
+        "handoff": handoff_text,
+    }
+
+    expected_fields = {
+        "MethodDefinitionCommit": METHOD_DEFINITION_COMMIT,
+        "MethodCompatibilityDispositionCommit": METHOD_DISPOSITION_COMMIT,
+    }
+    for document_name in ("binding", "mapping", "baseline", "change"):
+        for field, expected in expected_fields.items():
+            actual = controlled_table_value(documents[document_name], field)
+            expected_rendered = f"`{expected}`"
+            if actual != expected_rendered:
+                errors.append(
+                    f"{document_name} {field} identity differs: "
+                    f"expected {expected_rendered}, found {actual}"
+                )
+
+    if METHOD_DEFINITION_COMMIT == METHOD_DISPOSITION_COMMIT:
+        errors.append("method definition and disposition identities are conflated")
+
+    identity_requirements = {
+        "binding": (
+            METHOD_DEFINITION_COMMIT, METHOD_DISPOSITION_COMMIT,
+            METHOD_APPROVED_HEAD, ARINC_V43_RELEASE_COMMIT,
+            ARINC_V43_RELEASE_TAG, ACK_BASELINE_ID,
+        ),
+        "baseline": (
+            METHOD_DEFINITION_COMMIT, METHOD_DISPOSITION_COMMIT,
+            ARINC_V43_RELEASE_COMMIT, ARINC_V43_RELEASE_TAG, ACK_BASELINE_ID,
+        ),
+        "change": (
+            METHOD_DEFINITION_COMMIT, METHOD_DISPOSITION_COMMIT,
+            METHOD_APPROVED_HEAD, ARINC_V43_RELEASE_COMMIT,
+            ARINC_V43_RELEASE_TAG, ACK_BASELINE_ID,
+        ),
+        "handoff": (
+            METHOD_DEFINITION_COMMIT, METHOD_DISPOSITION_COMMIT,
+            METHOD_APPROVED_HEAD, ARINC_V43_RELEASE_COMMIT,
+            ARINC_V43_RELEASE_TAG, ACK_BASELINE_ID,
+        ),
+    }
+    for document_name, values in identity_requirements.items():
+        for value in values:
+            if value not in documents[document_name]:
+                errors.append(f"{document_name} is missing controlled identity: {value}")
+
+    controlled_status_fields = {
+        "Compatibility": ACK_DISPOSITION + " — Q-01–Q-09",
+        "Instance evaluation": "NOT-EXERCISED",
+        "Project Configuration": "NOT YET ESTABLISHED",
+    }
+    for document_name in ("binding", "mapping", "PBC"):
+        for field, expected in controlled_status_fields.items():
+            actual = controlled_table_value(documents[document_name], field)
+            if actual != expected:
+                errors.append(
+                    f"{document_name} controlled {field} differs: "
+                    f"expected {expected}, found {actual}"
+                )
+    for document_name in ("binding", "mapping", "PBC", "baseline", "change", "handoff"):
+        text = documents[document_name]
+        for value in (ACK_DISPOSITION, "NOT-EXERCISED", "NOT YET ESTABLISHED"):
+            if value not in text:
+                errors.append(f"{document_name} is missing controlled status: {value}")
+        if "Q-01–Q-09" not in text:
+            errors.append(f"{document_name} is missing the Q-01–Q-09 qualification set")
+
+    change_ids = set(re.findall(r"(?m)^\| (Q-\d{2}) \|", change_text.split(ZH_MARKER, 1)[0]))
+    if change_ids != ACK_QUALIFICATION_IDS:
+        errors.append(
+            "change request qualification IDs differ: "
+            f"expected {sorted(ACK_QUALIFICATION_IDS)}, found {sorted(change_ids)}"
+        )
+
+    # Commit-bound locators must associate definition artifacts only with the
+    # definition SHA and disposition artifacts only with the disposition SHA.
+    wrong_locator_patterns = (
+        rf"blob/{METHOD_DISPOSITION_COMMIT}/[^)\n]*generic_verification_suite_core\.md",
+        rf"blob/{METHOD_DEFINITION_COMMIT}/[^)\n]*third_handshake_compatibility_disposition\.md",
+        r"complex-system-verification-assurance/(?:blob|tree)/(?:main|master|latest)(?:/|$)",
+    )
+    for pattern in wrong_locator_patterns:
+        if re.search(pattern, binding_text, re.IGNORECASE):
+            errors.append(f"binding contains a wrong or mutable commit-bound association: {pattern}")
+
+    binding_english = binding_text.split(ZH_MARKER, 1)[0]
+    handoff_english = handoff_text.split(ZH_MARKER, 1)[0]
+    required_review_truth = ("COMMENTED", "APPROVE", METHOD_APPROVED_HEAD)
+    for value in required_review_truth:
+        if value not in binding_english or value not in handoff_english:
+            errors.append(f"natural-person review truth is missing from binding/handoff: {value}")
+
+    prohibited_promotions = (
+        "INSTANCE-EXERCISED", "VALIDATED-BASELINE", "RQ8 CLOSED",
+        "Project Configuration is ESTABLISHED", "protocol conformance established",
+    )
+    combined = "\n".join(documents.values())
+    for phrase in prohibited_promotions:
+        if phrase in combined:
+            errors.append(f"acknowledgement contains a prohibited promotion: {phrase}")
+
+    required_nonclaims = (
+        "no method-repository baseline or tag",
+        "no protocol-conformance",
+        "RQ8-closure",
+    )
+    for phrase in required_nonclaims:
+        if phrase.lower() not in combined.lower():
+            errors.append(f"acknowledgement non-claim is missing: {phrase}")
+
+    return errors
+
+
+def validate_third_handshake_acknowledgement(errors: list[str]) -> None:
+    errors.extend(third_handshake_acknowledgement_errors(
+        read(EXTERNAL_BINDING_PATH),
+        read(INSTANCE_MAPPING_PATH),
+        read(PROFILE_BINDING_PATH),
+        read(ACK_BASELINE_PATH),
+        read(ACK_CHANGE_PATH),
+        read(ACK_HANDOFF_PATH),
+    ))
 
 def validate_instance_mapping(errors: list[str]) -> None:
     errors.extend(mapping_reconciliation_errors(read(INSTANCE_MAPPING_PATH)))
@@ -880,6 +1040,7 @@ def main() -> int:
         validate_reference_catalog(errors)
 
     validate_gvs_binding(errors)
+    validate_third_handshake_acknowledgement(errors)
     validate_instance_mapping(errors)
     validate_cross_repository_semantics(errors)
     validate_candidate_semantics(errors)
@@ -900,7 +1061,7 @@ def main() -> int:
     if not v43_baselines:
         errors.append("v4.3 candidate baseline missing")
     else:
-        v43_text = read(v43_baselines[0])
+        v43_text = read(BASELINES_DIR / "RB-2026-001-v4.3.md")
         if V43_BASELINE_PREFIX not in v43_text:
             errors.append("v4.3 baseline does not declare RB-2026-001-v4.3")
         if V43_NONCLAIM_PHRASE not in v43_text:
@@ -910,6 +1071,8 @@ def main() -> int:
     cr_prefixes = {f.stem for f in cr_files}
     if "CR-2026-004" not in cr_prefixes:
         errors.append("CR-2026-004 not found among discovered change requests")
+    if "CR-2026-005" not in cr_prefixes:
+        errors.append("CR-2026-005 not found among discovered change requests")
 
     if errors:
         print("Baseline validation failed:", file=sys.stderr)
