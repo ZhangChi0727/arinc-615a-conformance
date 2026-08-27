@@ -3,9 +3,9 @@
 | Field | Value |
 |---|---|
 | **Plan ID** | IPP-2026-001 |
-| **Version** | 1.4 |
-| **Status** | Active under effective and frozen RB-2026-001-v4.2.1; GVS-bound v4.3 migration candidate under CR-2026-004 |
-| **Baseline** | RB-2026-001-v4.2.1 effective; RB-2026-001-v4.3 migration candidate bound to MethodDefinitionCommit `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
+| **Version** | 1.5 |
+| **Status** | Active under effective and frozen RB-2026-001-v4.2.1; released v4.3 plus v4.3.1 third-handshake acknowledgement candidate under CR-2026-005 |
+| **Baseline** | RB-2026-001-v4.3 released; RB-2026-001-v4.3.1 acknowledgement candidate bound to separate method definition/disposition commits |
 | **Planning horizon** | Baseline freeze through second-protocol replication |
 
 ## 1. Mission
@@ -75,7 +75,7 @@ allowed only when it does not pre-empt an unresolved upstream gate.
 - use `BRR-RB-2026-001-v4.2.1` to identify the PR #7 release commit and tag;
 - do not relabel v4.1/v4.2 evidence merely because repository paths changed.
 
-### v4.3 candidate baseline
+### v4.3 release and v4.3.1 acknowledgement candidate
 
 - establish `TMP-XRB-ARINC615A-01` through
   [`EXTERNAL_GVS_BINDING.md`](contracts/EXTERNAL_GVS_BINDING.md), bound to the
@@ -89,8 +89,9 @@ allowed only when it does not pre-empt an unresolved upstream gate.
   closure without redefining generic method objects;
 - treat L0–L7, A0–A4, R0–R5, RG, and G as ARINC Profile/project candidate
   semantics, pending independent review;
-- keep compatibility `NOT-DETERMINED`, evaluation `NOT-EXERCISED`, and PR #9
-  Draft until the independent migration review completes;
+- acknowledge compatibility as `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` only
+  under Q-01–Q-09; keep evaluation `NOT-EXERCISED` and Project Configuration
+  `NOT YET ESTABLISHED` until separate controlled evidence changes them;
 - do not promote any existing empirical, compatibility, certification, or
   authority-acceptance claim by the restructuring alone.
 
@@ -219,7 +220,7 @@ DD-014、v4.2.1 迁移、读者报告、双语对等及校验器评审轨迹；�
 `BRR-RB-2026-001-v4.2.1` 标识 PR #7 发布提交与标签；不得仅因仓库路径变化而重标
 v4.1/v4.2 证据。
 
-### v4.3 候选基线
+### v4.3 发布与 v4.3.1 确认候选
 
 通过 [`EXTERNAL_GVS_BINDING.md`](contracts/EXTERNAL_GVS_BINDING.md) 建立
 `TMP-XRB-ARINC615A-01`，并固定绑定 Candidate GVS Core 提交
@@ -227,8 +228,9 @@ v4.1/v4.2 证据。
 Profile、Product Binding、Project Configuration、实例工程、实例研究和实例证据负责。
 VO、OSR、CEI、Evidence Manifest、测试符合性和问题关闭按实例语义迁移，不重定义通用
 方法对象；L0–L7、A0–A4、R0–R5、RG 和 G 均作为 ARINC Profile/项目候选语义。
-兼容性保持 `NOT-DETERMINED`，评价保持 `NOT-EXERCISED`，PR #9 在独立迁移评审完成前
-保持 Draft；重构本身不晋级任何经验、兼容性、认证或权威接受主张。
+兼容性只在 Q-01–Q-09 限定下确认为 `REVIEWED-COMPATIBLE-WITH-QUALIFICATION`；评价保持
+`NOT-EXERCISED`、Project Configuration 保持 `NOT YET ESTABLISHED`。该确认不晋级任何
+经验、认证或权威接受主张。
 
 ### 第一研究增量
 
