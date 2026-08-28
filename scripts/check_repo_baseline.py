@@ -411,10 +411,10 @@ def _mapping_language_review_rows(
         if review.strip().lower() == "pending" or review.strip() == "待审":
             errors.append(f"{language} mapping row {row_id} Review is still bare pending")
         required_fragments = (
-            (METHOD_DISPOSITION_COMMIT[:7], "Q-01–Q-09", "relation/status unchanged",
+            (METHOD_DISPOSITION_COMMIT, "Q-01–Q-09", "relation/status unchanged",
              "local acknowledgement review pending")
             if language == "English"
-            else (METHOD_DISPOSITION_COMMIT[:7], "Q-01–Q-09", "关系/状态不变",
+            else (METHOD_DISPOSITION_COMMIT, "Q-01–Q-09", "关系/状态不变",
                   "本地确认评审待完成")
         )
         for fragment in required_fragments:

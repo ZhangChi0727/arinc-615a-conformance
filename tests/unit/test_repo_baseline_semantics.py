@@ -213,6 +213,38 @@ def test_pr10_mapping_rejects_bare_chinese_pending_review() -> None:
     assert any("Chinese mapping row R01 Review is still bare pending" in error for error in errors)
 
 
+def test_pr10_mapping_rejects_truncated_match_with_wrong_english_full_sha() -> None:
+    text = source("docs/control/contracts/GVS_INSTANCE_MAPPING.md")
+    wrong_sha = baseline.METHOD_DISPOSITION_COMMIT[:7] + "0" * 33
+    broken = text.replace(
+        f"method disposition `{baseline.METHOD_DISPOSITION_COMMIT}`;",
+        f"method disposition `{wrong_sha}`;",
+        1,
+    )
+    errors = baseline.mapping_reconciliation_errors(broken)
+    assert any(
+        f"English mapping row R01 Review lacks controlled reference: "
+        f"{baseline.METHOD_DISPOSITION_COMMIT}" in error
+        for error in errors
+    )
+
+
+def test_pr10_mapping_rejects_truncated_match_with_wrong_chinese_full_sha() -> None:
+    text = source("docs/control/contracts/GVS_INSTANCE_MAPPING.md")
+    wrong_sha = baseline.METHOD_DISPOSITION_COMMIT[:7] + "0" * 33
+    broken = text.replace(
+        f"方法处置 `{baseline.METHOD_DISPOSITION_COMMIT}`；",
+        f"方法处置 `{wrong_sha}`；",
+        1,
+    )
+    errors = baseline.mapping_reconciliation_errors(broken)
+    assert any(
+        f"Chinese mapping row R01 Review lacks controlled reference: "
+        f"{baseline.METHOD_DISPOSITION_COMMIT}" in error
+        for error in errors
+    )
+
+
 def test_pr10_acknowledgement_rejects_literal_markdown_line_break_damage() -> None:
     parts = list(acknowledgement_texts())
     parts[3] = parts[3].replace("## Controlled content\n", "## Controlled content`n- ", 1)
