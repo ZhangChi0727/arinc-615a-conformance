@@ -106,3 +106,207 @@ def test_evidence_chain_check_rejects_missing_control_refs() -> None:
         "statusDecisionRef" in error
         for error in baseline.evidence_chain_errors(architecture, osr, broken_cei, manifest)
     )
+
+def acknowledgement_texts() -> tuple[str, str, str, str, str, str]:
+    return (
+        source("docs/control/contracts/EXTERNAL_GVS_BINDING.md"),
+        source("docs/control/contracts/GVS_INSTANCE_MAPPING.md"),
+        source("docs/control/contracts/ARINC615A_PROFILE_BINDING_CONFIGURATION.md"),
+        source("docs/control/baselines/RB-2026-001-v4.3.1.md"),
+        source("docs/control/changes/CR-2026-005.md"),
+        source("docs/control/reviews/PR10_GVS_DISPOSITION_ACK_REVIEW_HANDOFF.md"),
+    )
+
+
+def ack_errors(parts: tuple[str, str, str, str, str, str]) -> list[str]:
+    return baseline.third_handshake_acknowledgement_errors(*parts)
+
+
+def test_acknowledgement_rejects_swapped_method_identities() -> None:
+    parts = list(acknowledgement_texts())
+    parts[0] = parts[0].replace(
+        f"| **MethodDefinitionCommit** | `{baseline.METHOD_DEFINITION_COMMIT}` |",
+        f"| **MethodDefinitionCommit** | `{baseline.METHOD_DISPOSITION_COMMIT}` |",
+        1,
+    ).replace(
+        f"| **MethodCompatibilityDispositionCommit** | `{baseline.METHOD_DISPOSITION_COMMIT}` |",
+        f"| **MethodCompatibilityDispositionCommit** | `{baseline.METHOD_DEFINITION_COMMIT}` |",
+        1,
+    )
+    errors = ack_errors(tuple(parts))
+    assert any("binding MethodDefinitionCommit identity differs" in error for error in errors)
+    assert any("binding MethodCompatibilityDispositionCommit identity differs" in error for error in errors)
+
+
+def test_acknowledgement_rejects_wrong_arinc_release_identity() -> None:
+    parts = list(acknowledgement_texts())
+    parts[3] = parts[3].replace(baseline.ARINC_V43_RELEASE_COMMIT, "0" * 40)
+    errors = ack_errors(tuple(parts))
+    assert any("baseline is missing controlled identity" in error for error in errors)
+
+
+def test_acknowledgement_rejects_missing_qualification() -> None:
+    parts = list(acknowledgement_texts())
+    parts[4] = parts[4].replace("| Q-09 |", "| Q-X9 |", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("qualification IDs differ" in error for error in errors)
+
+
+def test_acknowledgement_rejects_evaluation_or_configuration_promotion() -> None:
+    parts = list(acknowledgement_texts())
+    parts[1] = parts[1].replace("NOT-EXERCISED", "INSTANCE-EXERCISED", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("mapping controlled Instance evaluation differs" in error for error in errors)
+    assert any("prohibited promotion: INSTANCE-EXERCISED" in error for error in errors)
+
+    parts = list(acknowledgement_texts())
+    parts[2] = parts[2].replace("NOT YET ESTABLISHED", "ESTABLISHED", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("PBC controlled Project Configuration differs" in error for error in errors)
+
+
+def test_acknowledgement_rejects_mutable_or_wrong_commit_bound_locator() -> None:
+    parts = list(acknowledgement_texts())
+    parts[0] = parts[0].replace(
+        f"/blob/{baseline.METHOD_DEFINITION_COMMIT}/",
+        "/blob/main/",
+        1,
+    )
+    assert any("wrong or mutable commit-bound association" in error for error in ack_errors(tuple(parts)))
+
+    parts = list(acknowledgement_texts())
+    parts[0] = parts[0].replace(
+        f"/blob/{baseline.METHOD_DEFINITION_COMMIT}/docs/02_verification_framework/generic_verification_suite_core.md",
+        f"/blob/{baseline.METHOD_DISPOSITION_COMMIT}/docs/02_verification_framework/generic_verification_suite_core.md",
+        1,
+    )
+    assert any("wrong or mutable commit-bound association" in error for error in ack_errors(tuple(parts)))
+
+
+def test_acknowledgement_rejects_false_native_approval_state() -> None:
+    parts = list(acknowledgement_texts())
+    parts[5] = parts[5].replace("Platform state `COMMENTED`", "Platform state `APPROVED`", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("handoff English method review truth is missing: COMMENTED" in error for error in errors)
+
+
+def test_pr10_mapping_rejects_bare_english_pending_review() -> None:
+    text = source("docs/control/contracts/GVS_INSTANCE_MAPPING.md")
+    controlled = (
+        f"method disposition `{baseline.METHOD_DISPOSITION_COMMIT}`; "
+        "Q-01–Q-09 apply; relation/status unchanged; "
+        "local acknowledgement review pending"
+    )
+    broken = text.replace(controlled, "pending", 1)
+    errors = baseline.mapping_reconciliation_errors(broken)
+    assert any("English mapping row R01 Review is still bare pending" in error for error in errors)
+
+
+def test_pr10_mapping_rejects_bare_chinese_pending_review() -> None:
+    text = source("docs/control/contracts/GVS_INSTANCE_MAPPING.md")
+    controlled = (
+        f"方法处置 `{baseline.METHOD_DISPOSITION_COMMIT}`；适用 Q-01～Q-09；"
+        "关系/状态不变；本地确认评审待完成"
+    )
+    broken = text.replace(controlled, "待审", 1)
+    errors = baseline.mapping_reconciliation_errors(broken)
+    assert any("Chinese mapping row R01 Review is still bare pending" in error for error in errors)
+
+
+def test_pr10_mapping_rejects_truncated_match_with_wrong_english_full_sha() -> None:
+    text = source("docs/control/contracts/GVS_INSTANCE_MAPPING.md")
+    wrong_sha = baseline.METHOD_DISPOSITION_COMMIT[:7] + "0" * 33
+    broken = text.replace(
+        f"method disposition `{baseline.METHOD_DISPOSITION_COMMIT}`;",
+        f"method disposition `{wrong_sha}`;",
+        1,
+    )
+    errors = baseline.mapping_reconciliation_errors(broken)
+    assert any(
+        f"English mapping row R01 Review lacks controlled reference: "
+        f"{baseline.METHOD_DISPOSITION_COMMIT}" in error
+        for error in errors
+    )
+
+
+def test_pr10_mapping_rejects_truncated_match_with_wrong_chinese_full_sha() -> None:
+    text = source("docs/control/contracts/GVS_INSTANCE_MAPPING.md")
+    wrong_sha = baseline.METHOD_DISPOSITION_COMMIT[:7] + "0" * 33
+    broken = text.replace(
+        f"方法处置 `{baseline.METHOD_DISPOSITION_COMMIT}`；",
+        f"方法处置 `{wrong_sha}`；",
+        1,
+    )
+    errors = baseline.mapping_reconciliation_errors(broken)
+    assert any(
+        f"Chinese mapping row R01 Review lacks controlled reference: "
+        f"{baseline.METHOD_DISPOSITION_COMMIT}" in error
+        for error in errors
+    )
+
+
+def test_pr10_acknowledgement_rejects_literal_markdown_line_break_damage() -> None:
+    parts = list(acknowledgement_texts())
+    parts[3] = parts[3].replace("## Controlled content\n", "## Controlled content`n- ", 1)
+    assert any(
+        "baseline contains literal Markdown line-break damage" in error
+        for error in ack_errors(tuple(parts))
+    )
+
+    parts = list(acknowledgement_texts())
+    parts[0] += "\nDamaged paragraph`r\n"
+    assert any(
+        "binding contains literal Markdown line-break damage" in error
+        for error in ack_errors(tuple(parts))
+    )
+
+
+def test_pr10_acknowledgement_rejects_missing_chinese_commented_state() -> None:
+    parts = list(acknowledgement_texts())
+    english, chinese = parts[0].split(baseline.ZH_MARKER, 1)
+    parts[0] = english + baseline.ZH_MARKER + chinese.replace("`COMMENTED`", "`OMITTED`", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("binding Chinese method review truth is missing: COMMENTED" in error for error in errors)
+
+
+def test_pr10_acknowledgement_rejects_missing_chinese_approve_outcome() -> None:
+    parts = list(acknowledgement_texts())
+    english, chinese = parts[0].split(baseline.ZH_MARKER, 1)
+    parts[0] = english + baseline.ZH_MARKER + chinese.replace("`APPROVE`", "`OMITTED`", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("binding Chinese method review truth is missing: APPROVE" in error for error in errors)
+
+
+def test_pr10_acknowledgement_rejects_missing_chinese_controlled_content_link() -> None:
+    parts = list(acknowledgement_texts())
+    english, chinese = parts[3].split(baseline.ZH_MARKER, 1)
+    missing_link_line = (
+        "- [`docs/control/CHANGE_CONTROL.md`](../CHANGE_CONTROL.md)\n"
+    )
+    parts[3] = english + baseline.ZH_MARKER + chinese.replace(missing_link_line, "", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("must contain exactly seven links" in error for error in errors)
+    assert any("Controlled content link targets differ" in error for error in errors)
+
+
+def test_pr10_mapping_review_rejects_relation_status_strengthening_language() -> None:
+    text = source("docs/control/contracts/GVS_INSTANCE_MAPPING.md")
+    broken = text.replace("relation/status unchanged", "relation/status upgraded", 1)
+    errors = baseline.mapping_reconciliation_errors(broken)
+    assert any(
+        "English mapping row R01 Review lacks controlled reference: relation/status unchanged"
+        in error
+        for error in errors
+    )
+
+
+def test_pr10_acknowledgement_rejects_state_promotion_on_controlled_text() -> None:
+    parts = list(acknowledgement_texts())
+    parts[3] = parts[3].replace("NOT-EXERCISED", "INSTANCE-EXERCISED", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("prohibited promotion: INSTANCE-EXERCISED" in error for error in errors)
+
+    parts = list(acknowledgement_texts())
+    parts[3] = parts[3].replace("NOT YET ESTABLISHED", "ESTABLISHED", 1)
+    errors = ack_errors(tuple(parts))
+    assert any("baseline English controlled acknowledgement value is missing" in error for error in errors)

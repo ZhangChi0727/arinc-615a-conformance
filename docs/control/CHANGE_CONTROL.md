@@ -51,8 +51,14 @@ Create `docs/control/changes/CR-YYYY-NNN.md` containing:
     boundary, compatibility status, evaluation status, or object-migration
     semantics is a baseline change requiring impact analysis and independent
     review.
-11. Until independent review closes, compatibility remains `NOT-DETERMINED`,
-    evaluation remains `NOT-EXERCISED`, and the migration PR remains Draft.
+11. A reviewed cross-repository compatibility disposition is acknowledged only
+    through a baseline change that separates method definition, method
+    disposition, source release, and acknowledgement-merge identities. Qualified
+    compatibility does not change `NOT-EXERCISED` evaluation or
+    `NOT YET ESTABLISHED` configuration.
+12. A candidate release tag is created only after independent approval, ordinary
+    merge, and successful post-merge CI; the approved head must be the merge's
+    second parent.
 
 ## Git and PR policy
 
@@ -65,7 +71,7 @@ Create `docs/control/changes/CR-YYYY-NNN.md` containing:
 - squash only when the resulting commit preserves useful baseline and gate IDs.
 
 Recommended baseline tag after approval: `research-baseline/RB-2026-001-v4.2`;
-candidate for v4.3: `RB-2026-001-v4.3`.
+released v4.3 tag: `v4.3`; current candidate after approval: `v4.3.1` for `RB-2026-001-v4.3.1`.
 
 ---
 
@@ -83,7 +89,7 @@ candidate for v4.3: `RB-2026-001-v4.3`.
 
 ## 规则
 
-数学修正、时序语义、oracle、适用性和保证层级变化不得伪装成编辑；既有证据不得仅通过改标签迁移；解释冲突必须进入裁决和风险记录。跨领域接口变化必须标明受影响生产者、消费者、追踪字段、迁移以及教程/出版引用。在 `RB-2026-001-v4.3` 迁移候选下，L0–L7、A0–A4、R0–R5、RG 和 G 都是 ARINC Profile/项目候选语义，不是 Generic GVS Core 定义。外部方法依赖必须在 `contracts/EXTERNAL_GVS_BINDING.md` 中记录完整不可变提交和提交绑定链接；分支名及可变 `main` 链接不是受控身份。改变方法提交、临时实例 ID、所有权边界、兼容性状态、评价状态或对象迁移语义属于基线变更。独立评审关闭前，兼容性保持 `NOT-DETERMINED`、评价保持 `NOT-EXERCISED`，迁移 PR 保持 Draft。内部保证门不是 FAA、EASA、CAAC、RTCA、SAE 或 EUROCAE 的权威评审门。
+数学修正、时序语义、oracle、适用性和保证层级变化不得伪装成编辑；既有证据不得仅通过改标签迁移；解释冲突必须进入裁决和风险记录。跨领域接口变化必须标明受影响生产者、消费者、追踪字段、迁移以及教程/出版引用。在 `RB-2026-001-v4.3` 迁移候选下，L0–L7、A0–A4、R0–R5、RG 和 G 都是 ARINC Profile/项目候选语义，不是 Generic GVS Core 定义。外部方法依赖必须在 `contracts/EXTERNAL_GVS_BINDING.md` 中记录完整不可变提交和提交绑定链接；分支名及可变 `main` 链接不是受控身份。改变方法提交、临时实例 ID、所有权边界、兼容性状态、评价状态或对象迁移语义属于基线变更。受评审的跨仓库兼容性处置只能通过分离方法定义、方法处置、来源发布和确认合并身份的新基线变更确认。限定兼容性不改变 `NOT-EXERCISED` 评价或 `NOT YET ESTABLISHED` 配置。候选发布标签仅在独立批准、普通合并和合并后 CI 成功后创建，且已批准 head 必须是合并的第二父。内部保证门不是 FAA、EASA、CAAC、RTCA、SAE 或 EUROCAE 的权威评审门。
 
 ## Git 与 PR 政策
 

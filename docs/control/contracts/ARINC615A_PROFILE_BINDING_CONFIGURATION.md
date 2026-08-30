@@ -3,9 +3,13 @@
 | Field | Value |
 |---|---|
 | **Contract ID** | PBC-ARINC615A-2026-001 |
-| **Version** | 0.1-candidate |
-| **Baseline** | RB-2026-001-v4.3 migration candidate |
+| **Version** | 0.2-candidate |
+| **Baseline** | RB-2026-001-v4.3.1 acknowledgement candidate |
 | **External method binding** | `TMP-XRB-ARINC615A-01` |
+| **MethodCompatibilityDispositionCommit** | `c02330d21fe2d3e89e7e2d6352872d52461a6dda` |
+| **Compatibility** | REVIEWED-COMPATIBLE-WITH-QUALIFICATION — Q-01–Q-09 |
+| **Instance evaluation** | NOT-EXERCISED |
+| **Project Configuration** | NOT YET ESTABLISHED |
 | **Review status** | PENDING INDEPENDENT REVIEW |
 
 ## 1. Four-layer ownership model
@@ -66,9 +70,10 @@ or overconstraint, evaluation-protocol defects, and candidate generalizations
 are Framework Change Proposal inputs for the method repository; this repository
 must not directly edit or shadow the Core.
 
-Compatibility remains `NOT-DETERMINED`; instance evaluation remains
-`NOT-EXERCISED`. This candidate contract becomes active only after independent
-review, PR #9 merge, and an identified release commit/tag.
+Compatibility is `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` under Q-01–Q-09;
+instance evaluation remains `NOT-EXERCISED` and Project Configuration remains
+`NOT YET ESTABLISHED`. This acknowledgement candidate becomes effective only
+after its own independent review, ordinary merge, and identified v4.3.1 tag.
 
 ---
 
@@ -79,9 +84,12 @@ review, PR #9 merge, and an identified release commit/tag.
 | 字段 | 值 |
 |---|---|
 | **契约 ID** | PBC-ARINC615A-2026-001 |
-| **版本** | 0.1-candidate |
-| **基线** | RB-2026-001-v4.3 迁移候选 |
+| **版本** | 0.2-candidate |
+| **基线** | RB-2026-001-v4.3.1 确认候选 |
 | **外部方法绑定** | `TMP-XRB-ARINC615A-01` |
+| **兼容性** | REVIEWED-COMPATIBLE-WITH-QUALIFICATION——受 Q-01–Q-09 限定 |
+| **实例评价** | NOT-EXERCISED |
+| **Project Configuration** | NOT YET ESTABLISHED |
 | **评审状态** | 等待独立评审 |
 
 ## 1. 四层所有权模型
@@ -128,5 +136,6 @@ Observation。PASS 不自动关闭 VO、支持主张、建立合规或取得权�
 政策。疑似 Core insufficiency/overconstraint、评价协议缺陷和候选泛化只能形成提交方法仓库的
 Framework Change Proposal 输入；本仓库不得直接编辑或复制遮蔽 Core。
 
-兼容性保持 `NOT-DETERMINED`，实例评价保持 `NOT-EXERCISED`。本候选契约只有在独立评审、
-PR #9 合并并确定发布提交/标签后才生效。
+兼容性为受 Q-01–Q-09 限定的 `REVIEWED-COMPATIBLE-WITH-QUALIFICATION`；实例评价保持
+`NOT-EXERCISED`，Project Configuration 保持 `NOT YET ESTABLISHED`。本确认候选仅在
+自身独立评审、普通合并并确定 v4.3.1 标签后生效。

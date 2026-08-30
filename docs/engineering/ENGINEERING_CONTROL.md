@@ -3,9 +3,9 @@
 | Field | Value |
 |---|---|
 | **Plan ID** | EIP-2026-001 |
-| **Version** | 1.3 |
-| **Status** | Approved under effective v4.2; GVS-bound v4.3 migration candidate under CR-2026-004 |
-| **Methodology baseline** | RB-2026-001-v4.2 effective; v4.3 candidate bound to external MethodDefinitionCommit `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
+| **Version** | 1.4 |
+| **Status** | Approved under effective v4.2; released v4.3 plus v4.3.1 third-handshake acknowledgement candidate under CR-2026-005 |
+| **Methodology baseline** | RB-2026-001-v4.2 effective; v4.3.1 candidate bound to MethodDefinitionCommit `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` and MethodCompatibilityDispositionCommit `c02330d21fe2d3e89e7e2d6352872d52461a6dda` |
 
 ## Engineering objective
 
@@ -14,11 +14,12 @@ produces analysis-ready evidence, and enforces the baseline's scope and gate
 semantics. The software is an experimental and engineering instrument; its
 existence alone is not evidence of conformance.
 
-For v4.3, engineering realizes only the ARINC Product Binding under a selected
-Profile and Project Configuration. It consumes the external Core as read-only,
-does not redefine Generic objects, and must record method/Profile/Binding/
-Configuration identities. `TMP-PC-ARINC615A-01` remains `NOT YET ESTABLISHED`;
-no execution or compatibility result is inferred from migration documents.
+For v4.3 and the v4.3.1 acknowledgement candidate, engineering realizes only
+the ARINC Product Binding under a selected Profile and Project Configuration. It
+consumes the external Core as read-only, does not redefine Generic objects, and
+must record method/Profile/Binding/Configuration identities.
+`TMP-PC-ARINC615A-01` remains `NOT YET ESTABLISHED`; no execution or instance-
+evaluation result is inferred from the qualified compatibility disposition.
 
 ## Target architecture
 

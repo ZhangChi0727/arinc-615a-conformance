@@ -18,16 +18,16 @@ The frozen mathematical and methodological content remains
 changes repository information architecture and reporting control only and
 does not change equations, timed semantics, assurance tiers, or claim rules.
 
-A migration candidate `RB-2026-001-v4.3` is in progress under
-[`CR-2026-004`](docs/control/changes/CR-2026-004.md). It binds this repository to
-the immutable Candidate GVS Core definition at
-`48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b`, while assigning this repository
-authority only for the ARINC 615A Profile, Product Binding, Project
-Configuration, instance engineering, instance research, and instance evidence.
-The controlled [`external GVS binding`](docs/control/contracts/EXTERNAL_GVS_BINDING.md)
-keeps compatibility `NOT-DETERMINED` and instance evaluation `NOT-EXERCISED`.
-PR #9 remains Draft until independent review; the migration earns no authority
-approval, certification credit, compatibility result, or empirical result.
+Released baseline `RB-2026-001-v4.3` is identified by annotated tag `v4.3` and
+commit `523d42bf03a1135b3d63a00bfb47d3b879d3927e`. Candidate
+`RB-2026-001-v4.3.1` under [`CR-2026-005`](docs/control/changes/CR-2026-005.md)
+acknowledges the method-repository third-handshake disposition at
+`c02330d21fe2d3e89e7e2d6352872d52461a6dda`, separately from the immutable
+Candidate GVS Core method definition at `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b`.
+Compatibility is `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` under Q-01–Q-09;
+instance evaluation remains `NOT-EXERCISED` and Project Configuration remains
+`NOT YET ESTABLISHED`. The Draft acknowledgement creates no certification,
+authority-acceptance, protocol-conformance, scalability, or RQ8-closure claim.
 
 ## Developer control entry points
 
@@ -101,14 +101,14 @@ result.
 `RB-2026-001-v4.2.1` 现为已生效并冻结的仓库基线。它只改变仓库信息架构和报告控制，
 不修改公式、时序语义、保证层级或主张规则。
 
-迁移候选基线 `RB-2026-001-v4.3` 正在 [`CR-2026-004`](docs/control/changes/CR-2026-004.md)
-下推进。它把本仓库绑定到提交
-`48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` 的不可变 Candidate GVS Core，
-同时将本仓库的权威范围限定为 ARINC 615A Profile、Product Binding、Project
-Configuration、实例工程、实例研究和实例证据。受控的
-[`外部 GVS 绑定`](docs/control/contracts/EXTERNAL_GVS_BINDING.md) 将兼容性保持为
-`NOT-DETERMINED`、实例评价保持为 `NOT-EXERCISED`。PR #9 在独立评审前保持
-Draft；此次迁移不取得权威批准、认证信用、兼容性结论或经验结果。
+已发布基线 `RB-2026-001-v4.3` 由 annotated tag `v4.3` 和提交
+`523d42bf03a1135b3d63a00bfb47d3b879d3927e` 标识。`CR-2026-005` 下的候选
+`RB-2026-001-v4.3.1` 确认方法仓库第三次握手处置提交
+`c02330d21fe2d3e89e7e2d6352872d52461a6dda`，并将其与不可变 Candidate GVS Core 方法定义提交
+`48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` 分离。兼容性为受 Q-01–Q-09 限定的
+`REVIEWED-COMPATIBLE-WITH-QUALIFICATION`；实例评价保持 `NOT-EXERCISED`，Project
+Configuration 保持 `NOT YET ESTABLISHED`。该 Draft 确认不产生认证、权威接受、协议符合性、
+可扩展性或 RQ8 关闭主张。
 
 ## 开发者控制入口
 

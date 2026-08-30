@@ -3,9 +3,9 @@
 | Field | Value |
 |---|---|
 | **Plan ID** | RP-2026-001 |
-| **Version** | 1.3 |
-| **Status** | Approved under effective v4.2; GVS-bound v4.3 migration candidate under CR-2026-004 |
-| **Methodology baseline** | RB-2026-001-v4.2 effective; v4.3 candidate bound to external MethodDefinitionCommit `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` |
+| **Version** | 1.4 |
+| **Status** | Approved under effective v4.2; released v4.3 plus v4.3.1 third-handshake acknowledgement candidate under CR-2026-005 |
+| **Methodology baseline** | RB-2026-001-v4.2 effective; v4.3.1 candidate bound to MethodDefinitionCommit `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` and MethodCompatibilityDispositionCommit `c02330d21fe2d3e89e7e2d6352872d52461a6dda` |
 | **Primary report** | [`methodology/RR-2026-001_test_analysis_conformance_methodology.md`](methodology/RR-2026-001_test_analysis_conformance_methodology.md) |
 
 ## Objective
@@ -19,11 +19,12 @@ version-complete evidence manifests. It may propose upstream changes through
 CR/DD, but neither analysis code nor publication prose silently changes method
 contracts or raw observations.
 
-Under the `RB-2026-001-v4.3` migration candidate, research questions are
-grouped into local ARINC/Profile methodology research, engineering evaluation,
-and instance research-only evaluation. This repository does not own Generic GVS
-Core research. A0–A4, R0–R5, and RG/G remain Profile/project candidate
-taxonomies with external correspondence `NOT-DETERMINED`.
+Under released `RB-2026-001-v4.3` and the v4.3.1 acknowledgement candidate,
+research questions remain grouped into local ARINC/Profile methodology research,
+engineering evaluation, and instance research-only evaluation. This repository
+does not own Generic GVS Core research. A0–A4, R0–R5, and RG/G remain
+Profile/project candidate taxonomies; their 18 + 7 mapping is reviewed only with
+Q-01–Q-09, and all row-level `NOT-DETERMINED`/`PARTIAL` states remain open.
 Mutation adequacy, held-out detection, calibration, diagnosis, and
 transferability are research-only extensions: they do not grant certification
 status, and failure to reach the R4 or R5 maturity states does not block
@@ -132,9 +133,10 @@ negative evidence.
 
 研究目标是评价一条可审计测试—分析流程能否产生有用、有边界且可复现的 ARINC 615A 离散与时序符合性证据，并改善追踪、故障检测、诊断和发布决策。RQ1–RQ6 继续覆盖导出、覆盖、有限充分性、证据解释、诊断和可迁移性；RQ2 的模型对象升级为带时钟 EFSM 和时序义务目录。研究只通过不可变、版本完整的证据清单消费工程观测；它可以通过 CR/DD 提议上游变化，但分析代码或出版叙述不得静默修改方法契约或原始观测。
 
-在 `RB-2026-001-v4.3` 迁移候选下，研究问题分为本地 ARINC/Profile 方法研究、工程评价和
-实例仅研究评价三类。本仓库不拥有 Generic GVS Core 研究；A0–A4、R0–R5 与 RG/G 均为
-Profile/项目候选 taxonomy，外部对应为 `NOT-DETERMINED`。突变充分性、留出检测、校准、
+在已发布 `RB-2026-001-v4.3` 与 v4.3.1 确认候选下，研究问题仍分为本地 ARINC/Profile
+方法研究、工程评价和实例仅研究评价三类。本仓库不拥有 Generic GVS Core 研究；A0–A4、
+R0–R5 与 RG/G 均为 Profile/项目候选 taxonomy。其 18 + 7 映射只在 Q-01–Q-09 限定下
+通过评审，所有行级 `NOT-DETERMINED`/`PARTIAL` 状态保持开放。突变充分性、留出检测、校准、
 诊断和迁移性为仅研究扩展：它们不授予认证状态，未达 R4 或 R5 不阻塞本地候选 A4。
 任何假设不得暗示突变或贝叶斯校准为面向认证保证所必需。
 

@@ -51,6 +51,7 @@ EXTERNAL_BINDING_PATH = CONTRACTS_DIR / "EXTERNAL_GVS_BINDING.md"
 INSTANCE_MAPPING_PATH = CONTRACTS_DIR / "GVS_INSTANCE_MAPPING.md"
 PROFILE_BINDING_PATH = CONTRACTS_DIR / "ARINC615A_PROFILE_BINDING_CONFIGURATION.md"
 MIGRATION_HANDOFF_PATH = CONTROL / "reviews" / "PR9_GVS_MIGRATION_REVIEW_HANDOFF.md"
+ACK_HANDOFF_PATH = CONTROL / "reviews" / "PR10_GVS_DISPOSITION_ACK_REVIEW_HANDOFF.md"
 
 # Structural invariant directories (content checked by presence, not version).
 REQUIRED_FIXED_FILES = [
@@ -73,6 +74,7 @@ REQUIRED_FIXED_FILES = [
     GATES_DIR / "PR6_BASELINE_REVIEW_CHECKLIST.md",
     CONTROL / "risks" / "RISK_REGISTER.md",
     MIGRATION_HANDOFF_PATH,
+    ACK_HANDOFF_PATH,
     RESEARCH / "RESEARCH_CONTROL.md",
     RESEARCH / "EXPERIMENT_PLAN.md",
     RESEARCH / "CLAIM_EVIDENCE_MATRIX.md",
@@ -176,6 +178,15 @@ V43_NONCLAIM_PHRASE = "certification-oriented does not mean certification-approv
 
 # Immutable GVS/instance identities for the reviewed migration candidate.
 METHOD_DEFINITION_COMMIT = "48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b"
+METHOD_DISPOSITION_COMMIT = "c02330d21fe2d3e89e7e2d6352872d52461a6dda"
+METHOD_APPROVED_HEAD = "37fb88329abaea8f7127da96a66c0ac5d7525543"
+ARINC_V43_RELEASE_COMMIT = "523d42bf03a1135b3d63a00bfb47d3b879d3927e"
+ARINC_V43_RELEASE_TAG = "v4.3"
+ACK_BASELINE_ID = "RB-2026-001-v4.3.1"
+ACK_DISPOSITION = "REVIEWED-COMPATIBLE-WITH-QUALIFICATION"
+ACK_QUALIFICATION_IDS = {f"Q-{number:02d}" for number in range(1, 10)}
+ACK_BASELINE_PATH = BASELINES_DIR / "RB-2026-001-v4.3.1.md"
+ACK_CHANGE_PATH = CHANGES_DIR / "CR-2026-005.md"
 LEGACY_RELEASE_TAG = "RB-2026-001-v4.2.1"
 LEGACY_RELEASE_COMMIT = "3299e6dae83424862f75a4c1d09b91b80d9d8b00"
 CONTROL_STATE_COMMIT = "0ce96f701159fd4156d5e5e9889360f53977a61b"
@@ -323,11 +334,12 @@ def validate_gvs_binding(errors: list[str]) -> None:
         "TMP-PB-ARINC615A-01",
         "TMP-PC-ARINC615A-01",
         METHOD_DEFINITION_COMMIT,
-        LEGACY_RELEASE_TAG,
-        LEGACY_RELEASE_COMMIT,
-        CONTROL_STATE_COMMIT,
-        PR9_STARTING_HEAD,
-        "NOT-DETERMINED",
+        METHOD_DISPOSITION_COMMIT,
+        METHOD_APPROVED_HEAD,
+        ARINC_V43_RELEASE_COMMIT,
+        ARINC_V43_RELEASE_TAG,
+        ACK_BASELINE_ID,
+        ACK_DISPOSITION,
         "NOT-EXERCISED",
         "NOT YET ESTABLISHED",
     )
@@ -369,10 +381,79 @@ def validate_gvs_binding(errors: list[str]) -> None:
                 )
 
 
+def _mapping_language_review_rows(
+    section: str, language: str, errors: list[str],
+) -> dict[str, tuple[str, str, str]]:
+    """Parse relation, status, and Review for every controlled mapping row."""
+    rows: dict[str, tuple[str, str, str]] = {}
+    expected_ids = set(METHOD_MAPPING_EXPECTED) | set(INSTANCE_ADDITIONAL_EXPECTED)
+    for line in section.splitlines():
+        match = re.match(r"^\| ([RA]\d{2}) \|", line)
+        if not match:
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        row_id = match.group(1)
+        expected_columns = 10 if row_id.startswith("R") else 11
+        if len(cells) != expected_columns:
+            errors.append(
+                f"{language} mapping row {row_id} must have {expected_columns} columns"
+            )
+            continue
+        relation_index, status_index = ((4, 5) if row_id.startswith("R") else (5, 6))
+        relation = cells[relation_index].strip("`")
+        status = cells[status_index].strip("`")
+        review = cells[-1]
+        if row_id in rows:
+            errors.append(f"duplicate {language} mapping review row: {row_id}")
+        rows[row_id] = (relation, status, review)
+
+        normalized_review = review.replace("～", "–")
+        if review.strip().lower() == "pending" or review.strip() == "待审":
+            errors.append(f"{language} mapping row {row_id} Review is still bare pending")
+        required_fragments = (
+            (METHOD_DISPOSITION_COMMIT, "Q-01–Q-09", "relation/status unchanged",
+             "local acknowledgement review pending")
+            if language == "English"
+            else (METHOD_DISPOSITION_COMMIT, "Q-01–Q-09", "关系/状态不变",
+                  "本地确认评审待完成")
+        )
+        for fragment in required_fragments:
+            if fragment not in normalized_review:
+                errors.append(
+                    f"{language} mapping row {row_id} Review lacks controlled reference: "
+                    f"{fragment}"
+                )
+        if language == "English":
+            prematurely_approved = re.search(
+                r"local acknowledgement(?: review)? (?:approved|complete|closed)",
+                review,
+                re.IGNORECASE,
+            )
+        else:
+            prematurely_approved = re.search(
+                r"本地确认(?:评审)?(?:已批准|已通过|已完成|已关闭)", review,
+            )
+        if prematurely_approved:
+            errors.append(
+                f"{language} mapping row {row_id} prematurely approves local acknowledgement"
+            )
+
+    if set(rows) != expected_ids:
+        errors.append(
+            f"{language} mapping Review row IDs differ: expected {sorted(expected_ids)}, "
+            f"found {sorted(rows)}"
+        )
+    return rows
+
+
 def mapping_reconciliation_errors(text: str) -> list[str]:
-    """Validate source-row closure and instance-only additions from supplied text."""
+    """Validate source-row closure, bilingual Review, and local additions."""
     errors: list[str] = []
-    english = text.split(ZH_MARKER, 1)[0]
+    if ZH_MARKER not in text:
+        return ["mapping bilingual boundary is missing"]
+    english, chinese = text.split(ZH_MARKER, 1)
+    english_review_rows = _mapping_language_review_rows(english, "English", errors)
+    chinese_review_rows = _mapping_language_review_rows(chinese, "Chinese", errors)
     source_rows: dict[str, tuple[str, str, str, str, str]] = {}
     additional_rows: dict[str, tuple[str, str]] = {}
 
@@ -438,6 +519,14 @@ def mapping_reconciliation_errors(text: str) -> list[str]:
         errors.append("VerificationCase and VerificationProcedure are not independent rows")
     if source_rows.get("R03", (None, None, None))[2] == source_rows.get("R04", (None, None, None))[2]:
         errors.append("legacy and candidate VerificationObligation sources are not separated")
+    for row_id in sorted(set(english_review_rows) & set(chinese_review_rows)):
+        english_relation_status = english_review_rows[row_id][:2]
+        chinese_relation_status = chinese_review_rows[row_id][:2]
+        if english_relation_status != chinese_relation_status:
+            errors.append(
+                f"bilingual mapping row {row_id} relation/status differs: "
+                f"English {english_relation_status}, Chinese {chinese_relation_status}"
+            )
     return errors
 
 
@@ -578,6 +667,241 @@ def evidence_chain_errors(
             errors.append(f"evidence/claim shortcut remains: {phrase}")
     return errors
 
+
+def controlled_table_value(text: str, field: str) -> str | None:
+    """Return one English control-table value; duplicates are an error upstream."""
+    english = text.split(ZH_MARKER, 1)[0]
+    matches = re.findall(
+        rf"(?m)^\| \*\*{re.escape(field)}\*\* \| (.*?) \|$", english,
+    )
+    return matches[0] if len(matches) == 1 else None
+
+
+def _without_fenced_code(text: str) -> str:
+    """Remove fenced code before checking prose for literal Markdown damage."""
+    return re.sub(r"(?ms)^```[^\n]*\n.*?^```[ \t]*$", "", text)
+
+
+def _controlled_content_link_targets(text: str, heading: str) -> set[str]:
+    if heading not in text:
+        return set()
+    section = text.split(heading, 1)[1]
+    section = re.split(r"(?m)^## ", section, maxsplit=1)[0]
+    return set(re.findall(r"\]\(([^)]+)\)", section))
+
+
+def third_handshake_acknowledgement_errors(
+    binding_text: str,
+    mapping_text: str,
+    pbc_text: str,
+    baseline_text: str,
+    change_text: str,
+    handoff_text: str,
+) -> list[str]:
+    """Validate the cross-repository acknowledgement without awarding approval."""
+    errors: list[str] = []
+    documents = {
+        "binding": binding_text,
+        "mapping": mapping_text,
+        "PBC": pbc_text,
+        "baseline": baseline_text,
+        "change": change_text,
+        "handoff": handoff_text,
+    }
+
+    for document_name, text in documents.items():
+        prose = _without_fenced_code(text)
+        damage = re.search(
+            r"`([nr])(?=(?:`|[ \t]*(?:[-#*>]|$)))",
+            prose,
+            re.MULTILINE,
+        )
+        if damage:
+            errors.append(
+                f"{document_name} contains literal Markdown line-break damage: "
+                f"`{damage.group(1)}"
+            )
+
+    bilingual_documents = {
+        name: text for name, text in documents.items()
+        if name in {"binding", "mapping", "baseline", "change", "handoff"}
+    }
+    bilingual_parts: dict[str, tuple[str, str]] = {}
+    for document_name, text in bilingual_documents.items():
+        if ZH_MARKER not in text:
+            errors.append(f"{document_name} acknowledgement bilingual boundary is missing")
+            continue
+        bilingual_parts[document_name] = tuple(text.split(ZH_MARKER, 1))  # type: ignore[assignment]
+
+    bilingual_common_values = (
+        METHOD_DEFINITION_COMMIT,
+        METHOD_DISPOSITION_COMMIT,
+        ACK_DISPOSITION,
+        "Q-01–Q-09",
+        "NOT-EXERCISED",
+        "NOT YET ESTABLISHED",
+    )
+    for document_name, parts in bilingual_parts.items():
+        for language, section in zip(("English", "Chinese"), parts):
+            for value in bilingual_common_values:
+                if value not in section:
+                    errors.append(
+                        f"{document_name} {language} controlled acknowledgement value "
+                        f"is missing: {value}"
+                    )
+
+    for document_name in ("binding", "handoff"):
+        if document_name not in bilingual_parts:
+            continue
+        for language, section in zip(("English", "Chinese"), bilingual_parts[document_name]):
+            for value, required_token in (
+                (METHOD_APPROVED_HEAD, METHOD_APPROVED_HEAD),
+                ("COMMENTED", "`COMMENTED`"),
+                ("APPROVE", "`APPROVE`"),
+            ):
+                if required_token not in section:
+                    errors.append(
+                        f"{document_name} {language} method review truth is missing: {value}"
+                    )
+
+    if "baseline" in bilingual_parts:
+        baseline_english, baseline_chinese = bilingual_parts["baseline"]
+        english_links = _controlled_content_link_targets(
+            baseline_english, "## Controlled content",
+        )
+        chinese_links = _controlled_content_link_targets(
+            baseline_chinese, "## 受控内容",
+        )
+        normalized_chinese_links = {
+            target.replace("#强制限定", "#mandatory-qualifications")
+            for target in chinese_links
+        }
+        if len(english_links) != 7 or len(chinese_links) != 7:
+            errors.append(
+                "baseline bilingual Controlled content must contain exactly seven links: "
+                f"English={len(english_links)}, Chinese={len(chinese_links)}"
+            )
+        if english_links != normalized_chinese_links:
+            errors.append(
+                "baseline bilingual Controlled content link targets differ: "
+                f"English={sorted(english_links)}, Chinese={sorted(chinese_links)}"
+            )
+
+    expected_fields = {
+        "MethodDefinitionCommit": METHOD_DEFINITION_COMMIT,
+        "MethodCompatibilityDispositionCommit": METHOD_DISPOSITION_COMMIT,
+    }
+    for document_name in ("binding", "mapping", "baseline", "change"):
+        for field, expected in expected_fields.items():
+            actual = controlled_table_value(documents[document_name], field)
+            expected_rendered = f"`{expected}`"
+            if actual != expected_rendered:
+                errors.append(
+                    f"{document_name} {field} identity differs: "
+                    f"expected {expected_rendered}, found {actual}"
+                )
+
+    if METHOD_DEFINITION_COMMIT == METHOD_DISPOSITION_COMMIT:
+        errors.append("method definition and disposition identities are conflated")
+
+    identity_requirements = {
+        "binding": (
+            METHOD_DEFINITION_COMMIT, METHOD_DISPOSITION_COMMIT,
+            METHOD_APPROVED_HEAD, ARINC_V43_RELEASE_COMMIT,
+            ARINC_V43_RELEASE_TAG, ACK_BASELINE_ID,
+        ),
+        "baseline": (
+            METHOD_DEFINITION_COMMIT, METHOD_DISPOSITION_COMMIT,
+            ARINC_V43_RELEASE_COMMIT, ARINC_V43_RELEASE_TAG, ACK_BASELINE_ID,
+        ),
+        "change": (
+            METHOD_DEFINITION_COMMIT, METHOD_DISPOSITION_COMMIT,
+            METHOD_APPROVED_HEAD, ARINC_V43_RELEASE_COMMIT,
+            ARINC_V43_RELEASE_TAG, ACK_BASELINE_ID,
+        ),
+        "handoff": (
+            METHOD_DEFINITION_COMMIT, METHOD_DISPOSITION_COMMIT,
+            METHOD_APPROVED_HEAD, ARINC_V43_RELEASE_COMMIT,
+            ARINC_V43_RELEASE_TAG, ACK_BASELINE_ID,
+        ),
+    }
+    for document_name, values in identity_requirements.items():
+        for value in values:
+            if value not in documents[document_name]:
+                errors.append(f"{document_name} is missing controlled identity: {value}")
+
+    controlled_status_fields = {
+        "Compatibility": ACK_DISPOSITION + " — Q-01–Q-09",
+        "Instance evaluation": "NOT-EXERCISED",
+        "Project Configuration": "NOT YET ESTABLISHED",
+    }
+    for document_name in ("binding", "mapping", "PBC"):
+        for field, expected in controlled_status_fields.items():
+            actual = controlled_table_value(documents[document_name], field)
+            if actual != expected:
+                errors.append(
+                    f"{document_name} controlled {field} differs: "
+                    f"expected {expected}, found {actual}"
+                )
+    for document_name in ("binding", "mapping", "PBC", "baseline", "change", "handoff"):
+        text = documents[document_name]
+        for value in (ACK_DISPOSITION, "NOT-EXERCISED", "NOT YET ESTABLISHED"):
+            if value not in text:
+                errors.append(f"{document_name} is missing controlled status: {value}")
+        if "Q-01–Q-09" not in text:
+            errors.append(f"{document_name} is missing the Q-01–Q-09 qualification set")
+
+    if ZH_MARKER in change_text:
+        change_english, change_chinese = change_text.split(ZH_MARKER, 1)
+        for language, section in (("English", change_english), ("Chinese", change_chinese)):
+            change_ids = set(re.findall(r"(?m)^\| (Q-\d{2}) \|", section))
+            if change_ids != ACK_QUALIFICATION_IDS:
+                errors.append(
+                    f"change request {language} qualification IDs differ: "
+                    f"expected {sorted(ACK_QUALIFICATION_IDS)}, found {sorted(change_ids)}"
+                )
+
+    # Commit-bound locators must associate definition artifacts only with the
+    # definition SHA and disposition artifacts only with the disposition SHA.
+    wrong_locator_patterns = (
+        rf"blob/{METHOD_DISPOSITION_COMMIT}/[^)\n]*generic_verification_suite_core\.md",
+        rf"blob/{METHOD_DEFINITION_COMMIT}/[^)\n]*third_handshake_compatibility_disposition\.md",
+        r"complex-system-verification-assurance/(?:blob|tree)/(?:main|master|latest)(?:/|$)",
+    )
+    for pattern in wrong_locator_patterns:
+        if re.search(pattern, binding_text, re.IGNORECASE):
+            errors.append(f"binding contains a wrong or mutable commit-bound association: {pattern}")
+
+    prohibited_promotions = (
+        "INSTANCE-EXERCISED", "VALIDATED-BASELINE", "RQ8 CLOSED",
+        "Project Configuration is ESTABLISHED", "protocol conformance established",
+    )
+    combined = "\n".join(documents.values())
+    for phrase in prohibited_promotions:
+        if phrase in combined:
+            errors.append(f"acknowledgement contains a prohibited promotion: {phrase}")
+
+    required_nonclaims = (
+        "no method-repository baseline or tag",
+        "no protocol-conformance",
+        "RQ8-closure",
+    )
+    for phrase in required_nonclaims:
+        if phrase.lower() not in combined.lower():
+            errors.append(f"acknowledgement non-claim is missing: {phrase}")
+
+    return errors
+
+
+def validate_third_handshake_acknowledgement(errors: list[str]) -> None:
+    errors.extend(third_handshake_acknowledgement_errors(
+        read(EXTERNAL_BINDING_PATH),
+        read(INSTANCE_MAPPING_PATH),
+        read(PROFILE_BINDING_PATH),
+        read(ACK_BASELINE_PATH),
+        read(ACK_CHANGE_PATH),
+        read(ACK_HANDOFF_PATH),
+    ))
 
 def validate_instance_mapping(errors: list[str]) -> None:
     errors.extend(mapping_reconciliation_errors(read(INSTANCE_MAPPING_PATH)))
@@ -880,6 +1204,7 @@ def main() -> int:
         validate_reference_catalog(errors)
 
     validate_gvs_binding(errors)
+    validate_third_handshake_acknowledgement(errors)
     validate_instance_mapping(errors)
     validate_cross_repository_semantics(errors)
     validate_candidate_semantics(errors)
@@ -900,7 +1225,7 @@ def main() -> int:
     if not v43_baselines:
         errors.append("v4.3 candidate baseline missing")
     else:
-        v43_text = read(v43_baselines[0])
+        v43_text = read(BASELINES_DIR / "RB-2026-001-v4.3.md")
         if V43_BASELINE_PREFIX not in v43_text:
             errors.append("v4.3 baseline does not declare RB-2026-001-v4.3")
         if V43_NONCLAIM_PHRASE not in v43_text:
@@ -910,6 +1235,8 @@ def main() -> int:
     cr_prefixes = {f.stem for f in cr_files}
     if "CR-2026-004" not in cr_prefixes:
         errors.append("CR-2026-004 not found among discovered change requests")
+    if "CR-2026-005" not in cr_prefixes:
+        errors.append("CR-2026-005 not found among discovered change requests")
 
     if errors:
         print("Baseline validation failed:", file=sys.stderr)
