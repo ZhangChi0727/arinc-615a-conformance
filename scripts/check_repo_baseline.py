@@ -1118,8 +1118,14 @@ def pr_required_file_errors(status: dict, changed: set[str] | None = None) -> li
 def retired_surface_errors(status: dict) -> list[str]:
     errors: list[str] = []
     current_dir = ROOT / "artifacts/reports/current"
-    if current_dir.is_dir() and any(path.is_file() for path in current_dir.iterdir()):
-        errors.append("retired current reader-report directory still contains files")
+    historical_report = ROOT / status["release"]["records"]["historicalReaderReportPath"]
+    current_files = {
+        path.resolve() for path in current_dir.iterdir() if path.is_file()
+    } if current_dir.is_dir() else set()
+    # The sole legacy path remains only because an atomic baseline references
+    # it. It is historical evidence, not a current-status owner.
+    if current_files != {historical_report.resolve()}:
+        errors.append("legacy reader-report path differs from the single immutable historical record")
     allowed_handoffs = {
         Path(status["release"]["records"]["migrationReviewPath"]),
         Path(status["release"]["records"]["acknowledgementReviewPath"]),

@@ -54,7 +54,7 @@ silently redefine the Core.
 State changes:
 
 - Current-status ownership moves to README plus project-status.json.
-- The v4.2.1 reader report becomes an archived historical information-architecture report.
+- The v4.2.1 reader report is retained at its legacy path as historical evidence and no longer owns current status.
 
 Unchanged boundaries:
 
@@ -99,7 +99,7 @@ Unchanged boundaries:
 状态变化：
 
 - 当前状态由 README 与 project-status.json 共同承载。
-- v4.2.1 reader report 转为历史信息架构报告。
+- v4.2.1 reader report 在原路径保留为历史证据，不再拥有当前状态。
 
 保持不变的边界：
 
@@ -143,7 +143,8 @@ tests/                     executable engineering and governance checks
 configs/                   controlled machine-readable inputs and templates
 scripts/                   synchronization and validation automation
 docs/                      developer control plane and atomic records
-artifacts/reports/archive/ historical reader reports
+artifacts/reports/current/ legacy report path retained for immutable references; not current status
+artifacts/reports/archive/ other historical reader reports
 artifacts/tutorials/       published tutorial outputs
 artifacts/releases/        distributable release packages
 artifacts/evidence/        generated evidence packages, normally untracked

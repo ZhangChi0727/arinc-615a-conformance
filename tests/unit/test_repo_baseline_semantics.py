@@ -215,7 +215,7 @@ def test_temporary_control_is_rejected_after_retirement() -> None:
     assert any("retirement condition is fulfilled" in error for error in baseline.sync.temporary_control_errors(data))
 
 
-def test_archived_reader_report_path_must_resolve() -> None:
+def test_historical_reader_report_path_must_resolve() -> None:
     data = status()
     data["release"]["records"]["historicalReaderReportPath"] = "artifacts/reports/archive/missing.md"
     assert any("historicalReaderReportPath" in error for error in baseline.sync.status_errors(data, ROOT))
