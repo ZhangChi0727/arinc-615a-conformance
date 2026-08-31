@@ -1,168 +1,86 @@
-# Engineering Implementation Plan
+# Engineering Control
 
-| Field | Value |
+This document controls implementation, configuration, testing and evidence
+production. Current increment and stop state are owned by the
+[root README](../../README.md) and [`project-status.json`](../../project-status.json).
+
+## 1. Engineering objective
+
+Build a deterministic, inspectable instrument that executes reviewed ARINC
+verification procedures, records clock-characterized observations and
+produces provenance-complete outputs without promoting its own claims.
+
+## 2. Stable architecture
+
+| Component | Responsibility |
 |---|---|
-| **Plan ID** | EIP-2026-001 |
-| **Version** | 1.4 |
-| **Status** | Approved under effective v4.2; released v4.3 plus v4.3.1 third-handshake acknowledgement candidate under CR-2026-005 |
-| **Methodology baseline** | RB-2026-001-v4.2 effective; v4.3.1 candidate bound to MethodDefinitionCommit `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` and MethodCompatibilityDispositionCommit `c02330d21fe2d3e89e7e2d6352872d52461a6dda` |
+| Configuration loader | validate IUT, environment, tool and procedure identities |
+| Protocol roles | exercise bounded data-loader interactions |
+| Case/procedure runner | execute versioned preconditions, actions and cleanup |
+| Observation capture | preserve packets, timestamps, logs and environment facts |
+| Oracle evaluator | transform observations into versioned results |
+| Evidence writer | package characterized evidence and provenance |
 
-## Engineering objective
+The evidence chain remains: Observation → Oracle evaluation → Result →
+Evidence → Argument/SufficiencyAssessment → Decision → versioned Claim.
 
-Build a reproducible verification instrument that implements the Test path,
-produces analysis-ready evidence, and enforces the baseline's scope and gate
-semantics. The software is an experimental and engineering instrument; its
-existence alone is not evidence of conformance.
+## 3. Increment discipline
 
-For v4.3 and the v4.3.1 acknowledgement candidate, engineering realizes only
-the ARINC Product Binding under a selected Profile and Project Configuration. It
-consumes the external Core as read-only, does not redefine Generic objects, and
-must record method/Profile/Binding/Configuration identities.
-`TMP-PC-ARINC615A-01` remains `NOT YET ESTABLISHED`; no execution or instance-
-evaluation result is inferred from the qualified compatibility disposition.
+Each engineering increment declares requirements, configuration assumptions,
+tests, evidence outputs, limitations and affected claims. It updates README and
+`project-status.json` in the same pull request and records “unchanged” when no
+lifecycle state changes.
 
-## Target architecture
+## 4. Quality and configuration gates
 
-```text
-Controlled CRS and models
-        |
-        v
-Case catalog -> selector -> runner -> protocol peer/IUT
-                    |          |
-                    v          v
-                 injector    observations
-                                  |
-                                  v
-                              oracle/verdict
-                                  |
-                                  v
-                  immutable evidence package
-                         |              |
-                         v              v
-                 coverage/mutation   diagnosis/calibration
-```
+- deterministic unit and integration tests;
+- explicit block-number, timeout and retry boundary tests;
+- monotonic timestamps and reviewed measurement-error budgets;
+- schema validation and provenance-complete evidence manifests;
+- negative tests for unsupported claim promotion;
+- Python 3.10, 3.11 and 3.12 CI.
 
-## Components
-
-| Component | Responsibility | Planned location |
-|---|---|---|
-| Requirement/model schemas | IDs, applicability, obligations, trace relations | `configs/`, `docs/control/contracts/` |
-| TFTP core | Packets, options, retry, duplicate, timeout, rollover | `src/a615a_sim/tftp/` |
-| 615A session | DOWNLOAD/UPLOAD observable state machines | `src/a615a_sim/session/` |
-| Timing model | clocks, guards, invariants, resets, timing obligations | `src/a615a_sim/timing/` |
-| Minimal data artifacts | Only 665/664 constraints required by the controlled scope | `src/a615a_sim/lsap/` |
-| Role controller | DLS/THW mode without duplicating protocol logic | `src/a615a_sim/roles/` |
-| Verification engine | Selection, injection, robust discrete/timing oracle, verdict, reset, run control | `src/a615a_sim/engine/` |
-| Evidence writer | Immutable run manifest, traces, measurements, verdicts | `src/a615a_sim/evidence/` |
-| Analysis tools | Coverage, mutation, intervals, calibration, diagnosis | `src/a615a_sim/analysis/` |
-| CLI/reporting | Reproducible commands and human/machine reports | `src/a615a_sim/cli.py`, `src/a615a_sim/report/` |
-
-## Increment plan
-
-| Increment | Scope | Acceptance evidence | Governing gate |
-|---|---|---|---|
-| E0 | Baseline schemas and IDs | Schema tests; example CRS/TP/VC round-trip | RG1 |
-| E1 | TFTP protocol core hardening | Unit tests for nominal, duplicate, retry, wrong-TID, rollover | Engineering review |
-| E2 | Clock-augmented observable 615A EFSM | Reviewed states, data/clock guards, invariants, resets, timing catalog, trace map | RG2 |
-| E3 | VC engine and robust oracle API | Discrete and interval-timing examples for all four verdicts; boundary/reset tests | RG3 |
-| E4 | Dual-role loopback timing instrument | Reproducible DOWNLOAD/UPLOAD runs; monotonic timestamps, error budget, manifest | RG4/G2 |
-| E5 | Coverage and mutation pipeline | B0/B1/B2-U/B2-T/B3 reports; invalid/equivalent handling; held-out split | G3 |
-| E6 | Evidence integrity and reporting | Raw-to-derived reproduction from clean checkout | RG5 |
-| E7 | Optional calibration and diagnosis | Held-out evaluation and sensitivity reports | G4–G6 |
-
-## Cross-cutting engineering requirements
-
-- every execution records baseline, CRS, model, VCS, IUT, tool, and environment versions;
-- PASS/FAIL/INCONCLUSIVE/ERROR remain distinct end to end;
-- oracles are testable independently of the runner;
-- time is measured from a declared monotonic source; timestamp source,
-  resolution, observation points, and uncertainty budget are evidence;
-- timing PASS requires the complete observation interval to be contained in the
-  allowed interval; invalid timing instrumentation produces ERROR;
-- reset and isolation are explicit case operations;
-- base and extended VCS results are separable;
-- raw evidence is append-only; transformations create derived artifacts;
-- method inputs are imported through versioned schemas and semantic contracts;
-  internal Python APIs are not research or tutorial interfaces;
-- exported evidence manifests carry the upstream artifact versions and stable
-  IDs required by research, publication, and executable tutorials;
-- stochastic tools record seeds and repeated-seed results;
-- proprietary standard text never enters public fixtures;
-- the verification engine produces a case verdict only; it must not decide
-  objective satisfaction or compliance automatically—those are reviewed artifacts;
-- evidence manifests carry verification-objective refs, test
-  article/setup/procedure conformity refs, problem refs, and tool qualification
-  status, so an Execution Evidence Manifest alone never closes an objective;
-- tool qualification credit is not claimed; the default `qualificationStatus` is
-  `NOT_CLAIMED` unless an applicable qualification basis is established.
-
-## Quality strategy
-
-| Level | Purpose |
-|---|---|
-| Unit | Packet, data/clock guard, clock reset, robust oracle, schema, statistic, and serialization correctness |
-| Contract | Stable interfaces between runner, peer, oracle, and evidence writer |
-| Integration | DLS↔THW sessions, timer/reset behavior, failures, and evidence provenance |
-| Scenario | Requirement-derived discrete/timed VCs and mutation detection |
-| Reproduction | Rebuild a published table from a clean environment |
-
-CI must test supported Python versions and reject schema, traceability, or
-evidence-manifest violations once those validators exist.
-
-## Definition of engineering baseline readiness
-
-- E0–E4 are complete;
-- RG0–RG4 are approved;
-- at least one end-to-end VC preserves a complete evidence package;
-- the package is reproduced on a clean checkout;
-- no empirical claim exceeds the achieved local ARINC/Profile assurance or
-  research candidate state (A0–A4 and R0–R5 are not Generic/authority levels);
-- known limitations and deviations are recorded.
-
----
+No execution result is interpreted before a real Project Configuration exists.
+Tool success is evidence about the tool and run, not by itself protocol
+conformance or certification evidence.
 
 # 中文版
 
-## 工程目标
+本文档控制实现、配置、测试与证据生产。当前增量和停点由
+[根 README](../../README.md)与 [`project-status.json`](../../project-status.json) 管理。
 
-实现一套可复现验证仪器：执行测试路径、产生可分析证据，并强制执行 v4.2 的范围、时序和门禁语义。主要组件包括需求/模型 schema、TFTP 核心、615A 会话、时钟与时序义务模型、双角色控制器、VC 引擎、稳健 oracle、证据写入、覆盖/变异/时序/校准/诊断分析和 CLI 报告。
+## 1. 工程目标
 
-对 v4.3 而言，工程只在选定 Profile 与 Project Configuration 下实现 ARINC Product
-Binding。它只读消费外部 Core，不重定义 Generic 对象，并必须记录 method/Profile/Binding/
-Configuration 身份。`TMP-PC-ARINC615A-01` 仍为 `NOT YET ESTABLISHED`；不得从迁移文档
-推断执行或兼容性结果。
+构建确定、可检查的工具，执行已评审 ARINC 验证规程，记录经时钟表征的 Observation，
+产生来源完整的输出，并且不自行晋级主张。
 
-## 目标架构
+## 2. 稳定架构
 
-```text
-受控需求/模型 -> VC 引擎 -> 双角色协议执行 -> oracle
-                                      |          |
-                                      +-> 证据 <-+
-                                             |
-                                  覆盖/变异/时序/统计分析
-```
+| 组件 | 职责 |
+|---|---|
+| 配置加载器 | 校验 IUT、环境、工具和规程身份 |
+| 协议角色 | 执行有边界的数据加载交互 |
+| Case／procedure runner | 执行版本化前置条件、动作与清理 |
+| Observation 捕获 | 保存报文、时戳、日志和环境事实 |
+| Oracle evaluator | 将 Observation 转换为版本化 Result |
+| Evidence writer | 封装经表征的 Evidence 与来源 |
 
-## 组件
+证据链保持为：Observation → Oracle evaluation → Result → Evidence →
+Argument/SufficiencyAssessment → Decision → versioned Claim。
 
-组件包括需求/模型 schema、TFTP 核心、615A 会话、时钟与时序义务模型、双角色控制器、VC 引擎、稳健 oracle、证据写入器、分析管线以及 CLI/报告层。
+## 3. 增量纪律
 
-## 增量计划
+每个工程增量声明需求、配置假设、测试、证据输出、限制和受影响主张，并在同一 PR 更新
+README 与 `project-status.json`；没有生命周期状态变化时也要明确记录“不变”。
 
-- E0：基线 schema 和 ID；
-- E1：TFTP 核心加固；
-- E2：带时钟 615A EFSM，包括数据/时钟守卫、不变量、复位和时序目录；
-- E3：离散与区间时序 oracle API，覆盖四类判定和边界/复位测试；
-- E4：双角色环回时序仪器，保存单调时间戳、误差预算和 manifest；
-- E5–E7：覆盖/变异、证据复现及可选校准/诊断。
+## 4. 质量与配置门禁
 
-## 横向工程要求
+- 确定性单元测试与集成测试；
+- 显式的块号、超时和重试边界测试；
+- 单调时戳与经评审的测量误差预算；
+- schema 校验与来源完整的 Evidence Manifest；
+- 防止不受支持主张晋级的负例；
+- Python 3.10、3.11 和 3.12 CI。
 
-每次执行记录完整版本链；四类判定端到端分离；oracle 可独立测试；时间来自声明的单调源；时间戳源、分辨率、位置和误差预算属于证据；只有完整观测区间包含于允许区间时才可判时序 PASS；仪器无效必须判 ERROR；原始证据只追加，派生产物保留全部输入和脚本版本。方法输入只通过版本化 schema 和语义契约导入，Python 内部 API 不是研究或教程接口；导出的证据清单必须携带研究、出版和可执行教程所需的上游版本与稳定 ID。验证引擎只产生用例判定，不得自动决定目标满足或合规——这些是受评审产物；证据清单须携带验证目标引用、测试件/装置/规程符合性引用、问题引用和工具鉴定状态，使执行证据清单本身不关闭目标；除非在适用鉴定基础上建立，工具鉴定默认 `qualificationStatus` 为 `NOT_CLAIMED`。
-
-## 质量策略
-
-使用单元、契约、集成和场景测试，覆盖离散/时序边界、重置、重复、乱序、超时、无响应、证据完整性和故障注入；工具失败必须与 IUT FAIL 分离。
-
-## 工程基线就绪定义
-
-只有 schema、版本脊柱、四类判定、单调时钟、误差预算、证据 manifest、端到端干运行和相关门禁均完成时，工程基线才可称为就绪。
+在真实 Project Configuration 建立之前不得解释执行结果。工具成功仅是工具和运行的证据，
+本身不是协议符合性或认证证据。

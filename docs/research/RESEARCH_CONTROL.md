@@ -1,179 +1,111 @@
-# Research Plan
+# Research Control
 
-| Field | Value |
-|---|---|
-| **Plan ID** | RP-2026-001 |
-| **Version** | 1.4 |
-| **Status** | Approved under effective v4.2; released v4.3 plus v4.3.1 third-handshake acknowledgement candidate under CR-2026-005 |
-| **Methodology baseline** | RB-2026-001-v4.2 effective; v4.3.1 candidate bound to MethodDefinitionCommit `48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b` and MethodCompatibilityDispositionCommit `c02330d21fe2d3e89e7e2d6352872d52461a6dda` |
-| **Primary report** | [`methodology/RR-2026-001_test_analysis_conformance_methodology.md`](methodology/RR-2026-001_test_analysis_conformance_methodology.md) |
+This document controls ARINC-domain research, experiments and claim ownership.
+Current lifecycle state is shown only in the [root README](../../README.md) and
+[`project-status.json`](../../project-status.json).
 
-## Objective
+## 1. Research objective
 
-Evaluate whether an auditable Test-and-Analysis workflow can produce useful,
-bounded, and reproducible ARINC 615A conformance evidence while improving
-engineering traceability, defect detection, diagnosis, and release decisions.
+Evaluate how a commit-bound Candidate GVS Core can be refined into a credible
+ARINC 615A Profile, Binding, Configuration and evidence-producing instance.
+The work seeks both scientific insight and usable engineering decisions while
+keeping claims bounded by available sources, configurations and observations.
 
-Research consumes engineering observations only through immutable,
-version-complete evidence manifests. It may propose upstream changes through
-CR/DD, but neither analysis code nor publication prose silently changes method
-contracts or raw observations.
+## 2. Method Inputs → ARINC Domain/Product Refinement → Instance Evidence → Controlled Feedback
 
-Under released `RB-2026-001-v4.3` and the v4.3.1 acknowledgement candidate,
-research questions remain grouped into local ARINC/Profile methodology research,
-engineering evaluation, and instance research-only evaluation. This repository
-does not own Generic GVS Core research. A0–A4, R0–R5, and RG/G remain
-Profile/project candidate taxonomies; their 18 + 7 mapping is reviewed only with
-Q-01–Q-09, and all row-level `NOT-DETERMINED`/`PARTIAL` states remain open.
-Mutation adequacy, held-out detection, calibration, diagnosis, and
-transferability are research-only extensions: they do not grant certification
-status, and failure to reach the R4 or R5 maturity states does not block
-certification-oriented closure (A4). No hypothesis may imply that mutation or
-Bayesian calibration is necessary for certification-oriented assurance.
+| Research content | Authority | ARINC treatment |
+|---|---|---|
+| Generic verification objects and relations | Method repository | Cite immutable method commits and instantiate; do not redefine |
+| Observation → Oracle → Result → Evidence → Argument → Claim | Method repository | Implement, constrain and evaluate the chain in the ARINC context |
+| Coverage, Sufficiency and Reviewability dimensions | Method repository | Produce ARINC-specific observations and instance results |
+| Core/Profile/Binding/Configuration layering | Method repository | Establish the ARINC Profile, Binding and real Configuration |
+| ARINC applicability and CRS | ARINC repository | Conduct domain/product research without reproducing proprietary text |
+| Protocol states, messages, timing, errors and robustness | ARINC repository | Refine observable ARINC domain semantics |
+| IUT, environment, tools, clocks and error budget | ARINC repository | Control as Project Configuration |
+| Test Purpose, Case, Procedure and fault model | ARINC repository | Design product/domain verification artifacts |
+| Execution evidence, experimental results and ARINC claims | ARINC repository | Keep instance-scoped; no automatic Generic promotion |
+| Finding about the method | Method repository decides | Submit a Framework Change Proposal; never modify the Core implicitly |
 
-## Research questions and work packages
+## 3. Input and refinement rules
 
-| RQ | Work package | Principal output | Decision criterion |
-|---|---|---|---|
-| RQ1 Derivation | WP1 Scope and CRS | Applicability declaration, CRS, adjudication log | RG0–RG1 passed |
-| RQ2 Coverage | WP2 Timed model and VCS | clock-augmented EFSM, timing catalog, trace relations, coverage matrices, VCs | RG2–RG3 and G1 passed |
-| RQ3 Bounded adequacy | WP3 Fault study | Operator catalog, development/held-out mutants, results | G3 passed; held-out rate reported |
-| RQ4 Evidence interpretation | WP4 Repeatability and calibration | Run model, intervals, calibration dataset, sensitivity analysis | G4–G5 passed before T3 |
-| RQ5 Diagnosis | WP5 Diagnostic evaluation | Features, baseline classifier, held-out metrics | G6 passed before localization claim |
-| RQ6 Transferability | WP6 Replication | Second-protocol instance and comparative analysis | G7 passed |
+1. ARINC research is conducted under, not in place of, the Candidate GVS Core.
+2. Generic method inputs use immutable commit-bound locators; neither
+   repository's mutable `main` branch is a controlled semantic identity.
+3. ARINC may specialize generic objects into domain and product artifacts but
+   may not reverse-define the Generic Core.
+4. ARINC findings may support, qualify or falsify candidate method claims.
+   Cross-instance generalization and RQ8 closure remain the method repository's
+   synthesis responsibility.
+5. Without an established Project Configuration and execution results, this
+   repository remains in research and engineering preparation.
 
-## Research sequence
+## 4. Research sequence
 
-### Phase R0 — Baseline and registration
+| Stage | Research activity | Controlled output |
+|---|---|---|
+| R0 | source and scope control | applicability declaration, source manifest, registration |
+| R1 | requirements and observation boundary | CRS, obligations, adjudication record |
+| R2 | behavioral and timed refinement | model, timing semantics, test purposes, cases and oracles |
+| R3 | configured execution | observations, results, evidence manifests and deviations |
+| R4 | bounded adequacy and diagnosis | mutation, coverage, calibration and diagnostic analyses |
+| R5 | replication and synthesis | cross-instance comparison and explicitly bounded transfer claims |
 
-- freeze RB-2026-001-v4.2;
-- establish document ownership, change control, risks, and claim matrix;
-- register the first CRS extraction and inter-reviewer study.
+## 5. Experiment and claim discipline
 
-**Exit:** repository baseline is internally consistent and reproducible.
-
-### Phase R1 — Requirements and observation boundary
-
-- record standard edition, services, roles, options, exclusions, and observation boundary;
-- perform two independent normative-requirement extractions;
-- adjudicate disagreements without publishing proprietary standard text;
-- classify every applicable requirement by verification obligation.
-
-**Exit:** RG0, RG1, and G0 passed.
-
-### Phase R2 — Behavioral model and verification cases
-
-- construct the clock-augmented observable EFSM and timing-obligation catalog;
-- establish \(\rho_{RT}\), \(\rho_{TV}\), and requirement/model-target mappings;
-- derive positive, negative, data, sequence, and early/nominal/boundary/late/no-response timing cases;
-- independently review discrete and robust timing oracle logic, clock/reset semantics, and measurement-error budgets.
-
-**Exit:** RG2, RG3, and G1 passed; T0 achieved.
-
-### Phase R3 — Execution and bounded adequacy
-
-- freeze tool, environment, IUT configuration, seeds, and logging;
-- execute the base VCS and preserve every PASS/FAIL/INCONCLUSIVE/ERROR;
-- pre-register development and held-out fault splits;
-- evaluate mutation adequacy and held-out detection.
-
-**Exit:** RG4, RG5, G2, and G3 passed; T1/T2 results available.
-
-### Phase R4 — Quantitative evidence and diagnosis
-
-- evaluate repeated-run assumptions and operational PASS intervals;
-- estimate false-fail and false-PASS behavior from independent calibration data;
-- report likelihood/Bayes-factor results with prior sensitivity only when valid;
-- compare diagnostic models against simple baselines and permit abstention.
-
-**Exit:** G4–G6 passed for any T3 or diagnosis claim.
-
-### Phase R5 — Transferability
-
-- select a protocol with contrasting state, timing, or transport characteristics;
-- repeat the minimum R1–R3 artifact chain;
-- identify invariant and protocol-specific method components.
-
-**Exit:** G7 passed; RQ6 answered with cross-instance evidence.
-
-## Pre-registered hypotheses
-
-| ID | Hypothesis | Comparator | Primary metric |
-|---|---|---|---|
-| H1 | Requirement+EFSM derivation increases obligation coverage | Existing ICD/engineering set B0 | Coverage by obligation category |
-| H2 | Development-mutant refinement improves held-out fault detection | B2-T versus B3 | Held-out detection-rate difference with interval |
-| H3 | Gate reviews reduce downstream escaped defects | Ungated or earlier artifact revisions | Escape rate and rework effort |
-| H4 | Calibrated evidence outperforms raw PASS frequency as a probabilistic forecast | Raw-frequency baseline | Brier score/log loss on held-out instances |
-| H5 | Feature-based diagnosis outperforms severity-only ranking | FMEA severity baseline | Macro F1, Top-3 recall, abstention curve |
-| HT1 | A clock-augmented model exposes timing obligations missed by an untimed EFSM | B2-U versus B2-T | Added valid timing obligations and timing-partition coverage |
-| HT2 | An uncertainty-aware timing oracle reduces unsupported boundary verdicts | Naive point-threshold oracle | False-verdict and INCONCLUSIVE rates against controlled truth |
-| HT3 | Timing-boundary and timing-mutant refinement improves held-out timing-fault detection | B2-T versus B3 | Held-out timing-fault detection-rate difference |
-
-H4 and H5 are conditional research extensions. Failure to obtain representative
-calibration or sufficient fault instances is a reportable result, not permission
-to weaken the gate.
-
-## Publication units
-
-1. methodology and formal semantics;
-2. ARINC 615A CRS/EFSM/VCS construction study;
-3. deterministic timed-conformance and measurement-uncertainty study;
-4. finite-fault-domain adequacy experiment;
-5. optional calibrated-evidence and diagnosis study;
-6. second-protocol replication.
-
-Each unit must distinguish planned methods from observed results and preserve
-negative evidence.
-
----
+Experiments are registered before confirmatory execution. Raw observations are
+immutable; transformations, oracle versions, uncertainty and exclusions are
+recorded. A result becomes admissible evidence only after identity,
+provenance, applicability and credibility are reviewed. Publications cite the
+applicable configuration, evidence and decision records and state unearned
+claims explicitly.
 
 # 中文版
 
-## 目标
+本文档控制 ARINC 领域研究、实验和主张归属。当前生命周期状态只在
+[根 README](../../README.md)与 [`project-status.json`](../../project-status.json) 中展示。
 
-研究目标是评价一条可审计测试—分析流程能否产生有用、有边界且可复现的 ARINC 615A 离散与时序符合性证据，并改善追踪、故障检测、诊断和发布决策。RQ1–RQ6 继续覆盖导出、覆盖、有限充分性、证据解释、诊断和可迁移性；RQ2 的模型对象升级为带时钟 EFSM 和时序义务目录。研究只通过不可变、版本完整的证据清单消费工程观测；它可以通过 CR/DD 提议上游变化，但分析代码或出版叙述不得静默修改方法契约或原始观测。
+## 1. 研究目标
 
-在已发布 `RB-2026-001-v4.3` 与 v4.3.1 确认候选下，研究问题仍分为本地 ARINC/Profile
-方法研究、工程评价和实例仅研究评价三类。本仓库不拥有 Generic GVS Core 研究；A0–A4、
-R0–R5 与 RG/G 均为 Profile/项目候选 taxonomy。其 18 + 7 映射只在 Q-01–Q-09 限定下
-通过评审，所有行级 `NOT-DETERMINED`/`PARTIAL` 状态保持开放。突变充分性、留出检测、校准、
-诊断和迁移性为仅研究扩展：它们不授予认证状态，未达 R4 或 R5 不阻塞本地候选 A4。
-任何假设不得暗示突变或贝叶斯校准为面向认证保证所必需。
+评价由不可变提交绑定的 Candidate GVS Core 如何精化为可信的 ARINC 615A Profile、
+Binding、Configuration 及证据生产实例。在可用来源、配置和观测边界内，同时追求科学
+认识和可用工程决策。
 
-## 研究问题与工作包
+## 2. 方法输入 → ARINC 领域／产品精化 → 实例证据 → 受控反馈
 
-RQ1–RQ6 分别映射到需求提取、模型/覆盖、有限故障充分性、定量证据、诊断和可迁移性工作包；每个工作包均声明产物、实验、门禁和允许主张。
+| 研究内容 | 权威 | ARINC 处理方式 |
+|---|---|---|
+| 通用验证对象及关系 | 方法仓库 | 引用不可变方法提交并实例化，不重新定义 |
+| Observation → Oracle → Result → Evidence → Argument → Claim | 方法仓库 | 在 ARINC 场景实现、约束和评价该链 |
+| Coverage、Sufficiency、Reviewability 等维度 | 方法仓库 | 形成 ARINC 特定 Observation 与实例 Result |
+| Core/Profile/Binding/Configuration 分层 | 方法仓库 | 建立 ARINC Profile、Binding 与真实 Configuration |
+| ARINC 适用性与 CRS | ARINC 仓库 | 开展领域／产品研究且不复刻专有原文 |
+| 协议状态、消息、时序、错误与鲁棒性 | ARINC 仓库 | 精化可观测的 ARINC 领域语义 |
+| IUT、环境、工具、时钟与误差预算 | ARINC 仓库 | 作为 Project Configuration 受控 |
+| Test Purpose、Case、Procedure 与故障模型 | ARINC 仓库 | 设计产品／领域验证产物 |
+| 执行证据、实验结果与 ARINC 主张 | ARINC 仓库 | 保持实例范围，不自动晋级为 Generic 结论 |
+| 关于方法的问题 | 方法仓库决定 | 提交 Framework Change Proposal，不隐式修改 Core |
 
-## 研究序列
+## 3. 输入与精化规则
 
-### 阶段 R0——基线与注册
+1. ARINC 研究位于 Candidate GVS Core 之下，而不是取代它；
+2. 通用方法输入使用不可变 commit-bound locator；任一仓库可变的 `main` 都不是受控语义身份；
+3. ARINC 可把通用对象精化为领域和产品产物，但不能反向定义 Generic Core；
+4. ARINC finding 可以支持、限定或反证候选方法主张；跨实例推广和 RQ8 关闭仍由方法仓库综合；
+5. 在 Project Configuration 和执行结果尚未建立时，本仓库仍处于研究／工程准备状态。
 
-1. R0：冻结 RB-2026-001-v4.2，建立变更、风险和主张控制。
+## 4. 研究序列
 
-### 阶段 R1——需求与观测边界
+| 阶段 | 研究活动 | 受控输出 |
+|---|---|---|
+| R0 | 来源与范围控制 | 适用性声明、来源清单、注册 |
+| R1 | 需求与观测边界 | CRS、义务、裁决记录 |
+| R2 | 行为与时序精化 | 模型、时序语义、TP、case 和 oracle |
+| R3 | 配置化执行 | Observation、Result、Evidence Manifest 和偏差 |
+| R4 | 有边界充分性与诊断 | 变异、覆盖、校准和诊断分析 |
+| R5 | 复现与综合 | 跨实例比较及明确受限的迁移主张 |
 
-2. R1：固定标准、角色、服务、观测边界并双人提取 CRS。
+## 5. 实验与主张纪律
 
-### 阶段 R2——行为模型与验证用例
-
-3. R2：建立带时钟 EFSM；追踪状态、转移、时钟守卫和复位；导出离散及过早/标称/边界/过晚/无响应用例；独立评审稳健时序 oracle 和误差预算。
-
-### 阶段 R3——执行与有限充分性
-
-4. R3：冻结工具、IUT、环境、时钟和日志，执行基础 VCS，并用开发/留出离散与时序故障评价有限充分性。
-
-### 阶段 R4——定量证据与诊断
-
-5. R4：分析重复运行依赖、校准和诊断；条件不足时停留在 T2。
-
-### 阶段 R5——可迁移性
-
-6. R5：用具有不同状态、时序或传输特性的第二协议复现。
-
-## 预注册假设
-
-除原 H1–H5 外，HT1 比较无时钟 B2-U 与带时钟 B2-T 的义务发现能力；HT2 比较误差感知 oracle 与朴素点阈值的错误判定；HT3 检验时序边界和时序变异改进是否提高留出时序故障检测率。所有否定和不完整结果均为有效研究结果，不得通过事后放宽门禁消除。
-
-## 发布单元
-
-发布单元包括方法/需求研究、工具与复现包、有限故障评价、时序符合性实验、可选校准/诊断研究以及第二协议复现；每个单元只发布其门禁支持的结论。
+确认性执行前必须注册实验。原始 Observation 不可变；转换、Oracle 版本、不确定度和排除项
+必须记录。Result 只有在身份、来源、适用性和可信度经评审后才能成为准入 Evidence。
+出版物必须引用适用 Configuration、Evidence 和 Decision，并明确陈述尚未获得的主张。

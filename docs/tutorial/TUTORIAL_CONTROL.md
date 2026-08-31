@@ -1,79 +1,50 @@
-# Verification Tutorial Workspace
+# Tutorial Control
 
-Tutorials translate controlled methodology and released engineering artifacts
-into reproducible learning paths. They are downstream products: useful for
-teaching and operation, but never authoritative for requirements, formal
-semantics, verdicts, or research claims.
+This document controls tutorial production and publication. Current project
+state is linked from the [root README](../../README.md), not duplicated here.
 
-## Product lines
+## 1. Product lines
 
-| Product | Entry | Purpose |
+| Product | Scope | Source |
 |---|---|---|
-| Common verification tutorial | [`sources/COMMON_TUTORIAL_PLAN.md`](sources/COMMON_TUTORIAL_PLAN.md) | protocol-independent concepts, methods, evidence reasoning, and exercises |
-| ARINC 615A instance tutorial | [`sources/ARINC615A_TUTORIAL_PLAN.md`](sources/ARINC615A_TUTORIAL_PLAN.md) | concrete conformance workflow using a named baseline, tool release, and examples |
+| Common Verification Tutorial | protocol-independent method concepts and exercises | [`COMMON_TUTORIAL_PLAN.md`](sources/COMMON_TUTORIAL_PLAN.md) |
+| ARINC 615A Tutorial | instance walkthrough using only releasable project material | [`ARINC615A_TUTORIAL_PLAN.md`](sources/ARINC615A_TUTORIAL_PLAN.md) |
 
-The two lines may cross-reference common concepts, but ARINC-specific material
-must not be presented as a universal verification rule.
+## 2. Dependency and traceability rule
 
-## Dependency and traceability rule
+Tutorials cite versioned method, research and engineering artifacts. They may
+explain a released baseline and tool behavior but never become a normative
+source, replace a review record or import proprietary protocol text.
 
-Each controlled tutorial declares the applicable subset of:
+Each tutorial release declares `normative: false`, `explains_baseline`,
+`explains_tool_release` and the required configuration/evidence prerequisites.
 
-```text
-tutorial_id
-tutorial_version
-tutorial_type
-explains_baseline
-explains_tool_release
-example_artifact_ids
-evidence_manifest_ids
-source_or_concept_references
-normative: false
-```
+## 3. Promotion and feedback rule
 
-Executable ARINC 615A lessons must pin the baseline and tool release. Common
-concept lessons may mark tool- and example-specific fields not applicable, but
-must still identify the concept sources and project baseline used for wording.
-
-## Promotion and feedback rule
-
-Tutorial observations may open an issue, CR, or DD. They cannot directly change
-the method or engineering release. Corrected upstream artifacts are reviewed and
-versioned first; the tutorial then updates its references.
-
----
+Tutorial clarity findings return to the owning workstream as issues or change
+proposals. Tutorial examples cannot promote compatibility, configuration,
+evaluation, certification or RQ8 state.
 
 # 中文版
 
-教程把受控方法论和已发布工程产物转化为可复现的学习路径。它们是下游产品：可用于教学与操作，但不对需求、形式语义、判定或研究主张拥有权威。
+本文档控制教程生产与发布。当前项目状态从[根 README](../../README.md)进入，不在此重复。
 
-## 产品线
+## 1. 产品线
 
-| 产品 | 入口 | 用途 |
+| 产品 | 范围 | 来源 |
 |---|---|---|
-| 通用验证教程 | [`sources/COMMON_TUTORIAL_PLAN.md`](sources/COMMON_TUTORIAL_PLAN.md) | 协议无关的概念、方法、证据推理和练习 |
-| ARINC 615A 实例教程 | [`sources/ARINC615A_TUTORIAL_PLAN.md`](sources/ARINC615A_TUTORIAL_PLAN.md) | 使用具名基线、工具发布和示例讲解具体符合性流程 |
+| 通用验证教程 | 与协议无关的方法概念及练习 | [`COMMON_TUTORIAL_PLAN.md`](sources/COMMON_TUTORIAL_PLAN.md) |
+| ARINC 615A 教程 | 仅使用可发布项目材料的实例讲解 | [`ARINC615A_TUTORIAL_PLAN.md`](sources/ARINC615A_TUTORIAL_PLAN.md) |
 
-两条产品线可以交叉引用通用概念，但不得把 ARINC 专用材料表述为普遍验证规则。
+## 2. 依赖与追踪规则
 
-## 依赖与追踪规则
+教程引用版本化的方法、研究和工程产物。教程可以解释已发布 baseline 和工具行为，但不能
+成为规范来源、替代评审记录或引入专有协议原文。
 
-每份受控教程声明以下字段的适用子集：
+每次教程发布声明 `normative: false`、`explains_baseline`、
+`explains_tool_release` 以及必要的配置／证据前置条件。
 
-```text
-tutorial_id
-tutorial_version
-tutorial_type
-explains_baseline
-explains_tool_release
-example_artifact_ids
-evidence_manifest_ids
-source_or_concept_references
-normative: false
-```
+## 3. 晋级与反馈规则
 
-可执行的 ARINC 615A 课程必须固定基线和工具发布。通用概念课程可以把工具和示例字段标为不适用，但仍须标明概念来源以及措辞采用的项目基线。
-
-## 晋级与反馈规则
-
-教程观察可以发起 issue、CR 或 DD，但不能直接改变方法或工程发布。上游产物必须先完成修正、评审和版本化，教程随后更新引用。
+教程清晰度问题通过 issue 或变更提案反馈给所属工作流。教程示例不能晋级兼容性、配置、
+评价、认证或 RQ8 状态。
