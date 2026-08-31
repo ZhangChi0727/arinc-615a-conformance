@@ -152,6 +152,11 @@ REQUIRED_ARCHITECTURE_TERMS = {
         "atomic records",
         "Every pull request updates both",
     },
+    CONTROL / "CHANGE_CONTROL.md": {
+        "Changes to standard interpretation, applicability, mathematical/timing or",
+        "ownership or migration semantics are baseline changes requiring independent",
+        "对标准解释、适用性、数学／时序或 oracle／verdict 语义",
+    },
 }
 
 REQUIRED_REPORT_TERMS = {
@@ -364,7 +369,7 @@ def validate_gvs_binding(errors: list[str]) -> None:
         re.IGNORECASE,
     ):
         errors.append("external GVS binding uses a mutable method-repository locator")
-    if re.search(r"(?:^|[\s`'\"(])(?:[A-Za-z]:[\\/]|file://)", binding, re.MULTILINE):
+    if MACHINE_LOCAL_RE.search(binding):
         errors.append("external GVS binding contains a machine-local path")
     if "196cfc" in binding:
         errors.append("external GVS binding uses the pre-merge method parent 196cfc")
@@ -1023,15 +1028,15 @@ def validate_tracked_hygiene(errors: list[str]) -> None:
             errors.append(f"prohibited generated/private artifact is tracked: {relative}")
             continue
         path = ROOT / relative
+        if not path.is_file():
+            continue
         if path.suffix.lower() not in {".md", ".py", ".yaml", ".yml", ".json", ".toml"}:
             continue
         try:
             text = read(path)
         except UnicodeDecodeError:
             continue
-        if relative != Path("scripts/check_repo_baseline.py") and re.search(
-            r"(?:C:\\Users\\|/home/[^/]+/|file://)", text
-        ):
+        if MACHINE_LOCAL_RE.search(_without_stable_invariant_lines(text)):
             errors.append(f"tracked text exposes a machine/private path: {relative}")
         for pattern in credential_patterns:
             if pattern.search(text):
@@ -1047,25 +1052,33 @@ MUTABLE_IDENTITY_RE = re.compile(
     r"|(?:BRANCH|REF|IDENTITY|COMMIT|TAG|BASELINE)[A-Z0-9_]*\s*=\s*[\"'](?:main|master|latest)[\"']",
     re.IGNORECASE,
 )
+MACHINE_LOCAL_RE = re.compile(r"(?<!\w)[A-Za-z]:[\\/](?:Users|Project|Program Files)(?:[\\/]|$)|file://|/home/[^/]+/")  # STABLE_INVARIANT
 
 
-def governance_code_paths() -> list[Path]:
-    """Return only current lifecycle-governance code and its regression tests."""
-    return [
-        ROOT / "scripts/check_repo_baseline.py",
-        ROOT / "scripts/sync_project_overview.py",
-        ROOT / "tests/unit/test_repo_baseline_semantics.py",
-    ]
+def _without_stable_invariant_lines(text: str) -> str:
+    return "\n".join(
+        line for line in text.splitlines() if "# STABLE_INVARIANT" not in line
+    )
 
 
-def lifecycle_literal_errors(status: dict) -> list[str]:
+def governance_code_paths(root: Path = ROOT) -> list[Path]:
+    """Dynamically discover production scripts and all regression tests."""
+    paths = list((root / "scripts").rglob("*.py"))
+    paths.extend((root / "tests").rglob("test_*.py"))
+    return sorted(
+        path for path in paths
+        if path.is_file() and "__pycache__" not in path.parts
+    )
+
+
+def lifecycle_literal_errors(status: dict, root: Path = ROOT) -> list[str]:
     errors: list[str] = []
     current_tags = {
         status["release"]["tag"],
         status["release"]["assessedSource"]["tag"],
     }
-    for path in governance_code_paths():
-        text = read(path)
+    for path in governance_code_paths(root):
+        text = path.read_text(encoding="utf-8")
         errors.extend(lifecycle_literal_text_errors(text, path.name, current_tags))
     return errors
 
@@ -1080,6 +1093,8 @@ def lifecycle_literal_text_errors(
         errors.append(f"PR-number literal in executable governance code: {name}")
     if MUTABLE_IDENTITY_RE.search(text):
         errors.append(f"mutable branch used as lifecycle identity: {name}")
+    if MACHINE_LOCAL_RE.search(_without_stable_invariant_lines(text)):
+        errors.append(f"machine-local path in executable governance code: {name}")
     for tag in current_tags:
         if re.search(rf"(?<![\w.-]){re.escape(tag)}(?![\w.-])", text):
             errors.append(f"current release-tag literal in executable governance code: {name}")
@@ -1141,12 +1156,21 @@ def retired_surface_errors(status: dict) -> list[str]:
         ROOT / "README.md", CONTROL / "PROJECT_CONTROL.md", CONTROL / "CHANGE_CONTROL.md",
         RESEARCH / "RESEARCH_CONTROL.md", ROOT / "docs/engineering/ENGINEERING_CONTROL.md",
         ROOT / "docs/tutorial/TUTORIAL_CONTROL.md",
+        ROOT / "docs/engineering/increments/IAR_TEMPLATE.md",
     )
     for path in active_paths:
+        text = read(path)
         for target in allowed_handoffs:
-            if target.name in read(path):
+            if target.name in text:
                 errors.append(f"active control surface references retired HANDOFF: {path.relative_to(ROOT)}")
+        errors.extend(reader_handoff_text_errors(text, str(path.relative_to(ROOT))))
     return errors
+
+
+def reader_handoff_text_errors(text: str, label: str) -> list[str]:
+    if re.search(r"Reader-report handoff|向读者报告交接", text, re.IGNORECASE):
+        return [f"active template retains reader-report handoff: {label}"]
+    return []
 
 
 def research_ownership_errors(text: str) -> list[str]:
@@ -1169,6 +1193,19 @@ def overview_semantic_errors(readme: str) -> list[str]:
         errors.append("README still presents the current release as Draft/candidate")
     if re.search(r"(?im)^\| 当前发布 \|[^\n]*(?:Draft|候选)", readme):
         errors.append("README 中文当前发布仍被标为 Draft/候选")
+    return errors
+
+
+def governed_status_errors(status: dict, readme: str) -> list[str]:
+    """Validate governed state and the README produced from that exact state."""
+    errors = list(sync.status_errors(status, ROOT))
+    try:
+        expected = sync.replace_status_block(readme, status)
+    except sync.StatusError as exc:
+        errors.append(f"README status integration failed: {exc}")
+    else:
+        if readme != expected:
+            errors.append("README governed block differs from project-status.json")
     return errors
 
 
@@ -1210,9 +1247,7 @@ def main() -> int:
     for path in nested_readmes:
         errors.append(f"subdirectory README is prohibited: {path.relative_to(ROOT)}")
 
-    current_readme, expected_readme = sync.synchronized_readme(STATUS)
-    if current_readme != expected_readme:
-        errors.append("README governed block differs from project-status.json")
+    errors.extend(governed_status_errors(STATUS, read(ROOT / "README.md")))
 
     bilingual = [
         path for path in required

@@ -26,6 +26,7 @@ ALLOWED_COMPATIBILITY = {
 ALLOWED_CONFIGURATION = {"NOT YET ESTABLISHED", "ESTABLISHED"}
 ALLOWED_EVALUATION = {"NOT-EXERCISED", "INSTANCE-EXERCISED"}
 ALLOWED_RQ8 = {"OPEN", "CLOSED"}
+ALLOWED_HANDSHAKE = {"INCOMPLETE", "COMPLETE"}
 EXPECTED_QUALIFICATIONS = {f"Q-{number:02d}" for number in range(1, 10)}
 
 
@@ -62,7 +63,7 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
         "currentIncrement.stateChanges", "currentIncrement.stateChangesZh",
         "currentIncrement.unchangedBoundaries",
         "currentIncrement.unchangedBoundariesZh", "development.phase",
-        "development.currentStop.id", "development.currentStop.status",
+        "development.currentStop.id", "development.currentStop.statusPath",
         "development.currentStop.objective", "development.currentStop.objectiveZh",
         "development.nextSteps", "development.nextStepsZh",
         "release.currentBaselineId", "release.tag", "release.commit",
@@ -77,8 +78,12 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
         "crossRepository.methodology.repository",
         "crossRepository.methodology.projectManagementMerge",
         "crossRepository.methodology.schemaVersion",
+        "crossRepository.methodology.thirdHandshakeStatusPath",
         "claimsBoundary.projectConfigurationStatus",
         "claimsBoundary.instanceEvaluation", "claimsBoundary.rq8",
+        "claimsBoundary.protocolConformanceEstablished",
+        "claimsBoundary.certificationReady", "claimsBoundary.authorityAccepted",
+        "claimsBoundary.activationRecords",
         "temporaryControls", "governance.requiredPullRequestFiles",
         "governance.readmeMarkers.start", "governance.readmeMarkers.end",
     )
@@ -122,6 +127,18 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
             errors.append("invalid instance-evaluation status")
         if _get(data, "claimsBoundary.rq8") not in ALLOWED_RQ8:
             errors.append("invalid RQ8 status")
+        if _get(data, "release.thirdHandshake") not in ALLOWED_HANDSHAKE:
+            errors.append("invalid third-handshake status")
+        stop = _get(data, "development.currentStop")
+        if "status" in stop:
+            errors.append("development.currentStop.status duplicates its authoritative statusPath")
+        if stop.get("statusPath") != "claimsBoundary.projectConfigurationStatus":
+            errors.append("current stop must derive from claimsBoundary.projectConfigurationStatus")
+        peer = _get(data, "crossRepository.methodology")
+        if "thirdHandshake" in peer:
+            errors.append("crossRepository.methodology.thirdHandshake duplicates release.thirdHandshake")
+        if peer.get("thirdHandshakeStatusPath") != "release.thirdHandshake":
+            errors.append("cross-repository handshake must derive from release.thirdHandshake")
         qualifications = set(_get(data, "methodInputs.compatibilityDisposition.qualificationIds"))
         if qualifications != EXPECTED_QUALIFICATIONS:
             errors.append("qualification population differs from controlled Q-01 through Q-09")
@@ -135,6 +152,34 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
             errors.append("cross-repository schemaVersion differs")
     except KeyError:
         pass
+
+    claim_keys = (
+        "protocolConformanceEstablished", "certificationReady", "authorityAccepted",
+    )
+    boundary = data.get("claimsBoundary", {})
+    activations = boundary.get("activationRecords", {})
+    if not isinstance(activations, dict):
+        errors.append("claimsBoundary.activationRecords must be an object")
+        activations = {}
+    for claim in claim_keys:
+        value = boundary.get(claim)
+        if not isinstance(value, bool):
+            errors.append(f"claimsBoundary.{claim} must be boolean")
+            continue
+        if not value:
+            continue
+        activation = activations.get(claim)
+        if not isinstance(activation, dict):
+            errors.append(f"true claim {claim} requires an activation record")
+            continue
+        decision_path = activation.get("decisionPath")
+        evidence_refs = activation.get("evidenceRefs")
+        if not isinstance(decision_path, str) or not (root / decision_path).is_file():
+            errors.append(f"true claim {claim} requires an existing controlled decisionPath")
+        if not isinstance(evidence_refs, list) or not evidence_refs:
+            errors.append(f"true claim {claim} requires non-empty evidenceRefs")
+        elif any(not isinstance(item, str) or not (root / item).exists() for item in evidence_refs):
+            errors.append(f"true claim {claim} has unresolved evidenceRefs")
 
     for dotted in (
         "release.records.baselinePath", "release.records.changePath",
@@ -203,6 +248,7 @@ def render_status_block(data: dict[str, Any]) -> str:
     compatibility = method["compatibilityDisposition"]
     boundary = data["claimsBoundary"]
     stop = data["development"]["currentStop"]
+    stop_status = _get(data, stop["statusPath"])
     increment = data["currentIncrement"]
     repository = data["repository"]["url"]
     qualifications_en = "–".join((compatibility["qualificationIds"][0], compatibility["qualificationIds"][-1]))
@@ -239,7 +285,7 @@ Unchanged boundaries:
 
 ## Current stop
 
-`{stop['id']}` — **{stop['status']}**: {stop['objective']}
+`{stop['id']}` — **{stop_status}**: {stop['objective']}
 
 ## Next development steps
 
@@ -274,7 +320,7 @@ Unchanged boundaries:
 
 ## 当前停点
 
-`{stop['id']}` — **{stop['status']}**：{stop['objectiveZh']}
+`{stop['id']}` — **{stop_status}**：{stop['objectiveZh']}
 
 ## 下一步开发计划
 

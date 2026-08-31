@@ -50,6 +50,7 @@ silently redefine the Core.
 - Add a machine-readable project status and deterministic README synchronization.
 - Define the Candidate GVS Core to ARINC refinement and controlled-feedback architecture.
 - Retire duplicated reader-status and HANDOFF surfaces without rewriting atomic records.
+- Close independent-review gaps in dynamic script discovery, status activation and active-template governance.
 
 State changes:
 
@@ -95,6 +96,7 @@ Unchanged boundaries:
 - 新增机器可读项目状态和确定性 README 同步。
 - 明确 Candidate GVS Core 到 ARINC 精化及受控反馈的架构。
 - 在不改写原子记录的前提下退役重复 reader-status 与 HANDOFF 界面。
+- 关闭独立评审发现的动态脚本发现、状态激活和活动模板治理缺口。
 
 状态变化：
 

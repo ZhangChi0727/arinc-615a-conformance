@@ -24,6 +24,11 @@ def status() -> dict:
     return copy.deepcopy(baseline.STATUS)
 
 
+def integrated_status_errors(data: dict) -> list[str]:
+    generated = baseline.sync.replace_status_block(source("README.md"), data)
+    return baseline.governed_status_errors(data, generated)
+
+
 def mapping_line(text: str, row_id: str) -> str:
     return next(line for line in text.splitlines() if line.startswith(f"| {row_id} |"))
 
@@ -215,10 +220,52 @@ def test_temporary_control_is_rejected_after_retirement() -> None:
     assert any("retirement condition is fulfilled" in error for error in baseline.sync.temporary_control_errors(data))
 
 
+def test_status_rejects_duplicate_current_stop_status() -> None:
+    data = status()
+    data["development"]["currentStop"]["status"] = "ESTABLISHED"
+    assert any("duplicates its authoritative statusPath" in error for error in integrated_status_errors(data))
+
+
+def test_status_rejects_invalid_authoritative_handshake() -> None:
+    data = status()
+    data["release"]["thirdHandshake"] = "UNREVIEWED"
+    assert any("invalid third-handshake" in error for error in integrated_status_errors(data))
+
+
+def test_status_rejects_duplicate_cross_repository_handshake() -> None:
+    data = status()
+    data["crossRepository"]["methodology"]["thirdHandshake"] = "PENDING"
+    assert any("duplicates release.thirdHandshake" in error for error in integrated_status_errors(data))
+
+
+def test_status_rejects_unsubstantiated_protocol_conformance() -> None:
+    data = status()
+    data["claimsBoundary"]["protocolConformanceEstablished"] = True
+    assert any("protocolConformanceEstablished requires an activation record" in error for error in integrated_status_errors(data))
+
+
+def test_status_rejects_unsubstantiated_certification_readiness() -> None:
+    data = status()
+    data["claimsBoundary"]["certificationReady"] = True
+    assert any("certificationReady requires an activation record" in error for error in integrated_status_errors(data))
+
+
+def test_status_rejects_unsubstantiated_authority_acceptance() -> None:
+    data = status()
+    data["claimsBoundary"]["authorityAccepted"] = True
+    assert any("authorityAccepted requires an activation record" in error for error in integrated_status_errors(data))
+
+
 def test_historical_reader_report_path_must_resolve() -> None:
     data = status()
     data["release"]["records"]["historicalReaderReportPath"] = "artifacts/reports/archive/missing.md"
     assert any("historicalReaderReportPath" in error for error in baseline.sync.status_errors(data, ROOT))
+
+
+def test_iar_template_rejects_reader_report_handoff() -> None:
+    text = source("docs/engineering/increments/IAR_TEMPLATE.md")
+    broken = text + "\n## Reader-report " + "handoff\n"
+    assert baseline.reader_handoff_text_errors(broken, "IAR_TEMPLATE.md")
 
 
 def test_research_ownership_rejects_generic_core_capture() -> None:
@@ -239,6 +286,26 @@ def test_lifecycle_literals_are_rejected_in_governance_code() -> None:
         "negative.py", tags,
     )
     assert len(errors) == 4
+
+
+def test_dynamic_script_discovery_rejects_each_lifecycle_escape(tmp_path: Path) -> None:
+    data = status()
+    scripts = tmp_path / "scripts"
+    scripts.mkdir()
+    candidate = scripts / "new_operation.py"
+    numbered_pr = "PR " + "#" + "999"
+    mutable = "origin/" + "main"
+    machine = "E:" + "\\" + "Project\\private"
+    cases = (
+        f'VALUE = "{data["release"]["commit"]}"',
+        f'VALUE = "{numbered_pr}"',
+        f'VALUE = "{data["release"]["tag"]}"',
+        f'VALUE = "{mutable}"',
+        f'VALUE = r"{machine}"',
+    )
+    for content in cases:
+        candidate.write_text(content, encoding="utf-8")
+        assert baseline.lifecycle_literal_errors(data, tmp_path), content
 
 
 def test_status_rejects_method_identity_conflation() -> None:
