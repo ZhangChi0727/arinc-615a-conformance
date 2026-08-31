@@ -7,8 +7,9 @@ import argparse
 import difflib
 import json
 import re
+import subprocess
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,6 +29,15 @@ ALLOWED_EVALUATION = {"NOT-EXERCISED", "INSTANCE-EXERCISED"}
 ALLOWED_RQ8 = {"OPEN", "CLOSED"}
 ALLOWED_HANDSHAKE = {"INCOMPLETE", "COMPLETE"}
 EXPECTED_QUALIFICATIONS = {f"Q-{number:02d}" for number in range(1, 10)}
+CLAIM_KEYS = (
+    "protocolConformanceEstablished", "certificationReady", "authorityAccepted",
+)
+CONTROLLED_DECISION_PREFIXES = (
+    PurePosixPath("docs/control/decisions"),
+    PurePosixPath("docs/control/gates"),
+)
+CONTROLLED_EVIDENCE_PREFIXES = (PurePosixPath("artifacts/evidence"),)
+ALLOWED_ACTIVATION_DECISIONS = {"APPROVED", "ACCEPTED", "CONDITIONALLY-ACCEPTED"}
 
 
 class StatusError(ValueError):
@@ -52,6 +62,128 @@ def load_status(path: Path = STATUS_PATH) -> dict[str, Any]:
     if errors:
         raise StatusError("; ".join(errors))
     return data
+
+
+def _tracked_paths(root: Path) -> tuple[set[str], str | None]:
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "-z"], cwd=root, check=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        )
+    except (OSError, subprocess.CalledProcessError) as exc:
+        return set(), f"cannot enumerate tracked files for claim activation: {exc}"
+    return {
+        item.decode("utf-8").replace("\\", "/")
+        for item in result.stdout.split(b"\0") if item
+    }, None
+
+
+def _controlled_file_error(
+    raw: Any,
+    *,
+    root: Path,
+    tracked_paths: set[str],
+    allowed_prefixes: tuple[PurePosixPath, ...],
+    label: str,
+) -> tuple[Path | None, str | None]:
+    if not isinstance(raw, str) or not raw.strip():
+        return None, f"{label} must be a non-empty repository-relative path"
+    normalized = raw.replace("\\", "/")
+    posix = PurePosixPath(normalized)
+    windows = PureWindowsPath(raw)
+    if posix.is_absolute() or windows.is_absolute() or windows.drive or ".." in posix.parts:
+        return None, f"{label} must be a repository-relative path without traversal"
+    if not any(posix == prefix or prefix in posix.parents for prefix in allowed_prefixes):
+        return None, f"{label} is outside its permitted controlled location"
+    resolved_root = root.resolve()
+    target = (resolved_root / Path(*posix.parts)).resolve()
+    try:
+        target.relative_to(resolved_root)
+    except ValueError:
+        return None, f"{label} resolves outside the repository"
+    if not target.is_file() or target.is_symlink():
+        return None, f"{label} must resolve to an ordinary file"
+    if posix.as_posix() not in tracked_paths:
+        return None, f"{label} must name a Git-tracked file"
+    return target, None
+
+
+def activation_record_errors(
+    data: dict[str, Any],
+    root: Path = ROOT,
+    tracked_paths: set[str] | None = None,
+) -> list[str]:
+    """Validate that every promoted claim is supported by controlled records."""
+    errors: list[str] = []
+    boundary = data.get("claimsBoundary", {})
+    activations = boundary.get("activationRecords", {})
+    if not isinstance(activations, dict):
+        return ["claimsBoundary.activationRecords must be an object"]
+
+    active_claims: list[str] = []
+    for claim in CLAIM_KEYS:
+        value = boundary.get(claim)
+        if not isinstance(value, bool):
+            errors.append(f"claimsBoundary.{claim} must be boolean")
+        elif value:
+            active_claims.append(claim)
+    if not active_claims:
+        return errors
+
+    if tracked_paths is None:
+        tracked_paths, tracked_error = _tracked_paths(root)
+        if tracked_error:
+            return errors + [tracked_error]
+
+    for claim in active_claims:
+        activation = activations.get(claim)
+        if not isinstance(activation, dict):
+            errors.append(f"true claim {claim} requires an activation record")
+            continue
+        decision, decision_error = _controlled_file_error(
+            activation.get("decisionPath"), root=root,
+            tracked_paths=tracked_paths,
+            allowed_prefixes=CONTROLLED_DECISION_PREFIXES,
+            label=f"activationRecords.{claim}.decisionPath",
+        )
+        if decision_error:
+            errors.append(decision_error)
+        elif decision is not None:
+            text = decision.read_text(encoding="utf-8")
+            claim_match = re.search(
+                rf"(?im)^\s*(?:[-*]\s*)?(?:\*\*)?Claim(?:\*\*)?\s*:\s*`?{re.escape(claim)}`?\s*$",
+                text,
+            )
+            status_match = re.search(
+                r"(?im)^\s*(?:[-*]\s*)?(?:\*\*)?Decision status(?:\*\*)?\s*:\s*`?"
+                r"(APPROVED|ACCEPTED|CONDITIONALLY-ACCEPTED)`?\s*$",
+                text,
+            )
+            identity_match = re.search(
+                r"(?im)^\s*(?:[-*]\s*)?(?:\*\*)?(?:Decision version|Decision identity|Immutable identity)"
+                r"(?:\*\*)?\s*:\s*`?[^`\s][^`\r\n]*`?\s*$",
+                text,
+            )
+            if not claim_match:
+                errors.append(f"decisionPath for {claim} does not identify the activated claim")
+            if not status_match or status_match.group(1).upper() not in ALLOWED_ACTIVATION_DECISIONS:
+                errors.append(f"decisionPath for {claim} lacks an accepted decision status")
+            if not identity_match:
+                errors.append(f"decisionPath for {claim} lacks a decision version or immutable identity")
+
+        evidence_refs = activation.get("evidenceRefs")
+        if not isinstance(evidence_refs, list) or not evidence_refs:
+            errors.append(f"true claim {claim} requires non-empty evidenceRefs")
+            continue
+        for index, evidence_ref in enumerate(evidence_refs):
+            _, evidence_error = _controlled_file_error(
+                evidence_ref, root=root, tracked_paths=tracked_paths,
+                allowed_prefixes=CONTROLLED_EVIDENCE_PREFIXES,
+                label=f"activationRecords.{claim}.evidenceRefs[{index}]",
+            )
+            if evidence_error:
+                errors.append(evidence_error)
+    return errors
 
 
 def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
@@ -153,33 +285,7 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
     except KeyError:
         pass
 
-    claim_keys = (
-        "protocolConformanceEstablished", "certificationReady", "authorityAccepted",
-    )
-    boundary = data.get("claimsBoundary", {})
-    activations = boundary.get("activationRecords", {})
-    if not isinstance(activations, dict):
-        errors.append("claimsBoundary.activationRecords must be an object")
-        activations = {}
-    for claim in claim_keys:
-        value = boundary.get(claim)
-        if not isinstance(value, bool):
-            errors.append(f"claimsBoundary.{claim} must be boolean")
-            continue
-        if not value:
-            continue
-        activation = activations.get(claim)
-        if not isinstance(activation, dict):
-            errors.append(f"true claim {claim} requires an activation record")
-            continue
-        decision_path = activation.get("decisionPath")
-        evidence_refs = activation.get("evidenceRefs")
-        if not isinstance(decision_path, str) or not (root / decision_path).is_file():
-            errors.append(f"true claim {claim} requires an existing controlled decisionPath")
-        if not isinstance(evidence_refs, list) or not evidence_refs:
-            errors.append(f"true claim {claim} requires non-empty evidenceRefs")
-        elif any(not isinstance(item, str) or not (root / item).exists() for item in evidence_refs):
-            errors.append(f"true claim {claim} has unresolved evidenceRefs")
+    errors.extend(activation_record_errors(data, root))
 
     for dotted in (
         "release.records.baselinePath", "release.records.changePath",

@@ -1036,7 +1036,7 @@ def validate_tracked_hygiene(errors: list[str]) -> None:
             text = read(path)
         except UnicodeDecodeError:
             continue
-        if MACHINE_LOCAL_RE.search(_without_stable_invariant_lines(text)):
+        if TRACKED_MACHINE_LOCAL_RE.search(_without_stable_invariant_lines(text)):
             errors.append(f"tracked text exposes a machine/private path: {relative}")
         for pattern in credential_patterns:
             if pattern.search(text):
@@ -1052,7 +1052,15 @@ MUTABLE_IDENTITY_RE = re.compile(
     r"|(?:BRANCH|REF|IDENTITY|COMMIT|TAG|BASELINE)[A-Z0-9_]*\s*=\s*[\"'](?:main|master|latest)[\"']",
     re.IGNORECASE,
 )
-MACHINE_LOCAL_RE = re.compile(r"(?<!\w)[A-Za-z]:[\\/](?:Users|Project|Program Files)(?:[\\/]|$)|file://|/home/[^/]+/")  # STABLE_INVARIANT
+MACHINE_LOCAL_RE = re.compile(
+    r"(?<![\w:])[A-Za-z]:[\\/](?![\\/])|file://|/(?:home|Users)/[^/\s]+/",  # STABLE_INVARIANT
+    re.IGNORECASE,
+)  # STABLE_INVARIANT
+TRACKED_MACHINE_LOCAL_RE = re.compile(
+    r"(?<!\w)[A-Za-z]:[\\/](?:Users|Project|Program Files)(?:[\\/]|$)"  # STABLE_INVARIANT
+    r"|file://|/(?:home|Users)/[^/\s]+/",  # STABLE_INVARIANT
+    re.IGNORECASE,
+)  # STABLE_INVARIANT
 
 
 def _without_stable_invariant_lines(text: str) -> str:

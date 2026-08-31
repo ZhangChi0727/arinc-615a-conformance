@@ -256,6 +256,67 @@ def test_status_rejects_unsubstantiated_authority_acceptance() -> None:
     assert any("authorityAccepted requires an activation record" in error for error in integrated_status_errors(data))
 
 
+def activated_status(decision_path: str, evidence_ref: str) -> dict:
+    data = status()
+    claim = "protocolConformanceEstablished"
+    data["claimsBoundary"][claim] = True
+    data["claimsBoundary"]["activationRecords"][claim] = {
+        "decisionPath": decision_path,
+        "evidenceRefs": [evidence_ref],
+    }
+    return data
+
+
+def test_claim_activation_rejects_absolute_and_traversal_paths() -> None:
+    for invalid in ("/etc/passwd", "../../README.md"):
+        errors = integrated_status_errors(activated_status(invalid, invalid))
+        assert any("repository-relative" in error for error in errors), invalid
+
+
+def test_claim_activation_rejects_status_surfaces_and_control_prose() -> None:
+    cases = (
+        ("README.md", "README.md"),
+        ("project-status.json", "project-status.json"),
+        ("docs/control/contracts/PROJECT_CONTROL.md", "README.md"),
+    )
+    for decision, evidence in cases:
+        errors = integrated_status_errors(activated_status(decision, evidence))
+        assert any("permitted controlled location" in error for error in errors), decision
+
+
+def test_claim_activation_rejects_decision_without_matching_semantics(tmp_path: Path) -> None:
+    decision = tmp_path / "docs/control/decisions/unrelated.md"
+    evidence = tmp_path / "artifacts/evidence/run.json"
+    decision.parent.mkdir(parents=True)
+    evidence.parent.mkdir(parents=True)
+    decision.write_text(
+        "Claim: certificationReady\nDecision status: APPROVED\nDecision version: DEC-1\n",
+        encoding="utf-8",
+    )
+    evidence.write_text("{}\n", encoding="utf-8")
+    data = activated_status(decision.relative_to(tmp_path).as_posix(), evidence.relative_to(tmp_path).as_posix())
+    tracked = {decision.relative_to(tmp_path).as_posix(), evidence.relative_to(tmp_path).as_posix()}
+    errors = baseline.sync.activation_record_errors(data, tmp_path, tracked)
+    assert any("does not identify the activated claim" in error for error in errors)
+
+
+def test_claim_activation_accepts_controlled_tracked_decision_and_evidence(tmp_path: Path) -> None:
+    decision = tmp_path / "docs/control/gates/protocol-conformance.md"
+    evidence = tmp_path / "artifacts/evidence/verification-result.json"
+    decision.parent.mkdir(parents=True)
+    evidence.parent.mkdir(parents=True)
+    decision.write_text(
+        "Claim: protocolConformanceEstablished\n"
+        "Decision status: APPROVED\n"
+        "Decision identity: DEC-2026-001@0123456789abcdef\n",
+        encoding="utf-8",
+    )
+    evidence.write_text('{"result": "PASS"}\n', encoding="utf-8")
+    data = activated_status(decision.relative_to(tmp_path).as_posix(), evidence.relative_to(tmp_path).as_posix())
+    tracked = {decision.relative_to(tmp_path).as_posix(), evidence.relative_to(tmp_path).as_posix()}
+    assert baseline.sync.activation_record_errors(data, tmp_path, tracked) == []
+
+
 def test_historical_reader_report_path_must_resolve() -> None:
     data = status()
     data["release"]["records"]["historicalReaderReportPath"] = "artifacts/reports/archive/missing.md"
@@ -295,13 +356,20 @@ def test_dynamic_script_discovery_rejects_each_lifecycle_escape(tmp_path: Path) 
     candidate = scripts / "new_operation.py"
     numbered_pr = "PR " + "#" + "999"
     mutable = "origin/" + "main"
-    machine = "E:" + "\\" + "Project\\private"
+    machine_paths = (
+        "E:" + "\\" + "Project\\private",
+        "D:" + "\\" + "Work\\private",
+        "C:" + "\\" + "temp\\private",
+        "/Users/" + "alice/private",
+        "/home/" + "alice/private",
+        "file:" + "///tmp/private",
+    )
     cases = (
         f'VALUE = "{data["release"]["commit"]}"',
         f'VALUE = "{numbered_pr}"',
         f'VALUE = "{data["release"]["tag"]}"',
         f'VALUE = "{mutable}"',
-        f'VALUE = r"{machine}"',
+        *(f'VALUE = r"{machine}"' for machine in machine_paths),
     )
     for content in cases:
         candidate.write_text(content, encoding="utf-8")
