@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "1.0",
+  "updatedAt": "2026-08-31",
+  "repository": {
+    "role": "instance",
+    "displayRole": "ARINC 615A Profile / Binding / Configuration / instance engineering and evidence owner",
+    "url": "https://github.com/ZhangChi0727/arinc-615a-conformance"
+  },
+  "currentIncrement": {
+    "title": "Lean project-management control surface",
+    "summary": [
+      "Make the root README the sole human-readable current-status surface.",
+      "Add a machine-readable project status and deterministic README synchronization.",
+      "Define the Candidate GVS Core to ARINC refinement and controlled-feedback architecture.",
+      "Retire duplicated reader-status and HANDOFF surfaces without rewriting atomic records."
+    ],
+    "stateChanges": [
+      "Current-status ownership moves to README plus project-status.json.",
+      "The v4.2.1 reader report becomes an archived historical information-architecture report."
+    ],
+    "unchangedBoundaries": [
+      "Candidate GVS Core and compatibility-disposition identities remain separate and unchanged.",
+      "The 18 source mapping rows, 7 instance-only rows and Q-01 through Q-09 remain unchanged.",
+      "Project Configuration is NOT YET ESTABLISHED; instance evaluation is NOT-EXERCISED; RQ8 remains OPEN.",
+      "No baseline, tag, certification, authority acceptance or protocol-conformance claim is created."
+    ]
+  },
+  "development": {
+    "phase": "profile and binding complete; controlled configuration preparation",
+    "currentStop": {
+      "id": "PROJECT-CONFIGURATION-GATE",
+      "status": "NOT YET ESTABLISHED",
+      "objective": "Establish real, reviewed IUT, environment, tool, procedure, clock and error-budget identities before execution."
+    },
+    "nextSteps": [
+      "Populate and review a real Project Configuration from controlled values.",
+      "Bind the first verification cases, procedures and oracles to that configuration.",
+      "Execute the first controlled instance evaluation and preserve observations, results and evidence provenance.",
+      "Return method findings through a Framework Change Proposal without directly redefining the Generic Core."
+    ],
+    "blockedActions": [
+      "Do not execute or evaluate an instance before Project Configuration is established.",
+      "Do not promote instance evidence into a Generic Core conclusion.",
+      "Do not claim protocol conformance, certification or authority acceptance.",
+      "Do not close RQ8 from this single instance."
+    ]
+  },
+  "release": {
+    "currentBaselineId": "RB-2026-001-v4.3.1",
+    "tag": "v4.3.1",
+    "tagObject": "55005cc57e26dd56ea1f0fec3ffdbbf1e67d1beb",
+    "commit": "72ca6df88cb8def5221a8fa54e69551f9e7041db",
+    "peeledTarget": "72ca6df88cb8def5221a8fa54e69551f9e7041db",
+    "thirdHandshake": "COMPLETE",
+    "assessedSource": {
+      "baselineId": "RB-2026-001-v4.3",
+      "tag": "v4.3",
+      "tagObject": "28312fd9c5470cb15d76eb3762c99a25ab842cfd",
+      "commit": "523d42bf03a1135b3d63a00bfb47d3b879d3927e"
+    }
+  },
+  "methodInputs": {
+    "repository": "https://github.com/ZhangChi0727/complex-system-verification-assurance",
+    "methodDefinition": {
+      "version": "Candidate GVS Core 0.3",
+      "commit": "48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b",
+      "path": "docs/02_verification_framework/generic_verification_suite_core.md"
+    },
+    "compatibilityDisposition": {
+      "commit": "c02330d21fe2d3e89e7e2d6352872d52461a6dda",
+      "path": "docs/08_validation/arinc_615a_third_handshake_compatibility_disposition.md",
+      "status": "REVIEWED-COMPATIBLE-WITH-QUALIFICATION",
+      "qualificationIds": [
+        "Q-01", "Q-02", "Q-03", "Q-04", "Q-05", "Q-06", "Q-07", "Q-08", "Q-09"
+      ]
+    }
+  },
+  "crossRepository": {
+    "methodology": {
+      "repository": "https://github.com/ZhangChi0727/complex-system-verification-assurance",
+      "projectManagementMerge": "933ba91fbbcf4d2dc6e8b0ecbe9a45ea5bc380d7",
+      "schemaVersion": "1.0",
+      "thirdHandshake": "COMPLETE",
+      "feedbackMechanism": "Framework Change Proposal",
+      "controlledIdentityPolicy": "commit-bound"
+    }
+  },
+  "claimsBoundary": {
+    "protocolConformanceEstablished": false,
+    "certificationReady": false,
+    "authorityAccepted": false,
+    "projectConfigurationStatus": "NOT YET ESTABLISHED",
+    "instanceEvaluation": "NOT-EXERCISED",
+    "rq8": "OPEN"
+  },
+  "temporaryControls": [],
+  "governance": {
+    "requiredPullRequestFiles": ["README.md", "project-status.json"],
+    "readmeMarkers": {
+      "start": "<!-- project-status:start -->",
+      "end": "<!-- project-status:end -->"
+    },
+    "handoffRetired": true,
+    "readerStatusOwner": "README.md"
+  }
+}
