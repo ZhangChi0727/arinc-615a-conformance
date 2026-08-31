@@ -8,21 +8,38 @@
   },
   "currentIncrement": {
     "title": "Lean project-management control surface",
+    "titleZh": "精简项目管理控制面",
     "summary": [
       "Make the root README the sole human-readable current-status surface.",
       "Add a machine-readable project status and deterministic README synchronization.",
       "Define the Candidate GVS Core to ARINC refinement and controlled-feedback architecture.",
       "Retire duplicated reader-status and HANDOFF surfaces without rewriting atomic records."
     ],
+    "summaryZh": [
+      "将根 README 确立为唯一的人类可读当前状态界面。",
+      "新增机器可读项目状态和确定性 README 同步。",
+      "明确 Candidate GVS Core 到 ARINC 精化及受控反馈的架构。",
+      "在不改写原子记录的前提下退役重复 reader-status 与 HANDOFF 界面。"
+    ],
     "stateChanges": [
       "Current-status ownership moves to README plus project-status.json.",
       "The v4.2.1 reader report becomes an archived historical information-architecture report."
+    ],
+    "stateChangesZh": [
+      "当前状态由 README 与 project-status.json 共同承载。",
+      "v4.2.1 reader report 转为历史信息架构报告。"
     ],
     "unchangedBoundaries": [
       "Candidate GVS Core and compatibility-disposition identities remain separate and unchanged.",
       "The 18 source mapping rows, 7 instance-only rows and Q-01 through Q-09 remain unchanged.",
       "Project Configuration is NOT YET ESTABLISHED; instance evaluation is NOT-EXERCISED; RQ8 remains OPEN.",
       "No baseline, tag, certification, authority acceptance or protocol-conformance claim is created."
+    ],
+    "unchangedBoundariesZh": [
+      "Candidate GVS Core 与兼容性处置身份保持分离且不变。",
+      "18 个来源映射行、7 个实例专用行及 Q-01～Q-09 保持不变。",
+      "Project Configuration 保持 NOT YET ESTABLISHED；实例评价保持 NOT-EXERCISED；RQ8 保持 OPEN。",
+      "不创建 baseline、tag、认证、权威接受或协议符合性主张。"
     ]
   },
   "development": {
@@ -30,13 +47,20 @@
     "currentStop": {
       "id": "PROJECT-CONFIGURATION-GATE",
       "status": "NOT YET ESTABLISHED",
-      "objective": "Establish real, reviewed IUT, environment, tool, procedure, clock and error-budget identities before execution."
+      "objective": "Establish real, reviewed IUT, environment, tool, procedure, clock and error-budget identities before execution.",
+      "objectiveZh": "执行前建立并评审真实的 IUT、环境、工具、规程、时钟和误差预算身份。"
     },
     "nextSteps": [
       "Populate and review a real Project Configuration from controlled values.",
       "Bind the first verification cases, procedures and oracles to that configuration.",
       "Execute the first controlled instance evaluation and preserve observations, results and evidence provenance.",
       "Return method findings through a Framework Change Proposal without directly redefining the Generic Core."
+    ],
+    "nextStepsZh": [
+      "用受控真实值建立并评审 Project Configuration。",
+      "将首批 verification case、procedure 与 oracle 绑定至该配置。",
+      "执行首次受控实例评价并保存 Observation、Result 和 Evidence 来源。",
+      "通过 Framework Change Proposal 向方法仓库反馈，不直接反向定义 Generic Core。"
     ],
     "blockedActions": [
       "Do not execute or evaluate an instance before Project Configuration is established.",
@@ -56,7 +80,23 @@
       "baselineId": "RB-2026-001-v4.3",
       "tag": "v4.3",
       "tagObject": "28312fd9c5470cb15d76eb3762c99a25ab842cfd",
-      "commit": "523d42bf03a1135b3d63a00bfb47d3b879d3927e"
+      "commit": "523d42bf03a1135b3d63a00bfb47d3b879d3927e",
+      "baselinePath": "docs/control/baselines/RB-2026-001-v4.3.md",
+      "changePath": "docs/control/changes/CR-2026-004.md"
+    },
+    "records": {
+      "baselinePath": "docs/control/baselines/RB-2026-001-v4.3.1.md",
+      "changePath": "docs/control/changes/CR-2026-005.md",
+      "historicalReaderReportPath": "artifacts/reports/archive/RPT-2026-002_information_architecture_v4.2.1.md",
+      "migrationReviewPath": "docs/control/reviews/PR9_GVS_MIGRATION_REVIEW_HANDOFF.md",
+      "acknowledgementReviewPath": "docs/control/reviews/PR10_GVS_DISPOSITION_ACK_REVIEW_HANDOFF.md"
+    },
+    "historicalProvenance": {
+      "methodApprovedHead": "37fb88329abaea8f7127da96a66c0ac5d7525543",
+      "legacyReleaseTag": "RB-2026-001-v4.2.1",
+      "legacyReleaseCommit": "3299e6dae83424862f75a4c1d09b91b80d9d8b00",
+      "controlStateCommit": "0ce96f701159fd4156d5e5e9889360f53977a61b",
+      "migrationStartingHead": "53a98447bcfa862f082ce443d69115067d3ff2f1"
     }
   },
   "methodInputs": {

@@ -11,6 +11,8 @@ from __future__ import annotations
 
 import json
 import hashlib
+import importlib.util
+import os
 import re
 import subprocess
 import sys
@@ -18,6 +20,15 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+STATUS_PATH = ROOT / "project-status.json"
+
+SYNC_SPEC = importlib.util.spec_from_file_location(
+    "sync_project_overview", ROOT / "scripts/sync_project_overview.py"
+)
+assert SYNC_SPEC and SYNC_SPEC.loader
+sync = importlib.util.module_from_spec(SYNC_SPEC)
+SYNC_SPEC.loader.exec_module(sync)
+STATUS = sync.load_status(STATUS_PATH)
 
 # Directory roots for discovered artifacts.
 CONTROL = ROOT / "docs/control"
@@ -27,7 +38,6 @@ GATES_DIR = CONTROL / "gates"
 CONTRACTS_DIR = CONTROL / "contracts"
 RESEARCH = ROOT / "docs/research"
 METHODOLOGY_DIR = RESEARCH / "methodology"
-CURRENT_REPORT_DIR = ROOT / "artifacts/reports/current"
 
 # Discovery patterns (version-sensitive artifacts are not hard-coded).
 BASELINE_RE = re.compile(r"^RB-\d{4}-\d{3}-v[\d.]+\.md$")
@@ -50,12 +60,15 @@ REFERENCE_CATALOG_PATH = RESEARCH / "reference_catalog.yaml"
 EXTERNAL_BINDING_PATH = CONTRACTS_DIR / "EXTERNAL_GVS_BINDING.md"
 INSTANCE_MAPPING_PATH = CONTRACTS_DIR / "GVS_INSTANCE_MAPPING.md"
 PROFILE_BINDING_PATH = CONTRACTS_DIR / "ARINC615A_PROFILE_BINDING_CONFIGURATION.md"
-MIGRATION_HANDOFF_PATH = CONTROL / "reviews" / "PR9_GVS_MIGRATION_REVIEW_HANDOFF.md"
-ACK_HANDOFF_PATH = CONTROL / "reviews" / "PR10_GVS_DISPOSITION_ACK_REVIEW_HANDOFF.md"
+MIGRATION_HANDOFF_PATH = ROOT / STATUS["release"]["records"]["migrationReviewPath"]
+ACK_HANDOFF_PATH = ROOT / STATUS["release"]["records"]["acknowledgementReviewPath"]
+ARCHIVED_READER_REPORT_PATH = ROOT / STATUS["release"]["records"]["historicalReaderReportPath"]
 
 # Structural invariant directories (content checked by presence, not version).
 REQUIRED_FIXED_FILES = [
     ROOT / "README.md",
+    STATUS_PATH,
+    ROOT / "scripts/sync_project_overview.py",
     CONTROL / "PROJECT_CONTROL.md",
     CONTROL / "CHANGE_CONTROL.md",
     CONTRACTS_DIR / "ARCHITECTURE.md",
@@ -73,8 +86,6 @@ REQUIRED_FIXED_FILES = [
     GATES_DIR / "REVIEW_GUIDELINE.md",
     GATES_DIR / "PR6_BASELINE_REVIEW_CHECKLIST.md",
     CONTROL / "risks" / "RISK_REGISTER.md",
-    MIGRATION_HANDOFF_PATH,
-    ACK_HANDOFF_PATH,
     RESEARCH / "RESEARCH_CONTROL.md",
     RESEARCH / "EXPERIMENT_PLAN.md",
     RESEARCH / "CLAIM_EVIDENCE_MATRIX.md",
@@ -91,6 +102,7 @@ REQUIRED_FIXED_FILES = [
     ROOT / "docs/tutorial/sources/COMMON_TUTORIAL_PLAN.md",
     ROOT / "docs/tutorial/sources/ARINC615A_TUTORIAL_PLAN.md",
     REPORT_PATH,
+    ARCHIVED_READER_REPORT_PATH,
 ]
 
 # Bilingual exemption: gate records are historical control artifacts that may
@@ -136,9 +148,9 @@ REQUIRED_ARCHITECTURE_TERMS = {
         "normative: false",
     },
     CONTROL / "PROJECT_CONTROL.md": {
-        "reader release surface",
-        "developer control plane",
-        "artifacts/reports/current/",
+        "sole human-readable current-status surface",
+        "atomic records",
+        "Every pull request updates both",
     },
 }
 
@@ -167,52 +179,59 @@ EVIDENCE_BUDGET_REQUIRED_FIELDS = {
     "combinationRule", "commonBiasTreatment", "components",
 }
 
-# v4.3 architecture anchors discovered by content, not path.
+# STABLE_INVARIANT: profile traceability and claim vocabulary.
 REQUIRED_V43_TRACEABILITY_TERMS = (
     "rho_BR", "rho_RO", "rho_OM", "rho_EO", "rho_OC",
     "NOT_INSTANTIATED_IN_PROTOCOL_ONLY_STUDY",
 )
 REQUIRED_V43_CLAIMS = ("A-BASIS", "A-COMP", "A-OBJ", "E-TIME", "R-MUT", "R-XFER")
-V43_BASELINE_PREFIX = "RB-2026-001-v4.3"
+V43_BASELINE_PREFIX = STATUS["release"]["assessedSource"]["baselineId"]
 V43_NONCLAIM_PHRASE = "certification-oriented does not mean certification-approved"
 
-# Immutable GVS/instance identities for the reviewed migration candidate.
-METHOD_DEFINITION_COMMIT = "48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b"
-METHOD_DISPOSITION_COMMIT = "c02330d21fe2d3e89e7e2d6352872d52461a6dda"
-METHOD_APPROVED_HEAD = "37fb88329abaea8f7127da96a66c0ac5d7525543"
-ARINC_V43_RELEASE_COMMIT = "523d42bf03a1135b3d63a00bfb47d3b879d3927e"
-ARINC_V43_RELEASE_TAG = "v4.3"
-ACK_BASELINE_ID = "RB-2026-001-v4.3.1"
-ACK_DISPOSITION = "REVIEWED-COMPATIBLE-WITH-QUALIFICATION"
+# Lifecycle identities are governed data. No current SHA, tag, PR or branch is
+# duplicated in executable code.
+METHOD_DEFINITION_COMMIT = STATUS["methodInputs"]["methodDefinition"]["commit"]
+METHOD_DISPOSITION_COMMIT = STATUS["methodInputs"]["compatibilityDisposition"]["commit"]
+METHOD_APPROVED_HEAD = STATUS["release"]["historicalProvenance"]["methodApprovedHead"]
+ARINC_V43_RELEASE_COMMIT = STATUS["release"]["assessedSource"]["commit"]
+ARINC_V43_RELEASE_TAG = STATUS["release"]["assessedSource"]["tag"]
+ACK_BASELINE_ID = STATUS["release"]["currentBaselineId"]
+ACK_DISPOSITION = STATUS["methodInputs"]["compatibilityDisposition"]["status"]
+CONFIGURATION_STATUS = STATUS["claimsBoundary"]["projectConfigurationStatus"]
+EVALUATION_STATUS = STATUS["claimsBoundary"]["instanceEvaluation"]
+RQ8_STATUS = STATUS["claimsBoundary"]["rq8"]
 ACK_QUALIFICATION_IDS = {f"Q-{number:02d}" for number in range(1, 10)}
-ACK_BASELINE_PATH = BASELINES_DIR / "RB-2026-001-v4.3.1.md"
-ACK_CHANGE_PATH = CHANGES_DIR / "CR-2026-005.md"
-LEGACY_RELEASE_TAG = "RB-2026-001-v4.2.1"
-LEGACY_RELEASE_COMMIT = "3299e6dae83424862f75a4c1d09b91b80d9d8b00"
-CONTROL_STATE_COMMIT = "0ce96f701159fd4156d5e5e9889360f53977a61b"
-PR9_STARTING_HEAD = "53a98447bcfa862f082ce443d69115067d3ff2f1"
+ACK_BASELINE_PATH = ROOT / STATUS["release"]["records"]["baselinePath"]
+ACK_CHANGE_PATH = ROOT / STATUS["release"]["records"]["changePath"]
+ASSESSED_BASELINE_PATH = ROOT / STATUS["release"]["assessedSource"]["baselinePath"]
+ASSESSED_CHANGE_PATH = ROOT / STATUS["release"]["assessedSource"]["changePath"]
+LEGACY_RELEASE_TAG = STATUS["release"]["historicalProvenance"]["legacyReleaseTag"]
+LEGACY_RELEASE_COMMIT = STATUS["release"]["historicalProvenance"]["legacyReleaseCommit"]
+CONTROL_STATE_COMMIT = STATUS["release"]["historicalProvenance"]["controlStateCommit"]
+PR9_STARTING_HEAD = STATUS["release"]["historicalProvenance"]["migrationStartingHead"]
 ALLOWED_MAPPING_STATUSES = {
     "NOT-DETERMINED", "CANDIDATE", "PARTIAL", "CONFLICT", "OUT-OF-SCOPE",
 }
 METHOD_MAPPING_EXPECTED = {
-    "R01": ("Applicability/Profile Declaration", "PICS-like declaration", "active v4.2.1", "realizes", "CANDIDATE"),
-    "R02": ("VerificationBasisElement", "applicable CRS item", "active v4.2.1", "candidate-correspondence", "CANDIDATE"),
-    "R03": ("VerificationObligation", "current ARINC requirement-obligation aspect", "active v4.2.1", "no-direct-correspondence", "NOT-DETERMINED"),
-    "R04": ("VerificationObligation", "PR #9 Verification Objective", "PR #9 / v4.3 candidate", "candidate-correspondence", "NOT-DETERMINED"),
-    "R05": ("Obligation/Coverage aspect", "functional/state/timing and related classifications", "active v4.2.1", "classifies", "CANDIDATE"),
-    "R06": ("VerificationStrategy", "Test-and-Analysis allocation", "active v4.2.1", "realizes", "PARTIAL"),
-    "R07": ("VerificationCase", "VC", "active v4.2.1", "instantiates", "CANDIDATE"),
-    "R08": ("VerificationProcedure", "procedure", "active v4.2.1", "instantiates", "CANDIDATE"),
-    "R09": ("Observation", "packet trace/timestamp/log", "active v4.2.1", "instantiates", "CANDIDATE"),
-    "R10": ("Result", "verdict", "active v4.2.1", "instantiates", "CANDIDATE"),
-    "R11": ("Oracle", "discrete/robust timing rule", "active v4.2.1", "implements", "CANDIDATE"),
-    "R12": ("Evidence", "characterized execution/analysis record", "active v4.2.1", "candidate-correspondence", "NOT-DETERMINED"),
-    "R13": ("Argument", "scoped assurance reasoning", "active v4.2.1", "realizes", "PARTIAL"),
-    "R14": ("Claim", "PR #9 CEI claim entry candidate", "PR #9 / v4.3 candidate", "indexes", "NOT-DETERMINED"),
-    "R15": ("CompositeGate", "RG/G gate package", "PR #9 / v4.3 candidate", "specializes", "NOT-DETERMINED"),
-    "R16": ("Configuration", "IUT/setup/procedure identity", "active v4.2.1", "instantiates", "CANDIDATE"),
-    "R17": ("Anomaly/Change/Impact", "Problem Closure plus CR/DD", "active v4.2.1", "candidate-correspondence", "NOT-DETERMINED"),
-    "R18": ("SufficiencyAssessment", "PR #9 OSR/claim-review candidate", "PR #9 / v4.3 candidate", "candidate-correspondence", "NOT-DETERMINED"),
+    # STABLE_INVARIANT: external role, ARINC object, relation and status.
+    "R01": ("Applicability/Profile Declaration", "PICS-like declaration", "realizes", "CANDIDATE"),
+    "R02": ("VerificationBasisElement", "applicable CRS item", "candidate-correspondence", "CANDIDATE"),
+    "R03": ("VerificationObligation", "current ARINC requirement-obligation aspect", "no-direct-correspondence", "NOT-DETERMINED"),
+    "R04": ("VerificationObligation", "Verification Objective", "candidate-correspondence", "NOT-DETERMINED"),
+    "R05": ("Obligation/Coverage aspect", "functional/state/timing and related classifications", "classifies", "CANDIDATE"),
+    "R06": ("VerificationStrategy", "Test-and-Analysis allocation", "realizes", "PARTIAL"),
+    "R07": ("VerificationCase", "VC", "instantiates", "CANDIDATE"),
+    "R08": ("VerificationProcedure", "procedure", "instantiates", "CANDIDATE"),
+    "R09": ("Observation", "packet trace/timestamp/log", "instantiates", "CANDIDATE"),
+    "R10": ("Result", "verdict", "instantiates", "CANDIDATE"),
+    "R11": ("Oracle", "discrete/robust timing rule", "implements", "CANDIDATE"),
+    "R12": ("Evidence", "characterized execution/analysis record", "candidate-correspondence", "NOT-DETERMINED"),
+    "R13": ("Argument", "scoped assurance reasoning", "realizes", "PARTIAL"),
+    "R14": ("Claim", "CEI claim entry candidate", "indexes", "NOT-DETERMINED"),
+    "R15": ("CompositeGate", "RG/G gate package", "specializes", "NOT-DETERMINED"),
+    "R16": ("Configuration", "IUT/setup/procedure identity", "instantiates", "CANDIDATE"),
+    "R17": ("Anomaly/Change/Impact", "Problem Closure plus CR/DD", "candidate-correspondence", "NOT-DETERMINED"),
+    "R18": ("SufficiencyAssessment", "OSR/claim-review candidate", "candidate-correspondence", "NOT-DETERMINED"),
 }
 INSTANCE_ADDITIONAL_EXPECTED = {
     "A01": ("VerificationCase", "Test Purpose"),
@@ -298,7 +317,6 @@ def collect_required(errors: list[str]) -> tuple[list[Path], Path | None, Path |
     """Build the required-file list from fixed files plus discovered artifacts."""
     required = list(REQUIRED_FIXED_FILES)
     discovered_baseline = None
-    reader_report = None
 
     for baseline in discover(BASELINE_RE, BASELINES_DIR):
         required.append(baseline)
@@ -309,14 +327,7 @@ def collect_required(errors: list[str]) -> tuple[list[Path], Path | None, Path |
     for gate in discover(GATE_RECORD_RE, GATES_DIR):
         required.append(gate)
 
-    reader_report = discover_exactly_one(
-        re.compile(r"^.*\.md$"), CURRENT_REPORT_DIR,
-        "reader report", errors,
-    )
-    if reader_report is not None:
-        required.append(reader_report)
-
-    return required, None, reader_report, []
+    return required, None, None, []
 
 
 def display_math_fingerprint(text: str) -> tuple[int, str]:
@@ -340,8 +351,8 @@ def validate_gvs_binding(errors: list[str]) -> None:
         ARINC_V43_RELEASE_TAG,
         ACK_BASELINE_ID,
         ACK_DISPOSITION,
-        "NOT-EXERCISED",
-        "NOT YET ESTABLISHED",
+        EVALUATION_STATUS,
+        CONFIGURATION_STATUS,
     )
     for value in required_binding_values:
         if value not in binding:
@@ -454,7 +465,8 @@ def mapping_reconciliation_errors(text: str) -> list[str]:
     english, chinese = text.split(ZH_MARKER, 1)
     english_review_rows = _mapping_language_review_rows(english, "English", errors)
     chinese_review_rows = _mapping_language_review_rows(chinese, "Chinese", errors)
-    source_rows: dict[str, tuple[str, str, str, str, str]] = {}
+    source_rows: dict[str, tuple[str, str, str, str]] = {}
+    source_provenance: dict[str, str] = {}
     additional_rows: dict[str, tuple[str, str]] = {}
 
     for line in english.splitlines():
@@ -464,15 +476,17 @@ def mapping_reconciliation_errors(text: str) -> list[str]:
                 errors.append(f"method reconciliation row must have 10 columns: {line}")
                 continue
             row_id, role, local_object, source, relation, status, *_ = cells
+            normalized_object = re.sub(r"^PR\s*#\d+\s+", "", local_object)
             value = (
-                role.strip("`"), local_object, source,
+                role.strip("`"), normalized_object,
                 relation.strip("`"), status.strip("`"),
             )
             if row_id in source_rows:
                 errors.append(f"duplicate method reconciliation row: {row_id}")
             source_rows[row_id] = value
-            if value[4] not in ALLOWED_MAPPING_STATUSES:
-                errors.append(f"method row {row_id} has prohibited status: {value[4]}")
+            source_provenance[row_id] = source
+            if value[3] not in ALLOWED_MAPPING_STATUSES:
+                errors.append(f"method row {row_id} has prohibited status: {value[3]}")
         elif re.match(r"^\| A\d{2} \|", line):
             cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
             if len(cells) != 11:
@@ -517,7 +531,7 @@ def mapping_reconciliation_errors(text: str) -> list[str]:
 
     if source_rows.get("R07", (None,))[0] == source_rows.get("R08", (None,))[0]:
         errors.append("VerificationCase and VerificationProcedure are not independent rows")
-    if source_rows.get("R03", (None, None, None))[2] == source_rows.get("R04", (None, None, None))[2]:
+    if source_provenance.get("R03") == source_provenance.get("R04"):
         errors.append("legacy and candidate VerificationObligation sources are not separated")
     for row_id in sorted(set(english_review_rows) & set(chinese_review_rows)):
         english_relation_status = english_review_rows[row_id][:2]
@@ -563,11 +577,11 @@ def cr_bilingual_metadata_errors(text: str) -> list[str]:
             ("external method binding", "ownership", "migration", "traceability"),
             ("外部方法绑定", "所有权", "迁移", "追踪"),
         ),
-        "candidate baseline": (("RB-2026-001-v4.3",), ("RB-2026-001-v4.3",)),
+        "candidate baseline": ((V43_BASELINE_PREFIX,), (V43_BASELINE_PREFIX,)),
         "prior baseline": (("RB-2026-001-v4.2.1",), ("RB-2026-001-v4.2.1",)),
         "method semantics": (("1–14", "T1–T5", "unchanged"), ("1–14", "T1–T5", "不变")),
         "status": (("Migration candidate", "Draft", "independent migration review"), ("迁移候选", "Draft", "独立迁移评审")),
-        "trigger": (("PR #14", "pre-framework PR #9", "Candidate GVS Core"), ("PR #14", "pre-framework PR #9", "Candidate GVS Core")),
+        "trigger": (("Candidate GVS Core",), ("Candidate GVS Core",)),
         "method commit": ((METHOD_DEFINITION_COMMIT,), (METHOD_DEFINITION_COMMIT,)),
     }
     for label, (english_terms, chinese_terms) in checks.items():
@@ -738,8 +752,8 @@ def third_handshake_acknowledgement_errors(
         METHOD_DISPOSITION_COMMIT,
         ACK_DISPOSITION,
         "Q-01–Q-09",
-        "NOT-EXERCISED",
-        "NOT YET ESTABLISHED",
+        EVALUATION_STATUS,
+        CONFIGURATION_STATUS,
     )
     for document_name, parts in bilingual_parts.items():
         for language, section in zip(("English", "Chinese"), parts):
@@ -832,8 +846,8 @@ def third_handshake_acknowledgement_errors(
 
     controlled_status_fields = {
         "Compatibility": ACK_DISPOSITION + " — Q-01–Q-09",
-        "Instance evaluation": "NOT-EXERCISED",
-        "Project Configuration": "NOT YET ESTABLISHED",
+        "Instance evaluation": EVALUATION_STATUS,
+        "Project Configuration": CONFIGURATION_STATUS,
     }
     for document_name in ("binding", "mapping", "PBC"):
         for field, expected in controlled_status_fields.items():
@@ -845,7 +859,7 @@ def third_handshake_acknowledgement_errors(
                 )
     for document_name in ("binding", "mapping", "PBC", "baseline", "change", "handoff"):
         text = documents[document_name]
-        for value in (ACK_DISPOSITION, "NOT-EXERCISED", "NOT YET ESTABLISHED"):
+        for value in (ACK_DISPOSITION, EVALUATION_STATUS, CONFIGURATION_STATUS):
             if value not in text:
                 errors.append(f"{document_name} is missing controlled status: {value}")
         if "Q-01–Q-09" not in text:
@@ -909,10 +923,10 @@ def validate_instance_mapping(errors: list[str]) -> None:
 
 def validate_cross_repository_semantics(errors: list[str]) -> None:
     errors.extend(acceptance_criteria_errors(
-        read(BASELINES_DIR / "RB-2026-001-v4.3.md"),
-        read(CHANGES_DIR / "CR-2026-004.md"),
+        read(ASSESSED_BASELINE_PATH),
+        read(ASSESSED_CHANGE_PATH),
     ))
-    errors.extend(cr_bilingual_metadata_errors(read(CHANGES_DIR / "CR-2026-004.md")))
+    errors.extend(cr_bilingual_metadata_errors(read(ASSESSED_CHANGE_PATH)))
     errors.extend(observation_result_errors(
         read(PROFILE_BINDING_PATH), read(MIGRATION_HANDOFF_PATH),
     ))
@@ -927,7 +941,7 @@ def validate_cross_repository_semantics(errors: list[str]) -> None:
 def validate_candidate_semantics(errors: list[str]) -> None:
     candidate_paths = [
         ROOT / "README.md", CONTROL / "PROJECT_CONTROL.md", CONTROL / "CHANGE_CONTROL.md",
-        BASELINES_DIR / "RB-2026-001-v4.3.md", CHANGES_DIR / "CR-2026-004.md",
+        ASSESSED_BASELINE_PATH, ASSESSED_CHANGE_PATH,
         CONTRACTS_DIR / "ARCHITECTURE.md", CONTRACTS_DIR / "TRACEABILITY_SCHEMA.md",
         INSTANCE_MAPPING_PATH, PROFILE_BINDING_PATH, MIGRATION_HANDOFF_PATH,
         RESEARCH / "CLAIM_EVIDENCE_MATRIX.md", REPORT_PATH,
@@ -935,7 +949,7 @@ def validate_candidate_semantics(errors: list[str]) -> None:
     ]
     combined = "\n".join(read(path) for path in candidate_paths)
     if re.search(r"certification-grounded", combined, re.IGNORECASE):
-        errors.append("active v4.3 candidate surfaces still use certification-grounded")
+        errors.append("active assessed-source surfaces still use certification-grounded")
 
     scoped_terms = {
         "L0–L7": ("ARINC", "Profile", "not Generic"),
@@ -956,7 +970,7 @@ def validate_candidate_semantics(errors: list[str]) -> None:
         "CEI is an index and not Claim, Argument, Evidence Item, or Evidence Architecture",
         "PASS cannot automatically promote Evidence, Objective Satisfaction, Claim support, compliance, or authority acceptance",
         "compatibility is `NOT-DETERMINED`",
-        "instance evaluation is `NOT-EXERCISED`",
+        f"instance evaluation is `{EVALUATION_STATUS}`",
     )
     handoff = read(MIGRATION_HANDOFF_PATH)
     for phrase in required_nonpromotion:
@@ -1024,6 +1038,134 @@ def validate_tracked_hygiene(errors: list[str]) -> None:
                 errors.append(f"possible credential/private key in tracked text: {relative}")
 
 
+# STABLE_INVARIANT: lifecycle facts belong in project-status.json, while these
+# patterns describe prohibited executable-code shapes.
+FULL_SHA_RE = re.compile(r"(?<![0-9a-f])[0-9a-f]{40}(?![0-9a-f])")
+NUMBERED_PR_RE = re.compile(r"\bPR\s*#\d+\b", re.IGNORECASE)
+MUTABLE_IDENTITY_RE = re.compile(
+    r"(?:refs/heads/|origin/|blob/)(?:main|master|latest)(?![\w.-])"
+    r"|(?:BRANCH|REF|IDENTITY|COMMIT|TAG|BASELINE)[A-Z0-9_]*\s*=\s*[\"'](?:main|master|latest)[\"']",
+    re.IGNORECASE,
+)
+
+
+def governance_code_paths() -> list[Path]:
+    """Return only current lifecycle-governance code and its regression tests."""
+    return [
+        ROOT / "scripts/check_repo_baseline.py",
+        ROOT / "scripts/sync_project_overview.py",
+        ROOT / "tests/unit/test_repo_baseline_semantics.py",
+    ]
+
+
+def lifecycle_literal_errors(status: dict) -> list[str]:
+    errors: list[str] = []
+    current_tags = {
+        status["release"]["tag"],
+        status["release"]["assessedSource"]["tag"],
+    }
+    for path in governance_code_paths():
+        text = read(path)
+        errors.extend(lifecycle_literal_text_errors(text, path.name, current_tags))
+    return errors
+
+
+def lifecycle_literal_text_errors(
+    text: str, name: str, current_tags: set[str],
+) -> list[str]:
+    errors: list[str] = []
+    if FULL_SHA_RE.search(text):
+        errors.append(f"lifecycle SHA literal in executable governance code: {name}")
+    if NUMBERED_PR_RE.search(text):
+        errors.append(f"PR-number literal in executable governance code: {name}")
+    if MUTABLE_IDENTITY_RE.search(text):
+        errors.append(f"mutable branch used as lifecycle identity: {name}")
+    for tag in current_tags:
+        if re.search(rf"(?<![\w.-]){re.escape(tag)}(?![\w.-])", text):
+            errors.append(f"current release-tag literal in executable governance code: {name}")
+    return errors
+
+
+def _git(*args: str) -> str:
+    result = subprocess.run(
+        ["git", *args], cwd=ROOT, text=True, encoding="utf-8",
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+    )
+    return result.stdout.strip() if result.returncode == 0 else ""
+
+
+def changed_files_for_event() -> set[str]:
+    if os.getenv("GITHUB_EVENT_NAME") != "pull_request":
+        return set()
+    base = os.getenv("GITHUB_BASE_REF")
+    if not base:
+        return set()
+    output = _git("diff", "--name-only", f"origin/{base}...HEAD")
+    return {line for line in output.splitlines() if line}
+
+
+def pr_required_file_errors(status: dict, changed: set[str] | None = None) -> list[str]:
+    if os.getenv("GITHUB_EVENT_NAME") != "pull_request" and changed is None:
+        return []
+    changed = changed_files_for_event() if changed is None else changed
+    required = set(status["governance"]["requiredPullRequestFiles"])
+    return [
+        f"pull request must update {path}"
+        for path in sorted(required - changed)
+    ]
+
+
+def retired_surface_errors(status: dict) -> list[str]:
+    errors: list[str] = []
+    current_dir = ROOT / "artifacts/reports/current"
+    if current_dir.is_dir() and any(path.is_file() for path in current_dir.iterdir()):
+        errors.append("retired current reader-report directory still contains files")
+    allowed_handoffs = {
+        Path(status["release"]["records"]["migrationReviewPath"]),
+        Path(status["release"]["records"]["acknowledgementReviewPath"]),
+    }
+    found_handoffs = {
+        path.relative_to(ROOT)
+        for path in ROOT.rglob("*HANDOFF*.md")
+        if "local-references" not in path.parts
+    }
+    if found_handoffs != allowed_handoffs:
+        errors.append("HANDOFF population differs from the two immutable historical reviews")
+    active_paths = (
+        ROOT / "README.md", CONTROL / "PROJECT_CONTROL.md", CONTROL / "CHANGE_CONTROL.md",
+        RESEARCH / "RESEARCH_CONTROL.md", ROOT / "docs/engineering/ENGINEERING_CONTROL.md",
+        ROOT / "docs/tutorial/TUTORIAL_CONTROL.md",
+    )
+    for path in active_paths:
+        for target in allowed_handoffs:
+            if target.name in read(path):
+                errors.append(f"active control surface references retired HANDOFF: {path.relative_to(ROOT)}")
+    return errors
+
+
+def research_ownership_errors(text: str) -> list[str]:
+    required = (
+        "Method Inputs → ARINC Domain/Product Refinement → Instance Evidence → Controlled Feedback",
+        "ARINC research is conducted under, not in place of, the Candidate GVS Core",
+        "may not reverse-define the Generic Core",
+        "Framework Change Proposal",
+        "Cross-instance generalization and RQ8 closure remain the method repository's",
+        "方法输入 → ARINC 领域／产品精化 → 实例证据 → 受控反馈",
+        "不能反向定义 Generic Core",
+        "跨实例推广和 RQ8 关闭仍由方法仓库综合",
+    )
+    return [f"research ownership control is missing: {phrase}" for phrase in required if phrase not in text]
+
+
+def overview_semantic_errors(readme: str) -> list[str]:
+    errors: list[str] = []
+    if re.search(r"(?im)^\| Current release \|[^\n]*(?:Draft|candidate)", readme):
+        errors.append("README still presents the current release as Draft/candidate")
+    if re.search(r"(?im)^\| 当前发布 \|[^\n]*(?:Draft|候选)", readme):
+        errors.append("README 中文当前发布仍被标为 Draft/候选")
+    return errors
+
+
 def main() -> int:
     errors: list[str] = []
 
@@ -1062,17 +1204,16 @@ def main() -> int:
     for path in nested_readmes:
         errors.append(f"subdirectory README is prohibited: {path.relative_to(ROOT)}")
 
-    current_files = sorted(
-        path for path in CURRENT_REPORT_DIR.glob("*") if path.is_file()
-    )
-    if reader_report is None:
-        pass
-    elif current_files != [reader_report]:
-        errors.append(
-            "artifacts/reports/current must contain exactly the declared reader report"
-        )
+    current_readme, expected_readme = sync.synchronized_readme(STATUS)
+    if current_readme != expected_readme:
+        errors.append("README governed block differs from project-status.json")
 
-    bilingual = [path for path in required if not BILINGUAL_EXEMPT_RE.match(path.name)]
+    bilingual = [
+        path for path in required
+        if path.suffix == ".md"
+        and path != ROOT / "README.md"
+        and not BILINGUAL_EXEMPT_RE.match(path.name)
+    ]
     bilingual_shapes: dict[Path, tuple[tuple, tuple]] = {}
     for path in bilingual:
         text = read(path)
@@ -1199,7 +1340,7 @@ def main() -> int:
     errors.extend(local_link_errors())
 
     if not REFERENCE_CATALOG_PATH.exists():
-        errors.append("missing optional reference catalog (recommended for v4.3)")
+        errors.append("missing optional reference catalog for the active profile")
     else:
         validate_reference_catalog(errors)
 
@@ -1209,27 +1350,32 @@ def main() -> int:
     validate_cross_repository_semantics(errors)
     validate_candidate_semantics(errors)
     validate_tracked_hygiene(errors)
+    errors.extend(lifecycle_literal_errors(STATUS))
+    errors.extend(pr_required_file_errors(STATUS))
+    errors.extend(retired_surface_errors(STATUS))
+    errors.extend(research_ownership_errors(read(RESEARCH / "RESEARCH_CONTROL.md")))
+    errors.extend(overview_semantic_errors(read(ROOT / "README.md")))
 
     traceability = read(TRACEABILITY_PATH)
     for term in REQUIRED_V43_TRACEABILITY_TERMS:
         if term not in traceability:
-            errors.append(f"v4.3 traceability relation missing: {term}")
+            errors.append(f"profile traceability relation missing: {term}")
 
     claims = read(CLAIMS_PATH)
     for term in REQUIRED_V43_CLAIMS:
         if term not in claims:
-            errors.append(f"v4.3 claim-evidence matrix missing claim: {term}")
+            errors.append(f"profile claim-evidence matrix missing claim: {term}")
 
     v43_baselines = [b for b in discover(BASELINE_RE, BASELINES_DIR)
-                     if b.name.startswith("RB-2026-001-v4.3")]
+                     if b.stem.startswith(V43_BASELINE_PREFIX)]
     if not v43_baselines:
-        errors.append("v4.3 candidate baseline missing")
+        errors.append("assessed-source baseline missing")
     else:
-        v43_text = read(BASELINES_DIR / "RB-2026-001-v4.3.md")
+        v43_text = read(ASSESSED_BASELINE_PATH)
         if V43_BASELINE_PREFIX not in v43_text:
-            errors.append("v4.3 baseline does not declare RB-2026-001-v4.3")
+            errors.append("assessed-source baseline does not declare its governed identity")
         if V43_NONCLAIM_PHRASE not in v43_text:
-            errors.append("v4.3 baseline is missing a required non-claim")
+            errors.append("assessed-source baseline is missing a required non-claim")
 
     cr_files = discover(CHANGE_RE, CHANGES_DIR)
     cr_prefixes = {f.stem for f in cr_files}

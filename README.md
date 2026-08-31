@@ -34,7 +34,7 @@ silently redefine the Core.
 | Dimension | Controlled state |
 |---|---|
 | Repository role | ARINC 615A Profile / Binding / Configuration / instance engineering and evidence owner |
-| Current release | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/releases/tag/v4.3.1) |
+| Current release | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/tree/v4.3.1) |
 | Method input | Candidate GVS Core 0.3 at [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
 | Third handshake | `COMPLETE` |
 | Compatibility | `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` under Q-01–Q-09 |
@@ -53,21 +53,19 @@ silently redefine the Core.
 
 State changes:
 
-- Current-status ownership moves to README plus `project-status.json`.
+- Current-status ownership moves to README plus project-status.json.
 - The v4.2.1 reader report becomes an archived historical information-architecture report.
 
 Unchanged boundaries:
 
 - Candidate GVS Core and compatibility-disposition identities remain separate and unchanged.
 - The 18 source mapping rows, 7 instance-only rows and Q-01 through Q-09 remain unchanged.
-- Project Configuration is `NOT YET ESTABLISHED`; instance evaluation is `NOT-EXERCISED`; RQ8 remains `OPEN`.
+- Project Configuration is NOT YET ESTABLISHED; instance evaluation is NOT-EXERCISED; RQ8 remains OPEN.
 - No baseline, tag, certification, authority acceptance or protocol-conformance claim is created.
 
 ## Current stop
 
-`PROJECT-CONFIGURATION-GATE` — **NOT YET ESTABLISHED**: establish real,
-reviewed IUT, environment, tool, procedure, clock and error-budget identities
-before execution.
+`PROJECT-CONFIGURATION-GATE` — **NOT YET ESTABLISHED**: Establish real, reviewed IUT, environment, tool, procedure, clock and error-budget identities before execution.
 
 ## Next development steps
 
@@ -81,7 +79,7 @@ before execution.
 | 维度 | 受控状态 |
 |---|---|
 | 仓库角色 | ARINC 615A Profile、Binding、Configuration、实例工程与证据的权威仓库 |
-| 当前发布 | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/releases/tag/v4.3.1) |
+| 当前发布 | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/tree/v4.3.1) |
 | 方法输入 | Candidate GVS Core 0.3 @ [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
 | 第三次握手 | `COMPLETE` |
 | 兼容性 | 受 Q-01～Q-09 限定的 `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` |
@@ -98,22 +96,27 @@ before execution.
 - 明确 Candidate GVS Core 到 ARINC 精化及受控反馈的架构。
 - 在不改写原子记录的前提下退役重复 reader-status 与 HANDOFF 界面。
 
-状态变化：当前状态由 README 与 `project-status.json` 共同承载；v4.2.1 reader
-report 转为历史信息架构报告。
+状态变化：
 
-保持不变：方法定义、方法处置、18+7 映射、Q-01～Q-09、Configuration、实例评价和
-RQ8 状态均不改变；本增量不创建 baseline、tag 或符合性／认证主张。
+- 当前状态由 README 与 project-status.json 共同承载。
+- v4.2.1 reader report 转为历史信息架构报告。
+
+保持不变的边界：
+
+- Candidate GVS Core 与兼容性处置身份保持分离且不变。
+- 18 个来源映射行、7 个实例专用行及 Q-01～Q-09 保持不变。
+- Project Configuration 保持 NOT YET ESTABLISHED；实例评价保持 NOT-EXERCISED；RQ8 保持 OPEN。
+- 不创建 baseline、tag、认证、权威接受或协议符合性主张。
 
 ## 当前停点
 
-`PROJECT-CONFIGURATION-GATE` — **NOT YET ESTABLISHED**：执行前必须建立并评审真实的
-IUT、环境、工具、规程、时钟和误差预算身份。
+`PROJECT-CONFIGURATION-GATE` — **NOT YET ESTABLISHED**：执行前建立并评审真实的 IUT、环境、工具、规程、时钟和误差预算身份。
 
 ## 下一步开发计划
 
-- 用受控真实值建立并评审 Project Configuration；
-- 将首批 verification case、procedure 与 oracle 绑定至该配置；
-- 执行首次受控实例评价并保存 Observation、Result 和 Evidence 来源；
+- 用受控真实值建立并评审 Project Configuration。
+- 将首批 verification case、procedure 与 oracle 绑定至该配置。
+- 执行首次受控实例评价并保存 Observation、Result 和 Evidence 来源。
 - 通过 Framework Change Proposal 向方法仓库反馈，不直接反向定义 Generic Core。
 <!-- project-status:end -->
 
@@ -121,7 +124,7 @@ IUT、环境、工具、规程、时钟和误差预算身份。
 
 | Reader | Entry | Purpose |
 |---|---|---|
-| General reader / 普通读者 | This README and the [current release](https://github.com/ZhangChi0727/arinc-615a-conformance/releases/tag/v4.3.1) | purpose, achieved state and unearned claims |
+| General reader / 普通读者 | This README and the [current release](https://github.com/ZhangChi0727/arinc-615a-conformance/tree/v4.3.1) | purpose, achieved state and unearned claims |
 | Researcher / 研究人员 | [`RESEARCH_CONTROL.md`](docs/research/RESEARCH_CONTROL.md) | method inputs, ARINC refinement, experiments and claims |
 | Developer / 开发者 | [`ENGINEERING_CONTROL.md`](docs/engineering/ENGINEERING_CONTROL.md) | implementation, tests, configuration and evidence production |
 | Agent | [`project-status.json`](project-status.json) | machine state, stop point, next steps and prohibited actions |
