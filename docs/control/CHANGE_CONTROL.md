@@ -14,6 +14,11 @@ release rules. Current state is owned by the [root README](../../README.md) and
 | Baseline | scope, formal semantics, assurance tier, gate or ownership change | formal CR and independent approval |
 | Release | approved state made externally identifiable | release checks and annotated tag when authorized |
 
+Changes to standard interpretation, applicability, mathematical/timing or
+oracle/verdict semantics, method binding, compatibility/evaluation state,
+ownership or migration semantics are baseline changes requiring independent
+review.
+
 ## 2. Pull-request rules
 
 Every pull request must:
@@ -63,6 +68,9 @@ management or navigation changes create neither.
 | 研究 | 模型、实验、分析或主张变化 | 注册／追踪与研究评审 |
 | 基线 | 范围、形式语义、保证层级、门禁或所有权变化 | 正式 CR 与独立批准 |
 | 发布 | 使已批准状态可由外部识别 | 发布检查及经授权的 annotated tag |
+
+对标准解释、适用性、数学／时序或 oracle／verdict 语义、方法绑定、兼容性／评价状态、
+所有权或迁移语义的修改均属于 baseline change，必须接受独立评审。
 
 ## 2. PR 规则
 

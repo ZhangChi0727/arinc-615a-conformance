@@ -25,11 +25,14 @@ decision. Test names and comments must describe the behavior actually exercised.
 A claimed boundary or rollover requires evidence that reaches that boundary or
 an explicit, reviewed test seam.
 
-## Reader-report handoff
+## README status integration
 
-An Increment Assurance Record is developer-facing and is not itself the reader
-report. A reader update may cite it and summarize accepted results, but must
-retain limitations and link the underlying evidence manifest and gate record.
+An Increment Assurance Record is developer-facing and does not create a
+separate reader report or HANDOFF. In the same pull request, an accepted
+increment updates `project-status.json` and the generated README status block,
+including the increment, current stop, next step and unchanged boundaries.
+README links the underlying evidence manifest and gate decision where the
+accepted state depends on them.
 
 ---
 
@@ -57,7 +60,8 @@ retain limitations and link the underlying evidence manifest and gate record.
 发现、受影响主张、回退或迁移需求以及精确门禁决定。测试名称和注释必须描述实际执行的
 行为。若主张某个边界或编号回卷，证据必须真正到达该边界，或使用显式且经评审的测试缝。
 
-## 向读者报告交接
+## README 状态集成
 
-增量保证记录面向开发者，本身不是读者报告。读者更新可以引用它并汇总已接受结果，但必须
-保留局限，并链接底层证据清单和门禁记录。
+增量保证记录面向开发者，不创建独立 reader report 或 HANDOFF。已接受增量必须在同一 PR
+更新 `project-status.json` 和生成的 README 状态区块，记录增量、当前停点、下一步及保持
+不变的边界；当已接受状态依赖底层证据清单和门禁决定时，README 必须链接这些记录。
