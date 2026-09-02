@@ -432,16 +432,97 @@ def test_active_controls_reject_every_historical_alias_form(tmp_path: Path) -> N
 
 
 def test_historical_aliases_must_be_nonempty_unique_and_include_id() -> None:
-    mutations = (
-        [],
-        ["ARINC-615A-4", "ARINC-615A-4"],
-        ["ARINC 615A-4", "615A-4"],
-    )
     tracked = set(subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines())
-    for aliases in mutations:
+    cases = (
+        ([], "non-empty textAliases"),
+        (["ARINC-615A-4", "   ", "ARINC 615A-4", "615A-4"], "blank textAliases"),
+        (["ARINC-615A-4", "arinc-615a-4", "ARINC 615A-4", "615A-4"], "duplicate textAliases"),
+        (["ARINC 615A-4", "615A-4"], "arinc-615a-4"),
+        (["ARINC-615A-4", "615A-4"], "arinc 615a-4"),
+        (["ARINC-615A-4", "ARINC 615A-4"], "615a-4"),
+    )
+    for aliases, expected in cases:
         register = controlled_sources()
         register["historicalAssumptions"][0]["textAliases"] = aliases
-        assert baseline._active_authority_text_errors(register, ROOT, tracked)
+        errors = baseline._active_authority_text_errors(register, ROOT, tracked)
+        assert any(expected in error for error in errors), aliases
+
+
+def test_historical_inventory_and_canonical_id_are_required() -> None:
+    tracked = set(subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines())
+    for history, expected in (
+        (None, "non-empty list"),
+        ([], "non-empty list"),
+        ([{"id": "INVALID", "textAliases": ["INVALID"]}], "invalid canonical id"),
+    ):
+        register = controlled_sources()
+        if history is None:
+            del register["historicalAssumptions"]
+        else:
+            register["historicalAssumptions"] = history
+        errors = baseline._active_authority_text_errors(register, ROOT, tracked)
+        assert any(expected in error for error in errors), history
+
+
+def test_historical_alias_inventory_may_be_extended() -> None:
+    register = controlled_sources()
+    register["historicalAssumptions"][0]["textAliases"].append("legacy edition alias")
+    assert integrated_source_errors(register) == []
+
+
+def test_pruned_history_or_aliases_fail_closed() -> None:
+    for mutate in (
+        lambda register: register.update(historicalAssumptions=[]),
+        lambda register: register["historicalAssumptions"][0].update(textAliases=["ARINC-615A-4"]),
+    ):
+        register = controlled_sources()
+        mutate(register)
+        generated = baseline.sync.replace_status_block(source("README.md"), status(), register)
+        assert baseline.governed_status_errors(status(), generated, register)
+
+
+def test_pruned_aliases_still_scan_required_designation(tmp_path: Path) -> None:
+    register = controlled_sources()
+    register["historicalAssumptions"][0]["textAliases"] = ["ARINC-615A-4"]
+    tracked: set[str] = set()
+    for raw in register["activeControlSurfacePaths"]:
+        target = tmp_path / raw
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("Controlled surface.\n", encoding="utf-8")
+        tracked.add(raw)
+    (tmp_path / register["activeControlSurfacePaths"][0]).write_text(
+        "615A-4 是唯一活动协议权威。\n", encoding="utf-8",
+    )
+    errors = baseline._active_authority_text_errors(register, tmp_path, tracked)
+    assert any("lacks required forms" in error for error in errors)
+    assert any("names historical source" in error for error in errors)
+
+
+def test_required_aliases_are_scanned_across_all_active_surfaces(tmp_path: Path) -> None:
+    register = controlled_sources()
+    aliases = register["historicalAssumptions"][0]["textAliases"]
+    tracked: set[str] = set()
+    for index, raw in enumerate(register["activeControlSurfacePaths"]):
+        target = tmp_path / raw
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(f"Controlled reference: {aliases[index % len(aliases)]}\n", encoding="utf-8")
+        tracked.add(raw)
+    errors = baseline._active_authority_text_errors(register, tmp_path, tracked)
+    for raw in register["activeControlSurfacePaths"]:
+        assert any(raw in error for error in errors), raw
+
+
+def test_named_history_remains_allowed_outside_active_surfaces() -> None:
+    register = controlled_sources()
+    tracked = set(subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines())
+    history = register["historicalAssumptions"][0]
+    aliases = history["textAliases"]
+    assert any(alias in source("docs/control/changes/CR-2026-006.md") for alias in aliases)
+    assert any(
+        any(alias in source(record["path"]) for alias in aliases)
+        for record in history["frozenRecords"]
+    )
+    assert baseline._active_authority_text_errors(register, ROOT, tracked) == []
 
 
 def test_active_control_surfaces_cannot_be_empty_duplicate_or_incomplete() -> None:

@@ -16,6 +16,7 @@ import os
 import re
 import subprocess
 import sys
+import unicodedata
 from pathlib import Path, PurePosixPath, PureWindowsPath
 
 
@@ -1284,22 +1285,56 @@ def frozen_record_errors(
     return errors
 
 
+def _required_historical_aliases(source_id: str) -> tuple[set[str], str | None]:
+    """Derive the minimum normalized alias family from a canonical source ID."""
+    if not isinstance(source_id, str):
+        return set(), "canonical id must be a string"
+    canonical = unicodedata.normalize("NFKC", source_id).strip()
+    prefix, separator, designation = canonical.partition("-")
+    if not separator or not prefix.strip() or not designation.strip():
+        return set(), "canonical id must use prefix-designation form"
+    prefix = prefix.strip()
+    designation = designation.strip()
+    return {
+        unicodedata.normalize("NFKC", alias).strip().casefold()
+        for alias in (canonical, f"{prefix} {designation}", designation)
+    }, None
+
+
 def _active_authority_text_errors(register: dict, root: Path, tracked_paths: set[str]) -> list[str]:
     errors: list[str] = []
     historical_aliases: list[tuple[str, str]] = []
-    for item in register.get("historicalAssumptions", []):
-        if not isinstance(item, dict) or not isinstance(item.get("id"), str):
+    history = register.get("historicalAssumptions")
+    if not isinstance(history, list) or not history:
+        return ["historicalAssumptions must be a non-empty list"]
+    for history_index, item in enumerate(history):
+        if not isinstance(item, dict) or not isinstance(item.get("id"), str) or not item["id"].strip():
+            errors.append(f"historicalAssumptions[{history_index}] must have a non-empty canonical id")
             continue
+        required_aliases, canonical_error = _required_historical_aliases(item["id"])
+        if canonical_error:
+            errors.append(f"historical assumption {item['id']} has an invalid canonical id: {canonical_error}")
         aliases = item.get("textAliases")
-        if not isinstance(aliases, list) or not aliases or any(not isinstance(alias, str) or not alias for alias in aliases):
+        if not isinstance(aliases, list) or not aliases:
             errors.append(f"historical assumption {item['id']} must define non-empty textAliases")
-            continue
-        normalized = [alias.casefold() for alias in aliases]
+            aliases = []
+        non_strings = [alias for alias in aliases if not isinstance(alias, str)]
+        if non_strings:
+            errors.append(f"historical assumption {item['id']} textAliases must contain only strings")
+        string_aliases = [alias for alias in aliases if isinstance(alias, str)]
+        normalized = [unicodedata.normalize("NFKC", alias).strip().casefold() for alias in string_aliases]
+        if any(not alias for alias in normalized):
+            errors.append(f"historical assumption {item['id']} contains blank textAliases")
         if len(normalized) != len(set(normalized)):
             errors.append(f"historical assumption {item['id']} contains duplicate textAliases")
-        if item["id"].casefold() not in normalized:
-            errors.append(f"historical assumption {item['id']} textAliases must include its id")
-        historical_aliases.extend((item["id"], alias) for alias in aliases)
+        missing_aliases = required_aliases - set(normalized)
+        if missing_aliases:
+            errors.append(
+                f"historical assumption {item['id']} textAliases lacks required forms: "
+                + ", ".join(sorted(missing_aliases))
+            )
+        scan_aliases = required_aliases | {alias for alias in normalized if alias}
+        historical_aliases.extend((item["id"], alias) for alias in scan_aliases)
     surfaces = register.get("activeControlSurfacePaths")
     required_surfaces = {
         "docs/research/RESEARCH_CONTROL.md",
@@ -1326,9 +1361,9 @@ def _active_authority_text_errors(register: dict, root: Path, tracked_paths: set
             continue
         assert target is not None
         control_text = target.read_text(encoding="utf-8")
-        folded_text = control_text.casefold()
+        folded_text = unicodedata.normalize("NFKC", control_text).casefold()
         for source_id, alias in historical_aliases:
-            offset = folded_text.find(alias.casefold())
+            offset = folded_text.find(alias)
             if offset >= 0:
                 line_number = control_text.count("\n", 0, offset) + 1
                 errors.append(
