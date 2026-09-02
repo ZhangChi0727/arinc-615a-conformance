@@ -132,6 +132,28 @@ names or the latest Git commit.
 | Common tutorial | `docs/tutorial/sources/COMMON_TUTORIAL_PLAN.md`, `artifacts/tutorials/` |
 | ARINC 615A tutorial | `docs/tutorial/sources/ARINC615A_TUTORIAL_PLAN.md`, `artifacts/tutorials/` |
 
+## ARINC product layering and source authority
+
+The ARINC repository refines registered sources through one directional,
+injectable product chain:
+
+```text
+615A-3 authority + bounded 665-5 + open 645 capability
+  -> protocol-file codecs
+  -> DatagramIO / Clock / TraceSink
+  -> TftpSession -> 615A adaptation -> operations
+  -> TP / Case / Procedure / Oracle
+  -> Observation / Result / Evidence / Decision / Claim
+```
+
+Source identity and capabilities are controlled by
+[`controlled_sources.json`](../../../configs/research/controlled_sources.json).
+No lower layer may invent a missing source obligation or promote a claim.
+Injectable boundaries isolate transport, timing and trace collection. The single
+behavioral skeleton is a lightweight observable timed EFSM, introduced only
+after CRS/applicability approval. M0 adopts this direction but creates no
+implementation or execution eligibility.
+
 ## ARINC 615A certification-evidence view (`RB-2026-001-v4.3` candidate)
 
 ```text
@@ -220,6 +242,24 @@ RG0–RG6 控制静态产物和主张，G0–G7 控制证据层级；缺失上�
 与出版输入；`src/`、`tests/`、`configs/` 和 `docs/engineering/` 承载工具及其受控输入；
 `docs/tutorial/` 承载两条教程的控制和源计划；`artifacts/` 承载读者报告、已发布教程、发布包
 和生成证据。根 README 是唯一读者入口，四份控制文档是开发者入口。
+
+## ARINC 产品分层与来源权威
+
+本仓库沿单向、可注入产品链精化登记来源：
+
+```text
+615A-3 权威 + 有边界 665-5 + 开放的 645 能力
+  -> 协议文件 codec
+  -> DatagramIO / Clock / TraceSink
+  -> TftpSession -> 615A 适配 -> 操作
+  -> TP / Case / Procedure / Oracle
+  -> Observation / Result / Evidence / Decision / Claim
+```
+
+来源身份和能力由 [`controlled_sources.json`](../../../configs/research/controlled_sources.json)
+控制。下游层不得发明缺失的来源义务或晋级主张。注入边界隔离传输、时序和 trace 收集。唯一
+行为骨架是轻量可观测 timed EFSM，且只在 CRS/适用性批准后引入。M0 只采纳方向，不创建
+实现或执行资格。
 
 ## ARINC 615A 面向认证证据视图（`RB-2026-001-v4.3` 候选）
 

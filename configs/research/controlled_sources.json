@@ -1,0 +1,92 @@
+{
+  "schemaVersion": "1.0",
+  "currentProtocolAuthorityId": "ARINC-615A-3",
+  "sources": [
+    {
+      "id": "ARINC-615A-3",
+      "edition": "615A-3",
+      "role": "CURRENT-PROTOCOL-AUTHORITY",
+      "publicationDate": "2007-06-30",
+      "pageCount": 174,
+      "byteCount": 1875919,
+      "sha256": "918eff7afd7e88a312f07c5a0cefea1c70e31e95dc727716e92005bc96f02511",
+      "wireVersion": "A4",
+      "sourceHandling": "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY"
+    },
+    {
+      "id": "ARINC-665-5",
+      "edition": "665-5",
+      "role": "BOUNDED-DATA-FORMAT-REFERENCE",
+      "publicationDate": "2019-08-13",
+      "pageCount": 139,
+      "byteCount": 910694,
+      "sha256": "340cfbac1788ee3409d4b5f58f715fa37b19c69c105d311ed4d540f9350da9d8",
+      "formatVersions": {
+        "loadFile": "0x8004",
+        "batch": "0x9004",
+        "media": "0xA004"
+      },
+      "equivalentReplacementFor": [],
+      "limitations": [
+        "NOT-EQUIVALENT-TO-ARINC-665-3",
+        "APPLICABILITY-MUST-BE-DECIDED-PER-REQUIREMENT"
+      ],
+      "sourceHandling": "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY"
+    }
+  ],
+  "openDependencies": [
+    {
+      "id": "ARINC-645",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilities": [
+        "CRC-VALIDATION",
+        "CHECK-VALUE-VALIDATION",
+        "NAMING-ALGORITHM-VALIDATION",
+        "COMPLETE-INTEGRITY-VALIDATION"
+      ],
+      "closureRule": "Acquire and register an authorized source, complete applicability and CRS tracing, and obtain independent approval before claiming affected capabilities."
+    }
+  ],
+  "historicalAssumptions": [
+    {
+      "id": "ARINC-615A-4",
+      "status": "HISTORICAL-SUPERSEDED",
+      "activeDependency": false,
+      "frozenPaths": [
+        "artifacts/reports/current/RPT-2026-002_information_architecture_v4.2.1.md"
+      ]
+    }
+  ],
+  "futureSourceMigration": {
+    "target": null,
+    "requiredGates": [
+      "SOURCE-ACQUIRED-AND-IDENTIFIED",
+      "APPLICABILITY-DELTA-COMPLETE",
+      "CHANGE-RECORD-APPROVED",
+      "INDEPENDENT-REVIEW-APPROVED"
+    ]
+  },
+  "technicalDirection": {
+    "behaviorModel": "LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM",
+    "verificationMethod": "BOUNDED-TEST-ANALYSIS",
+    "deferredModels": ["DTMC", "HMM-ML", "BAYESIAN-CALIBRATION"],
+    "ttcn3": "NOT-A-DEPENDENCY-OR-SELECTED-PLATFORM",
+    "openSourceReuse": {
+      "L1": "REFERENCE-ONLY-ALLOWED-WITH-PROJECT-VERSION-LICENSE-AND-OBSERVED-ARCHITECTURE",
+      "L2": "FUTURE-BLACK-BOX-DIFFERENTIAL-IUT-WITH-FIXED-VERSION-AND-LICENSE",
+      "L3": "PROHIBITED-UNTIL-LICENSE-SOURCE-CLEANLINESS-AND-ARCHITECTURE-REVIEW"
+    }
+  },
+  "roadmap": [
+    {"id": "M0", "status": "CANDIDATE-IN-THIS-PR", "dependsOn": []},
+    {"id": "M1", "status": "NEXT-NOT-STARTED", "dependsOn": ["M0"]},
+    {"id": "M2", "status": "BLOCKED", "dependsOn": ["M1"]},
+    {"id": "M3", "status": "BLOCKED", "dependsOn": ["M2"]},
+    {"id": "M4", "status": "BLOCKED", "dependsOn": ["M3"]},
+    {"id": "M5", "status": "BLOCKED", "dependsOn": ["M4"]},
+    {"id": "M6", "status": "BLOCKED", "dependsOn": ["M5"]},
+    {"id": "M7", "status": "BLOCKED", "dependsOn": ["M6"]},
+    {"id": "M8", "status": "BLOCKED", "dependsOn": ["M7"]},
+    {"id": "M9", "status": "BLOCKED", "dependsOn": ["M8"]}
+  ]
+}

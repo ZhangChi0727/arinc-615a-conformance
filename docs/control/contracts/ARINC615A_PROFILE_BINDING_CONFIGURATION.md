@@ -50,6 +50,16 @@ Observation(s) produces a Result/verdict. A Result is not an Observation. A PASS
 does not automatically close a Verification Objective,
 support a claim, establish compliance, or obtain authority acceptance.
 
+### Controlled source boundary
+
+The current Product Binding source authority is ARINC 615A-3 as identified in
+[`controlled_sources.json`](../../../configs/research/controlled_sources.json).
+Its ASCII wire-version value `A4` is not an edition label. ARINC 665-5 is only a
+bounded data-format reference and is not an equivalent substitute for 665-3.
+ARINC 645 is an open dependency, so affected complete-integrity capabilities
+remain unearned. Historical 615A-4 wording has no current technical authority.
+M0 creates no CRS item, model, operation or execution qualification.
+
 ## 4. Project Configuration policy
 
 No actual configuration has yet been established or exercised for this
@@ -121,6 +131,14 @@ timed IOLTS，并提供可执行用例、规程、Oracle 实现、适配器及�
 
 Oracle 规定评价规则；将其应用于受控 Observation 后产生 Result/verdict。Result 不是
 Observation。PASS 不自动关闭 VO、支持主张、建立合规或取得权威接受。
+
+### 受控来源边界
+
+当前 Product Binding 的来源权威是
+[`controlled_sources.json`](../../../configs/research/controlled_sources.json) 登记的 ARINC
+615A-3。其 ASCII 线版本值 `A4` 不是版次标签。ARINC 665-5 只是有边界的数据格式参考，
+不等价替代 665-3。ARINC 645 是开放依赖，因此受影响的完整完整性能力仍未取得。历史
+615A-4 文字不再具有当前技术权威。M0 不创建 CRS 条目、模型、操作或执行资格。
 
 ## 4. Project Configuration 政策
 
