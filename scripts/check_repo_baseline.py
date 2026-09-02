@@ -1291,16 +1291,34 @@ def _active_authority_text_errors(register: dict, root: Path, tracked_paths: set
         if isinstance(item, dict) and isinstance(item.get("id"), str)
     }
     negative = re.compile(
-        r"histor|supersed|withdraw|not\s+(?:a\s+)?(?:current|active)|no\s+current|"
-        r"based\s+on|不再|不是|历史|撤销|取代|基于|不得|不能",
+        r"\bnot\b|\bno\s+longer\b|\bno\s+current\b|"
+        r"不再|不是|并非|非当前|无当前权威|不得|不能",
         re.IGNORECASE,
     )
-    assertion = re.compile(
-        r"(?:\bis\b|\bas\b|=|是|作为).{0,50}(?:current|active|authority|当前|活动|权威)"
-        r"|(?:current|active|authority|当前|活动|权威).{0,50}(?:\bis\b|=|是|作为)",
+    prohibited_role = re.compile(
+        r"current\s+(?:protocol\s+)?authority|active\s+source|"
+        r"implementation\s+target|normative\s+basis|(?:active\s+)?dependency|"
+        r"当前(?:协议)?权威|活动来源|实现目标|规范依据|(?:活动)?依赖",
         re.IGNORECASE,
     )
-    for index, raw in enumerate(register.get("activeControlSurfacePaths", [])):
+    surfaces = register.get("activeControlSurfacePaths")
+    required_surfaces = {
+        "docs/research/RESEARCH_CONTROL.md",
+        "docs/engineering/ENGINEERING_CONTROL.md",
+        "docs/control/contracts/ARINC615A_PROFILE_BINDING_CONFIGURATION.md",
+        "docs/control/contracts/ARCHITECTURE.md",
+    }
+    if not isinstance(surfaces, list) or not surfaces:
+        return ["activeControlSurfacePaths must be a non-empty list"]
+    normalized_surfaces = [raw.replace("\\", "/") for raw in surfaces if isinstance(raw, str)]
+    if len(normalized_surfaces) != len(surfaces):
+        errors.append("activeControlSurfacePaths entries must be paths")
+    if len(normalized_surfaces) != len(set(normalized_surfaces)):
+        errors.append("activeControlSurfacePaths contains duplicate paths")
+    missing = required_surfaces - set(normalized_surfaces)
+    if missing:
+        errors.append("activeControlSurfacePaths lacks required control surfaces: " + ", ".join(sorted(missing)))
+    for index, raw in enumerate(surfaces):
         target, path_error = _controlled_tracked_path_error(
             raw, root, tracked_paths, f"activeControlSurfacePaths[{index}]",
         )
@@ -1312,7 +1330,7 @@ def _active_authority_text_errors(register: dict, root: Path, tracked_paths: set
             for source_id in historical_ids:
                 variants = {source_id, source_id.replace("ARINC-", "ARINC ")}
                 if any(variant.lower() in line.lower() for variant in variants):
-                    if assertion.search(line) and not negative.search(line):
+                    if prohibited_role.search(line) and not negative.search(line):
                         errors.append(
                             f"active control surface reintroduces historical source authority: "
                             f"{raw}:{line_number}"
@@ -1467,33 +1485,51 @@ def controlled_source_errors(
 
     roadmap_order = list(roadmap_by_id)
     index_by_id = {stage_id: index for index, stage_id in enumerate(roadmap_order)}
-    for stage_id, stage in roadmap_by_id.items():
+    gate_ids: list[str] = []
+    for stage_index, (stage_id, stage) in enumerate(roadmap_by_id.items()):
         dependencies = stage.get("dependsOn")
         if not isinstance(dependencies, list) or len(dependencies) != len(set(dependencies)):
             errors.append(f"roadmap stage {stage_id} has invalid or duplicate dependencies")
             continue
-        for dependency_id in dependencies:
-            if dependency_id not in roadmap_by_id:
-                errors.append(f"roadmap stage {stage_id} references unknown dependency {dependency_id}")
-            elif index_by_id[dependency_id] >= index_by_id[stage_id]:
-                errors.append(f"roadmap stage {stage_id} is cyclic or not topologically ordered")
-        if not isinstance(stage.get("gateId"), str) or not stage["gateId"]:
+        expected_dependencies = [] if stage_index == 0 else [roadmap_order[stage_index - 1]]
+        if dependencies != expected_dependencies:
+            errors.append(f"roadmap stage {stage_id} must depend only on its immediate predecessor")
+        gate_id = stage.get("gateId")
+        if not isinstance(gate_id, str) or not gate_id:
             errors.append(f"roadmap stage {stage_id} lacks gateId")
+        else:
+            gate_ids.append(gate_id)
+    if len(gate_ids) != len(set(gate_ids)):
+        errors.append("roadmap gateId values must be unique")
     lifecycle = register.get("lifecycle", {})
     current_id, next_id = lifecycle.get("currentStageId"), lifecycle.get("nextStageId")
     if current_id not in roadmap_by_id or next_id not in roadmap_by_id or current_id == next_id:
         errors.append("lifecycle current/next stage references are invalid")
     else:
+        current_index = index_by_id[current_id]
+        next_index = index_by_id[next_id]
+        if next_index != current_index + 1:
+            errors.append("lifecycle next stage must immediately follow current stage")
         disposition = lifecycle.get("candidateDisposition")
-        if roadmap_by_id[current_id].get("status") != f"DISPOSITION-{disposition}":
-            errors.append("current roadmap status differs from lifecycle disposition")
-        if current_id not in roadmap_by_id[next_id].get("dependsOn", []):
-            errors.append("next roadmap stage must depend on current stage")
+        for stage_index, (stage_id, stage) in enumerate(roadmap_by_id.items()):
+            if stage_index < current_index:
+                expected_status = "COMPLETED-EXTERNALLY-VERIFIED"
+            elif stage_index == current_index:
+                expected_status = f"DISPOSITION-{disposition}"
+            elif stage_index == next_index:
+                expected_status = "NEXT-BLOCKED-BY-FINAL-GATE"
+            else:
+                expected_status = "BLOCKED-BY-PREDECESSOR"
+            if stage.get("status") != expected_status:
+                errors.append(f"roadmap stage {stage_id} status must be {expected_status}")
         stop = status.get("development", {}).get("currentStop", {})
         expected_gate = roadmap_by_id[next_id].get("gateId")
         expected_path = f"development.gates.{expected_gate}"
         if stop.get("id") != expected_gate or stop.get("statusPath") != expected_path:
             errors.append("current stop does not resolve the next roadmap stage gate")
+    governed_gates = status.get("development", {}).get("gates")
+    if not isinstance(governed_gates, dict) or set(governed_gates) != set(gate_ids):
+        errors.append("development.gates must match all and only roadmap gateId values")
     if lifecycle.get("repositoryMergeEvidence") != "EXTERNAL-VERIFICATION-REQUIRED" or lifecycle.get("independentApproval") != "NOT-AUTOMATED":
         errors.append("approval and merge evidence must remain externally verified conditions")
     if lifecycle.get("nextStageEntryRule") != "PROHIBITED-UNTIL-APPROVAL-AND-ORDINARY-MERGE-VERIFIED":

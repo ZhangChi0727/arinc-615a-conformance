@@ -404,16 +404,55 @@ def test_source_register_rejects_duplicate_ids() -> None:
 
 
 def test_active_controls_reject_historical_authority_but_allow_negative_history(tmp_path: Path) -> None:
-    relative = Path("docs/research/RESEARCH_CONTROL.md")
-    target = tmp_path / relative
-    target.parent.mkdir(parents=True)
     register = controlled_sources()
-    register["activeControlSurfacePaths"] = [relative.as_posix()]
-    target.write_text("ARINC 615A-4 是当前规范权威。\n", encoding="utf-8")
-    errors = baseline._active_authority_text_errors(register, tmp_path, {relative.as_posix()})
-    assert any("reintroduces historical source authority" in error for error in errors)
-    target.write_text("ARINC 615A-4 不再是当前规范权威。\n", encoding="utf-8")
-    assert baseline._active_authority_text_errors(register, tmp_path, {relative.as_posix()}) == []
+    tracked: set[str] = set()
+    for raw in register["activeControlSurfacePaths"]:
+        target = tmp_path / raw
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("Controlled surface.\n", encoding="utf-8")
+        tracked.add(raw)
+    target = tmp_path / register["activeControlSurfacePaths"][0]
+    prohibited = (
+        "The current protocol authority is ARINC 615A-4 based on the active source.\n",
+        "The implementation target is ARINC 615A-4.\n",
+        "The normative basis and dependency is ARINC 615A-4.\n",
+        "当前协议权威基于 ARINC 615A-4。\n",
+        "实现目标是 ARINC 615A-4。\n",
+        "规范依据和依赖是 ARINC 615A-4。\n",
+    )
+    for text in prohibited:
+        target.write_text(text, encoding="utf-8")
+        errors = baseline._active_authority_text_errors(register, tmp_path, tracked)
+        assert any("reintroduces historical source authority" in error for error in errors), text
+    for text in (
+        "ARINC 615A-4 is not the current protocol authority.\n",
+        "ARINC 615A-4 is no longer an active source.\n",
+        "ARINC 615A-4 不是当前协议权威。\n",
+        "ARINC 615A-4 不再是活动来源。\n",
+        "Historical note: ARINC 615A-4 was once assumed.\n",
+    ):
+        target.write_text(text, encoding="utf-8")
+        assert baseline._active_authority_text_errors(register, tmp_path, tracked) == [], text
+
+
+def test_active_control_surfaces_cannot_be_empty_duplicate_or_incomplete() -> None:
+    tracked = set(subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines())
+    for surfaces in (
+        [],
+        ["docs/research/RESEARCH_CONTROL.md"] * 2,
+        ["docs/research/RESEARCH_CONTROL.md"],
+    ):
+        register = controlled_sources()
+        register["activeControlSurfacePaths"] = surfaces
+        assert baseline._active_authority_text_errors(register, ROOT, tracked)
+
+
+def test_active_control_surfaces_reject_unsafe_and_untracked_paths() -> None:
+    tracked = set(subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines())
+    for invalid in ("/etc/passwd", "../../README.md", "docs/research/not-tracked.md"):
+        register = controlled_sources()
+        register["activeControlSurfacePaths"][0] = invalid
+        assert baseline._active_authority_text_errors(register, ROOT, tracked), invalid
 
 
 def test_roadmap_accepts_m1_transition_without_python_change() -> None:
@@ -429,6 +468,30 @@ def test_roadmap_accepts_m1_transition_without_python_change() -> None:
     data["development"]["currentStop"]["statusPath"] = f"development.gates.{next_stage['gateId']}"
     data["development"]["gates"][next_stage["gateId"]] = "NOT YET ESTABLISHED"
     assert integrated_source_errors(register, data) == []
+
+
+def test_serial_roadmap_rejects_bypasses() -> None:
+    mutations = (
+        lambda roadmap: roadmap[3].update(dependsOn=[]),
+        lambda roadmap: roadmap[3].update(dependsOn=[roadmap[1]["id"]]),
+        lambda roadmap: roadmap[3].update(status="READY"),
+        lambda roadmap: roadmap[3].update(status="COMPLETED-EXTERNALLY-VERIFIED"),
+        lambda roadmap: roadmap[3].update(gateId=roadmap[2]["gateId"]),
+    )
+    for mutate in mutations:
+        register = controlled_sources()
+        mutate(register["roadmap"])
+        assert integrated_source_errors(register)
+
+
+def test_development_gates_must_match_roadmap() -> None:
+    for mutate in (
+        lambda gates: gates.pop(next(iter(gates))),
+        lambda gates: gates.update({"UNREGISTERED-GATE": "BLOCKED"}),
+    ):
+        data = status()
+        mutate(data["development"]["gates"])
+        assert any("development.gates" in error for error in integrated_source_errors(controlled_sources(), data))
 
 
 def test_readme_rejects_stale_release_candidate_wording() -> None:

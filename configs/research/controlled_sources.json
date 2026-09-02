@@ -78,7 +78,8 @@
   "activeControlSurfacePaths": [
     "docs/research/RESEARCH_CONTROL.md",
     "docs/engineering/ENGINEERING_CONTROL.md",
-    "docs/control/contracts/ARINC615A_PROFILE_BINDING_CONFIGURATION.md"
+    "docs/control/contracts/ARINC615A_PROFILE_BINDING_CONFIGURATION.md",
+    "docs/control/contracts/ARCHITECTURE.md"
   ],
   "futureSourceMigration": {
     "status": "IDLE",
