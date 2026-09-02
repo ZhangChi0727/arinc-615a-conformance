@@ -56,9 +56,8 @@ conformance. TTCN-3 is not a dependency or selected execution platform.
 | L2 black-box/differential IUT | May be approved later with fixed version/license; conclusions remain instance-scoped |
 | L3 source/constants/test vectors | Prohibited until independent license, source-cleanliness and architecture-fit review |
 
-Project ARIEL (GPL-2.0) and Thomas Vogt's MPL-2.0, 615A-4-based implementation
-are L1 candidates only. No source, constant, vector or derivative is imported by
-M0.
+No named open-source implementation is registered as an L1/L2/L3 reuse input by
+M0. No source, constant, vector or derivative is imported.
 
 ## 5. Serial delivery and quality gates
 
@@ -124,8 +123,7 @@ calibration。FMEA 只能分类/排序故障，不能判定符合性。TTCN-3 �
 | L2 黑盒/差分 IUT | 以后可在固定版本/许可证后批准；结论保持实例范围 |
 | L3 源码/常量/测试向量 | 独立许可证、来源洁净度和架构适配评审前禁止 |
 
-Project ARIEL（GPL-2.0）和 Thomas Vogt 基于 615A-4 的 MPL-2.0 实现仅是 L1 候选。M0 不
-导入源码、常量、向量或派生物。
+M0 不登记任何具名开源实现作为 L1/L2/L3 复用输入，也不导入源码、常量、向量或派生物。
 
 ## 5. 串行交付与质量门
 

@@ -248,8 +248,8 @@ untraceable requirements and false capability claims.
 **Scope:** Source roles and migration control only; no standard text, CRS,
 applicability decision, implementation or conformance conclusion is created.
 
-**Status:** Candidate under CR-2026-006. It activates only after independent
-approval of an unchanged PR Head and ordinary two-parent merge.
+**Status:** Disposition `ADOPT`, with formal activation governed by CR-2026-006.
+Approval and ordinary-merge evidence are externally verified, not automated.
 
 ---
 
@@ -269,8 +269,8 @@ before CRS, Configuration and execution data exist.
 **Scope:** Technical direction only; no EFSM, oracle, test case, analysis model
 or execution platform is implemented or selected here.
 
-**Status:** Candidate under CR-2026-006 and subject to the same activation gate
-as DD-015.
+**Status:** Disposition `ADOPT`; formal activation uses the CR-2026-006 gate and
+does not assert that approval or merge has occurred.
 
 ---
 
@@ -287,12 +287,11 @@ Deliver M0–M9 serially, with M1 CRS/applicability next and no parallel stage P
 contain change. Gated reuse prevents license and source-authority contamination,
 and serial gates prevent implementation from outrunning requirements.
 
-**Scope:** Target architecture and delivery policy only. Project ARIEL
-(GPL-2.0) and Thomas Vogt's 615A-4-based implementation (MPL-2.0) are references,
-not authorities; no third-party material is copied.
+**Scope:** Target architecture and delivery policy only. No named open-source
+implementation is registered for reuse, and no third-party material is copied.
 
-**Status:** Candidate under CR-2026-006 and subject to the same activation gate
-as DD-015.
+**Status:** Disposition `ADOPT`; formal activation uses the CR-2026-006 gate and
+M1 remains prohibited until approval and ordinary merge are externally verified.
 
 ---
 
@@ -381,7 +380,7 @@ RR-2026-001 v4.2 的数学与方法论语义未改变。
 
 **范围：** 仅控制来源角色与迁移；不创建标准正文、CRS、适用性决定、实现或符合性结论。
 
-**状态：** CR-2026-006 下的候选；仅在最终不变 PR Head 获独立批准并普通两父合并后激活。
+**状态：** 处置为 `ADOPT`，正式激活由 CR-2026-006 控制；批准与普通合并证据由外部核验。
 
 ## DD-016——采用轻量可观测 timed EFSM 与有界 Test-Analysis
 
@@ -395,7 +394,7 @@ adequacy。延期 DTMC 协议语义、HMM/ML 诊断和 Bayesian calibration。FM
 
 **范围：** 仅为技术方向；本决定不实现或选择 EFSM、oracle、用例、分析模型或执行平台。
 
-**状态：** CR-2026-006 下候选，与 DD-015 使用相同激活门。
+**状态：** 处置为 `ADOPT`；正式激活使用 CR-2026-006 门，且不声称批准或合并已经发生。
 
 ## DD-017——采用可注入分层、受门禁的开源复用和 M0～M9 串行交付
 
@@ -407,7 +406,7 @@ adequacy。延期 DTMC 协议语义、HMM/ML 诊断和 Bayesian calibration。FM
 **理由：** 注入边界支持确定性时序和证据，方向性分层控制变化；受门禁复用避免许可证和
 来源权威污染，串行门防止实现越过需求。
 
-**范围：** 仅为目标架构与交付政策。Project ARIEL（GPL-2.0）和 Thomas Vogt 基于
-615A-4 的实现（MPL-2.0）只是参考，不是权威；不复制第三方材料。
+**范围：** 仅为目标架构与交付政策。本变更不登记任何具名开源实现用于复用，也不复制
+第三方材料。
 
-**状态：** CR-2026-006 下候选，与 DD-015 使用相同激活门。
+**状态：** 处置为 `ADOPT`；正式激活使用 CR-2026-006 门，批准与普通合并经外部核验前禁止 M1。
