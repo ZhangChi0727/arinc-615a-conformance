@@ -10,6 +10,7 @@
       "pageCount": 174,
       "byteCount": 1875919,
       "sha256": "918eff7afd7e88a312f07c5a0cefea1c70e31e95dc727716e92005bc96f02511",
+      "identitySeal": "65c6705840a4abcbb43af813a174491e4341d876efbe319eb85ad2c6782c4963",
       "wireVersion": "A4",
       "sourceHandling": "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY"
     },
@@ -21,6 +22,7 @@
       "pageCount": 139,
       "byteCount": 910694,
       "sha256": "340cfbac1788ee3409d4b5f58f715fa37b19c69c105d311ed4d540f9350da9d8",
+      "identitySeal": "9116fe5f3afe1121cdf9e273ffa321cdd5a5bb25cedea2389c7ca68e88930c67",
       "formatVersions": {
         "loadFile": "0x8004",
         "batch": "0x9004",
@@ -47,13 +49,25 @@
       "closureRule": "Acquire and register an authorized source, complete applicability and CRS tracing, and obtain independent approval before claiming affected capabilities."
     }
   ],
+  "capabilityStatus": {
+    "completeIntegrityValidation": "NOT-ESTABLISHED-OPEN-ARINC-645"
+  },
   "historicalAssumptions": [
     {
       "id": "ARINC-615A-4",
       "status": "HISTORICAL-SUPERSEDED",
       "activeDependency": false,
-      "frozenPaths": [
-        "artifacts/reports/current/RPT-2026-002_information_architecture_v4.2.1.md"
+      "frozenRecords": [
+        {
+          "path": "artifacts/reports/current/RPT-2026-002_information_architecture_v4.2.1.md",
+          "byteCount": 5426,
+          "sha256": "35f9ab6d44dd79fdc71f7a9be204ed3eced0e4d5b54db6a44f3f0934fa550ed1"
+        },
+        {
+          "path": "docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md",
+          "byteCount": 133964,
+          "sha256": "c248ad5a5e77149a6d93acb55105c6c62c83589c3bdceff2eff9b00ea8c636e7"
+        }
       ]
     }
   ],

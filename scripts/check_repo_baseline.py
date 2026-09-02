@@ -16,11 +16,12 @@ import os
 import re
 import subprocess
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 
 
 ROOT = Path(__file__).resolve().parents[1]
 STATUS_PATH = ROOT / "project-status.json"
+SOURCE_REGISTER_PATH = ROOT / "configs/research/controlled_sources.json"
 
 SYNC_SPEC = importlib.util.spec_from_file_location(
     "sync_project_overview", ROOT / "scripts/sync_project_overview.py"
@@ -29,6 +30,7 @@ assert SYNC_SPEC and SYNC_SPEC.loader
 sync = importlib.util.module_from_spec(SYNC_SPEC)
 SYNC_SPEC.loader.exec_module(sync)
 STATUS = sync.load_status(STATUS_PATH)
+CONTROLLED_SOURCES = sync.load_source_register(SOURCE_REGISTER_PATH)
 
 # Directory roots for discovered artifacts.
 CONTROL = ROOT / "docs/control"
@@ -68,6 +70,7 @@ ARCHIVED_READER_REPORT_PATH = ROOT / STATUS["release"]["records"]["historicalRea
 REQUIRED_FIXED_FILES = [
     ROOT / "README.md",
     STATUS_PATH,
+    SOURCE_REGISTER_PATH,
     ROOT / "scripts/sync_project_overview.py",
     CONTROL / "PROJECT_CONTROL.md",
     CONTROL / "CHANGE_CONTROL.md",
@@ -1195,6 +1198,205 @@ def research_ownership_errors(text: str) -> list[str]:
     return [f"research ownership control is missing: {phrase}" for phrase in required if phrase not in text]
 
 
+def _source_identity_seal(source: dict) -> str:
+    payload = {key: value for key, value in source.items() if key != "identitySeal"}
+    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def _controlled_tracked_path_error(
+    raw: object, root: Path, tracked_paths: set[str], label: str,
+) -> tuple[Path | None, str | None]:
+    if not isinstance(raw, str) or not raw:
+        return None, f"{label} must be a non-empty repository-relative path"
+    normalized = raw.replace("\\", "/")
+    posix = PurePosixPath(normalized)
+    windows = PureWindowsPath(raw)
+    if posix.is_absolute() or windows.is_absolute() or windows.drive or ".." in posix.parts:
+        return None, f"{label} must be repository-relative without traversal"
+    resolved_root = root.resolve()
+    candidate = resolved_root / Path(*posix.parts)
+    if candidate.is_symlink():
+        return None, f"{label} must not be a symbolic link"
+    target = candidate.resolve()
+    try:
+        target.relative_to(resolved_root)
+    except ValueError:
+        return None, f"{label} resolves outside the repository"
+    if not target.is_file():
+        return None, f"{label} must be an ordinary file"
+    if posix.as_posix() not in tracked_paths:
+        return None, f"{label} must name a Git-tracked file"
+    return target, None
+
+
+def controlled_source_errors(
+    status: dict,
+    register: dict,
+    root: Path = ROOT,
+    tracked_paths: set[str] | None = None,
+) -> list[str]:
+    """Validate source, technical-direction and serial-roadmap controlled data."""
+    errors: list[str] = []
+    if tracked_paths is None:
+        try:
+            result = subprocess.run(
+                ["git", "ls-files", "-z"], cwd=root, check=True,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            )
+            tracked_paths = {
+                item.decode("utf-8").replace("\\", "/")
+                for item in result.stdout.split(b"\0") if item
+            }
+        except (OSError, subprocess.CalledProcessError) as exc:
+            return [f"cannot enumerate tracked source-control files: {exc}"]
+
+    if register.get("schemaVersion") != "1.0":
+        errors.append("controlled source schemaVersion must be 1.0")
+    sources = register.get("sources")
+    if not isinstance(sources, list):
+        return errors + ["controlled sources must be a list"]
+    by_id = {
+        item.get("id"): item for item in sources
+        if isinstance(item, dict) and isinstance(item.get("id"), str)
+    }
+    if set(by_id) != {"ARINC-615A-3", "ARINC-665-5"}:
+        errors.append("controlled source population must be ARINC-615A-3 and ARINC-665-5")
+        return errors
+    if register.get("currentProtocolAuthorityId") != "ARINC-615A-3":
+        errors.append("ARINC-615A-3 must be the sole current protocol authority")
+
+    for source_id, source in by_id.items():
+        if source.get("edition") != source_id.removeprefix("ARINC-"):
+            errors.append(f"{source_id} edition differs from its controlled identity")
+        if not isinstance(source.get("pageCount"), int) or source["pageCount"] <= 0:
+            errors.append(f"{source_id} pageCount must be a positive integer")
+        if not isinstance(source.get("byteCount"), int) or source["byteCount"] <= 0:
+            errors.append(f"{source_id} byteCount must be a positive integer")
+        if not re.fullmatch(r"[0-9a-f]{64}", str(source.get("sha256", ""))):
+            errors.append(f"{source_id} sha256 must be a complete lowercase SHA-256")
+        if source.get("identitySeal") != _source_identity_seal(source):
+            errors.append(f"{source_id} controlled identity seal differs")
+        if source.get("sourceHandling") != "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY":
+            errors.append(f"{source_id} has an invalid source-handling policy")
+
+    protocol = by_id["ARINC-615A-3"]
+    if protocol.get("role") != "CURRENT-PROTOCOL-AUTHORITY":
+        errors.append("ARINC-615A-3 must have the sole protocol-authority role")
+    if protocol.get("wireVersion") != "A4" or protocol.get("edition") == protocol.get("wireVersion"):
+        errors.append("A4 must be represented only as the 615A-3 wire version")
+
+    formats = by_id["ARINC-665-5"]
+    if formats.get("role") != "BOUNDED-DATA-FORMAT-REFERENCE":
+        errors.append("ARINC-665-5 must remain a bounded data-format reference")
+    format_versions = formats.get("formatVersions")
+    if not isinstance(format_versions, dict) or set(format_versions) != {"loadFile", "batch", "media"} or any(
+        not re.fullmatch(r"0x[0-9A-F]{4}", str(value)) for value in format_versions.values()
+    ):
+        errors.append("ARINC-665-5 format-version schema is invalid")
+    if formats.get("equivalentReplacementFor") != [] or set(formats.get("limitations", [])) != {
+        "NOT-EQUIVALENT-TO-ARINC-665-3",
+        "APPLICABILITY-MUST-BE-DECIDED-PER-REQUIREMENT",
+    }:
+        errors.append("ARINC-665-5 equivalence/applicability boundary is invalid")
+
+    dependencies = register.get("openDependencies")
+    if not isinstance(dependencies, list) or len(dependencies) != 1:
+        errors.append("ARINC-645 must be the single registered open dependency")
+    else:
+        dependency = dependencies[0]
+        if dependency.get("id") != "ARINC-645" or dependency.get("status") != "OPEN-DEPENDENCY":
+            errors.append("ARINC-645 must remain an OPEN-DEPENDENCY")
+        if "COMPLETE-INTEGRITY-VALIDATION" not in dependency.get("affectedCapabilities", []):
+            errors.append("ARINC-645 must gate complete integrity validation")
+    if register.get("capabilityStatus", {}).get("completeIntegrityValidation") != "NOT-ESTABLISHED-OPEN-ARINC-645":
+        errors.append("complete integrity validation cannot be established while ARINC-645 is open")
+
+    history = register.get("historicalAssumptions")
+    if not isinstance(history, list) or len(history) != 1:
+        errors.append("615A-4 historical supersession record is missing")
+    else:
+        item = history[0]
+        if item.get("id") != "ARINC-615A-4" or item.get("status") != "HISTORICAL-SUPERSEDED" or item.get("activeDependency") is not False:
+            errors.append("ARINC-615A-4 must remain historical-superseded and inactive")
+        records = item.get("frozenRecords")
+        if not isinstance(records, list) or not records:
+            errors.append("615A-4 frozen historical records are missing")
+        else:
+            for index, record in enumerate(records):
+                label = f"historicalAssumptions[0].frozenRecords[{index}]"
+                if not isinstance(record, dict):
+                    errors.append(f"{label} must be an object")
+                    continue
+                target, path_error = _controlled_tracked_path_error(
+                    record.get("path"), root, tracked_paths, f"{label}.path",
+                )
+                if path_error:
+                    errors.append(path_error)
+                elif target is not None:
+                    payload = target.read_bytes()
+                    if record.get("byteCount") != len(payload):
+                        errors.append(f"{label} byteCount differs from frozen content")
+                    if record.get("sha256") != hashlib.sha256(payload).hexdigest():
+                        errors.append(f"{label} sha256 differs from frozen content")
+
+    migration = register.get("futureSourceMigration", {})
+    if migration.get("target") is not None:
+        errors.append("future source migration target must remain empty")
+    if set(migration.get("requiredGates", [])) != {
+        "SOURCE-ACQUIRED-AND-IDENTIFIED", "APPLICABILITY-DELTA-COMPLETE",
+        "CHANGE-RECORD-APPROVED", "INDEPENDENT-REVIEW-APPROVED",
+    }:
+        errors.append("future source migration gate is incomplete")
+
+    direction = register.get("technicalDirection", {})
+    if direction.get("behaviorModel") != "LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM":
+        errors.append("the active behavioral direction must be a lightweight observable timed EFSM")
+    if direction.get("verificationMethod") != "BOUNDED-TEST-ANALYSIS":
+        errors.append("the active verification method must remain bounded Test-Analysis")
+    if direction.get("deferredModels") != ["DTMC", "HMM-ML", "BAYESIAN-CALIBRATION"]:
+        errors.append("DTMC, HMM/ML and Bayesian calibration must remain deferred")
+    if direction.get("ttcn3") != "NOT-A-DEPENDENCY-OR-SELECTED-PLATFORM":
+        errors.append("TTCN-3 must not be a dependency or selected platform")
+    reuse = direction.get("openSourceReuse", {})
+    if not str(reuse.get("L1", "")).startswith("REFERENCE-ONLY-ALLOWED-WITH-"):
+        errors.append("L1 reference reuse policy is invalid")
+    if not str(reuse.get("L2", "")).startswith("FUTURE-BLACK-BOX-DIFFERENTIAL-IUT-"):
+        errors.append("L2 black-box reuse policy is invalid")
+    if reuse.get("L3") != "PROHIBITED-UNTIL-LICENSE-SOURCE-CLEANLINESS-AND-ARCHITECTURE-REVIEW":
+        errors.append("L3 reuse must remain gated by license, cleanliness and architecture review")
+
+    roadmap = register.get("roadmap")
+    if not isinstance(roadmap, list) or [item.get("id") for item in roadmap if isinstance(item, dict)] != [f"M{i}" for i in range(10)]:
+        errors.append("roadmap must contain ordered M0 through M9")
+    else:
+        if roadmap[0] != {"id": "M0", "status": "CANDIDATE-IN-THIS-PR", "dependsOn": []}:
+            errors.append("M0 must remain the only candidate milestone")
+        if roadmap[1] != {"id": "M1", "status": "NEXT-NOT-STARTED", "dependsOn": ["M0"]}:
+            errors.append("M1 must be next and not started")
+        for index in range(2, 10):
+            if roadmap[index] != {"id": f"M{index}", "status": "BLOCKED", "dependsOn": [f"M{index - 1}"]}:
+                errors.append(f"M{index} must remain blocked by M{index - 1}")
+
+    if status.get("technicalDirection", {}).get("sourceRegisterPath") != "configs/research/controlled_sources.json":
+        errors.append("project status source-register pointer differs")
+    if status.get("development", {}).get("currentStop", {}).get("id") != "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE":
+        errors.append("project status bypasses the M1 CRS/applicability gate")
+    if status.get("development", {}).get("requirementsSpecificationStatus") != "NOT YET ESTABLISHED":
+        errors.append("M1 conformance requirements must remain not established in M0")
+    boundary = status.get("claimsBoundary", {})
+    if boundary.get("projectConfigurationStatus") != "NOT YET ESTABLISHED":
+        errors.append("Project Configuration cannot be promoted in M0")
+    if boundary.get("instanceEvaluation") != "NOT-EXERCISED":
+        errors.append("instance evaluation cannot be promoted in M0")
+    if boundary.get("rq8") != "OPEN":
+        errors.append("RQ8 cannot be closed in M0")
+    for claim in sync.CLAIM_KEYS:
+        if boundary.get(claim) is not False:
+            errors.append(f"{claim} cannot be promoted in M0")
+    return errors
+
+
 def overview_semantic_errors(readme: str) -> list[str]:
     errors: list[str] = []
     if re.search(r"(?im)^\| Current release \|[^\n]*(?:Draft|candidate)", readme):
@@ -1204,16 +1406,39 @@ def overview_semantic_errors(readme: str) -> list[str]:
     return errors
 
 
-def governed_status_errors(status: dict, readme: str) -> list[str]:
+def governed_status_errors(
+    status: dict,
+    readme: str,
+    register: dict | None = None,
+    root: Path = ROOT,
+    tracked_paths: set[str] | None = None,
+) -> list[str]:
     """Validate governed state and the README produced from that exact state."""
-    errors = list(sync.status_errors(status, ROOT))
+    register = CONTROLLED_SOURCES if register is None else register
+    errors = list(sync.status_errors(status, root))
+    errors.extend(controlled_source_errors(status, register, root, tracked_paths))
     try:
-        expected = sync.replace_status_block(readme, status)
-    except sync.StatusError as exc:
+        expected = sync.replace_status_block(readme, status, register)
+    except (sync.StatusError, KeyError, TypeError, IndexError) as exc:
         errors.append(f"README status integration failed: {exc}")
     else:
         if readme != expected:
             errors.append("README governed block differs from project-status.json")
+    return errors
+
+
+def prohibited_source_artifact_errors(changed: set[str]) -> list[str]:
+    """Reject new protected-source payloads while preserving frozen history."""
+    errors: list[str] = []
+    for raw in changed:
+        path = PurePosixPath(raw.replace("\\", "/"))
+        lowered = path.name.lower()
+        if "local-references" in path.parts:
+            errors.append(f"private source directory cannot be tracked: {path}")
+        if path.suffix.lower() in {".pdf", ".patch", ".diff"}:
+            errors.append(f"protected or transient source artifact cannot be added: {path}")
+        if any(token in lowered for token in ("standard_extract", "standard-extract", "clause_extract", "clause-extract")):
+            errors.append(f"standard extraction cannot be added: {path}")
     return errors
 
 
@@ -1255,7 +1480,8 @@ def main() -> int:
     for path in nested_readmes:
         errors.append(f"subdirectory README is prohibited: {path.relative_to(ROOT)}")
 
-    errors.extend(governed_status_errors(STATUS, read(ROOT / "README.md")))
+    errors.extend(governed_status_errors(STATUS, read(ROOT / "README.md"), CONTROLLED_SOURCES))
+    errors.extend(prohibited_source_artifact_errors(changed_files_for_event()))
 
     bilingual = [
         path for path in required
@@ -1432,6 +1658,8 @@ def main() -> int:
         errors.append("CR-2026-004 not found among discovered change requests")
     if "CR-2026-005" not in cr_prefixes:
         errors.append("CR-2026-005 not found among discovered change requests")
+    if "CR-2026-006" not in cr_prefixes:
+        errors.append("CR-2026-006 not found among discovered change requests")
 
     if errors:
         print("Baseline validation failed:", file=sys.stderr)

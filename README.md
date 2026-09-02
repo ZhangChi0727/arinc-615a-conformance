@@ -36,6 +36,10 @@ silently redefine the Core.
 | Repository role | ARINC 615A Profile / Binding / Configuration / instance engineering and evidence owner |
 | Current release | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/tree/v4.3.1) |
 | Method input | Candidate GVS Core 0.3 at [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
+| Protocol source | `ARINC-615A-3` / edition `615A-3` / wire version `A4` |
+| Bounded source and open dependency | `ARINC-665-5`; ARINC-645 `OPEN-DEPENDENCY` |
+| Technical direction | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / `NOT-A-DEPENDENCY-OR-SELECTED-PLATFORM` |
+| M0 controls | [`source register`](configs/research/controlled_sources.json), [`CR-2026-006`](docs/control/changes/CR-2026-006.md), [`DD-015–DD-017`](docs/control/decisions/DESIGN_DECISIONS.md) |
 | Third handshake | `COMPLETE` |
 | Compatibility | `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` under Q-01–Q-09 |
 | Project Configuration | `NOT YET ESTABLISHED` |
@@ -80,6 +84,10 @@ Unchanged boundaries:
 | 仓库角色 | ARINC 615A Profile、Binding、Configuration、实例工程与证据的权威仓库 |
 | 当前发布 | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/tree/v4.3.1) |
 | 方法输入 | Candidate GVS Core 0.3 @ [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
+| 协议来源 | `ARINC-615A-3` / 版次 `615A-3` / 线版本 `A4` |
+| 有边界来源与开放依赖 | `ARINC-665-5`；ARINC-645 `OPEN-DEPENDENCY` |
+| 技术方向 | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / `NOT-A-DEPENDENCY-OR-SELECTED-PLATFORM` |
+| M0 控制入口 | [`source register`](configs/research/controlled_sources.json), [`CR-2026-006`](docs/control/changes/CR-2026-006.md), [`DD-015–DD-017`](docs/control/decisions/DESIGN_DECISIONS.md) |
 | 第三次握手 | `COMPLETE` |
 | 兼容性 | 受 Q-01～Q-09 限定的 `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` |
 | Project Configuration | `NOT YET ESTABLISHED` |

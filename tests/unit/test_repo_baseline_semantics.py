@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import hashlib
 from pathlib import Path
+
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -24,9 +27,18 @@ def status() -> dict:
     return copy.deepcopy(baseline.STATUS)
 
 
+def controlled_sources() -> dict:
+    return copy.deepcopy(baseline.CONTROLLED_SOURCES)
+
+
 def integrated_status_errors(data: dict) -> list[str]:
-    generated = baseline.sync.replace_status_block(source("README.md"), data)
+    generated = baseline.sync.replace_status_block(source("README.md"), data, baseline.CONTROLLED_SOURCES)
     return baseline.governed_status_errors(data, generated)
+
+
+def integrated_source_errors(register: dict, data: dict | None = None) -> list[str]:
+    data = status() if data is None else data
+    return baseline.governed_status_errors(data, source("README.md"), register)
 
 
 def mapping_line(text: str, row_id: str) -> str:
@@ -197,6 +209,163 @@ def test_readme_drift_is_detected() -> None:
     current = source("README.md")
     broken = current.replace(data["release"]["currentBaselineId"], "obsolete-release", 1)
     assert baseline.sync.replace_status_block(broken, data) != broken
+
+
+def test_controlled_source_register_and_generated_readme_are_valid() -> None:
+    assert baseline.governed_status_errors(
+        status(), source("README.md"), controlled_sources()
+    ) == []
+
+
+def test_source_rejects_non_615a3_current_authority() -> None:
+    register = controlled_sources()
+    register["currentProtocolAuthorityId"] = "ARINC-615A-4"
+    assert any("sole current protocol authority" in error for error in integrated_source_errors(register))
+
+
+def test_source_rejects_each_615a3_identity_mutation() -> None:
+    mutations = {
+        "edition": "615A-4",
+        "pageCount": 175,
+        "byteCount": 1875920,
+        "sha256": "0" * 64,
+    }
+    for field, value in mutations.items():
+        register = controlled_sources()
+        register["sources"][0][field] = value
+        assert any("ARINC-615A-3" in error for error in integrated_source_errors(register)), field
+
+
+def test_source_rejects_wire_version_as_edition() -> None:
+    register = controlled_sources()
+    register["sources"][0]["edition"] = register["sources"][0]["wireVersion"]
+    assert any("edition" in error or "wire version" in error for error in integrated_source_errors(register))
+
+
+def test_source_rejects_unbounded_665_equivalence() -> None:
+    register = controlled_sources()
+    register["sources"][1]["equivalentReplacementFor"] = ["ARINC-665-3"]
+    assert any("equivalence/applicability" in error for error in integrated_source_errors(register))
+
+
+def test_source_rejects_integrity_promotion_while_645_open() -> None:
+    register = controlled_sources()
+    register["capabilityStatus"]["completeIntegrityValidation"] = "ESTABLISHED"
+    assert any("cannot be established" in error for error in integrated_source_errors(register))
+
+
+def test_source_rejects_prefilled_615a4_migration_target() -> None:
+    register = controlled_sources()
+    register["futureSourceMigration"]["target"] = "ARINC-615A-4"
+    assert any("target must remain empty" in error for error in integrated_source_errors(register))
+
+
+def test_source_rejects_ttcn3_or_deferred_model_promotion() -> None:
+    register = controlled_sources()
+    register["technicalDirection"]["ttcn3"] = "SELECTED-PLATFORM"
+    assert any("TTCN-3" in error for error in integrated_source_errors(register))
+    for mutation in (
+        {"behaviorModel": "DTMC"},
+        {"deferredModels": ["BAYESIAN-CALIBRATION"]},
+        {"deferredModels": []},
+    ):
+        register = controlled_sources()
+        register["technicalDirection"].update(mutation)
+        assert integrated_source_errors(register), mutation
+
+
+def test_source_rejects_ungated_l3_reuse() -> None:
+    register = controlled_sources()
+    register["technicalDirection"]["openSourceReuse"]["L3"] = "ALLOWED"
+    assert any("L3 reuse" in error for error in integrated_source_errors(register))
+
+
+def test_source_rejects_unsafe_or_untracked_frozen_history_paths() -> None:
+    for invalid in ("/etc/passwd", "../../README.md", "README.md"):
+        register = controlled_sources()
+        register["historicalAssumptions"][0]["frozenRecords"][0]["path"] = invalid
+        assert integrated_source_errors(register), invalid
+
+
+def test_source_frozen_history_uses_tracked_ordinary_file_fixture(tmp_path: Path) -> None:
+    record_path = Path("artifacts/reports/current/frozen-history.md")
+    target = tmp_path / record_path
+    target.parent.mkdir(parents=True)
+    payload = b"historical 615A-4 wording\n"
+    target.write_bytes(payload)
+    register = controlled_sources()
+    register["historicalAssumptions"][0]["frozenRecords"] = [{
+        "path": record_path.as_posix(),
+        "byteCount": len(payload),
+        "sha256": hashlib.sha256(payload).hexdigest(),
+    }]
+    assert baseline.controlled_source_errors(
+        status(), register, tmp_path, {record_path.as_posix()}
+    ) == []
+    assert any("Git-tracked" in error for error in baseline.controlled_source_errors(
+        status(), register, tmp_path, set()
+    ))
+
+
+def test_source_rejects_symbolic_link_frozen_history(tmp_path: Path) -> None:
+    real = tmp_path / "real.md"
+    link_path = Path("artifacts/reports/current/link.md")
+    link = tmp_path / link_path
+    link.parent.mkdir(parents=True)
+    real.write_text("history\n", encoding="utf-8")
+    try:
+        link.symlink_to(real)
+    except OSError:
+        pytest.skip("symbolic-link creation is unavailable on this host")
+    register = controlled_sources()
+    register["historicalAssumptions"][0]["frozenRecords"][0]["path"] = link_path.as_posix()
+    assert any("symbolic link" in error for error in baseline.controlled_source_errors(
+        status(), register, tmp_path, {link_path.as_posix()}
+    ))
+
+
+def test_source_rejects_proprietary_and_extraction_artifacts() -> None:
+    changed = {
+        "docs/source.pdf", "local-references/private.txt",
+        "tests/vectors/standard_extract.txt", "tmp/change.patch", "tmp/review.diff",
+    }
+    errors = baseline.prohibited_source_artifact_errors(changed)
+    assert len(errors) == len(changed)
+
+
+def test_source_rejects_readme_register_drift() -> None:
+    register = controlled_sources()
+    register["sources"][0]["wireVersion"] = "ZZ"
+    errors = baseline.governed_status_errors(status(), source("README.md"), register)
+    assert any("README governed block differs" in error for error in errors)
+
+
+def test_status_rejects_bypassing_m1_gate() -> None:
+    data = status()
+    data["development"]["currentStop"] = {
+        "id": "PROJECT-CONFIGURATION-GATE",
+        "statusPath": "claimsBoundary.projectConfigurationStatus",
+        "objective": "skip",
+        "objectiveZh": "skip",
+    }
+    assert any("M1 conformance-requirements" in error or "requirementsSpecificationStatus" in error for error in integrated_status_errors(data))
+
+
+def test_m0_rejects_any_state_or_claim_promotion() -> None:
+    mutations = (
+        ("development", "requirementsSpecificationStatus", "ESTABLISHED"),
+        ("claimsBoundary", "projectConfigurationStatus", "ESTABLISHED"),
+        ("claimsBoundary", "instanceEvaluation", "INSTANCE-EXERCISED"),
+        ("claimsBoundary", "rq8", "CLOSED"),
+        ("claimsBoundary", "protocolConformanceEstablished", True),
+        ("claimsBoundary", "certificationReady", True),
+        ("claimsBoundary", "authorityAccepted", True),
+    )
+    for section, key, value in mutations:
+        data = status()
+        data[section][key] = value
+        errors = integrated_source_errors(controlled_sources(), data)
+        assert any("cannot be" in error or "must remain not established" in error for error in errors), key
 
 
 def test_readme_rejects_stale_release_candidate_wording() -> None:
