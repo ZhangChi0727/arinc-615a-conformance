@@ -1290,11 +1290,6 @@ def _active_authority_text_errors(register: dict, root: Path, tracked_paths: set
         item["id"] for item in register.get("historicalAssumptions", [])
         if isinstance(item, dict) and isinstance(item.get("id"), str)
     }
-    negative = re.compile(
-        r"\bnot\b|\bno\s+longer\b|\bno\s+current\b|"
-        r"不再|不是|并非|非当前|无当前权威|不得|不能",
-        re.IGNORECASE,
-    )
     prohibited_role = re.compile(
         r"current\s+(?:protocol\s+)?authority|active\s+source|"
         r"implementation\s+target|normative\s+basis|(?:active\s+)?dependency|"
@@ -1329,12 +1324,34 @@ def _active_authority_text_errors(register: dict, root: Path, tracked_paths: set
         for line_number, line in enumerate(target.read_text(encoding="utf-8").splitlines(), 1):
             for source_id in historical_ids:
                 variants = {source_id, source_id.replace("ARINC-", "ARINC ")}
-                if any(variant.lower() in line.lower() for variant in variants):
-                    if prohibited_role.search(line) and not negative.search(line):
+                for clause in re.split(r"[,，;；。]|\b(?:but|while|whereas)\b|(?:但|而|然而)", line, flags=re.IGNORECASE):
+                    source_matches = [
+                        match
+                        for variant in variants
+                        for match in re.finditer(re.escape(variant), clause, re.IGNORECASE)
+                    ]
+                    role_matches = list(prohibited_role.finditer(clause))
+                    relation_is_prohibited = False
+                    for source_match in source_matches:
+                        for role_match in role_matches:
+                            start = min(source_match.start(), role_match.start())
+                            end = max(source_match.end(), role_match.end())
+                            if end - start > 120:
+                                continue
+                            relation = clause[start:end]
+                            relation_negated = re.search(
+                                r"\bnot\b|\bno\s+longer\b|不是|不再是|并非|非当前|无当前权威",
+                                relation,
+                                re.IGNORECASE,
+                            )
+                            if relation_negated is None:
+                                relation_is_prohibited = True
+                    if relation_is_prohibited:
                         errors.append(
                             f"active control surface reintroduces historical source authority: "
                             f"{raw}:{line_number}"
                         )
+                        break
     return errors
 
 
@@ -1514,14 +1531,22 @@ def controlled_source_errors(
         for stage_index, (stage_id, stage) in enumerate(roadmap_by_id.items()):
             if stage_index < current_index:
                 expected_status = "COMPLETED-EXTERNALLY-VERIFIED"
+                expected_gate_status = "COMPLETED-EXTERNALLY-VERIFIED"
             elif stage_index == current_index:
                 expected_status = f"DISPOSITION-{disposition}"
+                expected_gate_status = "EXTERNAL-VERIFICATION-REQUIRED"
             elif stage_index == next_index:
                 expected_status = "NEXT-BLOCKED-BY-FINAL-GATE"
+                expected_gate_status = "NOT YET ESTABLISHED"
             else:
                 expected_status = "BLOCKED-BY-PREDECESSOR"
+                expected_gate_status = "BLOCKED"
             if stage.get("status") != expected_status:
                 errors.append(f"roadmap stage {stage_id} status must be {expected_status}")
+            gate_id = stage.get("gateId")
+            governed_gates = status.get("development", {}).get("gates", {})
+            if isinstance(gate_id, str) and governed_gates.get(gate_id) != expected_gate_status:
+                errors.append(f"roadmap gate {gate_id} status must be {expected_gate_status}")
         stop = status.get("development", {}).get("currentStop", {})
         expected_gate = roadmap_by_id[next_id].get("gateId")
         expected_path = f"development.gates.{expected_gate}"

@@ -414,9 +414,11 @@ def test_active_controls_reject_historical_authority_but_allow_negative_history(
     target = tmp_path / register["activeControlSurfacePaths"][0]
     prohibited = (
         "The current protocol authority is ARINC 615A-4 based on the active source.\n",
+        "ARINC 615A-4 is the current protocol authority, not ARINC 615A-3.\n",
         "The implementation target is ARINC 615A-4.\n",
         "The normative basis and dependency is ARINC 615A-4.\n",
         "当前协议权威基于 ARINC 615A-4。\n",
+        "ARINC 615A-4 是当前协议权威，而 ARINC 615A-3 不是。\n",
         "实现目标是 ARINC 615A-4。\n",
         "规范依据和依赖是 ARINC 615A-4。\n",
     )
@@ -467,6 +469,8 @@ def test_roadmap_accepts_m1_transition_without_python_change() -> None:
     data["development"]["currentStop"]["id"] = next_stage["gateId"]
     data["development"]["currentStop"]["statusPath"] = f"development.gates.{next_stage['gateId']}"
     data["development"]["gates"][next_stage["gateId"]] = "NOT YET ESTABLISHED"
+    data["development"]["gates"][register["roadmap"][0]["gateId"]] = "COMPLETED-EXTERNALLY-VERIFIED"
+    data["development"]["gates"][register["roadmap"][1]["gateId"]] = "EXTERNAL-VERIFICATION-REQUIRED"
     assert integrated_source_errors(register, data) == []
 
 
@@ -491,7 +495,34 @@ def test_development_gates_must_match_roadmap() -> None:
     ):
         data = status()
         mutate(data["development"]["gates"])
-        assert any("development.gates" in error for error in integrated_source_errors(controlled_sources(), data))
+    assert any("development.gates" in error for error in integrated_source_errors(controlled_sources(), data))
+
+
+def test_gate_values_must_match_stage_position() -> None:
+    cases = (
+        ("SCOPE-EXPANSION-GATE", "ESTABLISHED"),
+        ("SOURCE-TECHNICAL-DIRECTION-GATE", "COMPLETED-EXTERNALLY-VERIFIED"),
+    )
+    for gate_id, value in cases:
+        data = status()
+        data["development"]["gates"][gate_id] = value
+        assert any(f"roadmap gate {gate_id} status" in error for error in integrated_source_errors(controlled_sources(), data))
+
+
+def test_completed_stage_gate_must_be_closed() -> None:
+    register = controlled_sources()
+    register["roadmap"][0]["status"] = "COMPLETED-EXTERNALLY-VERIFIED"
+    register["roadmap"][1]["status"] = "DISPOSITION-ADOPT"
+    register["roadmap"][2]["status"] = "NEXT-BLOCKED-BY-FINAL-GATE"
+    register["lifecycle"]["currentStageId"] = register["roadmap"][1]["id"]
+    register["lifecycle"]["nextStageId"] = register["roadmap"][2]["id"]
+    data = status()
+    data["development"]["currentStop"]["id"] = register["roadmap"][2]["gateId"]
+    data["development"]["currentStop"]["statusPath"] = f"development.gates.{register['roadmap'][2]['gateId']}"
+    data["development"]["gates"][register["roadmap"][1]["gateId"]] = "EXTERNAL-VERIFICATION-REQUIRED"
+    data["development"]["gates"][register["roadmap"][2]["gateId"]] = "NOT YET ESTABLISHED"
+    errors = integrated_source_errors(register, data)
+    assert any("COMPLETED-EXTERNALLY-VERIFIED" in error for error in errors)
 
 
 def test_readme_rejects_stale_release_candidate_wording() -> None:
