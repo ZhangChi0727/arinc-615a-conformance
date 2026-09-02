@@ -59,6 +59,11 @@
   "historicalAssumptions": [
     {
       "id": "ARINC-615A-4",
+      "textAliases": [
+        "ARINC-615A-4",
+        "ARINC 615A-4",
+        "615A-4"
+      ],
       "status": "HISTORICAL-SUPERSEDED",
       "activeDependency": false,
       "frozenRecords": [

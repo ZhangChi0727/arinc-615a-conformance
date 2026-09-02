@@ -403,7 +403,7 @@ def test_source_register_rejects_duplicate_ids() -> None:
         assert any(f"{collection} contains duplicate id" in error for error in integrated_source_errors(register)), collection
 
 
-def test_active_controls_reject_historical_authority_but_allow_negative_history(tmp_path: Path) -> None:
+def test_active_controls_reject_every_historical_alias_form(tmp_path: Path) -> None:
     register = controlled_sources()
     tracked: set[str] = set()
     for raw in register["activeControlSurfacePaths"]:
@@ -413,33 +413,35 @@ def test_active_controls_reject_historical_authority_but_allow_negative_history(
         tracked.add(raw)
     target = tmp_path / register["activeControlSurfacePaths"][0]
     prohibited = (
-        "The current protocol authority is ARINC 615A-4 based on the active source.\n",
-        "ARINC 615A-4 is the current protocol authority, not ARINC 615A-3.\n",
-        "The current protocol authority, ARINC 615A-4, governs this project.\n",
-        "ARINC 615A-4, the current protocol authority, governs this project.\n",
-        "ARINC 615A-4 is not only the current protocol authority but also the implementation target.\n",
-        "The implementation target is ARINC 615A-4.\n",
-        "The normative basis and dependency is ARINC 615A-4.\n",
-        "当前协议权威基于 ARINC 615A-4。\n",
-        "ARINC 615A-4 是当前协议权威，而 ARINC 615A-3 不是。\n",
-        "当前协议权威，ARINC 615A-4，支配本项目。\n",
-        "ARINC 615A-4，当前协议权威，支配本项目。\n",
-        "实现目标是 ARINC 615A-4。\n",
-        "规范依据和依赖是 ARINC 615A-4。\n",
+        "615A-4 是唯一活动协议权威。\n",
+        "Historical 615A-4 wording has current technical authority.\n",
+        "[ARINC 615A-4](https://example.com/source) is the current protocol authority.\n",
+        "ARINC 615A-4 is the\ncurrent protocol authority.\n",
+        "ARINC-615A-4 is not the current protocol authority.\n",
     )
     for text in prohibited:
         target.write_text(text, encoding="utf-8")
         errors = baseline._active_authority_text_errors(register, tmp_path, tracked)
-        assert any("reintroduces historical source authority" in error for error in errors), text
-    for text in (
-        "ARINC 615A-4 is not the current protocol authority.\n",
-        "ARINC 615A-4 is no longer an active source.\n",
-        "ARINC 615A-4 不是当前协议权威。\n",
-        "ARINC 615A-4 不再是活动来源。\n",
-        "Historical note: ARINC 615A-4 was once assumed.\n",
-    ):
-        target.write_text(text, encoding="utf-8")
-        assert baseline._active_authority_text_errors(register, tmp_path, tracked) == [], text
+        assert any("names historical source" in error for error in errors), text
+    target.write_text(
+        "Historical source assumptions are non-authoritative and are governed by "
+        "the controlled source register and change record.\n",
+        encoding="utf-8",
+    )
+    assert baseline._active_authority_text_errors(register, tmp_path, tracked) == []
+
+
+def test_historical_aliases_must_be_nonempty_unique_and_include_id() -> None:
+    mutations = (
+        [],
+        ["ARINC-615A-4", "ARINC-615A-4"],
+        ["ARINC 615A-4", "615A-4"],
+    )
+    tracked = set(subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines())
+    for aliases in mutations:
+        register = controlled_sources()
+        register["historicalAssumptions"][0]["textAliases"] = aliases
+        assert baseline._active_authority_text_errors(register, ROOT, tracked)
 
 
 def test_active_control_surfaces_cannot_be_empty_duplicate_or_incomplete() -> None:

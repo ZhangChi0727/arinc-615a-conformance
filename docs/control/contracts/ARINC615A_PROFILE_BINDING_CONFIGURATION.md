@@ -57,7 +57,8 @@ The current Product Binding source authority is ARINC 615A-3 as identified in
 Its ASCII wire-version value `A4` is not an edition label. ARINC 665-5 is only a
 bounded data-format reference and is not an equivalent substitute for 665-3.
 ARINC 645 is an open dependency, so affected complete-integrity capabilities
-remain unearned. Historical 615A-4 wording has no current technical authority.
+remain unearned. Historical source assumptions are non-authoritative and are
+governed by the controlled source register and change record.
 M0 creates no CRS item, model, operation or execution qualification.
 
 ## 4. Project Configuration policy
@@ -137,8 +138,8 @@ Observation。PASS 不自动关闭 VO、支持主张、建立合规或取得权�
 当前 Product Binding 的来源权威是
 [`controlled_sources.json`](../../../configs/research/controlled_sources.json) 登记的 ARINC
 615A-3。其 ASCII 线版本值 `A4` 不是版次标签。ARINC 665-5 只是有边界的数据格式参考，
-不等价替代 665-3。ARINC 645 是开放依赖，因此受影响的完整完整性能力仍未取得。历史
-615A-4 文字不再具有当前技术权威。M0 不创建 CRS 条目、模型、操作或执行资格。
+不等价替代 665-3。ARINC 645 是开放依赖，因此受影响的完整完整性能力仍未取得。历史来源
+假设不具权威性，并由受控来源登记册与变更记录治理。M0 不创建 CRS 条目、模型、操作或执行资格。
 
 ## 4. Project Configuration 政策
 

@@ -36,8 +36,8 @@ synthesis responsibility.
 ## 3. Source and model discipline
 
 ARINC 615A-3 is the sole active protocol authority. `A4` is a wire value, not an
-edition. Registered 615A-4 historical wording is preserved but superseded as an
-active basis. ARINC 665-5 is bounded and ARINC 645 remains open. Source migration
+edition. Historical source assumptions are non-authoritative and are governed by
+the controlled source register and change record. ARINC 665-5 is bounded and ARINC 645 remains open. Source migration
 requires an acquired/identified source, applicability delta, CR and independent
 review; no future edition is preselected.
 
@@ -105,8 +105,8 @@ Configuration 和证据生产实例。方法仓库拥有 Generic 对象和跨实
 
 ## 3. 来源与模型纪律
 
-615A-3 是唯一活动协议权威；`A4` 是线值而非版次。登记的 615A-4 历史文字保留但其活动
-依据被取代。665-5 有边界，645 保持开放。来源迁移需取得并登记来源、完成适用性差分、CR
+615A-3 是唯一活动协议权威；`A4` 是线值而非版次。历史来源假设不具权威性，并由受控来源
+登记册与变更记录治理。665-5 有边界，645 保持开放。来源迁移需取得并登记来源、完成适用性差分、CR
 和独立评审；不预选未来版本。
 
 研究模型是单一轻量可观测 timed EFSM 加有界 Test-Analysis。首轮 Analysis 覆盖义务追踪、

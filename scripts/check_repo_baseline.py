@@ -1286,16 +1286,20 @@ def frozen_record_errors(
 
 def _active_authority_text_errors(register: dict, root: Path, tracked_paths: set[str]) -> list[str]:
     errors: list[str] = []
-    historical_ids = {
-        item["id"] for item in register.get("historicalAssumptions", [])
-        if isinstance(item, dict) and isinstance(item.get("id"), str)
-    }
-    prohibited_role = re.compile(
-        r"current\s+(?:protocol\s+)?authority|active\s+source|"
-        r"implementation\s+target|normative\s+basis|(?:active\s+)?dependency|"
-        r"当前(?:协议)?权威|活动来源|实现目标|规范依据|(?:活动)?依赖",
-        re.IGNORECASE,
-    )
+    historical_aliases: list[tuple[str, str]] = []
+    for item in register.get("historicalAssumptions", []):
+        if not isinstance(item, dict) or not isinstance(item.get("id"), str):
+            continue
+        aliases = item.get("textAliases")
+        if not isinstance(aliases, list) or not aliases or any(not isinstance(alias, str) or not alias for alias in aliases):
+            errors.append(f"historical assumption {item['id']} must define non-empty textAliases")
+            continue
+        normalized = [alias.casefold() for alias in aliases]
+        if len(normalized) != len(set(normalized)):
+            errors.append(f"historical assumption {item['id']} contains duplicate textAliases")
+        if item["id"].casefold() not in normalized:
+            errors.append(f"historical assumption {item['id']} textAliases must include its id")
+        historical_aliases.extend((item["id"], alias) for alias in aliases)
     surfaces = register.get("activeControlSurfacePaths")
     required_surfaces = {
         "docs/research/RESEARCH_CONTROL.md",
@@ -1321,39 +1325,17 @@ def _active_authority_text_errors(register: dict, root: Path, tracked_paths: set
             errors.append(path_error)
             continue
         assert target is not None
-        for line_number, line in enumerate(target.read_text(encoding="utf-8").splitlines(), 1):
-            for source_id in historical_ids:
-                variants = {source_id, source_id.replace("ARINC-", "ARINC ")}
-                source_pattern = "(?:" + "|".join(re.escape(value) for value in variants) + ")"
-                role_pattern = (
-                    r"(?:(?:the|an|a)\s+)?(?:current\s+(?:protocol\s+)?authority|active\s+source|"
-                    r"implementation\s+target|normative\s+basis|(?:active\s+)?dependency)"
+        control_text = target.read_text(encoding="utf-8")
+        folded_text = control_text.casefold()
+        for source_id, alias in historical_aliases:
+            offset = folded_text.find(alias.casefold())
+            if offset >= 0:
+                line_number = control_text.count("\n", 0, offset) + 1
+                errors.append(
+                    f"active control surface names historical source {source_id}: "
+                    f"{raw}:{line_number}"
                 )
-                allowed_english = re.compile(
-                    rf"^\s*(?:{source_pattern}\s+is\s+(?:not|no\s+longer)\s+{role_pattern}|"
-                    rf"{role_pattern}\s+is\s+(?:not|no\s+longer)\s+{source_pattern})\s*$",
-                    re.IGNORECASE,
-                )
-                chinese_role = r"(?:当前(?:协议)?权威|活动来源|实现目标|规范依据|(?:活动)?依赖)"
-                allowed_chinese = re.compile(
-                    rf"^\s*(?:{source_pattern}\s*(?:不是|不再是|并非)\s*{chinese_role}|"
-                    rf"{chinese_role}\s*(?:不是|不再是|并非)\s*{source_pattern})\s*$",
-                    re.IGNORECASE,
-                )
-                for statement in re.split(r"[.!?;；。！？]+", line):
-                    has_source = any(re.search(re.escape(variant), statement, re.IGNORECASE) for variant in variants)
-                    if not has_source or prohibited_role.search(statement) is None:
-                        continue
-                    controlled_negation = (
-                        "not only" not in statement.lower()
-                        and (allowed_english.fullmatch(statement) or allowed_chinese.fullmatch(statement))
-                    )
-                    if not controlled_negation:
-                        errors.append(
-                            f"active control surface reintroduces historical source authority: "
-                            f"{raw}:{line_number}"
-                        )
-                        break
+                break
     return errors
 
 
