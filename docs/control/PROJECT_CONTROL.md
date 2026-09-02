@@ -44,6 +44,13 @@ and claims.
 Parallel work is allowed only where it does not pre-empt an unresolved
 upstream gate.
 
+Source control and implementation are serial: an acquired source identity and
+open dependencies are registered before applicability/CRS; reviewed CRS
+precedes model refinement; reviewed model/profile precedes implementation; and
+Project Configuration precedes execution. M0–M9 are the controlled delivery
+stages for this lifecycle. A later stage PR cannot open before the prior stage
+is approved, merged, checked and cleaned.
+
 ## 5. Gate discipline
 
 Every increment identifies its inputs, configuration, evidence, open
@@ -98,6 +105,10 @@ no new HANDOFF or current-status Markdown is created.
 7. 仅发布获得批准证据和决定支持的主张。
 
 只有在不预断未解决上游门禁时才允许并行工作。
+
+来源控制与实现必须串行：先登记已取得来源身份和开放依赖，再进行适用性/CRS；受评审 CRS
+先于模型精化；受评审模型/Profile 先于实现；Project Configuration 先于执行。M0～M9 是该
+生命周期的受控交付阶段；前一阶段批准、合并、检查并清理前不得开启后一阶段 PR。
 
 ## 5. 门禁纪律
 

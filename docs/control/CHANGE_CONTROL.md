@@ -19,6 +19,12 @@ oracle/verdict semantics, method binding, compatibility/evaluation state,
 ownership or migration semantics are baseline changes requiring independent
 review.
 
+Registering or migrating a standards source, closing an open source dependency,
+or changing L1/L2/L3 open-source reuse permission is also a baseline change. It
+requires a CR, immutable source/license identity, applicability impact and
+independent review; proprietary material and unreviewed L3 reuse stay outside
+Git.
+
 ## 2. Pull-request rules
 
 Every pull request must:
@@ -71,6 +77,10 @@ management or navigation changes create neither.
 
 对标准解释、适用性、数学／时序或 oracle／verdict 语义、方法绑定、兼容性／评价状态、
 所有权或迁移语义的修改均属于 baseline change，必须接受独立评审。
+
+登记或迁移标准来源、关闭开放来源依赖、改变 L1/L2/L3 开源复用许可同样属于 baseline
+change，必须具有 CR、不可变来源/许可证身份、适用性影响和独立评审；专有材料及未经评审的
+L3 复用不得进入 Git。
 
 ## 2. PR 规则
 

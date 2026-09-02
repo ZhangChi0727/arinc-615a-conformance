@@ -44,37 +44,34 @@ silently redefine the Core.
 
 ## Current increment
 
-**Lean project-management control surface**
+**M0 — adopt ARINC 615A-3 sources and lean technical direction**
 
-- Make the root README the sole human-readable current-status surface.
-- Add a machine-readable project status and deterministic README synchronization.
-- Define the Candidate GVS Core to ARINC refinement and controlled-feedback architecture.
-- Retire duplicated reader-status and HANDOFF surfaces without rewriting atomic records.
-- Close independent-review gaps in dynamic script discovery, status activation and active-template governance.
-- Bind promoted claims to repository-tracked controlled decisions and evidence, with cross-platform private-path rejection.
+- Register ARINC 615A-3 as the sole active protocol authority, ARINC 665-5 as a bounded reference and ARINC 645 as an open dependency.
+- Supersede active ARINC 615A-4 assumptions while preserving registered frozen history byte-for-byte.
+- Adopt a lightweight observable timed EFSM, bounded Test-Analysis, gated open-source reuse and an injectable layered target architecture.
+- Adopt the serial M0–M9 route; this increment completes only the M0 candidate.
 
 State changes:
 
-- Current-status ownership moves to README plus project-status.json.
-- The v4.2.1 reader report is retained at its legacy path as historical evidence and no longer owns current status.
+- The active protocol source changes from an unresolved edition assumption to controlled ARINC 615A-3.
+- The current stop moves from Project Configuration to the prerequisite conformance-requirements and applicability gate.
 
 Unchanged boundaries:
 
 - Candidate GVS Core and compatibility-disposition identities remain separate and unchanged.
 - The 18 source mapping rows, 7 instance-only rows and Q-01 through Q-09 remain unchanged.
 - Project Configuration is NOT YET ESTABLISHED; instance evaluation is NOT-EXERCISED; RQ8 remains OPEN.
-- No baseline, tag, certification, authority acceptance or protocol-conformance claim is created.
+- Protocol conformance, certification readiness and authority acceptance remain false; no baseline or tag is created.
+- M0 creates no codec, protocol operation, EFSM instance, verification case, procedure or Project Configuration.
 
 ## Current stop
 
-`PROJECT-CONFIGURATION-GATE` — **NOT YET ESTABLISHED**: Establish real, reviewed IUT, environment, tool, procedure, clock and error-budget identities before execution.
+`CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE` — **NOT YET ESTABLISHED**: Complete M1 ARINC 615A-3/665-5 CRS and requirement-level applicability, explicitly registering the ARINC 645 capability gap.
 
 ## Next development steps
 
-- Populate and review a real Project Configuration from controlled values.
-- Bind the first verification cases, procedures and oracles to that configuration.
-- Execute the first controlled instance evaluation and preserve observations, results and evidence provenance.
-- Return method findings through a Framework Change Proposal without directly redefining the Generic Core.
+- After M0 approval and cleanup, prepare a separate M1 work order for the 615A-3/665-5 CRS, applicability decisions and ARINC 645 gap register.
+- Only after approved M1, prepare M2 refinement of the Profile, Binding and lightweight observable timed EFSM.
 
 ## 当前开发图景
 
@@ -91,37 +88,34 @@ Unchanged boundaries:
 
 ## 本次集成增量
 
-**精简项目管理控制面**
+**M0——采纳 ARINC 615A-3 来源与精简技术路线**
 
-- 将根 README 确立为唯一的人类可读当前状态界面。
-- 新增机器可读项目状态和确定性 README 同步。
-- 明确 Candidate GVS Core 到 ARINC 精化及受控反馈的架构。
-- 在不改写原子记录的前提下退役重复 reader-status 与 HANDOFF 界面。
-- 关闭独立评审发现的动态脚本发现、状态激活和活动模板治理缺口。
-- 将晋级主张绑定至仓库受跟踪的受控决定与证据，并拒绝跨平台私有路径。
+- 登记 ARINC 615A-3 为唯一活动协议权威、ARINC 665-5 为有边界参考、ARINC 645 为开放依赖。
+- 取代活动的 ARINC 615A-4 假设，同时保持登记的冻结历史逐字节不变。
+- 采纳轻量可观测 timed EFSM、有界 Test-Analysis、受门禁开源复用和可注入分层目标架构。
+- 采纳 M0～M9 串行路线；本增量只完成 M0 候选。
 
 状态变化：
 
-- 当前状态由 README 与 project-status.json 共同承载。
-- v4.2.1 reader report 在原路径保留为历史证据，不再拥有当前状态。
+- 活动协议来源从未解决的版次假设改为受控 ARINC 615A-3。
+- 当前停点从 Project Configuration 前移到作为前置条件的符合性需求与适用性门。
 
 保持不变的边界：
 
 - Candidate GVS Core 与兼容性处置身份保持分离且不变。
 - 18 个来源映射行、7 个实例专用行及 Q-01～Q-09 保持不变。
 - Project Configuration 保持 NOT YET ESTABLISHED；实例评价保持 NOT-EXERCISED；RQ8 保持 OPEN。
-- 不创建 baseline、tag、认证、权威接受或协议符合性主张。
+- 协议符合性、认证准备度和权威接受保持 false；不创建 baseline 或 tag。
+- M0 不创建 codec、协议操作、EFSM 实例、验证用例、规程或 Project Configuration。
 
 ## 当前停点
 
-`PROJECT-CONFIGURATION-GATE` — **NOT YET ESTABLISHED**：执行前建立并评审真实的 IUT、环境、工具、规程、时钟和误差预算身份。
+`CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE` — **NOT YET ESTABLISHED**：完成 M1 ARINC 615A-3/665-5 CRS 与需求级适用性，并明确登记 ARINC 645 能力缺口。
 
 ## 下一步开发计划
 
-- 用受控真实值建立并评审 Project Configuration。
-- 将首批 verification case、procedure 与 oracle 绑定至该配置。
-- 执行首次受控实例评价并保存 Observation、Result 和 Evidence 来源。
-- 通过 Framework Change Proposal 向方法仓库反馈，不直接反向定义 Generic Core。
+- M0 批准并清理后，另编 M1 工作单，处理 615A-3/665-5 CRS、适用性决定和 ARINC 645 缺口登记。
+- 仅在 M1 批准后，准备 M2 Profile、Binding 和轻量可观测 timed EFSM 精化。
 <!-- project-status:end -->
 
 ## Read by role / 按角色继续阅读
