@@ -64,6 +64,19 @@ def load_status(path: Path = STATUS_PATH) -> dict[str, Any]:
     return data
 
 
+def load_source_register(path: Path | None = None) -> dict[str, Any]:
+    if path is None:
+        status_data = json.loads(STATUS_PATH.read_text(encoding="utf-8"))
+        path = ROOT / status_data["technicalDirection"]["sourceRegisterPath"]
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise StatusError(f"cannot load {path}: {exc}") from exc
+    if not isinstance(data, dict):
+        raise StatusError("controlled source register must be a JSON object")
+    return data
+
+
 def _tracked_paths(root: Path) -> tuple[set[str], str | None]:
     try:
         result = subprocess.run(
@@ -96,12 +109,15 @@ def _controlled_file_error(
     if not any(posix == prefix or prefix in posix.parents for prefix in allowed_prefixes):
         return None, f"{label} is outside its permitted controlled location"
     resolved_root = root.resolve()
-    target = (resolved_root / Path(*posix.parts)).resolve()
+    candidate = resolved_root / Path(*posix.parts)
+    if candidate.is_symlink():
+        return None, f"{label} must not be a symbolic link"
+    target = candidate.resolve()
     try:
         target.relative_to(resolved_root)
     except ValueError:
         return None, f"{label} resolves outside the repository"
-    if not target.is_file() or target.is_symlink():
+    if not target.is_file():
         return None, f"{label} must resolve to an ordinary file"
     if posix.as_posix() not in tracked_paths:
         return None, f"{label} must name a Git-tracked file"
@@ -195,6 +211,7 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
         "currentIncrement.stateChanges", "currentIncrement.stateChangesZh",
         "currentIncrement.unchangedBoundaries",
         "currentIncrement.unchangedBoundariesZh", "development.phase",
+        "development.gates",
         "development.currentStop.id", "development.currentStop.statusPath",
         "development.currentStop.objective", "development.currentStop.objectiveZh",
         "development.nextSteps", "development.nextStepsZh",
@@ -216,6 +233,11 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
         "claimsBoundary.protocolConformanceEstablished",
         "claimsBoundary.certificationReady", "claimsBoundary.authorityAccepted",
         "claimsBoundary.activationRecords",
+        "technicalDirection.sourceRegisterPath",
+        "technicalDirection.currentStageIdPath",
+        "technicalDirection.nextStageIdPath",
+        "technicalDirection.formalActivationControlPath",
+        "technicalDirection.technicalDecisionPath",
         "temporaryControls", "governance.requiredPullRequestFiles",
         "governance.readmeMarkers.start", "governance.readmeMarkers.end",
     )
@@ -264,8 +286,14 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
         stop = _get(data, "development.currentStop")
         if "status" in stop:
             errors.append("development.currentStop.status duplicates its authoritative statusPath")
-        if stop.get("statusPath") != "claimsBoundary.projectConfigurationStatus":
-            errors.append("current stop must derive from claimsBoundary.projectConfigurationStatus")
+        status_path = stop.get("statusPath")
+        if not isinstance(status_path, str) or not status_path.startswith("development.gates."):
+            errors.append("current stop must derive from a development.gates statusPath")
+        else:
+            try:
+                _get(data, status_path)
+            except KeyError:
+                errors.append("current stop statusPath does not resolve")
         peer = _get(data, "crossRepository.methodology")
         if "thirdHandshake" in peer:
             errors.append("crossRepository.methodology.thirdHandshake duplicates release.thirdHandshake")
@@ -286,6 +314,13 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
         pass
 
     errors.extend(activation_record_errors(data, root))
+
+    direction = data.get("technicalDirection", {})
+    source_path = direction.get("sourceRegisterPath")
+    if not isinstance(source_path, str) or Path(source_path).is_absolute() or ".." in Path(source_path).parts:
+        errors.append("technical direction sourceRegisterPath must be repository-relative")
+    elif not (root / source_path).is_file():
+        errors.append("technical direction sourceRegisterPath does not resolve")
 
     for dotted in (
         "release.records.baselinePath", "release.records.changePath",
@@ -348,7 +383,10 @@ def _bullets(items: list[str]) -> str:
     return "\n".join(f"- {item}" for item in items)
 
 
-def render_status_block(data: dict[str, Any]) -> str:
+def render_status_block(
+    data: dict[str, Any], sources: dict[str, Any] | None = None,
+) -> str:
+    sources = load_source_register() if sources is None else sources
     release = data["release"]
     method = data["methodInputs"]
     compatibility = method["compatibilityDisposition"]
@@ -362,6 +400,26 @@ def render_status_block(data: dict[str, Any]) -> str:
     baseline_path = release["records"]["baselinePath"]
     release_link = f"{repository}/tree/{release['tag']}"
     definition = method["methodDefinition"]
+    source_items = {item["id"]: item for item in sources["sources"]}
+    authority = source_items[sources["currentProtocolAuthorityId"]]
+    bounded_items = [
+        item for item in sources["sources"]
+        if item.get("role") == "BOUNDED-DATA-FORMAT-REFERENCE"
+    ]
+    bounded_summary = ", ".join(item["id"] for item in bounded_items) or "none"
+    open_dependencies = ", ".join(
+        f"{item['id']} `{item['status']}`" for item in sources["openDependencies"]
+    )
+    direction = data["technicalDirection"]
+    lifecycle = sources["lifecycle"]
+    technical = sources["technicalDirection"]
+    platform = technical["executionPlatform"]
+    platform_summary = platform["selected"] or "deferred: " + ", ".join(platform["deferredCandidates"])
+    deep_links = (
+        f"[`source register`]({direction['sourceRegisterPath']}), "
+        f"[`activation control`]({lifecycle['formalActivationControlPath']}), "
+        f"[`technical decisions`]({technical['decisionRecordPath']})"
+    )
     return f"""## Current development picture
 
 | Dimension | Controlled state |
@@ -369,6 +427,12 @@ def render_status_block(data: dict[str, Any]) -> str:
 | Repository role | {data['repository']['displayRole']} |
 | Current release | [`{release['currentBaselineId']}`]({baseline_path}) / annotated [`{release['tag']}`]({release_link}) |
 | Method input | {definition['version']} at {_commit_link(method['repository'], definition['commit'])} |
+| Protocol source | `{authority['id']}` / edition `{authority['edition']}` / wire version `{authority['wireVersion']}` |
+| Bounded source and open dependency | `{bounded_summary}`; {open_dependencies} |
+| Technical direction | `{technical['behaviorModel']}` / `{technical['verificationMethod']}` / platform `{platform_summary}` |
+| Delivery position | current `{lifecycle['currentStageId']}` / next `{lifecycle['nextStageId']}` / disposition `{lifecycle['candidateDisposition']}` |
+| Activation boundary | merge evidence `{lifecycle['repositoryMergeEvidence']}` / approval `{lifecycle['independentApproval']}` |
+| Technical controls | {deep_links} |
 | Third handshake | `{release['thirdHandshake']}` |
 | Compatibility | `{compatibility['status']}` under {qualifications_en} |
 | Project Configuration | `{boundary['projectConfigurationStatus']}` |
@@ -404,6 +468,12 @@ Unchanged boundaries:
 | 仓库角色 | ARINC 615A Profile、Binding、Configuration、实例工程与证据的权威仓库 |
 | 当前发布 | [`{release['currentBaselineId']}`]({baseline_path}) / annotated [`{release['tag']}`]({release_link}) |
 | 方法输入 | {definition['version']} @ {_commit_link(method['repository'], definition['commit'])} |
+| 协议来源 | `{authority['id']}` / 版次 `{authority['edition']}` / 线版本 `{authority['wireVersion']}` |
+| 有边界来源与开放依赖 | `{bounded_summary}`；{open_dependencies} |
+| 技术方向 | `{technical['behaviorModel']}` / `{technical['verificationMethod']}` / 平台 `{platform_summary}` |
+| 交付位置 | 当前 `{lifecycle['currentStageId']}` / 下一 `{lifecycle['nextStageId']}` / 处置 `{lifecycle['candidateDisposition']}` |
+| 激活边界 | 合并证据 `{lifecycle['repositoryMergeEvidence']}` / 批准 `{lifecycle['independentApproval']}` |
+| 技术控制入口 | {deep_links} |
 | 第三次握手 | `{release['thirdHandshake']}` |
 | 兼容性 | 受 {qualifications_zh} 限定的 `{compatibility['status']}` |
 | Project Configuration | `{boundary['projectConfigurationStatus']}` |
@@ -434,21 +504,24 @@ Unchanged boundaries:
 """
 
 
-def replace_status_block(readme: str, data: dict[str, Any]) -> str:
+def replace_status_block(
+    readme: str, data: dict[str, Any], sources: dict[str, Any] | None = None,
+) -> str:
     markers = data["governance"]["readmeMarkers"]
     start, end = markers["start"], markers["end"]
     if readme.count(start) != 1 or readme.count(end) != 1:
         raise StatusError("README must contain exactly one governed marker pair")
     before, remainder = readme.split(start, 1)
     _, after = remainder.split(end, 1)
-    return f"{before}{start}\n{render_status_block(data).rstrip()}\n{end}{after}"
+    return f"{before}{start}\n{render_status_block(data, sources).rstrip()}\n{end}{after}"
 
 
 def synchronized_readme(
-    data: dict[str, Any], readme_path: Path = README_PATH
+    data: dict[str, Any], readme_path: Path = README_PATH,
+    sources: dict[str, Any] | None = None,
 ) -> tuple[str, str]:
     current = readme_path.read_text(encoding="utf-8")
-    return current, replace_status_block(current, data)
+    return current, replace_status_block(current, data, sources)
 
 
 def diff_text(current: str, expected: str) -> str:
@@ -466,7 +539,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         data = load_status()
-        current, expected = synchronized_readme(data)
+        sources = load_source_register()
+        current, expected = synchronized_readme(data, sources=sources)
     except StatusError as exc:
         print(f"project overview error: {exc}", file=sys.stderr)
         return 1

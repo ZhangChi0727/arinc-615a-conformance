@@ -4,7 +4,11 @@ from __future__ import annotations
 
 import copy
 import importlib.util
+import hashlib
+import subprocess
 from pathlib import Path
+
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -24,9 +28,19 @@ def status() -> dict:
     return copy.deepcopy(baseline.STATUS)
 
 
+def controlled_sources() -> dict:
+    return copy.deepcopy(baseline.CONTROLLED_SOURCES)
+
+
 def integrated_status_errors(data: dict) -> list[str]:
-    generated = baseline.sync.replace_status_block(source("README.md"), data)
+    generated = baseline.sync.replace_status_block(source("README.md"), data, baseline.CONTROLLED_SOURCES)
     return baseline.governed_status_errors(data, generated)
+
+
+def integrated_source_errors(register: dict, data: dict | None = None) -> list[str]:
+    data = status() if data is None else data
+    generated = baseline.sync.replace_status_block(source("README.md"), data, register)
+    return baseline.governed_status_errors(data, generated, register)
 
 
 def mapping_line(text: str, row_id: str) -> str:
@@ -197,6 +211,406 @@ def test_readme_drift_is_detected() -> None:
     current = source("README.md")
     broken = current.replace(data["release"]["currentBaselineId"], "obsolete-release", 1)
     assert baseline.sync.replace_status_block(broken, data) != broken
+
+
+def test_controlled_source_register_and_generated_readme_are_valid() -> None:
+    assert baseline.governed_status_errors(
+        status(), source("README.md"), controlled_sources()
+    ) == []
+
+
+def test_source_rejects_non_615a3_current_authority() -> None:
+    register = controlled_sources()
+    register["currentProtocolAuthorityId"] = "ARINC-615A-4"
+    assert any(
+        "single current protocol authority" in error
+        for error in baseline.controlled_source_errors(status(), register)
+    )
+
+
+def test_source_rejects_each_615a3_identity_mutation() -> None:
+    mutations = {
+        "edition": "615A-4",
+        "pageCount": 175,
+        "byteCount": 1875920,
+        "sha256": "0" * 64,
+    }
+    for field, value in mutations.items():
+        register = controlled_sources()
+        register["sources"][0][field] = value
+        assert any("ARINC-615A-3" in error for error in integrated_source_errors(register)), field
+
+
+def test_source_identity_cannot_be_repaired_with_a_self_hash() -> None:
+    register = controlled_sources()
+    register["sources"][0]["pageCount"] = 175
+    register["sources"][0]["identitySeal"] = hashlib.sha256(
+        b"attacker-controlled replacement seal"
+    ).hexdigest()
+    assert any("independent acquisition record" in error for error in integrated_source_errors(register))
+
+
+def test_source_rejects_wire_version_as_edition() -> None:
+    register = controlled_sources()
+    register["sources"][0]["edition"] = register["sources"][0]["wireVersion"]
+    assert any("edition" in error or "wire version" in error for error in integrated_source_errors(register))
+
+
+def test_source_rejects_unbounded_665_equivalence() -> None:
+    register = controlled_sources()
+    register["sources"][1]["equivalentReplacementFor"] = ["ARINC-665-3"]
+    assert any("applicability/equivalence" in error for error in integrated_source_errors(register))
+
+
+def test_source_rejects_integrity_promotion_while_645_open() -> None:
+    register = controlled_sources()
+    register["capabilities"][-1]["status"] = "ESTABLISHED"
+    assert any("cannot be established" in error for error in integrated_source_errors(register))
+
+
+def test_source_rejects_prefilled_615a4_migration_target() -> None:
+    register = controlled_sources()
+    register["futureSourceMigration"]["target"] = "ARINC-615A-4"
+    assert any("idle future source migration" in error for error in integrated_source_errors(register))
+
+
+def test_source_rejects_platform_selection_without_gate() -> None:
+    register = controlled_sources()
+    register["technicalDirection"]["executionPlatform"]["selected"] = "TTCN-3"
+    assert any("execution platform" in error for error in integrated_source_errors(register))
+
+
+def test_source_rejects_incomplete_reuse_levels() -> None:
+    register = controlled_sources()
+    del register["technicalDirection"]["openSourceReuse"]["L3"]
+    assert any("L1/L2/L3" in error for error in integrated_source_errors(register))
+
+
+def test_source_rejects_unsafe_or_untracked_frozen_history_paths() -> None:
+    for invalid in ("/etc/passwd", "../../README.md", "README.md"):
+        register = controlled_sources()
+        register["historicalAssumptions"][0]["frozenRecords"][0]["path"] = invalid
+        assert integrated_source_errors(register), invalid
+
+
+def init_git_fixture(root: Path, relative: Path, payload: bytes) -> None:
+    target = root / relative
+    target.parent.mkdir(parents=True)
+    target.write_bytes(payload)
+    subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+    subprocess.run(["git", "config", "core.autocrlf", "false"], cwd=root, check=True)
+    subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=root, check=True)
+    subprocess.run(["git", "config", "user.name", "Test"], cwd=root, check=True)
+    subprocess.run(["git", "add", relative.as_posix()], cwd=root, check=True)
+    subprocess.run(["git", "commit", "-qm", "fixture"], cwd=root, check=True)
+
+
+def test_frozen_history_uses_head_blob_not_checkout_newlines(tmp_path: Path) -> None:
+    record_path = Path("artifacts/reports/current/frozen-history.md")
+    target = tmp_path / record_path
+    canonical = b"line one\nline two\n"
+    init_git_fixture(tmp_path, record_path, canonical)
+    record = [{
+        "path": record_path.as_posix(),
+        "byteCount": len(canonical),
+        "sha256": hashlib.sha256(canonical).hexdigest(),
+    }]
+    target.write_bytes(b"line one\r\nline two\r\n")
+    assert baseline.frozen_record_errors(record, tmp_path, {record_path.as_posix()}) == []
+
+
+def test_frozen_history_rejects_committed_crlf_blob(tmp_path: Path) -> None:
+    record_path = Path("artifacts/reports/current/frozen-history.md")
+    canonical = b"line one\nline two\n"
+    init_git_fixture(tmp_path, record_path, canonical)
+    target = tmp_path / record_path
+    target.write_bytes(b"line one\r\nline two\r\n")
+    subprocess.run(["git", "add", record_path.as_posix()], cwd=tmp_path, check=True)
+    subprocess.run(["git", "commit", "-qm", "crlf blob"], cwd=tmp_path, check=True)
+    record = [{
+        "path": record_path.as_posix(),
+        "byteCount": len(canonical),
+        "sha256": hashlib.sha256(canonical).hexdigest(),
+    }]
+    errors = baseline.frozen_record_errors(record, tmp_path, {record_path.as_posix()})
+    assert any("committed Git blob" in error for error in errors)
+
+
+def test_source_rejects_symbolic_link_frozen_history(tmp_path: Path) -> None:
+    real = tmp_path / "real.md"
+    link_path = Path("artifacts/reports/current/link.md")
+    link = tmp_path / link_path
+    link.parent.mkdir(parents=True)
+    real.write_text("history\n", encoding="utf-8")
+    try:
+        link.symlink_to(real)
+    except OSError:
+        pytest.skip("symbolic-link creation is unavailable on this host")
+    register = controlled_sources()
+    register["historicalAssumptions"][0]["frozenRecords"][0]["path"] = link_path.as_posix()
+    assert any("symbolic link" in error for error in baseline.controlled_source_errors(
+        status(), register, root=tmp_path, tracked_paths={link_path.as_posix()}
+    ))
+
+
+def test_source_rejects_proprietary_and_extraction_artifacts() -> None:
+    changed = {
+        "docs/source.pdf", "local-references/private.txt",
+        "tests/vectors/standard_extract.txt", "tmp/change.patch", "tmp/review.diff",
+    }
+    errors = baseline.prohibited_source_artifact_errors(changed)
+    assert len(errors) == len(changed)
+
+
+def test_source_rejects_readme_register_drift() -> None:
+    register = controlled_sources()
+    register["sources"][0]["wireVersion"] = "ZZ"
+    errors = baseline.governed_status_errors(status(), source("README.md"), register)
+    assert any("README governed block differs" in error for error in errors)
+
+
+def test_status_rejects_bypassing_m1_gate() -> None:
+    data = status()
+    data["development"]["currentStop"] = {
+        "id": "PROJECT-CONFIGURATION-GATE",
+        "statusPath": "claimsBoundary.projectConfigurationStatus",
+        "objective": "skip",
+        "objectiveZh": "skip",
+    }
+    assert any("current stop" in error or "statusPath" in error for error in integrated_status_errors(data))
+
+
+def test_protected_states_reject_premature_promotion() -> None:
+    mutations = (
+        ("claimsBoundary", "projectConfigurationStatus", "ESTABLISHED"),
+        ("claimsBoundary", "instanceEvaluation", "INSTANCE-EXERCISED"),
+        ("claimsBoundary", "rq8", "CLOSED"),
+        ("claimsBoundary", "protocolConformanceEstablished", True),
+        ("claimsBoundary", "certificationReady", True),
+        ("claimsBoundary", "authorityAccepted", True),
+    )
+    for section, key, value in mutations:
+        data = status()
+        data[section][key] = value
+        errors = integrated_source_errors(controlled_sources(), data)
+        assert any("protected state changed" in error for error in errors), key
+
+
+def test_source_register_rejects_duplicate_ids() -> None:
+    for collection in ("sources", "openDependencies", "historicalAssumptions", "roadmap"):
+        register = controlled_sources()
+        register[collection].append(copy.deepcopy(register[collection][0]))
+        assert any(f"{collection} contains duplicate id" in error for error in integrated_source_errors(register)), collection
+
+
+def test_active_controls_reject_every_historical_alias_form(tmp_path: Path) -> None:
+    register = controlled_sources()
+    tracked: set[str] = set()
+    for raw in register["activeControlSurfacePaths"]:
+        target = tmp_path / raw
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("Controlled surface.\n", encoding="utf-8")
+        tracked.add(raw)
+    target = tmp_path / register["activeControlSurfacePaths"][0]
+    prohibited = (
+        "615A-4 是唯一活动协议权威。\n",
+        "Historical 615A-4 wording has current technical authority.\n",
+        "[ARINC 615A-4](https://example.com/source) is the current protocol authority.\n",
+        "ARINC 615A-4 is the\ncurrent protocol authority.\n",
+        "ARINC-615A-4 is not the current protocol authority.\n",
+    )
+    for text in prohibited:
+        target.write_text(text, encoding="utf-8")
+        errors = baseline._active_authority_text_errors(register, tmp_path, tracked)
+        assert any("names historical source" in error for error in errors), text
+    target.write_text(
+        "Historical source assumptions are non-authoritative and are governed by "
+        "the controlled source register and change record.\n",
+        encoding="utf-8",
+    )
+    assert baseline._active_authority_text_errors(register, tmp_path, tracked) == []
+
+
+def test_historical_aliases_must_be_nonempty_unique_and_include_id() -> None:
+    tracked = set(subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines())
+    cases = (
+        ([], "non-empty textAliases"),
+        (["ARINC-615A-4", "   ", "ARINC 615A-4", "615A-4"], "blank textAliases"),
+        (["ARINC-615A-4", "arinc-615a-4", "ARINC 615A-4", "615A-4"], "duplicate textAliases"),
+        (["ARINC 615A-4", "615A-4"], "arinc-615a-4"),
+        (["ARINC-615A-4", "615A-4"], "arinc 615a-4"),
+        (["ARINC-615A-4", "ARINC 615A-4"], "615a-4"),
+    )
+    for aliases, expected in cases:
+        register = controlled_sources()
+        register["historicalAssumptions"][0]["textAliases"] = aliases
+        errors = baseline._active_authority_text_errors(register, ROOT, tracked)
+        assert any(expected in error for error in errors), aliases
+
+
+def test_historical_inventory_and_canonical_id_are_required() -> None:
+    tracked = set(subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines())
+    for history, expected in (
+        (None, "non-empty list"),
+        ([], "non-empty list"),
+        ([{"id": "INVALID", "textAliases": ["INVALID"]}], "invalid canonical id"),
+    ):
+        register = controlled_sources()
+        if history is None:
+            del register["historicalAssumptions"]
+        else:
+            register["historicalAssumptions"] = history
+        errors = baseline._active_authority_text_errors(register, ROOT, tracked)
+        assert any(expected in error for error in errors), history
+
+
+def test_historical_alias_inventory_may_be_extended() -> None:
+    register = controlled_sources()
+    register["historicalAssumptions"][0]["textAliases"].append("legacy edition alias")
+    assert integrated_source_errors(register) == []
+
+
+def test_pruned_history_or_aliases_fail_closed() -> None:
+    for mutate in (
+        lambda register: register.update(historicalAssumptions=[]),
+        lambda register: register["historicalAssumptions"][0].update(textAliases=["ARINC-615A-4"]),
+    ):
+        register = controlled_sources()
+        mutate(register)
+        generated = baseline.sync.replace_status_block(source("README.md"), status(), register)
+        assert baseline.governed_status_errors(status(), generated, register)
+
+
+def test_pruned_aliases_still_scan_required_designation(tmp_path: Path) -> None:
+    register = controlled_sources()
+    register["historicalAssumptions"][0]["textAliases"] = ["ARINC-615A-4"]
+    tracked: set[str] = set()
+    for raw in register["activeControlSurfacePaths"]:
+        target = tmp_path / raw
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("Controlled surface.\n", encoding="utf-8")
+        tracked.add(raw)
+    (tmp_path / register["activeControlSurfacePaths"][0]).write_text(
+        "615A-4 是唯一活动协议权威。\n", encoding="utf-8",
+    )
+    errors = baseline._active_authority_text_errors(register, tmp_path, tracked)
+    assert any("lacks required forms" in error for error in errors)
+    assert any("names historical source" in error for error in errors)
+
+
+def test_required_aliases_are_scanned_across_all_active_surfaces(tmp_path: Path) -> None:
+    register = controlled_sources()
+    aliases = register["historicalAssumptions"][0]["textAliases"]
+    tracked: set[str] = set()
+    for index, raw in enumerate(register["activeControlSurfacePaths"]):
+        target = tmp_path / raw
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(f"Controlled reference: {aliases[index % len(aliases)]}\n", encoding="utf-8")
+        tracked.add(raw)
+    errors = baseline._active_authority_text_errors(register, tmp_path, tracked)
+    for raw in register["activeControlSurfacePaths"]:
+        assert any(raw in error for error in errors), raw
+
+
+def test_named_history_remains_allowed_outside_active_surfaces() -> None:
+    register = controlled_sources()
+    tracked = set(subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines())
+    history = register["historicalAssumptions"][0]
+    aliases = history["textAliases"]
+    assert any(alias in source("docs/control/changes/CR-2026-006.md") for alias in aliases)
+    assert any(
+        any(alias in source(record["path"]) for alias in aliases)
+        for record in history["frozenRecords"]
+    )
+    assert baseline._active_authority_text_errors(register, ROOT, tracked) == []
+
+
+def test_active_control_surfaces_cannot_be_empty_duplicate_or_incomplete() -> None:
+    tracked = set(subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines())
+    for surfaces in (
+        [],
+        ["docs/research/RESEARCH_CONTROL.md"] * 2,
+        ["docs/research/RESEARCH_CONTROL.md"],
+    ):
+        register = controlled_sources()
+        register["activeControlSurfacePaths"] = surfaces
+        assert baseline._active_authority_text_errors(register, ROOT, tracked)
+
+
+def test_active_control_surfaces_reject_unsafe_and_untracked_paths() -> None:
+    tracked = set(subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines())
+    for invalid in ("/etc/passwd", "../../README.md", "docs/research/not-tracked.md"):
+        register = controlled_sources()
+        register["activeControlSurfacePaths"][0] = invalid
+        assert baseline._active_authority_text_errors(register, ROOT, tracked), invalid
+
+
+def test_roadmap_accepts_m1_transition_without_python_change() -> None:
+    register = controlled_sources()
+    register["roadmap"][0]["status"] = "COMPLETED-EXTERNALLY-VERIFIED"
+    register["roadmap"][1]["status"] = "DISPOSITION-ADOPT"
+    register["roadmap"][2]["status"] = "NEXT-BLOCKED-BY-FINAL-GATE"
+    register["lifecycle"]["currentStageId"] = register["roadmap"][1]["id"]
+    register["lifecycle"]["nextStageId"] = register["roadmap"][2]["id"]
+    data = status()
+    next_stage = register["roadmap"][2]
+    data["development"]["currentStop"]["id"] = next_stage["gateId"]
+    data["development"]["currentStop"]["statusPath"] = f"development.gates.{next_stage['gateId']}"
+    data["development"]["gates"][next_stage["gateId"]] = "NOT YET ESTABLISHED"
+    data["development"]["gates"][register["roadmap"][0]["gateId"]] = "COMPLETED-EXTERNALLY-VERIFIED"
+    data["development"]["gates"][register["roadmap"][1]["gateId"]] = "EXTERNAL-VERIFICATION-REQUIRED"
+    assert integrated_source_errors(register, data) == []
+
+
+def test_serial_roadmap_rejects_bypasses() -> None:
+    mutations = (
+        lambda roadmap: roadmap[3].update(dependsOn=[]),
+        lambda roadmap: roadmap[3].update(dependsOn=[roadmap[1]["id"]]),
+        lambda roadmap: roadmap[3].update(status="READY"),
+        lambda roadmap: roadmap[3].update(status="COMPLETED-EXTERNALLY-VERIFIED"),
+        lambda roadmap: roadmap[3].update(gateId=roadmap[2]["gateId"]),
+    )
+    for mutate in mutations:
+        register = controlled_sources()
+        mutate(register["roadmap"])
+        assert integrated_source_errors(register)
+
+
+def test_development_gates_must_match_roadmap() -> None:
+    for mutate in (
+        lambda gates: gates.pop(next(iter(gates))),
+        lambda gates: gates.update({"UNREGISTERED-GATE": "BLOCKED"}),
+    ):
+        data = status()
+        mutate(data["development"]["gates"])
+        assert any("development.gates" in error for error in integrated_source_errors(controlled_sources(), data))
+
+
+def test_gate_values_must_match_stage_position() -> None:
+    cases = (
+        ("SCOPE-EXPANSION-GATE", "ESTABLISHED"),
+        ("SOURCE-TECHNICAL-DIRECTION-GATE", "COMPLETED-EXTERNALLY-VERIFIED"),
+    )
+    for gate_id, value in cases:
+        data = status()
+        data["development"]["gates"][gate_id] = value
+        assert any(f"roadmap gate {gate_id} status" in error for error in integrated_source_errors(controlled_sources(), data))
+
+
+def test_completed_stage_gate_must_be_closed() -> None:
+    register = controlled_sources()
+    register["roadmap"][0]["status"] = "COMPLETED-EXTERNALLY-VERIFIED"
+    register["roadmap"][1]["status"] = "DISPOSITION-ADOPT"
+    register["roadmap"][2]["status"] = "NEXT-BLOCKED-BY-FINAL-GATE"
+    register["lifecycle"]["currentStageId"] = register["roadmap"][1]["id"]
+    register["lifecycle"]["nextStageId"] = register["roadmap"][2]["id"]
+    data = status()
+    data["development"]["currentStop"]["id"] = register["roadmap"][2]["gateId"]
+    data["development"]["currentStop"]["statusPath"] = f"development.gates.{register['roadmap'][2]['gateId']}"
+    data["development"]["gates"][register["roadmap"][1]["gateId"]] = "EXTERNAL-VERIFICATION-REQUIRED"
+    data["development"]["gates"][register["roadmap"][2]["gateId"]] = "NOT YET ESTABLISHED"
+    errors = integrated_source_errors(register, data)
+    assert any("COMPLETED-EXTERNALLY-VERIFIED" in error for error in errors)
 
 
 def test_readme_rejects_stale_release_candidate_wording() -> None:

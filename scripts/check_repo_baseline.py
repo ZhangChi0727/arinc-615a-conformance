@@ -16,7 +16,8 @@ import os
 import re
 import subprocess
 import sys
-from pathlib import Path
+import unicodedata
+from pathlib import Path, PurePosixPath, PureWindowsPath
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -29,6 +30,10 @@ assert SYNC_SPEC and SYNC_SPEC.loader
 sync = importlib.util.module_from_spec(SYNC_SPEC)
 SYNC_SPEC.loader.exec_module(sync)
 STATUS = sync.load_status(STATUS_PATH)
+SOURCE_REGISTER_PATH = ROOT / STATUS["technicalDirection"]["sourceRegisterPath"]
+CONTROLLED_SOURCES = sync.load_source_register(SOURCE_REGISTER_PATH)
+ACQUISITION_RECORD_PATH = ROOT / CONTROLLED_SOURCES["acquisitionRecordPath"]
+ACQUISITION_RECORD = json.loads(ACQUISITION_RECORD_PATH.read_text(encoding="utf-8"))
 
 # Directory roots for discovered artifacts.
 CONTROL = ROOT / "docs/control"
@@ -68,6 +73,8 @@ ARCHIVED_READER_REPORT_PATH = ROOT / STATUS["release"]["records"]["historicalRea
 REQUIRED_FIXED_FILES = [
     ROOT / "README.md",
     STATUS_PATH,
+    SOURCE_REGISTER_PATH,
+    ACQUISITION_RECORD_PATH,
     ROOT / "scripts/sync_project_overview.py",
     CONTROL / "PROJECT_CONTROL.md",
     CONTROL / "CHANGE_CONTROL.md",
@@ -1195,6 +1202,429 @@ def research_ownership_errors(text: str) -> list[str]:
     return [f"research ownership control is missing: {phrase}" for phrase in required if phrase not in text]
 
 
+def _controlled_tracked_path_error(
+    raw: object, root: Path, tracked_paths: set[str], label: str,
+) -> tuple[Path | None, str | None]:
+    if not isinstance(raw, str) or not raw:
+        return None, f"{label} must be a non-empty repository-relative path"
+    normalized = raw.replace("\\", "/")
+    posix = PurePosixPath(normalized)
+    windows = PureWindowsPath(raw)
+    if posix.is_absolute() or windows.is_absolute() or windows.drive or ".." in posix.parts:
+        return None, f"{label} must be repository-relative without traversal"
+    resolved_root = root.resolve()
+    candidate = resolved_root / Path(*posix.parts)
+    if candidate.is_symlink():
+        return None, f"{label} must not be a symbolic link"
+    target = candidate.resolve()
+    try:
+        target.relative_to(resolved_root)
+    except ValueError:
+        return None, f"{label} resolves outside the repository"
+    if not target.is_file():
+        return None, f"{label} must be an ordinary file"
+    if posix.as_posix() not in tracked_paths:
+        return None, f"{label} must name a Git-tracked file"
+    return target, None
+
+
+def _unique_rows(rows: object, label: str) -> tuple[dict[str, dict], list[str]]:
+    if not isinstance(rows, list):
+        return {}, [f"{label} must be a list"]
+    result: dict[str, dict] = {}
+    errors: list[str] = []
+    for index, row in enumerate(rows):
+        if not isinstance(row, dict) or not isinstance(row.get("id"), str) or not row["id"]:
+            errors.append(f"{label}[{index}] must have a non-empty id")
+            continue
+        if row["id"] in result:
+            errors.append(f"{label} contains duplicate id {row['id']}")
+        else:
+            result[row["id"]] = row
+    return result, errors
+
+
+def _head_blob_bytes(root: Path, relative: str) -> tuple[bytes | None, str | None]:
+    result = subprocess.run(
+        ["git", "show", f"HEAD:{relative}"], cwd=root,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+    )
+    if result.returncode != 0:
+        return None, f"cannot read committed Git blob HEAD:{relative}"
+    return result.stdout, None
+
+
+def frozen_record_errors(
+    records: object, root: Path, tracked_paths: set[str], label: str = "frozenRecords",
+) -> list[str]:
+    """Compare registered identities with committed Git blob bytes, never checkout text."""
+    errors: list[str] = []
+    if not isinstance(records, list) or not records:
+        return [f"{label} must be a non-empty list"]
+    for index, record in enumerate(records):
+        item_label = f"{label}[{index}]"
+        if not isinstance(record, dict):
+            errors.append(f"{item_label} must be an object")
+            continue
+        target, path_error = _controlled_tracked_path_error(
+            record.get("path"), root, tracked_paths, f"{item_label}.path",
+        )
+        if path_error:
+            errors.append(path_error)
+            continue
+        assert target is not None
+        payload, blob_error = _head_blob_bytes(root, record["path"])
+        if blob_error:
+            errors.append(blob_error)
+            continue
+        assert payload is not None
+        if record.get("byteCount") != len(payload):
+            errors.append(f"{item_label} byteCount differs from committed Git blob")
+        if record.get("sha256") != hashlib.sha256(payload).hexdigest():
+            errors.append(f"{item_label} sha256 differs from committed Git blob")
+    return errors
+
+
+def _required_historical_aliases(source_id: str) -> tuple[set[str], str | None]:
+    """Derive the minimum normalized alias family from a canonical source ID."""
+    if not isinstance(source_id, str):
+        return set(), "canonical id must be a string"
+    canonical = unicodedata.normalize("NFKC", source_id).strip()
+    prefix, separator, designation = canonical.partition("-")
+    if not separator or not prefix.strip() or not designation.strip():
+        return set(), "canonical id must use prefix-designation form"
+    prefix = prefix.strip()
+    designation = designation.strip()
+    return {
+        unicodedata.normalize("NFKC", alias).strip().casefold()
+        for alias in (canonical, f"{prefix} {designation}", designation)
+    }, None
+
+
+def _active_authority_text_errors(register: dict, root: Path, tracked_paths: set[str]) -> list[str]:
+    errors: list[str] = []
+    historical_aliases: list[tuple[str, str]] = []
+    history = register.get("historicalAssumptions")
+    if not isinstance(history, list) or not history:
+        return ["historicalAssumptions must be a non-empty list"]
+    for history_index, item in enumerate(history):
+        if not isinstance(item, dict) or not isinstance(item.get("id"), str) or not item["id"].strip():
+            errors.append(f"historicalAssumptions[{history_index}] must have a non-empty canonical id")
+            continue
+        required_aliases, canonical_error = _required_historical_aliases(item["id"])
+        if canonical_error:
+            errors.append(f"historical assumption {item['id']} has an invalid canonical id: {canonical_error}")
+        aliases = item.get("textAliases")
+        if not isinstance(aliases, list) or not aliases:
+            errors.append(f"historical assumption {item['id']} must define non-empty textAliases")
+            aliases = []
+        non_strings = [alias for alias in aliases if not isinstance(alias, str)]
+        if non_strings:
+            errors.append(f"historical assumption {item['id']} textAliases must contain only strings")
+        string_aliases = [alias for alias in aliases if isinstance(alias, str)]
+        normalized = [unicodedata.normalize("NFKC", alias).strip().casefold() for alias in string_aliases]
+        if any(not alias for alias in normalized):
+            errors.append(f"historical assumption {item['id']} contains blank textAliases")
+        if len(normalized) != len(set(normalized)):
+            errors.append(f"historical assumption {item['id']} contains duplicate textAliases")
+        missing_aliases = required_aliases - set(normalized)
+        if missing_aliases:
+            errors.append(
+                f"historical assumption {item['id']} textAliases lacks required forms: "
+                + ", ".join(sorted(missing_aliases))
+            )
+        scan_aliases = required_aliases | {alias for alias in normalized if alias}
+        historical_aliases.extend((item["id"], alias) for alias in scan_aliases)
+    surfaces = register.get("activeControlSurfacePaths")
+    required_surfaces = {
+        "docs/research/RESEARCH_CONTROL.md",
+        "docs/engineering/ENGINEERING_CONTROL.md",
+        "docs/control/contracts/ARINC615A_PROFILE_BINDING_CONFIGURATION.md",
+        "docs/control/contracts/ARCHITECTURE.md",
+    }
+    if not isinstance(surfaces, list) or not surfaces:
+        return ["activeControlSurfacePaths must be a non-empty list"]
+    normalized_surfaces = [raw.replace("\\", "/") for raw in surfaces if isinstance(raw, str)]
+    if len(normalized_surfaces) != len(surfaces):
+        errors.append("activeControlSurfacePaths entries must be paths")
+    if len(normalized_surfaces) != len(set(normalized_surfaces)):
+        errors.append("activeControlSurfacePaths contains duplicate paths")
+    missing = required_surfaces - set(normalized_surfaces)
+    if missing:
+        errors.append("activeControlSurfacePaths lacks required control surfaces: " + ", ".join(sorted(missing)))
+    for index, raw in enumerate(surfaces):
+        target, path_error = _controlled_tracked_path_error(
+            raw, root, tracked_paths, f"activeControlSurfacePaths[{index}]",
+        )
+        if path_error:
+            errors.append(path_error)
+            continue
+        assert target is not None
+        control_text = target.read_text(encoding="utf-8")
+        folded_text = unicodedata.normalize("NFKC", control_text).casefold()
+        for source_id, alias in historical_aliases:
+            offset = folded_text.find(alias)
+            if offset >= 0:
+                line_number = control_text.count("\n", 0, offset) + 1
+                errors.append(
+                    f"active control surface names historical source {source_id}: "
+                    f"{raw}:{line_number}"
+                )
+                break
+    return errors
+
+
+def controlled_source_errors(
+    status: dict,
+    register: dict,
+    acquisition: dict | None = None,
+    root: Path = ROOT,
+    tracked_paths: set[str] | None = None,
+) -> list[str]:
+    """Validate generic source, control-reference and serial-roadmap invariants."""
+    errors: list[str] = []
+    if tracked_paths is None:
+        try:
+            result = subprocess.run(
+                ["git", "ls-files", "-z"], cwd=root, check=True,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            )
+            tracked_paths = {
+                item.decode("utf-8").replace("\\", "/")
+                for item in result.stdout.split(b"\0") if item
+            }
+        except (OSError, subprocess.CalledProcessError) as exc:
+            return [f"cannot enumerate tracked source-control files: {exc}"]
+
+    if not isinstance(register.get("schemaVersion"), str):
+        errors.append("controlled source schemaVersion must be a string")
+    by_id, unique_errors = _unique_rows(register.get("sources"), "sources")
+    errors.extend(unique_errors)
+    dependency_by_id, dependency_errors = _unique_rows(register.get("openDependencies"), "openDependencies")
+    errors.extend(dependency_errors)
+    history_by_id, history_errors = _unique_rows(register.get("historicalAssumptions"), "historicalAssumptions")
+    errors.extend(history_errors)
+    roadmap_by_id, roadmap_errors = _unique_rows(register.get("roadmap"), "roadmap")
+    errors.extend(roadmap_errors)
+    capability_by_id, capability_errors = _unique_rows(register.get("capabilities"), "capabilities")
+    errors.extend(capability_errors)
+    if unique_errors:
+        return errors
+
+    authority_id = register.get("currentProtocolAuthorityId")
+    authorities = [item for item in by_id.values() if item.get("role") == "CURRENT-PROTOCOL-AUTHORITY"]
+    if authority_id not in by_id or len(authorities) != 1 or authorities[0].get("id") != authority_id:
+        errors.append("currentProtocolAuthorityId must reference the single current protocol authority")
+
+    acquisition_path_raw = register.get("acquisitionRecordPath")
+    acquisition_path, acquisition_path_error = _controlled_tracked_path_error(
+        acquisition_path_raw, root, tracked_paths, "acquisitionRecordPath",
+    )
+    if acquisition_path_error:
+        errors.append(acquisition_path_error)
+    if acquisition is None and acquisition_path is not None:
+        try:
+            acquisition = json.loads(acquisition_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"cannot parse acquisition record: {exc}")
+    acquisition = {} if acquisition is None else acquisition
+    acquired_by_id, acquired_errors = _unique_rows(acquisition.get("sources"), "acquisition.sources")
+    errors.extend(acquired_errors)
+    acquisition_id = acquisition.get("recordId")
+    identity_fields = ("id", "edition", "publicationDate", "pageCount", "byteCount", "sha256")
+
+    for source_id, source in by_id.items():
+        if not isinstance(source.get("edition"), str) or not source["edition"]:
+            errors.append(f"{source_id} edition must be a non-empty string")
+        if not isinstance(source.get("pageCount"), int) or source["pageCount"] <= 0:
+            errors.append(f"{source_id} pageCount must be a positive integer")
+        if not isinstance(source.get("byteCount"), int) or source["byteCount"] <= 0:
+            errors.append(f"{source_id} byteCount must be a positive integer")
+        if not re.fullmatch(r"[0-9a-f]{64}", str(source.get("sha256", ""))):
+            errors.append(f"{source_id} sha256 must be a complete lowercase SHA-256")
+        if source.get("sourceHandling") != "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY":
+            errors.append(f"{source_id} has an invalid source-handling policy")
+        acquired = acquired_by_id.get(source_id)
+        if acquired is None or any(source.get(field) != acquired.get(field) for field in identity_fields):
+            errors.append(f"{source_id} differs from its independent acquisition record")
+        if source.get("acquisitionRecordId") != acquisition_id:
+            errors.append(f"{source_id} acquisitionRecordId does not resolve")
+        wire_version = source.get("wireVersion")
+        if wire_version is not None and (not isinstance(wire_version, str) or wire_version == source.get("edition")):
+            errors.append(f"{source_id} wire version must remain distinct from edition")
+        if source.get("role") == "BOUNDED-DATA-FORMAT-REFERENCE":
+            if source.get("equivalentReplacementFor") != [] or not source.get("limitations"):
+                errors.append(f"{source_id} bounded applicability/equivalence policy is invalid")
+
+    for dependency_id, dependency in dependency_by_id.items():
+        if dependency.get("status") != "OPEN-DEPENDENCY":
+            errors.append(f"open dependency {dependency_id} has an invalid status")
+        affected = dependency.get("affectedCapabilityIds")
+        if not isinstance(affected, list) or not affected:
+            errors.append(f"open dependency {dependency_id} must identify affected capabilities")
+            continue
+        for capability_id in affected:
+            capability = capability_by_id.get(capability_id)
+            if capability is None:
+                errors.append(f"open dependency {dependency_id} references unknown capability {capability_id}")
+            elif capability.get("status") == "ESTABLISHED" or dependency_id not in capability.get("blockedBy", []):
+                errors.append(f"capability {capability_id} cannot be established while {dependency_id} is open")
+
+    for history_id, item in history_by_id.items():
+        if item.get("status") != "HISTORICAL-SUPERSEDED" or item.get("activeDependency") is not False:
+            errors.append(f"historical assumption {history_id} must remain superseded and inactive")
+        errors.extend(frozen_record_errors(
+            item.get("frozenRecords"), root, tracked_paths,
+            f"historicalAssumptions[{history_id}].frozenRecords",
+        ))
+
+    migration = register.get("futureSourceMigration", {})
+    migration_status = migration.get("status")
+    if migration_status not in {"IDLE", "ACTIVE"}:
+        errors.append("future source migration status is invalid")
+    if migration_status == "IDLE" and migration.get("target") is not None:
+        errors.append("idle future source migration cannot name a target")
+    if migration_status == "ACTIVE" and not isinstance(migration.get("target"), str):
+        errors.append("active future source migration must name a target")
+    if not isinstance(migration.get("requiredGates"), list) or not migration["requiredGates"]:
+        errors.append("future source migration gate is incomplete")
+
+    direction = register.get("technicalDirection", {})
+    for field in ("behaviorModel", "verificationMethod"):
+        if not isinstance(direction.get(field), str) or not direction[field]:
+            errors.append(f"technicalDirection.{field} must be a non-empty controlled value")
+    if not isinstance(direction.get("deferredModels"), list):
+        errors.append("technicalDirection.deferredModels must be a list")
+    platform = direction.get("executionPlatform", {})
+    if platform.get("selected") is not None or platform.get("dependencies") != []:
+        errors.append("an execution platform cannot be selected without its separate control gate")
+    if not isinstance(platform.get("deferredCandidates"), list) or not platform.get("selectionGate"):
+        errors.append("execution-platform deferral and selection gate must be controlled")
+    reuse = direction.get("openSourceReuse", {})
+    if set(reuse) != {"L1", "L2", "L3"} or any(not isinstance(value, str) or not value for value in reuse.values()):
+        errors.append("open-source reuse policy must define non-empty L1/L2/L3 controls")
+
+    decision_path, decision_error = _controlled_tracked_path_error(
+        direction.get("decisionRecordPath"), root, tracked_paths, "technicalDirection.decisionRecordPath",
+    )
+    if decision_error:
+        errors.append(decision_error)
+    elif decision_path is not None:
+        decision_text = decision_path.read_text(encoding="utf-8")
+        decision_ids = direction.get("decisionIds")
+        if not isinstance(decision_ids, list) or not decision_ids:
+            errors.append("technicalDirection.decisionIds must be a non-empty list")
+            decision_ids = []
+        for decision_id in decision_ids:
+            if not isinstance(decision_id, str) or decision_id not in decision_text:
+                errors.append(f"technical decision record does not resolve decision {decision_id}")
+
+    roadmap_order = list(roadmap_by_id)
+    index_by_id = {stage_id: index for index, stage_id in enumerate(roadmap_order)}
+    gate_ids: list[str] = []
+    for stage_index, (stage_id, stage) in enumerate(roadmap_by_id.items()):
+        dependencies = stage.get("dependsOn")
+        if not isinstance(dependencies, list) or len(dependencies) != len(set(dependencies)):
+            errors.append(f"roadmap stage {stage_id} has invalid or duplicate dependencies")
+            continue
+        expected_dependencies = [] if stage_index == 0 else [roadmap_order[stage_index - 1]]
+        if dependencies != expected_dependencies:
+            errors.append(f"roadmap stage {stage_id} must depend only on its immediate predecessor")
+        gate_id = stage.get("gateId")
+        if not isinstance(gate_id, str) or not gate_id:
+            errors.append(f"roadmap stage {stage_id} lacks gateId")
+        else:
+            gate_ids.append(gate_id)
+    if len(gate_ids) != len(set(gate_ids)):
+        errors.append("roadmap gateId values must be unique")
+    lifecycle = register.get("lifecycle", {})
+    current_id, next_id = lifecycle.get("currentStageId"), lifecycle.get("nextStageId")
+    if current_id not in roadmap_by_id or next_id not in roadmap_by_id or current_id == next_id:
+        errors.append("lifecycle current/next stage references are invalid")
+    else:
+        current_index = index_by_id[current_id]
+        next_index = index_by_id[next_id]
+        if next_index != current_index + 1:
+            errors.append("lifecycle next stage must immediately follow current stage")
+        disposition = lifecycle.get("candidateDisposition")
+        for stage_index, (stage_id, stage) in enumerate(roadmap_by_id.items()):
+            if stage_index < current_index:
+                expected_status = "COMPLETED-EXTERNALLY-VERIFIED"
+                expected_gate_status = "COMPLETED-EXTERNALLY-VERIFIED"
+            elif stage_index == current_index:
+                expected_status = f"DISPOSITION-{disposition}"
+                expected_gate_status = "EXTERNAL-VERIFICATION-REQUIRED"
+            elif stage_index == next_index:
+                expected_status = "NEXT-BLOCKED-BY-FINAL-GATE"
+                expected_gate_status = "NOT YET ESTABLISHED"
+            else:
+                expected_status = "BLOCKED-BY-PREDECESSOR"
+                expected_gate_status = "BLOCKED"
+            if stage.get("status") != expected_status:
+                errors.append(f"roadmap stage {stage_id} status must be {expected_status}")
+            gate_id = stage.get("gateId")
+            governed_gates = status.get("development", {}).get("gates", {})
+            if isinstance(gate_id, str) and governed_gates.get(gate_id) != expected_gate_status:
+                errors.append(f"roadmap gate {gate_id} status must be {expected_gate_status}")
+        stop = status.get("development", {}).get("currentStop", {})
+        expected_gate = roadmap_by_id[next_id].get("gateId")
+        expected_path = f"development.gates.{expected_gate}"
+        if stop.get("id") != expected_gate or stop.get("statusPath") != expected_path:
+            errors.append("current stop does not resolve the next roadmap stage gate")
+    governed_gates = status.get("development", {}).get("gates")
+    if not isinstance(governed_gates, dict) or set(governed_gates) != set(gate_ids):
+        errors.append("development.gates must match all and only roadmap gateId values")
+    if lifecycle.get("repositoryMergeEvidence") != "EXTERNAL-VERIFICATION-REQUIRED" or lifecycle.get("independentApproval") != "NOT-AUTOMATED":
+        errors.append("approval and merge evidence must remain externally verified conditions")
+    if lifecycle.get("nextStageEntryRule") != "PROHIBITED-UNTIL-APPROVAL-AND-ORDINARY-MERGE-VERIFIED":
+        errors.append("next-stage entry rule is not controlled")
+    activation_path, activation_error = _controlled_tracked_path_error(
+        lifecycle.get("formalActivationControlPath"), root, tracked_paths,
+        "lifecycle.formalActivationControlPath",
+    )
+    if activation_error:
+        errors.append(activation_error)
+    elif activation_path is not None:
+        activation_text = activation_path.read_text(encoding="utf-8")
+        if str(lifecycle.get("candidateDisposition", "")).upper() not in activation_text.upper():
+            errors.append("activation control does not identify the lifecycle disposition")
+
+    direction_pointer = status.get("technicalDirection", {})
+    register_path, register_path_error = _controlled_tracked_path_error(
+        direction_pointer.get("sourceRegisterPath"), root, tracked_paths,
+        "technicalDirection.sourceRegisterPath",
+    )
+    if register_path_error:
+        errors.append(register_path_error)
+    for pointer_name, expected in (
+        ("currentStageIdPath", current_id), ("nextStageIdPath", next_id),
+        ("formalActivationControlPath", lifecycle.get("formalActivationControlPath")),
+        ("technicalDecisionPath", direction.get("decisionRecordPath")),
+    ):
+        pointer = direction_pointer.get(pointer_name)
+        try:
+            actual = sync._get(register, pointer) if isinstance(pointer, str) else None
+        except KeyError:
+            actual = None
+        if actual != expected:
+            errors.append(f"technicalDirection.{pointer_name} does not resolve controlled data")
+
+    for constraint in register.get("protectedStateConstraints", []):
+        if not isinstance(constraint, dict) or not isinstance(constraint.get("path"), str):
+            errors.append("protectedStateConstraints entries require path and equals")
+            continue
+        try:
+            actual = sync._get(status, constraint["path"])
+        except KeyError:
+            errors.append(f"protected state path does not resolve: {constraint['path']}")
+        else:
+            if actual != constraint.get("equals"):
+                errors.append(f"protected state changed before its controlling stage: {constraint['path']}")
+
+    errors.extend(_active_authority_text_errors(register, root, tracked_paths))
+    return errors
+
+
 def overview_semantic_errors(readme: str) -> list[str]:
     errors: list[str] = []
     if re.search(r"(?im)^\| Current release \|[^\n]*(?:Draft|candidate)", readme):
@@ -1204,16 +1634,43 @@ def overview_semantic_errors(readme: str) -> list[str]:
     return errors
 
 
-def governed_status_errors(status: dict, readme: str) -> list[str]:
+def governed_status_errors(
+    status: dict,
+    readme: str,
+    register: dict | None = None,
+    root: Path = ROOT,
+    tracked_paths: set[str] | None = None,
+) -> list[str]:
     """Validate governed state and the README produced from that exact state."""
-    errors = list(sync.status_errors(status, ROOT))
+    register = CONTROLLED_SOURCES if register is None else register
+    errors = list(sync.status_errors(status, root))
+    errors.extend(
+        controlled_source_errors(
+            status, register, root=root, tracked_paths=tracked_paths,
+        )
+    )
     try:
-        expected = sync.replace_status_block(readme, status)
-    except sync.StatusError as exc:
+        expected = sync.replace_status_block(readme, status, register)
+    except (sync.StatusError, KeyError, TypeError, IndexError) as exc:
         errors.append(f"README status integration failed: {exc}")
     else:
         if readme != expected:
             errors.append("README governed block differs from project-status.json")
+    return errors
+
+
+def prohibited_source_artifact_errors(changed: set[str]) -> list[str]:
+    """Reject new protected-source payloads while preserving frozen history."""
+    errors: list[str] = []
+    for raw in changed:
+        path = PurePosixPath(raw.replace("\\", "/"))
+        lowered = path.name.lower()
+        if "local-references" in path.parts:
+            errors.append(f"private source directory cannot be tracked: {path}")
+        if path.suffix.lower() in {".pdf", ".patch", ".diff"}:
+            errors.append(f"protected or transient source artifact cannot be added: {path}")
+        if any(token in lowered for token in ("standard_extract", "standard-extract", "clause_extract", "clause-extract")):
+            errors.append(f"standard extraction cannot be added: {path}")
     return errors
 
 
@@ -1255,7 +1712,8 @@ def main() -> int:
     for path in nested_readmes:
         errors.append(f"subdirectory README is prohibited: {path.relative_to(ROOT)}")
 
-    errors.extend(governed_status_errors(STATUS, read(ROOT / "README.md")))
+    errors.extend(governed_status_errors(STATUS, read(ROOT / "README.md"), CONTROLLED_SOURCES))
+    errors.extend(prohibited_source_artifact_errors(changed_files_for_event()))
 
     bilingual = [
         path for path in required

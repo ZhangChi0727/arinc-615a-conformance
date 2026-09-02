@@ -233,6 +233,68 @@ mathematical or methodological semantics.
 
 ---
 
+## DD-015 — Control ARINC 615A-3 as the sole active protocol source
+
+**Decision:** Adopt ARINC 615A-3 as the sole active 615A protocol authority,
+ARINC 665-5 as a bounded data-format reference, and ARINC 645 as an open
+dependency. Withdraw every active 615A-4 dependency or target while preserving
+registered frozen history as `HISTORICAL-SUPERSEDED`. The wire value `A4` is not
+an edition identifier.
+
+**Why:** Source identity must precede CRS derivation. Conflating wire version,
+edition, later data formats, or open integrity algorithms would produce
+untraceable requirements and false capability claims.
+
+**Scope:** Source roles and migration control only; no standard text, CRS,
+applicability decision, implementation or conformance conclusion is created.
+
+**Status:** Disposition `ADOPT`, with formal activation governed by CR-2026-006.
+Approval and ordinary-merge evidence are externally verified, not automated.
+
+---
+
+## DD-016 — Use a lightweight observable timed EFSM and bounded Test-Analysis
+
+**Decision:** Retain one lightweight observable timed EFSM and complementary
+Test-Analysis. Initially bound Analysis to obligation traceability,
+state/transition/timing coverage, robust timing/error budgets, and finite-domain
+mutation or held-out adequacy. Defer DTMC protocol semantics, HMM/ML diagnosis
+and Bayesian calibration. FMEA may prioritize faults but cannot decide
+conformance. TTCN-3 is neither a dependency nor a selected platform.
+
+**Why:** This is the smallest route that preserves auditable engineering and
+publishable analysis without introducing unidentifiable or uncalibrated models
+before CRS, Configuration and execution data exist.
+
+**Scope:** Technical direction only; no EFSM, oracle, test case, analysis model
+or execution platform is implemented or selected here.
+
+**Status:** Disposition `ADOPT`; formal activation uses the CR-2026-006 gate and
+does not assert that approval or merge has occurred.
+
+---
+
+## DD-017 — Adopt injectable layers, gated open-source reuse and M0–M9 serial delivery
+
+**Decision:** Use independently replaceable protocol-file, injected IO/clock/
+trace, TFTP, 615A adaptation, operation, verification and evidence layers.
+Allow L1 reference-only reuse with identity/license records; allow future L2
+black-box comparison with fixed identity/license; prohibit L3 source/constants/
+vectors until independent license, cleanliness and architecture-fit review.
+Deliver M0–M9 serially, with M1 CRS/applicability next and no parallel stage PR.
+
+**Why:** Injection makes timing and evidence deterministic; directional layers
+contain change. Gated reuse prevents license and source-authority contamination,
+and serial gates prevent implementation from outrunning requirements.
+
+**Scope:** Target architecture and delivery policy only. No named open-source
+implementation is registered for reuse, and no third-party material is copied.
+
+**Status:** Disposition `ADOPT`; formal activation uses the CR-2026-006 gate and
+M1 remains prohibited until approval and ordinary merge are externally verified.
+
+---
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -306,3 +368,45 @@ DD-012 已由 `GR-PR6-RB-2026-001-v4.2` 批准，并已在 PR #6 合并时生效
 导航噪声，同时不压平保证论证或削弱追踪。本决定已由 `GR-PR7-RB-2026-001-v4.2.1`
 批准，并已随 PR #7 合并生效。独立评审已确认迁移完整、链接有效、中英文对等、校验器覆盖充分，且
 RR-2026-001 v4.2 的数学与方法论语义未改变。
+
+## DD-015——以 ARINC 615A-3 作为唯一活动协议来源
+
+**决定：** 采纳 ARINC 615A-3 为唯一活动 615A 协议权威，665-5 为有边界的数据格式
+参考，645 为开放依赖；撤销全部活动 615A-4 依赖或目标，同时把登记的冻结历史保持为
+`HISTORICAL-SUPERSEDED`。线协议值 `A4` 不是标准版次。
+
+**理由：** 来源身份必须先于 CRS。混淆线版本、标准版次、后续数据格式或开放的完整性
+算法会产生不可追踪需求和虚假能力主张。
+
+**范围：** 仅控制来源角色与迁移；不创建标准正文、CRS、适用性决定、实现或符合性结论。
+
+**状态：** 处置为 `ADOPT`，正式激活由 CR-2026-006 控制；批准与普通合并证据由外部核验。
+
+## DD-016——采用轻量可观测 timed EFSM 与有界 Test-Analysis
+
+**决定：** 保留单一轻量可观测 timed EFSM 和互补的 Test-Analysis。首轮 Analysis 仅承担
+义务追踪、状态/迁移/时序覆盖、稳健时序/误差预算以及有限故障域 mutation/held-out
+adequacy。延期 DTMC 协议语义、HMM/ML 诊断和 Bayesian calibration。FMEA 只能为故障
+排序，不能判定符合性；TTCN-3 不是依赖或选定平台。
+
+**理由：** 这是在 CRS、Configuration 和执行数据存在前兼顾可审计工程和可发表分析、同时
+避免不可识别或不可校准模型的最小路线。
+
+**范围：** 仅为技术方向；本决定不实现或选择 EFSM、oracle、用例、分析模型或执行平台。
+
+**状态：** 处置为 `ADOPT`；正式激活使用 CR-2026-006 门，且不声称批准或合并已经发生。
+
+## DD-017——采用可注入分层、受门禁的开源复用和 M0～M9 串行交付
+
+**决定：** 协议文件、注入式 IO/时钟/trace、TFTP、615A 适配、操作、验证和证据层可独立
+替换。L1 参考复用需身份/许可证记录；L2 未来黑盒比较需固定身份/许可证；L3 源码/常量/
+向量在独立许可证、洁净度和架构适配评审前禁止。M0～M9 串行交付，下一步仅为 M1 CRS/
+适用性，不并行开启阶段 PR。
+
+**理由：** 注入边界支持确定性时序和证据，方向性分层控制变化；受门禁复用避免许可证和
+来源权威污染，串行门防止实现越过需求。
+
+**范围：** 仅为目标架构与交付政策。本变更不登记任何具名开源实现用于复用，也不复制
+第三方材料。
+
+**状态：** 处置为 `ADOPT`；正式激活使用 CR-2026-006 门，批准与普通合并经外部核验前禁止 M1。
