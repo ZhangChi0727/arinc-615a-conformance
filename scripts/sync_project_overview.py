@@ -15,7 +15,6 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 STATUS_PATH = ROOT / "project-status.json"
 README_PATH = ROOT / "README.md"
-SOURCE_REGISTER_PATH = ROOT / "configs/research/controlled_sources.json"
 COMMIT_RE = re.compile(r"^[0-9a-f]{40}$")
 
 # STABLE_INVARIANT: schema vocabulary, not mutable lifecycle state.
@@ -29,7 +28,6 @@ ALLOWED_CONFIGURATION = {"NOT YET ESTABLISHED", "ESTABLISHED"}
 ALLOWED_EVALUATION = {"NOT-EXERCISED", "INSTANCE-EXERCISED"}
 ALLOWED_RQ8 = {"OPEN", "CLOSED"}
 ALLOWED_HANDSHAKE = {"INCOMPLETE", "COMPLETE"}
-ALLOWED_REQUIREMENTS_SPECIFICATION = {"NOT YET ESTABLISHED", "ESTABLISHED"}
 EXPECTED_QUALIFICATIONS = {f"Q-{number:02d}" for number in range(1, 10)}
 CLAIM_KEYS = (
     "protocolConformanceEstablished", "certificationReady", "authorityAccepted",
@@ -66,7 +64,10 @@ def load_status(path: Path = STATUS_PATH) -> dict[str, Any]:
     return data
 
 
-def load_source_register(path: Path = SOURCE_REGISTER_PATH) -> dict[str, Any]:
+def load_source_register(path: Path | None = None) -> dict[str, Any]:
+    if path is None:
+        status_data = json.loads(STATUS_PATH.read_text(encoding="utf-8"))
+        path = ROOT / status_data["technicalDirection"]["sourceRegisterPath"]
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
@@ -210,7 +211,7 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
         "currentIncrement.stateChanges", "currentIncrement.stateChangesZh",
         "currentIncrement.unchangedBoundaries",
         "currentIncrement.unchangedBoundariesZh", "development.phase",
-        "development.requirementsSpecificationStatus",
+        "development.gates",
         "development.currentStop.id", "development.currentStop.statusPath",
         "development.currentStop.objective", "development.currentStop.objectiveZh",
         "development.nextSteps", "development.nextStepsZh",
@@ -232,9 +233,11 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
         "claimsBoundary.protocolConformanceEstablished",
         "claimsBoundary.certificationReady", "claimsBoundary.authorityAccepted",
         "claimsBoundary.activationRecords",
-        "technicalDirection.milestone", "technicalDirection.sourceRegisterPath",
-        "technicalDirection.changePath", "technicalDirection.decisionPath",
-        "technicalDirection.decisionIds",
+        "technicalDirection.sourceRegisterPath",
+        "technicalDirection.currentStageIdPath",
+        "technicalDirection.nextStageIdPath",
+        "technicalDirection.formalActivationControlPath",
+        "technicalDirection.technicalDecisionPath",
         "temporaryControls", "governance.requiredPullRequestFiles",
         "governance.readmeMarkers.start", "governance.readmeMarkers.end",
     )
@@ -280,15 +283,17 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
             errors.append("invalid RQ8 status")
         if _get(data, "release.thirdHandshake") not in ALLOWED_HANDSHAKE:
             errors.append("invalid third-handshake status")
-        if _get(data, "development.requirementsSpecificationStatus") not in ALLOWED_REQUIREMENTS_SPECIFICATION:
-            errors.append("invalid conformance-requirements specification status")
         stop = _get(data, "development.currentStop")
         if "status" in stop:
             errors.append("development.currentStop.status duplicates its authoritative statusPath")
-        if stop.get("statusPath") != "development.requirementsSpecificationStatus":
-            errors.append("current stop must derive from development.requirementsSpecificationStatus")
-        if stop.get("id") != "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE":
-            errors.append("current stop must remain at the M1 conformance-requirements gate")
+        status_path = stop.get("statusPath")
+        if not isinstance(status_path, str) or not status_path.startswith("development.gates."):
+            errors.append("current stop must derive from a development.gates statusPath")
+        else:
+            try:
+                _get(data, status_path)
+            except KeyError:
+                errors.append("current stop statusPath does not resolve")
         peer = _get(data, "crossRepository.methodology")
         if "thirdHandshake" in peer:
             errors.append("crossRepository.methodology.thirdHandshake duplicates release.thirdHandshake")
@@ -311,20 +316,11 @@ def status_errors(data: dict[str, Any], root: Path = ROOT) -> list[str]:
     errors.extend(activation_record_errors(data, root))
 
     direction = data.get("technicalDirection", {})
-    if direction.get("milestone") != "M0":
-        errors.append("technical direction must identify M0 as the current milestone")
-    if direction.get("sourceRegisterPath") != "configs/research/controlled_sources.json":
-        errors.append("technical direction must point to the controlled source register")
-    if direction.get("changePath") != "docs/control/changes/CR-2026-006.md":
-        errors.append("technical direction must point to CR-2026-006")
-    if direction.get("decisionPath") != "docs/control/decisions/DESIGN_DECISIONS.md":
-        errors.append("technical direction must point to the decision log")
-    if direction.get("decisionIds") != ["DD-015", "DD-016", "DD-017"]:
-        errors.append("technical direction must identify DD-015 through DD-017")
-    for key in ("sourceRegisterPath", "changePath", "decisionPath"):
-        raw = direction.get(key)
-        if isinstance(raw, str) and not (root / raw).is_file():
-            errors.append(f"technicalDirection.{key} does not resolve")
+    source_path = direction.get("sourceRegisterPath")
+    if not isinstance(source_path, str) or Path(source_path).is_absolute() or ".." in Path(source_path).parts:
+        errors.append("technical direction sourceRegisterPath must be repository-relative")
+    elif not (root / source_path).is_file():
+        errors.append("technical direction sourceRegisterPath does not resolve")
 
     for dotted in (
         "release.records.baselinePath", "release.records.changePath",
@@ -406,15 +402,23 @@ def render_status_block(
     definition = method["methodDefinition"]
     source_items = {item["id"]: item for item in sources["sources"]}
     authority = source_items[sources["currentProtocolAuthorityId"]]
-    bounded = source_items["ARINC-665-5"]
+    bounded_items = [
+        item for item in sources["sources"]
+        if item.get("role") == "BOUNDED-DATA-FORMAT-REFERENCE"
+    ]
+    bounded_summary = ", ".join(item["id"] for item in bounded_items) or "none"
     open_dependencies = ", ".join(
         f"{item['id']} `{item['status']}`" for item in sources["openDependencies"]
     )
     direction = data["technicalDirection"]
+    lifecycle = sources["lifecycle"]
+    technical = sources["technicalDirection"]
+    platform = technical["executionPlatform"]
+    platform_summary = platform["selected"] or "deferred: " + ", ".join(platform["deferredCandidates"])
     deep_links = (
         f"[`source register`]({direction['sourceRegisterPath']}), "
-        f"[`CR-2026-006`]({direction['changePath']}), "
-        f"[`DD-015–DD-017`]({direction['decisionPath']})"
+        f"[`activation control`]({lifecycle['formalActivationControlPath']}), "
+        f"[`technical decisions`]({technical['decisionRecordPath']})"
     )
     return f"""## Current development picture
 
@@ -424,9 +428,11 @@ def render_status_block(
 | Current release | [`{release['currentBaselineId']}`]({baseline_path}) / annotated [`{release['tag']}`]({release_link}) |
 | Method input | {definition['version']} at {_commit_link(method['repository'], definition['commit'])} |
 | Protocol source | `{authority['id']}` / edition `{authority['edition']}` / wire version `{authority['wireVersion']}` |
-| Bounded source and open dependency | `{bounded['id']}`; {open_dependencies} |
-| Technical direction | `{sources['technicalDirection']['behaviorModel']}` / `{sources['technicalDirection']['verificationMethod']}` / `{sources['technicalDirection']['ttcn3']}` |
-| M0 controls | {deep_links} |
+| Bounded source and open dependency | `{bounded_summary}`; {open_dependencies} |
+| Technical direction | `{technical['behaviorModel']}` / `{technical['verificationMethod']}` / platform `{platform_summary}` |
+| Delivery position | current `{lifecycle['currentStageId']}` / next `{lifecycle['nextStageId']}` / disposition `{lifecycle['candidateDisposition']}` |
+| Activation boundary | merge evidence `{lifecycle['repositoryMergeEvidence']}` / approval `{lifecycle['independentApproval']}` |
+| Technical controls | {deep_links} |
 | Third handshake | `{release['thirdHandshake']}` |
 | Compatibility | `{compatibility['status']}` under {qualifications_en} |
 | Project Configuration | `{boundary['projectConfigurationStatus']}` |
@@ -463,9 +469,11 @@ Unchanged boundaries:
 | 当前发布 | [`{release['currentBaselineId']}`]({baseline_path}) / annotated [`{release['tag']}`]({release_link}) |
 | 方法输入 | {definition['version']} @ {_commit_link(method['repository'], definition['commit'])} |
 | 协议来源 | `{authority['id']}` / 版次 `{authority['edition']}` / 线版本 `{authority['wireVersion']}` |
-| 有边界来源与开放依赖 | `{bounded['id']}`；{open_dependencies} |
-| 技术方向 | `{sources['technicalDirection']['behaviorModel']}` / `{sources['technicalDirection']['verificationMethod']}` / `{sources['technicalDirection']['ttcn3']}` |
-| M0 控制入口 | {deep_links} |
+| 有边界来源与开放依赖 | `{bounded_summary}`；{open_dependencies} |
+| 技术方向 | `{technical['behaviorModel']}` / `{technical['verificationMethod']}` / 平台 `{platform_summary}` |
+| 交付位置 | 当前 `{lifecycle['currentStageId']}` / 下一 `{lifecycle['nextStageId']}` / 处置 `{lifecycle['candidateDisposition']}` |
+| 激活边界 | 合并证据 `{lifecycle['repositoryMergeEvidence']}` / 批准 `{lifecycle['independentApproval']}` |
+| 技术控制入口 | {deep_links} |
 | 第三次握手 | `{release['thirdHandshake']}` |
 | 兼容性 | 受 {qualifications_zh} 限定的 `{compatibility['status']}` |
 | Project Configuration | `{boundary['projectConfigurationStatus']}` |

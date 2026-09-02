@@ -7,19 +7,19 @@
     "url": "https://github.com/ZhangChi0727/arinc-615a-conformance"
   },
   "currentIncrement": {
-    "title": "M0 — adopt ARINC 615A-3 sources and lean technical direction",
-    "titleZh": "M0——采纳 ARINC 615A-3 来源与精简技术路线",
+    "title": "M0 source and technical-direction disposition",
+    "titleZh": "M0 来源与技术方向处置",
     "summary": [
       "Register ARINC 615A-3 as the sole active protocol authority, ARINC 665-5 as a bounded reference and ARINC 645 as an open dependency.",
       "Supersede active ARINC 615A-4 assumptions while preserving registered frozen history byte-for-byte.",
       "Adopt a lightweight observable timed EFSM, bounded Test-Analysis, gated open-source reuse and an injectable layered target architecture.",
-      "Adopt the serial M0–M9 route; this increment completes only the M0 candidate."
+      "Record the M0 disposition as ADOPT under CR-controlled activation; approval and repository merge evidence remain externally verified gates."
     ],
     "summaryZh": [
       "登记 ARINC 615A-3 为唯一活动协议权威、ARINC 665-5 为有边界参考、ARINC 645 为开放依赖。",
       "取代活动的 ARINC 615A-4 假设，同时保持登记的冻结历史逐字节不变。",
       "采纳轻量可观测 timed EFSM、有界 Test-Analysis、受门禁开源复用和可注入分层目标架构。",
-      "采纳 M0～M9 串行路线；本增量只完成 M0 候选。"
+      "记录 M0 处置为 ADOPT 并由 CR 控制激活；批准与仓库合并证据仍须外部核验。"
     ],
     "stateChanges": [
       "The active protocol source changes from an unresolved edition assumption to controlled ARINC 615A-3.",
@@ -46,10 +46,21 @@
   },
   "development": {
     "phase": "sources controlled; awaiting conformance requirements and applicability",
-    "requirementsSpecificationStatus": "NOT YET ESTABLISHED",
+    "gates": {
+      "SOURCE-TECHNICAL-DIRECTION-GATE": "EXTERNAL-VERIFICATION-REQUIRED",
+      "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE": "NOT YET ESTABLISHED",
+      "PROFILE-MODEL-REFINEMENT-GATE": "BLOCKED",
+      "EXECUTABLE-FOUNDATION-GATE": "BLOCKED",
+      "INFORMATION-BOOTSTRAP-GATE": "BLOCKED",
+      "UPLOAD-BASE-VCS-GATE": "BLOCKED",
+      "PROJECT-CONFIGURATION-GATE": "BLOCKED",
+      "CONTROLLED-INSTANCE-EXECUTION-GATE": "BLOCKED",
+      "FINITE-FAULT-ADEQUACY-GATE": "BLOCKED",
+      "SCOPE-EXPANSION-GATE": "BLOCKED"
+    },
     "currentStop": {
       "id": "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE",
-      "statusPath": "development.requirementsSpecificationStatus",
+      "statusPath": "development.gates.CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE",
       "objective": "Complete M1 ARINC 615A-3/665-5 CRS and requirement-level applicability, explicitly registering the ARINC 645 capability gap.",
       "objectiveZh": "完成 M1 ARINC 615A-3/665-5 CRS 与需求级适用性，并明确登记 ARINC 645 能力缺口。"
     },
@@ -71,11 +82,11 @@
     ]
   },
   "technicalDirection": {
-    "milestone": "M0",
     "sourceRegisterPath": "configs/research/controlled_sources.json",
-    "changePath": "docs/control/changes/CR-2026-006.md",
-    "decisionPath": "docs/control/decisions/DESIGN_DECISIONS.md",
-    "decisionIds": ["DD-015", "DD-016", "DD-017"]
+    "currentStageIdPath": "lifecycle.currentStageId",
+    "nextStageIdPath": "lifecycle.nextStageId",
+    "formalActivationControlPath": "lifecycle.formalActivationControlPath",
+    "technicalDecisionPath": "technicalDirection.decisionRecordPath"
   },
   "release": {
     "currentBaselineId": "RB-2026-001-v4.3.1",

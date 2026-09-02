@@ -21,7 +21,6 @@ from pathlib import Path, PurePosixPath, PureWindowsPath
 
 ROOT = Path(__file__).resolve().parents[1]
 STATUS_PATH = ROOT / "project-status.json"
-SOURCE_REGISTER_PATH = ROOT / "configs/research/controlled_sources.json"
 
 SYNC_SPEC = importlib.util.spec_from_file_location(
     "sync_project_overview", ROOT / "scripts/sync_project_overview.py"
@@ -30,7 +29,10 @@ assert SYNC_SPEC and SYNC_SPEC.loader
 sync = importlib.util.module_from_spec(SYNC_SPEC)
 SYNC_SPEC.loader.exec_module(sync)
 STATUS = sync.load_status(STATUS_PATH)
+SOURCE_REGISTER_PATH = ROOT / STATUS["technicalDirection"]["sourceRegisterPath"]
 CONTROLLED_SOURCES = sync.load_source_register(SOURCE_REGISTER_PATH)
+ACQUISITION_RECORD_PATH = ROOT / CONTROLLED_SOURCES["acquisitionRecordPath"]
+ACQUISITION_RECORD = json.loads(ACQUISITION_RECORD_PATH.read_text(encoding="utf-8"))
 
 # Directory roots for discovered artifacts.
 CONTROL = ROOT / "docs/control"
@@ -71,6 +73,7 @@ REQUIRED_FIXED_FILES = [
     ROOT / "README.md",
     STATUS_PATH,
     SOURCE_REGISTER_PATH,
+    ACQUISITION_RECORD_PATH,
     ROOT / "scripts/sync_project_overview.py",
     CONTROL / "PROJECT_CONTROL.md",
     CONTROL / "CHANGE_CONTROL.md",
@@ -1198,12 +1201,6 @@ def research_ownership_errors(text: str) -> list[str]:
     return [f"research ownership control is missing: {phrase}" for phrase in required if phrase not in text]
 
 
-def _source_identity_seal(source: dict) -> str:
-    payload = {key: value for key, value in source.items() if key != "identitySeal"}
-    canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
-    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-
-
 def _controlled_tracked_path_error(
     raw: object, root: Path, tracked_paths: set[str], label: str,
 ) -> tuple[Path | None, str | None]:
@@ -1230,13 +1227,107 @@ def _controlled_tracked_path_error(
     return target, None
 
 
+def _unique_rows(rows: object, label: str) -> tuple[dict[str, dict], list[str]]:
+    if not isinstance(rows, list):
+        return {}, [f"{label} must be a list"]
+    result: dict[str, dict] = {}
+    errors: list[str] = []
+    for index, row in enumerate(rows):
+        if not isinstance(row, dict) or not isinstance(row.get("id"), str) or not row["id"]:
+            errors.append(f"{label}[{index}] must have a non-empty id")
+            continue
+        if row["id"] in result:
+            errors.append(f"{label} contains duplicate id {row['id']}")
+        else:
+            result[row["id"]] = row
+    return result, errors
+
+
+def _head_blob_bytes(root: Path, relative: str) -> tuple[bytes | None, str | None]:
+    result = subprocess.run(
+        ["git", "show", f"HEAD:{relative}"], cwd=root,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+    )
+    if result.returncode != 0:
+        return None, f"cannot read committed Git blob HEAD:{relative}"
+    return result.stdout, None
+
+
+def frozen_record_errors(
+    records: object, root: Path, tracked_paths: set[str], label: str = "frozenRecords",
+) -> list[str]:
+    """Compare registered identities with committed Git blob bytes, never checkout text."""
+    errors: list[str] = []
+    if not isinstance(records, list) or not records:
+        return [f"{label} must be a non-empty list"]
+    for index, record in enumerate(records):
+        item_label = f"{label}[{index}]"
+        if not isinstance(record, dict):
+            errors.append(f"{item_label} must be an object")
+            continue
+        target, path_error = _controlled_tracked_path_error(
+            record.get("path"), root, tracked_paths, f"{item_label}.path",
+        )
+        if path_error:
+            errors.append(path_error)
+            continue
+        assert target is not None
+        payload, blob_error = _head_blob_bytes(root, record["path"])
+        if blob_error:
+            errors.append(blob_error)
+            continue
+        assert payload is not None
+        if record.get("byteCount") != len(payload):
+            errors.append(f"{item_label} byteCount differs from committed Git blob")
+        if record.get("sha256") != hashlib.sha256(payload).hexdigest():
+            errors.append(f"{item_label} sha256 differs from committed Git blob")
+    return errors
+
+
+def _active_authority_text_errors(register: dict, root: Path, tracked_paths: set[str]) -> list[str]:
+    errors: list[str] = []
+    historical_ids = {
+        item["id"] for item in register.get("historicalAssumptions", [])
+        if isinstance(item, dict) and isinstance(item.get("id"), str)
+    }
+    negative = re.compile(
+        r"histor|supersed|withdraw|not\s+(?:a\s+)?(?:current|active)|no\s+current|"
+        r"based\s+on|不再|不是|历史|撤销|取代|基于|不得|不能",
+        re.IGNORECASE,
+    )
+    assertion = re.compile(
+        r"(?:\bis\b|\bas\b|=|是|作为).{0,50}(?:current|active|authority|当前|活动|权威)"
+        r"|(?:current|active|authority|当前|活动|权威).{0,50}(?:\bis\b|=|是|作为)",
+        re.IGNORECASE,
+    )
+    for index, raw in enumerate(register.get("activeControlSurfacePaths", [])):
+        target, path_error = _controlled_tracked_path_error(
+            raw, root, tracked_paths, f"activeControlSurfacePaths[{index}]",
+        )
+        if path_error:
+            errors.append(path_error)
+            continue
+        assert target is not None
+        for line_number, line in enumerate(target.read_text(encoding="utf-8").splitlines(), 1):
+            for source_id in historical_ids:
+                variants = {source_id, source_id.replace("ARINC-", "ARINC ")}
+                if any(variant.lower() in line.lower() for variant in variants):
+                    if assertion.search(line) and not negative.search(line):
+                        errors.append(
+                            f"active control surface reintroduces historical source authority: "
+                            f"{raw}:{line_number}"
+                        )
+    return errors
+
+
 def controlled_source_errors(
     status: dict,
     register: dict,
+    acquisition: dict | None = None,
     root: Path = ROOT,
     tracked_paths: set[str] | None = None,
 ) -> list[str]:
-    """Validate source, technical-direction and serial-roadmap controlled data."""
+    """Validate generic source, control-reference and serial-roadmap invariants."""
     errors: list[str] = []
     if tracked_paths is None:
         try:
@@ -1251,152 +1342,206 @@ def controlled_source_errors(
         except (OSError, subprocess.CalledProcessError) as exc:
             return [f"cannot enumerate tracked source-control files: {exc}"]
 
-    if register.get("schemaVersion") != "1.0":
-        errors.append("controlled source schemaVersion must be 1.0")
-    sources = register.get("sources")
-    if not isinstance(sources, list):
-        return errors + ["controlled sources must be a list"]
-    by_id = {
-        item.get("id"): item for item in sources
-        if isinstance(item, dict) and isinstance(item.get("id"), str)
-    }
-    if set(by_id) != {"ARINC-615A-3", "ARINC-665-5"}:
-        errors.append("controlled source population must be ARINC-615A-3 and ARINC-665-5")
+    if not isinstance(register.get("schemaVersion"), str):
+        errors.append("controlled source schemaVersion must be a string")
+    by_id, unique_errors = _unique_rows(register.get("sources"), "sources")
+    errors.extend(unique_errors)
+    dependency_by_id, dependency_errors = _unique_rows(register.get("openDependencies"), "openDependencies")
+    errors.extend(dependency_errors)
+    history_by_id, history_errors = _unique_rows(register.get("historicalAssumptions"), "historicalAssumptions")
+    errors.extend(history_errors)
+    roadmap_by_id, roadmap_errors = _unique_rows(register.get("roadmap"), "roadmap")
+    errors.extend(roadmap_errors)
+    capability_by_id, capability_errors = _unique_rows(register.get("capabilities"), "capabilities")
+    errors.extend(capability_errors)
+    if unique_errors:
         return errors
-    if register.get("currentProtocolAuthorityId") != "ARINC-615A-3":
-        errors.append("ARINC-615A-3 must be the sole current protocol authority")
+
+    authority_id = register.get("currentProtocolAuthorityId")
+    authorities = [item for item in by_id.values() if item.get("role") == "CURRENT-PROTOCOL-AUTHORITY"]
+    if authority_id not in by_id or len(authorities) != 1 or authorities[0].get("id") != authority_id:
+        errors.append("currentProtocolAuthorityId must reference the single current protocol authority")
+
+    acquisition_path_raw = register.get("acquisitionRecordPath")
+    acquisition_path, acquisition_path_error = _controlled_tracked_path_error(
+        acquisition_path_raw, root, tracked_paths, "acquisitionRecordPath",
+    )
+    if acquisition_path_error:
+        errors.append(acquisition_path_error)
+    if acquisition is None and acquisition_path is not None:
+        try:
+            acquisition = json.loads(acquisition_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(f"cannot parse acquisition record: {exc}")
+    acquisition = {} if acquisition is None else acquisition
+    acquired_by_id, acquired_errors = _unique_rows(acquisition.get("sources"), "acquisition.sources")
+    errors.extend(acquired_errors)
+    acquisition_id = acquisition.get("recordId")
+    identity_fields = ("id", "edition", "publicationDate", "pageCount", "byteCount", "sha256")
 
     for source_id, source in by_id.items():
-        if source.get("edition") != source_id.removeprefix("ARINC-"):
-            errors.append(f"{source_id} edition differs from its controlled identity")
+        if not isinstance(source.get("edition"), str) or not source["edition"]:
+            errors.append(f"{source_id} edition must be a non-empty string")
         if not isinstance(source.get("pageCount"), int) or source["pageCount"] <= 0:
             errors.append(f"{source_id} pageCount must be a positive integer")
         if not isinstance(source.get("byteCount"), int) or source["byteCount"] <= 0:
             errors.append(f"{source_id} byteCount must be a positive integer")
         if not re.fullmatch(r"[0-9a-f]{64}", str(source.get("sha256", ""))):
             errors.append(f"{source_id} sha256 must be a complete lowercase SHA-256")
-        if source.get("identitySeal") != _source_identity_seal(source):
-            errors.append(f"{source_id} controlled identity seal differs")
         if source.get("sourceHandling") != "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY":
             errors.append(f"{source_id} has an invalid source-handling policy")
+        acquired = acquired_by_id.get(source_id)
+        if acquired is None or any(source.get(field) != acquired.get(field) for field in identity_fields):
+            errors.append(f"{source_id} differs from its independent acquisition record")
+        if source.get("acquisitionRecordId") != acquisition_id:
+            errors.append(f"{source_id} acquisitionRecordId does not resolve")
+        wire_version = source.get("wireVersion")
+        if wire_version is not None and (not isinstance(wire_version, str) or wire_version == source.get("edition")):
+            errors.append(f"{source_id} wire version must remain distinct from edition")
+        if source.get("role") == "BOUNDED-DATA-FORMAT-REFERENCE":
+            if source.get("equivalentReplacementFor") != [] or not source.get("limitations"):
+                errors.append(f"{source_id} bounded applicability/equivalence policy is invalid")
 
-    protocol = by_id["ARINC-615A-3"]
-    if protocol.get("role") != "CURRENT-PROTOCOL-AUTHORITY":
-        errors.append("ARINC-615A-3 must have the sole protocol-authority role")
-    if protocol.get("wireVersion") != "A4" or protocol.get("edition") == protocol.get("wireVersion"):
-        errors.append("A4 must be represented only as the 615A-3 wire version")
+    for dependency_id, dependency in dependency_by_id.items():
+        if dependency.get("status") != "OPEN-DEPENDENCY":
+            errors.append(f"open dependency {dependency_id} has an invalid status")
+        affected = dependency.get("affectedCapabilityIds")
+        if not isinstance(affected, list) or not affected:
+            errors.append(f"open dependency {dependency_id} must identify affected capabilities")
+            continue
+        for capability_id in affected:
+            capability = capability_by_id.get(capability_id)
+            if capability is None:
+                errors.append(f"open dependency {dependency_id} references unknown capability {capability_id}")
+            elif capability.get("status") == "ESTABLISHED" or dependency_id not in capability.get("blockedBy", []):
+                errors.append(f"capability {capability_id} cannot be established while {dependency_id} is open")
 
-    formats = by_id["ARINC-665-5"]
-    if formats.get("role") != "BOUNDED-DATA-FORMAT-REFERENCE":
-        errors.append("ARINC-665-5 must remain a bounded data-format reference")
-    format_versions = formats.get("formatVersions")
-    if not isinstance(format_versions, dict) or set(format_versions) != {"loadFile", "batch", "media"} or any(
-        not re.fullmatch(r"0x[0-9A-F]{4}", str(value)) for value in format_versions.values()
-    ):
-        errors.append("ARINC-665-5 format-version schema is invalid")
-    if formats.get("equivalentReplacementFor") != [] or set(formats.get("limitations", [])) != {
-        "NOT-EQUIVALENT-TO-ARINC-665-3",
-        "APPLICABILITY-MUST-BE-DECIDED-PER-REQUIREMENT",
-    }:
-        errors.append("ARINC-665-5 equivalence/applicability boundary is invalid")
-
-    dependencies = register.get("openDependencies")
-    if not isinstance(dependencies, list) or len(dependencies) != 1:
-        errors.append("ARINC-645 must be the single registered open dependency")
-    else:
-        dependency = dependencies[0]
-        if dependency.get("id") != "ARINC-645" or dependency.get("status") != "OPEN-DEPENDENCY":
-            errors.append("ARINC-645 must remain an OPEN-DEPENDENCY")
-        if "COMPLETE-INTEGRITY-VALIDATION" not in dependency.get("affectedCapabilities", []):
-            errors.append("ARINC-645 must gate complete integrity validation")
-    if register.get("capabilityStatus", {}).get("completeIntegrityValidation") != "NOT-ESTABLISHED-OPEN-ARINC-645":
-        errors.append("complete integrity validation cannot be established while ARINC-645 is open")
-
-    history = register.get("historicalAssumptions")
-    if not isinstance(history, list) or len(history) != 1:
-        errors.append("615A-4 historical supersession record is missing")
-    else:
-        item = history[0]
-        if item.get("id") != "ARINC-615A-4" or item.get("status") != "HISTORICAL-SUPERSEDED" or item.get("activeDependency") is not False:
-            errors.append("ARINC-615A-4 must remain historical-superseded and inactive")
-        records = item.get("frozenRecords")
-        if not isinstance(records, list) or not records:
-            errors.append("615A-4 frozen historical records are missing")
-        else:
-            for index, record in enumerate(records):
-                label = f"historicalAssumptions[0].frozenRecords[{index}]"
-                if not isinstance(record, dict):
-                    errors.append(f"{label} must be an object")
-                    continue
-                target, path_error = _controlled_tracked_path_error(
-                    record.get("path"), root, tracked_paths, f"{label}.path",
-                )
-                if path_error:
-                    errors.append(path_error)
-                elif target is not None:
-                    # Git stores these controlled Markdown records with LF.
-                    # Universal-newline reading makes the identity invariant to
-                    # checkout-only core.autocrlf conversion on Windows.
-                    payload = target.read_text(encoding="utf-8").encode("utf-8")
-                    if record.get("byteCount") != len(payload):
-                        errors.append(f"{label} byteCount differs from frozen content")
-                    if record.get("sha256") != hashlib.sha256(payload).hexdigest():
-                        errors.append(f"{label} sha256 differs from frozen content")
+    for history_id, item in history_by_id.items():
+        if item.get("status") != "HISTORICAL-SUPERSEDED" or item.get("activeDependency") is not False:
+            errors.append(f"historical assumption {history_id} must remain superseded and inactive")
+        errors.extend(frozen_record_errors(
+            item.get("frozenRecords"), root, tracked_paths,
+            f"historicalAssumptions[{history_id}].frozenRecords",
+        ))
 
     migration = register.get("futureSourceMigration", {})
-    if migration.get("target") is not None:
-        errors.append("future source migration target must remain empty")
-    if set(migration.get("requiredGates", [])) != {
-        "SOURCE-ACQUIRED-AND-IDENTIFIED", "APPLICABILITY-DELTA-COMPLETE",
-        "CHANGE-RECORD-APPROVED", "INDEPENDENT-REVIEW-APPROVED",
-    }:
+    migration_status = migration.get("status")
+    if migration_status not in {"IDLE", "ACTIVE"}:
+        errors.append("future source migration status is invalid")
+    if migration_status == "IDLE" and migration.get("target") is not None:
+        errors.append("idle future source migration cannot name a target")
+    if migration_status == "ACTIVE" and not isinstance(migration.get("target"), str):
+        errors.append("active future source migration must name a target")
+    if not isinstance(migration.get("requiredGates"), list) or not migration["requiredGates"]:
         errors.append("future source migration gate is incomplete")
 
     direction = register.get("technicalDirection", {})
-    if direction.get("behaviorModel") != "LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM":
-        errors.append("the active behavioral direction must be a lightweight observable timed EFSM")
-    if direction.get("verificationMethod") != "BOUNDED-TEST-ANALYSIS":
-        errors.append("the active verification method must remain bounded Test-Analysis")
-    if direction.get("deferredModels") != ["DTMC", "HMM-ML", "BAYESIAN-CALIBRATION"]:
-        errors.append("DTMC, HMM/ML and Bayesian calibration must remain deferred")
-    if direction.get("ttcn3") != "NOT-A-DEPENDENCY-OR-SELECTED-PLATFORM":
-        errors.append("TTCN-3 must not be a dependency or selected platform")
+    for field in ("behaviorModel", "verificationMethod"):
+        if not isinstance(direction.get(field), str) or not direction[field]:
+            errors.append(f"technicalDirection.{field} must be a non-empty controlled value")
+    if not isinstance(direction.get("deferredModels"), list):
+        errors.append("technicalDirection.deferredModels must be a list")
+    platform = direction.get("executionPlatform", {})
+    if platform.get("selected") is not None or platform.get("dependencies") != []:
+        errors.append("an execution platform cannot be selected without its separate control gate")
+    if not isinstance(platform.get("deferredCandidates"), list) or not platform.get("selectionGate"):
+        errors.append("execution-platform deferral and selection gate must be controlled")
     reuse = direction.get("openSourceReuse", {})
-    if not str(reuse.get("L1", "")).startswith("REFERENCE-ONLY-ALLOWED-WITH-"):
-        errors.append("L1 reference reuse policy is invalid")
-    if not str(reuse.get("L2", "")).startswith("FUTURE-BLACK-BOX-DIFFERENTIAL-IUT-"):
-        errors.append("L2 black-box reuse policy is invalid")
-    if reuse.get("L3") != "PROHIBITED-UNTIL-LICENSE-SOURCE-CLEANLINESS-AND-ARCHITECTURE-REVIEW":
-        errors.append("L3 reuse must remain gated by license, cleanliness and architecture review")
+    if set(reuse) != {"L1", "L2", "L3"} or any(not isinstance(value, str) or not value for value in reuse.values()):
+        errors.append("open-source reuse policy must define non-empty L1/L2/L3 controls")
 
-    roadmap = register.get("roadmap")
-    if not isinstance(roadmap, list) or [item.get("id") for item in roadmap if isinstance(item, dict)] != [f"M{i}" for i in range(10)]:
-        errors.append("roadmap must contain ordered M0 through M9")
+    decision_path, decision_error = _controlled_tracked_path_error(
+        direction.get("decisionRecordPath"), root, tracked_paths, "technicalDirection.decisionRecordPath",
+    )
+    if decision_error:
+        errors.append(decision_error)
+    elif decision_path is not None:
+        decision_text = decision_path.read_text(encoding="utf-8")
+        decision_ids = direction.get("decisionIds")
+        if not isinstance(decision_ids, list) or not decision_ids:
+            errors.append("technicalDirection.decisionIds must be a non-empty list")
+            decision_ids = []
+        for decision_id in decision_ids:
+            if not isinstance(decision_id, str) or decision_id not in decision_text:
+                errors.append(f"technical decision record does not resolve decision {decision_id}")
+
+    roadmap_order = list(roadmap_by_id)
+    index_by_id = {stage_id: index for index, stage_id in enumerate(roadmap_order)}
+    for stage_id, stage in roadmap_by_id.items():
+        dependencies = stage.get("dependsOn")
+        if not isinstance(dependencies, list) or len(dependencies) != len(set(dependencies)):
+            errors.append(f"roadmap stage {stage_id} has invalid or duplicate dependencies")
+            continue
+        for dependency_id in dependencies:
+            if dependency_id not in roadmap_by_id:
+                errors.append(f"roadmap stage {stage_id} references unknown dependency {dependency_id}")
+            elif index_by_id[dependency_id] >= index_by_id[stage_id]:
+                errors.append(f"roadmap stage {stage_id} is cyclic or not topologically ordered")
+        if not isinstance(stage.get("gateId"), str) or not stage["gateId"]:
+            errors.append(f"roadmap stage {stage_id} lacks gateId")
+    lifecycle = register.get("lifecycle", {})
+    current_id, next_id = lifecycle.get("currentStageId"), lifecycle.get("nextStageId")
+    if current_id not in roadmap_by_id or next_id not in roadmap_by_id or current_id == next_id:
+        errors.append("lifecycle current/next stage references are invalid")
     else:
-        if roadmap[0] != {"id": "M0", "status": "CANDIDATE-IN-THIS-PR", "dependsOn": []}:
-            errors.append("M0 must remain the only candidate milestone")
-        if roadmap[1] != {"id": "M1", "status": "NEXT-NOT-STARTED", "dependsOn": ["M0"]}:
-            errors.append("M1 must be next and not started")
-        for index in range(2, 10):
-            if roadmap[index] != {"id": f"M{index}", "status": "BLOCKED", "dependsOn": [f"M{index - 1}"]}:
-                errors.append(f"M{index} must remain blocked by M{index - 1}")
+        disposition = lifecycle.get("candidateDisposition")
+        if roadmap_by_id[current_id].get("status") != f"DISPOSITION-{disposition}":
+            errors.append("current roadmap status differs from lifecycle disposition")
+        if current_id not in roadmap_by_id[next_id].get("dependsOn", []):
+            errors.append("next roadmap stage must depend on current stage")
+        stop = status.get("development", {}).get("currentStop", {})
+        expected_gate = roadmap_by_id[next_id].get("gateId")
+        expected_path = f"development.gates.{expected_gate}"
+        if stop.get("id") != expected_gate or stop.get("statusPath") != expected_path:
+            errors.append("current stop does not resolve the next roadmap stage gate")
+    if lifecycle.get("repositoryMergeEvidence") != "EXTERNAL-VERIFICATION-REQUIRED" or lifecycle.get("independentApproval") != "NOT-AUTOMATED":
+        errors.append("approval and merge evidence must remain externally verified conditions")
+    if lifecycle.get("nextStageEntryRule") != "PROHIBITED-UNTIL-APPROVAL-AND-ORDINARY-MERGE-VERIFIED":
+        errors.append("next-stage entry rule is not controlled")
+    activation_path, activation_error = _controlled_tracked_path_error(
+        lifecycle.get("formalActivationControlPath"), root, tracked_paths,
+        "lifecycle.formalActivationControlPath",
+    )
+    if activation_error:
+        errors.append(activation_error)
+    elif activation_path is not None:
+        activation_text = activation_path.read_text(encoding="utf-8")
+        if str(lifecycle.get("candidateDisposition", "")).upper() not in activation_text.upper():
+            errors.append("activation control does not identify the lifecycle disposition")
 
-    if status.get("technicalDirection", {}).get("sourceRegisterPath") != "configs/research/controlled_sources.json":
-        errors.append("project status source-register pointer differs")
-    if status.get("development", {}).get("currentStop", {}).get("id") != "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE":
-        errors.append("project status bypasses the M1 CRS/applicability gate")
-    if status.get("development", {}).get("requirementsSpecificationStatus") != "NOT YET ESTABLISHED":
-        errors.append("M1 conformance requirements must remain not established in M0")
-    boundary = status.get("claimsBoundary", {})
-    if boundary.get("projectConfigurationStatus") != "NOT YET ESTABLISHED":
-        errors.append("Project Configuration cannot be promoted in M0")
-    if boundary.get("instanceEvaluation") != "NOT-EXERCISED":
-        errors.append("instance evaluation cannot be promoted in M0")
-    if boundary.get("rq8") != "OPEN":
-        errors.append("RQ8 cannot be closed in M0")
-    for claim in sync.CLAIM_KEYS:
-        if boundary.get(claim) is not False:
-            errors.append(f"{claim} cannot be promoted in M0")
+    direction_pointer = status.get("technicalDirection", {})
+    register_path, register_path_error = _controlled_tracked_path_error(
+        direction_pointer.get("sourceRegisterPath"), root, tracked_paths,
+        "technicalDirection.sourceRegisterPath",
+    )
+    if register_path_error:
+        errors.append(register_path_error)
+    for pointer_name, expected in (
+        ("currentStageIdPath", current_id), ("nextStageIdPath", next_id),
+        ("formalActivationControlPath", lifecycle.get("formalActivationControlPath")),
+        ("technicalDecisionPath", direction.get("decisionRecordPath")),
+    ):
+        pointer = direction_pointer.get(pointer_name)
+        try:
+            actual = sync._get(register, pointer) if isinstance(pointer, str) else None
+        except KeyError:
+            actual = None
+        if actual != expected:
+            errors.append(f"technicalDirection.{pointer_name} does not resolve controlled data")
+
+    for constraint in register.get("protectedStateConstraints", []):
+        if not isinstance(constraint, dict) or not isinstance(constraint.get("path"), str):
+            errors.append("protectedStateConstraints entries require path and equals")
+            continue
+        try:
+            actual = sync._get(status, constraint["path"])
+        except KeyError:
+            errors.append(f"protected state path does not resolve: {constraint['path']}")
+        else:
+            if actual != constraint.get("equals"):
+                errors.append(f"protected state changed before its controlling stage: {constraint['path']}")
+
+    errors.extend(_active_authority_text_errors(register, root, tracked_paths))
     return errors
 
 
@@ -1419,7 +1564,11 @@ def governed_status_errors(
     """Validate governed state and the README produced from that exact state."""
     register = CONTROLLED_SOURCES if register is None else register
     errors = list(sync.status_errors(status, root))
-    errors.extend(controlled_source_errors(status, register, root, tracked_paths))
+    errors.extend(
+        controlled_source_errors(
+            status, register, root=root, tracked_paths=tracked_paths,
+        )
+    )
     try:
         expected = sync.replace_status_block(readme, status, register)
     except (sync.StatusError, KeyError, TypeError, IndexError) as exc:
@@ -1661,8 +1810,6 @@ def main() -> int:
         errors.append("CR-2026-004 not found among discovered change requests")
     if "CR-2026-005" not in cr_prefixes:
         errors.append("CR-2026-005 not found among discovered change requests")
-    if "CR-2026-006" not in cr_prefixes:
-        errors.append("CR-2026-006 not found among discovered change requests")
 
     if errors:
         print("Baseline validation failed:", file=sys.stderr)

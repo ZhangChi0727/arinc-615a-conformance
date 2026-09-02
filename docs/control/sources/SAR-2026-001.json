@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "1.0",
+  "recordId": "SAR-2026-001",
+  "recordType": "SOURCE-ACQUISITION-IDENTITY",
+  "status": "RECORDED-FOR-INDEPENDENT-REVIEW",
+  "handling": "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY",
+  "verification": {
+    "method": "INDEPENDENT-LOCAL-BINARY-RECALCULATION",
+    "result": "MATCH",
+    "recordedAt": "2026-09-02",
+    "evidenceLocation": "EXTERNAL-LOCAL-NOT-COMMITTED",
+    "approval": "NOT-AUTOMATED"
+  },
+  "sources": [
+    {
+      "id": "ARINC-615A-3",
+      "edition": "615A-3",
+      "publicationDate": "2007-06-30",
+      "pageCount": 174,
+      "byteCount": 1875919,
+      "sha256": "918eff7afd7e88a312f07c5a0cefea1c70e31e95dc727716e92005bc96f02511"
+    },
+    {
+      "id": "ARINC-665-5",
+      "edition": "665-5",
+      "publicationDate": "2019-08-13",
+      "pageCount": 139,
+      "byteCount": 910694,
+      "sha256": "340cfbac1788ee3409d4b5f58f715fa37b19c69c105d311ed4d540f9350da9d8"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 {
-  "schemaVersion": "1.0",
+  "schemaVersion": "1.1",
+  "acquisitionRecordPath": "docs/control/sources/SAR-2026-001.json",
   "currentProtocolAuthorityId": "ARINC-615A-3",
   "sources": [
     {
@@ -10,8 +11,8 @@
       "pageCount": 174,
       "byteCount": 1875919,
       "sha256": "918eff7afd7e88a312f07c5a0cefea1c70e31e95dc727716e92005bc96f02511",
-      "identitySeal": "65c6705840a4abcbb43af813a174491e4341d876efbe319eb85ad2c6782c4963",
       "wireVersion": "A4",
+      "acquisitionRecordId": "SAR-2026-001",
       "sourceHandling": "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY"
     },
     {
@@ -22,7 +23,6 @@
       "pageCount": 139,
       "byteCount": 910694,
       "sha256": "340cfbac1788ee3409d4b5f58f715fa37b19c69c105d311ed4d540f9350da9d8",
-      "identitySeal": "9116fe5f3afe1121cdf9e273ffa321cdd5a5bb25cedea2389c7ca68e88930c67",
       "formatVersions": {
         "loadFile": "0x8004",
         "batch": "0x9004",
@@ -30,9 +30,10 @@
       },
       "equivalentReplacementFor": [],
       "limitations": [
-        "NOT-EQUIVALENT-TO-ARINC-665-3",
+        "NOT-EQUIVALENT-TO-EARLIER-EDITION",
         "APPLICABILITY-MUST-BE-DECIDED-PER-REQUIREMENT"
       ],
+      "acquisitionRecordId": "SAR-2026-001",
       "sourceHandling": "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY"
     }
   ],
@@ -40,7 +41,7 @@
     {
       "id": "ARINC-645",
       "status": "OPEN-DEPENDENCY",
-      "affectedCapabilities": [
+      "affectedCapabilityIds": [
         "CRC-VALIDATION",
         "CHECK-VALUE-VALIDATION",
         "NAMING-ALGORITHM-VALIDATION",
@@ -49,9 +50,12 @@
       "closureRule": "Acquire and register an authorized source, complete applicability and CRS tracing, and obtain independent approval before claiming affected capabilities."
     }
   ],
-  "capabilityStatus": {
-    "completeIntegrityValidation": "NOT-ESTABLISHED-OPEN-ARINC-645"
-  },
+  "capabilities": [
+    {"id": "CRC-VALIDATION", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-645"]},
+    {"id": "CHECK-VALUE-VALIDATION", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-645"]},
+    {"id": "NAMING-ALGORITHM-VALIDATION", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-645"]},
+    {"id": "COMPLETE-INTEGRITY-VALIDATION", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-645"]}
+  ],
   "historicalAssumptions": [
     {
       "id": "ARINC-615A-4",
@@ -71,7 +75,13 @@
       ]
     }
   ],
+  "activeControlSurfacePaths": [
+    "docs/research/RESEARCH_CONTROL.md",
+    "docs/engineering/ENGINEERING_CONTROL.md",
+    "docs/control/contracts/ARINC615A_PROFILE_BINDING_CONFIGURATION.md"
+  ],
   "futureSourceMigration": {
+    "status": "IDLE",
     "target": null,
     "requiredGates": [
       "SOURCE-ACQUIRED-AND-IDENTIFIED",
@@ -81,26 +91,50 @@
     ]
   },
   "technicalDirection": {
+    "decisionRecordPath": "docs/control/decisions/DESIGN_DECISIONS.md",
+    "decisionIds": ["DD-015", "DD-016", "DD-017"],
     "behaviorModel": "LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM",
     "verificationMethod": "BOUNDED-TEST-ANALYSIS",
     "deferredModels": ["DTMC", "HMM-ML", "BAYESIAN-CALIBRATION"],
-    "ttcn3": "NOT-A-DEPENDENCY-OR-SELECTED-PLATFORM",
+    "executionPlatform": {
+      "selected": null,
+      "dependencies": [],
+      "deferredCandidates": ["TTCN-3"],
+      "selectionGate": "ADR-CR-INDEPENDENT-REVIEW"
+    },
     "openSourceReuse": {
       "L1": "REFERENCE-ONLY-ALLOWED-WITH-PROJECT-VERSION-LICENSE-AND-OBSERVED-ARCHITECTURE",
       "L2": "FUTURE-BLACK-BOX-DIFFERENTIAL-IUT-WITH-FIXED-VERSION-AND-LICENSE",
       "L3": "PROHIBITED-UNTIL-LICENSE-SOURCE-CLEANLINESS-AND-ARCHITECTURE-REVIEW"
     }
   },
+  "lifecycle": {
+    "currentStageId": "M0",
+    "nextStageId": "M1",
+    "candidateDisposition": "ADOPT",
+    "formalActivationControlPath": "docs/control/changes/CR-2026-006.md",
+    "repositoryMergeEvidence": "EXTERNAL-VERIFICATION-REQUIRED",
+    "independentApproval": "NOT-AUTOMATED",
+    "nextStageEntryRule": "PROHIBITED-UNTIL-APPROVAL-AND-ORDINARY-MERGE-VERIFIED"
+  },
+  "protectedStateConstraints": [
+    {"path": "claimsBoundary.projectConfigurationStatus", "equals": "NOT YET ESTABLISHED"},
+    {"path": "claimsBoundary.instanceEvaluation", "equals": "NOT-EXERCISED"},
+    {"path": "claimsBoundary.rq8", "equals": "OPEN"},
+    {"path": "claimsBoundary.protocolConformanceEstablished", "equals": false},
+    {"path": "claimsBoundary.certificationReady", "equals": false},
+    {"path": "claimsBoundary.authorityAccepted", "equals": false}
+  ],
   "roadmap": [
-    {"id": "M0", "status": "CANDIDATE-IN-THIS-PR", "dependsOn": []},
-    {"id": "M1", "status": "NEXT-NOT-STARTED", "dependsOn": ["M0"]},
-    {"id": "M2", "status": "BLOCKED", "dependsOn": ["M1"]},
-    {"id": "M3", "status": "BLOCKED", "dependsOn": ["M2"]},
-    {"id": "M4", "status": "BLOCKED", "dependsOn": ["M3"]},
-    {"id": "M5", "status": "BLOCKED", "dependsOn": ["M4"]},
-    {"id": "M6", "status": "BLOCKED", "dependsOn": ["M5"]},
-    {"id": "M7", "status": "BLOCKED", "dependsOn": ["M6"]},
-    {"id": "M8", "status": "BLOCKED", "dependsOn": ["M7"]},
-    {"id": "M9", "status": "BLOCKED", "dependsOn": ["M8"]}
+    {"id": "M0", "status": "DISPOSITION-ADOPT", "gateId": "SOURCE-TECHNICAL-DIRECTION-GATE", "dependsOn": []},
+    {"id": "M1", "status": "NEXT-BLOCKED-BY-FINAL-GATE", "gateId": "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE", "dependsOn": ["M0"]},
+    {"id": "M2", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "PROFILE-MODEL-REFINEMENT-GATE", "dependsOn": ["M1"]},
+    {"id": "M3", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "EXECUTABLE-FOUNDATION-GATE", "dependsOn": ["M2"]},
+    {"id": "M4", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "INFORMATION-BOOTSTRAP-GATE", "dependsOn": ["M3"]},
+    {"id": "M5", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "UPLOAD-BASE-VCS-GATE", "dependsOn": ["M4"]},
+    {"id": "M6", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "PROJECT-CONFIGURATION-GATE", "dependsOn": ["M5"]},
+    {"id": "M7", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "CONTROLLED-INSTANCE-EXECUTION-GATE", "dependsOn": ["M6"]},
+    {"id": "M8", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "FINITE-FAULT-ADEQUACY-GATE", "dependsOn": ["M7"]},
+    {"id": "M9", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "SCOPE-EXPANSION-GATE", "dependsOn": ["M8"]}
   ]
 }

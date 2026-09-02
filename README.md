@@ -38,8 +38,10 @@ silently redefine the Core.
 | Method input | Candidate GVS Core 0.3 at [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
 | Protocol source | `ARINC-615A-3` / edition `615A-3` / wire version `A4` |
 | Bounded source and open dependency | `ARINC-665-5`; ARINC-645 `OPEN-DEPENDENCY` |
-| Technical direction | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / `NOT-A-DEPENDENCY-OR-SELECTED-PLATFORM` |
-| M0 controls | [`source register`](configs/research/controlled_sources.json), [`CR-2026-006`](docs/control/changes/CR-2026-006.md), [`DD-015–DD-017`](docs/control/decisions/DESIGN_DECISIONS.md) |
+| Technical direction | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / platform `deferred: TTCN-3` |
+| Delivery position | current `M0` / next `M1` / disposition `ADOPT` |
+| Activation boundary | merge evidence `EXTERNAL-VERIFICATION-REQUIRED` / approval `NOT-AUTOMATED` |
+| Technical controls | [`source register`](configs/research/controlled_sources.json), [`activation control`](docs/control/changes/CR-2026-006.md), [`technical decisions`](docs/control/decisions/DESIGN_DECISIONS.md) |
 | Third handshake | `COMPLETE` |
 | Compatibility | `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` under Q-01–Q-09 |
 | Project Configuration | `NOT YET ESTABLISHED` |
@@ -48,12 +50,12 @@ silently redefine the Core.
 
 ## Current increment
 
-**M0 — adopt ARINC 615A-3 sources and lean technical direction**
+**M0 source and technical-direction disposition**
 
 - Register ARINC 615A-3 as the sole active protocol authority, ARINC 665-5 as a bounded reference and ARINC 645 as an open dependency.
 - Supersede active ARINC 615A-4 assumptions while preserving registered frozen history byte-for-byte.
 - Adopt a lightweight observable timed EFSM, bounded Test-Analysis, gated open-source reuse and an injectable layered target architecture.
-- Adopt the serial M0–M9 route; this increment completes only the M0 candidate.
+- Record the M0 disposition as ADOPT under CR-controlled activation; approval and repository merge evidence remain externally verified gates.
 
 State changes:
 
@@ -86,8 +88,10 @@ Unchanged boundaries:
 | 方法输入 | Candidate GVS Core 0.3 @ [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
 | 协议来源 | `ARINC-615A-3` / 版次 `615A-3` / 线版本 `A4` |
 | 有边界来源与开放依赖 | `ARINC-665-5`；ARINC-645 `OPEN-DEPENDENCY` |
-| 技术方向 | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / `NOT-A-DEPENDENCY-OR-SELECTED-PLATFORM` |
-| M0 控制入口 | [`source register`](configs/research/controlled_sources.json), [`CR-2026-006`](docs/control/changes/CR-2026-006.md), [`DD-015–DD-017`](docs/control/decisions/DESIGN_DECISIONS.md) |
+| 技术方向 | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / 平台 `deferred: TTCN-3` |
+| 交付位置 | 当前 `M0` / 下一 `M1` / 处置 `ADOPT` |
+| 激活边界 | 合并证据 `EXTERNAL-VERIFICATION-REQUIRED` / 批准 `NOT-AUTOMATED` |
+| 技术控制入口 | [`source register`](configs/research/controlled_sources.json), [`activation control`](docs/control/changes/CR-2026-006.md), [`technical decisions`](docs/control/decisions/DESIGN_DECISIONS.md) |
 | 第三次握手 | `COMPLETE` |
 | 兼容性 | 受 Q-01～Q-09 限定的 `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` |
 | Project Configuration | `NOT YET ESTABLISHED` |
@@ -96,12 +100,12 @@ Unchanged boundaries:
 
 ## 本次集成增量
 
-**M0——采纳 ARINC 615A-3 来源与精简技术路线**
+**M0 来源与技术方向处置**
 
 - 登记 ARINC 615A-3 为唯一活动协议权威、ARINC 665-5 为有边界参考、ARINC 645 为开放依赖。
 - 取代活动的 ARINC 615A-4 假设，同时保持登记的冻结历史逐字节不变。
 - 采纳轻量可观测 timed EFSM、有界 Test-Analysis、受门禁开源复用和可注入分层目标架构。
-- 采纳 M0～M9 串行路线；本增量只完成 M0 候选。
+- 记录 M0 处置为 ADOPT 并由 CR 控制激活；批准与仓库合并证据仍须外部核验。
 
 状态变化：
 

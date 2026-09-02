@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import hashlib
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -38,7 +39,8 @@ def integrated_status_errors(data: dict) -> list[str]:
 
 def integrated_source_errors(register: dict, data: dict | None = None) -> list[str]:
     data = status() if data is None else data
-    return baseline.governed_status_errors(data, source("README.md"), register)
+    generated = baseline.sync.replace_status_block(source("README.md"), data, register)
+    return baseline.governed_status_errors(data, generated, register)
 
 
 def mapping_line(text: str, row_id: str) -> str:
@@ -220,7 +222,10 @@ def test_controlled_source_register_and_generated_readme_are_valid() -> None:
 def test_source_rejects_non_615a3_current_authority() -> None:
     register = controlled_sources()
     register["currentProtocolAuthorityId"] = "ARINC-615A-4"
-    assert any("sole current protocol authority" in error for error in integrated_source_errors(register))
+    assert any(
+        "single current protocol authority" in error
+        for error in baseline.controlled_source_errors(status(), register)
+    )
 
 
 def test_source_rejects_each_615a3_identity_mutation() -> None:
@@ -236,6 +241,15 @@ def test_source_rejects_each_615a3_identity_mutation() -> None:
         assert any("ARINC-615A-3" in error for error in integrated_source_errors(register)), field
 
 
+def test_source_identity_cannot_be_repaired_with_a_self_hash() -> None:
+    register = controlled_sources()
+    register["sources"][0]["pageCount"] = 175
+    register["sources"][0]["identitySeal"] = hashlib.sha256(
+        b"attacker-controlled replacement seal"
+    ).hexdigest()
+    assert any("independent acquisition record" in error for error in integrated_source_errors(register))
+
+
 def test_source_rejects_wire_version_as_edition() -> None:
     register = controlled_sources()
     register["sources"][0]["edition"] = register["sources"][0]["wireVersion"]
@@ -245,39 +259,31 @@ def test_source_rejects_wire_version_as_edition() -> None:
 def test_source_rejects_unbounded_665_equivalence() -> None:
     register = controlled_sources()
     register["sources"][1]["equivalentReplacementFor"] = ["ARINC-665-3"]
-    assert any("equivalence/applicability" in error for error in integrated_source_errors(register))
+    assert any("applicability/equivalence" in error for error in integrated_source_errors(register))
 
 
 def test_source_rejects_integrity_promotion_while_645_open() -> None:
     register = controlled_sources()
-    register["capabilityStatus"]["completeIntegrityValidation"] = "ESTABLISHED"
+    register["capabilities"][-1]["status"] = "ESTABLISHED"
     assert any("cannot be established" in error for error in integrated_source_errors(register))
 
 
 def test_source_rejects_prefilled_615a4_migration_target() -> None:
     register = controlled_sources()
     register["futureSourceMigration"]["target"] = "ARINC-615A-4"
-    assert any("target must remain empty" in error for error in integrated_source_errors(register))
+    assert any("idle future source migration" in error for error in integrated_source_errors(register))
 
 
-def test_source_rejects_ttcn3_or_deferred_model_promotion() -> None:
+def test_source_rejects_platform_selection_without_gate() -> None:
     register = controlled_sources()
-    register["technicalDirection"]["ttcn3"] = "SELECTED-PLATFORM"
-    assert any("TTCN-3" in error for error in integrated_source_errors(register))
-    for mutation in (
-        {"behaviorModel": "DTMC"},
-        {"deferredModels": ["BAYESIAN-CALIBRATION"]},
-        {"deferredModels": []},
-    ):
-        register = controlled_sources()
-        register["technicalDirection"].update(mutation)
-        assert integrated_source_errors(register), mutation
+    register["technicalDirection"]["executionPlatform"]["selected"] = "TTCN-3"
+    assert any("execution platform" in error for error in integrated_source_errors(register))
 
 
-def test_source_rejects_ungated_l3_reuse() -> None:
+def test_source_rejects_incomplete_reuse_levels() -> None:
     register = controlled_sources()
-    register["technicalDirection"]["openSourceReuse"]["L3"] = "ALLOWED"
-    assert any("L3 reuse" in error for error in integrated_source_errors(register))
+    del register["technicalDirection"]["openSourceReuse"]["L3"]
+    assert any("L1/L2/L3" in error for error in integrated_source_errors(register))
 
 
 def test_source_rejects_unsafe_or_untracked_frozen_history_paths() -> None:
@@ -287,41 +293,47 @@ def test_source_rejects_unsafe_or_untracked_frozen_history_paths() -> None:
         assert integrated_source_errors(register), invalid
 
 
-def test_source_frozen_history_uses_tracked_ordinary_file_fixture(tmp_path: Path) -> None:
-    record_path = Path("artifacts/reports/current/frozen-history.md")
-    target = tmp_path / record_path
+def init_git_fixture(root: Path, relative: Path, payload: bytes) -> None:
+    target = root / relative
     target.parent.mkdir(parents=True)
-    payload = b"historical 615A-4 wording\n"
     target.write_bytes(payload)
-    register = controlled_sources()
-    register["historicalAssumptions"][0]["frozenRecords"] = [{
-        "path": record_path.as_posix(),
-        "byteCount": len(payload),
-        "sha256": hashlib.sha256(payload).hexdigest(),
-    }]
-    assert baseline.controlled_source_errors(
-        status(), register, tmp_path, {record_path.as_posix()}
-    ) == []
-    assert any("Git-tracked" in error for error in baseline.controlled_source_errors(
-        status(), register, tmp_path, set()
-    ))
+    subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+    subprocess.run(["git", "config", "core.autocrlf", "false"], cwd=root, check=True)
+    subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=root, check=True)
+    subprocess.run(["git", "config", "user.name", "Test"], cwd=root, check=True)
+    subprocess.run(["git", "add", relative.as_posix()], cwd=root, check=True)
+    subprocess.run(["git", "commit", "-qm", "fixture"], cwd=root, check=True)
 
 
-def test_source_frozen_history_identity_is_checkout_newline_invariant(tmp_path: Path) -> None:
+def test_frozen_history_uses_head_blob_not_checkout_newlines(tmp_path: Path) -> None:
     record_path = Path("artifacts/reports/current/frozen-history.md")
     target = tmp_path / record_path
-    target.parent.mkdir(parents=True)
-    target.write_bytes(b"line one\r\nline two\r\n")
     canonical = b"line one\nline two\n"
-    register = controlled_sources()
-    register["historicalAssumptions"][0]["frozenRecords"] = [{
+    init_git_fixture(tmp_path, record_path, canonical)
+    record = [{
         "path": record_path.as_posix(),
         "byteCount": len(canonical),
         "sha256": hashlib.sha256(canonical).hexdigest(),
     }]
-    assert baseline.controlled_source_errors(
-        status(), register, tmp_path, {record_path.as_posix()}
-    ) == []
+    target.write_bytes(b"line one\r\nline two\r\n")
+    assert baseline.frozen_record_errors(record, tmp_path, {record_path.as_posix()}) == []
+
+
+def test_frozen_history_rejects_committed_crlf_blob(tmp_path: Path) -> None:
+    record_path = Path("artifacts/reports/current/frozen-history.md")
+    canonical = b"line one\nline two\n"
+    init_git_fixture(tmp_path, record_path, canonical)
+    target = tmp_path / record_path
+    target.write_bytes(b"line one\r\nline two\r\n")
+    subprocess.run(["git", "add", record_path.as_posix()], cwd=tmp_path, check=True)
+    subprocess.run(["git", "commit", "-qm", "crlf blob"], cwd=tmp_path, check=True)
+    record = [{
+        "path": record_path.as_posix(),
+        "byteCount": len(canonical),
+        "sha256": hashlib.sha256(canonical).hexdigest(),
+    }]
+    errors = baseline.frozen_record_errors(record, tmp_path, {record_path.as_posix()})
+    assert any("committed Git blob" in error for error in errors)
 
 
 def test_source_rejects_symbolic_link_frozen_history(tmp_path: Path) -> None:
@@ -337,7 +349,7 @@ def test_source_rejects_symbolic_link_frozen_history(tmp_path: Path) -> None:
     register = controlled_sources()
     register["historicalAssumptions"][0]["frozenRecords"][0]["path"] = link_path.as_posix()
     assert any("symbolic link" in error for error in baseline.controlled_source_errors(
-        status(), register, tmp_path, {link_path.as_posix()}
+        status(), register, root=tmp_path, tracked_paths={link_path.as_posix()}
     ))
 
 
@@ -365,12 +377,11 @@ def test_status_rejects_bypassing_m1_gate() -> None:
         "objective": "skip",
         "objectiveZh": "skip",
     }
-    assert any("M1 conformance-requirements" in error or "requirementsSpecificationStatus" in error for error in integrated_status_errors(data))
+    assert any("current stop" in error or "statusPath" in error for error in integrated_status_errors(data))
 
 
-def test_m0_rejects_any_state_or_claim_promotion() -> None:
+def test_protected_states_reject_premature_promotion() -> None:
     mutations = (
-        ("development", "requirementsSpecificationStatus", "ESTABLISHED"),
         ("claimsBoundary", "projectConfigurationStatus", "ESTABLISHED"),
         ("claimsBoundary", "instanceEvaluation", "INSTANCE-EXERCISED"),
         ("claimsBoundary", "rq8", "CLOSED"),
@@ -382,7 +393,42 @@ def test_m0_rejects_any_state_or_claim_promotion() -> None:
         data = status()
         data[section][key] = value
         errors = integrated_source_errors(controlled_sources(), data)
-        assert any("cannot be" in error or "must remain not established" in error for error in errors), key
+        assert any("protected state changed" in error for error in errors), key
+
+
+def test_source_register_rejects_duplicate_ids() -> None:
+    for collection in ("sources", "openDependencies", "historicalAssumptions", "roadmap"):
+        register = controlled_sources()
+        register[collection].append(copy.deepcopy(register[collection][0]))
+        assert any(f"{collection} contains duplicate id" in error for error in integrated_source_errors(register)), collection
+
+
+def test_active_controls_reject_historical_authority_but_allow_negative_history(tmp_path: Path) -> None:
+    relative = Path("docs/research/RESEARCH_CONTROL.md")
+    target = tmp_path / relative
+    target.parent.mkdir(parents=True)
+    register = controlled_sources()
+    register["activeControlSurfacePaths"] = [relative.as_posix()]
+    target.write_text("ARINC 615A-4 是当前规范权威。\n", encoding="utf-8")
+    errors = baseline._active_authority_text_errors(register, tmp_path, {relative.as_posix()})
+    assert any("reintroduces historical source authority" in error for error in errors)
+    target.write_text("ARINC 615A-4 不再是当前规范权威。\n", encoding="utf-8")
+    assert baseline._active_authority_text_errors(register, tmp_path, {relative.as_posix()}) == []
+
+
+def test_roadmap_accepts_m1_transition_without_python_change() -> None:
+    register = controlled_sources()
+    register["roadmap"][0]["status"] = "COMPLETED-EXTERNALLY-VERIFIED"
+    register["roadmap"][1]["status"] = "DISPOSITION-ADOPT"
+    register["roadmap"][2]["status"] = "NEXT-BLOCKED-BY-FINAL-GATE"
+    register["lifecycle"]["currentStageId"] = register["roadmap"][1]["id"]
+    register["lifecycle"]["nextStageId"] = register["roadmap"][2]["id"]
+    data = status()
+    next_stage = register["roadmap"][2]
+    data["development"]["currentStop"]["id"] = next_stage["gateId"]
+    data["development"]["currentStop"]["statusPath"] = f"development.gates.{next_stage['gateId']}"
+    data["development"]["gates"][next_stage["gateId"]] = "NOT YET ESTABLISHED"
+    assert integrated_source_errors(register, data) == []
 
 
 def test_readme_rejects_stale_release_candidate_wording() -> None:
