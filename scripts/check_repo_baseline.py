@@ -1324,29 +1324,31 @@ def _active_authority_text_errors(register: dict, root: Path, tracked_paths: set
         for line_number, line in enumerate(target.read_text(encoding="utf-8").splitlines(), 1):
             for source_id in historical_ids:
                 variants = {source_id, source_id.replace("ARINC-", "ARINC ")}
-                for clause in re.split(r"[,，;；。]|\b(?:but|while|whereas)\b|(?:但|而|然而)", line, flags=re.IGNORECASE):
-                    source_matches = [
-                        match
-                        for variant in variants
-                        for match in re.finditer(re.escape(variant), clause, re.IGNORECASE)
-                    ]
-                    role_matches = list(prohibited_role.finditer(clause))
-                    relation_is_prohibited = False
-                    for source_match in source_matches:
-                        for role_match in role_matches:
-                            start = min(source_match.start(), role_match.start())
-                            end = max(source_match.end(), role_match.end())
-                            if end - start > 120:
-                                continue
-                            relation = clause[start:end]
-                            relation_negated = re.search(
-                                r"\bnot\b|\bno\s+longer\b|不是|不再是|并非|非当前|无当前权威",
-                                relation,
-                                re.IGNORECASE,
-                            )
-                            if relation_negated is None:
-                                relation_is_prohibited = True
-                    if relation_is_prohibited:
+                source_pattern = "(?:" + "|".join(re.escape(value) for value in variants) + ")"
+                role_pattern = (
+                    r"(?:(?:the|an|a)\s+)?(?:current\s+(?:protocol\s+)?authority|active\s+source|"
+                    r"implementation\s+target|normative\s+basis|(?:active\s+)?dependency)"
+                )
+                allowed_english = re.compile(
+                    rf"^\s*(?:{source_pattern}\s+is\s+(?:not|no\s+longer)\s+{role_pattern}|"
+                    rf"{role_pattern}\s+is\s+(?:not|no\s+longer)\s+{source_pattern})\s*$",
+                    re.IGNORECASE,
+                )
+                chinese_role = r"(?:当前(?:协议)?权威|活动来源|实现目标|规范依据|(?:活动)?依赖)"
+                allowed_chinese = re.compile(
+                    rf"^\s*(?:{source_pattern}\s*(?:不是|不再是|并非)\s*{chinese_role}|"
+                    rf"{chinese_role}\s*(?:不是|不再是|并非)\s*{source_pattern})\s*$",
+                    re.IGNORECASE,
+                )
+                for statement in re.split(r"[.!?;；。！？]+", line):
+                    has_source = any(re.search(re.escape(variant), statement, re.IGNORECASE) for variant in variants)
+                    if not has_source or prohibited_role.search(statement) is None:
+                        continue
+                    controlled_negation = (
+                        "not only" not in statement.lower()
+                        and (allowed_english.fullmatch(statement) or allowed_chinese.fullmatch(statement))
+                    )
+                    if not controlled_negation:
                         errors.append(
                             f"active control surface reintroduces historical source authority: "
                             f"{raw}:{line_number}"

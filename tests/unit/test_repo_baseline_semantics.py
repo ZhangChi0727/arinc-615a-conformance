@@ -415,10 +415,15 @@ def test_active_controls_reject_historical_authority_but_allow_negative_history(
     prohibited = (
         "The current protocol authority is ARINC 615A-4 based on the active source.\n",
         "ARINC 615A-4 is the current protocol authority, not ARINC 615A-3.\n",
+        "The current protocol authority, ARINC 615A-4, governs this project.\n",
+        "ARINC 615A-4, the current protocol authority, governs this project.\n",
+        "ARINC 615A-4 is not only the current protocol authority but also the implementation target.\n",
         "The implementation target is ARINC 615A-4.\n",
         "The normative basis and dependency is ARINC 615A-4.\n",
         "当前协议权威基于 ARINC 615A-4。\n",
         "ARINC 615A-4 是当前协议权威，而 ARINC 615A-3 不是。\n",
+        "当前协议权威，ARINC 615A-4，支配本项目。\n",
+        "ARINC 615A-4，当前协议权威，支配本项目。\n",
         "实现目标是 ARINC 615A-4。\n",
         "规范依据和依赖是 ARINC 615A-4。\n",
     )
@@ -495,7 +500,7 @@ def test_development_gates_must_match_roadmap() -> None:
     ):
         data = status()
         mutate(data["development"]["gates"])
-    assert any("development.gates" in error for error in integrated_source_errors(controlled_sources(), data))
+        assert any("development.gates" in error for error in integrated_source_errors(controlled_sources(), data))
 
 
 def test_gate_values_must_match_stage_position() -> None:
