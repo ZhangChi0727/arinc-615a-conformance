@@ -1334,7 +1334,10 @@ def controlled_source_errors(
                 if path_error:
                     errors.append(path_error)
                 elif target is not None:
-                    payload = target.read_bytes()
+                    # Git stores these controlled Markdown records with LF.
+                    # Universal-newline reading makes the identity invariant to
+                    # checkout-only core.autocrlf conversion on Windows.
+                    payload = target.read_text(encoding="utf-8").encode("utf-8")
                     if record.get("byteCount") != len(payload):
                         errors.append(f"{label} byteCount differs from frozen content")
                     if record.get("sha256") != hashlib.sha256(payload).hexdigest():

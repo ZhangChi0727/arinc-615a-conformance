@@ -60,13 +60,13 @@
       "frozenRecords": [
         {
           "path": "artifacts/reports/current/RPT-2026-002_information_architecture_v4.2.1.md",
-          "byteCount": 5426,
-          "sha256": "35f9ab6d44dd79fdc71f7a9be204ed3eced0e4d5b54db6a44f3f0934fa550ed1"
+          "byteCount": 5317,
+          "sha256": "3142ad191ff46f0601f154a30531adce1fa6142d246f17d0b6b458af7fb88a74"
         },
         {
           "path": "docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md",
-          "byteCount": 133964,
-          "sha256": "c248ad5a5e77149a6d93acb55105c6c62c83589c3bdceff2eff9b00ea8c636e7"
+          "byteCount": 130983,
+          "sha256": "c089a64e5feb80d8816d652bf9a150a89bd3c4b45a3f95887a109fa6e564fd3b"
         }
       ]
     }

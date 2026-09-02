@@ -307,6 +307,23 @@ def test_source_frozen_history_uses_tracked_ordinary_file_fixture(tmp_path: Path
     ))
 
 
+def test_source_frozen_history_identity_is_checkout_newline_invariant(tmp_path: Path) -> None:
+    record_path = Path("artifacts/reports/current/frozen-history.md")
+    target = tmp_path / record_path
+    target.parent.mkdir(parents=True)
+    target.write_bytes(b"line one\r\nline two\r\n")
+    canonical = b"line one\nline two\n"
+    register = controlled_sources()
+    register["historicalAssumptions"][0]["frozenRecords"] = [{
+        "path": record_path.as_posix(),
+        "byteCount": len(canonical),
+        "sha256": hashlib.sha256(canonical).hexdigest(),
+    }]
+    assert baseline.controlled_source_errors(
+        status(), register, tmp_path, {record_path.as_posix()}
+    ) == []
+
+
 def test_source_rejects_symbolic_link_frozen_history(tmp_path: Path) -> None:
     real = tmp_path / "real.md"
     link_path = Path("artifacts/reports/current/link.md")
