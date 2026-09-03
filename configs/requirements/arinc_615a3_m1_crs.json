@@ -7799,6 +7799,2777 @@
       "id": "COV-615A3-0433",
       "source": {
         "sourceId": "ARINC-615A-3",
+        "clause": "1.0",
+        "tableOrFigure": null,
+        "documentPage": 1,
+        "pdfPage": 13,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0434",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "1.1",
+        "tableOrFigure": null,
+        "documentPage": 1,
+        "pdfPage": 13,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0435",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "1.2",
+        "tableOrFigure": null,
+        "documentPage": 2,
+        "pdfPage": 14,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0436",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "1.3.1",
+        "tableOrFigure": null,
+        "documentPage": 3,
+        "pdfPage": 15,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0437",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "1.4.1",
+        "tableOrFigure": null,
+        "documentPage": 3,
+        "pdfPage": 15,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0438",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "1.4.2",
+        "tableOrFigure": null,
+        "documentPage": 4,
+        "pdfPage": 16,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0439",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "1.4.3",
+        "tableOrFigure": null,
+        "documentPage": 4,
+        "pdfPage": 16,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0440",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "1.5.1",
+        "tableOrFigure": null,
+        "documentPage": 5,
+        "pdfPage": 17,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0441",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "1.5.2",
+        "tableOrFigure": null,
+        "documentPage": 5,
+        "pdfPage": 17,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0442",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "1.6",
+        "tableOrFigure": null,
+        "documentPage": 5,
+        "pdfPage": 17,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0443",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "1.7",
+        "tableOrFigure": null,
+        "documentPage": 5,
+        "pdfPage": 17,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0444",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "1.8",
+        "tableOrFigure": null,
+        "documentPage": 5,
+        "pdfPage": 17,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0445",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "1.9",
+        "tableOrFigure": null,
+        "documentPage": 6,
+        "pdfPage": 18,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0446",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "1.10",
+        "tableOrFigure": null,
+        "documentPage": 6,
+        "pdfPage": 18,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "SCOPE-DEFINITION-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0447",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.0",
+        "tableOrFigure": null,
+        "documentPage": 7,
+        "pdfPage": 19,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0448",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.1",
+        "tableOrFigure": null,
+        "documentPage": 7,
+        "pdfPage": 19,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0449",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.2.1.1",
+        "tableOrFigure": null,
+        "documentPage": 7,
+        "pdfPage": 19,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0450",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.2.1.2",
+        "tableOrFigure": null,
+        "documentPage": 7,
+        "pdfPage": 19,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0451",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.2.2.1",
+        "tableOrFigure": null,
+        "documentPage": 8,
+        "pdfPage": 20,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0452",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.2.2.2",
+        "tableOrFigure": null,
+        "documentPage": 8,
+        "pdfPage": 20,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0453",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 8,
+        "pdfPage": 20,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0454",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.2.3.2",
+        "tableOrFigure": null,
+        "documentPage": 8,
+        "pdfPage": 20,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0455",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 8,
+        "pdfPage": 20,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0456",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.2.4.2",
+        "tableOrFigure": null,
+        "documentPage": 9,
+        "pdfPage": 21,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0457",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.2.5",
+        "tableOrFigure": null,
+        "documentPage": 9,
+        "pdfPage": 21,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0458",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 9,
+        "pdfPage": 21,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0459",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.3.2",
+        "tableOrFigure": null,
+        "documentPage": 9,
+        "pdfPage": 21,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0460",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.3.3.1",
+        "tableOrFigure": null,
+        "documentPage": 10,
+        "pdfPage": 22,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0461",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.3.3.2",
+        "tableOrFigure": null,
+        "documentPage": 10,
+        "pdfPage": 22,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0462",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.4.1.1",
+        "tableOrFigure": null,
+        "documentPage": 11,
+        "pdfPage": 23,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0463",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.4.1.2",
+        "tableOrFigure": null,
+        "documentPage": 11,
+        "pdfPage": 23,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0464",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.4.2",
+        "tableOrFigure": null,
+        "documentPage": 11,
+        "pdfPage": 23,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0465",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.4.4",
+        "tableOrFigure": null,
+        "documentPage": 11,
+        "pdfPage": 23,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0466",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.4.6.1",
+        "tableOrFigure": null,
+        "documentPage": 12,
+        "pdfPage": 24,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0467",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.4.6.2",
+        "tableOrFigure": null,
+        "documentPage": 12,
+        "pdfPage": 24,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0468",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.4.7.1",
+        "tableOrFigure": null,
+        "documentPage": 12,
+        "pdfPage": 24,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0469",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.4.7.2",
+        "tableOrFigure": null,
+        "documentPage": 12,
+        "pdfPage": 24,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0470",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.4.9",
+        "tableOrFigure": null,
+        "documentPage": 13,
+        "pdfPage": 25,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0471",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.4.10",
+        "tableOrFigure": null,
+        "documentPage": 13,
+        "pdfPage": 25,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0472",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "2.5",
+        "tableOrFigure": null,
+        "documentPage": 13,
+        "pdfPage": 25,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0473",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3.0",
+        "tableOrFigure": null,
+        "documentPage": 14,
+        "pdfPage": 26,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0474",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3.3",
+        "tableOrFigure": null,
+        "documentPage": 14,
+        "pdfPage": 26,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0475",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3.4",
+        "tableOrFigure": null,
+        "documentPage": 15,
+        "pdfPage": 27,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0476",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3.5.1",
+        "tableOrFigure": null,
+        "documentPage": 15,
+        "pdfPage": 27,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0477",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3.5.2",
+        "tableOrFigure": null,
+        "documentPage": 16,
+        "pdfPage": 28,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0478",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3.6.1",
+        "tableOrFigure": null,
+        "documentPage": 16,
+        "pdfPage": 28,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0479",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3.6.2",
+        "tableOrFigure": null,
+        "documentPage": 16,
+        "pdfPage": 28,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0480",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "4.0",
+        "tableOrFigure": null,
+        "documentPage": 17,
+        "pdfPage": 29,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0481",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "4.1.1.1",
+        "tableOrFigure": null,
+        "documentPage": 18,
+        "pdfPage": 30,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0482",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "4.1.1.2",
+        "tableOrFigure": null,
+        "documentPage": 18,
+        "pdfPage": 30,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0483",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "4.1.1.3",
+        "tableOrFigure": null,
+        "documentPage": 18,
+        "pdfPage": 30,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0484",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "4.1.2.1",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 31,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0485",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "4.1.2.2",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 31,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0486",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "4.1.3",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 31,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0487",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "4.1.4.1",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 32,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0488",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "4.1.4.2",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 32,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0489",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "4.1.4.3.1",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 33,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0490",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "4.1.4.3.2",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 33,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0491",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.0",
+        "tableOrFigure": null,
+        "documentPage": 22,
+        "pdfPage": 34,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0492",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.1",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 35,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0493",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.1",
+        "tableOrFigure": null,
+        "documentPage": 25,
+        "pdfPage": 37,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0494",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.2",
+        "tableOrFigure": null,
+        "documentPage": 25,
+        "pdfPage": 37,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0495",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 25,
+        "pdfPage": 37,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0496",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.2",
+        "tableOrFigure": null,
+        "documentPage": 25,
+        "pdfPage": 37,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0497",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.3",
+        "tableOrFigure": null,
+        "documentPage": 26,
+        "pdfPage": 38,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0498",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.4",
+        "tableOrFigure": null,
+        "documentPage": 26,
+        "pdfPage": 38,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0499",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.5",
+        "tableOrFigure": null,
+        "documentPage": 27,
+        "pdfPage": 39,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0500",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.6",
+        "tableOrFigure": null,
+        "documentPage": 27,
+        "pdfPage": 39,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0501",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.7",
+        "tableOrFigure": null,
+        "documentPage": 28,
+        "pdfPage": 40,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0502",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.8.1",
+        "tableOrFigure": null,
+        "documentPage": 28,
+        "pdfPage": 40,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0503",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.8.2",
+        "tableOrFigure": null,
+        "documentPage": 29,
+        "pdfPage": 41,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0504",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.8.3",
+        "tableOrFigure": null,
+        "documentPage": 29,
+        "pdfPage": 41,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0505",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.8.4",
+        "tableOrFigure": null,
+        "documentPage": 29,
+        "pdfPage": 41,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0506",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.8.5",
+        "tableOrFigure": null,
+        "documentPage": 29,
+        "pdfPage": 41,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0507",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.8.6",
+        "tableOrFigure": null,
+        "documentPage": 32,
+        "pdfPage": 44,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0508",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.2.3.9",
+        "tableOrFigure": null,
+        "documentPage": 32,
+        "pdfPage": 44,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0509",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.3",
+        "tableOrFigure": null,
+        "documentPage": 32,
+        "pdfPage": 44,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-FIND-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0510",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.4",
+        "tableOrFigure": null,
+        "documentPage": 33,
+        "pdfPage": 45,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0511",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.4.2",
+        "tableOrFigure": null,
+        "documentPage": 35,
+        "pdfPage": 47,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0512",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.4.3.1",
+        "tableOrFigure": null,
+        "documentPage": 36,
+        "pdfPage": 48,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0513",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.4.4.1",
+        "tableOrFigure": null,
+        "documentPage": 38,
+        "pdfPage": 50,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0514",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.4.4.2",
+        "tableOrFigure": null,
+        "documentPage": 39,
+        "pdfPage": 51,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0515",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.4.4.3",
+        "tableOrFigure": null,
+        "documentPage": 40,
+        "pdfPage": 52,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0516",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.4.5.1",
+        "tableOrFigure": null,
+        "documentPage": 40,
+        "pdfPage": 52,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0517",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.4.5.2",
+        "tableOrFigure": null,
+        "documentPage": 41,
+        "pdfPage": 53,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0518",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.0",
+        "tableOrFigure": null,
+        "documentPage": 42,
+        "pdfPage": 54,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0519",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.1",
+        "tableOrFigure": null,
+        "documentPage": 42,
+        "pdfPage": 54,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0520",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.1.1",
+        "tableOrFigure": null,
+        "documentPage": 43,
+        "pdfPage": 55,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0521",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.1.2",
+        "tableOrFigure": null,
+        "documentPage": 43,
+        "pdfPage": 55,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0522",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.1.3",
+        "tableOrFigure": null,
+        "documentPage": 43,
+        "pdfPage": 55,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0523",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.2.1",
+        "tableOrFigure": null,
+        "documentPage": 43,
+        "pdfPage": 55,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0524",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.2.2",
+        "tableOrFigure": null,
+        "documentPage": 43,
+        "pdfPage": 55,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0525",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.2.3",
+        "tableOrFigure": null,
+        "documentPage": 43,
+        "pdfPage": 55,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0526",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 43,
+        "pdfPage": 55,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0527",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.3.2",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 56,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0528",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.3.3",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 56,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0529",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 56,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0530",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.4.2",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 56,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0531",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.4.3",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 56,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0532",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.5.1",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 56,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0533",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.5.2",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 56,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0534",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.5.3",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 56,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0535",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.6.1",
+        "tableOrFigure": null,
+        "documentPage": 45,
+        "pdfPage": 57,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0536",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.6.2",
+        "tableOrFigure": null,
+        "documentPage": 45,
+        "pdfPage": 57,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0537",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.6.3",
+        "tableOrFigure": null,
+        "documentPage": 45,
+        "pdfPage": 57,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0538",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.7.1",
+        "tableOrFigure": null,
+        "documentPage": 45,
+        "pdfPage": 57,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0539",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.7.2",
+        "tableOrFigure": null,
+        "documentPage": 45,
+        "pdfPage": 57,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0540",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.7.3",
+        "tableOrFigure": null,
+        "documentPage": 45,
+        "pdfPage": 57,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0541",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.8.1",
+        "tableOrFigure": null,
+        "documentPage": 45,
+        "pdfPage": 57,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0542",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.8.2",
+        "tableOrFigure": null,
+        "documentPage": 45,
+        "pdfPage": 57,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0543",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.8.3",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 58,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0544",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.9.1",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 58,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0545",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.9.2",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 58,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0546",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.9.3",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 58,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0547",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.10.1",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 58,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0548",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.10.2",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 58,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0549",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.10.3",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 58,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0550",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.11.1",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 58,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0551",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.11.2",
+        "tableOrFigure": null,
+        "documentPage": 47,
+        "pdfPage": 59,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0552",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.11.3",
+        "tableOrFigure": null,
+        "documentPage": 47,
+        "pdfPage": 59,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0553",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.12.1",
+        "tableOrFigure": null,
+        "documentPage": 47,
+        "pdfPage": 59,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0554",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.12.2",
+        "tableOrFigure": null,
+        "documentPage": 47,
+        "pdfPage": 59,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0555",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.12.3",
+        "tableOrFigure": null,
+        "documentPage": 47,
+        "pdfPage": 59,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0556",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.13.1",
+        "tableOrFigure": null,
+        "documentPage": 47,
+        "pdfPage": 59,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0557",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.13.2",
+        "tableOrFigure": null,
+        "documentPage": 47,
+        "pdfPage": 59,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0558",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.13.3",
+        "tableOrFigure": null,
+        "documentPage": 47,
+        "pdfPage": 59,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0559",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.14.1",
+        "tableOrFigure": null,
+        "documentPage": 47,
+        "pdfPage": 59,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0560",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.14.2",
+        "tableOrFigure": null,
+        "documentPage": 48,
+        "pdfPage": 60,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0561",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.14.3",
+        "tableOrFigure": null,
+        "documentPage": 48,
+        "pdfPage": 60,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0562",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.15.1",
+        "tableOrFigure": null,
+        "documentPage": 48,
+        "pdfPage": 60,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0563",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.15.2",
+        "tableOrFigure": null,
+        "documentPage": 48,
+        "pdfPage": 60,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0564",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.15.3",
+        "tableOrFigure": null,
+        "documentPage": 48,
+        "pdfPage": 60,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0565",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.16.1",
+        "tableOrFigure": null,
+        "documentPage": 48,
+        "pdfPage": 60,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0566",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.16.2",
+        "tableOrFigure": null,
+        "documentPage": 48,
+        "pdfPage": 60,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0567",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.16.3",
+        "tableOrFigure": null,
+        "documentPage": 48,
+        "pdfPage": 60,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0568",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.17.1",
+        "tableOrFigure": null,
+        "documentPage": 49,
+        "pdfPage": 61,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0569",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.17.2",
+        "tableOrFigure": null,
+        "documentPage": 49,
+        "pdfPage": 61,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0570",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.2.17.3",
+        "tableOrFigure": null,
+        "documentPage": 49,
+        "pdfPage": 61,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0571",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.3.1",
+        "tableOrFigure": null,
+        "documentPage": 49,
+        "pdfPage": 61,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0572",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.3.2",
+        "tableOrFigure": null,
+        "documentPage": 53,
+        "pdfPage": 65,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0573",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.3.5",
+        "tableOrFigure": null,
+        "documentPage": 63,
+        "pdfPage": 75,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0574",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.1",
+        "tableOrFigure": null,
+        "documentPage": 67,
+        "pdfPage": 79,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0575",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.2",
+        "tableOrFigure": null,
+        "documentPage": 68,
+        "pdfPage": 80,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0576",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.3",
+        "tableOrFigure": null,
+        "documentPage": 70,
+        "pdfPage": 82,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0577",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.4",
+        "tableOrFigure": null,
+        "documentPage": 72,
+        "pdfPage": 84,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0578",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.5",
+        "tableOrFigure": null,
+        "documentPage": 74,
+        "pdfPage": 86,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "UPLOAD-BASE-VCS",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0579",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.6",
+        "tableOrFigure": null,
+        "documentPage": 78,
+        "pdfPage": 90,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0580",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.7",
+        "tableOrFigure": null,
+        "documentPage": 79,
+        "pdfPage": 91,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0581",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.8",
+        "tableOrFigure": null,
+        "documentPage": 83,
+        "pdfPage": 95,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0582",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.9",
+        "tableOrFigure": null,
+        "documentPage": 84,
+        "pdfPage": 96,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-DOWNLOAD-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0583",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.10",
+        "tableOrFigure": null,
+        "documentPage": 84,
+        "pdfPage": 96,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "INFORMATION-BOOTSTRAP-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0584",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-1",
+        "tableOrFigure": null,
+        "documentPage": 86,
+        "pdfPage": 98,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "PHYSICAL-CONNECTOR-SCOPE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0585",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-2",
+        "tableOrFigure": null,
+        "documentPage": 88,
+        "pdfPage": 100,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "SCENARIO-EXPLANATION",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0586",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-3",
+        "tableOrFigure": null,
+        "documentPage": 95,
+        "pdfPage": 107,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "DEFERRED-FIND-M9",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0587",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-4",
+        "tableOrFigure": null,
+        "documentPage": 99,
+        "pdfPage": 111,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0588",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-5",
+        "tableOrFigure": null,
+        "documentPage": 110,
+        "pdfPage": 122,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "ENVIRONMENT-CONFIGURATION-SCOPE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0589",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "APPENDIX-A",
+        "tableOrFigure": null,
+        "documentPage": 111,
+        "pdfPage": 123,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "HUMAN-INTERFACE-GUIDANCE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0590",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "APPENDIX-B",
+        "tableOrFigure": null,
+        "documentPage": 113,
+        "pdfPage": 125,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "REFERENCE-GUIDANCE",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0591",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "APPENDIX-C",
+        "tableOrFigure": null,
+        "documentPage": 115,
+        "pdfPage": 127,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TERMINOLOGY-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0592",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "APPENDIX-D",
+        "tableOrFigure": null,
+        "documentPage": 117,
+        "pdfPage": 129,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TERMINOLOGY-SUPPORT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0593",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "APPENDIX-E",
+        "tableOrFigure": null,
+        "documentPage": 122,
+        "pdfPage": 134,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "ARINC-664-DEPENDENCY-CONTEXT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0594",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "APPENDIX-F",
+        "tableOrFigure": null,
+        "documentPage": 123,
+        "pdfPage": 135,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "PROTOCOL-FILE-EXAMPLE-CONTEXT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0595",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "APPENDIX-G",
+        "tableOrFigure": null,
+        "documentPage": 125,
+        "pdfPage": 137,
+        "fragmentKind": "HEADING-SCOPE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-EXAMPLE-CONTEXT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0596",
+      "source": {
+        "sourceId": "ARINC-615A-3",
         "clause": "6.1",
         "tableOrFigure": "Table 6-1",
         "documentPage": 42,
@@ -7815,7 +10586,7 @@
       ]
     },
     {
-      "id": "COV-615A3-0434",
+      "id": "COV-615A3-0597",
       "source": {
         "sourceId": "ARINC-615A-3",
         "clause": "6.1",
@@ -7834,7 +10605,7 @@
       ]
     },
     {
-      "id": "COV-615A3-0435",
+      "id": "COV-615A3-0598",
       "source": {
         "sourceId": "ARINC-615A-3",
         "clause": "6.1",
@@ -7851,7 +10622,7 @@
       "requirementIds": []
     },
     {
-      "id": "COV-615A3-0436",
+      "id": "COV-615A3-0599",
       "source": {
         "sourceId": "ARINC-615A-3",
         "clause": "6.1",
@@ -7868,7 +10639,7 @@
       "requirementIds": []
     },
     {
-      "id": "COV-615A3-0437",
+      "id": "COV-615A3-0600",
       "source": {
         "sourceId": "ARINC-615A-3",
         "clause": "6.3.1",
@@ -7887,7 +10658,7 @@
       ]
     },
     {
-      "id": "COV-615A3-0438",
+      "id": "COV-615A3-0601",
       "source": {
         "sourceId": "ARINC-615A-3",
         "clause": "6.3.2",
@@ -7906,7 +10677,7 @@
       ]
     },
     {
-      "id": "COV-615A3-0439",
+      "id": "COV-615A3-0602",
       "source": {
         "sourceId": "ARINC-615A-3",
         "clause": "6.3.2",
@@ -7925,7 +10696,7 @@
       ]
     },
     {
-      "id": "COV-615A3-0440",
+      "id": "COV-615A3-0603",
       "source": {
         "sourceId": "ARINC-615A-3",
         "clause": "6.3.3",
@@ -7942,7 +10713,7 @@
       "requirementIds": []
     },
     {
-      "id": "COV-615A3-0441",
+      "id": "COV-615A3-0604",
       "source": {
         "sourceId": "ARINC-615A-3",
         "clause": "6.3.4",
@@ -7959,7 +10730,7 @@
       "requirementIds": []
     },
     {
-      "id": "COV-615A3-0442",
+      "id": "COV-615A3-0605",
       "source": {
         "sourceId": "ARINC-615A-3",
         "clause": "6.3.5",
@@ -19464,7 +22235,7 @@
       "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
       "rhoRA": {
         "relation": "refines-to-local-obligation",
-        "sourceCoverageId": "COV-615A3-0433",
+        "sourceCoverageId": "COV-615A3-0596",
         "status": "CANDIDATE"
       }
     },
@@ -19506,7 +22277,7 @@
       "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
       "rhoRA": {
         "relation": "refines-to-local-obligation",
-        "sourceCoverageId": "COV-615A3-0434",
+        "sourceCoverageId": "COV-615A3-0597",
         "status": "CANDIDATE"
       }
     },
@@ -19550,7 +22321,7 @@
       "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
       "rhoRA": {
         "relation": "refines-to-local-obligation",
-        "sourceCoverageId": "COV-615A3-0437",
+        "sourceCoverageId": "COV-615A3-0600",
         "status": "CANDIDATE"
       }
     },
@@ -19594,7 +22365,7 @@
       "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
       "rhoRA": {
         "relation": "refines-to-local-obligation",
-        "sourceCoverageId": "COV-615A3-0438",
+        "sourceCoverageId": "COV-615A3-0601",
         "status": "CANDIDATE"
       }
     },
@@ -19638,7 +22409,7 @@
       "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
       "rhoRA": {
         "relation": "refines-to-local-obligation",
-        "sourceCoverageId": "COV-615A3-0439",
+        "sourceCoverageId": "COV-615A3-0602",
         "status": "CANDIDATE"
       }
     },
@@ -19682,7 +22453,7 @@
       "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
       "rhoRA": {
         "relation": "refines-to-local-obligation",
-        "sourceCoverageId": "COV-615A3-0442",
+        "sourceCoverageId": "COV-615A3-0605",
         "status": "CANDIDATE"
       }
     },
@@ -23850,12 +26621,12 @@
     "reviewHead": "UNBOUND-DRAFT"
   },
   "inventorySummary": {
-    "coverageCount": 523,
+    "coverageCount": 686,
     "requirementCount": 300,
     "dependencyCount": 4,
     "gapCount": 1,
-    "coverageFingerprint": "f4f885b52a6b7f7597abffd775bc8aa1ef681c34adf9940ec3b5fed3ff26af50",
-    "requirementsFingerprint": "3eb61c6f5db277b3273e8d2436a85db9b99ce142e66a80c0da99b9cd496dd8eb"
+    "coverageFingerprint": "4dbf37c1d62077fe61a5adc2f946aec8cb12036da77382eb4c2e7eaaf7ee1696",
+    "requirementsFingerprint": "dd277e5c169ee6dfc7a80b1e63b9941dd0bee4c24b839e086591a854b313ae8b"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",
