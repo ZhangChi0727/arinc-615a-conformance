@@ -43,6 +43,18 @@ def test_package_is_valid_and_view_is_current() -> None:
     assert m1.VIEW_PATH.read_text(encoding="utf-8") == m1.render(data)
 
 
+def test_every_requirement_exposes_reviewable_semantic_roles() -> None:
+    data = package()
+    forbidden = {"APPLICABLE-SOURCE-CONDITION", "CAPABILITY-OR-STATE-OBSERVABLE", "SOURCE-DEFINED-ACTION"}
+    for row in data["requirements"]:
+        semantic = row["semantic"]
+        assert semantic["actor"]
+        assert semantic["condition"] not in forbidden
+        assert semantic["action"] not in forbidden
+        assert semantic["objects"] != ["SOURCE-IDENTIFIED-OBJECT"]
+        assert semantic["observableEffect"] not in forbidden
+
+
 def test_deleted_first_middle_or_last_coverage_is_rejected() -> None:
     for index in (0, len(package()["coverageLedger"]) // 2, -1):
         data = package()
