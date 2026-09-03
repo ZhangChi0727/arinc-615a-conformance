@@ -91,6 +91,8 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         source = row.get("source", {})
         if row.get("paraphraseEn") == row.get("paraphraseZh"):
             errors.append(f"requirement {row.get('id')} bilingual paraphrases must differ")
+        if any(token in row.get("paraphraseEn", "") for token in ("CLAUSE-SPECIFIC-BEHAVIOR", "SOURCE-DEFINED-NORMATIVE-BEHAVIOR")):
+            errors.append(f"requirement {row.get('id')} retains an uninformative paraphrase fallback")
         if not row.get("obligations"):
             errors.append(f"requirement {row.get('id')} has no obligation")
         if len(row.get("obligations", [])) > 1 and not row.get("inseparableRationale"):
