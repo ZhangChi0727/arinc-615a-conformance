@@ -12,685 +12,1627 @@
 
 ## Inventory
 
-- Coverage rows: 701
-- CRS items: 311
-- Dependencies: 4
+- Coverage rows: 2651
+- CRS items: 349
+- Dependencies: 12
 - Gaps: 1
-- Coverage fingerprint: `39dd54bd48b10647f84f78f291b755bb7f8605637e5e30e2107d58d02d7fe530`
-- Requirements fingerprint: `90396ef83c76f5d04f237cbfb7fcd62222e49343b5658d26bf84cecc1199fa39`
+- Coverage fingerprint: `a00d73377c5072ce86047f77aeb0ebab0695ef67ac57aad1e03fc7bd3e9ec3be`
+- Requirements fingerprint: `aa3997c82ff72e2e958c20961858bf328cb85d52719cd529f10b5fe041f0c78e`
+- Source-unit fingerprint: `a4e99d2a9a9d1315ca6beb96825b0d584f607a5a07f060ffc40b0611a3f21e1b`
+- Automated checks cover structure and cross-record consistency only; proprietary-source completeness and fidelity require external RG0 review.
 
 ## Applicability
 
-- `APPLICABLE-BASE`: 43
-- `APPLICABLE-SUPPORTING`: 246
-- `BLOCKED-BY-DEPENDENCY`: 22
+- `APPLICABLE-BASE`: 70
+- `APPLICABLE-SUPPORTING`: 279
 
 ## Source modality
 
-- `FIGURE-CONSTRAINT`: 9
-- `MAY`: 76
-- `MUST`: 18
-- `SHOULD`: 200
-- `TABLE-CONSTRAINT`: 8
+- `FIGURE-CONSTRAINT`: 39
+- `MAY`: 32
+- `MUST`: 12
+- `SHOULD`: 174
+- `TABLE-CONSTRAINT`: 92
 
 ## Conformance effect
 
-- `OPTIONAL`: 76
-- `REQUIRED`: 235
+- `OPTIONAL`: 32
+- `REQUIRED`: 317
 
 ## Open dependencies and gaps
 
-- `DEP-ARINC-645` — OPEN-DEPENDENCY: Integrity and naming algorithms remain unavailable. / 完整性与命名算法来源仍未取得。
-- `DEP-ARINC-6655` — REGISTERED-SUPPORTING-SOURCE: Bounded data-format survey; not an edition substitute. / 有界数据格式调查，不构成版次替代。
-- `DEP-IP-UDP-664` — OPEN-DEPENDENCY: IP, UDP and ARINC 664 network semantics require controlled source closure. / IP、UDP 与 ARINC 664 网络语义仍需受控来源闭合。
-- `DEP-RFC-TFTP` — OPEN-DEPENDENCY: TFTP base and option RFC identities and applicability remain open. / TFTP 基础及选项 RFC 的身份与适用性仍开放。
-- `GAP-ARINC-645` — NOT-ESTABLISHED: CRC, check-value, naming and complete-integrity validation are blocked. / CRC、校验值、命名及完整完整性验证仍受阻。
+- `DEP-ARINC-645` — OPEN-DEPENDENCY: ARINC 645 algorithms remain unavailable. / ARINC 645 算法来源仍未取得。
+- `DEP-ARINC-664-2` — OPEN-DEPENDENCY: Ethernet physical and link semantics remain open. / 以太网物理层与链路层语义仍开放。
+- `DEP-ARINC-664-3` — OPEN-DEPENDENCY: Internet-based aircraft network semantics remain open. / 基于互联网协议的航空网络语义仍开放。
+- `DEP-ARINC-6655` — REGISTERED-SUPPORTING-SOURCE: Bounded data-object source. / 有界数据对象来源。
+- `DEP-RFC-1123` — OPEN-DEPENDENCY: Host requirement identity and applicability remain open. / 主机要求身份与适用性仍开放。
+- `DEP-RFC-1350` — OPEN-DEPENDENCY: TFTP base identity and applicability remain open. / TFTP 基础身份与适用性仍开放。
+- `DEP-RFC-1785` — OPEN-DEPENDENCY: TFTP option-negotiation identity remains open. / TFTP 选项协商身份仍开放。
+- `DEP-RFC-2347` — OPEN-DEPENDENCY: TFTP option-extension identity remains open. / TFTP 选项扩展身份仍开放。
+- `DEP-RFC-2348` — OPEN-DEPENDENCY: TFTP block-size option identity remains open. / TFTP 块大小选项身份仍开放。
+- `DEP-RFC-2349` — OPEN-DEPENDENCY: TFTP timeout and transfer-size option identity remains open. / TFTP 超时与传输大小选项身份仍开放。
+- `DEP-RFC-768` — OPEN-DEPENDENCY: UDP identity and applicability remain open. / UDP 身份与适用性仍开放。
+- `DEP-RFC-791` — OPEN-DEPENDENCY: IP identity and applicability remain open. / IP 身份与适用性仍开放。
+- `GAP-ARINC-645` — NOT-ESTABLISHED: ARINC 645-dependent validation remains blocked. / 依赖 ARINC 645 的验证仍受阻。
 
 ## CRS items
 
-| ID | Source | Modality / effect | Applicability | Review paraphrase | Dependencies / gaps |
-|---|---|---|---|---|---|
-| `CRS-615A3-0001` | `ARINC-615A-3 1.1 p.1` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 1 governing DATA-LOADER-FUNCTION at clause 1.1.<br>对 SCOPE，执行条款 1.1 中治理 DATA-LOADER-FUNCTION 的第 1 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0002` | `ARINC-615A-3 1.3 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 1 governing SCOPE-AND-PRODUCT-ROLE at clause 1.3.<br>对 SCOPE，执行条款 1.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 1 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0003` | `ARINC-615A-3 1.3 p.2` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 2 governing COMPATIBILITY / DATA-LOADER-FUNCTION / MEDIA at clause 1.3.<br>对 SCOPE，执行条款 1.3 中治理 COMPATIBILITY / DATA-LOADER-FUNCTION / MEDIA 的第 2 项原子transport规则。 | — |
-| `CRS-615A3-0004` | `ARINC-615A-3 1.3 p.2` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic protocol behavior rule 3 governing COMPATIBILITY / OPTION-NEGOTIATION at clause 1.3.<br>对 SCOPE，执行条款 1.3 中治理 COMPATIBILITY / OPTION-NEGOTIATION 的第 3 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0005` | `ARINC-615A-3 1.3 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic protocol behavior rule 4 governing SCOPE-AND-PRODUCT-ROLE at clause 1.3.<br>对 SCOPE，执行条款 1.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 4 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0006` | `ARINC-615A-3 1.3 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 5 governing COMPATIBILITY / MEDIA at clause 1.3.<br>对 SCOPE，执行条款 1.3 中治理 COMPATIBILITY / MEDIA 的第 5 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0007` | `ARINC-615A-3 1.3 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic protocol behavior rule 6 governing SCOPE-AND-PRODUCT-ROLE at clause 1.3.<br>对 SCOPE，执行条款 1.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 6 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0008` | `ARINC-615A-3 1.3 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 7 governing SCOPE-AND-PRODUCT-ROLE at clause 1.3.<br>对 SCOPE，执行条款 1.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 7 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0009` | `ARINC-615A-3 1.3 p.2` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 8 governing SCOPE-AND-PRODUCT-ROLE at clause 1.3.<br>对 SCOPE，执行条款 1.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 8 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0010` | `ARINC-615A-3 1.3 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic protocol behavior rule 9 governing SCOPE-AND-PRODUCT-ROLE at clause 1.3.<br>对 SCOPE，执行条款 1.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 9 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0011` | `ARINC-615A-3 1.4.1 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic protocol behavior rule 1 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.1.<br>对 SCOPE，执行条款 1.4.1 中治理 SCOPE-AND-PRODUCT-ROLE 的第 1 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0012` | `ARINC-615A-3 1.4.1 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 2 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.1.<br>对 SCOPE，执行条款 1.4.1 中治理 SCOPE-AND-PRODUCT-ROLE 的第 2 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0013` | `ARINC-615A-3 1.4.1 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 3 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.1.<br>对 SCOPE，执行条款 1.4.1 中治理 SCOPE-AND-PRODUCT-ROLE 的第 3 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0014` | `ARINC-615A-3 1.4.1 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic human interface rule 4 governing MEDIA at clause 1.4.1.<br>对 SCOPE，执行条款 1.4.1 中治理 MEDIA 的第 4 项原子human interface规则。 | — |
-| `CRS-615A3-0015` | `ARINC-615A-3 1.4.1 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic data format rule 5 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.1.<br>对 SCOPE，执行条款 1.4.1 中治理 SCOPE-AND-PRODUCT-ROLE 的第 5 项原子data format规则。 | DEP-ARINC-6655, DEP-IP-UDP-664 |
-| `CRS-615A3-0016` | `ARINC-615A-3 1.4.1 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic error status rule 6 governing STATUS / RESOURCE-LIMIT at clause 1.4.1.<br>对 SCOPE，执行条款 1.4.1 中治理 STATUS / RESOURCE-LIMIT 的第 6 项原子error status规则。 | — |
-| `CRS-615A3-0017` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 1 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.3.<br>对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 1 项原子transport规则。 | — |
-| `CRS-615A3-0018` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic protocol behavior rule 2 governing POWER-ENVIRONMENT at clause 1.4.3.<br>对 SCOPE，执行条款 1.4.3 中治理 POWER-ENVIRONMENT 的第 2 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0019` | `ARINC-615A-3 1.4.3 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 3 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.3.<br>对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 3 项原子transport规则。 | — |
-| `CRS-615A3-0020` | `ARINC-615A-3 1.4.3 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic error status rule 4 governing STATUS / RESOURCE-LIMIT at clause 1.4.3.<br>对 SCOPE，执行条款 1.4.3 中治理 STATUS / RESOURCE-LIMIT 的第 4 项原子error status规则。 | — |
-| `CRS-615A3-0021` | `ARINC-615A-3 1.4.3 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 5 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.3.<br>对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 5 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0022` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic human interface rule 6 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.3.<br>对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 6 项原子human interface规则。 | — |
-| `CRS-615A3-0023` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 7 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.3.<br>对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 7 项原子transport规则。 | — |
-| `CRS-615A3-0024` | `ARINC-615A-3 1.4.3 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 8 governing POWER-ENVIRONMENT at clause 1.4.3.<br>对 SCOPE，执行条款 1.4.3 中治理 POWER-ENVIRONMENT 的第 8 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0025` | `ARINC-615A-3 1.4.3 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 9 governing POWER-ENVIRONMENT at clause 1.4.3.<br>对 SCOPE，执行条款 1.4.3 中治理 POWER-ENVIRONMENT 的第 9 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0026` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 10 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.3.<br>对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 10 项原子transport规则。 | — |
-| `CRS-615A3-0027` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic protocol behavior rule 11 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.3.<br>对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 11 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0028` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 12 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.3.<br>对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 12 项原子transport规则。 | — |
-| `CRS-615A3-0029` | `ARINC-615A-3 1.8 p.5` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic data format rule 1 governing COMPATIBILITY / MEDIA at clause 1.8.<br>对 SCOPE，执行条款 1.8 中治理 COMPATIBILITY / MEDIA 的第 1 项原子data format规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0030` | `ARINC-615A-3 1.8 p.5` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 2 governing SCOPE-AND-PRODUCT-ROLE at clause 1.8.<br>对 SCOPE，执行条款 1.8 中治理 SCOPE-AND-PRODUCT-ROLE 的第 2 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0031` | `ARINC-615A-3 1.8 p.5` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 3 governing DATA-LOADER-FUNCTION at clause 1.8.<br>对 SCOPE，执行条款 1.8 中治理 DATA-LOADER-FUNCTION 的第 3 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0032` | `ARINC-615A-3 1.8 p.5` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 4 governing MEDIA at clause 1.8.<br>对 SCOPE，执行条款 1.8 中治理 MEDIA 的第 4 项原子transport规则。 | — |
-| `CRS-615A3-0033` | `ARINC-615A-3 1.8 p.5` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 5 governing RELIABILITY at clause 1.8.<br>对 SCOPE，执行条款 1.8 中治理 RELIABILITY 的第 5 项原子transport规则。 | DEP-ARINC-6655, DEP-IP-UDP-664 |
-| `CRS-615A3-0034` | `ARINC-615A-3 1.8 p.5` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic protocol behavior rule 6 governing FIND / RELIABILITY at clause 1.8.<br>对 SCOPE，执行条款 1.8 中治理 FIND / RELIABILITY 的第 6 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0035` | `ARINC-615A-3 1.8 p.5` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 7 governing RELIABILITY / MAINTAINABILITY / POWER-ENVIRONMENT at clause 1.8.<br>对 SCOPE，执行条款 1.8 中治理 RELIABILITY / MAINTAINABILITY / POWER-ENVIRONMENT 的第 7 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0036` | `ARINC-615A-3 1.8 p.5` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 8 governing MAINTAINABILITY at clause 1.8.<br>对 SCOPE，执行条款 1.8 中治理 MAINTAINABILITY 的第 8 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0037` | `ARINC-615A-3 1.10 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For SCOPE, enforce atomic transport rule 1 governing SCOPE-AND-PRODUCT-ROLE at clause 1.10.<br>对 SCOPE，执行条款 1.10 中治理 SCOPE-AND-PRODUCT-ROLE 的第 1 项原子transport规则。 | — |
-| `CRS-615A3-0038` | `ARINC-615A-3 5.2 p.22` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 1 governing FILE-NAME / PROTOCOL-FILE at clause 5.2.<br>对 COMMON，执行条款 5.2 中治理 FILE-NAME / PROTOCOL-FILE 的第 1 项原子data format规则。 | — |
-| `CRS-615A3-0039` | `ARINC-615A-3 5.2 p.22` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 2 governing PROTOCOL-SCOPE at clause 5.2.<br>对 COMMON，执行条款 5.2 中治理 PROTOCOL-SCOPE 的第 2 项原子transport规则。 | DEP-ARINC-6655 |
-| `CRS-615A3-0040` | `ARINC-615A-3 5.3.1 p.23` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 1 governing FIND at clause 5.3.1.<br>对 COMMON，执行条款 5.3.1 中治理 FIND 的第 1 项原子data format规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0041` | `ARINC-615A-3 5.3.2 p.24` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 1 governing COMPATIBILITY at clause 5.3.2.<br>对 COMMON，执行条款 5.3.2 中治理 COMPATIBILITY 的第 1 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0042` | `ARINC-615A-3 5.3.2.3.2 p.25` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 1 governing TFTP-OPTION / OPTION-NEGOTIATION / FILE-TRANSFER at clause 5.3.2.3.2.<br>对 COMMON，执行条款 5.3.2.3.2 中治理 TFTP-OPTION / OPTION-NEGOTIATION / FILE-TRANSFER 的第 1 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0043` | `ARINC-615A-3 5.3.2.3.2 p.25` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic protocol behavior rule 2 governing TRANSPORT-ADAPTATION at clause 5.3.2.3.2.<br>对 COMMON，执行条款 5.3.2.3.2 中治理 TRANSPORT-ADAPTATION 的第 2 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0044` | `ARINC-615A-3 5.3.2.3.2 p.25` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic error status rule 3 governing ERROR / OPTION-NEGOTIATION at clause 5.3.2.3.2.<br>对 COMMON，执行条款 5.3.2.3.2 中治理 ERROR / OPTION-NEGOTIATION 的第 3 项原子error status规则。 | — |
-| `CRS-615A3-0045` | `ARINC-615A-3 5.3.2.3.2 p.25` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 4 governing TFTP-OPTION / OPTION-NEGOTIATION at clause 5.3.2.3.2.<br>对 COMMON，执行条款 5.3.2.3.2 中治理 TFTP-OPTION / OPTION-NEGOTIATION 的第 4 项原子transport规则。 | DEP-IP-UDP-664, DEP-RFC-TFTP |
-| `CRS-615A3-0046` | `ARINC-615A-3 5.3.2.3.2 p.25` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 5 governing TRANSPORT-ADAPTATION at clause 5.3.2.3.2.<br>对 COMMON，执行条款 5.3.2.3.2 中治理 TRANSPORT-ADAPTATION 的第 5 项原子data format规则。 | — |
-| `CRS-615A3-0047` | `ARINC-615A-3 5.3.2.3.2 p.25` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 6 governing PORT at clause 5.3.2.3.2.<br>对 COMMON，执行条款 5.3.2.3.2 中治理 PORT 的第 6 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0048` | `ARINC-615A-3 5.3.2.3.4 p.26` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic error status rule 1 governing ERROR at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 ERROR 的第 1 项原子error status规则。 | — |
-| `CRS-615A3-0049` | `ARINC-615A-3 5.3.2.3.4 p.26` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 2 governing ERROR at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 ERROR 的第 2 项原子data format规则。 | — |
-| `CRS-615A3-0050` | `ARINC-615A-3 5.3.2.3.4 p.26` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 3 governing ERROR at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 ERROR 的第 3 项原子data format规则。 | — |
-| `CRS-615A3-0051` | `ARINC-615A-3 5.3.2.3.4 p.26` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 4 governing WAIT / ERROR / RESOURCE-LIMIT at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 WAIT / ERROR / RESOURCE-LIMIT 的第 4 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0052` | `ARINC-615A-3 5.3.2.3.4 p.26` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 5 governing REQUEST-RESPONSE at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 REQUEST-RESPONSE 的第 5 项原子transport规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0053` | `ARINC-615A-3 5.3.2.3.4 p.26` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 6 governing WAIT / ABORT at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 WAIT / ABORT 的第 6 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0054` | `ARINC-615A-3 5.3.2.3.8.1 p.28` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 1 governing OPTION-NEGOTIATION at clause 5.3.2.3.8.1.<br>对 COMMON，执行条款 5.3.2.3.8.1 中治理 OPTION-NEGOTIATION 的第 1 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0055` | `ARINC-615A-3 5.3.2.3.8.1 p.28` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 2 governing OPTION-NEGOTIATION at clause 5.3.2.3.8.1.<br>对 COMMON，执行条款 5.3.2.3.8.1 中治理 OPTION-NEGOTIATION 的第 2 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0056` | `ARINC-615A-3 5.3.2.3.8.1 p.28` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 3 governing BLOCK-SIZE / OPTION-NEGOTIATION / MEDIA at clause 5.3.2.3.8.1.<br>对 COMMON，执行条款 5.3.2.3.8.1 中治理 BLOCK-SIZE / OPTION-NEGOTIATION / MEDIA 的第 3 项原子transport规则。 | DEP-IP-UDP-664, DEP-RFC-TFTP |
-| `CRS-615A3-0057` | `ARINC-615A-3 5.3.2.3.8.1 p.28` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic protocol behavior rule 4 governing RESOURCE-LIMIT at clause 5.3.2.3.8.1.<br>对 COMMON，执行条款 5.3.2.3.8.1 中治理 RESOURCE-LIMIT 的第 4 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0058` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 1 governing BLOCK-SIZE / OPTION-NEGOTIATION at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 BLOCK-SIZE / OPTION-NEGOTIATION 的第 1 项原子transport规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0059` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 2 governing BLOCK-SIZE / TRANSFER-SIZE / OPTION-NEGOTIATION / FILE-TRANSFER at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 BLOCK-SIZE / TRANSFER-SIZE / OPTION-NEGOTIATION / FILE-TRANSFER 的第 2 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0060` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic error status rule 3 governing TRANSFER-SIZE / ERROR / FILE-TRANSFER at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 TRANSFER-SIZE / ERROR / FILE-TRANSFER 的第 3 项原子error status规则。 | — |
-| `CRS-615A3-0061` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 4 governing TRANSFER-SIZE / TIMEOUT / OPTION-NEGOTIATION / FILE-TRANSFER at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 TRANSFER-SIZE / TIMEOUT / OPTION-NEGOTIATION / FILE-TRANSFER 的第 4 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0062` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 5 governing TIMEOUT at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 TIMEOUT 的第 5 项原子timing规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0063` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 6 governing TIMEOUT / PART-NUMBER / OPTION-NEGOTIATION at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 TIMEOUT / PART-NUMBER / OPTION-NEGOTIATION 的第 6 项原子timing规则。 | — |
-| `CRS-615A3-0064` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 7 governing TIMEOUT / CHECKSUM / OPTION-NEGOTIATION at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 TIMEOUT / CHECKSUM / OPTION-NEGOTIATION 的第 7 项原子timing规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0065` | `ARINC-615A-3 5.3.2.3.8.5 p.30` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 8 governing CHECKSUM / CRC / FILE-NAME / HEADER-FILE at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 CHECKSUM / CRC / FILE-NAME / HEADER-FILE 的第 8 项原子data format规则。 | DEP-ARINC-6655, DEP-RFC-TFTP, GAP-ARINC-645 |
-| `CRS-615A3-0066` | `ARINC-615A-3 5.3.2.3.8.5 p.30` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 9 governing CRC / REQUEST-RESPONSE at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 CRC / REQUEST-RESPONSE 的第 9 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0067` | `ARINC-615A-3 5.3.2.3.8.5 p.30` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 10 governing TFTP-OPTION / CHECKSUM / OPTION-NEGOTIATION at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 TFTP-OPTION / CHECKSUM / OPTION-NEGOTIATION 的第 10 项原子transport规则。 | DEP-RFC-TFTP, GAP-ARINC-645 |
-| `CRS-615A3-0068` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 11 governing REQUEST-RESPONSE / OPTION-NEGOTIATION at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 REQUEST-RESPONSE / OPTION-NEGOTIATION 的第 11 项原子data format规则。 | — |
-| `CRS-615A3-0069` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 12 governing CHECKSUM / CRC / FILE-NAME / HEADER-FILE at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 CHECKSUM / CRC / FILE-NAME / HEADER-FILE 的第 12 项原子data format规则。 | DEP-ARINC-6655, GAP-ARINC-645 |
-| `CRS-615A3-0070` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 13 governing DOWNLOAD / OPTION-NEGOTIATION at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 DOWNLOAD / OPTION-NEGOTIATION 的第 13 项原子data format规则。 | — |
-| `CRS-615A3-0071` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 14 governing CHECKSUM at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 CHECKSUM 的第 14 项原子transport规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0072` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 15 governing CHECKSUM / DATA-FILE / ERROR / OPTION-NEGOTIATION at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 CHECKSUM / DATA-FILE / ERROR / OPTION-NEGOTIATION 的第 15 项原子data format规则。 | DEP-RFC-TFTP, GAP-ARINC-645 |
-| `CRS-615A3-0073` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 16 governing CHECKSUM / DOWNLOAD / ERROR at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 CHECKSUM / DOWNLOAD / ERROR 的第 16 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0074` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 17 governing CHECKSUM / DOWNLOAD at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 CHECKSUM / DOWNLOAD 的第 17 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0075` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic protocol behavior rule 18 governing TRANSPORT-ADAPTATION at clause 5.3.2.3.8.5.<br>对 COMMON，执行条款 5.3.2.3.8.5 中治理 TRANSPORT-ADAPTATION 的第 18 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0076` | `ARINC-615A-3 5.4.1 p.33` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 1 governing OPERATION-SERVICE at clause 5.4.1.<br>对 COMMON，执行条款 5.4.1 中治理 OPERATION-SERVICE 的第 1 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0077` | `ARINC-615A-3 5.4.1 p.33` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 2 governing OPERATION-SERVICE at clause 5.4.1.<br>对 COMMON，执行条款 5.4.1 中治理 OPERATION-SERVICE 的第 2 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0078` | `ARINC-615A-3 5.4.1 p.33` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 3 governing PROTOCOL-FILE at clause 5.4.1.<br>对 COMMON，执行条款 5.4.1 中治理 PROTOCOL-FILE 的第 3 项原子data format规则。 | — |
-| `CRS-615A3-0079` | `ARINC-615A-3 5.4.1 p.34` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic protocol behavior rule 4 governing OPERATION-SERVICE at clause 5.4.1.<br>对 COMMON，执行条款 5.4.1 中治理 OPERATION-SERVICE 的第 4 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0080` | `ARINC-615A-3 5.4.1 p.34` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic error status rule 5 governing ABORT / INTERRUPTION at clause 5.4.1.<br>对 COMMON，执行条款 5.4.1 中治理 ABORT / INTERRUPTION 的第 5 项原子error status规则。 | — |
-| `CRS-615A3-0081` | `ARINC-615A-3 5.4.1 p.34` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic protocol behavior rule 6 governing OPERATION-SERVICE at clause 5.4.1.<br>对 COMMON，执行条款 5.4.1 中治理 OPERATION-SERVICE 的第 6 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0082` | `ARINC-615A-3 5.4.1 p.34` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 7 governing UPLOAD / DOWNLOAD / FIND at clause 5.4.1.<br>对 COMMON，执行条款 5.4.1 中治理 UPLOAD / DOWNLOAD / FIND 的第 7 项原子data format规则。 | — |
-| `CRS-615A3-0083` | `ARINC-615A-3 5.4.1 p.34` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic protocol behavior rule 8 governing FIND / REQUEST-RESPONSE at clause 5.4.1.<br>对 COMMON，执行条款 5.4.1 中治理 FIND / REQUEST-RESPONSE 的第 8 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0084` | `ARINC-615A-3 5.4.1 p.34` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 9 governing REQUEST-RESPONSE at clause 5.4.1.<br>对 COMMON，执行条款 5.4.1 中治理 REQUEST-RESPONSE 的第 9 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0085` | `ARINC-615A-3 5.4.1 p.34` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 10 governing STATUS / STATUS-CODE at clause 5.4.1.<br>对 COMMON，执行条款 5.4.1 中治理 STATUS / STATUS-CODE 的第 10 项原子data format规则。 | — |
-| `CRS-615A3-0086` | `ARINC-615A-3 5.4.3 p.35` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic transport rule 1 governing REQUEST-RESPONSE at clause 5.4.3.<br>对 UPLOAD，执行条款 5.4.3 中治理 REQUEST-RESPONSE 的第 1 项原子transport规则。 | — |
-| `CRS-615A3-0087` | `ARINC-615A-3 5.4.3 p.35` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic protocol behavior rule 2 governing OPERATION-SERVICE at clause 5.4.3.<br>对 UPLOAD，执行条款 5.4.3 中治理 OPERATION-SERVICE 的第 2 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0088` | `ARINC-615A-3 5.4.3 p.35` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic protocol behavior rule 3 governing OPERATION-SERVICE at clause 5.4.3.<br>对 UPLOAD，执行条款 5.4.3 中治理 OPERATION-SERVICE 的第 3 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0089` | `ARINC-615A-3 5.4.3 p.35` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic timing rule 4 governing WAIT / STATUS / APPLICATION-MESSAGE at clause 5.4.3.<br>对 UPLOAD，执行条款 5.4.3 中治理 WAIT / STATUS / APPLICATION-MESSAGE 的第 4 项原子timing规则。 | — |
-| `CRS-615A3-0090` | `ARINC-615A-3 5.4.3 p.35` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic transport rule 5 governing TFTP-OPTION / OPTION-NEGOTIATION at clause 5.4.3.<br>对 UPLOAD，执行条款 5.4.3 中治理 TFTP-OPTION / OPTION-NEGOTIATION 的第 5 项原子transport规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0091` | `ARINC-615A-3 5.4.3 p.35` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic transport rule 6 governing TFTP-OPTION / OPTION-NEGOTIATION at clause 5.4.3.<br>对 UPLOAD，执行条款 5.4.3 中治理 TFTP-OPTION / OPTION-NEGOTIATION 的第 6 项原子transport规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0092` | `ARINC-615A-3 5.4.3 p.35` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 7 governing UPLOAD at clause 5.4.3.<br>对 UPLOAD，执行条款 5.4.3 中治理 UPLOAD 的第 7 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0093` | `ARINC-615A-3 5.4.3.1 p.36` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic protocol behavior rule 1 governing OPERATION-SERVICE at clause 5.4.3.1.<br>对 UPLOAD，执行条款 5.4.3.1 中治理 OPERATION-SERVICE 的第 1 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0094` | `ARINC-615A-3 5.4.3.1 p.36` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic error status rule 2 governing STATUS / APPLICATION-MESSAGE at clause 5.4.3.1.<br>对 UPLOAD，执行条款 5.4.3.1 中治理 STATUS / APPLICATION-MESSAGE 的第 2 项原子error status规则。 | — |
-| `CRS-615A3-0095` | `ARINC-615A-3 5.4.3.1 p.36` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic transport rule 3 governing TFTP-OPTION / OPTION-NEGOTIATION at clause 5.4.3.1.<br>对 UPLOAD，执行条款 5.4.3.1 中治理 TFTP-OPTION / OPTION-NEGOTIATION 的第 3 项原子transport规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0096` | `ARINC-615A-3 5.4.3.1 p.36` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 4 governing FILE-NAME / REQUEST-RESPONSE at clause 5.4.3.1.<br>对 UPLOAD，执行条款 5.4.3.1 中治理 FILE-NAME / REQUEST-RESPONSE 的第 4 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0097` | `ARINC-615A-3 5.4.3.1 p.36` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic timing rule 5 governing TFTP-OPTION / OPTION-NEGOTIATION at clause 5.4.3.1.<br>对 UPLOAD，执行条款 5.4.3.1 中治理 TFTP-OPTION / OPTION-NEGOTIATION 的第 5 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0098` | `ARINC-615A-3 5.4.3.1 p.36` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 6 governing PART-NUMBER / HEADER-FILE / DATA-FILE at clause 5.4.3.1.<br>对 UPLOAD，执行条款 5.4.3.1 中治理 PART-NUMBER / HEADER-FILE / DATA-FILE 的第 6 项原子data format规则。 | — |
-| `CRS-615A3-0099` | `ARINC-615A-3 5.4.3.2 p.37` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic protocol behavior rule 1 governing OPERATION-SERVICE at clause 5.4.3.2.<br>对 UPLOAD，执行条款 5.4.3.2 中治理 OPERATION-SERVICE 的第 1 项原子protocol behavior规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0100` | `ARINC-615A-3 5.4.3.2 p.37` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 2 governing CRC at clause 5.4.3.2.<br>对 UPLOAD，执行条款 5.4.3.2 中治理 CRC 的第 2 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0101` | `ARINC-615A-3 5.4.3.2 p.37` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 3 governing CRC / PART-NUMBER at clause 5.4.3.2.<br>对 UPLOAD，执行条款 5.4.3.2 中治理 CRC / PART-NUMBER 的第 3 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0102` | `ARINC-615A-3 5.4.3.2 p.37` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 4 governing OPERATION-SERVICE at clause 5.4.3.2.<br>对 UPLOAD，执行条款 5.4.3.2 中治理 OPERATION-SERVICE 的第 4 项原子data format规则。 | — |
-| `CRS-615A3-0103` | `ARINC-615A-3 5.4.3.2 p.37` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic timing rule 5 governing FILE-CONTENT at clause 5.4.3.2.<br>对 UPLOAD，执行条款 5.4.3.2 中治理 FILE-CONTENT 的第 5 项原子timing规则。 | — |
-| `CRS-615A3-0104` | `ARINC-615A-3 5.4.3.2 p.37` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 6 governing OPERATION-SERVICE at clause 5.4.3.2.<br>对 UPLOAD，执行条款 5.4.3.2 中治理 OPERATION-SERVICE 的第 6 项原子data format规则。 | — |
-| `CRS-615A3-0105` | `ARINC-615A-3 5.4.5.1 p.40` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 1 governing DOWNLOAD / REQUEST-RESPONSE / MEDIA at clause 5.4.5.1.<br>对 COMMON，执行条款 5.4.5.1 中治理 DOWNLOAD / REQUEST-RESPONSE / MEDIA 的第 1 项原子data format规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0106` | `ARINC-615A-3 5.4.5.1 p.40` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic human interface rule 2 governing DOWNLOAD / MEDIA at clause 5.4.5.1.<br>对 COMMON，执行条款 5.4.5.1 中治理 DOWNLOAD / MEDIA 的第 2 项原子human interface规则。 | — |
-| `CRS-615A3-0107` | `ARINC-615A-3 5.4.5.1 p.40` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic error status rule 3 governing DOWNLOAD / ERROR / MEDIA at clause 5.4.5.1.<br>对 COMMON，执行条款 5.4.5.1 中治理 DOWNLOAD / ERROR / MEDIA 的第 3 项原子error status规则。 | — |
-| `CRS-615A3-0108` | `ARINC-615A-3 5.4.5.1 p.40` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 4 governing DOWNLOAD / TARGET-IDENTITY / MEDIA at clause 5.4.5.1.<br>对 COMMON，执行条款 5.4.5.1 中治理 DOWNLOAD / TARGET-IDENTITY / MEDIA 的第 4 项原子timing规则。 | — |
-| `CRS-615A3-0109` | `ARINC-615A-3 5.4.5.1 p.40` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 5 governing DOWNLOAD / TARGET-IDENTITY at clause 5.4.5.1.<br>对 COMMON，执行条款 5.4.5.1 中治理 DOWNLOAD / TARGET-IDENTITY 的第 5 项原子timing规则。 | — |
-| `CRS-615A3-0110` | `ARINC-615A-3 5.4.5.2 p.41` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 1 governing ABORT / STATUS / STATUS-CODE / INTERRUPTION at clause 5.4.5.2.<br>对 COMMON，执行条款 5.4.5.2 中治理 ABORT / STATUS / STATUS-CODE / INTERRUPTION 的第 1 项原子data format规则。 | — |
-| `CRS-615A3-0111` | `ARINC-615A-3 6.2.8.2 p.45` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic timing rule 1 governing WAIT / APPLICATION-MESSAGE / REQUEST-RESPONSE / RESOURCE-LIMIT at clause 6.2.8.2.<br>对 UPLOAD，执行条款 6.2.8.2 中治理 WAIT / APPLICATION-MESSAGE / REQUEST-RESPONSE / RESOURCE-LIMIT 的第 1 项原子timing规则。 | DEP-IP-UDP-664, DEP-RFC-TFTP |
-| `CRS-615A3-0112` | `ARINC-615A-3 6.3.1 p.51` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic timing rule 1 governing TIMEOUT at clause 6.3.1.<br>对 INFORMATION，执行条款 6.3.1 中治理 TIMEOUT 的第 1 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0113` | `ARINC-615A-3 6.3.1 p.51` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic timing rule 2 governing TIMEOUT at clause 6.3.1.<br>对 INFORMATION，执行条款 6.3.1 中治理 TIMEOUT 的第 2 项原子timing规则。 | — |
-| `CRS-615A3-0114` | `ARINC-615A-3 6.3.1 p.51` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic timing rule 3 governing STATUS / TIMEOUT / APPLICATION-MESSAGE at clause 6.3.1.<br>对 INFORMATION，执行条款 6.3.1 中治理 STATUS / TIMEOUT / APPLICATION-MESSAGE 的第 3 项原子timing规则。 | — |
-| `CRS-615A3-0115` | `ARINC-615A-3 6.3.1 p.51` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic timing rule 4 governing ABORT / STATUS / TIMEOUT / INFORMATION at clause 6.3.1.<br>对 INFORMATION，执行条款 6.3.1 中治理 ABORT / STATUS / TIMEOUT / INFORMATION 的第 4 项原子timing规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0116` | `ARINC-615A-3 6.3.1 p.51` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic timing rule 5 governing STATUS / TIMEOUT / APPLICATION-MESSAGE / REQUEST-RESPONSE at clause 6.3.1.<br>对 INFORMATION，执行条款 6.3.1 中治理 STATUS / TIMEOUT / APPLICATION-MESSAGE / REQUEST-RESPONSE 的第 5 项原子timing规则。 | — |
-| `CRS-615A3-0117` | `ARINC-615A-3 6.3.1 p.51` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic timing rule 6 governing STATUS / TIMEOUT / APPLICATION-MESSAGE / TARGET-IDENTITY at clause 6.3.1.<br>对 INFORMATION，执行条款 6.3.1 中治理 STATUS / TIMEOUT / APPLICATION-MESSAGE / TARGET-IDENTITY 的第 6 项原子timing规则。 | — |
-| `CRS-615A3-0118` | `ARINC-615A-3 6.3.1 p.52` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic timing rule 7 governing WAIT at clause 6.3.1.<br>对 INFORMATION，执行条款 6.3.1 中治理 WAIT 的第 7 项原子timing规则。 | — |
-| `CRS-615A3-0119` | `ARINC-615A-3 6.3.1 p.52` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic timing rule 8 governing OPERATION-SEQUENCE at clause 6.3.1.<br>对 INFORMATION，执行条款 6.3.1 中治理 OPERATION-SEQUENCE 的第 8 项原子timing规则。 | — |
-| `CRS-615A3-0120` | `ARINC-615A-3 6.3.1 p.52` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic timing rule 9 governing ABORT / STATUS / UPLOAD / DOWNLOAD at clause 6.3.1.<br>对 INFORMATION，执行条款 6.3.1 中治理 ABORT / STATUS / UPLOAD / DOWNLOAD 的第 9 项原子timing规则。 | — |
-| `CRS-615A3-0121` | `ARINC-615A-3 5.3.2.3.4 p.55` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 7 governing TIMEOUT at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 TIMEOUT 的第 7 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0122` | `ARINC-615A-3 5.3.2.3.4 p.55` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 8 governing TIMEOUT at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 TIMEOUT 的第 8 项原子timing规则。 | — |
-| `CRS-615A3-0123` | `ARINC-615A-3 5.3.2.3.4 p.55` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 9 governing STATUS / TIMEOUT / APPLICATION-MESSAGE at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 STATUS / TIMEOUT / APPLICATION-MESSAGE 的第 9 项原子timing规则。 | — |
-| `CRS-615A3-0124` | `ARINC-615A-3 5.3.2.3.4 p.55` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 10 governing ABORT / STATUS / TIMEOUT / ERROR at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 ABORT / STATUS / TIMEOUT / ERROR 的第 10 项原子timing规则。 | DEP-IP-UDP-664, DEP-RFC-TFTP |
-| `CRS-615A3-0125` | `ARINC-615A-3 5.3.2.3.4 p.55` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 11 governing HEADER-FILE / DATA-FILE / UPLOAD at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 HEADER-FILE / DATA-FILE / UPLOAD 的第 11 项原子data format规则。 | — |
-| `CRS-615A3-0126` | `ARINC-615A-3 5.3.2.3.4 p.56` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 12 governing WAIT at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 WAIT 的第 12 项原子timing规则。 | — |
-| `CRS-615A3-0127` | `ARINC-615A-3 5.3.2.3.4 p.56` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 13 governing TRANSPORT-ADAPTATION at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 TRANSPORT-ADAPTATION 的第 13 项原子timing规则。 | — |
-| `CRS-615A3-0128` | `ARINC-615A-3 5.3.2.3.4 p.56` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 14 governing ABORT / STATUS / UPLOAD / DOWNLOAD at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 ABORT / STATUS / UPLOAD / DOWNLOAD 的第 14 项原子timing规则。 | — |
-| `CRS-615A3-0129` | `ARINC-615A-3 5.3.2.3.4 p.56` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 15 governing STATUS / CHECKSUM / CRC / DATA-FILE at clause 5.3.2.3.4.<br>对 COMMON，执行条款 5.3.2.3.4 中治理 STATUS / CHECKSUM / CRC / DATA-FILE 的第 15 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0130` | `ARINC-615A-3 6.3.5 p.64` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 1 governing TIMEOUT at clause 6.3.5.<br>对 COMMON，执行条款 6.3.5 中治理 TIMEOUT 的第 1 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0131` | `ARINC-615A-3 6.3.5 p.64` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 2 governing ABORT / STATUS / REQUEST-RESPONSE at clause 6.3.5.<br>对 COMMON，执行条款 6.3.5 中治理 ABORT / STATUS / REQUEST-RESPONSE 的第 2 项原子data format规则。 | — |
-| `CRS-615A3-0132` | `ARINC-615A-3 6.3.5 p.64` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 3 governing ABORT / STATUS / ERROR / REQUEST-RESPONSE at clause 6.3.5.<br>对 COMMON，执行条款 6.3.5 中治理 ABORT / STATUS / ERROR / REQUEST-RESPONSE 的第 3 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0133` | `ARINC-615A-3 6.3.5 p.64` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 4 governing ABORT / STATUS / REQUEST-RESPONSE / STATUS-CODE at clause 6.3.5.<br>对 COMMON，执行条款 6.3.5 中治理 ABORT / STATUS / REQUEST-RESPONSE / STATUS-CODE 的第 4 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0134` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 1 governing PROTOCOL-VERSION at clause 6.4.<br>对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION 的第 1 项原子data format规则。 | — |
-| `CRS-615A3-0135` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic protocol behavior rule 2 governing PROTOCOL-VERSION at clause 6.4.<br>对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION 的第 2 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0136` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 3 governing PROTOCOL-VERSION / PROTOCOL-FILE at clause 6.4.<br>对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION / PROTOCOL-FILE 的第 3 项原子data format规则。 | — |
-| `CRS-615A3-0137` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 4 governing PROTOCOL-VERSION / PROTOCOL-FILE at clause 6.4.<br>对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION / PROTOCOL-FILE 的第 4 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0138` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic error status rule 5 governing PROTOCOL-VERSION / ABORT at clause 6.4.<br>对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION / ABORT 的第 5 项原子error status规则。 | — |
-| `CRS-615A3-0139` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 6 governing PROTOCOL-VERSION / ABORT / STATUS / COMPATIBILITY at clause 6.4.<br>对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION / ABORT / STATUS / COMPATIBILITY 的第 6 项原子data format规则。 | — |
-| `CRS-615A3-0140` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 7 governing PROTOCOL-VERSION / PROTOCOL-FILE at clause 6.4.<br>对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION / PROTOCOL-FILE 的第 7 项原子data format规则。 | — |
-| `CRS-615A3-0141` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 8 governing PART-NUMBER / ZERO-TERMINATION at clause 6.4.<br>对 COMMON，执行条款 6.4 中治理 PART-NUMBER / ZERO-TERMINATION 的第 8 项原子data format规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0142` | `ARINC-615A-3 6.4 p.65` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 9 governing ZERO-TERMINATION at clause 6.4.<br>对 COMMON，执行条款 6.4 中治理 ZERO-TERMINATION 的第 9 项原子data format规则。 | — |
-| `CRS-615A3-0143` | `ARINC-615A-3 6.4 p.66` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 10 governing FIELD-LENGTH at clause 6.4.<br>对 COMMON，执行条款 6.4 中治理 FIELD-LENGTH 的第 10 项原子data format规则。 | — |
-| `CRS-615A3-0144` | `ARINC-615A-3 6.4.2 p.68` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 1 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.2.<br>对 INFORMATION，执行条款 6.4.2 中治理 PROTOCOL-FILE-SEMANTICS 的第 1 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0145` | `ARINC-615A-3 6.4.2 p.68` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic data format rule 2 governing PROTOCOL-VERSION / PART-NUMBER / ZERO-TERMINATION / TARGET-IDENTITY at clause 6.4.2.<br>对 INFORMATION，执行条款 6.4.2 中治理 PROTOCOL-VERSION / PART-NUMBER / ZERO-TERMINATION / TARGET-IDENTITY 的第 2 项原子data format规则。 | — |
-| `CRS-615A3-0146` | `ARINC-615A-3 6.4.2 p.69` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 3 governing ZERO-TERMINATION at clause 6.4.2.<br>对 INFORMATION，执行条款 6.4.2 中治理 ZERO-TERMINATION 的第 3 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0147` | `ARINC-615A-3 6.4.2 p.69` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 4 governing ZERO-TERMINATION at clause 6.4.2.<br>对 INFORMATION，执行条款 6.4.2 中治理 ZERO-TERMINATION 的第 4 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0148` | `ARINC-615A-3 6.4.3 p.70` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 1 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.3.<br>对 INFORMATION，执行条款 6.4.3 中治理 PROTOCOL-FILE-SEMANTICS 的第 1 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0149` | `ARINC-615A-3 6.4.3 p.70` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic timing rule 2 governing PROTOCOL-VERSION / STATUS / INFORMATION / ZERO-TERMINATION at clause 6.4.3.<br>对 INFORMATION，执行条款 6.4.3 中治理 PROTOCOL-VERSION / STATUS / INFORMATION / ZERO-TERMINATION 的第 2 项原子timing规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0150` | `ARINC-615A-3 6.4.4 p.72` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 1 governing STATUS / STATUS-CODE at clause 6.4.4.<br>对 UPLOAD，执行条款 6.4.4 中治理 STATUS / STATUS-CODE 的第 1 项原子data format规则。 | — |
-| `CRS-615A3-0151` | `ARINC-615A-3 6.4.4 p.72` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic timing rule 2 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.4.<br>对 UPLOAD，执行条款 6.4.4 中治理 PROTOCOL-FILE-SEMANTICS 的第 2 项原子timing规则。 | — |
-| `CRS-615A3-0152` | `ARINC-615A-3 6.4.4 p.72` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic timing rule 3 governing STATUS / STATUS-CODE at clause 6.4.4.<br>对 UPLOAD，执行条款 6.4.4 中治理 STATUS / STATUS-CODE 的第 3 项原子timing规则。 | — |
-| `CRS-615A3-0153` | `ARINC-615A-3 6.4.4 p.72` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 4 governing STATUS / STATUS-CODE at clause 6.4.4.<br>对 UPLOAD，执行条款 6.4.4 中治理 STATUS / STATUS-CODE 的第 4 项原子data format规则。 | — |
-| `CRS-615A3-0154` | `ARINC-615A-3 6.4.4 p.72` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic protocol behavior rule 5 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.4.<br>对 UPLOAD，执行条款 6.4.4 中治理 PROTOCOL-FILE-SEMANTICS 的第 5 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0155` | `ARINC-615A-3 6.4.4 p.72` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 6 governing PROTOCOL-VERSION / FILE-NAME / PART-NUMBER / HEADER-FILE at clause 6.4.4.<br>对 UPLOAD，执行条款 6.4.4 中治理 PROTOCOL-VERSION / FILE-NAME / PART-NUMBER / HEADER-FILE 的第 6 项原子data format规则。 | — |
-| `CRS-615A3-0156` | `ARINC-615A-3 6.4.4 p.73` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 7 governing HEADER-FILE at clause 6.4.4.<br>对 UPLOAD，执行条款 6.4.4 中治理 HEADER-FILE 的第 7 项原子data format规则。 | — |
-| `CRS-615A3-0157` | `ARINC-615A-3 6.4.4 p.73` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic protocol behavior rule 8 governing ZERO-TERMINATION at clause 6.4.4.<br>对 UPLOAD，执行条款 6.4.4 中治理 ZERO-TERMINATION 的第 8 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0158` | `ARINC-615A-3 6.4.4 p.73` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic protocol behavior rule 9 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.4.<br>对 UPLOAD，执行条款 6.4.4 中治理 PROTOCOL-FILE-SEMANTICS 的第 9 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0159` | `ARINC-615A-3 6.4.5 p.75` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 1 governing STATUS / STATUS-CODE at clause 6.4.5.<br>对 UPLOAD，执行条款 6.4.5 中治理 STATUS / STATUS-CODE 的第 1 项原子data format规则。 | — |
-| `CRS-615A3-0160` | `ARINC-615A-3 6.4.5 p.75` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic protocol behavior rule 2 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.5.<br>对 UPLOAD，执行条款 6.4.5 中治理 PROTOCOL-FILE-SEMANTICS 的第 2 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0161` | `ARINC-615A-3 6.4.5 p.75` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic protocol behavior rule 3 governing ZERO-TERMINATION at clause 6.4.5.<br>对 UPLOAD，执行条款 6.4.5 中治理 ZERO-TERMINATION 的第 3 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0162` | `ARINC-615A-3 6.4.5 p.76` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 4 governing STATUS / STATUS-CODE at clause 6.4.5.<br>对 UPLOAD，执行条款 6.4.5 中治理 STATUS / STATUS-CODE 的第 4 项原子data format规则。 | — |
-| `CRS-615A3-0163` | `ARINC-615A-3 6.4.5 p.76` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic timing rule 5 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.5.<br>对 UPLOAD，执行条款 6.4.5 中治理 PROTOCOL-FILE-SEMANTICS 的第 5 项原子timing规则。 | — |
-| `CRS-615A3-0164` | `ARINC-615A-3 6.4.5 p.76` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic timing rule 6 governing STATUS / STATUS-CODE at clause 6.4.5.<br>对 UPLOAD，执行条款 6.4.5 中治理 STATUS / STATUS-CODE 的第 6 项原子timing规则。 | — |
-| `CRS-615A3-0165` | `ARINC-615A-3 6.4.5 p.76` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic data format rule 7 governing HEADER-FILE at clause 6.4.5.<br>对 UPLOAD，执行条款 6.4.5 中治理 HEADER-FILE 的第 7 项原子data format规则。 | — |
-| `CRS-615A3-0166` | `ARINC-615A-3 6.4.5 p.76` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic protocol behavior rule 8 governing ZERO-TERMINATION at clause 6.4.5.<br>对 UPLOAD，执行条款 6.4.5 中治理 ZERO-TERMINATION 的第 8 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0167` | `ARINC-615A-3 6.4.5 p.77` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | For UPLOAD, enforce atomic protocol behavior rule 9 governing ZERO-TERMINATION at clause 6.4.5.<br>对 UPLOAD，执行条款 6.4.5 中治理 ZERO-TERMINATION 的第 9 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0168` | `ARINC-615A-3 6.4.10 p.82` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic data format rule 1 governing STATUS / STATUS-CODE at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 STATUS / STATUS-CODE 的第 1 项原子data format规则。 | — |
-| `CRS-615A3-0169` | `ARINC-615A-3 6.4.10 p.82` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 2 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 2 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0170` | `ARINC-615A-3 6.4.10 p.82` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 3 governing ZERO-TERMINATION at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 ZERO-TERMINATION 的第 3 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0171` | `ARINC-615A-3 6.4.10 p.84` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 4 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 4 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0172` | `ARINC-615A-3 6.4.10 p.84` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic data format rule 5 governing PROTOCOL-VERSION / FILE-NAME / DOWNLOAD / ZERO-TERMINATION at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-VERSION / FILE-NAME / DOWNLOAD / ZERO-TERMINATION 的第 5 项原子data format规则。 | — |
-| `CRS-615A3-0173` | `ARINC-615A-3 6.4.10 p.84` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic data format rule 6 governing STATUS / ZERO-TERMINATION / STATUS-CODE / DISPLAY-INDICATION at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 STATUS / ZERO-TERMINATION / STATUS-CODE / DISPLAY-INDICATION 的第 6 项原子data format规则。 | — |
-| `CRS-615A3-0174` | `ARINC-615A-3 6.4.10 p.85` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic timing rule 7 governing STATUS / UPLOAD / DOWNLOAD / STATUS-CODE at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 STATUS / UPLOAD / DOWNLOAD / STATUS-CODE 的第 7 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0175` | `ARINC-615A-3 6.4.10 p.85` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic data format rule 8 governing ABORT / STATUS / FILE-NAME / PART-NUMBER at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 ABORT / STATUS / FILE-NAME / PART-NUMBER 的第 8 项原子data format规则。 | — |
-| `CRS-615A3-0176` | `ARINC-615A-3 6.4.10 p.87` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic transport rule 9 governing COMPATIBILITY at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 COMPATIBILITY 的第 9 项原子transport规则。 | — |
-| `CRS-615A3-0177` | `ARINC-615A-3 6.4.10 p.87` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic transport rule 10 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 10 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0178` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic transport rule 11 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 11 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0179` | `ARINC-615A-3 6.4.10 p.87` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic transport rule 12 governing COMPATIBILITY / REQUEST-RESPONSE at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 COMPATIBILITY / REQUEST-RESPONSE 的第 12 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0180` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 13 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 13 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0181` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 14 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 14 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0182` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 15 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 15 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0183` | `ARINC-615A-3 6.4.10 p.87` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 16 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 16 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0184` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 17 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 17 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0185` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 18 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 18 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0186` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For INFORMATION, enforce atomic protocol behavior rule 19 governing PROTOCOL-FILE-SEMANTICS at clause 6.4.10.<br>对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 19 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0187` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 1 governing TIMEOUT / RETRY at clause 4-1.<br>对 COMMON，执行条款 4-1 中治理 TIMEOUT / RETRY 的第 1 项原子timing规则。 | — |
-| `CRS-615A3-0188` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 2 governing TIMEOUT / FILE-TRANSFER / ACKNOWLEDGEMENT at clause 4-1.<br>对 COMMON，执行条款 4-1 中治理 TIMEOUT / FILE-TRANSFER / ACKNOWLEDGEMENT 的第 2 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0189` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 3 governing TIMEOUT / ERROR / ACKNOWLEDGEMENT at clause 4-1.<br>对 COMMON，执行条款 4-1 中治理 TIMEOUT / ERROR / ACKNOWLEDGEMENT 的第 3 项原子timing规则。 | — |
-| `CRS-615A3-0190` | `ARINC-615A-3 4-1 p.99` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 4 governing TIMEOUT / RETRY / CRC / ERROR at clause 4-1.<br>对 COMMON，执行条款 4-1 中治理 TIMEOUT / RETRY / CRC / ERROR 的第 4 项原子timing规则。 | DEP-RFC-TFTP, GAP-ARINC-645 |
-| `CRS-615A3-0191` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic retry policy rule 5 governing RETRY / ERROR / FILE-TRANSFER at clause 4-1.<br>对 COMMON，执行条款 4-1 中治理 RETRY / ERROR / FILE-TRANSFER 的第 5 项原子retry policy规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0192` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic error status rule 6 governing ERROR / APPLICATION-MESSAGE at clause 4-1.<br>对 COMMON，执行条款 4-1 中治理 ERROR / APPLICATION-MESSAGE 的第 6 项原子error status规则。 | — |
-| `CRS-615A3-0193` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic retry policy rule 7 governing RETRY / UPLOAD / DOWNLOAD / ERROR at clause 4-1.<br>对 COMMON，执行条款 4-1 中治理 RETRY / UPLOAD / DOWNLOAD / ERROR 的第 7 项原子retry policy规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0194` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic retry policy rule 8 governing RETRY / ERROR / APPLICATION-MESSAGE / FILE-TRANSFER at clause 4-1.<br>对 COMMON，执行条款 4-1 中治理 RETRY / ERROR / APPLICATION-MESSAGE / FILE-TRANSFER 的第 8 项原子retry policy规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0195` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic error status rule 9 governing ERROR at clause 4-1.<br>对 COMMON，执行条款 4-1 中治理 ERROR 的第 9 项原子error status规则。 | — |
-| `CRS-615A3-0196` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 10 governing TIMEOUT / APPLICATION-MESSAGE at clause 4-1.<br>对 COMMON，执行条款 4-1 中治理 TIMEOUT / APPLICATION-MESSAGE 的第 10 项原子timing规则。 | — |
-| `CRS-615A3-0197` | `ARINC-615A-3 4-3 p.100` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 1 governing TIMEOUT at clause 4-3.<br>对 COMMON，执行条款 4-3 中治理 TIMEOUT 的第 1 项原子timing规则。 | — |
-| `CRS-615A3-0198` | `ARINC-615A-3 4-3 p.100` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 2 governing TIMEOUT-AND-RETRY-POLICY at clause 4-3.<br>对 COMMON，执行条款 4-3 中治理 TIMEOUT-AND-RETRY-POLICY 的第 2 项原子transport规则。 | DEP-IP-UDP-664, DEP-RFC-TFTP |
-| `CRS-615A3-0199` | `ARINC-615A-3 4-3 p.100` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic transport rule 3 governing TIMEOUT-AND-RETRY-POLICY at clause 4-3.<br>对 COMMON，执行条款 4-3 中治理 TIMEOUT-AND-RETRY-POLICY 的第 3 项原子transport规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0200` | `ARINC-615A-3 4-3 p.101` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 4 governing RETRY / ERROR at clause 4-3.<br>对 COMMON，执行条款 4-3 中治理 RETRY / ERROR 的第 4 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0201` | `ARINC-615A-3 4-3 p.101` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic retry policy rule 5 governing RETRY at clause 4-3.<br>对 COMMON，执行条款 4-3 中治理 RETRY 的第 5 项原子retry policy规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0202` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 1 governing TIMEOUT / RETRY at clause 4-4.<br>对 COMMON，执行条款 4-4 中治理 TIMEOUT / RETRY 的第 1 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0203` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 2 governing TIMEOUT / APPLICATION-MESSAGE / REQUEST-RESPONSE / ACKNOWLEDGEMENT at clause 4-4.<br>对 COMMON，执行条款 4-4 中治理 TIMEOUT / APPLICATION-MESSAGE / REQUEST-RESPONSE / ACKNOWLEDGEMENT 的第 2 项原子timing规则。 | DEP-IP-UDP-664, DEP-RFC-TFTP |
-| `CRS-615A3-0204` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 3 governing TIMEOUT / APPLICATION-MESSAGE / FILE-TRANSFER at clause 4-4.<br>对 COMMON，执行条款 4-4 中治理 TIMEOUT / APPLICATION-MESSAGE / FILE-TRANSFER 的第 3 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0205` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 4 governing TIMEOUT / APPLICATION-MESSAGE at clause 4-4.<br>对 COMMON，执行条款 4-4 中治理 TIMEOUT / APPLICATION-MESSAGE 的第 4 项原子timing规则。 | — |
-| `CRS-615A3-0206` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 5 governing STATUS / APPLICATION-MESSAGE at clause 4-4.<br>对 COMMON，执行条款 4-4 中治理 STATUS / APPLICATION-MESSAGE 的第 5 项原子data format规则。 | — |
-| `CRS-615A3-0207` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 6 governing TIMEOUT at clause 4-4.<br>对 COMMON，执行条款 4-4 中治理 TIMEOUT 的第 6 项原子timing规则。 | — |
-| `CRS-615A3-0208` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 7 governing TIMEOUT / APPLICATION-MESSAGE / FILE-TRANSFER at clause 4-4.<br>对 COMMON，执行条款 4-4 中治理 TIMEOUT / APPLICATION-MESSAGE / FILE-TRANSFER 的第 7 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0209` | `ARINC-615A-3 4-4 p.103` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 8 governing RETRY / ERROR / APPLICATION-MESSAGE / FILE-TRANSFER at clause 4-4.<br>对 COMMON，执行条款 4-4 中治理 RETRY / ERROR / APPLICATION-MESSAGE / FILE-TRANSFER 的第 8 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0210` | `ARINC-615A-3 4-4 p.104` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic timing rule 9 governing TIMEOUT / RETRY / APPLICATION-MESSAGE at clause 4-4.<br>对 COMMON，执行条款 4-4 中治理 TIMEOUT / RETRY / APPLICATION-MESSAGE 的第 9 项原子timing规则。 | — |
-| `CRS-615A3-0211` | `ARINC-615A-3 4-4 p.104` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic data format rule 10 governing ERROR / RELIABILITY / DATA-LOADER-FUNCTION at clause 4-4.<br>对 COMMON，执行条款 4-4 中治理 ERROR / RELIABILITY / DATA-LOADER-FUNCTION 的第 10 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0212` | `ARINC-615A-3 4-4 p.106` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic protocol behavior rule 11 governing APPLICATION-MESSAGE at clause 4-4.<br>对 COMMON，执行条款 4-4 中治理 APPLICATION-MESSAGE 的第 11 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0213` | `ARINC-615A-3 4-4 p.106` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For COMMON, enforce atomic error status rule 12 governing UPLOAD / DOWNLOAD / ERROR at clause 4-4.<br>对 COMMON，执行条款 4-4 中治理 UPLOAD / DOWNLOAD / ERROR 的第 12 项原子error status规则。 | — |
-| `CRS-615A3-0214` | `ARINC-615A-3 6.1 p.42` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Table 6-1 fixes Information message direction between DLA and DLP.<br>表 6-1 固定 Information 消息在 DLA 与 DLP 间的方向。 | — |
-| `CRS-615A3-0215` | `ARINC-615A-3 6.1 p.42` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Table 6-1 fixes Upload message direction between DLA and DLP.<br>表 6-1 固定 Upload 消息在 DLA 与 DLP 间的方向。 | — |
-| `CRS-615A3-0216` | `ARINC-615A-3 6.3.1 p.50` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Information follows the initialization, LCI, LCL, status and completion ordering shown by the chart.<br>Information 遵循图示初始化、LCI、LCL、状态及完成顺序。 | DEP-RFC-TFTP |
-| `CRS-615A3-0217` | `ARINC-615A-3 6.3.2 p.53` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Upload initialization and list transfer follow the first chart segment.<br>Upload 初始化及清单传输遵循序列图第一段。 | DEP-RFC-TFTP |
-| `CRS-615A3-0218` | `ARINC-615A-3 6.3.2 p.54` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Upload file transfer, unavailable-file handling and completion status follow the second chart segment.<br>Upload 文件传输、文件不可用处理及完成状态遵循序列图第二段。 | DEP-RFC-TFTP |
-| `CRS-615A3-0219` | `ARINC-615A-3 6.3.5 p.63` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Interruption follows the charted abort request, stop, confirmation and termination sequence.<br>中断遵循图示中止请求、停止、确认及终止顺序。 | DEP-RFC-TFTP |
-| `CRS-615A3-0220` | `ARINC-615A-3 6.4.1 p.67` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Initialization-file field ordering and encodings are governed by Table 6.4.1-1.<br>初始化文件字段顺序与编码受表 6.4.1-1 约束。 | — |
-| `CRS-615A3-0221` | `ARINC-615A-3 6.4.2 p.68` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The LCL information-file structure follows Table 6.4.2-1.<br>LCL 信息文件结构遵循表 6.4.2-1。 | — |
-| `CRS-615A3-0222` | `ARINC-615A-3 6.4.3 p.70` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The common LCS status-file structure follows Table 6.4.3-1.<br>公共 LCS 状态文件结构遵循表 6.4.3-1。 | — |
-| `CRS-615A3-0223` | `ARINC-615A-3 6.4.4 p.72` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | The LUR Upload request structure follows Table 6.4.4-1.<br>LUR Upload 请求结构遵循表 6.4.4-1。 | — |
-| `CRS-615A3-0224` | `ARINC-615A-3 6.4.5 p.74` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | The LUS Upload status structure follows Table 6.4.5-1.<br>LUS Upload 状态结构遵循表 6.4.5-1。 | — |
-| `CRS-615A3-0225` | `ARINC-615A-3 6.4.10 p.85` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Status-code values and meanings follow the controlled status-code table.<br>状态码值及含义遵循受控状态码表。 | — |
-| `CRS-615A3-0226` | `ARINC-615A-3 ATTACHMENT-4.3.1 p.105` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Figure A4-1 constrains TFTP timeout observation and budget partitioning.<br>图 A4-1 约束 TFTP 超时观测与预算划分。 | — |
-| `CRS-615A3-0227` | `ARINC-615A-3 ATTACHMENT-4.4.1 p.105` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Figure A4-2 constrains the DLP timeout composition.<br>图 A4-2 约束 DLP 超时组成。 | — |
-| `CRS-615A3-0228` | `ARINC-615A-3 ATTACHMENT-4 p.107` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Figure A4-3 constrains client-side retry and error escalation ordering.<br>图 A4-3 约束客户端重试与错误晋级顺序。 | — |
-| `CRS-615A3-0229` | `ARINC-615A-3 ATTACHMENT-4 p.108` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Figure A4-4 constrains server-side retry and error escalation ordering.<br>图 A4-4 约束服务端重试与错误晋级顺序。 | — |
-| `CRS-615A3-0230` | `ARINC-615A-3 ATTACHMENT-4 p.109` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Figure A4-5 constrains data-loader-side DLP timeout classification.<br>图 A4-5 约束数据加载器侧 DLP 超时分类。 | — |
-| `CRS-6655-0001` | `ARINC-665-5 1.3.3 p.1` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 1 governing COMPATIBILITY at clause 1.3.3.<br>对 DATA-OBJECT，执行条款 1.3.3 中治理 COMPATIBILITY 的第 1 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0002` | `ARINC-665-5 1.3.3 p.1` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic transport rule 2 governing COMPATIBILITY at clause 1.3.3.<br>对 DATA-OBJECT，执行条款 1.3.3 中治理 COMPATIBILITY 的第 2 项原子transport规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0003` | `ARINC-665-5 1.3.3 p.1` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 3 governing OPTION-NEGOTIATION at clause 1.3.3.<br>对 DATA-OBJECT，执行条款 1.3.3 中治理 OPTION-NEGOTIATION 的第 3 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0004` | `ARINC-665-5 1.3.3 p.1` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 4 governing SCOPE-AND-PRODUCT-ROLE at clause 1.3.3.<br>对 DATA-OBJECT，执行条款 1.3.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 4 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0005` | `ARINC-665-5 1.3.3 p.1` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 5 governing COMPATIBILITY at clause 1.3.3.<br>对 DATA-OBJECT，执行条款 1.3.3 中治理 COMPATIBILITY 的第 5 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0006` | `ARINC-665-5 1.3.3 p.1` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 6 governing SCOPE-AND-PRODUCT-ROLE at clause 1.3.3.<br>对 DATA-OBJECT，执行条款 1.3.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 6 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0007` | `ARINC-665-5 1.4.2 p.2` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 1 governing OPTION-NEGOTIATION at clause 1.4.2.<br>对 DATA-OBJECT，执行条款 1.4.2 中治理 OPTION-NEGOTIATION 的第 1 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0008` | `ARINC-665-5 1.4.2 p.2` | `MAY` / `OPTIONAL` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic data format rule 2 governing FORMAT-VERSION at clause 1.4.2.<br>对 DATA-OBJECT，执行条款 1.4.2 中治理 FORMAT-VERSION 的第 2 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0009` | `ARINC-665-5 1.4.2 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 3 governing MEDIA at clause 1.4.2.<br>对 DATA-OBJECT，执行条款 1.4.2 中治理 MEDIA 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0010` | `ARINC-665-5 1.4.4 p.3` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 1 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.4.<br>对 DATA-OBJECT，执行条款 1.4.4 中治理 SCOPE-AND-PRODUCT-ROLE 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0011` | `ARINC-665-5 1.4.4 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 2 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.4.<br>对 DATA-OBJECT，执行条款 1.4.4 中治理 SCOPE-AND-PRODUCT-ROLE 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0012` | `ARINC-665-5 1.4.4 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 3 governing SCOPE-AND-PRODUCT-ROLE at clause 1.4.4.<br>对 DATA-OBJECT，执行条款 1.4.4 中治理 SCOPE-AND-PRODUCT-ROLE 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0013` | `ARINC-665-5 1.4.4 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 4 governing PART-NUMBER / HEADER-FILE / FIELD-LENGTH / FORMAT-VERSION at clause 1.4.4.<br>对 DATA-OBJECT，执行条款 1.4.4 中治理 PART-NUMBER / HEADER-FILE / FIELD-LENGTH / FORMAT-VERSION 的第 4 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0014` | `ARINC-665-5 1.5 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic transport rule 1 governing SCOPE-AND-PRODUCT-ROLE at clause 1.5.<br>对 DATA-OBJECT，执行条款 1.5 中治理 SCOPE-AND-PRODUCT-ROLE 的第 1 项原子transport规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0015` | `ARINC-665-5 1.5 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 2 governing SCOPE-AND-PRODUCT-ROLE at clause 1.5.<br>对 DATA-OBJECT，执行条款 1.5 中治理 SCOPE-AND-PRODUCT-ROLE 的第 2 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0016` | `ARINC-665-5 1.5 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 3 governing SCOPE-AND-PRODUCT-ROLE at clause 1.5.<br>对 DATA-OBJECT，执行条款 1.5 中治理 SCOPE-AND-PRODUCT-ROLE 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0017` | `ARINC-665-5 1.5 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 4 governing COMPATIBILITY at clause 1.5.<br>对 DATA-OBJECT，执行条款 1.5 中治理 COMPATIBILITY 的第 4 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0018` | `ARINC-665-5 1.5 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic transport rule 5 governing SCOPE-AND-PRODUCT-ROLE at clause 1.5.<br>对 DATA-OBJECT，执行条款 1.5 中治理 SCOPE-AND-PRODUCT-ROLE 的第 5 项原子transport规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0019` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 1 governing PART-NUMBER at clause 2.1.1.<br>对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER 的第 1 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0020` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 2 governing PART-NUMBER at clause 2.1.1.<br>对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER 的第 2 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0021` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic timing rule 3 governing PART-NUMBER at clause 2.1.1.<br>对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER 的第 3 项原子timing规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0022` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 4 governing PART-NUMBER / FIND at clause 2.1.1.<br>对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER / FIND 的第 4 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0023` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 5 governing PART-NUMBER at clause 2.1.1.<br>对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER 的第 5 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0024` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 6 governing PART-NUMBER at clause 2.1.1.<br>对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER 的第 6 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0025` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 7 governing PART-NUMBER at clause 2.1.1.<br>对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER 的第 7 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0026` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 8 governing LOAD-PART-NUMBER at clause 2.1.1.<br>对 DATA-OBJECT，执行条款 2.1.1 中治理 LOAD-PART-NUMBER 的第 8 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0027` | `ARINC-665-5 2.1.1 p.6` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 9 governing LOAD-PART-NUMBER at clause 2.1.1.<br>对 DATA-OBJECT，执行条款 2.1.1 中治理 LOAD-PART-NUMBER 的第 9 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0028` | `ARINC-665-5 2.1.4 p.7` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic transport rule 1 governing LOAD-PART-NUMBER at clause 2.1.4.<br>对 DATA-OBJECT，执行条款 2.1.4 中治理 LOAD-PART-NUMBER 的第 1 项原子transport规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0029` | `ARINC-665-5 2.1.4 p.7` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 2 governing PART-NUMBER at clause 2.1.4.<br>对 DATA-OBJECT，执行条款 2.1.4 中治理 PART-NUMBER 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0030` | `ARINC-665-5 2.1.4 p.7` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 3 governing LOAD-PART-NUMBER at clause 2.1.4.<br>对 DATA-OBJECT，执行条款 2.1.4 中治理 LOAD-PART-NUMBER 的第 3 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0031` | `ARINC-665-5 2.1.4 p.7` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 4 governing PART-NUMBER / ERROR at clause 2.1.4.<br>对 DATA-OBJECT，执行条款 2.1.4 中治理 PART-NUMBER / ERROR 的第 4 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0032` | `ARINC-665-5 2.1.4 p.7` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 5 governing LOAD-PART-NUMBER at clause 2.1.4.<br>对 DATA-OBJECT，执行条款 2.1.4 中治理 LOAD-PART-NUMBER 的第 5 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0033` | `ARINC-665-5 2.1.4 p.7` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic transport rule 6 governing LOAD-PART-NUMBER at clause 2.1.4.<br>对 DATA-OBJECT，执行条款 2.1.4 中治理 LOAD-PART-NUMBER 的第 6 项原子transport规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0034` | `ARINC-665-5 2.2.3.1 p.8` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 1 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.1.<br>对 DATA-OBJECT，执行条款 2.2.3.1 中治理 LOADABLE-SOFTWARE-PART 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0035` | `ARINC-665-5 2.2.3.1 p.8` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 2 governing FILE-NAME at clause 2.2.3.1.<br>对 DATA-OBJECT，执行条款 2.2.3.1 中治理 FILE-NAME 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0036` | `ARINC-665-5 2.2.3.1 p.8` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 3 governing FILE-NAME / HEADER-FILE at clause 2.2.3.1.<br>对 DATA-OBJECT，执行条款 2.2.3.1 中治理 FILE-NAME / HEADER-FILE 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0037` | `ARINC-665-5 2.2.3.1 p.8` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 4 governing HEADER-FILE / DATA-FILE at clause 2.2.3.1.<br>对 DATA-OBJECT，执行条款 2.2.3.1 中治理 HEADER-FILE / DATA-FILE 的第 4 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0038` | `ARINC-665-5 2.2.3.1 p.8` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 5 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.1.<br>对 DATA-OBJECT，执行条款 2.2.3.1 中治理 LOADABLE-SOFTWARE-PART 的第 5 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0039` | `ARINC-665-5 2.2.3.1 p.8` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 6 governing MEDIA / POWER-ENVIRONMENT at clause 2.2.3.1.<br>对 DATA-OBJECT，执行条款 2.2.3.1 中治理 MEDIA / POWER-ENVIRONMENT 的第 6 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0040` | `ARINC-665-5 2.2.3.1 p.8` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 7 governing FILE-NAME / HEADER-FILE / DATA-FILE / FILE-CONTENT at clause 2.2.3.1.<br>对 DATA-OBJECT，执行条款 2.2.3.1 中治理 FILE-NAME / HEADER-FILE / DATA-FILE / FILE-CONTENT 的第 7 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0041` | `ARINC-665-5 2.2.3.1.7 p.11` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 1 governing UPLOAD / DOWNLOAD at clause 2.2.3.1.7.<br>对 DATA-OBJECT，执行条款 2.2.3.1.7 中治理 UPLOAD / DOWNLOAD 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0042` | `ARINC-665-5 2.2.3.1.7 p.11` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 2 governing PART-NUMBER / DATA-FILE / DOWNLOAD / FIELD-LENGTH at clause 2.2.3.1.7.<br>对 DATA-OBJECT，执行条款 2.2.3.1.7 中治理 PART-NUMBER / DATA-FILE / DOWNLOAD / FIELD-LENGTH 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0043` | `ARINC-665-5 2.2.3.1.16 p.12` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 1 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.1.16.<br>对 DATA-OBJECT，执行条款 2.2.3.1.16 中治理 LOADABLE-SOFTWARE-PART 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0044` | `ARINC-665-5 2.2.3.1.16 p.12` | `MAY` / `OPTIONAL` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic data format rule 2 governing PART-NUMBER / OPTION-NEGOTIATION / FORMAT-VERSION / POINTER-FIELD at clause 2.2.3.1.16.<br>对 DATA-OBJECT，执行条款 2.2.3.1.16 中治理 PART-NUMBER / OPTION-NEGOTIATION / FORMAT-VERSION / POINTER-FIELD 的第 2 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0045` | `ARINC-665-5 2.2.3.1.16 p.12` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 3 governing PART-NUMBER / FORMAT-VERSION at clause 2.2.3.1.16.<br>对 DATA-OBJECT，执行条款 2.2.3.1.16 中治理 PART-NUMBER / FORMAT-VERSION 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0046` | `ARINC-665-5 2.2.3.1.20 p.13` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 1 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.1.20.<br>对 DATA-OBJECT，执行条款 2.2.3.1.20 中治理 LOADABLE-SOFTWARE-PART 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0047` | `ARINC-665-5 2.2.3.1.20 p.13` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic protocol behavior rule 2 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.1.20.<br>对 DATA-OBJECT，执行条款 2.2.3.1.20 中治理 LOADABLE-SOFTWARE-PART 的第 2 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0048` | `ARINC-665-5 2.2.3.1.20 p.13` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 3 governing FORMAT-VERSION at clause 2.2.3.1.20.<br>对 DATA-OBJECT，执行条款 2.2.3.1.20 中治理 FORMAT-VERSION 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0049` | `ARINC-665-5 2.2.3.1.28 p.14` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 1 governing FIELD-LENGTH / FORMAT-VERSION at clause 2.2.3.1.28.<br>对 DATA-OBJECT，执行条款 2.2.3.1.28 中治理 FIELD-LENGTH / FORMAT-VERSION 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0050` | `ARINC-665-5 2.2.3.1.28 p.14` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 2 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.1.28.<br>对 DATA-OBJECT，执行条款 2.2.3.1.28 中治理 LOADABLE-SOFTWARE-PART 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0051` | `ARINC-665-5 2.2.3.1.28 p.14` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 3 governing FIELD-LENGTH at clause 2.2.3.1.28.<br>对 DATA-OBJECT，执行条款 2.2.3.1.28 中治理 FIELD-LENGTH 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0052` | `ARINC-665-5 2.2.3.1.36 p.15` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 1 governing DATA-FILE / FORMAT-VERSION at clause 2.2.3.1.36.<br>对 DATA-OBJECT，执行条款 2.2.3.1.36 中治理 DATA-FILE / FORMAT-VERSION 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0053` | `ARINC-665-5 2.2.3.1.36 p.15` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 2 governing DATA-FILE at clause 2.2.3.1.36.<br>对 DATA-OBJECT，执行条款 2.2.3.1.36 中治理 DATA-FILE 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0054` | `ARINC-665-5 2.2.3.1.36 p.15` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 3 governing FILE-NAME / DATA-FILE / FIELD-LENGTH / POINTER-FIELD at clause 2.2.3.1.36.<br>对 DATA-OBJECT，执行条款 2.2.3.1.36 中治理 FILE-NAME / DATA-FILE / FIELD-LENGTH / POINTER-FIELD 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0055` | `ARINC-665-5 2.2.3.1.43 p.16` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic data format rule 1 governing CRC / DATA-FILE at clause 2.2.3.1.43.<br>对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 CRC / DATA-FILE 的第 1 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0056` | `ARINC-665-5 2.2.3.1.43 p.16` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic data format rule 2 governing CRC / DATA-FILE at clause 2.2.3.1.43.<br>对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 CRC / DATA-FILE 的第 2 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0057` | `ARINC-665-5 2.2.3.1.43 p.16` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic data format rule 3 governing DATA-FILE at clause 2.2.3.1.43.<br>对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 DATA-FILE 的第 3 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0058` | `ARINC-665-5 2.2.3.1.43 p.16` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic protocol behavior rule 4 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.1.43.<br>对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 LOADABLE-SOFTWARE-PART 的第 4 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0059` | `ARINC-665-5 2.2.3.1.43 p.16` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic protocol behavior rule 5 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.1.43.<br>对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 LOADABLE-SOFTWARE-PART 的第 5 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0060` | `ARINC-665-5 2.2.3.1.43 p.16` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic data format rule 6 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.1.43.<br>对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 LOADABLE-SOFTWARE-PART 的第 6 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0061` | `ARINC-665-5 2.2.3.1.43 p.16` | `MAY` / `OPTIONAL` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic data format rule 7 governing DATA-FILE / FORMAT-VERSION at clause 2.2.3.1.43.<br>对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 DATA-FILE / FORMAT-VERSION 的第 7 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0062` | `ARINC-665-5 2.2.3.1.51 p.17` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 1 governing POINTER-FIELD at clause 2.2.3.1.51.<br>对 DATA-OBJECT，执行条款 2.2.3.1.51 中治理 POINTER-FIELD 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0063` | `ARINC-665-5 2.2.3.1.51 p.17` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 2 governing FILE-NAME / FIELD-LENGTH / POINTER-FIELD at clause 2.2.3.1.51.<br>对 DATA-OBJECT，执行条款 2.2.3.1.51 中治理 FILE-NAME / FIELD-LENGTH / POINTER-FIELD 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0064` | `ARINC-665-5 2.2.3.1.51 p.17` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 3 governing PART-NUMBER / FIELD-LENGTH at clause 2.2.3.1.51.<br>对 DATA-OBJECT，执行条款 2.2.3.1.51 中治理 PART-NUMBER / FIELD-LENGTH 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0065` | `ARINC-665-5 2.2.3.1.51 p.17` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 4 governing PART-NUMBER at clause 2.2.3.1.51.<br>对 DATA-OBJECT，执行条款 2.2.3.1.51 中治理 PART-NUMBER 的第 4 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0066` | `ARINC-665-5 2.2.3.1.51 p.17` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic transport rule 5 governing CRC at clause 2.2.3.1.51.<br>对 DATA-OBJECT，执行条款 2.2.3.1.51 中治理 CRC 的第 5 项原子transport规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0067` | `ARINC-665-5 2.2.3.1.60 p.18` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic protocol behavior rule 1 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.1.60.<br>对 DATA-OBJECT，执行条款 2.2.3.1.60 中治理 LOADABLE-SOFTWARE-PART 的第 1 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0068` | `ARINC-665-5 2.2.3.1.60 p.18` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic protocol behavior rule 2 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.1.60.<br>对 DATA-OBJECT，执行条款 2.2.3.1.60 中治理 LOADABLE-SOFTWARE-PART 的第 2 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0069` | `ARINC-665-5 2.2.3.1.60 p.18` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic data format rule 3 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.1.60.<br>对 DATA-OBJECT，执行条款 2.2.3.1.60 中治理 LOADABLE-SOFTWARE-PART 的第 3 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0070` | `ARINC-665-5 2.2.3.1.60 p.18` | `MAY` / `OPTIONAL` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic data format rule 4 governing FORMAT-VERSION at clause 2.2.3.1.60.<br>对 DATA-OBJECT，执行条款 2.2.3.1.60 中治理 FORMAT-VERSION 的第 4 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0071` | `ARINC-665-5 2.2.3.1.60 p.18` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 5 governing HEADER-FILE at clause 2.2.3.1.60.<br>对 DATA-OBJECT，执行条款 2.2.3.1.60 中治理 HEADER-FILE 的第 5 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0072` | `ARINC-665-5 2.2.3.1.60 p.18` | `MAY` / `OPTIONAL` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic data format rule 6 governing FORMAT-VERSION at clause 2.2.3.1.60.<br>对 DATA-OBJECT，执行条款 2.2.3.1.60 中治理 FORMAT-VERSION 的第 6 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0073` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic protocol behavior rule 1 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.3.<br>对 DATA-OBJECT，执行条款 2.2.3.3 中治理 LOADABLE-SOFTWARE-PART 的第 1 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0074` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic protocol behavior rule 2 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.3.<br>对 DATA-OBJECT，执行条款 2.2.3.3 中治理 LOADABLE-SOFTWARE-PART 的第 2 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0075` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic protocol behavior rule 3 governing LOADABLE-SOFTWARE-PART at clause 2.2.3.3.<br>对 DATA-OBJECT，执行条款 2.2.3.3 中治理 LOADABLE-SOFTWARE-PART 的第 3 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0076` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic data format rule 4 governing CRC / HEADER-FILE / DATA-FILE / FILE-CONTENT at clause 2.2.3.3.<br>对 DATA-OBJECT，执行条款 2.2.3.3 中治理 CRC / HEADER-FILE / DATA-FILE / FILE-CONTENT 的第 4 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0077` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic data format rule 5 governing CRC / HEADER-FILE at clause 2.2.3.3.<br>对 DATA-OBJECT，执行条款 2.2.3.3 中治理 CRC / HEADER-FILE 的第 5 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0078` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | For DATA-OBJECT, enforce atomic transport rule 6 governing CRC at clause 2.2.3.3.<br>对 DATA-OBJECT，执行条款 2.2.3.3 中治理 CRC 的第 6 项原子transport规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0079` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 7 governing DATA-FILE / FILE-CONTENT at clause 2.2.3.3.<br>对 DATA-OBJECT，执行条款 2.2.3.3 中治理 DATA-FILE / FILE-CONTENT 的第 7 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0080` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 8 governing FILE-CONTENT at clause 2.2.3.3.<br>对 DATA-OBJECT，执行条款 2.2.3.3 中治理 FILE-CONTENT 的第 8 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0081` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | For DATA-OBJECT, enforce atomic data format rule 9 governing COMPATIBILITY / MEDIA at clause 2.2.3.3.<br>对 DATA-OBJECT，执行条款 2.2.3.3 中治理 COMPATIBILITY / MEDIA 的第 9 项原子data format规则。 | DEP-ARINC-6655 |
+| ID | Source unit | Actor / condition / action / object / observable effect | Modality / effect | Applicability | Bilingual review paraphrase | Timing provenance | Dependencies / gaps |
+|---|---|---|---|---|---|---|---|
+| `CRS-M1-00001` | `SU-ARINC-615A-3-1-2-P014-PROSE-SENTENCE-002-8D3CB7C14FBD`<br>`ARINC-615A-3 1.2 p.2` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform IMPLEMENT on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00002` | `SU-ARINC-615A-3-1-2-P014-PROSE-SENTENCE-003-8280DDEE506E`<br>`ARINC-615A-3 1.2 p.2` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform IMPLEMENT on CONFORMANCE-MODALITY under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“CONFORMANCE-MODALITY”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00003` | `SU-ARINC-615A-3-1-2-P014-PROSE-SENTENCE-004-9B5A3832A655`<br>`ARINC-615A-3 1.2 p.2` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION may perform USE on CONFORMANCE-MODALITY under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下可以对“CONFORMANCE-MODALITY”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00004` | `SU-ARINC-615A-3-1-2-P014-PROSE-SENTENCE-005-7D9A4E2DA48E`<br>`ARINC-615A-3 1.2 p.2` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform IMPLEMENT on CONFORMANCE-MODALITY under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“CONFORMANCE-MODALITY”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00005` | `SU-ARINC-615A-3-1-3-P014-PROSE-SENTENCE-001-2FA34C046AFB`<br>`ARINC-615A-3 1.3 p.2` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform TRANSFER on SOFTWARE-PART under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“软件加载件”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00006` | `SU-ARINC-615A-3-1-3-P014-PROSE-SENTENCE-002-873AFAE35C45`<br>`ARINC-615A-3 1.3 p.2` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `NETWORK-INTERFACE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform TRANSFER on NETWORK-INTERFACE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“网络接口、TARGET-HARDWARE-ID”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-664-2, DEP-ARINC-664-3 |
+| `CRS-M1-00007` | `SU-ARINC-615A-3-1-3-P014-PROSE-SENTENCE-005-EC7965CC3D31`<br>`ARINC-615A-3 1.3 p.2` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `OPERATION, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform IMPLEMENT on OPERATION, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“协议操作、网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00008` | `SU-ARINC-615A-3-1-3-P014-PROSE-SENTENCE-007-00560ACC8ACC`<br>`ARINC-615A-3 1.3 p.2` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `PROHIBIT` / `DATA-LOADING-TYPES` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform PROHIBIT on DATA-LOADING-TYPES under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“DATA-LOADING-TYPES”执行“禁止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00009` | `SU-ARINC-615A-3-1-6-P017-PROSE-SENTENCE-001-6E91C83C11CE`<br>`ARINC-615A-3 1.6 p.5` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `DESIGN` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform DESIGN on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“网络接口”执行“设计”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00010` | `SU-ARINC-615A-3-1-6-P017-PROSE-SENTENCE-003-817EC6E68797`<br>`ARINC-615A-3 1.6 p.5` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform IMPLEMENT on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00011` | `SU-ARINC-615A-3-1-6-P017-PROSE-SENTENCE-004-1768AAB8F452`<br>`ARINC-615A-3 1.6 p.5` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION may perform ENCODE on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下可以对“网络接口”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00012` | `SU-ARINC-615A-3-1-6-P017-PROSE-SENTENCE-005-358B4BAB3D69`<br>`ARINC-615A-3 1.6 p.5` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“网络接口”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00013` | `SU-ARINC-615A-3-1-6-P017-PROSE-SENTENCE-006-711482ED9B24`<br>`ARINC-615A-3 1.6 p.5` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `COMPLY` / `SOFTWARE-PART, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform COMPLY on SOFTWARE-PART, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“软件加载件、网络接口”执行“符合”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00014` | `SU-ARINC-615A-3-5-1-P034-PROSE-SENTENCE-015-441CC925118B`<br>`ARINC-615A-3 5.1 p.22` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `PROTOCOL-FILE-NAME` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on PROTOCOL-FILE-NAME under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下必须对“PROTOCOL-FILE-NAME”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00015` | `SU-ARINC-615A-3-5-1-P034-PROSE-SENTENCE-016-EE8EBA5E1E47`<br>`ARINC-615A-3 5.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform DEFINE on SOFTWARE-PART under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“软件加载件”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00016` | `SU-ARINC-615A-3-5-1-P034-PROSE-SENTENCE-016-EE8EBA5E1E47`<br>`ARINC-615A-3 5.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `COMPLY` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform COMPLY on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“网络接口”执行“符合”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00017` | `SU-ARINC-615A-3-5-2-P035-PROSE-SENTENCE-011-D07026646B5D`<br>`ARINC-615A-3 5.2 p.23` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `FIND-SERVICE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform USE on FIND-SERVICE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“FIND-SERVICE、TARGET-HARDWARE-ID”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00018` | `SU-ARINC-615A-3-5-3-2-2-P037-PROSE-SENTENCE-001-5DE45B64D498`<br>`ARINC-615A-3 5.3.2.2 p.25` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `TFTP-OPTION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION may perform TRANSFER on TFTP-OPTION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下可以对“TFTP 选项”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00019` | `SU-ARINC-615A-3-5-3-2-2-P037-PROSE-SENTENCE-003-DE334C18716C`<br>`ARINC-615A-3 5.3.2.2 p.25` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `DEFAULT-OPTION-VALUES` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform USE on DEFAULT-OPTION-VALUES under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“DEFAULT-OPTION-VALUES”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00020` | `SU-ARINC-615A-3-5-3-2-2-P037-PROSE-SENTENCE-004-FC7D3B3729A1`<br>`ARINC-615A-3 5.3.2.2 p.25` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `TRANSFER-OUTCOME` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform TRANSFER on TRANSFER-OUTCOME under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TRANSFER-OUTCOME”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00021` | `SU-ARINC-615A-3-5-3-2-2-P037-PROSE-SENTENCE-005-C966C11D19B8`<br>`ARINC-615A-3 5.3.2.2 p.25` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ABSENT-AFTER-BOUNDARY` / `TFTP-OPTION, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ABSENT-AFTER-BOUNDARY on TFTP-OPTION, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 选项、网络接口”执行“确保边界后不存在数据”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-768, DEP-RFC-791, DEP-RFC-1350 |
+| `CRS-M1-00022` | `SU-ARINC-615A-3-5-3-2-3-2-P037-PROSE-SENTENCE-002-1E0F8D921559`<br>`ARINC-615A-3 5.3.2.3.2 p.25` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE may perform TRANSFER on TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“TARGET-HARDWARE-ID”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00023` | `SU-ARINC-615A-3-5-3-2-3-2-P037-PROSE-SENTENCE-004-C976EA5E8074`<br>`ARINC-615A-3 5.3.2.3.2 p.25` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform IMPLEMENT on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00024` | `SU-ARINC-615A-3-5-3-2-3-3-P038-PROSE-SENTENCE-004-15DBABB1142A`<br>`ARINC-615A-3 5.3.2.3.3 p.26` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `ERROR-CODE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform USE on ERROR-CODE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“错误码”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00025` | `SU-ARINC-615A-3-5-3-2-3-3-P038-PROSE-SENTENCE-005-A1C528A5F702`<br>`ARINC-615A-3 5.3.2.3.3 p.26` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `ERROR-CODE, ERROR-MESSAGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on ERROR-CODE, ERROR-MESSAGE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下必须对“错误码、错误消息”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00026` | `SU-ARINC-615A-3-5-3-2-3-3-P038-PROSE-SENTENCE-006-06665FE11D6E`<br>`ARINC-615A-3 5.3.2.3.3 p.26` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `ERROR-CODE, ERROR-MESSAGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER may perform ENCODE on ERROR-CODE, ERROR-MESSAGE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下可以对“错误码、错误消息”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00027` | `SU-ARINC-615A-3-5-3-2-3-3-P038-PROSE-SENTENCE-007-2560DF2DBBD3`<br>`ARINC-615A-3 5.3.2.3.3 p.26` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `ERROR-CODE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform IMPLEMENT on ERROR-CODE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“错误码、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00028` | `SU-ARINC-615A-3-5-3-2-3-3-P038-PROSE-SENTENCE-008-B72528E71CC2`<br>`ARINC-615A-3 5.3.2.3.3 p.26` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `ERROR-CODE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform IMPLEMENT on ERROR-CODE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“错误码、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00029` | `SU-ARINC-615A-3-5-3-2-3-4-P038-PROSE-SENTENCE-004-1F95516BE886`<br>`ARINC-615A-3 5.3.2.3.4 p.26` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `PROTOCOL-MESSAGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION may perform TRANSFER on PROTOCOL-MESSAGE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下可以对“PROTOCOL-MESSAGE”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00030` | `SU-ARINC-615A-3-5-3-2-3-4-P038-PROSE-SENTENCE-006-D6FEB985BBBB`<br>`ARINC-615A-3 5.3.2.3.4 p.26` | `TFTP-RECEIVER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `WAIT-MESSAGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TFTP-RECEIVER shall perform ABORT on WAIT-MESSAGE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“TFTP 接收方”在“来源规定的适用条件”下必须对“WAIT 消息”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | DEP-RFC-1350 |
+| `CRS-M1-00031` | `SU-ARINC-615A-3-5-3-2-3-8-1-P040-PROSE-SENTENCE-001-28CC7C395DC9`<br>`ARINC-615A-3 5.3.2.3.8.1 p.28` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `TFTP-BLOCK-SIZE, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform IMPLEMENT on TFTP-BLOCK-SIZE, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“TFTP 块大小、网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-791, DEP-RFC-1350, DEP-RFC-2348 |
+| `CRS-M1-00032` | `SU-ARINC-615A-3-5-3-2-3-8-1-P040-PROSE-SENTENCE-002-A3F954863D43`<br>`ARINC-615A-3 5.3.2.3.8.1 p.28` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `CONFORMANCE-MODALITY, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform IMPLEMENT on CONFORMANCE-MODALITY, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“CONFORMANCE-MODALITY、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00033` | `SU-ARINC-615A-3-5-3-2-3-8-1-P041-PROSE-SENTENCE-003-C74E9B3EC0A0`<br>`ARINC-615A-3 5.3.2.3.8.1 p.29` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `TFTP-BLOCK-SIZE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE may perform USE on TFTP-BLOCK-SIZE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“TFTP 块大小、TARGET-HARDWARE-ID”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350, DEP-RFC-2348 |
+| `CRS-M1-00034` | `SU-ARINC-615A-3-5-3-2-3-8-2-P041-PROSE-SENTENCE-001-700C898C606C`<br>`ARINC-615A-3 5.3.2.3.8.2 p.29` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION may perform USE on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下可以对“网络接口”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00035` | `SU-ARINC-615A-3-5-3-2-3-8-2-P041-PROSE-SENTENCE-002-A12EC6F8831E`<br>`ARINC-615A-3 5.3.2.3.8.2 p.29` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `COMPARE` / `TFTP-TRANSFER-SIZE, TFTP-FILE-TRANSFER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform COMPARE on TFTP-TRANSFER-SIZE, TFTP-FILE-TRANSFER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 传输大小、TFTP 文件传输”执行“比较”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-2349 |
+| `CRS-M1-00036` | `SU-ARINC-615A-3-5-3-2-3-8-3-P041-PROSE-SENTENCE-001-700C898C606C`<br>`ARINC-615A-3 5.3.2.3.8.3 p.29` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION may perform USE on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下可以对“网络接口”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00037` | `SU-ARINC-615A-3-5-3-2-3-8-4-P041-PROSE-SENTENCE-001-700C898C606C`<br>`ARINC-615A-3 5.3.2.3.8.4 p.29` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION may perform USE on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下可以对“网络接口”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00038` | `SU-ARINC-615A-3-5-3-2-3-8-5-P041-PROSE-SENTENCE-001-700C898C606C`<br>`ARINC-615A-3 5.3.2.3.8.5 p.29` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION may perform USE on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下可以对“网络接口”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00039` | `SU-ARINC-615A-3-5-3-2-3-8-5-P042-PROSE-SENTENCE-009-89192D1CA807`<br>`ARINC-615A-3 5.3.2.3.8.5 p.30` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `HEADER-FILE, CRC, SOFTWARE-PART, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform ENCODE on HEADER-FILE, CRC, SOFTWARE-PART, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“头文件、CRC／校验值、软件加载件、TARGET-HARDWARE-ID”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350, DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00040` | `SU-ARINC-615A-3-5-3-2-3-8-5-P042-PROSE-SENTENCE-010-B47966431472`<br>`ARINC-615A-3 5.3.2.3.8.5 p.30` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform ENCODE on CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“CRC／校验值”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00041` | `SU-ARINC-615A-3-5-3-2-3-8-6-P044-PROSE-SENTENCE-005-F74AC5B7AE1C`<br>`ARINC-615A-3 5.3.2.3.8.6 p.32` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `FAIL` / `OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE may perform FAIL on OPERATION, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“协议操作、TARGET-HARDWARE-ID”执行“判定失败”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00042` | `SU-ARINC-615A-3-5-3-2-3-8-6-P044-PROSE-SENTENCE-006-1813D605F404`<br>`ARINC-615A-3 5.3.2.3.8.6 p.32` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ASSIGN` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ASSIGN on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“网络接口”执行“分配或管理”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00043` | `SU-ARINC-615A-3-5-3-2-3-9-P044-PROSE-SENTENCE-001-04EEB77FBE9B`<br>`ARINC-615A-3 5.3.2.3.9 p.32` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `COMPLY` / `TFTP-BLOCK-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform COMPLY on TFTP-BLOCK-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 块号”执行“符合”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00044` | `SU-ARINC-615A-3-5-3-2-3-9-P044-PROSE-SENTENCE-003-17BB6DF8AFB6`<br>`ARINC-615A-3 5.3.2.3.9 p.32` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `TFTP-BLOCK-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform SEND on TFTP-BLOCK-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 块号”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00045` | `SU-ARINC-615A-3-5-4-1-P045-PROSE-SENTENCE-008-B50B97990D87`<br>`ARINC-615A-3 5.4.1 p.33` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `NETWORK-INTERFACE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE may perform IMPLEMENT on NETWORK-INTERFACE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“网络接口、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00046` | `SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-002-ECE0CBAF4A74`<br>`ARINC-615A-3 5.4.2 p.35` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform IMPLEMENT on OPERATION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“协议操作”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00047` | `SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-003-78F447EDB430`<br>`ARINC-615A-3 5.4.2 p.35` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform IMPLEMENT on OPERATION, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“协议操作、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00048` | `SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-018-C6F5CE51372F`<br>`ARINC-615A-3 5.4.2 p.35` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `WAIT` / `CURRENT-STATUS` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform WAIT on CURRENT-STATUS under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“CURRENT-STATUS”执行“等待”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00049` | `SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-019-DD0255D27FB0`<br>`ARINC-615A-3 5.4.2 p.35` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `TFTP-OPTION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION may perform VALIDATE on TFTP-OPTION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下可以对“TFTP 选项”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00050` | `SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-020-12B60035E133`<br>`ARINC-615A-3 5.4.2 p.35` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `TFTP-OPTION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE may perform IMPLEMENT on TFTP-OPTION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“TFTP 选项”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00051` | `SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-021-3CF28DC21423`<br>`ARINC-615A-3 5.4.2 p.35` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform VALIDATE on CRC, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“CRC／校验值、网络接口”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00052` | `SU-ARINC-615A-3-5-4-3-P047-PROSE-SENTENCE-002-ECE0CBAF4A74`<br>`ARINC-615A-3 5.4.3 p.35` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor DATA-LOADER shall perform IMPLEMENT on OPERATION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“协议操作”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00053` | `SU-ARINC-615A-3-5-4-3-P047-PROSE-SENTENCE-003-78F447EDB430`<br>`ARINC-615A-3 5.4.3 p.35` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE shall perform IMPLEMENT on OPERATION, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“协议操作、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00054` | `SU-ARINC-615A-3-5-4-3-P048-PROSE-SENTENCE-014-A6329164790D`<br>`ARINC-615A-3 5.4.3 p.36` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `REJECT` / `LOAD-LIST, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE shall perform REJECT on LOAD-LIST, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“LOAD-LIST、TARGET-HARDWARE-ID”执行“拒绝”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00055` | `SU-ARINC-615A-3-5-4-3-P048-PROSE-SENTENCE-017-202272C96544`<br>`ARINC-615A-3 5.4.3 p.36` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `DISPLAY` / `CURRENT-STATUS` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor DATA-LOADER shall perform DISPLAY on CURRENT-STATUS under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“CURRENT-STATUS”执行“显示或通知”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00056` | `SU-ARINC-615A-3-5-4-3-P048-PROSE-SENTENCE-022-D550F67EB586`<br>`ARINC-615A-3 5.4.3 p.36` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `TFTP-OPTION, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE may perform VALIDATE on TFTP-OPTION, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“TFTP 选项、网络接口”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00057` | `SU-ARINC-615A-3-5-4-3-P048-PROSE-SENTENCE-024-F38D018C4499`<br>`ARINC-615A-3 5.4.3 p.36` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE shall perform VALIDATE on CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00058` | `SU-ARINC-615A-3-5-4-3-P048-PROSE-SENTENCE-025-E777A6D3DAC7`<br>`ARINC-615A-3 5.4.3 p.36` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `TFTP-OPTION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE may perform VALIDATE on TFTP-OPTION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“TFTP 选项”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00059` | `SU-ARINC-615A-3-5-4-3-1-P048-PROSE-SENTENCE-004-AF732D243056`<br>`ARINC-615A-3 5.4.3.1 p.36` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `COMPARE` / `HEADER-FILE, DATA-FILE, LOAD-PART-NUMBER, LOADABLE-SOFTWARE-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE shall perform COMPARE on HEADER-FILE, DATA-FILE, LOAD-PART-NUMBER, LOADABLE-SOFTWARE-PART-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“头文件、数据文件、加载件号、LOADABLE-SOFTWARE-PART-NUMBER”执行“比较”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00060` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-007-F209ABE1376B`<br>`ARINC-615A-3 5.4.3.1 p.37` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `NVM-MEMORY-IMAGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-IMPLEMENTATION shall perform VALIDATE on NVM-MEMORY-IMAGE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“NVM-MEMORY-IMAGE”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00061` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-007-F209ABE1376B`<br>`ARINC-615A-3 5.4.3.1 p.37` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC, SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform VALIDATE on CRC, SOFTWARE-PART under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值、软件加载件”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00062` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-008-CDA43D6568CC`<br>`ARINC-615A-3 5.4.3.1 p.37` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC, FILE-CONTENT, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE may perform VALIDATE on CRC, FILE-CONTENT, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“CRC／校验值、FILE-CONTENT、TARGET-HARDWARE-ID”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00063` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-010-F4624AC8DCB4`<br>`ARINC-615A-3 5.4.3.1 p.37` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENSURE-EQUALITY` / `LOAD-PART-NUMBER, CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-IMPLEMENTATION shall perform ENSURE-EQUALITY on LOAD-PART-NUMBER, CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“加载件号、CRC／校验值”执行“确保取值相等”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00064` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-012-B2655A4BD5D6`<br>`ARINC-615A-3 5.4.3.1 p.37` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `FORMAT` / `FILE-CONTENT` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-IMPLEMENTATION shall perform FORMAT on FILE-CONTENT under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“FILE-CONTENT”执行“按规定格式化”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00065` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-015-1FD87B87894F`<br>`ARINC-615A-3 5.4.3.1 p.37` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `SELECT` / `FILE-CONTENT` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-IMPLEMENTATION shall perform SELECT on FILE-CONTENT under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“FILE-CONTENT”执行“选择”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00066` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-017-D6D20C0AE6D8`<br>`ARINC-615A-3 5.4.3.1 p.37` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `COMPILE-AND-LINK` / `FILE-CONTENT` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-IMPLEMENTATION shall perform COMPILE-AND-LINK on FILE-CONTENT under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“FILE-CONTENT”执行“独立编译并链接”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00067` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-018-7D1A5B42A8F9`<br>`ARINC-615A-3 5.4.3.1 p.37` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `FILE-CONTENT, PROGRAM-MEMORY-MAP` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-IMPLEMENTATION shall perform DEFINE on FILE-CONTENT, PROGRAM-MEMORY-MAP under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“FILE-CONTENT、PROGRAM-MEMORY-MAP”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00068` | `SU-ARINC-615A-3-5-4-5-2-P053-PROSE-SENTENCE-008-6BD76320C0DE`<br>`ARINC-615A-3 5.4.5.2 p.41` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, TEXT-FIELD, OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform ABORT on STATUS-FILE, TEXT-FIELD, OPERATION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“状态文件、文本字段、协议操作”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00069` | `SU-ARINC-615A-3-6-2-8-1-P057-PROSE-SENTENCE-001-B9AF73779529`<br>`ARINC-615A-3 6.2.8.1 p.45` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TARGET-HARDWARE-ID, PROTOCOL-MESSAGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE shall perform RETRY on TARGET-HARDWARE-ID, PROTOCOL-MESSAGE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“TARGET-HARDWARE-ID、PROTOCOL-MESSAGE”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00070` | `SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-010-EF2C1FAB94E9`<br>`ARINC-615A-3 6.3.1 p.51` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `STATUS-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform DEFINE on STATUS-FILE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“状态文件”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00071` | `SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-014-46E366631127`<br>`ARINC-615A-3 6.3.1 p.51` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `STATUS-FILE, NETWORK-INTERFACE, PROTOCOL-ERROR` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform ENCODE on STATUS-FILE, NETWORK-INTERFACE, PROTOCOL-ERROR under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、网络接口、PROTOCOL-ERROR”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00072` | `SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-015-FFB177F65B0A`<br>`ARINC-615A-3 6.3.1 p.51` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `ABORT-MESSAGE, STATUS-FILE, NETWORK-INTERFACE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE may perform ABORT on ABORT-MESSAGE, STATUS-FILE, NETWORK-INTERFACE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“中止消息、状态文件、网络接口、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00073` | `SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-018-33F16CA0556B`<br>`ARINC-615A-3 6.3.1 p.51` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `STATUS-FILE, TIMEOUT-EXPIRY, LCL-TRANSFER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE may perform SEND on STATUS-FILE, TIMEOUT-EXPIRY, LCL-TRANSFER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“状态文件、TIMEOUT-EXPIRY、LCL-TRANSFER”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00074` | `SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-020-D27F9DB819AB`<br>`ARINC-615A-3 6.3.1 p.51` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `STATUS-FILE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform SEND on STATUS-FILE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、TARGET-HARDWARE-ID”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00075` | `SU-ARINC-615A-3-6-3-1-P064-PROSE-SENTENCE-031-D8862D88C46E`<br>`ARINC-615A-3 6.3.1 p.52` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `WAIT` / `EXCEPTION-TIMER, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform WAIT on EXCEPTION-TIMER, OPERATION, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“异常计时器、协议操作、TARGET-HARDWARE-ID”执行“等待”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00076` | `SU-ARINC-615A-3-6-3-1-P064-PROSE-SENTENCE-032-E812AC346D09`<br>`ARINC-615A-3 6.3.1 p.52` | `TARGET-HARDWARE-SUPPLIER` / `APPLICABLE-SOURCE-CONDITION` / `WAIT` / `EXCEPTION-TIMER, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE-SUPPLIER shall perform WAIT on EXCEPTION-TIMER, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件供应商”在“来源规定的适用条件”下必须对“异常计时器、TARGET-HARDWARE-ID”执行“等待”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00077` | `SU-ARINC-615A-3-6-3-1-P064-PROSE-SENTENCE-033-2765B9535D98`<br>`ARINC-615A-3 6.3.1 p.52` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform ABORT on STATUS-FILE, OPERATION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“状态文件、协议操作”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00078` | `SU-ARINC-615A-3-6-3-2-P067-PROSE-SENTENCE-020-43C35127F07F`<br>`ARINC-615A-3 6.3.2 p.55` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `STATUS-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-IMPLEMENTATION shall perform DEFINE on STATUS-FILE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“状态文件”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00079` | `SU-ARINC-615A-3-6-3-2-P067-PROSE-SENTENCE-022-9B7AA17CBAF6`<br>`ARINC-615A-3 6.3.2 p.55` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `STATUS-FILE, NETWORK-INTERFACE, PROTOCOL-ERROR` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE shall perform ENCODE on STATUS-FILE, NETWORK-INTERFACE, PROTOCOL-ERROR under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、网络接口、PROTOCOL-ERROR”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00080` | `SU-ARINC-615A-3-6-3-2-P067-PROSE-SENTENCE-023-AEFFB70E9596`<br>`ARINC-615A-3 6.3.2 p.55` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `ABORT-MESSAGE, STATUS-FILE, NETWORK-INTERFACE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE may perform ABORT on ABORT-MESSAGE, STATUS-FILE, NETWORK-INTERFACE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“中止消息、状态文件、网络接口、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00081` | `SU-ARINC-615A-3-6-3-2-P067-PROSE-SENTENCE-026-3B69FEC8B73B`<br>`ARINC-615A-3 6.3.2 p.55` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `UPLOAD-THREAD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE may perform TRANSFER on UPLOAD-THREAD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“UPLOAD-THREAD”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00082` | `SU-ARINC-615A-3-5-3-2-3-4-P068-PROSE-SENTENCE-016-D8862D88C46E`<br>`ARINC-615A-3 5.3.2.3.4 p.56` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `WAIT` / `EXCEPTION-TIMER, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform WAIT on EXCEPTION-TIMER, OPERATION, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“异常计时器、协议操作、TARGET-HARDWARE-ID”执行“等待”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00083` | `SU-ARINC-615A-3-5-3-2-3-4-P068-PROSE-SENTENCE-017-E812AC346D09`<br>`ARINC-615A-3 5.3.2.3.4 p.56` | `TARGET-HARDWARE-SUPPLIER` / `APPLICABLE-SOURCE-CONDITION` / `WAIT` / `EXCEPTION-TIMER, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE-SUPPLIER shall perform WAIT on EXCEPTION-TIMER, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件供应商”在“来源规定的适用条件”下必须对“异常计时器、TARGET-HARDWARE-ID”执行“等待”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00084` | `SU-ARINC-615A-3-5-3-2-3-4-P068-PROSE-SENTENCE-018-2765B9535D98`<br>`ARINC-615A-3 5.3.2.3.4 p.56` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform ABORT on STATUS-FILE, OPERATION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“状态文件、协议操作”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00085` | `SU-ARINC-615A-3-5-3-2-3-4-P068-PROSE-SENTENCE-020-4C1D759A6B9A`<br>`ARINC-615A-3 5.3.2.3.4 p.56` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `STATUS-FILE, DATA-FILE, CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform SEND on STATUS-FILE, DATA-FILE, CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“状态文件、数据文件、CRC／校验值”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00086` | `SU-ARINC-615A-3-6-3-5-P076-PROSE-SENTENCE-009-BF2F613AC35B`<br>`ARINC-615A-3 6.3.5 p.64` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE may perform ABORT on STATUS-FILE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“状态文件、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00087` | `SU-ARINC-615A-3-6-3-5-P076-PROSE-SENTENCE-011-5B38B1E3DBEF`<br>`ARINC-615A-3 6.3.5 p.64` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform ABORT on STATUS-FILE, OPERATION, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、协议操作、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00088` | `SU-ARINC-615A-3-6-3-5-P076-PROSE-SENTENCE-012-EED68957A0BC`<br>`ARINC-615A-3 6.3.5 p.64` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `ABORT-MESSAGE, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform ABORT on ABORT-MESSAGE, OPERATION, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“中止消息、协议操作、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00089` | `SU-ARINC-615A-3-6-3-5-P076-PROSE-SENTENCE-013-DEDC03B64B0A`<br>`ARINC-615A-3 6.3.5 p.64` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, ERROR-MESSAGE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform ABORT on STATUS-FILE, ERROR-MESSAGE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、错误消息、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00090` | `SU-ARINC-615A-3-6-3-5-P076-PROSE-SENTENCE-015-DCA535962C3D`<br>`ARINC-615A-3 6.3.5 p.64` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `ABORT-MESSAGE, OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform ABORT on ABORT-MESSAGE, OPERATION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“中止消息、协议操作”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00091` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-005-1B24BCFF8198`<br>`ARINC-615A-3 6.4 p.65` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `PROTOCOL-VERSION, OPERATION, NETWORK-INTERFACE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform SEND on PROTOCOL-VERSION, OPERATION, NETWORK-INTERFACE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“协议版本、协议操作、网络接口、TARGET-HARDWARE-ID”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00092` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-007-20EF70E6EF8B`<br>`ARINC-615A-3 6.4 p.65` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `PROTOCOL-VERSION, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform IMPLEMENT on PROTOCOL-VERSION, OPERATION, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“协议版本、协议操作、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00093` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-009-5F21110D7E4B`<br>`ARINC-615A-3 6.4 p.65` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `PROTOCOL-VERSION, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform DEFINE on PROTOCOL-VERSION, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下必须对“协议版本、网络接口”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00094` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-010-5625CA7DF2D3`<br>`ARINC-615A-3 6.4 p.65` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `PROTOCOL-VERSION, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform IMPLEMENT on PROTOCOL-VERSION, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下必须对“协议版本、网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00095` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-012-2FCCE7C4573B`<br>`ARINC-615A-3 6.4 p.65` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `PROTOCOL-VERSION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform ABORT on PROTOCOL-VERSION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“协议版本”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00096` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-013-569F14A5E296`<br>`ARINC-615A-3 6.4 p.65` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `ABORT-MESSAGE, STATUS-FILE, PROTOCOL-VERSION, OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform ABORT on ABORT-MESSAGE, STATUS-FILE, PROTOCOL-VERSION, OPERATION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“中止消息、状态文件、协议版本、协议操作”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00097` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-014-425EEC39D73C`<br>`ARINC-615A-3 6.4 p.65` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `PROTOCOL-VERSION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on PROTOCOL-VERSION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下必须对“协议版本”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00098` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-016-280B7BBBB75A`<br>`ARINC-615A-3 6.4 p.65` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `LOAD-PART-NUMBER, TEXT-FIELD, NETWORK-INTERFACE, LOADABLE-SOFTWARE-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on LOAD-PART-NUMBER, TEXT-FIELD, NETWORK-INTERFACE, LOADABLE-SOFTWARE-PART-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“加载件号、文本字段、网络接口、LOADABLE-SOFTWARE-PART-NUMBER”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00099` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-016-280B7BBBB75A`<br>`ARINC-615A-3 6.4 p.65` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00100` | `SU-ARINC-615A-3-6-4-1-P080-PROSE-SENTENCE-023-B30093B748E5`<br>`ARINC-615A-3 6.4.1 p.68` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ALLOW-PRINTABLE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ALLOW-PRINTABLE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“仅允许可打印字符”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00101` | `SU-ARINC-615A-3-6-4-1-P080-PROSE-SENTENCE-023-B30093B748E5`<br>`ARINC-615A-3 6.4.1 p.68` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00102` | `SU-ARINC-615A-3-6-4-1-P080-PROSE-SENTENCE-023-B30093B748E5`<br>`ARINC-615A-3 6.4.1 p.68` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform CONSTRAIN on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00103` | `SU-ARINC-615A-3-6-4-1-P080-PROSE-SENTENCE-024-1532165AA3AE`<br>`ARINC-615A-3 6.4.1 p.68` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00104` | `SU-ARINC-615A-3-6-4-2-P081-PROSE-SENTENCE-018-7650772794FC`<br>`ARINC-615A-3 6.4.2 p.69` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00105` | `SU-ARINC-615A-3-6-4-2-P081-PROSE-SENTENCE-023-B016CF154BFD`<br>`ARINC-615A-3 6.4.2 p.69` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00106` | `SU-ARINC-615A-3-6-4-2-P081-PROSE-SENTENCE-030-B016CF154BFD`<br>`ARINC-615A-3 6.4.2 p.69` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00107` | `SU-ARINC-615A-3-6-4-2-P082-PROSE-SENTENCE-042-0D59A327A7CC`<br>`ARINC-615A-3 6.4.2 p.70` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ALLOW-PRINTABLE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ALLOW-PRINTABLE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“仅允许可打印字符”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00108` | `SU-ARINC-615A-3-6-4-2-P082-PROSE-SENTENCE-042-0D59A327A7CC`<br>`ARINC-615A-3 6.4.2 p.70` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00109` | `SU-ARINC-615A-3-6-4-2-P082-PROSE-SENTENCE-042-0D59A327A7CC`<br>`ARINC-615A-3 6.4.2 p.70` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform CONSTRAIN on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00110` | `SU-ARINC-615A-3-6-4-2-P082-PROSE-SENTENCE-043-1532165AA3AE`<br>`ARINC-615A-3 6.4.2 p.70` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00111` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-029-C2788AA6D18A`<br>`ARINC-615A-3 6.4.3 p.72` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on STATUS-CODE-CONDITIONAL-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下必须对“STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00112` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-034-65EBA86ACA77`<br>`ARINC-615A-3 6.4.3 p.72` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `PROVIDE` / `ESTIMATED-TIME, OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform PROVIDE on ESTIMATED-TIME, OPERATION under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“预计时间、协议操作”执行“提供”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00113` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-037-98AB79F99A7B`<br>`ARINC-615A-3 6.4.3 p.72` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `ESTIMATED-TIME, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform ENCODE on ESTIMATED-TIME, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“预计时间、TARGET-HARDWARE-ID”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00114` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-043-83077CACF0DC`<br>`ARINC-615A-3 6.4.3 p.72` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER may perform ENCODE on STATUS-CODE-CONDITIONAL-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下可以对“STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00115` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-045-1B483243E195`<br>`ARINC-615A-3 6.4.3 p.72` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ALLOW-PRINTABLE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ALLOW-PRINTABLE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“仅允许可打印字符”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00116` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-045-1B483243E195`<br>`ARINC-615A-3 6.4.3 p.72` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00117` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-045-1B483243E195`<br>`ARINC-615A-3 6.4.3 p.72` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform CONSTRAIN on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00118` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-046-1532165AA3AE`<br>`ARINC-615A-3 6.4.3 p.72` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00119` | `SU-ARINC-615A-3-6-4-4-P085-PROSE-SENTENCE-013-D5E44774D202`<br>`ARINC-615A-3 6.4.4 p.73` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `HEADER-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on HEADER-FILE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下必须对“头文件”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00120` | `SU-ARINC-615A-3-6-4-4-P085-PROSE-SENTENCE-018-1532165AA3AE`<br>`ARINC-615A-3 6.4.4 p.73` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00121` | `SU-ARINC-615A-3-6-4-4-P085-PROSE-SENTENCE-023-53AAFA003A8B`<br>`ARINC-615A-3 6.4.4 p.73` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ALLOW-PRINTABLE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-IMPLEMENTATION shall perform ALLOW-PRINTABLE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“仅允许可打印字符”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00122` | `SU-ARINC-615A-3-6-4-4-P085-PROSE-SENTENCE-023-53AAFA003A8B`<br>`ARINC-615A-3 6.4.4 p.73` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00123` | `SU-ARINC-615A-3-6-4-4-P085-PROSE-SENTENCE-023-53AAFA003A8B`<br>`ARINC-615A-3 6.4.4 p.73` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-IMPLEMENTATION shall perform CONSTRAIN on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00124` | `SU-ARINC-615A-3-6-4-4-P085-PROSE-SENTENCE-024-1532165AA3AE`<br>`ARINC-615A-3 6.4.4 p.73` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00125` | `SU-ARINC-615A-3-6-4-10-P094-PROSE-SENTENCE-001-53AAFA003A8B`<br>`ARINC-615A-3 6.4.10 p.82` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ALLOW-PRINTABLE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ALLOW-PRINTABLE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“仅允许可打印字符”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00126` | `SU-ARINC-615A-3-6-4-10-P094-PROSE-SENTENCE-001-53AAFA003A8B`<br>`ARINC-615A-3 6.4.10 p.82` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00127` | `SU-ARINC-615A-3-6-4-10-P094-PROSE-SENTENCE-001-53AAFA003A8B`<br>`ARINC-615A-3 6.4.10 p.82` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform CONSTRAIN on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00128` | `SU-ARINC-615A-3-6-4-10-P094-PROSE-SENTENCE-002-1532165AA3AE`<br>`ARINC-615A-3 6.4.10 p.82` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on TEXT-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00129` | `SU-ARINC-615A-3-6-4-10-P096-PROSE-SENTENCE-003-2C9653D1AE20`<br>`ARINC-615A-3 6.4.10 p.84` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `DISPLAY` / `TEXT-FIELD, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform DISPLAY on TEXT-FIELD, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“文本字段、TARGET-HARDWARE-ID”执行“显示或通知”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00130` | `SU-ARINC-615A-3-6-4-10-P097-PROSE-SENTENCE-004-5D81ED14D19B`<br>`ARINC-615A-3 6.4.10 p.85` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `WAIT` / `NETWORK-INTERFACE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform WAIT on NETWORK-INTERFACE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“网络接口、TARGET-HARDWARE-ID”执行“等待”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00131` | `SU-ARINC-615A-3-6-4-10-P097-PROSE-SENTENCE-012-F313FBEE280D`<br>`ARINC-615A-3 6.4.10 p.85` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, TEXT-FIELD, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform ABORT on STATUS-FILE, TEXT-FIELD, OPERATION, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、文本字段、协议操作、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00132` | `SU-ARINC-615A-3-6-4-10-P097-PROSE-SENTENCE-014-DEF9DE65D40B`<br>`ARINC-615A-3 6.4.10 p.85` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `DISPLAY` / `STATUS-FILE, TEXT-FIELD, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform DISPLAY on STATUS-FILE, TEXT-FIELD, OPERATION, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、文本字段、协议操作、TARGET-HARDWARE-ID”执行“显示或通知”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00133` | `SU-ARINC-615A-3-6-4-10-P099-PROSE-SENTENCE-020-C650FAC6A8D8`<br>`ARINC-615A-3 6.4.10 p.87` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ASSIGN` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ASSIGN on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“网络接口”执行“分配或管理”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00134` | `SU-ARINC-615A-3-6-4-10-P099-PROSE-SENTENCE-021-7D0DD652080D`<br>`ARINC-615A-3 6.4.10 p.87` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `PROVIDE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION may perform PROVIDE on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下可以对“网络接口”执行“提供”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00135` | `SU-ARINC-615A-3-6-4-10-P099-PROSE-SENTENCE-023-7640457B8D57`<br>`ARINC-615A-3 6.4.10 p.87` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform USE on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“网络接口”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00136` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-005-D75104E5A8FF`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TIMEOUT-AND-RETRY-LAYERS` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform RETRY on TIMEOUT-AND-RETRY-LAYERS under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TIMEOUT-AND-RETRY-LAYERS”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00137` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-008-F320813241E5`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `TFTP-FILE-TRANSFER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform TRANSFER on TFTP-FILE-TRANSFER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 文件传输”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `TFTP-TO` / `UNRESOLVED..UNRESOLVED s` | DEP-RFC-1350 |
+| `CRS-M1-00138` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-009-414439744FBA`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ACKNOWLEDGE` / `TIMEOUT-EXPIRY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ACKNOWLEDGE on TIMEOUT-EXPIRY under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TIMEOUT-EXPIRY”执行“确认”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00139` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-011-D951F3C8D8DC`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TFTP-FILE-TRANSFER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION may perform RETRY on TFTP-FILE-TRANSFER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下可以对“TFTP 文件传输”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00140` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-012-DCEA052A12C5`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TFTP-FILE-TRANSFER, RETRY-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform RETRY on TFTP-FILE-TRANSFER, RETRY-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 文件传输、RETRY-NUMBER”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00141` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-013-0E511BD5A2AE`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `PROVIDE` / `PROTOCOL-ERROR` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform PROVIDE on PROTOCOL-ERROR under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“PROTOCOL-ERROR”执行“提供”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00142` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-015-7C1E9A3C2D05`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TFTP-FILE-TRANSFER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform RETRY on TFTP-FILE-TRANSFER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 文件传输”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00143` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-016-BC84E4EE3A39`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TFTP-FILE-TRANSFER, PROTOCOL-ERROR, RETRY-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform RETRY on TFTP-FILE-TRANSFER, PROTOCOL-ERROR, RETRY-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 文件传输、PROTOCOL-ERROR、RETRY-NUMBER”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00144` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-017-C80348B18729`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `FAIL` / `PROTOCOL-ERROR` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform FAIL on PROTOCOL-ERROR under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“PROTOCOL-ERROR”执行“判定失败”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00145` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-024-35890C54B368`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ADJUST-UPWARD` / `TIMEOUT-VALUE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ADJUST-UPWARD on TIMEOUT-VALUE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TIMEOUT-VALUE”执行“向上调整”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00146` | `SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-004-4C05C3174D37`<br>`ARINC-615A-3 4-3.1 p.100` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `SET-CONSTANT` / `TIMEOUT-VALUE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform SET-CONSTANT on TIMEOUT-VALUE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TIMEOUT-VALUE”执行“设置固定常数”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `FIXED-SOURCE-CONSTANT` / `TFTP-TO` / `0..2 s` | — |
+| `CRS-M1-00147` | `SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-005-88F51ABD3389`<br>`ARINC-615A-3 4-3.1 p.100` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `PROHIBIT` / `TFTP-EXCHANGE, TIMEOUT-VALUE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform PROHIBIT on TFTP-EXCHANGE, TIMEOUT-VALUE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 交换、TIMEOUT-VALUE”执行“禁止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `TFTP-TO` / `UNRESOLVED..UNRESOLVED s` | DEP-RFC-1350 |
+| `CRS-M1-00148` | `SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-007-69549032F30B`<br>`ARINC-615A-3 4-3.1 p.100` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `TFTP-EXCHANGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform SEND on TFTP-EXCHANGE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 交换”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00149` | `SU-ARINC-615A-3-4-3-2-P113-PROSE-SENTENCE-001-205BD6EF24F3`<br>`ARINC-615A-3 4-3.2 p.101` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TFTP-EXCHANGE, RETRY-NUMBER, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE may perform RETRY on TFTP-EXCHANGE, RETRY-NUMBER, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“TFTP 交换、RETRY-NUMBER、TARGET-HARDWARE-ID”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00150` | `SU-ARINC-615A-3-4-3-2-P113-PROSE-SENTENCE-011-A604F56F9739`<br>`ARINC-615A-3 4-3.2 p.101` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `RETRY-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform RETRY on RETRY-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“RETRY-NUMBER”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00151` | `SU-ARINC-615A-3-4-3-3-P114-PROSE-SENTENCE-001-5174295F548B`<br>`ARINC-615A-3 4-3.3 p.102` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `SORCERERS-APPRENTICE-FIX` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ENCODE on SORCERERS-APPRENTICE-FIX under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“SORCERERS-APPRENTICE-FIX”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1123, DEP-RFC-1350 |
+| `CRS-M1-00152` | `SU-ARINC-615A-3-4-3-3-P114-PROSE-SENTENCE-002-889533B1AA3F`<br>`ARINC-615A-3 4-3.3 p.102` | `TFTP-SENDER` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `TFTP-EXCHANGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TFTP-SENDER shall perform SEND on TFTP-EXCHANGE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“TFTP 发送方”在“来源规定的适用条件”下必须对“TFTP 交换”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00153` | `SU-ARINC-615A-3-4-3-3-P114-PROSE-SENTENCE-002-889533B1AA3F`<br>`ARINC-615A-3 4-3.3 p.102` | `TFTP-SENDER` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `TFTP-EXCHANGE, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TFTP-SENDER shall perform SEND on TFTP-EXCHANGE, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“TFTP 发送方”在“来源规定的适用条件”下必须对“TFTP 交换、网络接口”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00154` | `SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-003-7C29399D1DAB`<br>`ARINC-615A-3 4-4.1 p.102` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `TFTP-FILE-TRANSFER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform TRANSFER on TFTP-FILE-TRANSFER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 文件传输”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | DEP-RFC-1350 |
+| `CRS-M1-00155` | `SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-006-02C6AA3F66A1`<br>`ARINC-615A-3 4-4.1 p.102` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ADJUST-UPWARD` / `TIMEOUT-VALUE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform ADJUST-UPWARD on TIMEOUT-VALUE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TIMEOUT-VALUE”执行“向上调整”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00156` | `SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-008-4848608477C0`<br>`ARINC-615A-3 4-4.1 p.102` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `STATUS-FILE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform SEND on STATUS-FILE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、TARGET-HARDWARE-ID”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00157` | `SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-011-BD0CBB7058D1`<br>`ARINC-615A-3 4-4.1 p.102` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `PROVIDE` / `TIMEOUT-VALUE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform PROVIDE on TIMEOUT-VALUE, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“TIMEOUT-VALUE、TARGET-HARDWARE-ID”执行“提供”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `FIXED-SOURCE-CONSTANT` / `DLP-TO` / `0..13 s` | — |
+| `CRS-M1-00158` | `SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-012-FB8820DE2238`<br>`ARINC-615A-3 4-4.1 p.102` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `TFTP-EXCHANGE, TFTP-FILE-TRANSFER, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform SEND on TFTP-EXCHANGE, TFTP-FILE-TRANSFER, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“TFTP 交换、TFTP 文件传输、TARGET-HARDWARE-ID”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | DEP-RFC-1350 |
+| `CRS-M1-00159` | `SU-ARINC-615A-3-4-4-1-P115-PROSE-SENTENCE-015-A31F93757E22`<br>`ARINC-615A-3 4-4.1 p.103` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `TIMEOUT-VALUE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-IMPLEMENTATION shall perform CONSTRAIN on TIMEOUT-VALUE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议实现”在“来源规定的适用条件”下必须对“TIMEOUT-VALUE”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00160` | `SU-ARINC-615A-3-4-4-2-1-P115-PROSE-SENTENCE-001-46D0EBEB4FDD`<br>`ARINC-615A-3 4-4.2.1 p.103` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TFTP-FILE-TRANSFER, RETRY-NUMBER, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE may perform RETRY on TFTP-FILE-TRANSFER, RETRY-NUMBER, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下可以对“TFTP 文件传输、RETRY-NUMBER、TARGET-HARDWARE-ID”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00161` | `SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-002-93AC8751234E`<br>`ARINC-665-5 1.3.1 p.1` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `SOFTWARE-PART, CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform IMPLEMENT on SOFTWARE-PART, CONFORMANCE-MODALITY under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“软件加载件、CONFORMANCE-MODALITY”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00162` | `SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-003-F4F4BC419A09`<br>`ARINC-665-5 1.3.1 p.1` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `NETWORK-INTERFACE, CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform IMPLEMENT on NETWORK-INTERFACE, CONFORMANCE-MODALITY under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“网络接口、CONFORMANCE-MODALITY”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00163` | `SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-005-BC73FE29F0AF`<br>`ARINC-665-5 1.3.1 p.1` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER may perform USE on CONFORMANCE-MODALITY under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下可以对“CONFORMANCE-MODALITY”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00164` | `SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-006-3F3CB7AE6B26`<br>`ARINC-665-5 1.3.1 p.1` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform IMPLEMENT on CONFORMANCE-MODALITY under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CONFORMANCE-MODALITY”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00165` | `SU-ARINC-665-5-1-3-3-P011-PROSE-SENTENCE-001-E0CA338A51EE`<br>`ARINC-665-5 1.3.3 p.1` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `NETWORK-INTERFACE, DATA-TYPE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform ENCODE on NETWORK-INTERFACE, DATA-TYPE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“网络接口、DATA-TYPE”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00166` | `SU-ARINC-665-5-1-4-2-P012-PROSE-SENTENCE-002-D07F6C2D4DAC`<br>`ARINC-665-5 1.4.2 p.2` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform ENCODE on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“网络接口”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00167` | `SU-ARINC-665-5-1-4-3-P013-PROSE-SENTENCE-003-F355ED0B2EC9`<br>`ARINC-665-5 1.4.3 p.3` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ALLOW-READ` / `FILE-VERSION-COMPATIBILITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform ALLOW-READ on FILE-VERSION-COMPATIBILITY under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“FILE-VERSION-COMPATIBILITY”执行“允许读取”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00168` | `SU-ARINC-665-5-1-4-3-P013-PROSE-SENTENCE-004-C23C95885017`<br>`ARINC-665-5 1.4.3 p.3` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `FILE-VERSION-COMPATIBILITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform ENCODE on FILE-VERSION-COMPATIBILITY under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“FILE-VERSION-COMPATIBILITY”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00169` | `SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-007-5E8CCA74AF4E`<br>`ARINC-665-5 1.4.4 p.3` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `HEADER-FILE, LOAD-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on HEADER-FILE, LOAD-PART-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下必须对“头文件、加载件号”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00170` | `SU-ARINC-665-5-1-5-P014-PROSE-SENTENCE-002-DBF83061338F`<br>`ARINC-665-5 1.5 p.4` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `REFLECT` / `NETWORK-INTERFACE, MANUFACTURER-IDENTIFIER, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform REFLECT on NETWORK-INTERFACE, MANUFACTURER-IDENTIFIER, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“网络接口、MANUFACTURER-IDENTIFIER、TARGET-HARDWARE-ID”执行“反映”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00171` | `SU-ARINC-665-5-1-5-P014-PROSE-SENTENCE-003-35251417E277`<br>`ARINC-665-5 1.5 p.4` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ASSIGN` / `MANUFACTURER-IDENTIFIER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform ASSIGN on MANUFACTURER-IDENTIFIER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“MANUFACTURER-IDENTIFIER”执行“分配或管理”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00172` | `SU-ARINC-665-5-2-1-P016-PROSE-SENTENCE-001-A7E185845C31`<br>`ARINC-665-5 2.1 p.6` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENSURE-CARDINALITY` / `LOAD-PART-NUMBER, SOFTWARE-PART, LOADABLE-SOFTWARE-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform ENSURE-CARDINALITY on LOAD-PART-NUMBER, SOFTWARE-PART, LOADABLE-SOFTWARE-PART-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“加载件号、软件加载件、LOADABLE-SOFTWARE-PART-NUMBER”执行“保证基数约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00173` | `SU-ARINC-665-5-2-1-P016-PROSE-SENTENCE-002-C9B7C44AE544`<br>`ARINC-665-5 2.1 p.6` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `COORDINATE` / `LOAD-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform COORDINATE on LOAD-PART-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“加载件号”执行“协调并批准”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00174` | `SU-ARINC-665-5-2-1-P016-PROSE-SENTENCE-003-D2A78669BC58`<br>`ARINC-665-5 2.1 p.6` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ASSIGN` / `LOAD-PART-NUMBER, SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform ASSIGN on LOAD-PART-NUMBER, SOFTWARE-PART under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“加载件号、软件加载件”执行“分配或管理”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00175` | `SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-001-79D9D9285B09`<br>`ARINC-665-5 2.1.1 p.6` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `FORMAT` / `LOADABLE-SOFTWARE-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform FORMAT on LOADABLE-SOFTWARE-PART-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“LOADABLE-SOFTWARE-PART-NUMBER”执行“按规定格式化”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00176` | `SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-004-FBE93765B788`<br>`ARINC-665-5 2.1.1 p.6` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `LOAD-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform DEFINE on LOAD-PART-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“加载件号”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00177` | `SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-007-6FB26843CBD8`<br>`ARINC-665-5 2.1.1 p.6` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `LOAD-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform IMPLEMENT on LOAD-PART-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“加载件号”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00178` | `SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-008-63B5D84BC565`<br>`ARINC-665-5 2.1.1 p.6` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `LOAD-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER shall perform USE on LOAD-PART-NUMBER under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下必须对“加载件号”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00179` | `SU-ARINC-665-5-2-1-3-P017-PROSE-SENTENCE-003-41F8723AEC8B`<br>`ARINC-665-5 2.1.3 p.7` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `COMPUTE` / `CHECK-CHARACTERS` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform COMPUTE on CHECK-CHARACTERS under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CHECK-CHARACTERS”执行“计算”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00180` | `SU-ARINC-665-5-2-2-2-1-P018-PROSE-SENTENCE-001-84EA4A3113C8`<br>`ARINC-665-5 2.2.2.1 p.8` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `FORMAT` / `HEADER-FILE, SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform FORMAT on HEADER-FILE, SOFTWARE-PART under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“头文件、软件加载件”执行“按规定格式化”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00181` | `SU-ARINC-665-5-2-2-3-1-P018-PROSE-SENTENCE-001-7A7C6DE1A7A7`<br>`ARINC-665-5 2.2.3.1 p.8` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `HEADER-FILE, SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform ENCODE on HEADER-FILE, SOFTWARE-PART under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“头文件、软件加载件”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00182` | `SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-003-D19D48006847`<br>`ARINC-665-5 2.2.3.1 p.9` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `HEADER-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform ENCODE on HEADER-FILE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“头文件”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00183` | `SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-003-D19D48006847`<br>`ARINC-665-5 2.2.3.1 p.9` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `HEADER-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform DEFINE on HEADER-FILE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“头文件”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00184` | `SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-004-A761BB0130D9`<br>`ARINC-665-5 2.2.3.1 p.9` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `BINARY-FIELD-ENCODING` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform ENCODE on BINARY-FIELD-ENCODING under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“BINARY-FIELD-ENCODING”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00185` | `SU-ARINC-665-5-2-2-3-1-3-1-P021-PROSE-SENTENCE-004-EF7E6FF4663B`<br>`ARINC-665-5 2.2.3.1.3.1 p.11` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `OPERATION, STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor DATA-LOADER may perform ENCODE on OPERATION, STATUS-CODE-CONDITIONAL-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“数据加载器”在“来源规定的适用条件”下可以对“协议操作、STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00186` | `SU-ARINC-665-5-2-2-3-1-3-2-P021-PROSE-SENTENCE-001-641A8CBC9145`<br>`ARINC-665-5 2.2.3.1.3.2 p.11` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `PART-FLAGS` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on PART-FLAGS under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下必须对“PART-FLAGS”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00187` | `SU-ARINC-665-5-2-2-3-1-3-2-P021-PROSE-SENTENCE-001-641A8CBC9145`<br>`ARINC-665-5 2.2.3.1.3.2 p.11` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `BINARY-FIELD-ENCODING` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform ENCODE on BINARY-FIELD-ENCODING under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“BINARY-FIELD-ENCODING”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00188` | `SU-ARINC-665-5-2-2-3-1-10-P022-PROSE-SENTENCE-003-BCEBB784B407`<br>`ARINC-665-5 2.2.3.1.10 p.12` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TARGET-HARDWARE-ID, STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform ENCODE on TARGET-HARDWARE-ID, STATUS-CODE-CONDITIONAL-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“TARGET-HARDWARE-ID、STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00189` | `SU-ARINC-665-5-2-2-3-1-14-P022-PROSE-SENTENCE-004-4114C0816C51`<br>`ARINC-665-5 2.2.3.1.14 p.12` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `LOAD-PART-NUMBER, SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform IMPLEMENT on LOAD-PART-NUMBER, SOFTWARE-PART under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“加载件号、软件加载件”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00190` | `SU-ARINC-665-5-2-2-3-1-18-P023-PROSE-SENTENCE-002-E664B245877E`<br>`ARINC-665-5 2.2.3.1.18 p.13` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `NETWORK-INTERFACE, STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on NETWORK-INTERFACE, STATUS-CODE-CONDITIONAL-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下必须对“网络接口、STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00191` | `SU-ARINC-665-5-2-2-3-1-18-P023-PROSE-SENTENCE-004-C2CE75F23520`<br>`ARINC-665-5 2.2.3.1.18 p.13` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENSURE-UNIQUE` / `SOFTWARE-PART, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform ENSURE-UNIQUE on SOFTWARE-PART, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“软件加载件、TARGET-HARDWARE-ID”执行“保证唯一性”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00192` | `SU-ARINC-665-5-2-2-3-1-24-P024-PROSE-SENTENCE-002-C100FC8EE4E9`<br>`ARINC-665-5 2.2.3.1.24 p.14` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `SOFTWARE-PART, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform ENCODE on SOFTWARE-PART, TARGET-HARDWARE-ID under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“软件加载件、TARGET-HARDWARE-ID”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00193` | `SU-ARINC-665-5-2-2-3-1-26-P024-PROSE-SENTENCE-005-38372C2FA366`<br>`ARINC-665-5 2.2.3.1.26 p.14` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TARGET-HARDWARE-ID, STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform ENCODE on TARGET-HARDWARE-ID, STATUS-CODE-CONDITIONAL-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“目标硬件”在“来源规定的适用条件”下必须对“TARGET-HARDWARE-ID、STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00194` | `SU-ARINC-665-5-2-2-3-1-31-P025-PROSE-SENTENCE-002-0374CB53F0AB`<br>`ARINC-665-5 2.2.3.1.31 p.15` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `DATA-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform CONSTRAIN on DATA-FILE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“数据文件”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00195` | `SU-ARINC-665-5-2-2-3-1-32-P025-PROSE-SENTENCE-002-F6BCEFFF8371`<br>`ARINC-665-5 2.2.3.1.32 p.15` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `SET-ZERO` / `DATA-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform SET-ZERO on DATA-FILE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“数据文件”执行“置零”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00196` | `SU-ARINC-665-5-2-2-3-1-37-P026-PROSE-SENTENCE-002-05AC99F08A26`<br>`ARINC-665-5 2.2.3.1.37 p.16` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `FORMAT` / `DATA-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform FORMAT on DATA-FILE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“数据文件”执行“按规定格式化”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00197` | `SU-ARINC-665-5-2-2-3-1-38-P026-PROSE-SENTENCE-002-E3FF88E1EDA0`<br>`ARINC-665-5 2.2.3.1.38 p.16` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `CRC, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform DEFINE on CRC, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值、网络接口”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00198` | `SU-ARINC-665-5-2-2-3-1-40-P026-PROSE-SENTENCE-002-FCF47A272C90`<br>`ARINC-665-5 2.2.3.1.40 p.16` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform VALIDATE on CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00199` | `SU-ARINC-665-5-2-2-3-1-41-P026-PROSE-SENTENCE-002-91B469DEBE14`<br>`ARINC-665-5 2.2.3.1.41 p.16` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform VALIDATE on CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00200` | `SU-ARINC-665-5-2-2-3-1-42-P026-PROSE-SENTENCE-002-5E94CB4814AF`<br>`ARINC-665-5 2.2.3.1.42 p.16` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform VALIDATE on CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00201` | `SU-ARINC-665-5-2-2-3-1-44-P027-PROSE-SENTENCE-002-AF1722AA2C2B`<br>`ARINC-665-5 2.2.3.1.44 p.17` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下必须对“网络接口”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00202` | `SU-ARINC-665-5-2-2-3-1-45-P027-PROSE-SENTENCE-002-3B48FE46115E`<br>`ARINC-665-5 2.2.3.1.45 p.17` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform IMPLEMENT on NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00203` | `SU-ARINC-665-5-2-2-3-1-49-P027-PROSE-SENTENCE-004-5EFD86A600D8`<br>`ARINC-665-5 2.2.3.1.49 p.17` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `LOAD-PART-NUMBER, NETWORK-INTERFACE, STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on LOAD-PART-NUMBER, NETWORK-INTERFACE, STATUS-CODE-CONDITIONAL-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下必须对“加载件号、网络接口、STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00204` | `SU-ARINC-665-5-2-2-3-1-51-P027-PROSE-SENTENCE-002-E3FF88E1EDA0`<br>`ARINC-665-5 2.2.3.1.51 p.17` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `CRC, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform DEFINE on CRC, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值、网络接口”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00205` | `SU-ARINC-665-5-2-2-3-1-53-P028-PROSE-SENTENCE-002-EE1E5830AB09`<br>`ARINC-665-5 2.2.3.1.53 p.18` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform VALIDATE on CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00206` | `SU-ARINC-665-5-2-2-3-1-54-P028-PROSE-SENTENCE-002-02BC06547867`<br>`ARINC-665-5 2.2.3.1.54 p.18` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform VALIDATE on CRC, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值、网络接口”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00207` | `SU-ARINC-665-5-2-2-3-1-57-P028-PROSE-SENTENCE-002-284196C6B3D0`<br>`ARINC-665-5 2.2.3.1.57 p.18` | `OPERATOR` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `HEADER-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor OPERATOR may perform VALIDATE on HEADER-FILE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“操作员”在“来源规定的适用条件”下可以对“头文件”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00208` | `SU-ARINC-665-5-2-2-3-1-57-P028-PROSE-SENTENCE-003-E6ACA86FDF43`<br>`ARINC-665-5 2.2.3.1.57 p.18` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER may perform ENCODE on STATUS-CODE-CONDITIONAL-FIELD under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“协议文件生成方”在“来源规定的适用条件”下可以对“STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00209` | `SU-ARINC-665-5-2-2-3-1-59-P028-PROSE-SENTENCE-002-6672CA36E154`<br>`ARINC-665-5 2.2.3.1.59 p.18` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform VALIDATE on CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00210` | `SU-ARINC-665-5-2-2-3-1-60-P028-PROSE-SENTENCE-002-91B469DEBE14`<br>`ARINC-665-5 2.2.3.1.60 p.18` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform VALIDATE on CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00211` | `SU-ARINC-665-5-2-2-3-1-61-P029-PROSE-SENTENCE-002-6F1B40878C6B`<br>`ARINC-665-5 2.2.3.1.61 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform VALIDATE on CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00212` | `SU-ARINC-665-5-2-2-3-1-61-P029-PROSE-SENTENCE-003-6155DCD79C06`<br>`ARINC-665-5 2.2.3.1.61 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform VALIDATE on CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00213` | `SU-ARINC-665-5-2-2-3-1-61-P029-PROSE-SENTENCE-004-9A509D9AE4E2`<br>`ARINC-665-5 2.2.3.1.61 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform VALIDATE on CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00214` | `SU-ARINC-665-5-2-2-3-1-62-P029-PROSE-SENTENCE-002-136B2E7764B0`<br>`ARINC-665-5 2.2.3.1.62 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `HEADER-FILE, CRC, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform DEFINE on HEADER-FILE, CRC, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“头文件、CRC／校验值、网络接口”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00215` | `SU-ARINC-665-5-2-2-3-1-63-P029-PROSE-SENTENCE-002-8F49EC0CB8C3`<br>`ARINC-665-5 2.2.3.1.63 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `COMPUTE` / `HEADER-FILE, CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform COMPUTE on HEADER-FILE, CRC under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“头文件、CRC／校验值”执行“计算”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00216` | `SU-ARINC-665-5-2-2-3-1-63-P029-PROSE-SENTENCE-003-5A9C8CDFFDEB`<br>`ARINC-665-5 2.2.3.1.63 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `CRC, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform DEFINE on CRC, NETWORK-INTERFACE under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值、网络接口”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00217` | `SU-ARINC-665-5-2-2-3-2-P029-PROSE-SENTENCE-002-25AC959A1D2A`<br>`ARINC-665-5 2.2.3.2 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `DATA-FILE, SOFTWARE-PART, FILE-CONTENT` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform ENCODE on DATA-FILE, SOFTWARE-PART, FILE-CONTENT under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“数据文件、软件加载件、FILE-CONTENT”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00218` | `SU-ARINC-665-5-2-2-3-3-P029-PROSE-SENTENCE-002-BC8C7608516E`<br>`ARINC-665-5 2.2.3.3 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `SOFTWARE-PART, NETWORK-INTERFACE, FILE-CONTENT` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor SOFTWARE-PACKAGE-PRODUCER shall perform ENCODE on SOFTWARE-PART, NETWORK-INTERFACE, FILE-CONTENT under APPLICABLE-SOURCE-CONDITION; evidence is the resulting CAPABILITY-OR-STATE-OBSERVABLE.<br>参与者“软件包生成方”在“来源规定的适用条件”下必须对“软件加载件、网络接口、FILE-CONTENT”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00219` | `SU-ARINC-615A-3-TABLE-6-1-R002`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `TH_INFORMATION_INITIALIZATION` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on TH_INFORMATION_INITIALIZATION under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“TH_INFORMATION_INITIALIZATION”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00220` | `SU-ARINC-615A-3-TABLE-6-1-R003`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `INFORMATION_INITIALIZATION_RESPONSE` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on INFORMATION_INITIALIZATION_RESPONSE under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“INFORMATION_INITIALIZATION_RESPONSE”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00221` | `SU-ARINC-615A-3-TABLE-6-1-R005`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `TH_INFORMATION` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on TH_INFORMATION under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“TH_INFORMATION”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00222` | `SU-ARINC-615A-3-TABLE-6-1-R006`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on INFORMATION_STATUS under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00223` | `SU-ARINC-615A-3-TABLE-6-1-R007`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT_REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on ABORT_REQUEST under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT_REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00224` | `SU-ARINC-615A-3-TABLE-6-1-R009`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `TH_UPLOADING_INITIALIZATION` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on TH_UPLOADING_INITIALIZATION under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“TH_UPLOADING_INITIALIZATION”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00225` | `SU-ARINC-615A-3-TABLE-6-1-R010`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `UPLOADING_INITIALIZATION_RESPONSE` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on UPLOADING_INITIALIZATION_RESPONSE under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“UPLOADING_INITIALIZATION_RESPONSE”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00226` | `SU-ARINC-615A-3-TABLE-6-1-R012`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `LOAD_LIST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on LOAD_LIST under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“LOAD_LIST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00227` | `SU-ARINC-615A-3-TABLE-6-1-R013`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `UPLOAD_INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on UPLOAD_INFORMATION_STATUS under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“UPLOAD_INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00228` | `SU-ARINC-615A-3-TABLE-6-1-R014`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT_REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on ABORT_REQUEST under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT_REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00229` | `SU-ARINC-615A-3-TABLE-6-1-R016`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `FILE_NOT_AVAILABLE` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on FILE_NOT_AVAILABLE under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“FILE_NOT_AVAILABLE”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00230` | `SU-ARINC-615A-3-TABLE-6-1-R017`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `UPLOAD_INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on UPLOAD_INFORMATION_STATUS under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“UPLOAD_INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00231` | `SU-ARINC-615A-3-TABLE-6-1-R018`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT_REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on ABORT_REQUEST under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT_REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00232` | `SU-ARINC-615A-3-TABLE-6-1-R020`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_MEDIA_INITIALIZATION` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on DOWNLOADING_MEDIA_INITIALIZATION under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“DOWNLOADING_MEDIA_INITIALIZATION”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00233` | `SU-ARINC-615A-3-TABLE-6-1-R021`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_INITIALIZATION_RESPONSE` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on DOWNLOADING_INITIALIZATION_RESPONSE under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_INITIALIZATION_RESPONSE”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00234` | `SU-ARINC-615A-3-TABLE-6-1-R023`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on DOWNLOADING_INFORMATION_STATUS under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00235` | `SU-ARINC-615A-3-TABLE-6-1-R024`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT_REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on ABORT_REQUEST under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT_REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00236` | `SU-ARINC-615A-3-TABLE-6-1-R026`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_FILE_RECEIPT` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on DOWNLOADING_FILE_RECEIPT under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_FILE_RECEIPT”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00237` | `SU-ARINC-615A-3-TABLE-6-1-R027`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on DOWNLOADING_INFORMATION_STATUS under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00238` | `SU-ARINC-615A-3-TABLE-6-1-R028`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT_REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on ABORT_REQUEST under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT_REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00239` | `SU-ARINC-615A-3-TABLE-6-1-R030`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_OPERATOR_INITIALIZATION` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on DOWNLOADING_OPERATOR_INITIALIZATION under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“DOWNLOADING_OPERATOR_INITIALIZATION”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00240` | `SU-ARINC-615A-3-TABLE-6-1-R031`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_INITIALIZATION_RESPONSE` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on DOWNLOADING_INITIALIZATION_RESPONSE under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_INITIALIZATION_RESPONSE”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00241` | `SU-ARINC-615A-3-TABLE-6-1-R033`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_FILE_LIST_RECEIPT` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on DOWNLOADING_FILE_LIST_RECEIPT under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_FILE_LIST_RECEIPT”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00242` | `SU-ARINC-615A-3-TABLE-6-1-R034`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `FILE_SELECTION` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on FILE_SELECTION under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“FILE_SELECTION”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00243` | `SU-ARINC-615A-3-TABLE-6-1-R035`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on DOWNLOADING_INFORMATION_STATUS under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00244` | `SU-ARINC-615A-3-TABLE-6-1-R036`<br>`ARINC-615A-3 6.1 p.43` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT-REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on ABORT-REQUEST under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT-REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00245` | `SU-ARINC-615A-3-TABLE-6-1-R038`<br>`ARINC-615A-3 6.1 p.43` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_FILE_RECEIPT` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on DOWNLOADING_FILE_RECEIPT under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_FILE_RECEIPT”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00246` | `SU-ARINC-615A-3-TABLE-6-1-R039`<br>`ARINC-615A-3 6.1 p.43` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLP shall perform SEND on DOWNLOADING_INFORMATION_STATUS under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00247` | `SU-ARINC-615A-3-TABLE-6-1-R040`<br>`ARINC-615A-3 6.1 p.43` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT_REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on ABORT_REQUEST under TABLE-DEFINED-OPERATION-STEP; evidence is the resulting MESSAGE-DIRECTION-OBSERVABLE.<br>参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT_REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00248` | `SU-ARINC-615A-3-TABLE-6_4_1-1-R002`<br>`ARINC-615A-3 6.4.1 p.67` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-FILE-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-FILE-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00249` | `SU-ARINC-615A-3-TABLE-6_4_1-1-R003`<br>`ARINC-615A-3 6.4.1 p.67` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PROTOCOL-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-PROTOCOL-VERSION under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PROTOCOL-VERSION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00250` | `SU-ARINC-615A-3-TABLE-6_4_1-1-R004`<br>`ARINC-615A-3 6.4.1 p.67` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-OPERATION-ACCEPTANCE-STATUS-CODE` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-OPERATION-ACCEPTANCE-STATUS-CODE under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-OPERATION-ACCEPTANCE-STATUS-CODE”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00251` | `SU-ARINC-615A-3-TABLE-6_4_1-1-R005`<br>`ARINC-615A-3 6.4.1 p.67` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-STATUS-DESCRIPTION-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-STATUS-DESCRIPTION-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-STATUS-DESCRIPTION-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00252` | `SU-ARINC-615A-3-TABLE-6_4_1-1-R006`<br>`ARINC-615A-3 6.4.1 p.67` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-STATUS-DESCRIPTION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-STATUS-DESCRIPTION under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-STATUS-DESCRIPTION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00253` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R002`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-FILE-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-FILE-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00254` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R003`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PROTOCOL-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-PROTOCOL-VERSION under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PROTOCOL-VERSION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00255` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R004`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-NUMBER-OF-TARGET-HARDWARE` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-NUMBER-OF-TARGET-HARDWARE under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-NUMBER-OF-TARGET-HARDWARE”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00256` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R005`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LITERAL-NAME-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-LITERAL-NAME-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LITERAL-NAME-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00257` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R006`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LITERAL-NAME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-LITERAL-NAME under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LITERAL-NAME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00258` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R007`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-SERIAL-NUMBER-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-SERIAL-NUMBER-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-SERIAL-NUMBER-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00259` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R008`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-SERIAL-NUMBER` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-SERIAL-NUMBER under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-SERIAL-NUMBER”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00260` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R009`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-NUMBER-OF-PART-NUMBERS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-NUMBER-OF-PART-NUMBERS under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-NUMBER-OF-PART-NUMBERS”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00261` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R010`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PART-NUMBER-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-PART-NUMBER-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PART-NUMBER-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00262` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R011`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PART-NUMBER` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-PART-NUMBER under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PART-NUMBER”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00263` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R012`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-AMENDMENT-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-AMENDMENT-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-AMENDMENT-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00264` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R013`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-AMENDMENT` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-AMENDMENT under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-AMENDMENT”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00265` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R014`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PART-DESIGNATION-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-PART-DESIGNATION-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PART-DESIGNATION-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00266` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R015`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PART-DESIGNATION-TEXT` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-PART-DESIGNATION-TEXT under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PART-DESIGNATION-TEXT”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00267` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R002`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-FILE-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-FILE-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00268` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R003`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PROTOCOL-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-PROTOCOL-VERSION under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PROTOCOL-VERSION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00269` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R004`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-COUNTER` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-COUNTER under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-COUNTER”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00270` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R005`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-INFORMATION-OPERATION-STATUS-CODE` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-INFORMATION-OPERATION-STATUS-CODE under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-INFORMATION-OPERATION-STATUS-CODE”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00271` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R006`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-EXCEPTION-TIMER` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-EXCEPTION-TIMER under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-EXCEPTION-TIMER”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00272` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R007`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-ESTIMATED-TIME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-ESTIMATED-TIME under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-ESTIMATED-TIME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00273` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R008`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-STATUS-DESCRIPTION-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-STATUS-DESCRIPTION-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-STATUS-DESCRIPTION-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00274` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R009`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-STATUS-DESCRIPTION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-STATUS-DESCRIPTION under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-STATUS-DESCRIPTION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00275` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R002`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-FILE-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-FILE-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00276` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R003`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PROTOCOL-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-PROTOCOL-VERSION under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PROTOCOL-VERSION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00277` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R004`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-NUMBER-OF-HEADER-FILES` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-NUMBER-OF-HEADER-FILES under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-NUMBER-OF-HEADER-FILES”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00278` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R005`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-HEADER-FILE-NAME-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-HEADER-FILE-NAME-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-HEADER-FILE-NAME-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00279` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R006`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-HEADER-FILE-NAME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-HEADER-FILE-NAME under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-HEADER-FILE-NAME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00280` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R007`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-PART-NUMBER-NAME-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-LOAD-PART-NUMBER-NAME-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-PART-NUMBER-NAME-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00281` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R008`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-PART-NUMBER-NAME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-LOAD-PART-NUMBER-NAME under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-PART-NUMBER-NAME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00282` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R002`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-FILE-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-FILE-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00283` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R003`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PROTOCOL-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-PROTOCOL-VERSION under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PROTOCOL-VERSION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00284` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R004`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-UPLOAD-OPERATION-STATUS-CODE` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-UPLOAD-OPERATION-STATUS-CODE under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-UPLOAD-OPERATION-STATUS-CODE”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00285` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R005`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00286` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R006`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-UPLOAD-STATUS-DESCRIPTION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-UPLOAD-STATUS-DESCRIPTION under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-UPLOAD-STATUS-DESCRIPTION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00287` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R007`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-COUNTER` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-COUNTER under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-COUNTER”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00288` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R008`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-EXCEPTION-TIMER` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-EXCEPTION-TIMER under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-EXCEPTION-TIMER”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00289` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R009`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-ESTIMATED-TIME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-ESTIMATED-TIME under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-ESTIMATED-TIME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00290` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R010`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-LIST-RATIO` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-LOAD-LIST-RATIO under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-LIST-RATIO”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00291` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R011`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-NUMBER-OF-HEADER-FILES` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-NUMBER-OF-HEADER-FILES under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-NUMBER-OF-HEADER-FILES”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00292` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R012`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-HEADER-FILE-NAME-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-HEADER-FILE-NAME-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-HEADER-FILE-NAME-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00293` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R013`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-HEADER-FILE-NAME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-HEADER-FILE-NAME under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-HEADER-FILE-NAME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00294` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R014`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-PART-NUMBER-NAME-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-LOAD-PART-NUMBER-NAME-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-PART-NUMBER-NAME-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00295` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R015`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-PART-NUMBER-NAME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-LOAD-PART-NUMBER-NAME under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-PART-NUMBER-NAME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00296` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R016`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-RATIO` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-LOAD-RATIO under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-RATIO”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00297` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R017`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-STATUS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-LOAD-STATUS under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-STATUS”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00298` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R018`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-STATUS-DESCRIPTION-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-LOAD-STATUS-DESCRIPTION-LENGTH under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-STATUS-DESCRIPTION-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00299` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R019`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-STATUS-DESCRIPTION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-LOAD-STATUS-DESCRIPTION under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-STATUS-DESCRIPTION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00300` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R002`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X0001` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-0X0001 under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X0001”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00301` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R003`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X1000` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-0X1000 under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X1000”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00302` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R004`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X1002` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-0X1002 under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X1002”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00303` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R005`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X0002` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-0X0002 under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X0002”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00304` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R006`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X0003` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-0X0003 under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X0003”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00305` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R007`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X0004` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-0X0004 under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X0004”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00306` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R008`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X1003` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-0X1003 under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X1003”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00307` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R009`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X1004` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-0X1004 under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X1004”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00308` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R010`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X1005` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-0X1005 under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X1005”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00309` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R011`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X1007` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD-0X1007 under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X1007”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00310` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R012`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on FIELD- under TABLE-DEFINED-FILE-STRUCTURE; evidence is the resulting FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE.<br>参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00311` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E001-6BBD8FA395EF`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `OPERATION-START` / `RECEIVE` / `TH-INFORMATION-INITIALIZATION` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform RECEIVE on TH-INFORMATION-INITIALIZATION toward APPLICATION under OPERATION-START; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“OPERATION-START”下必须对“TH-INFORMATION-INITIALIZATION”执行“接收”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00312` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E002-C4C83C8F67F8`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `INITIALIZATION` / `SEND-TFTP-READ-REQUEST` / `LCI` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND-TFTP-READ-REQUEST on LCI toward TARGET-HARDWARE under INITIALIZATION; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“INITIALIZATION”下必须对“LCI”执行“SEND-TFTP-READ-REQUEST”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00313` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E003-86B1F4D69CC7`<br>`ARINC-615A-3 6.3.1 p.50` | `TARGET-HARDWARE` / `READ-REQUEST-ACCEPTED` / `TRANSFER` / `LCI` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform TRANSFER on LCI toward DLA under READ-REQUEST-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“READ-REQUEST-ACCEPTED”下必须对“LCI”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00314` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E004-7D245D52CBFE`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `LCI-ANALYSED` / `SEND` / `INFORMATION-INITIALIZATION-RESPONSE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on INFORMATION-INITIALIZATION-RESPONSE toward APPLICATION under LCI-ANALYSED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“LCI-ANALYSED”下必须对“INFORMATION-INITIALIZATION-RESPONSE”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00315` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E005-432DDCB05AC3`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `INITIALIZATION-REJECTED` / `TERMINATE` / `INFORMATION-OPERATION` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform TERMINATE on INFORMATION-OPERATION toward APPLICATION under INITIALIZATION-REJECTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“INITIALIZATION-REJECTED”下必须对“INFORMATION-OPERATION”执行“TERMINATE”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00316` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E006-ACD86B335E4E`<br>`ARINC-615A-3 6.3.1 p.50` | `TARGET-HARDWARE` / `INITIALIZATION-ACCEPTED` / `SEND-TFTP-WRITE-REQUEST` / `LCL` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform SEND-TFTP-WRITE-REQUEST on LCL toward DLA under INITIALIZATION-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“INITIALIZATION-ACCEPTED”下必须对“LCL”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00317` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E007-BABEAA841AA6`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `REQUEST-RECEIVED` / `ACKNOWLEDGE` / `LCL-WRITE-REQUEST` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform ACKNOWLEDGE on LCL-WRITE-REQUEST toward TARGET-HARDWARE under REQUEST-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“REQUEST-RECEIVED”下必须对“LCL-WRITE-REQUEST”执行“确认”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00318` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E008-C31F4710028B`<br>`ARINC-615A-3 6.3.1 p.50` | `TARGET-HARDWARE` / `ACKNOWLEDGED` / `TRANSFER` / `LCL` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform TRANSFER on LCL toward DLA under ACKNOWLEDGED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“ACKNOWLEDGED”下必须对“LCL”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00319` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E009-CA2FDC811E4A`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `LCL-RECEIVED` / `SEND` / `TH-INFORMATION` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on TH-INFORMATION toward APPLICATION under LCL-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“LCL-RECEIVED”下必须对“TH-INFORMATION”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00320` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E010-B9802EF2D3EA`<br>`ARINC-615A-3 6.3.1 p.50` | `TARGET-HARDWARE` / `STATUS-UPDATE-DUE` / `SEND-TFTP-WRITE-REQUEST` / `LCS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform SEND-TFTP-WRITE-REQUEST on LCS toward DLA under STATUS-UPDATE-DUE; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“STATUS-UPDATE-DUE”下必须对“LCS”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00321` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E011-1AC058091969`<br>`ARINC-615A-3 6.3.1 p.50` | `TARGET-HARDWARE` / `WRITE-REQUEST-ACKNOWLEDGED` / `TRANSFER` / `LCS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform TRANSFER on LCS toward DLA under WRITE-REQUEST-ACKNOWLEDGED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“WRITE-REQUEST-ACKNOWLEDGED”下必须对“LCS”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00322` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E012-641E73AF20EF`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `LCS-RECEIVED` / `SEND` / `INFORMATION-STATUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on INFORMATION-STATUS toward APPLICATION under LCS-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“LCS-RECEIVED”下必须对“INFORMATION-STATUS”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00323` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E013-73850A1986EF`<br>`ARINC-615A-3 6.3.1 p.50` | `TARGET-HARDWARE` / `OPERATION-COMPLETION-STATE` / `REPEAT-OR-TERMINATE` / `LCS-STATUS-CYCLE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform REPEAT-OR-TERMINATE on LCS-STATUS-CYCLE toward DLA under OPERATION-COMPLETION-STATE; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“OPERATION-COMPLETION-STATE”下必须对“LCS-STATUS-CYCLE”执行“REPEAT-OR-TERMINATE”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00324` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E001-C4F05B5E63B6`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `OPERATION-START` / `RECEIVE` / `TH-UPLOADING-INITIALIZATION` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor DLA shall perform RECEIVE on TH-UPLOADING-INITIALIZATION toward APPLICATION under OPERATION-START; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“OPERATION-START”下必须对“TH-UPLOADING-INITIALIZATION”执行“接收”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00325` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E002-77866A816D15`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `INITIALIZATION` / `SEND-TFTP-READ-REQUEST` / `LUI` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor DLA shall perform SEND-TFTP-READ-REQUEST on LUI toward TARGET-HARDWARE under INITIALIZATION; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“INITIALIZATION”下必须对“LUI”执行“SEND-TFTP-READ-REQUEST”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00326` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E003-23D0F1A6F303`<br>`ARINC-615A-3 6.3.2 p.53` | `TARGET-HARDWARE` / `READ-REQUEST-ACCEPTED` / `TRANSFER` / `LUI` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE shall perform TRANSFER on LUI toward DLA under READ-REQUEST-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“READ-REQUEST-ACCEPTED”下必须对“LUI”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00327` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E004-30A7E36B1CAC`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `LUI-ANALYSED` / `SEND` / `UPLOADING-INITIALIZATION-RESPONSE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor DLA shall perform SEND on UPLOADING-INITIALIZATION-RESPONSE toward APPLICATION under LUI-ANALYSED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“LUI-ANALYSED”下必须对“UPLOADING-INITIALIZATION-RESPONSE”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00328` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E005-1CC34400D27E`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `INITIALIZATION-ACCEPTED` / `SEND` / `LOAD-LIST` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor DLA shall perform SEND on LOAD-LIST toward TARGET-HARDWARE under INITIALIZATION-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“INITIALIZATION-ACCEPTED”下必须对“LOAD-LIST”执行“发送”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00329` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E006-298771587D83`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `LIST-NOT-YET-ACCEPTED` / `WAIT` / `LUS-0001` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor DLA shall perform WAIT on LUS-0001 toward TARGET-HARDWARE under LIST-NOT-YET-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“LIST-NOT-YET-ACCEPTED”下必须对“LUS-0001”执行“等待”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00330` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E007-7726A816FFE7`<br>`ARINC-615A-3 6.3.2 p.53` | `TARGET-HARDWARE` / `LIST-ACCEPTED` / `SEND-TFTP-WRITE-REQUEST` / `LUR` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE shall perform SEND-TFTP-WRITE-REQUEST on LUR toward DLA under LIST-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“LIST-ACCEPTED”下必须对“LUR”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00331` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E008-F1D3B51077A3`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `REQUEST-RECEIVED` / `ACKNOWLEDGE` / `LUR-WRITE-REQUEST` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor DLA shall perform ACKNOWLEDGE on LUR-WRITE-REQUEST toward TARGET-HARDWARE under REQUEST-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“REQUEST-RECEIVED”下必须对“LUR-WRITE-REQUEST”执行“确认”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00332` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E009-9A7CD75981CB`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `ACKNOWLEDGED` / `TRANSFER` / `LUR` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor DLA shall perform TRANSFER on LUR toward TARGET-HARDWARE under ACKNOWLEDGED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“ACKNOWLEDGED”下必须对“LUR”执行“传输”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00333` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E001-0056C38BAE97`<br>`ARINC-615A-3 6.3.2 p.54` | `TARGET-HARDWARE` / `FILE-SELECTED` / `SEND-TFTP-READ-REQUEST` / `REQUESTED-UPLOAD-FILE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE shall perform SEND-TFTP-READ-REQUEST on REQUESTED-UPLOAD-FILE toward DLA under FILE-SELECTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“FILE-SELECTED”下必须对“REQUESTED-UPLOAD-FILE”执行“SEND-TFTP-READ-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00334` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E002-9E4B69ABC6C0`<br>`ARINC-615A-3 6.3.2 p.54` | `DLA` / `REQUESTED-FILE-UNAVAILABLE` / `SEND` / `FILE-NOT-AVAILABLE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor DLA shall perform SEND on FILE-NOT-AVAILABLE toward TARGET-HARDWARE under REQUESTED-FILE-UNAVAILABLE; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“REQUESTED-FILE-UNAVAILABLE”下必须对“FILE-NOT-AVAILABLE”执行“发送”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00335` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E003-4CF8C989BD2D`<br>`ARINC-615A-3 6.3.2 p.54` | `DLA` / `REQUESTED-FILE-AVAILABLE` / `TRANSFER` / `REQUESTED-UPLOAD-FILE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor DLA shall perform TRANSFER on REQUESTED-UPLOAD-FILE toward TARGET-HARDWARE under REQUESTED-FILE-AVAILABLE; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“REQUESTED-FILE-AVAILABLE”下必须对“REQUESTED-UPLOAD-FILE”执行“传输”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00336` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E004-FA670B42C1F5`<br>`ARINC-615A-3 6.3.2 p.54` | `TARGET-HARDWARE` / `FILE-RECEIVED` / `WRITE` / `LUS-FILE-STATUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE shall perform WRITE on LUS-FILE-STATUS toward TARGET-MEMORY under FILE-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“FILE-RECEIVED”下必须对“LUS-FILE-STATUS”执行“WRITE”，接收方为“TARGET-MEMORY”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00337` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E005-B45D394BBCF7`<br>`ARINC-615A-3 6.3.2 p.54` | `TARGET-HARDWARE` / `MORE-FILES-REQUIRED` / `REPEAT` / `UPLOAD-FILE-THREAD` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE shall perform REPEAT on UPLOAD-FILE-THREAD toward DLA under MORE-FILES-REQUIRED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“MORE-FILES-REQUIRED”下必须对“UPLOAD-FILE-THREAD”执行“REPEAT”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00338` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E006-5AECD60FFEA3`<br>`ARINC-615A-3 6.3.2 p.54` | `TARGET-HARDWARE` / `STATUS-UPDATE-DUE` / `SEND-TFTP-WRITE-REQUEST` / `LUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE shall perform SEND-TFTP-WRITE-REQUEST on LUS toward DLA under STATUS-UPDATE-DUE; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“STATUS-UPDATE-DUE”下必须对“LUS”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00339` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E007-1C729672C57C`<br>`ARINC-615A-3 6.3.2 p.54` | `TARGET-HARDWARE` / `WRITE-REQUEST-ACKNOWLEDGED` / `TRANSFER` / `LUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor TARGET-HARDWARE shall perform TRANSFER on LUS toward DLA under WRITE-REQUEST-ACKNOWLEDGED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“WRITE-REQUEST-ACKNOWLEDGED”下必须对“LUS”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00340` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E008-772971415EE7`<br>`ARINC-615A-3 6.3.2 p.54` | `DLA` / `LUS-RECEIVED` / `SEND` / `UPLOAD-INFORMATION-STATUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor DLA shall perform SEND on UPLOAD-INFORMATION-STATUS toward APPLICATION under LUS-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“LUS-RECEIVED”下必须对“UPLOAD-INFORMATION-STATUS”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00341` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E009-0243DF6FD28F`<br>`ARINC-615A-3 6.3.2 p.54` | `DLA` / `UPLOAD-COMPLETION-STATE` / `REPEAT-OR-TERMINATE` / `UPLOAD-STATUS-CYCLE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Actor DLA shall perform REPEAT-OR-TERMINATE on UPLOAD-STATUS-CYCLE toward APPLICATION under UPLOAD-COMPLETION-STATE; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“UPLOAD-COMPLETION-STATE”下必须对“UPLOAD-STATUS-CYCLE”执行“REPEAT-OR-TERMINATE”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00342` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E001-9F14C8F561CB`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `INTERRUPTION-START` / `RECEIVE` / `ABORT-REQUEST` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform RECEIVE on ABORT-REQUEST toward APPLICATION under INTERRUPTION-START; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“INTERRUPTION-START”下必须对“ABORT-REQUEST”执行“接收”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00343` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E002-ADCFF3068CA9`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `ABORT-REQUESTED` / `WAIT` / `STATUS-FILE-WRITE-REQUEST` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform WAIT on STATUS-FILE-WRITE-REQUEST toward TARGET-HARDWARE under ABORT-REQUESTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“ABORT-REQUESTED”下必须对“STATUS-FILE-WRITE-REQUEST”执行“等待”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00344` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E003-F48598C39EB0`<br>`ARINC-615A-3 6.3.5 p.63` | `TARGET-HARDWARE` / `STATUS-AVAILABLE` / `SEND-TFTP-WRITE-REQUEST` / `LCS-LUS-OR-LNS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform SEND-TFTP-WRITE-REQUEST on LCS-LUS-OR-LNS toward DLA under STATUS-AVAILABLE; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“STATUS-AVAILABLE”下必须对“LCS-LUS-OR-LNS”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00345` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E004-CE12F9C3643D`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `WRITE-REQUEST-RECEIVED` / `SEND` / `ABORT-ERROR` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on ABORT-ERROR toward TARGET-HARDWARE under WRITE-REQUEST-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“WRITE-REQUEST-RECEIVED”下必须对“ABORT-ERROR”执行“发送”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00346` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E005-62BABD65DCA2`<br>`ARINC-615A-3 6.3.5 p.63` | `TARGET-HARDWARE` / `ABORT-ERROR-RECEIVED` / `STOP` / `NONSTATUS-FILE-TRANSFERS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform STOP on NONSTATUS-FILE-TRANSFERS toward DLA under ABORT-ERROR-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“ABORT-ERROR-RECEIVED”下必须对“NONSTATUS-FILE-TRANSFERS”执行“STOP”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00347` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E006-697ED629B1F1`<br>`ARINC-615A-3 6.3.5 p.63` | `TARGET-HARDWARE` / `ACTIVITIES-STOPPED` / `TRANSFER` / `ABORT-CONFIRMATION-STATUS-FILE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform TRANSFER on ABORT-CONFIRMATION-STATUS-FILE toward DLA under ACTIVITIES-STOPPED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“ACTIVITIES-STOPPED”下必须对“ABORT-CONFIRMATION-STATUS-FILE”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00348` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E007-0E8514BE5C06`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `ABORT-STATUS-RECEIVED` / `SEND` / `INFORMATION-OR-UPLOAD-OR-DOWNLOAD-STATUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on INFORMATION-OR-UPLOAD-OR-DOWNLOAD-STATUS toward APPLICATION under ABORT-STATUS-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“ABORT-STATUS-RECEIVED”下必须对“INFORMATION-OR-UPLOAD-OR-DOWNLOAD-STATUS”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00349` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E008-F805E5E804BC`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `ABORT-CONFIRMED` / `TERMINATE` / `INTERRUPTION-MODE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform TERMINATE on INTERRUPTION-MODE toward APPLICATION under ABORT-CONFIRMED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“ABORT-CONFIRMED”下必须对“INTERRUPTION-MODE”执行“TERMINATE”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
 
 ## Non-base and unresolved inventory
 
-- `COV-615A3-0038` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0039` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0040` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0041` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0042` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0043` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0044` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0045` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0046` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0047` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0048` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0049` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0050` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0051` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0052` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0053` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0054` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0055` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0056` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0057` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0058` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0059` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0060` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0061` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0062` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0063` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0064` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0065` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0066` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0067` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0068` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0069` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0070` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0071` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0072` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0073` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0074` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0075` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0076` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0077` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0078` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0079` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0080` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0081` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0082` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0083` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0084` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0085` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0086` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0087` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0088` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0089` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0090` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0091` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0092` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0093` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0094` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0095` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0096` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0097` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0098` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0099` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0100` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0101` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0102` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0103` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0104` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0105` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0106` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0107` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0108` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0109` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0110` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0111` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0112` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0113` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0114` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0115` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0116` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0117` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0118` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0119` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0120` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0121` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0122` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0123` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0124` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0125` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0126` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0127` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0128` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0129` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0130` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0131` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0132` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0133` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0134` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0135` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0136` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0137` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0138` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0139` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0140` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0141` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0142` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0143` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0144` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0145` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0146` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0147` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0148` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0187` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0188` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0189` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0190` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0220` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0221` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0222` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0223` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0224` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0225` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0226` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0227` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0228` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0254` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0255` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0256` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0257` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0258` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0259` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0260` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0261` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0262` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0263` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0264` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0265` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0266` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0267` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0306` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0307` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0308` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0309` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0310` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0311` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0312` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0313` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0314` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0315` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0316` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0320` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0337` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0338` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0339` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0340` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0341` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0342` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0343` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0344` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0345` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0346` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0347` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0348` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0349` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0350` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0351` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0352` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0353` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0354` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0355` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0356` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0357` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0358` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0359` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0360` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0361` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0362` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0363` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0364` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0365` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0366` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0367` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0368` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0369` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0370` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0371` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0372` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0373` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0374` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0375` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0376` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0377` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0378` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0406` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0407` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0408` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0409` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0410` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0411` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0412` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0413` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0414` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0415` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0416` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0417` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0418` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0419` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0420` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0421` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0422` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0423` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0424` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0425` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0426` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0427` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0428` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0429` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0430` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0431` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0432` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0447` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0448` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0449` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0450` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0451` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0452` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0453` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0454` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0455` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0456` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0457` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0458` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0459` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0460` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0461` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0462` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0463` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0464` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0465` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0466` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0467` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0468` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0469` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0470` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0471` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0472` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0473` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0474` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0475` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0476` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0477` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0478` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0479` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0480` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0481` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0482` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0483` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0484` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0485` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0486` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0487` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0488` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0489` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0490` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0509` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0513` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0514` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0515` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0547` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0548` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0549` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0550` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0551` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0552` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0553` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0554` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0555` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0556` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0557` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0558` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0559` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0560` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0561` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0562` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0563` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0564` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0565` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0566` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0567` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0579` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0580` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0581` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0582` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0584` — `OUT-OF-PROFILE` — PHYSICAL-CONNECTOR-SCOPE
-- `COV-615A3-0585` — `OUT-OF-PROFILE` — SCENARIO-EXPLANATION
-- `COV-615A3-0586` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0588` — `OUT-OF-PROFILE` — ENVIRONMENT-CONFIGURATION-SCOPE
-- `COV-615A3-0589` — `OUT-OF-PROFILE` — HUMAN-INTERFACE-GUIDANCE
-- `COV-615A3-0598` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0599` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0603` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0604` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0611` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0612` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0613` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0614` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-6655-0008` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0033` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0044` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0055` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0056` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0057` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0058` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0059` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0060` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0061` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0066` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0067` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0068` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0069` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0070` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0072` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0073` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0074` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0075` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0076` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0077` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0078` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
+- `COV-M1-00001` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00002` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00003` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00004` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00005` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00006` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00007` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00008` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00009` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00010` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00011` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00012` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00013` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00014` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00015` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00016` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00017` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00018` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00019` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00049` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00050` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00051` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00052` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00053` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00054` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00055` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00056` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00057` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00058` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00059` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00060` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00061` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00062` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00063` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00064` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00065` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00066` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00067` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00068` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00069` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00070` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00071` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00072` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00073` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00074` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00081` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00082` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00083` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00084` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00085` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00086` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00087` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00088` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00089` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00090` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00091` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00092` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00093` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00094` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00095` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00096` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00097` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00098` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00099` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00100` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00101` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00102` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00103` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00104` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00105` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00106` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00107` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00108` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00109` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00110` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00111` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00112` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00113` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00114` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00115` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00116` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00117` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00118` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00119` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00120` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00121` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00122` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00123` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00124` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00125` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00126` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00127` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00128` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00129` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00130` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00131` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00132` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00133` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00134` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00135` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00136` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00137` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00138` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00139` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00140` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00141` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00142` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00143` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00144` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00145` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00146` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00147` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00148` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00149` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00150` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00151` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00152` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00153` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00154` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00155` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00156` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00157` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00158` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00159` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00160` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00161` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00162` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00163` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00164` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00165` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00166` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00167` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00168` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00169` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00170` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00171` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00172` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00173` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00174` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00175` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00176` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00177` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00178` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00179` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00180` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00181` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00182` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00183` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00184` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00185` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00186` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00187` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00188` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00189` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00190` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00191` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00192` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00193` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00194` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00195` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00196` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00197` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00198` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00199` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00200` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00201` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00202` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00203` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00204` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00205` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00206` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00207` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00208` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00209` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00210` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00211` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00212` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00213` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00214` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00215` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00216` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00217` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00218` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00219` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00220` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00221` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00222` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00223` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00224` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00225` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00226` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00227` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00228` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00229` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00230` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00231` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00232` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00233` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00234` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00235` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00236` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00237` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00238` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00239` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00240` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00241` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00242` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00243` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00244` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00245` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00246` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00247` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00248` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00249` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00250` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00251` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00252` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00253` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00254` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00255` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00256` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00257` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00258` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00259` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00260` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00261` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00262` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00263` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00264` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00265` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00266` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00267` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00268` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00269` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00270` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00271` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00272` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00273` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00274` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00275` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00276` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00277` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00278` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00279` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00280` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00281` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00282` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00283` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00284` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00285` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00286` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00287` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00288` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00289` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00290` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00291` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00292` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00293` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00294` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00295` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00296` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00297` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00298` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00299` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00300` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00301` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00302` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00303` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00304` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00305` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00306` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00307` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00308` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00309` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00310` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00311` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00312` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00313` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00314` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00315` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00316` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00317` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00318` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00319` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00320` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00321` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00322` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00323` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00324` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00325` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00326` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00327` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00328` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00329` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00330` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00331` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00332` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00333` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00334` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00335` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00535` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
+- `COV-M1-00536` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
+- `COV-M1-00537` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
+- `COV-M1-00538` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
+- `COV-M1-00539` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
+- `COV-M1-00650` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00651` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00652` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00653` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00654` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00655` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00656` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00657` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00658` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00659` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00660` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00661` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00662` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00663` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00664` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00665` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00666` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00667` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00668` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00669` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00670` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00671` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00672` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00673` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00674` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00675` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00676` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00677` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00678` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00679` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00680` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00681` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00682` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00683` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00684` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00685` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00686` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00687` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00688` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00689` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00690` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00691` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00692` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00693` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00694` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00695` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00696` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00697` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00698` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00699` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00700` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00701` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00702` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00703` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00704` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00762` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00763` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00764` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00765` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00766` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00767` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00768` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00769` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00770` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00771` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00772` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00773` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00774` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00775` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00776` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00777` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00778` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00779` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00780` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00781` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00782` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00783` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00784` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00785` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00786` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00787` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00788` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00874` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00875` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00876` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00877` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00878` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00879` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00880` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00881` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00882` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00883` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00884` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00885` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00886` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00887` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00888` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00889` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00890` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00891` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00892` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00893` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00894` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00895` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00896` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00897` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00898` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00899` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00900` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00901` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00902` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00903` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00904` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00905` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00906` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00907` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00908` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00909` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00910` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00911` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00912` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00913` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00914` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00915` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00916` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00917` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00918` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00919` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00920` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00921` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00922` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00923` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00924` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00925` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00926` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00927` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00928` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00929` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00930` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00931` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00932` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00933` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00934` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00935` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00936` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00937` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00938` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00939` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00940` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00941` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00942` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00943` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00944` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00945` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00946` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00947` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00948` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00949` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00950` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00951` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00952` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00953` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00954` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00955` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01230` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01231` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01232` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01233` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01234` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01235` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01236` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01237` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01238` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01239` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01240` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01241` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01242` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01243` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01244` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01245` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01246` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01247` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01248` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01249` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01250` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01251` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01252` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01253` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01254` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01255` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01256` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01257` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01258` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01259` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01260` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01261` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01262` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01263` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01264` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01265` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01266` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01267` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01268` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01269` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01270` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01271` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01272` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01273` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01274` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01275` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01276` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01277` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01278` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01279` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01280` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01281` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01282` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01283` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01284` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01285` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01286` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01287` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01288` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01289` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01290` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01291` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01292` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01293` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01294` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01295` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01296` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01297` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01298` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01299` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01300` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01301` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01302` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01303` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01304` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01305` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01306` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01307` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01308` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01309` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01310` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01311` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01312` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01313` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01314` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01315` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01316` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01317` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01318` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01319` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01320` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01321` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01322` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01323` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01324` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01325` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01326` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01327` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01330` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01331` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01332` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01333` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01334` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01335` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01336` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01337` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01338` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01339` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01340` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01341` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01342` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01343` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01344` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01345` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01346` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01347` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01348` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01349` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01350` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01351` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01352` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01353` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01354` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01355` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01356` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01357` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01358` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01359` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01360` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01361` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01362` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01363` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01364` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01365` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01366` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01411` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01412` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01413` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01414` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01415` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01416` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01417` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01418` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01419` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01420` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01421` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01422` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01423` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01424` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01425` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01426` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01427` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01428` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01429` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01430` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01431` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01432` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01433` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01434` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01435` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01436` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01437` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01438` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01439` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01440` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01441` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01442` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01443` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01444` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01445` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01446` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01447` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01448` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01449` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01450` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01451` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01452` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01453` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01454` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01455` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01456` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01457` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01458` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01459` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01460` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01461` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01462` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01463` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01464` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01465` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01466` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01467` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01468` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01469` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01470` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01471` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01472` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01473` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01474` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01475` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01476` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01477` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01478` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01479` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01480` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01481` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01482` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01483` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01484` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01485` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01486` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01487` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01488` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01489` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01490` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01491` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01492` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01493` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01494` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01495` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01496` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01497` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01498` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01499` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01500` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01501` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01502` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01503` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01504` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01505` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01506` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01507` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01508` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01509` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01510` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01511` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01512` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01513` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01514` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01515` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01516` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01517` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01518` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01519` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01520` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01521` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01522` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01523` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01524` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01525` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01526` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01527` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01528` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01529` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01530` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01531` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01532` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01533` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01534` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01535` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01536` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01537` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01538` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01539` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01540` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01541` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01542` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01543` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01544` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01545` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01546` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01547` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01548` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01549` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01550` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01551` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01552` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01553` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01554` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01555` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01556` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01557` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01558` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01559` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01560` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01561` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01562` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01563` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01564` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01565` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01566` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01567` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01568` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01569` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01570` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01571` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01572` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01573` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01574` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01575` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01576` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01577` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01578` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01579` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01580` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01581` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01582` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01583` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01584` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01585` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01586` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01587` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01588` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01589` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01590` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01591` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01592` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01593` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01594` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01595` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01596` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01597` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01598` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01599` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01756` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01757` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01760` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01761` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01762` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01763` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01764` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01765` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01766` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01767` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01768` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01769` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01770` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01771` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01772` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01773` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01774` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01775` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01776` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01777` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01778` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01779` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01780` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01781` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01782` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01783` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01784` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01785` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01786` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01787` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01788` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01789` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01790` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01791` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01792` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01793` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01794` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01795` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01796` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01797` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01798` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01799` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01800` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01801` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01802` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01803` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01804` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01805` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01806` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01807` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01808` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01809` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01810` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01811` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01812` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01813` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01814` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01815` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01816` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01817` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01818` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01819` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01820` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01821` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01822` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01823` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01824` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01825` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01826` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01827` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01828` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01829` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01830` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01831` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01832` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01833` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01834` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01835` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01836` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01837` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01838` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01839` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01840` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01841` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01842` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01843` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01844` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01845` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01846` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01847` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01848` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01849` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01850` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01851` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01852` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01853` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01854` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01855` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01856` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01857` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01858` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01859` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01860` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01861` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01862` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01863` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01864` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01865` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01866` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01867` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01868` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01869` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01870` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01871` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01872` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01873` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01874` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01875` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01876` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01877` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01878` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01879` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01880` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01881` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01882` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01883` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01884` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01885` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01886` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01887` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01888` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01889` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01890` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01891` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01892` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01893` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01894` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01895` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01896` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01897` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01898` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01899` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01900` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01901` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01902` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01903` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01904` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01905` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01906` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01907` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01908` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01909` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01910` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01911` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01912` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01913` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01914` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01915` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01916` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01917` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01918` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01919` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01920` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01921` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01922` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01923` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01924` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01925` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01926` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01927` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01928` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01929` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01930` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01931` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01932` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01933` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01934` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01935` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01936` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01937` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01938` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01939` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01940` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01941` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01942` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01943` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01944` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01945` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01946` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01947` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01948` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01949` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01950` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01951` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01952` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01953` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01954` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01955` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01956` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01957` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01958` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01959` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01960` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01961` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01962` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01963` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01964` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01965` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01966` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01967` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01968` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01969` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01970` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01971` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01972` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01973` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01974` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01975` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01976` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01977` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01978` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01979` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01980` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01981` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01982` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01983` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01984` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01985` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01986` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01987` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01988` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01989` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01990` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01991` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01992` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01993` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01994` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01995` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01996` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01997` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01998` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01999` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02000` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02001` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02002` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02003` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02004` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02005` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02006` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02007` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02008` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02009` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02010` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02011` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02012` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02013` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02014` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02015` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02016` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02017` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02018` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02019` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02020` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02021` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02022` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02023` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02024` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02025` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02026` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02027` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02028` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02029` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02030` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02031` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02032` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02033` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02034` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02035` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02036` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02037` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02038` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02039` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02040` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02041` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02042` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02043` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02044` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02045` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02046` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02047` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02048` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02049` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02050` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02051` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02052` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02053` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02054` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02055` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02056` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02057` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02058` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02059` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02060` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02061` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02062` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02063` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02064` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02065` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02066` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02067` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02068` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02069` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02070` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02071` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02072` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02073` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02074` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02075` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02137` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02138` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02139` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02140` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02141` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02142` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02143` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02185` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02186` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02187` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02188` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02189` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02190` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02191` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02192` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02193` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02194` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02195` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02411` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02412` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02413` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02414` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02415` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02416` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02417` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02418` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02419` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02420` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02421` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02422` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02423` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02424` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02425` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02426` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02427` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02428` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02429` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02430` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02431` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02432` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02433` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02434` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02435` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02436` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02437` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02438` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02439` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02440` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02441` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02539` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02540` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02541` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02542` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02543` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02544` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02545` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02546` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02547` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02548` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02549` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02550` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02551` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02552` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02553` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02554` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02555` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02556` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02557` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02558` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02559` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02560` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02561` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02562` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02563` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02564` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02565` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02566` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02567` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02568` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02569` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02570` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02571` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02572` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02573` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02574` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02575` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02576` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02620` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02621` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02622` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02623` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02624` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02625` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02626` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02627` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02628` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02629` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02630` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02631` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02632` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02633` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02634` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02635` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02636` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02637` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02638` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02639` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02640` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02641` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02642` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02643` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
 
 # 中文版
 
@@ -706,682 +1648,1624 @@
 
 ## 清单
 
-- 覆盖行：701
-- CRS 项：311
-- 依赖：4
+- 覆盖行：2651
+- CRS 项：349
+- 依赖：12
 - 缺口：1
-- 覆盖指纹：`39dd54bd48b10647f84f78f291b755bb7f8605637e5e30e2107d58d02d7fe530`
-- 需求指纹：`90396ef83c76f5d04f237cbfb7fcd62222e49343b5658d26bf84cecc1199fa39`
+- 覆盖指纹：`a00d73377c5072ce86047f77aeb0ebab0695ef67ac57aad1e03fc7bd3e9ec3be`
+- 需求指纹：`aa3997c82ff72e2e958c20961858bf328cb85d52719cd529f10b5fe041f0c78e`
+- 来源单元指纹：`a4e99d2a9a9d1315ca6beb96825b0d584f607a5a07f060ffc40b0611a3f21e1b`
+- 自动检查只覆盖结构与跨记录一致性；专有来源的完整性与忠实度仍须外部 RG0 评审。
 
 ## 适用性
 
-- `APPLICABLE-BASE`：43
-- `APPLICABLE-SUPPORTING`：246
-- `BLOCKED-BY-DEPENDENCY`：22
+- `APPLICABLE-BASE`：70
+- `APPLICABLE-SUPPORTING`：279
 
 ## 来源模态
 
-- `FIGURE-CONSTRAINT`：9
-- `MAY`：76
-- `MUST`：18
-- `SHOULD`：200
-- `TABLE-CONSTRAINT`：8
+- `FIGURE-CONSTRAINT`：39
+- `MAY`：32
+- `MUST`：12
+- `SHOULD`：174
+- `TABLE-CONSTRAINT`：92
 
 ## 符合性效果
 
-- `OPTIONAL`：76
-- `REQUIRED`：235
+- `OPTIONAL`：32
+- `REQUIRED`：317
 
 ## 开放依赖与缺口
 
-- `DEP-ARINC-645` — OPEN-DEPENDENCY：完整性与命名算法来源仍未取得。
-- `DEP-ARINC-6655` — REGISTERED-SUPPORTING-SOURCE：有界数据格式调查，不构成版次替代。
-- `DEP-IP-UDP-664` — OPEN-DEPENDENCY：IP、UDP 与 ARINC 664 网络语义仍需受控来源闭合。
-- `DEP-RFC-TFTP` — OPEN-DEPENDENCY：TFTP 基础及选项 RFC 的身份与适用性仍开放。
-- `GAP-ARINC-645` — NOT-ESTABLISHED：CRC、校验值、命名及完整完整性验证仍受阻。
+- `DEP-ARINC-645` — OPEN-DEPENDENCY：ARINC 645 算法来源仍未取得。
+- `DEP-ARINC-664-2` — OPEN-DEPENDENCY：以太网物理层与链路层语义仍开放。
+- `DEP-ARINC-664-3` — OPEN-DEPENDENCY：基于互联网协议的航空网络语义仍开放。
+- `DEP-ARINC-6655` — REGISTERED-SUPPORTING-SOURCE：有界数据对象来源。
+- `DEP-RFC-1123` — OPEN-DEPENDENCY：主机要求身份与适用性仍开放。
+- `DEP-RFC-1350` — OPEN-DEPENDENCY：TFTP 基础身份与适用性仍开放。
+- `DEP-RFC-1785` — OPEN-DEPENDENCY：TFTP 选项协商身份仍开放。
+- `DEP-RFC-2347` — OPEN-DEPENDENCY：TFTP 选项扩展身份仍开放。
+- `DEP-RFC-2348` — OPEN-DEPENDENCY：TFTP 块大小选项身份仍开放。
+- `DEP-RFC-2349` — OPEN-DEPENDENCY：TFTP 超时与传输大小选项身份仍开放。
+- `DEP-RFC-768` — OPEN-DEPENDENCY：UDP 身份与适用性仍开放。
+- `DEP-RFC-791` — OPEN-DEPENDENCY：IP 身份与适用性仍开放。
+- `GAP-ARINC-645` — NOT-ESTABLISHED：依赖 ARINC 645 的验证仍受阻。
 
 ## CRS 项
 
-| ID | 来源 | 模态／效果 | 适用性 | 评审释义 | 依赖／缺口 |
-|---|---|---|---|---|---|
-| `CRS-615A3-0001` | `ARINC-615A-3 1.1 p.1` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.1 中治理 DATA-LOADER-FUNCTION 的第 1 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0002` | `ARINC-615A-3 1.3 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 1 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0003` | `ARINC-615A-3 1.3 p.2` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.3 中治理 COMPATIBILITY / DATA-LOADER-FUNCTION / MEDIA 的第 2 项原子transport规则。 | — |
-| `CRS-615A3-0004` | `ARINC-615A-3 1.3 p.2` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.3 中治理 COMPATIBILITY / OPTION-NEGOTIATION 的第 3 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0005` | `ARINC-615A-3 1.3 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 4 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0006` | `ARINC-615A-3 1.3 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.3 中治理 COMPATIBILITY / MEDIA 的第 5 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0007` | `ARINC-615A-3 1.3 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 6 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0008` | `ARINC-615A-3 1.3 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 7 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0009` | `ARINC-615A-3 1.3 p.2` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 8 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0010` | `ARINC-615A-3 1.3 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 9 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0011` | `ARINC-615A-3 1.4.1 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.1 中治理 SCOPE-AND-PRODUCT-ROLE 的第 1 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0012` | `ARINC-615A-3 1.4.1 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.1 中治理 SCOPE-AND-PRODUCT-ROLE 的第 2 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0013` | `ARINC-615A-3 1.4.1 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.1 中治理 SCOPE-AND-PRODUCT-ROLE 的第 3 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0014` | `ARINC-615A-3 1.4.1 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.1 中治理 MEDIA 的第 4 项原子human interface规则。 | — |
-| `CRS-615A3-0015` | `ARINC-615A-3 1.4.1 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.1 中治理 SCOPE-AND-PRODUCT-ROLE 的第 5 项原子data format规则。 | DEP-ARINC-6655, DEP-IP-UDP-664 |
-| `CRS-615A3-0016` | `ARINC-615A-3 1.4.1 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.1 中治理 STATUS / RESOURCE-LIMIT 的第 6 项原子error status规则。 | — |
-| `CRS-615A3-0017` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 1 项原子transport规则。 | — |
-| `CRS-615A3-0018` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.3 中治理 POWER-ENVIRONMENT 的第 2 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0019` | `ARINC-615A-3 1.4.3 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 3 项原子transport规则。 | — |
-| `CRS-615A3-0020` | `ARINC-615A-3 1.4.3 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.3 中治理 STATUS / RESOURCE-LIMIT 的第 4 项原子error status规则。 | — |
-| `CRS-615A3-0021` | `ARINC-615A-3 1.4.3 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 5 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0022` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 6 项原子human interface规则。 | — |
-| `CRS-615A3-0023` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 7 项原子transport规则。 | — |
-| `CRS-615A3-0024` | `ARINC-615A-3 1.4.3 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.3 中治理 POWER-ENVIRONMENT 的第 8 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0025` | `ARINC-615A-3 1.4.3 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.3 中治理 POWER-ENVIRONMENT 的第 9 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0026` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 10 项原子transport规则。 | — |
-| `CRS-615A3-0027` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 11 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0028` | `ARINC-615A-3 1.4.3 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.4.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 12 项原子transport规则。 | — |
-| `CRS-615A3-0029` | `ARINC-615A-3 1.8 p.5` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.8 中治理 COMPATIBILITY / MEDIA 的第 1 项原子data format规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0030` | `ARINC-615A-3 1.8 p.5` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.8 中治理 SCOPE-AND-PRODUCT-ROLE 的第 2 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0031` | `ARINC-615A-3 1.8 p.5` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.8 中治理 DATA-LOADER-FUNCTION 的第 3 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0032` | `ARINC-615A-3 1.8 p.5` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.8 中治理 MEDIA 的第 4 项原子transport规则。 | — |
-| `CRS-615A3-0033` | `ARINC-615A-3 1.8 p.5` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.8 中治理 RELIABILITY 的第 5 项原子transport规则。 | DEP-ARINC-6655, DEP-IP-UDP-664 |
-| `CRS-615A3-0034` | `ARINC-615A-3 1.8 p.5` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.8 中治理 FIND / RELIABILITY 的第 6 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0035` | `ARINC-615A-3 1.8 p.5` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.8 中治理 RELIABILITY / MAINTAINABILITY / POWER-ENVIRONMENT 的第 7 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0036` | `ARINC-615A-3 1.8 p.5` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.8 中治理 MAINTAINABILITY 的第 8 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0037` | `ARINC-615A-3 1.10 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 SCOPE，执行条款 1.10 中治理 SCOPE-AND-PRODUCT-ROLE 的第 1 项原子transport规则。 | — |
-| `CRS-615A3-0038` | `ARINC-615A-3 5.2 p.22` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.2 中治理 FILE-NAME / PROTOCOL-FILE 的第 1 项原子data format规则。 | — |
-| `CRS-615A3-0039` | `ARINC-615A-3 5.2 p.22` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.2 中治理 PROTOCOL-SCOPE 的第 2 项原子transport规则。 | DEP-ARINC-6655 |
-| `CRS-615A3-0040` | `ARINC-615A-3 5.3.1 p.23` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.1 中治理 FIND 的第 1 项原子data format规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0041` | `ARINC-615A-3 5.3.2 p.24` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2 中治理 COMPATIBILITY 的第 1 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0042` | `ARINC-615A-3 5.3.2.3.2 p.25` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.2 中治理 TFTP-OPTION / OPTION-NEGOTIATION / FILE-TRANSFER 的第 1 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0043` | `ARINC-615A-3 5.3.2.3.2 p.25` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.2 中治理 TRANSPORT-ADAPTATION 的第 2 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0044` | `ARINC-615A-3 5.3.2.3.2 p.25` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.2 中治理 ERROR / OPTION-NEGOTIATION 的第 3 项原子error status规则。 | — |
-| `CRS-615A3-0045` | `ARINC-615A-3 5.3.2.3.2 p.25` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.2 中治理 TFTP-OPTION / OPTION-NEGOTIATION 的第 4 项原子transport规则。 | DEP-IP-UDP-664, DEP-RFC-TFTP |
-| `CRS-615A3-0046` | `ARINC-615A-3 5.3.2.3.2 p.25` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.2 中治理 TRANSPORT-ADAPTATION 的第 5 项原子data format规则。 | — |
-| `CRS-615A3-0047` | `ARINC-615A-3 5.3.2.3.2 p.25` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.2 中治理 PORT 的第 6 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0048` | `ARINC-615A-3 5.3.2.3.4 p.26` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 ERROR 的第 1 项原子error status规则。 | — |
-| `CRS-615A3-0049` | `ARINC-615A-3 5.3.2.3.4 p.26` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 ERROR 的第 2 项原子data format规则。 | — |
-| `CRS-615A3-0050` | `ARINC-615A-3 5.3.2.3.4 p.26` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 ERROR 的第 3 项原子data format规则。 | — |
-| `CRS-615A3-0051` | `ARINC-615A-3 5.3.2.3.4 p.26` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 WAIT / ERROR / RESOURCE-LIMIT 的第 4 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0052` | `ARINC-615A-3 5.3.2.3.4 p.26` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 REQUEST-RESPONSE 的第 5 项原子transport规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0053` | `ARINC-615A-3 5.3.2.3.4 p.26` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 WAIT / ABORT 的第 6 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0054` | `ARINC-615A-3 5.3.2.3.8.1 p.28` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.1 中治理 OPTION-NEGOTIATION 的第 1 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0055` | `ARINC-615A-3 5.3.2.3.8.1 p.28` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.1 中治理 OPTION-NEGOTIATION 的第 2 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0056` | `ARINC-615A-3 5.3.2.3.8.1 p.28` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.1 中治理 BLOCK-SIZE / OPTION-NEGOTIATION / MEDIA 的第 3 项原子transport规则。 | DEP-IP-UDP-664, DEP-RFC-TFTP |
-| `CRS-615A3-0057` | `ARINC-615A-3 5.3.2.3.8.1 p.28` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.1 中治理 RESOURCE-LIMIT 的第 4 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0058` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 BLOCK-SIZE / OPTION-NEGOTIATION 的第 1 项原子transport规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0059` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 BLOCK-SIZE / TRANSFER-SIZE / OPTION-NEGOTIATION / FILE-TRANSFER 的第 2 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0060` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 TRANSFER-SIZE / ERROR / FILE-TRANSFER 的第 3 项原子error status规则。 | — |
-| `CRS-615A3-0061` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 TRANSFER-SIZE / TIMEOUT / OPTION-NEGOTIATION / FILE-TRANSFER 的第 4 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0062` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 TIMEOUT 的第 5 项原子timing规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0063` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 TIMEOUT / PART-NUMBER / OPTION-NEGOTIATION 的第 6 项原子timing规则。 | — |
-| `CRS-615A3-0064` | `ARINC-615A-3 5.3.2.3.8.5 p.29` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 TIMEOUT / CHECKSUM / OPTION-NEGOTIATION 的第 7 项原子timing规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0065` | `ARINC-615A-3 5.3.2.3.8.5 p.30` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 CHECKSUM / CRC / FILE-NAME / HEADER-FILE 的第 8 项原子data format规则。 | DEP-ARINC-6655, DEP-RFC-TFTP, GAP-ARINC-645 |
-| `CRS-615A3-0066` | `ARINC-615A-3 5.3.2.3.8.5 p.30` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 CRC / REQUEST-RESPONSE 的第 9 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0067` | `ARINC-615A-3 5.3.2.3.8.5 p.30` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 TFTP-OPTION / CHECKSUM / OPTION-NEGOTIATION 的第 10 项原子transport规则。 | DEP-RFC-TFTP, GAP-ARINC-645 |
-| `CRS-615A3-0068` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 REQUEST-RESPONSE / OPTION-NEGOTIATION 的第 11 项原子data format规则。 | — |
-| `CRS-615A3-0069` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 CHECKSUM / CRC / FILE-NAME / HEADER-FILE 的第 12 项原子data format规则。 | DEP-ARINC-6655, GAP-ARINC-645 |
-| `CRS-615A3-0070` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 DOWNLOAD / OPTION-NEGOTIATION 的第 13 项原子data format规则。 | — |
-| `CRS-615A3-0071` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 CHECKSUM 的第 14 项原子transport规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0072` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 CHECKSUM / DATA-FILE / ERROR / OPTION-NEGOTIATION 的第 15 项原子data format规则。 | DEP-RFC-TFTP, GAP-ARINC-645 |
-| `CRS-615A3-0073` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 CHECKSUM / DOWNLOAD / ERROR 的第 16 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0074` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 CHECKSUM / DOWNLOAD 的第 17 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0075` | `ARINC-615A-3 5.3.2.3.8.5 p.31` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.8.5 中治理 TRANSPORT-ADAPTATION 的第 18 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0076` | `ARINC-615A-3 5.4.1 p.33` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.1 中治理 OPERATION-SERVICE 的第 1 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0077` | `ARINC-615A-3 5.4.1 p.33` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.1 中治理 OPERATION-SERVICE 的第 2 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0078` | `ARINC-615A-3 5.4.1 p.33` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.1 中治理 PROTOCOL-FILE 的第 3 项原子data format规则。 | — |
-| `CRS-615A3-0079` | `ARINC-615A-3 5.4.1 p.34` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.1 中治理 OPERATION-SERVICE 的第 4 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0080` | `ARINC-615A-3 5.4.1 p.34` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.1 中治理 ABORT / INTERRUPTION 的第 5 项原子error status规则。 | — |
-| `CRS-615A3-0081` | `ARINC-615A-3 5.4.1 p.34` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.1 中治理 OPERATION-SERVICE 的第 6 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0082` | `ARINC-615A-3 5.4.1 p.34` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.1 中治理 UPLOAD / DOWNLOAD / FIND 的第 7 项原子data format规则。 | — |
-| `CRS-615A3-0083` | `ARINC-615A-3 5.4.1 p.34` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.1 中治理 FIND / REQUEST-RESPONSE 的第 8 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0084` | `ARINC-615A-3 5.4.1 p.34` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.1 中治理 REQUEST-RESPONSE 的第 9 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0085` | `ARINC-615A-3 5.4.1 p.34` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.1 中治理 STATUS / STATUS-CODE 的第 10 项原子data format规则。 | — |
-| `CRS-615A3-0086` | `ARINC-615A-3 5.4.3 p.35` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3 中治理 REQUEST-RESPONSE 的第 1 项原子transport规则。 | — |
-| `CRS-615A3-0087` | `ARINC-615A-3 5.4.3 p.35` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3 中治理 OPERATION-SERVICE 的第 2 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0088` | `ARINC-615A-3 5.4.3 p.35` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3 中治理 OPERATION-SERVICE 的第 3 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0089` | `ARINC-615A-3 5.4.3 p.35` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3 中治理 WAIT / STATUS / APPLICATION-MESSAGE 的第 4 项原子timing规则。 | — |
-| `CRS-615A3-0090` | `ARINC-615A-3 5.4.3 p.35` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3 中治理 TFTP-OPTION / OPTION-NEGOTIATION 的第 5 项原子transport规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0091` | `ARINC-615A-3 5.4.3 p.35` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3 中治理 TFTP-OPTION / OPTION-NEGOTIATION 的第 6 项原子transport规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0092` | `ARINC-615A-3 5.4.3 p.35` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3 中治理 UPLOAD 的第 7 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0093` | `ARINC-615A-3 5.4.3.1 p.36` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3.1 中治理 OPERATION-SERVICE 的第 1 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0094` | `ARINC-615A-3 5.4.3.1 p.36` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3.1 中治理 STATUS / APPLICATION-MESSAGE 的第 2 项原子error status规则。 | — |
-| `CRS-615A3-0095` | `ARINC-615A-3 5.4.3.1 p.36` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3.1 中治理 TFTP-OPTION / OPTION-NEGOTIATION 的第 3 项原子transport规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0096` | `ARINC-615A-3 5.4.3.1 p.36` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3.1 中治理 FILE-NAME / REQUEST-RESPONSE 的第 4 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0097` | `ARINC-615A-3 5.4.3.1 p.36` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3.1 中治理 TFTP-OPTION / OPTION-NEGOTIATION 的第 5 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0098` | `ARINC-615A-3 5.4.3.1 p.36` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3.1 中治理 PART-NUMBER / HEADER-FILE / DATA-FILE 的第 6 项原子data format规则。 | — |
-| `CRS-615A3-0099` | `ARINC-615A-3 5.4.3.2 p.37` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3.2 中治理 OPERATION-SERVICE 的第 1 项原子protocol behavior规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0100` | `ARINC-615A-3 5.4.3.2 p.37` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3.2 中治理 CRC 的第 2 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0101` | `ARINC-615A-3 5.4.3.2 p.37` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3.2 中治理 CRC / PART-NUMBER 的第 3 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0102` | `ARINC-615A-3 5.4.3.2 p.37` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3.2 中治理 OPERATION-SERVICE 的第 4 项原子data format规则。 | — |
-| `CRS-615A3-0103` | `ARINC-615A-3 5.4.3.2 p.37` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3.2 中治理 FILE-CONTENT 的第 5 项原子timing规则。 | — |
-| `CRS-615A3-0104` | `ARINC-615A-3 5.4.3.2 p.37` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 5.4.3.2 中治理 OPERATION-SERVICE 的第 6 项原子data format规则。 | — |
-| `CRS-615A3-0105` | `ARINC-615A-3 5.4.5.1 p.40` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.5.1 中治理 DOWNLOAD / REQUEST-RESPONSE / MEDIA 的第 1 项原子data format规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0106` | `ARINC-615A-3 5.4.5.1 p.40` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.5.1 中治理 DOWNLOAD / MEDIA 的第 2 项原子human interface规则。 | — |
-| `CRS-615A3-0107` | `ARINC-615A-3 5.4.5.1 p.40` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.5.1 中治理 DOWNLOAD / ERROR / MEDIA 的第 3 项原子error status规则。 | — |
-| `CRS-615A3-0108` | `ARINC-615A-3 5.4.5.1 p.40` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.5.1 中治理 DOWNLOAD / TARGET-IDENTITY / MEDIA 的第 4 项原子timing规则。 | — |
-| `CRS-615A3-0109` | `ARINC-615A-3 5.4.5.1 p.40` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.5.1 中治理 DOWNLOAD / TARGET-IDENTITY 的第 5 项原子timing规则。 | — |
-| `CRS-615A3-0110` | `ARINC-615A-3 5.4.5.2 p.41` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.4.5.2 中治理 ABORT / STATUS / STATUS-CODE / INTERRUPTION 的第 1 项原子data format规则。 | — |
-| `CRS-615A3-0111` | `ARINC-615A-3 6.2.8.2 p.45` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.2.8.2 中治理 WAIT / APPLICATION-MESSAGE / REQUEST-RESPONSE / RESOURCE-LIMIT 的第 1 项原子timing规则。 | DEP-IP-UDP-664, DEP-RFC-TFTP |
-| `CRS-615A3-0112` | `ARINC-615A-3 6.3.1 p.51` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.3.1 中治理 TIMEOUT 的第 1 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0113` | `ARINC-615A-3 6.3.1 p.51` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.3.1 中治理 TIMEOUT 的第 2 项原子timing规则。 | — |
-| `CRS-615A3-0114` | `ARINC-615A-3 6.3.1 p.51` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.3.1 中治理 STATUS / TIMEOUT / APPLICATION-MESSAGE 的第 3 项原子timing规则。 | — |
-| `CRS-615A3-0115` | `ARINC-615A-3 6.3.1 p.51` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.3.1 中治理 ABORT / STATUS / TIMEOUT / INFORMATION 的第 4 项原子timing规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0116` | `ARINC-615A-3 6.3.1 p.51` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.3.1 中治理 STATUS / TIMEOUT / APPLICATION-MESSAGE / REQUEST-RESPONSE 的第 5 项原子timing规则。 | — |
-| `CRS-615A3-0117` | `ARINC-615A-3 6.3.1 p.51` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.3.1 中治理 STATUS / TIMEOUT / APPLICATION-MESSAGE / TARGET-IDENTITY 的第 6 项原子timing规则。 | — |
-| `CRS-615A3-0118` | `ARINC-615A-3 6.3.1 p.52` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.3.1 中治理 WAIT 的第 7 项原子timing规则。 | — |
-| `CRS-615A3-0119` | `ARINC-615A-3 6.3.1 p.52` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.3.1 中治理 OPERATION-SEQUENCE 的第 8 项原子timing规则。 | — |
-| `CRS-615A3-0120` | `ARINC-615A-3 6.3.1 p.52` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.3.1 中治理 ABORT / STATUS / UPLOAD / DOWNLOAD 的第 9 项原子timing规则。 | — |
-| `CRS-615A3-0121` | `ARINC-615A-3 5.3.2.3.4 p.55` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 TIMEOUT 的第 7 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0122` | `ARINC-615A-3 5.3.2.3.4 p.55` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 TIMEOUT 的第 8 项原子timing规则。 | — |
-| `CRS-615A3-0123` | `ARINC-615A-3 5.3.2.3.4 p.55` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 STATUS / TIMEOUT / APPLICATION-MESSAGE 的第 9 项原子timing规则。 | — |
-| `CRS-615A3-0124` | `ARINC-615A-3 5.3.2.3.4 p.55` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 ABORT / STATUS / TIMEOUT / ERROR 的第 10 项原子timing规则。 | DEP-IP-UDP-664, DEP-RFC-TFTP |
-| `CRS-615A3-0125` | `ARINC-615A-3 5.3.2.3.4 p.55` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 HEADER-FILE / DATA-FILE / UPLOAD 的第 11 项原子data format规则。 | — |
-| `CRS-615A3-0126` | `ARINC-615A-3 5.3.2.3.4 p.56` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 WAIT 的第 12 项原子timing规则。 | — |
-| `CRS-615A3-0127` | `ARINC-615A-3 5.3.2.3.4 p.56` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 TRANSPORT-ADAPTATION 的第 13 项原子timing规则。 | — |
-| `CRS-615A3-0128` | `ARINC-615A-3 5.3.2.3.4 p.56` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 ABORT / STATUS / UPLOAD / DOWNLOAD 的第 14 项原子timing规则。 | — |
-| `CRS-615A3-0129` | `ARINC-615A-3 5.3.2.3.4 p.56` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 5.3.2.3.4 中治理 STATUS / CHECKSUM / CRC / DATA-FILE 的第 15 项原子data format规则。 | GAP-ARINC-645 |
-| `CRS-615A3-0130` | `ARINC-615A-3 6.3.5 p.64` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.3.5 中治理 TIMEOUT 的第 1 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0131` | `ARINC-615A-3 6.3.5 p.64` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.3.5 中治理 ABORT / STATUS / REQUEST-RESPONSE 的第 2 项原子data format规则。 | — |
-| `CRS-615A3-0132` | `ARINC-615A-3 6.3.5 p.64` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.3.5 中治理 ABORT / STATUS / ERROR / REQUEST-RESPONSE 的第 3 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0133` | `ARINC-615A-3 6.3.5 p.64` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.3.5 中治理 ABORT / STATUS / REQUEST-RESPONSE / STATUS-CODE 的第 4 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0134` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION 的第 1 项原子data format规则。 | — |
-| `CRS-615A3-0135` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION 的第 2 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0136` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION / PROTOCOL-FILE 的第 3 项原子data format规则。 | — |
-| `CRS-615A3-0137` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION / PROTOCOL-FILE 的第 4 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0138` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION / ABORT 的第 5 项原子error status规则。 | — |
-| `CRS-615A3-0139` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION / ABORT / STATUS / COMPATIBILITY 的第 6 项原子data format规则。 | — |
-| `CRS-615A3-0140` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.4 中治理 PROTOCOL-VERSION / PROTOCOL-FILE 的第 7 项原子data format规则。 | — |
-| `CRS-615A3-0141` | `ARINC-615A-3 6.4 p.65` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.4 中治理 PART-NUMBER / ZERO-TERMINATION 的第 8 项原子data format规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0142` | `ARINC-615A-3 6.4 p.65` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.4 中治理 ZERO-TERMINATION 的第 9 项原子data format规则。 | — |
-| `CRS-615A3-0143` | `ARINC-615A-3 6.4 p.66` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 6.4 中治理 FIELD-LENGTH 的第 10 项原子data format规则。 | — |
-| `CRS-615A3-0144` | `ARINC-615A-3 6.4.2 p.68` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.2 中治理 PROTOCOL-FILE-SEMANTICS 的第 1 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0145` | `ARINC-615A-3 6.4.2 p.68` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.2 中治理 PROTOCOL-VERSION / PART-NUMBER / ZERO-TERMINATION / TARGET-IDENTITY 的第 2 项原子data format规则。 | — |
-| `CRS-615A3-0146` | `ARINC-615A-3 6.4.2 p.69` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.2 中治理 ZERO-TERMINATION 的第 3 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0147` | `ARINC-615A-3 6.4.2 p.69` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.2 中治理 ZERO-TERMINATION 的第 4 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0148` | `ARINC-615A-3 6.4.3 p.70` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.3 中治理 PROTOCOL-FILE-SEMANTICS 的第 1 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0149` | `ARINC-615A-3 6.4.3 p.70` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.3 中治理 PROTOCOL-VERSION / STATUS / INFORMATION / ZERO-TERMINATION 的第 2 项原子timing规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0150` | `ARINC-615A-3 6.4.4 p.72` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.4 中治理 STATUS / STATUS-CODE 的第 1 项原子data format规则。 | — |
-| `CRS-615A3-0151` | `ARINC-615A-3 6.4.4 p.72` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.4 中治理 PROTOCOL-FILE-SEMANTICS 的第 2 项原子timing规则。 | — |
-| `CRS-615A3-0152` | `ARINC-615A-3 6.4.4 p.72` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.4 中治理 STATUS / STATUS-CODE 的第 3 项原子timing规则。 | — |
-| `CRS-615A3-0153` | `ARINC-615A-3 6.4.4 p.72` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.4 中治理 STATUS / STATUS-CODE 的第 4 项原子data format规则。 | — |
-| `CRS-615A3-0154` | `ARINC-615A-3 6.4.4 p.72` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.4 中治理 PROTOCOL-FILE-SEMANTICS 的第 5 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0155` | `ARINC-615A-3 6.4.4 p.72` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.4 中治理 PROTOCOL-VERSION / FILE-NAME / PART-NUMBER / HEADER-FILE 的第 6 项原子data format规则。 | — |
-| `CRS-615A3-0156` | `ARINC-615A-3 6.4.4 p.73` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.4 中治理 HEADER-FILE 的第 7 项原子data format规则。 | — |
-| `CRS-615A3-0157` | `ARINC-615A-3 6.4.4 p.73` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.4 中治理 ZERO-TERMINATION 的第 8 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0158` | `ARINC-615A-3 6.4.4 p.73` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.4 中治理 PROTOCOL-FILE-SEMANTICS 的第 9 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0159` | `ARINC-615A-3 6.4.5 p.75` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.5 中治理 STATUS / STATUS-CODE 的第 1 项原子data format规则。 | — |
-| `CRS-615A3-0160` | `ARINC-615A-3 6.4.5 p.75` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.5 中治理 PROTOCOL-FILE-SEMANTICS 的第 2 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0161` | `ARINC-615A-3 6.4.5 p.75` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.5 中治理 ZERO-TERMINATION 的第 3 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0162` | `ARINC-615A-3 6.4.5 p.76` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.5 中治理 STATUS / STATUS-CODE 的第 4 项原子data format规则。 | — |
-| `CRS-615A3-0163` | `ARINC-615A-3 6.4.5 p.76` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.5 中治理 PROTOCOL-FILE-SEMANTICS 的第 5 项原子timing规则。 | — |
-| `CRS-615A3-0164` | `ARINC-615A-3 6.4.5 p.76` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.5 中治理 STATUS / STATUS-CODE 的第 6 项原子timing规则。 | — |
-| `CRS-615A3-0165` | `ARINC-615A-3 6.4.5 p.76` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.5 中治理 HEADER-FILE 的第 7 项原子data format规则。 | — |
-| `CRS-615A3-0166` | `ARINC-615A-3 6.4.5 p.76` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.5 中治理 ZERO-TERMINATION 的第 8 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0167` | `ARINC-615A-3 6.4.5 p.77` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 对 UPLOAD，执行条款 6.4.5 中治理 ZERO-TERMINATION 的第 9 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0168` | `ARINC-615A-3 6.4.10 p.82` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 STATUS / STATUS-CODE 的第 1 项原子data format规则。 | — |
-| `CRS-615A3-0169` | `ARINC-615A-3 6.4.10 p.82` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 2 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0170` | `ARINC-615A-3 6.4.10 p.82` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 ZERO-TERMINATION 的第 3 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0171` | `ARINC-615A-3 6.4.10 p.84` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 4 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0172` | `ARINC-615A-3 6.4.10 p.84` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-VERSION / FILE-NAME / DOWNLOAD / ZERO-TERMINATION 的第 5 项原子data format规则。 | — |
-| `CRS-615A3-0173` | `ARINC-615A-3 6.4.10 p.84` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 STATUS / ZERO-TERMINATION / STATUS-CODE / DISPLAY-INDICATION 的第 6 项原子data format规则。 | — |
-| `CRS-615A3-0174` | `ARINC-615A-3 6.4.10 p.85` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 STATUS / UPLOAD / DOWNLOAD / STATUS-CODE 的第 7 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0175` | `ARINC-615A-3 6.4.10 p.85` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 ABORT / STATUS / FILE-NAME / PART-NUMBER 的第 8 项原子data format规则。 | — |
-| `CRS-615A3-0176` | `ARINC-615A-3 6.4.10 p.87` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 COMPATIBILITY 的第 9 项原子transport规则。 | — |
-| `CRS-615A3-0177` | `ARINC-615A-3 6.4.10 p.87` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 10 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0178` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 11 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0179` | `ARINC-615A-3 6.4.10 p.87` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 COMPATIBILITY / REQUEST-RESPONSE 的第 12 项原子transport规则。 | DEP-IP-UDP-664 |
-| `CRS-615A3-0180` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 13 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0181` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 14 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0182` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 15 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0183` | `ARINC-615A-3 6.4.10 p.87` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 16 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0184` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 17 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0185` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 18 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0186` | `ARINC-615A-3 6.4.10 p.87` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 INFORMATION，执行条款 6.4.10 中治理 PROTOCOL-FILE-SEMANTICS 的第 19 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0187` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-1 中治理 TIMEOUT / RETRY 的第 1 项原子timing规则。 | — |
-| `CRS-615A3-0188` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-1 中治理 TIMEOUT / FILE-TRANSFER / ACKNOWLEDGEMENT 的第 2 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0189` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-1 中治理 TIMEOUT / ERROR / ACKNOWLEDGEMENT 的第 3 项原子timing规则。 | — |
-| `CRS-615A3-0190` | `ARINC-615A-3 4-1 p.99` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-1 中治理 TIMEOUT / RETRY / CRC / ERROR 的第 4 项原子timing规则。 | DEP-RFC-TFTP, GAP-ARINC-645 |
-| `CRS-615A3-0191` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-1 中治理 RETRY / ERROR / FILE-TRANSFER 的第 5 项原子retry policy规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0192` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-1 中治理 ERROR / APPLICATION-MESSAGE 的第 6 项原子error status规则。 | — |
-| `CRS-615A3-0193` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-1 中治理 RETRY / UPLOAD / DOWNLOAD / ERROR 的第 7 项原子retry policy规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0194` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-1 中治理 RETRY / ERROR / APPLICATION-MESSAGE / FILE-TRANSFER 的第 8 项原子retry policy规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0195` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-1 中治理 ERROR 的第 9 项原子error status规则。 | — |
-| `CRS-615A3-0196` | `ARINC-615A-3 4-1 p.99` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-1 中治理 TIMEOUT / APPLICATION-MESSAGE 的第 10 项原子timing规则。 | — |
-| `CRS-615A3-0197` | `ARINC-615A-3 4-3 p.100` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-3 中治理 TIMEOUT 的第 1 项原子timing规则。 | — |
-| `CRS-615A3-0198` | `ARINC-615A-3 4-3 p.100` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-3 中治理 TIMEOUT-AND-RETRY-POLICY 的第 2 项原子transport规则。 | DEP-IP-UDP-664, DEP-RFC-TFTP |
-| `CRS-615A3-0199` | `ARINC-615A-3 4-3 p.100` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-3 中治理 TIMEOUT-AND-RETRY-POLICY 的第 3 项原子transport规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0200` | `ARINC-615A-3 4-3 p.101` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-3 中治理 RETRY / ERROR 的第 4 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0201` | `ARINC-615A-3 4-3 p.101` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-3 中治理 RETRY 的第 5 项原子retry policy规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0202` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-4 中治理 TIMEOUT / RETRY 的第 1 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0203` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-4 中治理 TIMEOUT / APPLICATION-MESSAGE / REQUEST-RESPONSE / ACKNOWLEDGEMENT 的第 2 项原子timing规则。 | DEP-IP-UDP-664, DEP-RFC-TFTP |
-| `CRS-615A3-0204` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-4 中治理 TIMEOUT / APPLICATION-MESSAGE / FILE-TRANSFER 的第 3 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0205` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-4 中治理 TIMEOUT / APPLICATION-MESSAGE 的第 4 项原子timing规则。 | — |
-| `CRS-615A3-0206` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-4 中治理 STATUS / APPLICATION-MESSAGE 的第 5 项原子data format规则。 | — |
-| `CRS-615A3-0207` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-4 中治理 TIMEOUT 的第 6 项原子timing规则。 | — |
-| `CRS-615A3-0208` | `ARINC-615A-3 4-4 p.102` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-4 中治理 TIMEOUT / APPLICATION-MESSAGE / FILE-TRANSFER 的第 7 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0209` | `ARINC-615A-3 4-4 p.103` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-4 中治理 RETRY / ERROR / APPLICATION-MESSAGE / FILE-TRANSFER 的第 8 项原子timing规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0210` | `ARINC-615A-3 4-4 p.104` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-4 中治理 TIMEOUT / RETRY / APPLICATION-MESSAGE 的第 9 项原子timing规则。 | — |
-| `CRS-615A3-0211` | `ARINC-615A-3 4-4 p.104` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-4 中治理 ERROR / RELIABILITY / DATA-LOADER-FUNCTION 的第 10 项原子data format规则。 | DEP-RFC-TFTP |
-| `CRS-615A3-0212` | `ARINC-615A-3 4-4 p.106` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-4 中治理 APPLICATION-MESSAGE 的第 11 项原子protocol behavior规则。 | — |
-| `CRS-615A3-0213` | `ARINC-615A-3 4-4 p.106` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 COMMON，执行条款 4-4 中治理 UPLOAD / DOWNLOAD / ERROR 的第 12 项原子error status规则。 | — |
-| `CRS-615A3-0214` | `ARINC-615A-3 6.1 p.42` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 表 6-1 固定 Information 消息在 DLA 与 DLP 间的方向。 | — |
-| `CRS-615A3-0215` | `ARINC-615A-3 6.1 p.42` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 表 6-1 固定 Upload 消息在 DLA 与 DLP 间的方向。 | — |
-| `CRS-615A3-0216` | `ARINC-615A-3 6.3.1 p.50` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Information 遵循图示初始化、LCI、LCL、状态及完成顺序。 | DEP-RFC-TFTP |
-| `CRS-615A3-0217` | `ARINC-615A-3 6.3.2 p.53` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Upload 初始化及清单传输遵循序列图第一段。 | DEP-RFC-TFTP |
-| `CRS-615A3-0218` | `ARINC-615A-3 6.3.2 p.54` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | Upload 文件传输、文件不可用处理及完成状态遵循序列图第二段。 | DEP-RFC-TFTP |
-| `CRS-615A3-0219` | `ARINC-615A-3 6.3.5 p.63` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 中断遵循图示中止请求、停止、确认及终止顺序。 | DEP-RFC-TFTP |
-| `CRS-615A3-0220` | `ARINC-615A-3 6.4.1 p.67` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 初始化文件字段顺序与编码受表 6.4.1-1 约束。 | — |
-| `CRS-615A3-0221` | `ARINC-615A-3 6.4.2 p.68` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | LCL 信息文件结构遵循表 6.4.2-1。 | — |
-| `CRS-615A3-0222` | `ARINC-615A-3 6.4.3 p.70` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 公共 LCS 状态文件结构遵循表 6.4.3-1。 | — |
-| `CRS-615A3-0223` | `ARINC-615A-3 6.4.4 p.72` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | LUR Upload 请求结构遵循表 6.4.4-1。 | — |
-| `CRS-615A3-0224` | `ARINC-615A-3 6.4.5 p.74` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | LUS Upload 状态结构遵循表 6.4.5-1。 | — |
-| `CRS-615A3-0225` | `ARINC-615A-3 6.4.10 p.85` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 状态码值及含义遵循受控状态码表。 | — |
-| `CRS-615A3-0226` | `ARINC-615A-3 ATTACHMENT-4.3.1 p.105` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 图 A4-1 约束 TFTP 超时观测与预算划分。 | — |
-| `CRS-615A3-0227` | `ARINC-615A-3 ATTACHMENT-4.4.1 p.105` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 图 A4-2 约束 DLP 超时组成。 | — |
-| `CRS-615A3-0228` | `ARINC-615A-3 ATTACHMENT-4 p.107` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 图 A4-3 约束客户端重试与错误晋级顺序。 | — |
-| `CRS-615A3-0229` | `ARINC-615A-3 ATTACHMENT-4 p.108` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 图 A4-4 约束服务端重试与错误晋级顺序。 | — |
-| `CRS-615A3-0230` | `ARINC-615A-3 ATTACHMENT-4 p.109` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 图 A4-5 约束数据加载器侧 DLP 超时分类。 | — |
-| `CRS-6655-0001` | `ARINC-665-5 1.3.3 p.1` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.3.3 中治理 COMPATIBILITY 的第 1 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0002` | `ARINC-665-5 1.3.3 p.1` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.3.3 中治理 COMPATIBILITY 的第 2 项原子transport规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0003` | `ARINC-665-5 1.3.3 p.1` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.3.3 中治理 OPTION-NEGOTIATION 的第 3 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0004` | `ARINC-665-5 1.3.3 p.1` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.3.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 4 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0005` | `ARINC-665-5 1.3.3 p.1` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.3.3 中治理 COMPATIBILITY 的第 5 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0006` | `ARINC-665-5 1.3.3 p.1` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.3.3 中治理 SCOPE-AND-PRODUCT-ROLE 的第 6 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0007` | `ARINC-665-5 1.4.2 p.2` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.4.2 中治理 OPTION-NEGOTIATION 的第 1 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0008` | `ARINC-665-5 1.4.2 p.2` | `MAY` / `OPTIONAL` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 1.4.2 中治理 FORMAT-VERSION 的第 2 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0009` | `ARINC-665-5 1.4.2 p.2` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.4.2 中治理 MEDIA 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0010` | `ARINC-665-5 1.4.4 p.3` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.4.4 中治理 SCOPE-AND-PRODUCT-ROLE 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0011` | `ARINC-665-5 1.4.4 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.4.4 中治理 SCOPE-AND-PRODUCT-ROLE 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0012` | `ARINC-665-5 1.4.4 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.4.4 中治理 SCOPE-AND-PRODUCT-ROLE 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0013` | `ARINC-665-5 1.4.4 p.3` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.4.4 中治理 PART-NUMBER / HEADER-FILE / FIELD-LENGTH / FORMAT-VERSION 的第 4 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0014` | `ARINC-665-5 1.5 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.5 中治理 SCOPE-AND-PRODUCT-ROLE 的第 1 项原子transport规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0015` | `ARINC-665-5 1.5 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.5 中治理 SCOPE-AND-PRODUCT-ROLE 的第 2 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0016` | `ARINC-665-5 1.5 p.4` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.5 中治理 SCOPE-AND-PRODUCT-ROLE 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0017` | `ARINC-665-5 1.5 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.5 中治理 COMPATIBILITY 的第 4 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0018` | `ARINC-665-5 1.5 p.4` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 1.5 中治理 SCOPE-AND-PRODUCT-ROLE 的第 5 项原子transport规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0019` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER 的第 1 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0020` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER 的第 2 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0021` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER 的第 3 项原子timing规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0022` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER / FIND 的第 4 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0023` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER 的第 5 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0024` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER 的第 6 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0025` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.1 中治理 PART-NUMBER 的第 7 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0026` | `ARINC-665-5 2.1.1 p.6` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.1 中治理 LOAD-PART-NUMBER 的第 8 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0027` | `ARINC-665-5 2.1.1 p.6` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.1 中治理 LOAD-PART-NUMBER 的第 9 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0028` | `ARINC-665-5 2.1.4 p.7` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.4 中治理 LOAD-PART-NUMBER 的第 1 项原子transport规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0029` | `ARINC-665-5 2.1.4 p.7` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.4 中治理 PART-NUMBER 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0030` | `ARINC-665-5 2.1.4 p.7` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.4 中治理 LOAD-PART-NUMBER 的第 3 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0031` | `ARINC-665-5 2.1.4 p.7` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.4 中治理 PART-NUMBER / ERROR 的第 4 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0032` | `ARINC-665-5 2.1.4 p.7` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.1.4 中治理 LOAD-PART-NUMBER 的第 5 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0033` | `ARINC-665-5 2.1.4 p.7` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.1.4 中治理 LOAD-PART-NUMBER 的第 6 项原子transport规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0034` | `ARINC-665-5 2.2.3.1 p.8` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1 中治理 LOADABLE-SOFTWARE-PART 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0035` | `ARINC-665-5 2.2.3.1 p.8` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1 中治理 FILE-NAME 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0036` | `ARINC-665-5 2.2.3.1 p.8` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1 中治理 FILE-NAME / HEADER-FILE 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0037` | `ARINC-665-5 2.2.3.1 p.8` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1 中治理 HEADER-FILE / DATA-FILE 的第 4 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0038` | `ARINC-665-5 2.2.3.1 p.8` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1 中治理 LOADABLE-SOFTWARE-PART 的第 5 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0039` | `ARINC-665-5 2.2.3.1 p.8` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1 中治理 MEDIA / POWER-ENVIRONMENT 的第 6 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0040` | `ARINC-665-5 2.2.3.1 p.8` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1 中治理 FILE-NAME / HEADER-FILE / DATA-FILE / FILE-CONTENT 的第 7 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0041` | `ARINC-665-5 2.2.3.1.7 p.11` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.7 中治理 UPLOAD / DOWNLOAD 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0042` | `ARINC-665-5 2.2.3.1.7 p.11` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.7 中治理 PART-NUMBER / DATA-FILE / DOWNLOAD / FIELD-LENGTH 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0043` | `ARINC-665-5 2.2.3.1.16 p.12` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.16 中治理 LOADABLE-SOFTWARE-PART 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0044` | `ARINC-665-5 2.2.3.1.16 p.12` | `MAY` / `OPTIONAL` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.16 中治理 PART-NUMBER / OPTION-NEGOTIATION / FORMAT-VERSION / POINTER-FIELD 的第 2 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0045` | `ARINC-665-5 2.2.3.1.16 p.12` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.16 中治理 PART-NUMBER / FORMAT-VERSION 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0046` | `ARINC-665-5 2.2.3.1.20 p.13` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.20 中治理 LOADABLE-SOFTWARE-PART 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0047` | `ARINC-665-5 2.2.3.1.20 p.13` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.20 中治理 LOADABLE-SOFTWARE-PART 的第 2 项原子protocol behavior规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0048` | `ARINC-665-5 2.2.3.1.20 p.13` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.20 中治理 FORMAT-VERSION 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0049` | `ARINC-665-5 2.2.3.1.28 p.14` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.28 中治理 FIELD-LENGTH / FORMAT-VERSION 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0050` | `ARINC-665-5 2.2.3.1.28 p.14` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.28 中治理 LOADABLE-SOFTWARE-PART 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0051` | `ARINC-665-5 2.2.3.1.28 p.14` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.28 中治理 FIELD-LENGTH 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0052` | `ARINC-665-5 2.2.3.1.36 p.15` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.36 中治理 DATA-FILE / FORMAT-VERSION 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0053` | `ARINC-665-5 2.2.3.1.36 p.15` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.36 中治理 DATA-FILE 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0054` | `ARINC-665-5 2.2.3.1.36 p.15` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.36 中治理 FILE-NAME / DATA-FILE / FIELD-LENGTH / POINTER-FIELD 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0055` | `ARINC-665-5 2.2.3.1.43 p.16` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 CRC / DATA-FILE 的第 1 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0056` | `ARINC-665-5 2.2.3.1.43 p.16` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 CRC / DATA-FILE 的第 2 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0057` | `ARINC-665-5 2.2.3.1.43 p.16` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 DATA-FILE 的第 3 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0058` | `ARINC-665-5 2.2.3.1.43 p.16` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 LOADABLE-SOFTWARE-PART 的第 4 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0059` | `ARINC-665-5 2.2.3.1.43 p.16` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 LOADABLE-SOFTWARE-PART 的第 5 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0060` | `ARINC-665-5 2.2.3.1.43 p.16` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 LOADABLE-SOFTWARE-PART 的第 6 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0061` | `ARINC-665-5 2.2.3.1.43 p.16` | `MAY` / `OPTIONAL` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.43 中治理 DATA-FILE / FORMAT-VERSION 的第 7 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0062` | `ARINC-665-5 2.2.3.1.51 p.17` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.51 中治理 POINTER-FIELD 的第 1 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0063` | `ARINC-665-5 2.2.3.1.51 p.17` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.51 中治理 FILE-NAME / FIELD-LENGTH / POINTER-FIELD 的第 2 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0064` | `ARINC-665-5 2.2.3.1.51 p.17` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.51 中治理 PART-NUMBER / FIELD-LENGTH 的第 3 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0065` | `ARINC-665-5 2.2.3.1.51 p.17` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.51 中治理 PART-NUMBER 的第 4 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0066` | `ARINC-665-5 2.2.3.1.51 p.17` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.51 中治理 CRC 的第 5 项原子transport规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0067` | `ARINC-665-5 2.2.3.1.60 p.18` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.60 中治理 LOADABLE-SOFTWARE-PART 的第 1 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0068` | `ARINC-665-5 2.2.3.1.60 p.18` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.60 中治理 LOADABLE-SOFTWARE-PART 的第 2 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0069` | `ARINC-665-5 2.2.3.1.60 p.18` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.60 中治理 LOADABLE-SOFTWARE-PART 的第 3 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0070` | `ARINC-665-5 2.2.3.1.60 p.18` | `MAY` / `OPTIONAL` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.60 中治理 FORMAT-VERSION 的第 4 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0071` | `ARINC-665-5 2.2.3.1.60 p.18` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.1.60 中治理 HEADER-FILE 的第 5 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0072` | `ARINC-665-5 2.2.3.1.60 p.18` | `MAY` / `OPTIONAL` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.1.60 中治理 FORMAT-VERSION 的第 6 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0073` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.3 中治理 LOADABLE-SOFTWARE-PART 的第 1 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0074` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.3 中治理 LOADABLE-SOFTWARE-PART 的第 2 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0075` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.3 中治理 LOADABLE-SOFTWARE-PART 的第 3 项原子protocol behavior规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0076` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.3 中治理 CRC / HEADER-FILE / DATA-FILE / FILE-CONTENT 的第 4 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0077` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.3 中治理 CRC / HEADER-FILE 的第 5 项原子data format规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0078` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `BLOCKED-BY-DEPENDENCY` | 对 DATA-OBJECT，执行条款 2.2.3.3 中治理 CRC 的第 6 项原子transport规则。 | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-6655-0079` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.3 中治理 DATA-FILE / FILE-CONTENT 的第 7 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0080` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.3 中治理 FILE-CONTENT 的第 8 项原子data format规则。 | DEP-ARINC-6655 |
-| `CRS-6655-0081` | `ARINC-665-5 2.2.3.3 p.19` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对 DATA-OBJECT，执行条款 2.2.3.3 中治理 COMPATIBILITY / MEDIA 的第 9 项原子data format规则。 | DEP-ARINC-6655 |
+| ID | 来源单元 | 参与者／条件／行为／对象／可观察结果 | 模态／效果 | 适用性 | 双语评审释义 | 时序溯源 | 依赖／缺口 |
+|---|---|---|---|---|---|---|---|
+| `CRS-M1-00001` | `SU-ARINC-615A-3-1-2-P014-PROSE-SENTENCE-002-8D3CB7C14FBD`<br>`ARINC-615A-3 1.2 p.2` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00002` | `SU-ARINC-615A-3-1-2-P014-PROSE-SENTENCE-003-8280DDEE506E`<br>`ARINC-615A-3 1.2 p.2` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“CONFORMANCE-MODALITY”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00003` | `SU-ARINC-615A-3-1-2-P014-PROSE-SENTENCE-004-9B5A3832A655`<br>`ARINC-615A-3 1.2 p.2` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下可以对“CONFORMANCE-MODALITY”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00004` | `SU-ARINC-615A-3-1-2-P014-PROSE-SENTENCE-005-7D9A4E2DA48E`<br>`ARINC-615A-3 1.2 p.2` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“CONFORMANCE-MODALITY”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00005` | `SU-ARINC-615A-3-1-3-P014-PROSE-SENTENCE-001-2FA34C046AFB`<br>`ARINC-615A-3 1.3 p.2` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“软件加载件”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00006` | `SU-ARINC-615A-3-1-3-P014-PROSE-SENTENCE-002-873AFAE35C45`<br>`ARINC-615A-3 1.3 p.2` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `NETWORK-INTERFACE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“网络接口、TARGET-HARDWARE-ID”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-664-2, DEP-ARINC-664-3 |
+| `CRS-M1-00007` | `SU-ARINC-615A-3-1-3-P014-PROSE-SENTENCE-005-EC7965CC3D31`<br>`ARINC-615A-3 1.3 p.2` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `OPERATION, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“协议操作、网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00008` | `SU-ARINC-615A-3-1-3-P014-PROSE-SENTENCE-007-00560ACC8ACC`<br>`ARINC-615A-3 1.3 p.2` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `PROHIBIT` / `DATA-LOADING-TYPES` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“DATA-LOADING-TYPES”执行“禁止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00009` | `SU-ARINC-615A-3-1-6-P017-PROSE-SENTENCE-001-6E91C83C11CE`<br>`ARINC-615A-3 1.6 p.5` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `DESIGN` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“网络接口”执行“设计”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00010` | `SU-ARINC-615A-3-1-6-P017-PROSE-SENTENCE-003-817EC6E68797`<br>`ARINC-615A-3 1.6 p.5` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00011` | `SU-ARINC-615A-3-1-6-P017-PROSE-SENTENCE-004-1768AAB8F452`<br>`ARINC-615A-3 1.6 p.5` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下可以对“网络接口”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00012` | `SU-ARINC-615A-3-1-6-P017-PROSE-SENTENCE-005-358B4BAB3D69`<br>`ARINC-615A-3 1.6 p.5` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“网络接口”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00013` | `SU-ARINC-615A-3-1-6-P017-PROSE-SENTENCE-006-711482ED9B24`<br>`ARINC-615A-3 1.6 p.5` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `COMPLY` / `SOFTWARE-PART, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“软件加载件、网络接口”执行“符合”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00014` | `SU-ARINC-615A-3-5-1-P034-PROSE-SENTENCE-015-441CC925118B`<br>`ARINC-615A-3 5.1 p.22` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `PROTOCOL-FILE-NAME` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下必须对“PROTOCOL-FILE-NAME”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00015` | `SU-ARINC-615A-3-5-1-P034-PROSE-SENTENCE-016-EE8EBA5E1E47`<br>`ARINC-615A-3 5.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“软件加载件”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00016` | `SU-ARINC-615A-3-5-1-P034-PROSE-SENTENCE-016-EE8EBA5E1E47`<br>`ARINC-615A-3 5.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `COMPLY` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“网络接口”执行“符合”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00017` | `SU-ARINC-615A-3-5-2-P035-PROSE-SENTENCE-011-D07026646B5D`<br>`ARINC-615A-3 5.2 p.23` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `FIND-SERVICE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“FIND-SERVICE、TARGET-HARDWARE-ID”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00018` | `SU-ARINC-615A-3-5-3-2-2-P037-PROSE-SENTENCE-001-5DE45B64D498`<br>`ARINC-615A-3 5.3.2.2 p.25` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `TFTP-OPTION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下可以对“TFTP 选项”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00019` | `SU-ARINC-615A-3-5-3-2-2-P037-PROSE-SENTENCE-003-DE334C18716C`<br>`ARINC-615A-3 5.3.2.2 p.25` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `DEFAULT-OPTION-VALUES` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“DEFAULT-OPTION-VALUES”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00020` | `SU-ARINC-615A-3-5-3-2-2-P037-PROSE-SENTENCE-004-FC7D3B3729A1`<br>`ARINC-615A-3 5.3.2.2 p.25` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `TRANSFER-OUTCOME` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TRANSFER-OUTCOME”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00021` | `SU-ARINC-615A-3-5-3-2-2-P037-PROSE-SENTENCE-005-C966C11D19B8`<br>`ARINC-615A-3 5.3.2.2 p.25` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ABSENT-AFTER-BOUNDARY` / `TFTP-OPTION, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 选项、网络接口”执行“确保边界后不存在数据”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-768, DEP-RFC-791, DEP-RFC-1350 |
+| `CRS-M1-00022` | `SU-ARINC-615A-3-5-3-2-3-2-P037-PROSE-SENTENCE-002-1E0F8D921559`<br>`ARINC-615A-3 5.3.2.3.2 p.25` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“TARGET-HARDWARE-ID”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00023` | `SU-ARINC-615A-3-5-3-2-3-2-P037-PROSE-SENTENCE-004-C976EA5E8074`<br>`ARINC-615A-3 5.3.2.3.2 p.25` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00024` | `SU-ARINC-615A-3-5-3-2-3-3-P038-PROSE-SENTENCE-004-15DBABB1142A`<br>`ARINC-615A-3 5.3.2.3.3 p.26` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `ERROR-CODE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“错误码”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00025` | `SU-ARINC-615A-3-5-3-2-3-3-P038-PROSE-SENTENCE-005-A1C528A5F702`<br>`ARINC-615A-3 5.3.2.3.3 p.26` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `ERROR-CODE, ERROR-MESSAGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下必须对“错误码、错误消息”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00026` | `SU-ARINC-615A-3-5-3-2-3-3-P038-PROSE-SENTENCE-006-06665FE11D6E`<br>`ARINC-615A-3 5.3.2.3.3 p.26` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `ERROR-CODE, ERROR-MESSAGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下可以对“错误码、错误消息”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00027` | `SU-ARINC-615A-3-5-3-2-3-3-P038-PROSE-SENTENCE-007-2560DF2DBBD3`<br>`ARINC-615A-3 5.3.2.3.3 p.26` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `ERROR-CODE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“错误码、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00028` | `SU-ARINC-615A-3-5-3-2-3-3-P038-PROSE-SENTENCE-008-B72528E71CC2`<br>`ARINC-615A-3 5.3.2.3.3 p.26` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `ERROR-CODE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“错误码、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00029` | `SU-ARINC-615A-3-5-3-2-3-4-P038-PROSE-SENTENCE-004-1F95516BE886`<br>`ARINC-615A-3 5.3.2.3.4 p.26` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `PROTOCOL-MESSAGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下可以对“PROTOCOL-MESSAGE”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00030` | `SU-ARINC-615A-3-5-3-2-3-4-P038-PROSE-SENTENCE-006-D6FEB985BBBB`<br>`ARINC-615A-3 5.3.2.3.4 p.26` | `TFTP-RECEIVER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `WAIT-MESSAGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“TFTP 接收方”在“来源规定的适用条件”下必须对“WAIT 消息”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | DEP-RFC-1350 |
+| `CRS-M1-00031` | `SU-ARINC-615A-3-5-3-2-3-8-1-P040-PROSE-SENTENCE-001-28CC7C395DC9`<br>`ARINC-615A-3 5.3.2.3.8.1 p.28` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `TFTP-BLOCK-SIZE, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“TFTP 块大小、网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-791, DEP-RFC-1350, DEP-RFC-2348 |
+| `CRS-M1-00032` | `SU-ARINC-615A-3-5-3-2-3-8-1-P040-PROSE-SENTENCE-002-A3F954863D43`<br>`ARINC-615A-3 5.3.2.3.8.1 p.28` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `CONFORMANCE-MODALITY, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“CONFORMANCE-MODALITY、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00033` | `SU-ARINC-615A-3-5-3-2-3-8-1-P041-PROSE-SENTENCE-003-C74E9B3EC0A0`<br>`ARINC-615A-3 5.3.2.3.8.1 p.29` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `TFTP-BLOCK-SIZE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“TFTP 块大小、TARGET-HARDWARE-ID”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350, DEP-RFC-2348 |
+| `CRS-M1-00034` | `SU-ARINC-615A-3-5-3-2-3-8-2-P041-PROSE-SENTENCE-001-700C898C606C`<br>`ARINC-615A-3 5.3.2.3.8.2 p.29` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下可以对“网络接口”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00035` | `SU-ARINC-615A-3-5-3-2-3-8-2-P041-PROSE-SENTENCE-002-A12EC6F8831E`<br>`ARINC-615A-3 5.3.2.3.8.2 p.29` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `COMPARE` / `TFTP-TRANSFER-SIZE, TFTP-FILE-TRANSFER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 传输大小、TFTP 文件传输”执行“比较”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-2349 |
+| `CRS-M1-00036` | `SU-ARINC-615A-3-5-3-2-3-8-3-P041-PROSE-SENTENCE-001-700C898C606C`<br>`ARINC-615A-3 5.3.2.3.8.3 p.29` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下可以对“网络接口”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00037` | `SU-ARINC-615A-3-5-3-2-3-8-4-P041-PROSE-SENTENCE-001-700C898C606C`<br>`ARINC-615A-3 5.3.2.3.8.4 p.29` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下可以对“网络接口”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00038` | `SU-ARINC-615A-3-5-3-2-3-8-5-P041-PROSE-SENTENCE-001-700C898C606C`<br>`ARINC-615A-3 5.3.2.3.8.5 p.29` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下可以对“网络接口”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00039` | `SU-ARINC-615A-3-5-3-2-3-8-5-P042-PROSE-SENTENCE-009-89192D1CA807`<br>`ARINC-615A-3 5.3.2.3.8.5 p.30` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `HEADER-FILE, CRC, SOFTWARE-PART, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“头文件、CRC／校验值、软件加载件、TARGET-HARDWARE-ID”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350, DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00040` | `SU-ARINC-615A-3-5-3-2-3-8-5-P042-PROSE-SENTENCE-010-B47966431472`<br>`ARINC-615A-3 5.3.2.3.8.5 p.30` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“CRC／校验值”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00041` | `SU-ARINC-615A-3-5-3-2-3-8-6-P044-PROSE-SENTENCE-005-F74AC5B7AE1C`<br>`ARINC-615A-3 5.3.2.3.8.6 p.32` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `FAIL` / `OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“协议操作、TARGET-HARDWARE-ID”执行“判定失败”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00042` | `SU-ARINC-615A-3-5-3-2-3-8-6-P044-PROSE-SENTENCE-006-1813D605F404`<br>`ARINC-615A-3 5.3.2.3.8.6 p.32` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ASSIGN` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“网络接口”执行“分配或管理”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00043` | `SU-ARINC-615A-3-5-3-2-3-9-P044-PROSE-SENTENCE-001-04EEB77FBE9B`<br>`ARINC-615A-3 5.3.2.3.9 p.32` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `COMPLY` / `TFTP-BLOCK-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 块号”执行“符合”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00044` | `SU-ARINC-615A-3-5-3-2-3-9-P044-PROSE-SENTENCE-003-17BB6DF8AFB6`<br>`ARINC-615A-3 5.3.2.3.9 p.32` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `TFTP-BLOCK-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 块号”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00045` | `SU-ARINC-615A-3-5-4-1-P045-PROSE-SENTENCE-008-B50B97990D87`<br>`ARINC-615A-3 5.4.1 p.33` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `NETWORK-INTERFACE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“网络接口、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00046` | `SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-002-ECE0CBAF4A74`<br>`ARINC-615A-3 5.4.2 p.35` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“协议操作”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00047` | `SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-003-78F447EDB430`<br>`ARINC-615A-3 5.4.2 p.35` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“协议操作、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00048` | `SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-018-C6F5CE51372F`<br>`ARINC-615A-3 5.4.2 p.35` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `WAIT` / `CURRENT-STATUS` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“CURRENT-STATUS”执行“等待”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00049` | `SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-019-DD0255D27FB0`<br>`ARINC-615A-3 5.4.2 p.35` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `TFTP-OPTION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下可以对“TFTP 选项”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00050` | `SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-020-12B60035E133`<br>`ARINC-615A-3 5.4.2 p.35` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `TFTP-OPTION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“TFTP 选项”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00051` | `SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-021-3CF28DC21423`<br>`ARINC-615A-3 5.4.2 p.35` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“CRC／校验值、网络接口”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00052` | `SU-ARINC-615A-3-5-4-3-P047-PROSE-SENTENCE-002-ECE0CBAF4A74`<br>`ARINC-615A-3 5.4.3 p.35` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“协议操作”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00053` | `SU-ARINC-615A-3-5-4-3-P047-PROSE-SENTENCE-003-78F447EDB430`<br>`ARINC-615A-3 5.4.3 p.35` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“协议操作、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00054` | `SU-ARINC-615A-3-5-4-3-P048-PROSE-SENTENCE-014-A6329164790D`<br>`ARINC-615A-3 5.4.3 p.36` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `REJECT` / `LOAD-LIST, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“LOAD-LIST、TARGET-HARDWARE-ID”执行“拒绝”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00055` | `SU-ARINC-615A-3-5-4-3-P048-PROSE-SENTENCE-017-202272C96544`<br>`ARINC-615A-3 5.4.3 p.36` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `DISPLAY` / `CURRENT-STATUS` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“CURRENT-STATUS”执行“显示或通知”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00056` | `SU-ARINC-615A-3-5-4-3-P048-PROSE-SENTENCE-022-D550F67EB586`<br>`ARINC-615A-3 5.4.3 p.36` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `TFTP-OPTION, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“TFTP 选项、网络接口”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00057` | `SU-ARINC-615A-3-5-4-3-P048-PROSE-SENTENCE-024-F38D018C4499`<br>`ARINC-615A-3 5.4.3 p.36` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00058` | `SU-ARINC-615A-3-5-4-3-P048-PROSE-SENTENCE-025-E777A6D3DAC7`<br>`ARINC-615A-3 5.4.3 p.36` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `TFTP-OPTION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“TFTP 选项”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00059` | `SU-ARINC-615A-3-5-4-3-1-P048-PROSE-SENTENCE-004-AF732D243056`<br>`ARINC-615A-3 5.4.3.1 p.36` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `COMPARE` / `HEADER-FILE, DATA-FILE, LOAD-PART-NUMBER, LOADABLE-SOFTWARE-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“头文件、数据文件、加载件号、LOADABLE-SOFTWARE-PART-NUMBER”执行“比较”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00060` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-007-F209ABE1376B`<br>`ARINC-615A-3 5.4.3.1 p.37` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `NVM-MEMORY-IMAGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议实现”在“来源规定的适用条件”下必须对“NVM-MEMORY-IMAGE”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00061` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-007-F209ABE1376B`<br>`ARINC-615A-3 5.4.3.1 p.37` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC, SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值、软件加载件”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655, DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00062` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-008-CDA43D6568CC`<br>`ARINC-615A-3 5.4.3.1 p.37` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC, FILE-CONTENT, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“CRC／校验值、FILE-CONTENT、TARGET-HARDWARE-ID”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00063` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-010-F4624AC8DCB4`<br>`ARINC-615A-3 5.4.3.1 p.37` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENSURE-EQUALITY` / `LOAD-PART-NUMBER, CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议实现”在“来源规定的适用条件”下必须对“加载件号、CRC／校验值”执行“确保取值相等”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00064` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-012-B2655A4BD5D6`<br>`ARINC-615A-3 5.4.3.1 p.37` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `FORMAT` / `FILE-CONTENT` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议实现”在“来源规定的适用条件”下必须对“FILE-CONTENT”执行“按规定格式化”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00065` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-015-1FD87B87894F`<br>`ARINC-615A-3 5.4.3.1 p.37` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `SELECT` / `FILE-CONTENT` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议实现”在“来源规定的适用条件”下必须对“FILE-CONTENT”执行“选择”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00066` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-017-D6D20C0AE6D8`<br>`ARINC-615A-3 5.4.3.1 p.37` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `COMPILE-AND-LINK` / `FILE-CONTENT` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议实现”在“来源规定的适用条件”下必须对“FILE-CONTENT”执行“独立编译并链接”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00067` | `SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-018-7D1A5B42A8F9`<br>`ARINC-615A-3 5.4.3.1 p.37` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `FILE-CONTENT, PROGRAM-MEMORY-MAP` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议实现”在“来源规定的适用条件”下必须对“FILE-CONTENT、PROGRAM-MEMORY-MAP”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00068` | `SU-ARINC-615A-3-5-4-5-2-P053-PROSE-SENTENCE-008-6BD76320C0DE`<br>`ARINC-615A-3 5.4.5.2 p.41` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, TEXT-FIELD, OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“状态文件、文本字段、协议操作”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00069` | `SU-ARINC-615A-3-6-2-8-1-P057-PROSE-SENTENCE-001-B9AF73779529`<br>`ARINC-615A-3 6.2.8.1 p.45` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TARGET-HARDWARE-ID, PROTOCOL-MESSAGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“TARGET-HARDWARE-ID、PROTOCOL-MESSAGE”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00070` | `SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-010-EF2C1FAB94E9`<br>`ARINC-615A-3 6.3.1 p.51` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `STATUS-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“状态文件”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00071` | `SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-014-46E366631127`<br>`ARINC-615A-3 6.3.1 p.51` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `STATUS-FILE, NETWORK-INTERFACE, PROTOCOL-ERROR` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、网络接口、PROTOCOL-ERROR”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00072` | `SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-015-FFB177F65B0A`<br>`ARINC-615A-3 6.3.1 p.51` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `ABORT-MESSAGE, STATUS-FILE, NETWORK-INTERFACE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“中止消息、状态文件、网络接口、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00073` | `SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-018-33F16CA0556B`<br>`ARINC-615A-3 6.3.1 p.51` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `STATUS-FILE, TIMEOUT-EXPIRY, LCL-TRANSFER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“状态文件、TIMEOUT-EXPIRY、LCL-TRANSFER”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00074` | `SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-020-D27F9DB819AB`<br>`ARINC-615A-3 6.3.1 p.51` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `STATUS-FILE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、TARGET-HARDWARE-ID”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00075` | `SU-ARINC-615A-3-6-3-1-P064-PROSE-SENTENCE-031-D8862D88C46E`<br>`ARINC-615A-3 6.3.1 p.52` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `WAIT` / `EXCEPTION-TIMER, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“异常计时器、协议操作、TARGET-HARDWARE-ID”执行“等待”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00076` | `SU-ARINC-615A-3-6-3-1-P064-PROSE-SENTENCE-032-E812AC346D09`<br>`ARINC-615A-3 6.3.1 p.52` | `TARGET-HARDWARE-SUPPLIER` / `APPLICABLE-SOURCE-CONDITION` / `WAIT` / `EXCEPTION-TIMER, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件供应商”在“来源规定的适用条件”下必须对“异常计时器、TARGET-HARDWARE-ID”执行“等待”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00077` | `SU-ARINC-615A-3-6-3-1-P064-PROSE-SENTENCE-033-2765B9535D98`<br>`ARINC-615A-3 6.3.1 p.52` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“状态文件、协议操作”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00078` | `SU-ARINC-615A-3-6-3-2-P067-PROSE-SENTENCE-020-43C35127F07F`<br>`ARINC-615A-3 6.3.2 p.55` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `STATUS-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议实现”在“来源规定的适用条件”下必须对“状态文件”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00079` | `SU-ARINC-615A-3-6-3-2-P067-PROSE-SENTENCE-022-9B7AA17CBAF6`<br>`ARINC-615A-3 6.3.2 p.55` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `STATUS-FILE, NETWORK-INTERFACE, PROTOCOL-ERROR` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、网络接口、PROTOCOL-ERROR”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00080` | `SU-ARINC-615A-3-6-3-2-P067-PROSE-SENTENCE-023-AEFFB70E9596`<br>`ARINC-615A-3 6.3.2 p.55` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `ABORT-MESSAGE, STATUS-FILE, NETWORK-INTERFACE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“中止消息、状态文件、网络接口、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00081` | `SU-ARINC-615A-3-6-3-2-P067-PROSE-SENTENCE-026-3B69FEC8B73B`<br>`ARINC-615A-3 6.3.2 p.55` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `UPLOAD-THREAD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-BASE` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“UPLOAD-THREAD”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00082` | `SU-ARINC-615A-3-5-3-2-3-4-P068-PROSE-SENTENCE-016-D8862D88C46E`<br>`ARINC-615A-3 5.3.2.3.4 p.56` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `WAIT` / `EXCEPTION-TIMER, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“异常计时器、协议操作、TARGET-HARDWARE-ID”执行“等待”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00083` | `SU-ARINC-615A-3-5-3-2-3-4-P068-PROSE-SENTENCE-017-E812AC346D09`<br>`ARINC-615A-3 5.3.2.3.4 p.56` | `TARGET-HARDWARE-SUPPLIER` / `APPLICABLE-SOURCE-CONDITION` / `WAIT` / `EXCEPTION-TIMER, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件供应商”在“来源规定的适用条件”下必须对“异常计时器、TARGET-HARDWARE-ID”执行“等待”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00084` | `SU-ARINC-615A-3-5-3-2-3-4-P068-PROSE-SENTENCE-018-2765B9535D98`<br>`ARINC-615A-3 5.3.2.3.4 p.56` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“状态文件、协议操作”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00085` | `SU-ARINC-615A-3-5-3-2-3-4-P068-PROSE-SENTENCE-020-4C1D759A6B9A`<br>`ARINC-615A-3 5.3.2.3.4 p.56` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `STATUS-FILE, DATA-FILE, CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“状态文件、数据文件、CRC／校验值”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00086` | `SU-ARINC-615A-3-6-3-5-P076-PROSE-SENTENCE-009-BF2F613AC35B`<br>`ARINC-615A-3 6.3.5 p.64` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“状态文件、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00087` | `SU-ARINC-615A-3-6-3-5-P076-PROSE-SENTENCE-011-5B38B1E3DBEF`<br>`ARINC-615A-3 6.3.5 p.64` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、协议操作、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00088` | `SU-ARINC-615A-3-6-3-5-P076-PROSE-SENTENCE-012-EED68957A0BC`<br>`ARINC-615A-3 6.3.5 p.64` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `ABORT-MESSAGE, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“中止消息、协议操作、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00089` | `SU-ARINC-615A-3-6-3-5-P076-PROSE-SENTENCE-013-DEDC03B64B0A`<br>`ARINC-615A-3 6.3.5 p.64` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, ERROR-MESSAGE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、错误消息、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00090` | `SU-ARINC-615A-3-6-3-5-P076-PROSE-SENTENCE-015-DCA535962C3D`<br>`ARINC-615A-3 6.3.5 p.64` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `ABORT-MESSAGE, OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“中止消息、协议操作”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00091` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-005-1B24BCFF8198`<br>`ARINC-615A-3 6.4 p.65` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `PROTOCOL-VERSION, OPERATION, NETWORK-INTERFACE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“协议版本、协议操作、网络接口、TARGET-HARDWARE-ID”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00092` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-007-20EF70E6EF8B`<br>`ARINC-615A-3 6.4 p.65` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `PROTOCOL-VERSION, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“协议版本、协议操作、TARGET-HARDWARE-ID”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00093` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-009-5F21110D7E4B`<br>`ARINC-615A-3 6.4 p.65` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `PROTOCOL-VERSION, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下必须对“协议版本、网络接口”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00094` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-010-5625CA7DF2D3`<br>`ARINC-615A-3 6.4 p.65` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `PROTOCOL-VERSION, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下必须对“协议版本、网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00095` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-012-2FCCE7C4573B`<br>`ARINC-615A-3 6.4 p.65` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `PROTOCOL-VERSION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“协议版本”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00096` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-013-569F14A5E296`<br>`ARINC-615A-3 6.4 p.65` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `ABORT-MESSAGE, STATUS-FILE, PROTOCOL-VERSION, OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“中止消息、状态文件、协议版本、协议操作”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00097` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-014-425EEC39D73C`<br>`ARINC-615A-3 6.4 p.65` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `PROTOCOL-VERSION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下必须对“协议版本”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00098` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-016-280B7BBBB75A`<br>`ARINC-615A-3 6.4 p.65` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `LOAD-PART-NUMBER, TEXT-FIELD, NETWORK-INTERFACE, LOADABLE-SOFTWARE-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“加载件号、文本字段、网络接口、LOADABLE-SOFTWARE-PART-NUMBER”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00099` | `SU-ARINC-615A-3-6-4-P077-PROSE-SENTENCE-016-280B7BBBB75A`<br>`ARINC-615A-3 6.4 p.65` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00100` | `SU-ARINC-615A-3-6-4-1-P080-PROSE-SENTENCE-023-B30093B748E5`<br>`ARINC-615A-3 6.4.1 p.68` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ALLOW-PRINTABLE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“仅允许可打印字符”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00101` | `SU-ARINC-615A-3-6-4-1-P080-PROSE-SENTENCE-023-B30093B748E5`<br>`ARINC-615A-3 6.4.1 p.68` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00102` | `SU-ARINC-615A-3-6-4-1-P080-PROSE-SENTENCE-023-B30093B748E5`<br>`ARINC-615A-3 6.4.1 p.68` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00103` | `SU-ARINC-615A-3-6-4-1-P080-PROSE-SENTENCE-024-1532165AA3AE`<br>`ARINC-615A-3 6.4.1 p.68` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00104` | `SU-ARINC-615A-3-6-4-2-P081-PROSE-SENTENCE-018-7650772794FC`<br>`ARINC-615A-3 6.4.2 p.69` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00105` | `SU-ARINC-615A-3-6-4-2-P081-PROSE-SENTENCE-023-B016CF154BFD`<br>`ARINC-615A-3 6.4.2 p.69` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00106` | `SU-ARINC-615A-3-6-4-2-P081-PROSE-SENTENCE-030-B016CF154BFD`<br>`ARINC-615A-3 6.4.2 p.69` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00107` | `SU-ARINC-615A-3-6-4-2-P082-PROSE-SENTENCE-042-0D59A327A7CC`<br>`ARINC-615A-3 6.4.2 p.70` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ALLOW-PRINTABLE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“仅允许可打印字符”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00108` | `SU-ARINC-615A-3-6-4-2-P082-PROSE-SENTENCE-042-0D59A327A7CC`<br>`ARINC-615A-3 6.4.2 p.70` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00109` | `SU-ARINC-615A-3-6-4-2-P082-PROSE-SENTENCE-042-0D59A327A7CC`<br>`ARINC-615A-3 6.4.2 p.70` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00110` | `SU-ARINC-615A-3-6-4-2-P082-PROSE-SENTENCE-043-1532165AA3AE`<br>`ARINC-615A-3 6.4.2 p.70` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00111` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-029-C2788AA6D18A`<br>`ARINC-615A-3 6.4.3 p.72` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下必须对“STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00112` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-034-65EBA86ACA77`<br>`ARINC-615A-3 6.4.3 p.72` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `PROVIDE` / `ESTIMATED-TIME, OPERATION` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“预计时间、协议操作”执行“提供”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00113` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-037-98AB79F99A7B`<br>`ARINC-615A-3 6.4.3 p.72` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `ESTIMATED-TIME, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“预计时间、TARGET-HARDWARE-ID”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00114` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-043-83077CACF0DC`<br>`ARINC-615A-3 6.4.3 p.72` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下可以对“STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00115` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-045-1B483243E195`<br>`ARINC-615A-3 6.4.3 p.72` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ALLOW-PRINTABLE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“仅允许可打印字符”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00116` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-045-1B483243E195`<br>`ARINC-615A-3 6.4.3 p.72` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00117` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-045-1B483243E195`<br>`ARINC-615A-3 6.4.3 p.72` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00118` | `SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-046-1532165AA3AE`<br>`ARINC-615A-3 6.4.3 p.72` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00119` | `SU-ARINC-615A-3-6-4-4-P085-PROSE-SENTENCE-013-D5E44774D202`<br>`ARINC-615A-3 6.4.4 p.73` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `HEADER-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“来源规定的适用条件”下必须对“头文件”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00120` | `SU-ARINC-615A-3-6-4-4-P085-PROSE-SENTENCE-018-1532165AA3AE`<br>`ARINC-615A-3 6.4.4 p.73` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00121` | `SU-ARINC-615A-3-6-4-4-P085-PROSE-SENTENCE-023-53AAFA003A8B`<br>`ARINC-615A-3 6.4.4 p.73` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ALLOW-PRINTABLE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“仅允许可打印字符”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00122` | `SU-ARINC-615A-3-6-4-4-P085-PROSE-SENTENCE-023-53AAFA003A8B`<br>`ARINC-615A-3 6.4.4 p.73` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00123` | `SU-ARINC-615A-3-6-4-4-P085-PROSE-SENTENCE-023-53AAFA003A8B`<br>`ARINC-615A-3 6.4.4 p.73` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00124` | `SU-ARINC-615A-3-6-4-4-P085-PROSE-SENTENCE-024-1532165AA3AE`<br>`ARINC-615A-3 6.4.4 p.73` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00125` | `SU-ARINC-615A-3-6-4-10-P094-PROSE-SENTENCE-001-53AAFA003A8B`<br>`ARINC-615A-3 6.4.10 p.82` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ALLOW-PRINTABLE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“仅允许可打印字符”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00126` | `SU-ARINC-615A-3-6-4-10-P094-PROSE-SENTENCE-001-53AAFA003A8B`<br>`ARINC-615A-3 6.4.10 p.82` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00127` | `SU-ARINC-615A-3-6-4-10-P094-PROSE-SENTENCE-001-53AAFA003A8B`<br>`ARINC-615A-3 6.4.10 p.82` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00128` | `SU-ARINC-615A-3-6-4-10-P094-PROSE-SENTENCE-002-1532165AA3AE`<br>`ARINC-615A-3 6.4.10 p.82` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TEXT-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“文本字段”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00129` | `SU-ARINC-615A-3-6-4-10-P096-PROSE-SENTENCE-003-2C9653D1AE20`<br>`ARINC-615A-3 6.4.10 p.84` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `DISPLAY` / `TEXT-FIELD, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“文本字段、TARGET-HARDWARE-ID”执行“显示或通知”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00130` | `SU-ARINC-615A-3-6-4-10-P097-PROSE-SENTENCE-004-5D81ED14D19B`<br>`ARINC-615A-3 6.4.10 p.85` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `WAIT` / `NETWORK-INTERFACE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“网络接口、TARGET-HARDWARE-ID”执行“等待”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00131` | `SU-ARINC-615A-3-6-4-10-P097-PROSE-SENTENCE-012-F313FBEE280D`<br>`ARINC-615A-3 6.4.10 p.85` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ABORT` / `STATUS-FILE, TEXT-FIELD, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、文本字段、协议操作、TARGET-HARDWARE-ID”执行“中止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00132` | `SU-ARINC-615A-3-6-4-10-P097-PROSE-SENTENCE-014-DEF9DE65D40B`<br>`ARINC-615A-3 6.4.10 p.85` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `DISPLAY` / `STATUS-FILE, TEXT-FIELD, OPERATION, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、文本字段、协议操作、TARGET-HARDWARE-ID”执行“显示或通知”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00133` | `SU-ARINC-615A-3-6-4-10-P099-PROSE-SENTENCE-020-C650FAC6A8D8`<br>`ARINC-615A-3 6.4.10 p.87` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ASSIGN` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“网络接口”执行“分配或管理”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00134` | `SU-ARINC-615A-3-6-4-10-P099-PROSE-SENTENCE-021-7D0DD652080D`<br>`ARINC-615A-3 6.4.10 p.87` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `PROVIDE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下可以对“网络接口”执行“提供”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00135` | `SU-ARINC-615A-3-6-4-10-P099-PROSE-SENTENCE-023-7640457B8D57`<br>`ARINC-615A-3 6.4.10 p.87` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“网络接口”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00136` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-005-D75104E5A8FF`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TIMEOUT-AND-RETRY-LAYERS` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TIMEOUT-AND-RETRY-LAYERS”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00137` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-008-F320813241E5`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `TFTP-FILE-TRANSFER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 文件传输”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `TFTP-TO` / `UNRESOLVED..UNRESOLVED s` | DEP-RFC-1350 |
+| `CRS-M1-00138` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-009-414439744FBA`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ACKNOWLEDGE` / `TIMEOUT-EXPIRY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TIMEOUT-EXPIRY”执行“确认”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00139` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-011-D951F3C8D8DC`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TFTP-FILE-TRANSFER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下可以对“TFTP 文件传输”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00140` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-012-DCEA052A12C5`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TFTP-FILE-TRANSFER, RETRY-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 文件传输、RETRY-NUMBER”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00141` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-013-0E511BD5A2AE`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `PROVIDE` / `PROTOCOL-ERROR` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“PROTOCOL-ERROR”执行“提供”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00142` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-015-7C1E9A3C2D05`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TFTP-FILE-TRANSFER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 文件传输”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00143` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-016-BC84E4EE3A39`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TFTP-FILE-TRANSFER, PROTOCOL-ERROR, RETRY-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 文件传输、PROTOCOL-ERROR、RETRY-NUMBER”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00144` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-017-C80348B18729`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `FAIL` / `PROTOCOL-ERROR` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“PROTOCOL-ERROR”执行“判定失败”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00145` | `SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-024-35890C54B368`<br>`ARINC-615A-3 4-1 p.99` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ADJUST-UPWARD` / `TIMEOUT-VALUE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TIMEOUT-VALUE”执行“向上调整”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00146` | `SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-004-4C05C3174D37`<br>`ARINC-615A-3 4-3.1 p.100` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `SET-CONSTANT` / `TIMEOUT-VALUE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TIMEOUT-VALUE”执行“设置固定常数”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `FIXED-SOURCE-CONSTANT` / `TFTP-TO` / `0..2 s` | — |
+| `CRS-M1-00147` | `SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-005-88F51ABD3389`<br>`ARINC-615A-3 4-3.1 p.100` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `PROHIBIT` / `TFTP-EXCHANGE, TIMEOUT-VALUE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 交换、TIMEOUT-VALUE”执行“禁止”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `TFTP-TO` / `UNRESOLVED..UNRESOLVED s` | DEP-RFC-1350 |
+| `CRS-M1-00148` | `SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-007-69549032F30B`<br>`ARINC-615A-3 4-3.1 p.100` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `TFTP-EXCHANGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 交换”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00149` | `SU-ARINC-615A-3-4-3-2-P113-PROSE-SENTENCE-001-205BD6EF24F3`<br>`ARINC-615A-3 4-3.2 p.101` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TFTP-EXCHANGE, RETRY-NUMBER, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“TFTP 交换、RETRY-NUMBER、TARGET-HARDWARE-ID”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00150` | `SU-ARINC-615A-3-4-3-2-P113-PROSE-SENTENCE-011-A604F56F9739`<br>`ARINC-615A-3 4-3.2 p.101` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `RETRY-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“RETRY-NUMBER”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00151` | `SU-ARINC-615A-3-4-3-3-P114-PROSE-SENTENCE-001-5174295F548B`<br>`ARINC-615A-3 4-3.3 p.102` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `SORCERERS-APPRENTICE-FIX` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“SORCERERS-APPRENTICE-FIX”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1123, DEP-RFC-1350 |
+| `CRS-M1-00152` | `SU-ARINC-615A-3-4-3-3-P114-PROSE-SENTENCE-002-889533B1AA3F`<br>`ARINC-615A-3 4-3.3 p.102` | `TFTP-SENDER` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `TFTP-EXCHANGE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“TFTP 发送方”在“来源规定的适用条件”下必须对“TFTP 交换”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00153` | `SU-ARINC-615A-3-4-3-3-P114-PROSE-SENTENCE-002-889533B1AA3F`<br>`ARINC-615A-3 4-3.3 p.102` | `TFTP-SENDER` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `TFTP-EXCHANGE, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“TFTP 发送方”在“来源规定的适用条件”下必须对“TFTP 交换、网络接口”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00154` | `SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-003-7C29399D1DAB`<br>`ARINC-615A-3 4-4.1 p.102` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `TRANSFER` / `TFTP-FILE-TRANSFER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TFTP 文件传输”执行“传输”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | DEP-RFC-1350 |
+| `CRS-M1-00155` | `SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-006-02C6AA3F66A1`<br>`ARINC-615A-3 4-4.1 p.102` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `ADJUST-UPWARD` / `TIMEOUT-VALUE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TIMEOUT-VALUE”执行“向上调整”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00156` | `SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-008-4848608477C0`<br>`ARINC-615A-3 4-4.1 p.102` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `STATUS-FILE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“状态文件、TARGET-HARDWARE-ID”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00157` | `SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-011-BD0CBB7058D1`<br>`ARINC-615A-3 4-4.1 p.102` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `PROVIDE` / `TIMEOUT-VALUE, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“TIMEOUT-VALUE、TARGET-HARDWARE-ID”执行“提供”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `FIXED-SOURCE-CONSTANT` / `DLP-TO` / `0..13 s` | — |
+| `CRS-M1-00158` | `SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-012-FB8820DE2238`<br>`ARINC-615A-3 4-4.1 p.102` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `SEND` / `TFTP-EXCHANGE, TFTP-FILE-TRANSFER, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“TFTP 交换、TFTP 文件传输、TARGET-HARDWARE-ID”执行“发送”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | `SYMBOLIC-SOURCE-PARAMETER` / `DLP-TO` / `UNRESOLVED..UNRESOLVED s` | DEP-RFC-1350 |
+| `CRS-M1-00159` | `SU-ARINC-615A-3-4-4-1-P115-PROSE-SENTENCE-015-A31F93757E22`<br>`ARINC-615A-3 4-4.1 p.103` | `PROTOCOL-IMPLEMENTATION` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `TIMEOUT-VALUE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议实现”在“来源规定的适用条件”下必须对“TIMEOUT-VALUE”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00160` | `SU-ARINC-615A-3-4-4-2-1-P115-PROSE-SENTENCE-001-46D0EBEB4FDD`<br>`ARINC-615A-3 4-4.2.1 p.103` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `RETRY` / `TFTP-FILE-TRANSFER, RETRY-NUMBER, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下可以对“TFTP 文件传输、RETRY-NUMBER、TARGET-HARDWARE-ID”执行“重试”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-RFC-1350 |
+| `CRS-M1-00161` | `SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-002-93AC8751234E`<br>`ARINC-665-5 1.3.1 p.1` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `SOFTWARE-PART, CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“软件加载件、CONFORMANCE-MODALITY”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00162` | `SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-003-F4F4BC419A09`<br>`ARINC-665-5 1.3.1 p.1` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `NETWORK-INTERFACE, CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“网络接口、CONFORMANCE-MODALITY”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00163` | `SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-005-BC73FE29F0AF`<br>`ARINC-665-5 1.3.1 p.1` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下可以对“CONFORMANCE-MODALITY”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00164` | `SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-006-3F3CB7AE6B26`<br>`ARINC-665-5 1.3.1 p.1` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `CONFORMANCE-MODALITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CONFORMANCE-MODALITY”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00165` | `SU-ARINC-665-5-1-3-3-P011-PROSE-SENTENCE-001-E0CA338A51EE`<br>`ARINC-665-5 1.3.3 p.1` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `NETWORK-INTERFACE, DATA-TYPE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“网络接口、DATA-TYPE”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00166` | `SU-ARINC-665-5-1-4-2-P012-PROSE-SENTENCE-002-D07F6C2D4DAC`<br>`ARINC-665-5 1.4.2 p.2` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“网络接口”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00167` | `SU-ARINC-665-5-1-4-3-P013-PROSE-SENTENCE-003-F355ED0B2EC9`<br>`ARINC-665-5 1.4.3 p.3` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ALLOW-READ` / `FILE-VERSION-COMPATIBILITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“FILE-VERSION-COMPATIBILITY”执行“允许读取”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00168` | `SU-ARINC-665-5-1-4-3-P013-PROSE-SENTENCE-004-C23C95885017`<br>`ARINC-665-5 1.4.3 p.3` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `FILE-VERSION-COMPATIBILITY` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“FILE-VERSION-COMPATIBILITY”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00169` | `SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-007-5E8CCA74AF4E`<br>`ARINC-665-5 1.4.4 p.3` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `HEADER-FILE, LOAD-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下必须对“头文件、加载件号”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00170` | `SU-ARINC-665-5-1-5-P014-PROSE-SENTENCE-002-DBF83061338F`<br>`ARINC-665-5 1.5 p.4` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `REFLECT` / `NETWORK-INTERFACE, MANUFACTURER-IDENTIFIER, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“网络接口、MANUFACTURER-IDENTIFIER、TARGET-HARDWARE-ID”执行“反映”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00171` | `SU-ARINC-665-5-1-5-P014-PROSE-SENTENCE-003-35251417E277`<br>`ARINC-665-5 1.5 p.4` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ASSIGN` / `MANUFACTURER-IDENTIFIER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“MANUFACTURER-IDENTIFIER”执行“分配或管理”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00172` | `SU-ARINC-665-5-2-1-P016-PROSE-SENTENCE-001-A7E185845C31`<br>`ARINC-665-5 2.1 p.6` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENSURE-CARDINALITY` / `LOAD-PART-NUMBER, SOFTWARE-PART, LOADABLE-SOFTWARE-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“加载件号、软件加载件、LOADABLE-SOFTWARE-PART-NUMBER”执行“保证基数约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00173` | `SU-ARINC-665-5-2-1-P016-PROSE-SENTENCE-002-C9B7C44AE544`<br>`ARINC-665-5 2.1 p.6` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `COORDINATE` / `LOAD-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“加载件号”执行“协调并批准”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00174` | `SU-ARINC-665-5-2-1-P016-PROSE-SENTENCE-003-D2A78669BC58`<br>`ARINC-665-5 2.1 p.6` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ASSIGN` / `LOAD-PART-NUMBER, SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“加载件号、软件加载件”执行“分配或管理”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00175` | `SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-001-79D9D9285B09`<br>`ARINC-665-5 2.1.1 p.6` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `FORMAT` / `LOADABLE-SOFTWARE-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“LOADABLE-SOFTWARE-PART-NUMBER”执行“按规定格式化”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00176` | `SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-004-FBE93765B788`<br>`ARINC-665-5 2.1.1 p.6` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `LOAD-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“加载件号”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00177` | `SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-007-6FB26843CBD8`<br>`ARINC-665-5 2.1.1 p.6` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `LOAD-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“加载件号”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00178` | `SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-008-63B5D84BC565`<br>`ARINC-665-5 2.1.1 p.6` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `USE` / `LOAD-PART-NUMBER` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下必须对“加载件号”执行“使用”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00179` | `SU-ARINC-665-5-2-1-3-P017-PROSE-SENTENCE-003-41F8723AEC8B`<br>`ARINC-665-5 2.1.3 p.7` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `COMPUTE` / `CHECK-CHARACTERS` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CHECK-CHARACTERS”执行“计算”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00180` | `SU-ARINC-665-5-2-2-2-1-P018-PROSE-SENTENCE-001-84EA4A3113C8`<br>`ARINC-665-5 2.2.2.1 p.8` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `FORMAT` / `HEADER-FILE, SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“头文件、软件加载件”执行“按规定格式化”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00181` | `SU-ARINC-665-5-2-2-3-1-P018-PROSE-SENTENCE-001-7A7C6DE1A7A7`<br>`ARINC-665-5 2.2.3.1 p.8` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `HEADER-FILE, SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“头文件、软件加载件”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00182` | `SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-003-D19D48006847`<br>`ARINC-665-5 2.2.3.1 p.9` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `HEADER-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“头文件”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00183` | `SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-003-D19D48006847`<br>`ARINC-665-5 2.2.3.1 p.9` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `HEADER-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“头文件”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00184` | `SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-004-A761BB0130D9`<br>`ARINC-665-5 2.2.3.1 p.9` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `BINARY-FIELD-ENCODING` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“BINARY-FIELD-ENCODING”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00185` | `SU-ARINC-665-5-2-2-3-1-3-1-P021-PROSE-SENTENCE-004-EF7E6FF4663B`<br>`ARINC-665-5 2.2.3.1.3.1 p.11` | `DATA-LOADER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `OPERATION, STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器”在“来源规定的适用条件”下可以对“协议操作、STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00186` | `SU-ARINC-665-5-2-2-3-1-3-2-P021-PROSE-SENTENCE-001-641A8CBC9145`<br>`ARINC-665-5 2.2.3.1.3.2 p.11` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `PART-FLAGS` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下必须对“PART-FLAGS”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00187` | `SU-ARINC-665-5-2-2-3-1-3-2-P021-PROSE-SENTENCE-001-641A8CBC9145`<br>`ARINC-665-5 2.2.3.1.3.2 p.11` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `BINARY-FIELD-ENCODING` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“BINARY-FIELD-ENCODING”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00188` | `SU-ARINC-665-5-2-2-3-1-10-P022-PROSE-SENTENCE-003-BCEBB784B407`<br>`ARINC-665-5 2.2.3.1.10 p.12` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TARGET-HARDWARE-ID, STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“TARGET-HARDWARE-ID、STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00189` | `SU-ARINC-665-5-2-2-3-1-14-P022-PROSE-SENTENCE-004-4114C0816C51`<br>`ARINC-665-5 2.2.3.1.14 p.12` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `LOAD-PART-NUMBER, SOFTWARE-PART` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“加载件号、软件加载件”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00190` | `SU-ARINC-665-5-2-2-3-1-18-P023-PROSE-SENTENCE-002-E664B245877E`<br>`ARINC-665-5 2.2.3.1.18 p.13` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `NETWORK-INTERFACE, STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下必须对“网络接口、STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00191` | `SU-ARINC-665-5-2-2-3-1-18-P023-PROSE-SENTENCE-004-C2CE75F23520`<br>`ARINC-665-5 2.2.3.1.18 p.13` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENSURE-UNIQUE` / `SOFTWARE-PART, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“软件加载件、TARGET-HARDWARE-ID”执行“保证唯一性”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00192` | `SU-ARINC-665-5-2-2-3-1-24-P024-PROSE-SENTENCE-002-C100FC8EE4E9`<br>`ARINC-665-5 2.2.3.1.24 p.14` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `SOFTWARE-PART, TARGET-HARDWARE-ID` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“软件加载件、TARGET-HARDWARE-ID”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00193` | `SU-ARINC-665-5-2-2-3-1-26-P024-PROSE-SENTENCE-005-38372C2FA366`<br>`ARINC-665-5 2.2.3.1.26 p.14` | `TARGET-HARDWARE` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `TARGET-HARDWARE-ID, STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“来源规定的适用条件”下必须对“TARGET-HARDWARE-ID、STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00194` | `SU-ARINC-665-5-2-2-3-1-31-P025-PROSE-SENTENCE-002-0374CB53F0AB`<br>`ARINC-665-5 2.2.3.1.31 p.15` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `CONSTRAIN` / `DATA-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“数据文件”执行“施加边界约束”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00195` | `SU-ARINC-665-5-2-2-3-1-32-P025-PROSE-SENTENCE-002-F6BCEFFF8371`<br>`ARINC-665-5 2.2.3.1.32 p.15` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `SET-ZERO` / `DATA-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“数据文件”执行“置零”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00196` | `SU-ARINC-665-5-2-2-3-1-37-P026-PROSE-SENTENCE-002-05AC99F08A26`<br>`ARINC-665-5 2.2.3.1.37 p.16` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `FORMAT` / `DATA-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“数据文件”执行“按规定格式化”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00197` | `SU-ARINC-665-5-2-2-3-1-38-P026-PROSE-SENTENCE-002-E3FF88E1EDA0`<br>`ARINC-665-5 2.2.3.1.38 p.16` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `CRC, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值、网络接口”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00198` | `SU-ARINC-665-5-2-2-3-1-40-P026-PROSE-SENTENCE-002-FCF47A272C90`<br>`ARINC-665-5 2.2.3.1.40 p.16` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00199` | `SU-ARINC-665-5-2-2-3-1-41-P026-PROSE-SENTENCE-002-91B469DEBE14`<br>`ARINC-665-5 2.2.3.1.41 p.16` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00200` | `SU-ARINC-665-5-2-2-3-1-42-P026-PROSE-SENTENCE-002-5E94CB4814AF`<br>`ARINC-665-5 2.2.3.1.42 p.16` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00201` | `SU-ARINC-665-5-2-2-3-1-44-P027-PROSE-SENTENCE-002-AF1722AA2C2B`<br>`ARINC-665-5 2.2.3.1.44 p.17` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下必须对“网络接口”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00202` | `SU-ARINC-665-5-2-2-3-1-45-P027-PROSE-SENTENCE-002-3B48FE46115E`<br>`ARINC-665-5 2.2.3.1.45 p.17` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `IMPLEMENT` / `NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“网络接口”执行“提供能力”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00203` | `SU-ARINC-665-5-2-2-3-1-49-P027-PROSE-SENTENCE-004-5EFD86A600D8`<br>`ARINC-665-5 2.2.3.1.49 p.17` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `LOAD-PART-NUMBER, NETWORK-INTERFACE, STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下必须对“加载件号、网络接口、STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00204` | `SU-ARINC-665-5-2-2-3-1-51-P027-PROSE-SENTENCE-002-E3FF88E1EDA0`<br>`ARINC-665-5 2.2.3.1.51 p.17` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `CRC, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值、网络接口”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00205` | `SU-ARINC-665-5-2-2-3-1-53-P028-PROSE-SENTENCE-002-EE1E5830AB09`<br>`ARINC-665-5 2.2.3.1.53 p.18` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00206` | `SU-ARINC-665-5-2-2-3-1-54-P028-PROSE-SENTENCE-002-02BC06547867`<br>`ARINC-665-5 2.2.3.1.54 p.18` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值、网络接口”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00207` | `SU-ARINC-665-5-2-2-3-1-57-P028-PROSE-SENTENCE-002-284196C6B3D0`<br>`ARINC-665-5 2.2.3.1.57 p.18` | `OPERATOR` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `HEADER-FILE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“操作员”在“来源规定的适用条件”下可以对“头文件”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00208` | `SU-ARINC-665-5-2-2-3-1-57-P028-PROSE-SENTENCE-003-E6ACA86FDF43`<br>`ARINC-665-5 2.2.3.1.57 p.18` | `PROTOCOL-FILE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `STATUS-CODE-CONDITIONAL-FIELD` / `CAPABILITY-OR-STATE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“来源规定的适用条件”下可以对“STATUS-CODE-CONDITIONAL-FIELD”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00209` | `SU-ARINC-665-5-2-2-3-1-59-P028-PROSE-SENTENCE-002-6672CA36E154`<br>`ARINC-665-5 2.2.3.1.59 p.18` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00210` | `SU-ARINC-665-5-2-2-3-1-60-P028-PROSE-SENTENCE-002-91B469DEBE14`<br>`ARINC-665-5 2.2.3.1.60 p.18` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00211` | `SU-ARINC-665-5-2-2-3-1-61-P029-PROSE-SENTENCE-002-6F1B40878C6B`<br>`ARINC-665-5 2.2.3.1.61 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00212` | `SU-ARINC-665-5-2-2-3-1-61-P029-PROSE-SENTENCE-003-6155DCD79C06`<br>`ARINC-665-5 2.2.3.1.61 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00213` | `SU-ARINC-665-5-2-2-3-1-61-P029-PROSE-SENTENCE-004-9A509D9AE4E2`<br>`ARINC-665-5 2.2.3.1.61 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `VALIDATE` / `CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值”执行“验证”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00214` | `SU-ARINC-665-5-2-2-3-1-62-P029-PROSE-SENTENCE-002-136B2E7764B0`<br>`ARINC-665-5 2.2.3.1.62 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `HEADER-FILE, CRC, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“头文件、CRC／校验值、网络接口”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00215` | `SU-ARINC-665-5-2-2-3-1-63-P029-PROSE-SENTENCE-002-8F49EC0CB8C3`<br>`ARINC-665-5 2.2.3.1.63 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `COMPUTE` / `HEADER-FILE, CRC` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“头文件、CRC／校验值”执行“计算”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00216` | `SU-ARINC-665-5-2-2-3-1-63-P029-PROSE-SENTENCE-003-5A9C8CDFFDEB`<br>`ARINC-665-5 2.2.3.1.63 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `DEFINE` / `CRC, NETWORK-INTERFACE` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“CRC／校验值、网络接口”执行“定义”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00217` | `SU-ARINC-665-5-2-2-3-2-P029-PROSE-SENTENCE-002-25AC959A1D2A`<br>`ARINC-665-5 2.2.3.2 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `DATA-FILE, SOFTWARE-PART, FILE-CONTENT` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“数据文件、软件加载件、FILE-CONTENT”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00218` | `SU-ARINC-665-5-2-2-3-3-P029-PROSE-SENTENCE-002-BC8C7608516E`<br>`ARINC-665-5 2.2.3.3 p.19` | `SOFTWARE-PACKAGE-PRODUCER` / `APPLICABLE-SOURCE-CONDITION` / `ENCODE` / `SOFTWARE-PART, NETWORK-INTERFACE, FILE-CONTENT` / `CAPABILITY-OR-STATE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“软件包生成方”在“来源规定的适用条件”下必须对“软件加载件、网络接口、FILE-CONTENT”执行“编码或赋值”；证据是“能力、消息、字段、状态或终止结果可被观察”。 | — | — |
+| `CRS-M1-00219` | `SU-ARINC-615A-3-TABLE-6-1-R002`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `TH_INFORMATION_INITIALIZATION` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“TH_INFORMATION_INITIALIZATION”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00220` | `SU-ARINC-615A-3-TABLE-6-1-R003`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `INFORMATION_INITIALIZATION_RESPONSE` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“INFORMATION_INITIALIZATION_RESPONSE”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00221` | `SU-ARINC-615A-3-TABLE-6-1-R005`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `TH_INFORMATION` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“TH_INFORMATION”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00222` | `SU-ARINC-615A-3-TABLE-6-1-R006`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00223` | `SU-ARINC-615A-3-TABLE-6-1-R007`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT_REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT_REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00224` | `SU-ARINC-615A-3-TABLE-6-1-R009`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `TH_UPLOADING_INITIALIZATION` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“TH_UPLOADING_INITIALIZATION”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00225` | `SU-ARINC-615A-3-TABLE-6-1-R010`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `UPLOADING_INITIALIZATION_RESPONSE` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“UPLOADING_INITIALIZATION_RESPONSE”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00226` | `SU-ARINC-615A-3-TABLE-6-1-R012`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `LOAD_LIST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“LOAD_LIST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00227` | `SU-ARINC-615A-3-TABLE-6-1-R013`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `UPLOAD_INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“UPLOAD_INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00228` | `SU-ARINC-615A-3-TABLE-6-1-R014`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT_REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT_REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00229` | `SU-ARINC-615A-3-TABLE-6-1-R016`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `FILE_NOT_AVAILABLE` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“FILE_NOT_AVAILABLE”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00230` | `SU-ARINC-615A-3-TABLE-6-1-R017`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `UPLOAD_INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“UPLOAD_INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00231` | `SU-ARINC-615A-3-TABLE-6-1-R018`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT_REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT_REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00232` | `SU-ARINC-615A-3-TABLE-6-1-R020`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_MEDIA_INITIALIZATION` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“DOWNLOADING_MEDIA_INITIALIZATION”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00233` | `SU-ARINC-615A-3-TABLE-6-1-R021`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_INITIALIZATION_RESPONSE` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_INITIALIZATION_RESPONSE”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00234` | `SU-ARINC-615A-3-TABLE-6-1-R023`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00235` | `SU-ARINC-615A-3-TABLE-6-1-R024`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT_REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT_REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00236` | `SU-ARINC-615A-3-TABLE-6-1-R026`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_FILE_RECEIPT` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_FILE_RECEIPT”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00237` | `SU-ARINC-615A-3-TABLE-6-1-R027`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00238` | `SU-ARINC-615A-3-TABLE-6-1-R028`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT_REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT_REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00239` | `SU-ARINC-615A-3-TABLE-6-1-R030`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_OPERATOR_INITIALIZATION` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“DOWNLOADING_OPERATOR_INITIALIZATION”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00240` | `SU-ARINC-615A-3-TABLE-6-1-R031`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_INITIALIZATION_RESPONSE` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_INITIALIZATION_RESPONSE”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00241` | `SU-ARINC-615A-3-TABLE-6-1-R033`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_FILE_LIST_RECEIPT` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_FILE_LIST_RECEIPT”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00242` | `SU-ARINC-615A-3-TABLE-6-1-R034`<br>`ARINC-615A-3 6.1 p.42` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `FILE_SELECTION` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“FILE_SELECTION”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00243` | `SU-ARINC-615A-3-TABLE-6-1-R035`<br>`ARINC-615A-3 6.1 p.42` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00244` | `SU-ARINC-615A-3-TABLE-6-1-R036`<br>`ARINC-615A-3 6.1 p.43` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT-REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT-REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00245` | `SU-ARINC-615A-3-TABLE-6-1-R038`<br>`ARINC-615A-3 6.1 p.43` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_FILE_RECEIPT` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_FILE_RECEIPT”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00246` | `SU-ARINC-615A-3-TABLE-6-1-R039`<br>`ARINC-615A-3 6.1 p.43` | `DLP` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `DOWNLOADING_INFORMATION_STATUS` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器协议层”在“表中规定的操作步骤”下必须对“DOWNLOADING_INFORMATION_STATUS”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00247` | `SU-ARINC-615A-3-TABLE-6-1-R040`<br>`ARINC-615A-3 6.1 p.43` | `DLA` / `TABLE-DEFINED-OPERATION-STEP` / `SEND` / `ABORT_REQUEST` / `MESSAGE-DIRECTION-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“表中规定的操作步骤”下必须对“ABORT_REQUEST”执行“发送”；证据是“消息名称与传输方向可被观察”。 | — | — |
+| `CRS-M1-00248` | `SU-ARINC-615A-3-TABLE-6_4_1-1-R002`<br>`ARINC-615A-3 6.4.1 p.67` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-FILE-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00249` | `SU-ARINC-615A-3-TABLE-6_4_1-1-R003`<br>`ARINC-615A-3 6.4.1 p.67` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PROTOCOL-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PROTOCOL-VERSION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00250` | `SU-ARINC-615A-3-TABLE-6_4_1-1-R004`<br>`ARINC-615A-3 6.4.1 p.67` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-OPERATION-ACCEPTANCE-STATUS-CODE` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-OPERATION-ACCEPTANCE-STATUS-CODE”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00251` | `SU-ARINC-615A-3-TABLE-6_4_1-1-R005`<br>`ARINC-615A-3 6.4.1 p.67` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-STATUS-DESCRIPTION-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-STATUS-DESCRIPTION-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00252` | `SU-ARINC-615A-3-TABLE-6_4_1-1-R006`<br>`ARINC-615A-3 6.4.1 p.67` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-STATUS-DESCRIPTION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-STATUS-DESCRIPTION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00253` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R002`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-FILE-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00254` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R003`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PROTOCOL-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PROTOCOL-VERSION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00255` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R004`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-NUMBER-OF-TARGET-HARDWARE` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-NUMBER-OF-TARGET-HARDWARE”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00256` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R005`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LITERAL-NAME-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LITERAL-NAME-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00257` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R006`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LITERAL-NAME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LITERAL-NAME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00258` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R007`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-SERIAL-NUMBER-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-SERIAL-NUMBER-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00259` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R008`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-SERIAL-NUMBER` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-SERIAL-NUMBER”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00260` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R009`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-NUMBER-OF-PART-NUMBERS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-NUMBER-OF-PART-NUMBERS”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00261` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R010`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PART-NUMBER-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PART-NUMBER-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00262` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R011`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PART-NUMBER` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PART-NUMBER”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00263` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R012`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-AMENDMENT-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-AMENDMENT-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00264` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R013`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-AMENDMENT` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-AMENDMENT”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00265` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R014`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PART-DESIGNATION-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PART-DESIGNATION-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00266` | `SU-ARINC-615A-3-TABLE-6_4_2-1-R015`<br>`ARINC-615A-3 6.4.2 p.68` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PART-DESIGNATION-TEXT` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PART-DESIGNATION-TEXT”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00267` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R002`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-FILE-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00268` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R003`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PROTOCOL-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PROTOCOL-VERSION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00269` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R004`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-COUNTER` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-COUNTER”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00270` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R005`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-INFORMATION-OPERATION-STATUS-CODE` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-INFORMATION-OPERATION-STATUS-CODE”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00271` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R006`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-EXCEPTION-TIMER` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-EXCEPTION-TIMER”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00272` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R007`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-ESTIMATED-TIME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-ESTIMATED-TIME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00273` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R008`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-STATUS-DESCRIPTION-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-STATUS-DESCRIPTION-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00274` | `SU-ARINC-615A-3-TABLE-6_4_3-1-R009`<br>`ARINC-615A-3 6.4.3 p.70` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-STATUS-DESCRIPTION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-STATUS-DESCRIPTION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00275` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R002`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-FILE-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00276` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R003`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PROTOCOL-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PROTOCOL-VERSION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00277` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R004`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-NUMBER-OF-HEADER-FILES` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-NUMBER-OF-HEADER-FILES”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00278` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R005`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-HEADER-FILE-NAME-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-HEADER-FILE-NAME-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00279` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R006`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-HEADER-FILE-NAME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-HEADER-FILE-NAME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00280` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R007`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-PART-NUMBER-NAME-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-PART-NUMBER-NAME-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00281` | `SU-ARINC-615A-3-TABLE-6_4_4-1-R008`<br>`ARINC-615A-3 6.4.4 p.72` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-PART-NUMBER-NAME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-PART-NUMBER-NAME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00282` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R002`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-FILE-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00283` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R003`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-PROTOCOL-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-PROTOCOL-VERSION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00284` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R004`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-UPLOAD-OPERATION-STATUS-CODE` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-UPLOAD-OPERATION-STATUS-CODE”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00285` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R005`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00286` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R006`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-UPLOAD-STATUS-DESCRIPTION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-UPLOAD-STATUS-DESCRIPTION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00287` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R007`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-COUNTER` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-COUNTER”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00288` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R008`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-EXCEPTION-TIMER` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-EXCEPTION-TIMER”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | `MESSAGE-CARRIED-PARAMETER` / `MESSAGE-TIMER-VALUE` / `UNRESOLVED..UNRESOLVED s` | — |
+| `CRS-M1-00289` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R009`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-ESTIMATED-TIME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-ESTIMATED-TIME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00290` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R010`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-LIST-RATIO` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-LIST-RATIO”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00291` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R011`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-NUMBER-OF-HEADER-FILES` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-NUMBER-OF-HEADER-FILES”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00292` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R012`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-HEADER-FILE-NAME-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-HEADER-FILE-NAME-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00293` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R013`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-HEADER-FILE-NAME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-HEADER-FILE-NAME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00294` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R014`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-PART-NUMBER-NAME-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-PART-NUMBER-NAME-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00295` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R015`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-PART-NUMBER-NAME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-PART-NUMBER-NAME”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00296` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R016`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-RATIO` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-RATIO”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00297` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R017`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-STATUS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-STATUS”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00298` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R018`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-STATUS-DESCRIPTION-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-STATUS-DESCRIPTION-LENGTH”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00299` | `SU-ARINC-615A-3-TABLE-6_4_5-1-R019`<br>`ARINC-615A-3 6.4.5 p.74` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-LOAD-STATUS-DESCRIPTION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-LOAD-STATUS-DESCRIPTION”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00300` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R002`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X0001` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X0001”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00301` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R003`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X1000` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X1000”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00302` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R004`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X1002` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X1002”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00303` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R005`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X0002` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X0002”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00304` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R006`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X0003` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X0003”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00305` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R007`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X0004` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X0004”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00306` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R008`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X1003` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X1003”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00307` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R009`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X1004` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X1004”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00308` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R010`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X1005` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X1005”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00309` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R011`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-0X1007` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-0X1007”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00310` | `SU-ARINC-615A-3-TABLE-6_4_10-1-R012`<br>`ARINC-615A-3 6.4.10 p.85` | `PROTOCOL-FILE-PRODUCER` / `TABLE-DEFINED-FILE-STRUCTURE` / `ENCODE` / `FIELD-` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“协议文件生成方”在“表中规定的文件结构”下必须对“FIELD-”执行“编码或赋值”；证据是“字段存在性、位宽与取值可被观察”。 | — | — |
+| `CRS-M1-00311` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E001-6BBD8FA395EF`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `OPERATION-START` / `RECEIVE` / `TH-INFORMATION-INITIALIZATION` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“OPERATION-START”下必须对“TH-INFORMATION-INITIALIZATION”执行“接收”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00312` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E002-C4C83C8F67F8`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `INITIALIZATION` / `SEND-TFTP-READ-REQUEST` / `LCI` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“INITIALIZATION”下必须对“LCI”执行“SEND-TFTP-READ-REQUEST”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00313` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E003-86B1F4D69CC7`<br>`ARINC-615A-3 6.3.1 p.50` | `TARGET-HARDWARE` / `READ-REQUEST-ACCEPTED` / `TRANSFER` / `LCI` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“READ-REQUEST-ACCEPTED”下必须对“LCI”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00314` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E004-7D245D52CBFE`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `LCI-ANALYSED` / `SEND` / `INFORMATION-INITIALIZATION-RESPONSE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“LCI-ANALYSED”下必须对“INFORMATION-INITIALIZATION-RESPONSE”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00315` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E005-432DDCB05AC3`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `INITIALIZATION-REJECTED` / `TERMINATE` / `INFORMATION-OPERATION` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“INITIALIZATION-REJECTED”下必须对“INFORMATION-OPERATION”执行“TERMINATE”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00316` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E006-ACD86B335E4E`<br>`ARINC-615A-3 6.3.1 p.50` | `TARGET-HARDWARE` / `INITIALIZATION-ACCEPTED` / `SEND-TFTP-WRITE-REQUEST` / `LCL` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“INITIALIZATION-ACCEPTED”下必须对“LCL”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00317` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E007-BABEAA841AA6`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `REQUEST-RECEIVED` / `ACKNOWLEDGE` / `LCL-WRITE-REQUEST` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“REQUEST-RECEIVED”下必须对“LCL-WRITE-REQUEST”执行“确认”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00318` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E008-C31F4710028B`<br>`ARINC-615A-3 6.3.1 p.50` | `TARGET-HARDWARE` / `ACKNOWLEDGED` / `TRANSFER` / `LCL` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“ACKNOWLEDGED”下必须对“LCL”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00319` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E009-CA2FDC811E4A`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `LCL-RECEIVED` / `SEND` / `TH-INFORMATION` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“LCL-RECEIVED”下必须对“TH-INFORMATION”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00320` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E010-B9802EF2D3EA`<br>`ARINC-615A-3 6.3.1 p.50` | `TARGET-HARDWARE` / `STATUS-UPDATE-DUE` / `SEND-TFTP-WRITE-REQUEST` / `LCS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“STATUS-UPDATE-DUE”下必须对“LCS”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00321` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E011-1AC058091969`<br>`ARINC-615A-3 6.3.1 p.50` | `TARGET-HARDWARE` / `WRITE-REQUEST-ACKNOWLEDGED` / `TRANSFER` / `LCS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“WRITE-REQUEST-ACKNOWLEDGED”下必须对“LCS”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00322` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E012-641E73AF20EF`<br>`ARINC-615A-3 6.3.1 p.50` | `DLA` / `LCS-RECEIVED` / `SEND` / `INFORMATION-STATUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“LCS-RECEIVED”下必须对“INFORMATION-STATUS”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00323` | `SU-ARINC-615A-3-SECTION-6-3-1-SEQUENCE-CHART-E013-73850A1986EF`<br>`ARINC-615A-3 6.3.1 p.50` | `TARGET-HARDWARE` / `OPERATION-COMPLETION-STATE` / `REPEAT-OR-TERMINATE` / `LCS-STATUS-CYCLE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“OPERATION-COMPLETION-STATE”下必须对“LCS-STATUS-CYCLE”执行“REPEAT-OR-TERMINATE”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00324` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E001-C4F05B5E63B6`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `OPERATION-START` / `RECEIVE` / `TH-UPLOADING-INITIALIZATION` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“数据加载器应用层”在“OPERATION-START”下必须对“TH-UPLOADING-INITIALIZATION”执行“接收”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00325` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E002-77866A816D15`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `INITIALIZATION` / `SEND-TFTP-READ-REQUEST` / `LUI` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“数据加载器应用层”在“INITIALIZATION”下必须对“LUI”执行“SEND-TFTP-READ-REQUEST”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00326` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E003-23D0F1A6F303`<br>`ARINC-615A-3 6.3.2 p.53` | `TARGET-HARDWARE` / `READ-REQUEST-ACCEPTED` / `TRANSFER` / `LUI` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“目标硬件”在“READ-REQUEST-ACCEPTED”下必须对“LUI”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00327` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E004-30A7E36B1CAC`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `LUI-ANALYSED` / `SEND` / `UPLOADING-INITIALIZATION-RESPONSE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“数据加载器应用层”在“LUI-ANALYSED”下必须对“UPLOADING-INITIALIZATION-RESPONSE”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00328` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E005-1CC34400D27E`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `INITIALIZATION-ACCEPTED` / `SEND` / `LOAD-LIST` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“数据加载器应用层”在“INITIALIZATION-ACCEPTED”下必须对“LOAD-LIST”执行“发送”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00329` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E006-298771587D83`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `LIST-NOT-YET-ACCEPTED` / `WAIT` / `LUS-0001` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“数据加载器应用层”在“LIST-NOT-YET-ACCEPTED”下必须对“LUS-0001”执行“等待”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00330` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E007-7726A816FFE7`<br>`ARINC-615A-3 6.3.2 p.53` | `TARGET-HARDWARE` / `LIST-ACCEPTED` / `SEND-TFTP-WRITE-REQUEST` / `LUR` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“目标硬件”在“LIST-ACCEPTED”下必须对“LUR”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00331` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E008-F1D3B51077A3`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `REQUEST-RECEIVED` / `ACKNOWLEDGE` / `LUR-WRITE-REQUEST` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“数据加载器应用层”在“REQUEST-RECEIVED”下必须对“LUR-WRITE-REQUEST”执行“确认”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00332` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E009-9A7CD75981CB`<br>`ARINC-615A-3 6.3.2 p.53` | `DLA` / `ACKNOWLEDGED` / `TRANSFER` / `LUR` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“数据加载器应用层”在“ACKNOWLEDGED”下必须对“LUR”执行“传输”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00333` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E001-0056C38BAE97`<br>`ARINC-615A-3 6.3.2 p.54` | `TARGET-HARDWARE` / `FILE-SELECTED` / `SEND-TFTP-READ-REQUEST` / `REQUESTED-UPLOAD-FILE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“目标硬件”在“FILE-SELECTED”下必须对“REQUESTED-UPLOAD-FILE”执行“SEND-TFTP-READ-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00334` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E002-9E4B69ABC6C0`<br>`ARINC-615A-3 6.3.2 p.54` | `DLA` / `REQUESTED-FILE-UNAVAILABLE` / `SEND` / `FILE-NOT-AVAILABLE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“数据加载器应用层”在“REQUESTED-FILE-UNAVAILABLE”下必须对“FILE-NOT-AVAILABLE”执行“发送”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00335` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E003-4CF8C989BD2D`<br>`ARINC-615A-3 6.3.2 p.54` | `DLA` / `REQUESTED-FILE-AVAILABLE` / `TRANSFER` / `REQUESTED-UPLOAD-FILE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“数据加载器应用层”在“REQUESTED-FILE-AVAILABLE”下必须对“REQUESTED-UPLOAD-FILE”执行“传输”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00336` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E004-FA670B42C1F5`<br>`ARINC-615A-3 6.3.2 p.54` | `TARGET-HARDWARE` / `FILE-RECEIVED` / `WRITE` / `LUS-FILE-STATUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“目标硬件”在“FILE-RECEIVED”下必须对“LUS-FILE-STATUS”执行“WRITE”，接收方为“TARGET-MEMORY”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00337` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E005-B45D394BBCF7`<br>`ARINC-615A-3 6.3.2 p.54` | `TARGET-HARDWARE` / `MORE-FILES-REQUIRED` / `REPEAT` / `UPLOAD-FILE-THREAD` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“目标硬件”在“MORE-FILES-REQUIRED”下必须对“UPLOAD-FILE-THREAD”执行“REPEAT”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00338` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E006-5AECD60FFEA3`<br>`ARINC-615A-3 6.3.2 p.54` | `TARGET-HARDWARE` / `STATUS-UPDATE-DUE` / `SEND-TFTP-WRITE-REQUEST` / `LUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“目标硬件”在“STATUS-UPDATE-DUE”下必须对“LUS”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00339` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E007-1C729672C57C`<br>`ARINC-615A-3 6.3.2 p.54` | `TARGET-HARDWARE` / `WRITE-REQUEST-ACKNOWLEDGED` / `TRANSFER` / `LUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“目标硬件”在“WRITE-REQUEST-ACKNOWLEDGED”下必须对“LUS”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00340` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E008-772971415EE7`<br>`ARINC-615A-3 6.3.2 p.54` | `DLA` / `LUS-RECEIVED` / `SEND` / `UPLOAD-INFORMATION-STATUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“数据加载器应用层”在“LUS-RECEIVED”下必须对“UPLOAD-INFORMATION-STATUS”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00341` | `SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-B-E009-0243DF6FD28F`<br>`ARINC-615A-3 6.3.2 p.54` | `DLA` / `UPLOAD-COMPLETION-STATE` / `REPEAT-OR-TERMINATE` / `UPLOAD-STATUS-CYCLE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-BASE` | 参与者“数据加载器应用层”在“UPLOAD-COMPLETION-STATE”下必须对“UPLOAD-STATUS-CYCLE”执行“REPEAT-OR-TERMINATE”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00342` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E001-9F14C8F561CB`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `INTERRUPTION-START` / `RECEIVE` / `ABORT-REQUEST` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“INTERRUPTION-START”下必须对“ABORT-REQUEST”执行“接收”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00343` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E002-ADCFF3068CA9`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `ABORT-REQUESTED` / `WAIT` / `STATUS-FILE-WRITE-REQUEST` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“ABORT-REQUESTED”下必须对“STATUS-FILE-WRITE-REQUEST”执行“等待”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00344` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E003-F48598C39EB0`<br>`ARINC-615A-3 6.3.5 p.63` | `TARGET-HARDWARE` / `STATUS-AVAILABLE` / `SEND-TFTP-WRITE-REQUEST` / `LCS-LUS-OR-LNS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“STATUS-AVAILABLE”下必须对“LCS-LUS-OR-LNS”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00345` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E004-CE12F9C3643D`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `WRITE-REQUEST-RECEIVED` / `SEND` / `ABORT-ERROR` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“WRITE-REQUEST-RECEIVED”下必须对“ABORT-ERROR”执行“发送”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00346` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E005-62BABD65DCA2`<br>`ARINC-615A-3 6.3.5 p.63` | `TARGET-HARDWARE` / `ABORT-ERROR-RECEIVED` / `STOP` / `NONSTATUS-FILE-TRANSFERS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“ABORT-ERROR-RECEIVED”下必须对“NONSTATUS-FILE-TRANSFERS”执行“STOP”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00347` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E006-697ED629B1F1`<br>`ARINC-615A-3 6.3.5 p.63` | `TARGET-HARDWARE` / `ACTIVITIES-STOPPED` / `TRANSFER` / `ABORT-CONFIRMATION-STATUS-FILE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“ACTIVITIES-STOPPED”下必须对“ABORT-CONFIRMATION-STATUS-FILE”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00348` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E007-0E8514BE5C06`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `ABORT-STATUS-RECEIVED` / `SEND` / `INFORMATION-OR-UPLOAD-OR-DOWNLOAD-STATUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“ABORT-STATUS-RECEIVED”下必须对“INFORMATION-OR-UPLOAD-OR-DOWNLOAD-STATUS”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00349` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E008-F805E5E804BC`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `ABORT-CONFIRMED` / `TERMINATE` / `INTERRUPTION-MODE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“ABORT-CONFIRMED”下必须对“INTERRUPTION-MODE”执行“TERMINATE”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
 
 ## 非基础范围及未决清单
 
-- `COV-615A3-0038` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0039` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0040` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0041` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0042` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0043` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0044` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0045` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0046` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0047` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0048` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0049` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0050` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0051` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0052` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0053` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0054` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0055` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0056` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0057` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0058` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0059` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0060` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0061` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0062` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0063` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0064` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0065` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0066` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0067` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0068` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0069` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0070` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0071` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0072` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0073` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0074` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0075` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0076` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0077` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0078` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0079` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0080` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0081` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0082` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0083` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0084` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0085` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0086` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0087` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0088` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0089` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0090` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0091` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0092` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0093` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0094` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0095` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0096` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0097` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0098` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0099` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0100` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0101` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0102` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0103` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0104` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0105` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0106` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0107` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0108` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0109` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0110` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0111` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0112` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0113` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0114` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0115` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0116` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0117` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0118` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0119` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0120` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0121` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0122` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0123` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0124` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0125` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0126` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0127` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0128` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0129` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0130` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0131` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0132` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0133` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0134` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0135` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0136` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0137` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0138` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0139` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0140` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0141` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0142` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0143` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0144` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0145` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0146` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0147` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0148` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0187` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0188` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0189` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0190` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0220` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0221` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0222` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0223` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0224` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0225` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0226` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0227` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0228` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0254` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0255` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0256` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0257` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0258` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0259` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0260` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0261` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0262` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0263` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0264` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0265` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0266` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0267` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0306` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0307` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0308` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0309` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0310` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0311` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0312` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0313` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0314` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0315` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0316` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0320` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0337` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0338` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0339` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0340` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0341` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0342` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0343` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0344` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0345` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0346` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0347` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0348` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0349` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0350` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0351` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0352` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0353` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0354` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0355` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0356` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0357` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0358` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0359` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0360` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0361` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0362` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0363` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0364` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0365` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0366` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0367` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0368` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0369` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0370` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0371` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0372` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0373` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0374` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0375` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0376` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0377` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0378` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0406` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0407` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0408` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0409` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0410` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0411` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0412` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0413` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0414` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0415` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0416` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0417` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0418` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0419` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0420` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0421` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0422` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0423` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0424` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0425` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0426` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0427` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0428` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0429` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0430` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0431` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0432` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0447` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0448` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0449` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0450` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0451` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0452` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0453` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0454` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0455` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0456` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0457` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0458` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0459` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0460` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0461` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0462` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0463` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0464` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0465` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0466` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0467` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0468` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0469` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0470` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0471` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0472` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0473` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0474` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0475` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0476` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0477` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0478` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0479` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0480` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0481` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0482` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0483` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0484` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0485` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0486` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0487` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0488` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0489` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0490` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-615A3-0509` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0513` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0514` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0515` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0547` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0548` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0549` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0550` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0551` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0552` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0553` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0554` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0555` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0556` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0557` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0558` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0559` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0560` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0561` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0562` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0563` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0564` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0565` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0566` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0567` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0579` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0580` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0581` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0582` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-615A3-0584` — `OUT-OF-PROFILE` — PHYSICAL-CONNECTOR-SCOPE
-- `COV-615A3-0585` — `OUT-OF-PROFILE` — SCENARIO-EXPLANATION
-- `COV-615A3-0586` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-615A3-0588` — `OUT-OF-PROFILE` — ENVIRONMENT-CONFIGURATION-SCOPE
-- `COV-615A3-0589` — `OUT-OF-PROFILE` — HUMAN-INTERFACE-GUIDANCE
-- `COV-615A3-0598` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0599` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0603` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0604` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0611` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0612` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0613` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-615A3-0614` — `DEFERRED-FUTURE-SCOPE` — MANUALLY-BOUND-NONPROSE-CONSTRAINT
-- `COV-6655-0008` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0033` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0044` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0055` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0056` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0057` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0058` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0059` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0060` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0061` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0066` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0067` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0068` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0069` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0070` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0072` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0073` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0074` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0075` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0076` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0077` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
-- `COV-6655-0078` — `BLOCKED-BY-DEPENDENCY` — TRIGGERED-BY-615A3-DATA-OBJECT
+- `COV-M1-00001` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00002` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00003` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00004` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00005` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00006` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00007` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00008` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00009` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00010` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00011` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00012` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00013` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00014` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00015` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00016` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00017` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00018` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00019` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00049` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00050` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00051` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00052` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00053` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00054` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00055` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00056` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00057` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00058` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00059` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00060` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00061` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00062` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00063` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00064` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00065` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00066` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00067` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00068` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00069` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00070` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00071` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00072` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00073` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00074` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00081` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00082` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00083` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00084` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00085` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00086` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00087` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00088` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00089` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00090` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00091` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00092` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00093` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00094` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00095` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00096` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00097` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00098` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00099` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00100` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00101` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00102` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00103` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00104` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00105` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00106` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00107` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00108` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00109` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00110` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00111` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00112` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00113` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00114` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00115` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00116` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00117` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00118` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00119` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00120` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00121` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00122` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00123` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00124` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00125` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00126` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00127` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00128` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00129` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00130` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00131` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00132` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00133` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00134` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00135` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00136` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00137` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00138` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00139` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00140` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00141` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00142` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00143` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00144` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00145` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00146` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00147` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00148` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00149` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00150` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00151` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00152` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00153` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00154` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00155` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00156` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00157` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00158` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00159` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00160` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00161` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00162` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00163` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00164` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00165` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00166` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00167` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00168` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00169` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00170` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00171` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00172` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00173` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00174` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00175` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00176` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00177` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00178` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00179` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00180` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00181` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00182` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00183` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00184` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00185` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00186` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00187` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00188` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00189` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00190` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00191` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00192` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00193` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00194` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00195` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00196` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00197` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00198` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00199` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00200` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00201` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00202` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00203` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00204` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00205` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00206` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00207` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00208` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00209` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00210` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00211` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00212` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00213` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00214` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00215` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00216` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00217` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00218` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00219` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00220` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00221` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00222` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00223` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00224` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00225` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00226` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00227` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00228` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00229` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00230` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00231` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00232` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00233` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00234` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00235` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00236` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00237` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00238` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00239` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00240` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00241` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00242` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00243` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00244` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00245` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00246` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00247` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00248` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00249` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00250` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00251` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00252` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00253` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00254` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00255` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00256` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00257` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00258` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00259` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00260` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00261` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00262` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00263` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00264` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00265` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00266` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00267` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00268` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00269` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00270` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00271` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00272` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00273` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00274` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00275` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00276` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00277` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00278` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00279` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00280` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00281` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00282` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00283` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00284` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00285` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00286` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00287` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00288` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00289` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00290` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00291` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00292` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00293` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00294` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00295` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00296` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00297` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00298` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00299` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00300` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00301` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00302` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00303` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00304` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00305` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00306` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00307` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00308` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00309` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00310` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00311` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00312` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00313` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00314` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00315` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00316` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00317` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00318` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00319` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00320` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00321` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00322` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00323` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00324` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00325` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00326` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00327` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00328` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00329` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00330` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00331` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00332` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00333` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00334` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00335` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-00535` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
+- `COV-M1-00536` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
+- `COV-M1-00537` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
+- `COV-M1-00538` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
+- `COV-M1-00539` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
+- `COV-M1-00650` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00651` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00652` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00653` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00654` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00655` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00656` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00657` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00658` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00659` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00660` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00661` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00662` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00663` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00664` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00665` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00666` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00667` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00668` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00669` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00670` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00671` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00672` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00673` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00674` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00675` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00676` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00677` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00678` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00679` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00680` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00681` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00682` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00683` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00684` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00685` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00686` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00687` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00688` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00689` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00690` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00691` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00692` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00693` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00694` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00695` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00696` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00697` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00698` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00699` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00700` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00701` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00702` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00703` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00704` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00762` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00763` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00764` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00765` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00766` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00767` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00768` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00769` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00770` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00771` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00772` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00773` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00774` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00775` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00776` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00777` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00778` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00779` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00780` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00781` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00782` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00783` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00784` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00785` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00786` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00787` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00788` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00874` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00875` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00876` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00877` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00878` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00879` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00880` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00881` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00882` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00883` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00884` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00885` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00886` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00887` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00888` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00889` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00890` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00891` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00892` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00893` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00894` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00895` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00896` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00897` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00898` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00899` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00900` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00901` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00902` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00903` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00904` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00905` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00906` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00907` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00908` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00909` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00910` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00911` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00912` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00913` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00914` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00915` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00916` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00917` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00918` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00919` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00920` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00921` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00922` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00923` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00924` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00925` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00926` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00927` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00928` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00929` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00930` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00931` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00932` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00933` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00934` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00935` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00936` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00937` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00938` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00939` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00940` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00941` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00942` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00943` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00944` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00945` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00946` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00947` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00948` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00949` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00950` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00951` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00952` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00953` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00954` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00955` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01230` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01231` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01232` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01233` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01234` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01235` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01236` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01237` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01238` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01239` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01240` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01241` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01242` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01243` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01244` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01245` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01246` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01247` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01248` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01249` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01250` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01251` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01252` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01253` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01254` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01255` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01256` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01257` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01258` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01259` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01260` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01261` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01262` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01263` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01264` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01265` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01266` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01267` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01268` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01269` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01270` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01271` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01272` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01273` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01274` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01275` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01276` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01277` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01278` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01279` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01280` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01281` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01282` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01283` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01284` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01285` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01286` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01287` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01288` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01289` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01290` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01291` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01292` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01293` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01294` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01295` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01296` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01297` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01298` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01299` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01300` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01301` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01302` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01303` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01304` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01305` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01306` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01307` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01308` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01309` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01310` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01311` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01312` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01313` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01314` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01315` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01316` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01317` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01318` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01319` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01320` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01321` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01322` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01323` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01324` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01325` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01326` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01327` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01330` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01331` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01332` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01333` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01334` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01335` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01336` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01337` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01338` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01339` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01340` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01341` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01342` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01343` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01344` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01345` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01346` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01347` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01348` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01349` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01350` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01351` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01352` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01353` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01354` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01355` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01356` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01357` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01358` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01359` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01360` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01361` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01362` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01363` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01364` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01365` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01366` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-01411` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01412` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01413` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01414` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01415` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01416` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01417` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01418` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01419` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01420` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01421` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01422` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01423` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01424` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01425` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01426` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01427` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01428` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01429` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01430` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01431` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01432` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01433` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01434` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01435` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01436` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01437` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01438` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01439` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01440` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01441` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01442` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01443` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01444` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01445` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01446` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01447` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01448` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01449` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01450` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01451` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01452` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01453` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01454` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01455` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01456` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01457` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01458` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01459` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01460` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01461` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01462` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01463` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01464` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01465` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01466` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01467` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01468` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01469` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01470` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01471` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01472` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01473` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01474` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01475` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01476` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01477` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01478` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01479` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01480` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01481` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01482` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01483` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01484` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01485` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01486` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01487` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01488` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01489` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01490` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01491` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01492` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01493` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01494` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01495` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01496` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01497` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01498` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01499` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01500` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01501` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01502` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01503` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01504` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01505` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01506` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01507` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01508` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01509` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01510` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01511` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01512` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01513` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01514` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01515` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01516` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01517` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01518` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01519` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01520` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01521` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01522` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01523` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01524` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01525` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01526` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01527` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01528` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01529` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01530` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01531` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01532` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01533` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01534` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01535` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01536` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01537` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01538` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01539` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01540` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01541` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01542` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01543` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01544` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01545` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01546` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01547` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01548` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01549` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01550` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01551` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01552` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01553` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01554` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01555` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01556` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01557` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01558` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01559` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01560` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01561` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01562` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01563` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01564` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01565` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01566` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01567` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01568` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01569` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01570` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01571` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01572` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01573` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01574` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01575` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01576` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01577` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01578` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01579` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01580` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01581` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01582` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01583` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01584` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01585` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01586` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01587` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01588` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01589` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01590` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01591` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01592` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01593` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01594` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01595` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01596` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01597` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01598` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01599` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01756` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01757` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01760` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01761` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01762` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01763` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01764` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01765` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01766` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01767` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01768` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01769` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01770` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01771` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01772` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01773` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01774` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01775` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01776` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01777` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01778` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01779` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01780` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01781` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01782` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01783` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01784` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01785` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01786` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01787` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01788` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01789` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01790` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01791` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01792` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01793` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01794` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01795` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01796` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01797` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01798` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01799` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01800` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01801` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01802` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01803` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01804` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01805` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01806` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01807` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01808` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01809` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01810` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01811` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01812` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01813` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01814` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01815` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01816` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01817` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01818` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01819` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01820` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01821` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01822` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01823` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01824` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01825` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01826` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01827` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01828` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01829` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01830` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01831` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01832` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01833` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01834` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01835` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01836` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01837` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01838` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01839` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01840` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01841` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01842` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01843` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01844` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01845` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01846` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01847` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01848` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01849` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01850` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01851` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01852` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01853` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01854` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01855` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01856` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01857` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01858` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01859` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01860` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01861` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01862` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01863` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01864` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01865` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01866` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01867` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01868` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01869` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01870` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01871` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01872` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01873` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01874` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01875` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01876` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01877` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01878` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01879` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01880` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01881` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01882` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01883` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01884` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01885` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01886` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01887` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01888` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01889` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01890` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01891` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01892` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01893` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01894` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01895` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01896` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01897` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01898` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01899` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01900` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01901` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01902` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01903` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01904` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01905` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01906` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01907` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01908` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01909` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01910` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01911` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01912` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01913` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01914` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01915` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01916` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01917` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01918` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01919` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01920` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01921` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01922` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01923` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01924` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01925` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01926` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01927` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01928` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01929` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01930` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01931` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01932` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01933` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01934` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01935` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01936` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01937` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01938` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01939` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01940` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01941` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01942` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01943` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01944` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01945` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01946` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01947` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01948` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01949` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01950` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01951` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01952` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01953` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01954` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01955` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01956` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01957` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01958` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01959` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01960` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01961` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01962` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01963` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01964` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01965` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01966` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01967` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01968` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01969` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01970` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01971` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01972` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01973` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01974` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01975` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01976` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01977` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01978` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01979` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01980` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01981` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01982` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01983` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01984` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01985` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01986` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01987` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01988` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01989` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01990` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01991` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01992` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01993` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01994` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01995` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01996` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01997` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01998` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-01999` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02000` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02001` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02002` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02003` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02004` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02005` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02006` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02007` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02008` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02009` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02010` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02011` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02012` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02013` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02014` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02015` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02016` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02017` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02018` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02019` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02020` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02021` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02022` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02023` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02024` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02025` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02026` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02027` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02028` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02029` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02030` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02031` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02032` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02033` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02034` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02035` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02036` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02037` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02038` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02039` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02040` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02041` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02042` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02043` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02044` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02045` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02046` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02047` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02048` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02049` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02050` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02051` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02052` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02053` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02054` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02055` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02056` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02057` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02058` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02059` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02060` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02061` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02062` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02063` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02064` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
+- `COV-M1-02065` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02066` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02067` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02068` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02069` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02070` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02071` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02072` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02073` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02074` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02075` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02137` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02138` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02139` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02140` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02141` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02142` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02143` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02185` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02186` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02187` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02188` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02189` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02190` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02191` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02192` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02193` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02194` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02195` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02411` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02412` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02413` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02414` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02415` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02416` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02417` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02418` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02419` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02420` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02421` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02422` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02423` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02424` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02425` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02426` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02427` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02428` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02429` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02430` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02431` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02432` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02433` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02434` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02435` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02436` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02437` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02438` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02439` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02440` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02441` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
+- `COV-M1-02539` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02540` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02541` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02542` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02543` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02544` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02545` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02546` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02547` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02548` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02549` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02550` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02551` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02552` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02553` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02554` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02555` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02556` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02557` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02558` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02559` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02560` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02561` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02562` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02563` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02564` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02565` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02566` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02567` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02568` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02569` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02570` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02571` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02572` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02573` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02574` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02575` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02576` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02620` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02621` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02622` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02623` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02624` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02625` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02626` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02627` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02628` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02629` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02630` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02631` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02632` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02633` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02634` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02635` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02636` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02637` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02638` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02639` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02640` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02641` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02642` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02643` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
