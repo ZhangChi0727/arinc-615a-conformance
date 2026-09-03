@@ -128,3 +128,15 @@ def test_private_text_paths_and_reversible_payloads_are_rejected() -> None:
     for key, value in mutations:
         data = package(); data["requirements"][0][key] = value; refresh_summary(data)
         assert errors(data)
+
+
+def test_compound_obligation_requires_inseparable_rationale() -> None:
+    data = package(); row = data["requirements"][0]
+    row["obligations"] = ["ORDERING", "DIRECTION"]; row.pop("inseparableRationale", None); refresh_summary(data)
+    assert any("inseparable rationale" in item for item in errors(data))
+
+
+def test_open_dependency_cannot_be_closed_without_source_binding() -> None:
+    data = package(); dep = next(item for item in data["dependencies"] if item["id"] == "DEP-RFC-TFTP")
+    dep["status"] = "REGISTERED-SUPPORTING-SOURCE"; refresh_summary(data)
+    assert any("lacks a controlled source binding" in item for item in errors(data))

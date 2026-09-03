@@ -85,6 +85,7 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     if len(locators) != len(set(locators)):
         errors.append("coverage locators must be unique")
     coverage_by_id = {row.get("id"): row for row in data["coverageLedger"]}
+    bound_source_ids = {row.get("sourceId") for row in data["sourceBindings"]}
     source_hash_parts: dict[tuple[str, str, int, str], list[dict[str, Any]]] = {}
     for row in data["requirements"]:
         source = row.get("source", {})
@@ -92,6 +93,8 @@ def package_errors(data: dict[str, Any]) -> list[str]:
             errors.append(f"requirement {row.get('id')} bilingual paraphrases must differ")
         if not row.get("obligations"):
             errors.append(f"requirement {row.get('id')} has no obligation")
+        if len(row.get("obligations", [])) > 1 and not row.get("inseparableRationale"):
+            errors.append(f"compound requirement {row.get('id')} lacks an inseparable rationale")
         if row.get("sourceModality") == "SHOULD" and row.get("conformanceEffect") not in {"REQUIRED", "CONDITIONAL-REQUIRED", "PROHIBITED"}:
             errors.append(f"requirement {row.get('id')} downgrades source SHOULD")
         if row.get("sourceModality") == "MAY" and row.get("conformanceEffect") == "REQUIRED":
@@ -145,6 +148,9 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     expected_645 = {"CRC-VALIDATION", "CHECK-VALUE-VALIDATION", "NAMING-ALGORITHM-VALIDATION", "COMPLETE-INTEGRITY-VALIDATION"}
     if gap645 is None or gap645.get("status") != "NOT-ESTABLISHED" or set(gap645.get("affectedCapabilityIds", [])) != expected_645:
         errors.append("ARINC 645 gap must retain all four NOT-ESTABLISHED capabilities")
+    for dependency in data["dependencies"]:
+        if dependency.get("status") == "REGISTERED-SUPPORTING-SOURCE" and dependency.get("sourceId") not in bound_source_ids:
+            errors.append(f"registered dependency {dependency.get('id')} lacks a controlled source binding")
     summary = data["inventorySummary"]
     expected = {
         "coverageCount": len(data["coverageLedger"]),

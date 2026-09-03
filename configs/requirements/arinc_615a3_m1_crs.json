@@ -10749,6 +10749,283 @@
       ]
     },
     {
+      "id": "COV-615A3-0606",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.1",
+        "tableOrFigure": "Table 6.4.1-1",
+        "documentPage": 67,
+        "pdfPage": 79,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": [
+        "CRS-615A3-0220"
+      ]
+    },
+    {
+      "id": "COV-615A3-0607",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.2",
+        "tableOrFigure": "Table 6.4.2-1",
+        "documentPage": 68,
+        "pdfPage": 80,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": [
+        "CRS-615A3-0221"
+      ]
+    },
+    {
+      "id": "COV-615A3-0608",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.3",
+        "tableOrFigure": "Table 6.4.3-1",
+        "documentPage": 70,
+        "pdfPage": 82,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": [
+        "CRS-615A3-0222"
+      ]
+    },
+    {
+      "id": "COV-615A3-0609",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.4",
+        "tableOrFigure": "Table 6.4.4-1",
+        "documentPage": 72,
+        "pdfPage": 84,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": [
+        "CRS-615A3-0223"
+      ]
+    },
+    {
+      "id": "COV-615A3-0610",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.5",
+        "tableOrFigure": "Table 6.4.5-1",
+        "documentPage": 74,
+        "pdfPage": 86,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": [
+        "CRS-615A3-0224"
+      ]
+    },
+    {
+      "id": "COV-615A3-0611",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.6",
+        "tableOrFigure": "Table 6.4.6-1",
+        "documentPage": 78,
+        "pdfPage": 90,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0612",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.7",
+        "tableOrFigure": "Table 6.4.7-1",
+        "documentPage": 79,
+        "pdfPage": 91,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0613",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.8",
+        "tableOrFigure": "Table 6.4.8-1",
+        "documentPage": 83,
+        "pdfPage": 95,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0614",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.9",
+        "tableOrFigure": "Table 6.4.9-1",
+        "documentPage": 84,
+        "pdfPage": 96,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": []
+    },
+    {
+      "id": "COV-615A3-0615",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.10",
+        "tableOrFigure": "Data Load Status Code Table",
+        "documentPage": 85,
+        "pdfPage": 97,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": [
+        "CRS-615A3-0225"
+      ]
+    },
+    {
+      "id": "COV-615A3-0616",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-4.3.1",
+        "tableOrFigure": "Figure A4-1",
+        "documentPage": 105,
+        "pdfPage": 117,
+        "fragmentKind": "FIGURE-NOTE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": [
+        "CRS-615A3-0226"
+      ]
+    },
+    {
+      "id": "COV-615A3-0617",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-4.4.1",
+        "tableOrFigure": "Figure A4-2",
+        "documentPage": 105,
+        "pdfPage": 117,
+        "fragmentKind": "FIGURE-NOTE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": [
+        "CRS-615A3-0227"
+      ]
+    },
+    {
+      "id": "COV-615A3-0618",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-4",
+        "tableOrFigure": "Figure A4-3",
+        "documentPage": 107,
+        "pdfPage": 119,
+        "fragmentKind": "FIGURE-NOTE",
+        "fragmentOrdinal": 1
+      },
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": [
+        "CRS-615A3-0228"
+      ]
+    },
+    {
+      "id": "COV-615A3-0619",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-4",
+        "tableOrFigure": "Figure A4-4",
+        "documentPage": 108,
+        "pdfPage": 120,
+        "fragmentKind": "FIGURE-NOTE",
+        "fragmentOrdinal": 2
+      },
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": [
+        "CRS-615A3-0229"
+      ]
+    },
+    {
+      "id": "COV-615A3-0620",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-4",
+        "tableOrFigure": "Figure A4-5",
+        "documentPage": 109,
+        "pdfPage": 121,
+        "fragmentKind": "FIGURE-NOTE",
+        "fragmentOrdinal": 3
+      },
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "requirementIds": [
+        "CRS-615A3-0230"
+      ]
+    },
+    {
       "id": "COV-6655-0001",
       "source": {
         "sourceId": "ARINC-665-5",
@@ -22228,6 +22505,7 @@
         "ORDERING",
         "DIRECTION"
       ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
       "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
       "ambiguityStatus": "NONE-OBSERVED",
       "dependencyIds": [],
@@ -22270,6 +22548,7 @@
         "ORDERING",
         "DIRECTION"
       ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
       "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
       "ambiguityStatus": "NONE-OBSERVED",
       "dependencyIds": [],
@@ -22312,6 +22591,7 @@
         "ORDERING",
         "DIRECTION"
       ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
       "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
       "ambiguityStatus": "NONE-OBSERVED",
       "dependencyIds": [
@@ -22356,6 +22636,7 @@
         "ORDERING",
         "DIRECTION"
       ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
       "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
       "ambiguityStatus": "NONE-OBSERVED",
       "dependencyIds": [
@@ -22400,6 +22681,7 @@
         "ORDERING",
         "DIRECTION"
       ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
       "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
       "ambiguityStatus": "NONE-OBSERVED",
       "dependencyIds": [
@@ -22444,6 +22726,7 @@
         "ORDERING",
         "DIRECTION"
       ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
       "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
       "ambiguityStatus": "NONE-OBSERVED",
       "dependencyIds": [
@@ -22455,6 +22738,584 @@
         "relation": "refines-to-local-obligation",
         "sourceCoverageId": "COV-615A3-0605",
         "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-615A3-0220",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.1",
+        "tableOrFigure": "Table 6.4.1-1",
+        "documentPage": 67,
+        "pdfPage": 79,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "65366b07e75904ea0888a9af2e279780c4d0a40c729316157970511b7532d61b",
+      "hashCanonicalizationId": "ARINC-LOGICAL-STATEMENT-NFC-LF-HWS-v1",
+      "paraphraseEn": "Initialization-file field ordering and encodings are governed by Table 6.4.1-1.",
+      "paraphraseZh": "初始化文件字段顺序与编码受表 6.4.1-1 约束。",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "roles": [
+        "DATA-LOADER",
+        "TARGET-HARDWARE"
+      ],
+      "operations": [
+        "COMMON"
+      ],
+      "category": "SEQUENCE-AND-DIRECTION",
+      "obligations": [
+        "ORDERING",
+        "DIRECTION"
+      ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
+      "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-to-local-obligation",
+        "sourceCoverageId": "COV-615A3-0606",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-615A3-0221",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.2",
+        "tableOrFigure": "Table 6.4.2-1",
+        "documentPage": 68,
+        "pdfPage": 80,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "92c6198aad492c204a124b3f3ecaab4af97d36a08435e6aa3781353014a431dc",
+      "hashCanonicalizationId": "ARINC-LOGICAL-STATEMENT-NFC-LF-HWS-v1",
+      "paraphraseEn": "The LCL information-file structure follows Table 6.4.2-1.",
+      "paraphraseZh": "LCL 信息文件结构遵循表 6.4.2-1。",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "roles": [
+        "DATA-LOADER",
+        "TARGET-HARDWARE"
+      ],
+      "operations": [
+        "INFORMATION"
+      ],
+      "category": "SEQUENCE-AND-DIRECTION",
+      "obligations": [
+        "ORDERING",
+        "DIRECTION"
+      ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
+      "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-to-local-obligation",
+        "sourceCoverageId": "COV-615A3-0607",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-615A3-0222",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.3",
+        "tableOrFigure": "Table 6.4.3-1",
+        "documentPage": 70,
+        "pdfPage": 82,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "87c30ed6a0fe6263df87e17438f830f92071b6443cdfb5257eae2e324a58bdb5",
+      "hashCanonicalizationId": "ARINC-LOGICAL-STATEMENT-NFC-LF-HWS-v1",
+      "paraphraseEn": "The common LCS status-file structure follows Table 6.4.3-1.",
+      "paraphraseZh": "公共 LCS 状态文件结构遵循表 6.4.3-1。",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "roles": [
+        "DATA-LOADER",
+        "TARGET-HARDWARE"
+      ],
+      "operations": [
+        "COMMON"
+      ],
+      "category": "SEQUENCE-AND-DIRECTION",
+      "obligations": [
+        "ORDERING",
+        "DIRECTION"
+      ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
+      "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-to-local-obligation",
+        "sourceCoverageId": "COV-615A3-0608",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-615A3-0223",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.4",
+        "tableOrFigure": "Table 6.4.4-1",
+        "documentPage": 72,
+        "pdfPage": 84,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "a530677f5793fe1a50c32c9c776a6e04cd9b59ce4f00e8cae7e0a8aab81a3f6c",
+      "hashCanonicalizationId": "ARINC-LOGICAL-STATEMENT-NFC-LF-HWS-v1",
+      "paraphraseEn": "The LUR Upload request structure follows Table 6.4.4-1.",
+      "paraphraseZh": "LUR Upload 请求结构遵循表 6.4.4-1。",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "roles": [
+        "DATA-LOADER",
+        "TARGET-HARDWARE"
+      ],
+      "operations": [
+        "UPLOAD"
+      ],
+      "category": "SEQUENCE-AND-DIRECTION",
+      "obligations": [
+        "ORDERING",
+        "DIRECTION"
+      ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
+      "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-to-local-obligation",
+        "sourceCoverageId": "COV-615A3-0609",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-615A3-0224",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.5",
+        "tableOrFigure": "Table 6.4.5-1",
+        "documentPage": 74,
+        "pdfPage": 86,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "19bdbf4919dc796a135745e7d33644960284b8bc8416c73134e311a803b961ec",
+      "hashCanonicalizationId": "ARINC-LOGICAL-STATEMENT-NFC-LF-HWS-v1",
+      "paraphraseEn": "The LUS Upload status structure follows Table 6.4.5-1.",
+      "paraphraseZh": "LUS Upload 状态结构遵循表 6.4.5-1。",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-BASE",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "roles": [
+        "DATA-LOADER",
+        "TARGET-HARDWARE"
+      ],
+      "operations": [
+        "UPLOAD"
+      ],
+      "category": "SEQUENCE-AND-DIRECTION",
+      "obligations": [
+        "ORDERING",
+        "DIRECTION"
+      ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
+      "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-to-local-obligation",
+        "sourceCoverageId": "COV-615A3-0610",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-615A3-0225",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.4.10",
+        "tableOrFigure": "Data Load Status Code Table",
+        "documentPage": 85,
+        "pdfPage": 97,
+        "fragmentKind": "TABLE-CELL",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "c8d215efa7c866e14fbe22bdf08688adfaf51875935c54f5a09f98295c38fe33",
+      "hashCanonicalizationId": "ARINC-LOGICAL-STATEMENT-NFC-LF-HWS-v1",
+      "paraphraseEn": "Status-code values and meanings follow the controlled status-code table.",
+      "paraphraseZh": "状态码值及含义遵循受控状态码表。",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "roles": [
+        "DATA-LOADER",
+        "TARGET-HARDWARE"
+      ],
+      "operations": [
+        "COMMON"
+      ],
+      "category": "SEQUENCE-AND-DIRECTION",
+      "obligations": [
+        "ORDERING",
+        "DIRECTION"
+      ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
+      "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-to-local-obligation",
+        "sourceCoverageId": "COV-615A3-0615",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-615A3-0226",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-4.3.1",
+        "tableOrFigure": "Figure A4-1",
+        "documentPage": 105,
+        "pdfPage": 117,
+        "fragmentKind": "FIGURE-NOTE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "ac96969daba1382ae5aac6105da1d6325de8d420639fb4163ed2b5dd60fd3189",
+      "hashCanonicalizationId": "ARINC-LOGICAL-STATEMENT-NFC-LF-HWS-v1",
+      "paraphraseEn": "Figure A4-1 constrains TFTP timeout observation and budget partitioning.",
+      "paraphraseZh": "图 A4-1 约束 TFTP 超时观测与预算划分。",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "roles": [
+        "DATA-LOADER",
+        "TARGET-HARDWARE"
+      ],
+      "operations": [
+        "COMMON"
+      ],
+      "category": "SEQUENCE-AND-DIRECTION",
+      "obligations": [
+        "ORDERING",
+        "DIRECTION"
+      ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
+      "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-to-local-obligation",
+        "sourceCoverageId": "COV-615A3-0616",
+        "status": "CANDIDATE"
+      },
+      "timing": {
+        "trigger": "timestamp of the correlated packet or file-transfer event",
+        "response": "timestamp of its correlated answer or secondary transfer",
+        "cancellation": "fatal error or abort terminates the timing obligation",
+        "supersedingTrigger": "no superseding trigger unless a source-authorized retry starts a new attempt",
+        "correlationKey": "target, operation, transfer, exchange number and direction",
+        "pairingPolicy": "pair only the response belonging to the same exchange or initial/secondary file-transfer pair",
+        "concurrencyPolicy": "maintain an independent clock per correlation key",
+        "silenceSemantics": "no paired response at the closed upper bound is a timeout observation",
+        "lowerBound": 0,
+        "upperBound": 2,
+        "unit": "s",
+        "lowerBoundary": "CLOSED",
+        "upperBoundary": "CLOSED",
+        "clockStart": "observable transmission completion of the triggering packet or transfer",
+        "clockResets": [
+          "source-authorized retry starts a new attempt"
+        ],
+        "observationState": "CONFIGURATION-DEPENDENT",
+        "errorBudgetState": "FUTURE-CONFIGURATION-DEPENDENT"
+      }
+    },
+    {
+      "id": "CRS-615A3-0227",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-4.4.1",
+        "tableOrFigure": "Figure A4-2",
+        "documentPage": 105,
+        "pdfPage": 117,
+        "fragmentKind": "FIGURE-NOTE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "a85fff0377a513327cc35e13a3946877a87fa069ee156a3e63e9905be86fd2e7",
+      "hashCanonicalizationId": "ARINC-LOGICAL-STATEMENT-NFC-LF-HWS-v1",
+      "paraphraseEn": "Figure A4-2 constrains the DLP timeout composition.",
+      "paraphraseZh": "图 A4-2 约束 DLP 超时组成。",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "roles": [
+        "DATA-LOADER",
+        "TARGET-HARDWARE"
+      ],
+      "operations": [
+        "COMMON"
+      ],
+      "category": "SEQUENCE-AND-DIRECTION",
+      "obligations": [
+        "ORDERING",
+        "DIRECTION"
+      ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
+      "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-to-local-obligation",
+        "sourceCoverageId": "COV-615A3-0617",
+        "status": "CANDIDATE"
+      },
+      "timing": {
+        "trigger": "timestamp of the correlated packet or file-transfer event",
+        "response": "timestamp of its correlated answer or secondary transfer",
+        "cancellation": "fatal error or abort terminates the timing obligation",
+        "supersedingTrigger": "no superseding trigger unless a source-authorized retry starts a new attempt",
+        "correlationKey": "target, operation, transfer, exchange number and direction",
+        "pairingPolicy": "pair only the response belonging to the same exchange or initial/secondary file-transfer pair",
+        "concurrencyPolicy": "maintain an independent clock per correlation key",
+        "silenceSemantics": "no paired response at the closed upper bound is a timeout observation",
+        "lowerBound": 0,
+        "upperBound": 13,
+        "unit": "s",
+        "lowerBoundary": "CLOSED",
+        "upperBoundary": "CLOSED",
+        "clockStart": "observable transmission completion of the triggering packet or transfer",
+        "clockResets": [
+          "source-authorized retry starts a new attempt"
+        ],
+        "observationState": "CONFIGURATION-DEPENDENT",
+        "errorBudgetState": "FUTURE-CONFIGURATION-DEPENDENT"
+      }
+    },
+    {
+      "id": "CRS-615A3-0228",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-4",
+        "tableOrFigure": "Figure A4-3",
+        "documentPage": 107,
+        "pdfPage": 119,
+        "fragmentKind": "FIGURE-NOTE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "e36ed37db5d8abf8b5c68f7ea3ed5245678473483ca1536b37471f25ae7118c7",
+      "hashCanonicalizationId": "ARINC-LOGICAL-STATEMENT-NFC-LF-HWS-v1",
+      "paraphraseEn": "Figure A4-3 constrains client-side retry and error escalation ordering.",
+      "paraphraseZh": "图 A4-3 约束客户端重试与错误晋级顺序。",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "roles": [
+        "DATA-LOADER",
+        "TARGET-HARDWARE"
+      ],
+      "operations": [
+        "COMMON"
+      ],
+      "category": "SEQUENCE-AND-DIRECTION",
+      "obligations": [
+        "ORDERING",
+        "DIRECTION"
+      ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
+      "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-to-local-obligation",
+        "sourceCoverageId": "COV-615A3-0618",
+        "status": "CANDIDATE"
+      },
+      "timing": {
+        "trigger": "timestamp of the correlated packet or file-transfer event",
+        "response": "timestamp of its correlated answer or secondary transfer",
+        "cancellation": "fatal error or abort terminates the timing obligation",
+        "supersedingTrigger": "no superseding trigger unless a source-authorized retry starts a new attempt",
+        "correlationKey": "target, operation, transfer, exchange number and direction",
+        "pairingPolicy": "pair only the response belonging to the same exchange or initial/secondary file-transfer pair",
+        "concurrencyPolicy": "maintain an independent clock per correlation key",
+        "silenceSemantics": "no paired response at the closed upper bound is a timeout observation",
+        "lowerBound": 0,
+        "upperBound": 13,
+        "unit": "s",
+        "lowerBoundary": "CLOSED",
+        "upperBoundary": "CLOSED",
+        "clockStart": "observable transmission completion of the triggering packet or transfer",
+        "clockResets": [
+          "source-authorized retry starts a new attempt"
+        ],
+        "observationState": "CONFIGURATION-DEPENDENT",
+        "errorBudgetState": "FUTURE-CONFIGURATION-DEPENDENT"
+      }
+    },
+    {
+      "id": "CRS-615A3-0229",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-4",
+        "tableOrFigure": "Figure A4-4",
+        "documentPage": 108,
+        "pdfPage": 120,
+        "fragmentKind": "FIGURE-NOTE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "22a46142eebf25b265e7cb08b014ab406b5979d87e612b67960b8b85a59f5f2f",
+      "hashCanonicalizationId": "ARINC-LOGICAL-STATEMENT-NFC-LF-HWS-v1",
+      "paraphraseEn": "Figure A4-4 constrains server-side retry and error escalation ordering.",
+      "paraphraseZh": "图 A4-4 约束服务端重试与错误晋级顺序。",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "roles": [
+        "DATA-LOADER",
+        "TARGET-HARDWARE"
+      ],
+      "operations": [
+        "COMMON"
+      ],
+      "category": "SEQUENCE-AND-DIRECTION",
+      "obligations": [
+        "ORDERING",
+        "DIRECTION"
+      ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
+      "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-to-local-obligation",
+        "sourceCoverageId": "COV-615A3-0619",
+        "status": "CANDIDATE"
+      },
+      "timing": {
+        "trigger": "timestamp of the correlated packet or file-transfer event",
+        "response": "timestamp of its correlated answer or secondary transfer",
+        "cancellation": "fatal error or abort terminates the timing obligation",
+        "supersedingTrigger": "no superseding trigger unless a source-authorized retry starts a new attempt",
+        "correlationKey": "target, operation, transfer, exchange number and direction",
+        "pairingPolicy": "pair only the response belonging to the same exchange or initial/secondary file-transfer pair",
+        "concurrencyPolicy": "maintain an independent clock per correlation key",
+        "silenceSemantics": "no paired response at the closed upper bound is a timeout observation",
+        "lowerBound": 0,
+        "upperBound": 13,
+        "unit": "s",
+        "lowerBoundary": "CLOSED",
+        "upperBoundary": "CLOSED",
+        "clockStart": "observable transmission completion of the triggering packet or transfer",
+        "clockResets": [
+          "source-authorized retry starts a new attempt"
+        ],
+        "observationState": "CONFIGURATION-DEPENDENT",
+        "errorBudgetState": "FUTURE-CONFIGURATION-DEPENDENT"
+      }
+    },
+    {
+      "id": "CRS-615A3-0230",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-4",
+        "tableOrFigure": "Figure A4-5",
+        "documentPage": 109,
+        "pdfPage": 121,
+        "fragmentKind": "FIGURE-NOTE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "58e737f12ec2fe11211171f7cba4f984a1dd676346b3f74efdefecfb5c563435",
+      "hashCanonicalizationId": "ARINC-LOGICAL-STATEMENT-NFC-LF-HWS-v1",
+      "paraphraseEn": "Figure A4-5 constrains data-loader-side DLP timeout classification.",
+      "paraphraseZh": "图 A4-5 约束数据加载器侧 DLP 超时分类。",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "MANUALLY-BOUND-NONPROSE-CONSTRAINT",
+      "roles": [
+        "DATA-LOADER",
+        "TARGET-HARDWARE"
+      ],
+      "operations": [
+        "COMMON"
+      ],
+      "category": "SEQUENCE-AND-DIRECTION",
+      "obligations": [
+        "ORDERING",
+        "DIRECTION"
+      ],
+      "inseparableRationale": "The same table row or chart path jointly encodes message direction and event ordering.",
+      "interpretationStatus": "CANDIDATE-MANUAL-VISUAL-EXTRACTION",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-to-local-obligation",
+        "sourceCoverageId": "COV-615A3-0620",
+        "status": "CANDIDATE"
+      },
+      "timing": {
+        "trigger": "timestamp of the correlated packet or file-transfer event",
+        "response": "timestamp of its correlated answer or secondary transfer",
+        "cancellation": "fatal error or abort terminates the timing obligation",
+        "supersedingTrigger": "no superseding trigger unless a source-authorized retry starts a new attempt",
+        "correlationKey": "target, operation, transfer, exchange number and direction",
+        "pairingPolicy": "pair only the response belonging to the same exchange or initial/secondary file-transfer pair",
+        "concurrencyPolicy": "maintain an independent clock per correlation key",
+        "silenceSemantics": "no paired response at the closed upper bound is a timeout observation",
+        "lowerBound": 0,
+        "upperBound": 13,
+        "unit": "s",
+        "lowerBoundary": "CLOSED",
+        "upperBoundary": "CLOSED",
+        "clockStart": "observable transmission completion of the triggering packet or transfer",
+        "clockResets": [
+          "source-authorized retry starts a new attempt"
+        ],
+        "observationState": "CONFIGURATION-DEPENDENT",
+        "errorBudgetState": "FUTURE-CONFIGURATION-DEPENDENT"
       }
     },
     {
@@ -26577,24 +27438,28 @@
   "dependencies": [
     {
       "id": "DEP-ARINC-645",
+      "sourceId": "ARINC-645",
       "status": "OPEN-DEPENDENCY",
       "summaryEn": "Integrity and naming algorithms remain unavailable.",
       "summaryZh": "完整性与命名算法来源仍未取得。"
     },
     {
       "id": "DEP-ARINC-6655",
+      "sourceId": "ARINC-665-5",
       "status": "REGISTERED-SUPPORTING-SOURCE",
       "summaryEn": "Bounded data-format survey; not an edition substitute.",
       "summaryZh": "有界数据格式调查，不构成版次替代。"
     },
     {
       "id": "DEP-IP-UDP-664",
+      "sourceId": "RFC-768-RFC-791-ARINC-664",
       "status": "OPEN-DEPENDENCY",
       "summaryEn": "IP, UDP and ARINC 664 network semantics require controlled source closure.",
       "summaryZh": "IP、UDP 与 ARINC 664 网络语义仍需受控来源闭合。"
     },
     {
       "id": "DEP-RFC-TFTP",
+      "sourceId": "RFC-1350-2347-2348-2349-1785",
       "status": "OPEN-DEPENDENCY",
       "summaryEn": "TFTP base and option RFC identities and applicability remain open.",
       "summaryZh": "TFTP 基础及选项 RFC 的身份与适用性仍开放。"
@@ -26621,12 +27486,12 @@
     "reviewHead": "UNBOUND-DRAFT"
   },
   "inventorySummary": {
-    "coverageCount": 686,
-    "requirementCount": 300,
+    "coverageCount": 701,
+    "requirementCount": 311,
     "dependencyCount": 4,
     "gapCount": 1,
-    "coverageFingerprint": "4dbf37c1d62077fe61a5adc2f946aec8cb12036da77382eb4c2e7eaaf7ee1696",
-    "requirementsFingerprint": "dd277e5c169ee6dfc7a80b1e63b9941dd0bee4c24b839e086591a854b313ae8b"
+    "coverageFingerprint": "39dd54bd48b10647f84f78f291b755bb7f8605637e5e30e2107d58d02d7fe530",
+    "requirementsFingerprint": "88cf55b7b09cb6517b7811a1c04705cc1fd167256bdd94a9e22721de9d893419"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",
