@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_PATH = ROOT / "configs/requirements/arinc_615a3_m1_crs.json"
 SCHEMA_PATH = ROOT / "configs/requirements/m1_crs_package.schema.json"
 VIEW_PATH = ROOT / "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md"
+RG0_ANCHOR_PATH = ROOT / "configs/requirements/m1_rg0_source_inventory_anchor.json"
 
 
 class M1Error(ValueError):
@@ -30,6 +31,28 @@ def canonical(value: Any) -> bytes:
 
 def fingerprint(records: list[dict[str, Any]]) -> str:
     return hashlib.sha256(canonical(records)).hexdigest()
+
+
+def source_inventory_projection(data: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        {
+            "sourceUnitId": row["sourceUnitId"], "source": row["source"],
+            "sourceTextHash": row["sourceTextHash"], "sourceModality": row["sourceModality"],
+            "conformanceEffect": row["conformanceEffect"], "applicabilityDecision": row["applicabilityDecision"],
+        }
+        for row in data["coverageLedger"]
+    ]
+
+
+def timing_provenance_projection(data: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        {
+            "sourceUnitId": row["sourceUnitId"], "provenanceKind": row["timing"]["provenanceKind"],
+            "sourceParameter": row["timing"]["sourceParameter"], "lowerBound": row["timing"]["lowerBound"],
+            "upperBound": row["timing"]["upperBound"],
+        }
+        for row in data["requirements"] if "timing" in row
+    ]
 
 
 def load_package(path: Path = PACKAGE_PATH) -> dict[str, Any]:
@@ -53,6 +76,10 @@ def package_errors(data: dict[str, Any]) -> list[str]:
             errors.append(f"missing top-level field {key}")
     if errors:
         return errors
+    try:
+        anchor = json.loads(RG0_ANCHOR_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"RG0 source-inventory anchor is unavailable: {exc}"]
     collections = {key: data[key] for key in ("coverageLedger", "requirements", "dependencies", "gaps")}
     ids: dict[str, set[str]] = {}
     for name, rows in collections.items():
@@ -68,8 +95,10 @@ def package_errors(data: dict[str, Any]) -> list[str]:
             errors.append(f"{name} ids must be sorted")
         ids[name] = set(row_ids)
     locators: list[str] = []
+    source_unit_ids: list[str] = []
     for row in data["coverageLedger"]:
         source = row.get("source", {})
+        source_unit_ids.append(str(row.get("sourceUnitId", "")))
         locator_key = json.dumps(source, sort_keys=True, ensure_ascii=False)
         locators.append(locator_key)
         requirement_ids = row.get("requirementIds", [])
@@ -84,11 +113,20 @@ def package_errors(data: dict[str, Any]) -> list[str]:
                 errors.append(f"coverage {row.get('id')} has dangling requirement {requirement_id}")
     if len(locators) != len(set(locators)):
         errors.append("coverage locators must be unique")
+    if len(source_unit_ids) != len(set(source_unit_ids)) or any(not item for item in source_unit_ids):
+        errors.append("coverage sourceUnitId values must be non-empty and unique")
     coverage_by_id = {row.get("id"): row for row in data["coverageLedger"]}
+    requirement_by_id = {row.get("id"): row for row in data["requirements"]}
     bound_source_ids = {row.get("sourceId") for row in data["sourceBindings"]}
-    source_hash_parts: dict[tuple[str, str, int, str], list[dict[str, Any]]] = {}
+    source_hash_parts: dict[str, list[dict[str, Any]]] = {}
     for row in data["requirements"]:
         source = row.get("source", {})
+        semantic = row.get("semantic", {})
+        for field in ("actor", "condition", "action", "objects", "observableEffect", "operation"):
+            if not semantic.get(field):
+                errors.append(f"requirement {row.get('id')} lacks semantic.{field}")
+        if semantic.get("action") == "SOURCE-DEFINED-ACTION" or semantic.get("objects") == ["SOURCE-IDENTIFIED-OBJECT"]:
+            errors.append(f"requirement {row.get('id')} retains a non-reviewable semantic fallback")
         if row.get("paraphraseEn") == row.get("paraphraseZh"):
             errors.append(f"requirement {row.get('id')} bilingual paraphrases must differ")
         if any(token in row.get("paraphraseEn", "") for token in ("CLAUSE-SPECIFIC-BEHAVIOR", "SOURCE-DEFINED-NORMATIVE-BEHAVIOR")):
@@ -104,10 +142,11 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         timing = row.get("timing")
         if timing is not None:
             timing_fields = {
+                "provenanceKind", "sourceParameter",
                 "trigger", "response", "cancellation", "supersedingTrigger", "correlationKey",
                 "pairingPolicy", "concurrencyPolicy", "silenceSemantics", "lowerBound",
                 "upperBound", "unit", "lowerBoundary", "upperBoundary", "clockStart",
-                "clockResets", "observationState", "errorBudgetState",
+                "clockResets", "observationState", "errorBudgetState", "ambiguityStatus",
             }
             missing = timing_fields - set(timing)
             if missing:
@@ -130,22 +169,37 @@ def package_errors(data: dict[str, Any]) -> list[str]:
             if not triggers:
                 errors.append(f"665-5 requirement {row.get('id')} lacks a 615A-3 trigger")
             for trigger in triggers:
-                if trigger not in ids.get("requirements", set()) or not trigger.startswith("CRS-615A3-"):
+                if trigger not in requirement_by_id or requirement_by_id[trigger].get("source", {}).get("sourceId") != "ARINC-615A-3":
                     errors.append(f"665-5 requirement {row.get('id')} has invalid trigger {trigger}")
             if row.get("bounded665Decision") not in {
                 "APPLICABLE-AS-BOUNDED-6655-REFERENCE", "NOT-APPLICABLE-TO-CURRENT-PROFILE",
                 "DEFERRED-VERSION-GAP", "BLOCKED-BY-ARINC-645", "UNSUPPORTED-BY-CURRENT-SOURCE",
             }:
                 errors.append(f"665-5 requirement {row.get('id')} has invalid bounded decision")
-        hash_key = (str(source.get("sourceId")), str(source.get("clause")), int(source.get("pdfPage", 0)), str(row.get("sourceTextHash")))
+        hash_key = str(row.get("sourceUnitId"))
         source_hash_parts.setdefault(hash_key, []).append(row)
         relation = row.get("rhoRA", {})
         coverage_id = relation.get("sourceCoverageId")
         if coverage_id not in coverage_by_id or row.get("id") not in coverage_by_id.get(coverage_id, {}).get("requirementIds", []):
             errors.append(f"requirement {row.get('id')} rho_RA does not close to its coverage row")
+        else:
+            coverage_row = coverage_by_id[coverage_id]
+            identical_fields = (
+                "sourceUnitId", "source", "sourceTextHash", "sourceModality",
+                "conformanceEffect", "applicabilityDecision", "rationaleCode",
+            )
+            for field in identical_fields:
+                if row.get(field) != coverage_row.get(field):
+                    errors.append(f"requirement {row.get('id')} disagrees with coverage {coverage_id} on {field}")
     for rows in source_hash_parts.values():
         if len(rows) > 1 and any(not row.get("atomicPartId") or not row.get("splitRationale") for row in rows):
             errors.append(f"shared source hash requires atomicPartId and splitRationale: {[row.get('id') for row in rows]}")
+    mapped_counts = Counter(
+        requirement_id for coverage in data["coverageLedger"] for requirement_id in coverage.get("requirementIds", [])
+    )
+    for requirement_id in ids.get("requirements", set()):
+        if mapped_counts[requirement_id] != 1:
+            errors.append(f"requirement {requirement_id} must be mapped by exactly one coverage row")
     gap645 = next((row for row in data["gaps"] if row.get("id") == "GAP-ARINC-645"), None)
     expected_645 = {"CRC-VALIDATION", "CHECK-VALUE-VALIDATION", "NAMING-ALGORITHM-VALIDATION", "COMPLETE-INTEGRITY-VALIDATION"}
     if gap645 is None or gap645.get("status") != "NOT-ESTABLISHED" or set(gap645.get("affectedCapabilityIds", [])) != expected_645:
@@ -153,6 +207,25 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     for dependency in data["dependencies"]:
         if dependency.get("status") == "REGISTERED-SUPPORTING-SOURCE" and dependency.get("sourceId") not in bound_source_ids:
             errors.append(f"registered dependency {dependency.get('id')} lacks a controlled source binding")
+        source_id = str(dependency.get("sourceId", ""))
+        if re.search(r"RFC-\d+.*RFC-\d+|ARINC-\d+.*ARINC-\d+", source_id):
+            errors.append(f"dependency {dependency.get('id')} combines multiple source identities")
+    inventory_fp = fingerprint(source_inventory_projection(data))
+    timing_fp = fingerprint(timing_provenance_projection(data))
+    dependency_fp = fingerprint([row.get("sourceId") for row in data["dependencies"]])
+    if data["reviewControl"].get("sourceInventoryFingerprint") != inventory_fp:
+        errors.append("reviewControl.sourceInventoryFingerprint does not match the source-unit projection")
+    anchor_expectations = {
+        "sourceInventoryFingerprint": inventory_fp,
+        "coverageCount": len(data["coverageLedger"]),
+        "tableRowCount": sum(row.get("source", {}).get("fragmentKind") == "TABLE-ROW" for row in data["coverageLedger"]),
+        "sequenceEventCount": sum(row.get("source", {}).get("fragmentKind") == "SEQUENCE-EVENT" for row in data["coverageLedger"]),
+        "timingProvenanceFingerprint": timing_fp,
+        "dependencySourceIdentityFingerprint": dependency_fp,
+    }
+    for key, value in anchor_expectations.items():
+        if anchor.get(key) != value:
+            errors.append(f"RG0 anchor {key} does not match the candidate package")
     summary = data["inventorySummary"]
     expected = {
         "coverageCount": len(data["coverageLedger"]),
@@ -215,17 +288,22 @@ def render(data: dict[str, Any]) -> str:
         f"- Gaps: {len(data['gaps'])}",
         f"- Coverage fingerprint: `{data['inventorySummary']['coverageFingerprint']}`",
         f"- Requirements fingerprint: `{data['inventorySummary']['requirementsFingerprint']}`",
+        f"- Source-unit fingerprint: `{data['reviewControl']['sourceInventoryFingerprint']}`",
+        "- Automated checks cover structure and cross-record consistency only; proprietary-source completeness and fidelity require external RG0 review.",
     ]
     for title, key in (("Applicability", "applicabilityDecision"), ("Source modality", "sourceModality"), ("Conformance effect", "conformanceEffect")):
         lines += ["", f"## {title}", ""] + [f"- `{name}`: {count}" for name, count in sorted(_counts(requirements, key).items())]
     lines += ["", "## Open dependencies and gaps", ""]
     for row in data["dependencies"] + data["gaps"]:
         lines.append(f"- `{row['id']}` — {row['status']}: {row['summaryEn']} / {row['summaryZh']}")
-    lines += ["", "## CRS items", "", "| ID | Source | Modality / effect | Applicability | Review paraphrase | Dependencies / gaps |", "|---|---|---|---|---|---|"]
+    lines += ["", "## CRS items", "", "| ID | Source unit | Actor / condition / action / object / observable effect | Modality / effect | Applicability | Bilingual review paraphrase | Timing provenance | Dependencies / gaps |", "|---|---|---|---|---|---|---|---|"]
     for row in requirements:
         src = row["source"]
+        sem = row["semantic"]
+        semantic_view = f"`{sem['actor']}` / `{sem['condition']}` / `{sem['action']}` / `{', '.join(sem['objects'])}` / `{sem['observableEffect']}`"
+        timing_view = "—" if "timing" not in row else f"`{row['timing']['provenanceKind']}` / `{row['timing']['sourceParameter']}` / `{row['timing']['lowerBound']}..{row['timing']['upperBound']} {row['timing']['unit']}`"
         refs = ", ".join(row.get("dependencyIds", []) + row.get("gapIds", [])) or "—"
-        lines.append(f"| `{row['id']}` | `{src['sourceId']} {src['clause']} p.{src['documentPage']}` | `{row['sourceModality']}` / `{row['conformanceEffect']}` | `{row['applicabilityDecision']}` | {row['paraphraseEn']}<br>{row['paraphraseZh']} | {refs} |")
+        lines.append(f"| `{row['id']}` | `{row['sourceUnitId']}`<br>`{src['sourceId']} {src['clause']} p.{src['documentPage']}` | {semantic_view} | `{row['sourceModality']}` / `{row['conformanceEffect']}` | `{row['applicabilityDecision']}` | {row['paraphraseEn']}<br>{row['paraphraseZh']} | {timing_view} | {refs} |")
     lines += ["", "## Non-base and unresolved inventory", ""]
     for row in coverage:
         if row["applicabilityDecision"] not in {"APPLICABLE-BASE", "APPLICABLE-SUPPORTING"}:
@@ -244,16 +322,20 @@ def render(data: dict[str, Any]) -> str:
         f"- 依赖：{len(data['dependencies'])}", f"- 缺口：{len(data['gaps'])}",
         f"- 覆盖指纹：`{data['inventorySummary']['coverageFingerprint']}`",
         f"- 需求指纹：`{data['inventorySummary']['requirementsFingerprint']}`",
+        f"- 来源单元指纹：`{data['reviewControl']['sourceInventoryFingerprint']}`",
+        "- 自动检查只覆盖结构与跨记录一致性；专有来源的完整性与忠实度仍须外部 RG0 评审。",
     ]
     for title, key in (("适用性", "applicabilityDecision"), ("来源模态", "sourceModality"), ("符合性效果", "conformanceEffect")):
         lines += ["", f"## {title}", ""] + [f"- `{name}`：{count}" for name, count in sorted(_counts(requirements, key).items())]
     lines += ["", "## 开放依赖与缺口", ""]
     for row in data["dependencies"] + data["gaps"]:
         lines.append(f"- `{row['id']}` — {row['status']}：{row['summaryZh']}")
-    lines += ["", "## CRS 项", "", "| ID | 来源 | 模态／效果 | 适用性 | 评审释义 | 依赖／缺口 |", "|---|---|---|---|---|---|"]
+    lines += ["", "## CRS 项", "", "| ID | 来源单元 | 参与者／条件／行为／对象／可观察结果 | 模态／效果 | 适用性 | 双语评审释义 | 时序溯源 | 依赖／缺口 |", "|---|---|---|---|---|---|---|---|"]
     for row in requirements:
-        src = row["source"]; refs = ", ".join(row.get("dependencyIds", []) + row.get("gapIds", [])) or "—"
-        lines.append(f"| `{row['id']}` | `{src['sourceId']} {src['clause']} p.{src['documentPage']}` | `{row['sourceModality']}` / `{row['conformanceEffect']}` | `{row['applicabilityDecision']}` | {row['paraphraseZh']} | {refs} |")
+        src = row["source"]; sem = row["semantic"]; refs = ", ".join(row.get("dependencyIds", []) + row.get("gapIds", [])) or "—"
+        semantic_view = f"`{sem['actor']}` / `{sem['condition']}` / `{sem['action']}` / `{', '.join(sem['objects'])}` / `{sem['observableEffect']}`"
+        timing_view = "—" if "timing" not in row else f"`{row['timing']['provenanceKind']}` / `{row['timing']['sourceParameter']}` / `{row['timing']['lowerBound']}..{row['timing']['upperBound']} {row['timing']['unit']}`"
+        lines.append(f"| `{row['id']}` | `{row['sourceUnitId']}`<br>`{src['sourceId']} {src['clause']} p.{src['documentPage']}` | {semantic_view} | `{row['sourceModality']}` / `{row['conformanceEffect']}` | `{row['applicabilityDecision']}` | {row['paraphraseZh']} | {timing_view} | {refs} |")
     lines += ["", "## 非基础范围及未决清单", ""]
     for row in coverage:
         if row["applicabilityDecision"] not in {"APPLICABLE-BASE", "APPLICABLE-SUPPORTING"}:

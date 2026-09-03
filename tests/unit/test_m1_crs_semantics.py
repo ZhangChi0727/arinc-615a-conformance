@@ -32,6 +32,11 @@ def refresh_summary(data: dict) -> None:
     )
 
 
+def refresh_all_mutable_fingerprints(data: dict) -> None:
+    refresh_summary(data)
+    data["reviewControl"]["sourceInventoryFingerprint"] = m1.fingerprint(m1.source_inventory_projection(data))
+
+
 def test_package_is_valid_and_view_is_current() -> None:
     data = package()
     assert errors(data) == []
@@ -137,6 +142,62 @@ def test_compound_obligation_requires_inseparable_rationale() -> None:
 
 
 def test_open_dependency_cannot_be_closed_without_source_binding() -> None:
-    data = package(); dep = next(item for item in data["dependencies"] if item["id"] == "DEP-RFC-TFTP")
+    data = package(); dep = next(item for item in data["dependencies"] if item["id"] == "DEP-RFC-1350")
     dep["status"] = "REGISTERED-SUPPORTING-SOURCE"; refresh_summary(data)
     assert any("lacks a controlled source binding" in item for item in errors(data))
+
+
+def test_coordinated_locator_page_and_hash_forgery_is_stopped_by_rg0_anchor() -> None:
+    data = package()
+    requirement = data["requirements"][0]
+    coverage = next(row for row in data["coverageLedger"] if requirement["id"] in row["requirementIds"])
+    for row in (requirement, coverage):
+        row["source"]["clause"] = "FORGED-CLAUSE"
+        row["source"]["documentPage"] += 1
+        row["source"]["pdfPage"] += 1
+        row["sourceTextHash"] = "f" * 64
+    refresh_all_mutable_fingerprints(data)
+    assert any("RG0 anchor sourceInventoryFingerprint" in item for item in errors(data))
+
+
+def test_coverage_and_requirement_semantics_cannot_diverge() -> None:
+    data = package()
+    requirement = data["requirements"][0]
+    requirement["sourceModality"] = "MAY"
+    requirement["conformanceEffect"] = "OPTIONAL"
+    refresh_summary(data)
+    found = errors(data)
+    assert any("disagrees with coverage" in item for item in found)
+
+
+def test_coordinated_coverage_requirement_deletion_is_stopped_by_rg0_anchor() -> None:
+    data = package()
+    coverage = next(row for row in data["coverageLedger"] if len(row["requirementIds"]) == 1)
+    requirement_id = coverage["requirementIds"][0]
+    data["coverageLedger"] = [row for row in data["coverageLedger"] if row["id"] != coverage["id"]]
+    data["requirements"] = [row for row in data["requirements"] if row["id"] != requirement_id]
+    refresh_all_mutable_fingerprints(data)
+    assert any("RG0 anchor" in item for item in errors(data))
+
+
+def test_arbitrary_timing_added_to_non_timing_source_is_stopped() -> None:
+    data = package()
+    template = copy.deepcopy(next(row["timing"] for row in data["requirements"] if "timing" in row))
+    template.update(provenanceKind="FIXED-SOURCE-CONSTANT", sourceParameter="FORGED-TIMER", lowerBound=0, upperBound=999)
+    target = next(row for row in data["requirements"] if "timing" not in row)
+    target["timing"] = template
+    refresh_summary(data)
+    assert any("timingProvenanceFingerprint" in item for item in errors(data))
+
+
+def test_table_rows_sequence_events_and_dependency_identities_are_anchored() -> None:
+    for kind in ("TABLE-ROW", "SEQUENCE-EVENT"):
+        data = package()
+        index = next(i for i, row in enumerate(data["coverageLedger"]) if row["source"]["fragmentKind"] == kind and not row["requirementIds"])
+        data["coverageLedger"].pop(index)
+        refresh_all_mutable_fingerprints(data)
+        assert any(f"{kind.lower().replace('-', '')}"[:5] in item.lower() or "coverageCount" in item for item in errors(data))
+    data = package()
+    data["dependencies"][0]["sourceId"] = "RFC-1350-RFC-2347"
+    refresh_summary(data)
+    assert any("combines multiple source identities" in item for item in errors(data))
