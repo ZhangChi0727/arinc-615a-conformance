@@ -12,8 +12,11 @@ from pathlib import Path
 from typing import Any
 import re
 
+import jsonschema
+
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_PATH = ROOT / "configs/requirements/arinc_615a3_m1_crs.json"
+SCHEMA_PATH = ROOT / "configs/requirements/m1_crs_package.schema.json"
 VIEW_PATH = ROOT / "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md"
 
 
@@ -31,6 +34,11 @@ def fingerprint(records: list[dict[str, Any]]) -> str:
 
 def load_package(path: Path = PACKAGE_PATH) -> dict[str, Any]:
     data = json.loads(path.read_text(encoding="utf-8"))
+    schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    try:
+        jsonschema.Draft202012Validator(schema).validate(data)
+    except jsonschema.ValidationError as exc:
+        raise M1Error(f"schema violation at {list(exc.absolute_path)}: {exc.message}") from exc
     errors = package_errors(data)
     if errors:
         raise M1Error("; ".join(errors))
