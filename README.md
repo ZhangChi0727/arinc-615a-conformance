@@ -52,15 +52,15 @@ silently redefine the Core.
 
 **M1 CRS and requirement-level applicability candidate**
 
-- Establish a single machine-readable candidate package for ARINC 615A-3 coverage, requirement applicability and atomic CRS items.
+- Rebuild the single machine-readable candidate package around leaf-level prose, table-row and sequence-event source units.
 - Apply a dependency-bounded ARINC 665-5 survey triggered only by 615A-3 and current Profile services.
-- Keep ARINC 645 and other unregistered normative dependencies open while preventing claim or capability promotion.
-- Expose a deterministic review view for joint independent RG0/RG1 review of the unchanged final Head.
+- Separate fixed timing constants, message-carried parameters, symbolic parameters and examples while keeping ARINC 645 open.
+- Expose actor-condition-action-object-effect semantics and an RG0 anchor for a full renewed RG0/RG1 review.
 
 State changes:
 
 - M0 is externally verified and M1 now owns the candidate CRS/applicability package under CR-2026-007.
-- The current stop moves to the M2 Profile/model-refinement gate, which remains not established until M1 approval and merge.
+- The M1 gate remains open in REWORK; RG0 and RG1 are not approved and M2 remains prohibited.
 
 Unchanged boundaries:
 
@@ -72,11 +72,11 @@ Unchanged boundaries:
 
 ## Current stop
 
-`PROFILE-MODEL-REFINEMENT-GATE` — **NOT YET ESTABLISHED**: After M1 independent approval and ordinary merge, prepare a separate M2 work order for Profile, Binding and observable timed EFSM refinement.
+`PROFILE-MODEL-REFINEMENT-GATE` — **NOT YET ESTABLISHED**: M2 remains not established: first complete full RG0 source-boundary and RG1 requirement-semantic review over the complete M1 branch range and merge the approved unchanged Head.
 
 ## Next development steps
 
-- Obtain joint independent RG0/RG1 review on the unchanged final M1 Head.
+- Obtain renewed joint independent RG0/RG1 review over the complete M1 branch range on the unchanged final Head.
 - Only after approval, ordinary merge, successful main CI and cleanup, prepare a separate M2 work order.
 
 ## 当前开发图景
@@ -102,15 +102,15 @@ Unchanged boundaries:
 
 **M1 CRS 与需求级适用性候选**
 
-- 建立单一机器可读候选包，承载 ARINC 615A-3 覆盖、需求适用性与原子 CRS 项。
+- 围绕叶级正文、表格行和序列事件来源单元重建单一机器可读候选包。
 - 仅由 615A-3 与当前 Profile 服务触发 ARINC 665-5 有边界调查。
-- 保持 ARINC 645 及其它未登记规范依赖开放，并阻止主张或能力提前晋级。
-- 提供确定性评审视图，供同一最终 Head 上的独立 RG0/RG1 联合评审。
+- 区分固定时序常数、消息携带参数、符号参数和示例，并保持 ARINC 645 开放。
+- 提供参与者—条件—行为—对象—效果语义及 RG0 锚点，以执行完整的新一轮 RG0/RG1 评审。
 
 状态变化：
 
 - M0 已获外部核验，M1 现由 CR-2026-007 控制候选 CRS/适用性数据包。
-- 当前停点移至 M2 Profile/模型精化门；该门在 M1 批准并合并前保持未建立。
+- M1 门保持 REWORK；RG0 与 RG1 尚未批准，M2 继续禁止启动。
 
 保持不变的边界：
 
@@ -122,11 +122,11 @@ Unchanged boundaries:
 
 ## 当前停点
 
-`PROFILE-MODEL-REFINEMENT-GATE` — **NOT YET ESTABLISHED**：M1 独立批准并普通合并后，另编 M2 工作单以精化 Profile、Binding 与可观测 timed EFSM。
+`PROFILE-MODEL-REFINEMENT-GATE` — **NOT YET ESTABLISHED**：M2 保持未建立：必须先对完整 M1 分支范围完成 RG0 来源边界与 RG1 需求语义评审，并合并获批且不再变化的 Head。
 
 ## 下一步开发计划
 
-- 在不再变化的 M1 最终 Head 上取得独立 RG0/RG1 联合评审。
+- 在不再变化的最终 Head 上，对完整 M1 分支范围取得新一轮独立 RG0/RG1 联合评审。
 - 仅在批准、普通合并、main CI 成功并清理后，另编 M2 工作单。
 <!-- project-status:end -->
 
