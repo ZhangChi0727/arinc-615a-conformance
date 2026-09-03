@@ -11,14 +11,14 @@ population; it is not itself Verification Basis. An applicable CRS item may play
 a candidate typed-basis role, while VO and Test Purpose correspondence with
 external method objects remains `NOT-DETERMINED` pending review.
 
-## Planned controlled artifacts
+## M1 controlled artifacts
 
 | Artifact | Suggested file | Gate |
 |---|---|---|
 | Applicability and observation declaration | `APPLICABILITY.md` | RG0 |
 | CRS item schema and extraction instructions | `CRS_SCHEMA.md` | RG1 |
-| Controlled CRS export | `CRS-<version>.csv/json` | RG1 |
-| Adjudication log | `CRS_ADJUDICATION.md` | RG1 |
+| Sole authoritative package | `configs/requirements/arinc_615a3_m1_crs.json` | RG0/RG1 |
+| Generated review view | `docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md` | RG0/RG1 |
 | Traceability schema | `TRACEABILITY_SCHEMA.md` | RG2/RG3 |
 | Verification Objective schema | `VERIFICATION_OBJECTIVE.md` | RG2/RG3 |
 | Timing-obligation catalog | `TIMING_OBLIGATIONS-<version>.yaml/json` | RG1/RG2 |
@@ -44,6 +44,11 @@ cancellation/silence, bounds, units, clock start/resets, inclusivity, and source
 - requirement text is replaced by a hash or approved paraphrase in public data;
 - no VC is “covered” merely because a link exists; obligation and oracle
   adequacy require review.
+- 615A-3 coverage is full-scope; 665-5 coverage is dependency-bounded and must
+  identify its triggering 615A-3 item or selected service;
+- implementation and tests cannot substitute for an unresolved normative
+  dependency;
+- no handoff, adjudication Markdown or duplicate status table owns M1 state.
 
 ---
 
@@ -59,6 +64,8 @@ PICS-like 声明控制适用性及由此产生的 CRS 总体，但本身不是 V
 ## 计划中的受控产物
 
 包括 RG0 的适用性/观测声明，RG1 的 CRS schema、受控导出和裁决日志，RG2/RG3 的追踪 schema，RG1/RG2 的时序义务目录，以及满足 G1 的需求→TP→VC 机器可读矩阵。
+
+M1 采用 `configs/requirements/arinc_615a3_m1_crs.json` 作为唯一权威，并生成 `docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md` 供 RG0/RG1 评审。615A-3 做全范围覆盖，665-5 只做可追溯到 615A-3 项或所选服务的有边界审计；实现和测试不能替代未闭合的规范依赖，也不新增 HANDOFF 或重复状态表。
 
 ## CRS 最小字段
 

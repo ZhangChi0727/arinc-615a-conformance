@@ -1,8 +1,9 @@
 # CRS Schema
 
 Each controlled Conformance Requirement Set item uses the following conceptual
-schema. A machine-readable JSON Schema should implement it in engineering
-increment E0.
+schema. For M1, `configs/requirements/m1_crs_package.schema.json` is the
+machine-readable contract and `configs/requirements/arinc_615a3_m1_crs.json`
+is the sole package authority.
 
 ```json
 {
@@ -74,6 +75,19 @@ increment E0.
 - an ambiguous trigger/response/cancellation match is invalid measurement
   configuration and produces `ERROR`, not an IUT `FAIL`.
 
+## M1 additions
+
+- every locator is structured as source, clause, table/figure, document page,
+  PDF page, fragment kind and ordinal;
+- source modality and conformance effect are separate controlled fields;
+- `SHOULD` retains the source convention's minimum-compatibility effect;
+- `MAY` capability and its implemented-case constraints are separate items;
+- public records contain only a logical-statement hash and non-reconstructive
+  bilingual paraphrases, never proprietary source text;
+- unknown and unbounded timing endpoints are distinct controlled states;
+- compound statements are split with stable atomic-part identity or carry an
+  inseparability rationale.
+
 ---
 
 # 中文版
@@ -135,3 +149,7 @@ increment E0.
 ## 不变量
 
 ID 唯一且不得重用；来源和版本强制；公开产物仅保存 hash 或批准释义；每个已批准适用条目至少含一个义务；解释或适用性变化必须形成新评审版本；复合规范语句原则上拆分。含 `timing` 义务的项目必须有完整时序对象，空上下界表示该界不存在而不是未知；触发、响应、取消、替代、关联/配对、并发、静默、端点包含性、单位、时钟启动/复位和误差预算引用均是经评审语义，不能由测试代码推断。歧义配对属于测量配置无效并产生 `ERROR`，不得记作 IUT `FAIL`。
+
+## M1 增补
+
+M1 的机器契约与唯一数据权威分别为 `configs/requirements/m1_crs_package.schema.json` 和 `configs/requirements/arinc_615a3_m1_crs.json`。来源定位必须结构化；原始模态与符合性效果分离；`SHOULD` 保留来源规定的最低兼容性效果；`MAY` 能力与其实现后的条件义务拆分。公开记录只保存逻辑语句 hash 与不可逆中英文释义。未知界限与真正无界必须分开；复合语句必须拆分或登记不可分理由。

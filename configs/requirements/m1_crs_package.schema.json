@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:arinc615a:m1-crs-package:1",
+  "title": "M1 CRS and applicability package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "artifactId", "artifactVersion", "candidateDisposition", "sourceBindings", "profileScope", "coverageLedger", "requirements", "dependencies", "gaps", "reviewControl", "inventorySummary", "activation"],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[A-Z][A-Z0-9._-]+$"},
+    "locator": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sourceId", "clause", "tableOrFigure", "documentPage", "pdfPage", "fragmentKind", "fragmentOrdinal"],
+      "properties": {
+        "sourceId": {"$ref": "#/$defs/id"}, "clause": {"type": "string", "minLength": 1},
+        "tableOrFigure": {"type": ["string", "null"]}, "documentPage": {"type": "integer", "minimum": 1},
+        "pdfPage": {"type": "integer", "minimum": 1}, "fragmentKind": {"enum": ["PARAGRAPH", "LIST-ITEM", "TABLE-CELL", "FIGURE-NOTE", "SEQUENCE-CHART", "HEADING-SCOPE"]},
+        "fragmentOrdinal": {"type": "integer", "minimum": 1}
+      }
+    },
+    "applicability": {"enum": ["APPLICABLE-BASE", "APPLICABLE-SUPPORTING", "CONDITIONAL", "DEFERRED-FUTURE-SCOPE", "OUT-OF-PROFILE", "BLOCKED-BY-DEPENDENCY", "UNRESOLVED"]},
+    "modality": {"enum": ["SHOULD", "MUST", "MAY", "FACT", "TABLE-CONSTRAINT", "FIGURE-CONSTRAINT", "COMMENTARY"]},
+    "effect": {"enum": ["REQUIRED", "CONDITIONAL-REQUIRED", "PROHIBITED", "OPTIONAL", "INFORMATIVE", "UNRESOLVED"]},
+    "timing": {
+      "type": "object", "additionalProperties": false,
+      "required": ["trigger", "response", "cancellation", "supersedingTrigger", "correlationKey", "pairingPolicy", "concurrencyPolicy", "silenceSemantics", "lowerBound", "upperBound", "unit", "lowerBoundary", "upperBoundary", "clockStart", "clockResets", "observationState", "errorBudgetState"],
+      "properties": {
+        "trigger": {"type": "string", "minLength": 1}, "response": {"type": "string", "minLength": 1},
+        "cancellation": {"type": "string", "minLength": 1}, "supersedingTrigger": {"type": "string", "minLength": 1},
+        "correlationKey": {"type": "string", "minLength": 1}, "pairingPolicy": {"type": "string", "minLength": 1},
+        "concurrencyPolicy": {"type": "string", "minLength": 1}, "silenceSemantics": {"type": "string", "minLength": 1},
+        "lowerBound": {"oneOf": [{"type": "number"}, {"enum": ["UNBOUNDED", "UNRESOLVED"]}]},
+        "upperBound": {"oneOf": [{"type": "number"}, {"enum": ["UNBOUNDED", "UNRESOLVED"]}]},
+        "unit": {"enum": ["s", "ms", "us", "ns"]}, "lowerBoundary": {"enum": ["OPEN", "CLOSED", "UNBOUNDED", "UNRESOLVED"]},
+        "upperBoundary": {"enum": ["OPEN", "CLOSED", "UNBOUNDED", "UNRESOLVED"]}, "clockStart": {"type": "string", "minLength": 1},
+        "clockResets": {"type": "array", "items": {"type": "string"}},
+        "observationState": {"enum": ["OBSERVABLE-IN-PRINCIPLE", "CONFIGURATION-DEPENDENT", "INTERNAL-NOT-OBSERVABLE", "DEPENDENCY-BLOCKED", "UNRESOLVED"]},
+        "errorBudgetState": {"enum": ["FUTURE-CONFIGURATION-DEPENDENT", "NOT-REQUIRED", "UNRESOLVED"]}
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": {"const": "1.0"}, "artifactId": {"$ref": "#/$defs/id"}, "artifactVersion": {"type": "string", "minLength": 1},
+    "candidateDisposition": {"const": "ADOPT"}, "sourceBindings": {"type": "array", "minItems": 1},
+    "profileScope": {"type": "object"},
+    "coverageLedger": {"type": "array", "items": {"type": "object", "required": ["id", "source", "sourceModality", "conformanceEffect", "applicabilityDecision", "rationaleCode"], "properties": {"id": {"$ref": "#/$defs/id"}, "source": {"$ref": "#/$defs/locator"}, "sourceModality": {"$ref": "#/$defs/modality"}, "conformanceEffect": {"$ref": "#/$defs/effect"}, "applicabilityDecision": {"$ref": "#/$defs/applicability"}, "rationaleCode": {"type": "string", "minLength": 1}}}},
+    "requirements": {"type": "array", "items": {"type": "object", "required": ["id", "source", "sourceTextHash", "hashCanonicalizationId", "paraphraseEn", "paraphraseZh", "sourceModality", "conformanceEffect", "applicabilityDecision", "rationaleCode", "roles", "operations", "category", "obligations", "interpretationStatus", "ambiguityStatus", "dependencyIds", "gapIds", "reviewStatus", "rhoRA"], "properties": {"id": {"$ref": "#/$defs/id"}, "source": {"$ref": "#/$defs/locator"}, "sourceTextHash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "hashCanonicalizationId": {"const": "ARINC-LOGICAL-STATEMENT-NFC-LF-HWS-v1"}, "paraphraseEn": {"type": "string", "minLength": 1}, "paraphraseZh": {"type": "string", "minLength": 1}, "sourceModality": {"$ref": "#/$defs/modality"}, "conformanceEffect": {"$ref": "#/$defs/effect"}, "applicabilityDecision": {"$ref": "#/$defs/applicability"}, "rationaleCode": {"type": "string"}, "roles": {"type": "array", "minItems": 1}, "operations": {"type": "array", "minItems": 1}, "category": {"type": "string"}, "obligations": {"type": "array", "minItems": 1}, "interpretationStatus": {"type": "string"}, "ambiguityStatus": {"type": "string"}, "dependencyIds": {"type": "array"}, "gapIds": {"type": "array"}, "reviewStatus": {"const": "PENDING-EXTERNAL-INDEPENDENT-REVIEW"}, "rhoRA": {"type": "object"}, "timing": {"$ref": "#/$defs/timing"}}}},
+    "dependencies": {"type": "array"}, "gaps": {"type": "array"}, "reviewControl": {"type": "object"},
+    "inventorySummary": {"type": "object"}, "activation": {"type": "object"}
+  }
+}
