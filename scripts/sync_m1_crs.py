@@ -10,6 +10,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 from typing import Any
+import re
 
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_PATH = ROOT / "configs/requirements/arinc_615a3_m1_crs.json"
@@ -75,6 +76,7 @@ def package_errors(data: dict[str, Any]) -> list[str]:
                 errors.append(f"coverage {row.get('id')} has dangling requirement {requirement_id}")
     if len(locators) != len(set(locators)):
         errors.append("coverage locators must be unique")
+    coverage_by_id = {row.get("id"): row for row in data["coverageLedger"]}
     source_hash_parts: dict[tuple[str, str, int, str], list[dict[str, Any]]] = {}
     for row in data["requirements"]:
         source = row.get("source", {})
@@ -124,6 +126,10 @@ def package_errors(data: dict[str, Any]) -> list[str]:
                 errors.append(f"665-5 requirement {row.get('id')} has invalid bounded decision")
         hash_key = (str(source.get("sourceId")), str(source.get("clause")), int(source.get("pdfPage", 0)), str(row.get("sourceTextHash")))
         source_hash_parts.setdefault(hash_key, []).append(row)
+        relation = row.get("rhoRA", {})
+        coverage_id = relation.get("sourceCoverageId")
+        if coverage_id not in coverage_by_id or row.get("id") not in coverage_by_id.get(coverage_id, {}).get("requirementIds", []):
+            errors.append(f"requirement {row.get('id')} rho_RA does not close to its coverage row")
     for rows in source_hash_parts.values():
         if len(rows) > 1 and any(not row.get("atomicPartId") or not row.get("splitRationale") for row in rows):
             errors.append(f"shared source hash requires atomicPartId and splitRationale: {[row.get('id') for row in rows]}")
@@ -147,6 +153,21 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         errors.append("RG0/RG1 must remain pending in the Draft package")
     if data["activation"].get("formalApproval") != "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED":
         errors.append("M1 formal approval must remain external and unsatisfied")
+    forbidden_keys = {"rawSourceText", "sourceText", "quote", "excerpt", "screenshot", "payload", "pdfPath"}
+    machine_path = re.compile(r"(?i)(?:[a-z]:[\\/]|file://|/(?:home|Users)/[^/]+/)")  # STABLE_INVARIANT
+    reversible = re.compile(r"^(?:[A-Za-z0-9+/]{160,}={0,2}|[0-9a-fA-F]{256,})$")
+    def scan(value: Any, path: str = "$") -> None:
+        if isinstance(value, dict):
+            for key, child in value.items():
+                if key in forbidden_keys:
+                    errors.append(f"proprietary-source field is prohibited at {path}.{key}")
+                scan(child, f"{path}.{key}")
+        elif isinstance(value, list):
+            for index, child in enumerate(value): scan(child, f"{path}[{index}]")
+        elif isinstance(value, str):
+            if machine_path.search(value): errors.append(f"machine-local path is prohibited at {path}")
+            if reversible.fullmatch(value): errors.append(f"reversible source payload is prohibited at {path}")
+    scan(data)
     return errors
 
 
