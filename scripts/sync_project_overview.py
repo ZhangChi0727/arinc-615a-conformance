@@ -420,6 +420,12 @@ def render_status_block(
         f"[`activation control`]({lifecycle['formalActivationControlPath']}), "
         f"[`technical decisions`]({technical['decisionRecordPath']})"
     )
+    requirements_control = sources.get("requirementsControl")
+    if requirements_control:
+        deep_links += (
+            f", [`M1 package`]({requirements_control['packagePath']})"
+            f", [`generated M1 review view`]({requirements_control['reviewViewPath']})"
+        )
     return f"""## Current development picture
 
 | Dimension | Controlled state |

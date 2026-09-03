@@ -4,6 +4,9 @@ This document controls ARINC-domain research, experiments and claim ownership.
 Current lifecycle state is shown only in the [root README](../../README.md) and
 [`project-status.json`](../../project-status.json). Controlled source identities
 are in [`controlled_sources.json`](../../configs/research/controlled_sources.json).
+The M1 output is the authoritative
+[`CRS/applicability package`](../../configs/requirements/arinc_615a3_m1_crs.json);
+its [review view](../control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md) is generated.
 
 ## 1. Research objective and authority boundary
 
@@ -59,7 +62,8 @@ TTCN-3 is neither a dependency nor selected platform.
 | R5 | replication and synthesis | M9 separately approved scope expansion and later cross-instance work |
 
 R0–R5 are research views of M0–M9, not a competing lifecycle. Each delivery
-stage is serial and independently reviewed. M1 must not start within M0.
+stage is serial and independently reviewed. M2 must not start before M1 is
+independently approved and ordinarily merged.
 
 ## 5. Open-source and claim discipline
 
@@ -81,6 +85,9 @@ evaluation, protocol conformance, certification or authority acceptance.
 本文档控制 ARINC 领域研究、实验和主张归属。当前生命周期状态只在[根 README](../../README.md)
 和 [`project-status.json`](../../project-status.json) 展示；来源身份由
 [`controlled_sources.json`](../../configs/research/controlled_sources.json) 控制。
+M1 输出由权威
+[`CRS/适用性数据包`](../../configs/requirements/arinc_615a3_m1_crs.json) 承载；
+[评审视图](../control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md) 为生成物。
 
 ## 1. 研究目标与权威边界
 
@@ -124,7 +131,7 @@ DTMC、HMM/ML 与 Bayesian calibration；TTCN-3 不是依赖或选定平台。
 | R4 | 有界充分性与诊断 | M8 有限故障域覆盖/mutation |
 | R5 | 复现与综合 | M9 单独批准的范围扩展及以后跨实例工作 |
 
-R0～R5 是 M0～M9 的研究视图，不是竞争生命周期。交付阶段串行且分别评审；M0 内不得启动 M1。
+R0～R5 是 M0～M9 的研究视图，不是竞争生命周期。交付阶段串行且分别评审；M1 未独立批准并普通合并前不得启动 M2。
 
 ## 5. 开源与主张纪律
 

@@ -115,13 +115,20 @@
     }
   },
   "lifecycle": {
-    "currentStageId": "M0",
-    "nextStageId": "M1",
+    "currentStageId": "M1",
+    "nextStageId": "M2",
     "candidateDisposition": "ADOPT",
-    "formalActivationControlPath": "docs/control/changes/CR-2026-006.md",
+    "formalActivationControlPath": "docs/control/changes/CR-2026-007.md",
     "repositoryMergeEvidence": "EXTERNAL-VERIFICATION-REQUIRED",
     "independentApproval": "NOT-AUTOMATED",
     "nextStageEntryRule": "PROHIBITED-UNTIL-APPROVAL-AND-ORDINARY-MERGE-VERIFIED"
+  },
+  "requirementsControl": {
+    "packagePath": "configs/requirements/arinc_615a3_m1_crs.json",
+    "schemaPath": "configs/requirements/m1_crs_package.schema.json",
+    "reviewViewPath": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
+    "generatorPath": "scripts/sync_m1_crs.py",
+    "reviewState": "PENDING-EXTERNAL-INDEPENDENT-REVIEW"
   },
   "protectedStateConstraints": [
     {"path": "claimsBoundary.projectConfigurationStatus", "equals": "NOT YET ESTABLISHED"},
@@ -132,9 +139,9 @@
     {"path": "claimsBoundary.authorityAccepted", "equals": false}
   ],
   "roadmap": [
-    {"id": "M0", "status": "DISPOSITION-ADOPT", "gateId": "SOURCE-TECHNICAL-DIRECTION-GATE", "dependsOn": []},
-    {"id": "M1", "status": "NEXT-BLOCKED-BY-FINAL-GATE", "gateId": "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE", "dependsOn": ["M0"]},
-    {"id": "M2", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "PROFILE-MODEL-REFINEMENT-GATE", "dependsOn": ["M1"]},
+    {"id": "M0", "status": "COMPLETED-EXTERNALLY-VERIFIED", "gateId": "SOURCE-TECHNICAL-DIRECTION-GATE", "dependsOn": []},
+    {"id": "M1", "status": "DISPOSITION-ADOPT", "gateId": "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE", "dependsOn": ["M0"]},
+    {"id": "M2", "status": "NEXT-BLOCKED-BY-FINAL-GATE", "gateId": "PROFILE-MODEL-REFINEMENT-GATE", "dependsOn": ["M1"]},
     {"id": "M3", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "EXECUTABLE-FOUNDATION-GATE", "dependsOn": ["M2"]},
     {"id": "M4", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "INFORMATION-BOOTSTRAP-GATE", "dependsOn": ["M3"]},
     {"id": "M5", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "UPLOAD-BASE-VCS-GATE", "dependsOn": ["M4"]},
