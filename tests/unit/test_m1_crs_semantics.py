@@ -213,3 +213,88 @@ def test_table_rows_sequence_events_and_dependency_identities_are_anchored() -> 
     data["dependencies"][0]["sourceId"] = "RFC-1350-RFC-2347"
     refresh_summary(data)
     assert any("combines multiple source identities" in item for item in errors(data))
+
+
+def test_cross_reference_cannot_move_a_unit_to_another_clause() -> None:
+    data = package()
+    coverage = next(row for row in data["coverageLedger"] if row["source"]["pdfPage"] == 94 and row["source"]["clause"] == "6.4.7")
+    coverage["source"]["clause"] = "6.4.10"
+    for requirement_id in coverage["requirementIds"]:
+        data["requirements"][int(requirement_id.rsplit("-", 1)[1]) - 1]["source"]["clause"] = "6.4.10"
+    refresh_all_mutable_fingerprints(data)
+    assert any("controlled clause page span" in item for item in errors(data))
+
+
+def test_appendix_namespace_cannot_be_removed() -> None:
+    data = package()
+    coverage = next(row for row in data["coverageLedger"] if row["source"]["clause"].startswith("A-"))
+    coverage["source"]["clause"] = coverage["source"]["clause"].removeprefix("A-")
+    refresh_all_mutable_fingerprints(data)
+    assert any("controlled namespace APPENDIX-A" in item for item in errors(data))
+
+
+def test_prose_atomicity_and_table_exclusive_ownership_are_enforced() -> None:
+    data = package()
+    prose = next(row for row in data["coverageLedger"] if row["source"]["fragmentKind"] == "PROSE-SENTENCE")
+    prose["atomicity"]["sentenceCount"] = 2
+    refresh_all_mutable_fingerprints(data)
+    assert any("exactly one sentence" in item for item in errors(data))
+    data = package()
+    row = next(item for item in data["coverageLedger"] if item["source"].get("tableOrFigure") == "Table 6.4.10-1")
+    row["source"].update(fragmentKind="PROSE-SENTENCE", fragmentOrdinal=4, tableOrFigure=None)
+    row["atomicity"].update(ownershipKind="PROSE-SENTENCE", sentenceCount=1)
+    refresh_all_mutable_fingerprints(data)
+    assert any("prose co-owners" in item for item in errors(data))
+
+
+def test_generic_semantics_empty_tokens_and_direction_reversal_are_rejected() -> None:
+    for field, value in (
+        ("condition", "SOURCE-BOUND-OBSERVABLE-TRIGGER"),
+        ("action", "SATISFY-"),
+        ("objects", ["CLAUSE-SPECIFIC-SUBJECT-MATTER"]),
+    ):
+        data = package(); row = data["requirements"][0]
+        row["semantic"][field] = value; refresh_summary(data)
+        assert any("non-reviewable semantic fallback" in item for item in errors(data))
+    data = package()
+    row = next(item for item in data["requirements"] if item["sourceTextHash"] == "00560acc8acc232b1eb1c81882c7270c775e75b59793df9f3829c7a6a4b838c2")
+    row["semantic"]["action"] = "PROHIBIT-COMBINATION"; refresh_summary(data)
+    assert any("semantic assertion failed" in item for item in errors(data))
+
+
+def test_timing_semantics_cannot_collapse_to_one_placeholder_tuple() -> None:
+    data = package()
+    template = copy.deepcopy(next(row["timing"] for row in data["requirements"] if "timing" in row))
+    for row in data["requirements"]:
+        if "timing" in row:
+            row["timing"].update({key: template[key] for key in ("timingFamily", "trigger", "response", "cancellation", "supersedingTrigger", "correlationKey", "pairingPolicy")})
+    refresh_summary(data)
+    assert any("generic shared event semantics" in item for item in errors(data))
+
+
+def test_665_profile_scope_and_requirement_edges_are_distinct() -> None:
+    data = package()
+    rows = [row for row in data["requirements"] if row["source"]["sourceId"] == "ARINC-665-5"]
+    broadcast = list(rows[0]["triggeredByRequirementIds"])
+    for row in rows:
+        row["triggeredByRequirementIds"] = broadcast
+    refresh_summary(data)
+    assert any("broadcast requirement trigger set" in item for item in errors(data))
+    data = package(); row = next(item for item in data["requirements"] if item["source"]["sourceId"] == "ARINC-665-5")
+    row["profileScopeTriggerIds"] = row["profileScopeTriggerIds"][:1]; refresh_summary(data)
+    assert any("profile-scope trigger set" in item for item in errors(data))
+
+
+def test_structured_status_meaning_display_and_footnote_are_anchored() -> None:
+    data = package()
+    row = next(item for item in data["requirements"] if item.get("statusTableConstraint", {}).get("kind") == "STATUS-CODE")
+    row["statusTableConstraint"]["meaningCode"] = "REVERSED-MEANING"
+    refresh_summary(data)
+    assert any("statusTableFingerprint" in item for item in errors(data))
+    data = package()
+    footnote = next(item for item in data["requirements"] if item.get("statusTableConstraint", {}).get("kind") == "DISPLAY-FOOTNOTE")
+    coverage_id = footnote["rhoRA"]["sourceCoverageId"]
+    data["requirements"] = [item for item in data["requirements"] if item["id"] != footnote["id"]]
+    next(item for item in data["coverageLedger"] if item["id"] == coverage_id)["requirementIds"] = []
+    refresh_all_mutable_fingerprints(data)
+    assert any("statusTableFingerprint" in item for item in errors(data))
