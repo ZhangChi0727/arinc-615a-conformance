@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0",
+  "artifactId": "ARINC-M1-SOURCE-SECTION-SPANS",
+  "policy": {
+    "locatorTransition": "FORMATTED-HEADING-ONLY",
+    "bodyCrossReferencesChangeLocator": false,
+    "attachmentAndAppendixNamespaceRequired": true
+  },
+  "exclusiveOwnershipRegions": [
+    {
+      "sourceId": "ARINC-615A-3",
+      "pdfPage": 97,
+      "tableOrFigure": "Table 6.4.10-1",
+      "proseFragmentOrdinalFrom": 4,
+      "ownerKinds": ["TABLE-ROW", "TABLE-FOOTNOTE"]
+    }
+  ],
+  "clausePageGuards": [
+    {"sourceId": "ARINC-615A-3", "clausePrefix": "6.4.1", "pdfPages": [79, 80]},
+    {"sourceId": "ARINC-615A-3", "clausePrefix": "6.4.2", "pdfPages": [80, 82]},
+    {"sourceId": "ARINC-615A-3", "clausePrefix": "6.4.3", "pdfPages": [82, 84]},
+    {"sourceId": "ARINC-615A-3", "clausePrefix": "6.4.4", "pdfPages": [84, 85]},
+    {"sourceId": "ARINC-615A-3", "clausePrefix": "6.4.5", "pdfPages": [86, 90]},
+    {"sourceId": "ARINC-615A-3", "clausePrefix": "6.4.6", "pdfPages": [90, 91]},
+    {"sourceId": "ARINC-615A-3", "clausePrefix": "6.4.7", "pdfPages": [91, 94]},
+    {"sourceId": "ARINC-615A-3", "clausePrefix": "6.4.8", "pdfPages": [95, 96]},
+    {"sourceId": "ARINC-615A-3", "clausePrefix": "6.4.9", "pdfPages": [96, 96]},
+    {"sourceId": "ARINC-615A-3", "clausePrefix": "6.4.10", "pdfPages": [96, 97]}
+  ],
+  "sources": [
+    {
+      "sourceId": "ARINC-615A-3",
+      "spans": [
+        {"namespace": "SECTION-1", "documentPages": [1, 6], "pdfPages": [13, 18]},
+        {"namespace": "SECTION-2", "documentPages": [7, 13], "pdfPages": [19, 25]},
+        {"namespace": "SECTION-3", "documentPages": [14, 16], "pdfPages": [26, 28]},
+        {"namespace": "SECTION-4", "documentPages": [17, 21], "pdfPages": [29, 33]},
+        {"namespace": "SECTION-5", "documentPages": [22, 41], "pdfPages": [34, 53]},
+        {"namespace": "SECTION-6", "documentPages": [42, 85], "pdfPages": [54, 97]},
+        {"namespace": "ATTACHMENT-1", "documentPages": [86, 87], "pdfPages": [98, 99]},
+        {"namespace": "ATTACHMENT-2", "documentPages": [88, 94], "pdfPages": [100, 106]},
+        {"namespace": "ATTACHMENT-3", "documentPages": [95, 98], "pdfPages": [107, 110]},
+        {"namespace": "ATTACHMENT-4", "documentPages": [99, 109], "pdfPages": [111, 121]},
+        {"namespace": "ATTACHMENT-5", "documentPages": [110, 110], "pdfPages": [122, 122]},
+        {"namespace": "APPENDIX-A", "documentPages": [111, 112], "pdfPages": [123, 124]},
+        {"namespace": "APPENDIX-B", "documentPages": [113, 114], "pdfPages": [125, 126]},
+        {"namespace": "APPENDIX-C", "documentPages": [115, 116], "pdfPages": [127, 128]},
+        {"namespace": "APPENDIX-D", "documentPages": [117, 121], "pdfPages": [129, 133]},
+        {"namespace": "APPENDIX-E", "documentPages": [122, 122], "pdfPages": [134, 134]},
+        {"namespace": "APPENDIX-F", "documentPages": [123, 124], "pdfPages": [135, 136]},
+        {"namespace": "APPENDIX-G", "documentPages": [125, 133], "pdfPages": [137, 145]}
+      ]
+    },
+    {
+      "sourceId": "ARINC-665-5",
+      "spans": [
+        {"namespace": "BOUNDED-SURVEY", "documentPages": [1, 21], "pdfPages": [11, 31]}
+      ]
+    }
+  ]
+}

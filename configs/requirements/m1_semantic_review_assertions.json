@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "1.0",
+  "artifactId": "ARINC-M1-SEMANTIC-REVIEW-ASSERTIONS",
+  "purpose": "Data-driven regression assertions for independently identified direction, negation, constant, retry-exhaustion, and wait-sequence risks.",
+  "assertions": [
+    {
+      "sourceTextHash": "8d3cb7c14fbd4073db34f04e1edad4889c27942f1b3a74d2362a911aeee06788",
+      "expected": {"actor": "ARINC-615A-CONFORMING-IMPLEMENTATION", "action": "IMPLEMENT-REQUIRED-STANDARD-FUNCTIONS", "objects": ["MINIMUM-COMPATIBILITY-FUNCTION-SET"], "observableEffect": "COMPATIBILITY-CAPABILITY-OBSERVABLE"}
+    },
+    {
+      "sourceTextHash": "873afae35c4507f2b8692f8372af04d589c3f3af09e4d297044c0302a21a3f6b",
+      "expected": {"actor": "DATA-LOADER-AND-TARGET-HARDWARE", "action": "TRANSFER-VIA-ETHERNET", "objects": ["DATA-TRANSFER"], "observableEffect": "ETHERNET-TRANSFER-OBSERVABLE"}
+    },
+    {
+      "sourceTextHash": "00560acc8acc232b1eb1c81882c7270c775e75b59793df9f3829c7a6a4b838c2",
+      "expected": {"actor": "ARINC-615A-DEFINITION", "action": "ALLOW-COMBINATION", "objects": ["DATA-LOADING-TYPES"], "observableEffect": "COMBINED-LOADING-CAPABILITY-OBSERVABLE"}
+    },
+    {
+      "sourceTextHash": "f3852739104c97b8476bf9422b4459f3c94a1e22d0b6072a7f8ca8882052fc40",
+      "expected": {"actor": "ARINC-615A-TFTP-IMPLEMENTATION", "action": "USE-WELL-KNOWN-PORT", "objects": ["TFTP-PORT-59"], "observableEffect": "TFTP-PORT-OBSERVABLE"}
+    },
+    {
+      "sourceTextHash": "d6feb985bbbbed1e9ca834487c4ed03775c960da7dedec1e88f28f37de92b0bf",
+      "expected": {"actor": "TFTP-WAIT-RECEIVER", "action": "ABORT-AND-RESTART-AFTER-DELAY", "objects": ["CURRENT-TFTP-TRANSFER", "WAIT-DELAY"], "observableEffect": "ABORT-THEN-RETRY-SEQUENCE-OBSERVABLE"}
+    },
+    {
+      "sourceTextHash": "f7b55a457fa58cc9a24f7de2c43fe4ed1223e4d443ff4da75fdbde047d6c9f3e",
+      "expected": {"actor": "DLP-CLIENT", "action": "DECLARE-FATAL-ERROR", "objects": ["DLP-FILE-TRANSFER"], "observableEffect": "FATAL-ERROR-RESULT-OBSERVABLE"}
+    },
+    {
+      "sourceTextHash": "93ac8751234e9e2d59069552b9c8508ef145a829cef1ef820f0f1e354cab6263",
+      "expected": {"actor": "ARINC-665-CONFORMING-PRODUCT", "action": "IMPLEMENT-REQUIRED-ARINC-665-CAPABILITIES", "objects": ["MINIMUM-ARINC-665-COMPATIBILITY-CAPABILITIES"], "observableEffect": "ARINC-665-COMPATIBILITY-OBSERVABLE"}
+    },
+    {
+      "sourceTextHash": "f4f4bc419a090968fae72b82e8348d4cdf5f51f939e744a4566575925151fcd9",
+      "expected": {"actor": "ARINC-665-REQUIREMENT-INTERPRETER", "action": "TREAT-SHOULD-AS-REQUIRED-FOR-MINIMUM-COMPATIBILITY", "objects": ["ARINC-665-SHOULD-MODALITY"], "observableEffect": "MODALITY-INTERPRETATION-OBSERVABLE"}
+    },
+    {
+      "sourceTextHash": "bc73fe29f0afd00a44bf4d62dd69730e2131851730000a7f4adc8557b654ec79",
+      "expected": {"actor": "ARINC-665-REQUIREMENT-INTERPRETER", "action": "TREAT-MAY-AS-OPTIONAL-CAPABILITY", "objects": ["ARINC-665-MAY-MODALITY"], "observableEffect": "MODALITY-INTERPRETATION-OBSERVABLE"}
+    },
+    {
+      "sourceTextHash": "3f3cb7ae6b261efe668fe72a0d01c02dabe649a6603c15daee0cc05096adb297",
+      "expected": {"actor": "ARINC-665-CONFORMING-PRODUCT", "action": "CONDITIONALLY-IMPLEMENT-OPTIONAL-CAPABILITY-AS-SPECIFIED", "objects": ["OPTIONAL-ARINC-665-CAPABILITY"], "observableEffect": "CONDITIONAL-CAPABILITY-CONFORMANCE-OBSERVABLE"}
+    },
+    {
+      "sourceTextHash": "6fb26843cbd8b427490ff31d65699050063343b00612ca4bd4f9e3714f026fcc",
+      "expected": {"actor": "ARINC-615A-DATA-LOADER", "action": "DO-NOT-ENFORCE-SPECIFIC-PART-NUMBER-FORMAT", "objects": ["LOAD-PART-NUMBER"], "observableEffect": "ABSENCE-OF-PN-FORMAT-REJECTION-OBSERVABLE"}
+    },
+    {
+      "sourceTextHash": "63b5d84bc565bdd2f30596ab82fe78adf785c618bfdda75fd97c94b704de61ac",
+      "expected": {"actor": "ARINC-615A-DATA-LOADER", "action": "PROCESS-NONCONFORMING-PART-NUMBER-FORMATS", "objects": ["LOAD-PART-NUMBER"], "observableEffect": "LOAD-ACCEPTANCE-OBSERVABLE"}
+    }
+  ]
+}

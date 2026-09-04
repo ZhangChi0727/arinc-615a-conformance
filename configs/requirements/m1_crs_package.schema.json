@@ -1,32 +1,789 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:arinc615a:m1-crs-package:2",
-  "title": "M1 leaf-source CRS and applicability package",
-  "type": "object",
-  "additionalProperties": false,
-  "required": ["schemaVersion", "artifactId", "artifactVersion", "candidateDisposition", "sourceBindings", "profileScope", "coverageLedger", "requirements", "dependencies", "gaps", "reviewControl", "inventorySummary", "activation"],
-  "$defs": {
-    "id": {"type": "string", "pattern": "^[A-Z][A-Z0-9._-]+$"},
-    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "locator": {"type": "object", "additionalProperties": false, "required": ["sourceId", "clause", "tableOrFigure", "documentPage", "pdfPage", "fragmentKind", "fragmentOrdinal"], "properties": {"sourceId": {"$ref": "#/$defs/id"}, "clause": {"type": "string", "minLength": 1}, "tableOrFigure": {"type": ["string", "null"]}, "documentPage": {"type": "integer", "minimum": 1}, "pdfPage": {"type": "integer", "minimum": 1}, "fragmentKind": {"enum": ["PROSE-SENTENCE", "COMMENTARY", "TABLE-ROW", "SEQUENCE-EVENT"]}, "fragmentOrdinal": {"type": "integer", "minimum": 1}}},
-    "applicability": {"enum": ["APPLICABLE-BASE", "APPLICABLE-SUPPORTING", "CONDITIONAL", "DEFERRED-FUTURE-SCOPE", "OUT-OF-PROFILE", "BLOCKED-BY-DEPENDENCY", "UNRESOLVED"]},
-    "modality": {"enum": ["SHOULD", "MUST", "MAY", "FACT", "TABLE-CONSTRAINT", "FIGURE-CONSTRAINT", "COMMENTARY"]},
-    "effect": {"enum": ["REQUIRED", "CONDITIONAL-REQUIRED", "PROHIBITED", "OPTIONAL", "INFORMATIVE", "UNRESOLVED"]},
-    "sourceBinding": {"type": "object", "additionalProperties": false, "required": ["sourceId", "role", "sha256"], "properties": {"sourceId": {"$ref": "#/$defs/id"}, "role": {"type": "string", "minLength": 1}, "sha256": {"$ref": "#/$defs/sha256"}}},
-    "dependency": {"type": "object", "additionalProperties": false, "required": ["id", "sourceId", "status", "summaryEn", "summaryZh"], "properties": {"id": {"$ref": "#/$defs/id"}, "sourceId": {"$ref": "#/$defs/id"}, "status": {"enum": ["REGISTERED-SUPPORTING-SOURCE", "OPEN-DEPENDENCY", "OUT-OF-CURRENT-PROFILE", "SATISFIED-BY-ACTIVE-AUTHORITY"]}, "summaryEn": {"type": "string", "minLength": 1}, "summaryZh": {"type": "string", "minLength": 1}}},
-    "gap": {"type": "object", "additionalProperties": false, "required": ["id", "status", "blockedBy", "summaryEn", "summaryZh", "affectedCapabilityIds"], "properties": {"id": {"$ref": "#/$defs/id"}, "status": {"const": "NOT-ESTABLISHED"}, "blockedBy": {"$ref": "#/$defs/id"}, "summaryEn": {"type": "string", "minLength": 1}, "summaryZh": {"type": "string", "minLength": 1}, "affectedCapabilityIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}}},
-    "semantic": {"type": "object", "additionalProperties": false, "required": ["actor", "condition", "action", "objects", "observableEffect", "operation"], "properties": {"actor": {"$ref": "#/$defs/id"}, "condition": {"$ref": "#/$defs/id"}, "action": {"$ref": "#/$defs/id"}, "objects": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}, "receiver": {"$ref": "#/$defs/id"}, "observableEffect": {"$ref": "#/$defs/id"}, "operation": {"$ref": "#/$defs/id"}}},
-    "timing": {"type": "object", "additionalProperties": false, "required": ["provenanceKind", "sourceParameter", "trigger", "response", "cancellation", "supersedingTrigger", "correlationKey", "pairingPolicy", "concurrencyPolicy", "silenceSemantics", "lowerBound", "upperBound", "unit", "lowerBoundary", "upperBoundary", "clockStart", "clockResets", "observationState", "errorBudgetState", "ambiguityStatus"], "properties": {"provenanceKind": {"enum": ["FIXED-SOURCE-CONSTANT", "MESSAGE-CARRIED-PARAMETER", "CONFIGURATION-PARAMETER", "SYMBOLIC-SOURCE-PARAMETER", "EXAMPLE-NONNORMATIVE"]}, "sourceParameter": {"$ref": "#/$defs/id"}, "trigger": {"$ref": "#/$defs/id"}, "response": {"$ref": "#/$defs/id"}, "cancellation": {"$ref": "#/$defs/id"}, "supersedingTrigger": {"$ref": "#/$defs/id"}, "correlationKey": {"$ref": "#/$defs/id"}, "pairingPolicy": {"$ref": "#/$defs/id"}, "concurrencyPolicy": {"$ref": "#/$defs/id"}, "silenceSemantics": {"$ref": "#/$defs/id"}, "lowerBound": {"oneOf": [{"type": "number"}, {"enum": ["UNBOUNDED", "UNRESOLVED"]}]}, "upperBound": {"oneOf": [{"type": "number"}, {"enum": ["UNBOUNDED", "UNRESOLVED"]}]}, "unit": {"enum": ["s", "ms", "us", "ns"]}, "lowerBoundary": {"enum": ["OPEN", "CLOSED", "UNBOUNDED", "UNRESOLVED"]}, "upperBoundary": {"enum": ["OPEN", "CLOSED", "UNBOUNDED", "UNRESOLVED"]}, "clockStart": {"$ref": "#/$defs/id"}, "clockResets": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "observationState": {"enum": ["OBSERVABLE-IN-PRINCIPLE", "CONFIGURATION-DEPENDENT", "INTERNAL-NOT-OBSERVABLE", "DEPENDENCY-BLOCKED", "UNRESOLVED"]}, "errorBudgetState": {"enum": ["FUTURE-CONFIGURATION-DEPENDENT", "NOT-REQUIRED", "UNRESOLVED"]}, "ambiguityStatus": {"type": "string", "minLength": 1}}}
-  },
-  "properties": {
-    "schemaVersion": {"const": "2.0"}, "artifactId": {"$ref": "#/$defs/id"}, "artifactVersion": {"type": "string", "minLength": 1}, "candidateDisposition": {"const": "ADOPT"},
-    "sourceBindings": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/sourceBinding"}},
-    "profileScope": {"type": "object", "required": ["baseOperation", "supportingOperation", "deferredOperations", "configurationStatus"]},
-    "coverageLedger": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["id", "sourceUnitId", "source", "sourceTextHash", "sourceModality", "conformanceEffect", "applicabilityDecision", "rationaleCode", "requirementIds"], "properties": {"id": {"$ref": "#/$defs/id"}, "sourceUnitId": {"$ref": "#/$defs/id"}, "source": {"$ref": "#/$defs/locator"}, "sourceTextHash": {"$ref": "#/$defs/sha256"}, "sourceModality": {"$ref": "#/$defs/modality"}, "conformanceEffect": {"$ref": "#/$defs/effect"}, "applicabilityDecision": {"$ref": "#/$defs/applicability"}, "rationaleCode": {"type": "string", "minLength": 1}, "requirementIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}}}},
-    "requirements": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["id", "sourceUnitId", "source", "sourceTextHash", "hashCanonicalizationId", "paraphraseEn", "paraphraseZh", "semantic", "sourceModality", "conformanceEffect", "applicabilityDecision", "rationaleCode", "roles", "operations", "category", "obligations", "interpretationStatus", "ambiguityStatus", "dependencyIds", "gapIds", "reviewStatus", "rhoRA"], "properties": {"id": {"$ref": "#/$defs/id"}, "sourceUnitId": {"$ref": "#/$defs/id"}, "source": {"$ref": "#/$defs/locator"}, "sourceTextHash": {"$ref": "#/$defs/sha256"}, "hashCanonicalizationId": {"enum": ["ARINC-LEAF-UNIT-NFC-LF-HWS-v2", "ARINC-VISUAL-EVENT-TUPLE-v1"]}, "paraphraseEn": {"type": "string", "minLength": 1}, "paraphraseZh": {"type": "string", "minLength": 1}, "semantic": {"$ref": "#/$defs/semantic"}, "sourceModality": {"$ref": "#/$defs/modality"}, "conformanceEffect": {"$ref": "#/$defs/effect"}, "applicabilityDecision": {"$ref": "#/$defs/applicability"}, "rationaleCode": {"type": "string", "minLength": 1}, "roles": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "operations": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "category": {"$ref": "#/$defs/id"}, "obligations": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "interpretationStatus": {"type": "string", "minLength": 1}, "ambiguityStatus": {"type": "string", "minLength": 1}, "dependencyIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "gapIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}, "reviewStatus": {"const": "PENDING-EXTERNAL-INDEPENDENT-REVIEW"}, "rhoRA": {"type": "object"}, "timing": {"$ref": "#/$defs/timing"}, "atomicPartId": {"type": "string", "minLength": 1}, "splitRationale": {"type": "string", "minLength": 1}, "bounded665Decision": {"type": "string", "minLength": 1}, "triggeredByRequirementIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}}}},
-    "dependencies": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/dependency"}}, "gaps": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/gap"}},
-    "reviewControl": {"type": "object", "additionalProperties": false, "required": ["rg0", "rg1", "reviewHead", "sourceInventoryFingerprint", "automaticValidationScope", "externalRg0Scope"], "properties": {"rg0": {"const": "PENDING-EXTERNAL-INDEPENDENT-REVIEW"}, "rg1": {"const": "PENDING-EXTERNAL-INDEPENDENT-REVIEW"}, "reviewHead": {"type": "string"}, "sourceInventoryFingerprint": {"$ref": "#/$defs/sha256"}, "automaticValidationScope": {"const": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY"}, "externalRg0Scope": {"const": "SOURCE-BOUNDARY-COMPLETENESS-AND-HASH-FIDELITY"}}},
-    "inventorySummary": {"type": "object", "additionalProperties": false, "required": ["coverageCount", "requirementCount", "dependencyCount", "gapCount", "coverageFingerprint", "requirementsFingerprint"], "properties": {"coverageCount": {"type": "integer", "minimum": 1}, "requirementCount": {"type": "integer", "minimum": 1}, "dependencyCount": {"type": "integer", "minimum": 1}, "gapCount": {"type": "integer", "minimum": 1}, "coverageFingerprint": {"$ref": "#/$defs/sha256"}, "requirementsFingerprint": {"$ref": "#/$defs/sha256"}}},
-    "activation": {"type": "object", "required": ["formalApproval", "mergeEvidence", "postActivationInput"]}
-  }
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "urn:arinc615a:m1-crs-package:2",
+    "title": "M1 leaf-source CRS and applicability package",
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+        "schemaVersion",
+        "artifactId",
+        "artifactVersion",
+        "candidateDisposition",
+        "sourceBindings",
+        "profileScope",
+        "coverageLedger",
+        "requirements",
+        "dependencies",
+        "gaps",
+        "reviewControl",
+        "inventorySummary",
+        "activation"
+    ],
+    "$defs": {
+        "id": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z0-9._-]+$"
+        },
+        "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+        },
+        "locator": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "sourceId",
+                "clause",
+                "tableOrFigure",
+                "documentPage",
+                "pdfPage",
+                "fragmentKind",
+                "fragmentOrdinal"
+            ],
+            "properties": {
+                "sourceId": {
+                    "$ref": "#/$defs/id"
+                },
+                "clause": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "tableOrFigure": {
+                    "type": [
+                        "string",
+                        "null"
+                    ]
+                },
+                "documentPage": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "pdfPage": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "fragmentKind": {
+                    "enum": [
+                        "PROSE-SENTENCE",
+                        "COMMENTARY",
+                    "TABLE-ROW",
+                    "TABLE-FOOTNOTE",
+                        "SEQUENCE-EVENT"
+                    ]
+                },
+                "fragmentOrdinal": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "applicability": {
+            "enum": [
+                "APPLICABLE-BASE",
+                "APPLICABLE-SUPPORTING",
+                "CONDITIONAL",
+                "DEFERRED-FUTURE-SCOPE",
+                "OUT-OF-PROFILE",
+                "BLOCKED-BY-DEPENDENCY",
+                "UNRESOLVED"
+            ]
+        },
+        "modality": {
+            "enum": [
+                "SHOULD",
+                "MUST",
+                "MAY",
+                "FACT",
+                "TABLE-CONSTRAINT",
+                "FIGURE-CONSTRAINT",
+                "COMMENTARY"
+            ]
+        },
+        "effect": {
+            "enum": [
+                "REQUIRED",
+                "CONDITIONAL-REQUIRED",
+                "PROHIBITED",
+                "OPTIONAL",
+                "INFORMATIVE",
+                "UNRESOLVED"
+            ]
+        },
+        "sourceBinding": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "sourceId",
+                "role",
+                "sha256"
+            ],
+            "properties": {
+                "sourceId": {
+                    "$ref": "#/$defs/id"
+                },
+                "role": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "sha256": {
+                    "$ref": "#/$defs/sha256"
+                }
+            }
+        },
+        "dependency": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "id",
+                "sourceId",
+                "status",
+                "summaryEn",
+                "summaryZh"
+            ],
+            "properties": {
+                "id": {
+                    "$ref": "#/$defs/id"
+                },
+                "sourceId": {
+                    "$ref": "#/$defs/id"
+                },
+                "status": {
+                    "enum": [
+                        "REGISTERED-SUPPORTING-SOURCE",
+                        "OPEN-DEPENDENCY",
+                        "OUT-OF-CURRENT-PROFILE",
+                        "SATISFIED-BY-ACTIVE-AUTHORITY"
+                    ]
+                },
+                "summaryEn": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "summaryZh": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "gap": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "id",
+                "status",
+                "blockedBy",
+                "summaryEn",
+                "summaryZh",
+                "affectedCapabilityIds"
+            ],
+            "properties": {
+                "id": {
+                    "$ref": "#/$defs/id"
+                },
+                "status": {
+                    "const": "NOT-ESTABLISHED"
+                },
+                "blockedBy": {
+                    "$ref": "#/$defs/id"
+                },
+                "summaryEn": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "summaryZh": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "affectedCapabilityIds": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/$defs/id"
+                    }
+                }
+            }
+        },
+        "semantic": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "actor",
+                "condition",
+                "action",
+                "objects",
+                "observableEffect",
+                "operation"
+            ],
+            "properties": {
+                "actor": {
+                    "$ref": "#/$defs/id"
+                },
+                "condition": {
+                    "$ref": "#/$defs/id"
+                },
+                "action": {
+                    "$ref": "#/$defs/id"
+                },
+                "objects": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "receiver": {
+                    "$ref": "#/$defs/id"
+                },
+                "observableEffect": {
+                    "$ref": "#/$defs/id"
+                },
+                "operation": {
+                    "$ref": "#/$defs/id"
+                }
+            }
+        },
+        "timing": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+            "timingFamily",
+            "provenanceKind",
+                "sourceParameter",
+                "trigger",
+                "response",
+                "cancellation",
+                "supersedingTrigger",
+                "correlationKey",
+                "pairingPolicy",
+                "concurrencyPolicy",
+                "silenceSemantics",
+                "lowerBound",
+                "upperBound",
+                "unit",
+                "lowerBoundary",
+                "upperBoundary",
+                "clockStart",
+                "clockResets",
+                "observationState",
+                "errorBudgetState",
+                "ambiguityStatus"
+            ],
+        "properties": {
+            "timingFamily": {
+                "$ref": "#/$defs/id"
+            },
+            "provenanceKind": {
+                    "enum": [
+                        "FIXED-SOURCE-CONSTANT",
+                        "MESSAGE-CARRIED-PARAMETER",
+                        "CONFIGURATION-PARAMETER",
+                        "SYMBOLIC-SOURCE-PARAMETER",
+                        "EXAMPLE-NONNORMATIVE"
+                    ]
+                },
+                "sourceParameter": {
+                    "$ref": "#/$defs/id"
+                },
+                "trigger": {
+                    "$ref": "#/$defs/id"
+                },
+                "response": {
+                    "$ref": "#/$defs/id"
+                },
+                "cancellation": {
+                    "$ref": "#/$defs/id"
+                },
+                "supersedingTrigger": {
+                    "$ref": "#/$defs/id"
+                },
+                "correlationKey": {
+                    "$ref": "#/$defs/id"
+                },
+                "pairingPolicy": {
+                    "$ref": "#/$defs/id"
+                },
+                "concurrencyPolicy": {
+                    "$ref": "#/$defs/id"
+                },
+                "silenceSemantics": {
+                    "$ref": "#/$defs/id"
+                },
+                "lowerBound": {
+                    "oneOf": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "enum": [
+                                "UNBOUNDED",
+                                "UNRESOLVED"
+                            ]
+                        }
+                    ]
+                },
+                "upperBound": {
+                    "oneOf": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "enum": [
+                                "UNBOUNDED",
+                                "UNRESOLVED"
+                            ]
+                        }
+                    ]
+                },
+                "unit": {
+                    "enum": [
+                        "s",
+                        "ms",
+                        "us",
+                        "ns"
+                    ]
+                },
+                "lowerBoundary": {
+                    "enum": [
+                        "OPEN",
+                        "CLOSED",
+                        "UNBOUNDED",
+                        "UNRESOLVED"
+                    ]
+                },
+                "upperBoundary": {
+                    "enum": [
+                        "OPEN",
+                        "CLOSED",
+                        "UNBOUNDED",
+                        "UNRESOLVED"
+                    ]
+                },
+                "clockStart": {
+                    "$ref": "#/$defs/id"
+                },
+                "clockResets": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/$defs/id"
+                    }
+                },
+                "observationState": {
+                    "enum": [
+                        "OBSERVABLE-IN-PRINCIPLE",
+                        "CONFIGURATION-DEPENDENT",
+                        "INTERNAL-NOT-OBSERVABLE",
+                        "DEPENDENCY-BLOCKED",
+                        "UNRESOLVED"
+                    ]
+                },
+                "errorBudgetState": {
+                    "enum": [
+                        "FUTURE-CONFIGURATION-DEPENDENT",
+                        "NOT-REQUIRED",
+                        "UNRESOLVED"
+                    ]
+                },
+                "ambiguityStatus": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "statusTableConstraint": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["kind", "substitutionRule"],
+                    "properties": {
+                        "kind": {"const": "DISPLAY-FOOTNOTE"},
+                        "substitutionRule": {"const": "SUBSTITUTE-ACTIVE-OPERATION-NAME"}
+                    }
+                },
+                {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["kind", "code", "meaningCode", "displayMode", "targetTextRule", "applicableProtocolFiles", "applicableOperations"],
+                    "properties": {
+                        "kind": {"const": "STATUS-CODE"},
+                        "code": {"type": "string", "pattern": "^0X[0-9A-F]{4}$"},
+                        "meaningCode": {"$ref": "#/$defs/id"},
+                        "displayMode": {"$ref": "#/$defs/id"},
+                        "targetTextRule": {"enum": ["REQUIRED", "FORBIDDEN", "NOT-SPECIFIED"]},
+                        "applicableProtocolFiles": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^\\.L[A-Z]{2}$"}},
+                        "applicableOperations": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["INFORMATION", "UPLOAD", "DOWNLOAD"]}}
+                    }
+                }
+            ]
+        }
+    },
+    "properties": {
+        "schemaVersion": {
+            "const": "2.0"
+        },
+        "artifactId": {
+            "$ref": "#/$defs/id"
+        },
+        "artifactVersion": {
+            "type": "string",
+            "minLength": 1
+        },
+        "candidateDisposition": {
+            "const": "ADOPT"
+        },
+        "sourceBindings": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+                "$ref": "#/$defs/sourceBinding"
+            }
+        },
+        "profileScope": {
+            "type": "object",
+            "required": [
+                "baseOperation",
+                "supportingOperation",
+                "deferredOperations",
+                "configurationStatus"
+            ]
+        },
+        "coverageLedger": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "id",
+                    "sourceUnitId",
+                    "source",
+                    "sourceTextHash",
+                    "sourceModality",
+                    "conformanceEffect",
+                    "applicabilityDecision",
+                        "rationaleCode",
+                        "atomicity",
+                        "requirementIds"
+                ],
+                "properties": {
+                    "id": {
+                        "$ref": "#/$defs/id"
+                    },
+                    "sourceUnitId": {
+                        "$ref": "#/$defs/id"
+                    },
+                    "source": {
+                        "$ref": "#/$defs/locator"
+                    },
+                    "sourceTextHash": {
+                        "$ref": "#/$defs/sha256"
+                    },
+                    "sourceModality": {
+                        "$ref": "#/$defs/modality"
+                    },
+                    "conformanceEffect": {
+                        "$ref": "#/$defs/effect"
+                    },
+                    "applicabilityDecision": {
+                        "$ref": "#/$defs/applicability"
+                    },
+                    "rationaleCode": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "atomicity": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["ownershipKind", "sentenceCount", "singleOwner"],
+                        "properties": {
+                            "ownershipKind": {"type": "string", "minLength": 1},
+                            "sentenceCount": {"type": "integer", "minimum": 0, "maximum": 1},
+                            "singleOwner": {"const": true}
+                        }
+                    },
+                    "requirementIds": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "$ref": "#/$defs/id"
+                        }
+                    }
+                }
+            }
+        },
+        "requirements": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "id",
+                    "sourceUnitId",
+                    "source",
+                    "sourceTextHash",
+                    "hashCanonicalizationId",
+                    "paraphraseEn",
+                    "paraphraseZh",
+                    "semantic",
+                    "sourceModality",
+                    "conformanceEffect",
+                    "applicabilityDecision",
+                    "rationaleCode",
+                    "roles",
+                    "operations",
+                    "category",
+                    "obligations",
+                    "interpretationStatus",
+                    "ambiguityStatus",
+                    "dependencyIds",
+                    "gapIds",
+                    "reviewStatus",
+                    "rhoRA"
+                ],
+                "properties": {
+                    "id": {
+                        "$ref": "#/$defs/id"
+                    },
+                    "sourceUnitId": {
+                        "$ref": "#/$defs/id"
+                    },
+                    "source": {
+                        "$ref": "#/$defs/locator"
+                    },
+                    "sourceTextHash": {
+                        "$ref": "#/$defs/sha256"
+                    },
+                    "hashCanonicalizationId": {
+                        "enum": [
+                            "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+                            "ARINC-VISUAL-EVENT-TUPLE-v1"
+                        ]
+                    },
+                    "paraphraseEn": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "paraphraseZh": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "semantic": {
+                        "$ref": "#/$defs/semantic"
+                    },
+                    "sourceModality": {
+                        "$ref": "#/$defs/modality"
+                    },
+                    "conformanceEffect": {
+                        "$ref": "#/$defs/effect"
+                    },
+                    "applicabilityDecision": {
+                        "$ref": "#/$defs/applicability"
+                    },
+                    "rationaleCode": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "roles": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                            "$ref": "#/$defs/id"
+                        }
+                    },
+                    "operations": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                            "$ref": "#/$defs/id"
+                        }
+                    },
+                    "category": {
+                        "$ref": "#/$defs/id"
+                    },
+                    "obligations": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                            "$ref": "#/$defs/id"
+                        }
+                    },
+                    "interpretationStatus": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "ambiguityStatus": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "dependencyIds": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "$ref": "#/$defs/id"
+                        }
+                    },
+                    "gapIds": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "$ref": "#/$defs/id"
+                        }
+                    },
+                    "reviewStatus": {
+                        "const": "PENDING-EXTERNAL-INDEPENDENT-REVIEW"
+                    },
+                    "rhoRA": {
+                        "type": "object"
+                    },
+                    "timing": {
+                        "$ref": "#/$defs/timing"
+                    },
+                    "atomicPartId": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "splitRationale": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "bounded665Decision": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "triggeredByRequirementIds": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "$ref": "#/$defs/id"
+                        }
+                    },
+                    "profileScopeTriggerIds": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                            "$ref": "#/$defs/id"
+                        }
+                    },
+                    "statusTableConstraint": {
+                        "$ref": "#/$defs/statusTableConstraint"
+                    }
+                }
+            }
+        },
+        "dependencies": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "$ref": "#/$defs/dependency"
+            }
+        },
+        "gaps": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "$ref": "#/$defs/gap"
+            }
+        },
+        "reviewControl": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "rg0",
+                "rg1",
+                "reviewHead",
+                "sourceInventoryFingerprint",
+                "sectionSpanManifestPath",
+                "sectionSpanManifestFingerprint",
+                "semanticAssertionPath",
+                "semanticAssertionFingerprint",
+                "automaticValidationScope",
+                "externalRg0Scope"
+            ],
+            "properties": {
+                "rg0": {
+                    "const": "PENDING-EXTERNAL-INDEPENDENT-REVIEW"
+                },
+                "rg1": {
+                    "const": "PENDING-EXTERNAL-INDEPENDENT-REVIEW"
+                },
+                "reviewHead": {
+                    "type": "string"
+                },
+                "sourceInventoryFingerprint": {
+                    "$ref": "#/$defs/sha256"
+                },
+                "sectionSpanManifestPath": {
+                    "const": "configs/requirements/m1_source_section_spans.json"
+                },
+                "sectionSpanManifestFingerprint": {
+                    "$ref": "#/$defs/sha256"
+                },
+                "semanticAssertionPath": {
+                    "const": "configs/requirements/m1_semantic_review_assertions.json"
+                },
+                "semanticAssertionFingerprint": {
+                    "$ref": "#/$defs/sha256"
+                },
+                "automaticValidationScope": {
+                    "const": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY"
+                },
+                "externalRg0Scope": {
+                    "const": "SOURCE-BOUNDARY-COMPLETENESS-AND-HASH-FIDELITY"
+                }
+            }
+        },
+        "inventorySummary": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "coverageCount",
+                "requirementCount",
+                "dependencyCount",
+                "gapCount",
+                "coverageFingerprint",
+                "requirementsFingerprint"
+            ],
+            "properties": {
+                "coverageCount": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "requirementCount": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "dependencyCount": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "gapCount": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "coverageFingerprint": {
+                    "$ref": "#/$defs/sha256"
+                },
+                "requirementsFingerprint": {
+                    "$ref": "#/$defs/sha256"
+                }
+            }
+        },
+        "activation": {
+            "type": "object",
+            "required": [
+                "formalApproval",
+                "mergeEvidence",
+                "postActivationInput"
+            ]
+        }
+    }
 }
