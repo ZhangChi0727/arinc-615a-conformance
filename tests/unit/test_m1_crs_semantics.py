@@ -423,15 +423,48 @@ def test_table_field_width_repetition_and_notes_are_anchored() -> None:
 
 def test_timing_predicate_symbolic_bound_and_evidence_are_anchored() -> None:
     data = package()
-    row = next(item for item in data["requirements"] if item.get("timing", {}).get("sourceParameter") == "DLP-TO-EQUATION")
+    candidates = [item for item in data["requirements"] if item.get("timing", {}).get("provenanceKind") == "SYMBOLIC-SOURCE-EQUATION"]
+    assert candidates, "the M1 package must contain a symbolic source equation timing proposition"
+    row = candidates[0]
     row["timing"]["upperBound"] = "UNRESOLVED"
     refresh_summary(data)
     assert any("failed for timing" in item or "timingProvenanceFingerprint" in item for item in errors(data))
+    data = package()
+    candidates = [item for item in data["requirements"] if item.get("timing", {}).get("provenanceKind") == "SYMBOLIC-SOURCE-EQUATION"]
+    assert candidates, "the M1 package must contain a symbolic source equation timing proposition"
+    candidates[0]["timing"]["sourceRelation"] = "NON-SYMBOLIC"
+    refresh_summary(data)
+    assert any("failed for timing" in item for item in errors(data))
     data = package()
     row = next(item for item in data["requirements"] if item.get("timing"))
     row["timing"]["sourceEvidenceUnitIds"] = ["SU-NOT-IN-INVENTORY"]
     refresh_summary(data)
     assert any("timing evidence" in item for item in errors(data))
+
+
+def test_symbolic_timing_cannot_use_only_its_requirement_source_as_evidence() -> None:
+    data = package()
+    candidates = [item for item in data["requirements"] if item.get("timing", {}).get("provenanceKind") == "SYMBOLIC-SOURCE-EQUATION"]
+    assert candidates, "the M1 package must contain a symbolic source equation timing proposition"
+    row = candidates[0]
+    row["timing"]["sourceEvidenceUnitIds"] = [row["sourceUnitId"]]
+    refresh_summary(data)
+    assert any("requires independent source evidence" in item for item in errors(data))
+
+
+def test_trigger_rationale_guard_rejects_an_unsupported_synthetic_edge() -> None:
+    data = package()
+    row = next(item for item in data["requirements"] if item["source"]["sourceId"] == "ARINC-665-5")
+    trigger = data["profileScope"]["bounded665ProfileScopeTriggerIds"][0]
+    row["refinementDisposition"] = "DIRECT-DATA-FORMAT-REFINEMENT"
+    row["triggeredByRequirementIds"] = [trigger]
+    row["triggerRelations"] = [{
+        "requirementId": trigger,
+        "relation": "615A-REQUIRES-665-DATA-SEMANTIC",
+        "rationaleCode": "SHARED-NONEXISTENT-OBJECT",
+    }]
+    refresh_summary(data)
+    assert any("unsupported requirement-level trigger rationale" in item for item in errors(data))
 
 
 def test_665_refinement_disposition_cannot_be_replaced_by_shared_object_guess() -> None:

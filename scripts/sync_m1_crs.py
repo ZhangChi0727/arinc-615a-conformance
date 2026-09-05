@@ -309,6 +309,14 @@ def package_errors(data: dict[str, Any]) -> list[str]:
             for source_unit_id in timing.get("sourceEvidenceUnitIds", []):
                 if source_unit_id not in set(source_unit_ids):
                     errors.append(f"requirement {row.get('id')} timing evidence {source_unit_id} is not in the source inventory")
+            evidence_ids = timing.get("sourceEvidenceUnitIds", [])
+            provenance = timing.get("provenanceKind")
+            if provenance in {"MESSAGE-CARRIED-PARAMETER", "SYMBOLIC-SOURCE-PARAMETER", "SYMBOLIC-SOURCE-EQUATION"} and not any(
+                source_unit_id != row.get("sourceUnitId") for source_unit_id in evidence_ids
+            ):
+                errors.append(f"requirement {row.get('id')} symbolic/message timing requires independent source evidence")
+            if provenance == "FIXED-SOURCE-CONSTANT" and evidence_ids == [row.get("sourceUnitId")] and timing.get("lowerBound") != timing.get("upperBound"):
+                errors.append(f"requirement {row.get('id')} self-evidenced fixed timing must bind one exact source constant")
             for boundary in ("lowerBoundary", "upperBoundary"):
                 if timing.get(boundary) not in {"OPEN", "CLOSED", "UNBOUNDED", "UNRESOLVED"}:
                     errors.append(f"requirement {row.get('id')} has invalid {boundary}")
