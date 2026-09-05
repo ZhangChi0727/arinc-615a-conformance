@@ -30,7 +30,20 @@
       "CRS-M1-00042",
       "CRS-M1-00046",
       "CRS-M1-00085"
-    ]
+    ],
+    "bounded665EdgePolicy": {
+      "policy": "REQUIREMENT-LEVEL-615A-TO-665-EDGES-DEFERRED-TO-M2-ATTACHMENT-RECONCILIATION",
+      "acceptedDispositions": [
+        "PROFILE-SCOPE-ONLY",
+        "DEPENDENCY-BLOCKED"
+      ],
+      "prohibitedDispositions": [
+        "DIRECT-DATA-FORMAT-REFINEMENT",
+        "PRODUCER-CONSTRAINT",
+        "CONSUMER-TOLERANCE"
+      ],
+      "reason": "Attachment reconciliation between 615A-3 and 665-5 is scheduled for M2; direct requirement-level refinement claims require attachment-anchored evidence that is not yet part of the controlled source corpus."
+    }
   },
   "coverageLedger": [
     {
@@ -84465,8 +84478,8 @@
         "ordinal": 1,
         "widthBitsExpression": "32",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -84528,8 +84541,8 @@
         "ordinal": 2,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -84591,8 +84604,8 @@
         "ordinal": 3,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -84654,8 +84667,8 @@
         "ordinal": 4,
         "widthBitsExpression": "8",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -84717,8 +84730,8 @@
         "ordinal": 5,
         "widthBitsExpression": "0..2040",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "noteRefs": [
           "NOTE-1"
@@ -84782,8 +84795,8 @@
         "ordinal": 1,
         "widthBitsExpression": "32",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -84845,8 +84858,8 @@
         "ordinal": 2,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -84908,8 +84921,8 @@
         "ordinal": 3,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -84971,8 +84984,8 @@
         "ordinal": 4,
         "widthBitsExpression": "8",
         "repeatScope": "PER-LITERAL-NAME",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -85034,8 +85047,8 @@
         "ordinal": 5,
         "widthBitsExpression": "8..2040",
         "repeatScope": "PER-LITERAL-NAME",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "noteRefs": [
           "NOTE-1"
@@ -85099,8 +85112,8 @@
         "ordinal": 6,
         "widthBitsExpression": "8",
         "repeatScope": "PER-LITERAL-NAME",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -85162,8 +85175,8 @@
         "ordinal": 7,
         "widthBitsExpression": "8..2040",
         "repeatScope": "PER-LITERAL-NAME",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "noteRefs": [
           "NOTE-1"
@@ -85227,8 +85240,8 @@
         "ordinal": 8,
         "widthBitsExpression": "16",
         "repeatScope": "PER-LITERAL-NAME",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -85290,8 +85303,8 @@
         "ordinal": 9,
         "widthBitsExpression": "8",
         "repeatScope": "PER-PART-NUMBER-WITHIN-LITERAL-NAME",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -85353,8 +85366,8 @@
         "ordinal": 10,
         "widthBitsExpression": "8..2040",
         "repeatScope": "PER-PART-NUMBER-WITHIN-LITERAL-NAME",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "noteRefs": [
           "NOTE-1"
@@ -85418,8 +85431,8 @@
         "ordinal": 11,
         "widthBitsExpression": "8",
         "repeatScope": "PER-PART-NUMBER-WITHIN-LITERAL-NAME",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -85481,8 +85494,8 @@
         "ordinal": 12,
         "widthBitsExpression": "0..2040",
         "repeatScope": "PER-PART-NUMBER-WITHIN-LITERAL-NAME",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "noteRefs": [
           "NOTE-1"
@@ -85546,8 +85559,8 @@
         "ordinal": 13,
         "widthBitsExpression": "8",
         "repeatScope": "PER-PART-NUMBER-WITHIN-LITERAL-NAME",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -85609,8 +85622,8 @@
         "ordinal": 14,
         "widthBitsExpression": "8..2040",
         "repeatScope": "PER-PART-NUMBER-WITHIN-LITERAL-NAME",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "noteRefs": [
           "NOTE-1"
@@ -85674,8 +85687,8 @@
         "ordinal": 1,
         "widthBitsExpression": "32",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -85737,8 +85750,8 @@
         "ordinal": 2,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -85800,8 +85813,8 @@
         "ordinal": 3,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -85863,8 +85876,8 @@
         "ordinal": 4,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -85926,8 +85939,8 @@
         "ordinal": 5,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       },
@@ -86017,8 +86030,8 @@
         "ordinal": 6,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -86080,8 +86093,8 @@
         "ordinal": 7,
         "widthBitsExpression": "8",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -86143,8 +86156,8 @@
         "ordinal": 8,
         "widthBitsExpression": "0..2040",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "noteRefs": [
           "NOTE-1"
@@ -86208,8 +86221,8 @@
         "ordinal": 1,
         "widthBitsExpression": "32",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -86271,8 +86284,8 @@
         "ordinal": 2,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -86334,8 +86347,8 @@
         "ordinal": 3,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -86397,8 +86410,8 @@
         "ordinal": 4,
         "widthBitsExpression": "8",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -86460,8 +86473,8 @@
         "ordinal": 5,
         "widthBitsExpression": "8..2040",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "noteRefs": [
           "NOTE-1"
@@ -86525,8 +86538,8 @@
         "ordinal": 6,
         "widthBitsExpression": "8",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -86588,8 +86601,8 @@
         "ordinal": 7,
         "widthBitsExpression": "8..2040",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "noteRefs": [
           "NOTE-1"
@@ -86653,8 +86666,8 @@
         "ordinal": 1,
         "widthBitsExpression": "32",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -86716,8 +86729,8 @@
         "ordinal": 2,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -86779,8 +86792,8 @@
         "ordinal": 3,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -86842,8 +86855,8 @@
         "ordinal": 4,
         "widthBitsExpression": "8",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -86905,8 +86918,8 @@
         "ordinal": 5,
         "widthBitsExpression": "0..2040",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "noteRefs": [
           "NOTE-1"
@@ -86970,8 +86983,8 @@
         "ordinal": 6,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -87033,8 +87046,8 @@
         "ordinal": 7,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       },
@@ -87124,8 +87137,8 @@
         "ordinal": 8,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -87187,8 +87200,8 @@
         "ordinal": 9,
         "widthBitsExpression": "24",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -87250,8 +87263,8 @@
         "ordinal": 10,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -87313,8 +87326,8 @@
         "ordinal": 11,
         "widthBitsExpression": "8",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -87376,8 +87389,8 @@
         "ordinal": 12,
         "widthBitsExpression": "8..2040",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "noteRefs": [
           "NOTE-1"
@@ -87441,8 +87454,8 @@
         "ordinal": 13,
         "widthBitsExpression": "8",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -87504,8 +87517,8 @@
         "ordinal": 14,
         "widthBitsExpression": "8..2040",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "noteRefs": [
           "NOTE-1"
@@ -87569,8 +87582,8 @@
         "ordinal": 15,
         "widthBitsExpression": "24",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -87632,8 +87645,8 @@
         "ordinal": 16,
         "widthBitsExpression": "16",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -87695,8 +87708,8 @@
         "ordinal": 17,
         "widthBitsExpression": "8",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -87758,8 +87771,8 @@
         "ordinal": 18,
         "widthBitsExpression": "0..2040",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "presenceCondition": "ALWAYS-WITHIN-ENCLOSING-REPETITION",
-        "encodingRule": "BINARY-OR-TEXT-AS-DETAILED-BY-MATCHING-PROSE",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "noteRefs": [
           "NOTE-1"
@@ -90754,11 +90767,11 @@
     "reviewHead": "UNBOUND-DRAFT",
     "sourceInventoryFingerprint": "23489ba54ff428302c7d3a3aa67d4c9cfcfb164efae8318d5421a9ce4cdffc25",
     "sectionSpanManifestPath": "configs/requirements/m1_source_section_spans.json",
-    "sectionSpanManifestFingerprint": "ab5e5227cd5ac91b1a6c1dd730747a0e6071027b73f17d2da546f4e72fea69dc",
+    "sectionSpanManifestFingerprint": "6b654d33c2bb6a72ecd0682e1645968301daa1edea09d20506bc46a92ae67d66",
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "149a0adbeca3dc6aa4256737ee4cb43d84694c5fddef327e1d2b0f83fba61b9f",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "7bbc9ffb7d4904573293839769204f87914283535ed4d9d07bfc958c2cf769f8",
+    "semanticAssertionFingerprint": "e0fc6dbfa6d124871700f7d0f5b4979cb4877d204f1d5a9ba50ae520e3eff4b0",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
@@ -90769,7 +90782,7 @@
     "dependencyCount": 12,
     "gapCount": 1,
     "coverageFingerprint": "4d1bf1459535c9ea6b194fc1a769059af244d49f75cdc82802bb34801166fd93",
-    "requirementsFingerprint": "a2f50712cc03baa40cb2f0bb46fd9944d7e023b037668a2c2493fdb71ed3f7a2"
+    "requirementsFingerprint": "013db530928a099832ea424e6989d663a824dab6c2e5bdd2edec6534549c077f"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

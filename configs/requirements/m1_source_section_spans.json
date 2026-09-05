@@ -51,6 +51,7 @@
     {"sourceId": "ARINC-615A-3", "clausePrefix": "6.4.9", "pdfPages": [96, 96]},
     {"sourceId": "ARINC-615A-3", "clausePrefix": "6.4.10", "pdfPages": [96, 97]}
   ],
+  "fieldConstraintUnresolved": [],
   "sources": [
     {
       "sourceId": "ARINC-615A-3",

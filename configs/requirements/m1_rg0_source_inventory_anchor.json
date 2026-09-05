@@ -9,11 +9,11 @@
   "sequenceEventCount": 63,
   "timingProvenanceFingerprint": "b98d5f5e55f9e587fd7be8bd5be5dd792504a7dfbdba31f3799e6c84d7504a8c",
   "dependencySourceIdentityFingerprint": "74053ca92324e69f24e0c77d3b54482e35bbeb279e649e29a63afa161b638321",
-  "sectionSpanManifestFingerprint": "ab5e5227cd5ac91b1a6c1dd730747a0e6071027b73f17d2da546f4e72fea69dc",
-  "semanticAssertionFingerprint": "7bbc9ffb7d4904573293839769204f87914283535ed4d9d07bfc958c2cf769f8",
+  "sectionSpanManifestFingerprint": "6b654d33c2bb6a72ecd0682e1645968301daa1edea09d20506bc46a92ae67d66",
+  "semanticAssertionFingerprint": "e0fc6dbfa6d124871700f7d0f5b4979cb4877d204f1d5a9ba50ae520e3eff4b0",
   "statusTableFingerprint": "626a7fa96d83853eb3a369da0de78ae866a44f1d24fd6d91b3092e734ed85cbf",
   "automaticAssuranceBoundary": "This anchor detects package-only coordinated edits. It does not prove proprietary-source completeness or semantic fidelity; those remain external RG0 and RG1 review responsibilities.",
   "人工保证边界": "本锚点用于发现仅修改数据包的协同篡改；它不证明专有来源的完整性或语义忠实度，后两者仍由外部 RG0 与 RG1 评审负责。",
-  "fieldConstraintFingerprint": "e3887d8558309314bdd418340c1b79b382b7244838df6e182cbfa2cc67c68f1b",
+  "fieldConstraintFingerprint": "a21bf5a6fc633764e19070f4057856473b037aa1e54166c1cf638f34ac7865b9",
   "supplementDispositionFingerprint": "149a0adbeca3dc6aa4256737ee4cb43d84694c5fddef327e1d2b0f83fba61b9f"
 }
