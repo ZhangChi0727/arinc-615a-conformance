@@ -1035,7 +1035,8 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-5-3-2-3-4-P038-PROSE-SENTENCE-006-D6FEB985BBBB"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "WAIT-MESSAGE-WITH-DELAY-RECEIVED",
         "response": "NEW-TFTP-TRANSFER-INITIATED-AFTER-DELAY",
@@ -3092,7 +3093,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-010-EF2C1FAB94E9"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -3219,7 +3221,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-018-33F16CA0556B"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -3278,7 +3281,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-020-D27F9DB819AB"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -3338,7 +3342,8 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-1-P064-PROSE-SENTENCE-031-D8862D88C46E"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED",
         "response": "FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE",
@@ -3397,7 +3402,8 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-1-P064-PROSE-SENTENCE-032-E812AC346D09"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED",
         "response": "FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE",
@@ -3457,7 +3463,8 @@
         "sourceParameter": "EXCEPTION-DELAY",
         "sourceRelation": "STATUS-RECEIVED-BEFORE-EXCEPTION-DELAY-ELSE-OPERATION-ABORT",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-1-P064-PROSE-SENTENCE-033-2765B9535D98"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-028-9597EE244FD7"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-DELAY-RECEIVED",
         "response": "NEW-STATUS-FILE-RECEIVED-OR-OPERATION-ABORTED",
@@ -3515,7 +3522,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-2-P067-PROSE-SENTENCE-020-43C35127F07F"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -3673,7 +3681,8 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-2-P068-PROSE-SENTENCE-038-D8862D88C46E"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED",
         "response": "FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE",
@@ -3732,7 +3741,8 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-2-P068-PROSE-SENTENCE-039-E812AC346D09"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED",
         "response": "FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE",
@@ -3792,7 +3802,8 @@
         "sourceParameter": "EXCEPTION-DELAY",
         "sourceRelation": "STATUS-RECEIVED-BEFORE-EXCEPTION-DELAY-ELSE-OPERATION-ABORT",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-2-P068-PROSE-SENTENCE-040-2765B9535D98"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-028-9597EE244FD7"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-DELAY-RECEIVED",
         "response": "NEW-STATUS-FILE-RECEIVED-OR-OPERATION-ABORTED",
@@ -5736,7 +5747,8 @@
         "sourceParameter": "TFTP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-009-F320813241E5"
+          "SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-001-97BE648C2E96",
+          "SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-002-E2A9490FA667"
         ],
         "trigger": "TFTP-PACKET-SENT",
         "response": "CORRESPONDING-TFTP-ANSWER-RECEIVED",
@@ -6020,7 +6032,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-028-35890C54B368"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -6088,7 +6101,7 @@
         "pairingPolicy": "PAIR-PACKET-WITH-ITS-ANSWER",
         "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
         "silenceSemantics": "TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE",
-        "lowerBound": 0,
+        "lowerBound": 2,
         "upperBound": 2,
         "unit": "s",
         "lowerBoundary": "CLOSED",
@@ -6139,7 +6152,7 @@
         "sourceParameter": "TFTP-TO-DIVIDED-BY-4",
         "sourceRelation": "PACKET-TRANSMISSION-DURATION<=TFTP-TO/4",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-005-88F51ABD3389"
+          "SU-ARINC-615A-3-A4-3-1-P112-EQUATION-001"
         ],
         "trigger": "TFTP-PACKET-EMISSION",
         "response": "SAME-TFTP-PACKET-RECEPTION",
@@ -6201,7 +6214,7 @@
         "sourceParameter": "TFTP-TO-DIVIDED-BY-2",
         "sourceRelation": "SUBSCRIBER-PROCESSING-DURATION<=TFTP-TO/2",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-007-69549032F30B"
+          "SU-ARINC-615A-3-A4-3-1-P112-EQUATION-002"
         ],
         "trigger": "TFTP-PACKET-RECEPTION",
         "response": "ASSOCIATED-TFTP-PACKET-EMISSION",
@@ -6395,7 +6408,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-003-7C29399D1DAB"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -6453,7 +6467,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-006-02C6AA3F66A1"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -6513,7 +6528,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "LCI-LCL-START<DLP-TO-EXPIRY=>ABSENT(LCS)",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-008-4848608477C0"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "LCI-LCL-SEQUENCE-INITIATED-BEFORE-DLP-TO-EXPIRY",
         "response": "LCS-MUST-NOT-BE-PRODUCED",
@@ -6582,7 +6598,7 @@
         "pairingPolicy": "PAIR-CONSECUTIVE-TFTP-TRANSFERS-IN-SAME-OPERATION",
         "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
         "silenceSemantics": "TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE",
-        "lowerBound": 0,
+        "lowerBound": 13,
         "upperBound": 13,
         "unit": "s",
         "lowerBoundary": "CLOSED",
@@ -6636,7 +6652,6 @@
         "sourceParameter": "DLP-TO-EQUATION",
         "sourceRelation": "DLP-TO>DURATION-TIME+DLP-RETRY*(TFTP-RETRY+1)*TFTP-TO+TFTP-RETRY*TFTP-TO+2*(TFTP-TO/4)",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-012-FB8820DE2238",
           "SU-ARINC-615A-3-A4-4-1-P115-EQUATION-001"
         ],
         "trigger": "LAST-PACKET-OF-PREVIOUS-TFTP-RECEIVED",
@@ -10884,6 +10899,7 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
           "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED",
@@ -11633,7 +11649,8 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-TABLE-6_4_5-1-R008"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED",
         "response": "FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE",

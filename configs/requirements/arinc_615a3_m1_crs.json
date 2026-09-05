@@ -67842,6 +67842,54 @@
         "singleOwner": true
       },
       "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02795",
+      "sourceUnitId": "SU-ARINC-615A-3-A4-3-1-P112-EQUATION-001",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "4-3.1",
+        "tableOrFigure": "Attachment 4 TFTP-TO constraints",
+        "documentPage": 100,
+        "pdfPage": 112,
+        "fragmentKind": "EQUATION",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "4d98bde28f8c1b558fda1a4bc4f6cee1376925a184ec4b70cd0db614881642c6",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "atomicity": {
+        "ownershipKind": "EQUATION",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02796",
+      "sourceUnitId": "SU-ARINC-615A-3-A4-3-1-P112-EQUATION-002",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "4-3.1",
+        "tableOrFigure": "Attachment 4 TFTP-TO constraints",
+        "documentPage": 100,
+        "pdfPage": 112,
+        "fragmentKind": "EQUATION",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "c6a9495a95daa8b927a72f02abdece70bb6fc675c2b444769752eae43f9c1122",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "COMMON-PROTOCOL-SUPPORT",
+      "atomicity": {
+        "ownershipKind": "EQUATION",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": []
     }
   ],
   "requirements": [
@@ -69549,7 +69597,8 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-5-3-2-3-4-P038-PROSE-SENTENCE-006-D6FEB985BBBB"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "WAIT-MESSAGE-WITH-DELAY-RECEIVED",
         "response": "NEW-TFTP-TRANSFER-INITIATED-AFTER-DELAY",
@@ -72952,7 +73001,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-010-EF2C1FAB94E9"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -73142,7 +73192,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-018-33F16CA0556B"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -73222,7 +73273,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-1-P063-PROSE-SENTENCE-020-D27F9DB819AB"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -73303,7 +73355,8 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-1-P064-PROSE-SENTENCE-031-D8862D88C46E"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED",
         "response": "FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE",
@@ -73383,7 +73436,8 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-1-P064-PROSE-SENTENCE-032-E812AC346D09"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED",
         "response": "FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE",
@@ -73464,7 +73518,8 @@
         "sourceParameter": "EXCEPTION-DELAY",
         "sourceRelation": "STATUS-RECEIVED-BEFORE-EXCEPTION-DELAY-ELSE-OPERATION-ABORT",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-1-P064-PROSE-SENTENCE-033-2765B9535D98"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-028-9597EE244FD7"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-DELAY-RECEIVED",
         "response": "NEW-STATUS-FILE-RECEIVED-OR-OPERATION-ABORTED",
@@ -73543,7 +73598,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-2-P067-PROSE-SENTENCE-020-43C35127F07F"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -73785,7 +73841,8 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-2-P068-PROSE-SENTENCE-038-D8862D88C46E"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED",
         "response": "FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE",
@@ -73865,7 +73922,8 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-2-P068-PROSE-SENTENCE-039-E812AC346D09"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED",
         "response": "FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE",
@@ -73946,7 +74004,8 @@
         "sourceParameter": "EXCEPTION-DELAY",
         "sourceRelation": "STATUS-RECEIVED-BEFORE-EXCEPTION-DELAY-ELSE-OPERATION-ABORT",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-6-3-2-P068-PROSE-SENTENCE-040-2765B9535D98"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-028-9597EE244FD7"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-DELAY-RECEIVED",
         "response": "NEW-STATUS-FILE-RECEIVED-OR-OPERATION-ABORTED",
@@ -77188,7 +77247,8 @@
         "sourceParameter": "TFTP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-009-F320813241E5"
+          "SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-001-97BE648C2E96",
+          "SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-002-E2A9490FA667"
         ],
         "trigger": "TFTP-PACKET-SENT",
         "response": "CORRESPONDING-TFTP-ANSWER-RECEIVED",
@@ -77640,7 +77700,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-1-P111-PROSE-SENTENCE-028-35890C54B368"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -77729,7 +77790,7 @@
         "pairingPolicy": "PAIR-PACKET-WITH-ITS-ANSWER",
         "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
         "silenceSemantics": "TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE",
-        "lowerBound": 0,
+        "lowerBound": 2,
         "upperBound": 2,
         "unit": "s",
         "lowerBoundary": "CLOSED",
@@ -77801,7 +77862,7 @@
         "sourceParameter": "TFTP-TO-DIVIDED-BY-4",
         "sourceRelation": "PACKET-TRANSMISSION-DURATION<=TFTP-TO/4",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-005-88F51ABD3389"
+          "SU-ARINC-615A-3-A4-3-1-P112-EQUATION-001"
         ],
         "trigger": "TFTP-PACKET-EMISSION",
         "response": "SAME-TFTP-PACKET-RECEPTION",
@@ -77884,7 +77945,7 @@
         "sourceParameter": "TFTP-TO-DIVIDED-BY-2",
         "sourceRelation": "SUBSCRIBER-PROCESSING-DURATION<=TFTP-TO/2",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-3-1-P112-PROSE-SENTENCE-007-69549032F30B"
+          "SU-ARINC-615A-3-A4-3-1-P112-EQUATION-002"
         ],
         "trigger": "TFTP-PACKET-RECEPTION",
         "response": "ASSOCIATED-TFTP-PACKET-EMISSION",
@@ -78183,7 +78244,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-003-7C29399D1DAB"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -78262,7 +78324,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-006-02C6AA3F66A1"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "FINAL-PACKET-OF-INITIATING-TFTP-TRANSFER",
         "response": "FIRST-PACKET-OF-NEXT-DLP-TFTP-TRANSFER",
@@ -78343,7 +78406,8 @@
         "sourceParameter": "DLP-TO",
         "sourceRelation": "LCI-LCL-START<DLP-TO-EXPIRY=>ABSENT(LCS)",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-008-4848608477C0"
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-001-E20DEE6A28B4",
+          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-002-68A6807BC6D8"
         ],
         "trigger": "LCI-LCL-SEQUENCE-INITIATED-BEFORE-DLP-TO-EXPIRY",
         "response": "LCS-MUST-NOT-BE-PRODUCED",
@@ -78433,7 +78497,7 @@
         "pairingPolicy": "PAIR-CONSECUTIVE-TFTP-TRANSFERS-IN-SAME-OPERATION",
         "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
         "silenceSemantics": "TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE",
-        "lowerBound": 0,
+        "lowerBound": 13,
         "upperBound": 13,
         "unit": "s",
         "lowerBoundary": "CLOSED",
@@ -78508,7 +78572,6 @@
         "sourceParameter": "DLP-TO-EQUATION",
         "sourceRelation": "DLP-TO>DURATION-TIME+DLP-RETRY*(TFTP-RETRY+1)*TFTP-TO+TFTP-RETRY*TFTP-TO+2*(TFTP-TO/4)",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-4-4-1-P114-PROSE-SENTENCE-012-FB8820DE2238",
           "SU-ARINC-615A-3-A4-4-1-P115-EQUATION-001"
         ],
         "trigger": "LAST-PACKET-OF-PREVIOUS-TFTP-RECEIVED",
@@ -85874,6 +85937,7 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
           "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED",
@@ -86980,7 +87044,8 @@
         "sourceParameter": "MESSAGE-TIMER-VALUE",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-TABLE-6_4_5-1-R008"
+          "SU-ARINC-615A-3-6-4-3-P084-PROSE-SENTENCE-027-B0D6862E1D67",
+          "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
         ],
         "trigger": "STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED",
         "response": "FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE",
@@ -90687,24 +90752,24 @@
     "rg0": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "rg1": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "reviewHead": "UNBOUND-DRAFT",
-    "sourceInventoryFingerprint": "db87dd80f27c7cceb6b140c2a333cfd50b3e0bf7ad32176b4a23577c17e21f12",
+    "sourceInventoryFingerprint": "23489ba54ff428302c7d3a3aa67d4c9cfcfb164efae8318d5421a9ce4cdffc25",
     "sectionSpanManifestPath": "configs/requirements/m1_source_section_spans.json",
     "sectionSpanManifestFingerprint": "ab5e5227cd5ac91b1a6c1dd730747a0e6071027b73f17d2da546f4e72fea69dc",
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "149a0adbeca3dc6aa4256737ee4cb43d84694c5fddef327e1d2b0f83fba61b9f",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "036b86497dba5ee9620f57fac853cd60b90fbc13d857462b4ecd8b46c685ec24",
+    "semanticAssertionFingerprint": "7bbc9ffb7d4904573293839769204f87914283535ed4d9d07bfc958c2cf769f8",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
   },
   "inventorySummary": {
-    "coverageCount": 2794,
+    "coverageCount": 2796,
     "requirementCount": 384,
     "dependencyCount": 12,
     "gapCount": 1,
-    "coverageFingerprint": "2f395d3e0167af209c82cdf495f09b84e6925a8c5229291083d5eb7a8f0638bb",
-    "requirementsFingerprint": "ef46364abee3eb360680e9a5abd58d8aaa825750689edc7051b9cea24622c4dc"
+    "coverageFingerprint": "4d1bf1459535c9ea6b194fc1a769059af244d49f75cdc82802bb34801166fd93",
+    "requirementsFingerprint": "a2f50712cc03baa40cb2f0bb46fd9944d7e023b037668a2c2493fdb71ed3f7a2"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",
