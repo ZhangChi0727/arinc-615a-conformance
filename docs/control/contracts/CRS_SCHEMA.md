@@ -68,6 +68,10 @@ is the sole package authority.
   inseparable, in which case the rationale is recorded.
 - an item with a `timing` obligation has a complete `timing` object; `null`
   lower/upper bounds mean absent bounds, not unknown values;
+- `rhoRA` is a closed candidate binding (`relation`, `sourceCoverageId`,
+  `status`) and may not carry proprietary transcription fields;
+- every registered source PDF page is either inside a controlled section span
+  or an explicit exclusion range;
 - trigger, response, cancellation, supersession, correlation/pairing,
   concurrency, silence, endpoint inclusivity, units, clock start/reset, and the
   applicable error-budget reference are reviewed semantic fields, not inferred
@@ -148,7 +152,7 @@ is the sole package authority.
 
 ## 不变量
 
-ID 唯一且不得重用；来源和版本强制；公开产物仅保存 hash 或批准释义；每个已批准适用条目至少含一个义务；解释或适用性变化必须形成新评审版本；复合规范语句原则上拆分。含 `timing` 义务的项目必须有完整时序对象，空上下界表示该界不存在而不是未知；触发、响应、取消、替代、关联/配对、并发、静默、端点包含性、单位、时钟启动/复位和误差预算引用均是经评审语义，不能由测试代码推断。歧义配对属于测量配置无效并产生 `ERROR`，不得记作 IUT `FAIL`。
+ID 唯一且不得重用；来源和版本强制；公开产物仅保存 hash 或批准释义；每个已批准适用条目至少含一个义务；解释或适用性变化必须形成新评审版本；复合规范语句原则上拆分。含 `timing` 义务的项目必须有完整时序对象，空上下界表示该界不存在而不是未知；触发、响应、取消、替代、关联/配对、并发、静默、端点包含性、单位、时钟启动/复位和误差预算引用均是经评审语义，不能由测试代码推断。歧义配对属于测量配置无效并产生 `ERROR`，不得记作 IUT `FAIL`。`rhoRA` 必须是封闭的候选绑定，不得携带专有转录字段。登记来源的每一 PDF 页必须落入受控 section span 或明确排除区间。
 
 ## M1 增补
 

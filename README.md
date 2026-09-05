@@ -37,7 +37,7 @@ silently redefine the Core.
 | Current release | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/tree/v4.3.1) |
 | Method input | Candidate GVS Core 0.3 at [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
 | Protocol source | `ARINC-615A-3` / edition `615A-3` / wire version `A4` |
-| Bounded source and open dependency | `ARINC-665-5`; ARINC-645 `OPEN-DEPENDENCY` |
+| Bounded source and open dependency | `ARINC-665-5`; ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-2 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY` |
 | Technical direction | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / platform `deferred: TTCN-3` |
 | Delivery position | current `M1` / next `M2` / disposition `ADOPT` |
 | Activation boundary | merge evidence `EXTERNAL-VERIFICATION-REQUIRED` / approval `NOT-AUTOMATED` |
@@ -55,12 +55,12 @@ silently redefine the Core.
 - Rebuild the single machine-readable candidate package around leaf-level prose, table-row and sequence-event source units.
 - Apply a dependency-bounded ARINC 665-5 survey triggered only by 615A-3 and current Profile services.
 - Separate fixed timing constants, message-carried parameters, symbolic parameters and examples while keeping ARINC 645 open.
-- Expose actor-condition-action-object-effect semantics and an RG0 anchor for a full renewed RG0/RG1 review.
+- Close WO-M1-2026-002 Must items: complete PDF page account, closed profileScope/rhoRA/activation schema, source-register hash binding, registered RFC/664 identities, and full semantic-assertion coverage.
 
 State changes:
 
-- M0 is externally verified and M1 now owns the candidate CRS/applicability package under CR-2026-007.
-- Repository snapshot: candidate package; external approval is not encoded in Git. Formal M1 state is governed by the CR-2026-007 conditional activation record.
+- M0 is externally verified and M1 remains a candidate CRS/applicability package under CR-2026-007.
+- Repository snapshot: candidate package after WO-M1-2026-002 mechanical closures. RG0/RG1 stay PENDING-EXTERNAL-INDEPENDENT-REVIEW; Git does not encode approval.
 
 Unchanged boundaries:
 
@@ -72,7 +72,7 @@ Unchanged boundaries:
 
 ## Current stop
 
-`PROFILE-MODEL-REFINEMENT-GATE` — **NOT YET ESTABLISHED**: M2 entry requires external verification of joint RG0/RG1 approval on the exact reviewed Head, ordinary merge with that Head as second parent, and successful main CI.
+`PROFILE-MODEL-REFINEMENT-GATE` — **NOT YET ESTABLISHED**: The M1 CRS gate remains EXTERNAL-VERIFICATION-REQUIRED. This stop blocks M2 until joint RG0/RG1 approval binds the exact reviewed Head, an ordinary merge has that Head as second parent, and main CI succeeds.
 
 ## Next development steps
 
@@ -87,7 +87,7 @@ Unchanged boundaries:
 | 当前发布 | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/tree/v4.3.1) |
 | 方法输入 | Candidate GVS Core 0.3 @ [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
 | 协议来源 | `ARINC-615A-3` / 版次 `615A-3` / 线版本 `A4` |
-| 有边界来源与开放依赖 | `ARINC-665-5`；ARINC-645 `OPEN-DEPENDENCY` |
+| 有边界来源与开放依赖 | `ARINC-665-5`；ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-2 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY` |
 | 技术方向 | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / 平台 `deferred: TTCN-3` |
 | 交付位置 | 当前 `M1` / 下一 `M2` / 处置 `ADOPT` |
 | 激活边界 | 合并证据 `EXTERNAL-VERIFICATION-REQUIRED` / 批准 `NOT-AUTOMATED` |
@@ -105,12 +105,12 @@ Unchanged boundaries:
 - 围绕叶级正文、表格行和序列事件来源单元重建单一机器可读候选包。
 - 仅由 615A-3 与当前 Profile 服务触发 ARINC 665-5 有边界调查。
 - 区分固定时序常数、消息携带参数、符号参数和示例，并保持 ARINC 645 开放。
-- 提供参与者—条件—行为—对象—效果语义及 RG0 锚点，以执行完整的新一轮 RG0/RG1 评审。
+- 关闭 WO-M1-2026-002 Must 项：完整 PDF 页账、封闭 profileScope/rhoRA/activation schema、来源登记散列绑定、已登记 RFC/664 身份，以及完整语义断言覆盖。
 
 状态变化：
 
-- M0 已获外部核验，M1 现由 CR-2026-007 控制候选 CRS/适用性数据包。
-- 仓库快照：候选数据包；Git 不编码外部批准。M1 正式状态由 CR-2026-007 条件激活记录控制。
+- M0 已获外部核验，M1 仍由 CR-2026-007 控制为候选 CRS/适用性数据包。
+- 仓库快照：WO-M1-2026-002 机械关闭后的候选数据包。RG0/RG1 保持 PENDING-EXTERNAL-INDEPENDENT-REVIEW；Git 不编码批准。
 
 保持不变的边界：
 
@@ -122,7 +122,7 @@ Unchanged boundaries:
 
 ## 当前停点
 
-`PROFILE-MODEL-REFINEMENT-GATE` — **NOT YET ESTABLISHED**：M2 入口要求外部核验：RG0/RG1 联合批准绑定精确受审 Head、普通合并的第二父为该 Head，且 main CI 成功。
+`PROFILE-MODEL-REFINEMENT-GATE` — **NOT YET ESTABLISHED**：M1 CRS 门仍为 EXTERNAL-VERIFICATION-REQUIRED。本停点禁止 M2，直至 RG0/RG1 联合批准绑定精确受审 Head、普通合并的第二父为该 Head，且 main CI 成功。
 
 ## 下一步开发计划
 

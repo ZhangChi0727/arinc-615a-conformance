@@ -3,7 +3,9 @@
 ## M1 Profile-level declaration
 
 M1 declares source identities, roles, services/operations, included, excluded
-and deferred behavior, and observation classes without inventing an IUT. Each
+and deferred behavior, and observation classes without inventing an IUT. Every
+registered source PDF page is either inside a controlled section span or an
+explicit exclusion range. Each
 requirement uses exactly one observation classification:
 `OBSERVABLE-IN-PRINCIPLE`, `CONFIGURATION-DEPENDENT`,
 `INTERNAL-NOT-OBSERVABLE`, `DEPENDENCY-BLOCKED`, or `UNRESOLVED`. The strongest
@@ -81,7 +83,7 @@ observability or applicability questions.
 
 ## M1 Profile 层声明
 
-M1 只声明来源身份、角色、服务／操作、纳入／排除／延期行为和观测分类，不虚构 IUT。每项需求只能采用 `OBSERVABLE-IN-PRINCIPLE`、`CONFIGURATION-DEPENDENT`、`INTERNAL-NOT-OBSERVABLE`、`DEPENDENCY-BLOCKED` 或 `UNRESOLVED` 之一。M1 允许的最强结论仅为已形成 CRS／适用性候选。
+M1 只声明来源身份、角色、服务／操作、纳入／排除／延期行为和观测分类，不虚构 IUT。登记来源的每一 PDF 页必须落入受控 section span 或明确排除区间。每项需求只能采用 `OBSERVABLE-IN-PRINCIPLE`、`CONFIGURATION-DEPENDENT`、`INTERNAL-NOT-OBSERVABLE`、`DEPENDENCY-BLOCKED` 或 `UNRESOLVED` 之一。M1 允许的最强结论仅为已形成 CRS／适用性候选。
 
 ## 未来 Project Configuration 声明
 
