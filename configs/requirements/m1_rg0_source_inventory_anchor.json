@@ -7,10 +7,10 @@
   "tableRowCount": 146,
   "tableFootnoteCount": 1,
   "sequenceEventCount": 63,
-  "timingProvenanceFingerprint": "952a5ae10332b73f573d96e98ccbb2d0e348c8c97b44971793a09e31137557f6",
+  "timingProvenanceFingerprint": "c30823413487b87065da0ad598a0bfd67d5d4435c560e68968d8f9b27134e2da",
   "dependencySourceIdentityFingerprint": "74053ca92324e69f24e0c77d3b54482e35bbeb279e649e29a63afa161b638321",
-  "sectionSpanManifestFingerprint": "7cb8e227ebc532cc81ae02631617757ac949fde8c8f826ed0e751f99ef0224f1",
-  "semanticAssertionFingerprint": "d385850f2899f3aaafd889b4a85c84a246e3dd855a97e8a6fdedad2e92ec2267",
+  "sectionSpanManifestFingerprint": "c65c17a17c5e6d9a87d034489e6f14a8b14671e2e0e4407d8efdec1f78396eea",
+  "semanticAssertionFingerprint": "d4eab8b46a72db9bdd61f34bc79ddaeb9f2c1ba0ad2ad2d5b44272c872a2a250",
   "statusTableFingerprint": "626a7fa96d83853eb3a369da0de78ae866a44f1d24fd6d91b3092e734ed85cbf",
   "automaticAssuranceBoundary": "This anchor detects package-only coordinated edits. It does not prove proprietary-source completeness or semantic fidelity; those remain external RG0 and RG1 review responsibilities.",
   "人工保证边界": "本锚点用于发现仅修改数据包的协同篡改；它不证明专有来源的完整性或语义忠实度，后两者仍由外部 RG0 与 RG1 评审负责。"

@@ -4,8 +4,35 @@
   "policy": {
     "locatorTransition": "FORMATTED-HEADING-ONLY",
     "bodyCrossReferencesChangeLocator": false,
-    "attachmentAndAppendixNamespaceRequired": true
+    "attachmentAndAppendixNamespaceRequired": true,
+    "pageAccount": "SPAN-OR-EXCLUSION-COVERS-EVERY-REGISTERED-PDF-PAGE"
   },
+  "excludedRanges": [
+    {
+      "sourceId": "ARINC-615A-3",
+      "pdfPages": [1, 12],
+      "kind": "FRONT-MATTER",
+      "rationaleCode": "TITLE-REVISION-AND-FRONT-MATTER-OUTSIDE-NORMATIVE-BODY"
+    },
+    {
+      "sourceId": "ARINC-615A-3",
+      "pdfPages": [146, 174],
+      "kind": "BACK-MATTER",
+      "rationaleCode": "TRAILING-PAGES-OUTSIDE-APPENDIX-G-BODY"
+    },
+    {
+      "sourceId": "ARINC-665-5",
+      "pdfPages": [1, 10],
+      "kind": "FRONT-MATTER",
+      "rationaleCode": "TITLE-AND-FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY"
+    },
+    {
+      "sourceId": "ARINC-665-5",
+      "pdfPages": [32, 139],
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "PAGES-BEYOND-615A3-TRIGGERED-BOUNDED-SURVEY"
+    }
+  ],
   "exclusiveOwnershipRegions": [
     {
       "sourceId": "ARINC-615A-3",
