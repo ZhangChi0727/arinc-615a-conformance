@@ -21,6 +21,15 @@ VIEW_PATH = ROOT / "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md"
 RG0_ANCHOR_PATH = ROOT / "configs/requirements/m1_rg0_source_inventory_anchor.json"
 SECTION_SPAN_PATH = ROOT / "configs/requirements/m1_source_section_spans.json"
 SEMANTIC_ASSERTION_PATH = ROOT / "configs/requirements/m1_semantic_review_assertions.json"
+SOURCE_REGISTER_PATH = ROOT / "configs/research/controlled_sources.json"
+GENERIC_OBSERVABLE_EFFECTS = {"STATE-OR-ENCODING-OUTCOME-OBSERVABLE"}
+REQUIRED_PROFILE_SCOPE_KEYS = {
+    "baseOperation",
+    "supportingOperation",
+    "deferredOperations",
+    "configurationStatus",
+    "bounded665ProfileScopeTriggerIds",
+}
 
 
 class M1Error(ValueError):
@@ -67,6 +76,41 @@ def status_table_projection(data: dict[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
+def page_account_errors(section_manifest: dict[str, Any], register: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    spans_by_source = {source.get("sourceId"): source.get("spans", []) for source in section_manifest.get("sources", [])}
+    exclusions_by_source: dict[str, list[dict[str, Any]]] = {}
+    for exclusion in section_manifest.get("excludedRanges", []):
+        exclusions_by_source.setdefault(exclusion.get("sourceId"), []).append(exclusion)
+    for source in register.get("sources", []):
+        source_id = source.get("id")
+        page_count = source.get("pageCount")
+        if not isinstance(page_count, int) or page_count <= 0:
+            errors.append(f"controlled register {source_id} lacks a usable pageCount for the M1 page account")
+            continue
+        expected = set(range(1, page_count + 1))
+        covered: set[int] = set()
+        excluded: set[int] = set()
+        for span in spans_by_source.get(source_id, []):
+            start, end = span["pdfPages"]
+            covered.update(range(start, end + 1))
+        for exclusion in exclusions_by_source.get(source_id, []):
+            start, end = exclusion["pdfPages"]
+            excluded.update(range(start, end + 1))
+        if covered & excluded:
+            errors.append(f"section-span page account for {source_id} overlaps span and exclusion pages")
+        accounted = covered | excluded
+        if accounted != expected:
+            missing = sorted(expected - accounted)
+            extra = sorted(accounted - expected)
+            errors.append(
+                f"section-span page account for {source_id} is incomplete"
+                + (f" missing={missing}" if missing else "")
+                + (f" extra={extra}" if extra else "")
+            )
+    return errors
+
+
 def load_package(path: Path = PACKAGE_PATH) -> dict[str, Any]:
     data = json.loads(path.read_text(encoding="utf-8"))
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
@@ -92,13 +136,37 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         anchor = json.loads(RG0_ANCHOR_PATH.read_text(encoding="utf-8"))
         section_manifest = json.loads(SECTION_SPAN_PATH.read_text(encoding="utf-8"))
         semantic_assertions = json.loads(SEMANTIC_ASSERTION_PATH.read_text(encoding="utf-8"))
+        source_register = json.loads(SOURCE_REGISTER_PATH.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         return [f"M1 controlled review input is unavailable: {exc}"]
+    errors.extend(page_account_errors(section_manifest, source_register))
     review_control = data["reviewControl"]
     if review_control.get("sectionSpanManifestFingerprint") != hashlib.sha256(canonical(section_manifest)).hexdigest():
         errors.append("section-span manifest fingerprint does not match the controlled manifest")
     if review_control.get("semanticAssertionFingerprint") != hashlib.sha256(canonical(semantic_assertions)).hexdigest():
         errors.append("semantic-assertion fingerprint does not match the controlled assertions")
+    register_sources = {row.get("id"): row for row in source_register.get("sources", [])}
+    for binding in data.get("sourceBindings", []):
+        source_id = binding.get("sourceId")
+        registered = register_sources.get(source_id)
+        if registered is None:
+            errors.append(f"source binding {source_id} is not in the controlled register")
+            continue
+        if binding.get("sha256") != registered.get("sha256"):
+            errors.append(f"source binding {source_id} sha256 disagrees with the controlled register")
+        if binding.get("role") != registered.get("role"):
+            errors.append(f"source binding {source_id} role disagrees with the controlled register")
+    scope = data.get("profileScope", {})
+    if set(scope) != REQUIRED_PROFILE_SCOPE_KEYS:
+        errors.append("profileScope must contain only the controlled M1 scope fields")
+    if scope.get("baseOperation") != "UPLOAD":
+        errors.append("profileScope.baseOperation must remain UPLOAD")
+    if scope.get("supportingOperation") != "INFORMATION":
+        errors.append("profileScope.supportingOperation must remain INFORMATION")
+    if scope.get("deferredOperations") != ["DOWNLOAD", "FIND"]:
+        errors.append("profileScope.deferredOperations must remain DOWNLOAD and FIND")
+    if scope.get("configurationStatus") != "NOT YET ESTABLISHED":
+        errors.append("profileScope.configurationStatus must remain NOT YET ESTABLISHED")
     spans_by_source: dict[str, list[dict[str, Any]]] = {}
     for source in section_manifest.get("sources", []):
         source_id = source.get("sourceId")
@@ -183,12 +251,14 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     for row in data["requirements"]:
         source = row.get("source", {})
         semantic = row.get("semantic", {})
-        for field in ("actor", "condition", "action", "objects", "observableEffect", "operation"):
+        for field in ("actor", "condition", "action", "objects", "observableEffect", "operation", "polarity"):
             if not semantic.get(field):
                 errors.append(f"requirement {row.get('id')} lacks semantic.{field}")
         semantic_values = [str(semantic.get("actor", "")), str(semantic.get("condition", "")), str(semantic.get("action", "")), *(str(item) for item in semantic.get("objects", [])), str(semantic.get("observableEffect", ""))]
-        if any(re.search(r"^(?:SOURCE-(?:BOUND|DEFINED|IDENTIFIED)|CLAUSE-SPECIFIC|DURING-.*-SCOPE$)|-$", value) for value in semantic_values):
+        if any(re.search(r"^(?:SOURCE-(?:BOUND|DEFINED|IDENTIFIED)|CLAUSE-SPECIFIC|WHEN-CLAUSE-|DURING-.*-SCOPE$)|-$", value) for value in semantic_values):
             errors.append(f"requirement {row.get('id')} retains a non-reviewable semantic fallback")
+        if semantic.get("observableEffect") in GENERIC_OBSERVABLE_EFFECTS:
+            errors.append(f"requirement {row.get('id')} retains a generic observableEffect")
         if row.get("paraphraseEn") == row.get("paraphraseZh"):
             errors.append(f"requirement {row.get('id')} bilingual paraphrases must differ")
         if any(token in row.get("paraphraseEn", "") for token in ("CLAUSE-SPECIFIC-BEHAVIOR", "SOURCE-DEFINED-NORMATIVE-BEHAVIOR")):
@@ -204,7 +274,7 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         timing = row.get("timing")
         if timing is not None:
             timing_fields = {
-                "timingFamily", "provenanceKind", "sourceParameter",
+                "timingFamily", "provenanceKind", "sourceParameter", "sourceRelation",
                 "trigger", "response", "cancellation", "supersedingTrigger", "correlationKey",
                 "pairingPolicy", "concurrencyPolicy", "silenceSemantics", "lowerBound",
                 "upperBound", "unit", "lowerBoundary", "upperBoundary", "clockStart",
@@ -231,11 +301,18 @@ def package_errors(data: dict[str, Any]) -> list[str]:
             triggers = row.get("triggeredByRequirementIds", [])
             if profile_triggers != data.get("profileScope", {}).get("bounded665ProfileScopeTriggerIds"):
                 errors.append(f"665-5 requirement {row.get('id')} does not preserve the profile-scope trigger set")
-            if not triggers:
-                errors.append(f"665-5 requirement {row.get('id')} lacks a 615A-3 trigger")
+            relations = row.get("triggerRelations", [])
+            if [item.get("requirementId") for item in relations] != triggers:
+                errors.append(f"665-5 requirement {row.get('id')} trigger relations do not match its requirement-level edges")
             for trigger in triggers:
                 if trigger not in requirement_by_id or requirement_by_id[trigger].get("source", {}).get("sourceId") != "ARINC-615A-3":
                     errors.append(f"665-5 requirement {row.get('id')} has invalid trigger {trigger}")
+            for relation in relations:
+                trigger = requirement_by_id.get(relation.get("requirementId"), {})
+                rationale = str(relation.get("rationaleCode", ""))
+                shared_object = rationale.removeprefix("SHARED-")
+                if not rationale.startswith("SHARED-") or shared_object not in row.get("semantic", {}).get("objects", []) or shared_object not in trigger.get("semantic", {}).get("objects", []):
+                    errors.append(f"665-5 requirement {row.get('id')} has an unsupported requirement-level trigger rationale")
             if row.get("bounded665Decision") not in {
                 "APPLICABLE-AS-BOUNDED-6655-REFERENCE", "NOT-APPLICABLE-TO-CURRENT-PROFILE",
                 "DEFERRED-VERSION-GAP", "BLOCKED-BY-ARINC-645", "UNSUPPORTED-BY-CURRENT-SOURCE",
@@ -244,6 +321,8 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         hash_key = str(row.get("sourceUnitId"))
         source_hash_parts.setdefault(hash_key, []).append(row)
         relation = row.get("rhoRA", {})
+        if set(relation) != {"relation", "sourceCoverageId", "status"} or relation.get("relation") != "refines-reviewed-source-unit" or relation.get("status") != "CANDIDATE":
+            errors.append(f"requirement {row.get('id')} rhoRA is not a closed candidate binding")
         coverage_id = relation.get("sourceCoverageId")
         if coverage_id not in coverage_by_id or row.get("id") not in coverage_by_id.get(coverage_id, {}).get("requirementIds", []):
             errors.append(f"requirement {row.get('id')} rho_RA does not close to its coverage row")
@@ -266,20 +345,36 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     }
     if len(timing_rows) > 1 and len(timing_tuples) < 3:
         errors.append("timing requirements collapse into generic shared event semantics")
-    trigger_sets = [tuple(row.get("triggeredByRequirementIds", [])) for row in data["requirements"] if row.get("source", {}).get("sourceId") == "ARINC-665-5"]
-    if len(trigger_sets) > 1 and len(set(trigger_sets)) == 1:
-        errors.append("all 665-5 requirements share one broadcast requirement trigger set")
-    requirements_by_hash: dict[str, list[dict[str, Any]]] = {}
-    for row in data["requirements"]:
-        requirements_by_hash.setdefault(row.get("sourceTextHash", ""), []).append(row)
+    requirements_by_id = {row.get("id"): row for row in data["requirements"]}
+    asserted_ids: list[str] = []
     for assertion in semantic_assertions.get("assertions", []):
-        rows = requirements_by_hash.get(assertion.get("sourceTextHash", ""), [])
-        if not rows:
-            errors.append(f"semantic assertion source {assertion.get('sourceTextHash')} is not represented")
+        requirement_id = assertion.get("requirementId")
+        asserted_ids.append(requirement_id)
+        row = requirements_by_id.get(requirement_id)
+        if row is None:
+            errors.append(f"semantic assertion requirement {requirement_id} is not represented")
             continue
-        expected_semantic = assertion.get("expected", {})
-        if not any(all(row.get("semantic", {}).get(key) == value for key, value in expected_semantic.items()) for row in rows):
-            errors.append(f"semantic assertion failed for source {assertion.get('sourceTextHash')}")
+        identity_fields = ("sourceUnitId", "sourceTextHash")
+        for field in identity_fields:
+            if row.get(field) != assertion.get(field):
+                errors.append(f"semantic assertion {requirement_id} disagrees on {field}")
+        expected_fields = {
+            "semantic": assertion.get("expectedSemantic"),
+            "sourceModality": assertion.get("expectedSourceModality"),
+            "conformanceEffect": assertion.get("expectedConformanceEffect"),
+            "dependencyIds": assertion.get("expectedDependencyIds"),
+        }
+        if "expectedTiming" in assertion:
+            expected_fields["timing"] = assertion["expectedTiming"]
+        elif "timing" in row:
+            errors.append(f"semantic assertion {requirement_id} omits an existing timing proposition")
+        if row.get("source", {}).get("sourceId") == "ARINC-665-5":
+            expected_fields["triggerRelations"] = assertion.get("expectedTriggerRelations")
+        for field, value in expected_fields.items():
+            if row.get(field) != value:
+                errors.append(f"semantic assertion {requirement_id} failed for {field}")
+    if len(asserted_ids) != len(set(asserted_ids)) or set(asserted_ids) != set(requirements_by_id):
+        errors.append("semantic assertions must cover every requirement exactly once")
     mapped_counts = Counter(
         requirement_id for coverage in data["coverageLedger"] for requirement_id in coverage.get("requirementIds", [])
     )
@@ -333,6 +428,11 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         errors.append("RG0/RG1 must remain pending in the Draft package")
     if data["activation"].get("formalApproval") != "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED":
         errors.append("M1 formal approval must remain external and unsatisfied")
+    if data["activation"].get("mergeEvidence") != "NOT-YET-PRESENT":
+        errors.append("M1 merge evidence must remain absent in the Draft package")
+    review_head = data["reviewControl"].get("reviewHead")
+    if review_head != "UNBOUND-DRAFT" and not re.fullmatch(r"[0-9a-f]{40}", str(review_head or "")):
+        errors.append("reviewHead must be UNBOUND-DRAFT or a complete 40-character SHA")
     forbidden_keys = {"rawSourceText", "sourceText", "quote", "excerpt", "screenshot", "payload", "pdfPath"}
     machine_path = re.compile(r"(?i)(?:[a-z]:[\\/]|file://|/(?:home|Users)/[^/]+/)")  # STABLE_INVARIANT
     reversible = re.compile(r"^(?:[A-Za-z0-9+/]{160,}={0,2}|[0-9a-fA-F]{256,})$")

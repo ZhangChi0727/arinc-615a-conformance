@@ -107,11 +107,11 @@ def test_rg0_rg1_and_formal_activation_cannot_be_promoted() -> None:
     assert errors(data)
 
 
-def test_665_rows_require_a_615a3_trigger_and_bounded_decision() -> None:
+def test_665_requirement_edges_require_a_matching_auditable_relation() -> None:
     data = package()
-    row = next(item for item in data["requirements"] if item["source"]["sourceId"] == "ARINC-665-5")
+    row = next(item for item in data["requirements"] if item.get("triggeredByRequirementIds"))
     row["triggeredByRequirementIds"] = []; refresh_summary(data)
-    assert any("lacks a 615A-3 trigger" in item for item in errors(data))
+    assert any("trigger relations do not match" in item for item in errors(data))
     data = package()
     row = next(item for item in data["requirements"] if item["source"]["sourceId"] == "ARINC-665-5")
     row["bounded665Decision"] = "EQUIVALENT-TO-665-3"; refresh_summary(data)
@@ -259,7 +259,43 @@ def test_generic_semantics_empty_tokens_and_direction_reversal_are_rejected() ->
     data = package()
     row = next(item for item in data["requirements"] if item["sourceTextHash"] == "00560acc8acc232b1eb1c81882c7270c775e75b59793df9f3829c7a6a4b838c2")
     row["semantic"]["action"] = "PROHIBIT-COMBINATION"; refresh_summary(data)
-    assert any("semantic assertion failed" in item for item in errors(data))
+    assert any("failed for semantic" in item for item in errors(data))
+
+
+def test_rg1_assertions_cover_every_requirement_and_bind_polarity() -> None:
+    data = package()
+    row = next(item for item in data["requirements"] if item["semantic"]["polarity"] == "NEGATIVE")
+    row["semantic"]["polarity"] = "AFFIRMATIVE"
+    refresh_summary(data)
+    assert any("failed for semantic" in item for item in errors(data))
+
+
+def test_reviewed_checksum_and_non_failure_propositions_cannot_regress() -> None:
+    for action in (
+        "LOCATE-REQUESTED-FILE-USING-INCLUDED-CRC",
+        "RETURN-FILE-CHECKSUM-COMPUTED-BY-INDICATED-ALGORITHM",
+        "ACKNOWLEDGE-CHECKSUM-OPTION-IF-ALGORITHM-SUPPORTED",
+        "CALCULATE-AND-VALIDATE-RECEIVED-FILE-CHECKSUM",
+        "DO-NOT-FAIL-TFTP-TRANSFER-ON-CHECKSUM-VALIDATION-FAILURE",
+    ):
+        data = package()
+        row = next(item for item in data["requirements"] if item["semantic"]["action"] == action)
+        row["semantic"]["action"] = "USE-CRC"
+        refresh_summary(data)
+        assert any("failed for semantic" in item for item in errors(data))
+
+
+def test_reviewed_timing_equations_cannot_be_relabelled_or_dropped() -> None:
+    data = package()
+    row = next(item for item in data["requirements"] if item.get("timing", {}).get("sourceParameter") == "TFTP-TO-DIVIDED-BY-2")
+    row["timing"]["sourceRelation"] = "TFTP-PACKET-ANSWER-DEADLINE"
+    refresh_summary(data)
+    assert any("failed for timing" in item for item in errors(data))
+    data = package()
+    row = next(item for item in data["requirements"] if item.get("timing", {}).get("sourceParameter") == "DLP-TO-EQUATION")
+    row.pop("timing")
+    refresh_summary(data)
+    assert any("failed for timing" in item for item in errors(data))
 
 
 def test_timing_semantics_cannot_collapse_to_one_placeholder_tuple() -> None:
@@ -274,15 +310,74 @@ def test_timing_semantics_cannot_collapse_to_one_placeholder_tuple() -> None:
 
 def test_665_profile_scope_and_requirement_edges_are_distinct() -> None:
     data = package()
-    rows = [row for row in data["requirements"] if row["source"]["sourceId"] == "ARINC-665-5"]
-    broadcast = list(rows[0]["triggeredByRequirementIds"])
-    for row in rows:
-        row["triggeredByRequirementIds"] = broadcast
+    row = next(row for row in data["requirements"] if row.get("triggerRelations"))
+    row["triggerRelations"][0]["rationaleCode"] = "SHARED-NONEXISTENT-OBJECT"
     refresh_summary(data)
-    assert any("broadcast requirement trigger set" in item for item in errors(data))
+    assert any("unsupported requirement-level trigger rationale" in item for item in errors(data))
     data = package(); row = next(item for item in data["requirements"] if item["source"]["sourceId"] == "ARINC-665-5")
     row["profileScopeTriggerIds"] = row["profileScopeTriggerIds"][:1]; refresh_summary(data)
     assert any("profile-scope trigger set" in item for item in errors(data))
+
+
+def test_profile_scope_cannot_change_the_controlled_m1_operations() -> None:
+    data = package()
+    data["profileScope"]["baseOperation"] = "DOWNLOAD"
+    refresh_summary(data)
+    assert any("baseOperation must remain UPLOAD" in item for item in errors(data))
+    data = package()
+    data["profileScope"]["extraField"] = "SILENT-SCOPE-CHANGE"
+    refresh_summary(data)
+    assert any("only the controlled M1 scope fields" in item for item in errors(data))
+
+
+def test_source_bindings_must_match_the_controlled_register() -> None:
+    data = package()
+    binding = next(item for item in data["sourceBindings"] if item["sourceId"] == "ARINC-615A-3")
+    binding["sha256"] = "0" * 64
+    refresh_summary(data)
+    assert any("sha256 disagrees with the controlled register" in item for item in errors(data))
+    data = package()
+    binding = next(item for item in data["sourceBindings"] if item["sourceId"] == "ARINC-615A-3")
+    binding["role"] = "HISTORICAL-SUPERSEDED"
+    refresh_summary(data)
+    assert any("role disagrees with the controlled register" in item for item in errors(data))
+    data = package()
+    data["sourceBindings"].append({"sourceId": "RFC-1350", "role": "OPEN-DEPENDENCY", "sha256": "a" * 64})
+    refresh_summary(data)
+    assert any("is not in the controlled register" in item for item in errors(data))
+
+
+def test_rhora_must_remain_a_closed_candidate_binding() -> None:
+    data = package()
+    data["requirements"][0]["rhoRA"]["transcription"] = "proprietary sentence"
+    refresh_summary(data)
+    assert any("rhoRA is not a closed candidate binding" in item for item in errors(data))
+
+
+def test_generic_observable_effect_is_rejected() -> None:
+    data = package()
+    data["requirements"][0]["semantic"]["observableEffect"] = "STATE-OR-ENCODING-OUTCOME-OBSERVABLE"
+    refresh_summary(data)
+    assert any("generic observableEffect" in item for item in errors(data))
+
+
+def test_draft_merge_evidence_cannot_be_manufactured() -> None:
+    data = package()
+    data["activation"]["mergeEvidence"] = "ORDINARY-TWO-PARENT-MERGE"
+    refresh_summary(data)
+    assert any("merge evidence must remain absent" in item for item in errors(data))
+
+
+def test_registered_pdf_pages_are_accounted_by_span_or_exclusion() -> None:
+    register = json.loads((ROOT / "configs/research/controlled_sources.json").read_text(encoding="utf-8"))
+    manifest = json.loads((ROOT / "configs/requirements/m1_source_section_spans.json").read_text(encoding="utf-8"))
+    assert m1.page_account_errors(manifest, register) == []
+    broken = json.loads(json.dumps(manifest))
+    broken["excludedRanges"][0]["pdfPages"] = [1, 11]
+    assert any("incomplete" in item for item in m1.page_account_errors(broken, register))
+    overlap = json.loads(json.dumps(manifest))
+    overlap["excludedRanges"][0]["pdfPages"] = [1, 13]
+    assert any("overlaps" in item for item in m1.page_account_errors(overlap, register))
 
 
 def test_structured_status_meaning_display_and_footnote_are_anchored() -> None:

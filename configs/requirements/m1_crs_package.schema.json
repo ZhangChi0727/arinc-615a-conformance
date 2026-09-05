@@ -214,6 +214,7 @@
                 "objects",
                 "observableEffect",
                 "operation"
+                ,"polarity"
             ],
             "properties": {
                 "actor": {
@@ -242,6 +243,9 @@
                 },
                 "operation": {
                     "$ref": "#/$defs/id"
+                },
+                "polarity": {
+                    "enum": ["AFFIRMATIVE", "NEGATIVE"]
                 }
             }
         },
@@ -252,6 +256,7 @@
             "timingFamily",
             "provenanceKind",
                 "sourceParameter",
+                "sourceRelation",
                 "trigger",
                 "response",
                 "cancellation",
@@ -281,11 +286,16 @@
                         "MESSAGE-CARRIED-PARAMETER",
                         "CONFIGURATION-PARAMETER",
                         "SYMBOLIC-SOURCE-PARAMETER",
+                        "SYMBOLIC-SOURCE-EQUATION",
                         "EXAMPLE-NONNORMATIVE"
                     ]
                 },
                 "sourceParameter": {
                     "$ref": "#/$defs/id"
+                },
+                "sourceRelation": {
+                    "type": "string",
+                    "minLength": 1
                 },
                 "trigger": {
                     "$ref": "#/$defs/id"
@@ -444,12 +454,31 @@
         },
         "profileScope": {
             "type": "object",
+            "additionalProperties": false,
             "required": [
                 "baseOperation",
                 "supportingOperation",
                 "deferredOperations",
-                "configurationStatus"
-            ]
+                "configurationStatus",
+                "bounded665ProfileScopeTriggerIds"
+            ],
+            "properties": {
+                "baseOperation": {"enum": ["UPLOAD"]},
+                "supportingOperation": {"enum": ["INFORMATION"]},
+                "deferredOperations": {
+                    "type": "array",
+                    "minItems": 2,
+                    "uniqueItems": true,
+                    "items": {"enum": ["DOWNLOAD", "FIND"]}
+                },
+                "configurationStatus": {"const": "NOT YET ESTABLISHED"},
+                "bounded665ProfileScopeTriggerIds": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {"$ref": "#/$defs/id"}
+                }
+            }
         },
         "coverageLedger": {
             "type": "array",
@@ -641,7 +670,14 @@
                         "const": "PENDING-EXTERNAL-INDEPENDENT-REVIEW"
                     },
                     "rhoRA": {
-                        "type": "object"
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": ["relation", "sourceCoverageId", "status"],
+                        "properties": {
+                            "relation": {"const": "refines-reviewed-source-unit"},
+                            "sourceCoverageId": {"$ref": "#/$defs/id"},
+                            "status": {"enum": ["CANDIDATE"]}
+                        }
                     },
                     "timing": {
                         "$ref": "#/$defs/timing"
@@ -663,6 +699,20 @@
                         "uniqueItems": true,
                         "items": {
                             "$ref": "#/$defs/id"
+                        }
+                    },
+                    "triggerRelations": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": ["requirementId", "relation", "rationaleCode"],
+                            "properties": {
+                                "requirementId": {"$ref": "#/$defs/id"},
+                                "relation": {"const": "615A-REQUIRES-665-DATA-SEMANTIC"},
+                                "rationaleCode": {"$ref": "#/$defs/id"}
+                            }
                         }
                     },
                     "profileScopeTriggerIds": {
@@ -716,7 +766,8 @@
                     "const": "PENDING-EXTERNAL-INDEPENDENT-REVIEW"
                 },
                 "reviewHead": {
-                    "type": "string"
+                    "type": "string",
+                    "pattern": "^(UNBOUND-DRAFT|[0-9a-f]{40})$"
                 },
                 "sourceInventoryFingerprint": {
                     "$ref": "#/$defs/sha256"
@@ -779,11 +830,23 @@
         },
         "activation": {
             "type": "object",
+            "additionalProperties": false,
             "required": [
                 "formalApproval",
                 "mergeEvidence",
                 "postActivationInput"
-            ]
+            ],
+            "properties": {
+                "formalApproval": {
+                    "const": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED"
+                },
+                "mergeEvidence": {
+                    "const": "NOT-YET-PRESENT"
+                },
+                "postActivationInput": {
+                    "const": "M2"
+                }
+            }
         }
     }
 }
