@@ -21,6 +21,7 @@ VIEW_PATH = ROOT / "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md"
 RG0_ANCHOR_PATH = ROOT / "configs/requirements/m1_rg0_source_inventory_anchor.json"
 SECTION_SPAN_PATH = ROOT / "configs/requirements/m1_source_section_spans.json"
 SEMANTIC_ASSERTION_PATH = ROOT / "configs/requirements/m1_semantic_review_assertions.json"
+SUPPLEMENT_DISPOSITION_PATH = ROOT / "configs/requirements/m1_supplement_dispositions.json"
 SOURCE_REGISTER_PATH = ROOT / "configs/research/controlled_sources.json"
 GENERIC_OBSERVABLE_EFFECTS = {"STATE-OR-ENCODING-OUTCOME-OBSERVABLE"}
 REQUIRED_PROFILE_SCOPE_KEYS = {
@@ -73,6 +74,13 @@ def status_table_projection(data: dict[str, Any]) -> list[dict[str, Any]]:
     return [
         {"sourceUnitId": row["sourceUnitId"], "constraint": row["statusTableConstraint"]}
         for row in data["requirements"] if "statusTableConstraint" in row
+    ]
+
+
+def field_constraint_projection(data: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        {"sourceUnitId": row["sourceUnitId"], "constraint": row["fieldConstraint"]}
+        for row in data["requirements"] if "fieldConstraint" in row
     ]
 
 
@@ -137,10 +145,21 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         section_manifest = json.loads(SECTION_SPAN_PATH.read_text(encoding="utf-8"))
         semantic_assertions = json.loads(SEMANTIC_ASSERTION_PATH.read_text(encoding="utf-8"))
         source_register = json.loads(SOURCE_REGISTER_PATH.read_text(encoding="utf-8"))
+        supplement_dispositions = json.loads(SUPPLEMENT_DISPOSITION_PATH.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         return [f"M1 controlled review input is unavailable: {exc}"]
     errors.extend(page_account_errors(section_manifest, source_register))
+    supplement_pages = [row.get("pdfPage") for row in supplement_dispositions.get("pages", [])]
+    required_supplement_pages = list(range(155, 158)) + list(range(161, 165)) + list(range(167, 175))
+    if supplement_dispositions.get("sourceId") != "ARINC-615A-3" or supplement_pages != required_supplement_pages:
+        errors.append("supplement dispositions must cover every change-summary page exactly once and in order")
+    for row in supplement_dispositions.get("pages", []):
+        if row.get("disposition") != "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE" or not row.get("targetClauseRefs") or row.get("reviewStatus") != "PENDING-EXTERNAL-RG0":
+            errors.append(f"supplement page {row.get('pdfPage')} lacks a reviewable candidate disposition")
     review_control = data["reviewControl"]
+    supplement_fp = hashlib.sha256(canonical(supplement_dispositions)).hexdigest()
+    if review_control.get("supplementDispositionFingerprint") != supplement_fp:
+        errors.append("supplement-disposition fingerprint does not match the controlled register")
     if review_control.get("sectionSpanManifestFingerprint") != hashlib.sha256(canonical(section_manifest)).hexdigest():
         errors.append("section-span manifest fingerprint does not match the controlled manifest")
     if review_control.get("semanticAssertionFingerprint") != hashlib.sha256(canonical(semantic_assertions)).hexdigest():
@@ -278,18 +297,27 @@ def package_errors(data: dict[str, Any]) -> list[str]:
                 "trigger", "response", "cancellation", "supersedingTrigger", "correlationKey",
                 "pairingPolicy", "concurrencyPolicy", "silenceSemantics", "lowerBound",
                 "upperBound", "unit", "lowerBoundary", "upperBoundary", "clockStart",
-                "clockResets", "observationState", "errorBudgetState", "ambiguityStatus",
+                "clockResets", "observationState", "errorBudgetState", "ambiguityStatus", "sourceEvidenceUnitIds",
             }
             missing = timing_fields - set(timing)
             if missing:
                 errors.append(f"requirement {row.get('id')} timing fields missing: {sorted(missing)}")
             for bound in ("lowerBound", "upperBound"):
                 value = timing.get(bound)
-                if value is None or (not isinstance(value, (int, float)) and value not in {"UNBOUNDED", "UNRESOLVED"}):
+                if value is None or (not isinstance(value, (int, float)) and not re.fullmatch(r"(?:UNBOUNDED|UNRESOLVED|[A-Z][A-Z0-9-]+)", str(value))):
                     errors.append(f"requirement {row.get('id')} has invalid {bound}")
+            for source_unit_id in timing.get("sourceEvidenceUnitIds", []):
+                if source_unit_id not in set(source_unit_ids):
+                    errors.append(f"requirement {row.get('id')} timing evidence {source_unit_id} is not in the source inventory")
             for boundary in ("lowerBoundary", "upperBoundary"):
                 if timing.get(boundary) not in {"OPEN", "CLOSED", "UNBOUNDED", "UNRESOLVED"}:
                     errors.append(f"requirement {row.get('id')} has invalid {boundary}")
+        if source.get("tableOrFigure") and re.fullmatch(r"Table 6\.4\.[1-9]-1", str(source.get("tableOrFigure"))) and "fieldConstraint" not in row:
+            errors.append(f"requirement {row.get('id')} table field lacks a structured field constraint")
+        if "fieldConstraint" in row and source.get("fragmentKind") != "TABLE-ROW":
+            errors.append(f"requirement {row.get('id')} field constraint is not owned by a table row")
+        if row.get("roles") != [semantic.get("actor")] or row.get("operations") != [semantic.get("operation")] or row.get("category") != semantic.get("action") or row.get("obligations") != [semantic.get("action")]:
+            errors.append(f"requirement {row.get('id')} denormalized semantic fields disagree with semantic")
         for dep_id in row.get("dependencyIds", []):
             if dep_id not in ids.get("dependencies", set()):
                 errors.append(f"requirement {row.get('id')} has dangling dependency {dep_id}")
@@ -318,6 +346,10 @@ def package_errors(data: dict[str, Any]) -> list[str]:
                 "DEFERRED-VERSION-GAP", "BLOCKED-BY-ARINC-645", "UNSUPPORTED-BY-CURRENT-SOURCE",
             }:
                 errors.append(f"665-5 requirement {row.get('id')} has invalid bounded decision")
+            if row.get("refinementDisposition") not in {"PROFILE-SCOPE-ONLY", "DIRECT-DATA-FORMAT-REFINEMENT", "PRODUCER-CONSTRAINT", "CONSUMER-TOLERANCE", "DEPENDENCY-BLOCKED"}:
+                errors.append(f"665-5 requirement {row.get('id')} lacks a controlled refinement disposition")
+            if not row.get("refinementRationaleEn") or not row.get("refinementRationaleZh"):
+                errors.append(f"665-5 requirement {row.get('id')} lacks bilingual refinement rationale")
         hash_key = str(row.get("sourceUnitId"))
         source_hash_parts.setdefault(hash_key, []).append(row)
         relation = row.get("rhoRA", {})
@@ -360,6 +392,12 @@ def package_errors(data: dict[str, Any]) -> list[str]:
                 errors.append(f"semantic assertion {requirement_id} disagrees on {field}")
         expected_fields = {
             "semantic": assertion.get("expectedSemantic"),
+            "paraphraseEn": assertion.get("expectedParaphraseEn"),
+            "paraphraseZh": assertion.get("expectedParaphraseZh"),
+            "roles": assertion.get("expectedRoles"),
+            "operations": assertion.get("expectedOperations"),
+            "category": assertion.get("expectedCategory"),
+            "obligations": assertion.get("expectedObligations"),
             "sourceModality": assertion.get("expectedSourceModality"),
             "conformanceEffect": assertion.get("expectedConformanceEffect"),
             "dependencyIds": assertion.get("expectedDependencyIds"),
@@ -370,6 +408,11 @@ def package_errors(data: dict[str, Any]) -> list[str]:
             errors.append(f"semantic assertion {requirement_id} omits an existing timing proposition")
         if row.get("source", {}).get("sourceId") == "ARINC-665-5":
             expected_fields["triggerRelations"] = assertion.get("expectedTriggerRelations")
+            expected_fields["refinementDisposition"] = assertion.get("expectedRefinementDisposition")
+            expected_fields["refinementRationaleEn"] = assertion.get("expectedRefinementRationaleEn")
+            expected_fields["refinementRationaleZh"] = assertion.get("expectedRefinementRationaleZh")
+        if "fieldConstraint" in row:
+            expected_fields["fieldConstraint"] = assertion.get("expectedFieldConstraint")
         for field, value in expected_fields.items():
             if row.get(field) != value:
                 errors.append(f"semantic assertion {requirement_id} failed for {field}")
@@ -395,6 +438,7 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     timing_fp = fingerprint(timing_provenance_projection(data))
     dependency_fp = fingerprint([row.get("sourceId") for row in data["dependencies"]])
     status_table_fp = fingerprint(status_table_projection(data))
+    field_constraint_fp = fingerprint(field_constraint_projection(data))
     if data["reviewControl"].get("sourceInventoryFingerprint") != inventory_fp:
         errors.append("reviewControl.sourceInventoryFingerprint does not match the source-unit projection")
     anchor_expectations = {
@@ -408,6 +452,8 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         "sectionSpanManifestFingerprint": review_control.get("sectionSpanManifestFingerprint"),
         "semanticAssertionFingerprint": review_control.get("semanticAssertionFingerprint"),
         "statusTableFingerprint": status_table_fp,
+        "fieldConstraintFingerprint": field_constraint_fp,
+        "supplementDispositionFingerprint": supplement_fp,
     }
     for key, value in anchor_expectations.items():
         if anchor.get(key) != value:
@@ -492,16 +538,21 @@ def render(data: dict[str, Any]) -> str:
         src = row["source"]
         sem = row["semantic"]
         semantic_view = f"`{sem['actor']}` / `{sem['condition']}` / `{sem['action']}` / `{', '.join(sem['objects'])}` / `{sem['observableEffect']}`"
-        timing_view = "—" if "timing" not in row else f"`{row['timing']['provenanceKind']}` / `{row['timing']['sourceParameter']}` / `{row['timing']['lowerBound']}..{row['timing']['upperBound']} {row['timing']['unit']}`"
+        timing_view = "—" if "timing" not in row else f"`{row['timing']['provenanceKind']}` / `{row['timing']['sourceParameter']}` / `{row['timing']['sourceRelation']}` / `{row['timing']['lowerBound']}..{row['timing']['upperBound']} {row['timing']['unit']}` / evidence: {', '.join(row['timing']['sourceEvidenceUnitIds'])}"
         refs = ", ".join(row.get("dependencyIds", []) + row.get("gapIds", [])) or "—"
         lines.append(f"| `{row['id']}` | `{row['sourceUnitId']}`<br>`{src['sourceId']} {src['clause']} p.{src['documentPage']}` | {semantic_view} | `{row['sourceModality']}` / `{row['conformanceEffect']}` | `{row['applicabilityDecision']}` | {row['paraphraseEn']}<br>{row['paraphraseZh']} | {timing_view} | {refs} |")
     lines += ["", "## Observable timing semantics", "", "| CRS | Family | Trigger → response | Cancellation / superseding trigger | Correlation / pairing |", "|---|---|---|---|---|"]
     for row in (item for item in requirements if "timing" in item):
         timing = row["timing"]
         lines.append(f"| `{row['id']}` | `{timing['timingFamily']}` | `{timing['trigger']}` → `{timing['response']}` | `{timing['cancellation']}` / `{timing['supersedingTrigger']}` | `{timing['correlationKey']}` / `{timing['pairingPolicy']}` |")
-    lines += ["", "## Requirement-level 615A → 665-5 traceability", "", "| 665-5 CRS | Profile-scope admission | Requirement-specific triggers |", "|---|---|---|"]
+    lines += ["", "## Requirement-level 615A → 665-5 traceability", "", "| 665-5 CRS | Profile-scope admission | Disposition | Requirement-specific relations |", "|---|---|---|---|"]
     for row in (item for item in requirements if item["source"]["sourceId"] == "ARINC-665-5"):
-        lines.append(f"| `{row['id']}` | {', '.join(f'`{item}`' for item in row['profileScopeTriggerIds'])} | {', '.join(f'`{item}`' for item in row['triggeredByRequirementIds'])} |")
+        relations = ", ".join(f"`{item['requirementId']}` ({item['relation']})" for item in row['triggerRelations']) or "—"
+        lines.append(f"| `{row['id']}` | {', '.join(f'`{item}`' for item in row['profileScopeTriggerIds'])} | `{row['refinementDisposition']}` — {row['refinementRationaleEn']} | {relations} |")
+    lines += ["", "## Structured protocol-file field constraints", "", "| CRS | File / ordinal | Field | Width | Repetition / presence | Encoding / termination | Notes |", "|---|---|---|---|---|---|---|"]
+    for row in (item for item in requirements if "fieldConstraint" in item):
+        c = row["fieldConstraint"]
+        lines.append(f"| `{row['id']}` | `{c['protocolFile']}` / `{c['ordinal']}` | `{c['fieldId']}` | `{c['widthBitsExpression']}` | `{c['repeatScope']}` / `{c['presenceCondition']}` | `{c['encodingRule']}` / `{c['terminationRule']}` | {', '.join(c['noteRefs']) or '—'} |")
     lines += ["", "## Structured Table 6.4.10-1 constraints", "", "| CRS | Code / kind | Meaning / substitution | Display | Target text | Files / operations |", "|---|---|---|---|---|---|"]
     for row in (item for item in requirements if "statusTableConstraint" in item):
         constraint = row["statusTableConstraint"]
@@ -539,15 +590,20 @@ def render(data: dict[str, Any]) -> str:
     for row in requirements:
         src = row["source"]; sem = row["semantic"]; refs = ", ".join(row.get("dependencyIds", []) + row.get("gapIds", [])) or "—"
         semantic_view = f"`{sem['actor']}` / `{sem['condition']}` / `{sem['action']}` / `{', '.join(sem['objects'])}` / `{sem['observableEffect']}`"
-        timing_view = "—" if "timing" not in row else f"`{row['timing']['provenanceKind']}` / `{row['timing']['sourceParameter']}` / `{row['timing']['lowerBound']}..{row['timing']['upperBound']} {row['timing']['unit']}`"
+        timing_view = "—" if "timing" not in row else f"`{row['timing']['provenanceKind']}` / `{row['timing']['sourceParameter']}` / `{row['timing']['sourceRelation']}` / `{row['timing']['lowerBound']}..{row['timing']['upperBound']} {row['timing']['unit']}` / 证据：{', '.join(row['timing']['sourceEvidenceUnitIds'])}"
         lines.append(f"| `{row['id']}` | `{row['sourceUnitId']}`<br>`{src['sourceId']} {src['clause']} p.{src['documentPage']}` | {semantic_view} | `{row['sourceModality']}` / `{row['conformanceEffect']}` | `{row['applicabilityDecision']}` | {row['paraphraseZh']} | {timing_view} | {refs} |")
     lines += ["", "## 可观察时序语义", "", "| CRS | 事件族 | 触发 → 响应 | 取消／替代触发 | 关联／配对 |", "|---|---|---|---|---|"]
     for row in (item for item in requirements if "timing" in item):
         timing = row["timing"]
         lines.append(f"| `{row['id']}` | `{timing['timingFamily']}` | `{timing['trigger']}` → `{timing['response']}` | `{timing['cancellation']}` / `{timing['supersedingTrigger']}` | `{timing['correlationKey']}` / `{timing['pairingPolicy']}` |")
-    lines += ["", "## 需求级 615A → 665-5 追溯", "", "| 665-5 CRS | Profile 范围准入 | 需求特定触发 |", "|---|---|---|"]
+    lines += ["", "## 需求级 615A → 665-5 追溯", "", "| 665-5 CRS | Profile 范围准入 | 处置 | 需求特定关系 |", "|---|---|---|---|"]
     for row in (item for item in requirements if item["source"]["sourceId"] == "ARINC-665-5"):
-        lines.append(f"| `{row['id']}` | {', '.join(f'`{item}`' for item in row['profileScopeTriggerIds'])} | {', '.join(f'`{item}`' for item in row['triggeredByRequirementIds'])} |")
+        relations = ", ".join(f"`{item['requirementId']}` ({item['relation']})" for item in row['triggerRelations']) or "—"
+        lines.append(f"| `{row['id']}` | {', '.join(f'`{item}`' for item in row['profileScopeTriggerIds'])} | `{row['refinementDisposition']}` — {row['refinementRationaleZh']} | {relations} |")
+    lines += ["", "## 结构化协议文件字段约束", "", "| CRS | 文件／序号 | 字段 | 位宽 | 重复／出现条件 | 编码／终止 | 注释 |", "|---|---|---|---|---|---|---|"]
+    for row in (item for item in requirements if "fieldConstraint" in item):
+        c = row["fieldConstraint"]
+        lines.append(f"| `{row['id']}` | `{c['protocolFile']}` / `{c['ordinal']}` | `{c['fieldId']}` | `{c['widthBitsExpression']}` | `{c['repeatScope']}` / `{c['presenceCondition']}` | `{c['encodingRule']}` / `{c['terminationRule']}` | {', '.join(c['noteRefs']) or '—'} |")
     lines += ["", "## 结构化 Table 6.4.10-1 约束", "", "| CRS | 状态码／类型 | 含义／替换 | 显示 | 目标文本 | 文件／操作 |", "|---|---|---|---|---|---|"]
     for row in (item for item in requirements if "statusTableConstraint" in item):
         constraint = row["statusTableConstraint"]

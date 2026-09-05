@@ -68,7 +68,8 @@
                         "COMMENTARY",
                     "TABLE-ROW",
                     "TABLE-FOOTNOTE",
-                        "SEQUENCE-EVENT"
+                        "SEQUENCE-EVENT",
+                        "EQUATION"
                     ]
                 },
                 "fragmentOrdinal": {
@@ -257,6 +258,7 @@
             "provenanceKind",
                 "sourceParameter",
                 "sourceRelation",
+                "sourceEvidenceUnitIds",
                 "trigger",
                 "response",
                 "cancellation",
@@ -297,6 +299,12 @@
                     "type": "string",
                     "minLength": 1
                 },
+                "sourceEvidenceUnitIds": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {"$ref": "#/$defs/id"}
+                },
                 "trigger": {
                     "$ref": "#/$defs/id"
                 },
@@ -326,12 +334,7 @@
                         {
                             "type": "number"
                         },
-                        {
-                            "enum": [
-                                "UNBOUNDED",
-                                "UNRESOLVED"
-                            ]
-                        }
+                        {"type": "string", "pattern": "^(?:UNBOUNDED|UNRESOLVED|[A-Z][A-Z0-9-]+)$"}
                     ]
                 },
                 "upperBound": {
@@ -339,12 +342,7 @@
                         {
                             "type": "number"
                         },
-                        {
-                            "enum": [
-                                "UNBOUNDED",
-                                "UNRESOLVED"
-                            ]
-                        }
+                        {"type": "string", "pattern": "^(?:UNBOUNDED|UNRESOLVED|[A-Z][A-Z0-9-]+)$"}
                     ]
                 },
                 "unit": {
@@ -429,6 +427,22 @@
                     }
                 }
             ]
+        },
+        "fieldConstraint": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["protocolFile", "fieldId", "ordinal", "widthBitsExpression", "repeatScope", "presenceCondition", "encodingRule", "terminationRule", "noteRefs"],
+            "properties": {
+                "protocolFile": {"type": "string", "pattern": "^L[A-Z]{2}$"},
+                "fieldId": {"type": "string", "minLength": 1},
+                "ordinal": {"type": "integer", "minimum": 1},
+                "widthBitsExpression": {"type": "string", "minLength": 1},
+                "repeatScope": {"$ref": "#/$defs/id"},
+                "presenceCondition": {"$ref": "#/$defs/id"},
+                "encodingRule": {"$ref": "#/$defs/id"},
+                "terminationRule": {"$ref": "#/$defs/id"},
+                "noteRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+            }
         }
     },
     "properties": {
@@ -715,6 +729,11 @@
                             }
                         }
                     },
+                    "refinementDisposition": {
+                        "enum": ["PROFILE-SCOPE-ONLY", "DIRECT-DATA-FORMAT-REFINEMENT", "PRODUCER-CONSTRAINT", "CONSUMER-TOLERANCE", "DEPENDENCY-BLOCKED"]
+                    },
+                    "refinementRationaleEn": {"type": "string", "minLength": 1},
+                    "refinementRationaleZh": {"type": "string", "minLength": 1},
                     "profileScopeTriggerIds": {
                         "type": "array",
                         "minItems": 1,
@@ -725,6 +744,9 @@
                     },
                     "statusTableConstraint": {
                         "$ref": "#/$defs/statusTableConstraint"
+                    },
+                    "fieldConstraint": {
+                        "$ref": "#/$defs/fieldConstraint"
                     }
                 }
             }
@@ -756,7 +778,10 @@
                 "semanticAssertionPath",
                 "semanticAssertionFingerprint",
                 "automaticValidationScope",
-                "externalRg0Scope"
+                "externalRg0Scope",
+                "externalRg1Scope",
+                "supplementDispositionPath",
+                "supplementDispositionFingerprint"
             ],
             "properties": {
                 "rg0": {
@@ -784,11 +809,20 @@
                 "semanticAssertionFingerprint": {
                     "$ref": "#/$defs/sha256"
                 },
+                "supplementDispositionPath": {
+                    "const": "configs/requirements/m1_supplement_dispositions.json"
+                },
+                "supplementDispositionFingerprint": {
+                    "$ref": "#/$defs/sha256"
+                },
                 "automaticValidationScope": {
-                    "const": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY"
+                    "const": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED"
                 },
                 "externalRg0Scope": {
-                    "const": "SOURCE-BOUNDARY-COMPLETENESS-AND-HASH-FIDELITY"
+                    "const": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION"
+                },
+                "externalRg1Scope": {
+                    "const": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
                 }
             }
         },

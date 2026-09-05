@@ -109,8 +109,8 @@ def test_rg0_rg1_and_formal_activation_cannot_be_promoted() -> None:
 
 def test_665_requirement_edges_require_a_matching_auditable_relation() -> None:
     data = package()
-    row = next(item for item in data["requirements"] if item.get("triggeredByRequirementIds"))
-    row["triggeredByRequirementIds"] = []; refresh_summary(data)
+    row = next(item for item in data["requirements"] if item["source"]["sourceId"] == "ARINC-665-5")
+    row["triggeredByRequirementIds"] = [data["profileScope"]["bounded665ProfileScopeTriggerIds"][0]]; refresh_summary(data)
     assert any("trigger relations do not match" in item for item in errors(data))
     data = package()
     row = next(item for item in data["requirements"] if item["source"]["sourceId"] == "ARINC-665-5")
@@ -310,10 +310,10 @@ def test_timing_semantics_cannot_collapse_to_one_placeholder_tuple() -> None:
 
 def test_665_profile_scope_and_requirement_edges_are_distinct() -> None:
     data = package()
-    row = next(row for row in data["requirements"] if row.get("triggerRelations"))
-    row["triggerRelations"][0]["rationaleCode"] = "SHARED-NONEXISTENT-OBJECT"
+    row = next(row for row in data["requirements"] if row["source"]["sourceId"] == "ARINC-665-5")
+    row["triggeredByRequirementIds"] = [data["profileScope"]["bounded665ProfileScopeTriggerIds"][0]]
     refresh_summary(data)
-    assert any("unsupported requirement-level trigger rationale" in item for item in errors(data))
+    assert any("trigger relations do not match" in item for item in errors(data))
     data = package(); row = next(item for item in data["requirements"] if item["source"]["sourceId"] == "ARINC-665-5")
     row["profileScopeTriggerIds"] = row["profileScopeTriggerIds"][:1]; refresh_summary(data)
     assert any("profile-scope trigger set" in item for item in errors(data))
@@ -393,3 +393,52 @@ def test_structured_status_meaning_display_and_footnote_are_anchored() -> None:
     next(item for item in data["coverageLedger"] if item["id"] == coverage_id)["requirementIds"] = []
     refresh_all_mutable_fingerprints(data)
     assert any("statusTableFingerprint" in item for item in errors(data))
+
+
+def test_reviewed_paraphrases_roles_and_denormalized_semantics_cannot_drift() -> None:
+    for field, value in (
+        ("paraphraseEn", "The opposite behavior is permitted."),
+        ("paraphraseZh", "允许执行相反行为。"),
+        ("roles", ["TARGET-HARDWARE"]),
+    ):
+        data = package()
+        data["requirements"][0][field] = value
+        refresh_summary(data)
+        assert any("semantic assertion" in item or "denormalized semantic" in item for item in errors(data))
+
+
+def test_table_field_width_repetition_and_notes_are_anchored() -> None:
+    mutations = (
+        ("widthBitsExpression", "999"),
+        ("repeatScope", "ONCE"),
+        ("noteRefs", ["NOTE-FORGED"]),
+    )
+    for field, value in mutations:
+        data = package()
+        row = next(item for item in data["requirements"] if item.get("fieldConstraint") and item["fieldConstraint"].get("repeatScope") != "ONCE")
+        row["fieldConstraint"][field] = value
+        refresh_summary(data)
+        assert any("fieldConstraint" in item or "fieldConstraintFingerprint" in item for item in errors(data))
+
+
+def test_timing_predicate_symbolic_bound_and_evidence_are_anchored() -> None:
+    data = package()
+    row = next(item for item in data["requirements"] if item.get("timing", {}).get("sourceParameter") == "DLP-TO-EQUATION")
+    row["timing"]["upperBound"] = "UNRESOLVED"
+    refresh_summary(data)
+    assert any("failed for timing" in item or "timingProvenanceFingerprint" in item for item in errors(data))
+    data = package()
+    row = next(item for item in data["requirements"] if item.get("timing"))
+    row["timing"]["sourceEvidenceUnitIds"] = ["SU-NOT-IN-INVENTORY"]
+    refresh_summary(data)
+    assert any("timing evidence" in item for item in errors(data))
+
+
+def test_665_refinement_disposition_cannot_be_replaced_by_shared_object_guess() -> None:
+    data = package()
+    row = next(item for item in data["requirements"] if item["source"]["sourceId"] == "ARINC-665-5")
+    row["refinementDisposition"] = "DIRECT-DATA-FORMAT-REFINEMENT"
+    row["refinementRationaleEn"] = "The records share a token."
+    row["refinementRationaleZh"] = "两条记录共享一个词。"
+    refresh_summary(data)
+    assert any("semantic assertion" in item for item in errors(data))

@@ -14,12 +14,9 @@
       "kind": "FRONT-MATTER",
       "rationaleCode": "TITLE-REVISION-AND-FRONT-MATTER-OUTSIDE-NORMATIVE-BODY"
     },
-    {
-      "sourceId": "ARINC-615A-3",
-      "pdfPages": [146, 174],
-      "kind": "BACK-MATTER",
-      "rationaleCode": "TRAILING-PAGES-OUTSIDE-APPENDIX-G-BODY"
-    },
+    {"sourceId": "ARINC-615A-3", "pdfPages": [146, 154], "kind": "NON-NORMATIVE-FORMS-AND-SUPPLEMENT-COVER", "rationaleCode": "BLANK-ERRATA-APIM-AND-SUPPLEMENT-COVER-PAGES"},
+    {"sourceId": "ARINC-615A-3", "pdfPages": [158, 160], "kind": "SUPPLEMENT-COVER-AND-BLANK", "rationaleCode": "SUPPLEMENT-2-COVER-AND-BLANK-PAGES"},
+    {"sourceId": "ARINC-615A-3", "pdfPages": [165, 166], "kind": "SUPPLEMENT-COVER-AND-BLANK", "rationaleCode": "SUPPLEMENT-3-COVER-AND-BLANK-PAGES"},
     {
       "sourceId": "ARINC-665-5",
       "pdfPages": [1, 10],
@@ -76,6 +73,9 @@
         {"namespace": "APPENDIX-E", "documentPages": [122, 122], "pdfPages": [134, 134]},
         {"namespace": "APPENDIX-F", "documentPages": [123, 124], "pdfPages": [135, 136]},
         {"namespace": "APPENDIX-G", "documentPages": [125, 133], "pdfPages": [137, 145]}
+        ,{"namespace": "SUPPLEMENT-1-TRACE", "documentPages": [1, 3], "pdfPages": [155, 157]}
+        ,{"namespace": "SUPPLEMENT-2-TRACE", "documentPages": [1, 4], "pdfPages": [161, 164]}
+        ,{"namespace": "SUPPLEMENT-3-TRACE", "documentPages": [1, 8], "pdfPages": [167, 174]}
       ]
     },
     {
