@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "1.0",
+  "artifactId": "ARINC-M1-SUPPLEMENT-DISPOSITIONS",
+  "sourceId": "ARINC-615A-3",
+  "policy": "Every supplement change-summary page is explicitly audited; consolidated-body incorporation is a candidate finding pending external RG0 confirmation.",
+  "pages": [
+    {"pdfPage": 155, "supplement": 1, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-1"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 156, "supplement": 1, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-2"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 157, "supplement": 1, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-3"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 161, "supplement": 2, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-1"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 162, "supplement": 2, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-2"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 163, "supplement": 2, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-3"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 164, "supplement": 2, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-4"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 167, "supplement": 3, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-1"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 168, "supplement": 3, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-2"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 169, "supplement": 3, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-3"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 170, "supplement": 3, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-4"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 171, "supplement": 3, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-5"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 172, "supplement": 3, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-6"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 173, "supplement": 3, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-7"], "reviewStatus": "PENDING-EXTERNAL-RG0"},
+    {"pdfPage": 174, "supplement": 3, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["LUR-NOTE-2", "STATUS-0X0004", "ATTACHMENT-4-CHECKSUM"], "reviewStatus": "PENDING-EXTERNAL-RG0"}
+  ]
+}

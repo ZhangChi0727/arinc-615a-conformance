@@ -1,55 +1,55 @@
 {
   "schemaVersion": "1.0",
-  "updatedAt": "2026-09-02",
+  "updatedAt": "2026-09-05",
   "repository": {
     "role": "instance",
     "displayRole": "ARINC 615A Profile / Binding / Configuration / instance engineering and evidence owner",
     "url": "https://github.com/ZhangChi0727/arinc-615a-conformance"
   },
   "currentIncrement": {
-    "title": "M0 source and technical-direction disposition",
-    "titleZh": "M0 来源与技术方向处置",
+    "title": "M1 CRS and requirement-level applicability candidate",
+    "titleZh": "M1 CRS 与需求级适用性候选",
     "summary": [
-      "Register ARINC 615A-3 as the sole active protocol authority, ARINC 665-5 as a bounded reference and ARINC 645 as an open dependency.",
-      "Supersede active ARINC 615A-4 assumptions while preserving registered frozen history byte-for-byte.",
-      "Adopt a lightweight observable timed EFSM, bounded Test-Analysis, gated open-source reuse and an injectable layered target architecture.",
-      "Record the M0 disposition as ADOPT under CR-controlled activation; approval and repository merge evidence remain externally verified gates."
+      "Rebuild the single machine-readable candidate package around leaf-level prose, table-row and sequence-event source units.",
+      "Apply a dependency-bounded ARINC 665-5 survey triggered only by 615A-3 and current Profile services.",
+      "Separate fixed timing constants, message-carried parameters, symbolic parameters and examples while keeping ARINC 645 open.",
+      "Address the fourth review cycle: audit supplement pages, bind table fields and timing equations structurally, remove inferred 615A-to-665 edges, and anchor bilingual semantics and denormalized fields."
     ],
     "summaryZh": [
-      "登记 ARINC 615A-3 为唯一活动协议权威、ARINC 665-5 为有边界参考、ARINC 645 为开放依赖。",
-      "取代活动的 ARINC 615A-4 假设，同时保持登记的冻结历史逐字节不变。",
-      "采纳轻量可观测 timed EFSM、有界 Test-Analysis、受门禁开源复用和可注入分层目标架构。",
-      "记录 M0 处置为 ADOPT 并由 CR 控制激活；批准与仓库合并证据仍须外部核验。"
+      "围绕叶级正文、表格行和序列事件来源单元重建单一机器可读候选包。",
+      "仅由 615A-3 与当前 Profile 服务触发 ARINC 665-5 有边界调查。",
+      "区分固定时序常数、消息携带参数、符号参数和示例，并保持 ARINC 645 开放。",
+      "处理第四轮评审：审计 supplement 页面，结构化绑定表字段与时序方程，移除推断的 615A→665 边，并锚定双语语义及冗余语义字段。"
     ],
     "stateChanges": [
-      "The active protocol source changes from an unresolved edition assumption to controlled ARINC 615A-3.",
-      "The current stop moves from Project Configuration to the prerequisite conformance-requirements and applicability gate."
+      "M0 is externally verified and M1 remains a candidate CRS/applicability package under CR-2026-007.",
+      "Repository snapshot: fourth-cycle correction candidate. Prior gate outcomes do not transfer to this Head; RG0/RG1 stay PENDING-EXTERNAL-INDEPENDENT-REVIEW and require complete-range review."
     ],
     "stateChangesZh": [
-      "活动协议来源从未解决的版次假设改为受控 ARINC 615A-3。",
-      "当前停点从 Project Configuration 前移到作为前置条件的符合性需求与适用性门。"
+      "M0 已获外部核验，M1 仍由 CR-2026-007 控制为候选 CRS/适用性数据包。",
+      "仓库快照：第四轮修正候选。既有门禁结论不继承到本 Head；RG0/RG1 保持 PENDING-EXTERNAL-INDEPENDENT-REVIEW，并须执行完整范围复审。"
     ],
     "unchangedBoundaries": [
       "Candidate GVS Core and compatibility-disposition identities remain separate and unchanged.",
       "The 18 source mapping rows, 7 instance-only rows and Q-01 through Q-09 remain unchanged.",
       "Project Configuration is NOT YET ESTABLISHED; instance evaluation is NOT-EXERCISED; RQ8 remains OPEN.",
       "Protocol conformance, certification readiness and authority acceptance remain false; no baseline or tag is created.",
-      "M0 creates no codec, protocol operation, EFSM instance, verification case, procedure or Project Configuration."
+      "M1 creates no codec, EFSM instance, verification case, procedure, execution evidence or Project Configuration."
     ],
     "unchangedBoundariesZh": [
       "Candidate GVS Core 与兼容性处置身份保持分离且不变。",
       "18 个来源映射行、7 个实例专用行及 Q-01～Q-09 保持不变。",
       "Project Configuration 保持 NOT YET ESTABLISHED；实例评价保持 NOT-EXERCISED；RQ8 保持 OPEN。",
       "协议符合性、认证准备度和权威接受保持 false；不创建 baseline 或 tag。",
-      "M0 不创建 codec、协议操作、EFSM 实例、验证用例、规程或 Project Configuration。"
+      "M1 不创建 codec、EFSM 实例、验证用例、规程、执行证据或 Project Configuration。"
     ]
   },
   "development": {
-    "phase": "sources controlled; awaiting conformance requirements and applicability",
+    "phase": "M1 candidate package snapshot; formal state governed by conditional external activation",
     "gates": {
-      "SOURCE-TECHNICAL-DIRECTION-GATE": "EXTERNAL-VERIFICATION-REQUIRED",
-      "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE": "NOT YET ESTABLISHED",
-      "PROFILE-MODEL-REFINEMENT-GATE": "BLOCKED",
+      "SOURCE-TECHNICAL-DIRECTION-GATE": "COMPLETED-EXTERNALLY-VERIFIED",
+      "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE": "EXTERNAL-VERIFICATION-REQUIRED",
+      "PROFILE-MODEL-REFINEMENT-GATE": "NOT YET ESTABLISHED",
       "EXECUTABLE-FOUNDATION-GATE": "BLOCKED",
       "INFORMATION-BOOTSTRAP-GATE": "BLOCKED",
       "UPLOAD-BASE-VCS-GATE": "BLOCKED",
@@ -59,21 +59,21 @@
       "SCOPE-EXPANSION-GATE": "BLOCKED"
     },
     "currentStop": {
-      "id": "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE",
-      "statusPath": "development.gates.CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE",
-      "objective": "Complete M1 ARINC 615A-3/665-5 CRS and requirement-level applicability, explicitly registering the ARINC 645 capability gap.",
-      "objectiveZh": "完成 M1 ARINC 615A-3/665-5 CRS 与需求级适用性，并明确登记 ARINC 645 能力缺口。"
+      "id": "PROFILE-MODEL-REFINEMENT-GATE",
+      "statusPath": "development.gates.PROFILE-MODEL-REFINEMENT-GATE",
+      "objective": "The M1 CRS gate remains EXTERNAL-VERIFICATION-REQUIRED. This stop blocks M2 until joint RG0/RG1 approval binds the exact reviewed Head, an ordinary merge has that Head as second parent, and main CI succeeds.",
+      "objectiveZh": "M1 CRS 门仍为 EXTERNAL-VERIFICATION-REQUIRED。本停点禁止 M2，直至 RG0/RG1 联合批准绑定精确受审 Head、普通合并的第二父为该 Head，且 main CI 成功。"
     },
     "nextSteps": [
-      "After M0 approval and cleanup, prepare a separate M1 work order for the 615A-3/665-5 CRS, applicability decisions and ARINC 645 gap register.",
-      "Only after approved M1, prepare M2 refinement of the Profile, Binding and lightweight observable timed EFSM."
+      "Obtain renewed joint independent RG0/RG1 review over the complete M1 branch range on the unchanged final Head.",
+      "Only after approval, ordinary merge, successful main CI and cleanup, prepare a separate M2 work order."
     ],
     "nextStepsZh": [
-      "M0 批准并清理后，另编 M1 工作单，处理 615A-3/665-5 CRS、适用性决定和 ARINC 645 缺口登记。",
-      "仅在 M1 批准后，准备 M2 Profile、Binding 和轻量可观测 timed EFSM 精化。"
+      "在不再变化的最终 Head 上，对完整 M1 分支范围取得新一轮独立 RG0/RG1 联合评审。",
+      "仅在批准、普通合并、main CI 成功并清理后，另编 M2 工作单。"
     ],
     "blockedActions": [
-      "Do not start M1 within this M0 pull request or start M2 before M1 approval.",
+      "Do not start M2 before M1 approval, ordinary merge, successful main CI and cleanup.",
       "Do not implement protocol behavior before CRS and model gates approve it.",
       "Do not execute or evaluate an instance before Project Configuration is established.",
       "Do not promote instance evidence into a Generic Core conclusion.",

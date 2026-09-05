@@ -293,6 +293,24 @@ implementation is registered for reuse, and no third-party material is copied.
 **Status:** Disposition `ADOPT`; formal activation uses the CR-2026-006 gate and
 M1 remains prohibited until approval and ordinary merge are externally verified.
 
+## DD-018 — Use one authoritative M1 package and joint RG0/RG1 activation
+
+**Decision:** The machine-readable M1 package is the sole authority; its Markdown
+review view is generated. Audit the full 615A-3 scope and only 615A-3/service-
+triggered 665-5 dependencies. Preserve source modality separately from
+conformance effect. RG0 and RG1 close together only on one unchanged Head.
+
+**Why:** One authority prevents status drift; complete coverage prevents keyword
+selection bias; bounded dependency use prevents a later edition from silently
+rewriting the active protocol. External GitHub approval is not created by local
+Git history or automation.
+
+**Scope:** M1 static requirements, applicability, dependencies and review only.
+No model, Configuration, execution evidence, baseline, tag or conformance claim.
+
+**Status:** Candidate disposition `ADOPT` under CR-2026-007; RG0/RG1 and formal
+activation remain pending external independent review and ordinary merge.
+
 ---
 
 # 中文版
@@ -410,3 +428,13 @@ adequacy。延期 DTMC 协议语义、HMM/ML 诊断和 Bayesian calibration。FM
 第三方材料。
 
 **状态：** 处置为 `ADOPT`；正式激活使用 CR-2026-006 门，批准与普通合并经外部核验前禁止 M1。
+
+## DD-018——采用单一 M1 权威数据包及 RG0/RG1 联合激活
+
+**决定：** 机器可读 M1 数据包是唯一权威，Markdown 评审视图是生成物。对 615A-3 做完整范围审计，只审计由 615A-3／所选服务触发的 665-5 依赖；来源模态与符合性效果分离。RG0 与 RG1 只在同一不变 Head 上联合关闭。
+
+**理由：** 单一权威防止状态漂移，完整覆盖避免关键词选择偏差，有边界依赖防止后续版次静默改写活动协议。本地 Git 历史或自动化不能制造外部 GitHub 批准。
+
+**范围：** 仅限 M1 静态需求、适用性、依赖和评审；不创建模型、Configuration、执行证据、baseline、tag 或符合性主张。
+
+**状态：** 在 CR-2026-007 下候选处置为 `ADOPT`；RG0/RG1 与正式激活仍等待外部独立评审和普通合并。

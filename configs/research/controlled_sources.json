@@ -48,13 +48,83 @@
         "COMPLETE-INTEGRITY-VALIDATION"
       ],
       "closureRule": "Acquire and register an authorized source, complete applicability and CRS tracing, and obtain independent approval before claiming affected capabilities."
+    },
+    {
+      "id": "ARINC-664-2",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilityIds": ["ETHERNET-PHYSICAL-LINK-SEMANTICS"],
+      "closureRule": "Acquire and register an authorized source, complete applicability and CRS tracing, and obtain independent approval before claiming Ethernet physical/link semantics."
+    },
+    {
+      "id": "ARINC-664-3",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilityIds": ["AIRCRAFT-INTERNET-NETWORK-SEMANTICS"],
+      "closureRule": "Acquire and register an authorized source, complete applicability and CRS tracing, and obtain independent approval before claiming aircraft internet-network semantics."
+    },
+    {
+      "id": "RFC-768",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilityIds": ["UDP-IDENTITY-AND-APPLICABILITY"],
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming UDP semantics."
+    },
+    {
+      "id": "RFC-791",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilityIds": ["IP-IDENTITY-AND-APPLICABILITY"],
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming IP semantics."
+    },
+    {
+      "id": "RFC-1123",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilityIds": ["HOST-REQUIREMENT-IDENTITY"],
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming host-requirement semantics."
+    },
+    {
+      "id": "RFC-1350",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilityIds": ["TFTP-BASE-IDENTITY-AND-APPLICABILITY"],
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP-base semantics."
+    },
+    {
+      "id": "RFC-1785",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilityIds": ["TFTP-OPTION-NEGOTIATION-IDENTITY"],
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP option-negotiation semantics."
+    },
+    {
+      "id": "RFC-2347",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilityIds": ["TFTP-OPTION-EXTENSION-IDENTITY"],
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP option-extension semantics."
+    },
+    {
+      "id": "RFC-2348",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilityIds": ["TFTP-BLOCK-SIZE-OPTION-IDENTITY"],
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP block-size option semantics."
+    },
+    {
+      "id": "RFC-2349",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilityIds": ["TFTP-TIMEOUT-TRANSFER-SIZE-IDENTITY"],
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP timeout and transfer-size option semantics."
     }
   ],
   "capabilities": [
     {"id": "CRC-VALIDATION", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-645"]},
     {"id": "CHECK-VALUE-VALIDATION", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-645"]},
     {"id": "NAMING-ALGORITHM-VALIDATION", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-645"]},
-    {"id": "COMPLETE-INTEGRITY-VALIDATION", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-645"]}
+    {"id": "COMPLETE-INTEGRITY-VALIDATION", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-645"]},
+    {"id": "ETHERNET-PHYSICAL-LINK-SEMANTICS", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-664-2"]},
+    {"id": "AIRCRAFT-INTERNET-NETWORK-SEMANTICS", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-664-3"]},
+    {"id": "UDP-IDENTITY-AND-APPLICABILITY", "status": "NOT-ESTABLISHED", "blockedBy": ["RFC-768"]},
+    {"id": "IP-IDENTITY-AND-APPLICABILITY", "status": "NOT-ESTABLISHED", "blockedBy": ["RFC-791"]},
+    {"id": "HOST-REQUIREMENT-IDENTITY", "status": "NOT-ESTABLISHED", "blockedBy": ["RFC-1123"]},
+    {"id": "TFTP-BASE-IDENTITY-AND-APPLICABILITY", "status": "NOT-ESTABLISHED", "blockedBy": ["RFC-1350"]},
+    {"id": "TFTP-OPTION-NEGOTIATION-IDENTITY", "status": "NOT-ESTABLISHED", "blockedBy": ["RFC-1785"]},
+    {"id": "TFTP-OPTION-EXTENSION-IDENTITY", "status": "NOT-ESTABLISHED", "blockedBy": ["RFC-2347"]},
+    {"id": "TFTP-BLOCK-SIZE-OPTION-IDENTITY", "status": "NOT-ESTABLISHED", "blockedBy": ["RFC-2348"]},
+    {"id": "TFTP-TIMEOUT-TRANSFER-SIZE-IDENTITY", "status": "NOT-ESTABLISHED", "blockedBy": ["RFC-2349"]}
   ],
   "historicalAssumptions": [
     {
@@ -98,7 +168,7 @@
   },
   "technicalDirection": {
     "decisionRecordPath": "docs/control/decisions/DESIGN_DECISIONS.md",
-    "decisionIds": ["DD-015", "DD-016", "DD-017"],
+    "decisionIds": ["DD-015", "DD-016", "DD-017", "DD-018"],
     "behaviorModel": "LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM",
     "verificationMethod": "BOUNDED-TEST-ANALYSIS",
     "deferredModels": ["DTMC", "HMM-ML", "BAYESIAN-CALIBRATION"],
@@ -115,13 +185,20 @@
     }
   },
   "lifecycle": {
-    "currentStageId": "M0",
-    "nextStageId": "M1",
+    "currentStageId": "M1",
+    "nextStageId": "M2",
     "candidateDisposition": "ADOPT",
-    "formalActivationControlPath": "docs/control/changes/CR-2026-006.md",
+    "formalActivationControlPath": "docs/control/changes/CR-2026-007.md",
     "repositoryMergeEvidence": "EXTERNAL-VERIFICATION-REQUIRED",
     "independentApproval": "NOT-AUTOMATED",
     "nextStageEntryRule": "PROHIBITED-UNTIL-APPROVAL-AND-ORDINARY-MERGE-VERIFIED"
+  },
+  "requirementsControl": {
+    "packagePath": "configs/requirements/arinc_615a3_m1_crs.json",
+    "schemaPath": "configs/requirements/m1_crs_package.schema.json",
+    "reviewViewPath": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
+    "generatorPath": "scripts/sync_m1_crs.py",
+    "reviewState": "PENDING-EXTERNAL-INDEPENDENT-REVIEW"
   },
   "protectedStateConstraints": [
     {"path": "claimsBoundary.projectConfigurationStatus", "equals": "NOT YET ESTABLISHED"},
@@ -132,9 +209,9 @@
     {"path": "claimsBoundary.authorityAccepted", "equals": false}
   ],
   "roadmap": [
-    {"id": "M0", "status": "DISPOSITION-ADOPT", "gateId": "SOURCE-TECHNICAL-DIRECTION-GATE", "dependsOn": []},
-    {"id": "M1", "status": "NEXT-BLOCKED-BY-FINAL-GATE", "gateId": "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE", "dependsOn": ["M0"]},
-    {"id": "M2", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "PROFILE-MODEL-REFINEMENT-GATE", "dependsOn": ["M1"]},
+    {"id": "M0", "status": "COMPLETED-EXTERNALLY-VERIFIED", "gateId": "SOURCE-TECHNICAL-DIRECTION-GATE", "dependsOn": []},
+    {"id": "M1", "status": "DISPOSITION-ADOPT", "gateId": "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE", "dependsOn": ["M0"]},
+    {"id": "M2", "status": "NEXT-BLOCKED-BY-FINAL-GATE", "gateId": "PROFILE-MODEL-REFINEMENT-GATE", "dependsOn": ["M1"]},
     {"id": "M3", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "EXECUTABLE-FOUNDATION-GATE", "dependsOn": ["M2"]},
     {"id": "M4", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "INFORMATION-BOOTSTRAP-GATE", "dependsOn": ["M3"]},
     {"id": "M5", "status": "BLOCKED-BY-PREDECESSOR", "gateId": "UPLOAD-BASE-VCS-GATE", "dependsOn": ["M4"]},
