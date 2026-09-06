@@ -14,6 +14,7 @@
         "coverageLedger",
         "requirements",
         "dependencies",
+        "dependencyOpenness",
         "gaps",
         "reviewControl",
         "inventorySummary",
@@ -438,8 +439,8 @@
                 "ordinal": {"type": "integer", "minimum": 1},
                 "widthBitsExpression": {"type": "string", "minLength": 1},
                 "repeatScope": {"$ref": "#/$defs/id"},
-                "presenceCondition": {"$ref": "#/$defs/id"},
-                "encodingRule": {"$ref": "#/$defs/id"},
+                "presenceCondition": {"enum": ["ALWAYS", "WHEN-LENGTH-FIELD-POSITIVE", "WHEN-STATUS-CODE-0002-OR-0004", "PER-REPETITION-OF-ENCLOSING-BLOCK", "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE"]},
+                "encodingRule": {"enum": ["UNSIGNED-INT-BIG-ENDIAN", "ZERO-TERMINATED-ASCII", "LENGTH-PREFIXED-BINARY", "RESERVED-ZERO-FILL", "PROSE-DEFINED"]},
                 "terminationRule": {"$ref": "#/$defs/id"},
                 "noteRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
             }
@@ -474,7 +475,8 @@
                 "supportingOperation",
                 "deferredOperations",
                 "configurationStatus",
-                "bounded665ProfileScopeTriggerIds"
+                "bounded665ProfileScopeTriggerIds",
+                "bounded665EdgePolicy"
             ],
             "properties": {
                 "baseOperation": {"enum": ["UPLOAD"]},
@@ -491,6 +493,17 @@
                     "minItems": 1,
                     "uniqueItems": true,
                     "items": {"$ref": "#/$defs/id"}
+                },
+                "bounded665EdgePolicy": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["policy", "acceptedDispositions", "prohibitedDispositions", "reason"],
+                    "properties": {
+                        "policy": {"const": "REQUIREMENT-LEVEL-615A-TO-665-EDGES-DEFERRED-TO-M2-ATTACHMENT-RECONCILIATION"},
+                        "acceptedDispositions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["PROFILE-SCOPE-ONLY", "DEPENDENCY-BLOCKED", "DIRECT-DATA-FORMAT-REFINEMENT", "PRODUCER-CONSTRAINT", "CONSUMER-TOLERANCE"]}},
+                        "prohibitedDispositions": {"type": "array", "uniqueItems": true, "items": {"enum": ["DIRECT-DATA-FORMAT-REFINEMENT", "PRODUCER-CONSTRAINT", "CONSUMER-TOLERANCE"]}},
+                        "reason": {"type": "string", "minLength": 1}
+                    }
                 }
             }
         },
@@ -570,17 +583,13 @@
                     "source",
                     "sourceTextHash",
                     "hashCanonicalizationId",
-                    "paraphraseEn",
-                    "paraphraseZh",
+                    "generatedSemanticProjectionEn",
+                    "generatedSemanticProjectionZh",
                     "semantic",
                     "sourceModality",
                     "conformanceEffect",
                     "applicabilityDecision",
                     "rationaleCode",
-                    "roles",
-                    "operations",
-                    "category",
-                    "obligations",
                     "interpretationStatus",
                     "ambiguityStatus",
                     "dependencyIds",
@@ -607,11 +616,11 @@
                             "ARINC-VISUAL-EVENT-TUPLE-v1"
                         ]
                     },
-                    "paraphraseEn": {
+                    "generatedSemanticProjectionEn": {
                         "type": "string",
                         "minLength": 1
                     },
-                    "paraphraseZh": {
+                    "generatedSemanticProjectionZh": {
                         "type": "string",
                         "minLength": 1
                     },
@@ -630,33 +639,6 @@
                     "rationaleCode": {
                         "type": "string",
                         "minLength": 1
-                    },
-                    "roles": {
-                        "type": "array",
-                        "minItems": 1,
-                        "uniqueItems": true,
-                        "items": {
-                            "$ref": "#/$defs/id"
-                        }
-                    },
-                    "operations": {
-                        "type": "array",
-                        "minItems": 1,
-                        "uniqueItems": true,
-                        "items": {
-                            "$ref": "#/$defs/id"
-                        }
-                    },
-                    "category": {
-                        "$ref": "#/$defs/id"
-                    },
-                    "obligations": {
-                        "type": "array",
-                        "minItems": 1,
-                        "uniqueItems": true,
-                        "items": {
-                            "$ref": "#/$defs/id"
-                        }
                     },
                     "interpretationStatus": {
                         "type": "string",
@@ -756,6 +738,20 @@
             "minItems": 1,
             "items": {
                 "$ref": "#/$defs/dependency"
+            }
+        },
+        "dependencyOpenness": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["dependencyId", "status", "blockedCapabilities"],
+                "properties": {
+                    "dependencyId": {"$ref": "#/$defs/id"},
+                    "status": {"const": "OPEN-NOT-YET-BOUND-AT-REQUIREMENT-LEVEL"},
+                    "blockedCapabilities": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+                }
             }
         },
         "gaps": {

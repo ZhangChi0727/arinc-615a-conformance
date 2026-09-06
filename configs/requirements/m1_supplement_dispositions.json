@@ -2,6 +2,7 @@
   "schemaVersion": "1.0",
   "artifactId": "ARINC-M1-SUPPLEMENT-DISPOSITIONS",
   "sourceId": "ARINC-615A-3",
+  "targetClauseRefsAreExternalRg0Opaque": true,
   "policy": "Every supplement change-summary page is explicitly audited; consolidated-body incorporation is a candidate finding pending external RG0 confirmation.",
   "pages": [
     {"pdfPage": 155, "supplement": 1, "disposition": "INCORPORATED-IN-CONSOLIDATED-BODY-CANDIDATE", "targetClauseRefs": ["CHANGE-SUMMARY-PAGE-1"], "reviewStatus": "PENDING-EXTERNAL-RG0"},

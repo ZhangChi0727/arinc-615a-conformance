@@ -52,6 +52,18 @@
     {"sourceId": "ARINC-615A-3", "clausePrefix": "6.4.10", "pdfPages": [96, 97]}
   ],
   "fieldConstraintUnresolved": [],
+  "tableRegistry": [
+    {"tableId": "Table 6.4.1-1", "constraintKind": "fieldConstraint"},
+    {"tableId": "Table 6.4.2-1", "constraintKind": "fieldConstraint"},
+    {"tableId": "Table 6.4.3-1", "constraintKind": "fieldConstraint"},
+    {"tableId": "Table 6.4.4-1", "constraintKind": "fieldConstraint"},
+    {"tableId": "Table 6.4.5-1", "constraintKind": "fieldConstraint"},
+    {"tableId": "Table 6.4.6-1", "constraintKind": "fieldConstraint"},
+    {"tableId": "Table 6.4.7-1", "constraintKind": "fieldConstraint"},
+    {"tableId": "Table 6.4.8-1", "constraintKind": "fieldConstraint"},
+    {"tableId": "Table 6.4.9-1", "constraintKind": "fieldConstraint"},
+    {"tableId": "Table 6.4.10-1", "constraintKind": "statusTableConstraint"}
+  ],
   "sources": [
     {
       "sourceId": "ARINC-615A-3",

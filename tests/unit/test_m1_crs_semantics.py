@@ -147,12 +147,6 @@ def test_private_text_paths_and_reversible_payloads_are_rejected() -> None:
         assert errors(data)
 
 
-def test_compound_obligation_requires_inseparable_rationale() -> None:
-    data = package(); row = data["requirements"][0]
-    row["obligations"] = ["ORDERING", "DIRECTION"]; row.pop("inseparableRationale", None); refresh_summary(data)
-    assert any("inseparable rationale" in item for item in errors(data))
-
-
 def test_open_dependency_cannot_be_closed_without_source_binding() -> None:
     data = package(); dep = next(item for item in data["dependencies"] if item["id"] == "DEP-RFC-1350")
     dep["status"] = "REGISTERED-SUPPORTING-SOURCE"; refresh_summary(data)
@@ -395,16 +389,15 @@ def test_structured_status_meaning_display_and_footnote_are_anchored() -> None:
     assert any("statusTableFingerprint" in item for item in errors(data))
 
 
-def test_reviewed_paraphrases_roles_and_denormalized_semantics_cannot_drift() -> None:
+def test_generated_semantic_projections_cannot_drift() -> None:
     for field, value in (
-        ("paraphraseEn", "The opposite behavior is permitted."),
-        ("paraphraseZh", "允许执行相反行为。"),
-        ("roles", ["TARGET-HARDWARE"]),
+        ("generatedSemanticProjectionEn", "The opposite behavior is permitted."),
+        ("generatedSemanticProjectionZh", "允许执行相反行为。"),
     ):
         data = package()
         data["requirements"][0][field] = value
         refresh_summary(data)
-        assert any("semantic assertion" in item or "denormalized semantic" in item for item in errors(data))
+        assert any("semantic assertion" in item for item in errors(data))
 
 
 def test_table_field_width_repetition_and_notes_are_anchored() -> None:
@@ -475,3 +468,29 @@ def test_665_refinement_disposition_cannot_be_replaced_by_shared_object_guess() 
     row["refinementRationaleZh"] = "两条记录共享一个词。"
     refresh_summary(data)
     assert any("semantic assertion" in item for item in errors(data))
+
+
+def test_bounded_665_edge_policy_rejects_unlisted_and_conservative_edges() -> None:
+    data = package()
+    row = next(item for item in data["requirements"] if item["source"]["sourceId"] == "ARINC-665-5")
+    row["refinementDisposition"] = "DIRECT-DATA-FORMAT-REFINEMENT"
+    assert any("not accepted" in item for item in m1.bounded_665_policy_errors(data))
+    data = package()
+    row = next(item for item in data["requirements"] if item["source"]["sourceId"] == "ARINC-665-5")
+    trigger = data["profileScope"]["bounded665ProfileScopeTriggerIds"][0]
+    row["triggeredByRequirementIds"] = [trigger]
+    row["triggerRelations"] = [{"requirementId": trigger, "relation": "615A-REQUIRES-665-DATA-SEMANTIC", "rationaleCode": "SOURCE-EXPLICIT-EDGE-FIXTURE"}]
+    assert any("conservative disposition" in item for item in m1.bounded_665_policy_errors(data))
+
+
+def test_bounded_665_edge_policy_accepts_a_future_explicit_refinement_fixture() -> None:
+    data = package()
+    policy = data["profileScope"]["bounded665EdgePolicy"]
+    policy["acceptedDispositions"].append("DIRECT-DATA-FORMAT-REFINEMENT")
+    policy["prohibitedDispositions"].remove("DIRECT-DATA-FORMAT-REFINEMENT")
+    row = next(item for item in data["requirements"] if item["source"]["sourceId"] == "ARINC-665-5")
+    trigger = data["profileScope"]["bounded665ProfileScopeTriggerIds"][0]
+    row["refinementDisposition"] = "DIRECT-DATA-FORMAT-REFINEMENT"
+    row["triggeredByRequirementIds"] = [trigger]
+    row["triggerRelations"] = [{"requirementId": trigger, "relation": "615A-REQUIRES-665-DATA-SEMANTIC", "rationaleCode": "SOURCE-EXPLICIT-EDGE-FIXTURE"}]
+    assert m1.bounded_665_policy_errors(data) == []

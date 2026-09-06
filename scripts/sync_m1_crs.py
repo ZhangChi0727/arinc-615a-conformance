@@ -30,6 +30,7 @@ REQUIRED_PROFILE_SCOPE_KEYS = {
     "deferredOperations",
     "configurationStatus",
     "bounded665ProfileScopeTriggerIds",
+    "bounded665EdgePolicy",
 }
 
 
@@ -82,6 +83,37 @@ def field_constraint_projection(data: dict[str, Any]) -> list[dict[str, Any]]:
         {"sourceUnitId": row["sourceUnitId"], "constraint": row["fieldConstraint"]}
         for row in data["requirements"] if "fieldConstraint" in row
     ]
+
+
+def bounded_665_policy_errors(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    policy = data.get("profileScope", {}).get("bounded665EdgePolicy", {})
+    accepted = set(policy.get("acceptedDispositions", []))
+    prohibited = set(policy.get("prohibitedDispositions", []))
+    if accepted & prohibited:
+        errors.append("bounded665EdgePolicy accepted and prohibited dispositions must be disjoint")
+    requirements = {row.get("id"): row for row in data.get("requirements", [])}
+    for row in data.get("requirements", []):
+        if row.get("source", {}).get("sourceId") != "ARINC-665-5":
+            continue
+        relations = row.get("triggerRelations", [])
+        triggers = row.get("triggeredByRequirementIds", [])
+        disposition = row.get("refinementDisposition")
+        if [item.get("requirementId") for item in relations] != triggers:
+            errors.append(f"665-5 requirement {row.get('id')} trigger relations do not match its requirement-level edges")
+        if disposition not in accepted:
+            errors.append(f"665-5 requirement {row.get('id')} disposition is not accepted by bounded665EdgePolicy")
+        if relations and disposition in prohibited:
+            errors.append(f"665-5 requirement {row.get('id')} relation is prohibited by bounded665EdgePolicy")
+        if relations and disposition in {"PROFILE-SCOPE-ONLY", "DEPENDENCY-BLOCKED"}:
+            errors.append(f"665-5 requirement {row.get('id')} conservative disposition cannot carry requirement-level relations")
+        for relation in relations:
+            target = requirements.get(relation.get("requirementId"), {})
+            if target.get("source", {}).get("sourceId") != "ARINC-615A-3":
+                errors.append(f"665-5 requirement {row.get('id')} relation does not point to a 615A-3 requirement")
+            if not str(relation.get("rationaleCode", "")).startswith("SOURCE-EXPLICIT-EDGE-"):
+                errors.append(f"665-5 requirement {row.get('id')} has an unsupported requirement-level trigger rationale")
+    return errors
 
 
 def page_account_errors(section_manifest: dict[str, Any], register: dict[str, Any]) -> list[str]:
@@ -186,6 +218,10 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         errors.append("profileScope.deferredOperations must remain DOWNLOAD and FIND")
     if scope.get("configurationStatus") != "NOT YET ESTABLISHED":
         errors.append("profileScope.configurationStatus must remain NOT YET ESTABLISHED")
+    edge_policy = scope.get("bounded665EdgePolicy", {})
+    accepted_665 = set(edge_policy.get("acceptedDispositions", []))
+    prohibited_665 = set(edge_policy.get("prohibitedDispositions", []))
+    errors.extend(bounded_665_policy_errors(data))
     spans_by_source: dict[str, list[dict[str, Any]]] = {}
     for source in section_manifest.get("sources", []):
         source_id = source.get("sourceId")
@@ -267,6 +303,10 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     requirement_by_id = {row.get("id"): row for row in data["requirements"]}
     bound_source_ids = {row.get("sourceId") for row in data["sourceBindings"]}
     source_hash_parts: dict[str, list[dict[str, Any]]] = {}
+    field_table_ids = {
+        row.get("tableId") for row in section_manifest.get("tableRegistry", [])
+        if row.get("constraintKind") == "fieldConstraint"
+    }
     for row in data["requirements"]:
         source = row.get("source", {})
         semantic = row.get("semantic", {})
@@ -278,14 +318,10 @@ def package_errors(data: dict[str, Any]) -> list[str]:
             errors.append(f"requirement {row.get('id')} retains a non-reviewable semantic fallback")
         if semantic.get("observableEffect") in GENERIC_OBSERVABLE_EFFECTS:
             errors.append(f"requirement {row.get('id')} retains a generic observableEffect")
-        if row.get("paraphraseEn") == row.get("paraphraseZh"):
-            errors.append(f"requirement {row.get('id')} bilingual paraphrases must differ")
-        if any(token in row.get("paraphraseEn", "") for token in ("CLAUSE-SPECIFIC-BEHAVIOR", "SOURCE-DEFINED-NORMATIVE-BEHAVIOR")):
-            errors.append(f"requirement {row.get('id')} retains an uninformative paraphrase fallback")
-        if not row.get("obligations"):
-            errors.append(f"requirement {row.get('id')} has no obligation")
-        if len(row.get("obligations", [])) > 1 and not row.get("inseparableRationale"):
-            errors.append(f"compound requirement {row.get('id')} lacks an inseparable rationale")
+        if row.get("generatedSemanticProjectionEn") == row.get("generatedSemanticProjectionZh"):
+            errors.append(f"requirement {row.get('id')} bilingual semantic projections must differ")
+        if any(token in row.get("generatedSemanticProjectionEn", "") for token in ("CLAUSE-SPECIFIC-BEHAVIOR", "SOURCE-DEFINED-NORMATIVE-BEHAVIOR")):
+            errors.append(f"requirement {row.get('id')} retains an uninformative semantic projection fallback")
         if row.get("sourceModality") == "SHOULD" and row.get("conformanceEffect") not in {"REQUIRED", "CONDITIONAL-REQUIRED", "PROHIBITED"}:
             errors.append(f"requirement {row.get('id')} downgrades source SHOULD")
         if row.get("sourceModality") == "MAY" and row.get("conformanceEffect") == "REQUIRED":
@@ -320,12 +356,10 @@ def package_errors(data: dict[str, Any]) -> list[str]:
             for boundary in ("lowerBoundary", "upperBoundary"):
                 if timing.get(boundary) not in {"OPEN", "CLOSED", "UNBOUNDED", "UNRESOLVED"}:
                     errors.append(f"requirement {row.get('id')} has invalid {boundary}")
-        if source.get("tableOrFigure") and re.fullmatch(r"Table 6\.4\.[1-9]-1", str(source.get("tableOrFigure"))) and "fieldConstraint" not in row:
+        if source.get("tableOrFigure") in field_table_ids and "fieldConstraint" not in row:
             errors.append(f"requirement {row.get('id')} table field lacks a structured field constraint")
         if "fieldConstraint" in row and source.get("fragmentKind") != "TABLE-ROW":
             errors.append(f"requirement {row.get('id')} field constraint is not owned by a table row")
-        if row.get("roles") != [semantic.get("actor")] or row.get("operations") != [semantic.get("operation")] or row.get("category") != semantic.get("action") or row.get("obligations") != [semantic.get("action")]:
-            errors.append(f"requirement {row.get('id')} denormalized semantic fields disagree with semantic")
         for dep_id in row.get("dependencyIds", []):
             if dep_id not in ids.get("dependencies", set()):
                 errors.append(f"requirement {row.get('id')} has dangling dependency {dep_id}")
@@ -344,10 +378,8 @@ def package_errors(data: dict[str, Any]) -> list[str]:
                 if trigger not in requirement_by_id or requirement_by_id[trigger].get("source", {}).get("sourceId") != "ARINC-615A-3":
                     errors.append(f"665-5 requirement {row.get('id')} has invalid trigger {trigger}")
             for relation in relations:
-                trigger = requirement_by_id.get(relation.get("requirementId"), {})
                 rationale = str(relation.get("rationaleCode", ""))
-                shared_object = rationale.removeprefix("SHARED-")
-                if not rationale.startswith("SHARED-") or shared_object not in row.get("semantic", {}).get("objects", []) or shared_object not in trigger.get("semantic", {}).get("objects", []):
+                if not rationale.startswith("SOURCE-EXPLICIT-EDGE-"):
                     errors.append(f"665-5 requirement {row.get('id')} has an unsupported requirement-level trigger rationale")
             if row.get("bounded665Decision") not in {
                 "APPLICABLE-AS-BOUNDED-6655-REFERENCE", "NOT-APPLICABLE-TO-CURRENT-PROFILE",
@@ -400,12 +432,8 @@ def package_errors(data: dict[str, Any]) -> list[str]:
                 errors.append(f"semantic assertion {requirement_id} disagrees on {field}")
         expected_fields = {
             "semantic": assertion.get("expectedSemantic"),
-            "paraphraseEn": assertion.get("expectedParaphraseEn"),
-            "paraphraseZh": assertion.get("expectedParaphraseZh"),
-            "roles": assertion.get("expectedRoles"),
-            "operations": assertion.get("expectedOperations"),
-            "category": assertion.get("expectedCategory"),
-            "obligations": assertion.get("expectedObligations"),
+            "generatedSemanticProjectionEn": assertion.get("expectedGeneratedSemanticProjectionEn"),
+            "generatedSemanticProjectionZh": assertion.get("expectedGeneratedSemanticProjectionZh"),
             "sourceModality": assertion.get("expectedSourceModality"),
             "conformanceEffect": assertion.get("expectedConformanceEffect"),
             "dependencyIds": assertion.get("expectedDependencyIds"),
@@ -436,6 +464,25 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     expected_645 = {"CRC-VALIDATION", "CHECK-VALUE-VALIDATION", "NAMING-ALGORITHM-VALIDATION", "COMPLETE-INTEGRITY-VALIDATION"}
     if gap645 is None or gap645.get("status") != "NOT-ESTABLISHED" or set(gap645.get("affectedCapabilityIds", [])) != expected_645:
         errors.append("ARINC 645 gap must retain all four NOT-ESTABLISHED capabilities")
+    field_constraints = [row["fieldConstraint"] for row in data["requirements"] if "fieldConstraint" in row]
+    for protocol_file in sorted({row["protocolFile"] for row in field_constraints}):
+        rows = [row for row in field_constraints if row["protocolFile"] == protocol_file]
+        if not any(row["presenceCondition"] != "ALWAYS" for row in rows):
+            errors.append(f"protocol file {protocol_file} field constraints lack non-ALWAYS presence semantics")
+        if len({row["encodingRule"] for row in rows}) < 2:
+            errors.append(f"protocol file {protocol_file} field constraints collapse encoding semantics")
+        ordinals = [row["ordinal"] for row in rows]
+        if len(ordinals) != len(set(ordinals)):
+            errors.append(f"protocol file {protocol_file} field constraint ordinals must be unique")
+    unresolved_units = {row.get("sourceUnitId") for row in section_manifest.get("fieldConstraintUnresolved", [])}
+    for row in data["requirements"]:
+        if row.get("fieldConstraint", {}).get("encodingRule") == "PROSE-DEFINED" and row.get("sourceUnitId") not in unresolved_units:
+            errors.append(f"requirement {row.get('id')} PROSE-DEFINED field is absent from fieldConstraintUnresolved")
+    referenced_dependencies = {dep for row in data["requirements"] for dep in row.get("dependencyIds", [])}
+    openness = {row.get("dependencyId"): row for row in data.get("dependencyOpenness", [])}
+    for dependency in data["dependencies"]:
+        if dependency["id"] not in referenced_dependencies and dependency["id"] not in openness:
+            errors.append(f"dependency {dependency['id']} is neither requirement-bound nor registered as open")
     for dependency in data["dependencies"]:
         if dependency.get("status") == "REGISTERED-SUPPORTING-SOURCE" and dependency.get("sourceId") not in bound_source_ids:
             errors.append(f"registered dependency {dependency.get('id')} lacks a controlled source binding")
@@ -548,7 +595,7 @@ def render(data: dict[str, Any]) -> str:
         semantic_view = f"`{sem['actor']}` / `{sem['condition']}` / `{sem['action']}` / `{', '.join(sem['objects'])}` / `{sem['observableEffect']}`"
         timing_view = "—" if "timing" not in row else f"`{row['timing']['provenanceKind']}` / `{row['timing']['sourceParameter']}` / `{row['timing']['sourceRelation']}` / `{row['timing']['lowerBound']}..{row['timing']['upperBound']} {row['timing']['unit']}` / evidence: {', '.join(row['timing']['sourceEvidenceUnitIds'])}"
         refs = ", ".join(row.get("dependencyIds", []) + row.get("gapIds", [])) or "—"
-        lines.append(f"| `{row['id']}` | `{row['sourceUnitId']}`<br>`{src['sourceId']} {src['clause']} p.{src['documentPage']}` | {semantic_view} | `{row['sourceModality']}` / `{row['conformanceEffect']}` | `{row['applicabilityDecision']}` | {row['paraphraseEn']}<br>{row['paraphraseZh']} | {timing_view} | {refs} |")
+        lines.append(f"| `{row['id']}` | `{row['sourceUnitId']}`<br>`{src['sourceId']} {src['clause']} p.{src['documentPage']}` | {semantic_view} | `{row['sourceModality']}` / `{row['conformanceEffect']}` | `{row['applicabilityDecision']}` | {row['generatedSemanticProjectionEn']}<br>{row['generatedSemanticProjectionZh']} | {timing_view} | {refs} |")
     lines += ["", "## Observable timing semantics", "", "| CRS | Family | Trigger → response | Cancellation / superseding trigger | Correlation / pairing |", "|---|---|---|---|---|"]
     for row in (item for item in requirements if "timing" in item):
         timing = row["timing"]
@@ -599,7 +646,7 @@ def render(data: dict[str, Any]) -> str:
         src = row["source"]; sem = row["semantic"]; refs = ", ".join(row.get("dependencyIds", []) + row.get("gapIds", [])) or "—"
         semantic_view = f"`{sem['actor']}` / `{sem['condition']}` / `{sem['action']}` / `{', '.join(sem['objects'])}` / `{sem['observableEffect']}`"
         timing_view = "—" if "timing" not in row else f"`{row['timing']['provenanceKind']}` / `{row['timing']['sourceParameter']}` / `{row['timing']['sourceRelation']}` / `{row['timing']['lowerBound']}..{row['timing']['upperBound']} {row['timing']['unit']}` / 证据：{', '.join(row['timing']['sourceEvidenceUnitIds'])}"
-        lines.append(f"| `{row['id']}` | `{row['sourceUnitId']}`<br>`{src['sourceId']} {src['clause']} p.{src['documentPage']}` | {semantic_view} | `{row['sourceModality']}` / `{row['conformanceEffect']}` | `{row['applicabilityDecision']}` | {row['paraphraseZh']} | {timing_view} | {refs} |")
+        lines.append(f"| `{row['id']}` | `{row['sourceUnitId']}`<br>`{src['sourceId']} {src['clause']} p.{src['documentPage']}` | {semantic_view} | `{row['sourceModality']}` / `{row['conformanceEffect']}` | `{row['applicabilityDecision']}` | {row['generatedSemanticProjectionZh']} | {timing_view} | {refs} |")
     lines += ["", "## 可观察时序语义", "", "| CRS | 事件族 | 触发 → 响应 | 取消／替代触发 | 关联／配对 |", "|---|---|---|---|---|"]
     for row in (item for item in requirements if "timing" in item):
         timing = row["timing"]
