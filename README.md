@@ -37,7 +37,7 @@ silently redefine the Core.
 | Current release | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/tree/v4.3.1) |
 | Method input | Candidate GVS Core 0.3 at [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
 | Protocol source | `ARINC-615A-3` / edition `615A-3` / wire version `A4` |
-| Bounded source and open dependency | `ARINC-665-5`; ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-2 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY` |
+| Bounded source and open dependency | `ARINC-665-5`; ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, ARINC-664-7 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY` |
 | Technical direction | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / platform `deferred: TTCN-3` |
 | Delivery position | current `M1` / next `M2` / disposition `ADOPT` |
 | Activation boundary | merge evidence `EXTERNAL-VERIFICATION-REQUIRED` / approval `NOT-AUTOMATED` |
@@ -56,11 +56,12 @@ silently redefine the Core.
 - Apply a dependency-bounded ARINC 665-5 survey triggered only by 615A-3 and current Profile services.
 - Separate fixed timing constants, message-carried parameters, symbolic parameters and examples while keeping ARINC 645 open.
 - Close WO-M1-2026-003: bind independent timing evidence, govern deferred 615A-to-665 edges, classify field presence/encoding, and remove misleading projection and denormalization semantics.
+- Close WO-M1-2026-004: replenish source-fidelity findings against the local reference PDFs (Attachment 3 and Appendix E explicit deferral, ARINC 664 Part 2 controlled binding, IETF RFC public retrieval identity, 665-5 media-set exclusion rationale).
 
 State changes:
 
 - M0 is externally verified and M1 remains a candidate CRS/applicability package under CR-2026-007.
-- Repository snapshot: WO-M1-2026-003 remediation candidate. Prior gate outcomes do not transfer to this Head; RG0/RG1 stay PENDING-EXTERNAL-INDEPENDENT-REVIEW and require complete-range review.
+- Repository snapshot: WO-M1-2026-004 source-fidelity replenishment candidate. Prior gate outcomes do not transfer to this Head; RG0/RG1 stay PENDING-EXTERNAL-INDEPENDENT-REVIEW and require complete-range review.
 
 Unchanged boundaries:
 
@@ -87,7 +88,7 @@ Unchanged boundaries:
 | 当前发布 | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/tree/v4.3.1) |
 | 方法输入 | Candidate GVS Core 0.3 @ [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
 | 协议来源 | `ARINC-615A-3` / 版次 `615A-3` / 线版本 `A4` |
-| 有边界来源与开放依赖 | `ARINC-665-5`；ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-2 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY` |
+| 有边界来源与开放依赖 | `ARINC-665-5`；ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, ARINC-664-7 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY` |
 | 技术方向 | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / 平台 `deferred: TTCN-3` |
 | 交付位置 | 当前 `M1` / 下一 `M2` / 处置 `ADOPT` |
 | 激活边界 | 合并证据 `EXTERNAL-VERIFICATION-REQUIRED` / 批准 `NOT-AUTOMATED` |
@@ -106,11 +107,12 @@ Unchanged boundaries:
 - 仅由 615A-3 与当前 Profile 服务触发 ARINC 665-5 有边界调查。
 - 区分固定时序常数、消息携带参数、符号参数和示例，并保持 ARINC 645 开放。
 - 关闭 WO-M1-2026-003：绑定独立时序证据，治理延期的 615A→665 边，分类字段出现／编码语义，并移除误导性的释义与冗余语义字段。
+- 关闭 WO-M1-2026-004：依据本地参考 PDF 完成源文件保真回填（附件 3 与附录 E 显式延期、ARINC 664 第 2 部分受控绑定、IETF RFC 公共检索身份、665-5 媒体集边界排除说明）。
 
 状态变化：
 
 - M0 已获外部核验，M1 仍由 CR-2026-007 控制为候选 CRS/适用性数据包。
-- 仓库快照：WO-M1-2026-003 修正候选。既有门禁结论不继承到本 Head；RG0/RG1 保持 PENDING-EXTERNAL-INDEPENDENT-REVIEW，并须执行完整范围复审。
+- 仓库快照：WO-M1-2026-004 源文件保真回填候选。既有门禁结论不继承到本 Head；RG0/RG1 保持 PENDING-EXTERNAL-INDEPENDENT-REVIEW，并须执行完整范围复审。
 
 保持不变的边界：
 

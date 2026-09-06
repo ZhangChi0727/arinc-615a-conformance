@@ -27,6 +27,14 @@
       "pageCount": 139,
       "byteCount": 910694,
       "sha256": "340cfbac1788ee3409d4b5f58f715fa37b19c69c105d311ed4d540f9350da9d8"
+    },
+    {
+      "id": "ARINC-664-2",
+      "edition": "664-Part-2",
+      "publicationDate": "2003-06-10",
+      "pageCount": 53,
+      "byteCount": 2983064,
+      "sha256": "177594eed4cb8a13f370a1a3ded88baf881816f83ab0528eb435acad621063d5"
     }
   ]
 }

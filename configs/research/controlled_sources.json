@@ -35,6 +35,22 @@
       ],
       "acquisitionRecordId": "SAR-2026-001",
       "sourceHandling": "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY"
+    },
+    {
+      "id": "ARINC-664-2",
+      "edition": "664-Part-2",
+      "role": "BOUNDED-PHYSICAL-LINK-REFERENCE",
+      "publicationDate": "2003-06-10",
+      "pageCount": 53,
+      "byteCount": 2983064,
+      "sha256": "177594eed4cb8a13f370a1a3ded88baf881816f83ab0528eb435acad621063d5",
+      "equivalentReplacementFor": [],
+      "limitations": [
+        "PROVIDES-PHYSICAL-AND-DATA-LINK-LAYER-ONLY",
+        "AFDX-SPECIFIC-DETERMINISTIC-EXTENSIONS-DEFINED-IN-PART-7"
+      ],
+      "acquisitionRecordId": "SAR-2026-001",
+      "sourceHandling": "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY"
     }
   ],
   "openDependencies": [
@@ -50,64 +66,120 @@
       "closureRule": "Acquire and register an authorized source, complete applicability and CRS tracing, and obtain independent approval before claiming affected capabilities."
     },
     {
-      "id": "ARINC-664-2",
-      "status": "OPEN-DEPENDENCY",
-      "affectedCapabilityIds": ["ETHERNET-PHYSICAL-LINK-SEMANTICS"],
-      "closureRule": "Acquire and register an authorized source, complete applicability and CRS tracing, and obtain independent approval before claiming Ethernet physical/link semantics."
-    },
-    {
       "id": "ARINC-664-3",
       "status": "OPEN-DEPENDENCY",
       "affectedCapabilityIds": ["AIRCRAFT-INTERNET-NETWORK-SEMANTICS"],
       "closureRule": "Acquire and register an authorized source, complete applicability and CRS tracing, and obtain independent approval before claiming aircraft internet-network semantics."
     },
     {
+      "id": "ARINC-664-7",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilityIds": ["AFDX-DETERMINISTIC-ETHERNET-SEMANTICS"],
+      "closureRule": "Acquire and register an authorized source, complete applicability and CRS tracing, and obtain independent approval before claiming AFDX / deterministic Ethernet semantics (Appendix E of ARINC 615A-3)."
+    },
+    {
       "id": "RFC-768",
       "status": "OPEN-DEPENDENCY",
       "affectedCapabilityIds": ["UDP-IDENTITY-AND-APPLICABILITY"],
-      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming UDP semantics."
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming UDP semantics.",
+      "publicRetrieval": {
+        "canonicalUrl": "https://www.rfc-editor.org/rfc/rfc768.txt",
+        "retrievedByteCount": 5896,
+        "retrievedSha256": "7dc8880e1ecef9c3f9da0db4b876a16e96bfa4f0953cc9d977d414f8f680c2f0",
+        "retrievedOn": "2026-09-06",
+        "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
+      }
     },
     {
       "id": "RFC-791",
       "status": "OPEN-DEPENDENCY",
       "affectedCapabilityIds": ["IP-IDENTITY-AND-APPLICABILITY"],
-      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming IP semantics."
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming IP semantics.",
+      "publicRetrieval": {
+        "canonicalUrl": "https://www.rfc-editor.org/rfc/rfc791.txt",
+        "retrievedByteCount": 94892,
+        "retrievedSha256": "6cfb387fcecfc1b72f2f69343c5b6951b5d263d708162e2b5c66ab8f394f6265",
+        "retrievedOn": "2026-09-06",
+        "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
+      }
     },
     {
       "id": "RFC-1123",
       "status": "OPEN-DEPENDENCY",
       "affectedCapabilityIds": ["HOST-REQUIREMENT-IDENTITY"],
-      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming host-requirement semantics."
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming host-requirement semantics.",
+      "publicRetrieval": {
+        "canonicalUrl": "https://www.rfc-editor.org/rfc/rfc1123.txt",
+        "retrievedByteCount": 239721,
+        "retrievedSha256": "3d019cc4777d1ead76c212711d56768bde9361312cd209846b62d2e41dd0301d",
+        "retrievedOn": "2026-09-06",
+        "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
+      }
     },
     {
       "id": "RFC-1350",
       "status": "OPEN-DEPENDENCY",
       "affectedCapabilityIds": ["TFTP-BASE-IDENTITY-AND-APPLICABILITY"],
-      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP-base semantics."
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP-base semantics.",
+      "publicRetrieval": {
+        "canonicalUrl": "https://www.rfc-editor.org/rfc/rfc1350.txt",
+        "retrievedByteCount": 24599,
+        "retrievedSha256": "39c9534e5fa6fecd3ac083ffd6256c2cc9a58f9f1058cb2e472d1782040231f9",
+        "retrievedOn": "2026-09-06",
+        "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
+      }
     },
     {
       "id": "RFC-1785",
       "status": "OPEN-DEPENDENCY",
       "affectedCapabilityIds": ["TFTP-OPTION-NEGOTIATION-IDENTITY"],
-      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP option-negotiation semantics."
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP option-negotiation semantics.",
+      "publicRetrieval": {
+        "canonicalUrl": "https://www.rfc-editor.org/rfc/rfc1785.txt",
+        "retrievedByteCount": 3354,
+        "retrievedSha256": "801d0c80d09549f694c0837c346934822c4212476fa63cbdf0a99ad8f522ea35",
+        "retrievedOn": "2026-09-06",
+        "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
+      }
     },
     {
       "id": "RFC-2347",
       "status": "OPEN-DEPENDENCY",
       "affectedCapabilityIds": ["TFTP-OPTION-EXTENSION-IDENTITY"],
-      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP option-extension semantics."
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP option-extension semantics.",
+      "publicRetrieval": {
+        "canonicalUrl": "https://www.rfc-editor.org/rfc/rfc2347.txt",
+        "retrievedByteCount": 13060,
+        "retrievedSha256": "dd858f38246b61dc46863a907e2834567270a92b03660a6bb120dc4a3339fb26",
+        "retrievedOn": "2026-09-06",
+        "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
+      }
     },
     {
       "id": "RFC-2348",
       "status": "OPEN-DEPENDENCY",
       "affectedCapabilityIds": ["TFTP-BLOCK-SIZE-OPTION-IDENTITY"],
-      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP block-size option semantics."
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP block-size option semantics.",
+      "publicRetrieval": {
+        "canonicalUrl": "https://www.rfc-editor.org/rfc/rfc2348.txt",
+        "retrievedByteCount": 9515,
+        "retrievedSha256": "fcd1e9959ef7bbacb20e3564c6c93089e77fbef62ea60e453e83d9d540bfac09",
+        "retrievedOn": "2026-09-06",
+        "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
+      }
     },
     {
       "id": "RFC-2349",
       "status": "OPEN-DEPENDENCY",
       "affectedCapabilityIds": ["TFTP-TIMEOUT-TRANSFER-SIZE-IDENTITY"],
-      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP timeout and transfer-size option semantics."
+      "closureRule": "Register the RFC identity, complete applicability and CRS tracing, and obtain independent approval before claiming TFTP timeout and transfer-size option semantics.",
+      "publicRetrieval": {
+        "canonicalUrl": "https://www.rfc-editor.org/rfc/rfc2349.txt",
+        "retrievedByteCount": 7848,
+        "retrievedSha256": "327758e6bf9178593bd48771be24682700e07fd682f1a468c0f54751196b4db6",
+        "retrievedOn": "2026-09-06",
+        "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
+      }
     }
   ],
   "capabilities": [
@@ -115,8 +187,9 @@
     {"id": "CHECK-VALUE-VALIDATION", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-645"]},
     {"id": "NAMING-ALGORITHM-VALIDATION", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-645"]},
     {"id": "COMPLETE-INTEGRITY-VALIDATION", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-645"]},
-    {"id": "ETHERNET-PHYSICAL-LINK-SEMANTICS", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-664-2"]},
+    {"id": "ETHERNET-PHYSICAL-LINK-SEMANTICS", "status": "NOT-ESTABLISHED", "blockedBy": []},
     {"id": "AIRCRAFT-INTERNET-NETWORK-SEMANTICS", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-664-3"]},
+    {"id": "AFDX-DETERMINISTIC-ETHERNET-SEMANTICS", "status": "NOT-ESTABLISHED", "blockedBy": ["ARINC-664-7"]},
     {"id": "UDP-IDENTITY-AND-APPLICABILITY", "status": "NOT-ESTABLISHED", "blockedBy": ["RFC-768"]},
     {"id": "IP-IDENTITY-AND-APPLICABILITY", "status": "NOT-ESTABLISHED", "blockedBy": ["RFC-791"]},
     {"id": "HOST-REQUIREMENT-IDENTITY", "status": "NOT-ESTABLISHED", "blockedBy": ["RFC-1123"]},
