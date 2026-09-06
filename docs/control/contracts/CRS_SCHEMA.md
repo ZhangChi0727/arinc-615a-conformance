@@ -86,11 +86,22 @@ is the sole package authority.
 - source modality and conformance effect are separate controlled fields;
 - `SHOULD` retains the source convention's minimum-compatibility effect;
 - `MAY` capability and its implemented-case constraints are separate items;
-- public records contain only a logical-statement hash and non-reconstructive
-  bilingual paraphrases, never proprietary source text;
+- public M1 records contain only a logical-statement hash and non-reconstructive
+  generated bilingual semantic projections, never proprietary source text;
 - unknown and unbounded timing endpoints are distinct controlled states;
 - compound statements are split with stable atomic-part identity or carry an
   inseparability rationale.
+- `generatedSemanticProjectionEn/Zh` are deterministic renderings of the
+  structured semantic tuple. They are drift anchors, not approved paraphrases
+  and not independent RG1 evidence;
+- M1 does not store the redundant `roles`, `operations`, `category`, or
+  `obligations` fields. Review views derive role, operation and action directly
+  from `semantic`; compound source propositions are split into atomic CRS items;
+- symbolic and message-carried timing propositions reference at least one
+  independently owned source unit. A self-reference is sufficient only for an
+  exact fixed constant whose lower and upper values are equal;
+- requirement-level 615A-to-665 edges remain deferred under the controlled
+  `bounded665EdgePolicy` until attachment-anchored reconciliation in M2.
 
 ---
 
@@ -156,4 +167,6 @@ ID 唯一且不得重用；来源和版本强制；公开产物仅保存 hash �
 
 ## M1 增补
 
-M1 的机器契约与唯一数据权威分别为 `configs/requirements/m1_crs_package.schema.json` 和 `configs/requirements/arinc_615a3_m1_crs.json`。来源定位必须结构化；原始模态与符合性效果分离；`SHOULD` 保留来源规定的最低兼容性效果；`MAY` 能力与其实现后的条件义务拆分。公开记录只保存逻辑语句 hash 与不可逆中英文释义。未知界限与真正无界必须分开；复合语句必须拆分或登记不可分理由。
+M1 的机器契约与唯一数据权威分别为 `configs/requirements/m1_crs_package.schema.json` 和 `configs/requirements/arinc_615a3_m1_crs.json`。来源定位必须结构化；原始模态与符合性效果分离；`SHOULD` 保留来源规定的最低兼容性效果；`MAY` 能力与其实现后的条件义务拆分。公开记录只保存逻辑语句 hash 与不可逆的中英文生成语义投影。未知界限与真正无界必须分开；复合语句必须拆分或登记不可分理由。
+
+`generatedSemanticProjectionEn/Zh` 是结构化语义元组的确定性生成投影，仅用于漂移锚定，不是批准释义，也不是独立 RG1 证据。M1 不再存储与 `semantic` 完全重复的 `roles`、`operations`、`category` 或 `obligations`；评审视图直接从语义元组导出角色、操作和行为。符号时序及消息携带时序必须引用至少一个独立拥有的来源单元；只有上下界相等的精确固定常量可以仅自引用。需求级 615A→665 边按照 `bounded665EdgePolicy` 延期到 M2 的 attachment 锚定协调。

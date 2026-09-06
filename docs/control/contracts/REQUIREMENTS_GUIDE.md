@@ -51,6 +51,11 @@ cancellation/silence, bounds, units, clock start/resets, inclusivity, and source
 - implementation and tests cannot substitute for an unresolved normative
   dependency;
 - no handoff, adjudication Markdown or duplicate status table owns M1 state.
+- timing evidence is an independently owned source unit for symbolic or
+  message-carried semantics; unresolved attachment reconciliation is explicit
+  theory debt and may not be hidden by self-reference;
+- M1 defers direct 615A-to-665 requirement edges to M2. Profile-scope admission
+  alone never constitutes a refinement edge.
 
 ---
 
@@ -76,3 +81,5 @@ M1 采用 `configs/requirements/arinc_615a3_m1_crs.json` 作为唯一权威，�
 ## 规则
 
 两名评审者独立提取后裁决；批准后的需求 ID 稳定；来源定位到版本、条款/表/图和受控页；适用性/解释变化形成评审修订；公开数据用 hash 或批准释义替代专有原文；只有链接不能证明 VC 覆盖，义务和 oracle 充分性必须评审。
+
+符号或消息携带时序的证据必须由独立来源单元拥有；不得以自引用掩盖 attachment 协调理论债务。M1 将直接 615A→665 需求边延期到 M2，Profile 范围准入本身不构成精化边。

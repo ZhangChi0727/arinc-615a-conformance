@@ -582,13 +582,15 @@ def render(data: dict[str, Any]) -> str:
         f"- Requirements fingerprint: `{data['inventorySummary']['requirementsFingerprint']}`",
         f"- Source-unit fingerprint: `{data['reviewControl']['sourceInventoryFingerprint']}`",
         "- Automated checks cover structure and cross-record consistency only; proprietary-source completeness and fidelity require external RG0 review.",
+        "- `generatedSemanticProjectionEn/Zh` are assertion-bound drift projections, not independent RG1 evidence.",
+        f"- 665 edge policy: `{data['profileScope']['bounded665EdgePolicy']['policy']}`",
     ]
     for title, key in (("Applicability", "applicabilityDecision"), ("Source modality", "sourceModality"), ("Conformance effect", "conformanceEffect")):
         lines += ["", f"## {title}", ""] + [f"- `{name}`: {count}" for name, count in sorted(_counts(requirements, key).items())]
     lines += ["", "## Open dependencies and gaps", ""]
     for row in data["dependencies"] + data["gaps"]:
         lines.append(f"- `{row['id']}` — {row['status']}: {row['summaryEn']} / {row['summaryZh']}")
-    lines += ["", "## CRS items", "", "| ID | Source unit | Actor / condition / action / object / observable effect | Modality / effect | Applicability | Bilingual review paraphrase | Timing provenance | Dependencies / gaps |", "|---|---|---|---|---|---|---|---|"]
+    lines += ["", "## CRS items", "", "| ID | Source unit | Actor / condition / action / object / observable effect | Modality / effect | Applicability | Generated semantic projection (assertion-bound) | Timing provenance | Dependencies / gaps |", "|---|---|---|---|---|---|---|---|"]
     for row in requirements:
         src = row["source"]
         sem = row["semantic"]
@@ -635,13 +637,15 @@ def render(data: dict[str, Any]) -> str:
         f"- 需求指纹：`{data['inventorySummary']['requirementsFingerprint']}`",
         f"- 来源单元指纹：`{data['reviewControl']['sourceInventoryFingerprint']}`",
         "- 自动检查只覆盖结构与跨记录一致性；专有来源的完整性与忠实度仍须外部 RG0 评审。",
+        "- `generatedSemanticProjectionEn/Zh` 是受断言约束的漂移投影，不是独立 RG1 证据。",
+        f"- 665 边政策：`{data['profileScope']['bounded665EdgePolicy']['policy']}`",
     ]
     for title, key in (("适用性", "applicabilityDecision"), ("来源模态", "sourceModality"), ("符合性效果", "conformanceEffect")):
         lines += ["", f"## {title}", ""] + [f"- `{name}`：{count}" for name, count in sorted(_counts(requirements, key).items())]
     lines += ["", "## 开放依赖与缺口", ""]
     for row in data["dependencies"] + data["gaps"]:
         lines.append(f"- `{row['id']}` — {row['status']}：{row['summaryZh']}")
-    lines += ["", "## CRS 项", "", "| ID | 来源单元 | 参与者／条件／行为／对象／可观察结果 | 模态／效果 | 适用性 | 双语评审释义 | 时序溯源 | 依赖／缺口 |", "|---|---|---|---|---|---|---|---|"]
+    lines += ["", "## CRS 项", "", "| ID | 来源单元 | 参与者／条件／行为／对象／可观察结果 | 模态／效果 | 适用性 | 生成语义投影（受断言约束） | 时序溯源 | 依赖／缺口 |", "|---|---|---|---|---|---|---|---|"]
     for row in requirements:
         src = row["source"]; sem = row["semantic"]; refs = ", ".join(row.get("dependencyIds", []) + row.get("gapIds", [])) or "—"
         semantic_view = f"`{sem['actor']}` / `{sem['condition']}` / `{sem['action']}` / `{', '.join(sem['objects'])}` / `{sem['observableEffect']}`"

@@ -311,6 +311,29 @@ No model, Configuration, execution evidence, baseline, tag or conformance claim.
 **Status:** Candidate disposition `ADOPT` under CR-2026-007; RG0/RG1 and formal
 activation remain pending external independent review and ordinary merge.
 
+## DD-019 — Defer direct 615A-to-665 requirement edges to M2
+
+**Decision:** M1 admits ARINC 665-5 only at bounded Profile scope. Direct
+requirement-level refinement, producer-constraint, and consumer-tolerance
+edges remain prohibited until M2 performs attachment-anchored reconciliation.
+
+**Why:** Shared words or data-object names do not prove implication. An edge
+requires explicit evidence binding both source propositions.
+
+**Status:** Candidate under CR-2026-007; it does not authorize M2 entry.
+
+## DD-020 — Use generated projections and remove tautological semantic fields
+
+**Decision:** Rename the deterministic bilingual template output to
+`generatedSemanticProjectionEn/Zh` and treat it only as a drift anchor. Remove
+the redundant requirement-level `roles`, `operations`, `category`, and
+`obligations` fields; derive their display values from `semantic`.
+
+**Why:** A generated template is not independent review evidence, and fields
+forced to equal one semantic element carry no additional information.
+
+**Status:** Candidate under CR-2026-007, pending full RG0/RG1 review.
+
 ---
 
 # 中文版
@@ -438,3 +461,19 @@ adequacy。延期 DTMC 协议语义、HMM/ML 诊断和 Bayesian calibration。FM
 **范围：** 仅限 M1 静态需求、适用性、依赖和评审；不创建模型、Configuration、执行证据、baseline、tag 或符合性主张。
 
 **状态：** 在 CR-2026-007 下候选处置为 `ADOPT`；RG0/RG1 与正式激活仍等待外部独立评审和普通合并。
+
+## DD-019——将直接 615A→665 需求边延期到 M2
+
+**决定：** M1 仅在有界 Profile 范围准入 ARINC 665-5。直接需求精化、生成方约束和消费方容忍边继续禁止，直至 M2 完成 attachment 锚定协调。
+
+**理由：** 共享词汇或数据对象名称不能证明蕴含关系；一条边必须由同时绑定两个来源命题的明确证据支持。
+
+**状态：** 在 CR-2026-007 下为候选，不授权进入 M2。
+
+## DD-020——采用生成投影并删除同义冗余语义字段
+
+**决定：** 将确定性双语模板输出重命名为 `generatedSemanticProjectionEn/Zh`，仅作为漂移锚；删除需求级 `roles`、`operations`、`category` 和 `obligations` 冗余字段，显示值由 `semantic` 导出。
+
+**理由：** 生成模板不是独立评审证据；被强制等于单个语义元素的字段不携带额外信息。
+
+**状态：** 在 CR-2026-007 下为候选，等待完整 RG0/RG1 复审。

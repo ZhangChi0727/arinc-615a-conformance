@@ -55,12 +55,12 @@ silently redefine the Core.
 - Rebuild the single machine-readable candidate package around leaf-level prose, table-row and sequence-event source units.
 - Apply a dependency-bounded ARINC 665-5 survey triggered only by 615A-3 and current Profile services.
 - Separate fixed timing constants, message-carried parameters, symbolic parameters and examples while keeping ARINC 645 open.
-- Address the fourth review cycle: audit supplement pages, bind table fields and timing equations structurally, remove inferred 615A-to-665 edges, and anchor bilingual semantics and denormalized fields.
+- Close WO-M1-2026-003: bind independent timing evidence, govern deferred 615A-to-665 edges, classify field presence/encoding, and remove misleading projection and denormalization semantics.
 
 State changes:
 
 - M0 is externally verified and M1 remains a candidate CRS/applicability package under CR-2026-007.
-- Repository snapshot: fourth-cycle correction candidate. Prior gate outcomes do not transfer to this Head; RG0/RG1 stay PENDING-EXTERNAL-INDEPENDENT-REVIEW and require complete-range review.
+- Repository snapshot: WO-M1-2026-003 remediation candidate. Prior gate outcomes do not transfer to this Head; RG0/RG1 stay PENDING-EXTERNAL-INDEPENDENT-REVIEW and require complete-range review.
 
 Unchanged boundaries:
 
@@ -105,12 +105,12 @@ Unchanged boundaries:
 - 围绕叶级正文、表格行和序列事件来源单元重建单一机器可读候选包。
 - 仅由 615A-3 与当前 Profile 服务触发 ARINC 665-5 有边界调查。
 - 区分固定时序常数、消息携带参数、符号参数和示例，并保持 ARINC 645 开放。
-- 处理第四轮评审：审计 supplement 页面，结构化绑定表字段与时序方程，移除推断的 615A→665 边，并锚定双语语义及冗余语义字段。
+- 关闭 WO-M1-2026-003：绑定独立时序证据，治理延期的 615A→665 边，分类字段出现／编码语义，并移除误导性的释义与冗余语义字段。
 
 状态变化：
 
 - M0 已获外部核验，M1 仍由 CR-2026-007 控制为候选 CRS/适用性数据包。
-- 仓库快照：第四轮修正候选。既有门禁结论不继承到本 Head；RG0/RG1 保持 PENDING-EXTERNAL-INDEPENDENT-REVIEW，并须执行完整范围复审。
+- 仓库快照：WO-M1-2026-003 修正候选。既有门禁结论不继承到本 Head；RG0/RG1 保持 PENDING-EXTERNAL-INDEPENDENT-REVIEW，并须执行完整范围复审。
 
 保持不变的边界：
 
