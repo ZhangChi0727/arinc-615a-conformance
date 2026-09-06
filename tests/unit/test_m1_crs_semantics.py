@@ -494,3 +494,43 @@ def test_bounded_665_edge_policy_accepts_a_future_explicit_refinement_fixture() 
     row["triggeredByRequirementIds"] = [trigger]
     row["triggerRelations"] = [{"requirementId": trigger, "relation": "615A-REQUIRES-665-DATA-SEMANTIC", "rationaleCode": "SOURCE-EXPLICIT-EDGE-FIXTURE"}]
     assert m1.bounded_665_policy_errors(data) == []
+
+
+def test_source_binding_664p2_sha_must_match_controlled_register() -> None:
+    data = package()
+    binding = next(item for item in data["sourceBindings"] if item["sourceId"] == "ARINC-664-2")
+    assert binding["role"] == "BOUNDED-PHYSICAL-LINK-REFERENCE"
+    assert binding["sha256"] == "177594eed4cb8a13f370a1a3ded88baf881816f83ab0528eb435acad621063d5"
+    data["sourceBindings"] = [dict(item) for item in data["sourceBindings"]]
+    for item in data["sourceBindings"]:
+        if item["sourceId"] == "ARINC-664-2":
+            item["sha256"] = "0" * 64
+    assert any("ARINC-664-2 sha256 disagrees" in item for item in errors(data))
+
+
+def test_appendix_e_afdx_is_deferred_and_attachment_3_find_is_deferred_not_informative() -> None:
+    data = package()
+    apxe = [row for row in data["coverageLedger"] if row["source"].get("pdfPage") == 134]
+    assert apxe, "Appendix E coverage must exist"
+    assert all(row["applicabilityDecision"] == "DEFERRED-FUTURE-SCOPE" for row in apxe)
+    assert all(row["rationaleCode"] == "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING" for row in apxe)
+
+    att3 = [row for row in data["coverageLedger"] if row["source"].get("pdfPage") in {107, 108, 109, 110}]
+    assert att3, "Attachment 3 coverage must exist"
+    reclassified = [row for row in att3 if row["rationaleCode"] == "DEFERRED-FIND-M9"]
+    still_informative = [row for row in att3 if row["rationaleCode"] == "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE"]
+    assert reclassified, "Attachment 3 must have entries reclassified to DEFERRED-FIND-M9"
+    assert not still_informative, "no Attachment 3 leaf should stay as NON-PROTOCOL-PRODUCT-OR-INFORMATIVE"
+
+
+def test_bounded_665_media_set_exclusion_is_explicitly_recorded() -> None:
+    manifest = json.loads(m1.SECTION_SPAN_PATH.read_text(encoding="utf-8"))
+    exclusions = manifest.get("boundedSourceScopeExclusion", [])
+    assert exclusions, "boundedSourceScopeExclusion must enumerate 665-5 excluded clauses"
+    media_set_entry = next(
+        (entry for entry in exclusions if entry.get("excludedClausePrefix") == "3"),
+        None,
+    )
+    assert media_set_entry is not None
+    assert media_set_entry["sourceId"] == "ARINC-665-5"
+    assert "MEDIA-SET-NOT-USED-BY-ETHERNET-UPLOAD" in media_set_entry["rationaleCode"]

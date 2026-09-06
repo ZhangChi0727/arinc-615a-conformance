@@ -334,6 +334,51 @@ forced to equal one semantic element carry no additional information.
 
 **Status:** Candidate under CR-2026-007, pending full RG0/RG1 review.
 
+## DD-021 — Reclassify Attachment 3 and Appendix E from informative to explicit deferral
+
+**Decision:** ARINC 615A-3 Attachment 3 (FIND protocol detail) and Appendix E
+(Data Loading Over AFDX) may no longer be classified
+`NON-PROTOCOL-PRODUCT-OR-INFORMATIVE` while the corresponding profile-level
+capability is deferred or the underlying dependency is not bound. Attachment 3
+leaves are recorded as `DEFERRED-FUTURE-SCOPE` with rationale `DEFERRED-FIND-M9`;
+Appendix E leaves are recorded as `DEFERRED-FUTURE-SCOPE` with rationale
+`DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING`.
+
+**Why:** Attachment 3 provides the normative definition of FIND while §5.3.3 is
+already deferred; an "informative" tag on the definition contradicts the
+deferral. Appendix E specifies deployment-normative constraints for AFDX
+transport whose ultimate blockers are ARINC 664 Part 7 (not yet acquired) and
+Part 2 (now bound); this should be closed by an explicit M2 infrastructure-
+binding condition rather than hidden behind an informative tag.
+
+**Scope:** Only coverage-ledger leaf reclassification; no CRS requirement is
+added or removed, no `currentStop` moves.
+
+**Status:** Candidate under CR-2026-007, pending external independent review.
+
+## DD-022 — Controlled handling of public IETF RFCs
+
+**Decision:** Public IETF RFCs (768, 791, 1123, 1350, 1785, 2347, 2348, 2349)
+are not registered in `configs/research/controlled_sources.json` `sources[]`
+(which is reserved for proprietary material subject to `SAR-2026-001`
+identity-match). They remain in `openDependencies[]` with an added
+`publicRetrieval` sub-object recording canonical URL, retrieval date, byte
+count, and SHA-256. The text files themselves are stored under
+`local-references/rfc/` (covered by `.gitignore`) and not committed.
+
+**Why:** The existing baseline check enforces `LOCAL-PROPRIETARY-NO-REPOSITORY-COPY`
+handling and independent acquisition-record matching for every `sources[]`
+entry — public text does not fit that model. Keeping RFCs in `openDependencies`
+preserves the correct "capability not yet established" semantics while
+`publicRetrieval` records the exact version identity we intend to bind against
+at requirement level.
+
+**Scope:** Only registers RFC identity and retrieval metadata; does not
+promote RFCs to requirement-level evidence, and does not clear the blocked
+status of any `RFC-*`-affected capability.
+
+**Status:** Candidate under CR-2026-007, pending external independent review.
+
 ---
 
 # 中文版
@@ -477,3 +522,23 @@ adequacy。延期 DTMC 协议语义、HMM/ML 诊断和 Bayesian calibration。FM
 **理由：** 生成模板不是独立评审证据；被强制等于单个语义元素的字段不携带额外信息。
 
 **状态：** 在 CR-2026-007 下为候选，等待完整 RG0/RG1 复审。
+
+## DD-021——附件 3 与附录 E 从"信息性"重分类为显式延期
+
+**决定：** ARINC 615A-3 附件 3（FIND 协议详解）与附录 E（AFDX 数据加载部署）在 Profile 层已延期或依赖尚未绑定的情况下，不得使用 `NON-PROTOCOL-PRODUCT-OR-INFORMATIVE` 归口，而应显式记为 `DEFERRED-FUTURE-SCOPE`，理由码分别为 `DEFERRED-FIND-M9` 与 `DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING`。
+
+**理由：** 附件 3 提供 FIND 的规范性定义，而 §5.3.3 主体已延期 FIND；"信息性"归口与延期结论冲突。附录 E 规定 AFDX 部署下的规范性约束，其真正阻塞在 ARINC 664 P7（未获取）与 P2（现已绑定），应通过明确的 M2 基础设施绑定条件封闭。
+
+**范围：** 仅重分类覆盖账本 leaf；不新增或删除 CRS 需求，也不移动 currentStop。
+
+**状态：** 在 CR-2026-007 下为候选，等待外部独立复审。
+
+## DD-022——公共 IETF RFC 的受控处理
+
+**决定：** 公共 IETF RFC（768、791、1123、1350、1785、2347、2348、2349）不进入 `configs/research/controlled_sources.json` 的 `sources[]`（其为专有材料专用），而是留在 `openDependencies[]`，并附上 `publicRetrieval` 子对象记录规范 URL、检索日期、字节数与 SHA-256；文件本体保存在 `local-references/rfc/`（`.gitignore` 覆盖）且不入库。
+
+**理由：** 现有 baseline 检查要求 `sources[]` 项目具备"专有本地非仓储副本"处置策略与独立采购记录匹配，公共文本不符合该模型。将 RFC 保留在 `openDependencies` 保持"能力仍未建立"的正确语义，同时通过 `publicRetrieval` 记录我们意图使用的具体版本身份。
+
+**范围：** 仅登记 RFC 身份与检索元数据；不将其提升为需求级证据，也不解除 `RFC-*` 对应能力的阻塞状态。
+
+**状态：** 在 CR-2026-007 下为候选，等待外部独立复审。
