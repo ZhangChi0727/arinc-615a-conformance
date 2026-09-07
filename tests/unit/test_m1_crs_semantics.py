@@ -4,6 +4,7 @@ import copy
 import importlib.util
 import json
 from pathlib import Path
+import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location("sync_m1_crs", ROOT / "scripts/sync_m1_crs.py")
@@ -534,3 +535,109 @@ def test_bounded_665_media_set_exclusion_is_explicitly_recorded() -> None:
     assert media_set_entry is not None
     assert media_set_entry["sourceId"] == "ARINC-665-5"
     assert "MEDIA-SET-NOT-USED-BY-ETHERNET-UPLOAD" in media_set_entry["rationaleCode"]
+
+
+@pytest.mark.parametrize("field,value", [
+    ("sha256", "0" * 64), ("edition", "WRONG-EDITION"),
+    ("pageCount", 1), ("publicationDate", "1900-01-01"),
+    ("acquisitionRecordId", "MISSING-ACQUISITION"),
+])
+def test_network_binding_complete_identity_cannot_drift(field, value):
+    data = package()
+    sid = data["networkReferenceReview"]["sourceIds"][0]
+    next(r for r in data["sourceBindings"] if r["sourceId"] == sid)[field] = value
+    refresh_all_mutable_fingerprints(data)
+    assert any(f"{field} disagrees" in e for e in errors(data))
+
+
+@pytest.mark.parametrize("mutation", ["duplicate", "remove-binding", "remove-audit", "remove-unit", "wrong-locator", "wrong-source", "bad-relation", "wrong-owner", "hide-blocker"])
+def test_network_inventory_and_relations_resist_coordinated_mutation(mutation):
+    data = package()
+    audit = data["networkReferenceReview"]
+    if mutation == "duplicate":
+        data["sourceBindings"].append(copy.deepcopy(data["sourceBindings"][-1]))
+    elif mutation == "remove-binding":
+        data["sourceBindings"] = [r for r in data["sourceBindings"] if r["sourceId"] != audit["sourceIds"][0]]
+    elif mutation == "remove-audit":
+        del data["networkReferenceReview"]
+    elif mutation == "remove-unit":
+        uid = audit["units"].pop()["id"]
+        for row in audit["relations"]:
+            row["targetUnitIds"] = [t for t in row["targetUnitIds"] if t != uid]
+    elif mutation == "wrong-locator":
+        audit["units"][0]["clause"] = "NONEXISTENT-CLAUSE"
+        audit["units"][0]["sourceTextHash"] = "0" * 64
+    elif mutation == "wrong-source":
+        audit["units"][0]["sourceId"] = audit["sourceIds"][-1]
+    elif mutation == "bad-relation":
+        audit["relations"][0]["relation"] = "SHARED-WORDS-PROVE-EQUIVALENCE"
+    elif mutation == "wrong-owner":
+        audit["relations"][0]["requirementId"] = data["requirements"][-1]["id"]
+    elif mutation == "hide-blocker":
+        next(i for i in audit["issues"] if i["blocksM1Approval"])["blocksM1Approval"] = False
+    refresh_all_mutable_fingerprints(data)
+    assert any("network" in e or "source bindings" in e or "duplicate source" in e for e in errors(data))
+
+
+@pytest.mark.parametrize("mutation", ["remove-dependency", "clear-obligations", "establish", "clear-blocked-by", "edition", "duplicate-source", "missing-acquisition"])
+def test_network_register_cannot_hide_pending_work(tmp_path, monkeypatch, mutation):
+    data = package()
+    register = json.loads(m1.SOURCE_REGISTER_PATH.read_text(encoding="utf-8"))
+    sid = data["networkReferenceReview"]["sourceIds"][0]
+    source = next(r for r in register["sources"] if r["id"] == sid)
+    dep = next(r for r in register["openDependencies"] if r["id"] == sid)
+    cap = next(r for r in register["capabilities"] if r["id"] == source["dependencyReview"]["capabilityIds"][0])
+    if mutation == "remove-dependency":
+        register["openDependencies"].remove(dep)
+    elif mutation == "clear-obligations":
+        dep["pendingObligations"] = []
+    elif mutation == "establish":
+        cap["status"] = "ESTABLISHED"
+        cap["blockedBy"] = []
+    elif mutation == "clear-blocked-by":
+        cap["blockedBy"] = []
+    elif mutation == "edition":
+        source["edition"] = "WRONG-EDITION"
+        next(r for r in data["sourceBindings"] if r["sourceId"] == sid)["edition"] = source["edition"]
+    elif mutation == "duplicate-source":
+        register["sources"].append(copy.deepcopy(source))
+    elif mutation == "missing-acquisition":
+        source["acquisitionRecordId"] = "MISSING-RECORD"
+    path = tmp_path / "register.json"
+    path.write_text(json.dumps(register), encoding="utf-8")
+    monkeypatch.setattr(m1, "SOURCE_REGISTER_PATH", path)
+    refresh_all_mutable_fingerprints(data)
+    assert any("network" in e or "acquisition" in e or "duplicate source" in e for e in errors(data))
+
+
+def test_deferred_network_relation_cannot_be_promoted_with_its_owner():
+    data = package()
+    relation = next(r for r in data["networkReferenceReview"]["relations"] if r["relation"] == "CONDITIONAL-DEPLOYMENT-REFERENCE")
+    relation["condition"] = "CURRENT-ETHERNET-PROFILE"
+    relation["disposition"] = "APPLICABILITY-REVIEW-PENDING"
+    owner = next(r for r in data["coverageLedger"] if r["id"] == relation["sourceCoverageId"])
+    owner["applicabilityDecision"] = "APPLICABLE-BASE"
+    refresh_all_mutable_fingerprints(data)
+    assert any("cannot activate a deferred deployment" in e for e in errors(data))
+
+
+def test_received_reference_with_pending_capability_is_valid():
+    data = package()
+    assert errors(data) == []
+    assert any(i["blocksM1Approval"] for i in data["networkReferenceReview"]["issues"])
+    rendered = m1.render(data)
+    for row in data["networkReferenceReview"]["issues"]:
+        assert row["summaryEn"] in rendered and row["summaryZh"] in rendered
+
+
+def test_reviewed_network_inventory_can_extend_without_production_constants():
+    data = package()
+    manifest = json.loads(m1.SECTION_SPAN_PATH.read_text(encoding="utf-8"))
+    assertions = json.loads(m1.SEMANTIC_ASSERTION_PATH.read_text(encoding="utf-8"))
+    register = json.loads(m1.SOURCE_REGISTER_PATH.read_text(encoding="utf-8"))
+    unit = copy.deepcopy(data["networkReferenceReview"]["units"][0])
+    unit["id"] = "NET-FIXTURE-REVIEWED-ADDITIONAL-REGION"
+    data["networkReferenceReview"]["units"].append(unit)
+    manifest["networkReviewContract"]["expectedUnitIds"].append(unit["id"])
+    assertions["networkReferenceReview"] = copy.deepcopy(data["networkReferenceReview"])
+    assert m1.network_reference_errors(data, register, manifest, assertions) == []

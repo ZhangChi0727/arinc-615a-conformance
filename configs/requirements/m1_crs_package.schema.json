@@ -18,7 +18,8 @@
         "gaps",
         "reviewControl",
         "inventorySummary",
-        "activation"
+        "activation",
+        "networkReferenceReview"
     ],
     "$defs": {
         "id": {
@@ -67,8 +68,8 @@
                     "enum": [
                         "PROSE-SENTENCE",
                         "COMMENTARY",
-                    "TABLE-ROW",
-                    "TABLE-FOOTNOTE",
+                        "TABLE-ROW",
+                        "TABLE-FOOTNOTE",
                         "SEQUENCE-EVENT",
                         "EQUATION"
                     ]
@@ -117,7 +118,12 @@
             "required": [
                 "sourceId",
                 "role",
-                "sha256"
+                "sha256",
+                "edition",
+                "publicationDate",
+                "pageCount",
+                "byteCount",
+                "acquisitionRecordId"
             ],
             "properties": {
                 "sourceId": {
@@ -129,6 +135,26 @@
                 },
                 "sha256": {
                     "$ref": "#/$defs/sha256"
+                },
+                "edition": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "publicationDate": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "pageCount": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "byteCount": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "acquisitionRecordId": {
+                    "type": "string",
+                    "minLength": 1
                 }
             }
         },
@@ -215,8 +241,8 @@
                 "action",
                 "objects",
                 "observableEffect",
-                "operation"
-                ,"polarity"
+                "operation",
+                "polarity"
             ],
             "properties": {
                 "actor": {
@@ -247,7 +273,10 @@
                     "$ref": "#/$defs/id"
                 },
                 "polarity": {
-                    "enum": ["AFFIRMATIVE", "NEGATIVE"]
+                    "enum": [
+                        "AFFIRMATIVE",
+                        "NEGATIVE"
+                    ]
                 }
             }
         },
@@ -255,8 +284,8 @@
             "type": "object",
             "additionalProperties": false,
             "required": [
-            "timingFamily",
-            "provenanceKind",
+                "timingFamily",
+                "provenanceKind",
                 "sourceParameter",
                 "sourceRelation",
                 "sourceEvidenceUnitIds",
@@ -279,11 +308,11 @@
                 "errorBudgetState",
                 "ambiguityStatus"
             ],
-        "properties": {
-            "timingFamily": {
-                "$ref": "#/$defs/id"
-            },
-            "provenanceKind": {
+            "properties": {
+                "timingFamily": {
+                    "$ref": "#/$defs/id"
+                },
+                "provenanceKind": {
                     "enum": [
                         "FIXED-SOURCE-CONSTANT",
                         "MESSAGE-CARRIED-PARAMETER",
@@ -304,7 +333,9 @@
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
-                    "items": {"$ref": "#/$defs/id"}
+                    "items": {
+                        "$ref": "#/$defs/id"
+                    }
                 },
                 "trigger": {
                     "$ref": "#/$defs/id"
@@ -335,7 +366,10 @@
                         {
                             "type": "number"
                         },
-                        {"type": "string", "pattern": "^(?:UNBOUNDED|UNRESOLVED|[A-Z][A-Z0-9-]+)$"}
+                        {
+                            "type": "string",
+                            "pattern": "^(?:UNBOUNDED|UNRESOLVED|[A-Z][A-Z0-9-]+)$"
+                        }
                     ]
                 },
                 "upperBound": {
@@ -343,7 +377,10 @@
                         {
                             "type": "number"
                         },
-                        {"type": "string", "pattern": "^(?:UNBOUNDED|UNRESOLVED|[A-Z][A-Z0-9-]+)$"}
+                        {
+                            "type": "string",
+                            "pattern": "^(?:UNBOUNDED|UNRESOLVED|[A-Z][A-Z0-9-]+)$"
+                        }
                     ]
                 },
                 "unit": {
@@ -407,24 +444,73 @@
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["kind", "substitutionRule"],
+                    "required": [
+                        "kind",
+                        "substitutionRule"
+                    ],
                     "properties": {
-                        "kind": {"const": "DISPLAY-FOOTNOTE"},
-                        "substitutionRule": {"const": "SUBSTITUTE-ACTIVE-OPERATION-NAME"}
+                        "kind": {
+                            "const": "DISPLAY-FOOTNOTE"
+                        },
+                        "substitutionRule": {
+                            "const": "SUBSTITUTE-ACTIVE-OPERATION-NAME"
+                        }
                     }
                 },
                 {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["kind", "code", "meaningCode", "displayMode", "targetTextRule", "applicableProtocolFiles", "applicableOperations"],
+                    "required": [
+                        "kind",
+                        "code",
+                        "meaningCode",
+                        "displayMode",
+                        "targetTextRule",
+                        "applicableProtocolFiles",
+                        "applicableOperations"
+                    ],
                     "properties": {
-                        "kind": {"const": "STATUS-CODE"},
-                        "code": {"type": "string", "pattern": "^0X[0-9A-F]{4}$"},
-                        "meaningCode": {"$ref": "#/$defs/id"},
-                        "displayMode": {"$ref": "#/$defs/id"},
-                        "targetTextRule": {"enum": ["REQUIRED", "FORBIDDEN", "NOT-SPECIFIED"]},
-                        "applicableProtocolFiles": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^\\.L[A-Z]{2}$"}},
-                        "applicableOperations": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["INFORMATION", "UPLOAD", "DOWNLOAD"]}}
+                        "kind": {
+                            "const": "STATUS-CODE"
+                        },
+                        "code": {
+                            "type": "string",
+                            "pattern": "^0X[0-9A-F]{4}$"
+                        },
+                        "meaningCode": {
+                            "$ref": "#/$defs/id"
+                        },
+                        "displayMode": {
+                            "$ref": "#/$defs/id"
+                        },
+                        "targetTextRule": {
+                            "enum": [
+                                "REQUIRED",
+                                "FORBIDDEN",
+                                "NOT-SPECIFIED"
+                            ]
+                        },
+                        "applicableProtocolFiles": {
+                            "type": "array",
+                            "minItems": 1,
+                            "uniqueItems": true,
+                            "items": {
+                                "type": "string",
+                                "pattern": "^\\.L[A-Z]{2}$"
+                            }
+                        },
+                        "applicableOperations": {
+                            "type": "array",
+                            "minItems": 1,
+                            "uniqueItems": true,
+                            "items": {
+                                "enum": [
+                                    "INFORMATION",
+                                    "UPLOAD",
+                                    "DOWNLOAD"
+                                ]
+                            }
+                        }
                     }
                 }
             ]
@@ -432,17 +518,66 @@
         "fieldConstraint": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["protocolFile", "fieldId", "ordinal", "widthBitsExpression", "repeatScope", "presenceCondition", "encodingRule", "terminationRule", "noteRefs"],
+            "required": [
+                "protocolFile",
+                "fieldId",
+                "ordinal",
+                "widthBitsExpression",
+                "repeatScope",
+                "presenceCondition",
+                "encodingRule",
+                "terminationRule",
+                "noteRefs"
+            ],
             "properties": {
-                "protocolFile": {"type": "string", "pattern": "^L[A-Z]{2}$"},
-                "fieldId": {"type": "string", "minLength": 1},
-                "ordinal": {"type": "integer", "minimum": 1},
-                "widthBitsExpression": {"type": "string", "minLength": 1},
-                "repeatScope": {"$ref": "#/$defs/id"},
-                "presenceCondition": {"enum": ["ALWAYS", "WHEN-LENGTH-FIELD-POSITIVE", "WHEN-STATUS-CODE-0002-OR-0004", "PER-REPETITION-OF-ENCLOSING-BLOCK", "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE"]},
-                "encodingRule": {"enum": ["UNSIGNED-INT-BIG-ENDIAN", "ZERO-TERMINATED-ASCII", "LENGTH-PREFIXED-BINARY", "RESERVED-ZERO-FILL", "PROSE-DEFINED"]},
-                "terminationRule": {"$ref": "#/$defs/id"},
-                "noteRefs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+                "protocolFile": {
+                    "type": "string",
+                    "pattern": "^L[A-Z]{2}$"
+                },
+                "fieldId": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "ordinal": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "widthBitsExpression": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "repeatScope": {
+                    "$ref": "#/$defs/id"
+                },
+                "presenceCondition": {
+                    "enum": [
+                        "ALWAYS",
+                        "WHEN-LENGTH-FIELD-POSITIVE",
+                        "WHEN-STATUS-CODE-0002-OR-0004",
+                        "PER-REPETITION-OF-ENCLOSING-BLOCK",
+                        "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE"
+                    ]
+                },
+                "encodingRule": {
+                    "enum": [
+                        "UNSIGNED-INT-BIG-ENDIAN",
+                        "ZERO-TERMINATED-ASCII",
+                        "LENGTH-PREFIXED-BINARY",
+                        "RESERVED-ZERO-FILL",
+                        "PROSE-DEFINED"
+                    ]
+                },
+                "terminationRule": {
+                    "$ref": "#/$defs/id"
+                },
+                "noteRefs": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                }
             }
         }
     },
@@ -479,30 +614,80 @@
                 "bounded665EdgePolicy"
             ],
             "properties": {
-                "baseOperation": {"enum": ["UPLOAD"]},
-                "supportingOperation": {"enum": ["INFORMATION"]},
+                "baseOperation": {
+                    "enum": [
+                        "UPLOAD"
+                    ]
+                },
+                "supportingOperation": {
+                    "enum": [
+                        "INFORMATION"
+                    ]
+                },
                 "deferredOperations": {
                     "type": "array",
                     "minItems": 2,
                     "uniqueItems": true,
-                    "items": {"enum": ["DOWNLOAD", "FIND"]}
+                    "items": {
+                        "enum": [
+                            "DOWNLOAD",
+                            "FIND"
+                        ]
+                    }
                 },
-                "configurationStatus": {"const": "NOT YET ESTABLISHED"},
+                "configurationStatus": {
+                    "const": "NOT YET ESTABLISHED"
+                },
                 "bounded665ProfileScopeTriggerIds": {
                     "type": "array",
                     "minItems": 1,
                     "uniqueItems": true,
-                    "items": {"$ref": "#/$defs/id"}
+                    "items": {
+                        "$ref": "#/$defs/id"
+                    }
                 },
                 "bounded665EdgePolicy": {
                     "type": "object",
                     "additionalProperties": false,
-                    "required": ["policy", "acceptedDispositions", "prohibitedDispositions", "reason"],
+                    "required": [
+                        "policy",
+                        "acceptedDispositions",
+                        "prohibitedDispositions",
+                        "reason"
+                    ],
                     "properties": {
-                        "policy": {"const": "REQUIREMENT-LEVEL-615A-TO-665-EDGES-DEFERRED-TO-M2-ATTACHMENT-RECONCILIATION"},
-                        "acceptedDispositions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["PROFILE-SCOPE-ONLY", "DEPENDENCY-BLOCKED", "DIRECT-DATA-FORMAT-REFINEMENT", "PRODUCER-CONSTRAINT", "CONSUMER-TOLERANCE"]}},
-                        "prohibitedDispositions": {"type": "array", "uniqueItems": true, "items": {"enum": ["DIRECT-DATA-FORMAT-REFINEMENT", "PRODUCER-CONSTRAINT", "CONSUMER-TOLERANCE"]}},
-                        "reason": {"type": "string", "minLength": 1}
+                        "policy": {
+                            "const": "REQUIREMENT-LEVEL-615A-TO-665-EDGES-DEFERRED-TO-M2-ATTACHMENT-RECONCILIATION"
+                        },
+                        "acceptedDispositions": {
+                            "type": "array",
+                            "minItems": 1,
+                            "uniqueItems": true,
+                            "items": {
+                                "enum": [
+                                    "PROFILE-SCOPE-ONLY",
+                                    "DEPENDENCY-BLOCKED",
+                                    "DIRECT-DATA-FORMAT-REFINEMENT",
+                                    "PRODUCER-CONSTRAINT",
+                                    "CONSUMER-TOLERANCE"
+                                ]
+                            }
+                        },
+                        "prohibitedDispositions": {
+                            "type": "array",
+                            "uniqueItems": true,
+                            "items": {
+                                "enum": [
+                                    "DIRECT-DATA-FORMAT-REFINEMENT",
+                                    "PRODUCER-CONSTRAINT",
+                                    "CONSUMER-TOLERANCE"
+                                ]
+                            }
+                        },
+                        "reason": {
+                            "type": "string",
+                            "minLength": 1
+                        }
                     }
                 }
             }
@@ -521,9 +706,9 @@
                     "sourceModality",
                     "conformanceEffect",
                     "applicabilityDecision",
-                        "rationaleCode",
-                        "atomicity",
-                        "requirementIds"
+                    "rationaleCode",
+                    "atomicity",
+                    "requirementIds"
                 ],
                 "properties": {
                     "id": {
@@ -554,11 +739,24 @@
                     "atomicity": {
                         "type": "object",
                         "additionalProperties": false,
-                        "required": ["ownershipKind", "sentenceCount", "singleOwner"],
+                        "required": [
+                            "ownershipKind",
+                            "sentenceCount",
+                            "singleOwner"
+                        ],
                         "properties": {
-                            "ownershipKind": {"type": "string", "minLength": 1},
-                            "sentenceCount": {"type": "integer", "minimum": 0, "maximum": 1},
-                            "singleOwner": {"const": true}
+                            "ownershipKind": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "sentenceCount": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 1
+                            },
+                            "singleOwner": {
+                                "const": true
+                            }
                         }
                     },
                     "requirementIds": {
@@ -668,11 +866,23 @@
                     "rhoRA": {
                         "type": "object",
                         "additionalProperties": false,
-                        "required": ["relation", "sourceCoverageId", "status"],
+                        "required": [
+                            "relation",
+                            "sourceCoverageId",
+                            "status"
+                        ],
                         "properties": {
-                            "relation": {"const": "refines-reviewed-source-unit"},
-                            "sourceCoverageId": {"$ref": "#/$defs/id"},
-                            "status": {"enum": ["CANDIDATE"]}
+                            "relation": {
+                                "const": "refines-reviewed-source-unit"
+                            },
+                            "sourceCoverageId": {
+                                "$ref": "#/$defs/id"
+                            },
+                            "status": {
+                                "enum": [
+                                    "CANDIDATE"
+                                ]
+                            }
                         }
                     },
                     "timing": {
@@ -703,19 +913,41 @@
                         "items": {
                             "type": "object",
                             "additionalProperties": false,
-                            "required": ["requirementId", "relation", "rationaleCode"],
+                            "required": [
+                                "requirementId",
+                                "relation",
+                                "rationaleCode"
+                            ],
                             "properties": {
-                                "requirementId": {"$ref": "#/$defs/id"},
-                                "relation": {"const": "615A-REQUIRES-665-DATA-SEMANTIC"},
-                                "rationaleCode": {"$ref": "#/$defs/id"}
+                                "requirementId": {
+                                    "$ref": "#/$defs/id"
+                                },
+                                "relation": {
+                                    "const": "615A-REQUIRES-665-DATA-SEMANTIC"
+                                },
+                                "rationaleCode": {
+                                    "$ref": "#/$defs/id"
+                                }
                             }
                         }
                     },
                     "refinementDisposition": {
-                        "enum": ["PROFILE-SCOPE-ONLY", "DIRECT-DATA-FORMAT-REFINEMENT", "PRODUCER-CONSTRAINT", "CONSUMER-TOLERANCE", "DEPENDENCY-BLOCKED"]
+                        "enum": [
+                            "PROFILE-SCOPE-ONLY",
+                            "DIRECT-DATA-FORMAT-REFINEMENT",
+                            "PRODUCER-CONSTRAINT",
+                            "CONSUMER-TOLERANCE",
+                            "DEPENDENCY-BLOCKED"
+                        ]
                     },
-                    "refinementRationaleEn": {"type": "string", "minLength": 1},
-                    "refinementRationaleZh": {"type": "string", "minLength": 1},
+                    "refinementRationaleEn": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "refinementRationaleZh": {
+                        "type": "string",
+                        "minLength": 1
+                    },
                     "profileScopeTriggerIds": {
                         "type": "array",
                         "minItems": 1,
@@ -746,11 +978,26 @@
             "items": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["dependencyId", "status", "blockedCapabilities"],
+                "required": [
+                    "dependencyId",
+                    "status",
+                    "blockedCapabilities"
+                ],
                 "properties": {
-                    "dependencyId": {"$ref": "#/$defs/id"},
-                    "status": {"const": "OPEN-NOT-YET-BOUND-AT-REQUIREMENT-LEVEL"},
-                    "blockedCapabilities": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}}
+                    "dependencyId": {
+                        "$ref": "#/$defs/id"
+                    },
+                    "status": {
+                        "const": "OPEN-NOT-YET-BOUND-AT-REQUIREMENT-LEVEL"
+                    },
+                    "blockedCapabilities": {
+                        "type": "array",
+                        "minItems": 1,
+                        "uniqueItems": true,
+                        "items": {
+                            "$ref": "#/$defs/id"
+                        }
+                    }
                 }
             }
         },
@@ -875,6 +1122,250 @@
                 },
                 "postActivationInput": {
                     "const": "M2"
+                }
+            }
+        },
+        "networkReferenceReview": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "reviewStatus",
+                "scope",
+                "networkMode",
+                "afdxSelected",
+                "sourceIds",
+                "units",
+                "relations",
+                "issues",
+                "coverageClaimEn",
+                "coverageClaimZh"
+            ],
+            "properties": {
+                "reviewStatus": {
+                    "const": "PENDING-EXTERNAL-INDEPENDENT-REVIEW"
+                },
+                "scope": {
+                    "const": "BOUNDED-REFERENCE-INSPECTION-NOT-FULL-NETWORK-CRS"
+                },
+                "networkMode": {
+                    "const": "UNRESOLVED-COMPLIANT-OR-PROFILED"
+                },
+                "afdxSelected": {
+                    "const": false
+                },
+                "sourceIds": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/$defs/id"
+                    },
+                    "uniqueItems": true,
+                    "minItems": 1
+                },
+                "units": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "id",
+                            "sourceId",
+                            "edition",
+                            "pdfPage",
+                            "documentPage",
+                            "clause",
+                            "inspectionKind",
+                            "hashNormalization",
+                            "sourceTextHash",
+                            "summaryEn",
+                            "summaryZh"
+                        ],
+                        "properties": {
+                            "id": {
+                                "$ref": "#/$defs/id"
+                            },
+                            "sourceId": {
+                                "$ref": "#/$defs/id"
+                            },
+                            "edition": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "pdfPage": {
+                                "type": "integer",
+                                "minimum": 1
+                            },
+                            "documentPage": {
+                                "type": "integer",
+                                "minimum": 1
+                            },
+                            "clause": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "inspectionKind": {
+                                "enum": [
+                                    "INSPECTION-REGION",
+                                    "TABLE-REGION-PENDING-ATOMIZATION"
+                                ]
+                            },
+                            "hashNormalization": {
+                                "const": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8"
+                            },
+                            "sourceTextHash": {
+                                "$ref": "#/$defs/sha256"
+                            },
+                            "summaryEn": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "summaryZh": {
+                                "type": "string",
+                                "minLength": 1
+                            }
+                        }
+                    }
+                },
+                "relations": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "id",
+                            "requirementId",
+                            "sourceCoverageId",
+                            "sourceUnitId",
+                            "source",
+                            "sourceTextHash",
+                            "targetUnitIds",
+                            "relation",
+                            "condition",
+                            "disposition",
+                            "rationaleEn",
+                            "rationaleZh",
+                            "issueIds"
+                        ],
+                        "properties": {
+                            "id": {
+                                "$ref": "#/$defs/id"
+                            },
+                            "requirementId": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "sourceCoverageId": {
+                                "$ref": "#/$defs/id"
+                            },
+                            "sourceUnitId": {
+                                "$ref": "#/$defs/id"
+                            },
+                            "source": {
+                                "$ref": "#/$defs/locator"
+                            },
+                            "sourceTextHash": {
+                                "$ref": "#/$defs/sha256"
+                            },
+                            "targetUnitIds": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/$defs/id"
+                                },
+                                "uniqueItems": true,
+                                "minItems": 1
+                            },
+                            "relation": {
+                                "enum": [
+                                    "DIRECT-NORMATIVE-REFERENCE",
+                                    "NETWORK-CONSTRAINT-RECONCILIATION",
+                                    "INFORMATIONAL-CROSS-CHECK",
+                                    "CONDITIONAL-DEPLOYMENT-REFERENCE"
+                                ]
+                            },
+                            "condition": {
+                                "enum": [
+                                    "CURRENT-ETHERNET-PROFILE",
+                                    "IF-AFDX-TRANSPORT-CHOSEN"
+                                ]
+                            },
+                            "disposition": {
+                                "enum": [
+                                    "APPLICABILITY-REVIEW-PENDING",
+                                    "NO-NORMATIVE-OVERRIDE",
+                                    "DEFERRED-FUTURE-SCOPE"
+                                ]
+                            },
+                            "rationaleEn": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "rationaleZh": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "issueIds": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/$defs/id"
+                                },
+                                "uniqueItems": true
+                            }
+                        }
+                    }
+                },
+                "issues": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "id",
+                            "status",
+                            "blocksM1Approval",
+                            "summaryEn",
+                            "summaryZh",
+                            "sourceUnitIds"
+                        ],
+                        "properties": {
+                            "id": {
+                                "$ref": "#/$defs/id"
+                            },
+                            "status": {
+                                "const": "OPEN"
+                            },
+                            "blocksM1Approval": {
+                                "type": "boolean"
+                            },
+                            "summaryEn": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "summaryZh": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "sourceUnitIds": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/$defs/id"
+                                },
+                                "uniqueItems": true,
+                                "minItems": 1
+                            }
+                        }
+                    }
+                },
+                "coverageClaimEn": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "coverageClaimZh": {
+                    "type": "string",
+                    "minLength": 1
                 }
             }
         }

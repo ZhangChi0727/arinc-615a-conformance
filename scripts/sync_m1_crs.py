@@ -164,6 +164,87 @@ def load_package(path: Path = PACKAGE_PATH) -> dict[str, Any]:
     return data
 
 
+def network_reference_errors(data: dict[str, Any], register: dict[str, Any],
+                             manifest: dict[str, Any], assertions: dict[str, Any]) -> list[str]:
+    """STABLE_INVARIANT: source receipt cannot manufacture semantic closure."""
+    errors: list[str] = []
+    audit = data.get("networkReferenceReview", {})
+    contract = manifest.get("networkReviewContract", {})
+    if not audit or not contract:
+        return ["network reference review and independent inventory contract are required"]
+    if audit != assertions.get("networkReferenceReview"):
+        errors.append("network reference review differs from the controlled semantic assertions")
+    sources = {r.get("id"): r for r in register.get("sources", [])}
+    bindings = {r.get("sourceId"): r for r in data.get("sourceBindings", [])}
+    deps = {r.get("id"): r for r in data.get("dependencies", [])}
+    open_deps = {r.get("id"): r for r in register.get("openDependencies", [])}
+    caps = {r.get("id"): r for r in register.get("capabilities", [])}
+    expected_sources = {sid for sid, s in sources.items() if "dependencyReview" in s}
+    audit_sources = audit.get("sourceIds", [])
+    if not audit_sources or len(audit_sources) != len(set(audit_sources)) or set(audit_sources) != expected_sources or audit_sources != contract.get("sourceIds"):
+        errors.append("network reference source inventory is missing, duplicated or inconsistent")
+    for sid in audit_sources:
+        source = sources.get(sid, {})
+        pending = source.get("dependencyReview", {})
+        dependency = deps.get(pending.get("dependencyId"), {})
+        if sid not in bindings or dependency.get("sourceId") != sid or dependency.get("status") != "OPEN-DEPENDENCY":
+            errors.append(f"network source {sid} lacks its bound identity or pending dependency")
+        open_row = open_deps.get(sid, {})
+        if (open_row.get("status") != "OPEN-DEPENDENCY" or open_row.get("sourceAvailability") != "ACQUIRED-IDENTITY-RECORDED"
+                or set(open_row.get("pendingObligations", [])) != {"EDITION-APPLICABILITY-REVIEW", "REQUIREMENT-LEVEL-TRACEABILITY-REVIEW", "INDEPENDENT-APPROVAL"}):
+            errors.append(f"network source {sid} cannot lose its pending closure obligations")
+        capability_ids = pending.get("capabilityIds", [])
+        if not capability_ids or set(capability_ids) != set(open_row.get("affectedCapabilityIds", [])):
+            errors.append(f"network source {sid} capability references do not reconcile")
+        for cid in capability_ids:
+            cap = caps.get(cid, {})
+            if cap.get("status") != "NOT-ESTABLISHED" or sid not in cap.get("blockedBy", []):
+                errors.append(f"network capability {cid} cannot advance from source acquisition")
+    indices = {}
+    for key, contract_key in (("units", "expectedUnitIds"), ("relations", "expectedRelationIds"), ("issues", "expectedIssueIds")):
+        rows = audit.get(key, [])
+        row_ids = [r.get("id") for r in rows]
+        if not row_ids or len(row_ids) != len(set(row_ids)) or row_ids != contract.get(contract_key):
+            errors.append(f"network {key} inventory does not match the controlled contract")
+        indices[key] = {r.get("id"): r for r in rows}
+    for uid, unit in indices["units"].items():
+        source = sources.get(unit.get("sourceId"), {})
+        page = unit.get("pdfPage")
+        if unit.get("sourceId") not in audit_sources or unit.get("edition") != source.get("edition"):
+            errors.append(f"network unit {uid} has an unbound source/edition")
+        if type(page) is not int or not 1 <= page <= source.get("pageCount", 0):
+            errors.append(f"network unit {uid} page is outside its registered source")
+        if not unit.get("clause") or not re.fullmatch(r"[0-9a-f]{64}", str(unit.get("sourceTextHash", ""))):
+            errors.append(f"network unit {uid} lacks a locator or hash")
+    coverage = {r.get("id"): r for r in data.get("coverageLedger", [])}
+    requirements = {r.get("id"): r for r in data.get("requirements", [])}
+    allowed_relations = {"DIRECT-NORMATIVE-REFERENCE", "NETWORK-CONSTRAINT-RECONCILIATION", "INFORMATIONAL-CROSS-CHECK", "CONDITIONAL-DEPLOYMENT-REFERENCE"}
+    for rid, relation in indices["relations"].items():
+        owner = coverage.get(relation.get("sourceCoverageId"), {})
+        if any(relation.get(k) != owner.get(k) for k in ("sourceUnitId", "source", "sourceTextHash")):
+            errors.append(f"network relation {rid} has an inconsistent coverage source identity")
+        reqid = relation.get("requirementId")
+        if reqid is not None and (reqid not in owner.get("requirementIds", []) or requirements.get(reqid, {}).get("rhoRA", {}).get("sourceCoverageId") != owner.get("id")):
+            errors.append(f"network relation {rid} does not bind its requirement owner")
+        targets = relation.get("targetUnitIds", [])
+        if not targets or len(targets) != len(set(targets)) or any(t not in indices["units"] for t in targets):
+            errors.append(f"network relation {rid} has a dangling/duplicate target unit")
+        if relation.get("relation") not in allowed_relations or not relation.get("rationaleEn") or not relation.get("rationaleZh"):
+            errors.append(f"network relation {rid} lacks a controlled relationship/rationale")
+        if any(i not in indices["issues"] for i in relation.get("issueIds", [])):
+            errors.append(f"network relation {rid} has a dangling issue")
+        if relation.get("relation") == "CONDITIONAL-DEPLOYMENT-REFERENCE":
+            if (relation.get("condition") != "IF-AFDX-TRANSPORT-CHOSEN" or relation.get("disposition") != "DEFERRED-FUTURE-SCOPE"
+                    or owner.get("applicabilityDecision") != "DEFERRED-FUTURE-SCOPE" or owner.get("requirementIds")):
+                errors.append(f"network relation {rid} cannot activate a deferred deployment")
+    for iid, issue in indices["issues"].items():
+        if issue.get("status") != "OPEN" or type(issue.get("blocksM1Approval")) is not bool:
+            errors.append(f"network issue {iid} cannot be silently closed or lose its blocking classification")
+        if not issue.get("sourceUnitIds") or any(t not in indices["units"] for t in issue.get("sourceUnitIds", [])):
+            errors.append(f"network issue {iid} lacks its source pointers")
+    return errors
+
+
 def package_errors(data: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     required = ("sourceBindings", "coverageLedger", "requirements", "dependencies", "gaps", "reviewControl", "inventorySummary", "activation")
@@ -181,6 +262,26 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     except (OSError, json.JSONDecodeError) as exc:
         return [f"M1 controlled review input is unavailable: {exc}"]
     errors.extend(page_account_errors(section_manifest, source_register))
+    errors.extend(network_reference_errors(data, source_register, section_manifest, semantic_assertions))
+    # STABLE_INVARIANT: compare independent acquisition identity, not a self seal.
+    try:
+        acquisition_path = (ROOT / source_register["acquisitionRecordPath"]).resolve()
+        acquisition_path.relative_to(ROOT.resolve())
+        acquisition = json.loads(acquisition_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError, KeyError) as exc:
+        errors.append(f"source acquisition record cannot be read: {exc}")
+        acquisition = {}
+    acquired_rows = acquisition.get("sources", [])
+    acquired = {r.get("id"): r for r in acquired_rows}
+    if len(acquired) != len(acquired_rows):
+        errors.append("source acquisition record contains duplicate source identities")
+    identity_fields = ("edition", "publicationDate", "pageCount", "byteCount", "sha256")
+    for source in source_register.get("sources", []):
+        sid = source.get("id")
+        if sid not in acquired or any(source.get(k) != acquired[sid].get(k) for k in identity_fields):
+            errors.append(f"source {sid} differs from its acquisition identity")
+        if source.get("acquisitionRecordId") != acquisition.get("recordId"):
+            errors.append(f"source {sid} acquisitionRecordId does not resolve")
     supplement_pages = [row.get("pdfPage") for row in supplement_dispositions.get("pages", [])]
     required_supplement_pages = list(range(155, 158)) + list(range(161, 165)) + list(range(167, 175))
     if supplement_dispositions.get("sourceId") != "ARINC-615A-3" or supplement_pages != required_supplement_pages:
@@ -197,6 +298,11 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     if review_control.get("semanticAssertionFingerprint") != hashlib.sha256(canonical(semantic_assertions)).hexdigest():
         errors.append("semantic-assertion fingerprint does not match the controlled assertions")
     register_sources = {row.get("id"): row for row in source_register.get("sources", [])}
+    binding_ids = [r.get("sourceId") for r in data["sourceBindings"]]
+    if len(register_sources) != len(source_register.get("sources", [])) or len(binding_ids) != len(set(binding_ids)):
+        errors.append("source register or bindings contain duplicate source identities")
+    if set(binding_ids) != set(register_sources):
+        errors.append("source bindings must account for every registered source identity")
     for binding in data.get("sourceBindings", []):
         source_id = binding.get("sourceId")
         registered = register_sources.get(source_id)
@@ -207,6 +313,9 @@ def package_errors(data: dict[str, Any]) -> list[str]:
             errors.append(f"source binding {source_id} sha256 disagrees with the controlled register")
         if binding.get("role") != registered.get("role"):
             errors.append(f"source binding {source_id} role disagrees with the controlled register")
+        for key in (*identity_fields, "acquisitionRecordId"):
+            if binding.get(key) != registered.get(key):
+                errors.append(f"source binding {source_id} {key} disagrees with the controlled register")
     scope = data.get("profileScope", {})
     if set(scope) != REQUIRED_PROFILE_SCOPE_KEYS:
         errors.append("profileScope must contain only the controlled M1 scope fields")
@@ -497,6 +606,7 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     if data["reviewControl"].get("sourceInventoryFingerprint") != inventory_fp:
         errors.append("reviewControl.sourceInventoryFingerprint does not match the source-unit projection")
     anchor_expectations = {
+        "registeredSourceIdentityFingerprint": fingerprint(data["sourceBindings"]),
         "sourceInventoryFingerprint": inventory_fp,
         "coverageCount": len(data["coverageLedger"]),
         "tableRowCount": sum(row.get("source", {}).get("fragmentKind") == "TABLE-ROW" for row in data["coverageLedger"]),
@@ -556,6 +666,26 @@ def _counts(rows: list[dict[str, Any]], key: str) -> Counter[str]:
     return Counter(str(row.get(key, "UNSPECIFIED")) for row in rows)
 
 
+def render_network_review(data: dict[str, Any], language: str) -> list[str]:
+    audit = data["networkReferenceReview"]
+    zh = language == "Zh"
+    lines = ["", "## 网络引用审计与批准阻塞项" if zh else "## Network reference inspection and approval blockers", "",
+             audit["coverageClaim" + language], "",
+             f"- Network mode: `{audit['networkMode']}`; AFDX selected: `{audit['afdxSelected']}`.", "",
+             "| ID | Source / edition | Clause / PDF page | Inspection boundary | Summary |",
+             "|---|---|---|---|---|"]
+    for unit in audit["units"]:
+        lines.append(f"| `{unit['id']}` | `{unit['sourceId']}` / `{unit['edition']}` | {unit['clause']} / {unit['pdfPage']} | `{unit['inspectionKind']}` | {unit['summary' + language]} |")
+    lines += ["", "| Relation | Owner | Target regions | Condition / disposition | Rationale / issues |", "|---|---|---|---|---|"]
+    for row in audit["relations"]:
+        owner = row["requirementId"] or row["sourceCoverageId"]
+        lines.append(f"| `{row['id']}` | `{owner}` | {', '.join(row['targetUnitIds'])} | `{row['condition']}` / `{row['disposition']}` | {row['rationale' + language]} / {', '.join(row['issueIds'])} |")
+    lines += ["", "| Issue | Blocks M1 approval | Status | Required resolution |", "|---|---|---|---|"]
+    for row in audit["issues"]:
+        lines.append(f"| `{row['id']}` | `{row['blocksM1Approval']}` | `{row['status']}` | {row['summary' + language]} |")
+    return lines
+
+
 def render(data: dict[str, Any]) -> str:
     coverage = data["coverageLedger"]
     requirements = data["requirements"]
@@ -590,6 +720,7 @@ def render(data: dict[str, Any]) -> str:
     lines += ["", "## Open dependencies and gaps", ""]
     for row in data["dependencies"] + data["gaps"]:
         lines.append(f"- `{row['id']}` — {row['status']}: {row['summaryEn']} / {row['summaryZh']}")
+    lines += render_network_review(data, "En")
     lines += ["", "## CRS items", "", "| ID | Source unit | Actor / condition / action / object / observable effect | Modality / effect | Applicability | Generated semantic projection (assertion-bound) | Timing provenance | Dependencies / gaps |", "|---|---|---|---|---|---|---|---|"]
     for row in requirements:
         src = row["source"]
@@ -645,6 +776,7 @@ def render(data: dict[str, Any]) -> str:
     lines += ["", "## 开放依赖与缺口", ""]
     for row in data["dependencies"] + data["gaps"]:
         lines.append(f"- `{row['id']}` — {row['status']}：{row['summaryZh']}")
+    lines += render_network_review(data, "Zh")
     lines += ["", "## CRS 项", "", "| ID | 来源单元 | 参与者／条件／行为／对象／可观察结果 | 模态／效果 | 适用性 | 生成语义投影（受断言约束） | 时序溯源 | 依赖／缺口 |", "|---|---|---|---|---|---|---|---|"]
     for row in requirements:
         src = row["source"]; sem = row["semantic"]; refs = ", ".join(row.get("dependencyIds", []) + row.get("gapIds", [])) or "—"
