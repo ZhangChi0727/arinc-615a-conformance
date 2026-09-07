@@ -9932,5 +9932,791 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": []
     }
-  ]
+  ],
+  "networkReferenceReview": {
+    "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+    "scope": "BOUNDED-REFERENCE-INSPECTION-NOT-FULL-NETWORK-CRS",
+    "networkMode": "UNRESOLVED-COMPLIANT-OR-PROFILED",
+    "afdxSelected": false,
+    "sourceIds": [
+      "ARINC-664-3",
+      "ARINC-664-7"
+    ],
+    "units": [
+      {
+        "id": "NET-P3-SCOPE",
+        "sourceId": "ARINC-664-3",
+        "edition": "664P3-1",
+        "pdfPage": 8,
+        "documentPage": 1,
+        "clause": "1.2",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "bc71ac0aff6933e8c6f90715ea2106ec6cd0eb277e39a61f90efb419d4db000a",
+        "summaryEn": "P3 distinguishes compliant and profiled networks; interoperability across these choices is not automatic.",
+        "summaryZh": "P3 区分 Compliant 与 Profiled 网络；不同选择间的互操作性并不自动成立。"
+      },
+      {
+        "id": "NET-P3-PRECEDENCE",
+        "sourceId": "ARINC-664-3",
+        "edition": "664P3-1",
+        "pdfPage": 13,
+        "documentPage": 6,
+        "clause": "1.5",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "1e578fcd86be91afe4f8c0be617bd3259840e078a31ee9674f99815b4bb71d35",
+        "summaryEn": "P3 restricts RFC options and establishes its precedence within its applicable network profile.",
+        "summaryZh": "P3 在其适用的网络 profile 内限制 RFC 选项并规定优先级。"
+      },
+      {
+        "id": "NET-P3-TFTP",
+        "sourceId": "ARINC-664-3",
+        "edition": "664P3-1",
+        "pdfPage": 21,
+        "documentPage": 14,
+        "clause": "3.2.2-3.2.3",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "1cf136b68fd649133e71b7f1900e2ea1de3f85278db0c11a1b31c88402ede5ad",
+        "summaryEn": "Base TFTP references option RFCs; DL-TFTP implementation details refer back to 615A.",
+        "summaryZh": "基础 TFTP 引用选项 RFC；DL-TFTP 实现细节回引 615A。"
+      },
+      {
+        "id": "NET-P3-UDP-RULE",
+        "sourceId": "ARINC-664-3",
+        "edition": "664P3-1",
+        "pdfPage": 29,
+        "documentPage": 22,
+        "clause": "3.3.2",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "5a31ae4da91876f2ebf156d9786f13664b1da38f94819aceeb49f6eb775861f4",
+        "summaryEn": "UDP is the minimum transport; profiled table X/E markings govern conformity and permitted exceptions, not a blanket recommendation.",
+        "summaryZh": "UDP 是最低传输要求；Profiled 表 X/E 标记决定遵循与可允许例外，不能统一降为建议。"
+      },
+      {
+        "id": "NET-P3-UDP-TABLE",
+        "sourceId": "ARINC-664-3",
+        "edition": "664P3-1",
+        "pdfPage": 30,
+        "documentPage": 23,
+        "clause": "Table 3.3.2-1",
+        "inspectionKind": "TABLE-REGION-PENDING-ATOMIZATION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "70ada7e88ec7a8046ee7bd3461d37fd60aa107e4c288e30905d02252d3ae7145",
+        "summaryEn": "UDP table differentiates checksum, source-address and interface obligations; a row-level RFC 1122 applicability audit remains open.",
+        "summaryZh": "UDP 表区分校验和、源地址与接口义务；逐行 RFC 1122 适用性审计仍开放。"
+      },
+      {
+        "id": "NET-P3-IP-RULE",
+        "sourceId": "ARINC-664-3",
+        "edition": "664P3-1",
+        "pdfPage": 31,
+        "documentPage": 24,
+        "clause": "3.4.1",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "2abd6cc3f790b339ecd3ce1694f6f47272f933098a9574f1dfe14e428bcc574f",
+        "summaryEn": "IPv4 profiling uses a distinct requirement table and explicit exception rules.",
+        "summaryZh": "IPv4 裁剪使用独立要求表及明确的例外规则。"
+      },
+      {
+        "id": "NET-P3-IP-TABLE",
+        "sourceId": "ARINC-664-3",
+        "edition": "664P3-1",
+        "pdfPage": 32,
+        "documentPage": 25,
+        "clause": "Table 3.4.1-1 / first page",
+        "inspectionKind": "TABLE-REGION-PENDING-ATOMIZATION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "4aa5251e856135df291bf92f188bc7b5f91558340172f633732e3c1bab174867",
+        "summaryEn": "Mandatory profiled rows include IPv4 version and header checks; the table is not yet an admitted leaf-level CRS inventory.",
+        "summaryZh": "Profiled 必选行包括 IPv4 版本和报头检查；该表尚未构成已纳入的叶级 CRS 清单。"
+      },
+      {
+        "id": "NET-P3-FRAGMENT",
+        "sourceId": "ARINC-664-3",
+        "edition": "664P3-1",
+        "pdfPage": 36,
+        "documentPage": 29,
+        "clause": "Table 3.4.1-2",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "2755b6850e7a96319baf354213ab864d89f5ec04399823fb1b48264676a6ef4d",
+        "summaryEn": "P3 permits specific reassembly deviations in profiled networks; these cannot erase the 615A Data Loader fragmentation/reassembly obligation.",
+        "summaryZh": "P3 允许 Profiled 网络采用特定重组偏差；这不能抹去 615A Data Loader 的分片／重组义务。"
+      },
+      {
+        "id": "NET-P3-MTU",
+        "sourceId": "ARINC-664-3",
+        "edition": "664P3-1",
+        "pdfPage": 36,
+        "documentPage": 29,
+        "clause": "3.4.1.2",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "f363c63c18341f9e0530a7dcef0c2cf4a78df1bfbc862af25c85666a94732e19",
+        "summaryEn": "MTU availability and respecting frame size concern network configuration and packet sizing, not a 615A operation deadline.",
+        "summaryZh": "MTU 可获知性与帧大小限制涉及网络配置及报文尺寸，并非 615A 操作时限。"
+      },
+      {
+        "id": "NET-P3-ARP",
+        "sourceId": "ARINC-664-3",
+        "edition": "664P3-1",
+        "pdfPage": 58,
+        "documentPage": 51,
+        "clause": "3.5.1",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "4c4d00067938424be5886903e6b885e37fd530cb7c7e460a609d08d8974c657b",
+        "summaryEn": "Dynamic ARP cache admission and static-map failure behavior are conditional network obligations requiring deployment selection.",
+        "summaryZh": "动态 ARP 缓存接纳和静态映射失败处理属于需要选择部署条件的网络义务。"
+      },
+      {
+        "id": "NET-P7-SCOPE",
+        "sourceId": "ARINC-664-7",
+        "edition": "664P7",
+        "pdfPage": 9,
+        "documentPage": 1,
+        "clause": "1.2",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "492aafac7114a5f8977af9967838e47b22f4eb9991b5df396d9880875f1e79e3",
+        "summaryEn": "AFDX defines a particular network profile and references P2 for physical links.",
+        "summaryZh": "AFDX 定义特定网络 profile，物理链路引用 P2。"
+      },
+      {
+        "id": "NET-P7-TFTP",
+        "sourceId": "ARINC-664-7",
+        "edition": "664P7",
+        "pdfPage": 40,
+        "documentPage": 32,
+        "clause": "3.3.1.2.3",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "3be6433bd012c7c1de0b0760f64e9f81a6dcc77d6e0b13d294bcd89fba30e9f2",
+        "summaryEn": "AFDX file service lists TFTP RFCs and a block handling capacity; applicability is conditional on AFDX deployment.",
+        "summaryZh": "AFDX 文件服务列出 TFTP RFC 与块处理能力；适用性以选择 AFDX 部署为条件。"
+      },
+      {
+        "id": "NET-P7-EXAMPLE",
+        "sourceId": "ARINC-664-7",
+        "edition": "664P7",
+        "pdfPage": 42,
+        "documentPage": 34,
+        "clause": "3.3.2",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "c5988f72a2a1361d35952a299670ab187e19153f3aec6751b0c9fdee689bbfe1",
+        "summaryEn": "Example ports and VLs do not replace the 615A control-port rule.",
+        "summaryZh": "示例端口和 VL 不能替代 615A 控制端口规则。"
+      },
+      {
+        "id": "NET-P7-IP",
+        "sourceId": "ARINC-664-7",
+        "edition": "664P7",
+        "pdfPage": 44,
+        "documentPage": 36,
+        "clause": "3.3.3.2",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "e24fc583dcc766e364544a9aebbd14dbc5c3edcdea6553174a9cf1cc9c770357",
+        "summaryEn": "AFDX IPv4 sizing accounts for its sequence number and refers to Attachment 2; it is not a global TFTP blocksize or timeout constraint.",
+        "summaryZh": "AFDX IPv4 尺寸考虑其序号并引用附件 2；它不是全局 TFTP 块大小或超时限制。"
+      },
+      {
+        "id": "NET-P7-ADDRESS",
+        "sourceId": "ARINC-664-7",
+        "edition": "664P7",
+        "pdfPage": 50,
+        "documentPage": 42,
+        "clause": "3.4.1.3.1-3.4.1.3.2",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "ff5eaba9001c0ccba5b58b0f0e83555a43e95069fa1941fd06d1a907c0b7a20e",
+        "summaryEn": "Intra/extra AFDX addressing and bidirectional SAP/queuing choices need system integration decisions.",
+        "summaryZh": "AFDX 内外寻址及双向 SAP／队列选择需要系统集成决策。"
+      },
+      {
+        "id": "NET-P7-SWITCH",
+        "sourceId": "ARINC-664-7",
+        "edition": "664P7",
+        "pdfPage": 75,
+        "documentPage": 67,
+        "clause": "4.9.1",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "99914b9848dad666d7a88e0e87759043eb3593e8ca9523b9a229afdfcca2dbae",
+        "summaryEn": "Switch software loading refers to 615A/665, without making an AFDX switch the selected target of this Profile.",
+        "summaryZh": "交换机软件加载引用 615A/665，但不能据此将 AFDX 交换机选为本 Profile 的目标。"
+      },
+      {
+        "id": "NET-P7-PERFORMANCE",
+        "sourceId": "ARINC-664-7",
+        "edition": "664P7",
+        "pdfPage": 80,
+        "documentPage": 72,
+        "clause": "5.1",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "eaa837af6369cc9b870d3a5c94a016e44d5b896a09807c5a0b6fd565b7845a19",
+        "summaryEn": "AFDX burst-processing performance uses its own measurement conditions; it does not establish a 615A transfer timeout.",
+        "summaryZh": "AFDX 突发处理性能使用自身测量条件；它不建立 615A 传输超时。"
+      }
+    ],
+    "relations": [
+      {
+        "id": "NET-REL-001",
+        "requirementId": "CRS-M1-00006",
+        "sourceCoverageId": "COV-M1-00027",
+        "sourceUnitId": "SU-ARINC-615A-3-1-3-P014-PROSE-SENTENCE-002-873AFAE35C45",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "1.3",
+          "tableOrFigure": null,
+          "documentPage": 2,
+          "pdfPage": 14,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 2
+        },
+        "sourceTextHash": "873afae35c4507f2b8692f8372af04d589c3f3af09e4d297044c0302a21a3f6b",
+        "targetUnitIds": [
+          "NET-P3-SCOPE",
+          "NET-P3-PRECEDENCE",
+          "NET-P3-UDP-RULE",
+          "NET-P3-IP-RULE"
+        ],
+        "relation": "DIRECT-NORMATIVE-REFERENCE",
+        "condition": "CURRENT-ETHERNET-PROFILE",
+        "disposition": "APPLICABILITY-REVIEW-PENDING",
+        "rationaleEn": "615A 1.3 invokes P3 without naming a supplement; the received edition is a candidate reference pending network-mode and edition review.",
+        "rationaleZh": "615A 1.3 引用 P3 而未指定补充号；接收版次作为候选引用，等待网络模式及版次评审。",
+        "issueIds": [
+          "NET-ISSUE-EDITION",
+          "NET-ISSUE-PROFILE"
+        ]
+      },
+      {
+        "id": "NET-REL-002",
+        "requirementId": "CRS-M1-00034",
+        "sourceCoverageId": "COV-M1-00485",
+        "sourceUnitId": "SU-ARINC-615A-3-5-3-2-3-8-1-P040-PROSE-SENTENCE-001-28CC7C395DC9",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "5.3.2.3.8.1",
+          "tableOrFigure": null,
+          "documentPage": 28,
+          "pdfPage": 40,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 1
+        },
+        "sourceTextHash": "28cc7c395dc9d38ba177eb72550a9382bafc8708da3d2cbf677f7b02e838c6a9",
+        "targetUnitIds": [
+          "NET-P3-FRAGMENT",
+          "NET-P3-MTU"
+        ],
+        "relation": "NETWORK-CONSTRAINT-RECONCILIATION",
+        "condition": "CURRENT-ETHERNET-PROFILE",
+        "disposition": "APPLICABILITY-REVIEW-PENDING",
+        "rationaleEn": "615A loader blocksize support includes fragmentation/reassembly; no-reassembly profiling requires reconciliation and cannot silently relax this requirement.",
+        "rationaleZh": "615A 加载器块大小支持包括分片／重组；不重组裁剪须经协调，不能静默放宽该要求。",
+        "issueIds": [
+          "NET-ISSUE-PROFILE",
+          "NET-ISSUE-RFC1122"
+        ]
+      },
+      {
+        "id": "NET-REL-003",
+        "requirementId": "CRS-M1-00025",
+        "sourceCoverageId": "COV-M1-00449",
+        "sourceUnitId": "SU-ARINC-615A-3-5-3-2-3-2-P037-PROSE-SENTENCE-004-F3852739104C",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "5.3.2.3.2",
+          "tableOrFigure": null,
+          "documentPage": 25,
+          "pdfPage": 37,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 4
+        },
+        "sourceTextHash": "f3852739104c97b8476bf9422b4459f3c94a1e22d0b6072a7f8ca8882052fc40",
+        "targetUnitIds": [
+          "NET-P3-TFTP",
+          "NET-P7-EXAMPLE"
+        ],
+        "relation": "INFORMATIONAL-CROSS-CHECK",
+        "condition": "CURRENT-ETHERNET-PROFILE",
+        "disposition": "NO-NORMATIVE-OVERRIDE",
+        "rationaleEn": "DL-TFTP refers back to 615A; the AFDX example using port 69 does not override 615A port 59.",
+        "rationaleZh": "DL-TFTP 回引 615A；使用端口 69 的 AFDX 示例不覆盖 615A 端口 59。",
+        "issueIds": []
+      },
+      {
+        "id": "NET-REL-004",
+        "requirementId": "CRS-M1-00020",
+        "sourceCoverageId": "COV-M1-00433",
+        "sourceUnitId": "SU-ARINC-615A-3-5-3-2-2-P037-PROSE-SENTENCE-001-5DE45B64D498",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "5.3.2.2",
+          "tableOrFigure": null,
+          "documentPage": 25,
+          "pdfPage": 37,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 1
+        },
+        "sourceTextHash": "5de45b64d498fa5c9dc6505df74b03b45e4fbab50239399c09b7ab35b06a0173",
+        "targetUnitIds": [
+          "NET-P3-TFTP"
+        ],
+        "relation": "DIRECT-NORMATIVE-REFERENCE",
+        "condition": "CURRENT-ETHERNET-PROFILE",
+        "disposition": "APPLICABILITY-REVIEW-PENDING",
+        "rationaleEn": "P3 names RFC 2347 for base TFTP options; the precise 615A port-option source unit still needs review before a direct RFC edge is emitted.",
+        "rationaleZh": "P3 为基础 TFTP 选项列出 RFC 2347；615A 端口选项的精确来源单元仍需评审，之后才可建立直接 RFC 边。",
+        "issueIds": [
+          "NET-ISSUE-OPTION-EDGE"
+        ]
+      },
+      {
+        "id": "NET-REL-005",
+        "requirementId": null,
+        "sourceCoverageId": "COV-M1-01960",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-001-4F47D3B33062",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "APPENDIX-E",
+          "tableOrFigure": null,
+          "documentPage": 122,
+          "pdfPage": 134,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 1
+        },
+        "sourceTextHash": "4f47d3b33062b23c0f029b48790d93ee888f8d3a1abc7875cfa263f5c2f1764f",
+        "targetUnitIds": [
+          "NET-P7-SCOPE"
+        ],
+        "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+        "condition": "IF-AFDX-TRANSPORT-CHOSEN",
+        "disposition": "DEFERRED-FUTURE-SCOPE",
+        "rationaleEn": "This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation.",
+        "rationaleZh": "此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。",
+        "issueIds": [
+          "NET-ISSUE-AFDX-DETAIL"
+        ]
+      },
+      {
+        "id": "NET-REL-006",
+        "requirementId": null,
+        "sourceCoverageId": "COV-M1-01961",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-002-515B9E955F1D",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "APPENDIX-E",
+          "tableOrFigure": null,
+          "documentPage": 122,
+          "pdfPage": 134,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 2
+        },
+        "sourceTextHash": "515b9e955f1dfba6ab2896f333f27e4f3fb71533f9b241ba09ddcc1338ebe840",
+        "targetUnitIds": [
+          "NET-P7-SCOPE"
+        ],
+        "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+        "condition": "IF-AFDX-TRANSPORT-CHOSEN",
+        "disposition": "DEFERRED-FUTURE-SCOPE",
+        "rationaleEn": "This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation.",
+        "rationaleZh": "此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。",
+        "issueIds": [
+          "NET-ISSUE-AFDX-DETAIL"
+        ]
+      },
+      {
+        "id": "NET-REL-007",
+        "requirementId": null,
+        "sourceCoverageId": "COV-M1-01962",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-003-4F1CD0BD1FCA",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "APPENDIX-E",
+          "tableOrFigure": null,
+          "documentPage": 122,
+          "pdfPage": 134,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 3
+        },
+        "sourceTextHash": "4f1cd0bd1fca8b1ec8c77d679591d468b3da293ceff4c7c23e6f298a03ef0f78",
+        "targetUnitIds": [
+          "NET-P7-SCOPE"
+        ],
+        "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+        "condition": "IF-AFDX-TRANSPORT-CHOSEN",
+        "disposition": "DEFERRED-FUTURE-SCOPE",
+        "rationaleEn": "This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation.",
+        "rationaleZh": "此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。",
+        "issueIds": [
+          "NET-ISSUE-AFDX-DETAIL"
+        ]
+      },
+      {
+        "id": "NET-REL-008",
+        "requirementId": null,
+        "sourceCoverageId": "COV-M1-01963",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-004-8CEC541FF8EE",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "APPENDIX-E",
+          "tableOrFigure": null,
+          "documentPage": 122,
+          "pdfPage": 134,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 4
+        },
+        "sourceTextHash": "8cec541ff8ee8c3a09d82bd697f9f99a94c66b1c8abe713c65972029f2b08fd9",
+        "targetUnitIds": [
+          "NET-P7-ADDRESS"
+        ],
+        "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+        "condition": "IF-AFDX-TRANSPORT-CHOSEN",
+        "disposition": "DEFERRED-FUTURE-SCOPE",
+        "rationaleEn": "This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation.",
+        "rationaleZh": "此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。",
+        "issueIds": [
+          "NET-ISSUE-AFDX-DETAIL",
+          "NET-ISSUE-AID"
+        ]
+      },
+      {
+        "id": "NET-REL-009",
+        "requirementId": null,
+        "sourceCoverageId": "COV-M1-01964",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-005-3747CE56C453",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "APPENDIX-E",
+          "tableOrFigure": null,
+          "documentPage": 122,
+          "pdfPage": 134,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 5
+        },
+        "sourceTextHash": "3747ce56c4537498cb6c00f37ef4ce4e519395e663f9620f2e310aa0152b18c7",
+        "targetUnitIds": [
+          "NET-P7-ADDRESS"
+        ],
+        "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+        "condition": "IF-AFDX-TRANSPORT-CHOSEN",
+        "disposition": "DEFERRED-FUTURE-SCOPE",
+        "rationaleEn": "This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation.",
+        "rationaleZh": "此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。",
+        "issueIds": [
+          "NET-ISSUE-AFDX-DETAIL",
+          "NET-ISSUE-AID"
+        ]
+      },
+      {
+        "id": "NET-REL-010",
+        "requirementId": null,
+        "sourceCoverageId": "COV-M1-01965",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-006-1A3ED90E6DEC",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "APPENDIX-E",
+          "tableOrFigure": null,
+          "documentPage": 122,
+          "pdfPage": 134,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 6
+        },
+        "sourceTextHash": "1a3ed90e6dec47ea3847745a6edf381dcf778472bd4fec075095976fe9b65d37",
+        "targetUnitIds": [
+          "NET-P7-ADDRESS"
+        ],
+        "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+        "condition": "IF-AFDX-TRANSPORT-CHOSEN",
+        "disposition": "DEFERRED-FUTURE-SCOPE",
+        "rationaleEn": "This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation.",
+        "rationaleZh": "此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。",
+        "issueIds": [
+          "NET-ISSUE-AFDX-DETAIL",
+          "NET-ISSUE-AID"
+        ]
+      },
+      {
+        "id": "NET-REL-011",
+        "requirementId": null,
+        "sourceCoverageId": "COV-M1-01966",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-007-E2E000945641",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "APPENDIX-E",
+          "tableOrFigure": null,
+          "documentPage": 122,
+          "pdfPage": 134,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 7
+        },
+        "sourceTextHash": "e2e0009456413030549940b3e2e677aa427aed73e6f326af84176d3bc3855b96",
+        "targetUnitIds": [
+          "NET-P7-SCOPE"
+        ],
+        "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+        "condition": "IF-AFDX-TRANSPORT-CHOSEN",
+        "disposition": "DEFERRED-FUTURE-SCOPE",
+        "rationaleEn": "This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation.",
+        "rationaleZh": "此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。",
+        "issueIds": [
+          "NET-ISSUE-AFDX-DETAIL"
+        ]
+      },
+      {
+        "id": "NET-REL-012",
+        "requirementId": null,
+        "sourceCoverageId": "COV-M1-01967",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-008-123ADFD1F0A0",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "APPENDIX-E",
+          "tableOrFigure": null,
+          "documentPage": 122,
+          "pdfPage": 134,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 8
+        },
+        "sourceTextHash": "123adfd1f0a056301ea758114bcbafa30eeabaea4e50e7ea5a50ed43e082913d",
+        "targetUnitIds": [
+          "NET-P7-ADDRESS"
+        ],
+        "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+        "condition": "IF-AFDX-TRANSPORT-CHOSEN",
+        "disposition": "DEFERRED-FUTURE-SCOPE",
+        "rationaleEn": "This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation.",
+        "rationaleZh": "此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。",
+        "issueIds": [
+          "NET-ISSUE-AFDX-DETAIL"
+        ]
+      },
+      {
+        "id": "NET-REL-013",
+        "requirementId": null,
+        "sourceCoverageId": "COV-M1-01968",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-009-F63DBE601757",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "APPENDIX-E",
+          "tableOrFigure": null,
+          "documentPage": 122,
+          "pdfPage": 134,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 9
+        },
+        "sourceTextHash": "f63dbe6017578ec79eabdaa95976119f3d09dfd7af0fc2170aa7cdd608d0c054",
+        "targetUnitIds": [
+          "NET-P7-ADDRESS"
+        ],
+        "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+        "condition": "IF-AFDX-TRANSPORT-CHOSEN",
+        "disposition": "DEFERRED-FUTURE-SCOPE",
+        "rationaleEn": "This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation.",
+        "rationaleZh": "此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。",
+        "issueIds": [
+          "NET-ISSUE-AFDX-DETAIL"
+        ]
+      },
+      {
+        "id": "NET-REL-014",
+        "requirementId": null,
+        "sourceCoverageId": "COV-M1-01969",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-010-C57B7897F472",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "APPENDIX-E",
+          "tableOrFigure": null,
+          "documentPage": 122,
+          "pdfPage": 134,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 10
+        },
+        "sourceTextHash": "c57b7897f4725f87f3fd68bb7e99b1701fcd423c08f12cdd4c1a392dc19fe93d",
+        "targetUnitIds": [
+          "NET-P7-ADDRESS"
+        ],
+        "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+        "condition": "IF-AFDX-TRANSPORT-CHOSEN",
+        "disposition": "DEFERRED-FUTURE-SCOPE",
+        "rationaleEn": "This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation.",
+        "rationaleZh": "此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。",
+        "issueIds": [
+          "NET-ISSUE-AFDX-DETAIL"
+        ]
+      },
+      {
+        "id": "NET-REL-015",
+        "requirementId": null,
+        "sourceCoverageId": "COV-M1-01970",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-011-E6FB447853B2",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "APPENDIX-E",
+          "tableOrFigure": null,
+          "documentPage": 122,
+          "pdfPage": 134,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 11
+        },
+        "sourceTextHash": "e6fb447853b2371d493b8fd8188e6e67c025583b5931753a369a91680c226250",
+        "targetUnitIds": [
+          "NET-P7-TFTP",
+          "NET-P7-EXAMPLE"
+        ],
+        "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+        "condition": "IF-AFDX-TRANSPORT-CHOSEN",
+        "disposition": "DEFERRED-FUTURE-SCOPE",
+        "rationaleEn": "This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation.",
+        "rationaleZh": "此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。",
+        "issueIds": [
+          "NET-ISSUE-AFDX-DETAIL"
+        ]
+      },
+      {
+        "id": "NET-REL-016",
+        "requirementId": null,
+        "sourceCoverageId": "COV-M1-01971",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-012-BD359EF6302E",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "APPENDIX-E",
+          "tableOrFigure": null,
+          "documentPage": 122,
+          "pdfPage": 134,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 12
+        },
+        "sourceTextHash": "bd359ef6302e08733e07785eac4c77ed46e0a03e1e6c2e7958a9a1c2594f5404",
+        "targetUnitIds": [
+          "NET-P7-IP",
+          "NET-P7-PERFORMANCE"
+        ],
+        "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+        "condition": "IF-AFDX-TRANSPORT-CHOSEN",
+        "disposition": "DEFERRED-FUTURE-SCOPE",
+        "rationaleEn": "This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation.",
+        "rationaleZh": "此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。",
+        "issueIds": [
+          "NET-ISSUE-AFDX-DETAIL"
+        ]
+      },
+      {
+        "id": "NET-REL-017",
+        "requirementId": null,
+        "sourceCoverageId": "COV-M1-01972",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-013-B5690D59EDBF",
+        "source": {
+          "sourceId": "ARINC-615A-3",
+          "clause": "APPENDIX-E",
+          "tableOrFigure": null,
+          "documentPage": 122,
+          "pdfPage": 134,
+          "fragmentKind": "PROSE-SENTENCE",
+          "fragmentOrdinal": 13
+        },
+        "sourceTextHash": "b5690d59edbf39c39ccc42d59e68b5a49679094f70f91349613e93c9b1933914",
+        "targetUnitIds": [
+          "NET-P7-ADDRESS"
+        ],
+        "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+        "condition": "IF-AFDX-TRANSPORT-CHOSEN",
+        "disposition": "DEFERRED-FUTURE-SCOPE",
+        "rationaleEn": "This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation.",
+        "rationaleZh": "此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。",
+        "issueIds": [
+          "NET-ISSUE-AFDX-DETAIL",
+          "NET-ISSUE-ADDRESS"
+        ]
+      }
+    ],
+    "issues": [
+      {
+        "id": "NET-ISSUE-EDITION",
+        "status": "OPEN",
+        "blocksM1Approval": true,
+        "summaryEn": "Undated 615A references and P3/P7 latest-version language require independent acceptance of these exact historical editions; no latest-edition claim is made.",
+        "summaryZh": "615A 未注明版次的引用与 P3/P7 最新版本措辞要求独立接受这些历史版次；未声称它们为最新版。",
+        "sourceUnitIds": [
+          "NET-P3-SCOPE",
+          "NET-P7-SCOPE"
+        ]
+      },
+      {
+        "id": "NET-ISSUE-PROFILE",
+        "status": "OPEN",
+        "blocksM1Approval": true,
+        "summaryEn": "Resolve compliant versus profiled network applicability and atomize the admitted UDP/IPv4/ARP table obligations before declaring M1 network source coverage complete.",
+        "summaryZh": "须解决 Compliant/Profiled 网络适用性并原子化纳入的 UDP/IPv4/ARP 表格义务，之后才可宣告 M1 网络来源覆盖完整。",
+        "sourceUnitIds": [
+          "NET-P3-UDP-TABLE",
+          "NET-P3-IP-TABLE",
+          "NET-P3-ARP"
+        ]
+      },
+      {
+        "id": "NET-ISSUE-RFC1122",
+        "status": "OPEN",
+        "blocksM1Approval": true,
+        "summaryEn": "RFC 1122 is distinct from RFC 1123; acquire and review the communication-layer reference used by P3 table X/E rules.",
+        "summaryZh": "RFC 1122 与 RFC 1123 不同；须取得并评审 P3 表 X/E 规则引用的通信层来源。",
+        "sourceUnitIds": [
+          "NET-P3-UDP-RULE",
+          "NET-P3-IP-RULE",
+          "NET-P3-MTU"
+        ]
+      },
+      {
+        "id": "NET-ISSUE-OPTION-EDGE",
+        "status": "OPEN",
+        "blocksM1Approval": false,
+        "summaryEn": "A-2 remains deferred: P3 3.2.2 names RFC 2347 and P7 lists RFC 1785, but this does not prove an exact active 615A atomic trigger edge.",
+        "summaryZh": "A-2 继续延期：P3 3.2.2 列出 RFC 2347 且 P7 列出 RFC 1785，但这不证明精确的活动 615A 原子触发边。",
+        "sourceUnitIds": [
+          "NET-P3-TFTP",
+          "NET-P7-TFTP"
+        ]
+      },
+      {
+        "id": "NET-ISSUE-AFDX-DETAIL",
+        "status": "OPEN",
+        "blocksM1Approval": false,
+        "summaryEn": "AFDX remains unselected; P7 Attachment 2, IEEE 802.3 (2000), and configuration-dependent latency/MTU need a later admitted deployment audit.",
+        "summaryZh": "AFDX 尚未选择；P7 附件 2、IEEE 802.3（2000）及配置相关延迟／MTU 须在后续纳入部署时审计。",
+        "sourceUnitIds": [
+          "NET-P7-IP",
+          "NET-P7-PERFORMANCE"
+        ]
+      },
+      {
+        "id": "NET-ISSUE-AID",
+        "status": "OPEN",
+        "blocksM1Approval": false,
+        "summaryEn": "615A Appendix E names an AID defined in a future P7 supplement; the supplied base edition cannot close that future supplement reference.",
+        "summaryZh": "615A 附录 E 将 AID 指向未来 P7 补充版；所提供初版不能关闭该未来补充版引用。",
+        "sourceUnitIds": [
+          "NET-P7-ADDRESS"
+        ]
+      },
+      {
+        "id": "NET-ISSUE-ADDRESS",
+        "status": "OPEN",
+        "blocksM1Approval": false,
+        "summaryEn": "Appendix E allows P4 address rules or integrator-defined requirements; record the choice before AFDX activation. P4 is not automatically a procurement mandate.",
+        "summaryZh": "附录 E 允许 P4 寻址规则或集成商规定要求；须在 AFDX 激活前记录选择，不能自动将 P4 变为采购要求。",
+        "sourceUnitIds": [
+          "NET-P7-ADDRESS"
+        ]
+      }
+    ],
+    "coverageClaimEn": "Inspected reference regions and existing CRS links only. Network table obligations are not yet exhaustively atomized; this is an explicit M1 review issue, not proof of complete network requirement coverage.",
+    "coverageClaimZh": "仅登记已检查的引用区域与既有 CRS 关系。网络表格义务尚未穷尽原子化；这是显式 M1 评审问题，不能证明网络需求覆盖完整。"
+  }
 }
