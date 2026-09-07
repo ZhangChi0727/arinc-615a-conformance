@@ -35,6 +35,48 @@
       "pageCount": 53,
       "byteCount": 2983064,
       "sha256": "177594eed4cb8a13f370a1a3ded88baf881816f83ab0528eb435acad621063d5"
+    },
+    {
+      "id": "ARINC-664-3",
+      "edition": "664P3-1",
+      "publicationDate": "2004-12-22",
+      "pageCount": 90,
+      "byteCount": 529983,
+      "sha256": "86cda84f4b0e1555fe2975942eaae53178ae3f7b151a7ff50a4022df6d958b90",
+      "reception": {
+        "channel": "USER-PROVIDED-LOCAL-COPY",
+        "authorizationEvidence": "NOT-INDEPENDENTLY-CONFIRMED",
+        "identityCheck": "AUTHOR-LOCAL-BINARY-AND-TITLE-PAGE-CHECK",
+        "independentReview": "PENDING",
+        "titlePagePdfPages": [
+          1,
+          3
+        ],
+        "supplementPages": [
+          83,
+          84,
+          85
+        ]
+      }
+    },
+    {
+      "id": "ARINC-664-7",
+      "edition": "664P7",
+      "publicationDate": "2005-06-27",
+      "pageCount": 145,
+      "byteCount": 1838153,
+      "sha256": "63ef56b2e0061bdb8a8554fc9cdb522d2ba7c4a0dc52003856d7022eb9889f71",
+      "reception": {
+        "channel": "USER-PROVIDED-LOCAL-COPY",
+        "authorizationEvidence": "NOT-INDEPENDENTLY-CONFIRMED",
+        "identityCheck": "AUTHOR-LOCAL-BINARY-AND-TITLE-PAGE-CHECK",
+        "independentReview": "PENDING",
+        "titlePagePdfPages": [
+          1,
+          3
+        ],
+        "supplementPages": []
+      }
     }
   ]
 }
