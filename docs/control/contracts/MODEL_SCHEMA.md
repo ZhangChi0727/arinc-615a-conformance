@@ -54,14 +54,18 @@ stimulating event and evaluated in the guard before variable updates. Arbitrary
 strings are not evaluated. Timeout and WAIT-elapsed events are enabled only by
 COMPARE(enablingCompare) between enablingClock and enablingBound. Unresolved
 symbolic bounds remain NOT-CHECKED or UNRESOLVED; they are not PASS. Source
-equations keep the source comparison operator and every source term, including
-retry and network-transmission terms. WAIT retry is a not-before lower bound.
+equations keep the source comparison operator and the ordered source expression
+structure, including retry and network-transmission terms. Same-operator ADD and
+MUL may be flattened and reordered; comparison direction, SUB/DIV order, mixed
+grouping and literals stay fixed. WAIT retry is a not-before lower bound.
+LUR WRQ requires a session-local list-ready flag established only by LUS 0001.
 
 ## Automatic checks
 
 Automation checks the nested closed schema, fail-closed git object identity,
-M1-bound field/status axes, RFC atomic-part locators, discrete-step witnesses,
-partition, polarity, graph connectivity, sequence constraints, restricted
+M1-bound field/status axes, RFC atomic-part locators, discrete-step witnesses
+including list-offered-not-ready, source-equation structure against the M1
+relation, partition, polarity, graph connectivity, sequence constraints, restricted
 expressions, capability guards and fingerprint refresh.
 It cannot prove proprietary source fidelity, timed reachability or
 implementation conformance. Static untimed connectivity is limited to the
@@ -117,13 +121,15 @@ SYMBOL、LITERAL、ENUM、ASSIGN、PAYLOAD 以及 ADD/SUB/MUL/DIV 的 BINARY。
 APPLICATION 的 payload 字段在刺激事件上有类型，并在变量更新之前参与守卫求值。
 禁止对任意字符串求值。超时与 WAIT 到期事件仅由 enablingClock 与 enablingBound
 之间的 COMPARE(enablingCompare) 使能。未解析符号边界保持 NOT-CHECKED 或
-UNRESOLVED，不是 PASS。来源方程保留来源比较算子及全部来源项，包括重试与网络
-传输项。WAIT 重试是不得早于的下界。
+UNRESOLVED，不是 PASS。来源方程保留来源比较算子及有序来源表达式结构，包括重试与网络传输项。同一算子
+的 ADD／MUL 可扁平化并重排；比较方向、SUB／DIV 次序、混合分组与常量保持固定。
+WAIT 重试是不得早于的下界。LUR WRQ 要求仅由 LUS 0001 建立的会话内列表就绪标志。
 
 ## 自动检查
 
 自动化检查完整嵌套封闭 schema、fail-closed 的 Git 对象身份、与 M1 绑定的字段／
-状态轴、RFC 原子片段定位、离散步见证、分区、极性、图连通、顺序约束、受限
+状态轴、RFC 原子片段定位、离散步见证（含列表已提交但未就绪）、按 M1 关系检查
+来源方程结构、分区、极性、图连通、顺序约束、受限
 表达式、能力守卫和指纹刷新。不能证明专有来源忠实度、定时可达或实现符合性。
 静态无时时连通仅限于已声明图。OPEN-M1-CORRECTION 使 blocksFinalApproval 保持
 为真。

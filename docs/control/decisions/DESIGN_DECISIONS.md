@@ -454,8 +454,12 @@ OPEN-M1-CORRECTION. That stop is correct and is not closure. The current M2
 candidate must not request final RG0/RG1/RG2 APPROVE while those inputs stay
 conflicted. After user authorization, a successor M1 package may correct only those
 identities in new ordinary commits and new blob OIDs. Historical merge
-`9bf18124d405b656815bc9eb524ae29bb4f04f56` and its frozen bytes stay unchanged.
-M2 then rebinds `inputAcceptance`. NET-ISSUE-EDITION remains a separate independent
+`9bf18124d405b656815bc9eb524ae29bb4f04f56` and its frozen bytes stay unchanged
+as a preserved record. Successor `inputAcceptance` is a new identity and must
+not transplant the original merge approval onto new blobs. CR-2026-009 is one
+authorization request with two pending items (6.4.4 file identity and
+CRS-M1-00365 WRQ actor), authorizable together or separately; neither is
+executed until authorized. NET-ISSUE-EDITION remains a separate independent
 RG0 decision; OPEN text is not edition acceptance. CR-2026-009 records the
 authorization request.
 
@@ -677,8 +681,10 @@ Configuration。ARINC 645 继续阻塞完整性成功。AFDX、FIND、媒体集�
 OPEN-M1-CORRECTION。该停线是正确行为，不是关闭。在这些输入仍冲突时，当前 M2
 候选不得请求最终 RG0/RG1/RG2 APPROVE。用户授权后，后继 M1 数据包可仅在新的
 普通提交与新 blob 中纠正这些身份。历史合并
-`9bf18124d405b656815bc9eb524ae29bb4f04f56` 及其冻结字节保持不变。随后 M2 重新
-绑定 `inputAcceptance`。NET-ISSUE-EDITION 仍是独立的 RG0 决定；OPEN 文字不是
+`9bf18124d405b656815bc9eb524ae29bb4f04f56` 及其冻结字节作为保留记录保持不变。
+后继 `inputAcceptance` 是新身份，不得把原合并批准移植到新 blob。CR-2026-009
+是一份授权请求，含两项待授权事项（6.4.4 文件身份与 CRS-M1-00365 WRQ 参与者），
+可一并或分开授权；获授权前均不执行。NET-ISSUE-EDITION 仍是独立的 RG0 决定；OPEN 文字不是
 版次接受。CR-2026-009 记录该授权请求。
 
 **范围：** 输入纠正授权；不是改写 M1，也不是 M2 最终批准。
