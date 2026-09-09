@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:arinc615a:m2-model-package:1.1",
+  "$id": "urn:arinc615a:m2-model-package:1.2",
   "title": "M2 observable timed model and bounded refinement package",
   "type": "object",
   "additionalProperties": false,
@@ -20,11 +20,13 @@
     "infrastructurePremises",
     "actions",
     "analysisScope",
+    "discreteWitnesses",
+    "blockingInputs",
     "reviewControl",
     "inventorySummary"
   ],
   "properties": {
-    "schemaVersion": { "const": "1.1" },
+    "schemaVersion": { "const": "1.2" },
     "artifactId": { "const": "ARINC615A3-M2-MODEL" },
     "artifactVersion": { "type": "string", "minLength": 1 },
     "candidateDisposition": { "const": "ADOPT" },
@@ -95,6 +97,25 @@
       ]
     },
     "analysisScope": { "$ref": "#/$defs/analysisScope" },
+    "discreteWitnesses": {
+      "type": "array",
+      "minItems": 5,
+      "items": { "$ref": "#/$defs/discreteWitness" }
+    },
+    "blockingInputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/blockingInput" },
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "required": ["id"],
+            "properties": { "id": { "const": "M1-FILE-IDENTITY-6-4-4" } }
+          }
+        }
+      ]
+    },
     "reviewControl": { "$ref": "#/$defs/reviewControl" },
     "inventorySummary": { "$ref": "#/$defs/inventorySummary" }
   },
@@ -107,8 +128,9 @@
       "properties": {
         "kind": {
           "type": "string",
-          "enum": ["TRUE", "COMPARE", "AND", "VAR", "CLOCK", "SYMBOL", "LITERAL", "ENUM", "ASSIGN", "BINARY"]
-        }
+          "enum": ["TRUE", "COMPARE", "AND", "VAR", "CLOCK", "SYMBOL", "LITERAL", "ENUM", "ASSIGN", "BINARY", "PAYLOAD"]
+        },
+        "name": { "type": "string" }
       },
       "additionalProperties": true
     },
@@ -410,6 +432,7 @@
             "additionalProperties": false,
             "required": [
               "id", "unit", "growsDuringDelay", "scope", "correlationKey",
+              "instanceBinding", "resetPolicy", "cancelPolicy",
               "resetOn", "meaningEn", "meaningZh"
             ],
             "properties": {
@@ -418,6 +441,9 @@
               "growsDuringDelay": { "type": "boolean" },
               "scope": { "$ref": "#/$defs/nonEmptyString" },
               "correlationKey": { "$ref": "#/$defs/nonEmptyString" },
+              "instanceBinding": { "$ref": "#/$defs/nonEmptyString" },
+              "resetPolicy": { "$ref": "#/$defs/nonEmptyString" },
+              "cancelPolicy": { "$ref": "#/$defs/nonEmptyString" },
               "resetOn": { "type": "array", "minItems": 1, "items": { "type": "string" } },
               "meaningEn": { "$ref": "#/$defs/nonEmptyString" },
               "meaningZh": { "$ref": "#/$defs/nonEmptyString" }
@@ -530,7 +556,9 @@
       "additionalProperties": false,
       "required": [
         "id", "requirementId", "trigger", "response", "cancel", "supersede",
-        "correlationKey", "clockId", "resets", "lowerBoundary", "upperBoundary",
+        "correlationKey",         "clockId", "resets", "constraintKind", "parameterOrigin",
+        "m1LowerBoundary", "m1UpperBoundary",
+        "lowerBoundary", "upperBoundary",
         "unit", "boundKind", "sourceRelation", "expression", "staticCheck",
         "observationWindow", "observationRoleEn", "observationRoleZh",
         "errorBudgetClass", "errorBudgetEn", "errorBudgetZh"
@@ -547,6 +575,11 @@
         "concurrencyPolicy": { "type": ["string", "null"] },
         "clockId": { "$ref": "#/$defs/nonEmptyString" },
         "resets": { "type": "array", "items": { "type": "string" } },
+        "constraintKind": { "$ref": "#/$defs/nonEmptyString" },
+        "parameterOrigin": { "$ref": "#/$defs/nonEmptyString" },
+        "m1LowerBoundary": { "enum": ["CLOSED", "OPEN", "UNRESOLVED"] },
+        "m1UpperBoundary": { "enum": ["CLOSED", "OPEN", "UNRESOLVED"] },
+        "enablementEventIds": { "type": "array", "items": { "type": "string" } },
         "lowerBound": {},
         "upperBound": {},
         "lowerBoundary": { "enum": ["CLOSED", "OPEN", "UNRESOLVED"] },
@@ -652,14 +685,15 @@
     "reviewControl": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["rg0", "rg1", "rg2", "reviewHead", "formalApproval", "mergeEvidence"],
+      "required": ["rg0", "rg1", "rg2", "reviewHead", "formalApproval", "mergeEvidence", "blocksFinalApproval"],
       "properties": {
         "rg0": { "enum": ["PENDING-EXTERNAL-REVIEW", "PENDING-EXTERNAL-INDEPENDENT-REVIEW"] },
         "rg1": { "enum": ["PENDING-EXTERNAL-REVIEW", "PENDING-EXTERNAL-INDEPENDENT-REVIEW"] },
         "rg2": { "enum": ["PENDING-EXTERNAL-REVIEW", "PENDING-EXTERNAL-INDEPENDENT-REVIEW"] },
         "reviewHead": { "const": "UNBOUND-DRAFT" },
         "formalApproval": { "type": "string", "not": { "enum": ["APPROVED", "APPROVE", "SELF-APPROVED"] } },
-        "mergeEvidence": { "$ref": "#/$defs/nonEmptyString" }
+        "mergeEvidence": { "$ref": "#/$defs/nonEmptyString" },
+        "blocksFinalApproval": { "type": "boolean" }
       }
     },
     "inventorySummary": {
@@ -684,7 +718,51 @@
         "inputFingerprint": { "type": "string", "minLength": 64 },
         "refinementFingerprint": { "type": "string", "minLength": 64 },
         "actionFingerprint": { "type": "string", "minLength": 64 },
-        "premiseFingerprint": { "type": "string", "minLength": 64 }
+        "premiseFingerprint": { "type": "string", "minLength": 64 },
+        "witnessFingerprint": { "type": "string", "minLength": 64 },
+        "blockingFingerprint": { "type": "string", "minLength": 64 }
+      }
+    },
+    "discreteWitness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "summaryEn", "summaryZh", "steps"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "summaryEn": { "$ref": "#/$defs/nonEmptyString" },
+        "summaryZh": { "$ref": "#/$defs/nonEmptyString" },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["transitionId"],
+            "properties": {
+              "transitionId": { "$ref": "#/$defs/nonEmptyString" },
+              "payload": { "type": "object" },
+              "clocks": { "type": "object", "additionalProperties": { "type": "number" } },
+              "parameters": { "type": "object", "additionalProperties": { "type": "number" } },
+              "expectEnabled": { "type": "boolean" },
+              "expectTarget": { "type": "string" },
+              "expectVariables": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    "blockingInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "authorizationRequest", "blocksFinalApproval", "requirementIds", "noteEn", "noteZh"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "$ref": "#/$defs/nonEmptyString" },
+        "authorizationRequest": { "$ref": "#/$defs/nonEmptyString" },
+        "blocksFinalApproval": { "type": "boolean" },
+        "requirementIds": { "type": "array", "items": { "type": "string" } },
+        "noteEn": { "$ref": "#/$defs/nonEmptyString" },
+        "noteZh": { "$ref": "#/$defs/nonEmptyString" }
       }
     }
   }

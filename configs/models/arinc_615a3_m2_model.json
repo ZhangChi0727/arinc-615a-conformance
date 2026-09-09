@@ -1,7 +1,7 @@
 {
-  "schemaVersion": "1.1",
+  "schemaVersion": "1.2",
   "artifactId": "ARINC615A3-M2-MODEL",
-  "artifactVersion": "M2-CANDIDATE-2",
+  "artifactVersion": "M2-CANDIDATE-3",
   "candidateDisposition": "ADOPT",
   "inputAcceptance": {
     "repository": "https://github.com/ZhangChi0727/arinc-615a-conformance",
@@ -91,7 +91,7 @@
           "EV_DL_RRQ_LCI",
           "EV_DL_RRQ_LUI",
           "EV_DL_ACK_LCL",
-          "EV_DL_ACK_LUR",
+          "EV_DL_WRQ_LUR",
           "EV_DL_DATA_LUR",
           "EV_DL_DATA_FILE",
           "EV_DL_FILE_UNAVAIL",
@@ -104,7 +104,7 @@
           "EV_TH_DATA_LCL",
           "EV_TH_WRQ_LCS",
           "EV_TH_DATA_LCS",
-          "EV_TH_WRQ_LUR",
+          "EV_TH_ACK_LUR",
           "EV_TH_RRQ_FILE",
           "EV_TH_WRQ_LUS",
           "EV_TH_DATA_LUS",
@@ -120,7 +120,7 @@
           "EV_TH_DATA_LCL",
           "EV_TH_WRQ_LCS",
           "EV_TH_DATA_LCS",
-          "EV_TH_WRQ_LUR",
+          "EV_TH_ACK_LUR",
           "EV_TH_RRQ_FILE",
           "EV_TH_WRQ_LUS",
           "EV_TH_DATA_LUS",
@@ -131,7 +131,7 @@
           "EV_DL_RRQ_LCI",
           "EV_DL_RRQ_LUI",
           "EV_DL_ACK_LCL",
-          "EV_DL_ACK_LUR",
+          "EV_DL_WRQ_LUR",
           "EV_DL_DATA_LUR",
           "EV_DL_DATA_FILE",
           "EV_DL_FILE_UNAVAIL",
@@ -144,10 +144,11 @@
         "EV_DL_APP_UPL_RESPONSE",
         "EV_DL_OFFER_LIST",
         "EV_TH_FILE_STATUS",
-        "EV_TH_MORE_FILES"
+        "EV_TH_MORE_FILES",
+        "EV_WAIT_RECEIVED"
       ],
-      "eventMappingEn": "NETWORK-VISIBLE events are TFTP opcodes on a named file role. APPLICATION/PARSE-RESULT/LOCAL events are derived from received files or local analysis and are not additional wire opcodes. ENVIRONMENT timeouts are enabled only by clock guards.",
-      "eventMappingZh": "NETWORK-VISIBLE 事件是具名文件角色上的 TFTP 操作码。APPLICATION/PARSE-RESULT/LOCAL 事件由已收文件或本地分析导出，不是额外线上操作码。ENVIRONMENT 超时仅由时钟守卫使能。",
+      "eventMappingEn": "NETWORK-VISIBLE events are TFTP opcodes on a named file role. LUR is a TFTP write: DL WRQ, TH ACK, DL DATA. APPLICATION payload.decision is a typed ENUM evaluated in the guard before lastDecision is written. PARSE-RESULT/LOCAL events are derived from received files or local analysis and are not additional wire opcodes. ENVIRONMENT timeouts and WAIT-elapsed are enabled only by COMPARE(enablingCompare) of enablingClock and enablingBound.",
+      "eventMappingZh": "NETWORK-VISIBLE 事件是具名文件角色上的 TFTP 操作码。LUR 是 TFTP 写：数据加载器 WRQ、目标硬件 ACK、数据加载器 DATA。APPLICATION 的 payload.decision 是有类型枚举，在写入 lastDecision 之前参与守卫求值。PARSE-RESULT/LOCAL 事件由已收文件或本地分析导出，不是额外线上操作码。ENVIRONMENT 超时与 WAIT 到期仅由 enablingClock 与 enablingBound 的 COMPARE(enablingCompare) 使能。",
       "silenceRuleEn": "Absence of a captured packet is not protocol silence unless the observation window, correlation key and clock are declared.",
       "silenceRuleZh": "未采到报文不是协议静默，除非已声明观测窗口、关联键和时钟。"
     },
@@ -234,6 +235,30 @@
       },
       "rationaleEn": "CRS-M1-00315 is Table 6.4.4-1 FIELD-LOAD-PART-NUMBER-NAME recorded as LUI. The same clause page cluster is the LUR/LUI identity conflict. No active 665 edge is emitted from the conflicted file identity.",
       "rationaleZh": "CRS-M1-00315 是表 6.4.4-1 的 FIELD-LOAD-PART-NUMBER-NAME，M1 记为 LUI。同一条款页簇存在 LUR/LUI 身份冲突。不从冲突文件身份发出活动 665 边。",
+      "disposition": "BLOCKED-PENDING-INCREMENTAL-RG1",
+      "reviewStatus": "OPEN-M1-CORRECTION"
+    },
+    {
+      "id": "REF-SEQ-00365-WRQ-ACTOR",
+      "kind": "SEQUENCE-ACTOR-OPEN-M1-CORRECTION",
+      "fromRequirementId": "CRS-M1-00365",
+      "sharedObjects": [
+        "LUR"
+      ],
+      "relation": "M2-FOLLOWS-TFTP-WRITE-AND-VISUAL-CHART",
+      "fromLocator": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "6.3.2",
+        "tableOrFigure": "Section 6.3.2 sequence chart A",
+        "documentPage": 53,
+        "pdfPage": 65,
+        "fragmentKind": "SEQUENCE-EVENT",
+        "fragmentOrdinal": 7,
+        "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E007-7726A816FFE7",
+        "sourceTextHash": "7726a816ffe72ad5691188f24b29a6ec131f042dce41742559da92b46cade96b"
+      },
+      "rationaleEn": "Frozen CRS-M1-00365 records Target Hardware as the LUR WRQ actor. Independent visual check of §6.3.2 chart A is Data Loader WRQ, Target Hardware ACK, Data Loader DATA. The machine follows the TFTP-write / visual direction. This remains OPEN-M1-CORRECTION; M1 bytes are not rewritten.",
+      "rationaleZh": "冻结的 CRS-M1-00365 将 LUR WRQ 参与者记为目标硬件。对 §6.3.2 图 A 的独立目视核对为数据加载器 WRQ、目标硬件 ACK、数据加载器 DATA。机器遵循 TFTP 写／目视方向。此条保持 OPEN-M1-CORRECTION；不改写 M1 字节。",
       "disposition": "BLOCKED-PENDING-INCREMENTAL-RG1",
       "reviewStatus": "OPEN-M1-CORRECTION"
     },
@@ -704,14 +729,14 @@
       {
         "id": "S_UPL_LUR_WRQ",
         "terminal": false,
-        "summaryEn": "TH WRQ for LUR after list accept",
-        "summaryZh": "列表接受后目标硬件对 LUR 发出 WRQ"
+        "summaryEn": "DL WRQ for LUR after list accept (TFTP write)",
+        "summaryZh": "列表接受后数据加载器对 LUR 发出 WRQ（TFTP 写）"
       },
       {
         "id": "S_UPL_LUR_ACK",
         "terminal": false,
-        "summaryEn": "DL ACK of LUR write request",
-        "summaryZh": "数据加载器确认 LUR 写请求"
+        "summaryEn": "TH ACK of LUR write request",
+        "summaryZh": "目标硬件确认 LUR 写请求"
       },
       {
         "id": "S_UPL_LUR_XFER",
@@ -780,6 +805,12 @@
         "summaryZh": "UPLOAD 异常等待"
       },
       {
+        "id": "S_WAIT_RETRY",
+        "terminal": false,
+        "summaryEn": "WAIT-message delay; retry not enabled before the carried timer",
+        "summaryZh": "WAIT 消息时延；未到所携定时器不得重试"
+      },
+      {
         "id": "S_ABORTING",
         "terminal": false,
         "summaryEn": "Abort in progress",
@@ -825,7 +856,16 @@
         "derivedFrom": [
           "LCI"
         ],
-        "notAWireOpcode": true
+        "notAWireOpcode": true,
+        "payloadSchema": {
+          "decision": {
+            "type": "ENUM",
+            "domain": [
+              "ACCEPT",
+              "REJECT"
+            ]
+          }
+        }
       },
       {
         "id": "EV_TH_WRQ_LCL",
@@ -918,7 +958,16 @@
         "derivedFrom": [
           "LUI"
         ],
-        "notAWireOpcode": true
+        "notAWireOpcode": true,
+        "payloadSchema": {
+          "decision": {
+            "type": "ENUM",
+            "domain": [
+              "ACCEPT",
+              "REJECT"
+            ]
+          }
+        }
       },
       {
         "id": "EV_DL_OFFER_LIST",
@@ -941,20 +990,20 @@
         "statusCode": "0X0001"
       },
       {
-        "id": "EV_TH_WRQ_LUR",
+        "id": "EV_DL_WRQ_LUR",
         "visibility": "NETWORK-VISIBLE",
-        "summaryEn": "TH TFTP WRQ for LUR after list accept",
-        "summaryZh": "列表接受后目标硬件对 LUR 发出 TFTP WRQ",
-        "direction": "TH-TO-DL",
+        "summaryEn": "DL TFTP WRQ for LUR after list accept",
+        "summaryZh": "列表接受后数据加载器对 LUR 发出 TFTP WRQ",
+        "direction": "DL-TO-TH",
         "tftpOpcode": "WRQ",
         "fileRole": "LUR"
       },
       {
-        "id": "EV_DL_ACK_LUR",
+        "id": "EV_TH_ACK_LUR",
         "visibility": "NETWORK-VISIBLE",
-        "summaryEn": "DL ACK of LUR WRQ",
-        "summaryZh": "数据加载器确认 LUR WRQ",
-        "direction": "DL-TO-TH",
+        "summaryEn": "TH ACK of LUR WRQ",
+        "summaryZh": "目标硬件确认 LUR WRQ",
+        "direction": "TH-TO-DL",
         "tftpOpcode": "ACK",
         "fileRole": "LUR"
       },
@@ -1080,7 +1129,8 @@
         "summaryEn": "TFTP clock expired; enabled only when CLK_TFTP >= TFTP_TO",
         "summaryZh": "TFTP 时钟到期；仅当 CLK_TFTP >= TFTP_TO 时使能",
         "enablingClock": "CLK_TFTP",
-        "enablingBound": "TFTP_TO"
+        "enablingBound": "TFTP_TO",
+        "enablingCompare": "GE"
       },
       {
         "id": "EV_TIMEOUT_DLP",
@@ -1088,7 +1138,8 @@
         "summaryEn": "DLP clock expired; enabled only when CLK_DLP >= DLP_TO",
         "summaryZh": "DLP 时钟到期；仅当 CLK_DLP >= DLP_TO 时使能",
         "enablingClock": "CLK_DLP",
-        "enablingBound": "DLP_TO"
+        "enablingBound": "DLP_TO",
+        "enablingCompare": "GE"
       },
       {
         "id": "EV_TIMEOUT_EXCEPTION",
@@ -1096,7 +1147,27 @@
         "summaryEn": "Exception clock expired; enabled only when CLK_EXCEPTION >= EXCEPTION_TIMER",
         "summaryZh": "异常时钟到期；仅当 CLK_EXCEPTION >= EXCEPTION_TIMER 时使能",
         "enablingClock": "CLK_EXCEPTION",
-        "enablingBound": "EXCEPTION_TIMER"
+        "enablingBound": "EXCEPTION_TIMER",
+        "enablingCompare": "GE"
+      },
+      {
+        "id": "EV_WAIT_RECEIVED",
+        "visibility": "PARSE-RESULT",
+        "summaryEn": "WAIT message received; starts the not-before delay clock",
+        "summaryZh": "收到 WAIT 消息；启动不得早于该时延的时钟",
+        "derivedFrom": [
+          "WAIT"
+        ],
+        "notAWireOpcode": true
+      },
+      {
+        "id": "EV_WAIT_ELAPSED",
+        "visibility": "ENVIRONMENT",
+        "summaryEn": "WAIT delay elapsed; enabled only when CLK_WAIT >= MESSAGE_TIMER_VALUE",
+        "summaryZh": "WAIT 时延已过；仅当 CLK_WAIT >= MESSAGE_TIMER_VALUE 时使能",
+        "enablingClock": "CLK_WAIT",
+        "enablingBound": "MESSAGE_TIMER_VALUE",
+        "enablingCompare": "GE"
       },
       {
         "id": "EV_OP_COMPLETE",
@@ -1128,6 +1199,18 @@
           "NONE",
           "ACCEPT",
           "REJECT"
+        ],
+        "initial": "NONE"
+      },
+      {
+        "id": "waitResume",
+        "type": "ENUM",
+        "domain": [
+          "NONE",
+          "UPL_FILE",
+          "UPL_LUR",
+          "INF_LCI",
+          "INF_LCL"
         ],
         "initial": "NONE"
       },
@@ -1332,6 +1415,9 @@
         "growsDuringDelay": true,
         "scope": "PER-CORRELATION-KEY",
         "correlationKey": "TFTP-PEER-AND-TRANSFER",
+        "instanceBinding": "EVENT-CORRELATION-KEY",
+        "resetPolicy": "RESET-ONLY-MATCHING-INSTANCE",
+        "cancelPolicy": "CLEAR-INSTANCE-ON-CANCEL-OR-SUPERSEDE",
         "resetOn": [
           "T_INF_LCI_RRQ",
           "T_UPL_LUI_RRQ",
@@ -1347,6 +1433,9 @@
         "growsDuringDelay": true,
         "scope": "PER-CORRELATION-KEY",
         "correlationKey": "TARGET-OPERATION-AND-DLP-TRANSFER-SEQUENCE",
+        "instanceBinding": "EVENT-CORRELATION-KEY",
+        "resetPolicy": "RESET-ONLY-MATCHING-INSTANCE",
+        "cancelPolicy": "CLEAR-INSTANCE-ON-CANCEL-OR-SUPERSEDE",
         "resetOn": [
           "T_INF_ACCEPT_INIT",
           "T_UPL_ACCEPT_INIT",
@@ -1362,6 +1451,9 @@
         "growsDuringDelay": true,
         "scope": "PER-CORRELATION-KEY",
         "correlationKey": "STATUS-EXCEPTION-OBJECT",
+        "instanceBinding": "EVENT-CORRELATION-KEY",
+        "resetPolicy": "RESET-ONLY-MATCHING-INSTANCE",
+        "cancelPolicy": "CLEAR-INSTANCE-ON-CANCEL-OR-SUPERSEDE",
         "resetOn": [
           "T_ENTER_UPL_EXC",
           "T_ENTER_INF_EXC",
@@ -1369,6 +1461,24 @@
         ],
         "meaningEn": "Exception silence clock.",
         "meaningZh": "异常静默时钟。"
+      },
+      {
+        "id": "CLK_WAIT",
+        "unit": "s",
+        "growsDuringDelay": true,
+        "scope": "PER-CORRELATION-KEY",
+        "correlationKey": "TFTP-PEER-AND-REJECTED-TRANSFER-REQUEST",
+        "instanceBinding": "EVENT-CORRELATION-KEY",
+        "resetPolicy": "RESET-ONLY-MATCHING-INSTANCE",
+        "cancelPolicy": "CLEAR-INSTANCE-ON-NEWER-WAIT-FOR-SAME-REQUEST",
+        "resetOn": [
+          "T_WAIT_FROM_UPL_FILE",
+          "T_WAIT_FROM_UPL_LUR",
+          "T_WAIT_FROM_INF_LCI",
+          "T_WAIT_FROM_INF_LCL"
+        ],
+        "meaningEn": "Delay since the WAIT message that forbids retry until the carried timer elapses.",
+        "meaningZh": "自 WAIT 消息起的时延；在所携定时器到期前禁止重试。"
       }
     ],
     "transitions": [
@@ -1395,6 +1505,86 @@
             "value": {
               "kind": "ENUM",
               "value": "INFORMATION"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "lastDecision",
+            "value": {
+              "kind": "ENUM",
+              "value": "NONE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "waitResume",
+            "value": {
+              "kind": "ENUM",
+              "value": "NONE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "listOffered",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "listAccepted",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "lurComplete",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "luiComplete",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "lciComplete",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "lclComplete",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "statusCode",
+            "value": {
+              "kind": "ENUM",
+              "value": "NONE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "integrityClaim",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
             }
           }
         ],
@@ -1495,8 +1685,8 @@
               "kind": "COMPARE",
               "op": "EQ",
               "left": {
-                "kind": "VAR",
-                "name": "lastDecision"
+                "kind": "PAYLOAD",
+                "name": "decision"
               },
               "right": {
                 "kind": "ENUM",
@@ -1524,8 +1714,8 @@
           "CRS-M1-00349",
           "CRS-M1-00351"
         ],
-        "noteEn": "Init accepted: next required stage is LCL WRQ, not a file data loop",
-        "noteZh": "初始化接受后下一阶段必须是 LCL WRQ，而不是文件数据环"
+        "noteEn": "Init accepted: payload.decision is ACCEPT; lastDecision is written after the guard",
+        "noteZh": "初始化接受：payload.decision 为 ACCEPT；守卫求值后再写入 lastDecision"
       },
       {
         "id": "T_INF_REJECT",
@@ -1550,8 +1740,8 @@
               "kind": "COMPARE",
               "op": "EQ",
               "left": {
-                "kind": "VAR",
-                "name": "lastDecision"
+                "kind": "PAYLOAD",
+                "name": "decision"
               },
               "right": {
                 "kind": "ENUM",
@@ -1584,8 +1774,8 @@
         "requirementIds": [
           "CRS-M1-00350"
         ],
-        "noteEn": "Init rejected terminates INFORMATION",
-        "noteZh": "初始化拒绝则终止 INFORMATION"
+        "noteEn": "Init rejected: payload.decision is REJECT",
+        "noteZh": "初始化拒绝：payload.decision 为 REJECT"
       },
       {
         "id": "T_INF_LCL_WRQ",
@@ -1832,6 +2022,86 @@
               "kind": "ENUM",
               "value": "UPLOAD"
             }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "lastDecision",
+            "value": {
+              "kind": "ENUM",
+              "value": "NONE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "waitResume",
+            "value": {
+              "kind": "ENUM",
+              "value": "NONE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "listOffered",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "listAccepted",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "lurComplete",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "luiComplete",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "lciComplete",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "lclComplete",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "statusCode",
+            "value": {
+              "kind": "ENUM",
+              "value": "NONE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "integrityClaim",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
           }
         ],
         "resets": [
@@ -1869,6 +2139,86 @@
             "value": {
               "kind": "ENUM",
               "value": "UPLOAD"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "lastDecision",
+            "value": {
+              "kind": "ENUM",
+              "value": "NONE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "waitResume",
+            "value": {
+              "kind": "ENUM",
+              "value": "NONE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "listOffered",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "listAccepted",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "lurComplete",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "luiComplete",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "lciComplete",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "lclComplete",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "statusCode",
+            "value": {
+              "kind": "ENUM",
+              "value": "NONE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "integrityClaim",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
             }
           }
         ],
@@ -1969,8 +2319,8 @@
               "kind": "COMPARE",
               "op": "EQ",
               "left": {
-                "kind": "VAR",
-                "name": "lastDecision"
+                "kind": "PAYLOAD",
+                "name": "decision"
               },
               "right": {
                 "kind": "ENUM",
@@ -1998,8 +2348,8 @@
           "CRS-M1-00362",
           "CRS-M1-00363"
         ],
-        "noteEn": "Init accepted: DL must offer the load list before any file RRQ",
-        "noteZh": "初始化接受后必须先提交装载列表，不能直接进入文件 RRQ"
+        "noteEn": "Init accepted from payload.decision=ACCEPT; list is not yet accepted",
+        "noteZh": "初始化接受来自 payload.decision=ACCEPT；列表此时尚未接受"
       },
       {
         "id": "T_UPL_REJECT",
@@ -2024,8 +2374,8 @@
               "kind": "COMPARE",
               "op": "EQ",
               "left": {
-                "kind": "VAR",
-                "name": "lastDecision"
+                "kind": "PAYLOAD",
+                "name": "decision"
               },
               "right": {
                 "kind": "ENUM",
@@ -2058,8 +2408,8 @@
         "requirementIds": [
           "CRS-M1-00362"
         ],
-        "noteEn": "Init rejected terminates UPLOAD",
-        "noteZh": "初始化拒绝则终止 UPLOAD"
+        "noteEn": "Init rejected from payload.decision=REJECT",
+        "noteZh": "初始化拒绝来自 payload.decision=REJECT"
       },
       {
         "id": "T_UPL_LIST_OFFER",
@@ -2156,7 +2506,7 @@
       {
         "id": "T_UPL_LUR_WRQ",
         "source": "S_UPL_WAIT_LUS0001",
-        "event": "EV_TH_WRQ_LUR",
+        "event": "EV_DL_WRQ_LUR",
         "guard": {
           "kind": "AND",
           "args": [
@@ -2177,11 +2527,23 @@
               "op": "EQ",
               "left": {
                 "kind": "VAR",
-                "name": "listAccepted"
+                "name": "listOffered"
               },
               "right": {
                 "kind": "ENUM",
                 "value": "TRUE"
+              }
+            },
+            {
+              "kind": "COMPARE",
+              "op": "EQ",
+              "left": {
+                "kind": "VAR",
+                "name": "listAccepted"
+              },
+              "right": {
+                "kind": "ENUM",
+                "value": "FALSE"
               }
             }
           ]
@@ -2205,13 +2567,13 @@
         "requirementIds": [
           "CRS-M1-00365"
         ],
-        "noteEn": "List accepted: TH WRQ LUR is the next required stage",
-        "noteZh": "列表接受后下一阶段必须是目标硬件对 LUR 的 WRQ"
+        "noteEn": "List accepted: DL WRQ LUR (TFTP write). Guard sees listAccepted still FALSE and then writes TRUE",
+        "noteZh": "列表接受后数据加载器对 LUR 发出 WRQ（TFTP 写）。守卫见到 listAccepted 仍为 FALSE，随后写 TRUE"
       },
       {
         "id": "T_UPL_LUR_ACK",
         "source": "S_UPL_LUR_WRQ",
-        "event": "EV_DL_ACK_LUR",
+        "event": "EV_TH_ACK_LUR",
         "guard": {
           "kind": "COMPARE",
           "op": "EQ",
@@ -2233,8 +2595,8 @@
         "requirementIds": [
           "CRS-M1-00366"
         ],
-        "noteEn": "DL ACK of LUR WRQ",
-        "noteZh": "数据加载器确认 LUR WRQ"
+        "noteEn": "TH ACK of LUR WRQ",
+        "noteZh": "目标硬件确认 LUR WRQ"
       },
       {
         "id": "T_UPL_LUR_XFER",
@@ -3259,6 +3621,406 @@
         "noteZh": "INFORMATION 异常状态启动 CLK_EXCEPTION"
       },
       {
+        "id": "T_WAIT_FROM_UPL_FILE",
+        "source": "S_UPL_FILE_XFER",
+        "event": "EV_WAIT_RECEIVED",
+        "guard": {
+          "kind": "COMPARE",
+          "op": "EQ",
+          "left": {
+            "kind": "VAR",
+            "name": "activeOperation"
+          },
+          "right": {
+            "kind": "ENUM",
+            "value": "UPLOAD"
+          }
+        },
+        "updates": [
+          {
+            "kind": "ASSIGN",
+            "target": "waitResume",
+            "value": {
+              "kind": "ENUM",
+              "value": "UPL_FILE"
+            }
+          }
+        ],
+        "resets": [
+          "CLK_WAIT"
+        ],
+        "outputs": [],
+        "target": "S_WAIT_RETRY",
+        "requirementIds": [
+          "CRS-M1-00032"
+        ],
+        "noteEn": "WAIT message aborts the current TFTP file transfer and starts CLK_WAIT",
+        "noteZh": "WAIT 消息中止当前 TFTP 文件传输并启动 CLK_WAIT"
+      },
+      {
+        "id": "T_WAIT_FROM_UPL_LUR",
+        "source": "S_UPL_LUR_XFER",
+        "event": "EV_WAIT_RECEIVED",
+        "guard": {
+          "kind": "COMPARE",
+          "op": "EQ",
+          "left": {
+            "kind": "VAR",
+            "name": "activeOperation"
+          },
+          "right": {
+            "kind": "ENUM",
+            "value": "UPLOAD"
+          }
+        },
+        "updates": [
+          {
+            "kind": "ASSIGN",
+            "target": "waitResume",
+            "value": {
+              "kind": "ENUM",
+              "value": "UPL_LUR"
+            }
+          }
+        ],
+        "resets": [
+          "CLK_WAIT"
+        ],
+        "outputs": [],
+        "target": "S_WAIT_RETRY",
+        "requirementIds": [
+          "CRS-M1-00032"
+        ],
+        "noteEn": "WAIT message during LUR transfer starts CLK_WAIT",
+        "noteZh": "LUR 传输中的 WAIT 消息启动 CLK_WAIT"
+      },
+      {
+        "id": "T_WAIT_FROM_INF_LCI",
+        "source": "S_INF_LCI_XFER",
+        "event": "EV_WAIT_RECEIVED",
+        "guard": {
+          "kind": "COMPARE",
+          "op": "EQ",
+          "left": {
+            "kind": "VAR",
+            "name": "activeOperation"
+          },
+          "right": {
+            "kind": "ENUM",
+            "value": "INFORMATION"
+          }
+        },
+        "updates": [
+          {
+            "kind": "ASSIGN",
+            "target": "waitResume",
+            "value": {
+              "kind": "ENUM",
+              "value": "INF_LCI"
+            }
+          }
+        ],
+        "resets": [
+          "CLK_WAIT"
+        ],
+        "outputs": [],
+        "target": "S_WAIT_RETRY",
+        "requirementIds": [
+          "CRS-M1-00032"
+        ],
+        "noteEn": "WAIT message during LCI transfer starts CLK_WAIT",
+        "noteZh": "LCI 传输中的 WAIT 消息启动 CLK_WAIT"
+      },
+      {
+        "id": "T_WAIT_FROM_INF_LCL",
+        "source": "S_INF_LCL_XFER",
+        "event": "EV_WAIT_RECEIVED",
+        "guard": {
+          "kind": "COMPARE",
+          "op": "EQ",
+          "left": {
+            "kind": "VAR",
+            "name": "activeOperation"
+          },
+          "right": {
+            "kind": "ENUM",
+            "value": "INFORMATION"
+          }
+        },
+        "updates": [
+          {
+            "kind": "ASSIGN",
+            "target": "waitResume",
+            "value": {
+              "kind": "ENUM",
+              "value": "INF_LCL"
+            }
+          }
+        ],
+        "resets": [
+          "CLK_WAIT"
+        ],
+        "outputs": [],
+        "target": "S_WAIT_RETRY",
+        "requirementIds": [
+          "CRS-M1-00032"
+        ],
+        "noteEn": "WAIT message during LCL transfer starts CLK_WAIT",
+        "noteZh": "LCL 传输中的 WAIT 消息启动 CLK_WAIT"
+      },
+      {
+        "id": "T_WAIT_RETRY_UPL_FILE",
+        "source": "S_WAIT_RETRY",
+        "event": "EV_WAIT_ELAPSED",
+        "guard": {
+          "kind": "AND",
+          "args": [
+            {
+              "kind": "COMPARE",
+              "op": "EQ",
+              "left": {
+                "kind": "VAR",
+                "name": "activeOperation"
+              },
+              "right": {
+                "kind": "ENUM",
+                "value": "UPLOAD"
+              }
+            },
+            {
+              "kind": "AND",
+              "args": [
+                {
+                  "kind": "COMPARE",
+                  "op": "GE",
+                  "left": {
+                    "kind": "CLOCK",
+                    "name": "CLK_WAIT"
+                  },
+                  "right": {
+                    "kind": "SYMBOL",
+                    "name": "MESSAGE_TIMER_VALUE",
+                    "unit": "s"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "COMPARE",
+              "op": "EQ",
+              "left": {
+                "kind": "VAR",
+                "name": "waitResume"
+              },
+              "right": {
+                "kind": "ENUM",
+                "value": "UPL_FILE"
+              }
+            }
+          ]
+        },
+        "updates": [],
+        "resets": [
+          "CLK_TFTP"
+        ],
+        "outputs": [],
+        "target": "S_UPL_FILE_RRQ",
+        "requirementIds": [
+          "CRS-M1-00032"
+        ],
+        "noteEn": "Retry the rejected file RRQ only after CLK_WAIT >= MESSAGE_TIMER_VALUE",
+        "noteZh": "仅当 CLK_WAIT >= MESSAGE_TIMER_VALUE 后才重试被拒绝的文件 RRQ"
+      },
+      {
+        "id": "T_WAIT_RETRY_UPL_LUR",
+        "source": "S_WAIT_RETRY",
+        "event": "EV_WAIT_ELAPSED",
+        "guard": {
+          "kind": "AND",
+          "args": [
+            {
+              "kind": "COMPARE",
+              "op": "EQ",
+              "left": {
+                "kind": "VAR",
+                "name": "activeOperation"
+              },
+              "right": {
+                "kind": "ENUM",
+                "value": "UPLOAD"
+              }
+            },
+            {
+              "kind": "AND",
+              "args": [
+                {
+                  "kind": "COMPARE",
+                  "op": "GE",
+                  "left": {
+                    "kind": "CLOCK",
+                    "name": "CLK_WAIT"
+                  },
+                  "right": {
+                    "kind": "SYMBOL",
+                    "name": "MESSAGE_TIMER_VALUE",
+                    "unit": "s"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "COMPARE",
+              "op": "EQ",
+              "left": {
+                "kind": "VAR",
+                "name": "waitResume"
+              },
+              "right": {
+                "kind": "ENUM",
+                "value": "UPL_LUR"
+              }
+            }
+          ]
+        },
+        "updates": [],
+        "resets": [
+          "CLK_TFTP"
+        ],
+        "outputs": [],
+        "target": "S_UPL_LUR_WRQ",
+        "requirementIds": [
+          "CRS-M1-00032"
+        ],
+        "noteEn": "Retry the rejected LUR WRQ only after the WAIT lower bound",
+        "noteZh": "仅在 WAIT 下界之后重试被拒绝的 LUR WRQ"
+      },
+      {
+        "id": "T_WAIT_RETRY_INF_LCI",
+        "source": "S_WAIT_RETRY",
+        "event": "EV_WAIT_ELAPSED",
+        "guard": {
+          "kind": "AND",
+          "args": [
+            {
+              "kind": "COMPARE",
+              "op": "EQ",
+              "left": {
+                "kind": "VAR",
+                "name": "activeOperation"
+              },
+              "right": {
+                "kind": "ENUM",
+                "value": "INFORMATION"
+              }
+            },
+            {
+              "kind": "AND",
+              "args": [
+                {
+                  "kind": "COMPARE",
+                  "op": "GE",
+                  "left": {
+                    "kind": "CLOCK",
+                    "name": "CLK_WAIT"
+                  },
+                  "right": {
+                    "kind": "SYMBOL",
+                    "name": "MESSAGE_TIMER_VALUE",
+                    "unit": "s"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "COMPARE",
+              "op": "EQ",
+              "left": {
+                "kind": "VAR",
+                "name": "waitResume"
+              },
+              "right": {
+                "kind": "ENUM",
+                "value": "INF_LCI"
+              }
+            }
+          ]
+        },
+        "updates": [],
+        "resets": [
+          "CLK_TFTP"
+        ],
+        "outputs": [],
+        "target": "S_INF_LCI_RRQ",
+        "requirementIds": [
+          "CRS-M1-00032"
+        ],
+        "noteEn": "Retry the rejected LCI RRQ only after the WAIT lower bound",
+        "noteZh": "仅在 WAIT 下界之后重试被拒绝的 LCI RRQ"
+      },
+      {
+        "id": "T_WAIT_RETRY_INF_LCL",
+        "source": "S_WAIT_RETRY",
+        "event": "EV_WAIT_ELAPSED",
+        "guard": {
+          "kind": "AND",
+          "args": [
+            {
+              "kind": "COMPARE",
+              "op": "EQ",
+              "left": {
+                "kind": "VAR",
+                "name": "activeOperation"
+              },
+              "right": {
+                "kind": "ENUM",
+                "value": "INFORMATION"
+              }
+            },
+            {
+              "kind": "AND",
+              "args": [
+                {
+                  "kind": "COMPARE",
+                  "op": "GE",
+                  "left": {
+                    "kind": "CLOCK",
+                    "name": "CLK_WAIT"
+                  },
+                  "right": {
+                    "kind": "SYMBOL",
+                    "name": "MESSAGE_TIMER_VALUE",
+                    "unit": "s"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "COMPARE",
+              "op": "EQ",
+              "left": {
+                "kind": "VAR",
+                "name": "waitResume"
+              },
+              "right": {
+                "kind": "ENUM",
+                "value": "INF_LCL"
+              }
+            }
+          ]
+        },
+        "updates": [],
+        "resets": [
+          "CLK_TFTP"
+        ],
+        "outputs": [],
+        "target": "S_INF_LCL_WRQ",
+        "requirementIds": [
+          "CRS-M1-00032"
+        ],
+        "noteEn": "Retry the rejected LCL WRQ only after the WAIT lower bound",
+        "noteZh": "仅在 WAIT 下界之后重试被拒绝的 LCL WRQ"
+      },
+      {
         "id": "T_ABORT_DL",
         "source": "S_UPL_FILE_XFER",
         "event": "EV_ABORT_DL",
@@ -3406,6 +4168,23 @@
         "noteZh": "该非终止态可中止"
       },
       {
+        "id": "T_ABORT_FROM_S_WAIT_RETRY",
+        "source": "S_WAIT_RETRY",
+        "event": "EV_ABORT_DL",
+        "guard": {
+          "kind": "TRUE"
+        },
+        "updates": [],
+        "resets": [],
+        "outputs": [],
+        "target": "S_ABORTING",
+        "requirementIds": [
+          "CRS-M1-00341"
+        ],
+        "noteEn": "Abort is available from this non-terminal",
+        "noteZh": "该非终止态可中止"
+      },
+      {
         "id": "T_ABORT_FROM_S_UPL_LUI_XFER",
         "source": "S_UPL_LUI_XFER",
         "event": "EV_ABORT_DL",
@@ -3531,6 +4310,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LCI-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-FILE-LENGTH in position 1 with 32 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 1 个字段位置编码 FIELD-FILE-LENGTH，位宽为 32 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3548,6 +4328,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LCI-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-PROTOCOL-VERSION in position 2 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 2 个字段位置编码 FIELD-PROTOCOL-VERSION，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3565,6 +4346,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LCI-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-OPERATION-ACCEPTANCE-STATUS-CODE in position 3 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 3 个字段位置编码 FIELD-OPERATION-ACCEPTANCE-STATUS-CODE，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3582,6 +4364,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LCI-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-STATUS-DESCRIPTION-LENGTH in position 4 with 8 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 4 个字段位置编码 FIELD-STATUS-DESCRIPTION-LENGTH，位宽为 8 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3599,6 +4382,7 @@
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "ONCE",
         "checkLocation": "LCI-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-STATUS-DESCRIPTION in position 5 with 0 to 2040 bits, repeated once; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 5 个字段位置编码 FIELD-STATUS-DESCRIPTION，位宽为 0..2040 bit，重复范围为 ONCE；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
@@ -3616,6 +4400,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-FILE-LENGTH in position 1 with 32 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 1 个字段位置编码 FIELD-FILE-LENGTH，位宽为 32 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3633,6 +4418,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-PROTOCOL-VERSION in position 2 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 2 个字段位置编码 FIELD-PROTOCOL-VERSION，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3650,6 +4436,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-NUMBER-OF-TARGET-HARDWARE in position 3 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 3 个字段位置编码 FIELD-NUMBER-OF-TARGET-HARDWARE，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3667,6 +4454,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-LITERAL-NAME",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LITERAL-NAME-LENGTH in position 4 with 8 bits, repeated per literal name; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 4 个字段位置编码 FIELD-LITERAL-NAME-LENGTH，位宽为 8 bit，重复范围为 PER-LITERAL-NAME；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3684,6 +4472,7 @@
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-LITERAL-NAME",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LITERAL-NAME in position 5 with 8 to 2040 bits, repeated per literal name; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 5 个字段位置编码 FIELD-LITERAL-NAME，位宽为 8..2040 bit，重复范围为 PER-LITERAL-NAME；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
@@ -3701,6 +4490,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-LITERAL-NAME",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-SERIAL-NUMBER-LENGTH in position 6 with 8 bits, repeated per literal name; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 6 个字段位置编码 FIELD-SERIAL-NUMBER-LENGTH，位宽为 8 bit，重复范围为 PER-LITERAL-NAME；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3718,6 +4508,7 @@
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-LITERAL-NAME",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-SERIAL-NUMBER in position 7 with 8 to 2040 bits, repeated per literal name; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 7 个字段位置编码 FIELD-SERIAL-NUMBER，位宽为 8..2040 bit，重复范围为 PER-LITERAL-NAME；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
@@ -3735,6 +4526,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-LITERAL-NAME",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-NUMBER-OF-PART-NUMBERS in position 8 with 16 bits, repeated per literal name; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 8 个字段位置编码 FIELD-NUMBER-OF-PART-NUMBERS，位宽为 16 bit，重复范围为 PER-LITERAL-NAME；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3752,6 +4544,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-PART-NUMBER-WITHIN-LITERAL-NAME",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-PART-NUMBER-LENGTH in position 9 with 8 bits, repeated per part number within literal name; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 9 个字段位置编码 FIELD-PART-NUMBER-LENGTH，位宽为 8 bit，重复范围为 PER-PART-NUMBER-WITHIN-LITERAL-NAME；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3769,6 +4562,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-PART-NUMBER-WITHIN-LITERAL-NAME",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-PART-NUMBER in position 10 with 8 to 2040 bits, repeated per part number within literal name; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 10 个字段位置编码 FIELD-PART-NUMBER，位宽为 8..2040 bit，重复范围为 PER-PART-NUMBER-WITHIN-LITERAL-NAME；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
@@ -3786,6 +4580,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-PART-NUMBER-WITHIN-LITERAL-NAME",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-AMENDMENT-LENGTH in position 11 with 8 bits, repeated per part number within literal name; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 11 个字段位置编码 FIELD-AMENDMENT-LENGTH，位宽为 8 bit，重复范围为 PER-PART-NUMBER-WITHIN-LITERAL-NAME；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3803,6 +4598,7 @@
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-PART-NUMBER-WITHIN-LITERAL-NAME",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-AMENDMENT in position 12 with 0 to 2040 bits, repeated per part number within literal name; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 12 个字段位置编码 FIELD-AMENDMENT，位宽为 0..2040 bit，重复范围为 PER-PART-NUMBER-WITHIN-LITERAL-NAME；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
@@ -3820,6 +4616,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-PART-NUMBER-WITHIN-LITERAL-NAME",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-PART-DESIGNATION-LENGTH in position 13 with 8 bits, repeated per part number within literal name; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 13 个字段位置编码 FIELD-PART-DESIGNATION-LENGTH，位宽为 8 bit，重复范围为 PER-PART-NUMBER-WITHIN-LITERAL-NAME；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3837,6 +4634,7 @@
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-PART-NUMBER-WITHIN-LITERAL-NAME",
         "checkLocation": "LCL-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-PART-DESIGNATION-TEXT in position 14 with 8 to 2040 bits, repeated per part number within literal name; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 14 个字段位置编码 FIELD-PART-DESIGNATION-TEXT，位宽为 8..2040 bit，重复范围为 PER-PART-NUMBER-WITHIN-LITERAL-NAME；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
@@ -3854,6 +4652,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LCS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-FILE-LENGTH in position 1 with 32 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 1 个字段位置编码 FIELD-FILE-LENGTH，位宽为 32 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3871,6 +4670,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LCS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-PROTOCOL-VERSION in position 2 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 2 个字段位置编码 FIELD-PROTOCOL-VERSION，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3888,6 +4688,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LCS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-COUNTER in position 3 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 3 个字段位置编码 FIELD-COUNTER，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3905,6 +4706,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LCS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-INFORMATION-OPERATION-STATUS-CODE in position 4 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 4 个字段位置编码 FIELD-INFORMATION-OPERATION-STATUS-CODE，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3922,6 +4724,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "repeatScope": "ONCE",
         "checkLocation": "LCS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-EXCEPTION-TIMER in position 5 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 5 个字段位置编码 FIELD-EXCEPTION-TIMER，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3939,6 +4742,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LCS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-ESTIMATED-TIME in position 6 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 6 个字段位置编码 FIELD-ESTIMATED-TIME，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3956,6 +4760,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LCS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-STATUS-DESCRIPTION-LENGTH in position 7 with 8 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 7 个字段位置编码 FIELD-STATUS-DESCRIPTION-LENGTH，位宽为 8 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -3973,6 +4778,7 @@
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "ONCE",
         "checkLocation": "LCS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-STATUS-DESCRIPTION in position 8 with 0 to 2040 bits, repeated once; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 8 个字段位置编码 FIELD-STATUS-DESCRIPTION，位宽为 0..2040 bit，重复范围为 ONCE；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
@@ -3990,6 +4796,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LUI-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-FILE-LENGTH in position 1 with 32 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 1 个字段位置编码 FIELD-FILE-LENGTH，位宽为 32 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4007,6 +4814,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LUI-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-PROTOCOL-VERSION in position 2 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 2 个字段位置编码 FIELD-PROTOCOL-VERSION，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4024,6 +4832,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LUI-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-NUMBER-OF-HEADER-FILES in position 3 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 3 个字段位置编码 FIELD-NUMBER-OF-HEADER-FILES，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4041,6 +4850,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUI-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-HEADER-FILE-NAME-LENGTH in position 4 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 4 个字段位置编码 FIELD-HEADER-FILE-NAME-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4058,6 +4868,7 @@
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUI-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-HEADER-FILE-NAME in position 5 with 8 to 2040 bits, repeated per preceding count field; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 5 个字段位置编码 FIELD-HEADER-FILE-NAME，位宽为 8..2040 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
@@ -4075,6 +4886,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUI-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-PART-NUMBER-NAME-LENGTH in position 6 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 6 个字段位置编码 FIELD-LOAD-PART-NUMBER-NAME-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4092,6 +4904,7 @@
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUI-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-PART-NUMBER-NAME in position 7 with 8 to 2040 bits, repeated per preceding count field; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 7 个字段位置编码 FIELD-LOAD-PART-NUMBER-NAME，位宽为 8..2040 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
@@ -4109,6 +4922,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-FILE-LENGTH in position 1 with 32 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 1 个字段位置编码 FIELD-FILE-LENGTH，位宽为 32 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4126,6 +4940,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-PROTOCOL-VERSION in position 2 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 2 个字段位置编码 FIELD-PROTOCOL-VERSION，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4143,6 +4958,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-UPLOAD-OPERATION-STATUS-CODE in position 3 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 3 个字段位置编码 FIELD-UPLOAD-OPERATION-STATUS-CODE，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4160,6 +4976,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH in position 4 with 8 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 4 个字段位置编码 FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH，位宽为 8 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4177,6 +4994,7 @@
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "ONCE",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-UPLOAD-STATUS-DESCRIPTION in position 5 with 0 to 2040 bits, repeated once; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 5 个字段位置编码 FIELD-UPLOAD-STATUS-DESCRIPTION，位宽为 0..2040 bit，重复范围为 ONCE；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
@@ -4194,6 +5012,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-COUNTER in position 6 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 6 个字段位置编码 FIELD-COUNTER，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4211,6 +5030,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "repeatScope": "ONCE",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-EXCEPTION-TIMER in position 7 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 7 个字段位置编码 FIELD-EXCEPTION-TIMER，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4228,6 +5048,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-ESTIMATED-TIME in position 8 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 8 个字段位置编码 FIELD-ESTIMATED-TIME，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4245,6 +5066,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-LIST-RATIO in position 9 with 24 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 9 个字段位置编码 FIELD-LOAD-LIST-RATIO，位宽为 24 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4262,6 +5084,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-NUMBER-OF-HEADER-FILES in position 10 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 10 个字段位置编码 FIELD-NUMBER-OF-HEADER-FILES，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4279,6 +5102,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-HEADER-FILE-NAME-LENGTH in position 11 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 11 个字段位置编码 FIELD-HEADER-FILE-NAME-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4296,6 +5120,7 @@
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-HEADER-FILE-NAME in position 12 with 8 to 2040 bits, repeated per preceding count field; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 12 个字段位置编码 FIELD-HEADER-FILE-NAME，位宽为 8..2040 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
@@ -4313,6 +5138,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-PART-NUMBER-NAME-LENGTH in position 13 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 13 个字段位置编码 FIELD-LOAD-PART-NUMBER-NAME-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4330,6 +5156,7 @@
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-PART-NUMBER-NAME in position 14 with 8 to 2040 bits, repeated per preceding count field; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 14 个字段位置编码 FIELD-LOAD-PART-NUMBER-NAME，位宽为 8..2040 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
@@ -4347,6 +5174,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-RATIO in position 15 with 24 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 15 个字段位置编码 FIELD-LOAD-RATIO，位宽为 24 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4364,6 +5192,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-STATUS in position 16 with 16 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 16 个字段位置编码 FIELD-LOAD-STATUS，位宽为 16 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4381,6 +5210,7 @@
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-STATUS-DESCRIPTION-LENGTH in position 17 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 17 个字段位置编码 FIELD-LOAD-STATUS-DESCRIPTION-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
@@ -4398,6 +5228,7 @@
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUR-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-STATUS-DESCRIPTION in position 18 with 0 to 2040 bits, repeated per preceding count field; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 18 个字段位置编码 FIELD-LOAD-STATUS-DESCRIPTION，位宽为 0..2040 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
@@ -4429,6 +5260,7 @@
           "UPLOAD",
           "DOWNLOAD"
         ],
+        "substitutionRule": null,
         "predicateEn": "Actor DATA-LOADER shall perform INTERPRET-AND-DISPLAY-STATUS on STATUS-CODE-0X0001 under WHEN-STATUS-CODE-0X0001-IS-RECEIVED; evidence is the resulting STATUS-MEANING-AND-DISPLAY-OBSERVABLE.",
         "predicateZh": "参与者“数据加载器”在“WHEN-STATUS-CODE-0X0001-IS-RECEIVED”下必须对“STATUS-CODE-0X0001”执行“INTERPRET-AND-DISPLAY-STATUS”；证据是“STATUS-MEANING-AND-DISPLAY-OBSERVABLE”。",
         "checkLocation": "STATUS-FILE-AND-DISPLAY"
@@ -4452,6 +5284,7 @@
           "UPLOAD",
           "DOWNLOAD"
         ],
+        "substitutionRule": null,
         "predicateEn": "Actor DATA-LOADER shall perform INTERPRET-AND-DISPLAY-STATUS on STATUS-CODE-0X1000 under WHEN-STATUS-CODE-0X1000-IS-RECEIVED; evidence is the resulting STATUS-MEANING-AND-DISPLAY-OBSERVABLE.",
         "predicateZh": "参与者“数据加载器”在“WHEN-STATUS-CODE-0X1000-IS-RECEIVED”下必须对“STATUS-CODE-0X1000”执行“INTERPRET-AND-DISPLAY-STATUS”；证据是“STATUS-MEANING-AND-DISPLAY-OBSERVABLE”。",
         "checkLocation": "STATUS-FILE-AND-DISPLAY"
@@ -4475,6 +5308,7 @@
           "UPLOAD",
           "DOWNLOAD"
         ],
+        "substitutionRule": null,
         "predicateEn": "Actor DATA-LOADER shall perform INTERPRET-AND-DISPLAY-STATUS on STATUS-CODE-0X1002 under WHEN-STATUS-CODE-0X1002-IS-RECEIVED; evidence is the resulting STATUS-MEANING-AND-DISPLAY-OBSERVABLE.",
         "predicateZh": "参与者“数据加载器”在“WHEN-STATUS-CODE-0X1002-IS-RECEIVED”下必须对“STATUS-CODE-0X1002”执行“INTERPRET-AND-DISPLAY-STATUS”；证据是“STATUS-MEANING-AND-DISPLAY-OBSERVABLE”。",
         "checkLocation": "STATUS-FILE-AND-DISPLAY"
@@ -4497,6 +5331,7 @@
           "UPLOAD",
           "DOWNLOAD"
         ],
+        "substitutionRule": null,
         "predicateEn": "Actor DATA-LOADER shall perform INTERPRET-AND-DISPLAY-STATUS on STATUS-CODE-0X0002 under WHEN-STATUS-CODE-0X0002-IS-RECEIVED; evidence is the resulting STATUS-MEANING-AND-DISPLAY-OBSERVABLE.",
         "predicateZh": "参与者“数据加载器”在“WHEN-STATUS-CODE-0X0002-IS-RECEIVED”下必须对“STATUS-CODE-0X0002”执行“INTERPRET-AND-DISPLAY-STATUS”；证据是“STATUS-MEANING-AND-DISPLAY-OBSERVABLE”。",
         "checkLocation": "STATUS-FILE-AND-DISPLAY"
@@ -4519,6 +5354,7 @@
           "UPLOAD",
           "DOWNLOAD"
         ],
+        "substitutionRule": null,
         "predicateEn": "Actor DATA-LOADER shall perform INTERPRET-AND-DISPLAY-STATUS on STATUS-CODE-0X0003 under WHEN-STATUS-CODE-0X0003-IS-RECEIVED; evidence is the resulting STATUS-MEANING-AND-DISPLAY-OBSERVABLE.",
         "predicateZh": "参与者“数据加载器”在“WHEN-STATUS-CODE-0X0003-IS-RECEIVED”下必须对“STATUS-CODE-0X0003”执行“INTERPRET-AND-DISPLAY-STATUS”；证据是“STATUS-MEANING-AND-DISPLAY-OBSERVABLE”。",
         "checkLocation": "STATUS-FILE-AND-DISPLAY"
@@ -4541,6 +5377,7 @@
           "UPLOAD",
           "DOWNLOAD"
         ],
+        "substitutionRule": null,
         "predicateEn": "Actor DATA-LOADER shall perform INTERPRET-AND-DISPLAY-STATUS on STATUS-CODE-0X0004 under WHEN-STATUS-CODE-0X0004-IS-RECEIVED; evidence is the resulting STATUS-MEANING-AND-DISPLAY-OBSERVABLE.",
         "predicateZh": "参与者“数据加载器”在“WHEN-STATUS-CODE-0X0004-IS-RECEIVED”下必须对“STATUS-CODE-0X0004”执行“INTERPRET-AND-DISPLAY-STATUS”；证据是“STATUS-MEANING-AND-DISPLAY-OBSERVABLE”。",
         "checkLocation": "STATUS-FILE-AND-DISPLAY"
@@ -4563,6 +5400,7 @@
           "UPLOAD",
           "DOWNLOAD"
         ],
+        "substitutionRule": null,
         "predicateEn": "Actor DATA-LOADER shall perform INTERPRET-AND-DISPLAY-STATUS on STATUS-CODE-0X1003 under WHEN-STATUS-CODE-0X1003-IS-RECEIVED; evidence is the resulting STATUS-MEANING-AND-DISPLAY-OBSERVABLE.",
         "predicateZh": "参与者“数据加载器”在“WHEN-STATUS-CODE-0X1003-IS-RECEIVED”下必须对“STATUS-CODE-0X1003”执行“INTERPRET-AND-DISPLAY-STATUS”；证据是“STATUS-MEANING-AND-DISPLAY-OBSERVABLE”。",
         "checkLocation": "STATUS-FILE-AND-DISPLAY"
@@ -4585,6 +5423,7 @@
           "UPLOAD",
           "DOWNLOAD"
         ],
+        "substitutionRule": null,
         "predicateEn": "Actor DATA-LOADER shall perform INTERPRET-AND-DISPLAY-STATUS on STATUS-CODE-0X1004 under WHEN-STATUS-CODE-0X1004-IS-RECEIVED; evidence is the resulting STATUS-MEANING-AND-DISPLAY-OBSERVABLE.",
         "predicateZh": "参与者“数据加载器”在“WHEN-STATUS-CODE-0X1004-IS-RECEIVED”下必须对“STATUS-CODE-0X1004”执行“INTERPRET-AND-DISPLAY-STATUS”；证据是“STATUS-MEANING-AND-DISPLAY-OBSERVABLE”。",
         "checkLocation": "STATUS-FILE-AND-DISPLAY"
@@ -4607,6 +5446,7 @@
           "UPLOAD",
           "DOWNLOAD"
         ],
+        "substitutionRule": null,
         "predicateEn": "Actor DATA-LOADER shall perform INTERPRET-AND-DISPLAY-STATUS on STATUS-CODE-0X1005 under WHEN-STATUS-CODE-0X1005-IS-RECEIVED; evidence is the resulting STATUS-MEANING-AND-DISPLAY-OBSERVABLE.",
         "predicateZh": "参与者“数据加载器”在“WHEN-STATUS-CODE-0X1005-IS-RECEIVED”下必须对“STATUS-CODE-0X1005”执行“INTERPRET-AND-DISPLAY-STATUS”；证据是“STATUS-MEANING-AND-DISPLAY-OBSERVABLE”。",
         "checkLocation": "STATUS-FILE-AND-DISPLAY"
@@ -4625,6 +5465,7 @@
         "applicableOperations": [
           "UPLOAD"
         ],
+        "substitutionRule": null,
         "predicateEn": "Actor DATA-LOADER shall perform INTERPRET-AND-DISPLAY-STATUS on STATUS-CODE-0X1007 under WHEN-STATUS-CODE-0X1007-IS-RECEIVED; evidence is the resulting STATUS-MEANING-AND-DISPLAY-OBSERVABLE.",
         "predicateZh": "参与者“数据加载器”在“WHEN-STATUS-CODE-0X1007-IS-RECEIVED”下必须对“STATUS-CODE-0X1007”执行“INTERPRET-AND-DISPLAY-STATUS”；证据是“STATUS-MEANING-AND-DISPLAY-OBSERVABLE”。",
         "checkLocation": "STATUS-FILE-AND-DISPLAY"
@@ -4643,6 +5484,7 @@
         "applicableOperations": [
           "DOWNLOAD"
         ],
+        "substitutionRule": null,
         "predicateEn": "Actor DATA-LOADER shall perform INTERPRET-AND-DISPLAY-STATUS on STATUS-CODE-0X1007 under WHEN-STATUS-CODE-0X1007-IS-RECEIVED; evidence is the resulting STATUS-MEANING-AND-DISPLAY-OBSERVABLE.",
         "predicateZh": "参与者“数据加载器”在“WHEN-STATUS-CODE-0X1007-IS-RECEIVED”下必须对“STATUS-CODE-0X1007”执行“INTERPRET-AND-DISPLAY-STATUS”；证据是“STATUS-MEANING-AND-DISPLAY-OBSERVABLE”。",
         "checkLocation": "STATUS-FILE-AND-DISPLAY"
@@ -4657,6 +5499,7 @@
         "targetTextRule": null,
         "applicableProtocolFiles": [],
         "applicableOperations": [],
+        "substitutionRule": "SUBSTITUTE-ACTIVE-OPERATION-NAME",
         "predicateEn": "Actor DATA-LOADER-DISPLAY shall perform SUBSTITUTE-OPERATION-NAME on STATUS-DISPLAY-TEXT under WHEN-RENDERING-TABLE-6.4.10-STATUS; evidence is the resulting DISPLAY-TEXT-OBSERVABLE.",
         "predicateZh": "参与者“DATA-LOADER-DISPLAY”在“WHEN-RENDERING-TABLE-6.4.10-STATUS”下必须对“STATUS-DISPLAY-TEXT”执行“SUBSTITUTE-OPERATION-NAME”；证据是“DISPLAY-TEXT-OBSERVABLE”。",
         "checkLocation": "STATUS-FILE-AND-DISPLAY"
@@ -5485,8 +6328,8 @@
         "noteZh": "INFORMATION 的 LCL 列表先于 LCS 状态。"
       }
     ],
-    "stepSemanticsEn": "Delay grows clocks in C; variables stay unchanged; invariants hold. A discrete step evaluates guard, then updates, then resets, then outputs, then the target. Timeout events are enabled only by their clock-bound guards. The input event is the stimulus; outputs are additional emissions and must not repeat the stimulus as a second message.",
-    "stepSemanticsZh": "延时时 C 中时钟增长，变量不变，不变量成立。离散步骤依次求值守卫、更新、复位、输出，然后进入目标。超时事件仅由其时钟边界守卫使能。输入事件是刺激；输出是额外发射，不得把刺激再计为第二条报文。"
+    "stepSemanticsEn": "Delay grows clocks in C; variables stay unchanged; invariants hold. A discrete step binds the input event's typed payload, evaluates the guard (PAYLOAD names read that payload, not implicit variable writes), then updates, then resets matching clock instances, then outputs, then the target. Timeout and WAIT-elapsed events are enabled only by COMPARE(enablingCompare) between enablingClock and enablingBound. The input event is the stimulus; outputs are additional emissions and must not repeat the stimulus as a second message.",
+    "stepSemanticsZh": "延时时 C 中时钟增长，变量不变，不变量成立。离散步骤先绑定输入事件的有类型 payload，再求值守卫（PAYLOAD 名读取该 payload，不是隐式变量写入），然后更新、复位匹配的时钟实例、输出，进入目标。超时与 WAIT 到期事件仅由 enablingClock 与 enablingBound 之间的 COMPARE(enablingCompare) 使能。输入事件是刺激；输出是额外发射，不得把刺激再计为第二条报文。"
   },
   "timingCatalog": [
     {
@@ -5499,15 +6342,20 @@
       "correlationKey": "TFTP-PEER-AND-REJECTED-TRANSFER-REQUEST",
       "pairingPolicy": "PAIR-WAIT-DELAY-WITH-REPLACEMENT-TFTP-TRANSFER",
       "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
-      "clockId": "CLK_EXCEPTION",
+      "clockId": "CLK_WAIT",
       "resets": [
-        "T_ENTER_UPL_EXC",
-        "T_ENTER_INF_EXC",
-        "T_INF_LCS_WRQ"
+        "T_WAIT_FROM_UPL_FILE",
+        "T_WAIT_FROM_UPL_LUR",
+        "T_WAIT_FROM_INF_LCI",
+        "T_WAIT_FROM_INF_LCL"
       ],
-      "lowerBound": null,
-      "upperBound": "MESSAGE_TIMER_VALUE",
-      "lowerBoundary": "UNRESOLVED",
+      "constraintKind": "NOT-BEFORE-LOWER-BOUND",
+      "parameterOrigin": "MESSAGE-CARRIED-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
+      "lowerBound": "MESSAGE_TIMER_VALUE",
+      "upperBound": null,
+      "lowerBoundary": "CLOSED",
       "upperBoundary": "UNRESOLVED",
       "unit": "s",
       "boundKind": "MESSAGE-PARAMETER",
@@ -5515,10 +6363,10 @@
       "sourceParameter": "MESSAGE-TIMER-VALUE",
       "expression": {
         "kind": "COMPARE",
-        "op": "LE",
+        "op": "GE",
         "left": {
           "kind": "CLOCK",
-          "name": "CLK_EXCEPTION"
+          "name": "CLK_WAIT"
         },
         "right": {
           "kind": "SYMBOL",
@@ -5531,13 +6379,17 @@
         "SU-ARINC-615A-3-TABLE-6_4_3-1-R006"
       ],
       "staticCheck": "RELATION-BOUND",
-      "observationWindow": "TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE",
+      "observationWindow": "RETRY-NOT-BEFORE-CARRIED-TIMER",
       "observationRoleEn": "Protocol event timestamps at the named peer; instrument error is a later M6 parameter, not network delay.",
       "observationRoleZh": "在具名对端记录协议事件时间戳；仪表误差是后续 M6 参数，不是网络时延。",
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_WAIT_RECEIVED",
+        "EV_WAIT_ELAPSED"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00094",
@@ -5556,6 +6408,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "SYMBOLIC-SOURCE-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "DLP_TO",
       "lowerBoundary": "UNRESOLVED",
@@ -5588,7 +6444,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_DLP"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00097",
@@ -5607,6 +6466,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "SYMBOLIC-SOURCE-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "DLP_TO",
       "lowerBoundary": "UNRESOLVED",
@@ -5639,7 +6502,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_DLP"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00098",
@@ -5658,6 +6524,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "SYMBOLIC-SOURCE-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "DLP_TO",
       "lowerBoundary": "UNRESOLVED",
@@ -5690,7 +6560,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_DLP"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00099",
@@ -5708,6 +6581,10 @@
         "T_ENTER_INF_EXC",
         "T_INF_LCS_WRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "MESSAGE-CARRIED-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "EXCEPTION_TIMER",
       "lowerBoundary": "UNRESOLVED",
@@ -5740,7 +6617,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_EXCEPTION"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00100",
@@ -5758,6 +6638,10 @@
         "T_ENTER_INF_EXC",
         "T_INF_LCS_WRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "MESSAGE-CARRIED-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "EXCEPTION_TIMER",
       "lowerBoundary": "UNRESOLVED",
@@ -5790,7 +6674,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_EXCEPTION"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00101",
@@ -5808,6 +6695,10 @@
         "T_ENTER_INF_EXC",
         "T_INF_LCS_WRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "MESSAGE-CARRIED-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "EXCEPTION_TIMER",
       "lowerBoundary": "UNRESOLVED",
@@ -5840,7 +6731,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_EXCEPTION"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00102",
@@ -5859,6 +6753,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "SYMBOLIC-SOURCE-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "DLP_TO",
       "lowerBoundary": "UNRESOLVED",
@@ -5891,7 +6789,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_DLP"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00106",
@@ -5909,6 +6810,10 @@
         "T_ENTER_INF_EXC",
         "T_INF_LCS_WRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "MESSAGE-CARRIED-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "EXCEPTION_TIMER",
       "lowerBoundary": "UNRESOLVED",
@@ -5941,7 +6846,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_EXCEPTION"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00107",
@@ -5959,6 +6867,10 @@
         "T_ENTER_INF_EXC",
         "T_INF_LCS_WRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "MESSAGE-CARRIED-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "EXCEPTION_TIMER",
       "lowerBoundary": "UNRESOLVED",
@@ -5991,7 +6903,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_EXCEPTION"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00108",
@@ -6009,6 +6924,10 @@
         "T_ENTER_INF_EXC",
         "T_INF_LCS_WRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "MESSAGE-CARRIED-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "EXCEPTION_TIMER",
       "lowerBoundary": "UNRESOLVED",
@@ -6041,7 +6960,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_EXCEPTION"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00168",
@@ -6060,6 +6982,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "SYMBOLIC-SOURCE-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "TFTP_TO",
       "lowerBoundary": "UNRESOLVED",
@@ -6092,7 +7018,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_TFTP"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00176",
@@ -6111,6 +7040,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "SYMBOLIC-SOURCE-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "DLP_TO",
       "lowerBoundary": "UNRESOLVED",
@@ -6143,7 +7076,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_DLP"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00177",
@@ -6162,6 +7098,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "CONSTANT-DEFINITION",
+      "parameterOrigin": "FIXED-SOURCE-CONSTANT",
+      "m1LowerBoundary": "CLOSED",
+      "m1UpperBoundary": "CLOSED",
       "lowerBound": 2,
       "upperBound": 2,
       "lowerBoundary": "CLOSED",
@@ -6185,7 +7125,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_TFTP"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00178",
@@ -6204,6 +7147,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "SOURCE-EQUATION",
+      "parameterOrigin": "SYMBOLIC-SOURCE-EQUATION",
+      "m1LowerBoundary": "CLOSED",
+      "m1UpperBoundary": "CLOSED",
       "lowerBound": 0,
       "upperBound": "TFTP-TO-DIVIDED-BY-4",
       "lowerBoundary": "CLOSED",
@@ -6246,7 +7193,8 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": []
     },
     {
       "id": "TIM-CRS-M1-00179",
@@ -6265,6 +7213,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "SOURCE-EQUATION",
+      "parameterOrigin": "SYMBOLIC-SOURCE-EQUATION",
+      "m1LowerBoundary": "CLOSED",
+      "m1UpperBoundary": "CLOSED",
       "lowerBound": 0,
       "upperBound": "TFTP-TO-DIVIDED-BY-2",
       "lowerBoundary": "CLOSED",
@@ -6307,7 +7259,8 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": []
     },
     {
       "id": "TIM-CRS-M1-00184",
@@ -6326,6 +7279,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "SYMBOLIC-SOURCE-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "DLP_TO",
       "lowerBoundary": "UNRESOLVED",
@@ -6358,7 +7315,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_DLP"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00185",
@@ -6377,6 +7337,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "SYMBOLIC-SOURCE-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "DLP_TO",
       "lowerBoundary": "UNRESOLVED",
@@ -6409,7 +7373,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_DLP"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00186",
@@ -6428,6 +7395,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "PROHIBITION-WINDOW-UPPER-BOUND",
+      "parameterOrigin": "SYMBOLIC-SOURCE-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "DLP_TO",
       "lowerBoundary": "UNRESOLVED",
@@ -6460,7 +7431,8 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": []
     },
     {
       "id": "TIM-CRS-M1-00187",
@@ -6479,6 +7451,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "CONSTANT-DEFINITION",
+      "parameterOrigin": "FIXED-SOURCE-CONSTANT",
+      "m1LowerBoundary": "CLOSED",
+      "m1UpperBoundary": "CLOSED",
       "lowerBound": 13,
       "upperBound": 13,
       "lowerBoundary": "CLOSED",
@@ -6502,7 +7478,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_DLP"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00188",
@@ -6521,6 +7500,10 @@
         "T_UPL_LUR_WRQ",
         "T_UPL_FILE_RRQ"
       ],
+      "constraintKind": "SOURCE-EQUATION",
+      "parameterOrigin": "SYMBOLIC-SOURCE-EQUATION",
+      "m1LowerBoundary": "CLOSED",
+      "m1UpperBoundary": "OPEN",
       "lowerBound": 0,
       "upperBound": "DLP-TO-MINUS-RETRY-AND-NETWORK-TERMS",
       "lowerBoundary": "CLOSED",
@@ -6643,7 +7626,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_DLP"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00305",
@@ -6661,6 +7647,10 @@
         "T_ENTER_INF_EXC",
         "T_INF_LCS_WRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "MESSAGE-CARRIED-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "EXCEPTION_TIMER",
       "lowerBoundary": "UNRESOLVED",
@@ -6693,7 +7683,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_EXCEPTION"
+      ]
     },
     {
       "id": "TIM-CRS-M1-00322",
@@ -6711,6 +7704,10 @@
         "T_ENTER_INF_EXC",
         "T_INF_LCS_WRQ"
       ],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "MESSAGE-CARRIED-PARAMETER",
+      "m1LowerBoundary": "UNRESOLVED",
+      "m1UpperBoundary": "UNRESOLVED",
       "lowerBound": null,
       "upperBound": "EXCEPTION_TIMER",
       "lowerBoundary": "UNRESOLVED",
@@ -6743,7 +7740,10 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. Network delay is not instrument error. No unsourced clock-sync assumption.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。网络时延不是仪表误差。不采用无来源时钟同步假设。",
-      "m6Instantiation": "REQUIRED-BEFORE-ORACLE"
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": [
+        "EV_TIMEOUT_EXCEPTION"
+      ]
     }
   ],
   "requirementDispositions": [
@@ -7130,7 +8130,15 @@
       "modelTargetIds": [
         "IF_TFTP",
         "TIM-CRS-M1-00032",
-        "CLK_EXCEPTION"
+        "CLK_WAIT",
+        "T_WAIT_FROM_UPL_FILE",
+        "T_WAIT_FROM_UPL_LUR",
+        "T_WAIT_FROM_INF_LCI",
+        "T_WAIT_FROM_INF_LCL",
+        "T_WAIT_RETRY_UPL_FILE",
+        "T_WAIT_RETRY_UPL_LUR",
+        "T_WAIT_RETRY_INF_LCI",
+        "T_WAIT_RETRY_INF_LCL"
       ]
     },
     {
@@ -10903,6 +11911,7 @@
         "T_ABORT_FROM_S_INF_LCL_XFER",
         "T_ABORT_FROM_S_INF_LCS_XFER",
         "T_ABORT_FROM_S_INF_EXCEPTION",
+        "T_ABORT_FROM_S_WAIT_RETRY",
         "T_ABORT_FROM_S_UPL_LUI_XFER",
         "T_ABORT_FROM_S_UPL_LIST_SENT",
         "T_ABORT_FROM_S_UPL_LUR_XFER",
@@ -11805,7 +12814,7 @@
       "id": "TR-CRS-M1-00032-0034",
       "requirementId": "CRS-M1-00032",
       "targetKind": "CLOCK",
-      "targetId": "CLK_EXCEPTION",
+      "targetId": "CLK_WAIT",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "SHOULD",
       "rationaleCode": "Clock used by this timing obligation.",
@@ -16422,7 +17431,95 @@
       "rationaleZh": "迁移 T_ENTER_INF_EXC 引用此义务。"
     },
     {
-      "id": "TR-CRS-M1-00341-0454",
+      "id": "TR-CRS-M1-00032-0454",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_FROM_UPL_FILE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_FROM_UPL_FILE cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_FROM_UPL_FILE cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_FROM_UPL_FILE 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0455",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_FROM_UPL_LUR",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_FROM_UPL_LUR cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_FROM_UPL_LUR cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_FROM_UPL_LUR 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0456",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_FROM_INF_LCI",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_FROM_INF_LCI cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_FROM_INF_LCI cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_FROM_INF_LCI 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0457",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_FROM_INF_LCL",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_FROM_INF_LCL cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_FROM_INF_LCL cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_FROM_INF_LCL 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0458",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_RETRY_UPL_FILE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_RETRY_UPL_FILE cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_RETRY_UPL_FILE cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_RETRY_UPL_FILE 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0459",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_RETRY_UPL_LUR",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_RETRY_UPL_LUR cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_RETRY_UPL_LUR cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_RETRY_UPL_LUR 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0460",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_RETRY_INF_LCI",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_RETRY_INF_LCI cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_RETRY_INF_LCI cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_RETRY_INF_LCI 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0461",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_RETRY_INF_LCL",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_RETRY_INF_LCL cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_RETRY_INF_LCL cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_RETRY_INF_LCL 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0462",
       "requirementId": "CRS-M1-00341",
       "targetKind": "TRANSITION",
       "targetId": "T_ABORT_DL",
@@ -16433,7 +17530,7 @@
       "rationaleZh": "迁移 T_ABORT_DL 引用此义务。"
     },
     {
-      "id": "TR-CRS-M1-00340-0455",
+      "id": "TR-CRS-M1-00340-0463",
       "requirementId": "CRS-M1-00340",
       "targetKind": "TRANSITION",
       "targetId": "T_ABORT_TH",
@@ -16444,7 +17541,7 @@
       "rationaleZh": "迁移 T_ABORT_TH 引用此义务。"
     },
     {
-      "id": "TR-CRS-M1-00340-0456",
+      "id": "TR-CRS-M1-00340-0464",
       "requirementId": "CRS-M1-00340",
       "targetKind": "TRANSITION",
       "targetId": "T_ABORTED",
@@ -16455,7 +17552,7 @@
       "rationaleZh": "迁移 T_ABORTED 引用此义务。"
     },
     {
-      "id": "TR-CRS-M1-00341-0457",
+      "id": "TR-CRS-M1-00341-0465",
       "requirementId": "CRS-M1-00341",
       "targetKind": "TRANSITION",
       "targetId": "T_ABORTED",
@@ -16466,7 +17563,7 @@
       "rationaleZh": "迁移 T_ABORTED 引用此义务。"
     },
     {
-      "id": "TR-CRS-M1-00341-0458",
+      "id": "TR-CRS-M1-00341-0466",
       "requirementId": "CRS-M1-00341",
       "targetKind": "TRANSITION",
       "targetId": "T_ABORT_FROM_S_INF_LCI_RRQ",
@@ -16477,7 +17574,7 @@
       "rationaleZh": "迁移 T_ABORT_FROM_S_INF_LCI_RRQ 引用此义务。"
     },
     {
-      "id": "TR-CRS-M1-00341-0459",
+      "id": "TR-CRS-M1-00341-0467",
       "requirementId": "CRS-M1-00341",
       "targetKind": "TRANSITION",
       "targetId": "T_ABORT_FROM_S_INF_LCL_XFER",
@@ -16488,7 +17585,7 @@
       "rationaleZh": "迁移 T_ABORT_FROM_S_INF_LCL_XFER 引用此义务。"
     },
     {
-      "id": "TR-CRS-M1-00341-0460",
+      "id": "TR-CRS-M1-00341-0468",
       "requirementId": "CRS-M1-00341",
       "targetKind": "TRANSITION",
       "targetId": "T_ABORT_FROM_S_INF_LCS_XFER",
@@ -16499,7 +17596,7 @@
       "rationaleZh": "迁移 T_ABORT_FROM_S_INF_LCS_XFER 引用此义务。"
     },
     {
-      "id": "TR-CRS-M1-00341-0461",
+      "id": "TR-CRS-M1-00341-0469",
       "requirementId": "CRS-M1-00341",
       "targetKind": "TRANSITION",
       "targetId": "T_ABORT_FROM_S_INF_EXCEPTION",
@@ -16510,7 +17607,18 @@
       "rationaleZh": "迁移 T_ABORT_FROM_S_INF_EXCEPTION 引用此义务。"
     },
     {
-      "id": "TR-CRS-M1-00341-0462",
+      "id": "TR-CRS-M1-00341-0470",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_FROM_S_WAIT_RETRY",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_FROM_S_WAIT_RETRY cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_FROM_S_WAIT_RETRY cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_FROM_S_WAIT_RETRY 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0471",
       "requirementId": "CRS-M1-00341",
       "targetKind": "TRANSITION",
       "targetId": "T_ABORT_FROM_S_UPL_LUI_XFER",
@@ -16521,7 +17629,7 @@
       "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_LUI_XFER 引用此义务。"
     },
     {
-      "id": "TR-CRS-M1-00341-0463",
+      "id": "TR-CRS-M1-00341-0472",
       "requirementId": "CRS-M1-00341",
       "targetKind": "TRANSITION",
       "targetId": "T_ABORT_FROM_S_UPL_LIST_SENT",
@@ -16532,7 +17640,7 @@
       "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_LIST_SENT 引用此义务。"
     },
     {
-      "id": "TR-CRS-M1-00341-0464",
+      "id": "TR-CRS-M1-00341-0473",
       "requirementId": "CRS-M1-00341",
       "targetKind": "TRANSITION",
       "targetId": "T_ABORT_FROM_S_UPL_LUR_XFER",
@@ -16543,7 +17651,7 @@
       "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_LUR_XFER 引用此义务。"
     },
     {
-      "id": "TR-CRS-M1-00341-0465",
+      "id": "TR-CRS-M1-00341-0474",
       "requirementId": "CRS-M1-00341",
       "targetKind": "TRANSITION",
       "targetId": "T_ABORT_FROM_S_UPL_LUS_XFER",
@@ -16601,10 +17709,12 @@
       "deadlineGate": "PROFILE-MODEL-REFINEMENT-GATE",
       "evidence": [
         "REF-A1-00143-BLOCKED-BY-FILE-IDENTITY",
-        "REF-A1-00315-BLOCKED-BY-FILE-IDENTITY"
+        "REF-A1-00315-BLOCKED-BY-FILE-IDENTITY",
+        "REF-SEQ-00365-WRQ-ACTOR",
+        "CR-2026-009"
       ],
-      "noteEn": "6.4.4 LUI/LUR identity conflict blocks the previous 665 edges.",
-      "noteZh": "6.4.4 的 LUI/LUR 身份冲突阻塞原先 665 边。"
+      "noteEn": "6.4.4 LUI/LUR identity and the LUR WRQ actor remain OPEN-M1-CORRECTION; CR-2026-009 is the authorization request, not closure.",
+      "noteZh": "6.4.4 的 LUI/LUR 身份与 LUR WRQ 参与者仍为 OPEN-M1-CORRECTION；CR-2026-009 是授权请求，不是关闭。"
     },
     {
       "id": "A-2",
@@ -16769,10 +17879,11 @@
       "ownerRole": "INCREMENTAL-RG1",
       "deadlineGate": "PROFILE-MODEL-REFINEMENT-GATE",
       "evidence": [
-        "REF-A1-00143-BLOCKED-BY-FILE-IDENTITY"
+        "REF-A1-00143-BLOCKED-BY-FILE-IDENTITY",
+        "CR-2026-009"
       ],
-      "noteEn": "Stop-the-line M1 LUI/LUR identity correction; M2 does not rewrite M1.",
-      "noteZh": "停线等待 M1 LUI/LUR 身份纠正；M2 不改写 M1。"
+      "noteEn": "Stop-the-line M1 LUI/LUR identity correction; M2 does not rewrite M1. CR-2026-009 requests successor-input authorization.",
+      "noteZh": "停线等待 M1 LUI/LUR 身份纠正；M2 不改写 M1。CR-2026-009 请求后继输入授权。"
     }
   ],
   "analysisScope": {
@@ -16794,28 +17905,382 @@
       "M1 6.4.4 file identity"
     ]
   },
+  "discreteWitnesses": [
+    {
+      "id": "W-UPL-ACCEPT",
+      "summaryEn": "UPLOAD init accept: payload.decision=ACCEPT enables the branch; lastDecision is written after the guard.",
+      "summaryZh": "UPLOAD 初始化接受：payload.decision=ACCEPT 使能该分支；守卫求值后再写入 lastDecision。",
+      "steps": [
+        {
+          "transitionId": "T_UPL_LUI_RRQ"
+        },
+        {
+          "transitionId": "T_UPL_LUI_XFER"
+        },
+        {
+          "transitionId": "T_UPL_EVAL"
+        },
+        {
+          "transitionId": "T_UPL_ACCEPT_INIT",
+          "payload": {
+            "decision": "ACCEPT"
+          },
+          "expectVariables": {
+            "lastDecision": "ACCEPT",
+            "listAccepted": "FALSE"
+          }
+        }
+      ]
+    },
+    {
+      "id": "W-UPL-REJECT",
+      "summaryEn": "UPLOAD init reject from payload.decision=REJECT starting at lastDecision=NONE.",
+      "summaryZh": "从 lastDecision=NONE 起，payload.decision=REJECT 使能 UPLOAD 初始化拒绝。",
+      "steps": [
+        {
+          "transitionId": "T_UPL_LUI_RRQ"
+        },
+        {
+          "transitionId": "T_UPL_LUI_XFER"
+        },
+        {
+          "transitionId": "T_UPL_EVAL"
+        },
+        {
+          "transitionId": "T_UPL_REJECT",
+          "payload": {
+            "decision": "REJECT"
+          },
+          "expectVariables": {
+            "lastDecision": "REJECT"
+          }
+        }
+      ]
+    },
+    {
+      "id": "W-INF-ACCEPT",
+      "summaryEn": "INFORMATION init accept uses the same typed payload, not a pre-written lastDecision.",
+      "summaryZh": "INFORMATION 初始化接受使用同一有类型 payload，而不是预先写好的 lastDecision。",
+      "steps": [
+        {
+          "transitionId": "T_INF_LCI_RRQ"
+        },
+        {
+          "transitionId": "T_INF_LCI_XFER"
+        },
+        {
+          "transitionId": "T_INF_EVAL"
+        },
+        {
+          "transitionId": "T_INF_ACCEPT_INIT",
+          "payload": {
+            "decision": "ACCEPT"
+          },
+          "expectVariables": {
+            "lastDecision": "ACCEPT"
+          }
+        }
+      ]
+    },
+    {
+      "id": "W-INF-REJECT",
+      "summaryEn": "INFORMATION init reject from payload.decision=REJECT.",
+      "summaryZh": "INFORMATION 初始化拒绝来自 payload.decision=REJECT。",
+      "steps": [
+        {
+          "transitionId": "T_INF_LCI_RRQ"
+        },
+        {
+          "transitionId": "T_INF_LCI_XFER"
+        },
+        {
+          "transitionId": "T_INF_EVAL"
+        },
+        {
+          "transitionId": "T_INF_REJECT",
+          "payload": {
+            "decision": "REJECT"
+          },
+          "expectVariables": {
+            "lastDecision": "REJECT"
+          }
+        }
+      ]
+    },
+    {
+      "id": "W-LIST-NOT-READY",
+      "summaryEn": "After init accept the list is not yet offered; LUR WRQ is not enabled.",
+      "summaryZh": "初始化接受后列表尚未提交；LUR WRQ 不能使能。",
+      "steps": [
+        {
+          "transitionId": "T_UPL_LUI_RRQ"
+        },
+        {
+          "transitionId": "T_UPL_LUI_XFER"
+        },
+        {
+          "transitionId": "T_UPL_EVAL"
+        },
+        {
+          "transitionId": "T_UPL_ACCEPT_INIT",
+          "payload": {
+            "decision": "ACCEPT"
+          }
+        },
+        {
+          "transitionId": "T_UPL_LUR_WRQ",
+          "expectEnabled": false
+        }
+      ]
+    },
+    {
+      "id": "W-LUR-AFTER-READY",
+      "summaryEn": "After the list is offered, DL WRQ LUR becomes enabled, writes listAccepted=TRUE, then TH ACK.",
+      "summaryZh": "列表提交后数据加载器 LUR WRQ 使能，写入 listAccepted=TRUE，随后目标硬件 ACK。",
+      "steps": [
+        {
+          "transitionId": "T_UPL_LUI_RRQ"
+        },
+        {
+          "transitionId": "T_UPL_LUI_XFER"
+        },
+        {
+          "transitionId": "T_UPL_EVAL"
+        },
+        {
+          "transitionId": "T_UPL_ACCEPT_INIT",
+          "payload": {
+            "decision": "ACCEPT"
+          }
+        },
+        {
+          "transitionId": "T_UPL_LIST_OFFER",
+          "expectVariables": {
+            "listOffered": "TRUE",
+            "listAccepted": "FALSE"
+          }
+        },
+        {
+          "transitionId": "T_UPL_WAIT_LUS0001",
+          "expectVariables": {
+            "listAccepted": "FALSE"
+          }
+        },
+        {
+          "transitionId": "T_UPL_LUR_WRQ",
+          "expectVariables": {
+            "listAccepted": "TRUE"
+          }
+        },
+        {
+          "transitionId": "T_UPL_LUR_ACK"
+        },
+        {
+          "transitionId": "T_UPL_LUR_XFER"
+        }
+      ]
+    },
+    {
+      "id": "W-SESSION-RESET",
+      "summaryEn": "A later UPLOAD start after INFORMATION completion resets lastDecision and list flags.",
+      "summaryZh": "INFORMATION 完成后再启动 UPLOAD 时复位 lastDecision 与列表标志。",
+      "steps": [
+        {
+          "transitionId": "T_INF_LCI_RRQ"
+        },
+        {
+          "transitionId": "T_INF_LCI_XFER"
+        },
+        {
+          "transitionId": "T_INF_EVAL"
+        },
+        {
+          "transitionId": "T_INF_ACCEPT_INIT",
+          "payload": {
+            "decision": "ACCEPT"
+          }
+        },
+        {
+          "transitionId": "T_INF_LCL_WRQ"
+        },
+        {
+          "transitionId": "T_INF_LCL_ACK"
+        },
+        {
+          "transitionId": "T_INF_LCL_XFER"
+        },
+        {
+          "transitionId": "T_INF_APP"
+        },
+        {
+          "transitionId": "T_INF_LCS_WRQ"
+        },
+        {
+          "transitionId": "T_INF_LCS_XFER"
+        },
+        {
+          "transitionId": "T_UPL_LUI_RRQ_AFTER_INF",
+          "expectVariables": {
+            "lastDecision": "NONE",
+            "listAccepted": "FALSE",
+            "listOffered": "FALSE",
+            "activeOperation": "UPLOAD"
+          }
+        }
+      ]
+    },
+    {
+      "id": "W-WAIT-NOT-BEFORE",
+      "summaryEn": "WAIT retry is disabled while CLK_WAIT is below MESSAGE_TIMER_VALUE and enabled at the closed lower bound.",
+      "summaryZh": "CLK_WAIT 低于 MESSAGE_TIMER_VALUE 时禁止 WAIT 重试；到达闭下界后才使能。",
+      "steps": [
+        {
+          "transitionId": "T_UPL_LUI_RRQ"
+        },
+        {
+          "transitionId": "T_UPL_LUI_XFER"
+        },
+        {
+          "transitionId": "T_UPL_EVAL"
+        },
+        {
+          "transitionId": "T_UPL_ACCEPT_INIT",
+          "payload": {
+            "decision": "ACCEPT"
+          }
+        },
+        {
+          "transitionId": "T_UPL_LIST_OFFER"
+        },
+        {
+          "transitionId": "T_UPL_LUR_WRQ"
+        },
+        {
+          "transitionId": "T_UPL_LUR_ACK"
+        },
+        {
+          "transitionId": "T_UPL_LUR_XFER"
+        },
+        {
+          "transitionId": "T_UPL_FILE_RRQ"
+        },
+        {
+          "transitionId": "T_UPL_FILE_XFER"
+        },
+        {
+          "transitionId": "T_WAIT_FROM_UPL_FILE",
+          "expectVariables": {
+            "waitResume": "UPL_FILE"
+          }
+        },
+        {
+          "transitionId": "T_WAIT_RETRY_UPL_FILE",
+          "clocks": {
+            "CLK_WAIT": 0
+          },
+          "parameters": {
+            "MESSAGE_TIMER_VALUE": 5
+          },
+          "expectEnabled": false
+        },
+        {
+          "transitionId": "T_WAIT_RETRY_UPL_FILE",
+          "clocks": {
+            "CLK_WAIT": 5
+          },
+          "parameters": {
+            "MESSAGE_TIMER_VALUE": 5
+          },
+          "expectTarget": "S_UPL_FILE_RRQ"
+        }
+      ]
+    },
+    {
+      "id": "W-ACCEPT-WITHOUT-PAYLOAD",
+      "summaryEn": "Accept is not enabled by lastDecision alone; missing payload.decision leaves the guard false.",
+      "summaryZh": "仅有 lastDecision 不能使能接受；缺少 payload.decision 时守卫为假。",
+      "steps": [
+        {
+          "transitionId": "T_UPL_LUI_RRQ"
+        },
+        {
+          "transitionId": "T_UPL_LUI_XFER"
+        },
+        {
+          "transitionId": "T_UPL_EVAL"
+        },
+        {
+          "transitionId": "T_UPL_ACCEPT_INIT",
+          "expectEnabled": false
+        }
+      ]
+    }
+  ],
+  "blockingInputs": [
+    {
+      "id": "M1-FILE-IDENTITY-6-4-4",
+      "status": "OPEN-M1-CORRECTION",
+      "authorizationRequest": "CR-2026-009",
+      "blocksFinalApproval": true,
+      "requirementIds": [
+        "CRS-M1-00143",
+        "CRS-M1-00309",
+        "CRS-M1-00310",
+        "CRS-M1-00311",
+        "CRS-M1-00312",
+        "CRS-M1-00313",
+        "CRS-M1-00314",
+        "CRS-M1-00315"
+      ],
+      "noteEn": "Successor M1 delta only after user authorization. Frozen merge bytes stay unchanged.",
+      "noteZh": "仅在用户授权后做后继 M1 增量。冻结合并字节保持不变。"
+    },
+    {
+      "id": "SEQ-LUR-WRQ-ACTOR",
+      "status": "OPEN-M1-CORRECTION",
+      "authorizationRequest": "CR-2026-009",
+      "blocksFinalApproval": true,
+      "requirementIds": [
+        "CRS-M1-00365"
+      ],
+      "noteEn": "M2 follows visual TFTP-write direction; frozen M1 actor tuple is not rewritten.",
+      "noteZh": "M2 遵循目视 TFTP 写方向；不改写冻结 M1 参与者元组。"
+    },
+    {
+      "id": "NET-ISSUE-EDITION",
+      "status": "OPEN-PENDING-INDEPENDENT-ACCEPTANCE",
+      "authorizationRequest": "INDEPENDENT-RG0",
+      "blocksFinalApproval": true,
+      "requirementIds": [],
+      "noteEn": "P3-1 / P7 historical editions remain conditional inputs. OPEN text is not acceptance.",
+      "noteZh": "P3-1／P7 历史版次仍为有条件输入。OPEN 文字不是接受。"
+    }
+  ],
   "reviewControl": {
     "rg0": "PENDING-EXTERNAL-REVIEW",
     "rg1": "PENDING-EXTERNAL-REVIEW",
     "rg2": "PENDING-EXTERNAL-REVIEW",
     "reviewHead": "UNBOUND-DRAFT",
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",
-    "mergeEvidence": "NOT-YET-PRESENT"
+    "mergeEvidence": "NOT-YET-PRESENT",
+    "blocksFinalApproval": true
   },
   "inventorySummary": {
     "requirementCount": 384,
     "dispositionCount": 384,
-    "traceCount": 465,
-    "stateCount": 34,
-    "transitionCount": 55,
+    "traceCount": 474,
+    "stateCount": 35,
+    "transitionCount": 64,
     "timingCount": 23,
     "fieldConstraintCount": 52,
-    "dispositionsFingerprint": "2614ecd75c5b97b6595f0b46a227d4a1688cd323a0edd82a966b1802de542281",
-    "modelFingerprint": "4db824c351d33a3b3552b1763dc5328f99d741f2086350db86b0ac476928b16c",
-    "timingFingerprint": "d9bb69d3d93caea36da0bb288ae08150e218c4fedb3e545fa058c9a34005ebbe",
+    "dispositionsFingerprint": "e1f2e478be00e94a8f553d1616b9ab88597e98035241c34b4a65c1a467b04d8c",
+    "modelFingerprint": "183491ad62ad1cabc14da11b5578aebf9c291e64a5976065a4b46cc6cf446455",
+    "timingFingerprint": "ccf8ed38a7cfd18363b57f72bf2d51bcbc7e5c91e1a48f83c84393b1e1c36e9c",
     "inputFingerprint": "4ce718d02e87557ee69fd7f256b95988b4d862364fc0459eeaf23210d13808df",
-    "refinementFingerprint": "518250b969be7747ea22b53893950cde93e75e6a64e609dc51995adbedfe106d",
-    "actionFingerprint": "a27fb37b042ff9ab79c1cb884b2fb241a58560d61144df7f18d704422d7e5017",
-    "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696"
+    "refinementFingerprint": "1c30dc4d11c0ed8a97a2bf9be3e86648591c5714367f63e753de32f95e3e8cfe",
+    "actionFingerprint": "e66b45050a7c81f3df5770f92dd08df3b71cfeac99830c15b0433692cce092ba",
+    "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
+    "witnessFingerprint": "bf7bd08a0c9ddab00d717f937e60aaff9fd5c650a3f27bf5d860cd7ca4cce222",
+    "blockingFingerprint": "0b80ffbdda35ac7936a73a5605ea845e5b9c5e2ba9698fccfde33afdf980c6d3"
   }
 }
