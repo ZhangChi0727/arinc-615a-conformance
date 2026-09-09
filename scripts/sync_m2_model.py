@@ -24,7 +24,54 @@ SOURCE_REGISTER_PATH = ROOT / "configs/research/controlled_sources.json"
 M1_PATH = ROOT / "configs/requirements/arinc_615a3_m1_crs.json"
 EXPR_OPS = {"ADD", "SUB", "MUL", "DIV"}
 COMPARE_OPS = {"EQ", "NE", "LT", "LE", "GT", "GE"}
-AST_KINDS = {"TRUE", "COMPARE", "AND", "VAR", "CLOCK", "SYMBOL", "LITERAL", "ENUM", "ASSIGN", "BINARY"}
+AST_KINDS = {"TRUE", "COMPARE", "AND", "VAR", "CLOCK", "SYMBOL", "LITERAL", "ENUM", "ASSIGN", "BINARY", "PAYLOAD"}
+SOURCE_COMPARE_OPS = (
+    (">=", "GE"),
+    ("<=", "LE"),
+    ("!=", "NE"),
+    (">", "GT"),
+    ("<", "LT"),
+    ("=", "EQ"),
+)
+CONSTRAINT_KINDS = {
+    "NOT-BEFORE-LOWER-BOUND",
+    "DEADLINE-UPPER-BOUND",
+    "DURATION-UPPER-BOUND",
+    "SOURCE-EQUATION",
+    "CONSTANT-DEFINITION",
+    "PROHIBITION-WINDOW-UPPER-BOUND",
+}
+FAMILY_CONSTRAINT_KIND = {
+    "WAIT-MESSAGE-RETRY-NOT-BEFORE-DEADLINE": "NOT-BEFORE-LOWER-BOUND",
+    "DLP-CONSECUTIVE-TFTP-TRANSFER-DEADLINE": "DEADLINE-UPPER-BOUND",
+    "STATUS-EXCEPTION-SILENCE-DEADLINE": "DEADLINE-UPPER-BOUND",
+    "STATUS-BEFORE-EXCEPTION-DELAY-OR-ABORT": "DEADLINE-UPPER-BOUND",
+    "TFTP-PACKET-ANSWER-DEADLINE": "DEADLINE-UPPER-BOUND",
+    "TFTP-PACKET-TRANSMISSION-DURATION-BOUND": "DURATION-UPPER-BOUND",
+    "TFTP-SUBSCRIBER-PROCESSING-DURATION-BOUND": "DURATION-UPPER-BOUND",
+    "DLP-CONSECUTIVE-TFTP-TRANSFER-EQUATION": "SOURCE-EQUATION",
+    "LCS-PRODUCTION-PROHIBITION-WINDOW": "PROHIBITION-WINDOW-UPPER-BOUND",
+}
+FIELD_AXES = (
+    "protocolFile", "fieldId", "ordinal", "widthBitsExpression",
+    "encodingRule", "terminationRule", "presenceCondition", "repeatScope",
+)
+STATUS_AXES = (
+    "kind", "code", "meaningCode", "displayMode", "targetTextRule",
+    "applicableProtocolFiles", "applicableOperations", "substitutionRule",
+)
+REQUIRED_WITNESSES = {
+    "W-UPL-ACCEPT", "W-UPL-REJECT", "W-LIST-NOT-READY",
+    "W-LUR-AFTER-READY", "W-SESSION-RESET",
+}
+COMPARE_EVAL = {
+    "EQ": lambda a, b: a == b,
+    "NE": lambda a, b: a != b,
+    "LT": lambda a, b: a is not None and b is not None and a < b,
+    "LE": lambda a, b: a is not None and b is not None and a <= b,
+    "GT": lambda a, b: a is not None and b is not None and a > b,
+    "GE": lambda a, b: a is not None and b is not None and a >= b,
+}
 CLOSED_ACTION_WITHOUT_EVIDENCE = {"CLOSED", "CLOSED-IN-THIS-PR"}
 FORBIDDEN_SELF_APPROVE = {
     "APPROVE", "APPROVED", "AUTHOR-APPROVED", "SELF-APPROVED", "SELF-APPROVE",
@@ -146,6 +193,7 @@ def ast_errors(
     path: str,
     *,
     allow_assign: bool = False,
+    payload_schema: dict[str, Any] | None = None,
 ) -> list[str]:
     errors: list[str] = []
     if not isinstance(node, dict) or "kind" not in node:
@@ -181,11 +229,18 @@ def ast_errors(
         if node.get("name") not in clocks:
             errors.append(f"{path} clock {node.get('name')} is undeclared")
         return errors
+    if kind == "PAYLOAD":
+        name = node.get("name")
+        if not payload_schema or name not in payload_schema:
+            errors.append(f"{path} payload {name} is not declared on the stimulating event")
+        return errors
     if kind == "COMPARE":
         if node.get("op") not in COMPARE_OPS:
             errors.append(f"{path} uses unsupported comparison {node.get('op')}")
-        errors.extend(ast_errors(node.get("left"), symbols, variables, clocks, path + ".left"))
-        errors.extend(ast_errors(node.get("right"), symbols, variables, clocks, path + ".right"))
+        left, right = node.get("left"), node.get("right")
+        errors.extend(ast_errors(left, symbols, variables, clocks, path + ".left", payload_schema=payload_schema))
+        errors.extend(ast_errors(right, symbols, variables, clocks, path + ".right", payload_schema=payload_schema))
+        errors.extend(compare_type_errors(left, right, variables, payload_schema, path))
         return errors
     if kind == "AND":
         args = node.get("args")
@@ -193,14 +248,16 @@ def ast_errors(
             errors.append(f"{path} AND requires arguments")
         else:
             for index, arg in enumerate(args):
-                errors.extend(ast_errors(arg, symbols, variables, clocks, f"{path}.args[{index}]"))
+                errors.extend(
+                    ast_errors(arg, symbols, variables, clocks, f"{path}.args[{index}]", payload_schema=payload_schema)
+                )
         return errors
     if kind == "BINARY":
         if node.get("op") not in EXPR_OPS:
             errors.append(f"{path} uses unsupported operator {node.get('op')}")
         left, right = node.get("left"), node.get("right")
-        errors.extend(ast_errors(left, symbols, variables, clocks, path + ".left"))
-        errors.extend(ast_errors(right, symbols, variables, clocks, path + ".right"))
+        errors.extend(ast_errors(left, symbols, variables, clocks, path + ".left", payload_schema=payload_schema))
+        errors.extend(ast_errors(right, symbols, variables, clocks, path + ".right", payload_schema=payload_schema))
         if node.get("op") == "DIV" and isinstance(right, dict) and right.get("kind") == "LITERAL" and right.get("value") == 0:
             errors.append(f"{path} divides by zero")
         if node.get("op") in {"ADD", "SUB"}:
@@ -215,10 +272,129 @@ def ast_errors(
         target = node.get("target")
         if target not in variables:
             errors.append(f"{path} updates undeclared variable {target}")
-        errors.extend(ast_errors(node.get("value"), symbols, variables, clocks, path + ".value"))
+        errors.extend(
+            ast_errors(node.get("value"), symbols, variables, clocks, path + ".value", payload_schema=payload_schema)
+        )
+        errors.extend(assign_domain_errors(target, node.get("value"), variables, path))
         return errors
     errors.append(f"{path} AST kind {kind} is not permitted")
     return errors
+
+
+def _enum_domain(node: Any, variables: dict[str, dict[str, Any]], payload_schema: dict[str, Any] | None) -> set[str] | None:
+    if not isinstance(node, dict):
+        return None
+    kind = node.get("kind")
+    if kind == "VAR":
+        row = variables.get(node.get("name")) or {}
+        if row.get("type") == "ENUM":
+            return set(row.get("domain") or [])
+        return None
+    if kind == "PAYLOAD":
+        spec = (payload_schema or {}).get(node.get("name")) or {}
+        if spec.get("type") == "ENUM":
+            return set(spec.get("domain") or [])
+        return None
+    return None
+
+
+def _sort(node: Any, variables: dict[str, dict[str, Any]], payload_schema: dict[str, Any] | None) -> str:
+    if not isinstance(node, dict):
+        return "UNKNOWN"
+    kind = node.get("kind")
+    if kind == "ENUM":
+        return "ENUM"
+    if kind == "VAR":
+        return str((variables.get(node.get("name")) or {}).get("type") or "UNKNOWN")
+    if kind == "PAYLOAD":
+        return str(((payload_schema or {}).get(node.get("name")) or {}).get("type") or "PAYLOAD")
+    if kind in {"CLOCK", "SYMBOL", "LITERAL", "BINARY"}:
+        return "NUM"
+    return kind
+
+
+def compare_type_errors(
+    left: Any,
+    right: Any,
+    variables: dict[str, dict[str, Any]],
+    payload_schema: dict[str, Any] | None,
+    path: str,
+) -> list[str]:
+    errors: list[str] = []
+    left_sort = _sort(left, variables, payload_schema)
+    right_sort = _sort(right, variables, payload_schema)
+    if {left_sort, right_sort} & {"ENUM"} and {"NUM"} & {left_sort, right_sort}:
+        errors.append(f"{path} compares enum with a numeric term")
+    for literal, counterpart in ((left, right), (right, left)):
+        if not isinstance(literal, dict) or literal.get("kind") != "ENUM":
+            continue
+        domain = _enum_domain(counterpart, variables, payload_schema)
+        if domain is not None and literal.get("value") not in domain:
+            errors.append(f"{path} compares with enum {literal.get('value')} outside domain")
+    return errors
+
+
+def assign_domain_errors(
+    target: Any,
+    value: Any,
+    variables: dict[str, dict[str, Any]],
+    path: str,
+) -> list[str]:
+    row = variables.get(target) or {}
+    if row.get("type") != "ENUM":
+        return []
+    domain = set(row.get("domain") or [])
+    if isinstance(value, dict) and value.get("kind") == "ENUM" and value.get("value") not in domain:
+        return [f"{path} assigns {value.get('value')} outside domain of {target}"]
+    return []
+
+
+def source_relation_compare_op(text: Any) -> str | None:
+    if not isinstance(text, str) or not text:
+        return None
+    for needle, op in SOURCE_COMPARE_OPS:
+        if needle in text:
+            return op
+    return None
+
+
+def source_relation_symbols(text: Any) -> set[str]:
+    names: set[str] = set()
+    for token in re.findall(r"[A-Za-z][A-Za-z0-9-]*", text or ""):
+        if token.upper() in {"AND", "OR", "NOT", "IF", "THEN"}:
+            continue
+        names.add(token.replace("-", "_"))
+    return names
+
+
+def expr_signature(node: Any) -> Counter:
+    counts: Counter = Counter()
+    for item in walk_nodes(node):
+        kind = item.get("kind")
+        if kind in {"COMPARE", "BINARY"}:
+            counts[("OP", item.get("op"))] += 1
+        elif kind == "SYMBOL":
+            counts[("SYM", item.get("name"))] += 1
+        elif kind == "LITERAL":
+            counts[("LIT", item.get("value"))] += 1
+        elif kind == "CLOCK":
+            counts[("CLK", item.get("name"))] += 1
+    return counts
+
+
+def clock_bound_compare_present(node: Any, clock_name: str, bound_name: str, op: str) -> bool:
+    for item in walk_nodes(node):
+        if item.get("kind") != "COMPARE" or item.get("op") != op:
+            continue
+        left, right = item.get("left") or {}, item.get("right") or {}
+        if (
+            left.get("kind") == "CLOCK"
+            and left.get("name") == clock_name
+            and right.get("kind") == "SYMBOL"
+            and right.get("name") == bound_name
+        ):
+            return True
+    return False
 
 
 def narrative_errors(node: Any, path: str = "") -> list[str]:
@@ -329,11 +505,17 @@ def timeout_guard_errors(model: dict[str, Any]) -> list[str]:
         if event.get("visibility") != "ENVIRONMENT":
             continue
         clock_name = event.get("enablingClock")
-        if not clock_name:
-            errors.append(f"environment event {event.get('id')} lacks enablingClock")
+        bound_name = event.get("enablingBound")
+        compare = event.get("enablingCompare")
+        if not clock_name or not bound_name or not compare:
+            errors.append(f"environment event {event.get('id')} lacks enablingClock, enablingBound or enablingCompare")
             continue
-        if clock_name not in ast_clocks(row.get("guard")):
-            errors.append(f"timeout transition {row.get('id')} is not enabled by clock {clock_name}")
+        if compare != "GE":
+            errors.append(f"environment event {event.get('id')} must be enabled at or after its bound")
+        if not clock_bound_compare_present(row.get("guard"), clock_name, bound_name, compare):
+            errors.append(
+                f"timeout transition {row.get('id')} is not enabled by clock {clock_name} {compare} {bound_name}"
+            )
     return errors
 
 
@@ -346,6 +528,177 @@ def clock_reset_errors(model: dict[str, Any]) -> list[str]:
                 errors.append(f"clock {clock['id']} resetOn unknown transition {tid}")
             elif clock["id"] not in trans[tid].get("resets", []):
                 errors.append(f"clock {clock['id']} resetOn {tid} is not in that transition resets")
+        if not clock.get("instanceBinding") or not clock.get("resetPolicy") or not clock.get("cancelPolicy"):
+            errors.append(f"clock {clock.get('id')} lacks instance binding or reset/cancel policy")
+    return errors
+
+
+def eval_ast(node: Any, env: dict[str, Any]) -> Any:
+    if not isinstance(node, dict):
+        return None
+    kind = node.get("kind")
+    if kind == "TRUE":
+        return True
+    if kind == "LITERAL":
+        return node.get("value")
+    if kind == "ENUM":
+        return node.get("value")
+    if kind == "VAR":
+        return env["vars"].get(node.get("name"))
+    if kind == "CLOCK":
+        return env["clocks"].get(node.get("name"), 0)
+    if kind == "SYMBOL":
+        return env["params"].get(node.get("name"))
+    if kind == "PAYLOAD":
+        return env["payload"].get(node.get("name"))
+    if kind == "AND":
+        return all(eval_ast(arg, env) is True for arg in (node.get("args") or []))
+    if kind == "COMPARE":
+        fn = COMPARE_EVAL.get(node.get("op"))
+        if fn is None:
+            return False
+        try:
+            return bool(fn(eval_ast(node.get("left"), env), eval_ast(node.get("right"), env)))
+        except TypeError:
+            return False
+    if kind == "BINARY":
+        left, right = eval_ast(node.get("left"), env), eval_ast(node.get("right"), env)
+        if left is None or right is None:
+            return None
+        op = node.get("op")
+        if op == "ADD":
+            return left + right
+        if op == "SUB":
+            return left - right
+        if op == "MUL":
+            return left * right
+        if op == "DIV" and right != 0:
+            return left / right
+        return None
+    return None
+
+
+def replay_witness_errors(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    model = data.get("model") or {}
+    trans = {row["id"]: row for row in model.get("transitions", [])}
+    present = {row.get("id") for row in data.get("discreteWitnesses") or []}
+    missing = sorted(REQUIRED_WITNESSES - present)
+    if missing:
+        errors.append(f"discrete witnesses missing {missing}")
+    for witness in data.get("discreteWitnesses") or []:
+        env = {
+            "state": model.get("initialState"),
+            "vars": {row["id"]: row["initial"] for row in model.get("variables", [])},
+            "clocks": {row["id"]: 0 for row in model.get("clocks", [])},
+            "params": {row["id"]: row.get("value") for row in model.get("parameters", [])},
+            "payload": {},
+        }
+        for index, step in enumerate(witness.get("steps") or []):
+            tid = step.get("transitionId")
+            row = trans.get(tid)
+            if row is None:
+                errors.append(f"witness {witness.get('id')} step {index} unknown {tid}")
+                break
+            env["payload"] = dict(step.get("payload") or {})
+            for name, value in (step.get("clocks") or {}).items():
+                env["clocks"][name] = value
+            for name, value in (step.get("parameters") or {}).items():
+                env["params"][name] = value
+            enabled = row.get("source") == env["state"] and eval_ast(row.get("guard"), env) is True
+            expect_enabled = step.get("expectEnabled", True)
+            if enabled != expect_enabled:
+                errors.append(
+                    f"witness {witness.get('id')} step {tid} enablement {enabled} expected {expect_enabled}"
+                )
+                break
+            if not enabled:
+                continue
+            for update in row.get("updates") or []:
+                if update.get("kind") == "ASSIGN":
+                    env["vars"][update["target"]] = eval_ast(update.get("value"), env)
+            for clock in row.get("resets") or []:
+                env["clocks"][clock] = 0
+            env["state"] = row.get("target")
+            if step.get("expectTarget") and env["state"] != step["expectTarget"]:
+                errors.append(
+                    f"witness {witness.get('id')} step {tid} target {env['state']} expected {step['expectTarget']}"
+                )
+            for name, value in (step.get("expectVariables") or {}).items():
+                if env["vars"].get(name) != value:
+                    errors.append(
+                        f"witness {witness.get('id')} step {tid} {name}={env['vars'].get(name)} expected {value}"
+                    )
+    return errors
+
+
+def field_axis_errors(model: dict[str, Any], m1_by_id: dict[str, dict[str, Any]]) -> list[str]:
+    errors: list[str] = []
+    for row in model.get("fieldConstraints", []):
+        req = m1_by_id.get(row.get("m1RequirementId")) or {}
+        fc = req.get("fieldConstraint") or {}
+        if not fc:
+            errors.append(f"field constraint {row.get('id')} is not bound to an M1 fieldConstraint")
+            continue
+        for axis in FIELD_AXES:
+            if row.get(axis) != fc.get(axis):
+                errors.append(f"field constraint {row.get('id')} axis {axis} drifted from M1")
+        clause = (req.get("source") or {}).get("clause")
+        conflict = clause == "6.4.4"
+        if bool(row.get("m1FileIdentityConflict")) != conflict:
+            errors.append(f"field constraint {row.get('id')} file-identity conflict flag drifted")
+    for row in model.get("statusConstraints", []):
+        req = m1_by_id.get(row.get("m1RequirementId")) or {}
+        st = req.get("statusTableConstraint") or {}
+        if not st:
+            errors.append(f"status constraint {row.get('id')} is not bound to an M1 statusTableConstraint")
+            continue
+        for axis in STATUS_AXES:
+            if axis not in st:
+                continue
+            if row.get(axis) != st.get(axis):
+                errors.append(f"status constraint {row.get('id')} axis {axis} drifted from M1")
+    return errors
+
+
+def timing_kind_errors(row: dict[str, Any], timing: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    family = timing.get("timingFamily")
+    expected_kind = FAMILY_CONSTRAINT_KIND.get(family)
+    if timing.get("provenanceKind") == "FIXED-SOURCE-CONSTANT":
+        expected_kind = "CONSTANT-DEFINITION"
+    if row.get("staticCheck") == "EQUATION-STRUCTURAL":
+        expected_kind = "SOURCE-EQUATION"
+    kind = row.get("constraintKind")
+    if kind not in CONSTRAINT_KINDS:
+        errors.append(f"timing {row.get('id')} constraintKind is missing")
+    elif expected_kind and kind != expected_kind:
+        errors.append(f"timing {row.get('id')} constraintKind {kind} disagrees with family {family}")
+    expr = row.get("expression")
+    if kind == "NOT-BEFORE-LOWER-BOUND":
+        if not clock_bound_compare_present(expr, row.get("clockId"), "MESSAGE_TIMER_VALUE", "GE"):
+            errors.append(f"timing {row.get('id')} wait lower bound is not CLK_WAIT >= MESSAGE_TIMER_VALUE")
+        if row.get("clockId") != "CLK_WAIT":
+            errors.append(f"timing {row.get('id')} wait clock is not CLK_WAIT")
+        wait_resets = {item for item in row.get("resets") or [] if "WAIT" in item}
+        if not wait_resets:
+            errors.append(f"timing {row.get('id')} wait clock is not reset on WAIT receive")
+    elif kind in {"DEADLINE-UPPER-BOUND", "DURATION-UPPER-BOUND", "PROHIBITION-WINDOW-UPPER-BOUND"}:
+        if isinstance(expr, dict) and expr.get("kind") == "COMPARE" and expr.get("op") not in {"LE", "LT"}:
+            errors.append(f"timing {row.get('id')} in-window constraint is not an upper bound")
+    elif kind == "SOURCE-EQUATION":
+        expected_op = source_relation_compare_op(timing.get("sourceRelation") or row.get("sourceRelation"))
+        if expected_op and (not isinstance(expr, dict) or expr.get("kind") != "COMPARE" or expr.get("op") != expected_op):
+            errors.append(f"timing {row.get('id')} equation operator drifted from the source relation")
+        required = source_relation_symbols(timing.get("sourceRelation") or "")
+        present = ast_symbols(expr)
+        dropped = [
+            name
+            for name in required
+            if name.endswith(("_TO", "_RETRY", "_TIME", "_TIMER", "_VALUE")) and name not in present
+        ]
+        if dropped:
+            errors.append(f"timing {row.get('id')} AST dropped source terms {dropped}")
     return errors
 
 
@@ -562,12 +915,32 @@ def package_errors(
     errors.extend(sequence_errors(model))
     errors.extend(timeout_guard_errors(model))
     errors.extend(clock_reset_errors(model))
+    errors.extend(field_axis_errors(model, m1_by_id))
+    errors.extend(replay_witness_errors(data))
 
+    events_by_id = {row["id"]: row for row in model["events"]}
     dl_out = set(data["scope"]["observationBoundary"]["dataLoader"]["outputs"])
-    if "EV_DL_RRQ_LCI" in data["scope"]["observationBoundary"]["targetHardware"]["outputs"]:
+    th_out = set(data["scope"]["observationBoundary"]["targetHardware"]["outputs"])
+    if "EV_DL_RRQ_LCI" in th_out:
         errors.append("data-loader LCI RRQ cannot be a target-hardware output")
     if "EV_TH_ACCEPT_INF" in dl_out:
         errors.append("target-hardware accept cannot be a data-loader output")
+    for eid in dl_out:
+        if events_by_id.get(eid, {}).get("direction") == "TH-TO-DL":
+            errors.append(f"data-loader output {eid} has the opposite direction")
+    for eid in th_out:
+        if events_by_id.get(eid, {}).get("direction") == "DL-TO-TH":
+            errors.append(f"target-hardware output {eid} has the opposite direction")
+    lur_wrq = events_by_id.get("EV_DL_WRQ_LUR") or {}
+    lur_ack = events_by_id.get("EV_TH_ACK_LUR") or {}
+    if lur_wrq.get("direction") != "DL-TO-TH" or lur_wrq.get("tftpOpcode") != "WRQ":
+        errors.append("LUR WRQ must be a Data Loader TFTP write")
+    if lur_ack.get("direction") != "TH-TO-DL" or lur_ack.get("tftpOpcode") != "ACK":
+        errors.append("LUR ACK must be a Target Hardware TFTP acknowledgement")
+    if "EV_TH_WRQ_LUR" in events_by_id or "EV_DL_ACK_LUR" in events_by_id:
+        errors.append("LUR WRQ/ACK names still follow the reversed TH-write mapping")
+    if "EV_DL_WRQ_LUR" not in dl_out or "EV_TH_ACK_LUR" not in th_out:
+        errors.append("observation boundary does not place LUR WRQ/ACK on the visual TFTP-write sides")
     if data["scope"].get("afdxSelected") or data["scope"].get("p3ProfiledDeviations"):
         errors.append("scope cannot activate AFDX or P3 profiled deviations")
     if data["scope"].get("networkMode") != "COMPLIANT":
@@ -582,13 +955,21 @@ def package_errors(
     clocks = {row["id"] for row in model["clocks"]}
     symbols = {row["id"] for row in model["parameters"]} | clocks
     for row in model["transitions"]:
-        errors.extend(ast_errors(row.get("guard"), symbols, variables, clocks, f"transition:{row.get('id')}.guard"))
+        event = events_by_id.get(row.get("event"), {})
+        payload_schema = event.get("payloadSchema")
+        errors.extend(
+            ast_errors(
+                row.get("guard"), symbols, variables, clocks, f"transition:{row.get('id')}.guard",
+                payload_schema=payload_schema,
+            )
+        )
         for index, update in enumerate(row.get("updates") or []):
             errors.extend(
                 ast_errors(
                     update, symbols, variables, clocks,
                     f"transition:{row.get('id')}.updates[{index}]",
                     allow_assign=True,
+                    payload_schema=payload_schema,
                 )
             )
         for output in row.get("outputs") or []:
@@ -609,8 +990,16 @@ def package_errors(
                 errors.append(f"timing {row.get('id')} unit drifted from M1 without conversion")
             if row.get("sourceRelation") != timing.get("sourceRelation"):
                 errors.append(f"timing {row.get('id')} sourceRelation drifted from M1")
-            if row.get("upperBoundary") != timing.get("upperBoundary") or row.get("lowerBoundary") != timing.get("lowerBoundary"):
+            if row.get("m1LowerBoundary") != timing.get("lowerBoundary") or row.get("m1UpperBoundary") != timing.get("upperBoundary"):
+                errors.append(f"timing {row.get('id')} m1 endpoint copy drifted from M1")
+            if row.get("constraintKind") == "NOT-BEFORE-LOWER-BOUND" and timing.get("lowerBoundary") == "UNRESOLVED":
+                if row.get("lowerBoundary") != "CLOSED":
+                    errors.append(f"timing {row.get('id')} wait lower bound is not modeled CLOSED")
+                if row.get("upperBoundary") != timing.get("upperBoundary"):
+                    errors.append(f"timing {row.get('id')} endpoint drifted from M1")
+            elif row.get("upperBoundary") != timing.get("upperBoundary") or row.get("lowerBoundary") != timing.get("lowerBoundary"):
                 errors.append(f"timing {row.get('id')} endpoint drifted from M1")
+            errors.extend(timing_kind_errors(row, timing))
         lower, upper = row.get("lowerBound"), row.get("upperBound")
         if isinstance(lower, (int, float)) and isinstance(upper, (int, float)) and lower > upper:
             errors.append(f"timing {row.get('id')} bounds are reversed")
@@ -623,13 +1012,14 @@ def package_errors(
             errors.append(f"timing {row.get('id')} lacks error-budget semantics")
         if not row.get("observationWindow"):
             errors.append(f"timing {row.get('id')} lacks observation window")
-        if row.get("requirementId") == "CRS-M1-00188":
+        required_terms = source_relation_symbols(timing.get("sourceRelation") or "")
+        if {"DLP_RETRY", "TFTP_RETRY"} <= required_terms:
             names = ast_symbols(row.get("expression"))
-            required = {"DLP_TO", "DURATION_TIME", "DLP_RETRY", "TFTP_RETRY", "TFTP_TO"}
-            if not required <= names:
-                errors.append("timing CRS-M1-00188 AST dropped retry or duration terms")
+            missing_retry = sorted({"DLP_TO", "DURATION_TIME", "DLP_RETRY", "TFTP_RETRY", "TFTP_TO"} - names)
+            if missing_retry:
+                errors.append(f"timing {row.get('id')} AST dropped retry or duration terms")
             if "NETWORK_TERM" in names:
-                errors.append("timing CRS-M1-00188 invented NETWORK_TERM")
+                errors.append(f"timing {row.get('id')} invented NETWORK_TERM")
 
     nrr = m1.get("networkReferenceReview", {})
     m1_rel = {row["id"] for row in nrr.get("relations", [])}
@@ -667,6 +1057,8 @@ def package_errors(
             errors.append(f"action {row.get('id')} closed without evidence")
         if status in CLOSED_ACTION_WITHOUT_EVIDENCE and row.get("id") in silent_close:
             errors.append(f"action {row.get('id')} cannot be silently CLOSED")
+        if row.get("id") in {"A-1", "M1-FILE-IDENTITY-6-4-4"} and "OPEN-M1-CORRECTION" not in str(status):
+            errors.append(f"action {row.get('id')} cannot treat OPEN-M1-CORRECTION as closed")
         if not row.get("ownerRole") or not row.get("deadlineGate"):
             errors.append(f"action {row.get('id')} lacks ownerRole or deadlineGate")
 
@@ -690,6 +1082,8 @@ def package_errors(
         ("refinementFingerprint", data["sourceRefinements"]),
         ("actionFingerprint", data["actions"]),
         ("premiseFingerprint", data["infrastructurePremises"]),
+        ("witnessFingerprint", data.get("discreteWitnesses")),
+        ("blockingFingerprint", data.get("blockingInputs")),
     ):
         if summary.get(key) and summary.get(key) != fingerprint(payload):
             errors.append(f"inventorySummary.{key} disagrees after mutation")
@@ -738,10 +1132,32 @@ def package_errors(
             public = (dep or {}).get("publicRetrieval") or {}
             if locator.get("retrievedSha256") and locator["retrievedSha256"] != public.get("retrievedSha256"):
                 errors.append(f"refinement {row.get('id')} RFC hash disagrees with the register")
+            atomic = dep.get("atomicParts") if dep else None
+            if not atomic:
+                errors.append(f"refinement {row.get('id')} RFC {locator.get('sourceId')} has no registered atomic parts")
+            else:
+                clauses = {item.get("clause") for item in atomic}
+                units = {item.get("sourceUnitId") for item in atomic}
+                if locator.get("clause") not in clauses:
+                    errors.append(f"refinement {row.get('id')} RFC clause is not a registered atomic part")
+                if locator.get("sourceUnitId") not in units:
+                    errors.append(f"refinement {row.get('id')} RFC sourceUnitId is not a registered atomic part")
             if not locator.get("clause"):
                 errors.append(f"refinement {row.get('id')} RFC locator lacks a section clause")
             if locator.get("sourceUnitId") in {None, locator.get("sourceId")}:
                 errors.append(f"refinement {row.get('id')} RFC locator is not section-atomic")
+            if locator.get("retrievedSha256") != public.get("retrievedSha256"):
+                errors.append(f"refinement {row.get('id')} RFC fragment hash is not bound to publicRetrieval")
+    open_correction = [row for row in refinements if row.get("reviewStatus") == "OPEN-M1-CORRECTION"]
+    if open_correction and data["reviewControl"].get("blocksFinalApproval") is not True:
+        errors.append("OPEN-M1-CORRECTION remains; blocksFinalApproval must stay true")
+    identity_block = next((row for row in data.get("blockingInputs") or [] if row.get("id") == "M1-FILE-IDENTITY-6-4-4"), None)
+    if identity_block is None:
+        errors.append("blockingInputs omit M1-FILE-IDENTITY-6-4-4")
+    elif identity_block.get("status") != "OPEN-M1-CORRECTION" or identity_block.get("blocksFinalApproval") is not True:
+        errors.append("M1-FILE-IDENTITY-6-4-4 cannot be treated as closed")
+    if any(row.get("status", "").startswith("CLOSED") for row in data.get("blockingInputs") or []):
+        errors.append("blockingInputs cannot close an open M1 correction")
     return errors
 
 
@@ -893,11 +1309,12 @@ def render(data: dict[str, Any]) -> str:
         lines.append(f"- `{name}` `{row['kind']}` — {row['noteEn']}")
     lines += ["", "## Timing catalog", ""]
     lines += _table(
-        ["ID", "CRS", "Clock", "Bounds", "AST", "Resets", "Endpoints", "Check", "Window"],
+        ["ID", "CRS", "Clock", "Kind", "Bounds", "AST", "Resets", "Endpoints", "Check", "Window"],
         [[
             f"`{row['id']}`",
             f"`{row['requirementId']}`",
             f"`{row['clockId']}`",
+            row.get("constraintKind") or "—",
             f"{row['lowerBound']}..{row['upperBound']} {row['unit']}",
             f"`{_ast(row['expression'])}`",
             ", ".join(row["resets"]) or "—",
@@ -944,6 +1361,16 @@ def render(data: dict[str, Any]) -> str:
     lines += ["", "## Network relation dispositions", ""]
     for row in data["networkRelationDispositions"]:
         lines.append(f"- `{row['relationId']}` → `{row['m2Disposition']}` (M1 `{row['m1Disposition']}`)")
+    lines += ["", "## Discrete witnesses", ""]
+    for row in data.get("discreteWitnesses") or []:
+        lines.append(
+            f"- `{row['id']}` {row['summaryEn']} ({len(row.get('steps') or [])} steps)"
+        )
+    lines += ["", "## Blocking inputs", ""]
+    for row in data.get("blockingInputs") or []:
+        lines.append(
+            f"- `{row['id']}` `{row['status']}` authorization `{row['authorizationRequest']}` blocksFinalApproval=`{row['blocksFinalApproval']}` — {row['noteEn']}"
+        )
     lines += [
         "",
         "## Analysis boundary",
@@ -955,7 +1382,7 @@ def render(data: dict[str, Any]) -> str:
         "## Review control",
         "",
         f"- rg0 `{data['reviewControl']['rg0']}`; rg1 `{data['reviewControl']['rg1']}`; rg2 `{data['reviewControl']['rg2']}`",
-        f"- reviewHead `{data['reviewControl']['reviewHead']}`; formalApproval `{data['reviewControl']['formalApproval']}`",
+        f"- reviewHead `{data['reviewControl']['reviewHead']}`; formalApproval `{data['reviewControl']['formalApproval']}`; blocksFinalApproval `{data['reviewControl'].get('blocksFinalApproval')}`",
         "",
         "# 中文版",
         "",
@@ -1092,11 +1519,12 @@ def render(data: dict[str, Any]) -> str:
         lines.append(f"- `{name}` `{row['kind']}` — {row['noteZh']}")
     lines += ["", "## 时序目录", ""]
     lines += _table(
-        ["ID", "CRS", "时钟", "边界", "AST", "复位", "端点", "检查", "窗口"],
+        ["ID", "CRS", "时钟", "种类", "边界", "AST", "复位", "端点", "检查", "窗口"],
         [[
             f"`{row['id']}`",
             f"`{row['requirementId']}`",
             f"`{row['clockId']}`",
+            row.get("constraintKind") or "—",
             f"{row['lowerBound']}..{row['upperBound']} {row['unit']}",
             f"`{_ast(row['expression'])}`",
             ", ".join(row["resets"]) or "—",
@@ -1143,6 +1571,16 @@ def render(data: dict[str, Any]) -> str:
     lines += ["", "## 网络关系处置", ""]
     for row in data["networkRelationDispositions"]:
         lines.append(f"- `{row['relationId']}` → `{row['m2Disposition']}`（M1 `{row['m1Disposition']}`）")
+    lines += ["", "## 离散见证", ""]
+    for row in data.get("discreteWitnesses") or []:
+        lines.append(
+            f"- `{row['id']}` {row['summaryZh']}（{len(row.get('steps') or [])} 步）"
+        )
+    lines += ["", "## 阻塞输入", ""]
+    for row in data.get("blockingInputs") or []:
+        lines.append(
+            f"- `{row['id']}` `{row['status']}` 授权 `{row['authorizationRequest']}` blocksFinalApproval=`{row['blocksFinalApproval']}` — {row['noteZh']}"
+        )
     lines += [
         "",
         "## 分析边界",
@@ -1154,7 +1592,7 @@ def render(data: dict[str, Any]) -> str:
         "## 评审控制",
         "",
         f"- rg0 `{data['reviewControl']['rg0']}`；rg1 `{data['reviewControl']['rg1']}`；rg2 `{data['reviewControl']['rg2']}`",
-        f"- reviewHead `{data['reviewControl']['reviewHead']}`；formalApproval `{data['reviewControl']['formalApproval']}`",
+        f"- reviewHead `{data['reviewControl']['reviewHead']}`；formalApproval `{data['reviewControl']['formalApproval']}`；blocksFinalApproval `{data['reviewControl'].get('blocksFinalApproval')}`",
         "",
     ]
     return "\n".join(lines)

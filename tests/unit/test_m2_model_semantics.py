@@ -68,6 +68,8 @@ def refresh_summary(data: dict) -> None:
         refinementFingerprint=m2.fingerprint(data["sourceRefinements"]),
         actionFingerprint=m2.fingerprint(data["actions"]),
         premiseFingerprint=m2.fingerprint(data["infrastructurePremises"]),
+        witnessFingerprint=m2.fingerprint(data.get("discreteWitnesses")),
+        blockingFingerprint=m2.fingerprint(data.get("blockingInputs")),
     )
 
 
@@ -472,8 +474,9 @@ def test_blocksize_and_lui_lur_source_edges() -> None:
         for row in data["sourceRefinements"]
     )
     blocked = [row for row in data["sourceRefinements"] if row["reviewStatus"] == "OPEN-M1-CORRECTION"]
-    assert {row["fromRequirementId"] for row in blocked} >= {"CRS-M1-00143", "CRS-M1-00315"}
-    assert all("LUR" in row["rationaleEn"] and "LUI" in row["rationaleEn"] for row in blocked)
+    assert {row["fromRequirementId"] for row in blocked} >= {"CRS-M1-00143", "CRS-M1-00315", "CRS-M1-00365"}
+    file_identity = [row for row in blocked if row["fromRequirementId"] in {"CRS-M1-00143", "CRS-M1-00315"}]
+    assert all("LUR" in row["rationaleEn"] and "LUI" in row["rationaleEn"] for row in file_identity)
     rfc = next(row for row in data["sourceRefinements"] if row.get("toSourceId") == "RFC-2347")
     assert rfc["toLocator"]["clause"]
     assert rfc["toLocator"]["retrievedSha256"]
@@ -617,3 +620,95 @@ def test_chinese_view_does_not_reuse_english_summaries() -> None:
     data["model"]["states"][0]["summaryZh"] = data["model"]["states"][0]["summaryEn"]
     refresh_summary(data)
     assert any("reuses English" in item for item in errors(data))
+
+
+def _first_clock_ge(node: dict) -> dict:
+    for item in m2.walk_nodes(node):
+        if (
+            item.get("kind") == "COMPARE"
+            and item.get("op") == "GE"
+            and item.get("left", {}).get("kind") == "CLOCK"
+        ):
+            return item
+    raise AssertionError("missing clock GE compare")
+
+
+def test_round2_mutations_fail_after_fingerprint_refresh() -> None:
+    data = copy.deepcopy(package())
+    timeout = next(row for row in data["model"]["transitions"] if row["event"] == "EV_TIMEOUT_TFTP")
+    _first_clock_ge(timeout["guard"])["op"] = "LT"
+    refresh_summary(data)
+    assert any("not enabled by clock" in item for item in errors(data))
+
+    data = copy.deepcopy(package())
+    equation = next(item for item in data["timingCatalog"] if item["requirementId"] == "CRS-M1-00188")
+    assert equation["expression"]["op"] == "GT"
+    equation["expression"]["op"] = "LT"
+    refresh_summary(data)
+    assert any("operator" in item or "source relation" in item for item in errors(data))
+
+    data = copy.deepcopy(package())
+    assign = next(
+        node
+        for row in data["model"]["transitions"]
+        for node in row.get("updates") or []
+        if node.get("kind") == "ASSIGN" and node.get("value", {}).get("kind") == "ENUM"
+    )
+    assign["value"]["value"] = "OUTSIDE-DOMAIN"
+    refresh_summary(data)
+    assert any("outside domain" in item for item in errors(data))
+
+    data = copy.deepcopy(package())
+    data["model"]["fieldConstraints"][0]["widthBitsExpression"] = "999"
+    refresh_summary(data)
+    assert any("widthBitsExpression" in item or "axis" in item for item in errors(data))
+
+    data = copy.deepcopy(package())
+    rfc = next(row for row in data["sourceRefinements"] if row.get("toSourceId") == "RFC-2348")
+    rfc["toLocator"]["clause"] = "NONEXISTENT-SECTION"
+    refresh_summary(data)
+    assert any("atomic part" in item for item in errors(data))
+
+
+def test_wait_lower_bound_is_not_an_upper_bound() -> None:
+    data = package()
+    row = next(item for item in data["timingCatalog"] if item["requirementId"] == "CRS-M1-00032")
+    assert row["constraintKind"] == "NOT-BEFORE-LOWER-BOUND"
+    assert row["expression"]["op"] == "GE"
+    assert row["clockId"] == "CLK_WAIT"
+    assert any("WAIT" in item for item in row["resets"])
+    row["expression"]["op"] = "LE"
+    refresh_summary(data)
+    assert any("wait lower bound" in item or "not CLK_WAIT >=" in item for item in errors(data))
+
+
+def test_legal_commutative_add_and_payload_path_still_pass() -> None:
+    data = package()
+    equation = next(item for item in data["timingCatalog"] if item["requirementId"] == "CRS-M1-00188")
+    add = next(node for node in m2.walk_nodes(equation["expression"]) if node.get("kind") == "BINARY" and node.get("op") == "ADD")
+    add["left"], add["right"] = add["right"], add["left"]
+    refresh_summary(data)
+    assert errors(data) == []
+    data = package()
+    accept = next(row for row in data["model"]["transitions"] if row["id"] == "T_UPL_ACCEPT_INIT")
+    assert any(node.get("kind") == "PAYLOAD" for node in m2.walk_nodes(accept["guard"]))
+    assert data["model"]["events"]
+    assert any(row["id"] == "EV_DL_WRQ_LUR" for row in data["model"]["events"])
+    assert errors(data) == []
+    assert data["reviewControl"]["blocksFinalApproval"] is True
+    assert any(row["id"] == "W-LUR-AFTER-READY" for row in data["discreteWitnesses"])
+    lur = next(row for row in data["model"]["transitions"] if row["id"] == "T_UPL_LUR_WRQ")
+    assert lur["event"] == "EV_DL_WRQ_LUR"
+
+
+def test_open_m1_correction_cannot_be_closed() -> None:
+    data = package()
+    row = next(item for item in data["actions"] if item["id"] == "M1-FILE-IDENTITY-6-4-4")
+    row["status"] = "CLOSED"
+    row["evidence"] = ["forced"]
+    refresh_summary(data)
+    assert any("OPEN-M1-CORRECTION" in item or "cannot be silently CLOSED" in item for item in errors(data))
+    data = package()
+    data["reviewControl"]["blocksFinalApproval"] = False
+    refresh_summary(data)
+    assert any("blocksFinalApproval" in item for item in errors(data))

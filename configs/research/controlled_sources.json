@@ -231,7 +231,14 @@
         "retrievedSha256": "dd858f38246b61dc46863a907e2834567270a92b03660a6bb120dc4a3339fb26",
         "retrievedOn": "2026-09-06",
         "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
-      }
+      },
+      "atomicParts": [
+        {
+          "clause": "2",
+          "kind": "SECTION",
+          "sourceUnitId": "RFC-2347-SECTION-2"
+        }
+      ]
     },
     {
       "id": "RFC-2348",
@@ -246,7 +253,14 @@
         "retrievedSha256": "fcd1e9959ef7bbacb20e3564c6c93089e77fbef62ea60e453e83d9d540bfac09",
         "retrievedOn": "2026-09-06",
         "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
-      }
+      },
+      "atomicParts": [
+        {
+          "clause": "2",
+          "kind": "SECTION",
+          "sourceUnitId": "RFC-2348-SECTION-2"
+        }
+      ]
     },
     {
       "id": "RFC-2349",
