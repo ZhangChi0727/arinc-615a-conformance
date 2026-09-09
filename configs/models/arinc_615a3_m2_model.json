@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.2",
   "artifactId": "ARINC615A3-M2-MODEL",
-  "artifactVersion": "M2-CANDIDATE-3",
+  "artifactVersion": "M2-CANDIDATE-4",
   "candidateDisposition": "ADOPT",
   "inputAcceptance": {
     "repository": "https://github.com/ZhangChi0727/arinc-615a-conformance",
@@ -1224,6 +1224,15 @@
         "initial": "FALSE"
       },
       {
+        "id": "targetListReady",
+        "type": "ENUM",
+        "domain": [
+          "FALSE",
+          "TRUE"
+        ],
+        "initial": "FALSE"
+      },
+      {
         "id": "listAccepted",
         "type": "ENUM",
         "domain": [
@@ -1526,6 +1535,14 @@
           {
             "kind": "ASSIGN",
             "target": "listOffered",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "targetListReady",
             "value": {
               "kind": "ENUM",
               "value": "FALSE"
@@ -2049,6 +2066,14 @@
           },
           {
             "kind": "ASSIGN",
+            "target": "targetListReady",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
             "target": "listAccepted",
             "value": {
               "kind": "ENUM",
@@ -2160,6 +2185,14 @@
           {
             "kind": "ASSIGN",
             "target": "listOffered",
+            "value": {
+              "kind": "ENUM",
+              "value": "FALSE"
+            }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "targetListReady",
             "value": {
               "kind": "ENUM",
               "value": "FALSE"
@@ -2473,6 +2506,18 @@
               "op": "EQ",
               "left": {
                 "kind": "VAR",
+                "name": "listOffered"
+              },
+              "right": {
+                "kind": "ENUM",
+                "value": "TRUE"
+              }
+            },
+            {
+              "kind": "COMPARE",
+              "op": "EQ",
+              "left": {
+                "kind": "VAR",
                 "name": "listAccepted"
               },
               "right": {
@@ -2490,6 +2535,14 @@
               "kind": "ENUM",
               "value": "0X0001"
             }
+          },
+          {
+            "kind": "ASSIGN",
+            "target": "targetListReady",
+            "value": {
+              "kind": "ENUM",
+              "value": "TRUE"
+            }
           }
         ],
         "resets": [
@@ -2500,8 +2553,8 @@
         "requirementIds": [
           "CRS-M1-00364"
         ],
-        "noteEn": "LUS-0001 while list not yet accepted; do not start LUR or files",
-        "noteZh": "列表未接受时的 LUS-0001；不得开始 LUR 或文件"
+        "noteEn": "LUS-0001 is the session-local list-ready stimulus; it does not accept the list and does not start LUR",
+        "noteZh": "LUS-0001 是会话内列表就绪刺激；它不表示接受列表，也不启动 LUR"
       },
       {
         "id": "T_UPL_LUR_WRQ",
@@ -2528,6 +2581,18 @@
               "left": {
                 "kind": "VAR",
                 "name": "listOffered"
+              },
+              "right": {
+                "kind": "ENUM",
+                "value": "TRUE"
+              }
+            },
+            {
+              "kind": "COMPARE",
+              "op": "EQ",
+              "left": {
+                "kind": "VAR",
+                "name": "targetListReady"
               },
               "right": {
                 "kind": "ENUM",
@@ -2567,8 +2632,8 @@
         "requirementIds": [
           "CRS-M1-00365"
         ],
-        "noteEn": "List accepted: DL WRQ LUR (TFTP write). Guard sees listAccepted still FALSE and then writes TRUE",
-        "noteZh": "列表接受后数据加载器对 LUR 发出 WRQ（TFTP 写）。守卫见到 listAccepted 仍为 FALSE，随后写 TRUE"
+        "noteEn": "DL WRQ LUR only after this session received LUS-0001; guard still sees listAccepted=FALSE then writes TRUE",
+        "noteZh": "仅在本会话收到 LUS-0001 后数据加载器才对 LUR 发出 WRQ；守卫见到 listAccepted 仍为 FALSE，随后写 TRUE"
       },
       {
         "id": "T_UPL_LUR_ACK",
@@ -4204,6 +4269,23 @@
       {
         "id": "T_ABORT_FROM_S_UPL_LIST_SENT",
         "source": "S_UPL_LIST_SENT",
+        "event": "EV_ABORT_DL",
+        "guard": {
+          "kind": "TRUE"
+        },
+        "updates": [],
+        "resets": [],
+        "outputs": [],
+        "target": "S_ABORTING",
+        "requirementIds": [
+          "CRS-M1-00341"
+        ],
+        "noteEn": "Abort is available from this non-terminal",
+        "noteZh": "该非终止态可中止"
+      },
+      {
+        "id": "T_ABORT_FROM_S_UPL_WAIT_LUS0001",
+        "source": "S_UPL_WAIT_LUS0001",
         "event": "EV_ABORT_DL",
         "guard": {
           "kind": "TRUE"
@@ -11914,6 +11996,7 @@
         "T_ABORT_FROM_S_WAIT_RETRY",
         "T_ABORT_FROM_S_UPL_LUI_XFER",
         "T_ABORT_FROM_S_UPL_LIST_SENT",
+        "T_ABORT_FROM_S_UPL_WAIT_LUS0001",
         "T_ABORT_FROM_S_UPL_LUR_XFER",
         "T_ABORT_FROM_S_UPL_LUS_XFER"
       ]
@@ -17643,6 +17726,17 @@
       "id": "TR-CRS-M1-00341-0473",
       "requirementId": "CRS-M1-00341",
       "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_FROM_S_UPL_WAIT_LUS0001",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_FROM_S_UPL_WAIT_LUS0001 cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_FROM_S_UPL_WAIT_LUS0001 cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_WAIT_LUS0001 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0474",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
       "targetId": "T_ABORT_FROM_S_UPL_LUR_XFER",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
@@ -17651,7 +17745,7 @@
       "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_LUR_XFER 引用此义务。"
     },
     {
-      "id": "TR-CRS-M1-00341-0474",
+      "id": "TR-CRS-M1-00341-0475",
       "requirementId": "CRS-M1-00341",
       "targetKind": "TRANSITION",
       "targetId": "T_ABORT_FROM_S_UPL_LUS_XFER",
@@ -18034,9 +18128,9 @@
       ]
     },
     {
-      "id": "W-LUR-AFTER-READY",
-      "summaryEn": "After the list is offered, DL WRQ LUR becomes enabled, writes listAccepted=TRUE, then TH ACK.",
-      "summaryZh": "列表提交后数据加载器 LUR WRQ 使能，写入 listAccepted=TRUE，随后目标硬件 ACK。",
+      "id": "W-LIST-OFFERED-NOT-READY",
+      "summaryEn": "After the list is offered but before LUS-0001, LUR WRQ stays disabled.",
+      "summaryZh": "列表已提交但尚未收到 LUS-0001 时，LUR WRQ 仍不能使能。",
       "steps": [
         {
           "transitionId": "T_UPL_LUI_RRQ"
@@ -18057,13 +18151,50 @@
           "transitionId": "T_UPL_LIST_OFFER",
           "expectVariables": {
             "listOffered": "TRUE",
+            "targetListReady": "FALSE",
+            "listAccepted": "FALSE"
+          }
+        },
+        {
+          "transitionId": "T_UPL_LUR_WRQ",
+          "expectEnabled": false
+        }
+      ]
+    },
+    {
+      "id": "W-LUR-AFTER-READY",
+      "summaryEn": "LUS-0001 establishes session-local list readiness; only then DL WRQ LUR, TH ACK and DL DATA are enabled.",
+      "summaryZh": "LUS-0001 建立会话内列表就绪；此后才使能数据加载器 LUR WRQ、目标硬件 ACK 与数据加载器 DATA。",
+      "steps": [
+        {
+          "transitionId": "T_UPL_LUI_RRQ"
+        },
+        {
+          "transitionId": "T_UPL_LUI_XFER"
+        },
+        {
+          "transitionId": "T_UPL_EVAL"
+        },
+        {
+          "transitionId": "T_UPL_ACCEPT_INIT",
+          "payload": {
+            "decision": "ACCEPT"
+          }
+        },
+        {
+          "transitionId": "T_UPL_LIST_OFFER",
+          "expectVariables": {
+            "listOffered": "TRUE",
+            "targetListReady": "FALSE",
             "listAccepted": "FALSE"
           }
         },
         {
           "transitionId": "T_UPL_WAIT_LUS0001",
           "expectVariables": {
-            "listAccepted": "FALSE"
+            "targetListReady": "TRUE",
+            "listAccepted": "FALSE",
+            "statusCode": "0X0001"
           }
         },
         {
@@ -18082,8 +18213,8 @@
     },
     {
       "id": "W-SESSION-RESET",
-      "summaryEn": "A later UPLOAD start after INFORMATION completion resets lastDecision and list flags.",
-      "summaryZh": "INFORMATION 完成后再启动 UPLOAD 时复位 lastDecision 与列表标志。",
+      "summaryEn": "A later UPLOAD start after INFORMATION completion clears list readiness; offering the list still does not enable LUR WRQ.",
+      "summaryZh": "INFORMATION 完成后再启动 UPLOAD 时清除列表就绪；提交列表后 LUR WRQ 仍不能使能。",
       "steps": [
         {
           "transitionId": "T_INF_LCI_RRQ"
@@ -18124,8 +18255,32 @@
             "lastDecision": "NONE",
             "listAccepted": "FALSE",
             "listOffered": "FALSE",
+            "targetListReady": "FALSE",
             "activeOperation": "UPLOAD"
           }
+        },
+        {
+          "transitionId": "T_UPL_LUI_XFER"
+        },
+        {
+          "transitionId": "T_UPL_EVAL"
+        },
+        {
+          "transitionId": "T_UPL_ACCEPT_INIT",
+          "payload": {
+            "decision": "ACCEPT"
+          }
+        },
+        {
+          "transitionId": "T_UPL_LIST_OFFER",
+          "expectVariables": {
+            "targetListReady": "FALSE",
+            "listOffered": "TRUE"
+          }
+        },
+        {
+          "transitionId": "T_UPL_LUR_WRQ",
+          "expectEnabled": false
         }
       ]
     },
@@ -18151,6 +18306,9 @@
         },
         {
           "transitionId": "T_UPL_LIST_OFFER"
+        },
+        {
+          "transitionId": "T_UPL_WAIT_LUS0001"
         },
         {
           "transitionId": "T_UPL_LUR_WRQ"
@@ -18268,19 +18426,19 @@
   "inventorySummary": {
     "requirementCount": 384,
     "dispositionCount": 384,
-    "traceCount": 474,
+    "traceCount": 475,
     "stateCount": 35,
-    "transitionCount": 64,
+    "transitionCount": 65,
     "timingCount": 23,
     "fieldConstraintCount": 52,
-    "dispositionsFingerprint": "e1f2e478be00e94a8f553d1616b9ab88597e98035241c34b4a65c1a467b04d8c",
-    "modelFingerprint": "183491ad62ad1cabc14da11b5578aebf9c291e64a5976065a4b46cc6cf446455",
+    "dispositionsFingerprint": "5947f1d1e800aebe4815b25793a630347dd3672a817936226442be8494f5b260",
+    "modelFingerprint": "50427b113846df4c6f0b5c162292bd3c8e57e0022a658bef84f9ee96eea8ef75",
     "timingFingerprint": "ccf8ed38a7cfd18363b57f72bf2d51bcbc7e5c91e1a48f83c84393b1e1c36e9c",
     "inputFingerprint": "4ce718d02e87557ee69fd7f256b95988b4d862364fc0459eeaf23210d13808df",
     "refinementFingerprint": "1c30dc4d11c0ed8a97a2bf9be3e86648591c5714367f63e753de32f95e3e8cfe",
     "actionFingerprint": "e66b45050a7c81f3df5770f92dd08df3b71cfeac99830c15b0433692cce092ba",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
-    "witnessFingerprint": "bf7bd08a0c9ddab00d717f937e60aaff9fd5c650a3f27bf5d860cd7ca4cce222",
+    "witnessFingerprint": "3de3d3bf3b1b9c6eb9ee0e6ab65234ec5957762185e51093aeb10534986e6643",
     "blockingFingerprint": "0b80ffbdda35ac7936a73a5605ea845e5b9c5e2ba9698fccfde33afdf980c6d3"
   }
 }
