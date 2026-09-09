@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0",
+  "artifactId": "ARINC615A3-M1-RG0-ANCHOR",
+  "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-RG0",
+  "sourceInventoryFingerprint": "4b9a16c0bc81626a73439cab21368c8f86e0a447000d10d3f8f7980b3f867f2d",
+  "coverageCount": 2796,
+  "tableRowCount": 146,
+  "tableFootnoteCount": 1,
+  "sequenceEventCount": 63,
+  "timingProvenanceFingerprint": "b98d5f5e55f9e587fd7be8bd5be5dd792504a7dfbdba31f3799e6c84d7504a8c",
+  "dependencySourceIdentityFingerprint": "d99901d0ab3eadb9d092dce8bc4e17732fbc30a2622ee400a668ef4b80e98ae5",
+  "sectionSpanManifestFingerprint": "7411f0afe45a73a761242099a7cff358d6a1b71a78ca6167a61ac20c51eca6ec",
+  "semanticAssertionFingerprint": "aa17cdaac64bf3167ecc7d617eb1210d4bef6d94623c68d96985a6cb761fd2e8",
+  "statusTableFingerprint": "626a7fa96d83853eb3a369da0de78ae866a44f1d24fd6d91b3092e734ed85cbf",
+  "automaticAssuranceBoundary": "This anchor detects package-only coordinated edits. It does not prove proprietary-source completeness or semantic fidelity; those remain external RG0 and RG1 review responsibilities.",
+  "人工保证边界": "本锚点用于发现仅修改数据包的协同篡改；它不证明专有来源的完整性或语义忠实度，后两者仍由外部 RG0 与 RG1 评审负责。",
+  "fieldConstraintFingerprint": "a21bf5a6fc633764e19070f4057856473b037aa1e54166c1cf638f34ac7865b9",
+  "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
+  "registeredSourceIdentityFingerprint": "66739ec2b42d7dfa95f96fc0ced11ff643ff5f109cc44a0c525ceb746f6c5aad"
+}

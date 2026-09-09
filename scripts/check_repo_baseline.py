@@ -29,6 +29,12 @@ SYNC_SPEC = importlib.util.spec_from_file_location(
 assert SYNC_SPEC and SYNC_SPEC.loader
 sync = importlib.util.module_from_spec(SYNC_SPEC)
 SYNC_SPEC.loader.exec_module(sync)
+M1_SYNC_SPEC = importlib.util.spec_from_file_location(
+    "sync_m1_crs", ROOT / "scripts/sync_m1_crs.py"
+)
+assert M1_SYNC_SPEC and M1_SYNC_SPEC.loader
+m1_sync = importlib.util.module_from_spec(M1_SYNC_SPEC)
+M1_SYNC_SPEC.loader.exec_module(m1_sync)
 STATUS = sync.load_status(STATUS_PATH)
 SOURCE_REGISTER_PATH = ROOT / STATUS["technicalDirection"]["sourceRegisterPath"]
 CONTROLLED_SOURCES = sync.load_source_register(SOURCE_REGISTER_PATH)
@@ -76,6 +82,10 @@ REQUIRED_FIXED_FILES = [
     SOURCE_REGISTER_PATH,
     ACQUISITION_RECORD_PATH,
     ROOT / "scripts/sync_project_overview.py",
+    ROOT / "scripts/sync_m1_crs.py",
+    ROOT / "configs/requirements/m1_crs_package.schema.json",
+    ROOT / "configs/requirements/arinc_615a3_m1_crs.json",
+    CONTROL / "requirements" / "ARINC615A3_M1_CRS_REVIEW_VIEW.md",
     CONTROL / "PROJECT_CONTROL.md",
     CONTROL / "CHANGE_CONTROL.md",
     CONTRACTS_DIR / "ARCHITECTURE.md",
@@ -1713,6 +1723,23 @@ def main() -> int:
         errors.append(f"subdirectory README is prohibited: {path.relative_to(ROOT)}")
 
     errors.extend(governed_status_errors(STATUS, read(ROOT / "README.md"), CONTROLLED_SOURCES))
+    try:
+        m1_package = m1_sync.load_package()
+    except (OSError, json.JSONDecodeError, m1_sync.M1Error) as exc:
+        errors.append(f"M1 CRS package validation failed: {exc}")
+    else:
+        if read(m1_sync.VIEW_PATH) != m1_sync.render(m1_package):
+            errors.append("generated M1 CRS review view differs from authoritative package")
+        control = CONTROLLED_SOURCES.get("requirementsControl", {})
+        expected_paths = {
+            "packagePath": m1_sync.PACKAGE_PATH.relative_to(ROOT).as_posix(),
+            "schemaPath": "configs/requirements/m1_crs_package.schema.json",
+            "reviewViewPath": m1_sync.VIEW_PATH.relative_to(ROOT).as_posix(),
+            "generatorPath": "scripts/sync_m1_crs.py",
+        }
+        for key, expected_path in expected_paths.items():
+            if control.get(key) != expected_path:
+                errors.append(f"requirementsControl.{key} must be {expected_path}")
     errors.extend(prohibited_source_artifact_errors(changed_files_for_event()))
 
     bilingual = [

@@ -1,0 +1,581 @@
+{
+  "schemaVersion": "1.0",
+  "artifactId": "ARINC-M1-SOURCE-SECTION-SPANS",
+  "policy": {
+    "locatorTransition": "FORMATTED-HEADING-ONLY",
+    "bodyCrossReferencesChangeLocator": false,
+    "attachmentAndAppendixNamespaceRequired": true,
+    "pageAccount": "SPAN-OR-EXCLUSION-COVERS-EVERY-REGISTERED-PDF-PAGE"
+  },
+  "excludedRanges": [
+    {
+      "sourceId": "ARINC-615A-3",
+      "pdfPages": [
+        1,
+        12
+      ],
+      "kind": "FRONT-MATTER",
+      "rationaleCode": "TITLE-REVISION-AND-FRONT-MATTER-OUTSIDE-NORMATIVE-BODY"
+    },
+    {
+      "sourceId": "ARINC-615A-3",
+      "pdfPages": [
+        146,
+        154
+      ],
+      "kind": "NON-NORMATIVE-FORMS-AND-SUPPLEMENT-COVER",
+      "rationaleCode": "BLANK-ERRATA-APIM-AND-SUPPLEMENT-COVER-PAGES"
+    },
+    {
+      "sourceId": "ARINC-615A-3",
+      "pdfPages": [
+        158,
+        160
+      ],
+      "kind": "SUPPLEMENT-COVER-AND-BLANK",
+      "rationaleCode": "SUPPLEMENT-2-COVER-AND-BLANK-PAGES"
+    },
+    {
+      "sourceId": "ARINC-615A-3",
+      "pdfPages": [
+        165,
+        166
+      ],
+      "kind": "SUPPLEMENT-COVER-AND-BLANK",
+      "rationaleCode": "SUPPLEMENT-3-COVER-AND-BLANK-PAGES"
+    },
+    {
+      "sourceId": "ARINC-665-5",
+      "pdfPages": [
+        1,
+        10
+      ],
+      "kind": "FRONT-MATTER",
+      "rationaleCode": "TITLE-AND-FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY"
+    },
+    {
+      "sourceId": "ARINC-665-5",
+      "pdfPages": [
+        32,
+        139
+      ],
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-MEDIA-SET-NOT-USED-BY-ETHERNET-UPLOAD"
+    },
+    {
+      "sourceId": "ARINC-664-2",
+      "pdfPages": [
+        1,
+        53
+      ],
+      "kind": "REGISTRY-ONLY-BINDING",
+      "rationaleCode": "REGISTRY-BOUND-BUT-PAGE-LEVEL-SURVEY-DEFERRED-TO-M2-INFRASTRUCTURE-BINDING"
+    },
+    {
+      "sourceId": "ARINC-664-3",
+      "pdfPages": [
+        1,
+        90
+      ],
+      "kind": "REGISTRY-ONLY-BINDING",
+      "rationaleCode": "FULL-LEAF-SURVEY-NOT-CLAIMED-BOUNDED-REGIONS-IN-NETWORK-REVIEW"
+    },
+    {
+      "sourceId": "ARINC-664-7",
+      "pdfPages": [
+        1,
+        145
+      ],
+      "kind": "REGISTRY-ONLY-BINDING",
+      "rationaleCode": "FULL-LEAF-SURVEY-NOT-CLAIMED-BOUNDED-REGIONS-IN-NETWORK-REVIEW"
+    }
+  ],
+  "boundedSourceScopeExclusion": [
+    {
+      "sourceId": "ARINC-665-5",
+      "excludedClausePrefix": "3",
+      "clauseTitleEn": "Loadable Media Set Parts",
+      "excludedPdfPages": [
+        32,
+        45
+      ],
+      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-MEDIA-SET-NOT-USED-BY-ETHERNET-UPLOAD",
+      "conditionForReactivation": "MEDIA-BASED-DELIVERY-ADDED-TO-PROFILE-SCOPE"
+    },
+    {
+      "sourceId": "ARINC-665-5",
+      "excludedClausePrefix": "4",
+      "clauseTitleEn": "Loadable Software Distribution Container Format",
+      "excludedPdfPages": [
+        46,
+        60
+      ],
+      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-DISTRIBUTION-CONTAINER-NOT-USED-BY-BOUNDED-UPLOAD",
+      "conditionForReactivation": "CONTAINER-BASED-DELIVERY-ADDED-TO-PROFILE-SCOPE"
+    },
+    {
+      "sourceId": "ARINC-665-5",
+      "excludedClausePrefix": "5-onwards",
+      "clauseTitleEn": "Loadable Software Airline Modifiable Information, Legacy Compatibility, Back Matter",
+      "excludedPdfPages": [
+        61,
+        139
+      ],
+      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-BEYOND-CURRENT-M1-PROFILE-SURFACE",
+      "conditionForReactivation": "PROFILE-SCOPE-EXPANSION-VIA-CONTROLLED-CR"
+    }
+  ],
+  "exclusiveOwnershipRegions": [
+    {
+      "sourceId": "ARINC-615A-3",
+      "pdfPage": 97,
+      "tableOrFigure": "Table 6.4.10-1",
+      "proseFragmentOrdinalFrom": 4,
+      "ownerKinds": [
+        "TABLE-ROW",
+        "TABLE-FOOTNOTE"
+      ]
+    }
+  ],
+  "clausePageGuards": [
+    {
+      "sourceId": "ARINC-615A-3",
+      "clausePrefix": "6.4.1",
+      "pdfPages": [
+        79,
+        80
+      ]
+    },
+    {
+      "sourceId": "ARINC-615A-3",
+      "clausePrefix": "6.4.2",
+      "pdfPages": [
+        80,
+        82
+      ]
+    },
+    {
+      "sourceId": "ARINC-615A-3",
+      "clausePrefix": "6.4.3",
+      "pdfPages": [
+        82,
+        84
+      ]
+    },
+    {
+      "sourceId": "ARINC-615A-3",
+      "clausePrefix": "6.4.4",
+      "pdfPages": [
+        84,
+        85
+      ]
+    },
+    {
+      "sourceId": "ARINC-615A-3",
+      "clausePrefix": "6.4.5",
+      "pdfPages": [
+        86,
+        90
+      ]
+    },
+    {
+      "sourceId": "ARINC-615A-3",
+      "clausePrefix": "6.4.6",
+      "pdfPages": [
+        90,
+        91
+      ]
+    },
+    {
+      "sourceId": "ARINC-615A-3",
+      "clausePrefix": "6.4.7",
+      "pdfPages": [
+        91,
+        94
+      ]
+    },
+    {
+      "sourceId": "ARINC-615A-3",
+      "clausePrefix": "6.4.8",
+      "pdfPages": [
+        95,
+        96
+      ]
+    },
+    {
+      "sourceId": "ARINC-615A-3",
+      "clausePrefix": "6.4.9",
+      "pdfPages": [
+        96,
+        96
+      ]
+    },
+    {
+      "sourceId": "ARINC-615A-3",
+      "clausePrefix": "6.4.10",
+      "pdfPages": [
+        96,
+        97
+      ]
+    }
+  ],
+  "fieldConstraintUnresolved": [],
+  "tableRegistry": [
+    {
+      "tableId": "Table 6.4.1-1",
+      "constraintKind": "fieldConstraint"
+    },
+    {
+      "tableId": "Table 6.4.2-1",
+      "constraintKind": "fieldConstraint"
+    },
+    {
+      "tableId": "Table 6.4.3-1",
+      "constraintKind": "fieldConstraint"
+    },
+    {
+      "tableId": "Table 6.4.4-1",
+      "constraintKind": "fieldConstraint"
+    },
+    {
+      "tableId": "Table 6.4.5-1",
+      "constraintKind": "fieldConstraint"
+    },
+    {
+      "tableId": "Table 6.4.6-1",
+      "constraintKind": "fieldConstraint"
+    },
+    {
+      "tableId": "Table 6.4.7-1",
+      "constraintKind": "fieldConstraint"
+    },
+    {
+      "tableId": "Table 6.4.8-1",
+      "constraintKind": "fieldConstraint"
+    },
+    {
+      "tableId": "Table 6.4.9-1",
+      "constraintKind": "fieldConstraint"
+    },
+    {
+      "tableId": "Table 6.4.10-1",
+      "constraintKind": "statusTableConstraint"
+    }
+  ],
+  "sources": [
+    {
+      "sourceId": "ARINC-615A-3",
+      "spans": [
+        {
+          "namespace": "SECTION-1",
+          "documentPages": [
+            1,
+            6
+          ],
+          "pdfPages": [
+            13,
+            18
+          ]
+        },
+        {
+          "namespace": "SECTION-2",
+          "documentPages": [
+            7,
+            13
+          ],
+          "pdfPages": [
+            19,
+            25
+          ]
+        },
+        {
+          "namespace": "SECTION-3",
+          "documentPages": [
+            14,
+            16
+          ],
+          "pdfPages": [
+            26,
+            28
+          ]
+        },
+        {
+          "namespace": "SECTION-4",
+          "documentPages": [
+            17,
+            21
+          ],
+          "pdfPages": [
+            29,
+            33
+          ]
+        },
+        {
+          "namespace": "SECTION-5",
+          "documentPages": [
+            22,
+            41
+          ],
+          "pdfPages": [
+            34,
+            53
+          ]
+        },
+        {
+          "namespace": "SECTION-6",
+          "documentPages": [
+            42,
+            85
+          ],
+          "pdfPages": [
+            54,
+            97
+          ]
+        },
+        {
+          "namespace": "ATTACHMENT-1",
+          "documentPages": [
+            86,
+            87
+          ],
+          "pdfPages": [
+            98,
+            99
+          ]
+        },
+        {
+          "namespace": "ATTACHMENT-2",
+          "documentPages": [
+            88,
+            94
+          ],
+          "pdfPages": [
+            100,
+            106
+          ]
+        },
+        {
+          "namespace": "ATTACHMENT-3",
+          "documentPages": [
+            95,
+            98
+          ],
+          "pdfPages": [
+            107,
+            110
+          ]
+        },
+        {
+          "namespace": "ATTACHMENT-4",
+          "documentPages": [
+            99,
+            109
+          ],
+          "pdfPages": [
+            111,
+            121
+          ]
+        },
+        {
+          "namespace": "ATTACHMENT-5",
+          "documentPages": [
+            110,
+            110
+          ],
+          "pdfPages": [
+            122,
+            122
+          ]
+        },
+        {
+          "namespace": "APPENDIX-A",
+          "documentPages": [
+            111,
+            112
+          ],
+          "pdfPages": [
+            123,
+            124
+          ]
+        },
+        {
+          "namespace": "APPENDIX-B",
+          "documentPages": [
+            113,
+            114
+          ],
+          "pdfPages": [
+            125,
+            126
+          ]
+        },
+        {
+          "namespace": "APPENDIX-C",
+          "documentPages": [
+            115,
+            116
+          ],
+          "pdfPages": [
+            127,
+            128
+          ]
+        },
+        {
+          "namespace": "APPENDIX-D",
+          "documentPages": [
+            117,
+            121
+          ],
+          "pdfPages": [
+            129,
+            133
+          ]
+        },
+        {
+          "namespace": "APPENDIX-E",
+          "documentPages": [
+            122,
+            122
+          ],
+          "pdfPages": [
+            134,
+            134
+          ]
+        },
+        {
+          "namespace": "APPENDIX-F",
+          "documentPages": [
+            123,
+            124
+          ],
+          "pdfPages": [
+            135,
+            136
+          ]
+        },
+        {
+          "namespace": "APPENDIX-G",
+          "documentPages": [
+            125,
+            133
+          ],
+          "pdfPages": [
+            137,
+            145
+          ]
+        },
+        {
+          "namespace": "SUPPLEMENT-1-TRACE",
+          "documentPages": [
+            1,
+            3
+          ],
+          "pdfPages": [
+            155,
+            157
+          ]
+        },
+        {
+          "namespace": "SUPPLEMENT-2-TRACE",
+          "documentPages": [
+            1,
+            4
+          ],
+          "pdfPages": [
+            161,
+            164
+          ]
+        },
+        {
+          "namespace": "SUPPLEMENT-3-TRACE",
+          "documentPages": [
+            1,
+            8
+          ],
+          "pdfPages": [
+            167,
+            174
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "ARINC-665-5",
+      "spans": [
+        {
+          "namespace": "BOUNDED-SURVEY",
+          "documentPages": [
+            1,
+            21
+          ],
+          "pdfPages": [
+            11,
+            31
+          ]
+        }
+      ]
+    }
+  ],
+  "networkReviewContract": {
+    "sourceIds": [
+      "ARINC-664-3",
+      "ARINC-664-7"
+    ],
+    "expectedUnitIds": [
+      "NET-P3-SCOPE",
+      "NET-P3-PRECEDENCE",
+      "NET-P3-TFTP",
+      "NET-P3-UDP-RULE",
+      "NET-P3-UDP-TABLE",
+      "NET-P3-IP-RULE",
+      "NET-P3-IP-TABLE",
+      "NET-P3-FRAGMENT",
+      "NET-P3-MTU",
+      "NET-P3-ARP",
+      "NET-P7-SCOPE",
+      "NET-P7-TFTP",
+      "NET-P7-EXAMPLE",
+      "NET-P7-IP",
+      "NET-P7-ADDRESS",
+      "NET-P7-SWITCH",
+      "NET-P7-PERFORMANCE"
+    ],
+    "expectedRelationIds": [
+      "NET-REL-001",
+      "NET-REL-002",
+      "NET-REL-003",
+      "NET-REL-004",
+      "NET-REL-005",
+      "NET-REL-006",
+      "NET-REL-007",
+      "NET-REL-008",
+      "NET-REL-009",
+      "NET-REL-010",
+      "NET-REL-011",
+      "NET-REL-012",
+      "NET-REL-013",
+      "NET-REL-014",
+      "NET-REL-015",
+      "NET-REL-016",
+      "NET-REL-017"
+    ],
+    "expectedIssueIds": [
+      "NET-ISSUE-EDITION",
+      "NET-ISSUE-PROFILE",
+      "NET-ISSUE-RFC1122",
+      "NET-ISSUE-OPTION-EDGE",
+      "NET-ISSUE-AFDX-DETAIL",
+      "NET-ISSUE-AID",
+      "NET-ISSUE-ADDRESS"
+    ],
+    "assuranceBoundary": "REFERENCE-REGIONS-NOT-ATOMIC-REQUIREMENT-COVERAGE",
+    "scopeDecision": "DD-023",
+    "networkMode": "COMPLIANT",
+    "expectedAssumptionIds": [
+      "NET-PREMISE-IPV4-UDP"
+    ],
+    "publicSourceIds": [
+      "RFC-1122"
+    ]
+  }
+}

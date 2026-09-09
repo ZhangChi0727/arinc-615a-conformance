@@ -293,7 +293,110 @@ implementation is registered for reuse, and no third-party material is copied.
 **Status:** Disposition `ADOPT`; formal activation uses the CR-2026-006 gate and
 M1 remains prohibited until approval and ordinary merge are externally verified.
 
+## DD-018 — Use one authoritative M1 package and joint RG0/RG1 activation
+
+**Decision:** The machine-readable M1 package is the sole authority; its Markdown
+review view is generated. Audit the full 615A-3 scope and only 615A-3/service-
+triggered 665-5 dependencies. Preserve source modality separately from
+conformance effect. RG0 and RG1 close together only on one unchanged Head.
+
+**Why:** One authority prevents status drift; complete coverage prevents keyword
+selection bias; bounded dependency use prevents a later edition from silently
+rewriting the active protocol. External GitHub approval is not created by local
+Git history or automation.
+
+**Scope:** M1 static requirements, applicability, dependencies and review only.
+No model, Configuration, execution evidence, baseline, tag or conformance claim.
+
+**Status:** Candidate disposition `ADOPT` under CR-2026-007; RG0/RG1 and formal
+activation remain pending external independent review and ordinary merge.
+
+## DD-019 — Defer direct 615A-to-665 requirement edges to M2
+
+**Decision:** M1 admits ARINC 665-5 only at bounded Profile scope. Direct
+requirement-level refinement, producer-constraint, and consumer-tolerance
+edges remain prohibited until M2 performs attachment-anchored reconciliation.
+
+**Why:** Shared words or data-object names do not prove implication. An edge
+requires explicit evidence binding both source propositions.
+
+**Status:** Candidate under CR-2026-007; it does not authorize M2 entry.
+
+## DD-020 — Use generated projections and remove tautological semantic fields
+
+**Decision:** Rename the deterministic bilingual template output to
+`generatedSemanticProjectionEn/Zh` and treat it only as a drift anchor. Remove
+the redundant requirement-level `roles`, `operations`, `category`, and
+`obligations` fields; derive their display values from `semantic`.
+
+**Why:** A generated template is not independent review evidence, and fields
+forced to equal one semantic element carry no additional information.
+
+**Status:** Candidate under CR-2026-007, pending full RG0/RG1 review.
+
+## DD-021 — Reclassify Attachment 3 and Appendix E from informative to explicit deferral
+
+**Decision:** ARINC 615A-3 Attachment 3 (FIND protocol detail) and Appendix E
+(Data Loading Over AFDX) may no longer be classified
+`NON-PROTOCOL-PRODUCT-OR-INFORMATIVE` while the corresponding profile-level
+capability is deferred or the underlying dependency is not bound. Attachment 3
+leaves are recorded as `DEFERRED-FUTURE-SCOPE` with rationale `DEFERRED-FIND-M9`;
+Appendix E leaves are recorded as `DEFERRED-FUTURE-SCOPE` with rationale
+`DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING`.
+
+**Why:** Attachment 3 provides the normative definition of FIND while §5.3.3 is
+already deferred; an "informative" tag on the definition contradicts the
+deferral. Appendix E specifies deployment-normative constraints for AFDX
+transport whose ultimate blockers are ARINC 664 Part 7 (not yet acquired) and
+Part 2 (now bound); this should be closed by an explicit M2 infrastructure-
+binding condition rather than hidden behind an informative tag.
+
+**Scope:** Only coverage-ledger leaf reclassification; no CRS requirement is
+added or removed, no `currentStop` moves.
+
+**Status:** Candidate under CR-2026-007, pending external independent review.
+
+## DD-022 — Controlled handling of public IETF RFCs
+
+**Decision:** Public IETF RFCs (768, 791, 1123, 1350, 1785, 2347, 2348, 2349)
+are not registered in `configs/research/controlled_sources.json` `sources[]`
+(which is reserved for proprietary material subject to `SAR-2026-001`
+identity-match). They remain in `openDependencies[]` with an added
+`publicRetrieval` sub-object recording canonical URL, retrieval date, byte
+count, and SHA-256. The text files themselves are stored under
+`local-references/rfc/` (covered by `.gitignore`) and not committed.
+
+**Why:** The existing baseline check enforces `LOCAL-PROPRIETARY-NO-REPOSITORY-COPY`
+handling and independent acquisition-record matching for every `sources[]`
+entry — public text does not fit that model. Keeping RFCs in `openDependencies`
+preserves the correct "capability not yet established" semantics while
+`publicRetrieval` records the exact version identity we intend to bind against
+at requirement level.
+
+**Scope:** Only registers RFC identity and retrieval metadata; does not
+promote RFCs to requirement-level evidence, and does not clear the blocked
+status of any `RFC-*`-affected capability.
+
+**Status:** Candidate under CR-2026-007, pending external independent review.
+
 ---
+
+## DD-023 — Receive network references without manufacturing applicability closure
+
+Record P3-1 and P7 base-edition identities under CR-2026-007, retaining open
+edition, network applicability and independent approval obligations. The received
+editions are candidate inputs, not an assertion about the latest published standard.
+The network inspection register distinguishes regions inspected for context from
+atomic requirement coverage. The user selects Compliant Network, without P3
+deviations. RFC 1122 is independently registered as a received public source.
+The IPv4/UDP host service remains an unestablished infrastructure prerequisite,
+not a complete RFC inventory or implementation conformance claim. M2 must plan
+its substantiation before execution Configuration approval. Independent review
+must accept the historical editions and this scope boundary. AFDX, its AID future-supplement reference, and addressing
+choices remain deferred. Source receipt establishes no implementation capability.
+Review the remaining applicability before further normative promotion; retain DD-019
+and DD-020. Actual approval and merge facts are recorded externally on the unchanged
+Head and ordinary merge, without a dedicated post-merge synchronization commit.
 
 # 中文版
 
@@ -410,3 +513,60 @@ adequacy。延期 DTMC 协议语义、HMM/ML 诊断和 Bayesian calibration。FM
 第三方材料。
 
 **状态：** 处置为 `ADOPT`；正式激活使用 CR-2026-006 门，批准与普通合并经外部核验前禁止 M1。
+
+## DD-018——采用单一 M1 权威数据包及 RG0/RG1 联合激活
+
+**决定：** 机器可读 M1 数据包是唯一权威，Markdown 评审视图是生成物。对 615A-3 做完整范围审计，只审计由 615A-3／所选服务触发的 665-5 依赖；来源模态与符合性效果分离。RG0 与 RG1 只在同一不变 Head 上联合关闭。
+
+**理由：** 单一权威防止状态漂移，完整覆盖避免关键词选择偏差，有边界依赖防止后续版次静默改写活动协议。本地 Git 历史或自动化不能制造外部 GitHub 批准。
+
+**范围：** 仅限 M1 静态需求、适用性、依赖和评审；不创建模型、Configuration、执行证据、baseline、tag 或符合性主张。
+
+**状态：** 在 CR-2026-007 下候选处置为 `ADOPT`；RG0/RG1 与正式激活仍等待外部独立评审和普通合并。
+
+## DD-019——将直接 615A→665 需求边延期到 M2
+
+**决定：** M1 仅在有界 Profile 范围准入 ARINC 665-5。直接需求精化、生成方约束和消费方容忍边继续禁止，直至 M2 完成 attachment 锚定协调。
+
+**理由：** 共享词汇或数据对象名称不能证明蕴含关系；一条边必须由同时绑定两个来源命题的明确证据支持。
+
+**状态：** 在 CR-2026-007 下为候选，不授权进入 M2。
+
+## DD-020——采用生成投影并删除同义冗余语义字段
+
+**决定：** 将确定性双语模板输出重命名为 `generatedSemanticProjectionEn/Zh`，仅作为漂移锚；删除需求级 `roles`、`operations`、`category` 和 `obligations` 冗余字段，显示值由 `semantic` 导出。
+
+**理由：** 生成模板不是独立评审证据；被强制等于单个语义元素的字段不携带额外信息。
+
+**状态：** 在 CR-2026-007 下为候选，等待完整 RG0/RG1 复审。
+
+## DD-021——附件 3 与附录 E 从"信息性"重分类为显式延期
+
+**决定：** ARINC 615A-3 附件 3（FIND 协议详解）与附录 E（AFDX 数据加载部署）在 Profile 层已延期或依赖尚未绑定的情况下，不得使用 `NON-PROTOCOL-PRODUCT-OR-INFORMATIVE` 归口，而应显式记为 `DEFERRED-FUTURE-SCOPE`，理由码分别为 `DEFERRED-FIND-M9` 与 `DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING`。
+
+**理由：** 附件 3 提供 FIND 的规范性定义，而 §5.3.3 主体已延期 FIND；"信息性"归口与延期结论冲突。附录 E 规定 AFDX 部署下的规范性约束，其真正阻塞在 ARINC 664 P7（未获取）与 P2（现已绑定），应通过明确的 M2 基础设施绑定条件封闭。
+
+**范围：** 仅重分类覆盖账本 leaf；不新增或删除 CRS 需求，也不移动 currentStop。
+
+**状态：** 在 CR-2026-007 下为候选，等待外部独立复审。
+
+## DD-022——公共 IETF RFC 的受控处理
+
+**决定：** 公共 IETF RFC（768、791、1123、1350、1785、2347、2348、2349）不进入 `configs/research/controlled_sources.json` 的 `sources[]`（其为专有材料专用），而是留在 `openDependencies[]`，并附上 `publicRetrieval` 子对象记录规范 URL、检索日期、字节数与 SHA-256；文件本体保存在 `local-references/rfc/`（`.gitignore` 覆盖）且不入库。
+
+**理由：** 现有 baseline 检查要求 `sources[]` 项目具备"专有本地非仓储副本"处置策略与独立采购记录匹配，公共文本不符合该模型。将 RFC 保留在 `openDependencies` 保持"能力仍未建立"的正确语义，同时通过 `publicRetrieval` 记录我们意图使用的具体版本身份。
+
+**范围：** 仅登记 RFC 身份与检索元数据；不将其提升为需求级证据，也不解除 `RFC-*` 对应能力的阻塞状态。
+
+**状态：** 在 CR-2026-007 下为候选，等待外部独立复审。
+
+## DD-023——接收网络来源并选择 Compliant 范围，不制造适用性闭合
+
+在 CR-2026-007 下登记 P3-1 与 P7 初版身份，保留版次、网络适用性与独立批准义务。
+所获版次为候选输入，不声称是最新标准。网络检查登记区分上下文检查区域与原子需求覆盖。
+用户选择 Compliant Network，不采用 P3 偏差；RFC 1122 单独登记为已取得公共来源。
+IPv4/UDP 主机服务仍是未建立的基础设施前提，不代表完整 RFC 清单或实现符合性。
+M2 须规划其验证，之后才可批准执行 Configuration；独立评审须接受历史版次与此范围边界。
+AFDX、AID 未来补充版引用与寻址选择仍延期。来源接收不建立实现能力。
+继续保留 DD-019/DD-020，在进一步规范晋级前评审剩余适用性。
+真实批准和合并事实由不变 Head 上的外部记录与普通合并承载，不新增专门 post-merge 同步提交。

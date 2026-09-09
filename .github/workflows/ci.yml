@@ -37,6 +37,10 @@ jobs:
         run: |
           python scripts/sync_project_overview.py --check
 
+      - name: Validate M1 CRS synchronization
+        run: |
+          python scripts/sync_m1_crs.py --check
+
       - name: Compile with SyntaxWarning as error
         run: |
           python -W error::SyntaxWarning -m compileall -q src scripts tests

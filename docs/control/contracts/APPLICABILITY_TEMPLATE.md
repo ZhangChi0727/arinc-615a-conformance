@@ -1,5 +1,20 @@
 # Applicability and Observation Declaration Template
 
+## M1 Profile-level declaration
+
+M1 declares source identities, roles, services/operations, included, excluded
+and deferred behavior, and observation classes without inventing an IUT. Every
+registered source PDF page is either inside a controlled section span or an
+explicit exclusion range. Each
+requirement uses exactly one observation classification:
+`OBSERVABLE-IN-PRINCIPLE`, `CONFIGURATION-DEPENDENT`,
+`INTERNAL-NOT-OBSERVABLE`, `DEPENDENCY-BLOCKED`, or `UNRESOLVED`. The strongest
+M1 conclusion is only that a CRS/applicability candidate has been formed.
+
+## Future Project Configuration declaration
+
+The fields below are retained for M6. They must not be instantiated during M1.
+
 | Field | Value |
 |---|---|
 | **Artifact ID** | APP-YYYY-NNN |
@@ -65,6 +80,14 @@ observability or applicability questions.
 ---
 
 # 中文版
+
+## M1 Profile 层声明
+
+M1 只声明来源身份、角色、服务／操作、纳入／排除／延期行为和观测分类，不虚构 IUT。登记来源的每一 PDF 页必须落入受控 section span 或明确排除区间。每项需求只能采用 `OBSERVABLE-IN-PRINCIPLE`、`CONFIGURATION-DEPENDENT`、`INTERNAL-NOT-OBSERVABLE`、`DEPENDENCY-BLOCKED` 或 `UNRESOLVED` 之一。M1 允许的最强结论仅为已形成 CRS／适用性候选。
+
+## 未来 Project Configuration 声明
+
+下列 IUT、平台、工具、时钟、拓扑和 checksum 字段保留到 M6；M1 不得实例化。
 
 本模板用于固定 IUT 身份、角色、服务/选项、排除项、观测边界、环境和最强允许主张。时序观测必须声明来源/工具、分辨率和限制；环境假设必须记录时间源、单调时钟身份与分辨率、时间戳观测点、跨主机同步/路径假设、初始误差预算及重置能力。存在不可观测或误差界无法论证的适用义务时，应缩小主张或判为不可验证，而不是静默忽略。
 

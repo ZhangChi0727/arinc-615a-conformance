@@ -587,9 +587,14 @@ def test_development_gates_must_match_roadmap() -> None:
 
 
 def test_gate_values_must_match_stage_position() -> None:
+    register = controlled_sources()
+    current_gate = next(
+        row["gateId"] for row in register["roadmap"]
+        if row["id"] == register["lifecycle"]["currentStageId"]
+    )
     cases = (
         ("SCOPE-EXPANSION-GATE", "ESTABLISHED"),
-        ("SOURCE-TECHNICAL-DIRECTION-GATE", "COMPLETED-EXTERNALLY-VERIFIED"),
+        (current_gate, "COMPLETED-EXTERNALLY-VERIFIED"),
     )
     for gate_id, value in cases:
         data = status()
@@ -599,16 +604,9 @@ def test_gate_values_must_match_stage_position() -> None:
 
 def test_completed_stage_gate_must_be_closed() -> None:
     register = controlled_sources()
-    register["roadmap"][0]["status"] = "COMPLETED-EXTERNALLY-VERIFIED"
-    register["roadmap"][1]["status"] = "DISPOSITION-ADOPT"
-    register["roadmap"][2]["status"] = "NEXT-BLOCKED-BY-FINAL-GATE"
-    register["lifecycle"]["currentStageId"] = register["roadmap"][1]["id"]
-    register["lifecycle"]["nextStageId"] = register["roadmap"][2]["id"]
     data = status()
-    data["development"]["currentStop"]["id"] = register["roadmap"][2]["gateId"]
-    data["development"]["currentStop"]["statusPath"] = f"development.gates.{register['roadmap'][2]['gateId']}"
-    data["development"]["gates"][register["roadmap"][1]["gateId"]] = "EXTERNAL-VERIFICATION-REQUIRED"
-    data["development"]["gates"][register["roadmap"][2]["gateId"]] = "NOT YET ESTABLISHED"
+    completed_gate = register["roadmap"][0]["gateId"]
+    data["development"]["gates"][completed_gate] = "BLOCKED"
     errors = integrated_source_errors(register, data)
     assert any("COMPLETED-EXTERNALLY-VERIFIED" in error for error in errors)
 
