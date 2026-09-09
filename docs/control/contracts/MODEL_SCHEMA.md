@@ -47,16 +47,21 @@ This candidate does not ship an execution oracle.
 
 ## Expressions
 
-Timing expressions use a restricted AST: LITERAL, SYMBOL and BINARY with ADD,
-SUB, MUL and DIV. Arbitrary strings are not evaluated. Unresolved symbolic
-bounds remain NOT-CHECKED or UNRESOLVED; they are not PASS.
+Guards, updates, invariants and timing expressions use a restricted AST:
+TRUE, COMPARE, AND, VAR, CLOCK, SYMBOL, LITERAL, ENUM, ASSIGN and BINARY with
+ADD, SUB, MUL and DIV. Arbitrary strings are not evaluated. Timeout events are
+enabled only by clock-bound guards. Unresolved symbolic bounds remain
+NOT-CHECKED or UNRESOLVED; they are not PASS. Source equations retain every
+source term, including retry and network-transmission terms.
 
 ## Automatic checks
 
-Automation checks schema, identity, partition, polarity, graph connectivity,
-restricted expressions, capability guards and fingerprint refresh. It cannot
-prove proprietary source fidelity, timed reachability or implementation
-conformance. Static untimed connectivity is limited to the declared graph.
+Automation checks the nested closed schema, fail-closed git object identity,
+M1-bound inventories, partition, polarity, graph connectivity, sequence
+constraints, restricted expressions, capability guards and fingerprint refresh.
+It cannot prove proprietary source fidelity, timed reachability or
+implementation conformance. Static untimed connectivity is limited to the
+declared graph.
 
 ## Non-claims
 
@@ -103,13 +108,16 @@ UPLOAD 与 INFORMATION 共享一台机器。数据加载器与目标硬件是同
 
 ## 表达式
 
-时序表达式使用受限 AST：LITERAL、SYMBOL 以及 ADD/SUB/MUL/DIV 的 BINARY。
-禁止对任意字符串求值。未解析符号边界保持 NOT-CHECKED 或 UNRESOLVED，不是 PASS。
+守卫、更新、不变量和时序表达式使用受限 AST：TRUE、COMPARE、AND、VAR、CLOCK、
+SYMBOL、LITERAL、ENUM、ASSIGN 以及 ADD/SUB/MUL/DIV 的 BINARY。禁止对任意字符串
+求值。超时事件仅由时钟边界守卫使能。未解析符号边界保持 NOT-CHECKED 或
+UNRESOLVED，不是 PASS。来源方程保留全部来源项，包括重试与网络传输项。
 
 ## 自动检查
 
-自动化检查 schema、身份、分区、极性、图连通、受限表达式、能力守卫和指纹刷新。
-不能证明专有来源忠实度、定时可达或实现符合性。静态无时时连通仅限于已声明图。
+自动化检查完整嵌套封闭 schema、fail-closed 的 Git 对象身份、与 M1 绑定的清单、
+分区、极性、图连通、顺序约束、受限表达式、能力守卫和指纹刷新。不能证明专有
+来源忠实度、定时可达或实现符合性。静态无时时连通仅限于已声明图。
 
 ## 非主张
 

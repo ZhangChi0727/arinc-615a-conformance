@@ -404,10 +404,11 @@ Head and ordinary merge, without a dedicated post-merge synchronization commit.
 
 M2 delivers one machine M = (S, s0, V, C, P, E, T, Inv) for UPLOAD and
 INFORMATION, with Data Loader and Target Hardware as observation projections of
-the same state. Timing uses restricted ASTs, explicit clocks and source-bound
-error-budget classes. Unresolved bounds remain NOT-CHECKED. The package is the
-model authority; M1 remains the immutable CRS input. No codec, executable engine,
-TP/VC or Project Configuration is authorized.
+the same state. Timing uses restricted ASTs, explicit clocks, clock-enabled
+timeouts and source-bound error-budget classes. Attachment 4 equations retain
+retry and network-transmission terms. Unresolved bounds remain NOT-CHECKED. The
+package is the model authority; M1 remains the immutable CRS input. No codec,
+executable engine, TP/VC or Project Configuration is authorized.
 
 **Scope:** Candidate model and obligation traces under CR-2026-008.
 
@@ -433,11 +434,12 @@ says otherwise.
 ## DD-026 — Keep infrastructure premises distinct from established capabilities
 
 Source-explicit 615A→665 and TFTP-option edges may be candidate refinements when
-both ends are located. IPv4/UDP and RFC 1122/1123 remain infrastructure premises
-with substantiation planned for Project Configuration. ARINC 645 continues to
-block integrity success. AFDX, FIND, media-set services and P3 profiled deviations
-stay deferred or excluded. No behavior capability becomes ESTABLISHED in this
-candidate.
+both ends are located. CRS-M1-00034 is a block-size candidate to RFC 2348 §2;
+the conflicted 6.4.4 LUI/LUR file identity does not emit an active 665 edge.
+IPv4/UDP and RFC 1122/1123 remain infrastructure premises with substantiation
+planned for Project Configuration. ARINC 645 continues to block integrity
+success. AFDX, FIND, media-set services and P3 profiled deviations stay deferred
+or excluded. No behavior capability becomes ESTABLISHED in this candidate.
 
 **Scope:** Premises, refinements and capability guards used by the M2 model.
 
@@ -619,9 +621,10 @@ AFDX、AID 未来补充版引用与寻址选择仍延期。来源接收不建立
 ## DD-024——将 M2 绑定到带受限时钟的可观测 timed EFSM
 
 M2 为 UPLOAD 与 INFORMATION 交付一台机器 M = (S, s0, V, C, P, E, T, Inv)，
-数据加载器与目标硬件是同一状态的观测投影。时序使用受限 AST、显式时钟和有来源
-的误差预算类别。未解析边界保持 NOT-CHECKED。数据包是模型权威；M1 仍为不可变
-CRS 输入。不授权 codec、可执行引擎、TP/VC 或 Project Configuration。
+数据加载器与目标硬件是同一状态的观测投影。时序使用受限 AST、显式时钟、时钟
+使能超时和有来源的误差预算类别。附件 4 方程保留重试与网络传输项。未解析边界
+保持 NOT-CHECKED。数据包是模型权威；M1 仍为不可变 CRS 输入。不授权 codec、
+可执行引擎、TP/VC 或 Project Configuration。
 
 **范围：** CR-2026-008 下的候选模型与义务追踪。
 
@@ -640,10 +643,11 @@ main CI。不改写已合并 M1 字节，不伪造 GitHub APPROVED Review，不�
 
 ## DD-026——将基础设施前提与已建立能力分开
 
-两端均可定位时，615A→665 与 TFTP 选项边可作为候选精化。IPv4/UDP 与 RFC
-1122/1123 仍为基础设施前提，其验证计划用于 Project Configuration。ARINC 645
-继续阻塞完整性成功。AFDX、FIND、媒体集服务和 P3 裁剪偏差保持延期或排除。
-本候选不把任何行为能力改为 ESTABLISHED。
+两端均可定位时，615A→665 与 TFTP 选项边可作为候选精化。CRS-M1-00034 是指向
+RFC 2348 §2 的块大小候选；冲突的 6.4.4 LUI/LUR 文件身份不发出活动 665 边。
+IPv4/UDP 与 RFC 1122/1123 仍为基础设施前提，其验证计划用于 Project
+Configuration。ARINC 645 继续阻塞完整性成功。AFDX、FIND、媒体集服务和 P3
+裁剪偏差保持延期或排除。本候选不把任何行为能力改为 ESTABLISHED。
 
 **范围：** M2 模型使用的前提、精化与能力守卫。
 
