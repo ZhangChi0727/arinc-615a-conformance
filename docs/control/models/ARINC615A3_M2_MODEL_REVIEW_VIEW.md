@@ -17,8 +17,8 @@
 - Services: UPLOAD, INFORMATION; deferred DOWNLOAD, FIND
 - Network: `COMPLIANT`; AFDX selected `False`; P3 profiled `False`
 - Form: `M=(S,s0,V,C,P,E,T,Inv)`; initial `S_IDLE`
-- Delay grows clocks in C; variables stay unchanged; invariants hold. A discrete step evaluates guard, then updates, then resets, then outputs, then the target. Timeout events are enabled only by their clock-bound guards. The input event is the stimulus; outputs are additional emissions and must not repeat the stimulus as a second message.
-- NETWORK-VISIBLE events are TFTP opcodes on a named file role. APPLICATION/PARSE-RESULT/LOCAL events are derived from received files or local analysis and are not additional wire opcodes. ENVIRONMENT timeouts are enabled only by clock guards.
+- Delay grows clocks in C; variables stay unchanged; invariants hold. A discrete step binds the input event's typed payload, evaluates the guard (PAYLOAD names read that payload, not implicit variable writes), then updates, then resets matching clock instances, then outputs, then the target. Timeout and WAIT-elapsed events are enabled only by COMPARE(enablingCompare) between enablingClock and enablingBound. The input event is the stimulus; outputs are additional emissions and must not repeat the stimulus as a second message.
+- NETWORK-VISIBLE events are TFTP opcodes on a named file role. LUR is a TFTP write: DL WRQ, TH ACK, DL DATA. APPLICATION payload.decision is a typed ENUM evaluated in the guard before lastDecision is written. PARSE-RESULT/LOCAL events are derived from received files or local analysis and are not additional wire opcodes. ENVIRONMENT timeouts and WAIT-elapsed are enabled only by COMPARE(enablingCompare) of enablingClock and enablingBound.
 
 ## Events
 
@@ -39,8 +39,8 @@
 | `EV_DL_APP_UPL_RESPONSE` | APPLICATION | DL initialization response after LUI analysis |
 | `EV_DL_OFFER_LIST` | APPLICATION | DL offers the load list after init accept |
 | `EV_TH_LUS0001` | NETWORK-VISIBLE | TH LUS with status 0001 while list not accepted |
-| `EV_TH_WRQ_LUR` | NETWORK-VISIBLE | TH TFTP WRQ for LUR after list accept |
-| `EV_DL_ACK_LUR` | NETWORK-VISIBLE | DL ACK of LUR WRQ |
+| `EV_DL_WRQ_LUR` | NETWORK-VISIBLE | DL TFTP WRQ for LUR after list accept |
+| `EV_TH_ACK_LUR` | NETWORK-VISIBLE | TH ACK of LUR WRQ |
 | `EV_DL_DATA_LUR` | NETWORK-VISIBLE | DL TFTP DATA of LUR list |
 | `EV_TH_RRQ_FILE` | NETWORK-VISIBLE | TH TFTP RRQ for a requested upload file |
 | `EV_DL_FILE_UNAVAIL` | NETWORK-VISIBLE | DL reports requested file unavailable |
@@ -58,6 +58,8 @@
 | `EV_TIMEOUT_TFTP` | ENVIRONMENT | TFTP clock expired; enabled only when CLK_TFTP >= TFTP_TO |
 | `EV_TIMEOUT_DLP` | ENVIRONMENT | DLP clock expired; enabled only when CLK_DLP >= DLP_TO |
 | `EV_TIMEOUT_EXCEPTION` | ENVIRONMENT | Exception clock expired; enabled only when CLK_EXCEPTION >= EXCEPTION_TIMER |
+| `EV_WAIT_RECEIVED` | PARSE-RESULT | WAIT message received; starts the not-before delay clock |
+| `EV_WAIT_ELAPSED` | ENVIRONMENT | WAIT delay elapsed; enabled only when CLK_WAIT >= MESSAGE_TIMER_VALUE |
 | `EV_OP_COMPLETE` | PARSE-RESULT | Completion decided from LCS/LUS status, not a forged success |
 
 ## States
@@ -82,8 +84,8 @@
 | `S_UPL_REJECTED` | True | UPLOAD initialization rejected |
 | `S_UPL_LIST_SENT` | False | DL offered the load list after init accept |
 | `S_UPL_WAIT_LUS0001` | False | Wait LUS-0001 while list not yet accepted |
-| `S_UPL_LUR_WRQ` | False | TH WRQ for LUR after list accept |
-| `S_UPL_LUR_ACK` | False | DL ACK of LUR write request |
+| `S_UPL_LUR_WRQ` | False | DL WRQ for LUR after list accept (TFTP write) |
+| `S_UPL_LUR_ACK` | False | TH ACK of LUR write request |
 | `S_UPL_LUR_XFER` | False | LUR list transfer; distinct from file data |
 | `S_UPL_FILE_RRQ` | False | TH RRQ for a requested upload file |
 | `S_UPL_FILE_UNAVAIL` | False | Requested file unavailable |
@@ -95,6 +97,7 @@
 | `S_UPL_STATUS_APP` | False | Application consumes LUS |
 | `S_UPL_COMPLETE` | True | UPLOAD completed without treating abort as success |
 | `S_UPL_EXCEPTION` | False | UPLOAD exception wait |
+| `S_WAIT_RETRY` | False | WAIT-message delay; retry not enabled before the carried timer |
 | `S_ABORTING` | False | Abort in progress |
 | `S_ABORTED` | True | Aborted terminal |
 | `S_FAILED` | True | Failed terminal |
@@ -105,6 +108,7 @@
 |---|---|---|---|
 | `activeOperation` | ENUM | NONE | NONE, INFORMATION, UPLOAD |
 | `lastDecision` | ENUM | NONE | NONE, ACCEPT, REJECT |
+| `waitResume` | ENUM | NONE | NONE, UPL_FILE, UPL_LUR, INF_LCI, INF_LCL |
 | `listOffered` | ENUM | FALSE | FALSE, TRUE |
 | `listAccepted` | ENUM | FALSE | FALSE, TRUE |
 | `lciComplete` | ENUM | FALSE | FALSE, TRUE |
@@ -138,6 +142,7 @@
 | `CLK_TFTP` | PER-CORRELATION-KEY | TFTP-PEER-AND-TRANSFER | `T_INF_LCI_RRQ`, `T_UPL_LUI_RRQ`, `T_UPL_LUR_WRQ`, `T_UPL_FILE_RRQ` | Time since last TFTP packet of the correlated transfer. |
 | `CLK_DLP` | PER-CORRELATION-KEY | TARGET-OPERATION-AND-DLP-TRANSFER-SEQUENCE | `T_INF_ACCEPT_INIT`, `T_UPL_ACCEPT_INIT`, `T_UPL_LUR_WRQ`, `T_UPL_FILE_RRQ` | Inter-operation / inter-transfer DLP clock. |
 | `CLK_EXCEPTION` | PER-CORRELATION-KEY | STATUS-EXCEPTION-OBJECT | `T_ENTER_UPL_EXC`, `T_ENTER_INF_EXC`, `T_INF_LCS_WRQ` | Exception silence clock. |
+| `CLK_WAIT` | PER-CORRELATION-KEY | TFTP-PEER-AND-REJECTED-TRANSFER-REQUEST | `T_WAIT_FROM_UPL_FILE`, `T_WAIT_FROM_UPL_LUR`, `T_WAIT_FROM_INF_LCI`, `T_WAIT_FROM_INF_LCL` | Delay since the WAIT message that forbids retry until the carried timer elapses. |
 
 ## Invariants
 
@@ -150,11 +155,11 @@
 
 | ID | Source | Event | Target | Guard | Updates | Outputs | Resets | Requirements |
 |---|---|---|---|---|---|---|---|---|
-| `T_INF_LCI_RRQ` | `S_IDLE` | `EV_DL_RRQ_LCI` | `S_INF_LCI_RRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"INFORMATION"}}]` | — | CLK_TFTP | `CRS-M1-00347` |
+| `T_INF_LCI_RRQ` | `S_IDLE` | `EV_DL_RRQ_LCI` | `S_INF_LCI_RRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"listOffered","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"listAccepted","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lurComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"luiComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lciComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lclComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"integrityClaim","value":{"kind":"ENUM","value":"FALSE"}}]` | — | CLK_TFTP | `CRS-M1-00347` |
 | `T_INF_LCI_XFER` | `S_INF_LCI_RRQ` | `EV_TH_DATA_LCI` | `S_INF_LCI_XFER` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | `[{"kind":"ASSIGN","target":"lciComplete","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_TFTP | `CRS-M1-00348` |
 | `T_INF_EVAL` | `S_INF_LCI_XFER` | `EV_LOCAL_EVAL` | `S_INF_EVALUATE` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | — | — | — | `CRS-M1-00349` |
-| `T_INF_ACCEPT_INIT` | `S_INF_EVALUATE` | `EV_DL_APP_INF_RESPONSE` | `S_INF_LCL_WRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"lastDecision"},"right":{"kind":"ENUM","value":"ACCEPT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"ACCEPT"}}]` | — | CLK_DLP | `CRS-M1-00349`, `CRS-M1-00351` |
-| `T_INF_REJECT` | `S_INF_EVALUATE` | `EV_DL_APP_INF_RESPONSE` | `S_INF_REJECTED` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"lastDecision"},"right":{"kind":"ENUM","value":"REJECT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"REJECT"}},{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | — | `CRS-M1-00350` |
+| `T_INF_ACCEPT_INIT` | `S_INF_EVALUATE` | `EV_DL_APP_INF_RESPONSE` | `S_INF_LCL_WRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"PAYLOAD","name":"decision"},"right":{"kind":"ENUM","value":"ACCEPT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"ACCEPT"}}]` | — | CLK_DLP | `CRS-M1-00349`, `CRS-M1-00351` |
+| `T_INF_REJECT` | `S_INF_EVALUATE` | `EV_DL_APP_INF_RESPONSE` | `S_INF_REJECTED` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"PAYLOAD","name":"decision"},"right":{"kind":"ENUM","value":"REJECT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"REJECT"}},{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | — | `CRS-M1-00350` |
 | `T_INF_LCL_WRQ` | `S_INF_LCL_WRQ` | `EV_TH_WRQ_LCL` | `S_INF_LCL_WRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | — | — | CLK_TFTP | `CRS-M1-00351` |
 | `T_INF_LCL_ACK` | `S_INF_LCL_WRQ` | `EV_DL_ACK_LCL` | `S_INF_LCL_XFER` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | — | — | CLK_TFTP | `CRS-M1-00352` |
 | `T_INF_LCL_XFER` | `S_INF_LCL_XFER` | `EV_TH_DATA_LCL` | `S_INF_APP` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | `[{"kind":"ASSIGN","target":"lclComplete","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_TFTP | `CRS-M1-00353` |
@@ -162,16 +167,16 @@
 | `T_INF_LCS_WRQ` | `S_INF_LCS_WRQ` | `EV_TH_WRQ_LCS` | `S_INF_LCS_XFER` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | — | — | CLK_TFTP, CLK_EXCEPTION | `CRS-M1-00355` |
 | `T_INF_LCS_XFER` | `S_INF_LCS_XFER` | `EV_TH_DATA_LCS` | `S_INF_COMPLETE` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | `[{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"FROM-LCS"}},{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | CLK_TFTP | `CRS-M1-00356`, `CRS-M1-00357`, `CRS-M1-00358` |
 | `T_INF_SESSION_END` | `S_INF_COMPLETE` | `EV_OP_COMPLETE` | `S_IDLE` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | — | — | — | `CRS-M1-00358` |
-| `T_UPL_LUI_RRQ` | `S_IDLE` | `EV_DL_RRQ_LUI` | `S_UPL_LUI_RRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"UPLOAD"}}]` | — | CLK_TFTP | `CRS-M1-00359`, `CRS-M1-00360` |
-| `T_UPL_LUI_RRQ_AFTER_INF` | `S_INF_COMPLETE` | `EV_DL_RRQ_LUI` | `S_UPL_LUI_RRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"UPLOAD"}}]` | — | CLK_TFTP | `CRS-M1-00360` |
+| `T_UPL_LUI_RRQ` | `S_IDLE` | `EV_DL_RRQ_LUI` | `S_UPL_LUI_RRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"listOffered","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"listAccepted","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lurComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"luiComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lciComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lclComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"integrityClaim","value":{"kind":"ENUM","value":"FALSE"}}]` | — | CLK_TFTP | `CRS-M1-00359`, `CRS-M1-00360` |
+| `T_UPL_LUI_RRQ_AFTER_INF` | `S_INF_COMPLETE` | `EV_DL_RRQ_LUI` | `S_UPL_LUI_RRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"listOffered","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"listAccepted","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lurComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"luiComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lciComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lclComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"integrityClaim","value":{"kind":"ENUM","value":"FALSE"}}]` | — | CLK_TFTP | `CRS-M1-00360` |
 | `T_UPL_LUI_XFER` | `S_UPL_LUI_RRQ` | `EV_TH_DATA_LUI` | `S_UPL_LUI_XFER` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | `[{"kind":"ASSIGN","target":"luiComplete","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_TFTP | `CRS-M1-00361` |
 | `T_UPL_EVAL` | `S_UPL_LUI_XFER` | `EV_LOCAL_EVAL` | `S_UPL_EVALUATE` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | — | — | — | `CRS-M1-00362` |
-| `T_UPL_ACCEPT_INIT` | `S_UPL_EVALUATE` | `EV_DL_APP_UPL_RESPONSE` | `S_UPL_LIST_SENT` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"lastDecision"},"right":{"kind":"ENUM","value":"ACCEPT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"ACCEPT"}}]` | — | CLK_DLP | `CRS-M1-00362`, `CRS-M1-00363` |
-| `T_UPL_REJECT` | `S_UPL_EVALUATE` | `EV_DL_APP_UPL_RESPONSE` | `S_UPL_REJECTED` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"lastDecision"},"right":{"kind":"ENUM","value":"REJECT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"REJECT"}},{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | — | `CRS-M1-00362` |
+| `T_UPL_ACCEPT_INIT` | `S_UPL_EVALUATE` | `EV_DL_APP_UPL_RESPONSE` | `S_UPL_LIST_SENT` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"PAYLOAD","name":"decision"},"right":{"kind":"ENUM","value":"ACCEPT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"ACCEPT"}}]` | — | CLK_DLP | `CRS-M1-00362`, `CRS-M1-00363` |
+| `T_UPL_REJECT` | `S_UPL_EVALUATE` | `EV_DL_APP_UPL_RESPONSE` | `S_UPL_REJECTED` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"PAYLOAD","name":"decision"},"right":{"kind":"ENUM","value":"REJECT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"REJECT"}},{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | — | `CRS-M1-00362` |
 | `T_UPL_LIST_OFFER` | `S_UPL_LIST_SENT` | `EV_DL_OFFER_LIST` | `S_UPL_WAIT_LUS0001` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | `[{"kind":"ASSIGN","target":"listOffered","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_DLP | `CRS-M1-00363`, `CRS-M1-00364` |
 | `T_UPL_WAIT_LUS0001` | `S_UPL_WAIT_LUS0001` | `EV_TH_LUS0001` | `S_UPL_WAIT_LUS0001` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"listAccepted"},"right":{"kind":"ENUM","value":"FALSE"}}]}` | `[{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"0X0001"}}]` | — | CLK_EXCEPTION | `CRS-M1-00364` |
-| `T_UPL_LUR_WRQ` | `S_UPL_WAIT_LUS0001` | `EV_TH_WRQ_LUR` | `S_UPL_LUR_WRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"listAccepted"},"right":{"kind":"ENUM","value":"TRUE"}}]}` | `[{"kind":"ASSIGN","target":"listAccepted","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_TFTP, CLK_DLP | `CRS-M1-00365` |
-| `T_UPL_LUR_ACK` | `S_UPL_LUR_WRQ` | `EV_DL_ACK_LUR` | `S_UPL_LUR_ACK` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | — | — | CLK_TFTP | `CRS-M1-00366` |
+| `T_UPL_LUR_WRQ` | `S_UPL_WAIT_LUS0001` | `EV_DL_WRQ_LUR` | `S_UPL_LUR_WRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"listOffered"},"right":{"kind":"ENUM","value":"TRUE"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"listAccepted"},"right":{"kind":"ENUM","value":"FALSE"}}]}` | `[{"kind":"ASSIGN","target":"listAccepted","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_TFTP, CLK_DLP | `CRS-M1-00365` |
+| `T_UPL_LUR_ACK` | `S_UPL_LUR_WRQ` | `EV_TH_ACK_LUR` | `S_UPL_LUR_ACK` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | — | — | CLK_TFTP | `CRS-M1-00366` |
 | `T_UPL_LUR_XFER` | `S_UPL_LUR_ACK` | `EV_DL_DATA_LUR` | `S_UPL_LUR_XFER` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | `[{"kind":"ASSIGN","target":"lurComplete","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_TFTP | `CRS-M1-00367` |
 | `T_UPL_FILE_RRQ` | `S_UPL_LUR_XFER` | `EV_TH_RRQ_FILE` | `S_UPL_FILE_RRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"lurComplete"},"right":{"kind":"ENUM","value":"TRUE"}}]}` | — | — | CLK_TFTP, CLK_DLP | `CRS-M1-00368` |
 | `T_UPL_FILE_RRQ_MORE` | `S_UPL_MORE_FILES` | `EV_TH_RRQ_FILE` | `S_UPL_FILE_RRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"moreFilesRequired"},"right":{"kind":"ENUM","value":"TRUE"}}]}` | — | — | CLK_TFTP | `CRS-M1-00368`, `CRS-M1-00372` |
@@ -194,6 +199,14 @@
 | `T_INF_EXC_TO` | `S_INF_EXCEPTION` | `EV_TIMEOUT_EXCEPTION` | `S_FAILED` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"AND","args":[{"kind":"COMPARE","op":"GE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}]}]}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | — | `CRS-M1-00101` |
 | `T_ENTER_UPL_EXC` | `S_UPL_WAIT_LUS0001` | `EV_TH_DATA_LUS` | `S_UPL_EXCEPTION` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | `[{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"EXCEPTION"}}]` | — | CLK_EXCEPTION | `CRS-M1-00099` |
 | `T_ENTER_INF_EXC` | `S_INF_LCS_XFER` | `EV_DL_APP_INF_STATUS` | `S_INF_EXCEPTION` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | `[{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"EXCEPTION"}}]` | — | CLK_EXCEPTION | `CRS-M1-00099` |
+| `T_WAIT_FROM_UPL_FILE` | `S_UPL_FILE_XFER` | `EV_WAIT_RECEIVED` | `S_WAIT_RETRY` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | `[{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"UPL_FILE"}}]` | — | CLK_WAIT | `CRS-M1-00032` |
+| `T_WAIT_FROM_UPL_LUR` | `S_UPL_LUR_XFER` | `EV_WAIT_RECEIVED` | `S_WAIT_RETRY` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | `[{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"UPL_LUR"}}]` | — | CLK_WAIT | `CRS-M1-00032` |
+| `T_WAIT_FROM_INF_LCI` | `S_INF_LCI_XFER` | `EV_WAIT_RECEIVED` | `S_WAIT_RETRY` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | `[{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"INF_LCI"}}]` | — | CLK_WAIT | `CRS-M1-00032` |
+| `T_WAIT_FROM_INF_LCL` | `S_INF_LCL_XFER` | `EV_WAIT_RECEIVED` | `S_WAIT_RETRY` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | `[{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"INF_LCL"}}]` | — | CLK_WAIT | `CRS-M1-00032` |
+| `T_WAIT_RETRY_UPL_FILE` | `S_WAIT_RETRY` | `EV_WAIT_ELAPSED` | `S_UPL_FILE_RRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"AND","args":[{"kind":"COMPARE","op":"GE","left":{"kind":"CLOCK","name":"CLK_WAIT"},"right":{"kind":"SYMBOL","name":"MESSAGE_TIMER_VALUE","unit":"s"}}]},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"waitResume"},"right":{"kind":"ENUM","value":"UPL_FILE"}}]}` | — | — | CLK_TFTP | `CRS-M1-00032` |
+| `T_WAIT_RETRY_UPL_LUR` | `S_WAIT_RETRY` | `EV_WAIT_ELAPSED` | `S_UPL_LUR_WRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"AND","args":[{"kind":"COMPARE","op":"GE","left":{"kind":"CLOCK","name":"CLK_WAIT"},"right":{"kind":"SYMBOL","name":"MESSAGE_TIMER_VALUE","unit":"s"}}]},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"waitResume"},"right":{"kind":"ENUM","value":"UPL_LUR"}}]}` | — | — | CLK_TFTP | `CRS-M1-00032` |
+| `T_WAIT_RETRY_INF_LCI` | `S_WAIT_RETRY` | `EV_WAIT_ELAPSED` | `S_INF_LCI_RRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"AND","args":[{"kind":"COMPARE","op":"GE","left":{"kind":"CLOCK","name":"CLK_WAIT"},"right":{"kind":"SYMBOL","name":"MESSAGE_TIMER_VALUE","unit":"s"}}]},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"waitResume"},"right":{"kind":"ENUM","value":"INF_LCI"}}]}` | — | — | CLK_TFTP | `CRS-M1-00032` |
+| `T_WAIT_RETRY_INF_LCL` | `S_WAIT_RETRY` | `EV_WAIT_ELAPSED` | `S_INF_LCL_WRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"AND","args":[{"kind":"COMPARE","op":"GE","left":{"kind":"CLOCK","name":"CLK_WAIT"},"right":{"kind":"SYMBOL","name":"MESSAGE_TIMER_VALUE","unit":"s"}}]},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"waitResume"},"right":{"kind":"ENUM","value":"INF_LCL"}}]}` | — | — | CLK_TFTP | `CRS-M1-00032` |
 | `T_ABORT_DL` | `S_UPL_FILE_XFER` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | — | — | — | `CRS-M1-00341` |
 | `T_ABORT_TH` | `S_UPL_FILE_XFER` | `EV_ABORT_TH` | `S_ABORTING` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | — | — | — | `CRS-M1-00340` |
 | `T_ABORTED` | `S_ABORTING` | `EV_OP_COMPLETE` | `S_ABORTED` | `{"kind":"TRUE"}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | — | `CRS-M1-00340`, `CRS-M1-00341` |
@@ -201,6 +214,7 @@
 | `T_ABORT_FROM_S_INF_LCL_XFER` | `S_INF_LCL_XFER` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
 | `T_ABORT_FROM_S_INF_LCS_XFER` | `S_INF_LCS_XFER` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
 | `T_ABORT_FROM_S_INF_EXCEPTION` | `S_INF_EXCEPTION` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
+| `T_ABORT_FROM_S_WAIT_RETRY` | `S_WAIT_RETRY` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
 | `T_ABORT_FROM_S_UPL_LUI_XFER` | `S_UPL_LUI_XFER` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
 | `T_ABORT_FROM_S_UPL_LIST_SENT` | `S_UPL_LIST_SENT` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
 | `T_ABORT_FROM_S_UPL_LUR_XFER` | `S_UPL_LUR_XFER` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
@@ -361,31 +375,31 @@
 
 ## Timing catalog
 
-| ID | CRS | Clock | Bounds | AST | Resets | Endpoints | Check | Window |
-|---|---|---|---|---|---|---|---|---|
-| `TIM-CRS-M1-00032` | `CRS-M1-00032` | `CLK_EXCEPTION` | None..MESSAGE_TIMER_VALUE s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"MESSAGE_TIMER_VALUE","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00094` | `CRS-M1-00094` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00097` | `CRS-M1-00097` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00098` | `CRS-M1-00098` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00099` | `CRS-M1-00099` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00100` | `CRS-M1-00100` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00101` | `CRS-M1-00101` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00102` | `CRS-M1-00102` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00106` | `CRS-M1-00106` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00107` | `CRS-M1-00107` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00108` | `CRS-M1-00108` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00168` | `CRS-M1-00168` | `CLK_TFTP` | None..TFTP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_TFTP"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"}}` | T_INF_LCI_RRQ, T_UPL_LUI_RRQ, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00176` | `CRS-M1-00176` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00177` | `CRS-M1-00177` | `CLK_TFTP` | 2..2 s | `{"kind":"LITERAL","value":2,"unit":"s"}` | T_INF_LCI_RRQ, T_UPL_LUI_RRQ, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `CONSTANT-DEFINITION` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00178` | `CRS-M1-00178` | `CLK_TFTP` | 0..TFTP-TO-DIVIDED-BY-4 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":4,"unit":"1"},"unit":"s"}}` | T_INF_LCI_RRQ, T_UPL_LUI_RRQ, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00179` | `CRS-M1-00179` | `CLK_DLP` | 0..TFTP-TO-DIVIDED-BY-2 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":2,"unit":"1"},"unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00184` | `CRS-M1-00184` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00185` | `CRS-M1-00185` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00186` | `CRS-M1-00186` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00187` | `CRS-M1-00187` | `CLK_DLP` | 13..13 s | `{"kind":"LITERAL","value":13,"unit":"s"}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `CONSTANT-DEFINITION` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00188` | `CRS-M1-00188` | `CLK_DLP` | 0..DLP-TO-MINUS-RETRY-AND-NETWORK-TERMS s | `{"kind":"COMPARE","op":"GT","left":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"DLP_RETRY","unit":"1"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"LITERAL","value":1,"unit":"1"},"unit":"1"},"unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"MUL","left":{"kind":"LITERAL","value":2,"unit":"1"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":4,"unit":"1"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/OPEN | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00305` | `CRS-M1-00305` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00322` | `CRS-M1-00322` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| ID | CRS | Clock | Kind | Bounds | AST | Resets | Endpoints | Check | Window |
+|---|---|---|---|---|---|---|---|---|---|
+| `TIM-CRS-M1-00032` | `CRS-M1-00032` | `CLK_WAIT` | NOT-BEFORE-LOWER-BOUND | MESSAGE_TIMER_VALUE..None s | `{"kind":"COMPARE","op":"GE","left":{"kind":"CLOCK","name":"CLK_WAIT"},"right":{"kind":"SYMBOL","name":"MESSAGE_TIMER_VALUE","unit":"s"}}` | T_WAIT_FROM_UPL_FILE, T_WAIT_FROM_UPL_LUR, T_WAIT_FROM_INF_LCI, T_WAIT_FROM_INF_LCL | CLOSED/UNRESOLVED | `RELATION-BOUND` | RETRY-NOT-BEFORE-CARRIED-TIMER |
+| `TIM-CRS-M1-00094` | `CRS-M1-00094` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00097` | `CRS-M1-00097` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00098` | `CRS-M1-00098` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00099` | `CRS-M1-00099` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00100` | `CRS-M1-00100` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00101` | `CRS-M1-00101` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00102` | `CRS-M1-00102` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00106` | `CRS-M1-00106` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00107` | `CRS-M1-00107` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00108` | `CRS-M1-00108` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00168` | `CRS-M1-00168` | `CLK_TFTP` | DEADLINE-UPPER-BOUND | None..TFTP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_TFTP"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"}}` | T_INF_LCI_RRQ, T_UPL_LUI_RRQ, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00176` | `CRS-M1-00176` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00177` | `CRS-M1-00177` | `CLK_TFTP` | CONSTANT-DEFINITION | 2..2 s | `{"kind":"LITERAL","value":2,"unit":"s"}` | T_INF_LCI_RRQ, T_UPL_LUI_RRQ, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `CONSTANT-DEFINITION` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00178` | `CRS-M1-00178` | `CLK_TFTP` | SOURCE-EQUATION | 0..TFTP-TO-DIVIDED-BY-4 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":4,"unit":"1"},"unit":"s"}}` | T_INF_LCI_RRQ, T_UPL_LUI_RRQ, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00179` | `CRS-M1-00179` | `CLK_DLP` | SOURCE-EQUATION | 0..TFTP-TO-DIVIDED-BY-2 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":2,"unit":"1"},"unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00184` | `CRS-M1-00184` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00185` | `CRS-M1-00185` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00186` | `CRS-M1-00186` | `CLK_DLP` | PROHIBITION-WINDOW-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00187` | `CRS-M1-00187` | `CLK_DLP` | CONSTANT-DEFINITION | 13..13 s | `{"kind":"LITERAL","value":13,"unit":"s"}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `CONSTANT-DEFINITION` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00188` | `CRS-M1-00188` | `CLK_DLP` | SOURCE-EQUATION | 0..DLP-TO-MINUS-RETRY-AND-NETWORK-TERMS s | `{"kind":"COMPARE","op":"GT","left":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"DLP_RETRY","unit":"1"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"LITERAL","value":1,"unit":"1"},"unit":"1"},"unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"MUL","left":{"kind":"LITERAL","value":2,"unit":"1"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":4,"unit":"1"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/OPEN | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00305` | `CRS-M1-00305` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00322` | `CRS-M1-00322` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
 
 ## Requirement dispositions
 
@@ -422,7 +436,7 @@
 | `CRS-M1-00029` | INTERFACE-PREMISE | `IF_TFTP` |
 | `CRS-M1-00030` | INTERFACE-PREMISE | `IF_TFTP` |
 | `CRS-M1-00031` | INTERFACE-PREMISE | `IF_TFTP` |
-| `CRS-M1-00032` | MODELED-TIMING | `IF_TFTP`, `TIM-CRS-M1-00032`, `CLK_EXCEPTION` |
+| `CRS-M1-00032` | MODELED-TIMING | `IF_TFTP`, `TIM-CRS-M1-00032`, `CLK_WAIT`, `T_WAIT_FROM_UPL_FILE`, `T_WAIT_FROM_UPL_LUR`, `T_WAIT_FROM_INF_LCI`, `T_WAIT_FROM_INF_LCL`, `T_WAIT_RETRY_UPL_FILE`, `T_WAIT_RETRY_UPL_LUR`, `T_WAIT_RETRY_INF_LCI`, `T_WAIT_RETRY_INF_LCL` |
 | `CRS-M1-00033` | INTERFACE-PREMISE | `IF_NETWORK` |
 | `CRS-M1-00034` | INTERFACE-PREMISE | `IF_TFTP_BLOCKSIZE` |
 | `CRS-M1-00035` | SCOPE-CONSTRAINT | `SCOPE` |
@@ -731,7 +745,7 @@
 | `CRS-M1-00338` | DATA-CONSTRAINT | `ST-CRS-M1-00338` |
 | `CRS-M1-00339` | DATA-CONSTRAINT | `ST-CRS-M1-00339` |
 | `CRS-M1-00340` | DATA-CONSTRAINT | `ST-CRS-M1-00340`, `T_ABORT_TH`, `T_ABORTED` |
-| `CRS-M1-00341` | DATA-CONSTRAINT | `ST-CRS-M1-00341`, `T_ABORT_DL`, `T_ABORTED`, `T_ABORT_FROM_S_INF_LCI_RRQ`, `T_ABORT_FROM_S_INF_LCL_XFER`, `T_ABORT_FROM_S_INF_LCS_XFER`, `T_ABORT_FROM_S_INF_EXCEPTION`, `T_ABORT_FROM_S_UPL_LUI_XFER`, `T_ABORT_FROM_S_UPL_LIST_SENT`, `T_ABORT_FROM_S_UPL_LUR_XFER`, `T_ABORT_FROM_S_UPL_LUS_XFER` |
+| `CRS-M1-00341` | DATA-CONSTRAINT | `ST-CRS-M1-00341`, `T_ABORT_DL`, `T_ABORTED`, `T_ABORT_FROM_S_INF_LCI_RRQ`, `T_ABORT_FROM_S_INF_LCL_XFER`, `T_ABORT_FROM_S_INF_LCS_XFER`, `T_ABORT_FROM_S_INF_EXCEPTION`, `T_ABORT_FROM_S_WAIT_RETRY`, `T_ABORT_FROM_S_UPL_LUI_XFER`, `T_ABORT_FROM_S_UPL_LIST_SENT`, `T_ABORT_FROM_S_UPL_LUR_XFER`, `T_ABORT_FROM_S_UPL_LUS_XFER` |
 | `CRS-M1-00342` | DATA-CONSTRAINT | `ST-CRS-M1-00342` |
 | `CRS-M1-00343` | DATA-CONSTRAINT | `ST-CRS-M1-00343` |
 | `CRS-M1-00344` | SCOPE-CONSTRAINT | `SCOPE` |
@@ -813,7 +827,7 @@
 | `TR-CRS-M1-00031-0031` | `CRS-M1-00031` | INTERFACE | `IF_TFTP` | TFTP interface premise for TRANSFER. |
 | `TR-CRS-M1-00032-0032` | `CRS-M1-00032` | INTERFACE | `IF_TFTP` | TFTP interface premise for ABORT-AND-RESTART-AFTER-DELAY. |
 | `TR-CRS-M1-00032-0033` | `CRS-M1-00032` | TIMING | `TIM-CRS-M1-00032` | Timing catalog row with source relation and clock enablement. |
-| `TR-CRS-M1-00032-0034` | `CRS-M1-00032` | CLOCK | `CLK_EXCEPTION` | Clock used by this timing obligation. |
+| `TR-CRS-M1-00032-0034` | `CRS-M1-00032` | CLOCK | `CLK_WAIT` | Clock used by this timing obligation. |
 | `TR-CRS-M1-00033-0035` | `CRS-M1-00033` | INTERFACE | `IF_NETWORK` | Network infrastructure premise; capability not established. |
 | `TR-CRS-M1-00034-0036` | `CRS-M1-00034` | INTERFACE | `IF_TFTP_BLOCKSIZE` | Block-size capability premise; RFC 2348 candidate edge is separate. |
 | `TR-CRS-M1-00035-0037` | `CRS-M1-00035` | SCOPE | `SCOPE` | Non-behavior / profile obligation IMPLEMENT kept as a scope or applicability constraint. |
@@ -1233,18 +1247,27 @@
 | `TR-CRS-M1-00101-0451` | `CRS-M1-00101` | TRANSITION | `T_INF_EXC_TO` | Transition T_INF_EXC_TO cites this obligation. |
 | `TR-CRS-M1-00099-0452` | `CRS-M1-00099` | TRANSITION | `T_ENTER_UPL_EXC` | Transition T_ENTER_UPL_EXC cites this obligation. |
 | `TR-CRS-M1-00099-0453` | `CRS-M1-00099` | TRANSITION | `T_ENTER_INF_EXC` | Transition T_ENTER_INF_EXC cites this obligation. |
-| `TR-CRS-M1-00341-0454` | `CRS-M1-00341` | TRANSITION | `T_ABORT_DL` | Transition T_ABORT_DL cites this obligation. |
-| `TR-CRS-M1-00340-0455` | `CRS-M1-00340` | TRANSITION | `T_ABORT_TH` | Transition T_ABORT_TH cites this obligation. |
-| `TR-CRS-M1-00340-0456` | `CRS-M1-00340` | TRANSITION | `T_ABORTED` | Transition T_ABORTED cites this obligation. |
-| `TR-CRS-M1-00341-0457` | `CRS-M1-00341` | TRANSITION | `T_ABORTED` | Transition T_ABORTED cites this obligation. |
-| `TR-CRS-M1-00341-0458` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_LCI_RRQ` | Transition T_ABORT_FROM_S_INF_LCI_RRQ cites this obligation. |
-| `TR-CRS-M1-00341-0459` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_LCL_XFER` | Transition T_ABORT_FROM_S_INF_LCL_XFER cites this obligation. |
-| `TR-CRS-M1-00341-0460` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_LCS_XFER` | Transition T_ABORT_FROM_S_INF_LCS_XFER cites this obligation. |
-| `TR-CRS-M1-00341-0461` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_EXCEPTION` | Transition T_ABORT_FROM_S_INF_EXCEPTION cites this obligation. |
-| `TR-CRS-M1-00341-0462` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUI_XFER` | Transition T_ABORT_FROM_S_UPL_LUI_XFER cites this obligation. |
-| `TR-CRS-M1-00341-0463` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LIST_SENT` | Transition T_ABORT_FROM_S_UPL_LIST_SENT cites this obligation. |
-| `TR-CRS-M1-00341-0464` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUR_XFER` | Transition T_ABORT_FROM_S_UPL_LUR_XFER cites this obligation. |
-| `TR-CRS-M1-00341-0465` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUS_XFER` | Transition T_ABORT_FROM_S_UPL_LUS_XFER cites this obligation. |
+| `TR-CRS-M1-00032-0454` | `CRS-M1-00032` | TRANSITION | `T_WAIT_FROM_UPL_FILE` | Transition T_WAIT_FROM_UPL_FILE cites this obligation. |
+| `TR-CRS-M1-00032-0455` | `CRS-M1-00032` | TRANSITION | `T_WAIT_FROM_UPL_LUR` | Transition T_WAIT_FROM_UPL_LUR cites this obligation. |
+| `TR-CRS-M1-00032-0456` | `CRS-M1-00032` | TRANSITION | `T_WAIT_FROM_INF_LCI` | Transition T_WAIT_FROM_INF_LCI cites this obligation. |
+| `TR-CRS-M1-00032-0457` | `CRS-M1-00032` | TRANSITION | `T_WAIT_FROM_INF_LCL` | Transition T_WAIT_FROM_INF_LCL cites this obligation. |
+| `TR-CRS-M1-00032-0458` | `CRS-M1-00032` | TRANSITION | `T_WAIT_RETRY_UPL_FILE` | Transition T_WAIT_RETRY_UPL_FILE cites this obligation. |
+| `TR-CRS-M1-00032-0459` | `CRS-M1-00032` | TRANSITION | `T_WAIT_RETRY_UPL_LUR` | Transition T_WAIT_RETRY_UPL_LUR cites this obligation. |
+| `TR-CRS-M1-00032-0460` | `CRS-M1-00032` | TRANSITION | `T_WAIT_RETRY_INF_LCI` | Transition T_WAIT_RETRY_INF_LCI cites this obligation. |
+| `TR-CRS-M1-00032-0461` | `CRS-M1-00032` | TRANSITION | `T_WAIT_RETRY_INF_LCL` | Transition T_WAIT_RETRY_INF_LCL cites this obligation. |
+| `TR-CRS-M1-00341-0462` | `CRS-M1-00341` | TRANSITION | `T_ABORT_DL` | Transition T_ABORT_DL cites this obligation. |
+| `TR-CRS-M1-00340-0463` | `CRS-M1-00340` | TRANSITION | `T_ABORT_TH` | Transition T_ABORT_TH cites this obligation. |
+| `TR-CRS-M1-00340-0464` | `CRS-M1-00340` | TRANSITION | `T_ABORTED` | Transition T_ABORTED cites this obligation. |
+| `TR-CRS-M1-00341-0465` | `CRS-M1-00341` | TRANSITION | `T_ABORTED` | Transition T_ABORTED cites this obligation. |
+| `TR-CRS-M1-00341-0466` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_LCI_RRQ` | Transition T_ABORT_FROM_S_INF_LCI_RRQ cites this obligation. |
+| `TR-CRS-M1-00341-0467` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_LCL_XFER` | Transition T_ABORT_FROM_S_INF_LCL_XFER cites this obligation. |
+| `TR-CRS-M1-00341-0468` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_LCS_XFER` | Transition T_ABORT_FROM_S_INF_LCS_XFER cites this obligation. |
+| `TR-CRS-M1-00341-0469` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_EXCEPTION` | Transition T_ABORT_FROM_S_INF_EXCEPTION cites this obligation. |
+| `TR-CRS-M1-00341-0470` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_WAIT_RETRY` | Transition T_ABORT_FROM_S_WAIT_RETRY cites this obligation. |
+| `TR-CRS-M1-00341-0471` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUI_XFER` | Transition T_ABORT_FROM_S_UPL_LUI_XFER cites this obligation. |
+| `TR-CRS-M1-00341-0472` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LIST_SENT` | Transition T_ABORT_FROM_S_UPL_LIST_SENT cites this obligation. |
+| `TR-CRS-M1-00341-0473` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUR_XFER` | Transition T_ABORT_FROM_S_UPL_LUR_XFER cites this obligation. |
+| `TR-CRS-M1-00341-0474` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUS_XFER` | Transition T_ABORT_FROM_S_UPL_LUS_XFER cites this obligation. |
 
 ## Infrastructure premises
 
@@ -1255,7 +1278,7 @@
 
 | ID | Status | Owner | Gate | Note |
 |---|---|---|---|---|
-| `A-1` | `OPEN-M1-CORRECTION` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | 6.4.4 LUI/LUR identity conflict blocks the previous 665 edges. |
+| `A-1` | `OPEN-M1-CORRECTION` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | 6.4.4 LUI/LUR identity and the LUR WRQ actor remain OPEN-M1-CORRECTION; CR-2026-009 is the authorization request, not closure. |
 | `A-2` | `CANDIDATE-PARTIAL` | M2-RG1 | PROFILE-MODEL-REFINEMENT-GATE | RFC-2347 option transfer and RFC-2348 block-size are candidate edges; 1785/2349 remain without an active 615A unit. |
 | `A-3` | `CANDIDATE-IN-MODEL` | M2-RG2 | PROFILE-MODEL-REFINEMENT-GATE | Attachment 4 equation restored with retry terms; clocks enable timeout transitions. |
 | `A-4` | `DEFERRED` | FUTURE-TAXONOMY-CR | SCOPE-EXPANSION-GATE | requirementKind taxonomy not executed. |
@@ -1271,12 +1294,13 @@
 | `P7/AID/address` | `DEFERRED-UNSELECTED-DEPLOYMENT` | PRODUCT-SCOPE | SCOPE-EXPANSION-GATE | Unselected AFDX addressing remains deferred. |
 | `README-P2-DISPLAY` | `CLOSED-IN-THIS-PR` | M2-AUTHOR | PROFILE-MODEL-REFINEMENT-GATE | displayGroup rendering remains. |
 | `M1-LEDGER` | `RECORDED-IN-INPUT-ACCEPTANCE` | M2-AUTHOR | PROFILE-MODEL-REFINEMENT-GATE | M1 merge facts remain in inputAcceptance. |
-| `M1-FILE-IDENTITY-6-4-4` | `OPEN-M1-CORRECTION` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | Stop-the-line M1 LUI/LUR identity correction; M2 does not rewrite M1. |
+| `M1-FILE-IDENTITY-6-4-4` | `OPEN-M1-CORRECTION` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | Stop-the-line M1 LUI/LUR identity correction; M2 does not rewrite M1. CR-2026-009 requests successor-input authorization. |
 
 ## Source refinements
 
 - `REF-A1-00143-BLOCKED-BY-FILE-IDENTITY` — `BLOCKED-PENDING-INCREMENTAL-RG1` — CRS-M1-00143 is 6.4.4 prose on PDF p.85. Independent visual check identifies LUR field discussion, while M1 table 6.4.4-1 records LUI. Shared noun HEADER-FILE is not enough. No active 665 edge until incremental RG1 corrects M1. (to `CRS-M1-00217` 2.2.3.1)
 - `REF-A1-00315-BLOCKED-BY-FILE-IDENTITY` — `BLOCKED-PENDING-INCREMENTAL-RG1` — CRS-M1-00315 is Table 6.4.4-1 FIELD-LOAD-PART-NUMBER-NAME recorded as LUI. The same clause page cluster is the LUR/LUI identity conflict. No active 665 edge is emitted from the conflicted file identity. (to `CRS-M1-00212` 2.1.1)
+- `REF-SEQ-00365-WRQ-ACTOR` — `BLOCKED-PENDING-INCREMENTAL-RG1` — Frozen CRS-M1-00365 records Target Hardware as the LUR WRQ actor. Independent visual check of §6.3.2 chart A is Data Loader WRQ, Target Hardware ACK, Data Loader DATA. The machine follows the TFTP-write / visual direction. This remains OPEN-M1-CORRECTION; M1 bytes are not rewritten. (to `None` )
 - `REF-A2-TFTP-OPTION-2347` — `CANDIDATE-REFINEMENT` — 615A 5.3.2.2 requires transferring TFTP options. RFC 2347 §2 is the option-extension mechanism. The edge uses the public retrieval identity, not a fabricated PDF page. It does not claim complete RFC-2347 conformance. (to `RFC-2347` 2)
 - `REF-A2-BLOCKSIZE-2348` — `CANDIDATE-REFINEMENT` — 615A 5.3.2.3.8.1 is the Blocksize Option Implementation unit already in M1 (CRS-M1-00034) with DEP-RFC-2348. A token search for 'blksize' cannot negate that source. RFC 2348 §2 is the candidate encoding. Capability stays NOT-ESTABLISHED. (to `RFC-2348` 2)
 - `REF-A2-NO-RFC-1785-ACTIVE-EDGE` — `NOT-ESTABLISHED-NO-ACTIVE-SOURCE-UNIT` — UPLOAD/INFORMATION option units do not name RFC 1785 negotiation-option advertisement. P7 listings stay with unselected AFDX. (to `RFC-1785` )
@@ -1305,6 +1329,24 @@
 - `NET-REL-016` → `DEFERRED-UNSELECTED-DEPLOYMENT` (M1 `DEFERRED-FUTURE-SCOPE`)
 - `NET-REL-017` → `DEFERRED-UNSELECTED-DEPLOYMENT` (M1 `DEFERRED-FUTURE-SCOPE`)
 
+## Discrete witnesses
+
+- `W-UPL-ACCEPT` UPLOAD init accept: payload.decision=ACCEPT enables the branch; lastDecision is written after the guard. (4 steps)
+- `W-UPL-REJECT` UPLOAD init reject from payload.decision=REJECT starting at lastDecision=NONE. (4 steps)
+- `W-INF-ACCEPT` INFORMATION init accept uses the same typed payload, not a pre-written lastDecision. (4 steps)
+- `W-INF-REJECT` INFORMATION init reject from payload.decision=REJECT. (4 steps)
+- `W-LIST-NOT-READY` After init accept the list is not yet offered; LUR WRQ is not enabled. (5 steps)
+- `W-LUR-AFTER-READY` After the list is offered, DL WRQ LUR becomes enabled, writes listAccepted=TRUE, then TH ACK. (9 steps)
+- `W-SESSION-RESET` A later UPLOAD start after INFORMATION completion resets lastDecision and list flags. (11 steps)
+- `W-WAIT-NOT-BEFORE` WAIT retry is disabled while CLK_WAIT is below MESSAGE_TIMER_VALUE and enabled at the closed lower bound. (13 steps)
+- `W-ACCEPT-WITHOUT-PAYLOAD` Accept is not enabled by lastDecision alone; missing payload.decision leaves the guard false. (4 steps)
+
+## Blocking inputs
+
+- `M1-FILE-IDENTITY-6-4-4` `OPEN-M1-CORRECTION` authorization `CR-2026-009` blocksFinalApproval=`True` — Successor M1 delta only after user authorization. Frozen merge bytes stay unchanged.
+- `SEQ-LUR-WRQ-ACTOR` `OPEN-M1-CORRECTION` authorization `CR-2026-009` blocksFinalApproval=`True` — M2 follows visual TFTP-write direction; frozen M1 actor tuple is not rewritten.
+- `NET-ISSUE-EDITION` `OPEN-PENDING-INDEPENDENT-ACCEPTANCE` authorization `INDEPENDENT-RG0` blocksFinalApproval=`True` — P3-1 / P7 historical editions remain conditional inputs. OPEN text is not acceptance.
+
 ## Analysis boundary
 
 - Untimed: `GRAPH-CONNECTIVITY-ON-DECLARED-TRANSITIONS`
@@ -1314,7 +1356,7 @@
 ## Review control
 
 - rg0 `PENDING-EXTERNAL-REVIEW`; rg1 `PENDING-EXTERNAL-REVIEW`; rg2 `PENDING-EXTERNAL-REVIEW`
-- reviewHead `UNBOUND-DRAFT`; formalApproval `EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED`
+- reviewHead `UNBOUND-DRAFT`; formalApproval `EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED`; blocksFinalApproval `True`
 
 # 中文版
 
@@ -1337,8 +1379,8 @@
 - 服务：UPLOAD, INFORMATION；延期 DOWNLOAD, FIND
 - 网络：`COMPLIANT`；AFDX `False`；P3 裁剪 `False`
 - 形式：`M=(S,s0,V,C,P,E,T,Inv)`；初态 `S_IDLE`
-- 延时时 C 中时钟增长，变量不变，不变量成立。离散步骤依次求值守卫、更新、复位、输出，然后进入目标。超时事件仅由其时钟边界守卫使能。输入事件是刺激；输出是额外发射，不得把刺激再计为第二条报文。
-- NETWORK-VISIBLE 事件是具名文件角色上的 TFTP 操作码。APPLICATION/PARSE-RESULT/LOCAL 事件由已收文件或本地分析导出，不是额外线上操作码。ENVIRONMENT 超时仅由时钟守卫使能。
+- 延时时 C 中时钟增长，变量不变，不变量成立。离散步骤先绑定输入事件的有类型 payload，再求值守卫（PAYLOAD 名读取该 payload，不是隐式变量写入），然后更新、复位匹配的时钟实例、输出，进入目标。超时与 WAIT 到期事件仅由 enablingClock 与 enablingBound 之间的 COMPARE(enablingCompare) 使能。输入事件是刺激；输出是额外发射，不得把刺激再计为第二条报文。
+- NETWORK-VISIBLE 事件是具名文件角色上的 TFTP 操作码。LUR 是 TFTP 写：数据加载器 WRQ、目标硬件 ACK、数据加载器 DATA。APPLICATION 的 payload.decision 是有类型枚举，在写入 lastDecision 之前参与守卫求值。PARSE-RESULT/LOCAL 事件由已收文件或本地分析导出，不是额外线上操作码。ENVIRONMENT 超时与 WAIT 到期仅由 enablingClock 与 enablingBound 的 COMPARE(enablingCompare) 使能。
 
 ## 事件
 
@@ -1359,8 +1401,8 @@
 | `EV_DL_APP_UPL_RESPONSE` | APPLICATION | 分析 LUI 后的数据加载器初始化响应 |
 | `EV_DL_OFFER_LIST` | APPLICATION | 初始化接受后数据加载器提交装载列表 |
 | `EV_TH_LUS0001` | NETWORK-VISIBLE | 列表未接受时目标硬件发送状态 0001 的 LUS |
-| `EV_TH_WRQ_LUR` | NETWORK-VISIBLE | 列表接受后目标硬件对 LUR 发出 TFTP WRQ |
-| `EV_DL_ACK_LUR` | NETWORK-VISIBLE | 数据加载器确认 LUR WRQ |
+| `EV_DL_WRQ_LUR` | NETWORK-VISIBLE | 列表接受后数据加载器对 LUR 发出 TFTP WRQ |
+| `EV_TH_ACK_LUR` | NETWORK-VISIBLE | 目标硬件确认 LUR WRQ |
 | `EV_DL_DATA_LUR` | NETWORK-VISIBLE | 数据加载器发送 LUR 列表数据 |
 | `EV_TH_RRQ_FILE` | NETWORK-VISIBLE | 目标硬件对请求的上载文件发出 TFTP RRQ |
 | `EV_DL_FILE_UNAVAIL` | NETWORK-VISIBLE | 数据加载器报告请求文件不可用 |
@@ -1378,6 +1420,8 @@
 | `EV_TIMEOUT_TFTP` | ENVIRONMENT | TFTP 时钟到期；仅当 CLK_TFTP >= TFTP_TO 时使能 |
 | `EV_TIMEOUT_DLP` | ENVIRONMENT | DLP 时钟到期；仅当 CLK_DLP >= DLP_TO 时使能 |
 | `EV_TIMEOUT_EXCEPTION` | ENVIRONMENT | 异常时钟到期；仅当 CLK_EXCEPTION >= EXCEPTION_TIMER 时使能 |
+| `EV_WAIT_RECEIVED` | PARSE-RESULT | 收到 WAIT 消息；启动不得早于该时延的时钟 |
+| `EV_WAIT_ELAPSED` | ENVIRONMENT | WAIT 时延已过；仅当 CLK_WAIT >= MESSAGE_TIMER_VALUE 时使能 |
 | `EV_OP_COMPLETE` | PARSE-RESULT | 由 LCS/LUS 状态判定完成，不是伪造成功 |
 
 ## 状态
@@ -1402,8 +1446,8 @@
 | `S_UPL_REJECTED` | True | UPLOAD 初始化被拒绝 |
 | `S_UPL_LIST_SENT` | False | 初始化接受后数据加载器已提交装载列表 |
 | `S_UPL_WAIT_LUS0001` | False | 列表尚未接受时等待 LUS-0001 |
-| `S_UPL_LUR_WRQ` | False | 列表接受后目标硬件对 LUR 发出 WRQ |
-| `S_UPL_LUR_ACK` | False | 数据加载器确认 LUR 写请求 |
+| `S_UPL_LUR_WRQ` | False | 列表接受后数据加载器对 LUR 发出 WRQ（TFTP 写） |
+| `S_UPL_LUR_ACK` | False | 目标硬件确认 LUR 写请求 |
 | `S_UPL_LUR_XFER` | False | LUR 列表传输，不同于后续文件数据 |
 | `S_UPL_FILE_RRQ` | False | 目标硬件对请求的上载文件发出 RRQ |
 | `S_UPL_FILE_UNAVAIL` | False | 请求文件不可用 |
@@ -1415,6 +1459,7 @@
 | `S_UPL_STATUS_APP` | False | 应用层消费 LUS |
 | `S_UPL_COMPLETE` | True | UPLOAD 完成，中止不记为成功 |
 | `S_UPL_EXCEPTION` | False | UPLOAD 异常等待 |
+| `S_WAIT_RETRY` | False | WAIT 消息时延；未到所携定时器不得重试 |
 | `S_ABORTING` | False | 正在中止 |
 | `S_ABORTED` | True | 中止终止态 |
 | `S_FAILED` | True | 失败终止态 |
@@ -1425,6 +1470,7 @@
 |---|---|---|---|
 | `activeOperation` | ENUM | NONE | NONE, INFORMATION, UPLOAD |
 | `lastDecision` | ENUM | NONE | NONE, ACCEPT, REJECT |
+| `waitResume` | ENUM | NONE | NONE, UPL_FILE, UPL_LUR, INF_LCI, INF_LCL |
 | `listOffered` | ENUM | FALSE | FALSE, TRUE |
 | `listAccepted` | ENUM | FALSE | FALSE, TRUE |
 | `lciComplete` | ENUM | FALSE | FALSE, TRUE |
@@ -1458,6 +1504,7 @@
 | `CLK_TFTP` | PER-CORRELATION-KEY | TFTP-PEER-AND-TRANSFER | `T_INF_LCI_RRQ`, `T_UPL_LUI_RRQ`, `T_UPL_LUR_WRQ`, `T_UPL_FILE_RRQ` | 相关传输中上一 TFTP 报文以来的时间。 |
 | `CLK_DLP` | PER-CORRELATION-KEY | TARGET-OPERATION-AND-DLP-TRANSFER-SEQUENCE | `T_INF_ACCEPT_INIT`, `T_UPL_ACCEPT_INIT`, `T_UPL_LUR_WRQ`, `T_UPL_FILE_RRQ` | 操作间／传输间 DLP 时钟。 |
 | `CLK_EXCEPTION` | PER-CORRELATION-KEY | STATUS-EXCEPTION-OBJECT | `T_ENTER_UPL_EXC`, `T_ENTER_INF_EXC`, `T_INF_LCS_WRQ` | 异常静默时钟。 |
+| `CLK_WAIT` | PER-CORRELATION-KEY | TFTP-PEER-AND-REJECTED-TRANSFER-REQUEST | `T_WAIT_FROM_UPL_FILE`, `T_WAIT_FROM_UPL_LUR`, `T_WAIT_FROM_INF_LCI`, `T_WAIT_FROM_INF_LCL` | 自 WAIT 消息起的时延；在所携定时器到期前禁止重试。 |
 
 ## 不变量
 
@@ -1470,11 +1517,11 @@
 
 | ID | 源 | 事件 | 目标 | 守卫 | 更新 | 输出 | 复位 | 需求 |
 |---|---|---|---|---|---|---|---|---|
-| `T_INF_LCI_RRQ` | `S_IDLE` | `EV_DL_RRQ_LCI` | `S_INF_LCI_RRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"INFORMATION"}}]` | — | CLK_TFTP | `CRS-M1-00347` |
+| `T_INF_LCI_RRQ` | `S_IDLE` | `EV_DL_RRQ_LCI` | `S_INF_LCI_RRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"listOffered","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"listAccepted","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lurComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"luiComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lciComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lclComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"integrityClaim","value":{"kind":"ENUM","value":"FALSE"}}]` | — | CLK_TFTP | `CRS-M1-00347` |
 | `T_INF_LCI_XFER` | `S_INF_LCI_RRQ` | `EV_TH_DATA_LCI` | `S_INF_LCI_XFER` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | `[{"kind":"ASSIGN","target":"lciComplete","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_TFTP | `CRS-M1-00348` |
 | `T_INF_EVAL` | `S_INF_LCI_XFER` | `EV_LOCAL_EVAL` | `S_INF_EVALUATE` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | — | — | — | `CRS-M1-00349` |
-| `T_INF_ACCEPT_INIT` | `S_INF_EVALUATE` | `EV_DL_APP_INF_RESPONSE` | `S_INF_LCL_WRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"lastDecision"},"right":{"kind":"ENUM","value":"ACCEPT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"ACCEPT"}}]` | — | CLK_DLP | `CRS-M1-00349`, `CRS-M1-00351` |
-| `T_INF_REJECT` | `S_INF_EVALUATE` | `EV_DL_APP_INF_RESPONSE` | `S_INF_REJECTED` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"lastDecision"},"right":{"kind":"ENUM","value":"REJECT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"REJECT"}},{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | — | `CRS-M1-00350` |
+| `T_INF_ACCEPT_INIT` | `S_INF_EVALUATE` | `EV_DL_APP_INF_RESPONSE` | `S_INF_LCL_WRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"PAYLOAD","name":"decision"},"right":{"kind":"ENUM","value":"ACCEPT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"ACCEPT"}}]` | — | CLK_DLP | `CRS-M1-00349`, `CRS-M1-00351` |
+| `T_INF_REJECT` | `S_INF_EVALUATE` | `EV_DL_APP_INF_RESPONSE` | `S_INF_REJECTED` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"PAYLOAD","name":"decision"},"right":{"kind":"ENUM","value":"REJECT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"REJECT"}},{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | — | `CRS-M1-00350` |
 | `T_INF_LCL_WRQ` | `S_INF_LCL_WRQ` | `EV_TH_WRQ_LCL` | `S_INF_LCL_WRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | — | — | CLK_TFTP | `CRS-M1-00351` |
 | `T_INF_LCL_ACK` | `S_INF_LCL_WRQ` | `EV_DL_ACK_LCL` | `S_INF_LCL_XFER` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | — | — | CLK_TFTP | `CRS-M1-00352` |
 | `T_INF_LCL_XFER` | `S_INF_LCL_XFER` | `EV_TH_DATA_LCL` | `S_INF_APP` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | `[{"kind":"ASSIGN","target":"lclComplete","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_TFTP | `CRS-M1-00353` |
@@ -1482,16 +1529,16 @@
 | `T_INF_LCS_WRQ` | `S_INF_LCS_WRQ` | `EV_TH_WRQ_LCS` | `S_INF_LCS_XFER` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | — | — | CLK_TFTP, CLK_EXCEPTION | `CRS-M1-00355` |
 | `T_INF_LCS_XFER` | `S_INF_LCS_XFER` | `EV_TH_DATA_LCS` | `S_INF_COMPLETE` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | `[{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"FROM-LCS"}},{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | CLK_TFTP | `CRS-M1-00356`, `CRS-M1-00357`, `CRS-M1-00358` |
 | `T_INF_SESSION_END` | `S_INF_COMPLETE` | `EV_OP_COMPLETE` | `S_IDLE` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | — | — | — | `CRS-M1-00358` |
-| `T_UPL_LUI_RRQ` | `S_IDLE` | `EV_DL_RRQ_LUI` | `S_UPL_LUI_RRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"UPLOAD"}}]` | — | CLK_TFTP | `CRS-M1-00359`, `CRS-M1-00360` |
-| `T_UPL_LUI_RRQ_AFTER_INF` | `S_INF_COMPLETE` | `EV_DL_RRQ_LUI` | `S_UPL_LUI_RRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"UPLOAD"}}]` | — | CLK_TFTP | `CRS-M1-00360` |
+| `T_UPL_LUI_RRQ` | `S_IDLE` | `EV_DL_RRQ_LUI` | `S_UPL_LUI_RRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"listOffered","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"listAccepted","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lurComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"luiComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lciComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lclComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"integrityClaim","value":{"kind":"ENUM","value":"FALSE"}}]` | — | CLK_TFTP | `CRS-M1-00359`, `CRS-M1-00360` |
+| `T_UPL_LUI_RRQ_AFTER_INF` | `S_INF_COMPLETE` | `EV_DL_RRQ_LUI` | `S_UPL_LUI_RRQ` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"NONE"}}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"listOffered","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"listAccepted","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lurComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"luiComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lciComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"lclComplete","value":{"kind":"ENUM","value":"FALSE"}},{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"NONE"}},{"kind":"ASSIGN","target":"integrityClaim","value":{"kind":"ENUM","value":"FALSE"}}]` | — | CLK_TFTP | `CRS-M1-00360` |
 | `T_UPL_LUI_XFER` | `S_UPL_LUI_RRQ` | `EV_TH_DATA_LUI` | `S_UPL_LUI_XFER` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | `[{"kind":"ASSIGN","target":"luiComplete","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_TFTP | `CRS-M1-00361` |
 | `T_UPL_EVAL` | `S_UPL_LUI_XFER` | `EV_LOCAL_EVAL` | `S_UPL_EVALUATE` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | — | — | — | `CRS-M1-00362` |
-| `T_UPL_ACCEPT_INIT` | `S_UPL_EVALUATE` | `EV_DL_APP_UPL_RESPONSE` | `S_UPL_LIST_SENT` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"lastDecision"},"right":{"kind":"ENUM","value":"ACCEPT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"ACCEPT"}}]` | — | CLK_DLP | `CRS-M1-00362`, `CRS-M1-00363` |
-| `T_UPL_REJECT` | `S_UPL_EVALUATE` | `EV_DL_APP_UPL_RESPONSE` | `S_UPL_REJECTED` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"lastDecision"},"right":{"kind":"ENUM","value":"REJECT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"REJECT"}},{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | — | `CRS-M1-00362` |
+| `T_UPL_ACCEPT_INIT` | `S_UPL_EVALUATE` | `EV_DL_APP_UPL_RESPONSE` | `S_UPL_LIST_SENT` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"PAYLOAD","name":"decision"},"right":{"kind":"ENUM","value":"ACCEPT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"ACCEPT"}}]` | — | CLK_DLP | `CRS-M1-00362`, `CRS-M1-00363` |
+| `T_UPL_REJECT` | `S_UPL_EVALUATE` | `EV_DL_APP_UPL_RESPONSE` | `S_UPL_REJECTED` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"PAYLOAD","name":"decision"},"right":{"kind":"ENUM","value":"REJECT"}}]}` | `[{"kind":"ASSIGN","target":"lastDecision","value":{"kind":"ENUM","value":"REJECT"}},{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | — | `CRS-M1-00362` |
 | `T_UPL_LIST_OFFER` | `S_UPL_LIST_SENT` | `EV_DL_OFFER_LIST` | `S_UPL_WAIT_LUS0001` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | `[{"kind":"ASSIGN","target":"listOffered","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_DLP | `CRS-M1-00363`, `CRS-M1-00364` |
 | `T_UPL_WAIT_LUS0001` | `S_UPL_WAIT_LUS0001` | `EV_TH_LUS0001` | `S_UPL_WAIT_LUS0001` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"listAccepted"},"right":{"kind":"ENUM","value":"FALSE"}}]}` | `[{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"0X0001"}}]` | — | CLK_EXCEPTION | `CRS-M1-00364` |
-| `T_UPL_LUR_WRQ` | `S_UPL_WAIT_LUS0001` | `EV_TH_WRQ_LUR` | `S_UPL_LUR_WRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"listAccepted"},"right":{"kind":"ENUM","value":"TRUE"}}]}` | `[{"kind":"ASSIGN","target":"listAccepted","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_TFTP, CLK_DLP | `CRS-M1-00365` |
-| `T_UPL_LUR_ACK` | `S_UPL_LUR_WRQ` | `EV_DL_ACK_LUR` | `S_UPL_LUR_ACK` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | — | — | CLK_TFTP | `CRS-M1-00366` |
+| `T_UPL_LUR_WRQ` | `S_UPL_WAIT_LUS0001` | `EV_DL_WRQ_LUR` | `S_UPL_LUR_WRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"listOffered"},"right":{"kind":"ENUM","value":"TRUE"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"listAccepted"},"right":{"kind":"ENUM","value":"FALSE"}}]}` | `[{"kind":"ASSIGN","target":"listAccepted","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_TFTP, CLK_DLP | `CRS-M1-00365` |
+| `T_UPL_LUR_ACK` | `S_UPL_LUR_WRQ` | `EV_TH_ACK_LUR` | `S_UPL_LUR_ACK` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | — | — | CLK_TFTP | `CRS-M1-00366` |
 | `T_UPL_LUR_XFER` | `S_UPL_LUR_ACK` | `EV_DL_DATA_LUR` | `S_UPL_LUR_XFER` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | `[{"kind":"ASSIGN","target":"lurComplete","value":{"kind":"ENUM","value":"TRUE"}}]` | — | CLK_TFTP | `CRS-M1-00367` |
 | `T_UPL_FILE_RRQ` | `S_UPL_LUR_XFER` | `EV_TH_RRQ_FILE` | `S_UPL_FILE_RRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"lurComplete"},"right":{"kind":"ENUM","value":"TRUE"}}]}` | — | — | CLK_TFTP, CLK_DLP | `CRS-M1-00368` |
 | `T_UPL_FILE_RRQ_MORE` | `S_UPL_MORE_FILES` | `EV_TH_RRQ_FILE` | `S_UPL_FILE_RRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"moreFilesRequired"},"right":{"kind":"ENUM","value":"TRUE"}}]}` | — | — | CLK_TFTP | `CRS-M1-00368`, `CRS-M1-00372` |
@@ -1514,6 +1561,14 @@
 | `T_INF_EXC_TO` | `S_INF_EXCEPTION` | `EV_TIMEOUT_EXCEPTION` | `S_FAILED` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"AND","args":[{"kind":"COMPARE","op":"GE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}]}]}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | — | `CRS-M1-00101` |
 | `T_ENTER_UPL_EXC` | `S_UPL_WAIT_LUS0001` | `EV_TH_DATA_LUS` | `S_UPL_EXCEPTION` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | `[{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"EXCEPTION"}}]` | — | CLK_EXCEPTION | `CRS-M1-00099` |
 | `T_ENTER_INF_EXC` | `S_INF_LCS_XFER` | `EV_DL_APP_INF_STATUS` | `S_INF_EXCEPTION` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | `[{"kind":"ASSIGN","target":"statusCode","value":{"kind":"ENUM","value":"EXCEPTION"}}]` | — | CLK_EXCEPTION | `CRS-M1-00099` |
+| `T_WAIT_FROM_UPL_FILE` | `S_UPL_FILE_XFER` | `EV_WAIT_RECEIVED` | `S_WAIT_RETRY` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | `[{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"UPL_FILE"}}]` | — | CLK_WAIT | `CRS-M1-00032` |
+| `T_WAIT_FROM_UPL_LUR` | `S_UPL_LUR_XFER` | `EV_WAIT_RECEIVED` | `S_WAIT_RETRY` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | `[{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"UPL_LUR"}}]` | — | CLK_WAIT | `CRS-M1-00032` |
+| `T_WAIT_FROM_INF_LCI` | `S_INF_LCI_XFER` | `EV_WAIT_RECEIVED` | `S_WAIT_RETRY` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | `[{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"INF_LCI"}}]` | — | CLK_WAIT | `CRS-M1-00032` |
+| `T_WAIT_FROM_INF_LCL` | `S_INF_LCL_XFER` | `EV_WAIT_RECEIVED` | `S_WAIT_RETRY` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}}` | `[{"kind":"ASSIGN","target":"waitResume","value":{"kind":"ENUM","value":"INF_LCL"}}]` | — | CLK_WAIT | `CRS-M1-00032` |
+| `T_WAIT_RETRY_UPL_FILE` | `S_WAIT_RETRY` | `EV_WAIT_ELAPSED` | `S_UPL_FILE_RRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"AND","args":[{"kind":"COMPARE","op":"GE","left":{"kind":"CLOCK","name":"CLK_WAIT"},"right":{"kind":"SYMBOL","name":"MESSAGE_TIMER_VALUE","unit":"s"}}]},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"waitResume"},"right":{"kind":"ENUM","value":"UPL_FILE"}}]}` | — | — | CLK_TFTP | `CRS-M1-00032` |
+| `T_WAIT_RETRY_UPL_LUR` | `S_WAIT_RETRY` | `EV_WAIT_ELAPSED` | `S_UPL_LUR_WRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}},{"kind":"AND","args":[{"kind":"COMPARE","op":"GE","left":{"kind":"CLOCK","name":"CLK_WAIT"},"right":{"kind":"SYMBOL","name":"MESSAGE_TIMER_VALUE","unit":"s"}}]},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"waitResume"},"right":{"kind":"ENUM","value":"UPL_LUR"}}]}` | — | — | CLK_TFTP | `CRS-M1-00032` |
+| `T_WAIT_RETRY_INF_LCI` | `S_WAIT_RETRY` | `EV_WAIT_ELAPSED` | `S_INF_LCI_RRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"AND","args":[{"kind":"COMPARE","op":"GE","left":{"kind":"CLOCK","name":"CLK_WAIT"},"right":{"kind":"SYMBOL","name":"MESSAGE_TIMER_VALUE","unit":"s"}}]},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"waitResume"},"right":{"kind":"ENUM","value":"INF_LCI"}}]}` | — | — | CLK_TFTP | `CRS-M1-00032` |
+| `T_WAIT_RETRY_INF_LCL` | `S_WAIT_RETRY` | `EV_WAIT_ELAPSED` | `S_INF_LCL_WRQ` | `{"kind":"AND","args":[{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"INFORMATION"}},{"kind":"AND","args":[{"kind":"COMPARE","op":"GE","left":{"kind":"CLOCK","name":"CLK_WAIT"},"right":{"kind":"SYMBOL","name":"MESSAGE_TIMER_VALUE","unit":"s"}}]},{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"waitResume"},"right":{"kind":"ENUM","value":"INF_LCL"}}]}` | — | — | CLK_TFTP | `CRS-M1-00032` |
 | `T_ABORT_DL` | `S_UPL_FILE_XFER` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | — | — | — | `CRS-M1-00341` |
 | `T_ABORT_TH` | `S_UPL_FILE_XFER` | `EV_ABORT_TH` | `S_ABORTING` | `{"kind":"COMPARE","op":"EQ","left":{"kind":"VAR","name":"activeOperation"},"right":{"kind":"ENUM","value":"UPLOAD"}}` | — | — | — | `CRS-M1-00340` |
 | `T_ABORTED` | `S_ABORTING` | `EV_OP_COMPLETE` | `S_ABORTED` | `{"kind":"TRUE"}` | `[{"kind":"ASSIGN","target":"activeOperation","value":{"kind":"ENUM","value":"NONE"}}]` | — | — | `CRS-M1-00340`, `CRS-M1-00341` |
@@ -1521,6 +1576,7 @@
 | `T_ABORT_FROM_S_INF_LCL_XFER` | `S_INF_LCL_XFER` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
 | `T_ABORT_FROM_S_INF_LCS_XFER` | `S_INF_LCS_XFER` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
 | `T_ABORT_FROM_S_INF_EXCEPTION` | `S_INF_EXCEPTION` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
+| `T_ABORT_FROM_S_WAIT_RETRY` | `S_WAIT_RETRY` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
 | `T_ABORT_FROM_S_UPL_LUI_XFER` | `S_UPL_LUI_XFER` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
 | `T_ABORT_FROM_S_UPL_LIST_SENT` | `S_UPL_LIST_SENT` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
 | `T_ABORT_FROM_S_UPL_LUR_XFER` | `S_UPL_LUR_XFER` | `EV_ABORT_DL` | `S_ABORTING` | `{"kind":"TRUE"}` | — | — | — | `CRS-M1-00341` |
@@ -1681,31 +1737,31 @@
 
 ## 时序目录
 
-| ID | CRS | 时钟 | 边界 | AST | 复位 | 端点 | 检查 | 窗口 |
-|---|---|---|---|---|---|---|---|---|
-| `TIM-CRS-M1-00032` | `CRS-M1-00032` | `CLK_EXCEPTION` | None..MESSAGE_TIMER_VALUE s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"MESSAGE_TIMER_VALUE","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00094` | `CRS-M1-00094` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00097` | `CRS-M1-00097` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00098` | `CRS-M1-00098` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00099` | `CRS-M1-00099` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00100` | `CRS-M1-00100` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00101` | `CRS-M1-00101` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00102` | `CRS-M1-00102` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00106` | `CRS-M1-00106` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00107` | `CRS-M1-00107` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00108` | `CRS-M1-00108` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00168` | `CRS-M1-00168` | `CLK_TFTP` | None..TFTP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_TFTP"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"}}` | T_INF_LCI_RRQ, T_UPL_LUI_RRQ, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00176` | `CRS-M1-00176` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00177` | `CRS-M1-00177` | `CLK_TFTP` | 2..2 s | `{"kind":"LITERAL","value":2,"unit":"s"}` | T_INF_LCI_RRQ, T_UPL_LUI_RRQ, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `CONSTANT-DEFINITION` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00178` | `CRS-M1-00178` | `CLK_TFTP` | 0..TFTP-TO-DIVIDED-BY-4 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":4,"unit":"1"},"unit":"s"}}` | T_INF_LCI_RRQ, T_UPL_LUI_RRQ, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00179` | `CRS-M1-00179` | `CLK_DLP` | 0..TFTP-TO-DIVIDED-BY-2 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":2,"unit":"1"},"unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00184` | `CRS-M1-00184` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00185` | `CRS-M1-00185` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00186` | `CRS-M1-00186` | `CLK_DLP` | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00187` | `CRS-M1-00187` | `CLK_DLP` | 13..13 s | `{"kind":"LITERAL","value":13,"unit":"s"}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `CONSTANT-DEFINITION` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00188` | `CRS-M1-00188` | `CLK_DLP` | 0..DLP-TO-MINUS-RETRY-AND-NETWORK-TERMS s | `{"kind":"COMPARE","op":"GT","left":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"DLP_RETRY","unit":"1"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"LITERAL","value":1,"unit":"1"},"unit":"1"},"unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"MUL","left":{"kind":"LITERAL","value":2,"unit":"1"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":4,"unit":"1"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/OPEN | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00305` | `CRS-M1-00305` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00322` | `CRS-M1-00322` | `CLK_EXCEPTION` | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| ID | CRS | 时钟 | 种类 | 边界 | AST | 复位 | 端点 | 检查 | 窗口 |
+|---|---|---|---|---|---|---|---|---|---|
+| `TIM-CRS-M1-00032` | `CRS-M1-00032` | `CLK_WAIT` | NOT-BEFORE-LOWER-BOUND | MESSAGE_TIMER_VALUE..None s | `{"kind":"COMPARE","op":"GE","left":{"kind":"CLOCK","name":"CLK_WAIT"},"right":{"kind":"SYMBOL","name":"MESSAGE_TIMER_VALUE","unit":"s"}}` | T_WAIT_FROM_UPL_FILE, T_WAIT_FROM_UPL_LUR, T_WAIT_FROM_INF_LCI, T_WAIT_FROM_INF_LCL | CLOSED/UNRESOLVED | `RELATION-BOUND` | RETRY-NOT-BEFORE-CARRIED-TIMER |
+| `TIM-CRS-M1-00094` | `CRS-M1-00094` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00097` | `CRS-M1-00097` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00098` | `CRS-M1-00098` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00099` | `CRS-M1-00099` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00100` | `CRS-M1-00100` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00101` | `CRS-M1-00101` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00102` | `CRS-M1-00102` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00106` | `CRS-M1-00106` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00107` | `CRS-M1-00107` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00108` | `CRS-M1-00108` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00168` | `CRS-M1-00168` | `CLK_TFTP` | DEADLINE-UPPER-BOUND | None..TFTP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_TFTP"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"}}` | T_INF_LCI_RRQ, T_UPL_LUI_RRQ, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00176` | `CRS-M1-00176` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00177` | `CRS-M1-00177` | `CLK_TFTP` | CONSTANT-DEFINITION | 2..2 s | `{"kind":"LITERAL","value":2,"unit":"s"}` | T_INF_LCI_RRQ, T_UPL_LUI_RRQ, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `CONSTANT-DEFINITION` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00178` | `CRS-M1-00178` | `CLK_TFTP` | SOURCE-EQUATION | 0..TFTP-TO-DIVIDED-BY-4 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":4,"unit":"1"},"unit":"s"}}` | T_INF_LCI_RRQ, T_UPL_LUI_RRQ, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00179` | `CRS-M1-00179` | `CLK_DLP` | SOURCE-EQUATION | 0..TFTP-TO-DIVIDED-BY-2 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":2,"unit":"1"},"unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00184` | `CRS-M1-00184` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00185` | `CRS-M1-00185` | `CLK_DLP` | DEADLINE-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00186` | `CRS-M1-00186` | `CLK_DLP` | PROHIBITION-WINDOW-UPPER-BOUND | None..DLP_TO s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_DLP"},"right":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00187` | `CRS-M1-00187` | `CLK_DLP` | CONSTANT-DEFINITION | 13..13 s | `{"kind":"LITERAL","value":13,"unit":"s"}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/CLOSED | `CONSTANT-DEFINITION` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00188` | `CRS-M1-00188` | `CLK_DLP` | SOURCE-EQUATION | 0..DLP-TO-MINUS-RETRY-AND-NETWORK-TERMS s | `{"kind":"COMPARE","op":"GT","left":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"DLP_RETRY","unit":"1"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"LITERAL","value":1,"unit":"1"},"unit":"1"},"unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"MUL","left":{"kind":"LITERAL","value":2,"unit":"1"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":4,"unit":"1"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/OPEN | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00305` | `CRS-M1-00305` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00322` | `CRS-M1-00322` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
 
 ## 需求处置
 
@@ -1742,7 +1798,7 @@
 | `CRS-M1-00029` | INTERFACE-PREMISE | `IF_TFTP` |
 | `CRS-M1-00030` | INTERFACE-PREMISE | `IF_TFTP` |
 | `CRS-M1-00031` | INTERFACE-PREMISE | `IF_TFTP` |
-| `CRS-M1-00032` | MODELED-TIMING | `IF_TFTP`, `TIM-CRS-M1-00032`, `CLK_EXCEPTION` |
+| `CRS-M1-00032` | MODELED-TIMING | `IF_TFTP`, `TIM-CRS-M1-00032`, `CLK_WAIT`, `T_WAIT_FROM_UPL_FILE`, `T_WAIT_FROM_UPL_LUR`, `T_WAIT_FROM_INF_LCI`, `T_WAIT_FROM_INF_LCL`, `T_WAIT_RETRY_UPL_FILE`, `T_WAIT_RETRY_UPL_LUR`, `T_WAIT_RETRY_INF_LCI`, `T_WAIT_RETRY_INF_LCL` |
 | `CRS-M1-00033` | INTERFACE-PREMISE | `IF_NETWORK` |
 | `CRS-M1-00034` | INTERFACE-PREMISE | `IF_TFTP_BLOCKSIZE` |
 | `CRS-M1-00035` | SCOPE-CONSTRAINT | `SCOPE` |
@@ -2051,7 +2107,7 @@
 | `CRS-M1-00338` | DATA-CONSTRAINT | `ST-CRS-M1-00338` |
 | `CRS-M1-00339` | DATA-CONSTRAINT | `ST-CRS-M1-00339` |
 | `CRS-M1-00340` | DATA-CONSTRAINT | `ST-CRS-M1-00340`, `T_ABORT_TH`, `T_ABORTED` |
-| `CRS-M1-00341` | DATA-CONSTRAINT | `ST-CRS-M1-00341`, `T_ABORT_DL`, `T_ABORTED`, `T_ABORT_FROM_S_INF_LCI_RRQ`, `T_ABORT_FROM_S_INF_LCL_XFER`, `T_ABORT_FROM_S_INF_LCS_XFER`, `T_ABORT_FROM_S_INF_EXCEPTION`, `T_ABORT_FROM_S_UPL_LUI_XFER`, `T_ABORT_FROM_S_UPL_LIST_SENT`, `T_ABORT_FROM_S_UPL_LUR_XFER`, `T_ABORT_FROM_S_UPL_LUS_XFER` |
+| `CRS-M1-00341` | DATA-CONSTRAINT | `ST-CRS-M1-00341`, `T_ABORT_DL`, `T_ABORTED`, `T_ABORT_FROM_S_INF_LCI_RRQ`, `T_ABORT_FROM_S_INF_LCL_XFER`, `T_ABORT_FROM_S_INF_LCS_XFER`, `T_ABORT_FROM_S_INF_EXCEPTION`, `T_ABORT_FROM_S_WAIT_RETRY`, `T_ABORT_FROM_S_UPL_LUI_XFER`, `T_ABORT_FROM_S_UPL_LIST_SENT`, `T_ABORT_FROM_S_UPL_LUR_XFER`, `T_ABORT_FROM_S_UPL_LUS_XFER` |
 | `CRS-M1-00342` | DATA-CONSTRAINT | `ST-CRS-M1-00342` |
 | `CRS-M1-00343` | DATA-CONSTRAINT | `ST-CRS-M1-00343` |
 | `CRS-M1-00344` | SCOPE-CONSTRAINT | `SCOPE` |
@@ -2133,7 +2189,7 @@
 | `TR-CRS-M1-00031-0031` | `CRS-M1-00031` | INTERFACE | `IF_TFTP` | TRANSFER 的 TFTP 接口前提。 |
 | `TR-CRS-M1-00032-0032` | `CRS-M1-00032` | INTERFACE | `IF_TFTP` | ABORT-AND-RESTART-AFTER-DELAY 的 TFTP 接口前提。 |
 | `TR-CRS-M1-00032-0033` | `CRS-M1-00032` | TIMING | `TIM-CRS-M1-00032` | 带来源关系与时钟使能的时序目录行。 |
-| `TR-CRS-M1-00032-0034` | `CRS-M1-00032` | CLOCK | `CLK_EXCEPTION` | 此时序义务使用的时钟。 |
+| `TR-CRS-M1-00032-0034` | `CRS-M1-00032` | CLOCK | `CLK_WAIT` | 此时序义务使用的时钟。 |
 | `TR-CRS-M1-00033-0035` | `CRS-M1-00033` | INTERFACE | `IF_NETWORK` | 网络基础设施前提；能力未建立。 |
 | `TR-CRS-M1-00034-0036` | `CRS-M1-00034` | INTERFACE | `IF_TFTP_BLOCKSIZE` | 块大小能力前提；RFC 2348 候选边另行记录。 |
 | `TR-CRS-M1-00035-0037` | `CRS-M1-00035` | SCOPE | `SCOPE` | 非行为／Profile 义务 IMPLEMENT 保持为范围或适用性约束。 |
@@ -2553,18 +2609,27 @@
 | `TR-CRS-M1-00101-0451` | `CRS-M1-00101` | TRANSITION | `T_INF_EXC_TO` | 迁移 T_INF_EXC_TO 引用此义务。 |
 | `TR-CRS-M1-00099-0452` | `CRS-M1-00099` | TRANSITION | `T_ENTER_UPL_EXC` | 迁移 T_ENTER_UPL_EXC 引用此义务。 |
 | `TR-CRS-M1-00099-0453` | `CRS-M1-00099` | TRANSITION | `T_ENTER_INF_EXC` | 迁移 T_ENTER_INF_EXC 引用此义务。 |
-| `TR-CRS-M1-00341-0454` | `CRS-M1-00341` | TRANSITION | `T_ABORT_DL` | 迁移 T_ABORT_DL 引用此义务。 |
-| `TR-CRS-M1-00340-0455` | `CRS-M1-00340` | TRANSITION | `T_ABORT_TH` | 迁移 T_ABORT_TH 引用此义务。 |
-| `TR-CRS-M1-00340-0456` | `CRS-M1-00340` | TRANSITION | `T_ABORTED` | 迁移 T_ABORTED 引用此义务。 |
-| `TR-CRS-M1-00341-0457` | `CRS-M1-00341` | TRANSITION | `T_ABORTED` | 迁移 T_ABORTED 引用此义务。 |
-| `TR-CRS-M1-00341-0458` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_LCI_RRQ` | 迁移 T_ABORT_FROM_S_INF_LCI_RRQ 引用此义务。 |
-| `TR-CRS-M1-00341-0459` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_LCL_XFER` | 迁移 T_ABORT_FROM_S_INF_LCL_XFER 引用此义务。 |
-| `TR-CRS-M1-00341-0460` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_LCS_XFER` | 迁移 T_ABORT_FROM_S_INF_LCS_XFER 引用此义务。 |
-| `TR-CRS-M1-00341-0461` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_EXCEPTION` | 迁移 T_ABORT_FROM_S_INF_EXCEPTION 引用此义务。 |
-| `TR-CRS-M1-00341-0462` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUI_XFER` | 迁移 T_ABORT_FROM_S_UPL_LUI_XFER 引用此义务。 |
-| `TR-CRS-M1-00341-0463` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LIST_SENT` | 迁移 T_ABORT_FROM_S_UPL_LIST_SENT 引用此义务。 |
-| `TR-CRS-M1-00341-0464` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUR_XFER` | 迁移 T_ABORT_FROM_S_UPL_LUR_XFER 引用此义务。 |
-| `TR-CRS-M1-00341-0465` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUS_XFER` | 迁移 T_ABORT_FROM_S_UPL_LUS_XFER 引用此义务。 |
+| `TR-CRS-M1-00032-0454` | `CRS-M1-00032` | TRANSITION | `T_WAIT_FROM_UPL_FILE` | 迁移 T_WAIT_FROM_UPL_FILE 引用此义务。 |
+| `TR-CRS-M1-00032-0455` | `CRS-M1-00032` | TRANSITION | `T_WAIT_FROM_UPL_LUR` | 迁移 T_WAIT_FROM_UPL_LUR 引用此义务。 |
+| `TR-CRS-M1-00032-0456` | `CRS-M1-00032` | TRANSITION | `T_WAIT_FROM_INF_LCI` | 迁移 T_WAIT_FROM_INF_LCI 引用此义务。 |
+| `TR-CRS-M1-00032-0457` | `CRS-M1-00032` | TRANSITION | `T_WAIT_FROM_INF_LCL` | 迁移 T_WAIT_FROM_INF_LCL 引用此义务。 |
+| `TR-CRS-M1-00032-0458` | `CRS-M1-00032` | TRANSITION | `T_WAIT_RETRY_UPL_FILE` | 迁移 T_WAIT_RETRY_UPL_FILE 引用此义务。 |
+| `TR-CRS-M1-00032-0459` | `CRS-M1-00032` | TRANSITION | `T_WAIT_RETRY_UPL_LUR` | 迁移 T_WAIT_RETRY_UPL_LUR 引用此义务。 |
+| `TR-CRS-M1-00032-0460` | `CRS-M1-00032` | TRANSITION | `T_WAIT_RETRY_INF_LCI` | 迁移 T_WAIT_RETRY_INF_LCI 引用此义务。 |
+| `TR-CRS-M1-00032-0461` | `CRS-M1-00032` | TRANSITION | `T_WAIT_RETRY_INF_LCL` | 迁移 T_WAIT_RETRY_INF_LCL 引用此义务。 |
+| `TR-CRS-M1-00341-0462` | `CRS-M1-00341` | TRANSITION | `T_ABORT_DL` | 迁移 T_ABORT_DL 引用此义务。 |
+| `TR-CRS-M1-00340-0463` | `CRS-M1-00340` | TRANSITION | `T_ABORT_TH` | 迁移 T_ABORT_TH 引用此义务。 |
+| `TR-CRS-M1-00340-0464` | `CRS-M1-00340` | TRANSITION | `T_ABORTED` | 迁移 T_ABORTED 引用此义务。 |
+| `TR-CRS-M1-00341-0465` | `CRS-M1-00341` | TRANSITION | `T_ABORTED` | 迁移 T_ABORTED 引用此义务。 |
+| `TR-CRS-M1-00341-0466` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_LCI_RRQ` | 迁移 T_ABORT_FROM_S_INF_LCI_RRQ 引用此义务。 |
+| `TR-CRS-M1-00341-0467` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_LCL_XFER` | 迁移 T_ABORT_FROM_S_INF_LCL_XFER 引用此义务。 |
+| `TR-CRS-M1-00341-0468` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_LCS_XFER` | 迁移 T_ABORT_FROM_S_INF_LCS_XFER 引用此义务。 |
+| `TR-CRS-M1-00341-0469` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_INF_EXCEPTION` | 迁移 T_ABORT_FROM_S_INF_EXCEPTION 引用此义务。 |
+| `TR-CRS-M1-00341-0470` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_WAIT_RETRY` | 迁移 T_ABORT_FROM_S_WAIT_RETRY 引用此义务。 |
+| `TR-CRS-M1-00341-0471` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUI_XFER` | 迁移 T_ABORT_FROM_S_UPL_LUI_XFER 引用此义务。 |
+| `TR-CRS-M1-00341-0472` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LIST_SENT` | 迁移 T_ABORT_FROM_S_UPL_LIST_SENT 引用此义务。 |
+| `TR-CRS-M1-00341-0473` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUR_XFER` | 迁移 T_ABORT_FROM_S_UPL_LUR_XFER 引用此义务。 |
+| `TR-CRS-M1-00341-0474` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUS_XFER` | 迁移 T_ABORT_FROM_S_UPL_LUS_XFER 引用此义务。 |
 
 ## 基础设施前提
 
@@ -2575,7 +2640,7 @@
 
 | ID | 状态 | 责任 | 门禁 | 说明 |
 |---|---|---|---|---|
-| `A-1` | `OPEN-M1-CORRECTION` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | 6.4.4 的 LUI/LUR 身份冲突阻塞原先 665 边。 |
+| `A-1` | `OPEN-M1-CORRECTION` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | 6.4.4 的 LUI/LUR 身份与 LUR WRQ 参与者仍为 OPEN-M1-CORRECTION；CR-2026-009 是授权请求，不是关闭。 |
 | `A-2` | `CANDIDATE-PARTIAL` | M2-RG1 | PROFILE-MODEL-REFINEMENT-GATE | RFC-2347 选项传输与 RFC-2348 块大小为候选边；1785/2349 仍无活动 615A 单元。 |
 | `A-3` | `CANDIDATE-IN-MODEL` | M2-RG2 | PROFILE-MODEL-REFINEMENT-GATE | 已恢复带重试项的附件 4 方程；时钟使能超时迁移。 |
 | `A-4` | `DEFERRED` | FUTURE-TAXONOMY-CR | SCOPE-EXPANSION-GATE | 未执行 requirementKind 分类扩展。 |
@@ -2591,12 +2656,13 @@
 | `P7/AID/address` | `DEFERRED-UNSELECTED-DEPLOYMENT` | PRODUCT-SCOPE | SCOPE-EXPANSION-GATE | 未选择的 AFDX 寻址保持延期。 |
 | `README-P2-DISPLAY` | `CLOSED-IN-THIS-PR` | M2-AUTHOR | PROFILE-MODEL-REFINEMENT-GATE | 保留 displayGroup 展示。 |
 | `M1-LEDGER` | `RECORDED-IN-INPUT-ACCEPTANCE` | M2-AUTHOR | PROFILE-MODEL-REFINEMENT-GATE | M1 合并事实仍在 inputAcceptance。 |
-| `M1-FILE-IDENTITY-6-4-4` | `OPEN-M1-CORRECTION` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | 停线等待 M1 LUI/LUR 身份纠正；M2 不改写 M1。 |
+| `M1-FILE-IDENTITY-6-4-4` | `OPEN-M1-CORRECTION` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | 停线等待 M1 LUI/LUR 身份纠正；M2 不改写 M1。CR-2026-009 请求后继输入授权。 |
 
 ## 来源精化
 
 - `REF-A1-00143-BLOCKED-BY-FILE-IDENTITY` — `BLOCKED-PENDING-INCREMENTAL-RG1` — CRS-M1-00143 是 PDF 第 85 页的 6.4.4 散文。独立目视核对其为 LUR 字段说明，而 M1 表 6.4.4-1 记为 LUI。仅有共享名词 HEADER-FILE 不足。在增量 RG1 纠正 M1 前不建立活动 665 边。 （至 `CRS-M1-00217` 2.2.3.1）
 - `REF-A1-00315-BLOCKED-BY-FILE-IDENTITY` — `BLOCKED-PENDING-INCREMENTAL-RG1` — CRS-M1-00315 是表 6.4.4-1 的 FIELD-LOAD-PART-NUMBER-NAME，M1 记为 LUI。同一条款页簇存在 LUR/LUI 身份冲突。不从冲突文件身份发出活动 665 边。 （至 `CRS-M1-00212` 2.1.1）
+- `REF-SEQ-00365-WRQ-ACTOR` — `BLOCKED-PENDING-INCREMENTAL-RG1` — 冻结的 CRS-M1-00365 将 LUR WRQ 参与者记为目标硬件。对 §6.3.2 图 A 的独立目视核对为数据加载器 WRQ、目标硬件 ACK、数据加载器 DATA。机器遵循 TFTP 写／目视方向。此条保持 OPEN-M1-CORRECTION；不改写 M1 字节。 （至 `None` ）
 - `REF-A2-TFTP-OPTION-2347` — `CANDIDATE-REFINEMENT` — 615A 5.3.2.2 要求传输 TFTP 选项。RFC 2347 §2 是选项扩展机制。该边使用公共检索身份，不伪造 PDF 页码。不声称完整 RFC-2347 符合性。 （至 `RFC-2347` 2）
 - `REF-A2-BLOCKSIZE-2348` — `CANDIDATE-REFINEMENT` — 615A 5.3.2.3.8.1 是 M1 已纳入的 Blocksize Option Implementation 单元（CRS-M1-00034）并带 DEP-RFC-2348。不能用 blksize 词形搜索否定该来源。RFC 2348 §2 是候选编码。能力保持未建立。 （至 `RFC-2348` 2）
 - `REF-A2-NO-RFC-1785-ACTIVE-EDGE` — `NOT-ESTABLISHED-NO-ACTIVE-SOURCE-UNIT` — UPLOAD/INFORMATION 选项单元未点名 RFC 1785 协商选项通告。P7 列举仍随未选择的 AFDX。 （至 `RFC-1785` ）
@@ -2625,6 +2691,24 @@
 - `NET-REL-016` → `DEFERRED-UNSELECTED-DEPLOYMENT`（M1 `DEFERRED-FUTURE-SCOPE`）
 - `NET-REL-017` → `DEFERRED-UNSELECTED-DEPLOYMENT`（M1 `DEFERRED-FUTURE-SCOPE`）
 
+## 离散见证
+
+- `W-UPL-ACCEPT` UPLOAD 初始化接受：payload.decision=ACCEPT 使能该分支；守卫求值后再写入 lastDecision。（4 步）
+- `W-UPL-REJECT` 从 lastDecision=NONE 起，payload.decision=REJECT 使能 UPLOAD 初始化拒绝。（4 步）
+- `W-INF-ACCEPT` INFORMATION 初始化接受使用同一有类型 payload，而不是预先写好的 lastDecision。（4 步）
+- `W-INF-REJECT` INFORMATION 初始化拒绝来自 payload.decision=REJECT。（4 步）
+- `W-LIST-NOT-READY` 初始化接受后列表尚未提交；LUR WRQ 不能使能。（5 步）
+- `W-LUR-AFTER-READY` 列表提交后数据加载器 LUR WRQ 使能，写入 listAccepted=TRUE，随后目标硬件 ACK。（9 步）
+- `W-SESSION-RESET` INFORMATION 完成后再启动 UPLOAD 时复位 lastDecision 与列表标志。（11 步）
+- `W-WAIT-NOT-BEFORE` CLK_WAIT 低于 MESSAGE_TIMER_VALUE 时禁止 WAIT 重试；到达闭下界后才使能。（13 步）
+- `W-ACCEPT-WITHOUT-PAYLOAD` 仅有 lastDecision 不能使能接受；缺少 payload.decision 时守卫为假。（4 步）
+
+## 阻塞输入
+
+- `M1-FILE-IDENTITY-6-4-4` `OPEN-M1-CORRECTION` 授权 `CR-2026-009` blocksFinalApproval=`True` — 仅在用户授权后做后继 M1 增量。冻结合并字节保持不变。
+- `SEQ-LUR-WRQ-ACTOR` `OPEN-M1-CORRECTION` 授权 `CR-2026-009` blocksFinalApproval=`True` — M2 遵循目视 TFTP 写方向；不改写冻结 M1 参与者元组。
+- `NET-ISSUE-EDITION` `OPEN-PENDING-INDEPENDENT-ACCEPTANCE` 授权 `INDEPENDENT-RG0` blocksFinalApproval=`True` — P3-1／P7 历史版次仍为有条件输入。OPEN 文字不是接受。
+
 ## 分析边界
 
 - 无时：`GRAPH-CONNECTIVITY-ON-DECLARED-TRANSITIONS`
@@ -2634,4 +2718,4 @@
 ## 评审控制
 
 - rg0 `PENDING-EXTERNAL-REVIEW`；rg1 `PENDING-EXTERNAL-REVIEW`；rg2 `PENDING-EXTERNAL-REVIEW`
-- reviewHead `UNBOUND-DRAFT`；formalApproval `EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED`
+- reviewHead `UNBOUND-DRAFT`；formalApproval `EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED`；blocksFinalApproval `True`

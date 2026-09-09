@@ -445,6 +445,24 @@ or excluded. No behavior capability becomes ESTABLISHED in this candidate.
 
 **Status:** Candidate under CR-2026-008, pending external independent review.
 
+---
+
+## DD-027 — Successor M1 delta for file identity, without rewriting the frozen tree
+
+A 6.4.4 LUI/LUR file-identity conflict and the §6.3.2 LUR WRQ actor mismatch remain
+OPEN-M1-CORRECTION. That stop is correct and is not closure. The current M2
+candidate must not request final RG0/RG1/RG2 APPROVE while those inputs stay
+conflicted. After user authorization, a successor M1 package may correct only those
+identities in new ordinary commits and new blob OIDs. Historical merge
+`9bf18124d405b656815bc9eb524ae29bb4f04f56` and its frozen bytes stay unchanged.
+M2 then rebinds `inputAcceptance`. NET-ISSUE-EDITION remains a separate independent
+RG0 decision; OPEN text is not edition acceptance. CR-2026-009 records the
+authorization request.
+
+**Scope:** Input-correction authorization; not an M1 rewrite and not M2 final approval.
+
+**Status:** Candidate under CR-2026-008 / CR-2026-009, pending user authorization.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -652,3 +670,17 @@ Configuration。ARINC 645 继续阻塞完整性成功。AFDX、FIND、媒体集�
 **范围：** M2 模型使用的前提、精化与能力守卫。
 
 **状态：** 在 CR-2026-008 下为候选，等待外部独立复审。
+
+## DD-027——用后继 M1 增量纠正文件身份，不改写冻结树
+
+6.4.4 的 LUI/LUR 文件身份冲突以及 §6.3.2 的 LUR WRQ 参与者不一致仍为
+OPEN-M1-CORRECTION。该停线是正确行为，不是关闭。在这些输入仍冲突时，当前 M2
+候选不得请求最终 RG0/RG1/RG2 APPROVE。用户授权后，后继 M1 数据包可仅在新的
+普通提交与新 blob 中纠正这些身份。历史合并
+`9bf18124d405b656815bc9eb524ae29bb4f04f56` 及其冻结字节保持不变。随后 M2 重新
+绑定 `inputAcceptance`。NET-ISSUE-EDITION 仍是独立的 RG0 决定；OPEN 文字不是
+版次接受。CR-2026-009 记录该授权请求。
+
+**范围：** 输入纠正授权；不是改写 M1，也不是 M2 最终批准。
+
+**状态：** 在 CR-2026-008／CR-2026-009 下为候选，等待用户授权。
