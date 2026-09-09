@@ -398,6 +398,51 @@ Review the remaining applicability before further normative promotion; retain DD
 and DD-020. Actual approval and merge facts are recorded externally on the unchanged
 Head and ordinary merge, without a dedicated post-merge synchronization commit.
 
+---
+
+## DD-024 — Bind M2 to an observable timed EFSM with restricted clocks
+
+M2 delivers one machine M = (S, s0, V, C, P, E, T, Inv) for UPLOAD and
+INFORMATION, with Data Loader and Target Hardware as observation projections of
+the same state. Timing uses restricted ASTs, explicit clocks and source-bound
+error-budget classes. Unresolved bounds remain NOT-CHECKED. The package is the
+model authority; M1 remains the immutable CRS input. No codec, executable engine,
+TP/VC or Project Configuration is authorized.
+
+**Scope:** Candidate model and obligation traces under CR-2026-008.
+
+**Status:** Candidate under CR-2026-008, pending external independent review.
+
+---
+
+## DD-025 — Separate M1 input acceptance from technical action closure
+
+Record the owner-accepted COMMENTED sign-off, ordinary two-parent merge, tree and
+main CI in M2 `inputAcceptance`. Do not rewrite merged M1 bytes, fabricate a
+GitHub APPROVED review, or claim a named independent reviewer. CR-2026-007 closing
+text transfers residual actions to CR-2026-008; transfer is not technical closure.
+Historical edition acceptance remains a conditional input until independent RG0
+says otherwise.
+
+**Scope:** Control-plane recording of merged M1 facts; not a ledger-only PR.
+
+**Status:** Candidate under CR-2026-008, pending external independent review.
+
+---
+
+## DD-026 — Keep infrastructure premises distinct from established capabilities
+
+Source-explicit 615A→665 and TFTP-option edges may be candidate refinements when
+both ends are located. IPv4/UDP and RFC 1122/1123 remain infrastructure premises
+with substantiation planned for Project Configuration. ARINC 645 continues to
+block integrity success. AFDX, FIND, media-set services and P3 profiled deviations
+stay deferred or excluded. No behavior capability becomes ESTABLISHED in this
+candidate.
+
+**Scope:** Premises, refinements and capability guards used by the M2 model.
+
+**Status:** Candidate under CR-2026-008, pending external independent review.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -570,3 +615,36 @@ M2 须规划其验证，之后才可批准执行 Configuration；独立评审须
 AFDX、AID 未来补充版引用与寻址选择仍延期。来源接收不建立实现能力。
 继续保留 DD-019/DD-020，在进一步规范晋级前评审剩余适用性。
 真实批准和合并事实由不变 Head 上的外部记录与普通合并承载，不新增专门 post-merge 同步提交。
+
+## DD-024——将 M2 绑定到带受限时钟的可观测 timed EFSM
+
+M2 为 UPLOAD 与 INFORMATION 交付一台机器 M = (S, s0, V, C, P, E, T, Inv)，
+数据加载器与目标硬件是同一状态的观测投影。时序使用受限 AST、显式时钟和有来源
+的误差预算类别。未解析边界保持 NOT-CHECKED。数据包是模型权威；M1 仍为不可变
+CRS 输入。不授权 codec、可执行引擎、TP/VC 或 Project Configuration。
+
+**范围：** CR-2026-008 下的候选模型与义务追踪。
+
+**状态：** 在 CR-2026-008 下为候选，等待外部独立复审。
+
+## DD-025——将 M1 输入接受与技术行动关闭分开
+
+在 M2 `inputAcceptance` 中记录所有者接受的 COMMENTED 签署、普通两父合并、树和
+main CI。不改写已合并 M1 字节，不伪造 GitHub APPROVED Review，不声称具名独立
+评审者。CR-2026-007 结案将残余行动转交 CR-2026-008；转交不是技术关闭。
+历史版次接受仍为有条件输入，直至独立 RG0 另有决定。
+
+**范围：** 合并后 M1 事实的控制平面记录；不是纯落账 PR。
+
+**状态：** 在 CR-2026-008 下为候选，等待外部独立复审。
+
+## DD-026——将基础设施前提与已建立能力分开
+
+两端均可定位时，615A→665 与 TFTP 选项边可作为候选精化。IPv4/UDP 与 RFC
+1122/1123 仍为基础设施前提，其验证计划用于 Project Configuration。ARINC 645
+继续阻塞完整性成功。AFDX、FIND、媒体集服务和 P3 裁剪偏差保持延期或排除。
+本候选不把任何行为能力改为 ESTABLISHED。
+
+**范围：** M2 模型使用的前提、精化与能力守卫。
+
+**状态：** 在 CR-2026-008 下为候选，等待外部独立复审。

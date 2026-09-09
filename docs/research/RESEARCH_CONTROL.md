@@ -7,6 +7,10 @@ are in [`controlled_sources.json`](../../configs/research/controlled_sources.jso
 The M1 output is the authoritative
 [`CRS/applicability package`](../../configs/requirements/arinc_615a3_m1_crs.json);
 its [review view](../control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md) is generated.
+Merged M1 remains the immutable CRS input. The M2 candidate authority is the
+[`observable timed model package`](../../configs/models/arinc_615a3_m2_model.json);
+its [review view](../control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md) is generated.
+M3 stays blocked until this model is independently approved and ordinarily merged.
 
 ## 1. Research objective and authority boundary
 
@@ -62,8 +66,8 @@ TTCN-3 is neither a dependency nor selected platform.
 | R5 | replication and synthesis | M9 separately approved scope expansion and later cross-instance work |
 
 R0–R5 are research views of M0–M9, not a competing lifecycle. Each delivery
-stage is serial and independently reviewed. M2 must not start before M1 is
-independently approved and ordinarily merged.
+stage is serial and independently reviewed. M1 is the immutable merged CRS input.
+M3 must not start before M2 is independently approved and ordinarily merged.
 
 ## 5. Open-source and claim discipline
 
@@ -88,6 +92,10 @@ evaluation, protocol conformance, certification or authority acceptance.
 M1 输出由权威
 [`CRS/适用性数据包`](../../configs/requirements/arinc_615a3_m1_crs.json) 承载；
 [评审视图](../control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md) 为生成物。
+已合并 M1 仍为不可变 CRS 输入。M2 候选权威为
+[`可观测时序模型数据包`](../../configs/models/arinc_615a3_m2_model.json)；
+[评审视图](../control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md) 为生成物。
+在该模型获独立批准并普通合并前，M3 保持阻塞。
 
 ## 1. 研究目标与权威边界
 
@@ -131,7 +139,7 @@ DTMC、HMM/ML 与 Bayesian calibration；TTCN-3 不是依赖或选定平台。
 | R4 | 有界充分性与诊断 | M8 有限故障域覆盖/mutation |
 | R5 | 复现与综合 | M9 单独批准的范围扩展及以后跨实例工作 |
 
-R0～R5 是 M0～M9 的研究视图，不是竞争生命周期。交付阶段串行且分别评审；M1 未独立批准并普通合并前不得启动 M2。
+R0～R5 是 M0～M9 的研究视图，不是竞争生命周期。交付阶段串行且分别评审；已合并 M1 为不可变 CRS 输入，M2 未独立批准并普通合并前不得启动 M3。
 
 ## 5. 开源与主张纪律
 

@@ -17,6 +17,9 @@ Current controlled check:
 
 ```bash
 python scripts/check_repo_baseline.py
+python scripts/sync_m1_crs.py --check
+python scripts/sync_m2_model.py --check
+python scripts/sync_project_overview.py --check
 ```
 
 It validates required baseline files, local document links, appended Chinese
@@ -35,6 +38,9 @@ sources are outside the public-baseline link graph.
 
 ```bash
 python scripts/check_repo_baseline.py
+python scripts/sync_m1_crs.py --check
+python scripts/sync_m2_model.py --check
+python scripts/sync_project_overview.py --check
 ```
 
 它还验证全部双语受控文档使用统一 H1 边界，并对中英文 H2/H3、数学块、公式标签和代码围栏执行结构对等检查，同时检查方法论目录迁移以及架构/追踪契约的关键字段。本地忽略的研究素材不进入公开基线链接图。结构门禁不能证明翻译语义正确，语义对等仍必须记录在逐文件人工评审清单中。

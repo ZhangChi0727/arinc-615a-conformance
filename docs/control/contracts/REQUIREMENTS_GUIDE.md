@@ -24,6 +24,10 @@ external method objects remains `NOT-DETERMINED` pending review.
 | Timing-obligation catalog | `TIMING_OBLIGATIONS-<version>.yaml/json` | RG1/RG2 |
 | Requirement→objective→TP→VC matrix | generated CSV/JSON | G1 |
 
+M2 model authority is `configs/models/arinc_615a3_m2_model.json`; the data
+semantics are in `MODEL_SCHEMA.md`. The generated review view is
+`docs/control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md`.
+
 ## CRS minimum fields
 
 `id`, `standardEdition`, `sourceReference`, `textHash`, `modality`,
@@ -72,7 +76,7 @@ PICS-like 声明控制适用性及由此产生的 CRS 总体，但本身不是 V
 
 包括 RG0 的适用性/观测声明，RG1 的 CRS schema、受控导出和裁决日志，RG2/RG3 的追踪 schema，RG1/RG2 的时序义务目录，以及满足 G1 的需求→TP→VC 机器可读矩阵。
 
-M1 采用 `configs/requirements/arinc_615a3_m1_crs.json` 作为唯一权威，并生成 `docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md` 供 RG0/RG1 评审。615A-3 做全范围覆盖，665-5 只做可追溯到 615A-3 项或所选服务的有边界审计；登记 PDF 的每一页必须由 section span 或明确排除区间入账，自动化不得为排除页伪造叶级单元。实现和测试不能替代未闭合的规范依赖，也不新增 HANDOFF 或重复状态表。
+M1 采用 `configs/requirements/arinc_615a3_m1_crs.json` 作为唯一权威，并生成 `docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md` 供 RG0/RG1 评审。M2 模型权威为 `configs/models/arinc_615a3_m2_model.json`，数据语义见 `MODEL_SCHEMA.md`，生成评审视图为 `docs/control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md`。615A-3 做全范围覆盖，665-5 只做可追溯到 615A-3 项或所选服务的有边界审计；登记 PDF 的每一页必须由 section span 或明确排除区间入账，自动化不得为排除页伪造叶级单元。实现和测试不能替代未闭合的规范依赖，也不新增 HANDOFF 或重复状态表。
 
 ## CRS 最小字段
 

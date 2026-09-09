@@ -7,10 +7,12 @@ production. Current status remains in the [root README](../../README.md).
 
 Build an injectable ARINC 615A verification instrument that realizes approved
 Profile/Binding artifacts and produces reproducible Observation, Result and
-Evidence records. M1 supplies only the candidate
-[`CRS/applicability package`](../../configs/requirements/arinc_615a3_m1_crs.json):
-it creates no codec, protocol operation, EFSM, case, procedure, oracle or
-Project Configuration.
+Evidence records. Merged M1 remains the immutable
+[`CRS/applicability package`](../../configs/requirements/arinc_615a3_m1_crs.json).
+M2 supplies the candidate
+[`observable timed model package`](../../configs/models/arinc_615a3_m2_model.json)
+and still creates no codec, protocol operation, executable EFSM engine, case,
+procedure, oracle or Project Configuration.
 
 ## 2. Target dependency architecture
 
@@ -82,9 +84,12 @@ conformance, certification readiness or authority acceptance.
 ## 1. 工程目标与当前边界
 
 构建可注入的 ARINC 615A 验证仪器，实现已批准 Profile/Binding 并产生可复现 Observation、
-Result 与 Evidence。M1 只提供候选
-[`CRS/适用性数据包`](../../configs/requirements/arinc_615a3_m1_crs.json)，不创建 codec、
-协议操作、EFSM、用例、规程、oracle 或 Project Configuration。
+Result 与 Evidence。已合并 M1 仍为不可变
+[`CRS/适用性数据包`](../../configs/requirements/arinc_615a3_m1_crs.json)。
+M2 提供候选
+[`可观测时序模型数据包`](../../configs/models/arinc_615a3_m2_model.json)，
+仍不创建 codec、协议操作、可执行 EFSM 引擎、用例、规程、oracle 或 Project
+Configuration。
 
 ## 2. 目标依赖架构
 
