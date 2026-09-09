@@ -29,6 +29,7 @@ LEGAL_UPLOAD = (
     "T_UPL_EVAL",
     "T_UPL_ACCEPT_INIT",
     "T_UPL_LIST_OFFER",
+    "T_UPL_WAIT_LUS0001",
     "T_UPL_LUR_WRQ",
     "T_UPL_LUR_ACK",
     "T_UPL_LUR_XFER",
@@ -361,6 +362,7 @@ def test_upload_list_then_lur_then_file_is_a_legal_path() -> None:
         "S_UPL_EVALUATE",
         "S_UPL_LIST_SENT",
         "S_UPL_WAIT_LUS0001",
+        "S_UPL_WAIT_LUS0001",
         "S_UPL_LUR_WRQ",
         "S_UPL_LUR_ACK",
         "S_UPL_LUR_XFER",
@@ -645,7 +647,7 @@ def test_round2_mutations_fail_after_fingerprint_refresh() -> None:
     assert equation["expression"]["op"] == "GT"
     equation["expression"]["op"] = "LT"
     refresh_summary(data)
-    assert any("operator" in item or "source relation" in item for item in errors(data))
+    assert any("equation structure" in item or "source relation" in item for item in errors(data))
 
     data = copy.deepcopy(package())
     assign = next(
@@ -699,6 +701,132 @@ def test_legal_commutative_add_and_payload_path_still_pass() -> None:
     assert any(row["id"] == "W-LUR-AFTER-READY" for row in data["discreteWitnesses"])
     lur = next(row for row in data["model"]["transitions"] if row["id"] == "T_UPL_LUR_WRQ")
     assert lur["event"] == "EV_DL_WRQ_LUR"
+
+
+def _witness(data: dict, wid: str) -> dict:
+    return next(row for row in data["discreteWitnesses"] if row["id"] == wid)
+
+
+def test_list_ready_is_required_before_lur_wrq() -> None:
+    data = package()
+    assert errors(data) == []
+    offered = _witness(data, "W-LIST-OFFERED-NOT-READY")
+    assert offered["steps"][-1]["transitionId"] == "T_UPL_LUR_WRQ"
+    assert offered["steps"][-1]["expectEnabled"] is False
+    ready = _witness(data, "W-LUR-AFTER-READY")
+    ids = [step["transitionId"] for step in ready["steps"]]
+    assert ids.index("T_UPL_WAIT_LUS0001") < ids.index("T_UPL_LUR_WRQ")
+    lus = next(step for step in ready["steps"] if step["transitionId"] == "T_UPL_WAIT_LUS0001")
+    assert lus["expectVariables"]["targetListReady"] == "TRUE"
+    wait = _witness(data, "W-WAIT-NOT-BEFORE")
+    wait_ids = [step["transitionId"] for step in wait["steps"]]
+    assert wait_ids.index("T_UPL_WAIT_LUS0001") < wait_ids.index("T_UPL_LUR_WRQ")
+    session = _witness(data, "W-SESSION-RESET")
+    assert session["steps"][-1]["transitionId"] == "T_UPL_LUR_WRQ"
+    assert session["steps"][-1]["expectEnabled"] is False
+    start = next(step for step in session["steps"] if step["transitionId"] == "T_UPL_LUI_RRQ_AFTER_INF")
+    assert start["expectVariables"]["targetListReady"] == "FALSE"
+
+    data = copy.deepcopy(package())
+    witness = _witness(data, "W-LUR-AFTER-READY")
+    witness["steps"] = [step for step in witness["steps"] if step.get("transitionId") != "T_UPL_WAIT_LUS0001"]
+    refresh_summary(data)
+    assert any("enablement" in item or "W-LUR-AFTER-READY" in item for item in errors(data))
+
+    data = copy.deepcopy(package())
+    wrq = next(row for row in data["model"]["transitions"] if row["id"] == "T_UPL_LUR_WRQ")
+    wrq["guard"]["args"] = [
+        item for item in wrq["guard"]["args"] if item.get("left", {}).get("name") != "targetListReady"
+    ]
+    refresh_summary(data)
+    assert any("list-ready" in item or "LUS 0001" in item for item in errors(data))
+
+
+def _first_binary(node: dict, op: str) -> dict:
+    for item in m2.walk_nodes(node):
+        if item.get("kind") == "BINARY" and item.get("op") == op:
+            return item
+    raise AssertionError(op)
+
+
+def _rewrite_retry_grouping(expr: dict) -> None:
+    for node in m2.walk_nodes(expr):
+        if node.get("kind") != "BINARY" or node.get("op") != "MUL":
+            continue
+        left, right = node.get("left") or {}, node.get("right") or {}
+        if left.get("op") == "MUL":
+            inner_right = left.get("right") or {}
+            if inner_right.get("op") == "ADD" and right.get("name") == "TFTP_TO":
+                node["left"] = left["left"]
+                node["right"] = {
+                    "kind": "BINARY",
+                    "op": "ADD",
+                    "left": inner_right["left"],
+                    "right": {
+                        "kind": "BINARY",
+                        "op": "MUL",
+                        "left": inner_right["right"],
+                        "right": right,
+                        "unit": node.get("unit"),
+                    },
+                    "unit": node.get("unit"),
+                }
+                return
+        if left.get("op") == "ADD" and right.get("name") == "TFTP_TO":
+            node["op"] = "ADD"
+            node["left"] = left["left"]
+            node["right"] = {
+                "kind": "BINARY",
+                "op": "MUL",
+                "left": left["right"],
+                "right": right,
+                "unit": node.get("unit"),
+            }
+            return
+    raise AssertionError("retry grouping not found")
+
+
+def test_equation_structure_mutations_fail_after_fingerprint_refresh() -> None:
+    source = next(
+        item["sourceRelation"]
+        for item in package()["timingCatalog"]
+        if item["requirementId"] == "CRS-M1-00188"
+    )
+    parsed = m2.parse_source_equation(source)
+    assert parsed is not None and parsed["op"] == "GT"
+
+    data = copy.deepcopy(package())
+    equation = next(item for item in data["timingCatalog"] if item["requirementId"] == "CRS-M1-00188")
+    equation["expression"]["left"], equation["expression"]["right"] = (
+        equation["expression"]["right"],
+        equation["expression"]["left"],
+    )
+    refresh_summary(data)
+    assert any("equation structure" in item for item in errors(data))
+
+    data = copy.deepcopy(package())
+    equation = next(item for item in data["timingCatalog"] if item["requirementId"] == "CRS-M1-00188")
+    div = _first_binary(equation["expression"], "DIV")
+    div["left"], div["right"] = div["right"], div["left"]
+    refresh_summary(data)
+    assert any("equation structure" in item for item in errors(data))
+
+    data = copy.deepcopy(package())
+    equation = next(item for item in data["timingCatalog"] if item["requirementId"] == "CRS-M1-00188")
+    _rewrite_retry_grouping(equation["expression"])
+    refresh_summary(data)
+    assert any("equation structure" in item for item in errors(data))
+
+    data = copy.deepcopy(package())
+    equation = next(item for item in data["timingCatalog"] if item["requirementId"] == "CRS-M1-00188")
+    four = next(
+        node
+        for node in m2.walk_nodes(equation["expression"])
+        if node.get("kind") == "LITERAL" and node.get("value") == 4
+    )
+    four["value"] = 5
+    refresh_summary(data)
+    assert any("equation structure" in item for item in errors(data))
 
 
 def test_open_m1_correction_cannot_be_closed() -> None:

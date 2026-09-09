@@ -62,7 +62,31 @@ STATUS_AXES = (
 )
 REQUIRED_WITNESSES = {
     "W-UPL-ACCEPT", "W-UPL-REJECT", "W-LIST-NOT-READY",
-    "W-LUR-AFTER-READY", "W-SESSION-RESET",
+    "W-LIST-OFFERED-NOT-READY", "W-LUR-AFTER-READY", "W-SESSION-RESET",
+}
+SESSION_START_TRANSITIONS = {
+    "T_INF_LCI_RRQ", "T_UPL_LUI_RRQ", "T_UPL_LUI_RRQ_AFTER_INF",
+}
+LUS_READY_EVENT = "EV_TH_LUS0001"
+LUR_WRQ_TRANSITION = "T_UPL_LUR_WRQ"
+SOURCE_SYMBOL_ALIASES = {
+    "PACKET_TRANSMISSION_DURATION": "DURATION_TIME",
+    "SUBSCRIBER_PROCESSING_DURATION": "DURATION_TIME",
+}
+UNPARSED_SOURCE_RELATIONS = {
+    "SOURCE-DEFINES-DEADLINE-OR-DURATION",
+    "STATUS-RECEIVED-BEFORE-EXCEPTION-DELAY-ELSE-OPERATION-ABORT",
+}
+SOURCE_EQ_TOKEN_RE = re.compile(
+    r"\s*(>=|<=|!=|=>|>|<|=|\(|\)|\+|\*|/|[A-Za-z][A-Za-z0-9-]*|\d+(?:\.\d+)?|-)"
+)
+SOURCE_COMPARE_TOKEN = {
+    ">=": "GE",
+    "<=": "LE",
+    "!=": "NE",
+    ">": "GT",
+    "<": "LT",
+    "=": "EQ",
 }
 COMPARE_EVAL = {
     "EQ": lambda a, b: a == b,
@@ -363,8 +387,159 @@ def source_relation_symbols(text: Any) -> set[str]:
     for token in re.findall(r"[A-Za-z][A-Za-z0-9-]*", text or ""):
         if token.upper() in {"AND", "OR", "NOT", "IF", "THEN"}:
             continue
-        names.add(token.replace("-", "_"))
+        names.add(SOURCE_SYMBOL_ALIASES.get(token.replace("-", "_"), token.replace("-", "_")))
     return names
+
+
+def _source_tokens(text: str) -> list[str] | None:
+    tokens: list[str] = []
+    index = 0
+    while index < len(text):
+        match = SOURCE_EQ_TOKEN_RE.match(text, index)
+        if not match:
+            return None
+        token = match.group(1)
+        if token == "=>":
+            return None
+        tokens.append(token)
+        index = match.end()
+    return tokens
+
+
+def parse_source_equation(text: Any) -> dict[str, Any] | None:
+    if not isinstance(text, str) or not text.strip():
+        return None
+    stripped = text.strip()
+    if stripped in UNPARSED_SOURCE_RELATIONS or "=>" in stripped:
+        return None
+    tokens = _source_tokens(stripped)
+    if not tokens:
+        return None
+    index = 0
+
+    def peek() -> str | None:
+        return tokens[index] if index < len(tokens) else None
+
+    def take() -> str:
+        nonlocal index
+        token = tokens[index]
+        index += 1
+        return token
+
+    def parse_primary() -> dict[str, Any] | None:
+        token = peek()
+        if token == "(":
+            take()
+            node = parse_add()
+            if peek() != ")" or node is None:
+                return None
+            take()
+            return node
+        if token is None:
+            return None
+        if token[0].isdigit():
+            take()
+            value: int | float = float(token) if "." in token else int(token)
+            return {"kind": "LITERAL", "value": value}
+        if re.match(r"[A-Za-z]", token):
+            take()
+            name = SOURCE_SYMBOL_ALIASES.get(token.replace("-", "_"), token.replace("-", "_"))
+            return {"kind": "SYMBOL", "name": name}
+        return None
+
+    def parse_mul() -> dict[str, Any] | None:
+        node = parse_primary()
+        while node is not None and peek() in {"*", "/"}:
+            op = "MUL" if take() == "*" else "DIV"
+            right = parse_primary()
+            if right is None:
+                return None
+            node = {"kind": "BINARY", "op": op, "left": node, "right": right}
+        return node
+
+    def parse_add() -> dict[str, Any] | None:
+        node = parse_mul()
+        while node is not None and peek() in {"+", "-"}:
+            op = "ADD" if take() == "+" else "SUB"
+            right = parse_mul()
+            if right is None:
+                return None
+            node = {"kind": "BINARY", "op": op, "left": node, "right": right}
+        return node
+
+    left = parse_add()
+    op_token = peek()
+    if left is None or op_token not in SOURCE_COMPARE_TOKEN:
+        return None
+    take()
+    right = parse_add()
+    if right is None or index != len(tokens):
+        return None
+    return {"kind": "COMPARE", "op": SOURCE_COMPARE_TOKEN[op_token], "left": left, "right": right}
+
+
+def strip_expr_units(node: Any) -> Any:
+    if isinstance(node, dict):
+        return {key: strip_expr_units(value) for key, value in node.items() if key != "unit"}
+    if isinstance(node, list):
+        return [strip_expr_units(item) for item in node]
+    return node
+
+
+def _canon_number(value: Any) -> Any:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return value
+    if float(value).is_integer():
+        return int(value)
+    return float(value)
+
+
+def _flatten_same_op(node: dict[str, Any], op: str) -> list[dict[str, Any]]:
+    if node.get("kind") == "BINARY" and node.get("op") == op:
+        return _flatten_same_op(node["left"], op) + _flatten_same_op(node["right"], op)
+    return [node]
+
+
+def canonical_expr(node: Any) -> Any:
+    if not isinstance(node, dict):
+        return node
+    kind = node.get("kind")
+    if kind == "COMPARE":
+        return {
+            "kind": "COMPARE",
+            "op": node.get("op"),
+            "left": canonical_expr(node.get("left")),
+            "right": canonical_expr(node.get("right")),
+        }
+    if kind == "BINARY":
+        op = node.get("op")
+        if op in {"ADD", "MUL"}:
+            parts = [canonical_expr(item) for item in _flatten_same_op(node, op)]
+            parts.sort(key=lambda item: json.dumps(item, sort_keys=True, separators=(",", ":")))
+            return {"kind": "NARY", "op": op, "args": parts}
+        return {
+            "kind": "BINARY",
+            "op": op,
+            "left": canonical_expr(node.get("left")),
+            "right": canonical_expr(node.get("right")),
+        }
+    if kind == "LITERAL":
+        return {"kind": "LITERAL", "value": _canon_number(node.get("value"))}
+    if kind == "SYMBOL":
+        name = SOURCE_SYMBOL_ALIASES.get(node.get("name"), node.get("name"))
+        return {"kind": "SYMBOL", "name": name}
+    if kind == "CLOCK":
+        return {"kind": "CLOCK", "name": node.get("name")}
+    return strip_expr_units(node)
+
+
+def source_equation_structure_errors(row: dict[str, Any], source_relation: str, expr: Any) -> list[str]:
+    parsed = parse_source_equation(source_relation)
+    if parsed is None:
+        return [f"timing {row.get('id')} source relation is not a parseable equation"]
+    if canonical_expr(parsed) != canonical_expr(strip_expr_units(expr)):
+        return [f"timing {row.get('id')} equation structure drifted from the source relation"]
+    return []
 
 
 def expr_signature(node: Any) -> Counter:
@@ -686,11 +861,10 @@ def timing_kind_errors(row: dict[str, Any], timing: dict[str, Any]) -> list[str]
     elif kind in {"DEADLINE-UPPER-BOUND", "DURATION-UPPER-BOUND", "PROHIBITION-WINDOW-UPPER-BOUND"}:
         if isinstance(expr, dict) and expr.get("kind") == "COMPARE" and expr.get("op") not in {"LE", "LT"}:
             errors.append(f"timing {row.get('id')} in-window constraint is not an upper bound")
-    elif kind == "SOURCE-EQUATION":
-        expected_op = source_relation_compare_op(timing.get("sourceRelation") or row.get("sourceRelation"))
-        if expected_op and (not isinstance(expr, dict) or expr.get("kind") != "COMPARE" or expr.get("op") != expected_op):
-            errors.append(f"timing {row.get('id')} equation operator drifted from the source relation")
-        required = source_relation_symbols(timing.get("sourceRelation") or "")
+    elif kind == "SOURCE-EQUATION" or row.get("staticCheck") == "EQUATION-STRUCTURAL":
+        source = timing.get("sourceRelation") or row.get("sourceRelation") or ""
+        errors.extend(source_equation_structure_errors(row, source, expr))
+        required = source_relation_symbols(source)
         present = ast_symbols(expr)
         dropped = [
             name
@@ -699,6 +873,97 @@ def timing_kind_errors(row: dict[str, Any], timing: dict[str, Any]) -> list[str]
         ]
         if dropped:
             errors.append(f"timing {row.get('id')} AST dropped source terms {dropped}")
+    return errors
+
+
+def _compare_var_enum(node: Any, name: str, value: str) -> bool:
+    for item in walk_nodes(node):
+        if item.get("kind") != "COMPARE" or item.get("op") != "EQ":
+            continue
+        left, right = item.get("left") or {}, item.get("right") or {}
+        for first, second in ((left, right), (right, left)):
+            if (
+                first.get("kind") == "VAR"
+                and first.get("name") == name
+                and second.get("kind") == "ENUM"
+                and second.get("value") == value
+            ):
+                return True
+    return False
+
+
+def _guard_true_vars(node: Any) -> set[str]:
+    names: set[str] = set()
+    for item in walk_nodes(node):
+        if item.get("kind") != "COMPARE" or item.get("op") != "EQ":
+            continue
+        left, right = item.get("left") or {}, item.get("right") or {}
+        for first, second in ((left, right), (right, left)):
+            if first.get("kind") == "VAR" and second.get("kind") == "ENUM" and second.get("value") == "TRUE":
+                names.add(first.get("name"))
+    return names
+
+
+def _assigns_enum(updates: Any, name: str, value: str) -> bool:
+    return any(
+        item.get("kind") == "ASSIGN"
+        and item.get("target") == name
+        and (item.get("value") or {}).get("kind") == "ENUM"
+        and (item.get("value") or {}).get("value") == value
+        for item in updates or []
+    )
+
+
+def list_readiness_errors(model: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    trans = model.get("transitions") or []
+    wrq = next((row for row in trans if row.get("id") == LUR_WRQ_TRANSITION), None)
+    if wrq is None:
+        return ["LUR WRQ transition is missing"]
+    writers_true: dict[str, set[str]] = defaultdict(set)
+    for row in trans:
+        for update in row.get("updates") or []:
+            if (
+                update.get("kind") == "ASSIGN"
+                and (update.get("value") or {}).get("kind") == "ENUM"
+                and (update.get("value") or {}).get("value") == "TRUE"
+                and update.get("target")
+            ):
+                writers_true[update["target"]].add(row.get("event"))
+    ready_vars = [
+        name
+        for name in _guard_true_vars(wrq.get("guard"))
+        if writers_true.get(name) == {LUS_READY_EVENT}
+    ]
+    if not ready_vars:
+        errors.append("LUR WRQ is not guarded by a session-local list-ready flag established only by LUS 0001")
+        return errors
+    ready = ready_vars[0]
+    variables = {row["id"]: row for row in model.get("variables", [])}
+    ready_row = variables.get(ready) or {}
+    if ready_row.get("initial") != "FALSE":
+        errors.append(f"{ready} must start FALSE")
+    lus_ready = [row for row in trans if row.get("event") == LUS_READY_EVENT]
+    if not lus_ready:
+        errors.append("LUS 0001 receive transition is missing")
+    for row in lus_ready:
+        if not _assigns_enum(row.get("updates"), ready, "TRUE"):
+            errors.append(f"{row.get('id')} LUS 0001 does not establish {ready}")
+        if not _assigns_enum(row.get("updates"), "statusCode", "0X0001"):
+            errors.append(f"{row.get('id')} LUS 0001 does not record status 0X0001")
+        if not _compare_var_enum(row.get("guard"), "listOffered", "TRUE"):
+            errors.append(f"{row.get('id')} LUS 0001 is enabled without listOffered")
+        if not _compare_var_enum(row.get("guard"), "listAccepted", "FALSE"):
+            errors.append(f"{row.get('id')} LUS 0001 is enabled after listAccepted")
+    for row in trans:
+        if _assigns_enum(row.get("updates"), ready, "TRUE") and row.get("event") != LUS_READY_EVENT:
+            errors.append(f"{row.get('id')} writes {ready}=TRUE without LUS 0001")
+    for tid in SESSION_START_TRANSITIONS:
+        row = next((item for item in trans if item.get("id") == tid), None)
+        if row is None:
+            errors.append(f"session start {tid} is missing")
+        elif not _assigns_enum(row.get("updates"), ready, "FALSE"):
+            errors.append(f"session start {tid} does not clear {ready}")
     return errors
 
 
@@ -917,6 +1182,7 @@ def package_errors(
     errors.extend(clock_reset_errors(model))
     errors.extend(field_axis_errors(model, m1_by_id))
     errors.extend(replay_witness_errors(data))
+    errors.extend(list_readiness_errors(model))
 
     events_by_id = {row["id"]: row for row in model["events"]}
     dl_out = set(data["scope"]["observationBoundary"]["dataLoader"]["outputs"])
