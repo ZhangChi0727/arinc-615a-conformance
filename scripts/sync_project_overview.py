@@ -402,11 +402,17 @@ def render_status_block(
     definition = method["methodDefinition"]
     source_items = {item["id"]: item for item in sources["sources"]}
     authority = source_items[sources["currentProtocolAuthorityId"]]
-    bounded_items = [
-        item for item in sources["sources"]
-        if item.get("role") == "BOUNDED-DATA-FORMAT-REFERENCE"
-    ]
-    bounded_summary = ", ".join(item["id"] for item in bounded_items) or "none"
+    display_groups: dict[str, list[str]] = {}
+    for item in sources["sources"]:
+        if item.get("role") == "CURRENT-PROTOCOL-AUTHORITY":
+            continue
+        group = item.get("displayGroup")
+        if isinstance(group, str) and group:
+            display_groups.setdefault(group, []).append(item["id"])
+    source_display = "; ".join(
+        ", ".join(f"`{sid}`" for sid in ids) + f" ({group})"
+        for group, ids in display_groups.items()
+    ) or "none"
     open_dependencies = ", ".join(
         f"{item['id']} `{item['status']}`" for item in sources["openDependencies"]
     )
@@ -426,6 +432,12 @@ def render_status_block(
             f", [`M1 package`]({requirements_control['packagePath']})"
             f", [`generated M1 review view`]({requirements_control['reviewViewPath']})"
         )
+    model_control = sources.get("modelControl")
+    if model_control:
+        deep_links += (
+            f", [`M2 package`]({model_control['packagePath']})"
+            f", [`generated M2 review view`]({model_control['reviewViewPath']})"
+        )
     return f"""## Current development picture
 
 | Dimension | Controlled state |
@@ -434,7 +446,7 @@ def render_status_block(
 | Current release | [`{release['currentBaselineId']}`]({baseline_path}) / annotated [`{release['tag']}`]({release_link}) |
 | Method input | {definition['version']} at {_commit_link(method['repository'], definition['commit'])} |
 | Protocol source | `{authority['id']}` / edition `{authority['edition']}` / wire version `{authority['wireVersion']}` |
-| Bounded source and open dependency | `{bounded_summary}`; {open_dependencies} |
+| Bounded source and open dependency | {source_display}; {open_dependencies} |
 | Technical direction | `{technical['behaviorModel']}` / `{technical['verificationMethod']}` / platform `{platform_summary}` |
 | Delivery position | current `{lifecycle['currentStageId']}` / next `{lifecycle['nextStageId']}` / disposition `{lifecycle['candidateDisposition']}` |
 | Activation boundary | merge evidence `{lifecycle['repositoryMergeEvidence']}` / approval `{lifecycle['independentApproval']}` |
@@ -475,7 +487,7 @@ Unchanged boundaries:
 | 当前发布 | [`{release['currentBaselineId']}`]({baseline_path}) / annotated [`{release['tag']}`]({release_link}) |
 | 方法输入 | {definition['version']} @ {_commit_link(method['repository'], definition['commit'])} |
 | 协议来源 | `{authority['id']}` / 版次 `{authority['edition']}` / 线版本 `{authority['wireVersion']}` |
-| 有边界来源与开放依赖 | `{bounded_summary}`；{open_dependencies} |
+| 有边界来源与开放依赖 | {source_display}；{open_dependencies} |
 | 技术方向 | `{technical['behaviorModel']}` / `{technical['verificationMethod']}` / 平台 `{platform_summary}` |
 | 交付位置 | 当前 `{lifecycle['currentStageId']}` / 下一 `{lifecycle['nextStageId']}` / 处置 `{lifecycle['candidateDisposition']}` |
 | 激活边界 | 合并证据 `{lifecycle['repositoryMergeEvidence']}` / 批准 `{lifecycle['independentApproval']}` |

@@ -19,6 +19,7 @@
       "id": "ARINC-665-5",
       "edition": "665-5",
       "role": "BOUNDED-DATA-FORMAT-REFERENCE",
+      "displayGroup": "BOUNDED-ACTIVE",
       "publicationDate": "2019-08-13",
       "pageCount": 139,
       "byteCount": 910694,
@@ -40,6 +41,7 @@
       "id": "ARINC-664-2",
       "edition": "664-Part-2",
       "role": "BOUNDED-PHYSICAL-LINK-REFERENCE",
+      "displayGroup": "BOUNDED-ACTIVE",
       "publicationDate": "2003-06-10",
       "pageCount": 53,
       "byteCount": 2983064,
@@ -60,6 +62,7 @@
       "byteCount": 529983,
       "sha256": "86cda84f4b0e1555fe2975942eaae53178ae3f7b151a7ff50a4022df6d958b90",
       "role": "BOUNDED-NETWORK-SERVICES-REFERENCE",
+      "displayGroup": "BOUNDED-ACTIVE",
       "acquisitionRecordId": "SAR-2026-001",
       "sourceHandling": "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY",
       "equivalentReplacementFor": [],
@@ -83,6 +86,7 @@
       "byteCount": 1838153,
       "sha256": "63ef56b2e0061bdb8a8554fc9cdb522d2ba7c4a0dc52003856d7022eb9889f71",
       "role": "CONDITIONAL-AFDX-REFERENCE",
+      "displayGroup": "CONDITIONAL-DEPLOYMENT",
       "acquisitionRecordId": "SAR-2026-001",
       "sourceHandling": "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY",
       "equivalentReplacementFor": [],
@@ -433,7 +437,10 @@
       "DD-015",
       "DD-016",
       "DD-017",
-      "DD-018"
+      "DD-018",
+      "DD-024",
+      "DD-025",
+      "DD-026"
     ],
     "behaviorModel": "LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM",
     "verificationMethod": "BOUNDED-TEST-ANALYSIS",
@@ -457,10 +464,10 @@
     }
   },
   "lifecycle": {
-    "currentStageId": "M1",
-    "nextStageId": "M2",
+    "currentStageId": "M2",
+    "nextStageId": "M3",
     "candidateDisposition": "ADOPT",
-    "formalActivationControlPath": "docs/control/changes/CR-2026-007.md",
+    "formalActivationControlPath": "docs/control/changes/CR-2026-008.md",
     "repositoryMergeEvidence": "EXTERNAL-VERIFICATION-REQUIRED",
     "independentApproval": "NOT-AUTOMATED",
     "nextStageEntryRule": "PROHIBITED-UNTIL-APPROVAL-AND-ORDINARY-MERGE-VERIFIED"
@@ -470,7 +477,14 @@
     "schemaPath": "configs/requirements/m1_crs_package.schema.json",
     "reviewViewPath": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
     "generatorPath": "scripts/sync_m1_crs.py",
-    "reviewState": "PENDING-EXTERNAL-INDEPENDENT-REVIEW"
+    "reviewState": "OWNER-ACCEPTED-COMMENTED-SIGNOFF-MERGED"
+  },
+  "modelControl": {
+    "packagePath": "configs/models/arinc_615a3_m2_model.json",
+    "schemaPath": "configs/models/m2_model_package.schema.json",
+    "reviewViewPath": "docs/control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md",
+    "generatorPath": "scripts/sync_m2_model.py",
+    "reviewState": "PENDING-EXTERNAL-REVIEW"
   },
   "protectedStateConstraints": [
     {
@@ -507,7 +521,7 @@
     },
     {
       "id": "M1",
-      "status": "DISPOSITION-ADOPT",
+      "status": "COMPLETED-EXTERNALLY-VERIFIED",
       "gateId": "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE",
       "dependsOn": [
         "M0"
@@ -515,7 +529,7 @@
     },
     {
       "id": "M2",
-      "status": "NEXT-BLOCKED-BY-FINAL-GATE",
+      "status": "DISPOSITION-ADOPT",
       "gateId": "PROFILE-MODEL-REFINEMENT-GATE",
       "dependsOn": [
         "M1"
@@ -523,7 +537,7 @@
     },
     {
       "id": "M3",
-      "status": "BLOCKED-BY-PREDECESSOR",
+      "status": "NEXT-BLOCKED-BY-FINAL-GATE",
       "gateId": "EXECUTABLE-FOUNDATION-GATE",
       "dependsOn": [
         "M2"
