@@ -35,6 +35,12 @@ M1_SYNC_SPEC = importlib.util.spec_from_file_location(
 assert M1_SYNC_SPEC and M1_SYNC_SPEC.loader
 m1_sync = importlib.util.module_from_spec(M1_SYNC_SPEC)
 M1_SYNC_SPEC.loader.exec_module(m1_sync)
+M2_SYNC_SPEC = importlib.util.spec_from_file_location(
+    "sync_m2_model", ROOT / "scripts/sync_m2_model.py"
+)
+assert M2_SYNC_SPEC and M2_SYNC_SPEC.loader
+m2_sync = importlib.util.module_from_spec(M2_SYNC_SPEC)
+M2_SYNC_SPEC.loader.exec_module(m2_sync)
 STATUS = sync.load_status(STATUS_PATH)
 SOURCE_REGISTER_PATH = ROOT / STATUS["technicalDirection"]["sourceRegisterPath"]
 CONTROLLED_SOURCES = sync.load_source_register(SOURCE_REGISTER_PATH)
@@ -83,9 +89,13 @@ REQUIRED_FIXED_FILES = [
     ACQUISITION_RECORD_PATH,
     ROOT / "scripts/sync_project_overview.py",
     ROOT / "scripts/sync_m1_crs.py",
+    ROOT / "scripts/sync_m2_model.py",
     ROOT / "configs/requirements/m1_crs_package.schema.json",
     ROOT / "configs/requirements/arinc_615a3_m1_crs.json",
     CONTROL / "requirements" / "ARINC615A3_M1_CRS_REVIEW_VIEW.md",
+    ROOT / "configs/models/m2_model_package.schema.json",
+    ROOT / "configs/models/arinc_615a3_m2_model.json",
+    CONTROL / "models" / "ARINC615A3_M2_MODEL_REVIEW_VIEW.md",
     CONTROL / "PROJECT_CONTROL.md",
     CONTROL / "CHANGE_CONTROL.md",
     CONTRACTS_DIR / "ARCHITECTURE.md",
@@ -93,6 +103,7 @@ REQUIRED_FIXED_FILES = [
     CONTRACTS_DIR / "TERMINOLOGY.md",
     CONTRACTS_DIR / "APPLICABILITY_TEMPLATE.md",
     CONTRACTS_DIR / "CRS_SCHEMA.md",
+    CONTRACTS_DIR / "MODEL_SCHEMA.md",
     CONTRACTS_DIR / "TRACEABILITY_SCHEMA.md",
     CONTRACTS_DIR / "REQUIREMENTS_GUIDE.md",
     EXTERNAL_BINDING_PATH,
@@ -1425,6 +1436,11 @@ def controlled_source_errors(
     authorities = [item for item in by_id.values() if item.get("role") == "CURRENT-PROTOCOL-AUTHORITY"]
     if authority_id not in by_id or len(authorities) != 1 or authorities[0].get("id") != authority_id:
         errors.append("currentProtocolAuthorityId must reference the single current protocol authority")
+    for item in by_id.values():
+        if item.get("role") == "CURRENT-PROTOCOL-AUTHORITY":
+            continue
+        if not isinstance(item.get("displayGroup"), str) or not item["displayGroup"].strip():
+            errors.append(f"source {item.get('id')} must declare displayGroup for README rendering")
 
     acquisition_path_raw = register.get("acquisitionRecordPath")
     acquisition_path, acquisition_path_error = _controlled_tracked_path_error(
@@ -1740,6 +1756,26 @@ def main() -> int:
         for key, expected_path in expected_paths.items():
             if control.get(key) != expected_path:
                 errors.append(f"requirementsControl.{key} must be {expected_path}")
+    model_control = CONTROLLED_SOURCES.get("modelControl")
+    if not isinstance(model_control, dict):
+        errors.append("modelControl is missing from the source register")
+    else:
+        try:
+            m2_package = m2_sync.load_package()
+        except (OSError, json.JSONDecodeError, m2_sync.M2Error) as exc:
+            errors.append(f"M2 model package validation failed: {exc}")
+        else:
+            if read(m2_sync.VIEW_PATH) != m2_sync.render(m2_package):
+                errors.append("generated M2 model review view differs from authoritative package")
+            expected_m2 = {
+                "packagePath": m2_sync.PACKAGE_PATH.relative_to(ROOT).as_posix(),
+                "schemaPath": m2_sync.SCHEMA_PATH.relative_to(ROOT).as_posix(),
+                "reviewViewPath": m2_sync.VIEW_PATH.relative_to(ROOT).as_posix(),
+                "generatorPath": "scripts/sync_m2_model.py",
+            }
+            for key, expected_path in expected_m2.items():
+                if model_control.get(key) != expected_path:
+                    errors.append(f"modelControl.{key} must match the M2 generator paths")
     errors.extend(prohibited_source_artifact_errors(changed_files_for_event()))
 
     bilingual = [

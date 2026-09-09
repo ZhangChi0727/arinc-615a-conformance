@@ -219,6 +219,35 @@ def test_controlled_source_register_and_generated_readme_are_valid() -> None:
     ) == []
 
 
+def test_readme_renders_network_display_groups() -> None:
+    readme = source("README.md")
+    assert "`ARINC-664-2`" in readme
+    assert "`ARINC-664-3`" in readme
+    assert "`ARINC-665-5`" in readme
+    assert "BOUNDED-ACTIVE" in readme
+    assert "`ARINC-664-7`" in readme
+    assert "CONDITIONAL-DEPLOYMENT" in readme
+    assert "M2 package" in readme
+
+
+def test_new_display_group_appears_without_python_change() -> None:
+    register = controlled_sources()
+    extra = copy.deepcopy(next(item for item in register["sources"] if item.get("displayGroup")))
+    extra["id"] = "FIXTURE-DISPLAY-SOURCE"
+    extra["displayGroup"] = "FIXTURE-GROUP"
+    register["sources"].append(extra)
+    generated = baseline.sync.replace_status_block(source("README.md"), status(), register)
+    assert "`FIXTURE-DISPLAY-SOURCE`" in generated
+    assert "FIXTURE-GROUP" in generated
+
+
+def test_non_authority_source_without_display_group_is_rejected() -> None:
+    register = controlled_sources()
+    item = next(row for row in register["sources"] if row.get("role") != "CURRENT-PROTOCOL-AUTHORITY")
+    item.pop("displayGroup", None)
+    assert any("displayGroup" in error for error in integrated_source_errors(register))
+
+
 def test_source_rejects_non_615a3_current_authority() -> None:
     register = controlled_sources()
     register["currentProtocolAuthorityId"] = "ARINC-615A-4"
@@ -547,18 +576,32 @@ def test_active_control_surfaces_reject_unsafe_and_untracked_paths() -> None:
 
 def test_roadmap_accepts_m1_transition_without_python_change() -> None:
     register = controlled_sources()
-    register["roadmap"][0]["status"] = "COMPLETED-EXTERNALLY-VERIFIED"
-    register["roadmap"][1]["status"] = "DISPOSITION-ADOPT"
-    register["roadmap"][2]["status"] = "NEXT-BLOCKED-BY-FINAL-GATE"
-    register["lifecycle"]["currentStageId"] = register["roadmap"][1]["id"]
-    register["lifecycle"]["nextStageId"] = register["roadmap"][2]["id"]
+    roadmap = register["roadmap"]
+    for index, row in enumerate(roadmap):
+        if index == 0:
+            row["status"] = "COMPLETED-EXTERNALLY-VERIFIED"
+        elif index == 1:
+            row["status"] = "DISPOSITION-ADOPT"
+        elif index == 2:
+            row["status"] = "NEXT-BLOCKED-BY-FINAL-GATE"
+        else:
+            row["status"] = "BLOCKED-BY-PREDECESSOR"
+    register["lifecycle"]["currentStageId"] = roadmap[1]["id"]
+    register["lifecycle"]["nextStageId"] = roadmap[2]["id"]
     data = status()
-    next_stage = register["roadmap"][2]
+    gates = data["development"]["gates"]
+    for index, row in enumerate(roadmap):
+        if index == 0:
+            gates[row["gateId"]] = "COMPLETED-EXTERNALLY-VERIFIED"
+        elif index == 1:
+            gates[row["gateId"]] = "EXTERNAL-VERIFICATION-REQUIRED"
+        elif index == 2:
+            gates[row["gateId"]] = "NOT YET ESTABLISHED"
+        else:
+            gates[row["gateId"]] = "BLOCKED"
+    next_stage = roadmap[2]
     data["development"]["currentStop"]["id"] = next_stage["gateId"]
     data["development"]["currentStop"]["statusPath"] = f"development.gates.{next_stage['gateId']}"
-    data["development"]["gates"][next_stage["gateId"]] = "NOT YET ESTABLISHED"
-    data["development"]["gates"][register["roadmap"][0]["gateId"]] = "COMPLETED-EXTERNALLY-VERIFIED"
-    data["development"]["gates"][register["roadmap"][1]["gateId"]] = "EXTERNAL-VERIFICATION-REQUIRED"
     assert integrated_source_errors(register, data) == []
 
 

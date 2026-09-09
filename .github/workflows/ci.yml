@@ -41,6 +41,10 @@ jobs:
         run: |
           python scripts/sync_m1_crs.py --check
 
+      - name: Validate M2 model synchronization
+        run: |
+          python scripts/sync_m2_model.py --check
+
       - name: Compile with SyntaxWarning as error
         run: |
           python -W error::SyntaxWarning -m compileall -q src scripts tests
