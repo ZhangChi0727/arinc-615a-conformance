@@ -9936,7 +9936,7 @@
   "networkReferenceReview": {
     "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "scope": "BOUNDED-REFERENCE-INSPECTION-NOT-FULL-NETWORK-CRS",
-    "networkMode": "UNRESOLVED-COMPLIANT-OR-PROFILED",
+    "networkMode": "COMPLIANT",
     "afdxSelected": false,
     "sourceIds": [
       "ARINC-664-3",
@@ -10002,11 +10002,11 @@
         "pdfPage": 30,
         "documentPage": 23,
         "clause": "Table 3.3.2-1",
-        "inspectionKind": "TABLE-REGION-PENDING-ATOMIZATION",
+      "inspectionKind": "DEFERRED-PROFILED-TABLE-REGION",
         "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
         "sourceTextHash": "70ada7e88ec7a8046ee7bd3461d37fd60aa107e4c288e30905d02252d3ae7145",
-        "summaryEn": "UDP table differentiates checksum, source-address and interface obligations; a row-level RFC 1122 applicability audit remains open.",
-        "summaryZh": "UDP 表区分校验和、源地址与接口义务；逐行 RFC 1122 适用性审计仍开放。"
+      "summaryEn": "The profiled UDP table differentiates checksum, source-address and interface obligations. Its deviations are unselected; applicable RFC behavior remains an unverified infrastructure prerequisite.",
+      "summaryZh": "Profiled UDP 表区分校验和、源地址与接口义务。其偏差未选择；适用 RFC 行为仍是尚未验证的基础设施前提。"
       },
       {
         "id": "NET-P3-IP-RULE",
@@ -10028,7 +10028,7 @@
         "pdfPage": 32,
         "documentPage": 25,
         "clause": "Table 3.4.1-1 / first page",
-        "inspectionKind": "TABLE-REGION-PENDING-ATOMIZATION",
+      "inspectionKind": "DEFERRED-PROFILED-TABLE-REGION",
         "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
         "sourceTextHash": "4aa5251e856135df291bf92f188bc7b5f91558340172f633732e3c1bab174867",
         "summaryEn": "Mandatory profiled rows include IPv4 version and header checks; the table is not yet an admitted leaf-level CRS inventory.",
@@ -10190,8 +10190,8 @@
         "relation": "DIRECT-NORMATIVE-REFERENCE",
         "condition": "CURRENT-ETHERNET-PROFILE",
         "disposition": "APPLICABILITY-REVIEW-PENDING",
-        "rationaleEn": "615A 1.3 invokes P3 without naming a supplement; the received edition is a candidate reference pending network-mode and edition review.",
-        "rationaleZh": "615A 1.3 引用 P3 而未指定补充号；接收版次作为候选引用，等待网络模式及版次评审。",
+        "rationaleEn": "615A 1.3 invokes P3. DD-023 selects its Compliant Network route; P3 exception tables do not replace applicable RFC behavior. Exact-edition acceptance remains an external review decision.",
+        "rationaleZh": "615A 1.3 引用 P3。DD-023 选择其 Compliant Network 路径；P3 例外表不替代适用 RFC 行为。精确版次接受仍由外部评审决定。",
         "issueIds": [
           "NET-ISSUE-EDITION",
           "NET-ISSUE-PROFILE"
@@ -10219,8 +10219,8 @@
         "relation": "NETWORK-CONSTRAINT-RECONCILIATION",
         "condition": "CURRENT-ETHERNET-PROFILE",
         "disposition": "APPLICABILITY-REVIEW-PENDING",
-        "rationaleEn": "615A loader blocksize support includes fragmentation/reassembly; no-reassembly profiling requires reconciliation and cannot silently relax this requirement.",
-        "rationaleZh": "615A 加载器块大小支持包括分片／重组；不重组裁剪须经协调，不能静默放宽该要求。",
+        "rationaleEn": "The current 615A loader fragmentation/reassembly obligation is retained. DD-023 excludes P3 no-reassembly deviations; MTU is a network-size constraint, not an operation deadline.",
+        "rationaleZh": "保留当前 615A 加载器分片／重组义务。DD-023 排除 P3 不重组偏差；MTU 属于网络尺寸约束，并非操作时限。",
         "issueIds": [
           "NET-ISSUE-PROFILE",
           "NET-ISSUE-RFC1122"
@@ -10642,8 +10642,8 @@
         "id": "NET-ISSUE-EDITION",
         "status": "OPEN",
         "blocksM1Approval": true,
-        "summaryEn": "Undated 615A references and P3/P7 latest-version language require independent acceptance of these exact historical editions; no latest-edition claim is made.",
-        "summaryZh": "615A 未注明版次的引用与 P3/P7 最新版本措辞要求独立接受这些历史版次；未声称它们为最新版。",
+        "summaryEn": "The exact historical editions are pinned for this candidate; independent RG0 must confirm this edition-bounded interpretation, not latest-edition compliance. P3 Supplement 1 describes continued IPv4 support; the P7 AID future-supplement issue remains separately deferred.",
+        "summaryZh": "本候选固定精确历史版次；独立 RG0 须确认此版次边界解释，不是最新版符合性。P3 补充 1 描述继续支持 IPv4；P7 AID 未来补充版问题单独延期。",
         "sourceUnitIds": [
           "NET-P3-SCOPE",
           "NET-P7-SCOPE"
@@ -10651,10 +10651,10 @@
       },
       {
         "id": "NET-ISSUE-PROFILE",
-        "status": "OPEN",
-        "blocksM1Approval": true,
-        "summaryEn": "Resolve compliant versus profiled network applicability and atomize the admitted UDP/IPv4/ARP table obligations before declaring M1 network source coverage complete.",
-        "summaryZh": "须解决 Compliant/Profiled 网络适用性并原子化纳入的 UDP/IPv4/ARP 表格义务，之后才可宣告 M1 网络来源覆盖完整。",
+        "status": "RESOLVED-BY-SCOPE-DECISION",
+        "blocksM1Approval": false,
+        "summaryEn": "User selected Compliant Network under DD-023. P3 exception columns are not selected. RFC-conforming IPv4/UDP behavior remains an unverified infrastructure prerequisite.",
+        "summaryZh": "用户按 DD-023 选择 Compliant Network；不采用 P3 例外列。遵循 RFC 的 IPv4/UDP 行为仍是尚未验证的基础设施前提。",
         "sourceUnitIds": [
           "NET-P3-UDP-TABLE",
           "NET-P3-IP-TABLE",
@@ -10663,10 +10663,10 @@
       },
       {
         "id": "NET-ISSUE-RFC1122",
-        "status": "OPEN",
-        "blocksM1Approval": true,
-        "summaryEn": "RFC 1122 is distinct from RFC 1123; acquire and review the communication-layer reference used by P3 table X/E rules.",
-        "summaryZh": "RFC 1122 与 RFC 1123 不同；须取得并评审 P3 表 X/E 规则引用的通信层来源。",
+        "status": "SOURCE-ACQUIRED-REVIEW-PENDING",
+        "blocksM1Approval": false,
+        "summaryEn": "RFC 1122 was retrieved from RFC Editor with an immutable content hash. Its applicable obligations and updates remain part of the infrastructure prerequisite; retrieval is not conformance evidence.",
+        "summaryZh": "已从 RFC Editor 取得 RFC 1122 并记录不可变内容哈希。其适用义务与更新仍属于基础设施前提；取得原文不是符合性证据。",
         "sourceUnitIds": [
           "NET-P3-UDP-RULE",
           "NET-P3-IP-RULE",
@@ -10716,7 +10716,33 @@
         ]
       }
     ],
-    "coverageClaimEn": "Inspected reference regions and existing CRS links only. Network table obligations are not yet exhaustively atomized; this is an explicit M1 review issue, not proof of complete network requirement coverage.",
-    "coverageClaimZh": "仅登记已检查的引用区域与既有 CRS 关系。网络表格义务尚未穷尽原子化；这是显式 M1 评审问题，不能证明网络需求覆盖完整。"
+    "coverageClaimEn": "M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX remain deferred. Reference-region inspection is not full network-stack conformance evidence; applicable RFC service behavior is an explicit, unverified infrastructure prerequisite.",
+    "coverageClaimZh": "M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期。引用区域检查不构成完整网络栈符合性证据；适用 RFC 服务行为属于显式、尚未验证的基础设施前提。",
+    "scopeDecision": "DD-023",
+    "infrastructureAssumptions": [
+      {
+        "id": "NET-PREMISE-IPV4-UDP",
+        "ownerRequirementId": "CRS-M1-00006",
+        "status": "NOT-ESTABLISHED",
+        "dependencyIds": [
+          "DEP-RFC-768",
+          "DEP-RFC-791",
+          "DEP-RFC-1122"
+        ],
+        "verificationGate": "PROJECT-CONFIGURATION-GATE",
+        "summaryEn": "The underlying IPv4/UDP service must satisfy applicable IETF host requirements without P3-specific deviations. Retained as an infrastructure prerequisite; neither implementation compliance nor a complete RFC requirements inventory is claimed. M2 must plan its substantiation before any execution configuration is approved.",
+        "summaryZh": "底层 IPv4/UDP 服务须遵循适用 IETF 主机要求，不采用 P3 特有偏差。此项作为基础设施前提保留；未声称实现符合性或完整 RFC 需求清单。M2 须规划其验证，之后才可批准任何执行配置。"
+      }
+    ],
+    "publicSourceBindings": [
+      {
+        "sourceId": "RFC-1122",
+        "canonicalUrl": "https://www.rfc-editor.org/rfc/rfc1122.txt",
+        "retrievedByteCount": 289148,
+        "retrievedSha256": "9f526e6bebc868324fedb90aebbcf6e5b15c53fd373ca5d5ce1c2cdcd264e04f",
+        "retrievedOn": "2026-09-09",
+        "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
+      }
+    ]
   }
 }

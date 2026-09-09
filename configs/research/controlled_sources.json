@@ -258,6 +258,21 @@
         "retrievedOn": "2026-09-06",
         "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
       }
+    },
+    {
+      "id": "RFC-1122",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilityIds": [
+        "IPV4-UDP-HOST-COMMUNICATION-SEMANTICS"
+      ],
+      "closureRule": "The historical RFC identity has been retrieved; assess applicable communication-layer obligations and updates before claiming infrastructure compliance.",
+      "publicRetrieval": {
+        "canonicalUrl": "https://www.rfc-editor.org/rfc/rfc1122.txt",
+        "retrievedByteCount": 289148,
+        "retrievedSha256": "9f526e6bebc868324fedb90aebbcf6e5b15c53fd373ca5d5ce1c2cdcd264e04f",
+        "retrievedOn": "2026-09-09",
+        "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
+      }
     }
   ],
   "capabilities": [
@@ -362,6 +377,13 @@
       "status": "NOT-ESTABLISHED",
       "blockedBy": [
         "RFC-2349"
+      ]
+    },
+    {
+      "id": "IPV4-UDP-HOST-COMMUNICATION-SEMANTICS",
+      "status": "NOT-ESTABLISHED",
+      "blockedBy": [
+        "RFC-1122"
       ]
     }
   ],

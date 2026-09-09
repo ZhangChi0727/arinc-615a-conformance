@@ -14,7 +14,7 @@
 
 - Coverage rows: 2796
 - CRS items: 384
-- Dependencies: 12
+- Dependencies: 14
 - Gaps: 1
 - Coverage fingerprint: `01470d751abdc20b28ac6b75e79f308f53b458dd3e7beafcbd9e229e598fdde6`
 - Requirements fingerprint: `632e34cc0720cf3ca8deb816c6aaf001543fc116288382d8b8304ab0d0a3dad4`
@@ -45,8 +45,10 @@
 
 - `DEP-ARINC-645` — OPEN-DEPENDENCY: ARINC 645 algorithms remain unavailable. / ARINC 645 算法来源仍未取得。
 - `DEP-ARINC-664-2` — OPEN-DEPENDENCY: Ethernet physical and link semantics remain open. / 以太网物理层与链路层语义仍开放。
-- `DEP-ARINC-664-3` — OPEN-DEPENDENCY: Internet-based aircraft network semantics remain open. / 基于互联网协议的航空网络语义仍开放。
+- `DEP-ARINC-664-3` — OPEN-DEPENDENCY: Received P3-1 identity; edition and network applicability review remain open. / 已接收 P3-1 身份；版次与网络适用性评审仍开放。
+- `DEP-ARINC-664-7` — OPEN-DEPENDENCY: Received P7 base edition; AFDX is deferred and AID future-supplement applicability remains open. / 已接收 P7 初版；AFDX 延期，AID 未来补充版适用性仍开放。
 - `DEP-ARINC-6655` — REGISTERED-SUPPORTING-SOURCE: Bounded data-object source. / 有界数据对象来源。
+- `DEP-RFC-1122` — OPEN-DEPENDENCY: RFC 1122 communication-layer identity retrieved; infrastructure conformance and applicability of subsequent updates remain unestablished. / 已取得 RFC 1122 通信层来源身份；基础设施符合性及后续更新适用性尚未建立。
 - `DEP-RFC-1123` — OPEN-DEPENDENCY: Host requirement identity and applicability remain open. / 主机要求身份与适用性仍开放。
 - `DEP-RFC-1350` — OPEN-DEPENDENCY: TFTP base identity and applicability remain open. / TFTP 基础身份与适用性仍开放。
 - `DEP-RFC-1785` — OPEN-DEPENDENCY: TFTP option-negotiation identity remains open. / TFTP 选项协商身份仍开放。
@@ -56,6 +58,69 @@
 - `DEP-RFC-768` — OPEN-DEPENDENCY: UDP identity and applicability remain open. / UDP 身份与适用性仍开放。
 - `DEP-RFC-791` — OPEN-DEPENDENCY: IP identity and applicability remain open. / IP 身份与适用性仍开放。
 - `GAP-ARINC-645` — NOT-ESTABLISHED: ARINC 645-dependent validation remains blocked. / 依赖 ARINC 645 的验证仍受阻。
+
+## Network reference inspection and approval blockers
+
+M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX remain deferred. Reference-region inspection is not full network-stack conformance evidence; applicable RFC service behavior is an explicit, unverified infrastructure prerequisite.
+
+- Network mode: `COMPLIANT`; AFDX selected: `False`.
+
+| ID | Source / edition | Clause / PDF page | Inspection boundary | Summary |
+|---|---|---|---|---|
+| `NET-P3-SCOPE` | `ARINC-664-3` / `664P3-1` | 1.2 / 8 | `INSPECTION-REGION` | P3 distinguishes compliant and profiled networks; interoperability across these choices is not automatic. |
+| `NET-P3-PRECEDENCE` | `ARINC-664-3` / `664P3-1` | 1.5 / 13 | `INSPECTION-REGION` | P3 restricts RFC options and establishes its precedence within its applicable network profile. |
+| `NET-P3-TFTP` | `ARINC-664-3` / `664P3-1` | 3.2.2-3.2.3 / 21 | `INSPECTION-REGION` | Base TFTP references option RFCs; DL-TFTP implementation details refer back to 615A. |
+| `NET-P3-UDP-RULE` | `ARINC-664-3` / `664P3-1` | 3.3.2 / 29 | `INSPECTION-REGION` | UDP is the minimum transport; profiled table X/E markings govern conformity and permitted exceptions, not a blanket recommendation. |
+| `NET-P3-UDP-TABLE` | `ARINC-664-3` / `664P3-1` | Table 3.3.2-1 / 30 | `DEFERRED-PROFILED-TABLE-REGION` | The profiled UDP table differentiates checksum, source-address and interface obligations. Its deviations are unselected; applicable RFC behavior remains an unverified infrastructure prerequisite. |
+| `NET-P3-IP-RULE` | `ARINC-664-3` / `664P3-1` | 3.4.1 / 31 | `INSPECTION-REGION` | IPv4 profiling uses a distinct requirement table and explicit exception rules. |
+| `NET-P3-IP-TABLE` | `ARINC-664-3` / `664P3-1` | Table 3.4.1-1 / first page / 32 | `DEFERRED-PROFILED-TABLE-REGION` | Mandatory profiled rows include IPv4 version and header checks; the table is not yet an admitted leaf-level CRS inventory. |
+| `NET-P3-FRAGMENT` | `ARINC-664-3` / `664P3-1` | Table 3.4.1-2 / 36 | `INSPECTION-REGION` | P3 permits specific reassembly deviations in profiled networks; these cannot erase the 615A Data Loader fragmentation/reassembly obligation. |
+| `NET-P3-MTU` | `ARINC-664-3` / `664P3-1` | 3.4.1.2 / 36 | `INSPECTION-REGION` | MTU availability and respecting frame size concern network configuration and packet sizing, not a 615A operation deadline. |
+| `NET-P3-ARP` | `ARINC-664-3` / `664P3-1` | 3.5.1 / 58 | `INSPECTION-REGION` | Dynamic ARP cache admission and static-map failure behavior are conditional network obligations requiring deployment selection. |
+| `NET-P7-SCOPE` | `ARINC-664-7` / `664P7` | 1.2 / 9 | `INSPECTION-REGION` | AFDX defines a particular network profile and references P2 for physical links. |
+| `NET-P7-TFTP` | `ARINC-664-7` / `664P7` | 3.3.1.2.3 / 40 | `INSPECTION-REGION` | AFDX file service lists TFTP RFCs and a block handling capacity; applicability is conditional on AFDX deployment. |
+| `NET-P7-EXAMPLE` | `ARINC-664-7` / `664P7` | 3.3.2 / 42 | `INSPECTION-REGION` | Example ports and VLs do not replace the 615A control-port rule. |
+| `NET-P7-IP` | `ARINC-664-7` / `664P7` | 3.3.3.2 / 44 | `INSPECTION-REGION` | AFDX IPv4 sizing accounts for its sequence number and refers to Attachment 2; it is not a global TFTP blocksize or timeout constraint. |
+| `NET-P7-ADDRESS` | `ARINC-664-7` / `664P7` | 3.4.1.3.1-3.4.1.3.2 / 50 | `INSPECTION-REGION` | Intra/extra AFDX addressing and bidirectional SAP/queuing choices need system integration decisions. |
+| `NET-P7-SWITCH` | `ARINC-664-7` / `664P7` | 4.9.1 / 75 | `INSPECTION-REGION` | Switch software loading refers to 615A/665, without making an AFDX switch the selected target of this Profile. |
+| `NET-P7-PERFORMANCE` | `ARINC-664-7` / `664P7` | 5.1 / 80 | `INSPECTION-REGION` | AFDX burst-processing performance uses its own measurement conditions; it does not establish a 615A transfer timeout. |
+
+| Relation | Owner | Target regions | Condition / disposition | Rationale / issues |
+|---|---|---|---|---|
+| `NET-REL-001` | `CRS-M1-00006` | NET-P3-SCOPE, NET-P3-PRECEDENCE, NET-P3-UDP-RULE, NET-P3-IP-RULE | `CURRENT-ETHERNET-PROFILE` / `APPLICABILITY-REVIEW-PENDING` | 615A 1.3 invokes P3. DD-023 selects its Compliant Network route; P3 exception tables do not replace applicable RFC behavior. Exact-edition acceptance remains an external review decision. / NET-ISSUE-EDITION, NET-ISSUE-PROFILE |
+| `NET-REL-002` | `CRS-M1-00034` | NET-P3-FRAGMENT, NET-P3-MTU | `CURRENT-ETHERNET-PROFILE` / `APPLICABILITY-REVIEW-PENDING` | The current 615A loader fragmentation/reassembly obligation is retained. DD-023 excludes P3 no-reassembly deviations; MTU is a network-size constraint, not an operation deadline. / NET-ISSUE-PROFILE, NET-ISSUE-RFC1122 |
+| `NET-REL-003` | `CRS-M1-00025` | NET-P3-TFTP, NET-P7-EXAMPLE | `CURRENT-ETHERNET-PROFILE` / `NO-NORMATIVE-OVERRIDE` | DL-TFTP refers back to 615A; the AFDX example using port 69 does not override 615A port 59. /  |
+| `NET-REL-004` | `CRS-M1-00020` | NET-P3-TFTP | `CURRENT-ETHERNET-PROFILE` / `APPLICABILITY-REVIEW-PENDING` | P3 names RFC 2347 for base TFTP options; the precise 615A port-option source unit still needs review before a direct RFC edge is emitted. / NET-ISSUE-OPTION-EDGE |
+| `NET-REL-005` | `COV-M1-01960` | NET-P7-SCOPE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-006` | `COV-M1-01961` | NET-P7-SCOPE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-007` | `COV-M1-01962` | NET-P7-SCOPE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-008` | `COV-M1-01963` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-AID |
+| `NET-REL-009` | `COV-M1-01964` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-AID |
+| `NET-REL-010` | `COV-M1-01965` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-AID |
+| `NET-REL-011` | `COV-M1-01966` | NET-P7-SCOPE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-012` | `COV-M1-01967` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-013` | `COV-M1-01968` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-014` | `COV-M1-01969` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-015` | `COV-M1-01970` | NET-P7-TFTP, NET-P7-EXAMPLE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-016` | `COV-M1-01971` | NET-P7-IP, NET-P7-PERFORMANCE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-017` | `COV-M1-01972` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-ADDRESS |
+
+| Issue | Blocks M1 approval | Status | Required resolution |
+|---|---|---|---|
+| `NET-ISSUE-EDITION` | `True` | `OPEN` | The exact historical editions are pinned for this candidate; independent RG0 must confirm this edition-bounded interpretation, not latest-edition compliance. P3 Supplement 1 describes continued IPv4 support; the P7 AID future-supplement issue remains separately deferred. |
+| `NET-ISSUE-PROFILE` | `False` | `RESOLVED-BY-SCOPE-DECISION` | User selected Compliant Network under DD-023. P3 exception columns are not selected. RFC-conforming IPv4/UDP behavior remains an unverified infrastructure prerequisite. |
+| `NET-ISSUE-RFC1122` | `False` | `SOURCE-ACQUIRED-REVIEW-PENDING` | RFC 1122 was retrieved from RFC Editor with an immutable content hash. Its applicable obligations and updates remain part of the infrastructure prerequisite; retrieval is not conformance evidence. |
+| `NET-ISSUE-OPTION-EDGE` | `False` | `OPEN` | A-2 remains deferred: P3 3.2.2 names RFC 2347 and P7 lists RFC 1785, but this does not prove an exact active 615A atomic trigger edge. |
+| `NET-ISSUE-AFDX-DETAIL` | `False` | `OPEN` | AFDX remains unselected; P7 Attachment 2, IEEE 802.3 (2000), and configuration-dependent latency/MTU need a later admitted deployment audit. |
+| `NET-ISSUE-AID` | `False` | `OPEN` | 615A Appendix E names an AID defined in a future P7 supplement; the supplied base edition cannot close that future supplement reference. |
+| `NET-ISSUE-ADDRESS` | `False` | `OPEN` | Appendix E allows P4 address rules or integrator-defined requirements; record the choice before AFDX activation. P4 is not automatically a procurement mandate. |
+
+### Infrastructure premises and public sources
+
+`DD-023`
+
+- `NET-PREMISE-IPV4-UDP` / `NOT-ESTABLISHED` / `PROJECT-CONFIGURATION-GATE`: The underlying IPv4/UDP service must satisfy applicable IETF host requirements without P3-specific deviations. Retained as an infrastructure prerequisite; neither implementation compliance nor a complete RFC requirements inventory is claimed. M2 must plan its substantiation before any execution configuration is approved.
+- `RFC-1122`: https://www.rfc-editor.org/rfc/rfc1122.txt / SHA-256 `9f526e6bebc868324fedb90aebbcf6e5b15c53fd373ca5d5ce1c2cdcd264e04f`
 
 ## CRS items
 
@@ -2052,7 +2117,7 @@
 
 - 覆盖行：2796
 - CRS 项：384
-- 依赖：12
+- 依赖：14
 - 缺口：1
 - 覆盖指纹：`01470d751abdc20b28ac6b75e79f308f53b458dd3e7beafcbd9e229e598fdde6`
 - 需求指纹：`632e34cc0720cf3ca8deb816c6aaf001543fc116288382d8b8304ab0d0a3dad4`
@@ -2083,8 +2148,10 @@
 
 - `DEP-ARINC-645` — OPEN-DEPENDENCY：ARINC 645 算法来源仍未取得。
 - `DEP-ARINC-664-2` — OPEN-DEPENDENCY：以太网物理层与链路层语义仍开放。
-- `DEP-ARINC-664-3` — OPEN-DEPENDENCY：基于互联网协议的航空网络语义仍开放。
+- `DEP-ARINC-664-3` — OPEN-DEPENDENCY：已接收 P3-1 身份；版次与网络适用性评审仍开放。
+- `DEP-ARINC-664-7` — OPEN-DEPENDENCY：已接收 P7 初版；AFDX 延期，AID 未来补充版适用性仍开放。
 - `DEP-ARINC-6655` — REGISTERED-SUPPORTING-SOURCE：有界数据对象来源。
+- `DEP-RFC-1122` — OPEN-DEPENDENCY：已取得 RFC 1122 通信层来源身份；基础设施符合性及后续更新适用性尚未建立。
 - `DEP-RFC-1123` — OPEN-DEPENDENCY：主机要求身份与适用性仍开放。
 - `DEP-RFC-1350` — OPEN-DEPENDENCY：TFTP 基础身份与适用性仍开放。
 - `DEP-RFC-1785` — OPEN-DEPENDENCY：TFTP 选项协商身份仍开放。
@@ -2094,6 +2161,69 @@
 - `DEP-RFC-768` — OPEN-DEPENDENCY：UDP 身份与适用性仍开放。
 - `DEP-RFC-791` — OPEN-DEPENDENCY：IP 身份与适用性仍开放。
 - `GAP-ARINC-645` — NOT-ESTABLISHED：依赖 ARINC 645 的验证仍受阻。
+
+## 网络引用审计与批准阻塞项
+
+M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期。引用区域检查不构成完整网络栈符合性证据；适用 RFC 服务行为属于显式、尚未验证的基础设施前提。
+
+- Network mode: `COMPLIANT`; AFDX selected: `False`.
+
+| ID | Source / edition | Clause / PDF page | Inspection boundary | Summary |
+|---|---|---|---|---|
+| `NET-P3-SCOPE` | `ARINC-664-3` / `664P3-1` | 1.2 / 8 | `INSPECTION-REGION` | P3 区分 Compliant 与 Profiled 网络；不同选择间的互操作性并不自动成立。 |
+| `NET-P3-PRECEDENCE` | `ARINC-664-3` / `664P3-1` | 1.5 / 13 | `INSPECTION-REGION` | P3 在其适用的网络 profile 内限制 RFC 选项并规定优先级。 |
+| `NET-P3-TFTP` | `ARINC-664-3` / `664P3-1` | 3.2.2-3.2.3 / 21 | `INSPECTION-REGION` | 基础 TFTP 引用选项 RFC；DL-TFTP 实现细节回引 615A。 |
+| `NET-P3-UDP-RULE` | `ARINC-664-3` / `664P3-1` | 3.3.2 / 29 | `INSPECTION-REGION` | UDP 是最低传输要求；Profiled 表 X/E 标记决定遵循与可允许例外，不能统一降为建议。 |
+| `NET-P3-UDP-TABLE` | `ARINC-664-3` / `664P3-1` | Table 3.3.2-1 / 30 | `DEFERRED-PROFILED-TABLE-REGION` | Profiled UDP 表区分校验和、源地址与接口义务。其偏差未选择；适用 RFC 行为仍是尚未验证的基础设施前提。 |
+| `NET-P3-IP-RULE` | `ARINC-664-3` / `664P3-1` | 3.4.1 / 31 | `INSPECTION-REGION` | IPv4 裁剪使用独立要求表及明确的例外规则。 |
+| `NET-P3-IP-TABLE` | `ARINC-664-3` / `664P3-1` | Table 3.4.1-1 / first page / 32 | `DEFERRED-PROFILED-TABLE-REGION` | Profiled 必选行包括 IPv4 版本和报头检查；该表尚未构成已纳入的叶级 CRS 清单。 |
+| `NET-P3-FRAGMENT` | `ARINC-664-3` / `664P3-1` | Table 3.4.1-2 / 36 | `INSPECTION-REGION` | P3 允许 Profiled 网络采用特定重组偏差；这不能抹去 615A Data Loader 的分片／重组义务。 |
+| `NET-P3-MTU` | `ARINC-664-3` / `664P3-1` | 3.4.1.2 / 36 | `INSPECTION-REGION` | MTU 可获知性与帧大小限制涉及网络配置及报文尺寸，并非 615A 操作时限。 |
+| `NET-P3-ARP` | `ARINC-664-3` / `664P3-1` | 3.5.1 / 58 | `INSPECTION-REGION` | 动态 ARP 缓存接纳和静态映射失败处理属于需要选择部署条件的网络义务。 |
+| `NET-P7-SCOPE` | `ARINC-664-7` / `664P7` | 1.2 / 9 | `INSPECTION-REGION` | AFDX 定义特定网络 profile，物理链路引用 P2。 |
+| `NET-P7-TFTP` | `ARINC-664-7` / `664P7` | 3.3.1.2.3 / 40 | `INSPECTION-REGION` | AFDX 文件服务列出 TFTP RFC 与块处理能力；适用性以选择 AFDX 部署为条件。 |
+| `NET-P7-EXAMPLE` | `ARINC-664-7` / `664P7` | 3.3.2 / 42 | `INSPECTION-REGION` | 示例端口和 VL 不能替代 615A 控制端口规则。 |
+| `NET-P7-IP` | `ARINC-664-7` / `664P7` | 3.3.3.2 / 44 | `INSPECTION-REGION` | AFDX IPv4 尺寸考虑其序号并引用附件 2；它不是全局 TFTP 块大小或超时限制。 |
+| `NET-P7-ADDRESS` | `ARINC-664-7` / `664P7` | 3.4.1.3.1-3.4.1.3.2 / 50 | `INSPECTION-REGION` | AFDX 内外寻址及双向 SAP／队列选择需要系统集成决策。 |
+| `NET-P7-SWITCH` | `ARINC-664-7` / `664P7` | 4.9.1 / 75 | `INSPECTION-REGION` | 交换机软件加载引用 615A/665，但不能据此将 AFDX 交换机选为本 Profile 的目标。 |
+| `NET-P7-PERFORMANCE` | `ARINC-664-7` / `664P7` | 5.1 / 80 | `INSPECTION-REGION` | AFDX 突发处理性能使用自身测量条件；它不建立 615A 传输超时。 |
+
+| Relation | Owner | Target regions | Condition / disposition | Rationale / issues |
+|---|---|---|---|---|
+| `NET-REL-001` | `CRS-M1-00006` | NET-P3-SCOPE, NET-P3-PRECEDENCE, NET-P3-UDP-RULE, NET-P3-IP-RULE | `CURRENT-ETHERNET-PROFILE` / `APPLICABILITY-REVIEW-PENDING` | 615A 1.3 引用 P3。DD-023 选择其 Compliant Network 路径；P3 例外表不替代适用 RFC 行为。精确版次接受仍由外部评审决定。 / NET-ISSUE-EDITION, NET-ISSUE-PROFILE |
+| `NET-REL-002` | `CRS-M1-00034` | NET-P3-FRAGMENT, NET-P3-MTU | `CURRENT-ETHERNET-PROFILE` / `APPLICABILITY-REVIEW-PENDING` | 保留当前 615A 加载器分片／重组义务。DD-023 排除 P3 不重组偏差；MTU 属于网络尺寸约束，并非操作时限。 / NET-ISSUE-PROFILE, NET-ISSUE-RFC1122 |
+| `NET-REL-003` | `CRS-M1-00025` | NET-P3-TFTP, NET-P7-EXAMPLE | `CURRENT-ETHERNET-PROFILE` / `NO-NORMATIVE-OVERRIDE` | DL-TFTP 回引 615A；使用端口 69 的 AFDX 示例不覆盖 615A 端口 59。 /  |
+| `NET-REL-004` | `CRS-M1-00020` | NET-P3-TFTP | `CURRENT-ETHERNET-PROFILE` / `APPLICABILITY-REVIEW-PENDING` | P3 为基础 TFTP 选项列出 RFC 2347；615A 端口选项的精确来源单元仍需评审，之后才可建立直接 RFC 边。 / NET-ISSUE-OPTION-EDGE |
+| `NET-REL-005` | `COV-M1-01960` | NET-P7-SCOPE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-006` | `COV-M1-01961` | NET-P7-SCOPE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-007` | `COV-M1-01962` | NET-P7-SCOPE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-008` | `COV-M1-01963` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-AID |
+| `NET-REL-009` | `COV-M1-01964` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-AID |
+| `NET-REL-010` | `COV-M1-01965` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-AID |
+| `NET-REL-011` | `COV-M1-01966` | NET-P7-SCOPE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-012` | `COV-M1-01967` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-013` | `COV-M1-01968` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-014` | `COV-M1-01969` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-015` | `COV-M1-01970` | NET-P7-TFTP, NET-P7-EXAMPLE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-016` | `COV-M1-01971` | NET-P7-IP, NET-P7-PERFORMANCE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
+| `NET-REL-017` | `COV-M1-01972` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-ADDRESS |
+
+| Issue | Blocks M1 approval | Status | Required resolution |
+|---|---|---|---|
+| `NET-ISSUE-EDITION` | `True` | `OPEN` | 本候选固定精确历史版次；独立 RG0 须确认此版次边界解释，不是最新版符合性。P3 补充 1 描述继续支持 IPv4；P7 AID 未来补充版问题单独延期。 |
+| `NET-ISSUE-PROFILE` | `False` | `RESOLVED-BY-SCOPE-DECISION` | 用户按 DD-023 选择 Compliant Network；不采用 P3 例外列。遵循 RFC 的 IPv4/UDP 行为仍是尚未验证的基础设施前提。 |
+| `NET-ISSUE-RFC1122` | `False` | `SOURCE-ACQUIRED-REVIEW-PENDING` | 已从 RFC Editor 取得 RFC 1122 并记录不可变内容哈希。其适用义务与更新仍属于基础设施前提；取得原文不是符合性证据。 |
+| `NET-ISSUE-OPTION-EDGE` | `False` | `OPEN` | A-2 继续延期：P3 3.2.2 列出 RFC 2347 且 P7 列出 RFC 1785，但这不证明精确的活动 615A 原子触发边。 |
+| `NET-ISSUE-AFDX-DETAIL` | `False` | `OPEN` | AFDX 尚未选择；P7 附件 2、IEEE 802.3（2000）及配置相关延迟／MTU 须在后续纳入部署时审计。 |
+| `NET-ISSUE-AID` | `False` | `OPEN` | 615A 附录 E 将 AID 指向未来 P7 补充版；所提供初版不能关闭该未来补充版引用。 |
+| `NET-ISSUE-ADDRESS` | `False` | `OPEN` | 附录 E 允许 P4 寻址规则或集成商规定要求；须在 AFDX 激活前记录选择，不能自动将 P4 变为采购要求。 |
+
+### 基础设施前提与公共来源
+
+`DD-023`
+
+- `NET-PREMISE-IPV4-UDP` / `NOT-ESTABLISHED` / `PROJECT-CONFIGURATION-GATE`: 底层 IPv4/UDP 服务须遵循适用 IETF 主机要求，不采用 P3 特有偏差。此项作为基础设施前提保留；未声称实现符合性或完整 RFC 需求清单。M2 须规划其验证，之后才可批准任何执行配置。
+- `RFC-1122`: https://www.rfc-editor.org/rfc/rfc1122.txt / SHA-256 `9f526e6bebc868324fedb90aebbcf6e5b15c53fd373ca5d5ce1c2cdcd264e04f`
 
 ## CRS 项
 

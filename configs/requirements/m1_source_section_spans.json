@@ -568,6 +568,14 @@
       "NET-ISSUE-AID",
       "NET-ISSUE-ADDRESS"
     ],
-    "assuranceBoundary": "REFERENCE-REGIONS-NOT-ATOMIC-REQUIREMENT-COVERAGE"
+    "assuranceBoundary": "REFERENCE-REGIONS-NOT-ATOMIC-REQUIREMENT-COVERAGE",
+    "scopeDecision": "DD-023",
+    "networkMode": "COMPLIANT",
+    "expectedAssumptionIds": [
+      "NET-PREMISE-IPV4-UDP"
+    ],
+    "publicSourceIds": [
+      "RFC-1122"
+    ]
   }
 }

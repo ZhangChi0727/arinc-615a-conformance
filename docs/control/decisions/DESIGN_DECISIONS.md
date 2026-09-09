@@ -381,6 +381,23 @@ status of any `RFC-*`-affected capability.
 
 ---
 
+## DD-023 — Receive network references without manufacturing applicability closure
+
+Record P3-1 and P7 base-edition identities under CR-2026-007, retaining open
+edition, network applicability and independent approval obligations. The received
+editions are candidate inputs, not an assertion about the latest published standard.
+The network inspection register distinguishes regions inspected for context from
+atomic requirement coverage. The user selects Compliant Network, without P3
+deviations. RFC 1122 is independently registered as a received public source.
+The IPv4/UDP host service remains an unestablished infrastructure prerequisite,
+not a complete RFC inventory or implementation conformance claim. M2 must plan
+its substantiation before execution Configuration approval. Independent review
+must accept the historical editions and this scope boundary. AFDX, its AID future-supplement reference, and addressing
+choices remain deferred. Source receipt establishes no implementation capability.
+Review the remaining applicability before further normative promotion; retain DD-019
+and DD-020. Actual approval and merge facts are recorded externally on the unchanged
+Head and ordinary merge, without a dedicated post-merge synchronization commit.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -542,3 +559,14 @@ adequacy。延期 DTMC 协议语义、HMM/ML 诊断和 Bayesian calibration。FM
 **范围：** 仅登记 RFC 身份与检索元数据；不将其提升为需求级证据，也不解除 `RFC-*` 对应能力的阻塞状态。
 
 **状态：** 在 CR-2026-007 下为候选，等待外部独立复审。
+
+## DD-023——接收网络来源并选择 Compliant 范围，不制造适用性闭合
+
+在 CR-2026-007 下登记 P3-1 与 P7 初版身份，保留版次、网络适用性与独立批准义务。
+所获版次为候选输入，不声称是最新标准。网络检查登记区分上下文检查区域与原子需求覆盖。
+用户选择 Compliant Network，不采用 P3 偏差；RFC 1122 单独登记为已取得公共来源。
+IPv4/UDP 主机服务仍是未建立的基础设施前提，不代表完整 RFC 清单或实现符合性。
+M2 须规划其验证，之后才可批准执行 Configuration；独立评审须接受历史版次与此范围边界。
+AFDX、AID 未来补充版引用与寻址选择仍延期。来源接收不建立实现能力。
+继续保留 DD-019/DD-020，在进一步规范晋级前评审剩余适用性。
+真实批准和合并事实由不变 Head 上的外部记录与普通合并承载，不新增专门 post-merge 同步提交。

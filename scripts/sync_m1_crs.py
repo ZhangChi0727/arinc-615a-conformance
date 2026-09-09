@@ -179,6 +179,30 @@ def network_reference_errors(data: dict[str, Any], register: dict[str, Any],
     deps = {r.get("id"): r for r in data.get("dependencies", [])}
     open_deps = {r.get("id"): r for r in register.get("openDependencies", [])}
     caps = {r.get("id"): r for r in register.get("capabilities", [])}
+    for key in ("networkMode", "scopeDecision"):
+        if not audit.get(key) or audit.get(key) != contract.get(key):
+            errors.append(f"network {key} differs from the controlled scope decision")
+    assumptions = audit.get("infrastructureAssumptions", [])
+    if [r.get("id") for r in assumptions] != contract.get("expectedAssumptionIds"):
+        errors.append("network infrastructure assumption inventory differs")
+    requirement_ids = {r.get("id") for r in data.get("requirements", [])}
+    for row in assumptions:
+        if (row.get("status") != "NOT-ESTABLISHED" or row.get("ownerRequirementId") not in requirement_ids
+                or not row.get("dependencyIds") or any(d not in deps for d in row.get("dependencyIds", []))
+                or not row.get("verificationGate")):
+            errors.append("network infrastructure prerequisite cannot disappear or establish itself")
+    public = audit.get("publicSourceBindings", [])
+    if [r.get("sourceId") for r in public] != contract.get("publicSourceIds"):
+        errors.append("network public source inventory differs")
+    for row in public:
+        sid = row.get("sourceId")
+        registered = open_deps.get(sid, {})
+        receipt = {k: v for k, v in row.items() if k != "sourceId"}
+        if receipt != registered.get("publicRetrieval") or not any(d.get("sourceId") == sid and d.get("status") == "OPEN-DEPENDENCY" for d in deps.values()):
+            errors.append("network public source receipt or pending dependency differs")
+        for cid in registered.get("affectedCapabilityIds", []):
+            if caps.get(cid, {}).get("status") != "NOT-ESTABLISHED" or sid not in caps.get(cid, {}).get("blockedBy", []):
+                errors.append("network public source acquisition cannot establish capability")
     expected_sources = {sid for sid, s in sources.items() if "dependencyReview" in s}
     audit_sources = audit.get("sourceIds", [])
     if not audit_sources or len(audit_sources) != len(set(audit_sources)) or set(audit_sources) != expected_sources or audit_sources != contract.get("sourceIds"):
@@ -238,7 +262,9 @@ def network_reference_errors(data: dict[str, Any], register: dict[str, Any],
                     or owner.get("applicabilityDecision") != "DEFERRED-FUTURE-SCOPE" or owner.get("requirementIds")):
                 errors.append(f"network relation {rid} cannot activate a deferred deployment")
     for iid, issue in indices["issues"].items():
-        if issue.get("status") != "OPEN" or type(issue.get("blocksM1Approval")) is not bool:
+        if (issue.get("status") not in {"OPEN", "RESOLVED-BY-SCOPE-DECISION", "SOURCE-ACQUIRED-REVIEW-PENDING"}
+                or type(issue.get("blocksM1Approval")) is not bool
+                or (issue.get("status") != "OPEN" and issue.get("blocksM1Approval"))):
             errors.append(f"network issue {iid} cannot be silently closed or lose its blocking classification")
         if not issue.get("sourceUnitIds") or any(t not in indices["units"] for t in issue.get("sourceUnitIds", [])):
             errors.append(f"network issue {iid} lacks its source pointers")
@@ -645,7 +671,7 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     if review_head != "UNBOUND-DRAFT" and not re.fullmatch(r"[0-9a-f]{40}", str(review_head or "")):
         errors.append("reviewHead must be UNBOUND-DRAFT or a complete 40-character SHA")
     forbidden_keys = {"rawSourceText", "sourceText", "quote", "excerpt", "screenshot", "payload", "pdfPath"}
-    machine_path = re.compile(r"(?i)(?:[a-z]:[\\/]|file://|/(?:home|Users)/[^/]+/)")  # STABLE_INVARIANT
+    machine_path = re.compile(r"(?i)(?:(?<![a-z])[a-z]:[\\/]|file://|/(?:home|Users)/[^/]+/)")  # STABLE_INVARIANT
     reversible = re.compile(r"^(?:[A-Za-z0-9+/]{160,}={0,2}|[0-9a-fA-F]{256,})$")
     def scan(value: Any, path: str = "$") -> None:
         if isinstance(value, dict):
@@ -683,6 +709,12 @@ def render_network_review(data: dict[str, Any], language: str) -> list[str]:
     lines += ["", "| Issue | Blocks M1 approval | Status | Required resolution |", "|---|---|---|---|"]
     for row in audit["issues"]:
         lines.append(f"| `{row['id']}` | `{row['blocksM1Approval']}` | `{row['status']}` | {row['summary' + language]} |")
+    lines += ["", "### 基础设施前提与公共来源" if zh else "### Infrastructure premises and public sources", "",
+              f"`{audit['scopeDecision']}`", ""]
+    for row in audit["infrastructureAssumptions"]:
+        lines.append(f"- `{row['id']}` / `{row['status']}` / `{row['verificationGate']}`: {row['summary' + language]}")
+    for row in audit["publicSourceBindings"]:
+        lines.append(f"- `{row['sourceId']}`: {row['canonicalUrl']} / SHA-256 `{row['retrievedSha256']}`")
     return lines
 
 

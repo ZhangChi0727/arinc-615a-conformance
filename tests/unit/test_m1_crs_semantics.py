@@ -630,6 +630,27 @@ def test_received_reference_with_pending_capability_is_valid():
         assert row["summaryEn"] in rendered and row["summaryZh"] in rendered
 
 
+@pytest.mark.parametrize("mutation", ["mode", "assumption-delete", "assumption-establish", "receipt", "dependency", "issue"])
+def test_network_scope_choice_and_public_receipt_are_controlled(mutation):
+    data = package()
+    audit = data["networkReferenceReview"]
+    if mutation == "mode":
+        audit["networkMode"] = "PROFILED"
+    elif mutation == "assumption-delete":
+        audit["infrastructureAssumptions"] = []
+    elif mutation == "assumption-establish":
+        audit["infrastructureAssumptions"][0]["status"] = "ESTABLISHED"
+    elif mutation == "receipt":
+        audit["publicSourceBindings"][0]["retrievedSha256"] = "0" * 64
+    elif mutation == "dependency":
+        sid = audit["publicSourceBindings"][0]["sourceId"]
+        data["dependencies"] = [d for d in data["dependencies"] if d["sourceId"] != sid]
+    else:
+        next(i for i in audit["issues"] if i["status"] == "OPEN")["status"] = "RESOLVED-BY-SCOPE-DECISION"
+    refresh_all_mutable_fingerprints(data)
+    assert any("network" in e for e in errors(data))
+
+
 def test_reviewed_network_inventory_can_extend_without_production_constants():
     data = package()
     manifest = json.loads(m1.SECTION_SPAN_PATH.read_text(encoding="utf-8"))
