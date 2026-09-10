@@ -86014,8 +86014,8 @@
       },
       "sourceTextHash": "7726a816ffe72ad5691188f24b29a6ec131f042dce41742559da92b46cade96b",
       "hashCanonicalizationId": "ARINC-VISUAL-EVENT-TUPLE-v1",
-      "generatedSemanticProjectionEn": "Actor DATA-LOADER shall perform SEND-TFTP-WRITE-REQUEST on LUR toward DLA under LIST-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
-      "generatedSemanticProjectionZh": "参与者“数据加载器”在“LIST-ACCEPTED”下必须对“LUR”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
+      "generatedSemanticProjectionEn": "Actor DATA-LOADER shall perform SEND-TFTP-WRITE-REQUEST on LUR toward TARGET-HARDWARE under LIST-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
+      "generatedSemanticProjectionZh": "参与者“数据加载器”在“LIST-ACCEPTED”下必须对“LUR”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
       "semantic": {
         "actor": "DATA-LOADER",
         "condition": "LIST-ACCEPTED",
@@ -86023,7 +86023,7 @@
         "objects": [
           "LUR"
         ],
-        "receiver": "DLA",
+        "receiver": "TARGET-HARDWARE",
         "observableEffect": "ORDER-DIRECTION-BRANCH-OBSERVABLE",
         "operation": "UPLOAD",
         "polarity": "AFFIRMATIVE"
@@ -86057,16 +86057,16 @@
       },
       "sourceTextHash": "f1d3b51077a3197eda93ae3751252266c3c55161149ce8393dbad7fcc9c0cee1",
       "hashCanonicalizationId": "ARINC-VISUAL-EVENT-TUPLE-v1",
-      "generatedSemanticProjectionEn": "Actor DLA shall perform ACKNOWLEDGE on LUR-WRITE-REQUEST toward TARGET-HARDWARE under REQUEST-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
-      "generatedSemanticProjectionZh": "参与者“数据加载器应用层”在“REQUEST-RECEIVED”下必须对“LUR-WRITE-REQUEST”执行“确认”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
+      "generatedSemanticProjectionEn": "Actor TARGET-HARDWARE shall perform ACKNOWLEDGE on LUR-WRITE-REQUEST toward DATA-LOADER under REQUEST-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
+      "generatedSemanticProjectionZh": "参与者“目标硬件”在“REQUEST-RECEIVED”下必须对“LUR-WRITE-REQUEST”执行“确认”，接收方为“数据加载器”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
       "semantic": {
-        "actor": "DLA",
+        "actor": "TARGET-HARDWARE",
         "condition": "REQUEST-RECEIVED",
         "action": "ACKNOWLEDGE",
         "objects": [
           "LUR-WRITE-REQUEST"
         ],
-        "receiver": "TARGET-HARDWARE",
+        "receiver": "DATA-LOADER",
         "observableEffect": "ORDER-DIRECTION-BRANCH-OBSERVABLE",
         "operation": "UPLOAD",
         "polarity": "AFFIRMATIVE"
@@ -86100,10 +86100,10 @@
       },
       "sourceTextHash": "9a7cd75981cb9a76bd9e2b29e1109b86851b3befcbac3b58d0f0c3fe060ba85f",
       "hashCanonicalizationId": "ARINC-VISUAL-EVENT-TUPLE-v1",
-      "generatedSemanticProjectionEn": "Actor DLA shall perform TRANSFER on LUR toward TARGET-HARDWARE under ACKNOWLEDGED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
-      "generatedSemanticProjectionZh": "参与者“数据加载器应用层”在“ACKNOWLEDGED”下必须对“LUR”执行“传输”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
+      "generatedSemanticProjectionEn": "Actor DATA-LOADER shall perform TRANSFER on LUR toward TARGET-HARDWARE under ACKNOWLEDGED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
+      "generatedSemanticProjectionZh": "参与者“数据加载器”在“ACKNOWLEDGED”下必须对“LUR”执行“传输”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
       "semantic": {
-        "actor": "DLA",
+        "actor": "DATA-LOADER",
         "condition": "ACKNOWLEDGED",
         "action": "TRANSFER",
         "objects": [
@@ -87016,7 +87016,7 @@
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "71606ba5497ce5757aeea8d079bbe772967d3a6eafecaaa157ef704bce19ef5d",
+    "semanticAssertionFingerprint": "f84879eb6ae689592c79cc96ceea18d7555f2260ed1af9a07d366539f1352816",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
@@ -87027,7 +87027,7 @@
     "dependencyCount": 14,
     "gapCount": 1,
     "coverageFingerprint": "01470d751abdc20b28ac6b75e79f308f53b458dd3e7beafcbd9e229e598fdde6",
-    "requirementsFingerprint": "65504b891ba459e6d252c6ed25d912ac56917a73e9bcba082d8c7edd32dd51c6"
+    "requirementsFingerprint": "b9d7ed46e0fb8be95ecd747ad47bf0451b3b81c52ab601397456b14031a099bf"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

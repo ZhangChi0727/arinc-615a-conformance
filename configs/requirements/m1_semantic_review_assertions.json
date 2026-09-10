@@ -9504,13 +9504,13 @@
         "objects": [
           "LUR"
         ],
-        "receiver": "DLA",
+        "receiver": "TARGET-HARDWARE",
         "observableEffect": "ORDER-DIRECTION-BRANCH-OBSERVABLE",
         "operation": "UPLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "Actor DATA-LOADER shall perform SEND-TFTP-WRITE-REQUEST on LUR toward DLA under LIST-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
-      "expectedGeneratedSemanticProjectionZh": "参与者“数据加载器”在“LIST-ACCEPTED”下必须对“LUR”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
+      "expectedGeneratedSemanticProjectionEn": "Actor DATA-LOADER shall perform SEND-TFTP-WRITE-REQUEST on LUR toward TARGET-HARDWARE under LIST-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
+      "expectedGeneratedSemanticProjectionZh": "参与者“数据加载器”在“LIST-ACCEPTED”下必须对“LUR”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
       "expectedSourceModality": "FIGURE-CONSTRAINT",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": []
@@ -9520,19 +9520,19 @@
       "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E008-F1D3B51077A3",
       "sourceTextHash": "f1d3b51077a3197eda93ae3751252266c3c55161149ce8393dbad7fcc9c0cee1",
       "expectedSemantic": {
-        "actor": "DLA",
+        "actor": "TARGET-HARDWARE",
         "condition": "REQUEST-RECEIVED",
         "action": "ACKNOWLEDGE",
         "objects": [
           "LUR-WRITE-REQUEST"
         ],
-        "receiver": "TARGET-HARDWARE",
+        "receiver": "DATA-LOADER",
         "observableEffect": "ORDER-DIRECTION-BRANCH-OBSERVABLE",
         "operation": "UPLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "Actor DLA shall perform ACKNOWLEDGE on LUR-WRITE-REQUEST toward TARGET-HARDWARE under REQUEST-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
-      "expectedGeneratedSemanticProjectionZh": "参与者“数据加载器应用层”在“REQUEST-RECEIVED”下必须对“LUR-WRITE-REQUEST”执行“确认”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
+      "expectedGeneratedSemanticProjectionEn": "Actor TARGET-HARDWARE shall perform ACKNOWLEDGE on LUR-WRITE-REQUEST toward DATA-LOADER under REQUEST-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
+      "expectedGeneratedSemanticProjectionZh": "参与者“目标硬件”在“REQUEST-RECEIVED”下必须对“LUR-WRITE-REQUEST”执行“确认”，接收方为“数据加载器”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
       "expectedSourceModality": "FIGURE-CONSTRAINT",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": []
@@ -9542,7 +9542,7 @@
       "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E009-9A7CD75981CB",
       "sourceTextHash": "9a7cd75981cb9a76bd9e2b29e1109b86851b3befcbac3b58d0f0c3fe060ba85f",
       "expectedSemantic": {
-        "actor": "DLA",
+        "actor": "DATA-LOADER",
         "condition": "ACKNOWLEDGED",
         "action": "TRANSFER",
         "objects": [
@@ -9553,8 +9553,8 @@
         "operation": "UPLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "Actor DLA shall perform TRANSFER on LUR toward TARGET-HARDWARE under ACKNOWLEDGED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
-      "expectedGeneratedSemanticProjectionZh": "参与者“数据加载器应用层”在“ACKNOWLEDGED”下必须对“LUR”执行“传输”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
+      "expectedGeneratedSemanticProjectionEn": "Actor DATA-LOADER shall perform TRANSFER on LUR toward TARGET-HARDWARE under ACKNOWLEDGED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
+      "expectedGeneratedSemanticProjectionZh": "参与者“数据加载器”在“ACKNOWLEDGED”下必须对“LUR”执行“传输”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
       "expectedSourceModality": "FIGURE-CONSTRAINT",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": []
