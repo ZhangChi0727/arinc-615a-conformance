@@ -535,6 +535,9 @@ def test_successor_m1_identities_are_lur_lus_and_data_loader() -> None:
     assert successor["doesNotTransplantFrozenApproval"] is True
     assert successor["predecessorInputCommit"]
     assert successor["predecessorInputTree"]
+    assert successor["currentInputArtifactCommit"]
+    assert successor["currentInputArtifactTree"]
+    assert successor["currentInputArtifactCommit"] != successor["predecessorInputCommit"]
     assert {item["path"] for item in successor["predecessorInputBlobs"]} == {
         item["path"] for item in data["inputAcceptance"]["inputs"]
     }
@@ -841,7 +844,10 @@ def test_lur_write_endpoints_match_visual_chart() -> None:
         assert row["receiver"] == receiver
         assert row["direction"] == direction
         assert row["layer"] == "NETWORK-VISIBLE"
+        assert row["tftpOpcode"] == _event(data, eid)["tftpOpcode"]
+        assert row["fileRole"] == "LUR"
         assert _event(data, eid)["direction"] == direction
+        assert _event(data, eid)["fileRole"] == "LUR"
         assert "DLA" not in {row["actor"], row["receiver"]}
     ready = _witness(data, "W-LUR-AFTER-READY")
     ids = [step["transitionId"] for step in ready["steps"]]
@@ -881,6 +887,68 @@ def test_lur_endpoint_mutations_fail_after_fingerprint_refresh() -> None:
     _binding(data, "CRS-M1-00365")["receiver"] = "DATA-LOADER"
     refresh_summary(data)
     assert any("CRS-M1-00365" in item and ("endpoint" in item or "receiver" in item or "direction" in item) for item in errors(data))
+
+
+def test_lur_opcode_and_file_role_mutations_fail_after_fingerprint_refresh() -> None:
+    data = copy.deepcopy(package())
+    assert errors(data) == []
+    _event(data, "EV_DL_DATA_LUR")["tftpOpcode"] = "ACK"
+    refresh_summary(data)
+    found = errors(data)
+    assert any("CRS-M1-00367" in item and "opcode" in item for item in found)
+
+    data = copy.deepcopy(package())
+    _event(data, "EV_TH_ACK_LUR")["fileRole"] = "LCI"
+    refresh_summary(data)
+    found = errors(data)
+    assert any("CRS-M1-00366" in item and "file role" in item for item in found)
+
+    data = copy.deepcopy(package())
+    _event(data, "EV_DL_DATA_LUR")["tftpOpcode"] = "ACK"
+    _binding(data, "CRS-M1-00367")["tftpOpcode"] = "ACK"
+    refresh_summary(data)
+    found = errors(data)
+    assert any("CRS-M1-00367" in item and "opcode" in item for item in found)
+
+    data = copy.deepcopy(package())
+    _binding(data, "CRS-M1-00367")["requirementId"] = "CRS-M1-00364"
+    _event(data, "EV_DL_DATA_LUR")["fileRole"] = "LCI"
+    refresh_summary(data)
+    found = errors(data)
+    assert any("CRS-M1-00367" in item and "no sequence endpoint binding" in item for item in found)
+
+
+def test_current_input_artifact_identity_mutations_fail() -> None:
+    data = copy.deepcopy(package())
+    assert errors(data) == []
+    successor = data["inputAcceptance"]["successorDelta"]
+    stale = successor["predecessorInputCommit"]
+    successor["currentInputArtifactCommit"] = stale
+    successor["currentInputArtifactTree"] = successor["predecessorInputTree"]
+    refresh_summary(data)
+    found = errors(data)
+    assert any("reuse the predecessor" in item or "current input blob disagrees" in item for item in found)
+
+    data = copy.deepcopy(package())
+    data["inputAcceptance"]["successorDelta"]["currentInputArtifactTree"] = (
+        data["inputAcceptance"]["successorDelta"]["predecessorInputTree"]
+    )
+    refresh_summary(data)
+    found = errors(data)
+    assert any("current input artifact tree disagrees" in item for item in found)
+
+    data = copy.deepcopy(package())
+    crs_path = "configs/requirements/arinc_615a3_m1_crs.json"
+    current = next(item for item in data["inputAcceptance"]["inputs"] if item["path"] == crs_path)
+    stale = next(
+        item
+        for item in data["inputAcceptance"]["successorDelta"]["predecessorInputBlobs"]
+        if item["path"] == crs_path
+    )
+    current["gitBlobOid"] = stale["gitBlobOid"]
+    refresh_summary(data)
+    found = errors(data)
+    assert any("current input blob disagrees" in item or "worktree blob disagrees" in item for item in found)
 
 
 def _first_binary(node: dict, op: str) -> dict:

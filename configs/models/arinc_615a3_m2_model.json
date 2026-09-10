@@ -147,7 +147,9 @@
           "gitBlobOid": "9fe87b84260c93df5c0ac2c5fa4db8328e85c48c",
           "role": "M1-IMMUTABLE-INPUT"
         }
-      ]
+      ],
+      "currentInputArtifactCommit": "e1c6056c72c4618ad502e6406ce2869f1881ad4b",
+      "currentInputArtifactTree": "3d6b7926b13f32df7eda6b96746130ead0a954d6"
     }
   },
   "sequenceEndpointBindings": [
@@ -158,7 +160,13 @@
       "actor": "DATA-LOADER",
       "receiver": "TARGET-HARDWARE",
       "direction": "DL-TO-TH",
-      "layer": "NETWORK-VISIBLE"
+      "layer": "NETWORK-VISIBLE",
+      "action": "SEND-TFTP-WRITE-REQUEST",
+      "objects": [
+        "LUR"
+      ],
+      "tftpOpcode": "WRQ",
+      "fileRole": "LUR"
     },
     {
       "requirementId": "CRS-M1-00366",
@@ -167,7 +175,13 @@
       "actor": "TARGET-HARDWARE",
       "receiver": "DATA-LOADER",
       "direction": "TH-TO-DL",
-      "layer": "NETWORK-VISIBLE"
+      "layer": "NETWORK-VISIBLE",
+      "action": "ACKNOWLEDGE",
+      "objects": [
+        "LUR-WRITE-REQUEST"
+      ],
+      "tftpOpcode": "ACK",
+      "fileRole": "LUR"
     },
     {
       "requirementId": "CRS-M1-00367",
@@ -176,7 +190,13 @@
       "actor": "DATA-LOADER",
       "receiver": "TARGET-HARDWARE",
       "direction": "DL-TO-TH",
-      "layer": "NETWORK-VISIBLE"
+      "layer": "NETWORK-VISIBLE",
+      "action": "TRANSFER",
+      "objects": [
+        "LUR"
+      ],
+      "tftpOpcode": "DATA",
+      "fileRole": "LUR"
     }
   ],
   "scope": {
@@ -18560,12 +18580,12 @@
     "dispositionsFingerprint": "99eec40d08e16c9c2a72ebba8ee4845fe843d34c1879f3c43383aa7eabf040c1",
     "modelFingerprint": "e3cd631efdb7b54c2808ebf07a76062204553a3bc69326a25dc185acd29a5cfc",
     "timingFingerprint": "ccf8ed38a7cfd18363b57f72bf2d51bcbc7e5c91e1a48f83c84393b1e1c36e9c",
-    "inputFingerprint": "2c82cceaebe973b028e6eb6863752b3f286852dacf2989b2e3f87802c4a00fd3",
+    "inputFingerprint": "dd1f841b5b1b7c1489f313ec8cafda41acd7b2b0841d5f53f9227b375f47951c",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "4dd9cbe58b38efd7e6fcea09a33118b548d2790d2f8cefcd5085f69320c5bac0",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
     "witnessFingerprint": "3de3d3bf3b1b9c6eb9ee0e6ab65234ec5957762185e51093aeb10534986e6643",
     "blockingFingerprint": "ed1c2d23ae210315decd37ee16af46d55b7e8eb29359bbd7f1a6d42ca0444aa6",
-    "endpointBindingFingerprint": "739471d787a7db5c515f393466c04ff1051d90cfb82d6622168772fe1b85cf13"
+    "endpointBindingFingerprint": "60f9e50c2346388d5164e6175bef19ab9718ada595c89cca07576d36ca1a9505"
   }
 }

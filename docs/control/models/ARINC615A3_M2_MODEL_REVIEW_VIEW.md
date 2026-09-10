@@ -13,6 +13,7 @@
 - M1 NET-ISSUE-EDITION snapshot blocksM1Approval=`True` — Historical snapshot on the merged M1 tree. External owner sign-off and merge bound that Head. The boolean does not reopen the merge. CR-2026-009 accepted 664P3-1 as this M2 input edition; 664P7 remains recorded and AFDX stays unselected.
 - Successor delta `CR-2026-011` authorized by `CR-2026-009`; doesNotTransplantFrozenApproval=`True`
 - Predecessor input artifact commit `402e8371b0237aec4691bab0b44e502f4ac1a7c4` tree `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
+- Current input artifact commit `e1c6056c72c4618ad502e6406ce2869f1881ad4b` tree `3d6b7926b13f32df7eda6b96746130ead0a954d6`
 
 ## Scope
 
@@ -1304,11 +1305,11 @@
 
 ## Sequence endpoint bindings
 
-| CRS | Transition | Event | Actor | Receiver | Direction | Layer |
-|---|---|---|---|---|---|---|
-| `CRS-M1-00365` | `T_UPL_LUR_WRQ` | `EV_DL_WRQ_LUR` | `DATA-LOADER` | `TARGET-HARDWARE` | `DL-TO-TH` | `NETWORK-VISIBLE` |
-| `CRS-M1-00366` | `T_UPL_LUR_ACK` | `EV_TH_ACK_LUR` | `TARGET-HARDWARE` | `DATA-LOADER` | `TH-TO-DL` | `NETWORK-VISIBLE` |
-| `CRS-M1-00367` | `T_UPL_LUR_XFER` | `EV_DL_DATA_LUR` | `DATA-LOADER` | `TARGET-HARDWARE` | `DL-TO-TH` | `NETWORK-VISIBLE` |
+| CRS | Transition | Event | Actor | Receiver | Action | Objects | Opcode | File | Direction | Layer |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `CRS-M1-00365` | `T_UPL_LUR_WRQ` | `EV_DL_WRQ_LUR` | `DATA-LOADER` | `TARGET-HARDWARE` | `SEND-TFTP-WRITE-REQUEST` | `LUR` | `WRQ` | `LUR` | `DL-TO-TH` | `NETWORK-VISIBLE` |
+| `CRS-M1-00366` | `T_UPL_LUR_ACK` | `EV_TH_ACK_LUR` | `TARGET-HARDWARE` | `DATA-LOADER` | `ACKNOWLEDGE` | `LUR-WRITE-REQUEST` | `ACK` | `LUR` | `TH-TO-DL` | `NETWORK-VISIBLE` |
+| `CRS-M1-00367` | `T_UPL_LUR_XFER` | `EV_DL_DATA_LUR` | `DATA-LOADER` | `TARGET-HARDWARE` | `TRANSFER` | `LUR` | `DATA` | `LUR` | `DL-TO-TH` | `NETWORK-VISIBLE` |
 
 ## Source refinements
 
@@ -1390,6 +1391,7 @@
 - M1 NET-ISSUE-EDITION 快照 blocksM1Approval=`True` — 已合并 M1 树上的历史快照。外部所有者签署与合并绑定了该 Head。该布尔值不重开合并。CR-2026-009 接受 664P3-1 作为本 M2 输入版次；664P7 保持已登记且 AFDX 未选。
 - 后继增量 `CR-2026-011` 由 `CR-2026-009` 授权；doesNotTransplantFrozenApproval=`True`
 - 前序输入制品提交 `402e8371b0237aec4691bab0b44e502f4ac1a7c4` 树 `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
+- 当前输入制品提交 `e1c6056c72c4618ad502e6406ce2869f1881ad4b` 树 `3d6b7926b13f32df7eda6b96746130ead0a954d6`
 
 ## 范围
 
@@ -2681,11 +2683,11 @@
 
 ## 序列端点绑定
 
-| CRS | 迁移 | 事件 | 发送者 | 接收者 | 方向 | 层级 |
-|---|---|---|---|---|---|---|
-| `CRS-M1-00365` | `T_UPL_LUR_WRQ` | `EV_DL_WRQ_LUR` | `DATA-LOADER` | `TARGET-HARDWARE` | `DL-TO-TH` | `NETWORK-VISIBLE` |
-| `CRS-M1-00366` | `T_UPL_LUR_ACK` | `EV_TH_ACK_LUR` | `TARGET-HARDWARE` | `DATA-LOADER` | `TH-TO-DL` | `NETWORK-VISIBLE` |
-| `CRS-M1-00367` | `T_UPL_LUR_XFER` | `EV_DL_DATA_LUR` | `DATA-LOADER` | `TARGET-HARDWARE` | `DL-TO-TH` | `NETWORK-VISIBLE` |
+| CRS | 迁移 | 事件 | 发送者 | 接收者 | 动作 | 对象 | 操作码 | 文件 | 方向 | 层级 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `CRS-M1-00365` | `T_UPL_LUR_WRQ` | `EV_DL_WRQ_LUR` | `DATA-LOADER` | `TARGET-HARDWARE` | `SEND-TFTP-WRITE-REQUEST` | `LUR` | `WRQ` | `LUR` | `DL-TO-TH` | `NETWORK-VISIBLE` |
+| `CRS-M1-00366` | `T_UPL_LUR_ACK` | `EV_TH_ACK_LUR` | `TARGET-HARDWARE` | `DATA-LOADER` | `ACKNOWLEDGE` | `LUR-WRITE-REQUEST` | `ACK` | `LUR` | `TH-TO-DL` | `NETWORK-VISIBLE` |
+| `CRS-M1-00367` | `T_UPL_LUR_XFER` | `EV_DL_DATA_LUR` | `DATA-LOADER` | `TARGET-HARDWARE` | `TRANSFER` | `LUR` | `DATA` | `LUR` | `DL-TO-TH` | `NETWORK-VISIBLE` |
 
 ## 来源精化
 

@@ -77,6 +77,16 @@ NETWORK_DIRECTION_ENDPOINTS = {
     "TH-TO-DL": ("TARGET-HARDWARE", "DATA-LOADER"),
 }
 APPLICATION_LAYER_ROLES = {"DLA", "DLP"}
+LUR_WRITE_CHART = "Section 6.3.2 sequence chart A"
+CRS_ACTION_TO_TFTP_OPCODE = {
+    "SEND-TFTP-WRITE-REQUEST": "WRQ",
+    "ACKNOWLEDGE": "ACK",
+    "TRANSFER": "DATA",
+}
+CRS_OBJECT_TO_FILE_ROLE = {
+    "LUR": "LUR",
+    "LUR-WRITE-REQUEST": "LUR",
+}
 SOURCE_SYMBOL_ALIASES = {
     "PACKET_TRANSMISSION_DURATION": "DURATION_TIME",
     "SUBSCRIBER_PROCESSING_DURATION": "DURATION_TIME",
@@ -1113,6 +1123,32 @@ def edition_acceptance_recorded(status: Any) -> bool:
     )
 
 
+def file_role_from_crs_objects(objects: Any) -> str | None:
+    roles = {
+        CRS_OBJECT_TO_FILE_ROLE[name]
+        for name in (objects or [])
+        if name in CRS_OBJECT_TO_FILE_ROLE
+    }
+    if len(roles) == 1:
+        return next(iter(roles))
+    return None
+
+
+def lur_write_requirement_ids(m1_by_id: dict[str, dict[str, Any]]) -> list[str]:
+    found: list[str] = []
+    for rid, req in m1_by_id.items():
+        source = req.get("source") or {}
+        if source.get("tableOrFigure") != LUR_WRITE_CHART:
+            continue
+        semantic = req.get("semantic") or {}
+        if semantic.get("action") not in CRS_ACTION_TO_TFTP_OPCODE:
+            continue
+        if file_role_from_crs_objects(semantic.get("objects")) != "LUR":
+            continue
+        found.append(rid)
+    return found
+
+
 def sequence_endpoint_errors(data: dict[str, Any], m1_by_id: dict[str, dict[str, Any]]) -> list[str]:
     errors: list[str] = []
     bindings = data.get("sequenceEndpointBindings") or []
@@ -1131,18 +1167,32 @@ def sequence_endpoint_errors(data: dict[str, Any], m1_by_id: dict[str, dict[str,
             errors.append(f"duplicate sequence endpoint binding {rid}")
         seen.add(rid)
         semantic = (m1_by_id.get(rid) or {}).get("semantic") or {}
+        expected_opcode = CRS_ACTION_TO_TFTP_OPCODE.get(str(semantic.get("action") or ""))
+        expected_role = file_role_from_crs_objects(semantic.get("objects"))
         if semantic.get("actor") != row.get("actor"):
             errors.append(f"{rid} CRS actor disagrees with bound endpoint")
         if semantic.get("receiver") != row.get("receiver"):
             errors.append(f"{rid} CRS receiver disagrees with bound endpoint")
+        if semantic.get("action") != row.get("action"):
+            errors.append(f"{rid} CRS action disagrees with bound endpoint")
+        if list(row.get("objects") or []) != list(semantic.get("objects") or []):
+            errors.append(f"{rid} CRS objects disagree with bound endpoint")
         for field in ("actor", "receiver"):
             if row.get(field) in APPLICATION_LAYER_ROLES:
                 errors.append(f"{rid} bound {field} uses application-layer role")
+        if expected_opcode and row.get("tftpOpcode") != expected_opcode:
+            errors.append(f"{rid} bound opcode disagrees with CRS action")
+        if expected_role and row.get("fileRole") != expected_role:
+            errors.append(f"{rid} bound file role disagrees with CRS objects")
         event = events.get(row.get("eventId")) or {}
         if event.get("direction") != row.get("direction"):
             errors.append(f"{rid} event direction disagrees with bound endpoint")
         if event.get("visibility") != row.get("layer"):
             errors.append(f"{rid} event layer disagrees with bound endpoint")
+        if expected_opcode and event.get("tftpOpcode") != expected_opcode:
+            errors.append(f"{rid} event opcode disagrees with CRS action")
+        if expected_role and event.get("fileRole") != expected_role:
+            errors.append(f"{rid} event file role disagrees with CRS objects")
         expected = NETWORK_DIRECTION_ENDPOINTS.get(str(row.get("direction") or ""))
         if expected and (row.get("actor"), row.get("receiver")) != expected:
             errors.append(f"{rid} endpoints disagree with bound direction")
@@ -1151,17 +1201,9 @@ def sequence_endpoint_errors(data: dict[str, Any], m1_by_id: dict[str, dict[str,
             errors.append(f"{rid} transition event disagrees with bound endpoint")
         if rid not in (trans.get("requirementIds") or []):
             errors.append(f"{rid} is not on the bound transition")
-    for trans in data["model"]["transitions"]:
-        event = events.get(trans.get("event")) or {}
-        if event.get("visibility") != "NETWORK-VISIBLE":
-            continue
-        if event.get("fileRole") != "LUR":
-            continue
-        if event.get("tftpOpcode") not in {"WRQ", "ACK", "DATA"}:
-            continue
-        for rid in trans.get("requirementIds") or []:
-            if rid not in seen:
-                errors.append(f"{rid} LUR write event has no sequence endpoint binding")
+    for rid in lur_write_requirement_ids(m1_by_id):
+        if rid not in seen:
+            errors.append(f"{rid} LUR write CRS row has no sequence endpoint binding")
     return errors
 
 
@@ -1201,6 +1243,27 @@ def successor_input_errors(acc: dict[str, Any], git_root: Path, inputs: list[dic
             errors.append(f"predecessor commit blob for {path} is missing")
         elif committed != item.get("gitBlobOid"):
             errors.append(f"predecessor blob disagrees for {path}")
+    cur_commit = successor.get("currentInputArtifactCommit")
+    cur_tree = successor.get("currentInputArtifactTree")
+    errors.extend(require_git_object(git_root, cur_commit, "commit", "current input artifact commit"))
+    errors.extend(require_git_object(git_root, cur_tree, "tree", "current input artifact tree"))
+    actual_current_tree = git_output(git_root, ["rev-parse", f"{cur_commit}^{{tree}}"]) if isinstance(cur_commit, str) else None
+    if actual_current_tree is None:
+        errors.append("current input artifact tree cannot be read from git")
+    elif actual_current_tree != cur_tree:
+        errors.append("current input artifact tree disagrees with current input commit")
+    current_ancestor = git_output(git_root, ["merge-base", str(cur_commit or ""), "HEAD"])
+    if current_ancestor is None or current_ancestor != cur_commit:
+        errors.append("current input artifact commit is not an ancestor of HEAD")
+    if cur_commit and cur_commit == pred_commit:
+        errors.append("current input artifact commit cannot reuse the predecessor commit")
+    for item in inputs:
+        path = item.get("path", "")
+        committed = git_blob(str(cur_commit or ""), path, git_root) if cur_commit else None
+        if committed is None:
+            errors.append(f"current input commit blob for {path} is missing")
+        elif committed != item.get("gitBlobOid"):
+            errors.append(f"current input blob disagrees for {path}")
     preserved = successor.get("preservedFrozenInputs") or []
     if not preserved:
         errors.append("successor delta omits preserved frozen inputs")
@@ -1656,6 +1719,10 @@ def successor_delta_view_lines(successor: dict[str, Any] | None, lang: str) -> l
             lines.append(
                 f"- 前序输入制品提交 `{successor['predecessorInputCommit']}` 树 `{successor['predecessorInputTree']}`"
             )
+        if successor.get("currentInputArtifactCommit"):
+            lines.append(
+                f"- 当前输入制品提交 `{successor['currentInputArtifactCommit']}` 树 `{successor['currentInputArtifactTree']}`"
+            )
         return lines
     lines = [
         f"- Successor delta `{successor['changeRequest']}` authorized by `{successor['authorizationRequest']}`; doesNotTransplantFrozenApproval=`{successor['doesNotTransplantFrozenApproval']}`"
@@ -1663,6 +1730,10 @@ def successor_delta_view_lines(successor: dict[str, Any] | None, lang: str) -> l
     if successor.get("predecessorInputCommit"):
         lines.append(
             f"- Predecessor input artifact commit `{successor['predecessorInputCommit']}` tree `{successor['predecessorInputTree']}`"
+        )
+    if successor.get("currentInputArtifactCommit"):
+        lines.append(
+            f"- Current input artifact commit `{successor['currentInputArtifactCommit']}` tree `{successor['currentInputArtifactTree']}`"
         )
     return lines
 
@@ -1860,13 +1931,17 @@ def render(data: dict[str, Any]) -> str:
     )
     lines += ["", "## Sequence endpoint bindings", ""]
     lines += _table(
-        ["CRS", "Transition", "Event", "Actor", "Receiver", "Direction", "Layer"],
+        ["CRS", "Transition", "Event", "Actor", "Receiver", "Action", "Objects", "Opcode", "File", "Direction", "Layer"],
         [[
             f"`{row['requirementId']}`",
             f"`{row['transitionId']}`",
             f"`{row['eventId']}`",
             f"`{row['actor']}`",
             f"`{row['receiver']}`",
+            f"`{row.get('action', '')}`",
+            ", ".join(f"`{item}`" for item in row.get("objects") or []) or "—",
+            f"`{row.get('tftpOpcode', '')}`",
+            f"`{row.get('fileRole', '')}`",
             f"`{row['direction']}`",
             f"`{row['layer']}`",
         ] for row in data.get("sequenceEndpointBindings") or []],
@@ -2084,13 +2159,17 @@ def render(data: dict[str, Any]) -> str:
     )
     lines += ["", "## 序列端点绑定", ""]
     lines += _table(
-        ["CRS", "迁移", "事件", "发送者", "接收者", "方向", "层级"],
+        ["CRS", "迁移", "事件", "发送者", "接收者", "动作", "对象", "操作码", "文件", "方向", "层级"],
         [[
             f"`{row['requirementId']}`",
             f"`{row['transitionId']}`",
             f"`{row['eventId']}`",
             f"`{row['actor']}`",
             f"`{row['receiver']}`",
+            f"`{row.get('action', '')}`",
+            ", ".join(f"`{item}`" for item in row.get("objects") or []) or "—",
+            f"`{row.get('tftpOpcode', '')}`",
+            f"`{row.get('fileRole', '')}`",
             f"`{row['direction']}`",
             f"`{row['layer']}`",
         ] for row in data.get("sequenceEndpointBindings") or []],
