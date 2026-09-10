@@ -10,15 +10,15 @@
     "title": "M2 observable timed model and bounded source refinement candidate",
     "titleZh": "M2 可观测时序模型与有边界来源精化候选",
     "summary": [
-      "Record owner-accepted M1 sign-off and merge facts in M2 inputAcceptance without rewriting merged M1 bytes.",
+      "Record owner-accepted M1 sign-off and merge facts in M2 inputAcceptance without rewriting merged M1 bytes. CR-2026-011 successor delta rebinds current M1 blobs as a new identity and does not transplant that approval.",
       "Deliver an observable timed EFSM for UPLOAD and INFORMATION with payload-enabled accept/reject, session-local list readiness before LUR, visual TFTP-write LUR direction, WAIT not-before retry, obligation-level traces and Attachment 4 equations bound to ordered source structure.",
-      "Add source-explicit 615A→665 and TFTP-option refinements used by the model; keep AFDX, FIND, 645 and P3 deviations deferred.",
+      "Correct Table 6.4.4-1 to LUR and Table 6.4.5-1 to LUS; set CRS-M1-00365 WRQ actor to DATA-LOADER; keep LUI field-table predicates as a named gap. Add source-explicit 615A→665 and TFTP-option refinements used by the model; keep AFDX, FIND, 645 and P3 deviations deferred.",
       "Plan IPv4/UDP substantiation for Project Configuration; do not establish network or integrity capabilities."
     ],
     "summaryZh": [
-      "在 M2 inputAcceptance 中记录所有者接受的 M1 签署与合并事实，不改写已合并 M1 字节。",
+      "在 M2 inputAcceptance 中记录所有者接受的 M1 签署与合并事实，不改写已合并 M1 字节。CR-2026-011 后继增量把当前 M1 blob 作为新身份重绑定，不移植该批准。",
       "交付 UPLOAD 与 INFORMATION 的可观测 timed EFSM，含 payload 使能的接受／拒绝、LUR 前的会话内列表就绪、目视 TFTP 写的 LUR 方向、WAIT 不得早于重试、义务级追踪，以及按有序来源结构绑定的附件 4 方程。",
-      "为模型实际使用的对象增加 615A→665 与 TFTP 选项精化；FIND、AFDX、645 与 P3 偏差保持延期。",
+      "将表 6.4.4-1 纠正为 LUR、表 6.4.5-1 纠正为 LUS；将 CRS-M1-00365 WRQ 参与者改为 DATA-LOADER；LUI 字段表谓词作为具名缺口。为模型实际使用的对象增加 615A→665 与 TFTP 选项精化；FIND、AFDX、645 与 P3 偏差保持延期。",
       "规划 IPv4/UDP 基础设施验证以备 Project Configuration；不建立网络或完整性能力。"
     ],
     "stateChanges": [

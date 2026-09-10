@@ -126,9 +126,15 @@ def test_recorded_input_identity_matches_git() -> None:
     assert acc["githubReviewState"] != "APPROVED"
     assert "NOT-CLAIMED" in acc["independenceClaim"]
     assert acc["m1NetIssueEditionSnapshot"]["blocksM1Approval"] is True
+    successor = acc.get("successorDelta") or {}
+    preserved = {item["path"]: item["gitBlobOid"] for item in successor.get("preservedFrozenInputs") or []}
+    assert successor.get("doesNotTransplantFrozenApproval") is True
+    assert preserved
     for item in acc["inputs"]:
-        blob = m2.git_blob(acc["baseCommit"], item["path"])
-        assert blob == item["gitBlobOid"]
+        frozen = preserved[item["path"]]
+        assert m2.git_blob(acc["mergeCommit"], item["path"]) == frozen
+        work = m2.git_output(ROOT, ["hash-object", str(ROOT / item["path"])])
+        assert work == item["gitBlobOid"]
 
 
 @pytest.mark.parametrize("mutation", ["blob", "parent", "tree", "ci", "review"])
@@ -476,15 +482,64 @@ def test_blocksize_and_lui_lur_source_edges() -> None:
         for row in data["sourceRefinements"]
     )
     blocked = [row for row in data["sourceRefinements"] if row["reviewStatus"] == "OPEN-M1-CORRECTION"]
-    assert {row["fromRequirementId"] for row in blocked} >= {"CRS-M1-00143", "CRS-M1-00315", "CRS-M1-00365"}
-    file_identity = [row for row in blocked if row["fromRequirementId"] in {"CRS-M1-00143", "CRS-M1-00315"}]
-    assert all("LUR" in row["rationaleEn"] and "LUI" in row["rationaleEn"] for row in file_identity)
+    assert {row["fromRequirementId"] for row in blocked}.isdisjoint({"CRS-M1-00143", "CRS-M1-00315", "CRS-M1-00365"})
+    active = [
+        row
+        for row in data["sourceRefinements"]
+        if row["fromRequirementId"] in {"CRS-M1-00143", "CRS-M1-00315", "CRS-M1-00365"}
+    ]
+    assert len(active) >= 3
+    assert all(row["reviewStatus"] != "OPEN-M1-CORRECTION" for row in active)
     rfc = next(row for row in data["sourceRefinements"] if row.get("toSourceId") == "RFC-2347")
     assert rfc["toLocator"]["clause"]
     assert rfc["toLocator"]["retrievedSha256"]
     data["sourceRefinements"] = [row for row in data["sourceRefinements"] if row.get("toSourceId") != "RFC-2348"]
     refresh_summary(data)
     assert any("RFC-2348" in item for item in errors(data))
+
+
+def test_successor_m1_identities_are_lur_lus_and_data_loader() -> None:
+    m1 = json.loads((ROOT / "configs/requirements/arinc_615a3_m1_crs.json").read_text(encoding="utf-8"))
+    by_id = {row["id"]: row for row in m1["requirements"]}
+    for rid in [f"CRS-M1-00{n}" for n in range(309, 316)]:
+        assert by_id[rid]["fieldConstraint"]["protocolFile"] == "LUR", rid
+    lur_left = [
+        row["id"]
+        for row in m1["requirements"]
+        if (row.get("source") or {}).get("clause") == "6.4.5"
+        and (row.get("fieldConstraint") or {}).get("protocolFile") == "LUR"
+    ]
+    assert lur_left == []
+    lus = [
+        row
+        for row in m1["requirements"]
+        if (row.get("fieldConstraint") or {}).get("protocolFile") == "LUS"
+    ]
+    assert lus
+    assert all((row.get("source") or {}).get("clause") == "6.4.5" for row in lus)
+    assert by_id["CRS-M1-00365"]["semantic"]["actor"] == "DATA-LOADER"
+    assert by_id["CRS-M1-00365"]["semantic"]["receiver"] == "DLA"
+    assert "LUR" in by_id["CRS-M1-00143"]["semantic"]["objects"]
+    data = package()
+    assert data["inputAcceptance"]["successorDelta"]["doesNotTransplantFrozenApproval"] is True
+    assert data["reviewControl"]["blocksFinalApproval"] is True
+    identity = next(row for row in data["blockingInputs"] if row["id"] == "M1-FILE-IDENTITY-6-4-4")
+    assert identity["status"] == "CLOSED-BY-SUCCESSOR-M1-DELTA"
+    net = next(row for row in data["blockingInputs"] if row["id"] == "NET-ISSUE-EDITION")
+    assert net["status"] == "ACCEPTED-CURRENT-EDITION-P3-1-AFDX-DEFERRED"
+
+
+def test_open_m1_correction_cannot_be_closed() -> None:
+    data = package()
+    row = next(item for item in data["actions"] if item["id"] == "M1-FILE-IDENTITY-6-4-4")
+    row["status"] = "CLOSED"
+    row["evidence"] = ["forced"]
+    refresh_summary(data)
+    assert any("silently CLOSED" in item or "OPEN-M1-CORRECTION" in item for item in errors(data))
+    data = package()
+    data["reviewControl"]["blocksFinalApproval"] = False
+    refresh_summary(data)
+    assert any("blocksFinalApproval" in item for item in errors(data))
 
 
 def _apply_review_mutation(name: str, data: dict) -> None:
@@ -827,16 +882,3 @@ def test_equation_structure_mutations_fail_after_fingerprint_refresh() -> None:
     four["value"] = 5
     refresh_summary(data)
     assert any("equation structure" in item for item in errors(data))
-
-
-def test_open_m1_correction_cannot_be_closed() -> None:
-    data = package()
-    row = next(item for item in data["actions"] if item["id"] == "M1-FILE-IDENTITY-6-4-4")
-    row["status"] = "CLOSED"
-    row["evidence"] = ["forced"]
-    refresh_summary(data)
-    assert any("OPEN-M1-CORRECTION" in item or "cannot be silently CLOSED" in item for item in errors(data))
-    data = package()
-    data["reviewControl"]["blocksFinalApproval"] = False
-    refresh_summary(data)
-    assert any("blocksFinalApproval" in item for item in errors(data))

@@ -69,6 +69,12 @@ SESSION_START_TRANSITIONS = {
 }
 LUS_READY_EVENT = "EV_TH_LUS0001"
 LUR_WRQ_TRANSITION = "T_UPL_LUR_WRQ"
+TABLE_6_4_4_FIELD_IDS = {f"CRS-M1-00{n}" for n in range(309, 316)}
+WRQ_ACTOR_REQUIREMENT_ID = "CRS-M1-00365"
+SUCCESSOR_DELTA_CR = "CR-2026-011"
+SUCCESSOR_AUTH_CR = "CR-2026-009"
+SUCCESSOR_CLOSED_STATUS = "CLOSED-BY-SUCCESSOR-M1-DELTA"
+NET_EDITION_ACCEPTED_STATUS = "ACCEPTED-CURRENT-EDITION-P3-1-AFDX-DEFERRED"
 SOURCE_SYMBOL_ALIASES = {
     "PACKET_TRANSMISSION_DURATION": "DURATION_TIME",
     "SUBSCRIBER_PROCESSING_DURATION": "DURATION_TIME",
@@ -819,7 +825,8 @@ def field_axis_errors(model: dict[str, Any], m1_by_id: dict[str, dict[str, Any]]
             if row.get(axis) != fc.get(axis):
                 errors.append(f"field constraint {row.get('id')} axis {axis} drifted from M1")
         clause = (req.get("source") or {}).get("clause")
-        conflict = clause == "6.4.4"
+        expected_file = expected_protocol_file_for_clause(clause)
+        conflict = bool(expected_file and fc.get("protocolFile") != expected_file)
         if bool(row.get("m1FileIdentityConflict")) != conflict:
             errors.append(f"field constraint {row.get('id')} file-identity conflict flag drifted")
     for row in model.get("statusConstraints", []):
@@ -1030,6 +1037,7 @@ def input_identity_errors(acc: dict[str, Any], git_root: Path) -> list[str]:
     missing_required = [path for path in REQUIRED_M1_INPUT_PATHS if path not in paths]
     if missing_required:
         errors.append(f"inputAcceptance omits required M1 inputs: {missing_required}")
+    successor = acc.get("successorDelta")
     for item in inputs:
         path = item.get("path", "")
         try:
@@ -1041,11 +1049,6 @@ def input_identity_errors(acc: dict[str, Any], git_root: Path) -> list[str]:
             errors.append(f"input path is not relative-safe: {path}")
             continue
         errors.extend(require_git_object(git_root, item.get("gitBlobOid"), "blob", f"input {path}"))
-        merge_blob = git_blob(str(acc.get("mergeCommit") or ""), path, git_root)
-        if merge_blob is None:
-            errors.append(f"merge blob for {path} is missing")
-        elif merge_blob != item.get("gitBlobOid"):
-            errors.append(f"input blob disagrees for {path}")
         worktree_path = git_root / path
         if not worktree_path.is_file():
             errors.append(f"worktree input is missing: {path}")
@@ -1055,6 +1058,82 @@ def input_identity_errors(acc: dict[str, Any], git_root: Path) -> list[str]:
                 errors.append(f"worktree blob for {path} cannot be hashed")
             elif work_blob != item.get("gitBlobOid"):
                 errors.append(f"worktree blob disagrees for {path}")
+        merge_blob = git_blob(str(acc.get("mergeCommit") or ""), path, git_root)
+        if merge_blob is None:
+            errors.append(f"merge blob for {path} is missing")
+        elif not successor and merge_blob != item.get("gitBlobOid"):
+            errors.append(f"input blob disagrees for {path}")
+    if successor:
+        errors.extend(successor_input_errors(acc, git_root, inputs))
+    return errors
+
+
+def expected_protocol_file_for_clause(clause: Any) -> str | None:
+    if clause == "6.4.4":
+        return "LUR"
+    if clause == "6.4.5":
+        return "LUS"
+    return None
+
+
+def m1_successor_identity_errors(m1_by_id: dict[str, dict[str, Any]]) -> list[str]:
+    errors: list[str] = []
+    for rid in sorted(TABLE_6_4_4_FIELD_IDS):
+        fc = (m1_by_id.get(rid) or {}).get("fieldConstraint") or {}
+        if fc.get("protocolFile") != "LUR":
+            errors.append(f"{rid} Table 6.4.4-1 protocolFile is not LUR")
+    for req in m1_by_id.values():
+        if (req.get("source") or {}).get("clause") != "6.4.5":
+            continue
+        fc = req.get("fieldConstraint")
+        if not fc:
+            continue
+        if fc.get("protocolFile") != "LUS":
+            errors.append(f"{req.get('id')} Table 6.4.5-1 protocolFile is not LUS")
+    wrq = m1_by_id.get(WRQ_ACTOR_REQUIREMENT_ID) or {}
+    semantic = wrq.get("semantic") or {}
+    if semantic.get("actor") != "DATA-LOADER":
+        errors.append("CRS-M1-00365 actor is not DATA-LOADER")
+    if semantic.get("receiver") != "DLA":
+        errors.append("CRS-M1-00365 receiver is not DLA")
+    return errors
+
+
+def successor_input_errors(acc: dict[str, Any], git_root: Path, inputs: list[dict[str, Any]]) -> list[str]:
+    errors: list[str] = []
+    successor = acc.get("successorDelta") or {}
+    if successor.get("doesNotTransplantFrozenApproval") is not True:
+        errors.append("successor delta must not transplant frozen approval")
+    if successor.get("changeRequest") != SUCCESSOR_DELTA_CR:
+        errors.append("successor delta change request is not CR-2026-011")
+    if successor.get("authorizationRequest") != SUCCESSOR_AUTH_CR:
+        errors.append("successor delta authorization is not CR-2026-009")
+    preserved = successor.get("preservedFrozenInputs") or []
+    if not preserved:
+        errors.append("successor delta omits preserved frozen inputs")
+        return errors
+    preserved_by_path = {item.get("path"): item for item in preserved}
+    if len(preserved_by_path) != len(preserved):
+        errors.append("preserved frozen input paths are not unique")
+    changed = False
+    for item in inputs:
+        path = item.get("path", "")
+        frozen = preserved_by_path.get(path)
+        if frozen is None:
+            errors.append(f"successor input {path} has no preserved frozen blob")
+            continue
+        errors.extend(require_git_object(git_root, frozen.get("gitBlobOid"), "blob", f"preserved {path}"))
+        merge_blob = git_blob(str(acc.get("mergeCommit") or ""), path, git_root)
+        if merge_blob is None:
+            errors.append(f"merge blob for preserved {path} is missing")
+        elif merge_blob != frozen.get("gitBlobOid"):
+            errors.append(f"preserved frozen blob disagrees for {path}")
+        if frozen.get("gitBlobOid") != item.get("gitBlobOid"):
+            changed = True
+    if not changed:
+        errors.append("successor delta claims a new identity but frozen inputs are unchanged")
+    if acc.get("m1PendingFieldsUnchanged") is not False:
+        errors.append("successor delta must record m1PendingFieldsUnchanged=false")
     return errors
 
 
@@ -1316,17 +1395,28 @@ def package_errors(
     if data["model"]["interfaces"]["IF_TFTP_BLOCKSIZE"].get("status") == "ESTABLISHED":
         errors.append("block-size capability cannot be ESTABLISHED")
 
-    silent_close = {"A-4", "F-1", "F-2", "NET-ISSUE-EDITION", "M1-FILE-IDENTITY-6-4-4"}
+    silent_close = {"A-4", "F-1", "F-2"}
+    identity_hold_errors = m1_successor_identity_errors(m1_by_id)
+    identities_hold = not identity_hold_errors
     for row in data["actions"]:
         status = row.get("status")
         if status in CLOSED_ACTION_WITHOUT_EVIDENCE and not row.get("evidence"):
             errors.append(f"action {row.get('id')} closed without evidence")
         if status in CLOSED_ACTION_WITHOUT_EVIDENCE and row.get("id") in silent_close:
             errors.append(f"action {row.get('id')} cannot be silently CLOSED")
-        if row.get("id") in {"A-1", "M1-FILE-IDENTITY-6-4-4"} and "OPEN-M1-CORRECTION" not in str(status):
-            errors.append(f"action {row.get('id')} cannot treat OPEN-M1-CORRECTION as closed")
+        if row.get("id") in {"A-1", "M1-FILE-IDENTITY-6-4-4"}:
+            if identities_hold:
+                if status == "OPEN-M1-CORRECTION":
+                    errors.append(f"action {row.get('id')} cannot keep OPEN-M1-CORRECTION after successor identities agree")
+                if status in CLOSED_ACTION_WITHOUT_EVIDENCE:
+                    errors.append(f"action {row.get('id')} cannot be silently CLOSED")
+            elif "OPEN-M1-CORRECTION" not in str(status):
+                errors.append(f"action {row.get('id')} cannot treat OPEN-M1-CORRECTION as closed")
+        if identities_hold and row.get("id") == "NET-ISSUE-EDITION" and status in CLOSED_ACTION_WITHOUT_EVIDENCE:
+            errors.append("action NET-ISSUE-EDITION cannot be silently CLOSED")
         if not row.get("ownerRole") or not row.get("deadlineGate"):
             errors.append(f"action {row.get('id')} lacks ownerRole or deadlineGate")
+    errors.extend(identity_hold_errors)
 
     summary = data["inventorySummary"]
     expected = {
@@ -1418,12 +1508,40 @@ def package_errors(
     if open_correction and data["reviewControl"].get("blocksFinalApproval") is not True:
         errors.append("OPEN-M1-CORRECTION remains; blocksFinalApproval must stay true")
     identity_block = next((row for row in data.get("blockingInputs") or [] if row.get("id") == "M1-FILE-IDENTITY-6-4-4"), None)
+    seq_block = next((row for row in data.get("blockingInputs") or [] if row.get("id") == "SEQ-LUR-WRQ-ACTOR"), None)
+    net_block = next((row for row in data.get("blockingInputs") or [] if row.get("id") == "NET-ISSUE-EDITION"), None)
     if identity_block is None:
         errors.append("blockingInputs omit M1-FILE-IDENTITY-6-4-4")
-    elif identity_block.get("status") != "OPEN-M1-CORRECTION" or identity_block.get("blocksFinalApproval") is not True:
-        errors.append("M1-FILE-IDENTITY-6-4-4 cannot be treated as closed")
-    if any(row.get("status", "").startswith("CLOSED") for row in data.get("blockingInputs") or []):
-        errors.append("blockingInputs cannot close an open M1 correction")
+    if seq_block is None:
+        errors.append("blockingInputs omit SEQ-LUR-WRQ-ACTOR")
+    if net_block is None:
+        errors.append("blockingInputs omit NET-ISSUE-EDITION")
+    if identities_hold:
+        if identity_block and identity_block.get("status") != SUCCESSOR_CLOSED_STATUS:
+            errors.append("M1-FILE-IDENTITY-6-4-4 must be CLOSED-BY-SUCCESSOR-M1-DELTA after successor identities")
+        if seq_block and seq_block.get("status") != SUCCESSOR_CLOSED_STATUS:
+            errors.append("SEQ-LUR-WRQ-ACTOR must be CLOSED-BY-SUCCESSOR-M1-DELTA after successor identities")
+        if net_block and net_block.get("status") != NET_EDITION_ACCEPTED_STATUS:
+            errors.append("NET-ISSUE-EDITION must record 664P3-1 acceptance with AFDX deferred")
+        stale_open = [
+            row.get("id")
+            for row in refinements
+            if row.get("fromRequirementId") in {*TABLE_6_4_4_FIELD_IDS, "CRS-M1-00143", WRQ_ACTOR_REQUIREMENT_ID}
+            and row.get("reviewStatus") == "OPEN-M1-CORRECTION"
+        ]
+        if stale_open:
+            errors.append("cannot keep OPEN-M1-CORRECTION after successor identities agree")
+        if not data.get("inputAcceptance", {}).get("successorDelta"):
+            errors.append("successor identities require inputAcceptance.successorDelta")
+        if data["reviewControl"].get("blocksFinalApproval") is not True:
+            errors.append("independent RG1 has not accepted; blocksFinalApproval must stay true")
+    else:
+        if identity_block and (
+            identity_block.get("status") != "OPEN-M1-CORRECTION" or identity_block.get("blocksFinalApproval") is not True
+        ):
+            errors.append("M1-FILE-IDENTITY-6-4-4 cannot be treated as closed")
+        if any(str(row.get("status", "")).startswith("CLOSED") for row in data.get("blockingInputs") or []):
+            errors.append("blockingInputs cannot close an open M1 correction")
     return errors
 
 
@@ -1455,6 +1573,13 @@ def render(data: dict[str, Any]) -> str:
         f"- Sign-off: {acc['signOffUrl']} (`{acc['githubReviewState']}`, `{acc['recordedConclusion']}`)",
         f"- Independence: `{acc['independenceClaim']}`",
         f"- M1 NET-ISSUE-EDITION snapshot blocksM1Approval=`{acc['m1NetIssueEditionSnapshot']['blocksM1Approval']}` — {acc['m1NetIssueEditionSnapshot']['interpretationEn']}",
+        *(
+            [
+                f"- Successor delta `{acc['successorDelta']['changeRequest']}` authorized by `{acc['successorDelta']['authorizationRequest']}`; doesNotTransplantFrozenApproval=`{acc['successorDelta']['doesNotTransplantFrozenApproval']}`"
+            ]
+            if acc.get("successorDelta")
+            else []
+        ),
         "",
         "## Scope",
         "",
@@ -1665,6 +1790,13 @@ def render(data: dict[str, Any]) -> str:
         f"- 签署：{acc['signOffUrl']}（`{acc['githubReviewState']}`，`{acc['recordedConclusion']}`）",
         f"- 独立性：`{acc['independenceClaim']}`",
         f"- M1 NET-ISSUE-EDITION 快照 blocksM1Approval=`{acc['m1NetIssueEditionSnapshot']['blocksM1Approval']}` — {acc['m1NetIssueEditionSnapshot']['interpretationZh']}",
+        *(
+            [
+                f"- 后继增量 `{acc['successorDelta']['changeRequest']}` 由 `{acc['successorDelta']['authorizationRequest']}` 授权；doesNotTransplantFrozenApproval=`{acc['successorDelta']['doesNotTransplantFrozenApproval']}`"
+            ]
+            if acc.get("successorDelta")
+            else []
+        ),
         "",
         "## 范围",
         "",

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.2",
   "artifactId": "ARINC615A3-M2-MODEL",
-  "artifactVersion": "M2-CANDIDATE-4",
+  "artifactVersion": "M2-CANDIDATE-5",
   "candidateDisposition": "ADOPT",
   "inputAcceptance": {
     "repository": "https://github.com/ZhangChi0727/arinc-615a-conformance",
@@ -26,8 +26,8 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "e2b34c7839e9d5710a7aba3805decd74555b5a38",
-        "role": "M1-IMMUTABLE-INPUT"
+        "gitBlobOid": "3d31c93c1fb2f2b4cbdd5c5e7998c8e317bb9b3c",
+        "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_crs_package.schema.json",
@@ -36,13 +36,13 @@
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "d13a15c628b70a31cf43a40f4277e767be888b6c",
-        "role": "M1-IMMUTABLE-INPUT"
+        "gitBlobOid": "f334467b6ac275b1ab50dbbc15a516a92ad2aba6",
+        "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "4647eea41877028e3b25637518ffa9d97a44bca1",
-        "role": "M1-IMMUTABLE-INPUT"
+        "gitBlobOid": "823248e853de5e6fcf8422e306de12f2d563873e",
+        "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_source_section_spans.json",
@@ -56,18 +56,60 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "e1258602a73835a0218c3d102dce119ce76372dc",
-        "role": "M1-IMMUTABLE-INPUT"
+        "gitBlobOid": "9fe87b84260c93df5c0ac2c5fa4db8328e85c48c",
+        "role": "SUCCESSOR-M1-DELTA"
       }
     ],
-    "m1PendingFieldsUnchanged": true,
+    "m1PendingFieldsUnchanged": false,
     "m1NetIssueEditionSnapshot": {
       "id": "NET-ISSUE-EDITION",
       "blocksM1Approval": true,
-      "interpretationEn": "Historical snapshot on the merged M1 tree. External owner sign-off and merge bound that Head. The boolean does not reopen the merge; it remains a transferred technical action.",
-      "interpretationZh": "已合并 M1 树上的历史快照。外部所有者签署与合并绑定了该 Head。该布尔值不重开合并；它仍是已转移的技术行动。"
+      "interpretationEn": "Historical snapshot on the merged M1 tree. External owner sign-off and merge bound that Head. The boolean does not reopen the merge. CR-2026-009 accepted 664P3-1 as this M2 input edition; 664P7 remains recorded and AFDX stays unselected.",
+      "interpretationZh": "已合并 M1 树上的历史快照。外部所有者签署与合并绑定了该 Head。该布尔值不重开合并。CR-2026-009 接受 664P3-1 作为本 M2 输入版次；664P7 保持已登记且 AFDX 未选。"
     },
-    "approvedHeadTree": "2810bcaa76003eef791348607b068d76d91b5103"
+    "approvedHeadTree": "2810bcaa76003eef791348607b068d76d91b5103",
+    "successorDelta": {
+      "changeRequest": "CR-2026-011",
+      "authorizationRequest": "CR-2026-009",
+      "doesNotTransplantFrozenApproval": true,
+      "preservedFrozenInputs": [
+        {
+          "path": "configs/requirements/arinc_615a3_m1_crs.json",
+          "gitBlobOid": "e2b34c7839e9d5710a7aba3805decd74555b5a38",
+          "role": "M1-IMMUTABLE-INPUT"
+        },
+        {
+          "path": "configs/requirements/m1_crs_package.schema.json",
+          "gitBlobOid": "f5a052ff27d15d7cf28cf58cd05ea7cf51cc1482",
+          "role": "M1-IMMUTABLE-INPUT"
+        },
+        {
+          "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
+          "gitBlobOid": "d13a15c628b70a31cf43a40f4277e767be888b6c",
+          "role": "M1-IMMUTABLE-INPUT"
+        },
+        {
+          "path": "configs/requirements/m1_semantic_review_assertions.json",
+          "gitBlobOid": "4647eea41877028e3b25637518ffa9d97a44bca1",
+          "role": "M1-IMMUTABLE-INPUT"
+        },
+        {
+          "path": "configs/requirements/m1_source_section_spans.json",
+          "gitBlobOid": "40d13161f521200e643ecc71363333f9c542f593",
+          "role": "M1-IMMUTABLE-INPUT"
+        },
+        {
+          "path": "configs/requirements/m1_supplement_dispositions.json",
+          "gitBlobOid": "042dd1c56386776c48b225d591137d46171b815c",
+          "role": "M1-IMMUTABLE-INPUT"
+        },
+        {
+          "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
+          "gitBlobOid": "e1258602a73835a0218c3d102dce119ce76372dc",
+          "role": "M1-IMMUTABLE-INPUT"
+        }
+      ]
+    }
   },
   "scope": {
     "services": [
@@ -174,7 +216,7 @@
       "sharedObjects": [
         "HEADER-FILE"
       ],
-      "relation": "EDGE-BLOCKED-PENDING-M1-FILE-IDENTITY",
+      "relation": "SOURCE-EXPLICIT-EDGE-HEADER-FILE",
       "fromLocator": {
         "sourceId": "ARINC-615A-3",
         "clause": "6.4.4",
@@ -197,10 +239,10 @@
         "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P018-PROSE-SENTENCE-001-7A7C6DE1A7A7",
         "sourceTextHash": "7a7c6de1a7a7195402c06d0c069b2a70b716cababe366a8abd6e154fd6809579"
       },
-      "rationaleEn": "CRS-M1-00143 is 6.4.4 prose on PDF p.85. Independent visual check identifies LUR field discussion, while M1 table 6.4.4-1 records LUI. Shared noun HEADER-FILE is not enough. No active 665 edge until incremental RG1 corrects M1.",
-      "rationaleZh": "CRS-M1-00143 是 PDF 第 85 页的 6.4.4 散文。独立目视核对其为 LUR 字段说明，而 M1 表 6.4.4-1 记为 LUI。仅有共享名词 HEADER-FILE 不足。在增量 RG1 纠正 M1 前不建立活动 665 边。",
-      "disposition": "BLOCKED-PENDING-INCREMENTAL-RG1",
-      "reviewStatus": "OPEN-M1-CORRECTION"
+      "rationaleEn": "Successor M1 delta (CR-2026-011) records CRS-M1-00143 as 6.4.4 LUR prose with HEADER-FILE. Shared object HEADER-FILE now supports a candidate 665 edge to CRS-M1-00217. Independent RG1 still required. Capability stays NOT-ESTABLISHED.",
+      "rationaleZh": "后继 M1 增量（CR-2026-011）将 CRS-M1-00143 记为 6.4.4 的 LUR 散文并含 HEADER-FILE。共享对象 HEADER-FILE 现支持到 CRS-M1-00217 的候选 665 边。仍须独立 RG1。能力保持未建立。",
+      "disposition": "CANDIDATE-REFINEMENT",
+      "reviewStatus": "PENDING-INCREMENTAL-RG1"
     },
     {
       "id": "REF-A1-00315-BLOCKED-BY-FILE-IDENTITY",
@@ -210,7 +252,7 @@
       "sharedObjects": [
         "LOAD-PART-NUMBER"
       ],
-      "relation": "EDGE-BLOCKED-PENDING-M1-FILE-IDENTITY",
+      "relation": "SOURCE-EXPLICIT-EDGE-LOAD-PART-NUMBER",
       "fromLocator": {
         "sourceId": "ARINC-615A-3",
         "clause": "6.4.4",
@@ -233,14 +275,14 @@
         "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-021-CBAD881793E5",
         "sourceTextHash": "cbad881793e5d117fd696ba8b413a8d2ed71b1c96161b8e65ac68e3ba0943d63"
       },
-      "rationaleEn": "CRS-M1-00315 is Table 6.4.4-1 FIELD-LOAD-PART-NUMBER-NAME recorded as LUI. The same clause page cluster is the LUR/LUI identity conflict. No active 665 edge is emitted from the conflicted file identity.",
-      "rationaleZh": "CRS-M1-00315 是表 6.4.4-1 的 FIELD-LOAD-PART-NUMBER-NAME，M1 记为 LUI。同一条款页簇存在 LUR/LUI 身份冲突。不从冲突文件身份发出活动 665 边。",
-      "disposition": "BLOCKED-PENDING-INCREMENTAL-RG1",
-      "reviewStatus": "OPEN-M1-CORRECTION"
+      "rationaleEn": "Successor M1 delta records Table 6.4.4-1 FIELD-LOAD-PART-NUMBER-NAME as LUR. Shared object LOAD-PART-NUMBER now supports a candidate 665 edge to CRS-M1-00212. Independent RG1 still required.",
+      "rationaleZh": "后继 M1 增量将表 6.4.4-1 的 FIELD-LOAD-PART-NUMBER-NAME 记为 LUR。共享对象 LOAD-PART-NUMBER 现支持到 CRS-M1-00212 的候选 665 边。仍须独立 RG1。",
+      "disposition": "CANDIDATE-REFINEMENT",
+      "reviewStatus": "PENDING-INCREMENTAL-RG1"
     },
     {
       "id": "REF-SEQ-00365-WRQ-ACTOR",
-      "kind": "SEQUENCE-ACTOR-OPEN-M1-CORRECTION",
+      "kind": "SEQUENCE-ACTOR-SUCCESSOR-ALIGNED",
       "fromRequirementId": "CRS-M1-00365",
       "sharedObjects": [
         "LUR"
@@ -257,10 +299,10 @@
         "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E007-7726A816FFE7",
         "sourceTextHash": "7726a816ffe72ad5691188f24b29a6ec131f042dce41742559da92b46cade96b"
       },
-      "rationaleEn": "Frozen CRS-M1-00365 records Target Hardware as the LUR WRQ actor. Independent visual check of §6.3.2 chart A is Data Loader WRQ, Target Hardware ACK, Data Loader DATA. The machine follows the TFTP-write / visual direction. This remains OPEN-M1-CORRECTION; M1 bytes are not rewritten.",
-      "rationaleZh": "冻结的 CRS-M1-00365 将 LUR WRQ 参与者记为目标硬件。对 §6.3.2 图 A 的独立目视核对为数据加载器 WRQ、目标硬件 ACK、数据加载器 DATA。机器遵循 TFTP 写／目视方向。此条保持 OPEN-M1-CORRECTION；不改写 M1 字节。",
-      "disposition": "BLOCKED-PENDING-INCREMENTAL-RG1",
-      "reviewStatus": "OPEN-M1-CORRECTION"
+      "rationaleEn": "Successor M1 delta sets CRS-M1-00365 actor to DATA-LOADER, matching §6.3.2 chart A and the TFTP-write machine. receiver remains DLA. Independent RG1 still required.",
+      "rationaleZh": "后继 M1 增量将 CRS-M1-00365 的参与者改为 DATA-LOADER，与 §6.3.2 图 A 及 TFTP 写机器一致。receiver 保持 DLA。仍须独立 RG1。",
+      "disposition": "CANDIDATE-REFINEMENT",
+      "reviewStatus": "PENDING-INCREMENTAL-RG1"
     },
     {
       "id": "REF-A2-TFTP-OPTION-2347",
@@ -4869,136 +4911,10 @@
         "conflictNoteZh": ""
       },
       {
-        "id": "FC-LUI-FIELD-FILE-LENGTH",
-        "protocolFile": "LUI",
-        "fieldId": "FIELD-FILE-LENGTH",
-        "m1RequirementId": "CRS-M1-00309",
-        "ordinal": 1,
-        "widthBitsExpression": "32",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "ALWAYS",
-        "repeatScope": "ONCE",
-        "checkLocation": "LUI-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-FILE-LENGTH in position 1 with 32 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 1 个字段位置编码 FIELD-FILE-LENGTH，位宽为 32 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
-        "m1FileIdentityConflict": true,
-        "conflictNoteEn": "M1 records Table 6.4.4-1 as LUI. Independent visual check of PDF p.85 (CRS-M1-00143) identifies LUR field prose. Incremental RG1 must correct M1; M2 does not rewrite M1 bytes.",
-        "conflictNoteZh": "M1 将表 6.4.4-1 记为 LUI。对 PDF 第 85 页（CRS-M1-00143）的独立目视核对显示为 LUR 字段说明。须由增量 RG1 纠正 M1；M2 不改写 M1 字节。"
-      },
-      {
-        "id": "FC-LUI-FIELD-PROTOCOL-VERSION",
-        "protocolFile": "LUI",
-        "fieldId": "FIELD-PROTOCOL-VERSION",
-        "m1RequirementId": "CRS-M1-00310",
-        "ordinal": 2,
-        "widthBitsExpression": "16",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "ALWAYS",
-        "repeatScope": "ONCE",
-        "checkLocation": "LUI-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-PROTOCOL-VERSION in position 2 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 2 个字段位置编码 FIELD-PROTOCOL-VERSION，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
-        "m1FileIdentityConflict": true,
-        "conflictNoteEn": "M1 records Table 6.4.4-1 as LUI. Independent visual check of PDF p.85 (CRS-M1-00143) identifies LUR field prose. Incremental RG1 must correct M1; M2 does not rewrite M1 bytes.",
-        "conflictNoteZh": "M1 将表 6.4.4-1 记为 LUI。对 PDF 第 85 页（CRS-M1-00143）的独立目视核对显示为 LUR 字段说明。须由增量 RG1 纠正 M1；M2 不改写 M1 字节。"
-      },
-      {
-        "id": "FC-LUI-FIELD-NUMBER-OF-HEADER-FILES",
-        "protocolFile": "LUI",
-        "fieldId": "FIELD-NUMBER-OF-HEADER-FILES",
-        "m1RequirementId": "CRS-M1-00311",
-        "ordinal": 3,
-        "widthBitsExpression": "16",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "ALWAYS",
-        "repeatScope": "ONCE",
-        "checkLocation": "LUI-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-NUMBER-OF-HEADER-FILES in position 3 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 3 个字段位置编码 FIELD-NUMBER-OF-HEADER-FILES，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
-        "m1FileIdentityConflict": true,
-        "conflictNoteEn": "M1 records Table 6.4.4-1 as LUI. Independent visual check of PDF p.85 (CRS-M1-00143) identifies LUR field prose. Incremental RG1 must correct M1; M2 does not rewrite M1 bytes.",
-        "conflictNoteZh": "M1 将表 6.4.4-1 记为 LUI。对 PDF 第 85 页（CRS-M1-00143）的独立目视核对显示为 LUR 字段说明。须由增量 RG1 纠正 M1；M2 不改写 M1 字节。"
-      },
-      {
-        "id": "FC-LUI-FIELD-HEADER-FILE-NAME-LENGTH",
-        "protocolFile": "LUI",
-        "fieldId": "FIELD-HEADER-FILE-NAME-LENGTH",
-        "m1RequirementId": "CRS-M1-00312",
-        "ordinal": 4,
-        "widthBitsExpression": "8",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
-        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "checkLocation": "LUI-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-HEADER-FILE-NAME-LENGTH in position 4 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 4 个字段位置编码 FIELD-HEADER-FILE-NAME-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
-        "m1FileIdentityConflict": true,
-        "conflictNoteEn": "M1 records Table 6.4.4-1 as LUI. Independent visual check of PDF p.85 (CRS-M1-00143) identifies LUR field prose. Incremental RG1 must correct M1; M2 does not rewrite M1 bytes.",
-        "conflictNoteZh": "M1 将表 6.4.4-1 记为 LUI。对 PDF 第 85 页（CRS-M1-00143）的独立目视核对显示为 LUR 字段说明。须由增量 RG1 纠正 M1；M2 不改写 M1 字节。"
-      },
-      {
-        "id": "FC-LUI-FIELD-HEADER-FILE-NAME",
-        "protocolFile": "LUI",
-        "fieldId": "FIELD-HEADER-FILE-NAME",
-        "m1RequirementId": "CRS-M1-00313",
-        "ordinal": 5,
-        "widthBitsExpression": "8..2040",
-        "encodingRule": "ZERO-TERMINATED-ASCII",
-        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
-        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
-        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "checkLocation": "LUI-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-HEADER-FILE-NAME in position 5 with 8 to 2040 bits, repeated per preceding count field; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
-        "predicateZh": "协议文件生成方必须在第 5 个字段位置编码 FIELD-HEADER-FILE-NAME，位宽为 8..2040 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
-        "m1FileIdentityConflict": true,
-        "conflictNoteEn": "M1 records Table 6.4.4-1 as LUI. Independent visual check of PDF p.85 (CRS-M1-00143) identifies LUR field prose. Incremental RG1 must correct M1; M2 does not rewrite M1 bytes.",
-        "conflictNoteZh": "M1 将表 6.4.4-1 记为 LUI。对 PDF 第 85 页（CRS-M1-00143）的独立目视核对显示为 LUR 字段说明。须由增量 RG1 纠正 M1；M2 不改写 M1 字节。"
-      },
-      {
-        "id": "FC-LUI-FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
-        "protocolFile": "LUI",
-        "fieldId": "FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
-        "m1RequirementId": "CRS-M1-00314",
-        "ordinal": 6,
-        "widthBitsExpression": "8",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
-        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "checkLocation": "LUI-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-PART-NUMBER-NAME-LENGTH in position 6 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 6 个字段位置编码 FIELD-LOAD-PART-NUMBER-NAME-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
-        "m1FileIdentityConflict": true,
-        "conflictNoteEn": "M1 records Table 6.4.4-1 as LUI. Independent visual check of PDF p.85 (CRS-M1-00143) identifies LUR field prose. Incremental RG1 must correct M1; M2 does not rewrite M1 bytes.",
-        "conflictNoteZh": "M1 将表 6.4.4-1 记为 LUI。对 PDF 第 85 页（CRS-M1-00143）的独立目视核对显示为 LUR 字段说明。须由增量 RG1 纠正 M1；M2 不改写 M1 字节。"
-      },
-      {
-        "id": "FC-LUI-FIELD-LOAD-PART-NUMBER-NAME",
-        "protocolFile": "LUI",
-        "fieldId": "FIELD-LOAD-PART-NUMBER-NAME",
-        "m1RequirementId": "CRS-M1-00315",
-        "ordinal": 7,
-        "widthBitsExpression": "8..2040",
-        "encodingRule": "ZERO-TERMINATED-ASCII",
-        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
-        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
-        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "checkLocation": "LUI-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-PART-NUMBER-NAME in position 7 with 8 to 2040 bits, repeated per preceding count field; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
-        "predicateZh": "协议文件生成方必须在第 7 个字段位置编码 FIELD-LOAD-PART-NUMBER-NAME，位宽为 8..2040 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
-        "m1FileIdentityConflict": true,
-        "conflictNoteEn": "M1 records Table 6.4.4-1 as LUI. Independent visual check of PDF p.85 (CRS-M1-00143) identifies LUR field prose. Incremental RG1 must correct M1; M2 does not rewrite M1 bytes.",
-        "conflictNoteZh": "M1 将表 6.4.4-1 记为 LUI。对 PDF 第 85 页（CRS-M1-00143）的独立目视核对显示为 LUR 字段说明。须由增量 RG1 纠正 M1；M2 不改写 M1 字节。"
-      },
-      {
         "id": "FC-LUR-FIELD-FILE-LENGTH",
         "protocolFile": "LUR",
         "fieldId": "FIELD-FILE-LENGTH",
-        "m1RequirementId": "CRS-M1-00316",
+        "m1RequirementId": "CRS-M1-00309",
         "ordinal": 1,
         "widthBitsExpression": "32",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
@@ -5016,7 +4932,7 @@
         "id": "FC-LUR-FIELD-PROTOCOL-VERSION",
         "protocolFile": "LUR",
         "fieldId": "FIELD-PROTOCOL-VERSION",
-        "m1RequirementId": "CRS-M1-00317",
+        "m1RequirementId": "CRS-M1-00310",
         "ordinal": 2,
         "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
@@ -5031,10 +4947,10 @@
         "conflictNoteZh": ""
       },
       {
-        "id": "FC-LUR-FIELD-UPLOAD-OPERATION-STATUS-CODE",
+        "id": "FC-LUR-FIELD-NUMBER-OF-HEADER-FILES",
         "protocolFile": "LUR",
-        "fieldId": "FIELD-UPLOAD-OPERATION-STATUS-CODE",
-        "m1RequirementId": "CRS-M1-00318",
+        "fieldId": "FIELD-NUMBER-OF-HEADER-FILES",
+        "m1RequirementId": "CRS-M1-00311",
         "ordinal": 3,
         "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
@@ -5042,134 +4958,8 @@
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
         "checkLocation": "LUR-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-UPLOAD-OPERATION-STATUS-CODE in position 3 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 3 个字段位置编码 FIELD-UPLOAD-OPERATION-STATUS-CODE，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
-        "m1FileIdentityConflict": false,
-        "conflictNoteEn": "",
-        "conflictNoteZh": ""
-      },
-      {
-        "id": "FC-LUR-FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH",
-        "protocolFile": "LUR",
-        "fieldId": "FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH",
-        "m1RequirementId": "CRS-M1-00319",
-        "ordinal": 4,
-        "widthBitsExpression": "8",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "ALWAYS",
-        "repeatScope": "ONCE",
-        "checkLocation": "LUR-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH in position 4 with 8 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 4 个字段位置编码 FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH，位宽为 8 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
-        "m1FileIdentityConflict": false,
-        "conflictNoteEn": "",
-        "conflictNoteZh": ""
-      },
-      {
-        "id": "FC-LUR-FIELD-UPLOAD-STATUS-DESCRIPTION",
-        "protocolFile": "LUR",
-        "fieldId": "FIELD-UPLOAD-STATUS-DESCRIPTION",
-        "m1RequirementId": "CRS-M1-00320",
-        "ordinal": 5,
-        "widthBitsExpression": "0..2040",
-        "encodingRule": "ZERO-TERMINATED-ASCII",
-        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
-        "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
-        "repeatScope": "ONCE",
-        "checkLocation": "LUR-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-UPLOAD-STATUS-DESCRIPTION in position 5 with 0 to 2040 bits, repeated once; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
-        "predicateZh": "协议文件生成方必须在第 5 个字段位置编码 FIELD-UPLOAD-STATUS-DESCRIPTION，位宽为 0..2040 bit，重复范围为 ONCE；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
-        "m1FileIdentityConflict": false,
-        "conflictNoteEn": "",
-        "conflictNoteZh": ""
-      },
-      {
-        "id": "FC-LUR-FIELD-COUNTER",
-        "protocolFile": "LUR",
-        "fieldId": "FIELD-COUNTER",
-        "m1RequirementId": "CRS-M1-00321",
-        "ordinal": 6,
-        "widthBitsExpression": "16",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "ALWAYS",
-        "repeatScope": "ONCE",
-        "checkLocation": "LUR-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-COUNTER in position 6 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 6 个字段位置编码 FIELD-COUNTER，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
-        "m1FileIdentityConflict": false,
-        "conflictNoteEn": "",
-        "conflictNoteZh": ""
-      },
-      {
-        "id": "FC-LUR-FIELD-EXCEPTION-TIMER",
-        "protocolFile": "LUR",
-        "fieldId": "FIELD-EXCEPTION-TIMER",
-        "m1RequirementId": "CRS-M1-00322",
-        "ordinal": 7,
-        "widthBitsExpression": "16",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
-        "repeatScope": "ONCE",
-        "checkLocation": "LUR-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-EXCEPTION-TIMER in position 7 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 7 个字段位置编码 FIELD-EXCEPTION-TIMER，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
-        "m1FileIdentityConflict": false,
-        "conflictNoteEn": "",
-        "conflictNoteZh": ""
-      },
-      {
-        "id": "FC-LUR-FIELD-ESTIMATED-TIME",
-        "protocolFile": "LUR",
-        "fieldId": "FIELD-ESTIMATED-TIME",
-        "m1RequirementId": "CRS-M1-00323",
-        "ordinal": 8,
-        "widthBitsExpression": "16",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "ALWAYS",
-        "repeatScope": "ONCE",
-        "checkLocation": "LUR-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-ESTIMATED-TIME in position 8 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 8 个字段位置编码 FIELD-ESTIMATED-TIME，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
-        "m1FileIdentityConflict": false,
-        "conflictNoteEn": "",
-        "conflictNoteZh": ""
-      },
-      {
-        "id": "FC-LUR-FIELD-LOAD-LIST-RATIO",
-        "protocolFile": "LUR",
-        "fieldId": "FIELD-LOAD-LIST-RATIO",
-        "m1RequirementId": "CRS-M1-00324",
-        "ordinal": 9,
-        "widthBitsExpression": "24",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "ALWAYS",
-        "repeatScope": "ONCE",
-        "checkLocation": "LUR-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-LIST-RATIO in position 9 with 24 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 9 个字段位置编码 FIELD-LOAD-LIST-RATIO，位宽为 24 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
-        "m1FileIdentityConflict": false,
-        "conflictNoteEn": "",
-        "conflictNoteZh": ""
-      },
-      {
-        "id": "FC-LUR-FIELD-NUMBER-OF-HEADER-FILES",
-        "protocolFile": "LUR",
-        "fieldId": "FIELD-NUMBER-OF-HEADER-FILES",
-        "m1RequirementId": "CRS-M1-00325",
-        "ordinal": 10,
-        "widthBitsExpression": "16",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "ALWAYS",
-        "repeatScope": "ONCE",
-        "checkLocation": "LUR-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-NUMBER-OF-HEADER-FILES in position 10 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 10 个字段位置编码 FIELD-NUMBER-OF-HEADER-FILES，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "predicateEn": "The protocol-file producer shall encode FIELD-NUMBER-OF-HEADER-FILES in position 3 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 3 个字段位置编码 FIELD-NUMBER-OF-HEADER-FILES，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "",
         "conflictNoteZh": ""
@@ -5178,16 +4968,16 @@
         "id": "FC-LUR-FIELD-HEADER-FILE-NAME-LENGTH",
         "protocolFile": "LUR",
         "fieldId": "FIELD-HEADER-FILE-NAME-LENGTH",
-        "m1RequirementId": "CRS-M1-00326",
-        "ordinal": 11,
+        "m1RequirementId": "CRS-M1-00312",
+        "ordinal": 4,
         "widthBitsExpression": "8",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUR-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-HEADER-FILE-NAME-LENGTH in position 11 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 11 个字段位置编码 FIELD-HEADER-FILE-NAME-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "predicateEn": "The protocol-file producer shall encode FIELD-HEADER-FILE-NAME-LENGTH in position 4 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 4 个字段位置编码 FIELD-HEADER-FILE-NAME-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "",
         "conflictNoteZh": ""
@@ -5196,16 +4986,16 @@
         "id": "FC-LUR-FIELD-HEADER-FILE-NAME",
         "protocolFile": "LUR",
         "fieldId": "FIELD-HEADER-FILE-NAME",
-        "m1RequirementId": "CRS-M1-00327",
-        "ordinal": 12,
+        "m1RequirementId": "CRS-M1-00313",
+        "ordinal": 5,
         "widthBitsExpression": "8..2040",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUR-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-HEADER-FILE-NAME in position 12 with 8 to 2040 bits, repeated per preceding count field; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
-        "predicateZh": "协议文件生成方必须在第 12 个字段位置编码 FIELD-HEADER-FILE-NAME，位宽为 8..2040 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
+        "predicateEn": "The protocol-file producer shall encode FIELD-HEADER-FILE-NAME in position 5 with 8 to 2040 bits, repeated per preceding count field; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
+        "predicateZh": "协议文件生成方必须在第 5 个字段位置编码 FIELD-HEADER-FILE-NAME，位宽为 8..2040 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "",
         "conflictNoteZh": ""
@@ -5214,16 +5004,16 @@
         "id": "FC-LUR-FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
         "protocolFile": "LUR",
         "fieldId": "FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
-        "m1RequirementId": "CRS-M1-00328",
-        "ordinal": 13,
+        "m1RequirementId": "CRS-M1-00314",
+        "ordinal": 6,
         "widthBitsExpression": "8",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "checkLocation": "LUR-FILE-BYTES",
-        "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-PART-NUMBER-NAME-LENGTH in position 13 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
-        "predicateZh": "协议文件生成方必须在第 13 个字段位置编码 FIELD-LOAD-PART-NUMBER-NAME-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-PART-NUMBER-NAME-LENGTH in position 6 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 6 个字段位置编码 FIELD-LOAD-PART-NUMBER-NAME-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "",
         "conflictNoteZh": ""
@@ -5232,6 +5022,258 @@
         "id": "FC-LUR-FIELD-LOAD-PART-NUMBER-NAME",
         "protocolFile": "LUR",
         "fieldId": "FIELD-LOAD-PART-NUMBER-NAME",
+        "m1RequirementId": "CRS-M1-00315",
+        "ordinal": 7,
+        "widthBitsExpression": "8..2040",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
+        "checkLocation": "LUR-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-PART-NUMBER-NAME in position 7 with 8 to 2040 bits, repeated per preceding count field; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
+        "predicateZh": "协议文件生成方必须在第 7 个字段位置编码 FIELD-LOAD-PART-NUMBER-NAME，位宽为 8..2040 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-FILE-LENGTH",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-FILE-LENGTH",
+        "m1RequirementId": "CRS-M1-00316",
+        "ordinal": 1,
+        "widthBitsExpression": "32",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUS-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-FILE-LENGTH in position 1 with 32 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 1 个字段位置编码 FIELD-FILE-LENGTH，位宽为 32 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-PROTOCOL-VERSION",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-PROTOCOL-VERSION",
+        "m1RequirementId": "CRS-M1-00317",
+        "ordinal": 2,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUS-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-PROTOCOL-VERSION in position 2 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 2 个字段位置编码 FIELD-PROTOCOL-VERSION，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-UPLOAD-OPERATION-STATUS-CODE",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-UPLOAD-OPERATION-STATUS-CODE",
+        "m1RequirementId": "CRS-M1-00318",
+        "ordinal": 3,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUS-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-UPLOAD-OPERATION-STATUS-CODE in position 3 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 3 个字段位置编码 FIELD-UPLOAD-OPERATION-STATUS-CODE，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH",
+        "m1RequirementId": "CRS-M1-00319",
+        "ordinal": 4,
+        "widthBitsExpression": "8",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUS-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH in position 4 with 8 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 4 个字段位置编码 FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH，位宽为 8 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-UPLOAD-STATUS-DESCRIPTION",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-UPLOAD-STATUS-DESCRIPTION",
+        "m1RequirementId": "CRS-M1-00320",
+        "ordinal": 5,
+        "widthBitsExpression": "0..2040",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUS-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-UPLOAD-STATUS-DESCRIPTION in position 5 with 0 to 2040 bits, repeated once; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
+        "predicateZh": "协议文件生成方必须在第 5 个字段位置编码 FIELD-UPLOAD-STATUS-DESCRIPTION，位宽为 0..2040 bit，重复范围为 ONCE；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-COUNTER",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-COUNTER",
+        "m1RequirementId": "CRS-M1-00321",
+        "ordinal": 6,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUS-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-COUNTER in position 6 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 6 个字段位置编码 FIELD-COUNTER，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-EXCEPTION-TIMER",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-EXCEPTION-TIMER",
+        "m1RequirementId": "CRS-M1-00322",
+        "ordinal": 7,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUS-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-EXCEPTION-TIMER in position 7 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 7 个字段位置编码 FIELD-EXCEPTION-TIMER，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-ESTIMATED-TIME",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-ESTIMATED-TIME",
+        "m1RequirementId": "CRS-M1-00323",
+        "ordinal": 8,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUS-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-ESTIMATED-TIME in position 8 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 8 个字段位置编码 FIELD-ESTIMATED-TIME，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-LOAD-LIST-RATIO",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-LOAD-LIST-RATIO",
+        "m1RequirementId": "CRS-M1-00324",
+        "ordinal": 9,
+        "widthBitsExpression": "24",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUS-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-LIST-RATIO in position 9 with 24 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 9 个字段位置编码 FIELD-LOAD-LIST-RATIO，位宽为 24 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-NUMBER-OF-HEADER-FILES",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-NUMBER-OF-HEADER-FILES",
+        "m1RequirementId": "CRS-M1-00325",
+        "ordinal": 10,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUS-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-NUMBER-OF-HEADER-FILES in position 10 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 10 个字段位置编码 FIELD-NUMBER-OF-HEADER-FILES，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-HEADER-FILE-NAME-LENGTH",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-HEADER-FILE-NAME-LENGTH",
+        "m1RequirementId": "CRS-M1-00326",
+        "ordinal": 11,
+        "widthBitsExpression": "8",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
+        "checkLocation": "LUS-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-HEADER-FILE-NAME-LENGTH in position 11 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 11 个字段位置编码 FIELD-HEADER-FILE-NAME-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-HEADER-FILE-NAME",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-HEADER-FILE-NAME",
+        "m1RequirementId": "CRS-M1-00327",
+        "ordinal": 12,
+        "widthBitsExpression": "8..2040",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
+        "checkLocation": "LUS-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-HEADER-FILE-NAME in position 12 with 8 to 2040 bits, repeated per preceding count field; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
+        "predicateZh": "协议文件生成方必须在第 12 个字段位置编码 FIELD-HEADER-FILE-NAME，位宽为 8..2040 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
+        "m1RequirementId": "CRS-M1-00328",
+        "ordinal": 13,
+        "widthBitsExpression": "8",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-PRECEDING-COUNT-FIELD",
+        "checkLocation": "LUS-FILE-BYTES",
+        "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-PART-NUMBER-NAME-LENGTH in position 13 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
+        "predicateZh": "协议文件生成方必须在第 13 个字段位置编码 FIELD-LOAD-PART-NUMBER-NAME-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUS-FIELD-LOAD-PART-NUMBER-NAME",
+        "protocolFile": "LUS",
+        "fieldId": "FIELD-LOAD-PART-NUMBER-NAME",
         "m1RequirementId": "CRS-M1-00329",
         "ordinal": 14,
         "widthBitsExpression": "8..2040",
@@ -5239,7 +5281,7 @@
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "checkLocation": "LUR-FILE-BYTES",
+        "checkLocation": "LUS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-PART-NUMBER-NAME in position 14 with 8 to 2040 bits, repeated per preceding count field; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 14 个字段位置编码 FIELD-LOAD-PART-NUMBER-NAME，位宽为 8..2040 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
         "m1FileIdentityConflict": false,
@@ -5247,8 +5289,8 @@
         "conflictNoteZh": ""
       },
       {
-        "id": "FC-LUR-FIELD-LOAD-RATIO",
-        "protocolFile": "LUR",
+        "id": "FC-LUS-FIELD-LOAD-RATIO",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-RATIO",
         "m1RequirementId": "CRS-M1-00330",
         "ordinal": 15,
@@ -5257,7 +5299,7 @@
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "checkLocation": "LUR-FILE-BYTES",
+        "checkLocation": "LUS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-RATIO in position 15 with 24 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 15 个字段位置编码 FIELD-LOAD-RATIO，位宽为 24 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
         "m1FileIdentityConflict": false,
@@ -5265,8 +5307,8 @@
         "conflictNoteZh": ""
       },
       {
-        "id": "FC-LUR-FIELD-LOAD-STATUS",
-        "protocolFile": "LUR",
+        "id": "FC-LUS-FIELD-LOAD-STATUS",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-STATUS",
         "m1RequirementId": "CRS-M1-00331",
         "ordinal": 16,
@@ -5275,7 +5317,7 @@
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "checkLocation": "LUR-FILE-BYTES",
+        "checkLocation": "LUS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-STATUS in position 16 with 16 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 16 个字段位置编码 FIELD-LOAD-STATUS，位宽为 16 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
         "m1FileIdentityConflict": false,
@@ -5283,8 +5325,8 @@
         "conflictNoteZh": ""
       },
       {
-        "id": "FC-LUR-FIELD-LOAD-STATUS-DESCRIPTION-LENGTH",
-        "protocolFile": "LUR",
+        "id": "FC-LUS-FIELD-LOAD-STATUS-DESCRIPTION-LENGTH",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-STATUS-DESCRIPTION-LENGTH",
         "m1RequirementId": "CRS-M1-00332",
         "ordinal": 17,
@@ -5293,7 +5335,7 @@
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "checkLocation": "LUR-FILE-BYTES",
+        "checkLocation": "LUS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-STATUS-DESCRIPTION-LENGTH in position 17 with 8 bits, repeated per preceding count field; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 17 个字段位置编码 FIELD-LOAD-STATUS-DESCRIPTION-LENGTH，位宽为 8 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
         "m1FileIdentityConflict": false,
@@ -5301,8 +5343,8 @@
         "conflictNoteZh": ""
       },
       {
-        "id": "FC-LUR-FIELD-LOAD-STATUS-DESCRIPTION",
-        "protocolFile": "LUR",
+        "id": "FC-LUS-FIELD-LOAD-STATUS-DESCRIPTION",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-STATUS-DESCRIPTION",
         "m1RequirementId": "CRS-M1-00333",
         "ordinal": 18,
@@ -5311,7 +5353,7 @@
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
-        "checkLocation": "LUR-FILE-BYTES",
+        "checkLocation": "LUS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-LOAD-STATUS-DESCRIPTION in position 18 with 0 to 2040 bits, repeated per preceding count field; termination is ZERO-TERMINATED-PER-SECTION-6.4.",
         "predicateZh": "协议文件生成方必须在第 18 个字段位置编码 FIELD-LOAD-STATUS-DESCRIPTION，位宽为 0..2040 bit，重复范围为 PER-PRECEDING-COUNT-FIELD；终止规则为 ZERO-TERMINATED-PER-SECTION-6.4。",
         "m1FileIdentityConflict": false,
@@ -9577,7 +9619,7 @@
       "kind": "MODELED",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "T_UPL_FILE_XFER"
+        "T_UPL_LUR_XFER"
       ]
     },
     {
@@ -11598,7 +11640,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUI-FIELD-FILE-LENGTH"
+        "FC-LUR-FIELD-FILE-LENGTH"
       ]
     },
     {
@@ -11610,7 +11652,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUI-FIELD-PROTOCOL-VERSION"
+        "FC-LUR-FIELD-PROTOCOL-VERSION"
       ]
     },
     {
@@ -11622,7 +11664,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUI-FIELD-NUMBER-OF-HEADER-FILES"
+        "FC-LUR-FIELD-NUMBER-OF-HEADER-FILES"
       ]
     },
     {
@@ -11634,7 +11676,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUI-FIELD-HEADER-FILE-NAME-LENGTH"
+        "FC-LUR-FIELD-HEADER-FILE-NAME-LENGTH"
       ]
     },
     {
@@ -11646,7 +11688,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUI-FIELD-HEADER-FILE-NAME"
+        "FC-LUR-FIELD-HEADER-FILE-NAME"
       ]
     },
     {
@@ -11658,7 +11700,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUI-FIELD-LOAD-PART-NUMBER-NAME-LENGTH"
+        "FC-LUR-FIELD-LOAD-PART-NUMBER-NAME-LENGTH"
       ]
     },
     {
@@ -11670,7 +11712,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUI-FIELD-LOAD-PART-NUMBER-NAME"
+        "FC-LUR-FIELD-LOAD-PART-NUMBER-NAME"
       ]
     },
     {
@@ -11682,7 +11724,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-FILE-LENGTH"
+        "FC-LUS-FIELD-FILE-LENGTH"
       ]
     },
     {
@@ -11694,7 +11736,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-PROTOCOL-VERSION"
+        "FC-LUS-FIELD-PROTOCOL-VERSION"
       ]
     },
     {
@@ -11706,7 +11748,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-UPLOAD-OPERATION-STATUS-CODE"
+        "FC-LUS-FIELD-UPLOAD-OPERATION-STATUS-CODE"
       ]
     },
     {
@@ -11718,7 +11760,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH"
+        "FC-LUS-FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH"
       ]
     },
     {
@@ -11730,7 +11772,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-UPLOAD-STATUS-DESCRIPTION"
+        "FC-LUS-FIELD-UPLOAD-STATUS-DESCRIPTION"
       ]
     },
     {
@@ -11742,7 +11784,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-COUNTER"
+        "FC-LUS-FIELD-COUNTER"
       ]
     },
     {
@@ -11754,7 +11796,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-EXCEPTION-TIMER",
+        "FC-LUS-FIELD-EXCEPTION-TIMER",
         "TIM-CRS-M1-00322",
         "CLK_EXCEPTION"
       ]
@@ -11768,7 +11810,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-ESTIMATED-TIME"
+        "FC-LUS-FIELD-ESTIMATED-TIME"
       ]
     },
     {
@@ -11780,7 +11822,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-LOAD-LIST-RATIO"
+        "FC-LUS-FIELD-LOAD-LIST-RATIO"
       ]
     },
     {
@@ -11792,7 +11834,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-NUMBER-OF-HEADER-FILES"
+        "FC-LUS-FIELD-NUMBER-OF-HEADER-FILES"
       ]
     },
     {
@@ -11804,7 +11846,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-HEADER-FILE-NAME-LENGTH"
+        "FC-LUS-FIELD-HEADER-FILE-NAME-LENGTH"
       ]
     },
     {
@@ -11816,7 +11858,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-HEADER-FILE-NAME"
+        "FC-LUS-FIELD-HEADER-FILE-NAME"
       ]
     },
     {
@@ -11828,7 +11870,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-LOAD-PART-NUMBER-NAME-LENGTH"
+        "FC-LUS-FIELD-LOAD-PART-NUMBER-NAME-LENGTH"
       ]
     },
     {
@@ -11840,7 +11882,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-LOAD-PART-NUMBER-NAME"
+        "FC-LUS-FIELD-LOAD-PART-NUMBER-NAME"
       ]
     },
     {
@@ -11852,7 +11894,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-LOAD-RATIO"
+        "FC-LUS-FIELD-LOAD-RATIO"
       ]
     },
     {
@@ -11864,7 +11906,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-LOAD-STATUS"
+        "FC-LUS-FIELD-LOAD-STATUS"
       ]
     },
     {
@@ -11876,7 +11918,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-LOAD-STATUS-DESCRIPTION-LENGTH"
+        "FC-LUS-FIELD-LOAD-STATUS-DESCRIPTION-LENGTH"
       ]
     },
     {
@@ -11888,7 +11930,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "FC-LUR-FIELD-LOAD-STATUS-DESCRIPTION"
+        "FC-LUS-FIELD-LOAD-STATUS-DESCRIPTION"
       ]
     },
     {
@@ -14338,12 +14380,12 @@
       "id": "TR-CRS-M1-00143-0165",
       "requirementId": "CRS-M1-00143",
       "targetKind": "TRANSITION",
-      "targetId": "T_UPL_FILE_XFER",
+      "targetId": "T_UPL_LUR_XFER",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "SHOULD",
-      "rationaleCode": "UPLOAD file-thread obligation after LUR.",
-      "rationaleEn": "UPLOAD file-thread obligation after LUR.",
-      "rationaleZh": "LUR 之后的 UPLOAD 文件线程义务。"
+      "rationaleCode": "UPLOAD list-file obligation on the LUR stage.",
+      "rationaleEn": "UPLOAD list-file obligation on the LUR stage.",
+      "rationaleZh": "UPLOAD 列表文件义务落在 LUR 阶段。"
     },
     {
       "id": "TR-CRS-M1-00144-0166",
@@ -16406,83 +16448,6 @@
       "id": "TR-CRS-M1-00309-0353",
       "requirementId": "CRS-M1-00309",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUI-FIELD-FILE-LENGTH",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUI-FIELD-FILE-LENGTH at the named protocol file bytes.",
-      "rationaleEn": "Field predicate FC-LUI-FIELD-FILE-LENGTH at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUI-FIELD-FILE-LENGTH。"
-    },
-    {
-      "id": "TR-CRS-M1-00310-0354",
-      "requirementId": "CRS-M1-00310",
-      "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUI-FIELD-PROTOCOL-VERSION",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUI-FIELD-PROTOCOL-VERSION at the named protocol file bytes.",
-      "rationaleEn": "Field predicate FC-LUI-FIELD-PROTOCOL-VERSION at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUI-FIELD-PROTOCOL-VERSION。"
-    },
-    {
-      "id": "TR-CRS-M1-00311-0355",
-      "requirementId": "CRS-M1-00311",
-      "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUI-FIELD-NUMBER-OF-HEADER-FILES",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUI-FIELD-NUMBER-OF-HEADER-FILES at the named protocol file b",
-      "rationaleEn": "Field predicate FC-LUI-FIELD-NUMBER-OF-HEADER-FILES at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUI-FIELD-NUMBER-OF-HEADER-FILES。"
-    },
-    {
-      "id": "TR-CRS-M1-00312-0356",
-      "requirementId": "CRS-M1-00312",
-      "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUI-FIELD-HEADER-FILE-NAME-LENGTH",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUI-FIELD-HEADER-FILE-NAME-LENGTH at the named protocol file ",
-      "rationaleEn": "Field predicate FC-LUI-FIELD-HEADER-FILE-NAME-LENGTH at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUI-FIELD-HEADER-FILE-NAME-LENGTH。"
-    },
-    {
-      "id": "TR-CRS-M1-00313-0357",
-      "requirementId": "CRS-M1-00313",
-      "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUI-FIELD-HEADER-FILE-NAME",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUI-FIELD-HEADER-FILE-NAME at the named protocol file bytes.",
-      "rationaleEn": "Field predicate FC-LUI-FIELD-HEADER-FILE-NAME at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUI-FIELD-HEADER-FILE-NAME。"
-    },
-    {
-      "id": "TR-CRS-M1-00314-0358",
-      "requirementId": "CRS-M1-00314",
-      "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUI-FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUI-FIELD-LOAD-PART-NUMBER-NAME-LENGTH at the named protocol ",
-      "rationaleEn": "Field predicate FC-LUI-FIELD-LOAD-PART-NUMBER-NAME-LENGTH at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUI-FIELD-LOAD-PART-NUMBER-NAME-LENGTH。"
-    },
-    {
-      "id": "TR-CRS-M1-00315-0359",
-      "requirementId": "CRS-M1-00315",
-      "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUI-FIELD-LOAD-PART-NUMBER-NAME",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUI-FIELD-LOAD-PART-NUMBER-NAME at the named protocol file by",
-      "rationaleEn": "Field predicate FC-LUI-FIELD-LOAD-PART-NUMBER-NAME at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUI-FIELD-LOAD-PART-NUMBER-NAME。"
-    },
-    {
-      "id": "TR-CRS-M1-00316-0360",
-      "requirementId": "CRS-M1-00316",
-      "targetKind": "FIELD-CONSTRAINT",
       "targetId": "FC-LUR-FIELD-FILE-LENGTH",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
@@ -16491,8 +16456,8 @@
       "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-FILE-LENGTH。"
     },
     {
-      "id": "TR-CRS-M1-00317-0361",
-      "requirementId": "CRS-M1-00317",
+      "id": "TR-CRS-M1-00310-0354",
+      "requirementId": "CRS-M1-00310",
       "targetKind": "FIELD-CONSTRAINT",
       "targetId": "FC-LUR-FIELD-PROTOCOL-VERSION",
       "polarity": "AFFIRMATIVE",
@@ -16502,59 +16467,136 @@
       "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-PROTOCOL-VERSION。"
     },
     {
+      "id": "TR-CRS-M1-00311-0355",
+      "requirementId": "CRS-M1-00311",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUR-FIELD-NUMBER-OF-HEADER-FILES",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Field predicate FC-LUR-FIELD-NUMBER-OF-HEADER-FILES at the named protocol file b",
+      "rationaleEn": "Field predicate FC-LUR-FIELD-NUMBER-OF-HEADER-FILES at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-NUMBER-OF-HEADER-FILES。"
+    },
+    {
+      "id": "TR-CRS-M1-00312-0356",
+      "requirementId": "CRS-M1-00312",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUR-FIELD-HEADER-FILE-NAME-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Field predicate FC-LUR-FIELD-HEADER-FILE-NAME-LENGTH at the named protocol file ",
+      "rationaleEn": "Field predicate FC-LUR-FIELD-HEADER-FILE-NAME-LENGTH at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-HEADER-FILE-NAME-LENGTH。"
+    },
+    {
+      "id": "TR-CRS-M1-00313-0357",
+      "requirementId": "CRS-M1-00313",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUR-FIELD-HEADER-FILE-NAME",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Field predicate FC-LUR-FIELD-HEADER-FILE-NAME at the named protocol file bytes.",
+      "rationaleEn": "Field predicate FC-LUR-FIELD-HEADER-FILE-NAME at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-HEADER-FILE-NAME。"
+    },
+    {
+      "id": "TR-CRS-M1-00314-0358",
+      "requirementId": "CRS-M1-00314",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUR-FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Field predicate FC-LUR-FIELD-LOAD-PART-NUMBER-NAME-LENGTH at the named protocol ",
+      "rationaleEn": "Field predicate FC-LUR-FIELD-LOAD-PART-NUMBER-NAME-LENGTH at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-LOAD-PART-NUMBER-NAME-LENGTH。"
+    },
+    {
+      "id": "TR-CRS-M1-00315-0359",
+      "requirementId": "CRS-M1-00315",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUR-FIELD-LOAD-PART-NUMBER-NAME",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Field predicate FC-LUR-FIELD-LOAD-PART-NUMBER-NAME at the named protocol file by",
+      "rationaleEn": "Field predicate FC-LUR-FIELD-LOAD-PART-NUMBER-NAME at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-LOAD-PART-NUMBER-NAME。"
+    },
+    {
+      "id": "TR-CRS-M1-00316-0360",
+      "requirementId": "CRS-M1-00316",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUS-FIELD-FILE-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Field predicate FC-LUS-FIELD-FILE-LENGTH at the named protocol file bytes.",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-FILE-LENGTH at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-FILE-LENGTH。"
+    },
+    {
+      "id": "TR-CRS-M1-00317-0361",
+      "requirementId": "CRS-M1-00317",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUS-FIELD-PROTOCOL-VERSION",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Field predicate FC-LUS-FIELD-PROTOCOL-VERSION at the named protocol file bytes.",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-PROTOCOL-VERSION at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-PROTOCOL-VERSION。"
+    },
+    {
       "id": "TR-CRS-M1-00318-0362",
       "requirementId": "CRS-M1-00318",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-UPLOAD-OPERATION-STATUS-CODE",
+      "targetId": "FC-LUS-FIELD-UPLOAD-OPERATION-STATUS-CODE",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-UPLOAD-OPERATION-STATUS-CODE at the named protocol ",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-UPLOAD-OPERATION-STATUS-CODE at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-UPLOAD-OPERATION-STATUS-CODE。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-UPLOAD-OPERATION-STATUS-CODE at the named protocol ",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-UPLOAD-OPERATION-STATUS-CODE at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-UPLOAD-OPERATION-STATUS-CODE。"
     },
     {
       "id": "TR-CRS-M1-00319-0363",
       "requirementId": "CRS-M1-00319",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH",
+      "targetId": "FC-LUS-FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH at the named proto",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH at the named proto",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH。"
     },
     {
       "id": "TR-CRS-M1-00320-0364",
       "requirementId": "CRS-M1-00320",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-UPLOAD-STATUS-DESCRIPTION",
+      "targetId": "FC-LUS-FIELD-UPLOAD-STATUS-DESCRIPTION",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-UPLOAD-STATUS-DESCRIPTION at the named protocol fil",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-UPLOAD-STATUS-DESCRIPTION at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-UPLOAD-STATUS-DESCRIPTION。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-UPLOAD-STATUS-DESCRIPTION at the named protocol fil",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-UPLOAD-STATUS-DESCRIPTION at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-UPLOAD-STATUS-DESCRIPTION。"
     },
     {
       "id": "TR-CRS-M1-00321-0365",
       "requirementId": "CRS-M1-00321",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-COUNTER",
+      "targetId": "FC-LUS-FIELD-COUNTER",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-COUNTER at the named protocol file bytes.",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-COUNTER at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-COUNTER。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-COUNTER at the named protocol file bytes.",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-COUNTER at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-COUNTER。"
     },
     {
       "id": "TR-CRS-M1-00322-0366",
       "requirementId": "CRS-M1-00322",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-EXCEPTION-TIMER",
+      "targetId": "FC-LUS-FIELD-EXCEPTION-TIMER",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-EXCEPTION-TIMER at the named protocol file bytes.",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-EXCEPTION-TIMER at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-EXCEPTION-TIMER。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-EXCEPTION-TIMER at the named protocol file bytes.",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-EXCEPTION-TIMER at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-EXCEPTION-TIMER。"
     },
     {
       "id": "TR-CRS-M1-00322-0367",
@@ -16582,122 +16624,122 @@
       "id": "TR-CRS-M1-00323-0369",
       "requirementId": "CRS-M1-00323",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-ESTIMATED-TIME",
+      "targetId": "FC-LUS-FIELD-ESTIMATED-TIME",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-ESTIMATED-TIME at the named protocol file bytes.",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-ESTIMATED-TIME at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-ESTIMATED-TIME。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-ESTIMATED-TIME at the named protocol file bytes.",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-ESTIMATED-TIME at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-ESTIMATED-TIME。"
     },
     {
       "id": "TR-CRS-M1-00324-0370",
       "requirementId": "CRS-M1-00324",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-LOAD-LIST-RATIO",
+      "targetId": "FC-LUS-FIELD-LOAD-LIST-RATIO",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-LOAD-LIST-RATIO at the named protocol file bytes.",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-LOAD-LIST-RATIO at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-LOAD-LIST-RATIO。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-LOAD-LIST-RATIO at the named protocol file bytes.",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-LOAD-LIST-RATIO at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-LOAD-LIST-RATIO。"
     },
     {
       "id": "TR-CRS-M1-00325-0371",
       "requirementId": "CRS-M1-00325",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-NUMBER-OF-HEADER-FILES",
+      "targetId": "FC-LUS-FIELD-NUMBER-OF-HEADER-FILES",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-NUMBER-OF-HEADER-FILES at the named protocol file b",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-NUMBER-OF-HEADER-FILES at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-NUMBER-OF-HEADER-FILES。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-NUMBER-OF-HEADER-FILES at the named protocol file b",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-NUMBER-OF-HEADER-FILES at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-NUMBER-OF-HEADER-FILES。"
     },
     {
       "id": "TR-CRS-M1-00326-0372",
       "requirementId": "CRS-M1-00326",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-HEADER-FILE-NAME-LENGTH",
+      "targetId": "FC-LUS-FIELD-HEADER-FILE-NAME-LENGTH",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-HEADER-FILE-NAME-LENGTH at the named protocol file ",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-HEADER-FILE-NAME-LENGTH at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-HEADER-FILE-NAME-LENGTH。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-HEADER-FILE-NAME-LENGTH at the named protocol file ",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-HEADER-FILE-NAME-LENGTH at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-HEADER-FILE-NAME-LENGTH。"
     },
     {
       "id": "TR-CRS-M1-00327-0373",
       "requirementId": "CRS-M1-00327",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-HEADER-FILE-NAME",
+      "targetId": "FC-LUS-FIELD-HEADER-FILE-NAME",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-HEADER-FILE-NAME at the named protocol file bytes.",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-HEADER-FILE-NAME at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-HEADER-FILE-NAME。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-HEADER-FILE-NAME at the named protocol file bytes.",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-HEADER-FILE-NAME at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-HEADER-FILE-NAME。"
     },
     {
       "id": "TR-CRS-M1-00328-0374",
       "requirementId": "CRS-M1-00328",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
+      "targetId": "FC-LUS-FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-LOAD-PART-NUMBER-NAME-LENGTH at the named protocol ",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-LOAD-PART-NUMBER-NAME-LENGTH at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-LOAD-PART-NUMBER-NAME-LENGTH。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-LOAD-PART-NUMBER-NAME-LENGTH at the named protocol ",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-LOAD-PART-NUMBER-NAME-LENGTH at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-LOAD-PART-NUMBER-NAME-LENGTH。"
     },
     {
       "id": "TR-CRS-M1-00329-0375",
       "requirementId": "CRS-M1-00329",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-LOAD-PART-NUMBER-NAME",
+      "targetId": "FC-LUS-FIELD-LOAD-PART-NUMBER-NAME",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-LOAD-PART-NUMBER-NAME at the named protocol file by",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-LOAD-PART-NUMBER-NAME at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-LOAD-PART-NUMBER-NAME。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-LOAD-PART-NUMBER-NAME at the named protocol file by",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-LOAD-PART-NUMBER-NAME at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-LOAD-PART-NUMBER-NAME。"
     },
     {
       "id": "TR-CRS-M1-00330-0376",
       "requirementId": "CRS-M1-00330",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-LOAD-RATIO",
+      "targetId": "FC-LUS-FIELD-LOAD-RATIO",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-LOAD-RATIO at the named protocol file bytes.",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-LOAD-RATIO at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-LOAD-RATIO。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-LOAD-RATIO at the named protocol file bytes.",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-LOAD-RATIO at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-LOAD-RATIO。"
     },
     {
       "id": "TR-CRS-M1-00331-0377",
       "requirementId": "CRS-M1-00331",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-LOAD-STATUS",
+      "targetId": "FC-LUS-FIELD-LOAD-STATUS",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-LOAD-STATUS at the named protocol file bytes.",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-LOAD-STATUS at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-LOAD-STATUS。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-LOAD-STATUS at the named protocol file bytes.",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-LOAD-STATUS at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-LOAD-STATUS。"
     },
     {
       "id": "TR-CRS-M1-00332-0378",
       "requirementId": "CRS-M1-00332",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-LOAD-STATUS-DESCRIPTION-LENGTH",
+      "targetId": "FC-LUS-FIELD-LOAD-STATUS-DESCRIPTION-LENGTH",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-LOAD-STATUS-DESCRIPTION-LENGTH at the named protoco",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-LOAD-STATUS-DESCRIPTION-LENGTH at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-LOAD-STATUS-DESCRIPTION-LENGTH。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-LOAD-STATUS-DESCRIPTION-LENGTH at the named protoco",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-LOAD-STATUS-DESCRIPTION-LENGTH at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-LOAD-STATUS-DESCRIPTION-LENGTH。"
     },
     {
       "id": "TR-CRS-M1-00333-0379",
       "requirementId": "CRS-M1-00333",
       "targetKind": "FIELD-CONSTRAINT",
-      "targetId": "FC-LUR-FIELD-LOAD-STATUS-DESCRIPTION",
+      "targetId": "FC-LUS-FIELD-LOAD-STATUS-DESCRIPTION",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Field predicate FC-LUR-FIELD-LOAD-STATUS-DESCRIPTION at the named protocol file ",
-      "rationaleEn": "Field predicate FC-LUR-FIELD-LOAD-STATUS-DESCRIPTION at the named protocol file bytes.",
-      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUR-FIELD-LOAD-STATUS-DESCRIPTION。"
+      "rationaleCode": "Field predicate FC-LUS-FIELD-LOAD-STATUS-DESCRIPTION at the named protocol file ",
+      "rationaleEn": "Field predicate FC-LUS-FIELD-LOAD-STATUS-DESCRIPTION at the named protocol file bytes.",
+      "rationaleZh": "在具名协议文件字节上应用字段谓词 FC-LUS-FIELD-LOAD-STATUS-DESCRIPTION。"
     },
     {
       "id": "TR-CRS-M1-00334-0380",
@@ -17798,17 +17840,18 @@
   "actions": [
     {
       "id": "A-1",
-      "status": "OPEN-M1-CORRECTION",
+      "status": "EXECUTED-SUCCESSOR-M1-DELTA-PENDING-RG1",
       "ownerRole": "INCREMENTAL-RG1",
       "deadlineGate": "PROFILE-MODEL-REFINEMENT-GATE",
       "evidence": [
         "REF-A1-00143-BLOCKED-BY-FILE-IDENTITY",
         "REF-A1-00315-BLOCKED-BY-FILE-IDENTITY",
         "REF-SEQ-00365-WRQ-ACTOR",
-        "CR-2026-009"
+        "CR-2026-009",
+        "CR-2026-011"
       ],
-      "noteEn": "6.4.4 LUI/LUR identity and the LUR WRQ actor remain OPEN-M1-CORRECTION; CR-2026-009 is the authorization request, not closure.",
-      "noteZh": "6.4.4 的 LUI/LUR 身份与 LUR WRQ 参与者仍为 OPEN-M1-CORRECTION；CR-2026-009 是授权请求，不是关闭。"
+      "noteEn": "CR-2026-011 executed the successor identities (6.4.4 LUR, 6.4.5 LUS, WRQ actor DATA-LOADER). Independent RG1 still required.",
+      "noteZh": "CR-2026-011 已执行后继身份（6.4.4 为 LUR、6.4.5 为 LUS、WRQ 参与者为 DATA-LOADER）。仍须独立 RG1。"
     },
     {
       "id": "A-2",
@@ -17893,15 +17936,16 @@
     },
     {
       "id": "NET-ISSUE-EDITION",
-      "status": "OPEN-PENDING-INDEPENDENT-ACCEPTANCE",
+      "status": "ACCEPTED-CURRENT-EDITION-P3-1-AFDX-DEFERRED",
       "ownerRole": "INDEPENDENT-RG0",
       "deadlineGate": "PROFILE-MODEL-REFINEMENT-GATE",
       "evidence": [
         "REF-EDITION-P3-1",
-        "REF-EDITION-P7-BASE"
+        "REF-EDITION-P7-BASE",
+        "CR-2026-009"
       ],
-      "noteEn": "Historical editions remain conditional inputs.",
-      "noteZh": "历史版次仍为有条件输入。"
+      "noteEn": "Owner accepted 664P3-1 as this M2 input edition; 664P7 remains recorded and AFDX stays unselected.",
+      "noteZh": "所有者接受 664P3-1 作为本 M2 输入版次；664P7 保持已登记且 AFDX 未选。"
     },
     {
       "id": "RFC1122/IPv4/UDP",
@@ -17969,15 +18013,27 @@
     },
     {
       "id": "M1-FILE-IDENTITY-6-4-4",
-      "status": "OPEN-M1-CORRECTION",
+      "status": "CLOSED-BY-SUCCESSOR-M1-DELTA",
       "ownerRole": "INCREMENTAL-RG1",
       "deadlineGate": "PROFILE-MODEL-REFINEMENT-GATE",
       "evidence": [
         "REF-A1-00143-BLOCKED-BY-FILE-IDENTITY",
-        "CR-2026-009"
+        "CR-2026-009",
+        "CR-2026-011"
       ],
-      "noteEn": "Stop-the-line M1 LUI/LUR identity correction; M2 does not rewrite M1. CR-2026-009 requests successor-input authorization.",
-      "noteZh": "停线等待 M1 LUI/LUR 身份纠正；M2 不改写 M1。CR-2026-009 请求后继输入授权。"
+      "noteEn": "Successor M1 delta executed under CR-2026-011. Frozen merge bytes stay unchanged as a preserved record. Independent RG1 still required.",
+      "noteZh": "后继 M1 增量已在 CR-2026-011 下执行。冻结合并字节作为保留记录不变。仍须独立 RG1。"
+    },
+    {
+      "id": "LUI-FIELD-TABLE-GAP",
+      "status": "KNOWN-GAP-NO-DEDICATED-TABLE",
+      "ownerRole": "M1-EXPANDED",
+      "deadlineGate": "EXECUTABLE-FOUNDATION-GATE",
+      "evidence": [
+        "CR-2026-011"
+      ],
+      "noteEn": "After 6.4.4→LUR there is no dedicated LUI field table. LUI remains a sequence file. Fields are not invented.",
+      "noteZh": "6.4.4 改为 LUR 后没有专用 LUI 字段表。LUI 仍是序列文件。不编造字段。"
     }
   ],
   "analysisScope": {
@@ -17996,7 +18052,7 @@
       "timed reachability",
       "implementation conformance",
       "network-stack conformance",
-      "M1 6.4.4 file identity"
+      "LUI field-table predicates"
     ]
   },
   "discreteWitnesses": [
@@ -18377,9 +18433,9 @@
   "blockingInputs": [
     {
       "id": "M1-FILE-IDENTITY-6-4-4",
-      "status": "OPEN-M1-CORRECTION",
+      "status": "CLOSED-BY-SUCCESSOR-M1-DELTA",
       "authorizationRequest": "CR-2026-009",
-      "blocksFinalApproval": true,
+      "blocksFinalApproval": false,
       "requirementIds": [
         "CRS-M1-00143",
         "CRS-M1-00309",
@@ -18390,28 +18446,28 @@
         "CRS-M1-00314",
         "CRS-M1-00315"
       ],
-      "noteEn": "Successor M1 delta only after user authorization. Frozen merge bytes stay unchanged.",
-      "noteZh": "仅在用户授权后做后继 M1 增量。冻结合并字节保持不变。"
+      "noteEn": "Successor M1 delta executed under CR-2026-011. Frozen merge bytes stay unchanged. Independent RG1 still required.",
+      "noteZh": "后继 M1 增量已在 CR-2026-011 下执行。冻结合并字节不变。仍须独立 RG1。"
     },
     {
       "id": "SEQ-LUR-WRQ-ACTOR",
-      "status": "OPEN-M1-CORRECTION",
+      "status": "CLOSED-BY-SUCCESSOR-M1-DELTA",
       "authorizationRequest": "CR-2026-009",
-      "blocksFinalApproval": true,
+      "blocksFinalApproval": false,
       "requirementIds": [
         "CRS-M1-00365"
       ],
-      "noteEn": "M2 follows visual TFTP-write direction; frozen M1 actor tuple is not rewritten.",
-      "noteZh": "M2 遵循目视 TFTP 写方向；不改写冻结 M1 参与者元组。"
+      "noteEn": "Successor M1 actor is DATA-LOADER; receiver remains DLA. Frozen merge bytes stay unchanged.",
+      "noteZh": "后继 M1 参与者为 DATA-LOADER；receiver 保持 DLA。冻结合并字节不变。"
     },
     {
       "id": "NET-ISSUE-EDITION",
-      "status": "OPEN-PENDING-INDEPENDENT-ACCEPTANCE",
-      "authorizationRequest": "INDEPENDENT-RG0",
-      "blocksFinalApproval": true,
+      "status": "ACCEPTED-CURRENT-EDITION-P3-1-AFDX-DEFERRED",
+      "authorizationRequest": "CR-2026-009",
+      "blocksFinalApproval": false,
       "requirementIds": [],
-      "noteEn": "P3-1 / P7 historical editions remain conditional inputs. OPEN text is not acceptance.",
-      "noteZh": "P3-1／P7 历史版次仍为有条件输入。OPEN 文字不是接受。"
+      "noteEn": "Owner accepted 664P3-1 as this M2 input edition; 664P7 remains recorded and AFDX stays unselected.",
+      "noteZh": "所有者接受 664P3-1 作为本 M2 输入版次；664P7 保持已登记且 AFDX 未选。"
     }
   ],
   "reviewControl": {
@@ -18431,14 +18487,14 @@
     "transitionCount": 65,
     "timingCount": 23,
     "fieldConstraintCount": 52,
-    "dispositionsFingerprint": "5947f1d1e800aebe4815b25793a630347dd3672a817936226442be8494f5b260",
-    "modelFingerprint": "50427b113846df4c6f0b5c162292bd3c8e57e0022a658bef84f9ee96eea8ef75",
+    "dispositionsFingerprint": "99eec40d08e16c9c2a72ebba8ee4845fe843d34c1879f3c43383aa7eabf040c1",
+    "modelFingerprint": "e3cd631efdb7b54c2808ebf07a76062204553a3bc69326a25dc185acd29a5cfc",
     "timingFingerprint": "ccf8ed38a7cfd18363b57f72bf2d51bcbc7e5c91e1a48f83c84393b1e1c36e9c",
-    "inputFingerprint": "4ce718d02e87557ee69fd7f256b95988b4d862364fc0459eeaf23210d13808df",
-    "refinementFingerprint": "1c30dc4d11c0ed8a97a2bf9be3e86648591c5714367f63e753de32f95e3e8cfe",
-    "actionFingerprint": "e66b45050a7c81f3df5770f92dd08df3b71cfeac99830c15b0433692cce092ba",
+    "inputFingerprint": "a475a4f01a60ec964dd6298ce96afe4f9274bbaacf992153a2e1ca576a674524",
+    "refinementFingerprint": "dc3d3d6f35941269c2e58f442ee22d8c7156ef8c14e41c4cc83e322ce03da8f3",
+    "actionFingerprint": "2d1b9879bcbb89ba37a4ebaad3f277b2b6d2132eb95484e88b76d3ee8a1a64aa",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
     "witnessFingerprint": "3de3d3bf3b1b9c6eb9ee0e6ab65234ec5957762185e51093aeb10534986e6643",
-    "blockingFingerprint": "0b80ffbdda35ac7936a73a5605ea845e5b9c5e2ba9698fccfde33afdf980c6d3"
+    "blockingFingerprint": "2f63ff0be1763c5cfd867b3aba34d024b6492c0448517d1d5f1a9be19b00074c"
   }
 }

@@ -217,6 +217,26 @@
           "items": { "$ref": "#/$defs/inputItem" }
         },
         "m1PendingFieldsUnchanged": { "type": "boolean" },
+        "successorDelta": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "changeRequest",
+            "authorizationRequest",
+            "doesNotTransplantFrozenApproval",
+            "preservedFrozenInputs"
+          ],
+          "properties": {
+            "changeRequest": { "$ref": "#/$defs/nonEmptyString" },
+            "authorizationRequest": { "$ref": "#/$defs/nonEmptyString" },
+            "doesNotTransplantFrozenApproval": { "type": "boolean" },
+            "preservedFrozenInputs": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/inputItem" }
+            }
+          }
+        },
         "m1NetIssueEditionSnapshot": {
           "type": "object",
           "required": ["id", "blocksM1Approval", "interpretationEn", "interpretationZh"],
