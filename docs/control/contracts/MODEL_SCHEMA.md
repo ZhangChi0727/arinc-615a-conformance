@@ -69,7 +69,11 @@ relation, partition, polarity, graph connectivity, sequence constraints, restric
 expressions, capability guards and fingerprint refresh.
 It cannot prove proprietary source fidelity, timed reachability or
 implementation conformance. Static untimed connectivity is limited to the
-declared graph. OPEN-M1-CORRECTION keeps blocksFinalApproval true.
+declared graph. OPEN-M1-CORRECTION keeps blocksFinalApproval true. After a
+successor M1 delta authorized by CR-2026-009 and executed under CR-2026-011,
+those identities may be CLOSED-BY-SUCCESSOR-M1-DELTA; reviewControl still
+blocks final approval until independent RG1 accepts. Successor inputAcceptance
+does not transplant the frozen merge approval.
 
 ## Non-claims
 
@@ -132,7 +136,9 @@ WAIT 重试是不得早于的下界。LUR WRQ 要求仅由 LUS 0001 建立的会
 来源方程结构、分区、极性、图连通、顺序约束、受限
 表达式、能力守卫和指纹刷新。不能证明专有来源忠实度、定时可达或实现符合性。
 静态无时时连通仅限于已声明图。OPEN-M1-CORRECTION 使 blocksFinalApproval 保持
-为真。
+为真。CR-2026-009 授权并由 CR-2026-011 执行的后继 M1 增量可将这些身份记为
+CLOSED-BY-SUCCESSOR-M1-DELTA；reviewControl 在独立 RG1 接受前仍阻止最终批准。
+后继 inputAcceptance 不移植冻结合并批准。
 
 ## 非主张
 

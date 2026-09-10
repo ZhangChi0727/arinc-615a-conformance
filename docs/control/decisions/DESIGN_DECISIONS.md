@@ -465,15 +465,15 @@ authorization request.
 
 **Scope:** Input-correction authorization; not an M1 rewrite and not M2 final approval.
 
-**Status:** Candidate under CR-2026-008 / CR-2026-009, pending user authorization.
+**Status:** Candidate under CR-2026-008 / CR-2026-009 / CR-2026-011. Owner
+authorization granted 2026-09-10; successor delta executed under CR-2026-011;
+independent RG1 still required.
 
-### 2026-09-10 update
+### 2026-09-10 T1 execution
 
-Owner-authorization granted for CR-2026-009 Items A and B; execution is
-delegated to CR-2026-011 (T1) as a successor M1 delta with new blob OIDs. The
-frozen merge remains a preserved record; the successor `inputAcceptance` is a
-new identity and does not transplant the original approval. This update is not
-an M2 final approval; RG0/RG1/RG2 remain external.
+CR-2026-011 executes Items A and B plus the owner-authorized 6.4.5 LUR→LUS
+companion. Successor `inputAcceptance` is a new identity and does not transplant
+the frozen merge approval. `reviewControl.blocksFinalApproval` stays true.
 
 # 中文版
 
@@ -697,11 +697,11 @@ OPEN-M1-CORRECTION。该停线是正确行为，不是关闭。在这些输入�
 
 **范围：** 输入纠正授权；不是改写 M1，也不是 M2 最终批准。
 
-**状态：** 在 CR-2026-008／CR-2026-009 下为候选，等待用户授权。
+**状态：** 在 CR-2026-008／CR-2026-009／CR-2026-011 下为候选。所有者授权已于
+2026-09-10 到位；后继增量由 CR-2026-011 执行；仍须独立 RG1。
 
-### 2026-09-10 更新
+### 2026-09-10 T1 执行
 
-所有者对 CR-2026-009 事项 A、B 的授权已到位；执行下放到 CR-2026-011（T1），
-作为后继 M1 增量、以新 blob OID 交付。冻结合并作为保留记录不变；后继
-`inputAcceptance` 是新身份，不移植原批准。本更新不构成 M2 最终批准；
-RG0/RG1/RG2 仍为外部评审。
+CR-2026-011 执行事项 A、B 以及所有者授权的 6.4.5 LUR→LUS 伴随。后继
+`inputAcceptance` 是新身份，不移植冻结合并批准。`reviewControl.blocksFinalApproval`
+保持为真。
