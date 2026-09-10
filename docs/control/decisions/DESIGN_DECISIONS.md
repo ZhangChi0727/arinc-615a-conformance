@@ -467,6 +467,14 @@ authorization request.
 
 **Status:** Candidate under CR-2026-008 / CR-2026-009, pending user authorization.
 
+### 2026-09-10 update
+
+Owner-authorization granted for CR-2026-009 Items A and B; execution is
+delegated to CR-2026-011 (T1) as a successor M1 delta with new blob OIDs. The
+frozen merge remains a preserved record; the successor `inputAcceptance` is a
+new identity and does not transplant the original approval. This update is not
+an M2 final approval; RG0/RG1/RG2 remain external.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -690,3 +698,10 @@ OPEN-M1-CORRECTION。该停线是正确行为，不是关闭。在这些输入�
 **范围：** 输入纠正授权；不是改写 M1，也不是 M2 最终批准。
 
 **状态：** 在 CR-2026-008／CR-2026-009 下为候选，等待用户授权。
+
+### 2026-09-10 更新
+
+所有者对 CR-2026-009 事项 A、B 的授权已到位；执行下放到 CR-2026-011（T1），
+作为后继 M1 增量、以新 blob OID 交付。冻结合并作为保留记录不变；后继
+`inputAcceptance` 是新身份，不移植原批准。本更新不构成 M2 最终批准；
+RG0/RG1/RG2 仍为外部评审。
