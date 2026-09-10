@@ -12,6 +12,7 @@
     "inputAcceptance",
     "scope",
     "sourceRefinements",
+    "sequenceEndpointBindings",
     "networkRelationDispositions",
     "model",
     "timingCatalog",
@@ -36,6 +37,11 @@
       "type": "array",
       "minItems": 1,
       "items": { "$ref": "#/$defs/sourceRefinement" }
+    },
+    "sequenceEndpointBindings": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "$ref": "#/$defs/sequenceEndpointBinding" }
     },
     "networkRelationDispositions": {
       "type": "array",
@@ -224,13 +230,23 @@
             "changeRequest",
             "authorizationRequest",
             "doesNotTransplantFrozenApproval",
-            "preservedFrozenInputs"
+            "preservedFrozenInputs",
+            "predecessorInputCommit",
+            "predecessorInputTree",
+            "predecessorInputBlobs"
           ],
           "properties": {
             "changeRequest": { "$ref": "#/$defs/nonEmptyString" },
             "authorizationRequest": { "$ref": "#/$defs/nonEmptyString" },
             "doesNotTransplantFrozenApproval": { "type": "boolean" },
             "preservedFrozenInputs": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/inputItem" }
+            },
+            "predecessorInputCommit": { "$ref": "#/$defs/gitOid" },
+            "predecessorInputTree": { "$ref": "#/$defs/gitOid" },
+            "predecessorInputBlobs": {
               "type": "array",
               "minItems": 1,
               "items": { "$ref": "#/$defs/inputItem" }
@@ -740,7 +756,24 @@
         "actionFingerprint": { "type": "string", "minLength": 64 },
         "premiseFingerprint": { "type": "string", "minLength": 64 },
         "witnessFingerprint": { "type": "string", "minLength": 64 },
-        "blockingFingerprint": { "type": "string", "minLength": 64 }
+        "blockingFingerprint": { "type": "string", "minLength": 64 },
+        "endpointBindingFingerprint": { "type": "string", "minLength": 64 }
+      }
+    },
+    "sequenceEndpointBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirementId", "transitionId", "eventId", "actor", "receiver", "direction", "layer"
+      ],
+      "properties": {
+        "requirementId": { "$ref": "#/$defs/nonEmptyString" },
+        "transitionId": { "$ref": "#/$defs/nonEmptyString" },
+        "eventId": { "$ref": "#/$defs/nonEmptyString" },
+        "actor": { "$ref": "#/$defs/nonEmptyString" },
+        "receiver": { "$ref": "#/$defs/nonEmptyString" },
+        "direction": { "enum": ["DL-TO-TH", "TH-TO-DL"] },
+        "layer": { "const": "NETWORK-VISIBLE" }
       }
     },
     "discreteWitness": {

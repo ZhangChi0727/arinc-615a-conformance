@@ -70,11 +70,13 @@ SESSION_START_TRANSITIONS = {
 LUS_READY_EVENT = "EV_TH_LUS0001"
 LUR_WRQ_TRANSITION = "T_UPL_LUR_WRQ"
 TABLE_6_4_4_FIELD_IDS = {f"CRS-M1-00{n}" for n in range(309, 316)}
-WRQ_ACTOR_REQUIREMENT_ID = "CRS-M1-00365"
-SUCCESSOR_DELTA_CR = "CR-2026-011"
-SUCCESSOR_AUTH_CR = "CR-2026-009"
 SUCCESSOR_CLOSED_STATUS = "CLOSED-BY-SUCCESSOR-M1-DELTA"
-NET_EDITION_ACCEPTED_STATUS = "ACCEPTED-CURRENT-EDITION-P3-1-AFDX-DEFERRED"
+CHANGE_REQUEST_RE = re.compile(r"^CR-\d{4}-\d{3}$")
+NETWORK_DIRECTION_ENDPOINTS = {
+    "DL-TO-TH": ("DATA-LOADER", "TARGET-HARDWARE"),
+    "TH-TO-DL": ("TARGET-HARDWARE", "DATA-LOADER"),
+}
+APPLICATION_LAYER_ROLES = {"DLA", "DLP"}
 SOURCE_SYMBOL_ALIASES = {
     "PACKET_TRANSMISSION_DURATION": "DURATION_TIME",
     "SUBSCRIBER_PROCESSING_DURATION": "DURATION_TIME",
@@ -1090,12 +1092,76 @@ def m1_successor_identity_errors(m1_by_id: dict[str, dict[str, Any]]) -> list[st
             continue
         if fc.get("protocolFile") != "LUS":
             errors.append(f"{req.get('id')} Table 6.4.5-1 protocolFile is not LUS")
-    wrq = m1_by_id.get(WRQ_ACTOR_REQUIREMENT_ID) or {}
-    semantic = wrq.get("semantic") or {}
-    if semantic.get("actor") != "DATA-LOADER":
-        errors.append("CRS-M1-00365 actor is not DATA-LOADER")
-    if semantic.get("receiver") != "DLA":
-        errors.append("CRS-M1-00365 receiver is not DLA")
+    return errors
+
+
+def controlled_change_errors(git_root: Path, cr_id: Any, label: str) -> list[str]:
+    if not isinstance(cr_id, str) or not CHANGE_REQUEST_RE.fullmatch(cr_id):
+        return [f"{label} is not a controlled change-request id"]
+    path = Path(git_root) / "docs/control/changes" / f"{cr_id}.md"
+    if not path.is_file():
+        return [f"{label} {cr_id} has no controlled change file"]
+    return []
+
+
+def edition_acceptance_recorded(status: Any) -> bool:
+    text = str(status or "")
+    return (
+        text.startswith("ACCEPTED-CURRENT-EDITION")
+        and "P3-1" in text
+        and "AFDX-DEFERRED" in text
+    )
+
+
+def sequence_endpoint_errors(data: dict[str, Any], m1_by_id: dict[str, dict[str, Any]]) -> list[str]:
+    errors: list[str] = []
+    bindings = data.get("sequenceEndpointBindings") or []
+    if not bindings:
+        errors.append("sequence endpoint bindings are missing")
+        return errors
+    events = {row["id"]: row for row in data["model"]["events"]}
+    transitions = {row["id"]: row for row in data["model"]["transitions"]}
+    seen: set[str] = set()
+    for row in bindings:
+        rid = row.get("requirementId")
+        if not isinstance(rid, str):
+            errors.append("sequence endpoint binding lacks requirementId")
+            continue
+        if rid in seen:
+            errors.append(f"duplicate sequence endpoint binding {rid}")
+        seen.add(rid)
+        semantic = (m1_by_id.get(rid) or {}).get("semantic") or {}
+        if semantic.get("actor") != row.get("actor"):
+            errors.append(f"{rid} CRS actor disagrees with bound endpoint")
+        if semantic.get("receiver") != row.get("receiver"):
+            errors.append(f"{rid} CRS receiver disagrees with bound endpoint")
+        for field in ("actor", "receiver"):
+            if row.get(field) in APPLICATION_LAYER_ROLES:
+                errors.append(f"{rid} bound {field} uses application-layer role")
+        event = events.get(row.get("eventId")) or {}
+        if event.get("direction") != row.get("direction"):
+            errors.append(f"{rid} event direction disagrees with bound endpoint")
+        if event.get("visibility") != row.get("layer"):
+            errors.append(f"{rid} event layer disagrees with bound endpoint")
+        expected = NETWORK_DIRECTION_ENDPOINTS.get(str(row.get("direction") or ""))
+        if expected and (row.get("actor"), row.get("receiver")) != expected:
+            errors.append(f"{rid} endpoints disagree with bound direction")
+        trans = transitions.get(row.get("transitionId")) or {}
+        if trans.get("event") != row.get("eventId"):
+            errors.append(f"{rid} transition event disagrees with bound endpoint")
+        if rid not in (trans.get("requirementIds") or []):
+            errors.append(f"{rid} is not on the bound transition")
+    for trans in data["model"]["transitions"]:
+        event = events.get(trans.get("event")) or {}
+        if event.get("visibility") != "NETWORK-VISIBLE":
+            continue
+        if event.get("fileRole") != "LUR":
+            continue
+        if event.get("tftpOpcode") not in {"WRQ", "ACK", "DATA"}:
+            continue
+        for rid in trans.get("requirementIds") or []:
+            if rid not in seen:
+                errors.append(f"{rid} LUR write event has no sequence endpoint binding")
     return errors
 
 
@@ -1104,10 +1170,37 @@ def successor_input_errors(acc: dict[str, Any], git_root: Path, inputs: list[dic
     successor = acc.get("successorDelta") or {}
     if successor.get("doesNotTransplantFrozenApproval") is not True:
         errors.append("successor delta must not transplant frozen approval")
-    if successor.get("changeRequest") != SUCCESSOR_DELTA_CR:
-        errors.append("successor delta change request is not CR-2026-011")
-    if successor.get("authorizationRequest") != SUCCESSOR_AUTH_CR:
-        errors.append("successor delta authorization is not CR-2026-009")
+    errors.extend(controlled_change_errors(git_root, successor.get("changeRequest"), "successor delta change request"))
+    errors.extend(controlled_change_errors(git_root, successor.get("authorizationRequest"), "successor delta authorization"))
+    pred_commit = successor.get("predecessorInputCommit")
+    pred_tree = successor.get("predecessorInputTree")
+    pred_blobs = successor.get("predecessorInputBlobs") or []
+    errors.extend(require_git_object(git_root, pred_commit, "commit", "predecessor input commit"))
+    errors.extend(require_git_object(git_root, pred_tree, "tree", "predecessor input tree"))
+    actual_tree = git_output(git_root, ["rev-parse", f"{pred_commit}^{{tree}}"]) if isinstance(pred_commit, str) else None
+    if actual_tree is None:
+        errors.append("predecessor input tree cannot be read from git")
+    elif actual_tree != pred_tree:
+        errors.append("predecessor input tree disagrees with predecessor commit")
+    ancestor = git_output(git_root, ["merge-base", str(pred_commit or ""), "HEAD"])
+    if ancestor is None or ancestor != pred_commit:
+        errors.append("predecessor input commit is not an ancestor of HEAD")
+    if not pred_blobs:
+        errors.append("successor delta omits predecessor input blobs")
+    pred_by_path = {item.get("path"): item for item in pred_blobs}
+    if len(pred_by_path) != len(pred_blobs):
+        errors.append("predecessor input blob paths are not unique")
+    input_paths = {item.get("path") for item in inputs}
+    if pred_by_path and {item.get("path") for item in pred_blobs} != input_paths:
+        errors.append("predecessor input blobs do not cover the same paths")
+    for item in pred_blobs:
+        path = item.get("path", "")
+        errors.extend(require_git_object(git_root, item.get("gitBlobOid"), "blob", f"predecessor {path}"))
+        committed = git_blob(str(pred_commit or ""), path, git_root) if pred_commit else None
+        if committed is None:
+            errors.append(f"predecessor commit blob for {path} is missing")
+        elif committed != item.get("gitBlobOid"):
+            errors.append(f"predecessor blob disagrees for {path}")
     preserved = successor.get("preservedFrozenInputs") or []
     if not preserved:
         errors.append("successor delta omits preserved frozen inputs")
@@ -1417,6 +1510,7 @@ def package_errors(
         if not row.get("ownerRole") or not row.get("deadlineGate"):
             errors.append(f"action {row.get('id')} lacks ownerRole or deadlineGate")
     errors.extend(identity_hold_errors)
+    errors.extend(sequence_endpoint_errors(data, m1_by_id))
 
     summary = data["inventorySummary"]
     expected = {
@@ -1440,6 +1534,7 @@ def package_errors(
         ("premiseFingerprint", data["infrastructurePremises"]),
         ("witnessFingerprint", data.get("discreteWitnesses")),
         ("blockingFingerprint", data.get("blockingInputs")),
+        ("endpointBindingFingerprint", data.get("sequenceEndpointBindings")),
     ):
         if summary.get(key) and summary.get(key) != fingerprint(payload):
             errors.append(f"inventorySummary.{key} disagrees after mutation")
@@ -1521,12 +1616,17 @@ def package_errors(
             errors.append("M1-FILE-IDENTITY-6-4-4 must be CLOSED-BY-SUCCESSOR-M1-DELTA after successor identities")
         if seq_block and seq_block.get("status") != SUCCESSOR_CLOSED_STATUS:
             errors.append("SEQ-LUR-WRQ-ACTOR must be CLOSED-BY-SUCCESSOR-M1-DELTA after successor identities")
-        if net_block and net_block.get("status") != NET_EDITION_ACCEPTED_STATUS:
+        if net_block and not edition_acceptance_recorded(net_block.get("status")):
             errors.append("NET-ISSUE-EDITION must record 664P3-1 acceptance with AFDX deferred")
+        bound_ids = {
+            row.get("requirementId")
+            for row in data.get("sequenceEndpointBindings") or []
+            if isinstance(row.get("requirementId"), str)
+        }
         stale_open = [
             row.get("id")
             for row in refinements
-            if row.get("fromRequirementId") in {*TABLE_6_4_4_FIELD_IDS, "CRS-M1-00143", WRQ_ACTOR_REQUIREMENT_ID}
+            if row.get("fromRequirementId") in {*TABLE_6_4_4_FIELD_IDS, "CRS-M1-00143", *bound_ids}
             and row.get("reviewStatus") == "OPEN-M1-CORRECTION"
         ]
         if stale_open:
@@ -1543,6 +1643,28 @@ def package_errors(
         if any(str(row.get("status", "")).startswith("CLOSED") for row in data.get("blockingInputs") or []):
             errors.append("blockingInputs cannot close an open M1 correction")
     return errors
+
+
+def successor_delta_view_lines(successor: dict[str, Any] | None, lang: str) -> list[str]:
+    if not successor:
+        return []
+    if lang == "zh":
+        lines = [
+            f"- 后继增量 `{successor['changeRequest']}` 由 `{successor['authorizationRequest']}` 授权；doesNotTransplantFrozenApproval=`{successor['doesNotTransplantFrozenApproval']}`"
+        ]
+        if successor.get("predecessorInputCommit"):
+            lines.append(
+                f"- 前序输入制品提交 `{successor['predecessorInputCommit']}` 树 `{successor['predecessorInputTree']}`"
+            )
+        return lines
+    lines = [
+        f"- Successor delta `{successor['changeRequest']}` authorized by `{successor['authorizationRequest']}`; doesNotTransplantFrozenApproval=`{successor['doesNotTransplantFrozenApproval']}`"
+    ]
+    if successor.get("predecessorInputCommit"):
+        lines.append(
+            f"- Predecessor input artifact commit `{successor['predecessorInputCommit']}` tree `{successor['predecessorInputTree']}`"
+        )
+    return lines
 
 
 def _table(headers: list[str], rows: list[list[str]]) -> list[str]:
@@ -1573,13 +1695,7 @@ def render(data: dict[str, Any]) -> str:
         f"- Sign-off: {acc['signOffUrl']} (`{acc['githubReviewState']}`, `{acc['recordedConclusion']}`)",
         f"- Independence: `{acc['independenceClaim']}`",
         f"- M1 NET-ISSUE-EDITION snapshot blocksM1Approval=`{acc['m1NetIssueEditionSnapshot']['blocksM1Approval']}` — {acc['m1NetIssueEditionSnapshot']['interpretationEn']}",
-        *(
-            [
-                f"- Successor delta `{acc['successorDelta']['changeRequest']}` authorized by `{acc['successorDelta']['authorizationRequest']}`; doesNotTransplantFrozenApproval=`{acc['successorDelta']['doesNotTransplantFrozenApproval']}`"
-            ]
-            if acc.get("successorDelta")
-            else []
-        ),
+        *successor_delta_view_lines(acc.get("successorDelta"), "en"),
         "",
         "## Scope",
         "",
@@ -1742,6 +1858,19 @@ def render(data: dict[str, Any]) -> str:
         ["ID", "Status", "Owner", "Gate", "Note"],
         [[f"`{row['id']}`", f"`{row['status']}`", row["ownerRole"], row["deadlineGate"], row["noteEn"]] for row in data["actions"]],
     )
+    lines += ["", "## Sequence endpoint bindings", ""]
+    lines += _table(
+        ["CRS", "Transition", "Event", "Actor", "Receiver", "Direction", "Layer"],
+        [[
+            f"`{row['requirementId']}`",
+            f"`{row['transitionId']}`",
+            f"`{row['eventId']}`",
+            f"`{row['actor']}`",
+            f"`{row['receiver']}`",
+            f"`{row['direction']}`",
+            f"`{row['layer']}`",
+        ] for row in data.get("sequenceEndpointBindings") or []],
+    )
     lines += ["", "## Source refinements", ""]
     for row in data["sourceRefinements"]:
         locator = row.get("toLocator") or {}
@@ -1790,13 +1919,7 @@ def render(data: dict[str, Any]) -> str:
         f"- 签署：{acc['signOffUrl']}（`{acc['githubReviewState']}`，`{acc['recordedConclusion']}`）",
         f"- 独立性：`{acc['independenceClaim']}`",
         f"- M1 NET-ISSUE-EDITION 快照 blocksM1Approval=`{acc['m1NetIssueEditionSnapshot']['blocksM1Approval']}` — {acc['m1NetIssueEditionSnapshot']['interpretationZh']}",
-        *(
-            [
-                f"- 后继增量 `{acc['successorDelta']['changeRequest']}` 由 `{acc['successorDelta']['authorizationRequest']}` 授权；doesNotTransplantFrozenApproval=`{acc['successorDelta']['doesNotTransplantFrozenApproval']}`"
-            ]
-            if acc.get("successorDelta")
-            else []
-        ),
+        *successor_delta_view_lines(acc.get("successorDelta"), "zh"),
         "",
         "## 范围",
         "",
@@ -1958,6 +2081,19 @@ def render(data: dict[str, Any]) -> str:
     lines += _table(
         ["ID", "状态", "责任", "门禁", "说明"],
         [[f"`{row['id']}`", f"`{row['status']}`", row["ownerRole"], row["deadlineGate"], row["noteZh"]] for row in data["actions"]],
+    )
+    lines += ["", "## 序列端点绑定", ""]
+    lines += _table(
+        ["CRS", "迁移", "事件", "发送者", "接收者", "方向", "层级"],
+        [[
+            f"`{row['requirementId']}`",
+            f"`{row['transitionId']}`",
+            f"`{row['eventId']}`",
+            f"`{row['actor']}`",
+            f"`{row['receiver']}`",
+            f"`{row['direction']}`",
+            f"`{row['layer']}`",
+        ] for row in data.get("sequenceEndpointBindings") or []],
     )
     lines += ["", "## 来源精化", ""]
     for row in data["sourceRefinements"]:

@@ -45,8 +45,13 @@ def register() -> dict:
     return json.loads(m2.SOURCE_REGISTER_PATH.read_text(encoding="utf-8"))
 
 
-def errors(data: dict, source_register: dict | None = None, git_root: Path | None = None) -> list[str]:
-    return m2.package_errors(data, register=source_register, git_root=git_root)
+def errors(
+    data: dict,
+    source_register: dict | None = None,
+    git_root: Path | None = None,
+    m1: dict | None = None,
+) -> list[str]:
+    return m2.package_errors(data, register=source_register, git_root=git_root, m1=m1)
 
 
 def flip_hex(value: str) -> str:
@@ -71,6 +76,7 @@ def refresh_summary(data: dict) -> None:
         premiseFingerprint=m2.fingerprint(data["infrastructurePremises"]),
         witnessFingerprint=m2.fingerprint(data.get("discreteWitnesses")),
         blockingFingerprint=m2.fingerprint(data.get("blockingInputs")),
+        endpointBindingFingerprint=m2.fingerprint(data.get("sequenceEndpointBindings")),
     )
 
 
@@ -518,15 +524,29 @@ def test_successor_m1_identities_are_lur_lus_and_data_loader() -> None:
     assert lus
     assert all((row.get("source") or {}).get("clause") == "6.4.5" for row in lus)
     assert by_id["CRS-M1-00365"]["semantic"]["actor"] == "DATA-LOADER"
-    assert by_id["CRS-M1-00365"]["semantic"]["receiver"] == "DLA"
+    assert by_id["CRS-M1-00365"]["semantic"]["receiver"] == "TARGET-HARDWARE"
+    assert by_id["CRS-M1-00366"]["semantic"]["actor"] == "TARGET-HARDWARE"
+    assert by_id["CRS-M1-00366"]["semantic"]["receiver"] == "DATA-LOADER"
+    assert by_id["CRS-M1-00367"]["semantic"]["actor"] == "DATA-LOADER"
+    assert by_id["CRS-M1-00367"]["semantic"]["receiver"] == "TARGET-HARDWARE"
     assert "LUR" in by_id["CRS-M1-00143"]["semantic"]["objects"]
     data = package()
-    assert data["inputAcceptance"]["successorDelta"]["doesNotTransplantFrozenApproval"] is True
+    successor = data["inputAcceptance"]["successorDelta"]
+    assert successor["doesNotTransplantFrozenApproval"] is True
+    assert successor["predecessorInputCommit"]
+    assert successor["predecessorInputTree"]
+    assert {item["path"] for item in successor["predecessorInputBlobs"]} == {
+        item["path"] for item in data["inputAcceptance"]["inputs"]
+    }
     assert data["reviewControl"]["blocksFinalApproval"] is True
     identity = next(row for row in data["blockingInputs"] if row["id"] == "M1-FILE-IDENTITY-6-4-4")
     assert identity["status"] == "CLOSED-BY-SUCCESSOR-M1-DELTA"
     net = next(row for row in data["blockingInputs"] if row["id"] == "NET-ISSUE-EDITION")
-    assert net["status"] == "ACCEPTED-CURRENT-EDITION-P3-1-AFDX-DEFERRED"
+    assert net["status"].startswith("ACCEPTED-CURRENT-EDITION")
+    assert "P3-1" in net["status"]
+    assert "AFDX-DEFERRED" in net["status"]
+    assert (ROOT / "docs/control/changes" / f"{successor['changeRequest']}.md").is_file()
+    assert (ROOT / "docs/control/changes" / f"{successor['authorizationRequest']}.md").is_file()
 
 
 def test_open_m1_correction_cannot_be_closed() -> None:
@@ -795,6 +815,72 @@ def test_list_ready_is_required_before_lur_wrq() -> None:
     ]
     refresh_summary(data)
     assert any("list-ready" in item or "LUS 0001" in item for item in errors(data))
+
+
+def _binding(data: dict, requirement_id: str) -> dict:
+    return next(row for row in data["sequenceEndpointBindings"] if row["requirementId"] == requirement_id)
+
+
+def _event(data: dict, event_id: str) -> dict:
+    return next(row for row in data["model"]["events"] if row["id"] == event_id)
+
+
+def test_lur_write_endpoints_match_visual_chart() -> None:
+    data = package()
+    assert errors(data) == []
+    expected = {
+        "CRS-M1-00365": ("T_UPL_LUR_WRQ", "EV_DL_WRQ_LUR", "DATA-LOADER", "TARGET-HARDWARE", "DL-TO-TH"),
+        "CRS-M1-00366": ("T_UPL_LUR_ACK", "EV_TH_ACK_LUR", "TARGET-HARDWARE", "DATA-LOADER", "TH-TO-DL"),
+        "CRS-M1-00367": ("T_UPL_LUR_XFER", "EV_DL_DATA_LUR", "DATA-LOADER", "TARGET-HARDWARE", "DL-TO-TH"),
+    }
+    for rid, (tid, eid, actor, receiver, direction) in expected.items():
+        row = _binding(data, rid)
+        assert row["transitionId"] == tid
+        assert row["eventId"] == eid
+        assert row["actor"] == actor
+        assert row["receiver"] == receiver
+        assert row["direction"] == direction
+        assert row["layer"] == "NETWORK-VISIBLE"
+        assert _event(data, eid)["direction"] == direction
+        assert "DLA" not in {row["actor"], row["receiver"]}
+    ready = _witness(data, "W-LUR-AFTER-READY")
+    ids = [step["transitionId"] for step in ready["steps"]]
+    assert ids.index("T_UPL_LUR_WRQ") < ids.index("T_UPL_LUR_ACK") < ids.index("T_UPL_LUR_XFER")
+
+
+def test_lur_endpoint_mutations_fail_after_fingerprint_refresh() -> None:
+    m1 = json.loads((ROOT / "configs/requirements/arinc_615a3_m1_crs.json").read_text(encoding="utf-8"))
+    by_id = {row["id"]: row for row in m1["requirements"]}
+
+    by_id["CRS-M1-00365"]["semantic"]["receiver"] = "DLA"
+    found = errors(package(), m1=m1)
+    assert any("CRS-M1-00365" in item and "receiver" in item for item in found)
+    assert not any("receiver is not DLA" in item for item in found)
+
+    by_id["CRS-M1-00365"]["semantic"]["receiver"] = "DATA-LOADER"
+    found = errors(package(), m1=m1)
+    assert any("CRS-M1-00365" in item and ("receiver" in item or "endpoint" in item) for item in found)
+
+    by_id["CRS-M1-00365"]["semantic"]["receiver"] = "TARGET-HARDWARE"
+    by_id["CRS-M1-00366"]["semantic"]["actor"] = "DATA-LOADER"
+    by_id["CRS-M1-00366"]["semantic"]["receiver"] = "TARGET-HARDWARE"
+    found = errors(package(), m1=m1)
+    assert any("CRS-M1-00366" in item and ("actor" in item or "receiver" in item or "endpoint" in item) for item in found)
+
+    data = copy.deepcopy(package())
+    _event(data, "EV_TH_ACK_LUR")["direction"] = "DL-TO-TH"
+    refresh_summary(data)
+    assert any("CRS-M1-00366" in item and "direction" in item for item in errors(data))
+
+    data = copy.deepcopy(package())
+    _event(data, "EV_DL_DATA_LUR")["direction"] = "TH-TO-DL"
+    refresh_summary(data)
+    assert any("CRS-M1-00367" in item and "direction" in item for item in errors(data))
+
+    data = copy.deepcopy(package())
+    _binding(data, "CRS-M1-00365")["receiver"] = "DATA-LOADER"
+    refresh_summary(data)
+    assert any("CRS-M1-00365" in item and ("endpoint" in item or "receiver" in item or "direction" in item) for item in errors(data))
 
 
 def _first_binary(node: dict, op: str) -> dict:

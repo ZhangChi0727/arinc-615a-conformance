@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.2",
   "artifactId": "ARINC615A3-M2-MODEL",
-  "artifactVersion": "M2-CANDIDATE-5",
+  "artifactVersion": "M2-CANDIDATE-6",
   "candidateDisposition": "ADOPT",
   "inputAcceptance": {
     "repository": "https://github.com/ZhangChi0727/arinc-615a-conformance",
@@ -26,7 +26,7 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "3d31c93c1fb2f2b4cbdd5c5e7998c8e317bb9b3c",
+        "gitBlobOid": "cadf89035f6b071dc77e33c356dd88a1efc421bc",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -36,12 +36,12 @@
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "f334467b6ac275b1ab50dbbc15a516a92ad2aba6",
+        "gitBlobOid": "ec1117a6e1180f521be31fb503ad3f5faf9aca41",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "823248e853de5e6fcf8422e306de12f2d563873e",
+        "gitBlobOid": "aa5b26f0cc2d98c72c619cf6ccfce3316f324bfa",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "9fe87b84260c93df5c0ac2c5fa4db8328e85c48c",
+        "gitBlobOid": "3a06b248314a77590a18fe7adf6a1adffd1423e3",
         "role": "SUCCESSOR-M1-DELTA"
       }
     ],
@@ -108,9 +108,77 @@
           "gitBlobOid": "e1258602a73835a0218c3d102dce119ce76372dc",
           "role": "M1-IMMUTABLE-INPUT"
         }
+      ],
+      "predecessorInputCommit": "402e8371b0237aec4691bab0b44e502f4ac1a7c4",
+      "predecessorInputTree": "26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97",
+      "predecessorInputBlobs": [
+        {
+          "path": "configs/requirements/arinc_615a3_m1_crs.json",
+          "gitBlobOid": "3d31c93c1fb2f2b4cbdd5c5e7998c8e317bb9b3c",
+          "role": "M1-IMMUTABLE-INPUT"
+        },
+        {
+          "path": "configs/requirements/m1_crs_package.schema.json",
+          "gitBlobOid": "f5a052ff27d15d7cf28cf58cd05ea7cf51cc1482",
+          "role": "M1-IMMUTABLE-INPUT"
+        },
+        {
+          "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
+          "gitBlobOid": "f334467b6ac275b1ab50dbbc15a516a92ad2aba6",
+          "role": "M1-IMMUTABLE-INPUT"
+        },
+        {
+          "path": "configs/requirements/m1_semantic_review_assertions.json",
+          "gitBlobOid": "823248e853de5e6fcf8422e306de12f2d563873e",
+          "role": "M1-IMMUTABLE-INPUT"
+        },
+        {
+          "path": "configs/requirements/m1_source_section_spans.json",
+          "gitBlobOid": "40d13161f521200e643ecc71363333f9c542f593",
+          "role": "M1-IMMUTABLE-INPUT"
+        },
+        {
+          "path": "configs/requirements/m1_supplement_dispositions.json",
+          "gitBlobOid": "042dd1c56386776c48b225d591137d46171b815c",
+          "role": "M1-IMMUTABLE-INPUT"
+        },
+        {
+          "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
+          "gitBlobOid": "9fe87b84260c93df5c0ac2c5fa4db8328e85c48c",
+          "role": "M1-IMMUTABLE-INPUT"
+        }
       ]
     }
   },
+  "sequenceEndpointBindings": [
+    {
+      "requirementId": "CRS-M1-00365",
+      "transitionId": "T_UPL_LUR_WRQ",
+      "eventId": "EV_DL_WRQ_LUR",
+      "actor": "DATA-LOADER",
+      "receiver": "TARGET-HARDWARE",
+      "direction": "DL-TO-TH",
+      "layer": "NETWORK-VISIBLE"
+    },
+    {
+      "requirementId": "CRS-M1-00366",
+      "transitionId": "T_UPL_LUR_ACK",
+      "eventId": "EV_TH_ACK_LUR",
+      "actor": "TARGET-HARDWARE",
+      "receiver": "DATA-LOADER",
+      "direction": "TH-TO-DL",
+      "layer": "NETWORK-VISIBLE"
+    },
+    {
+      "requirementId": "CRS-M1-00367",
+      "transitionId": "T_UPL_LUR_XFER",
+      "eventId": "EV_DL_DATA_LUR",
+      "actor": "DATA-LOADER",
+      "receiver": "TARGET-HARDWARE",
+      "direction": "DL-TO-TH",
+      "layer": "NETWORK-VISIBLE"
+    }
+  ],
   "scope": {
     "services": [
       "UPLOAD",
@@ -299,8 +367,8 @@
         "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E007-7726A816FFE7",
         "sourceTextHash": "7726a816ffe72ad5691188f24b29a6ec131f042dce41742559da92b46cade96b"
       },
-      "rationaleEn": "Successor M1 delta sets CRS-M1-00365 actor to DATA-LOADER, matching §6.3.2 chart A and the TFTP-write machine. receiver remains DLA. Independent RG1 still required.",
-      "rationaleZh": "后继 M1 增量将 CRS-M1-00365 的参与者改为 DATA-LOADER，与 §6.3.2 图 A 及 TFTP 写机器一致。receiver 保持 DLA。仍须独立 RG1。",
+      "rationaleEn": "Successor M1 delta aligns the LUR write triad with §6.3.2 chart A and the TFTP-write machine: DATA-LOADER WRQ to TARGET-HARDWARE, TARGET-HARDWARE ACK to DATA-LOADER, DATA-LOADER DATA to TARGET-HARDWARE. DLA is the loader application layer, not a network WRQ/ACK endpoint. Independent RG1 still required.",
+      "rationaleZh": "后继 M1 增量将 LUR 写三元组对齐到 §6.3.2 图 A 与 TFTP 写机器：DATA-LOADER 向 TARGET-HARDWARE 发 WRQ，TARGET-HARDWARE 向 DATA-LOADER 发 ACK，DATA-LOADER 向 TARGET-HARDWARE 发 DATA。DLA 是加载器应用层，不是网络 WRQ/ACK 端点。仍须独立 RG1。",
       "disposition": "CANDIDATE-REFINEMENT",
       "reviewStatus": "PENDING-INCREMENTAL-RG1"
     },
@@ -17850,8 +17918,8 @@
         "CR-2026-009",
         "CR-2026-011"
       ],
-      "noteEn": "CR-2026-011 executed the successor identities (6.4.4 LUR, 6.4.5 LUS, WRQ actor DATA-LOADER). Independent RG1 still required.",
-      "noteZh": "CR-2026-011 已执行后继身份（6.4.4 为 LUR、6.4.5 为 LUS、WRQ 参与者为 DATA-LOADER）。仍须独立 RG1。"
+      "noteEn": "CR-2026-011 executed the successor identities (6.4.4 LUR, 6.4.5 LUS, LUR write endpoints DL WRQ / TH ACK / DL DATA). Independent RG1 still required. This is a bounded M2 baseline, not a development-ready CRS.",
+      "noteZh": "CR-2026-011 已执行后继身份（6.4.4 为 LUR、6.4.5 为 LUS、LUR 写端点为 DL WRQ／TH ACK／DL DATA）。仍须独立 RG1。这是有界 M2 基线，不是开发就绪 CRS。"
     },
     {
       "id": "A-2",
@@ -18455,10 +18523,12 @@
       "authorizationRequest": "CR-2026-009",
       "blocksFinalApproval": false,
       "requirementIds": [
-        "CRS-M1-00365"
+        "CRS-M1-00365",
+        "CRS-M1-00366",
+        "CRS-M1-00367"
       ],
-      "noteEn": "Successor M1 actor is DATA-LOADER; receiver remains DLA. Frozen merge bytes stay unchanged.",
-      "noteZh": "后继 M1 参与者为 DATA-LOADER；receiver 保持 DLA。冻结合并字节不变。"
+      "noteEn": "Successor M1 LUR write endpoints are DATA-LOADER→TARGET-HARDWARE WRQ, TARGET-HARDWARE→DATA-LOADER ACK, DATA-LOADER→TARGET-HARDWARE DATA. Frozen merge bytes stay unchanged.",
+      "noteZh": "后继 M1 的 LUR 写端点为 DATA-LOADER→TARGET-HARDWARE WRQ、TARGET-HARDWARE→DATA-LOADER ACK、DATA-LOADER→TARGET-HARDWARE DATA。冻结合并字节不变。"
     },
     {
       "id": "NET-ISSUE-EDITION",
@@ -18490,11 +18560,12 @@
     "dispositionsFingerprint": "99eec40d08e16c9c2a72ebba8ee4845fe843d34c1879f3c43383aa7eabf040c1",
     "modelFingerprint": "e3cd631efdb7b54c2808ebf07a76062204553a3bc69326a25dc185acd29a5cfc",
     "timingFingerprint": "ccf8ed38a7cfd18363b57f72bf2d51bcbc7e5c91e1a48f83c84393b1e1c36e9c",
-    "inputFingerprint": "a475a4f01a60ec964dd6298ce96afe4f9274bbaacf992153a2e1ca576a674524",
-    "refinementFingerprint": "dc3d3d6f35941269c2e58f442ee22d8c7156ef8c14e41c4cc83e322ce03da8f3",
-    "actionFingerprint": "2d1b9879bcbb89ba37a4ebaad3f277b2b6d2132eb95484e88b76d3ee8a1a64aa",
+    "inputFingerprint": "2c82cceaebe973b028e6eb6863752b3f286852dacf2989b2e3f87802c4a00fd3",
+    "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
+    "actionFingerprint": "4dd9cbe58b38efd7e6fcea09a33118b548d2790d2f8cefcd5085f69320c5bac0",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
     "witnessFingerprint": "3de3d3bf3b1b9c6eb9ee0e6ab65234ec5957762185e51093aeb10534986e6643",
-    "blockingFingerprint": "2f63ff0be1763c5cfd867b3aba34d024b6492c0448517d1d5f1a9be19b00074c"
+    "blockingFingerprint": "ed1c2d23ae210315decd37ee16af46d55b7e8eb29359bbd7f1a6d42ca0444aa6",
+    "endpointBindingFingerprint": "739471d787a7db5c515f393466c04ff1051d90cfb82d6622168772fe1b85cf13"
   }
 }

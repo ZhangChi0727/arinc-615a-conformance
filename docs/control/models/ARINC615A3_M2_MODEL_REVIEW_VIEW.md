@@ -12,6 +12,7 @@
 - Independence: `NOT-CLAIMED-NAMED-INDEPENDENT-REVIEWER`
 - M1 NET-ISSUE-EDITION snapshot blocksM1Approval=`True` — Historical snapshot on the merged M1 tree. External owner sign-off and merge bound that Head. The boolean does not reopen the merge. CR-2026-009 accepted 664P3-1 as this M2 input edition; 664P7 remains recorded and AFDX stays unselected.
 - Successor delta `CR-2026-011` authorized by `CR-2026-009`; doesNotTransplantFrozenApproval=`True`
+- Predecessor input artifact commit `402e8371b0237aec4691bab0b44e502f4ac1a7c4` tree `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
 
 ## Scope
 
@@ -1282,7 +1283,7 @@
 
 | ID | Status | Owner | Gate | Note |
 |---|---|---|---|---|
-| `A-1` | `EXECUTED-SUCCESSOR-M1-DELTA-PENDING-RG1` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | CR-2026-011 executed the successor identities (6.4.4 LUR, 6.4.5 LUS, WRQ actor DATA-LOADER). Independent RG1 still required. |
+| `A-1` | `EXECUTED-SUCCESSOR-M1-DELTA-PENDING-RG1` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | CR-2026-011 executed the successor identities (6.4.4 LUR, 6.4.5 LUS, LUR write endpoints DL WRQ / TH ACK / DL DATA). Independent RG1 still required. This is a bounded M2 baseline, not a development-ready CRS. |
 | `A-2` | `CANDIDATE-PARTIAL` | M2-RG1 | PROFILE-MODEL-REFINEMENT-GATE | RFC-2347 option transfer and RFC-2348 block-size are candidate edges; 1785/2349 remain without an active 615A unit. |
 | `A-3` | `CANDIDATE-IN-MODEL` | M2-RG2 | PROFILE-MODEL-REFINEMENT-GATE | Attachment 4 equation restored with retry terms; clocks enable timeout transitions. |
 | `A-4` | `DEFERRED` | FUTURE-TAXONOMY-CR | SCOPE-EXPANSION-GATE | requirementKind taxonomy not executed. |
@@ -1301,11 +1302,19 @@
 | `M1-FILE-IDENTITY-6-4-4` | `CLOSED-BY-SUCCESSOR-M1-DELTA` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | Successor M1 delta executed under CR-2026-011. Frozen merge bytes stay unchanged as a preserved record. Independent RG1 still required. |
 | `LUI-FIELD-TABLE-GAP` | `KNOWN-GAP-NO-DEDICATED-TABLE` | M1-EXPANDED | EXECUTABLE-FOUNDATION-GATE | After 6.4.4→LUR there is no dedicated LUI field table. LUI remains a sequence file. Fields are not invented. |
 
+## Sequence endpoint bindings
+
+| CRS | Transition | Event | Actor | Receiver | Direction | Layer |
+|---|---|---|---|---|---|---|
+| `CRS-M1-00365` | `T_UPL_LUR_WRQ` | `EV_DL_WRQ_LUR` | `DATA-LOADER` | `TARGET-HARDWARE` | `DL-TO-TH` | `NETWORK-VISIBLE` |
+| `CRS-M1-00366` | `T_UPL_LUR_ACK` | `EV_TH_ACK_LUR` | `TARGET-HARDWARE` | `DATA-LOADER` | `TH-TO-DL` | `NETWORK-VISIBLE` |
+| `CRS-M1-00367` | `T_UPL_LUR_XFER` | `EV_DL_DATA_LUR` | `DATA-LOADER` | `TARGET-HARDWARE` | `DL-TO-TH` | `NETWORK-VISIBLE` |
+
 ## Source refinements
 
 - `REF-A1-00143-BLOCKED-BY-FILE-IDENTITY` — `CANDIDATE-REFINEMENT` — Successor M1 delta (CR-2026-011) records CRS-M1-00143 as 6.4.4 LUR prose with HEADER-FILE. Shared object HEADER-FILE now supports a candidate 665 edge to CRS-M1-00217. Independent RG1 still required. Capability stays NOT-ESTABLISHED. (to `CRS-M1-00217` 2.2.3.1)
 - `REF-A1-00315-BLOCKED-BY-FILE-IDENTITY` — `CANDIDATE-REFINEMENT` — Successor M1 delta records Table 6.4.4-1 FIELD-LOAD-PART-NUMBER-NAME as LUR. Shared object LOAD-PART-NUMBER now supports a candidate 665 edge to CRS-M1-00212. Independent RG1 still required. (to `CRS-M1-00212` 2.1.1)
-- `REF-SEQ-00365-WRQ-ACTOR` — `CANDIDATE-REFINEMENT` — Successor M1 delta sets CRS-M1-00365 actor to DATA-LOADER, matching §6.3.2 chart A and the TFTP-write machine. receiver remains DLA. Independent RG1 still required. (to `None` )
+- `REF-SEQ-00365-WRQ-ACTOR` — `CANDIDATE-REFINEMENT` — Successor M1 delta aligns the LUR write triad with §6.3.2 chart A and the TFTP-write machine: DATA-LOADER WRQ to TARGET-HARDWARE, TARGET-HARDWARE ACK to DATA-LOADER, DATA-LOADER DATA to TARGET-HARDWARE. DLA is the loader application layer, not a network WRQ/ACK endpoint. Independent RG1 still required. (to `None` )
 - `REF-A2-TFTP-OPTION-2347` — `CANDIDATE-REFINEMENT` — 615A 5.3.2.2 requires transferring TFTP options. RFC 2347 §2 is the option-extension mechanism. The edge uses the public retrieval identity, not a fabricated PDF page. It does not claim complete RFC-2347 conformance. (to `RFC-2347` 2)
 - `REF-A2-BLOCKSIZE-2348` — `CANDIDATE-REFINEMENT` — 615A 5.3.2.3.8.1 is the Blocksize Option Implementation unit already in M1 (CRS-M1-00034) with DEP-RFC-2348. A token search for 'blksize' cannot negate that source. RFC 2348 §2 is the candidate encoding. Capability stays NOT-ESTABLISHED. (to `RFC-2348` 2)
 - `REF-A2-NO-RFC-1785-ACTIVE-EDGE` — `NOT-ESTABLISHED-NO-ACTIVE-SOURCE-UNIT` — UPLOAD/INFORMATION option units do not name RFC 1785 negotiation-option advertisement. P7 listings stay with unselected AFDX. (to `RFC-1785` )
@@ -1350,7 +1359,7 @@
 ## Blocking inputs
 
 - `M1-FILE-IDENTITY-6-4-4` `CLOSED-BY-SUCCESSOR-M1-DELTA` authorization `CR-2026-009` blocksFinalApproval=`False` — Successor M1 delta executed under CR-2026-011. Frozen merge bytes stay unchanged. Independent RG1 still required.
-- `SEQ-LUR-WRQ-ACTOR` `CLOSED-BY-SUCCESSOR-M1-DELTA` authorization `CR-2026-009` blocksFinalApproval=`False` — Successor M1 actor is DATA-LOADER; receiver remains DLA. Frozen merge bytes stay unchanged.
+- `SEQ-LUR-WRQ-ACTOR` `CLOSED-BY-SUCCESSOR-M1-DELTA` authorization `CR-2026-009` blocksFinalApproval=`False` — Successor M1 LUR write endpoints are DATA-LOADER→TARGET-HARDWARE WRQ, TARGET-HARDWARE→DATA-LOADER ACK, DATA-LOADER→TARGET-HARDWARE DATA. Frozen merge bytes stay unchanged.
 - `NET-ISSUE-EDITION` `ACCEPTED-CURRENT-EDITION-P3-1-AFDX-DEFERRED` authorization `CR-2026-009` blocksFinalApproval=`False` — Owner accepted 664P3-1 as this M2 input edition; 664P7 remains recorded and AFDX stays unselected.
 
 ## Analysis boundary
@@ -1380,6 +1389,7 @@
 - 独立性：`NOT-CLAIMED-NAMED-INDEPENDENT-REVIEWER`
 - M1 NET-ISSUE-EDITION 快照 blocksM1Approval=`True` — 已合并 M1 树上的历史快照。外部所有者签署与合并绑定了该 Head。该布尔值不重开合并。CR-2026-009 接受 664P3-1 作为本 M2 输入版次；664P7 保持已登记且 AFDX 未选。
 - 后继增量 `CR-2026-011` 由 `CR-2026-009` 授权；doesNotTransplantFrozenApproval=`True`
+- 前序输入制品提交 `402e8371b0237aec4691bab0b44e502f4ac1a7c4` 树 `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
 
 ## 范围
 
@@ -2650,7 +2660,7 @@
 
 | ID | 状态 | 责任 | 门禁 | 说明 |
 |---|---|---|---|---|
-| `A-1` | `EXECUTED-SUCCESSOR-M1-DELTA-PENDING-RG1` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | CR-2026-011 已执行后继身份（6.4.4 为 LUR、6.4.5 为 LUS、WRQ 参与者为 DATA-LOADER）。仍须独立 RG1。 |
+| `A-1` | `EXECUTED-SUCCESSOR-M1-DELTA-PENDING-RG1` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | CR-2026-011 已执行后继身份（6.4.4 为 LUR、6.4.5 为 LUS、LUR 写端点为 DL WRQ／TH ACK／DL DATA）。仍须独立 RG1。这是有界 M2 基线，不是开发就绪 CRS。 |
 | `A-2` | `CANDIDATE-PARTIAL` | M2-RG1 | PROFILE-MODEL-REFINEMENT-GATE | RFC-2347 选项传输与 RFC-2348 块大小为候选边；1785/2349 仍无活动 615A 单元。 |
 | `A-3` | `CANDIDATE-IN-MODEL` | M2-RG2 | PROFILE-MODEL-REFINEMENT-GATE | 已恢复带重试项的附件 4 方程；时钟使能超时迁移。 |
 | `A-4` | `DEFERRED` | FUTURE-TAXONOMY-CR | SCOPE-EXPANSION-GATE | 未执行 requirementKind 分类扩展。 |
@@ -2669,11 +2679,19 @@
 | `M1-FILE-IDENTITY-6-4-4` | `CLOSED-BY-SUCCESSOR-M1-DELTA` | INCREMENTAL-RG1 | PROFILE-MODEL-REFINEMENT-GATE | 后继 M1 增量已在 CR-2026-011 下执行。冻结合并字节作为保留记录不变。仍须独立 RG1。 |
 | `LUI-FIELD-TABLE-GAP` | `KNOWN-GAP-NO-DEDICATED-TABLE` | M1-EXPANDED | EXECUTABLE-FOUNDATION-GATE | 6.4.4 改为 LUR 后没有专用 LUI 字段表。LUI 仍是序列文件。不编造字段。 |
 
+## 序列端点绑定
+
+| CRS | 迁移 | 事件 | 发送者 | 接收者 | 方向 | 层级 |
+|---|---|---|---|---|---|---|
+| `CRS-M1-00365` | `T_UPL_LUR_WRQ` | `EV_DL_WRQ_LUR` | `DATA-LOADER` | `TARGET-HARDWARE` | `DL-TO-TH` | `NETWORK-VISIBLE` |
+| `CRS-M1-00366` | `T_UPL_LUR_ACK` | `EV_TH_ACK_LUR` | `TARGET-HARDWARE` | `DATA-LOADER` | `TH-TO-DL` | `NETWORK-VISIBLE` |
+| `CRS-M1-00367` | `T_UPL_LUR_XFER` | `EV_DL_DATA_LUR` | `DATA-LOADER` | `TARGET-HARDWARE` | `DL-TO-TH` | `NETWORK-VISIBLE` |
+
 ## 来源精化
 
 - `REF-A1-00143-BLOCKED-BY-FILE-IDENTITY` — `CANDIDATE-REFINEMENT` — 后继 M1 增量（CR-2026-011）将 CRS-M1-00143 记为 6.4.4 的 LUR 散文并含 HEADER-FILE。共享对象 HEADER-FILE 现支持到 CRS-M1-00217 的候选 665 边。仍须独立 RG1。能力保持未建立。 （至 `CRS-M1-00217` 2.2.3.1）
 - `REF-A1-00315-BLOCKED-BY-FILE-IDENTITY` — `CANDIDATE-REFINEMENT` — 后继 M1 增量将表 6.4.4-1 的 FIELD-LOAD-PART-NUMBER-NAME 记为 LUR。共享对象 LOAD-PART-NUMBER 现支持到 CRS-M1-00212 的候选 665 边。仍须独立 RG1。 （至 `CRS-M1-00212` 2.1.1）
-- `REF-SEQ-00365-WRQ-ACTOR` — `CANDIDATE-REFINEMENT` — 后继 M1 增量将 CRS-M1-00365 的参与者改为 DATA-LOADER，与 §6.3.2 图 A 及 TFTP 写机器一致。receiver 保持 DLA。仍须独立 RG1。 （至 `None` ）
+- `REF-SEQ-00365-WRQ-ACTOR` — `CANDIDATE-REFINEMENT` — 后继 M1 增量将 LUR 写三元组对齐到 §6.3.2 图 A 与 TFTP 写机器：DATA-LOADER 向 TARGET-HARDWARE 发 WRQ，TARGET-HARDWARE 向 DATA-LOADER 发 ACK，DATA-LOADER 向 TARGET-HARDWARE 发 DATA。DLA 是加载器应用层，不是网络 WRQ/ACK 端点。仍须独立 RG1。 （至 `None` ）
 - `REF-A2-TFTP-OPTION-2347` — `CANDIDATE-REFINEMENT` — 615A 5.3.2.2 要求传输 TFTP 选项。RFC 2347 §2 是选项扩展机制。该边使用公共检索身份，不伪造 PDF 页码。不声称完整 RFC-2347 符合性。 （至 `RFC-2347` 2）
 - `REF-A2-BLOCKSIZE-2348` — `CANDIDATE-REFINEMENT` — 615A 5.3.2.3.8.1 是 M1 已纳入的 Blocksize Option Implementation 单元（CRS-M1-00034）并带 DEP-RFC-2348。不能用 blksize 词形搜索否定该来源。RFC 2348 §2 是候选编码。能力保持未建立。 （至 `RFC-2348` 2）
 - `REF-A2-NO-RFC-1785-ACTIVE-EDGE` — `NOT-ESTABLISHED-NO-ACTIVE-SOURCE-UNIT` — UPLOAD/INFORMATION 选项单元未点名 RFC 1785 协商选项通告。P7 列举仍随未选择的 AFDX。 （至 `RFC-1785` ）
@@ -2718,7 +2736,7 @@
 ## 阻塞输入
 
 - `M1-FILE-IDENTITY-6-4-4` `CLOSED-BY-SUCCESSOR-M1-DELTA` 授权 `CR-2026-009` blocksFinalApproval=`False` — 后继 M1 增量已在 CR-2026-011 下执行。冻结合并字节不变。仍须独立 RG1。
-- `SEQ-LUR-WRQ-ACTOR` `CLOSED-BY-SUCCESSOR-M1-DELTA` 授权 `CR-2026-009` blocksFinalApproval=`False` — 后继 M1 参与者为 DATA-LOADER；receiver 保持 DLA。冻结合并字节不变。
+- `SEQ-LUR-WRQ-ACTOR` `CLOSED-BY-SUCCESSOR-M1-DELTA` 授权 `CR-2026-009` blocksFinalApproval=`False` — 后继 M1 的 LUR 写端点为 DATA-LOADER→TARGET-HARDWARE WRQ、TARGET-HARDWARE→DATA-LOADER ACK、DATA-LOADER→TARGET-HARDWARE DATA。冻结合并字节不变。
 - `NET-ISSUE-EDITION` `ACCEPTED-CURRENT-EDITION-P3-1-AFDX-DEFERRED` 授权 `CR-2026-009` blocksFinalApproval=`False` — 所有者接受 664P3-1 作为本 M2 输入版次；664P7 保持已登记且 AFDX 未选。
 
 ## 分析边界
