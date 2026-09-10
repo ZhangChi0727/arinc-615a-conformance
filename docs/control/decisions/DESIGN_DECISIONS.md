@@ -475,6 +475,14 @@ CR-2026-011 executes Items A and B plus the owner-authorized 6.4.5 LUR→LUS
 companion. Successor `inputAcceptance` is a new identity and does not transplant
 the frozen merge approval. `reviewControl.blocksFinalApproval` stays true.
 
+### 2026-09-10 LUR write endpoints after RR-M2-2026-004
+
+Independent review withdrew “receiver remains DLA” as mixing application-layer
+DLA with a network-visible TFTP WRQ. The same CR-2026-009 Item B class now
+records DATA-LOADER→TARGET-HARDWARE WRQ, TARGET-HARDWARE→DATA-LOADER ACK, and
+DATA-LOADER→TARGET-HARDWARE DATA. This remains a bounded M2 baseline, not a
+development-ready CRS.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -705,3 +713,10 @@ OPEN-M1-CORRECTION。该停线是正确行为，不是关闭。在这些输入�
 CR-2026-011 执行事项 A、B 以及所有者授权的 6.4.5 LUR→LUS 伴随。后继
 `inputAcceptance` 是新身份，不移植冻结合并批准。`reviewControl.blocksFinalApproval`
 保持为真。
+
+### 2026-09-10 RR-M2-2026-004 之后的 LUR 写端点
+
+独立评审撤回“receiver 保持 DLA”，因其把应用层 DLA 与网络可见 TFTP WRQ 混为一谈。
+同一 CR-2026-009 事项 B 类别现记录 DATA-LOADER→TARGET-HARDWARE WRQ、
+TARGET-HARDWARE→DATA-LOADER ACK、DATA-LOADER→TARGET-HARDWARE DATA。这仍是有界
+M2 基线，不是开发就绪 CRS。
