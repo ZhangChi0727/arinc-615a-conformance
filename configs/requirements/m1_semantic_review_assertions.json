@@ -3508,14 +3508,15 @@
         "condition": "UNCONDITIONAL",
         "action": "ENCODE",
         "objects": [
-          "HEADER-FILE"
+          "HEADER-FILE",
+          "LUR"
         ],
         "observableEffect": "ENCODED-FIELD-OBSERVABLE",
         "operation": "UPLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on HEADER-FILE under UNCONDITIONAL; evidence is the resulting ENCODED-FIELD-OBSERVABLE.",
-      "expectedGeneratedSemanticProjectionZh": "参与者“协议文件生成方”在“UNCONDITIONAL”下必须对“头文件”执行“编码或赋值”；证据是“编码字段可被观察”。",
+      "expectedGeneratedSemanticProjectionEn": "Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on HEADER-FILE, LUR under UNCONDITIONAL; evidence is the resulting ENCODED-FIELD-OBSERVABLE.",
+      "expectedGeneratedSemanticProjectionZh": "参与者“协议文件生成方”在“UNCONDITIONAL”下必须对“头文件、LUR”执行“编码或赋值”；证据是“编码字段可被观察”。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": []
@@ -8003,7 +8004,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-FILE-LENGTH",
         "ordinal": 1,
         "widthBitsExpression": "32",
@@ -8035,7 +8036,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-PROTOCOL-VERSION",
         "ordinal": 2,
         "widthBitsExpression": "16",
@@ -8067,7 +8068,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-NUMBER-OF-HEADER-FILES",
         "ordinal": 3,
         "widthBitsExpression": "16",
@@ -8099,7 +8100,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-HEADER-FILE-NAME-LENGTH",
         "ordinal": 4,
         "widthBitsExpression": "8",
@@ -8131,7 +8132,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-HEADER-FILE-NAME",
         "ordinal": 5,
         "widthBitsExpression": "8..2040",
@@ -8165,7 +8166,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
         "ordinal": 6,
         "widthBitsExpression": "8",
@@ -8197,7 +8198,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-LOAD-PART-NUMBER-NAME",
         "ordinal": 7,
         "widthBitsExpression": "8..2040",
@@ -8231,7 +8232,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-FILE-LENGTH",
         "ordinal": 1,
         "widthBitsExpression": "32",
@@ -8263,7 +8264,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-PROTOCOL-VERSION",
         "ordinal": 2,
         "widthBitsExpression": "16",
@@ -8295,7 +8296,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-UPLOAD-OPERATION-STATUS-CODE",
         "ordinal": 3,
         "widthBitsExpression": "16",
@@ -8327,7 +8328,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH",
         "ordinal": 4,
         "widthBitsExpression": "8",
@@ -8359,7 +8360,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-UPLOAD-STATUS-DESCRIPTION",
         "ordinal": 5,
         "widthBitsExpression": "0..2040",
@@ -8393,7 +8394,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-COUNTER",
         "ordinal": 6,
         "widthBitsExpression": "16",
@@ -8453,7 +8454,7 @@
         "ambiguityStatus": "NONE-OBSERVED"
       },
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-EXCEPTION-TIMER",
         "ordinal": 7,
         "widthBitsExpression": "16",
@@ -8485,7 +8486,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-ESTIMATED-TIME",
         "ordinal": 8,
         "widthBitsExpression": "16",
@@ -8517,7 +8518,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-LIST-RATIO",
         "ordinal": 9,
         "widthBitsExpression": "24",
@@ -8549,7 +8550,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-NUMBER-OF-HEADER-FILES",
         "ordinal": 10,
         "widthBitsExpression": "16",
@@ -8581,7 +8582,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-HEADER-FILE-NAME-LENGTH",
         "ordinal": 11,
         "widthBitsExpression": "8",
@@ -8613,7 +8614,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-HEADER-FILE-NAME",
         "ordinal": 12,
         "widthBitsExpression": "8..2040",
@@ -8647,7 +8648,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
         "ordinal": 13,
         "widthBitsExpression": "8",
@@ -8679,7 +8680,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-PART-NUMBER-NAME",
         "ordinal": 14,
         "widthBitsExpression": "8..2040",
@@ -8713,7 +8714,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-RATIO",
         "ordinal": 15,
         "widthBitsExpression": "24",
@@ -8745,7 +8746,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-STATUS",
         "ordinal": 16,
         "widthBitsExpression": "16",
@@ -8777,7 +8778,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-STATUS-DESCRIPTION-LENGTH",
         "ordinal": 17,
         "widthBitsExpression": "8",
@@ -8809,7 +8810,7 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedFieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-STATUS-DESCRIPTION",
         "ordinal": 18,
         "widthBitsExpression": "0..2040",
@@ -9497,7 +9498,7 @@
       "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E007-7726A816FFE7",
       "sourceTextHash": "7726a816ffe72ad5691188f24b29a6ec131f042dce41742559da92b46cade96b",
       "expectedSemantic": {
-        "actor": "TARGET-HARDWARE",
+        "actor": "DATA-LOADER",
         "condition": "LIST-ACCEPTED",
         "action": "SEND-TFTP-WRITE-REQUEST",
         "objects": [
@@ -9508,8 +9509,8 @@
         "operation": "UPLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "Actor TARGET-HARDWARE shall perform SEND-TFTP-WRITE-REQUEST on LUR toward DLA under LIST-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
-      "expectedGeneratedSemanticProjectionZh": "参与者“目标硬件”在“LIST-ACCEPTED”下必须对“LUR”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
+      "expectedGeneratedSemanticProjectionEn": "Actor DATA-LOADER shall perform SEND-TFTP-WRITE-REQUEST on LUR toward DLA under LIST-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
+      "expectedGeneratedSemanticProjectionZh": "参与者“数据加载器”在“LIST-ACCEPTED”下必须对“LUR”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
       "expectedSourceModality": "FIGURE-CONSTRAINT",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": []
@@ -10002,11 +10003,11 @@
         "pdfPage": 30,
         "documentPage": 23,
         "clause": "Table 3.3.2-1",
-      "inspectionKind": "DEFERRED-PROFILED-TABLE-REGION",
+        "inspectionKind": "DEFERRED-PROFILED-TABLE-REGION",
         "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
         "sourceTextHash": "70ada7e88ec7a8046ee7bd3461d37fd60aa107e4c288e30905d02252d3ae7145",
-      "summaryEn": "The profiled UDP table differentiates checksum, source-address and interface obligations. Its deviations are unselected; applicable RFC behavior remains an unverified infrastructure prerequisite.",
-      "summaryZh": "Profiled UDP 表区分校验和、源地址与接口义务。其偏差未选择；适用 RFC 行为仍是尚未验证的基础设施前提。"
+        "summaryEn": "The profiled UDP table differentiates checksum, source-address and interface obligations. Its deviations are unselected; applicable RFC behavior remains an unverified infrastructure prerequisite.",
+        "summaryZh": "Profiled UDP 表区分校验和、源地址与接口义务。其偏差未选择；适用 RFC 行为仍是尚未验证的基础设施前提。"
       },
       {
         "id": "NET-P3-IP-RULE",
@@ -10028,7 +10029,7 @@
         "pdfPage": 32,
         "documentPage": 25,
         "clause": "Table 3.4.1-1 / first page",
-      "inspectionKind": "DEFERRED-PROFILED-TABLE-REGION",
+        "inspectionKind": "DEFERRED-PROFILED-TABLE-REGION",
         "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
         "sourceTextHash": "4aa5251e856135df291bf92f188bc7b5f91558340172f633732e3c1bab174867",
         "summaryEn": "Mandatory profiled rows include IPv4 version and header checks; the table is not yet an admitted leaf-level CRS inventory.",
