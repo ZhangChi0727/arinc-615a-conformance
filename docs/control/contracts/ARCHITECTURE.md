@@ -152,7 +152,9 @@ No lower layer may invent a missing source obligation or promote a claim.
 Injectable boundaries isolate transport, timing and trace collection. The single
 behavioral skeleton is a lightweight observable timed EFSM, introduced only
 after CRS/applicability approval. M0 adopts this direction but creates no
-implementation or execution eligibility.
+implementation or execution eligibility. M1 is the immutable CRS input. M2 is
+the model authority in `configs/models/arinc_615a3_m2_model.json`. No executable
+engine is introduced by this candidate.
 
 ## ARINC 615A certification-evidence view (`RB-2026-001-v4.3` candidate)
 
@@ -259,7 +261,8 @@ RG0–RG6 控制静态产物和主张，G0–G7 控制证据层级；缺失上�
 来源身份和能力由 [`controlled_sources.json`](../../../configs/research/controlled_sources.json)
 控制。下游层不得发明缺失的来源义务或晋级主张。注入边界隔离传输、时序和 trace 收集。唯一
 行为骨架是轻量可观测 timed EFSM，且只在 CRS/适用性批准后引入。M0 只采纳方向，不创建
-实现或执行资格。
+实现或执行资格。M1 是不可变 CRS 输入。M2 模型权威位于
+`configs/models/arinc_615a3_m2_model.json`。本候选不引入可执行引擎。
 
 ## ARINC 615A 面向认证证据视图（`RB-2026-001-v4.3` 候选）
 

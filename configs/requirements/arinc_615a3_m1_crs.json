@@ -74501,14 +74501,15 @@
       },
       "sourceTextHash": "d5e44774d202393b908e209ff01938ae07d5b43b79ca0cdfd46a80e6ecf9a798",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on HEADER-FILE under UNCONDITIONAL; evidence is the resulting ENCODED-FIELD-OBSERVABLE.",
-      "generatedSemanticProjectionZh": "参与者“协议文件生成方”在“UNCONDITIONAL”下必须对“头文件”执行“编码或赋值”；证据是“编码字段可被观察”。",
+      "generatedSemanticProjectionEn": "Actor PROTOCOL-FILE-PRODUCER shall perform ENCODE on HEADER-FILE, LUR under UNCONDITIONAL; evidence is the resulting ENCODED-FIELD-OBSERVABLE.",
+      "generatedSemanticProjectionZh": "参与者“协议文件生成方”在“UNCONDITIONAL”下必须对“头文件、LUR”执行“编码或赋值”；证据是“编码字段可被观察”。",
       "semantic": {
         "actor": "PROTOCOL-FILE-PRODUCER",
         "condition": "UNCONDITIONAL",
         "action": "ENCODE",
         "objects": [
-          "HEADER-FILE"
+          "HEADER-FILE",
+          "LUR"
         ],
         "observableEffect": "ENCODED-FIELD-OBSERVABLE",
         "operation": "UPLOAD",
@@ -83166,7 +83167,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-FILE-LENGTH",
         "ordinal": 1,
         "widthBitsExpression": "32",
@@ -83219,7 +83220,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-PROTOCOL-VERSION",
         "ordinal": 2,
         "widthBitsExpression": "16",
@@ -83272,7 +83273,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-NUMBER-OF-HEADER-FILES",
         "ordinal": 3,
         "widthBitsExpression": "16",
@@ -83325,7 +83326,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-HEADER-FILE-NAME-LENGTH",
         "ordinal": 4,
         "widthBitsExpression": "8",
@@ -83378,7 +83379,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-HEADER-FILE-NAME",
         "ordinal": 5,
         "widthBitsExpression": "8..2040",
@@ -83433,7 +83434,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
         "ordinal": 6,
         "widthBitsExpression": "8",
@@ -83486,7 +83487,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUI",
+        "protocolFile": "LUR",
         "fieldId": "FIELD-LOAD-PART-NUMBER-NAME",
         "ordinal": 7,
         "widthBitsExpression": "8..2040",
@@ -83541,7 +83542,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-FILE-LENGTH",
         "ordinal": 1,
         "widthBitsExpression": "32",
@@ -83594,7 +83595,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-PROTOCOL-VERSION",
         "ordinal": 2,
         "widthBitsExpression": "16",
@@ -83647,7 +83648,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-UPLOAD-OPERATION-STATUS-CODE",
         "ordinal": 3,
         "widthBitsExpression": "16",
@@ -83700,7 +83701,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH",
         "ordinal": 4,
         "widthBitsExpression": "8",
@@ -83753,7 +83754,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-UPLOAD-STATUS-DESCRIPTION",
         "ordinal": 5,
         "widthBitsExpression": "0..2040",
@@ -83808,7 +83809,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-COUNTER",
         "ordinal": 6,
         "widthBitsExpression": "16",
@@ -83861,7 +83862,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-EXCEPTION-TIMER",
         "ordinal": 7,
         "widthBitsExpression": "16",
@@ -83942,7 +83943,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-ESTIMATED-TIME",
         "ordinal": 8,
         "widthBitsExpression": "16",
@@ -83995,7 +83996,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-LIST-RATIO",
         "ordinal": 9,
         "widthBitsExpression": "24",
@@ -84048,7 +84049,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-NUMBER-OF-HEADER-FILES",
         "ordinal": 10,
         "widthBitsExpression": "16",
@@ -84101,7 +84102,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-HEADER-FILE-NAME-LENGTH",
         "ordinal": 11,
         "widthBitsExpression": "8",
@@ -84154,7 +84155,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-HEADER-FILE-NAME",
         "ordinal": 12,
         "widthBitsExpression": "8..2040",
@@ -84209,7 +84210,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-PART-NUMBER-NAME-LENGTH",
         "ordinal": 13,
         "widthBitsExpression": "8",
@@ -84262,7 +84263,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-PART-NUMBER-NAME",
         "ordinal": 14,
         "widthBitsExpression": "8..2040",
@@ -84317,7 +84318,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-RATIO",
         "ordinal": 15,
         "widthBitsExpression": "24",
@@ -84370,7 +84371,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-STATUS",
         "ordinal": 16,
         "widthBitsExpression": "16",
@@ -84423,7 +84424,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-STATUS-DESCRIPTION-LENGTH",
         "ordinal": 17,
         "widthBitsExpression": "8",
@@ -84476,7 +84477,7 @@
         "status": "CANDIDATE"
       },
       "fieldConstraint": {
-        "protocolFile": "LUR",
+        "protocolFile": "LUS",
         "fieldId": "FIELD-LOAD-STATUS-DESCRIPTION",
         "ordinal": 18,
         "widthBitsExpression": "0..2040",
@@ -86013,16 +86014,16 @@
       },
       "sourceTextHash": "7726a816ffe72ad5691188f24b29a6ec131f042dce41742559da92b46cade96b",
       "hashCanonicalizationId": "ARINC-VISUAL-EVENT-TUPLE-v1",
-      "generatedSemanticProjectionEn": "Actor TARGET-HARDWARE shall perform SEND-TFTP-WRITE-REQUEST on LUR toward DLA under LIST-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
-      "generatedSemanticProjectionZh": "参与者“目标硬件”在“LIST-ACCEPTED”下必须对“LUR”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
+      "generatedSemanticProjectionEn": "Actor DATA-LOADER shall perform SEND-TFTP-WRITE-REQUEST on LUR toward TARGET-HARDWARE under LIST-ACCEPTED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
+      "generatedSemanticProjectionZh": "参与者“数据加载器”在“LIST-ACCEPTED”下必须对“LUR”执行“SEND-TFTP-WRITE-REQUEST”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
       "semantic": {
-        "actor": "TARGET-HARDWARE",
+        "actor": "DATA-LOADER",
         "condition": "LIST-ACCEPTED",
         "action": "SEND-TFTP-WRITE-REQUEST",
         "objects": [
           "LUR"
         ],
-        "receiver": "DLA",
+        "receiver": "TARGET-HARDWARE",
         "observableEffect": "ORDER-DIRECTION-BRANCH-OBSERVABLE",
         "operation": "UPLOAD",
         "polarity": "AFFIRMATIVE"
@@ -86056,16 +86057,16 @@
       },
       "sourceTextHash": "f1d3b51077a3197eda93ae3751252266c3c55161149ce8393dbad7fcc9c0cee1",
       "hashCanonicalizationId": "ARINC-VISUAL-EVENT-TUPLE-v1",
-      "generatedSemanticProjectionEn": "Actor DLA shall perform ACKNOWLEDGE on LUR-WRITE-REQUEST toward TARGET-HARDWARE under REQUEST-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
-      "generatedSemanticProjectionZh": "参与者“数据加载器应用层”在“REQUEST-RECEIVED”下必须对“LUR-WRITE-REQUEST”执行“确认”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
+      "generatedSemanticProjectionEn": "Actor TARGET-HARDWARE shall perform ACKNOWLEDGE on LUR-WRITE-REQUEST toward DATA-LOADER under REQUEST-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
+      "generatedSemanticProjectionZh": "参与者“目标硬件”在“REQUEST-RECEIVED”下必须对“LUR-WRITE-REQUEST”执行“确认”，接收方为“数据加载器”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
       "semantic": {
-        "actor": "DLA",
+        "actor": "TARGET-HARDWARE",
         "condition": "REQUEST-RECEIVED",
         "action": "ACKNOWLEDGE",
         "objects": [
           "LUR-WRITE-REQUEST"
         ],
-        "receiver": "TARGET-HARDWARE",
+        "receiver": "DATA-LOADER",
         "observableEffect": "ORDER-DIRECTION-BRANCH-OBSERVABLE",
         "operation": "UPLOAD",
         "polarity": "AFFIRMATIVE"
@@ -86099,10 +86100,10 @@
       },
       "sourceTextHash": "9a7cd75981cb9a76bd9e2b29e1109b86851b3befcbac3b58d0f0c3fe060ba85f",
       "hashCanonicalizationId": "ARINC-VISUAL-EVENT-TUPLE-v1",
-      "generatedSemanticProjectionEn": "Actor DLA shall perform TRANSFER on LUR toward TARGET-HARDWARE under ACKNOWLEDGED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
-      "generatedSemanticProjectionZh": "参与者“数据加载器应用层”在“ACKNOWLEDGED”下必须对“LUR”执行“传输”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
+      "generatedSemanticProjectionEn": "Actor DATA-LOADER shall perform TRANSFER on LUR toward TARGET-HARDWARE under ACKNOWLEDGED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.",
+      "generatedSemanticProjectionZh": "参与者“数据加载器”在“ACKNOWLEDGED”下必须对“LUR”执行“传输”，接收方为“目标硬件”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。",
       "semantic": {
-        "actor": "DLA",
+        "actor": "DATA-LOADER",
         "condition": "ACKNOWLEDGED",
         "action": "TRANSFER",
         "objects": [
@@ -87015,7 +87016,7 @@
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "aa17cdaac64bf3167ecc7d617eb1210d4bef6d94623c68d96985a6cb761fd2e8",
+    "semanticAssertionFingerprint": "f84879eb6ae689592c79cc96ceea18d7555f2260ed1af9a07d366539f1352816",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
@@ -87026,7 +87027,7 @@
     "dependencyCount": 14,
     "gapCount": 1,
     "coverageFingerprint": "01470d751abdc20b28ac6b75e79f308f53b458dd3e7beafcbd9e229e598fdde6",
-    "requirementsFingerprint": "632e34cc0720cf3ca8deb816c6aaf001543fc116288382d8b8304ab0d0a3dad4"
+    "requirementsFingerprint": "b9d7ed46e0fb8be95ecd747ad47bf0451b3b81c52ab601397456b14031a099bf"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

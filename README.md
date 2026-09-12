@@ -37,11 +37,11 @@ silently redefine the Core.
 | Current release | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/tree/v4.3.1) |
 | Method input | Candidate GVS Core 0.3 at [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
 | Protocol source | `ARINC-615A-3` / edition `615A-3` / wire version `A4` |
-| Bounded source and open dependency | `ARINC-665-5`; ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, ARINC-664-7 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY`, RFC-1122 `OPEN-DEPENDENCY` |
+| Bounded source and open dependency | `ARINC-665-5`, `ARINC-664-2`, `ARINC-664-3` (BOUNDED-ACTIVE); `ARINC-664-7` (CONDITIONAL-DEPLOYMENT); ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, ARINC-664-7 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY`, RFC-1122 `OPEN-DEPENDENCY` |
 | Technical direction | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / platform `deferred: TTCN-3` |
-| Delivery position | current `M1` / next `M2` / disposition `ADOPT` |
+| Delivery position | current `M2` / next `M3` / disposition `ADOPT` |
 | Activation boundary | merge evidence `EXTERNAL-VERIFICATION-REQUIRED` / approval `NOT-AUTOMATED` |
-| Technical controls | [`source register`](configs/research/controlled_sources.json), [`activation control`](docs/control/changes/CR-2026-007.md), [`technical decisions`](docs/control/decisions/DESIGN_DECISIONS.md), [`M1 package`](configs/requirements/arinc_615a3_m1_crs.json), [`generated M1 review view`](docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md) |
+| Technical controls | [`source register`](configs/research/controlled_sources.json), [`activation control`](docs/control/changes/CR-2026-008.md), [`technical decisions`](docs/control/decisions/DESIGN_DECISIONS.md), [`M1 package`](configs/requirements/arinc_615a3_m1_crs.json), [`generated M1 review view`](docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md), [`M2 package`](configs/models/arinc_615a3_m2_model.json), [`generated M2 review view`](docs/control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md) |
 | Third handshake | `COMPLETE` |
 | Compatibility | `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` under Q-01–Q-09 |
 | Project Configuration | `NOT YET ESTABLISHED` |
@@ -50,19 +50,17 @@ silently redefine the Core.
 
 ## Current increment
 
-**M1 bounded network source and Compliant scope candidate**
+**M2 observable timed model and bounded source refinement candidate**
 
-- Receive edition-specific P3/P7 references and RFC 1122; select Compliant Network, defer P3 deviations and AFDX, and retain an unestablished IPv4/UDP infrastructure prerequisite.
-- Rebuild the single machine-readable candidate package around leaf-level prose, table-row and sequence-event source units.
-- Apply a dependency-bounded ARINC 665-5 survey triggered only by 615A-3 and current Profile services.
-- Separate fixed timing constants, message-carried parameters, symbolic parameters and examples while keeping ARINC 645 open.
-- Close WO-M1-2026-003: bind independent timing evidence, govern deferred 615A-to-665 edges, classify field presence/encoding, and remove misleading projection and denormalization semantics.
-- Close WO-M1-2026-004: replenish source-fidelity findings against the local reference PDFs (Attachment 3 and Appendix E explicit deferral, ARINC 664 Part 2 controlled binding, IETF RFC public retrieval identity, 665-5 media-set exclusion rationale).
+- Record owner-accepted M1 sign-off and merge facts in M2 inputAcceptance without rewriting merged M1 bytes. CR-2026-011 successor delta rebinds current M1 blobs as a new identity and does not transplant that approval.
+- Deliver an observable timed EFSM for UPLOAD and INFORMATION with payload-enabled accept/reject, session-local list readiness before LUR, visual TFTP-write LUR direction, WAIT not-before retry, obligation-level traces and Attachment 4 equations bound to ordered source structure.
+- Correct Table 6.4.4-1 to LUR and Table 6.4.5-1 to LUS; align the LUR write triad to DATA-LOADER WRQ, TARGET-HARDWARE ACK and DATA-LOADER DATA; bind those CRS actions/objects to TFTP opcode and file role; keep LUI field-table predicates as a named gap. This PR exit is a bounded M2 baseline, not a development-ready CRS. Add source-explicit 615A→665 and TFTP-option refinements used by the model; keep AFDX, FIND, 645 and P3 deviations deferred.
+- Plan IPv4/UDP substantiation for Project Configuration; do not establish network or integrity capabilities.
 
 State changes:
 
-- M0 is externally verified and M1 remains a candidate CRS/applicability package under CR-2026-007.
-- Repository snapshot: bounded network source review candidate under DD-023. Prior gate outcomes do not transfer to this Head; RG0/RG1 stay PENDING-EXTERNAL-INDEPENDENT-REVIEW and require complete-range review.
+- M0 and M1 are COMPLETED-EXTERNALLY-VERIFIED. M2 is a DISPOSITION-ADOPT candidate under CR-2026-008.
+- currentStop is EXECUTABLE-FOUNDATION-GATE, which blocks M3 until M2 is independently approved, ordinarily merged and main CI succeeds.
 
 Unchanged boundaries:
 
@@ -70,16 +68,16 @@ Unchanged boundaries:
 - The 18 source mapping rows, 7 instance-only rows and Q-01 through Q-09 remain unchanged.
 - Project Configuration is NOT YET ESTABLISHED; instance evaluation is NOT-EXERCISED; RQ8 remains OPEN.
 - Protocol conformance, certification readiness and authority acceptance remain false; no baseline or tag is created.
-- M1 creates no codec, EFSM instance, verification case, procedure, execution evidence or Project Configuration.
+- This M2 candidate creates no codec, executable EFSM engine, verification case, procedure, execution evidence or Project Configuration.
 
 ## Current stop
 
-`PROFILE-MODEL-REFINEMENT-GATE` — **NOT YET ESTABLISHED**: The M1 CRS gate remains EXTERNAL-VERIFICATION-REQUIRED. This stop blocks M2 until joint RG0/RG1 approval binds the exact reviewed Head, an ordinary merge has that Head as second parent, and main CI succeeds.
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop blocks M3 until joint RG0/RG1/RG2 approval binds the exact reviewed M2 Head, an ordinary merge has that Head as second parent, and main CI succeeds.
 
 ## Next development steps
 
-- Obtain renewed joint independent RG0/RG1 review over the complete M1 branch range on the unchanged final Head.
-- Only after approval, ordinary merge, successful main CI and cleanup, prepare a separate M2 work order.
+- Obtain independent RG0, incremental RG1 and RG2 review of the complete M2 range on the unchanged final Head.
+- Do not merge, tag or start M3 until that review, user authorization, ordinary two-parent merge and main CI succeed.
 
 ## 当前开发图景
 
@@ -89,11 +87,11 @@ Unchanged boundaries:
 | 当前发布 | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/tree/v4.3.1) |
 | 方法输入 | Candidate GVS Core 0.3 @ [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
 | 协议来源 | `ARINC-615A-3` / 版次 `615A-3` / 线版本 `A4` |
-| 有边界来源与开放依赖 | `ARINC-665-5`；ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, ARINC-664-7 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY`, RFC-1122 `OPEN-DEPENDENCY` |
+| 有边界来源与开放依赖 | `ARINC-665-5`, `ARINC-664-2`, `ARINC-664-3` (BOUNDED-ACTIVE); `ARINC-664-7` (CONDITIONAL-DEPLOYMENT)；ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, ARINC-664-7 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY`, RFC-1122 `OPEN-DEPENDENCY` |
 | 技术方向 | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / 平台 `deferred: TTCN-3` |
-| 交付位置 | 当前 `M1` / 下一 `M2` / 处置 `ADOPT` |
+| 交付位置 | 当前 `M2` / 下一 `M3` / 处置 `ADOPT` |
 | 激活边界 | 合并证据 `EXTERNAL-VERIFICATION-REQUIRED` / 批准 `NOT-AUTOMATED` |
-| 技术控制入口 | [`source register`](configs/research/controlled_sources.json), [`activation control`](docs/control/changes/CR-2026-007.md), [`technical decisions`](docs/control/decisions/DESIGN_DECISIONS.md), [`M1 package`](configs/requirements/arinc_615a3_m1_crs.json), [`generated M1 review view`](docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md) |
+| 技术控制入口 | [`source register`](configs/research/controlled_sources.json), [`activation control`](docs/control/changes/CR-2026-008.md), [`technical decisions`](docs/control/decisions/DESIGN_DECISIONS.md), [`M1 package`](configs/requirements/arinc_615a3_m1_crs.json), [`generated M1 review view`](docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md), [`M2 package`](configs/models/arinc_615a3_m2_model.json), [`generated M2 review view`](docs/control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md) |
 | 第三次握手 | `COMPLETE` |
 | 兼容性 | 受 Q-01～Q-09 限定的 `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` |
 | Project Configuration | `NOT YET ESTABLISHED` |
@@ -102,19 +100,17 @@ Unchanged boundaries:
 
 ## 本次集成增量
 
-**M1 有边界网络来源与 Compliant 范围候选**
+**M2 可观测时序模型与有边界来源精化候选**
 
-- 接收精确版次 P3/P7 引用及 RFC 1122；选择 Compliant Network，延期 P3 偏差与 AFDX，保留未建立的 IPv4/UDP 基础设施前提。
-- 围绕叶级正文、表格行和序列事件来源单元重建单一机器可读候选包。
-- 仅由 615A-3 与当前 Profile 服务触发 ARINC 665-5 有边界调查。
-- 区分固定时序常数、消息携带参数、符号参数和示例，并保持 ARINC 645 开放。
-- 关闭 WO-M1-2026-003：绑定独立时序证据，治理延期的 615A→665 边，分类字段出现／编码语义，并移除误导性的释义与冗余语义字段。
-- 关闭 WO-M1-2026-004：依据本地参考 PDF 完成源文件保真回填（附件 3 与附录 E 显式延期、ARINC 664 第 2 部分受控绑定、IETF RFC 公共检索身份、665-5 媒体集边界排除说明）。
+- 在 M2 inputAcceptance 中记录所有者接受的 M1 签署与合并事实，不改写已合并 M1 字节。CR-2026-011 后继增量把当前 M1 blob 作为新身份重绑定，不移植该批准。
+- 交付 UPLOAD 与 INFORMATION 的可观测 timed EFSM，含 payload 使能的接受／拒绝、LUR 前的会话内列表就绪、目视 TFTP 写的 LUR 方向、WAIT 不得早于重试、义务级追踪，以及按有序来源结构绑定的附件 4 方程。
+- 将表 6.4.4-1 纠正为 LUR、表 6.4.5-1 纠正为 LUS；将 LUR 写三元组对齐为 DATA-LOADER WRQ、TARGET-HARDWARE ACK、DATA-LOADER DATA；将上述 CRS 动作／对象绑定到 TFTP 操作码与文件角色；LUI 字段表谓词作为具名缺口。本 PR 出口是有界 M2 基线，不是开发就绪 CRS。为模型实际使用的对象增加 615A→665 与 TFTP 选项精化；FIND、AFDX、645 与 P3 偏差保持延期。
+- 规划 IPv4/UDP 基础设施验证以备 Project Configuration；不建立网络或完整性能力。
 
 状态变化：
 
-- M0 已获外部核验，M1 仍由 CR-2026-007 控制为候选 CRS/适用性数据包。
-- 仓库快照：DD-023 下的有边界网络来源评审候选。既有门禁结论不继承到本 Head；RG0/RG1 保持 PENDING-EXTERNAL-INDEPENDENT-REVIEW，并须执行完整范围复审。
+- M0 与 M1 为 COMPLETED-EXTERNALLY-VERIFIED。M2 在 CR-2026-008 下为 DISPOSITION-ADOPT 候选。
+- currentStop 为 EXECUTABLE-FOUNDATION-GATE，在 M2 获独立批准、普通合并且 main CI 成功前阻止 M3。
 
 保持不变的边界：
 
@@ -122,16 +118,16 @@ Unchanged boundaries:
 - 18 个来源映射行、7 个实例专用行及 Q-01～Q-09 保持不变。
 - Project Configuration 保持 NOT YET ESTABLISHED；实例评价保持 NOT-EXERCISED；RQ8 保持 OPEN。
 - 协议符合性、认证准备度和权威接受保持 false；不创建 baseline 或 tag。
-- M1 不创建 codec、EFSM 实例、验证用例、规程、执行证据或 Project Configuration。
+- 本 M2 候选不创建 codec、可执行 EFSM 引擎、验证用例、规程、执行证据或 Project Configuration。
 
 ## 当前停点
 
-`PROFILE-MODEL-REFINEMENT-GATE` — **NOT YET ESTABLISHED**：M1 CRS 门仍为 EXTERNAL-VERIFICATION-REQUIRED。本停点禁止 M2，直至 RG0/RG1 联合批准绑定精确受审 Head、普通合并的第二父为该 Head，且 main CI 成功。
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点禁止 M3，直至 RG0/RG1/RG2 联合批准绑定精确受审 M2 Head、普通合并的第二父为该 Head，且 main CI 成功。
 
 ## 下一步开发计划
 
-- 在不再变化的最终 Head 上，对完整 M1 分支范围取得新一轮独立 RG0/RG1 联合评审。
-- 仅在批准、普通合并、main CI 成功并清理后，另编 M2 工作单。
+- 在不再变化的最终 Head 上，对完整 M2 范围取得独立 RG0、增量 RG1 与 RG2 评审。
+- 在该评审、用户授权、普通两父合并且 main CI 成功前，不合并、不打标签、不启动 M3。
 <!-- project-status:end -->
 
 ## Read by role / 按角色继续阅读

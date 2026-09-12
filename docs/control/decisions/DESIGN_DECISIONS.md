@@ -398,6 +398,91 @@ Review the remaining applicability before further normative promotion; retain DD
 and DD-020. Actual approval and merge facts are recorded externally on the unchanged
 Head and ordinary merge, without a dedicated post-merge synchronization commit.
 
+---
+
+## DD-024 — Bind M2 to an observable timed EFSM with restricted clocks
+
+M2 delivers one machine M = (S, s0, V, C, P, E, T, Inv) for UPLOAD and
+INFORMATION, with Data Loader and Target Hardware as observation projections of
+the same state. Timing uses restricted ASTs, explicit clocks, clock-enabled
+timeouts and source-bound error-budget classes. Attachment 4 equations retain
+retry and network-transmission terms. Unresolved bounds remain NOT-CHECKED. The
+package is the model authority; M1 remains the immutable CRS input. No codec,
+executable engine, TP/VC or Project Configuration is authorized.
+
+**Scope:** Candidate model and obligation traces under CR-2026-008.
+
+**Status:** Candidate under CR-2026-008, pending external independent review.
+
+---
+
+## DD-025 — Separate M1 input acceptance from technical action closure
+
+Record the owner-accepted COMMENTED sign-off, ordinary two-parent merge, tree and
+main CI in M2 `inputAcceptance`. Do not rewrite merged M1 bytes, fabricate a
+GitHub APPROVED review, or claim a named independent reviewer. CR-2026-007 closing
+text transfers residual actions to CR-2026-008; transfer is not technical closure.
+Historical edition acceptance remains a conditional input until independent RG0
+says otherwise.
+
+**Scope:** Control-plane recording of merged M1 facts; not a ledger-only PR.
+
+**Status:** Candidate under CR-2026-008, pending external independent review.
+
+---
+
+## DD-026 — Keep infrastructure premises distinct from established capabilities
+
+Source-explicit 615A→665 and TFTP-option edges may be candidate refinements when
+both ends are located. CRS-M1-00034 is a block-size candidate to RFC 2348 §2;
+the conflicted 6.4.4 LUI/LUR file identity does not emit an active 665 edge.
+IPv4/UDP and RFC 1122/1123 remain infrastructure premises with substantiation
+planned for Project Configuration. ARINC 645 continues to block integrity
+success. AFDX, FIND, media-set services and P3 profiled deviations stay deferred
+or excluded. No behavior capability becomes ESTABLISHED in this candidate.
+
+**Scope:** Premises, refinements and capability guards used by the M2 model.
+
+**Status:** Candidate under CR-2026-008, pending external independent review.
+
+---
+
+## DD-027 — Successor M1 delta for file identity, without rewriting the frozen tree
+
+A 6.4.4 LUI/LUR file-identity conflict and the §6.3.2 LUR WRQ actor mismatch remain
+OPEN-M1-CORRECTION. That stop is correct and is not closure. The current M2
+candidate must not request final RG0/RG1/RG2 APPROVE while those inputs stay
+conflicted. After user authorization, a successor M1 package may correct only those
+identities in new ordinary commits and new blob OIDs. Historical merge
+`9bf18124d405b656815bc9eb524ae29bb4f04f56` and its frozen bytes stay unchanged
+as a preserved record. Successor `inputAcceptance` is a new identity and must
+not transplant the original merge approval onto new blobs. CR-2026-009 is one
+authorization request with two pending items (6.4.4 file identity and
+CRS-M1-00365 WRQ actor), authorizable together or separately; neither is
+executed until authorized. NET-ISSUE-EDITION remains a separate independent
+RG0 decision; OPEN text is not edition acceptance. CR-2026-009 records the
+authorization request.
+
+**Scope:** Input-correction authorization; not an M1 rewrite and not M2 final approval.
+
+**Status:** Candidate under CR-2026-008 / CR-2026-009 / CR-2026-011. Owner
+authorization granted 2026-09-10; successor delta executed under CR-2026-011;
+independent RG1 still required.
+
+### 2026-09-10 T1 execution
+
+CR-2026-011 executes Items A and B plus the owner-authorized 6.4.5 LUR→LUS
+companion. Successor `inputAcceptance` is a new identity and does not transplant
+the frozen merge approval. `reviewControl.blocksFinalApproval` stays true.
+
+### 2026-09-10 LUR write endpoints after RR-M2-2026-004
+
+Independent review withdrew “receiver remains DLA” as mixing application-layer
+DLA with a network-visible TFTP WRQ. The same CR-2026-009 Item B class now
+records DATA-LOADER→TARGET-HARDWARE WRQ, TARGET-HARDWARE→DATA-LOADER ACK, and
+DATA-LOADER→TARGET-HARDWARE DATA. This remains a bounded M2 baseline, not a
+development-ready CRS.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -570,3 +655,68 @@ M2 须规划其验证，之后才可批准执行 Configuration；独立评审须
 AFDX、AID 未来补充版引用与寻址选择仍延期。来源接收不建立实现能力。
 继续保留 DD-019/DD-020，在进一步规范晋级前评审剩余适用性。
 真实批准和合并事实由不变 Head 上的外部记录与普通合并承载，不新增专门 post-merge 同步提交。
+
+## DD-024——将 M2 绑定到带受限时钟的可观测 timed EFSM
+
+M2 为 UPLOAD 与 INFORMATION 交付一台机器 M = (S, s0, V, C, P, E, T, Inv)，
+数据加载器与目标硬件是同一状态的观测投影。时序使用受限 AST、显式时钟、时钟
+使能超时和有来源的误差预算类别。附件 4 方程保留重试与网络传输项。未解析边界
+保持 NOT-CHECKED。数据包是模型权威；M1 仍为不可变 CRS 输入。不授权 codec、
+可执行引擎、TP/VC 或 Project Configuration。
+
+**范围：** CR-2026-008 下的候选模型与义务追踪。
+
+**状态：** 在 CR-2026-008 下为候选，等待外部独立复审。
+
+## DD-025——将 M1 输入接受与技术行动关闭分开
+
+在 M2 `inputAcceptance` 中记录所有者接受的 COMMENTED 签署、普通两父合并、树和
+main CI。不改写已合并 M1 字节，不伪造 GitHub APPROVED Review，不声称具名独立
+评审者。CR-2026-007 结案将残余行动转交 CR-2026-008；转交不是技术关闭。
+历史版次接受仍为有条件输入，直至独立 RG0 另有决定。
+
+**范围：** 合并后 M1 事实的控制平面记录；不是纯落账 PR。
+
+**状态：** 在 CR-2026-008 下为候选，等待外部独立复审。
+
+## DD-026——将基础设施前提与已建立能力分开
+
+两端均可定位时，615A→665 与 TFTP 选项边可作为候选精化。CRS-M1-00034 是指向
+RFC 2348 §2 的块大小候选；冲突的 6.4.4 LUI/LUR 文件身份不发出活动 665 边。
+IPv4/UDP 与 RFC 1122/1123 仍为基础设施前提，其验证计划用于 Project
+Configuration。ARINC 645 继续阻塞完整性成功。AFDX、FIND、媒体集服务和 P3
+裁剪偏差保持延期或排除。本候选不把任何行为能力改为 ESTABLISHED。
+
+**范围：** M2 模型使用的前提、精化与能力守卫。
+
+**状态：** 在 CR-2026-008 下为候选，等待外部独立复审。
+
+## DD-027——用后继 M1 增量纠正文件身份，不改写冻结树
+
+6.4.4 的 LUI/LUR 文件身份冲突以及 §6.3.2 的 LUR WRQ 参与者不一致仍为
+OPEN-M1-CORRECTION。该停线是正确行为，不是关闭。在这些输入仍冲突时，当前 M2
+候选不得请求最终 RG0/RG1/RG2 APPROVE。用户授权后，后继 M1 数据包可仅在新的
+普通提交与新 blob 中纠正这些身份。历史合并
+`9bf18124d405b656815bc9eb524ae29bb4f04f56` 及其冻结字节作为保留记录保持不变。
+后继 `inputAcceptance` 是新身份，不得把原合并批准移植到新 blob。CR-2026-009
+是一份授权请求，含两项待授权事项（6.4.4 文件身份与 CRS-M1-00365 WRQ 参与者），
+可一并或分开授权；获授权前均不执行。NET-ISSUE-EDITION 仍是独立的 RG0 决定；OPEN 文字不是
+版次接受。CR-2026-009 记录该授权请求。
+
+**范围：** 输入纠正授权；不是改写 M1，也不是 M2 最终批准。
+
+**状态：** 在 CR-2026-008／CR-2026-009／CR-2026-011 下为候选。所有者授权已于
+2026-09-10 到位；后继增量由 CR-2026-011 执行；仍须独立 RG1。
+
+### 2026-09-10 T1 执行
+
+CR-2026-011 执行事项 A、B 以及所有者授权的 6.4.5 LUR→LUS 伴随。后继
+`inputAcceptance` 是新身份，不移植冻结合并批准。`reviewControl.blocksFinalApproval`
+保持为真。
+
+### 2026-09-10 RR-M2-2026-004 之后的 LUR 写端点
+
+独立评审撤回“receiver 保持 DLA”，因其把应用层 DLA 与网络可见 TFTP WRQ 混为一谈。
+同一 CR-2026-009 事项 B 类别现记录 DATA-LOADER→TARGET-HARDWARE WRQ、
+TARGET-HARDWARE→DATA-LOADER ACK、DATA-LOADER→TARGET-HARDWARE DATA。这仍是有界
+M2 基线，不是开发就绪 CRS。

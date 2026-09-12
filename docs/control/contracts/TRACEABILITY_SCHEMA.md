@@ -38,6 +38,8 @@ reviewed mapping record states otherwise.
 | `rho_EA` | evidence | calibration / diagnosis / research analysis | analysis model, dataset |
 
 These relations must not be presented as certification-mandatory trace links.
+M2 candidate `traceRelations` instantiate local `rho_RM` targets; they do not
+create Verification Cases or execution evidence.
 
 ## Integrity checks
 
@@ -86,7 +88,7 @@ acceptance。除非受评审映射另有规定，外部对应状态为 `NOT-DETE
 
 ## 工程与研究扩展关系
 
-`rho_RM` 从需求义务到 EFSM/模型目标；`rho_VF` 从验证用例到故障类别/变异算子；`rho_EA` 从证据到校准/诊断/研究分析。这些关系不得被表述为认证强制链接。
+`rho_RM` 从需求义务到 EFSM/模型目标；`rho_VF` 从验证用例到故障类别/变异算子；`rho_EA` 从证据到校准/诊断/研究分析。这些关系不得被表述为认证强制链接。M2 候选 `traceRelations` 实例化本地 `rho_RM` 目标；它们不创建验证用例或执行证据。
 
 ## 完整性检查
 

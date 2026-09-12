@@ -1,0 +1,835 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:arinc615a:m2-model-package:1.2",
+  "title": "M2 observable timed model and bounded refinement package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "artifactId",
+    "artifactVersion",
+    "candidateDisposition",
+    "inputAcceptance",
+    "scope",
+    "sourceRefinements",
+    "sequenceEndpointBindings",
+    "networkRelationDispositions",
+    "model",
+    "timingCatalog",
+    "requirementDispositions",
+    "traceRelations",
+    "infrastructurePremises",
+    "actions",
+    "analysisScope",
+    "discreteWitnesses",
+    "blockingInputs",
+    "reviewControl",
+    "inventorySummary"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.2" },
+    "artifactId": { "const": "ARINC615A3-M2-MODEL" },
+    "artifactVersion": { "type": "string", "minLength": 1 },
+    "candidateDisposition": { "const": "ADOPT" },
+    "inputAcceptance": { "$ref": "#/$defs/inputAcceptance" },
+    "scope": { "$ref": "#/$defs/scope" },
+    "sourceRefinements": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/sourceRefinement" }
+    },
+    "sequenceEndpointBindings": {
+      "type": "array",
+      "minItems": 3,
+      "items": { "$ref": "#/$defs/sequenceEndpointBinding" }
+    },
+    "networkRelationDispositions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/networkRelationDisposition" }
+    },
+    "model": { "$ref": "#/$defs/model" },
+    "timingCatalog": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/timingRow" }
+    },
+    "requirementDispositions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/disposition" }
+    },
+    "traceRelations": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/trace" }
+    },
+    "infrastructurePremises": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/premise" },
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "required": ["id"],
+            "properties": { "id": { "const": "NET-PREMISE-IPV4-UDP" } }
+          }
+        }
+      ]
+    },
+    "actions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/action" },
+      "allOf": [
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "A-1" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "A-2" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "A-3" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "A-4" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "F-1" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "F-2" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "F-3" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "F-4" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "F-5" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "NET-ISSUE-EDITION" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "RFC1122/IPv4/UDP" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "RFC1123" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "ARINC645" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "P7/AID/address" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "README-P2-DISPLAY" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "M1-LEDGER" } } } },
+        { "contains": { "type": "object", "required": ["id"], "properties": { "id": { "const": "M1-FILE-IDENTITY-6-4-4" } } } }
+      ]
+    },
+    "analysisScope": { "$ref": "#/$defs/analysisScope" },
+    "discreteWitnesses": {
+      "type": "array",
+      "minItems": 5,
+      "items": { "$ref": "#/$defs/discreteWitness" }
+    },
+    "blockingInputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/blockingInput" },
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "required": ["id"],
+            "properties": { "id": { "const": "M1-FILE-IDENTITY-6-4-4" } }
+          }
+        }
+      ]
+    },
+    "reviewControl": { "$ref": "#/$defs/reviewControl" },
+    "inventorySummary": { "$ref": "#/$defs/inventorySummary" }
+  },
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1 },
+    "gitOid": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "ast": {
+      "type": "object",
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["TRUE", "COMPARE", "AND", "VAR", "CLOCK", "SYMBOL", "LITERAL", "ENUM", "ASSIGN", "BINARY", "PAYLOAD"]
+        },
+        "name": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "locator": {
+      "type": "object",
+      "required": ["sourceId", "fragmentKind"],
+      "additionalProperties": true,
+      "properties": {
+        "sourceId": { "$ref": "#/$defs/nonEmptyString" },
+        "clause": { "type": ["string", "null"] },
+        "tableOrFigure": { "type": ["string", "null"] },
+        "documentPage": { "type": ["integer", "null"] },
+        "pdfPage": { "type": ["integer", "null"] },
+        "fragmentKind": { "$ref": "#/$defs/nonEmptyString" },
+        "fragmentOrdinal": { "type": ["integer", "null"] },
+        "sourceUnitId": { "type": ["string", "null"] },
+        "sourceTextHash": { "type": ["string", "null"] },
+        "canonicalUrl": { "type": "string" },
+        "retrievedSha256": { "type": "string" },
+        "retrievedByteCount": { "type": "integer" }
+      }
+    },
+    "inputItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "gitBlobOid", "role"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*\\.\\.).+$" },
+        "gitBlobOid": { "$ref": "#/$defs/gitOid" },
+        "role": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "inputAcceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "baseCommit",
+        "approvedHead",
+        "mergeCommit",
+        "mergeParents",
+        "mergeSecondParent",
+        "mergeTree",
+        "approvedHeadTree",
+        "mainCiRunId",
+        "mainCiUrl",
+        "mainCiHead",
+        "signOffUrl",
+        "signOffActor",
+        "signOffKind",
+        "githubReviewState",
+        "recordedConclusion",
+        "independenceClaim",
+        "inputs",
+        "m1PendingFieldsUnchanged",
+        "m1NetIssueEditionSnapshot"
+      ],
+      "properties": {
+        "repository": { "$ref": "#/$defs/nonEmptyString" },
+        "baseCommit": { "$ref": "#/$defs/gitOid" },
+        "approvedHead": { "$ref": "#/$defs/gitOid" },
+        "mergeCommit": { "$ref": "#/$defs/gitOid" },
+        "mergeParents": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "$ref": "#/$defs/gitOid" }
+        },
+        "mergeSecondParent": { "$ref": "#/$defs/gitOid" },
+        "mergeTree": { "$ref": "#/$defs/gitOid" },
+        "approvedHeadTree": { "$ref": "#/$defs/gitOid" },
+        "mainCiRunId": { "$ref": "#/$defs/nonEmptyString" },
+        "mainCiUrl": { "$ref": "#/$defs/nonEmptyString" },
+        "mainCiHead": { "$ref": "#/$defs/gitOid" },
+        "signOffUrl": { "$ref": "#/$defs/nonEmptyString" },
+        "signOffActor": { "$ref": "#/$defs/nonEmptyString" },
+        "signOffKind": { "$ref": "#/$defs/nonEmptyString" },
+        "githubReviewState": { "type": "string", "not": { "const": "APPROVED" } },
+        "recordedConclusion": { "$ref": "#/$defs/nonEmptyString" },
+        "independenceClaim": { "$ref": "#/$defs/nonEmptyString" },
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/inputItem" }
+        },
+        "m1PendingFieldsUnchanged": { "type": "boolean" },
+        "successorDelta": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "changeRequest",
+            "authorizationRequest",
+            "doesNotTransplantFrozenApproval",
+            "preservedFrozenInputs",
+            "predecessorInputCommit",
+            "predecessorInputTree",
+            "predecessorInputBlobs",
+            "currentInputArtifactCommit",
+            "currentInputArtifactTree"
+          ],
+          "properties": {
+            "changeRequest": { "$ref": "#/$defs/nonEmptyString" },
+            "authorizationRequest": { "$ref": "#/$defs/nonEmptyString" },
+            "doesNotTransplantFrozenApproval": { "type": "boolean" },
+            "preservedFrozenInputs": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/inputItem" }
+            },
+            "predecessorInputCommit": { "$ref": "#/$defs/gitOid" },
+            "predecessorInputTree": { "$ref": "#/$defs/gitOid" },
+            "predecessorInputBlobs": {
+              "type": "array",
+              "minItems": 1,
+              "items": { "$ref": "#/$defs/inputItem" }
+            },
+            "currentInputArtifactCommit": { "$ref": "#/$defs/gitOid" },
+            "currentInputArtifactTree": { "$ref": "#/$defs/gitOid" }
+          }
+        },
+        "m1NetIssueEditionSnapshot": {
+          "type": "object",
+          "required": ["id", "blocksM1Approval", "interpretationEn", "interpretationZh"],
+          "additionalProperties": false,
+          "properties": {
+            "id": { "const": "NET-ISSUE-EDITION" },
+            "blocksM1Approval": { "type": "boolean" },
+            "interpretationEn": { "$ref": "#/$defs/nonEmptyString" },
+            "interpretationZh": { "$ref": "#/$defs/nonEmptyString" }
+          }
+        }
+      }
+    },
+    "roleBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inputs", "outputs"],
+      "properties": {
+        "inputs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nonEmptyString" } },
+        "outputs": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/nonEmptyString" } }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "services",
+        "deferredServices",
+        "roles",
+        "networkMode",
+        "afdxSelected",
+        "p3ProfiledDeviations",
+        "observationBoundary",
+        "timeSemantics",
+        "compositionEn",
+        "compositionZh"
+      ],
+      "properties": {
+        "services": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "deferredServices": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "roles": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "networkMode": { "const": "COMPLIANT" },
+        "afdxSelected": { "const": false },
+        "p3ProfiledDeviations": { "const": false },
+        "observationBoundary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "dataLoader",
+            "targetHardware",
+            "notClaimedObserved",
+            "eventMappingEn",
+            "eventMappingZh",
+            "silenceRuleEn",
+            "silenceRuleZh"
+          ],
+          "properties": {
+            "dataLoader": { "$ref": "#/$defs/roleBoundary" },
+            "targetHardware": { "$ref": "#/$defs/roleBoundary" },
+            "notClaimedObserved": { "type": "array", "items": { "type": "string" } },
+            "eventMappingEn": { "$ref": "#/$defs/nonEmptyString" },
+            "eventMappingZh": { "$ref": "#/$defs/nonEmptyString" },
+            "silenceRuleEn": { "$ref": "#/$defs/nonEmptyString" },
+            "silenceRuleZh": { "$ref": "#/$defs/nonEmptyString" }
+          }
+        },
+        "timeSemantics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "delayEn", "delayZh", "discreteEn", "discreteZh",
+            "raceEn", "raceZh", "endpointEn", "endpointZh"
+          ],
+          "properties": {
+            "delayEn": { "$ref": "#/$defs/nonEmptyString" },
+            "delayZh": { "$ref": "#/$defs/nonEmptyString" },
+            "discreteEn": { "$ref": "#/$defs/nonEmptyString" },
+            "discreteZh": { "$ref": "#/$defs/nonEmptyString" },
+            "raceEn": { "$ref": "#/$defs/nonEmptyString" },
+            "raceZh": { "$ref": "#/$defs/nonEmptyString" },
+            "endpointEn": { "$ref": "#/$defs/nonEmptyString" },
+            "endpointZh": { "$ref": "#/$defs/nonEmptyString" }
+          }
+        },
+        "compositionEn": { "$ref": "#/$defs/nonEmptyString" },
+        "compositionZh": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "sourceRefinement": {
+      "type": "object",
+      "required": [
+        "id", "kind", "relation", "rationaleEn", "rationaleZh",
+        "disposition", "reviewStatus"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": { "$ref": "#/$defs/nonEmptyString" },
+        "fromRequirementId": { "type": ["string", "null"] },
+        "toRequirementId": { "type": "string" },
+        "toSourceId": { "type": "string" },
+        "sharedObjects": { "type": "array", "items": { "type": "string" } },
+        "relation": { "$ref": "#/$defs/nonEmptyString" },
+        "fromLocator": { "$ref": "#/$defs/locator" },
+        "toLocator": { "$ref": "#/$defs/locator" },
+        "rationaleEn": { "$ref": "#/$defs/nonEmptyString" },
+        "rationaleZh": { "$ref": "#/$defs/nonEmptyString" },
+        "disposition": { "$ref": "#/$defs/nonEmptyString" },
+        "reviewStatus": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "networkRelationDisposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relationId", "requirementId", "m1Relation", "m1Disposition",
+        "m2Disposition", "targetUnitIds", "rationaleEn", "rationaleZh"
+      ],
+      "properties": {
+        "relationId": { "$ref": "#/$defs/nonEmptyString" },
+        "requirementId": { "type": ["string", "null"] },
+        "m1Relation": { "$ref": "#/$defs/nonEmptyString" },
+        "m1Disposition": { "$ref": "#/$defs/nonEmptyString" },
+        "m2Disposition": { "$ref": "#/$defs/nonEmptyString" },
+        "targetUnitIds": { "type": "array", "items": { "type": "string" } },
+        "rationaleEn": { "$ref": "#/$defs/nonEmptyString" },
+        "rationaleZh": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "form", "initialState", "states", "events", "variables", "parameters",
+        "clocks", "transitions", "invariants", "fieldConstraints",
+        "statusConstraints", "objectConstraints", "interfaces",
+        "sequenceConstraints", "stepSemanticsEn", "stepSemanticsZh"
+      ],
+      "properties": {
+        "form": { "const": "M=(S,s0,V,C,P,E,T,Inv)" },
+        "initialState": { "$ref": "#/$defs/nonEmptyString" },
+        "states": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "terminal", "summaryEn", "summaryZh"],
+            "properties": {
+              "id": { "$ref": "#/$defs/nonEmptyString" },
+              "terminal": { "type": "boolean" },
+              "summaryEn": { "$ref": "#/$defs/nonEmptyString" },
+              "summaryZh": { "$ref": "#/$defs/nonEmptyString" }
+            }
+          }
+        },
+        "events": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "visibility", "summaryEn", "summaryZh"],
+            "additionalProperties": true,
+            "properties": {
+              "id": { "$ref": "#/$defs/nonEmptyString" },
+              "visibility": {
+                "enum": ["NETWORK-VISIBLE", "APPLICATION", "PARSE-RESULT", "LOCAL", "ENVIRONMENT"]
+              },
+              "summaryEn": { "$ref": "#/$defs/nonEmptyString" },
+              "summaryZh": { "$ref": "#/$defs/nonEmptyString" }
+            }
+          }
+        },
+        "variables": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "type", "initial"],
+            "additionalProperties": true,
+            "properties": {
+              "id": { "$ref": "#/$defs/nonEmptyString" },
+              "type": { "enum": ["ENUM", "INT", "BOOL"] },
+              "initial": {},
+              "domain": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "parameters": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["id", "unit", "kind", "meaningEn", "meaningZh", "sourceRequirementIds"],
+            "additionalProperties": true,
+            "properties": {
+              "id": { "$ref": "#/$defs/nonEmptyString" },
+              "unit": { "enum": ["s", "ms", "us", "ns", "1"] },
+              "kind": { "$ref": "#/$defs/nonEmptyString" },
+              "value": { "type": ["number", "null"] },
+              "domain": { "type": "string" },
+              "sourceRequirementIds": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+              "meaningEn": { "$ref": "#/$defs/nonEmptyString" },
+              "meaningZh": { "$ref": "#/$defs/nonEmptyString" }
+            }
+          }
+        },
+        "clocks": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id", "unit", "growsDuringDelay", "scope", "correlationKey",
+              "instanceBinding", "resetPolicy", "cancelPolicy",
+              "resetOn", "meaningEn", "meaningZh"
+            ],
+            "properties": {
+              "id": { "$ref": "#/$defs/nonEmptyString" },
+              "unit": { "enum": ["s", "ms", "us", "ns"] },
+              "growsDuringDelay": { "type": "boolean" },
+              "scope": { "$ref": "#/$defs/nonEmptyString" },
+              "correlationKey": { "$ref": "#/$defs/nonEmptyString" },
+              "instanceBinding": { "$ref": "#/$defs/nonEmptyString" },
+              "resetPolicy": { "$ref": "#/$defs/nonEmptyString" },
+              "cancelPolicy": { "$ref": "#/$defs/nonEmptyString" },
+              "resetOn": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+              "meaningEn": { "$ref": "#/$defs/nonEmptyString" },
+              "meaningZh": { "$ref": "#/$defs/nonEmptyString" }
+            }
+          }
+        },
+        "transitions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id", "source", "event", "guard", "updates", "resets",
+              "outputs", "target", "requirementIds", "noteEn", "noteZh"
+            ],
+            "properties": {
+              "id": { "$ref": "#/$defs/nonEmptyString" },
+              "source": { "$ref": "#/$defs/nonEmptyString" },
+              "event": { "$ref": "#/$defs/nonEmptyString" },
+              "guard": { "$ref": "#/$defs/ast" },
+              "updates": { "type": "array", "items": { "$ref": "#/$defs/ast" } },
+              "resets": { "type": "array", "items": { "type": "string" } },
+              "outputs": { "type": "array", "items": { "type": "string" } },
+              "target": { "$ref": "#/$defs/nonEmptyString" },
+              "requirementIds": { "type": "array", "items": { "type": "string" } },
+              "noteEn": { "$ref": "#/$defs/nonEmptyString" },
+              "noteZh": { "$ref": "#/$defs/nonEmptyString" }
+            }
+          }
+        },
+        "invariants": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "states", "expression", "noteEn", "noteZh"],
+            "properties": {
+              "id": { "$ref": "#/$defs/nonEmptyString" },
+              "states": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+              "expression": { "$ref": "#/$defs/ast" },
+              "noteEn": { "$ref": "#/$defs/nonEmptyString" },
+              "noteZh": { "$ref": "#/$defs/nonEmptyString" }
+            }
+          }
+        },
+        "fieldConstraints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "protocolFile", "fieldId", "m1RequirementId", "predicateEn", "predicateZh", "checkLocation"],
+            "additionalProperties": true
+          }
+        },
+        "statusConstraints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "m1RequirementId", "predicateEn", "predicateZh", "checkLocation"],
+            "additionalProperties": true
+          }
+        },
+        "objectConstraints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "m1RequirementId", "objects", "action", "predicateEn", "predicateZh", "checkLocation"],
+            "additionalProperties": true
+          }
+        },
+        "interfaces": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["kind", "exposes", "noteEn", "noteZh"],
+            "additionalProperties": true
+          },
+          "required": ["IF_TFTP", "IF_TFTP_BLOCKSIZE", "IF_INTEGRITY", "IF_NETWORK"]
+        },
+        "sequenceConstraints": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "requiredStateOrder", "forbiddenEdges", "noteEn", "noteZh"],
+            "properties": {
+              "id": { "$ref": "#/$defs/nonEmptyString" },
+              "requiredStateOrder": { "type": "array", "minItems": 2, "items": { "type": "string" } },
+              "forbiddenEdges": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "minItems": 2,
+                  "maxItems": 2,
+                  "items": { "type": "string" }
+                }
+              },
+              "noteEn": { "$ref": "#/$defs/nonEmptyString" },
+              "noteZh": { "$ref": "#/$defs/nonEmptyString" }
+            }
+          }
+        },
+        "stepSemanticsEn": { "$ref": "#/$defs/nonEmptyString" },
+        "stepSemanticsZh": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "timingRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "requirementId", "trigger", "response", "cancel", "supersede",
+        "correlationKey",         "clockId", "resets", "constraintKind", "parameterOrigin",
+        "m1LowerBoundary", "m1UpperBoundary",
+        "lowerBoundary", "upperBoundary",
+        "unit", "boundKind", "sourceRelation", "expression", "staticCheck",
+        "observationWindow", "observationRoleEn", "observationRoleZh",
+        "errorBudgetClass", "errorBudgetEn", "errorBudgetZh"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "requirementId": { "$ref": "#/$defs/nonEmptyString" },
+        "trigger": { "$ref": "#/$defs/nonEmptyString" },
+        "response": { "$ref": "#/$defs/nonEmptyString" },
+        "cancel": { "type": ["string", "null"] },
+        "supersede": { "type": ["string", "null"] },
+        "correlationKey": { "$ref": "#/$defs/nonEmptyString" },
+        "pairingPolicy": { "type": ["string", "null"] },
+        "concurrencyPolicy": { "type": ["string", "null"] },
+        "clockId": { "$ref": "#/$defs/nonEmptyString" },
+        "resets": { "type": "array", "items": { "type": "string" } },
+        "constraintKind": { "$ref": "#/$defs/nonEmptyString" },
+        "parameterOrigin": { "$ref": "#/$defs/nonEmptyString" },
+        "m1LowerBoundary": { "enum": ["CLOSED", "OPEN", "UNRESOLVED"] },
+        "m1UpperBoundary": { "enum": ["CLOSED", "OPEN", "UNRESOLVED"] },
+        "enablementEventIds": { "type": "array", "items": { "type": "string" } },
+        "lowerBound": {},
+        "upperBound": {},
+        "lowerBoundary": { "enum": ["CLOSED", "OPEN", "UNRESOLVED"] },
+        "upperBoundary": { "enum": ["CLOSED", "OPEN", "UNRESOLVED"] },
+        "unit": { "enum": ["s", "ms", "us", "ns", "1"] },
+        "boundKind": { "$ref": "#/$defs/nonEmptyString" },
+        "sourceRelation": { "$ref": "#/$defs/nonEmptyString" },
+        "sourceParameter": { "type": ["string", "null"] },
+        "expression": { "$ref": "#/$defs/ast" },
+        "sourceEvidenceUnitIds": { "type": "array", "items": { "type": "string" } },
+        "staticCheck": { "$ref": "#/$defs/nonEmptyString" },
+        "observationWindow": { "$ref": "#/$defs/nonEmptyString" },
+        "observationRoleEn": { "$ref": "#/$defs/nonEmptyString" },
+        "observationRoleZh": { "$ref": "#/$defs/nonEmptyString" },
+        "errorBudgetClass": { "$ref": "#/$defs/nonEmptyString" },
+        "errorBudgetEn": { "$ref": "#/$defs/nonEmptyString" },
+        "errorBudgetZh": { "$ref": "#/$defs/nonEmptyString" },
+        "m6Instantiation": { "type": "string" }
+      }
+    },
+    "disposition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirementId", "sourceId", "operation", "polarity", "sourceModality",
+        "kind", "ownerRole", "modelTargetIds"
+      ],
+      "properties": {
+        "requirementId": { "$ref": "#/$defs/nonEmptyString" },
+        "sourceId": { "$ref": "#/$defs/nonEmptyString" },
+        "operation": { "$ref": "#/$defs/nonEmptyString" },
+        "polarity": { "$ref": "#/$defs/nonEmptyString" },
+        "sourceModality": { "$ref": "#/$defs/nonEmptyString" },
+        "kind": {
+          "enum": [
+            "MODELED", "MODELED-TIMING", "DATA-CONSTRAINT", "SCOPE-CONSTRAINT",
+            "DEPENDENCY-BLOCKED", "INTERFACE-PREMISE"
+          ]
+        },
+        "ownerRole": { "$ref": "#/$defs/nonEmptyString" },
+        "modelTargetIds": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      }
+    },
+    "trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "requirementId", "targetKind", "targetId", "polarity",
+        "sourceModality", "rationaleCode", "rationaleEn", "rationaleZh"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "requirementId": { "$ref": "#/$defs/nonEmptyString" },
+        "targetKind": {
+          "enum": [
+            "TRANSITION", "CLOCK", "VARIABLE", "INTERFACE", "SCOPE",
+            "TIMING", "FIELD-CONSTRAINT", "STATUS-CONSTRAINT", "OBJECT-CONSTRAINT"
+          ]
+        },
+        "targetId": { "$ref": "#/$defs/nonEmptyString" },
+        "polarity": { "$ref": "#/$defs/nonEmptyString" },
+        "sourceModality": { "$ref": "#/$defs/nonEmptyString" },
+        "rationaleCode": { "$ref": "#/$defs/nonEmptyString" },
+        "rationaleEn": { "$ref": "#/$defs/nonEmptyString" },
+        "rationaleZh": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "premise": {
+      "type": "object",
+      "required": ["id", "status", "ownerRole", "triggeredByRequirementIds", "behaviorEn", "behaviorZh", "deadlineGate"],
+      "additionalProperties": true
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "ownerRole", "deadlineGate", "evidence", "noteEn", "noteZh"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "$ref": "#/$defs/nonEmptyString" },
+        "ownerRole": { "$ref": "#/$defs/nonEmptyString" },
+        "deadlineGate": { "$ref": "#/$defs/nonEmptyString" },
+        "evidence": { "type": "array" },
+        "noteEn": { "$ref": "#/$defs/nonEmptyString" },
+        "noteZh": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "analysisScope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "untimedReachability", "timedReachability", "finiteDomainEn",
+        "finiteDomainZh", "excluded", "unproven"
+      ],
+      "properties": {
+        "untimedReachability": { "$ref": "#/$defs/nonEmptyString" },
+        "timedReachability": { "not": { "const": "PASS" } },
+        "finiteDomainEn": { "$ref": "#/$defs/nonEmptyString" },
+        "finiteDomainZh": { "$ref": "#/$defs/nonEmptyString" },
+        "excluded": { "type": "array", "items": { "type": "string" } },
+        "unproven": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      }
+    },
+    "reviewControl": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rg0", "rg1", "rg2", "reviewHead", "formalApproval", "mergeEvidence", "blocksFinalApproval"],
+      "properties": {
+        "rg0": { "enum": ["PENDING-EXTERNAL-REVIEW", "PENDING-EXTERNAL-INDEPENDENT-REVIEW"] },
+        "rg1": { "enum": ["PENDING-EXTERNAL-REVIEW", "PENDING-EXTERNAL-INDEPENDENT-REVIEW"] },
+        "rg2": { "enum": ["PENDING-EXTERNAL-REVIEW", "PENDING-EXTERNAL-INDEPENDENT-REVIEW"] },
+        "reviewHead": { "const": "UNBOUND-DRAFT" },
+        "formalApproval": { "type": "string", "not": { "enum": ["APPROVED", "APPROVE", "SELF-APPROVED"] } },
+        "mergeEvidence": { "$ref": "#/$defs/nonEmptyString" },
+        "blocksFinalApproval": { "type": "boolean" }
+      }
+    },
+    "inventorySummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirementCount", "dispositionCount", "traceCount", "stateCount",
+        "transitionCount", "timingCount", "dispositionsFingerprint",
+        "modelFingerprint", "timingFingerprint", "inputFingerprint"
+      ],
+      "properties": {
+        "requirementCount": { "type": "integer", "minimum": 1 },
+        "dispositionCount": { "type": "integer", "minimum": 1 },
+        "traceCount": { "type": "integer", "minimum": 1 },
+        "stateCount": { "type": "integer", "minimum": 1 },
+        "transitionCount": { "type": "integer", "minimum": 1 },
+        "timingCount": { "type": "integer", "minimum": 1 },
+        "fieldConstraintCount": { "type": "integer" },
+        "dispositionsFingerprint": { "type": "string", "minLength": 64 },
+        "modelFingerprint": { "type": "string", "minLength": 64 },
+        "timingFingerprint": { "type": "string", "minLength": 64 },
+        "inputFingerprint": { "type": "string", "minLength": 64 },
+        "refinementFingerprint": { "type": "string", "minLength": 64 },
+        "actionFingerprint": { "type": "string", "minLength": 64 },
+        "premiseFingerprint": { "type": "string", "minLength": 64 },
+        "witnessFingerprint": { "type": "string", "minLength": 64 },
+        "blockingFingerprint": { "type": "string", "minLength": 64 },
+        "endpointBindingFingerprint": { "type": "string", "minLength": 64 }
+      }
+    },
+    "sequenceEndpointBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requirementId", "transitionId", "eventId", "actor", "receiver",
+        "action", "objects", "tftpOpcode", "fileRole", "direction", "layer"
+      ],
+      "properties": {
+        "requirementId": { "$ref": "#/$defs/nonEmptyString" },
+        "transitionId": { "$ref": "#/$defs/nonEmptyString" },
+        "eventId": { "$ref": "#/$defs/nonEmptyString" },
+        "actor": { "$ref": "#/$defs/nonEmptyString" },
+        "receiver": { "$ref": "#/$defs/nonEmptyString" },
+        "action": { "$ref": "#/$defs/nonEmptyString" },
+        "objects": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/nonEmptyString" }
+        },
+        "tftpOpcode": { "$ref": "#/$defs/nonEmptyString" },
+        "fileRole": { "$ref": "#/$defs/nonEmptyString" },
+        "direction": { "enum": ["DL-TO-TH", "TH-TO-DL"] },
+        "layer": { "const": "NETWORK-VISIBLE" }
+      }
+    },
+    "discreteWitness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "summaryEn", "summaryZh", "steps"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "summaryEn": { "$ref": "#/$defs/nonEmptyString" },
+        "summaryZh": { "$ref": "#/$defs/nonEmptyString" },
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["transitionId"],
+            "properties": {
+              "transitionId": { "$ref": "#/$defs/nonEmptyString" },
+              "payload": { "type": "object" },
+              "clocks": { "type": "object", "additionalProperties": { "type": "number" } },
+              "parameters": { "type": "object", "additionalProperties": { "type": "number" } },
+              "expectEnabled": { "type": "boolean" },
+              "expectTarget": { "type": "string" },
+              "expectVariables": { "type": "object" }
+            }
+          }
+        }
+      }
+    },
+    "blockingInput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status", "authorizationRequest", "blocksFinalApproval", "requirementIds", "noteEn", "noteZh"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nonEmptyString" },
+        "status": { "$ref": "#/$defs/nonEmptyString" },
+        "authorizationRequest": { "$ref": "#/$defs/nonEmptyString" },
+        "blocksFinalApproval": { "type": "boolean" },
+        "requirementIds": { "type": "array", "items": { "type": "string" } },
+        "noteEn": { "$ref": "#/$defs/nonEmptyString" },
+        "noteZh": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    }
+  }
+}
