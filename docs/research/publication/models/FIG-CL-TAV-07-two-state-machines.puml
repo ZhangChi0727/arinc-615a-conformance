@@ -6,20 +6,22 @@ state Msess as "Msess verification session" {
   [*] --> Idle
   Idle --> Admit
   Admit --> Select : admissible A nonempty
-  Admit --> StopBudget : distinguisher or Prep exists but unaffordable
-  Admit --> StopNoDistinguisher : no distinguisher and no Prep
+  Admit --> StopBudget : strictly-reducing test or Prep exists but unaffordable
+  Admit --> StopNoDistinguisher : no strictly-reducing test and no Prep
   Admit --> StopError : q unknown and Recover not admissible
-  Select --> Execute : chosen from A TEST Prep or Recover
+  Select --> Execute : chosen from A strictly-reducing TEST, else Prep, else Recover
   Execute --> Update : valid Izk
   Execute --> ErrorHandle : ERROR
-  ErrorHandle --> Admit : retry remaining; unknown-effect only if Recover can enter next A
-  ErrorHandle --> StopError : retry cap or Recover not admissible
-  Update --> Admit : |Hk| > 1 and selected-mode resource remains
-  Update --> StopBudget : selected-mode resource exhausted
-  Update --> StopEquivalent : observational equivalence established
-  Update --> StopSingleton : |Hk| == 1
-  Update --> StopEmpty : Hk empty
-  Update --> Stop645 : named 645-blocked item
+  ErrorHandle --> StopError : retry cap reached
+  ErrorHandle --> StopError : unknown-effect and Recover not admissible
+  ErrorHandle --> Admit : confirmed not sent and retry remaining
+  ErrorHandle --> Admit : unknown-effect and retry remaining and Recover admissible
+  Update --> StopEmpty : P1 Hk empty
+  Update --> StopSingleton : P2 |Hk| == 1
+  Update --> Stop645 : P3 named 645-blocked
+  Update --> StopEquivalent : P4 observational equivalence established
+  Update --> StopBudget : P5 selected-mode resource exhausted
+  Update --> Admit : else |Hk| > 1 and resource remains
 }
 
 state Mprot as "Mprot protocol black box" {
@@ -28,12 +30,12 @@ state Mprot as "Mprot protocol black box" {
 }
 
 note bottom of Msess
-  Stop classes: Stop-Budget, Stop-NoDistinguisher, Stop-Equivalent,
-  Stop-Singleton, Stop-Empty, Stop-Error, Stop-645.
-  Admit uses the same selected-mode resource rule as FIG-CL-TAV-05.
-  ErrorHandle is not an immediate Stop-Error on every ERROR.
+  Update stop priority equals FIG-CL-TAV-05 and the walker:
+  P1 Stop-Empty, P2 Stop-Singleton, P3 Stop-645,
+  P4 Stop-Equivalent, P5 Stop-Budget, else Admit.
+  Guards are mutually exclusive by that order, not by arrow order.
+  Recover not admissible stops only on unknown-effect.
   Independent machines. Stimulus and observation use FIG-CL-TAV-04 ports.
   This note is not a state transition between Msess and Mprot.
-  New DOWNLOAD/FIND services are not claimed as bound M2 coverage.
 end note
 @enduml

@@ -10,24 +10,24 @@ repeat
     :Classify empty: Stop-Budget / Stop-NoDistinguisher / Stop-Error;
     stop
   else (never argmin empty A)
-    :Select from A by one-step minimax on tests, else Prep, else Recover;
+    :Select strictly-reducing tests by one-step minimax, else Prep, else Recover;
     :Execute chosen action toward Mprot through FIG-CL-TAV-04 ports;
     :Charge cost once under the selected mode;
     if (instrument / correlation / record valid?) then (yes)
       :Observe Izk; Update Hk; qk known;
-      if (Hk empty?) then (yes)
+      if (P1 Hk empty?) then (yes)
         :Stop-Empty;
         stop
-      elseif (|Hk| == 1) then (yes)
+      elseif (P2 |Hk| == 1) then (yes)
         :Stop-Singleton;
         stop
-      elseif (named 645-blocked item?) then (yes)
+      elseif (P3 named 645-blocked item?) then (yes)
         :Stop-645;
         stop
-      elseif (observational equivalence established?) then (yes)
+      elseif (P4 observational equivalence established?) then (yes)
         :Stop-Equivalent;
         stop
-      elseif (selected-mode resource exhausted?) then (yes)
+      elseif (P5 selected-mode resource exhausted?) then (yes)
         :Stop-Budget;
         stop
       else (continue to next Admit)
@@ -43,7 +43,7 @@ repeat
         endif
       else (unknown-effect)
         :qk unknown; record failed history; do not reuse T(q_old);
-        if (Recover not admissible or retry cap reached?) then (yes)
+        if (retry cap reached or Recover not admissible?) then (yes)
           :Stop-Error;
           stop
         endif

@@ -202,9 +202,9 @@ declared subset:
 | FIG-CL-TAV-02 | Requirement layers | method goals, protocol CRS, tool requirements stay distinct; representative source→CRS trace |
 | FIG-CL-TAV-03 | BDD | Test, Observation, Analysis, Diagnosis, Selection, Evidence |
 | FIG-CL-TAV-04 | IBD | trace, constraint, candidate-set, test-selection, budget ports |
-| FIG-CL-TAV-05 | Closed-loop activity | admissible \(A(q_k)\), selected-mode XOR, charge once, Prep, `ERROR` split, every stop class |
+| FIG-CL-TAV-05 | Closed-loop activity | admissible \(A(q_k)\), strictly-reducing minimax then Prep, XOR, charge once, exclusive P1–P5 stops, `ERROR` split |
 | FIG-CL-TAV-06 | Diagnostic sequence | overlapping observation, preparatory action, later distinguishing test, second \(I_{z_k}\) into Analysis |
-| FIG-CL-TAV-07 | Two state machines | \(M_{\mathrm{sess}}\) versus bound-M2 black box, joined only by FIG-CL-TAV-04 ports |
+| FIG-CL-TAV-07 | Two state machines | \(M_{\mathrm{sess}}\) versus bound-M2 black box; P1–P5 stops; ports not cross-machine transitions |
 | FIG-CL-TAV-08 | Parametric | \(I\), \(\varepsilon\), \(J\), \(c_{\min}\), \(B\) or \(K_{\max}\), remaining-set score |
 
 ---
@@ -337,7 +337,7 @@ Defined DOWNLOAD、Operator Defined DOWNLOAD 与 FIND 是计划中的 CRS 范围
 | FIG-CL-TAV-02 | 需求层次 | 方法目标、协议 CRS、工具需求保持分离；带真实 ID 的来源→CRS 代表追踪 |
 | FIG-CL-TAV-03 | BDD | Test、Observation、Analysis、Diagnosis、Selection、Evidence |
 | FIG-CL-TAV-04 | IBD | trace、constraint、候选集、测试选择、预算端口 |
-| FIG-CL-TAV-05 | 闭环活动 | 可准入 \(A(q_k)\)、所选模式 XOR、一次计费、Prep、拆分 `ERROR`、全部停止类 |
+| FIG-CL-TAV-05 | 闭环活动 | 可准入 \(A(q_k)\)、先严格缩小再 Prep、XOR、一次计费、互斥 P1–P5 停止、拆分 `ERROR` |
 | FIG-CL-TAV-06 | 诊断序列 | 重叠观测、准备性动作、随后的区分测试、第二次 \(I_{z_k}\) 进入 Analysis |
-| FIG-CL-TAV-07 | 两套状态机 | \(M_{\mathrm{sess}}\) 对已绑定 M2 黑箱，只通过 FIG-CL-TAV-04 端口连接 |
+| FIG-CL-TAV-07 | 两套状态机 | \(M_{\mathrm{sess}}\) 对已绑定 M2 黑箱；P1–P5 停止；只通过端口连接 |
 | FIG-CL-TAV-08 | 参数 | \(I\)、\(\varepsilon\)、\(J\)、\(c_{\min}\)、\(B\) 或 \(K_{\max}\)、剩余集评分 |

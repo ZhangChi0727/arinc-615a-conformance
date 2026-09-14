@@ -8,14 +8,14 @@ participant "Mprot" as P
 participant "Analysis / Diagnosis" as A
 
 Operator -> S : start session, H0 = {h_normal} union H_single
-S -> S : Admit A(qk); Select ta from admissible set
-S -> P : Execute ta through FIG-CL-TAV-04 ports
-P --> S : observation class a (keeps h1 and h2)
-S -> A : Izk of ta
-A --> S : Hk = {h1, h2}; overlapping observation, not proved equivalent
-S -> S : no currently usable distinguisher at qk
-S -> S : Admit; Prep is in A and selected-mode resource remains
-S -> P : Prep action (changes observable q)
+S -> S : overlapping {a,b}/{a,c} stays strictly-reducing even if s(t)=|H|
+note right of S
+  Worst-case non-shrinkage is not
+  "no diagnostic value".
+end note
+S -> S : Admit; uninformative TEST has no strictly-reducing outcome
+S -> S : Select Prep from A, not the uninformative test
+S -> P : Prep action through FIG-CL-TAV-04 ports
 P --> S : qk+1
 S -> S : Select later distinguishing test tb from A
 S -> P : Execute tb

@@ -500,6 +500,17 @@ def _expected_clause_groups(units: list[dict]) -> list[dict]:
     return sorted(out, key=lambda row: (-row["count"], str(row["clause"]), str(row["tableOrFigure"] or "")))
 
 
+def _count_field(rows, key: str) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for row in rows:
+        value = row.get(key)
+        if value is None:
+            continue
+        name = str(value)
+        counts[name] = counts.get(name, 0) + 1
+    return counts
+
+
 def protocol_source_audit_errors(audit: dict, crs: dict) -> list[str]:
     """Row-level navigation identity of the deferred ledger. Not a source-semantics proof."""
     errors: list[str] = []
@@ -519,6 +530,10 @@ def protocol_source_audit_errors(audit: dict, crs: dict) -> list[str]:
         errors.append("protocol source audit requirements fingerprint does not match the bound CRS package")
     if bound.get("artifactVersion") != crs.get("artifactVersion"):
         errors.append("protocol source audit artifactVersion does not match the bound CRS package")
+    if bound.get("coverageCount") != inventory.get("coverageCount"):
+        errors.append("protocol source audit boundPackage.coverageCount does not match the bound CRS package")
+    if bound.get("requirementCount") != inventory.get("requirementCount"):
+        errors.append("protocol source audit boundPackage.requirementCount does not match the bound CRS package")
     ledger = {row["id"]: row for row in crs.get("coverageLedger") or []}
     deferred_units = audit.get("deferredUnits") or {}
     summary = audit.get("summary") or {}
@@ -601,6 +616,16 @@ def protocol_source_audit_errors(audit: dict, crs: dict) -> list[str]:
         errors.append("protocol source audit summary.coverageCount does not match the bound CRS package")
     if summary.get("requirementCount") != inventory.get("requirementCount"):
         errors.append("protocol source audit summary.requirementCount does not match the bound CRS package")
+    expected_app = _count_field(ledger.values(), "applicabilityDecision")
+    if (summary.get("applicabilityDecisions") or {}) != expected_app:
+        errors.append("protocol source audit summary.applicabilityDecisions drifted from the bound CRS ledger")
+    expected_rat = _count_field(ledger.values(), "rationaleCode")
+    if (summary.get("rationaleCodes") or {}) != expected_rat:
+        errors.append("protocol source audit summary.rationaleCodes drifted from the bound CRS ledger")
+    deferred_total = expected_app.get("DEFERRED-FUTURE-SCOPE", 0)
+    future = summary.get("deferredFutureScope") or {}
+    if future.get("total") != deferred_total:
+        errors.append("protocol source audit summary.deferredFutureScope.total does not match the bound CRS ledger")
     return errors
 
 
@@ -629,6 +654,9 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
         "unknown-effect",
         "confirmed not sent",
         "Charge cost once",
+        "strictly-reducing",
+        "P1",
+        "P5",
         "Stop-Budget",
         "Stop-NoDistinguisher",
         "Stop-Equivalent",
@@ -644,7 +672,7 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
     if "or round < Kmax" in activity:
         errors.append("closed-loop activity view must not OR budget and round modes")
     machines = models.get("FIG-CL-TAV-07-two-state-machines.puml", "")
-    for token in ("Msess", "Mprot", "Admit", "ErrorHandle", "bound M2", "FIG-CL-TAV-04", "FIND"):
+    for token in ("Msess", "Mprot", "Admit", "ErrorHandle", "bound M2", "FIG-CL-TAV-04", "FIND", "P1", "P5"):
         if token not in machines:
             errors.append(f"two-machine view is missing {token}")
     if "Information -->" in machines:
@@ -653,6 +681,8 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
         errors.append("two-machine view must not use a cross-machine state transition")
     if "Execute --> StopError" in machines:
         errors.append("two-machine view must not stop immediately on every ERROR")
+    if "retry cap or Recover not admissible" in machines:
+        errors.append("two-machine view must not stop on Recover-not-admissible except under unknown-effect")
     parametric = models.get("FIG-CL-TAV-08-parametric.puml", "")
     for token in ("cmin", "Kmax", "Hk"):
         if token not in parametric:

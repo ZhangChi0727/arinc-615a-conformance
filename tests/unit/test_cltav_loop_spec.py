@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import importlib.util
+import math
 import sys
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location("cltav_loop_spec", ROOT / "scripts/cltav_loop_spec.py")
@@ -20,27 +23,27 @@ def _hyps(*names: str) -> set[str]:
 
 def test_affordable_suboptimal_is_admitted_instead_of_stop_budget() -> None:
     library = [
-        loop.Action("t_best", loop.ActionKind.TEST, 2.0, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
-        loop.Action("t_alt", loop.ActionKind.TEST, 1.0, frozenset({"q0"}), worst_remaining=2, next_q="q0"),
+        loop.Action("t_best", loop.ActionKind.TEST, 2, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
+        loop.Action("t_alt", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=2, next_q="q0"),
     ]
     session = loop.Session(
-        loop.ResourceMode.BUDGET, cmin=1.0, Hk=_hyps("h1", "h2", "h3"), q="q0",
-        B=1.0, remaining_B=1.0,
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2", "h3"), q="q0",
+        B=1, remaining_B=1,
     )
     chosen = loop.step(session, library, observation=_hyps("h1", "h2"))
     assert chosen is not None and chosen.id == "t_alt"
-    assert session.charges == [("t_alt", 1.0)]
+    assert session.charges == [("t_alt", 1)]
 
 
 def test_test_that_exhausts_budget_cannot_be_followed_by_prep() -> None:
     library = [
-        loop.Action("t1", loop.ActionKind.TEST, 1.0, frozenset({"q0"}), worst_remaining=2, next_q="q1"),
-        loop.Action("prep", loop.ActionKind.PREP, 1.0, frozenset({"q1"}), next_q="q2"),
-        loop.Action("t2", loop.ActionKind.TEST, 1.0, frozenset({"q2"}), worst_remaining=1, next_q="q2"),
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=2, next_q="q1"),
+        loop.Action("prep", loop.ActionKind.PREP, 1, frozenset({"q1"}), next_q="q2"),
+        loop.Action("t2", loop.ActionKind.TEST, 1, frozenset({"q2"}), worst_remaining=1, next_q="q2"),
     ]
     session = loop.Session(
-        loop.ResourceMode.BUDGET, cmin=1.0, Hk=_hyps("h1", "h2", "h3"), q="q0",
-        B=1.0, remaining_B=1.0,
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2", "h3"), q="q0",
+        B=1, remaining_B=1,
     )
     loop.step(session, library, observation=_hyps("h1", "h2"))
     assert session.stop == "Stop-Budget"
@@ -50,11 +53,11 @@ def test_test_that_exhausts_budget_cannot_be_followed_by_prep() -> None:
 
 def test_kmax_blocks_prep_after_last_round() -> None:
     library = [
-        loop.Action("t1", loop.ActionKind.TEST, 1.0, frozenset({"q0"}), worst_remaining=2, next_q="q1"),
-        loop.Action("prep", loop.ActionKind.PREP, 1.0, frozenset({"q1"}), next_q="q2"),
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=2, next_q="q1"),
+        loop.Action("prep", loop.ActionKind.PREP, 1, frozenset({"q1"}), next_q="q2"),
     ]
     session = loop.Session(
-        loop.ResourceMode.ROUNDS, cmin=1.0, Hk=_hyps("h1", "h2", "h3"), q="q0",
+        loop.ResourceMode.ROUNDS, cmin=1, Hk=_hyps("h1", "h2", "h3"), q="q0",
         Kmax=1,
     )
     loop.step(session, library, observation=_hyps("h1", "h2"))
@@ -64,12 +67,12 @@ def test_kmax_blocks_prep_after_last_round() -> None:
 
 def test_initial_library_with_only_prep_is_admitted() -> None:
     library = [
-        loop.Action("prep", loop.ActionKind.PREP, 1.0, frozenset({"q0"}), next_q="q1"),
-        loop.Action("t1", loop.ActionKind.TEST, 1.0, frozenset({"q1"}), worst_remaining=1, next_q="q1"),
+        loop.Action("prep", loop.ActionKind.PREP, 1, frozenset({"q0"}), next_q="q1"),
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q1"}), worst_remaining=1, next_q="q1"),
     ]
     session = loop.Session(
-        loop.ResourceMode.BUDGET, cmin=1.0, Hk=_hyps("h1", "h2"), q="q0",
-        B=2.0, remaining_B=2.0,
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=2, remaining_B=2,
     )
     chosen = loop.step(session, library, observation=_hyps("h1", "h2"))
     assert chosen is not None and chosen.id == "prep"
@@ -79,11 +82,11 @@ def test_initial_library_with_only_prep_is_admitted() -> None:
 
 def test_budget_mode_does_not_use_round_or() -> None:
     library = [
-        loop.Action("t1", loop.ActionKind.TEST, 1.0, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
     ]
     session = loop.Session(
-        loop.ResourceMode.BUDGET, cmin=1.0, Hk=_hyps("h1", "h2"), q="q0",
-        B=0.0, remaining_B=0.0,
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=0, remaining_B=0,
     )
     assert loop.step(session, library, observation=_hyps("h1")) is None
     assert session.stop == "Stop-Budget"
@@ -92,62 +95,214 @@ def test_budget_mode_does_not_use_round_or() -> None:
 
 def test_rounds_mode_does_not_use_leftover_budget() -> None:
     library = [
-        loop.Action("t1", loop.ActionKind.TEST, 1.0, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
     ]
     session = loop.Session(
-        loop.ResourceMode.ROUNDS, cmin=1.0, Hk=_hyps("h1", "h2"), q="q0",
+        loop.ResourceMode.ROUNDS, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
         Kmax=0,
     )
     assert loop.step(session, library, observation=_hyps("h1")) is None
     assert session.stop == "Stop-Budget"
 
 
+def test_uninformative_test_does_not_block_prep() -> None:
+    library = [
+        loop.Action(
+            "uninformative",
+            loop.ActionKind.TEST,
+            1,
+            frozenset({"q0"}),
+            worst_remaining=2,
+            next_q="q0",
+            obs_classes=(frozenset({"h1", "h2"}),),
+        ),
+        loop.Action("prep", loop.ActionKind.PREP, 1, frozenset({"q0"}), next_q="q1"),
+        loop.Action(
+            "split",
+            loop.ActionKind.TEST,
+            1,
+            frozenset({"q1"}),
+            worst_remaining=1,
+            next_q="q1",
+            obs_classes=(frozenset({"h1"}), frozenset({"h2"})),
+        ),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=3, remaining_B=3,
+    )
+    first = loop.step(session, library, observation=_hyps("h1", "h2"))
+    assert first is not None and first.id == "prep"
+    assert session.q == "q1"
+    second = loop.step(session, library, observation=_hyps("h1"))
+    assert second is not None and second.id == "split"
+    assert session.stop == "Stop-Singleton"
+    assert [item[0] for item in session.charges] == ["prep", "split"]
+
+
+def test_overlapping_observation_is_still_distinguishing_valuable() -> None:
+    overlapping = loop.Action(
+        "overlap",
+        loop.ActionKind.TEST,
+        1,
+        frozenset({"q0"}),
+        worst_remaining=2,
+        next_q="q0",
+        obs_classes=(frozenset({"h1", "h2"}), frozenset({"h1"}), frozenset({"h2"})),
+    )
+    library = [
+        overlapping,
+        loop.Action("prep", loop.ActionKind.PREP, 1, frozenset({"q0"}), next_q="q1"),
+    ]
+    hk = _hyps("h1", "h2")
+    assert loop.can_strictly_reduce(overlapping, hk)
+    assert loop.worst_remaining_count(overlapping, hk) == 2
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=hk, q="q0",
+        B=3, remaining_B=3,
+    )
+    chosen = loop.step(session, library, observation=_hyps("h1", "h2"))
+    assert chosen is not None and chosen.id == "overlap"
+    assert session.stop is None
+    assert session.charges[0][0] != "prep"
+
+
+def test_valuable_but_unaffordable_is_stop_budget() -> None:
+    library = [
+        loop.Action("costly", loop.ActionKind.TEST, 2, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=1, remaining_B=1,
+    )
+    assert loop.step(session, library, observation=_hyps("h1")) is None
+    assert session.stop == "Stop-Budget"
+    assert session.charges == []
+
+
+def test_no_strictly_reducing_test_and_no_prep_is_stop_nodistinguisher() -> None:
+    library = [
+        loop.Action(
+            "uninformative",
+            loop.ActionKind.TEST,
+            1,
+            frozenset({"q0"}),
+            worst_remaining=2,
+            next_q="q0",
+            obs_classes=(frozenset({"h1", "h2"}),),
+        ),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=3, remaining_B=3,
+    )
+    assert loop.step(session, library, observation=_hyps("h1", "h2")) is None
+    assert session.stop == "Stop-NoDistinguisher"
+    assert session.charges == []
+
+
 def test_confirmed_not_sent_keeps_q_and_unknown_effect_does_not() -> None:
     library = [
-        loop.Action("t1", loop.ActionKind.TEST, 1.0, frozenset({"q0"}), worst_remaining=1, next_q="q1"),
-        loop.Action("recover", loop.ActionKind.RECOVER, 1.0, frozenset({"q0"}), next_q="q0"),
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q1"),
+        loop.Action(
+            "recover",
+            loop.ActionKind.RECOVER,
+            1,
+            frozenset({"unreachable"}),
+            next_q="q_sync",
+            recover_when_unknown=True,
+        ),
     ]
     sent = loop.Session(
-        loop.ResourceMode.BUDGET, cmin=1.0, Hk=_hyps("h1", "h2"), q="q0",
-        B=4.0, remaining_B=4.0, retry_cap=3,
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=4, remaining_B=4, retry_cap=3,
     )
     loop.step(sent, library, error=loop.ErrorKind.NOT_SENT)
     assert sent.q_status is loop.QStatus.KNOWN
     assert sent.q == "q0"
     assert sent.stop is None
     unknown = loop.Session(
-        loop.ResourceMode.BUDGET, cmin=1.0, Hk=_hyps("h1", "h2"), q="q0",
-        B=4.0, remaining_B=4.0, retry_cap=3,
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=4, remaining_B=4, retry_cap=3,
     )
     loop.step(unknown, library, error=loop.ErrorKind.UNKNOWN_EFFECT)
     assert unknown.q_status is loop.QStatus.UNKNOWN
     assert unknown.Hk == _hyps("h1", "h2")
-    chosen = loop.step(unknown, library, observation=_hyps("h1", "h2"))
+    chosen = loop.step(unknown, library, confirmed_q="q_sync")
     assert chosen is not None and chosen.kind is loop.ActionKind.RECOVER
+    assert unknown.q == "q_sync"
+    assert unknown.q_status is loop.QStatus.KNOWN
 
 
 def test_retry_cap_stops_while_budget_remains() -> None:
     library = [
-        loop.Action("t1", loop.ActionKind.TEST, 1.0, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
     ]
     session = loop.Session(
-        loop.ResourceMode.BUDGET, cmin=1.0, Hk=_hyps("h1", "h2"), q="q0",
-        B=10.0, remaining_B=10.0, retry_cap=1,
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=10, remaining_B=10, retry_cap=1,
     )
     loop.step(session, library, error=loop.ErrorKind.NOT_SENT)
     assert session.stop == "Stop-Error"
-    assert session.remaining_B == 9.0
+    assert session.remaining_B == 9
     assert loop.step(session, library, observation=_hyps("h1")) is None
+
+
+def test_ineligible_recover_is_not_admitted_or_charged() -> None:
+    library = [
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q1"),
+        loop.Action("recover", loop.ActionKind.RECOVER, 1, frozenset({"unreachable"})),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=10, remaining_B=10, retry_cap=3,
+    )
+    loop.step(session, library, error=loop.ErrorKind.UNKNOWN_EFFECT)
+    assert session.q_status is loop.QStatus.UNKNOWN
+    assert loop.step(session, library, observation=_hyps("h1", "h2")) is None
+    assert session.stop == "Stop-Error"
+    assert [item[0] for item in session.charges] == ["t1"]
+
+
+def test_recover_without_confirmation_does_not_restore_old_q() -> None:
+    library = [
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q1"),
+        loop.Action(
+            "recover",
+            loop.ActionKind.RECOVER,
+            1,
+            frozenset({"unreachable"}),
+            next_q="q_sync",
+            recover_when_unknown=True,
+        ),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=10, remaining_B=10, retry_cap=3,
+    )
+    loop.step(session, library, error=loop.ErrorKind.UNKNOWN_EFFECT)
+    chosen = loop.step(session, library, observation=_hyps("h1", "h2"))
+    assert chosen is not None and chosen.id == "recover"
+    assert session.q_status is loop.QStatus.UNKNOWN
+    assert session.q == "q0"
+    assert session.Hk == _hyps("h1", "h2")
 
 
 def test_recover_error_uses_same_gate_and_not_sent_keeps_unknown() -> None:
     library = [
-        loop.Action("t1", loop.ActionKind.TEST, 1.0, frozenset({"q0"}), worst_remaining=1, next_q="q1"),
-        loop.Action("recover", loop.ActionKind.RECOVER, 1.0, frozenset({"q0"}), next_q="q0"),
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q1"),
+        loop.Action(
+            "recover",
+            loop.ActionKind.RECOVER,
+            1,
+            frozenset({"unreachable"}),
+            next_q="q_sync",
+            recover_when_unknown=True,
+        ),
     ]
     unknown = loop.Session(
-        loop.ResourceMode.BUDGET, cmin=1.0, Hk=_hyps("h1", "h2"), q="q0",
-        B=10.0, remaining_B=10.0, retry_cap=3,
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=10, remaining_B=10, retry_cap=3,
     )
     loop.step(unknown, library, error=loop.ErrorKind.UNKNOWN_EFFECT)
     assert unknown.q_status is loop.QStatus.UNKNOWN
@@ -156,11 +311,112 @@ def test_recover_error_uses_same_gate_and_not_sent_keeps_unknown() -> None:
     assert unknown.charges[-1][0] == "recover"
     assert unknown.stop is None
     capped = loop.Session(
-        loop.ResourceMode.BUDGET, cmin=1.0, Hk=_hyps("h1", "h2"), q="q0",
-        B=10.0, remaining_B=10.0, retry_cap=2,
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=10, remaining_B=10, retry_cap=2,
     )
     loop.step(capped, library, error=loop.ErrorKind.UNKNOWN_EFFECT)
     loop.step(capped, library, error=loop.ErrorKind.UNKNOWN_EFFECT)
     assert capped.stop == "Stop-Error"
-    assert capped.remaining_B == 8.0
+    assert capped.remaining_B == 8
     assert [item[0] for item in capped.charges] == ["t1", "recover"]
+
+
+def test_not_sent_without_recover_retries_when_cap_remains() -> None:
+    library = [
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=10, remaining_B=10, retry_cap=3,
+    )
+    loop.step(session, library, error=loop.ErrorKind.NOT_SENT)
+    assert session.stop is None
+    assert session.q_status is loop.QStatus.KNOWN
+    chosen = loop.step(session, library, observation=_hyps("h1"))
+    assert chosen is not None and chosen.id == "t1"
+
+
+def test_singleton_on_last_round_beats_stop_budget() -> None:
+    library = [
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=1, remaining_B=1,
+    )
+    loop.step(session, library, observation=_hyps("h1"))
+    assert session.stop == "Stop-Singleton"
+    assert session.remaining_B == 0
+
+
+def test_empty_on_last_round_beats_stop_budget() -> None:
+    library = [
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=1, remaining_B=1,
+    )
+    loop.step(session, library, observation=set())
+    assert session.stop == "Stop-Empty"
+
+
+def test_equivalent_with_resource_remaining_is_stop_equivalent() -> None:
+    library = [
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=5, remaining_B=5,
+    )
+    loop.step(session, library, observation=_hyps("h1", "h2"), equivalent=True)
+    assert session.stop == "Stop-Equivalent"
+    assert session.remaining_B == 4
+
+
+def test_named_645_beats_continue() -> None:
+    library = [
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q0"),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=5, remaining_B=5,
+    )
+    loop.step(session, library, observation=_hyps("h1", "h2"), named_645=True)
+    assert session.stop == "Stop-645"
+
+
+def test_update_stop_priority_table_matches_figures() -> None:
+    assert loop.UPDATE_STOP_PRIORITY == (
+        "Stop-Empty",
+        "Stop-Singleton",
+        "Stop-645",
+        "Stop-Equivalent",
+        "Stop-Budget",
+    )
+
+
+def test_resource_domain_rejects_non_finite_and_non_integer_inputs() -> None:
+    hk = _hyps("h1", "h2")
+    with pytest.raises(ValueError):
+        loop.Session(loop.ResourceMode.BUDGET, cmin=1, Hk=hk, q="q0", B=math.inf, remaining_B=math.inf)
+    with pytest.raises(ValueError):
+        loop.Session(loop.ResourceMode.BUDGET, cmin=1, Hk=hk, q="q0", B=math.nan, remaining_B=1)
+    with pytest.raises(ValueError):
+        loop.Session(loop.ResourceMode.ROUNDS, cmin=1, Hk=hk, q="q0", Kmax=1.5)
+    with pytest.raises(ValueError):
+        loop.Session(loop.ResourceMode.BUDGET, cmin=1, Hk=hk, q="q0", B=2, remaining_B=3)
+    with pytest.raises(ValueError):
+        loop.Session(loop.ResourceMode.BUDGET, cmin=1, Hk=hk, q="q0", B=1, remaining_B=1, retry_cap=0)
+    with pytest.raises(ValueError):
+        loop.Action("t1", loop.ActionKind.TEST, math.inf, frozenset({"q0"}))
+    with pytest.raises(ValueError):
+        loop.Action("t1", loop.ActionKind.TEST, 1.5, frozenset({"q0"}))
+    with pytest.raises(ValueError):
+        loop.Action(
+            "recover",
+            loop.ActionKind.RECOVER,
+            1,
+            frozenset({"q0"}),
+            recover_when_unknown=True,
+        )

@@ -914,6 +914,15 @@ def test_protocol_source_audit_rejects_locator_and_duplicate_drift() -> None:
             row[field] = f"UNRELATED-{field}"
         errors = baseline.protocol_source_audit_errors(field_mutated, crs)
         assert any(field in error for error in errors), field
+    total = copy.deepcopy(audit)
+    total["summary"]["deferredFutureScope"]["total"] = 0
+    assert any("deferredFutureScope.total" in error for error in baseline.protocol_source_audit_errors(total, crs))
+    app = copy.deepcopy(audit)
+    app["summary"]["applicabilityDecisions"]["DEFERRED-FUTURE-SCOPE"] = 0
+    assert any("applicabilityDecisions" in error for error in baseline.protocol_source_audit_errors(app, crs))
+    bound_count = copy.deepcopy(audit)
+    bound_count["boundPackage"]["coverageCount"] = 1
+    assert any("boundPackage.coverageCount" in error for error in baseline.protocol_source_audit_errors(bound_count, crs))
 
 
 def test_protocol_source_audit_allows_declared_future_status_pairs() -> None:

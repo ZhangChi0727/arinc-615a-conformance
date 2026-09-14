@@ -619,17 +619,22 @@ from outside \(A(q_k)\). If \(A(q_k)=\emptyset\), classify the stop
 (Stop-Budget / Stop-NoDistinguisher / Stop-Error); do not take
 \(\arg\min\) of an empty set.
 
-Score only admissible tests:
+Score only admissible tests that are **strictly reducing**: some finite
+observation class leaves a proper subset of \(H_k\). The score
 
 \[
-s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
+s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|
 \]
 
-Select \(\arg\min_{t\in A(q_k)\cap T} s(t)\). If that set is empty, select an
-admissible Prep; if none, an admissible Recover. Ties: smaller
-\(\mathrm{cost}(t)\), then stable id. This is **one-step minimax in
-remaining-candidate cardinality**. It is not global optimality, not minimum
-total test cost, and not an optimal diagnostic strategy.
+is one-step minimax among those tests. \(s(t)=|H_k|\) means the worst class
+does not shrink; it does **not** mean the test has no diagnostic value.
+Select \(\arg\min s(t)\) over strictly-reducing tests in \(A(q_k)\). If that
+set is empty, select an admissible Prep; if none, an admissible Recover.
+Uninformative tests stay out of the minimax set even when they are in
+\(A(q_k)\). Ties: smaller \(\mathrm{cost}(t)\), then stable id. This is
+**one-step minimax in remaining-candidate cardinality**. It is not global
+optimality, not minimum total test cost, and not an optimal diagnostic
+strategy.
 
 Not default this round (allowed later as comparison arms; a new DD is required
 before replacing the default):
@@ -659,6 +664,16 @@ diagnostic value. Distinguish three “cannot shrink” returns:
 | Instrument `ERROR` | Invalid tool/correlation/record; distinct from IUT `FAIL`; do not exclude candidates. Split confirmed-not-sent (do not change \(q\)-status) from unknown-effect (mark \(q\) unknown; recover/resync before using \(T(q)\)) | Use ERROR to kill hypotheses; assume \(q_k\) unchanged after a possibly received stimulus; retry without a finite cap; stop on every ERROR |
 | Named 645-blocked item | Explicit inconclusive | Silent removal from the coverage denominator |
 | Budget exhausted or round cap | Current \(H_k\) and pending obligations | Infinite looping |
+
+Update-path stop classes are exclusive in this order, matching FIG-CL-TAV-05,
+FIG-CL-TAV-07 and the bounded walker: Stop-Empty, Stop-Singleton, Stop-645,
+Stop-Equivalent, then Stop-Budget; otherwise continue. Recover-not-admissible
+is an ErrorHandle stop only under unknown-effect.
+
+Unknown-effect recovery is an explicit eligibility (declared recovery target
+and `recover_when_unknown`), not `enabled_at` of the untrusted \(q\). \(H_k\)
+retention and \(q\) restoration are separate. A Recover returns to KNOWN only
+when the declared target is confirmed; missing confirmation keeps UNKNOWN.
 
 Finite termination cannot rest on “each cost is positive” alone: a sequence
 \(1,1/2,1/4,\ldots\) stays strictly positive and may not exhaust a finite budget
@@ -706,8 +721,10 @@ default complexity claim.
    Worst-case remaining count is 2 because \(a\) keeps both. Outcomes \(b\) or
    \(c\) distinguish. Do not discard the test as having no diagnostic value.
 5. **No distinguishing test now; a preparatory action may enable one.** From
-   observable \(q_k\) every executable test has \(s(t)=|H_k|\). If a Prep is in
-   \(A(q_k)\), execute it and recompute. If Prep exists but is unaffordable,
+   observable \(q_k\) no executable test has a strictly-reducing observation
+   class (some uninformative tests may still have \(s(t)=|H_k|\)). If a Prep is
+   in \(A(q_k)\), execute it and recompute; do not spend the budget on the
+   uninformative tests. If a strictly-reducing test exists but is unaffordable,
    return Stop-Budget, not proved equivalence. If neither distinguisher nor Prep
    exists, return “no currently usable distinguishing test,” not “no sequence
    can distinguish.”
@@ -718,10 +735,12 @@ default complexity claim.
    failure.
 7. **`ERROR` does not exclude candidates, but \(q\) is not automatically
    unchanged.** Confirmed-not-sent does not change \(q\)-status and may retry
-   under the retry cap. Unknown-effect marks \(q\) unknown; only Recover/resync
-   actions are admissible until history is conservative again. Recover and Prep
-   failures use the same ERROR and resource rules. Each `ERROR` spends the
-   selected-mode resource. Retry cap may stop while \(B\) remains.
+   under the retry cap. Unknown-effect marks \(q\) unknown; only recovery-eligible
+   Recover/resync actions (declared target, `recover_when_unknown`) are
+   admissible until history is conservative again. Missing confirmation does
+   not restore the old \(q\). Recover and Prep failures use the same ERROR and
+   resource rules. Each `ERROR` spends the selected-mode resource. Retry cap
+   may stop while \(B\) remains.
 8. **Affordable suboptimal beats unaffordable optimum.** Remaining budget 1,
    best minimax test costs 2, another distinguisher costs 1. Admit the cost-1
    test; do not Stop-Budget.
@@ -1104,15 +1123,17 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 \(A(q_k)\) 之外执行 Prep、Recover 或重试。若 \(A(q_k)=\emptyset\)，先分类停止
 （Stop-Budget／Stop-NoDistinguisher／Stop-Error），禁止对空集合取 \(\arg\min\)。
 
-只对可准入测试评分：
+只对可准入且**严格缩小**的测试评分：某一有限观测类使剩余候选成为 \(H_k\) 的真子集。
 
 \[
-s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
+s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|
 \]
 
-选择 \(\arg\min_{t\in A(q_k)\cap T} s(t)\)。若该集合为空，再选可准入 Prep；若仍无，再选
-可准入 Recover。并列时先更小 \(\mathrm{cost}(t)\)，再稳定测试 ID。这是**候选
-数量意义下的一步 minimax**，不是全局最优、最小总测试成本或最优诊断策略。
+只在这些测试上做一步 minimax。\(s(t)=|H_k|\) 表示最坏类不缩小，**不等于**没有诊断价值。
+在 \(A(q_k)\) 中对严格缩小测试取 \(\arg\min s(t)\)。若该集合为空，再选可准入 Prep；若仍无，
+再选可准入 Recover。无信息测试即使已在 \(A(q_k)\) 中也不进入 minimax 集合。并列时先更小
+\(\mathrm{cost}(t)\)，再稳定测试 ID。这是**候选数量意义下的一步 minimax**，不是全局最优、
+最小总测试成本或最优诊断策略。
 
 本轮不作默认（可作为后继比较臂；替换默认须新 DD）：
 
@@ -1138,6 +1159,14 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 | 仪器 `ERROR` | 工具／关联／记录无效；与 IUT `FAIL` 分开；不排除候选。区分确认未发送（不改变 \(q\) 状态）与效果未知（将 \(q\) 标为未知，恢复／重同步后才能使用 \(T(q)\)） | 用 ERROR 排除假设；在刺激可能已被接收后仍假定 \(q_k\) 不变；无上限重试；每次 ERROR 立即停止 |
 | 具名 645 阻塞项 | 显式未决 | 从覆盖分母静默删除 |
 | 预算耗尽或轮次上限 | 当前 \(H_k\) 与未决义务 | 无限循环 |
+
+更新路径停止类按下述顺序互斥，与 FIG-CL-TAV-05、FIG-CL-TAV-07 及有界走查器相同：
+Stop-Empty、Stop-Singleton、Stop-645、Stop-Equivalent，然后 Stop-Budget；否则继续。
+Recover 不可用只在效果未知的 ErrorHandle 下构成停止。
+
+效果未知的恢复是显式资格（已声明恢复目标且 `recover_when_unknown`），不是对不可信
+\(q\) 比较 `enabled_at`。\(H_k\) 保留与 \(q\) 恢复分开。Recover 仅在确认已声明目标后
+回到 KNOWN；缺确认则保持 UNKNOWN。
 
 有限终止不能只靠“每次成本为正”：序列 \(1,1/2,1/4,\ldots\) 始终为正，却可能在有限预算下
 无限轮转。首版 CL-TAV 因此采用下列**之一**：
@@ -1173,15 +1202,17 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 4. **重叠观测：最坏不缩小，但部分结果可区分。** \(h_1\) 允许 \(\{a,b\}\)，\(h_2\) 允许
    \(\{a,c\}\)。因 \(a\) 会保留二者，最坏剩余数为 2；但 \(b\) 或 \(c\) 能够区分。不得把该
    测试当成没有诊断价值而丢弃。
-5. **当前没有区分测试，准备动作后可能可区分。** 在可观测 \(q_k\) 上每个可执行测试都有
-   \(s(t)=|H_k|\)。若 Prep 属于 \(A(q_k)\)，则执行后再计算。Prep 存在但不可负担时返回
-   Stop-Budget，不是已证明等价。既无区分测试也无 Prep 时，返回“当前没有可用区分测试”，
-   而不是“任何序列都不能区分”。
+5. **当前没有区分测试，准备动作后可能可区分。** 在可观测 \(q_k\) 上没有任何可执行测试具有
+   严格缩小的观测类（无信息测试仍可能 \(s(t)=|H_k|\)）。若 Prep 属于 \(A(q_k)\)，则执行后再
+   计算，不得把预算花在无信息测试上。存在严格缩小测试但不可负担时返回 Stop-Budget，不是
+   已证明等价。既无区分测试也无 Prep 时，返回“当前没有可用区分测试”，而不是“任何序列都
+   不能区分”。
 6. **域外故障仍与域内候选相容。** 真实故障 \(h^\star\notin H_0\) 与某个
    \(h_i\in H_{\mathrm{single}}\) 产生相同观测。更新不会清空 \(H_k\)。算法可能把 \(h_i\)
    当作定位结果，不会自动宣布域外失败。
 7. **`ERROR` 不排除候选，但 \(q\) 不能自动保持不变。** 确认未发送不改变 \(q\) 状态，并可在
-   重试上限内重试。效果未知则将 \(q\) 标为未知，直到恢复／重同步之前只有 Recover 可准入。
+   重试上限内重试。效果未知则将 \(q\) 标为未知，直到恢复／重同步之前只有具备恢复资格
+  （已声明目标、`recover_when_unknown`）的 Recover 可准入。缺确认不得恢复旧 \(q\)。
    Recover 与 Prep 失败使用同一 ERROR 与资源规则。每次 `ERROR` 消耗所选模式资源。
    重试上限可在 \(B\) 仍有余额时停止。
 8. **可负担次优优于不可负担最优。** 剩余预算 1，最优 minimax 测试费用 2，另一区分测试
