@@ -35,6 +35,16 @@ class ErrorKind(str, Enum):
     UNKNOWN_EFFECT = "UNKNOWN_EFFECT"
 
 
+class PredictionGapError(ValueError):
+    """A currently enabled TEST declares classes that project to no current survivors."""
+
+    def __init__(self, action_id: str) -> None:
+        self.action_id = action_id
+        super().__init__(
+            f"prediction gap: test {action_id} has no currently valid observation class"
+        )
+
+
 # Update-path arbitration used by FIG-CL-TAV-05, FIG-CL-TAV-07 and this walker.
 # First matching class wins. Continue-to-Admit is the residual, not a stop.
 UPDATE_STOP_PRIORITY = (
@@ -191,20 +201,44 @@ def current_valid_classes(action: Action, hk: set[str]) -> tuple[set[str], ...]:
     )
 
 
+def is_prediction_gap(action: Action, hk: set[str]) -> bool:
+    """True iff declared obs_classes project to no currently valid nonempty set."""
+    return (
+        action.kind is ActionKind.TEST
+        and bool(action.obs_classes)
+        and not current_valid_classes(action, hk)
+    )
+
+
+def require_no_prediction_gap(session: Session, library: list[Action]) -> None:
+    """Reject currently enabled TESTs that have no current valid prediction.
+
+    This is a spec-input error, not A3. Uninformative tests that do have a
+    current class covering all of Hk remain A3. Do not score a gap as |Hk|.
+    """
+    if session.q_status is QStatus.UNKNOWN:
+        return
+    for action in library:
+        if session.q not in action.enabled_at:
+            continue
+        if is_prediction_gap(action, session.Hk):
+            raise PredictionGapError(action.id)
+
+
 def can_strictly_reduce(action: Action, hk: set[str]) -> bool:
     """True iff some *currently valid* nonempty class leaves a proper subset of Hk.
 
     Require 0 < |survivors| < |Hk|. s(t)=|Hk| is worst-case non-shrinkage, not
     'no diagnostic value'. Classes that project to empty are not distinguishing
-    value. A test with obs_classes but no current valid class is a prediction
-    gap, not a score-0 perfect test.
+    value. A currently enabled test with obs_classes but no current valid class
+    is a named prediction-gap spec error, not a score-0 perfect test and not A3.
     """
     if action.kind is not ActionKind.TEST or not hk:
         return False
+    if is_prediction_gap(action, hk):
+        raise PredictionGapError(action.id)
     if action.obs_classes:
         valid = current_valid_classes(action, hk)
-        if not valid:
-            return False
         return any(len(survivors) < len(hk) for survivors in valid)
     if action.worst_remaining is not None:
         return 0 < action.worst_remaining < len(hk)
@@ -212,11 +246,11 @@ def can_strictly_reduce(action: Action, hk: set[str]) -> bool:
 
 
 def worst_remaining_count(action: Action, hk: set[str]) -> int:
+    if is_prediction_gap(action, hk):
+        raise PredictionGapError(action.id)
     valid = current_valid_classes(action, hk)
     if valid:
         return max(len(survivors) for survivors in valid)
-    if action.obs_classes:
-        return len(hk)
     if action.worst_remaining is not None:
         return action.worst_remaining
     return len(hk)
@@ -279,6 +313,7 @@ def classify_empty(session: Session, library: list[Action]) -> str:
 
 
 def admit_decision(session: Session, library: list[Action]) -> str:
+    require_no_prediction_gap(session, library)
     actions = admissible(session, library)
     if select(session, actions) is not None:
         return "A1"
@@ -299,6 +334,7 @@ def admit_decision(session: Session, library: list[Action]) -> str:
 
 
 def admit_or_stop(session: Session, library: list[Action]) -> Action | None:
+    require_no_prediction_gap(session, library)
     actions = admissible(session, library)
     chosen = select(session, actions)
     if chosen is not None:

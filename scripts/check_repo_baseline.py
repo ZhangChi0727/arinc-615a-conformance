@@ -676,7 +676,7 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
     if "if (A empty?)" in activity and "S empty" not in activity:
         errors.append("closed-loop activity view must not Execute from nonempty A without selectable S")
     machines = models.get("FIG-CL-TAV-07-two-state-machines.puml", "")
-    for token in ("Msess", "Mprot", "Admit", "ErrorHandle", "bound M2", "FIG-CL-TAV-04", "FIND", "P1", "P5", "A1", "A5", "unconfirmed"):
+    for token in ("Msess", "Mprot", "Admit", "ErrorHandle", "bound M2", "FIG-CL-TAV-04", "FIND", "P1", "P5", "A1", "A5", "unconfirmed", "retry remaining"):
         if token not in machines:
             errors.append(f"two-machine view is missing {token}")
     if "Information -->" in machines:
@@ -687,6 +687,10 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
         errors.append("two-machine view must not stop immediately on every ERROR")
     if "retry cap or Recover not admissible" in machines:
         errors.append("two-machine view must not stop on Recover-not-admissible except under unknown-effect")
+    if "ErrorHandle --> Admit : unknown-effect and Recover in S" in machines:
+        errors.append("two-machine view must not Admit unknown-effect Recover without retry remaining")
+    if "RecoverConfirm --> StopBudget : unconfirmed A5" in machines or "RecoverConfirm --> StopError : unconfirmed A4" in machines:
+        errors.append("two-machine view must not overlap unconfirmed Recover stop with return to Admit")
     parametric = models.get("FIG-CL-TAV-08-parametric.puml", "")
     for token in ("cmin", "Kmax", "Hk"):
         if token not in parametric:

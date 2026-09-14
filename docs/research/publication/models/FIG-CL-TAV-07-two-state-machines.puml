@@ -16,13 +16,11 @@ state Msess as "Msess verification session" {
   Execute --> ErrorHandle : ERROR
   RecoverConfirm --> Update : target confirmed
   RecoverConfirm --> Admit : unconfirmed; q UNKNOWN
-  RecoverConfirm --> StopBudget : unconfirmed A5
-  RecoverConfirm --> StopError : unconfirmed A4
   ErrorHandle --> StopError : retry cap reached
-  ErrorHandle --> StopError : unknown-effect A4 Recover not eligible
-  ErrorHandle --> StopBudget : unknown-effect A5 Recover eligible unaffordable
+  ErrorHandle --> StopError : retry remaining and unknown-effect A4 Recover not eligible
+  ErrorHandle --> StopBudget : retry remaining and unknown-effect A5 Recover eligible unaffordable
   ErrorHandle --> Admit : confirmed not sent and retry remaining
-  ErrorHandle --> Admit : unknown-effect and Recover in S
+  ErrorHandle --> Admit : retry remaining and unknown-effect and Recover in S
   Update --> StopEmpty : P1 Hk empty
   Update --> StopSingleton : P2 |Hk| == 1
   Update --> Stop645 : P3 named 645-blocked
@@ -39,6 +37,8 @@ state Mprot as "Mprot protocol black box" {
 note bottom of Msess
   Admit/Select table A1-A5 equals FIG-CL-TAV-05 and the walker.
   A nonempty does not imply Execute. S empty uses A2-A5.
+  ErrorHandle: retry cap first, then A4/A5 or Admit A1.
+  Unconfirmed Recover returns to Admit; A1-A5 apply there.
   Update priority P1-P5 is unchanged.
   Independent machines use FIG-CL-TAV-04 ports, not a cross-machine transition.
 end note

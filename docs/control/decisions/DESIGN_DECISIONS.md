@@ -624,8 +624,10 @@ survivor sets. Score only tests that are **strictly reducing** on that
 currently valid collection: some class satisfies
 \(0<|\mathrm{survivors}|<|H_k|\). Empty intersections from already-excluded
 hypotheses are not extra score classes and do not create distinguishing value.
-A test with no currently valid class is a prediction gap, not a score-0
-perfect test. An executed observation that empties \(H_k\) remains Stop-Empty.
+A currently enabled test with no currently valid class is rejected as a named
+prediction-gap spec error before admission. It is not A3, not proved
+equivalence, and not scored as remaining \(|H_k|\). An executed observation
+that empties \(H_k\) remains Stop-Empty.
 
 The score
 
@@ -645,7 +647,8 @@ unaffordable, Stop-Budget; **A3** KNOWN, no strictly-reducing TEST and no Prep,
 Stop-NoDistinguisher; **A4** UNKNOWN, Recover not eligible, Stop-Error;
 **A5** UNKNOWN, Recover eligible but unaffordable, Stop-Budget. Keep the ERROR
 and UNKNOWN facts under A5. Recover returns to KNOWN only after the declared
-target is confirmed; an unconfirmed Recover stays UNKNOWN and re-enters Admit.
+target is confirmed; an unconfirmed Recover stays UNKNOWN and re-enters Admit,
+where A1–A5 apply. ErrorHandle decides the retry cap before A4, A5 or Admit A1.
 This is **one-step minimax in remaining-candidate cardinality**. It is not
 global optimality, not minimum total test cost, and not an optimal diagnostic
 strategy.
@@ -1141,8 +1144,9 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 
 把 \(\mathrm{Obs}(t,q_k)\) 投影到当前 \(H_k\)，只保留非空幸存集。只对在该**当前有效**
 集合上**严格缩小**的测试评分：某一类满足 \(0<|\mathrm{survivors}|<|H_k|\)。已排除假设
-造成的空交集不是额外评分类，也不构成区分价值。没有当前有效类的测试是预测缺口，不是
-score=0 的完美测试。实际执行得到空 \(H_k\) 仍为 Stop-Empty。
+造成的空交集不是额外评分类，也不构成区分价值。当前可执行却没有当前有效类的测试在准入前
+作为具名预测缺口规格错误被拒绝。它不是 A3、不是已证明等价，也不得按剩余 \(|H_k|\) 评分。
+实际执行得到空 \(H_k\) 仍为 Stop-Empty。
 
 \[
 s(t) = \max_{o \in \mathrm{Obs}_{\mathrm{cur}}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|
@@ -1156,7 +1160,8 @@ ID。Admit/Select 表与 FIG-CL-TAV-05／07 及走查器相同：**A1** \(S\) �
 严格缩小 TEST 也无 Prep，Stop-NoDistinguisher；**A4** UNKNOWN 且 Recover 无资格，
 Stop-Error；**A5** UNKNOWN 且 Recover 有资格但不可负担，Stop-Budget。A5 须保留 ERROR
 与 UNKNOWN 事实。Recover 仅在确认已声明目标后回到 KNOWN；未确认则保持 UNKNOWN 并回到
-Admit。这是**候选数量意义下的一步 minimax**，不是全局最优、最小总测试成本或最优诊断
+Admit，再按 A1–A5 决定。ErrorHandle 先判定重试上限，再处理 A4、A5 或 Admit A1。这是
+**候选数量意义下的一步 minimax**，不是全局最优、最小总测试成本或最优诊断
 策略。
 
 本轮不作默认（可作为后继比较臂；替换默认须新 DD）：

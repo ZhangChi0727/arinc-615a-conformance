@@ -436,20 +436,48 @@ def test_explicit_empty_class_does_not_make_a_test_valuable() -> None:
         obs_classes=(frozenset({"h3"}),),
     )
     hk = _hyps("h1", "h2")
-    assert loop.can_strictly_reduce(empty_only, hk) is False
-    assert loop.can_strictly_reduce(gap, hk) is False
-    assert loop.worst_remaining_count(gap, hk) == 2
+    with pytest.raises(loop.PredictionGapError, match="empty") as empty_exc:
+        loop.can_strictly_reduce(empty_only, hk)
+    assert empty_exc.value.action_id == "empty"
+    with pytest.raises(loop.PredictionGapError, match="gap") as gap_exc:
+        loop.worst_remaining_count(gap, hk)
+    assert gap_exc.value.action_id == "gap"
     session = loop.Session(
         loop.ResourceMode.BUDGET, cmin=1, Hk=hk, q="q0",
         B=2, remaining_B=2,
     )
-    assert loop.step(session, [gap], observation=_hyps("h1")) is None
-    assert session.stop == "Stop-NoDistinguisher"
+    with pytest.raises(loop.PredictionGapError, match="gap"):
+        loop.step(session, [gap], observation=_hyps("h1"))
+    assert session.stop is None
     assert session.charges == []
-    assert loop.admit_decision(
-        loop.Session(loop.ResourceMode.BUDGET, cmin=1, Hk=hk, q="q0", B=2, remaining_B=2),
-        [gap],
-    ) == "A3"
+    assert session.history == []
+    with pytest.raises(loop.PredictionGapError, match="gap"):
+        loop.admit_decision(
+            loop.Session(loop.ResourceMode.BUDGET, cmin=1, Hk=hk, q="q0", B=2, remaining_B=2),
+            [gap],
+        )
+
+
+def test_prediction_gap_is_not_silent_a3() -> None:
+    gap = loop.Action(
+        "t",
+        loop.ActionKind.TEST,
+        1,
+        frozenset({"q0"}),
+        obs_classes=(frozenset({"h3"}),),
+    )
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=2, remaining_B=2,
+    )
+    with pytest.raises(loop.PredictionGapError) as exc:
+        loop.admit_decision(session, [gap])
+    assert exc.value.action_id == "t"
+    with pytest.raises(loop.PredictionGapError):
+        loop.step(session, [gap], observation=_hyps("h1"))
+    assert session.stop is None
+    assert session.history == []
+    assert session.charges == []
 
 
 def test_unknown_eligible_recover_unaffordable_is_stop_budget() -> None:
@@ -521,6 +549,45 @@ def test_unconfirmed_recover_then_unaffordable_stays_unknown() -> None:
     assert session.q == "q0"
     assert session.stop == "Stop-Budget"
     assert session.charges == [("t1", 1), ("recover", 1)]
+
+
+def test_retry_cap_preempts_recover_in_s_and_a5() -> None:
+    recover = loop.Action(
+        "recover",
+        loop.ActionKind.RECOVER,
+        1,
+        frozenset({"unreachable"}),
+        next_q="q_sync",
+        recover_when_unknown=True,
+    )
+    costly = loop.Action(
+        "recover",
+        loop.ActionKind.RECOVER,
+        2,
+        frozenset({"unreachable"}),
+        next_q="q_sync",
+        recover_when_unknown=True,
+    )
+    test = loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q1")
+    available = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=10, remaining_B=10, retry_cap=1,
+    )
+    loop.step(available, [test, recover], error=loop.ErrorKind.UNKNOWN_EFFECT)
+    assert available.stop == "Stop-Error"
+    assert available.q_status is loop.QStatus.UNKNOWN
+    assert available.history[0].startswith("ERROR:UNKNOWN_EFFECT")
+    assert available.charges == [("t1", 1)]
+    unaffordable = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=1, remaining_B=1, retry_cap=1,
+    )
+    loop.step(unaffordable, [test, costly], error=loop.ErrorKind.UNKNOWN_EFFECT)
+    assert unaffordable.stop == "Stop-Error"
+    assert unaffordable.q_status is loop.QStatus.UNKNOWN
+    assert unaffordable.history[0].startswith("ERROR:UNKNOWN_EFFECT")
+    assert unaffordable.charges == [("t1", 1)]
+    assert unaffordable.remaining_B == 0
 
 
 def test_resource_domain_rejects_non_finite_and_non_integer_inputs() -> None:
