@@ -608,16 +608,28 @@ in this increment.
 
 Let \(\mathrm{Obs}(t,q_k)\) cover the valid observation classes that current
 candidates can produce under the same uncertainty partitions as \(I_{z_k}\).
-For every executable test with remaining budget \(\ge \mathrm{cost}(t)\),
+Declare **one** resource mode and never mix them with a logical OR:
+budget mode \((c_{\min},B)\) or round mode \(K_{\max}\).
+
+Before scoring, form the admissible action set \(A(q_k)\) of tests,
+preparatory actions and recovery actions that meet preconditions **and** the
+selected-mode resource constraint. Charge each executed action, including
+`ERROR`, exactly once after admission. Do not execute Prep, Recover or a retry
+from outside \(A(q_k)\). If \(A(q_k)=\emptyset\), classify the stop
+(Stop-Budget / Stop-NoDistinguisher / Stop-Error); do not take
+\(\arg\min\) of an empty set.
+
+Score only admissible tests:
 
 \[
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
-Select \(\arg\min_t s(t)\). Ties: smaller \(\mathrm{cost}(t)\), then stable
-test id. This is **one-step minimax in remaining-candidate cardinality**. It is
-not global optimality, not minimum total test cost, and not an optimal
-diagnostic strategy.
+Select \(\arg\min_{t\in A(q_k)\cap T} s(t)\). If that set is empty, select an
+admissible Prep; if none, an admissible Recover. Ties: smaller
+\(\mathrm{cost}(t)\), then stable id. This is **one-step minimax in
+remaining-candidate cardinality**. It is not global optimality, not minimum
+total test cost, and not an optimal diagnostic strategy.
 
 Not default this round (allowed later as comparison arms; a new DD is required
 before replacing the default):
@@ -644,7 +656,7 @@ diagnostic value. Distinguish three “cannot shrink” returns:
 | Observational equivalence established | Indistinguishable set, only after the corresponding analysis is completed | Equate “no one-step distinguishing test now” with proved observational equivalence |
 | \(|H_{k+1}|=1\) | Locate only inside the declared hypothesis domain and valid observation conditions | Automatic protocol PASS, including when the singleton is \(h_{\mathrm{normal}}\) |
 | \(H_{k+1}=\emptyset\) | Model / hypothesis / observation inconsistency; keep diagnostic data | Pick the “nearest” fault |
-| Instrument `ERROR` | Invalid tool/correlation/record; distinct from IUT `FAIL`; do not exclude candidates | Use ERROR to kill hypotheses; retry without a finite cap |
+| Instrument `ERROR` | Invalid tool/correlation/record; distinct from IUT `FAIL`; do not exclude candidates. Split confirmed-not-sent (do not change \(q\)-status) from unknown-effect (mark \(q\) unknown; recover/resync before using \(T(q)\)) | Use ERROR to kill hypotheses; assume \(q_k\) unchanged after a possibly received stimulus; retry without a finite cap; stop on every ERROR |
 | Named 645-blocked item | Explicit inconclusive | Silent removal from the coverage denominator |
 | Budget exhausted or round cap | Current \(H_k\) and pending obligations | Infinite looping |
 
@@ -660,7 +672,9 @@ in finitely many rounds. First-version CL-TAV therefore adopts **one** of:
 
 Both `ERROR` and ordinary tests are under the **same** chosen constraint. A
 retry bound may be stricter than \(K_{\max}\) but cannot replace it. Costs that
-approach zero are forbidden under the \(c_{\min}\) option.
+approach zero are forbidden under the \(c_{\min}\) option. Budget mode and
+round mode are alternatives, not a combined OR that admits an action the
+selected mode cannot pay.
 
 ### Complexity accounting (candidate)
 
@@ -692,20 +706,33 @@ default complexity claim.
    Worst-case remaining count is 2 because \(a\) keeps both. Outcomes \(b\) or
    \(c\) distinguish. Do not discard the test as having no diagnostic value.
 5. **No distinguishing test now; a preparatory action may enable one.** From
-   observable \(q_k\) every executable test has \(s(t)=|H_k|\). A preparatory
-   test changes \(q\) so that a later test splits \(H_k\). Return “no currently
-   usable distinguishing test,” not “no sequence can distinguish.”
+   observable \(q_k\) every executable test has \(s(t)=|H_k|\). If a Prep is in
+   \(A(q_k)\), execute it and recompute. If Prep exists but is unaffordable,
+   return Stop-Budget, not proved equivalence. If neither distinguisher nor Prep
+   exists, return “no currently usable distinguishing test,” not “no sequence
+   can distinguish.”
 6. **Out-of-domain fault remains compatible with an in-domain candidate.** True
    fault \(h^\star\notin H_0\) produces the same observations as some
    \(h_i\in H_{\mathrm{single}}\). Updates never empty \(H_k\). The algorithm
    may localize \(h_i\) and will not automatically announce out-of-domain
    failure.
-7. **Consecutive `ERROR`s do not exclude candidates, but consume the same
-   termination resource.** Each `ERROR` leaves \(H_k\) unchanged and spends at
-   least \(c_{\min}\) of budget or one round toward \(K_{\max}\). When that
-   resource is exhausted, stop with the same candidate set and an
-   instrument-invalid record. A separate retry cap may stop earlier; it does
-   not replace the chosen finite-termination rule.
+7. **`ERROR` does not exclude candidates, but \(q\) is not automatically
+   unchanged.** Confirmed-not-sent does not change \(q\)-status and may retry
+   under the retry cap. Unknown-effect marks \(q\) unknown; only Recover/resync
+   actions are admissible until history is conservative again. Recover and Prep
+   failures use the same ERROR and resource rules. Each `ERROR` spends the
+   selected-mode resource. Retry cap may stop while \(B\) remains.
+8. **Affordable suboptimal beats unaffordable optimum.** Remaining budget 1,
+   best minimax test costs 2, another distinguisher costs 1. Admit the cost-1
+   test; do not Stop-Budget.
+9. **A test that exhausts the selected resource cannot be followed by Prep in
+   the same or next step.** After charging the last \(c_{\min}\) of \(B\) or the
+   last \(K_{\max}\) round, \(A\) is empty even if Prep would distinguish.
+10. **Initial library with only Prep.** \(A=\{Prep\}\); select Prep. Do not skip
+    admission because no test exists.
+11. **Budget mode and round mode are separate walk-throughs.** An action that
+    fails the selected mode is not admitted because the other mode would have
+    allowed it.
 
 ### Design-direction acceptance record (2026-09-14)
 
@@ -1069,13 +1096,22 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 ### 选择规则（候选）与替代方案
 
 \(\mathrm{Obs}(t,q_k)\) 应覆盖当前候选在与 \(I_{z_k}\) 相同不确定性分区下可能产生的有效
-观测类。对每个可执行且剩余预算 \(\ge \mathrm{cost}(t)\) 的测试：
+观测类。须声明**一种**资源模式，禁止用逻辑或把预算模式与轮次模式混用：预算模式
+\((c_{\min},B)\) 或轮次模式 \(K_{\max}\)。
+
+评分前先构造可准入动作集合 \(A(q_k)\)：满足前置条件**并且**满足所选模式资源约束的
+测试、准备性动作和恢复动作。每个已执行动作（含 `ERROR`）只在准入后计费一次。不得在
+\(A(q_k)\) 之外执行 Prep、Recover 或重试。若 \(A(q_k)=\emptyset\)，先分类停止
+（Stop-Budget／Stop-NoDistinguisher／Stop-Error），禁止对空集合取 \(\arg\min\)。
+
+只对可准入测试评分：
 
 \[
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
-选择 \(\arg\min_t s(t)\)。并列时先更小 \(\mathrm{cost}(t)\)，再稳定测试 ID。这是**候选
+选择 \(\arg\min_{t\in A(q_k)\cap T} s(t)\)。若该集合为空，再选可准入 Prep；若仍无，再选
+可准入 Recover。并列时先更小 \(\mathrm{cost}(t)\)，再稳定测试 ID。这是**候选
 数量意义下的一步 minimax**，不是全局最优、最小总测试成本或最优诊断策略。
 
 本轮不作默认（可作为后继比较臂；替换默认须新 DD）：
@@ -1099,7 +1135,7 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 | 已证明观测等价 | 不可区分集合，且须完成相应分析 | 把“当前无一步区分测试”当成已证明观测等价 |
 | \(|H_{k+1}|=1\) | 仅在声明假设域与有效观测条件下定位 | 自动协议 PASS，包括单例为 \(h_{\mathrm{normal}}\) |
 | \(H_{k+1}=\emptyset\) | 模型／假设／观测不一致；保留诊断数据 | 硬选“最接近”故障 |
-| 仪器 `ERROR` | 工具／关联／记录无效；与 IUT `FAIL` 分开；不排除候选 | 用 ERROR 排除假设；无上限重试 |
+| 仪器 `ERROR` | 工具／关联／记录无效；与 IUT `FAIL` 分开；不排除候选。区分确认未发送（不改变 \(q\) 状态）与效果未知（将 \(q\) 标为未知，恢复／重同步后才能使用 \(T(q)\)） | 用 ERROR 排除假设；在刺激可能已被接收后仍假定 \(q_k\) 不变；无上限重试；每次 ERROR 立即停止 |
 | 具名 645 阻塞项 | 显式未决 | 从覆盖分母静默删除 |
 | 预算耗尽或轮次上限 | 当前 \(H_k\) 与未决义务 | 无限循环 |
 
@@ -1112,7 +1148,8 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 - 有限轮次上限 \(K_{\max}<\infty\)，每次已执行测试和每次 `ERROR` 都计一轮。
 
 `ERROR` 与普通测试受**同一**选定约束。重试上限可以严于 \(K_{\max}\)，但不能代替它。
-在 \(c_{\min}\) 选项下禁止成本趋近于零。
+在 \(c_{\min}\) 选项下禁止成本趋近于零。预算模式与轮次模式是替代关系，不是用逻辑或
+把所选模式付不起的动作放进来。
 
 ### 复杂度记账（候选）
 
@@ -1137,14 +1174,23 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
    \(\{a,c\}\)。因 \(a\) 会保留二者，最坏剩余数为 2；但 \(b\) 或 \(c\) 能够区分。不得把该
    测试当成没有诊断价值而丢弃。
 5. **当前没有区分测试，准备动作后可能可区分。** 在可观测 \(q_k\) 上每个可执行测试都有
-   \(s(t)=|H_k|\)。一次准备性测试改变 \(q\) 后，后续测试可以分裂 \(H_k\)。返回“当前没有
-   可用区分测试”，而不是“任何序列都不能区分”。
+   \(s(t)=|H_k|\)。若 Prep 属于 \(A(q_k)\)，则执行后再计算。Prep 存在但不可负担时返回
+   Stop-Budget，不是已证明等价。既无区分测试也无 Prep 时，返回“当前没有可用区分测试”，
+   而不是“任何序列都不能区分”。
 6. **域外故障仍与域内候选相容。** 真实故障 \(h^\star\notin H_0\) 与某个
    \(h_i\in H_{\mathrm{single}}\) 产生相同观测。更新不会清空 \(H_k\)。算法可能把 \(h_i\)
    当作定位结果，不会自动宣布域外失败。
-7. **连续 `ERROR` 不排除候选，但消耗同一终止资源。** 每次 `ERROR` 保持 \(H_k\) 不变，并
-   至少消耗 \(c_{\min}\) 预算或计入 \(K_{\max}\) 的一轮。该资源耗尽时停止，返回同一候选
-   集和仪器无效记录。单独的重试上限可以更早停止，但不能代替所选有限终止规则。
+7. **`ERROR` 不排除候选，但 \(q\) 不能自动保持不变。** 确认未发送不改变 \(q\) 状态，并可在
+   重试上限内重试。效果未知则将 \(q\) 标为未知，直到恢复／重同步之前只有 Recover 可准入。
+   Recover 与 Prep 失败使用同一 ERROR 与资源规则。每次 `ERROR` 消耗所选模式资源。
+   重试上限可在 \(B\) 仍有余额时停止。
+8. **可负担次优优于不可负担最优。** 剩余预算 1，最优 minimax 测试费用 2，另一区分测试
+   费用 1。准入费用为 1 的测试，不得直接 Stop-Budget。
+9. **测试耗尽所选资源后不得再执行 Prep。** 扣完最后一份 \(c_{\min}\) 或最后一轮
+   \(K_{\max}\) 后，即使 Prep 能区分，\(A\) 仍为空。
+10. **初始库只有 Prep。** \(A=\{Prep\}\)；选择 Prep。不得因为没有测试而跳过准入。
+11. **预算模式与轮次模式分开走查。** 不因另一种模式能负担，就把所选模式付不起的动作
+    放进 \(A\)。
 
 ### 设计方向接受记录（2026-09-14）
 

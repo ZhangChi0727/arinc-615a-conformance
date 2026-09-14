@@ -1,18 +1,20 @@
 @startuml FIG-CL-TAV-05
 skinparam shadowing false
-title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\ncandidate update, Prep, test selection, budget spend, ERROR and every stop class
+title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nadmissible set first; selected mode XOR; charge once; ERROR history
 
 start
-:Idle;
+:Idle; declare selected mode BUDGET(cmin,B) XOR ROUNDS(Kmax);
 repeat
-  :Select t from T(qk) by one-step minimax s(t);
-  if (resource enough? cost(t) >= cmin and cost(t) <= remaining B, or round < Kmax) then (yes)
-    :Execute t on Mprot;
+  :Build admissible A(qk) = TEST, Prep, Recover meeting preconditions AND selected-mode resource;
+  if (A empty?) then (yes)
+    :Classify empty: Stop-Budget / Stop-NoDistinguisher / Stop-Error;
+    stop
+  else (never argmin empty A)
+    :Select from A by one-step minimax on tests, else Prep, else Recover;
+    :Execute chosen action toward Mprot through FIG-CL-TAV-04 ports;
+    :Charge cost once under the selected mode;
     if (instrument / correlation / record valid?) then (yes)
-      :Observe Izk;
-      :Verdict PASS / FAIL / INCONCLUSIVE;
-      :Update Hk = {h in Hk | O(h,t,qk) intersects Izk};
-      :Spend cost(t) from B or count one round;
+      :Observe Izk; Update Hk; qk known;
       if (Hk empty?) then (yes)
         :Stop-Empty;
         stop
@@ -25,31 +27,28 @@ repeat
       elseif (observational equivalence established?) then (yes)
         :Stop-Equivalent;
         stop
-      elseif (no currently usable distinguisher?) then (yes)
-        if (Prep can change qk?) then (yes)
-          :Prep action;
-          :Spend same termination resource;
-          :qk+1;
-        else
-          :Stop-NoDistinguisher;
-          stop
-        endif
-      else (continue)
-        :qk+1;
+      elseif (selected-mode resource exhausted?) then (yes)
+        :Stop-Budget;
+        stop
+      else (continue to next Admit)
+        :qk+1 known;
       endif
     else (ERROR)
-      :ERROR; do not exclude candidates; Hk unchanged;
-      :Spend >= cmin or one Kmax round;
-      if (termination resource exhausted?) then (yes)
-        :Stop-Error;
-        stop
-      else (retry under same cap)
-        :qk unchanged;
+      :ErrorHandle; do not exclude Hk candidates;
+      if (confirmed not sent?) then (yes)
+        :qk status unchanged; record ERROR history;
+        if (retry cap reached?) then (yes)
+          :Stop-Error;
+          stop
+        endif
+      else (unknown-effect)
+        :qk unknown; record failed history; do not reuse T(q_old);
+        if (Recover not admissible or retry cap reached?) then (yes)
+          :Stop-Error;
+          stop
+        endif
       endif
     endif
-  else (no)
-    :Stop-Budget;
-    stop
   endif
 repeat while (session open?) is (yes)
 stop

@@ -83,10 +83,29 @@ CLTAV_PUML_FILES = (
     "FIG-CL-TAV-07-two-state-machines.puml",
     "FIG-CL-TAV-08-parametric.puml",
 )
+CLTAV_SVG_DIR = ROOT / "artifacts/publications/cltav/figures"
+CLTAV_SVG_FILES = tuple(name.replace(".puml", ".svg") for name in CLTAV_PUML_FILES)
+AUDIT_STATUS_GENERATION = {
+    "AUDIT-BEFORE-REQUIREMENT-GENERATION": False,
+    "SOURCE-UNIT-AUDIT-IN-PROGRESS": False,
+    "AUDIT-COMPLETE-REQUIREMENT-GENERATION-ALLOWED": True,
+}
 DEFERRED_AUDIT_CODES = (
     "DEFERRED-FIND-M9",
     "DEFERRED-DOWNLOAD-M9",
     "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+)
+AUDIT_UNIT_FIELDS = (
+    "id",
+    "sourceUnitId",
+    "clause",
+    "tableOrFigure",
+    "documentPage",
+    "pdfPage",
+    "fragmentKind",
+    "fragmentOrdinal",
+    "applicabilityDecision",
+    "requirementIds",
 )
 SYSML_NOTATION_MARK = "SysML 1.6 notation-based views; executable/metamodel conformance is not claimed"
 EVIDENCE_MANIFEST_PATH = ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md"
@@ -141,6 +160,7 @@ REQUIRED_FIXED_FILES = [
     RESEARCH / "publication" / "PUBLICATION_GUIDE.md",
     ROOT / "artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md",
     ROOT / "configs/research/cltav_protocol_source_audit.json",
+    ROOT / "scripts/cltav_loop_spec.py",
     *[CLTAV_PUML_DIR / name for name in CLTAV_PUML_FILES],
     ROOT / "docs/engineering/ENGINEERING_CONTROL.md",
     ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md",
@@ -440,15 +460,56 @@ def historical_methodology_math_errors() -> list[str]:
     return errors
 
 
+def _audit_locator_from_crs(row: dict) -> dict:
+    source = row.get("source") or {}
+    return {
+        "id": row.get("id"),
+        "sourceUnitId": row.get("sourceUnitId"),
+        "clause": source.get("clause"),
+        "tableOrFigure": source.get("tableOrFigure"),
+        "documentPage": source.get("documentPage"),
+        "pdfPage": source.get("pdfPage"),
+        "fragmentKind": source.get("fragmentKind"),
+        "fragmentOrdinal": source.get("fragmentOrdinal"),
+        "applicabilityDecision": row.get("applicabilityDecision"),
+        "requirementIds": list(row.get("requirementIds") or []),
+    }
+
+
+def _expected_clause_groups(units: list[dict]) -> list[dict]:
+    groups: dict[tuple[object, object], dict] = {}
+    for item in units:
+        key = (item.get("clause"), item.get("tableOrFigure"))
+        group = groups.setdefault(
+            key,
+            {"clause": key[0], "tableOrFigure": key[1], "count": 0, "coverageIds": []},
+        )
+        group["count"] += 1
+        group["coverageIds"].append(item.get("id"))
+    out = []
+    for group in groups.values():
+        out.append(
+            {
+                "clause": group["clause"],
+                "tableOrFigure": group["tableOrFigure"],
+                "count": group["count"],
+                "coverageIds": sorted(group["coverageIds"]),
+            }
+        )
+    return sorted(out, key=lambda row: (-row["count"], str(row["clause"]), str(row["tableOrFigure"] or "")))
+
+
 def protocol_source_audit_errors(audit: dict, crs: dict) -> list[str]:
-    """Audit ledger must inventory deferred units without rewriting the bound CRS."""
+    """Row-level navigation identity of the deferred ledger. Not a source-semantics proof."""
     errors: list[str] = []
-    if audit.get("status") != "AUDIT-BEFORE-REQUIREMENT-GENERATION":
-        errors.append("protocol source audit status must be AUDIT-BEFORE-REQUIREMENT-GENERATION")
+    status = audit.get("status")
+    if status not in AUDIT_STATUS_GENERATION:
+        errors.append("protocol source audit status is not a declared audit-phase value")
+    expected_generation = AUDIT_STATUS_GENERATION.get(status)
+    if audit.get("requirementGenerationAllowed") is not expected_generation:
+        errors.append("protocol source audit requirementGenerationAllowed must match the declared status")
     if audit.get("notBatchStatusRename") is not True:
         errors.append("protocol source audit must forbid batch status rename")
-    if audit.get("requirementGenerationAllowed") is True:
-        errors.append("protocol source audit must not allow requirement generation before source reread")
     bound = audit.get("boundPackage") or {}
     inventory = crs.get("inventorySummary") or {}
     if bound.get("coverageFingerprint") != inventory.get("coverageFingerprint"):
@@ -459,34 +520,95 @@ def protocol_source_audit_errors(audit: dict, crs: dict) -> list[str]:
         errors.append("protocol source audit artifactVersion does not match the bound CRS package")
     ledger = {row["id"]: row for row in crs.get("coverageLedger") or []}
     deferred_units = audit.get("deferredUnits") or {}
+    summary = audit.get("summary") or {}
+    rationale_counts = summary.get("rationaleCodes") or {}
+    by_rationale = ((summary.get("deferredFutureScope") or {}).get("byRationale") or {})
+    clause_groups = audit.get("clauseGroups") or {}
     for code in DEFERRED_AUDIT_CODES:
-        expected_ids = {
-            row_id
+        expected_rows = {
+            row_id: _audit_locator_from_crs(row)
             for row_id, row in ledger.items()
             if row.get("rationaleCode") == code
         }
-        recorded = deferred_units.get(code) or []
-        recorded_ids = {item.get("id") for item in recorded}
-        if recorded_ids != expected_ids:
+        recorded = deferred_units.get(code)
+        if not isinstance(recorded, list):
+            errors.append(f"protocol source audit deferredUnits.{code} must be a list")
+            continue
+        recorded_ids = [item.get("id") if isinstance(item, dict) else None for item in recorded]
+        if None in recorded_ids or "" in recorded_ids:
+            errors.append(f"protocol source audit {code} contains a row without id")
+        if len(recorded_ids) != len(set(recorded_ids)):
+            errors.append(f"protocol source audit {code} contains duplicate coverage ids")
+        if set(recorded_ids) - {None, ""} != set(expected_rows):
             errors.append(f"protocol source audit IDs for {code} do not match the bound CRS ledger")
+        if by_rationale.get(code) != len(expected_rows):
+            errors.append(f"protocol source audit summary count for {code} does not match the bound CRS ledger")
+        if rationale_counts.get(code) != len(expected_rows):
+            errors.append(f"protocol source audit rationaleCodes.{code} does not match the bound CRS ledger")
+        locators: list[dict] = []
         for item in recorded:
-            row = ledger.get(item.get("id"))
-            if row is None:
+            if not isinstance(item, dict):
+                errors.append(f"protocol source audit {code} contains a non-object row")
                 continue
-            if row.get("rationaleCode") != code:
-                errors.append(f"protocol source audit row {item.get('id')} does not keep rationale {code}")
-            if item.get("requirementIds"):
-                errors.append(f"protocol source audit row {item.get('id')} must not invent requirementIds")
-            if row.get("requirementIds"):
-                errors.append(
-                    f"bound CRS row {item.get('id')} still has requirements; "
-                    "do not treat deferred rename as complete"
+            missing = [field for field in AUDIT_UNIT_FIELDS if field not in item]
+            if missing:
+                errors.append(f"protocol source audit row {item.get('id')} is missing {missing[0]}")
+                continue
+            if item.get("requirementIds") is None:
+                errors.append(f"protocol source audit row {item.get('id')} must make requirementIds explicit")
+                continue
+            row_id = item.get("id")
+            expected = expected_rows.get(row_id)
+            if expected is None:
+                continue
+            for field in AUDIT_UNIT_FIELDS:
+                left = item.get(field)
+                right = expected.get(field)
+                if field == "requirementIds":
+                    left = list(left or [])
+                    right = list(right or [])
+                if left != right:
+                    errors.append(
+                        f"protocol source audit row {row_id} {field} does not match the bound CRS locator"
+                    )
+            locators.append(item)
+        expected_groups = _expected_clause_groups(list(expected_rows.values()))
+        recorded_groups = clause_groups.get(code) or []
+        normalized = []
+        if not isinstance(recorded_groups, list):
+            errors.append(f"protocol source audit clauseGroups.{code} must be a list")
+        else:
+            for group in recorded_groups:
+                if not isinstance(group, dict):
+                    errors.append(f"protocol source audit clauseGroups.{code} contains a non-object group")
+                    continue
+                normalized.append(
+                    {
+                        "clause": group.get("clause"),
+                        "tableOrFigure": group.get("tableOrFigure"),
+                        "count": group.get("count"),
+                        "coverageIds": sorted(group.get("coverageIds") or []),
+                    }
                 )
+            normalized = sorted(
+                normalized,
+                key=lambda row: (-int(row["count"] or 0), str(row["clause"]), str(row["tableOrFigure"] or "")),
+            )
+            if normalized != expected_groups:
+                errors.append(f"protocol source audit clauseGroups.{code} drifted from deferredUnits")
+    if summary.get("coverageCount") != inventory.get("coverageCount"):
+        errors.append("protocol source audit summary.coverageCount does not match the bound CRS package")
+    if summary.get("requirementCount") != inventory.get("requirementCount"):
+        errors.append("protocol source audit summary.requirementCount does not match the bound CRS package")
     return errors
 
 
 def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
-    """Notation-based SysML views must show the loop, two machines, and stop classes."""
+    """File and marker completeness for notation-based views.
+
+    Semantic admission, ERROR and stop-class behavior is checked by
+    scripts/cltav_loop_spec.py walk-throughs, not by natural-language regex.
+    """
     errors: list[str] = []
     for name in CLTAV_PUML_FILES:
         text = models.get(name, "")
@@ -497,9 +619,15 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
             errors.append(f"{name} must declare SysML 1.6 notation-based views")
     activity = models.get("FIG-CL-TAV-05-closed-loop-activity.puml", "")
     for token in (
+        "admissible",
+        "XOR",
         "Hk",
         "Prep",
         "ERROR",
+        "ErrorHandle",
+        "unknown-effect",
+        "confirmed not sent",
+        "Charge cost once",
         "Stop-Budget",
         "Stop-NoDistinguisher",
         "Stop-Equivalent",
@@ -512,10 +640,18 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
     ):
         if token not in activity:
             errors.append(f"closed-loop activity view is missing {token}")
+    if "or round < Kmax" in activity:
+        errors.append("closed-loop activity view must not OR budget and round modes")
     machines = models.get("FIG-CL-TAV-07-two-state-machines.puml", "")
-    for token in ("Msess", "Mprot", "Stop-Budget", "Information", "FIND"):
+    for token in ("Msess", "Mprot", "Admit", "ErrorHandle", "bound M2", "FIG-CL-TAV-04", "FIND"):
         if token not in machines:
             errors.append(f"two-machine view is missing {token}")
+    if "Information -->" in machines:
+        errors.append("two-machine view must not draw unaudited Information to other-operation edges")
+    if re.search(r"Msess\s+-->\s+Mprot", machines):
+        errors.append("two-machine view must not use a cross-machine state transition")
+    if "Execute --> StopError" in machines:
+        errors.append("two-machine view must not stop immediately on every ERROR")
     parametric = models.get("FIG-CL-TAV-08-parametric.puml", "")
     for token in ("cmin", "Kmax", "Hk"):
         if token not in parametric:
@@ -523,6 +659,25 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
     sequence = models.get("FIG-CL-TAV-06-diagnostic-sequence.puml", "")
     if "Prep" not in sequence or "overlapping" not in sequence:
         errors.append("diagnostic sequence view must show overlapping observation and Prep")
+    if "Izk of tb" not in sequence:
+        errors.append("diagnostic sequence view must send the second observation to Analysis")
+    return errors
+
+
+def cltav_figure_errors() -> list[str]:
+    """Reader SVG completeness. Not a PlantUML renderer and not a semantic engine."""
+    errors: list[str] = []
+    for name in CLTAV_SVG_FILES:
+        path = CLTAV_SVG_DIR / name
+        if not path.is_file():
+            errors.append(f"missing CL-TAV reader figure: {name}")
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        head = text[:400].lstrip().lower()
+        if "<svg" not in head:
+            errors.append(f"{name} is not an SVG document")
+        if "bad url" in text.lower() or "huffman" in text.lower():
+            errors.append(f"{name} is a renderer error page, not a figure")
     return errors
 
 
@@ -548,6 +703,19 @@ def cltav_outline_errors(outline_text: str) -> list[str]:
         errors.append("research outline must distinguish the verification-session and protocol-operation machines")
     if "c_{\\min}" not in english or "K_{\\max}" not in english:
         errors.append("research outline must state the finite-termination rule")
+    outline_dir = RESEARCH / "publication"
+    for raw in LINK_RE.findall(outline_text):
+        href = raw.split()[0]
+        if href.startswith("#") or "://" in href:
+            continue
+        target = (outline_dir / href).resolve()
+        try:
+            target.relative_to(ROOT.resolve())
+        except ValueError:
+            errors.append(f"research outline link escapes the repository: {href}")
+            continue
+        if not target.exists():
+            errors.append(f"research outline link is missing: {href}")
     return errors
 
 

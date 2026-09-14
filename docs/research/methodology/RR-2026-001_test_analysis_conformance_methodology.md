@@ -584,7 +584,7 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
-\(\mathrm{Obs}(t,q_k)\) uses the same uncertainty partitions as \(I_{z_k}\). This is one-step minimax in remaining-candidate count, not global optimality. Out-of-model observations are inconsistency, not extra score classes. Finite termination uses a uniform cost lower bound \(c_{\min}>0\) plus finite budget \(B\), or a finite \(K_{\max}\); `ERROR` spends the same resource. Positive-but-vanishing costs are not a termination proof. Algorithm details, three-way cannot-shrink stopping and walk-throughs are in DD-029. They are not proved theorems and are not implemented in this increment.
+\(\mathrm{Obs}(t,q_k)\) uses the same uncertainty partitions as \(I_{z_k}\). Score only the admissible set \(A(q_k)\) under one selected resource mode (budget \(c_{\min},B\) or rounds \(K_{\max}\), never a logical OR of both). Prep, Recover and retries use that same pre-admission and one-shot charging rule. `ERROR` does not exclude candidates; confirmed-not-sent does not change \(q\)-status, unknown-effect marks \(q\) unknown until Recover. This is one-step minimax in remaining-candidate count, not global optimality. Out-of-model observations are inconsistency, not extra score classes. Positive-but-vanishing costs are not a termination proof. Algorithm details, three-way cannot-shrink stopping and walk-throughs are in DD-029. They are not proved theorems and are not implemented in this increment.
 
 ---
 
@@ -751,9 +751,9 @@ Each gate produces signed findings and one of `APPROVE`, `APPROVE WITH ACTIONS`,
 
 After an executed observation is recorded:
 
-1. Update \(H_k\) and \(q_k\) under DD-029, including `ERROR` without excluding candidates.
-2. Select the next executable test by one-step minimax remaining-candidate count, with cost then stable id as tie-breakers.
-3. Stop under budget insufficient, no currently usable distinguishing test, proved observational equivalence, singleton (not protocol PASS), empty set, named 645 block, round cap, or retry-capped `ERROR`.
+1. Update \(H_k\) under DD-029. `ERROR` does not exclude candidates. Confirmed-not-sent does not change \(q\)-status; unknown-effect marks \(q\) unknown until Recover.
+2. Form \(A(q_k)\), then select by one-step minimax among admissible tests, else Prep, else Recover. Charge once. Do not \(\arg\min\) an empty set.
+3. Stop under budget insufficient, no currently usable distinguishing test, proved observational equivalence, singleton (not protocol PASS), empty set, named 645 block, selected-mode resource exhausted, or retry-capped `ERROR`.
 4. Do not write “no one-step distinguishing test now” as “no later sequence can distinguish.”
 
 **Exit artifact:** session log of \(H_k\), selected tests, costs, stop class, and unresolved obligations. No confirmatory experiment is executed in this increment.
@@ -2134,7 +2134,7 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
-\(\mathrm{Obs}(t,q_k)\) 使用与 \(I_{z_k}\) 相同的不确定性分区。这是候选数量意义下的一步 minimax，不是全局最优。模型外观测按不一致处置，不是评分中的额外类。有限终止采用统一成本下界 \(c_{\min}>0\) 加有限预算 \(B\)，或有限 \(K_{\max}\)；`ERROR` 消耗同一资源。仅“每次成本为正”不能证明有限终止。算法细节、三分“不能缩小”停止与走查见 DD-029。它们不是已证明定理，本增量也不实现。
+\(\mathrm{Obs}(t,q_k)\) 使用与 \(I_{z_k}\) 相同的不确定性分区。只对选定资源模式（预算 \(c_{\min},B\) 或轮次 \(K_{\max}\)，禁止二者逻辑或）下的可准入集合 \(A(q_k)\) 评分。Prep、Recover 与重试使用同一执行前准入和一次计费规则。`ERROR` 不排除候选；确认未发送不改变 \(q\) 状态，效果未知则将 \(q\) 标为未知直至 Recover。这是候选数量意义下的一步 minimax，不是全局最优。模型外观测按不一致处置，不是评分中的额外类。仅“每次成本为正”不能证明有限终止。算法细节、三分“不能缩小”停止与走查见 DD-029。它们不是已证明定理，本增量也不实现。
 
 ---
 
@@ -2297,9 +2297,9 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 
 在记录一次已执行观测之后：
 
-1. 按 DD-029 更新 \(H_k\) 与 \(q_k\)，`ERROR` 不排除候选。
-2. 按一步 minimax 剩余候选数选择下一可执行测试，并列时按成本、稳定 ID。
-3. 在预算不足、当前没有可用区分测试、已证明观测等价、单例（不是协议 PASS）、空集、具名 645 阻塞、轮次上限或达重试上限的 `ERROR` 下停止。
+1. 按 DD-029 更新 \(H_k\)。`ERROR` 不排除候选。确认未发送不改变 \(q\) 状态；效果未知则将 \(q\) 标为未知直至 Recover。
+2. 先构造 \(A(q_k)\)，再对可准入测试做一步 minimax，否则 Prep，否则 Recover。只计费一次。禁止对空集合取 \(\arg\min\)。
+3. 在预算不足、当前没有可用区分测试、已证明观测等价、单例（不是协议 PASS）、空集、具名 645 阻塞、所选模式资源耗尽或达重试上限的 `ERROR` 下停止。
 4. 不得把“当前无一步区分测试”写成“任何后续序列都不能区分”。
 
 **出口产物：** \(H_k\)、所选测试、成本、停止类别和未决义务的会话记录。本增量不执行确认性实验。

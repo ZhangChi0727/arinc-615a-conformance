@@ -8,20 +8,23 @@ participant "Mprot" as P
 participant "Analysis / Diagnosis" as A
 
 Operator -> S : start session, H0 = {h_normal} union H_single
-S -> S : Select ta (worst remaining 2; overlap possible)
-S -> P : Execute ta
+S -> S : Admit A(qk); Select ta from admissible set
+S -> P : Execute ta through FIG-CL-TAV-04 ports
 P --> S : observation class a (keeps h1 and h2)
-S -> A : Izk
+S -> A : Izk of ta
 A --> S : Hk = {h1, h2}; overlapping observation, not proved equivalent
 S -> S : no currently usable distinguisher at qk
+S -> S : Admit; Prep is in A and selected-mode resource remains
 S -> P : Prep action (changes observable q)
 P --> S : qk+1
-S -> S : Select later distinguishing test tb
+S -> S : Select later distinguishing test tb from A
 S -> P : Execute tb
 P --> S : observation that splits h1 / h2
+S -> A : Izk of tb
 A --> S : Hk singleton or still indistinguishable
 note over S, A
-  Prep is a session step. It must spend the same
-  cmin / B or Kmax resource as an ordinary test.
+  Prep is a session action in the same admissible set.
+  It spends the same selected-mode resource as a test.
+  ERROR with unknown-effect does not keep q; recover first.
 end note
 @enduml
