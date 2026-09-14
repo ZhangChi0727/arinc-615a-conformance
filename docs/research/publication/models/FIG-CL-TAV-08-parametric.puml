@@ -1,0 +1,25 @@
+@startuml FIG-CL-TAV-08
+skinparam shadowing false
+title FIG-CL-TAV-08 Parametric\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nconstraints shown, not claimed solved
+
+constraint I_allow as "I : allowed timing interval"
+constraint eps as "epsilon : measurement error bound"
+constraint J_meas as "J : feasible interval from measurement"
+constraint cmin_b as "cmin > 0 and cost(t) >= cmin\nand cost(ERROR) >= cmin"
+constraint budget as "B finite OR Kmax finite"
+constraint score as "s(t) = worst remaining |Hk|\nover Obs(t,qk)"
+constraint update as "Hk+1 = {h in Hk | O(h,t,qk) intersects Izk}"
+
+I_allow .. J_meas
+eps .. J_meas
+J_meas .. update
+cmin_b .. budget
+score .. update
+budget .. score
+
+note bottom
+  Positive-but-vanishing costs are not a termination proof.
+  ERROR is under the same chosen constraint as ordinary tests.
+  Parametric view displays constraints; it does not claim they are solved.
+end note
+@enduml

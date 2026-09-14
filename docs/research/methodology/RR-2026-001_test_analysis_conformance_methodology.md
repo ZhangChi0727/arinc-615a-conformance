@@ -584,7 +584,7 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
-\(\mathrm{Obs}(t,q_k)\) uses the same uncertainty partitions as \(I_{z_k}\). This is one-step minimax in remaining-candidate count, not global optimality. Out-of-model observations are inconsistency, not extra score classes. Algorithm details, three-way cannot-shrink stopping, finite termination and walk-throughs are in DD-029. They are not proved theorems and are not implemented in this increment.
+\(\mathrm{Obs}(t,q_k)\) uses the same uncertainty partitions as \(I_{z_k}\). This is one-step minimax in remaining-candidate count, not global optimality. Out-of-model observations are inconsistency, not extra score classes. Finite termination uses a uniform cost lower bound \(c_{\min}>0\) plus finite budget \(B\), or a finite \(K_{\max}\); `ERROR` spends the same resource. Positive-but-vanishing costs are not a termination proof. Algorithm details, three-way cannot-shrink stopping and walk-throughs are in DD-029. They are not proved theorems and are not implemented in this increment.
 
 ---
 
@@ -2134,7 +2134,7 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
-\(\mathrm{Obs}(t,q_k)\) 使用与 \(I_{z_k}\) 相同的不确定性分区。这是候选数量意义下的一步 minimax，不是全局最优。模型外观测按不一致处置，不是评分中的额外类。算法细节、三分“不能缩小”停止、有限终止与走查见 DD-029。它们不是已证明定理，本增量也不实现。
+\(\mathrm{Obs}(t,q_k)\) 使用与 \(I_{z_k}\) 相同的不确定性分区。这是候选数量意义下的一步 minimax，不是全局最优。模型外观测按不一致处置，不是评分中的额外类。有限终止采用统一成本下界 \(c_{\min}>0\) 加有限预算 \(B\)，或有限 \(K_{\max}\)；`ERROR` 消耗同一资源。仅“每次成本为正”不能证明有限终止。算法细节、三分“不能缩小”停止与走查见 DD-029。它们不是已证明定理，本增量也不实现。
 
 ---
 

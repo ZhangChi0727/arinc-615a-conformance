@@ -67,7 +67,10 @@ the only unacquired original standard; it blocks unique algorithm details, not
 whole obligation classes already stated in 615A/665. Source migration
 requires an acquired/identified source, applicability delta, CR and independent
 review; no future edition is preselected. “Study later” is not an acceptable
-blanket disposition for an already-held source unit.
+blanket disposition for an already-held source unit. New protocol CRS rows wait
+for the source-unit audit in
+[`cltav_protocol_source_audit.json`](../../configs/research/cltav_protocol_source_audit.json);
+deferred rationale codes are not batch-renamed into active requirements.
 
 The protocol behavioural model remains one lightweight observable timed EFSM.
 CL-TAV wraps Test and Analysis into an explicit diagnosis and next-test loop
@@ -162,7 +165,9 @@ AFDX 是配置变体，不是同一实例。ARINC 645 独有算法细节保持 `
 登记册与变更记录治理。665-5 对其触发的加载数据／媒体集条款做完整适用性审计。645 是
 唯一未取得的原文，只阻塞独有算法细节，不删除 615A／665 已明示的义务类别。来源迁移需
 取得并登记来源、完成适用性差分、CR 和独立评审；不预选未来版本。已有来源活动条款不得
-再用“以后研究”作为笼统处置。
+再用“以后研究”作为笼统处置。新协议 CRS 行须等待
+[`cltav_protocol_source_audit.json`](../../configs/research/cltav_protocol_source_audit.json)
+中的来源单元审计；不得把延期理由码批量改名为活动需求。
 
 协议行为模型仍是单一轻量可观测 timed EFSM。CL-TAV 把 Test 与 Analysis 做成显式诊断与
 后续测试闭环（候选：DD-029）。已合并 M2 不自动覆盖扩大后的 CRS 服务。默认算法不引入

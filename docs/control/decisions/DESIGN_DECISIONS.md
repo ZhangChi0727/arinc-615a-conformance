@@ -648,10 +648,19 @@ diagnostic value. Distinguish three “cannot shrink” returns:
 | Named 645-blocked item | Explicit inconclusive | Silent removal from the coverage denominator |
 | Budget exhausted or round cap | Current \(H_k\) and pending obligations | Infinite looping |
 
-Finite termination: every executable test has strictly positive cost, and/or a
-declared maximum round count \(K_{\max}\) is set. `ERROR` still consumes the
-recorded cost and is limited by a retry bound so that repeated instrument
-failures cannot loop forever.
+Finite termination cannot rest on “each cost is positive” alone: a sequence
+\(1,1/2,1/4,\ldots\) stays strictly positive and may not exhaust a finite budget
+in finitely many rounds. First-version CL-TAV therefore adopts **one** of:
+
+- uniform lower bound \(c_{\min}>0\) with \(\mathrm{cost}(t)\ge c_{\min}\) for
+  every executable test **and** every `ERROR`, together with a finite remaining
+  budget \(B<\infty\) (then rounds \(\le \lfloor B/c_{\min}\rfloor\)); or
+- a finite round cap \(K_{\max}<\infty\), counting every executed test and every
+  `ERROR` as one round.
+
+Both `ERROR` and ordinary tests are under the **same** chosen constraint. A
+retry bound may be stricter than \(K_{\max}\) but cannot replace it. Costs that
+approach zero are forbidden under the \(c_{\min}\) option.
 
 ### Complexity accounting (candidate)
 
@@ -691,10 +700,12 @@ default complexity claim.
    \(h_i\in H_{\mathrm{single}}\). Updates never empty \(H_k\). The algorithm
    may localize \(h_i\) and will not automatically announce out-of-domain
    failure.
-7. **Consecutive `ERROR`s do not exclude candidates, but consume budget.** Each
-   `ERROR` leaves \(H_k\) unchanged, records cost, and increments the retry
-   counter. At the retry bound or when budget is exhausted, stop with the same
-   candidate set and an instrument-invalid record.
+7. **Consecutive `ERROR`s do not exclude candidates, but consume the same
+   termination resource.** Each `ERROR` leaves \(H_k\) unchanged and spends at
+   least \(c_{\min}\) of budget or one round toward \(K_{\max}\). When that
+   resource is exhausted, stop with the same candidate set and an
+   instrument-invalid record. A separate retry cap may stop earlier; it does
+   not replace the chosen finite-termination rule.
 
 ### Design-direction acceptance record (2026-09-14)
 
@@ -1092,8 +1103,16 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 | 具名 645 阻塞项 | 显式未决 | 从覆盖分母静默删除 |
 | 预算耗尽或轮次上限 | 当前 \(H_k\) 与未决义务 | 无限循环 |
 
-有限终止：每个可执行测试成本严格为正，和／或声明最大轮数 \(K_{\max}\)。`ERROR` 仍计入
-实际消耗，并受重试上限约束，避免仪器失败无限循环。
+有限终止不能只靠“每次成本为正”：序列 \(1,1/2,1/4,\ldots\) 始终为正，却可能在有限预算下
+无限轮转。首版 CL-TAV 因此采用下列**之一**：
+
+- 统一下界 \(c_{\min}>0\)，每个可执行测试和每次 `ERROR` 都满足
+  \(\mathrm{cost}(t)\ge c_{\min}\)，并且剩余预算 \(B<\infty\)（从而轮数
+  \(\le \lfloor B/c_{\min}\rfloor\)）；或
+- 有限轮次上限 \(K_{\max}<\infty\)，每次已执行测试和每次 `ERROR` 都计一轮。
+
+`ERROR` 与普通测试受**同一**选定约束。重试上限可以严于 \(K_{\max}\)，但不能代替它。
+在 \(c_{\min}\) 选项下禁止成本趋近于零。
 
 ### 复杂度记账（候选）
 
@@ -1123,8 +1142,9 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 6. **域外故障仍与域内候选相容。** 真实故障 \(h^\star\notin H_0\) 与某个
    \(h_i\in H_{\mathrm{single}}\) 产生相同观测。更新不会清空 \(H_k\)。算法可能把 \(h_i\)
    当作定位结果，不会自动宣布域外失败。
-7. **连续 `ERROR` 不排除候选，但会消耗预算。** 每次 `ERROR` 保持 \(H_k\) 不变，记录成本并
-   增加重试计数。到达重试上限或预算耗尽时停止，返回同一候选集和仪器无效记录。
+7. **连续 `ERROR` 不排除候选，但消耗同一终止资源。** 每次 `ERROR` 保持 \(H_k\) 不变，并
+   至少消耗 \(c_{\min}\) 预算或计入 \(K_{\max}\) 的一轮。该资源耗尽时停止，返回同一候选
+   集和仪器无效记录。单独的重试上限可以更早停止，但不能代替所选有限终止规则。
 
 ### 设计方向接受记录（2026-09-14）
 

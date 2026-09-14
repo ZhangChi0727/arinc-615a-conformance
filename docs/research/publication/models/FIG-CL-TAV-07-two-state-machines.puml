@@ -1,0 +1,42 @@
+@startuml FIG-CL-TAV-07
+skinparam shadowing false
+title FIG-CL-TAV-07 Two state machines\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nMsess stop classes versus Mprot operation states; joined only by observation
+
+state Msess as "Msess verification session" {
+  [*] --> Idle
+  Idle --> Select
+  Select --> Execute : chosen t
+  Execute --> Update : valid Izk
+  Execute --> Prep : preparatory action
+  Execute --> StopError : ERROR
+  Prep --> Select : qk changed
+  Update --> Select : |Hk| > 1 and distinguisher exists
+  Update --> StopBudget : budget or Kmax exhausted
+  Update --> StopNoDistinguisher : no currently usable distinguisher
+  Update --> StopEquivalent : observational equivalence established
+  Update --> StopSingleton : |Hk| == 1
+  Update --> StopEmpty : Hk empty
+  Update --> Stop645 : named 645-blocked item
+}
+
+state Mprot as "Mprot protocol operation" {
+  [*] --> Information
+  Information --> Upload
+  Information --> MediaDownload : Media Defined DOWNLOAD
+  Information --> OperatorDownload : Operator Defined DOWNLOAD
+  Information --> Find : FIND
+  Upload --> AbortReject
+  MediaDownload --> AbortReject
+  OperatorDownload --> AbortReject
+  Find --> AbortReject
+}
+
+Msess --> Mprot : Execute stimulus / Prep
+Mprot --> Msess : observation Izk and qk
+note bottom of Msess
+  Stop classes: Stop-Budget, Stop-NoDistinguisher, Stop-Equivalent,
+  Stop-Singleton, Stop-Empty, Stop-Error, Stop-645.
+  Do not copy UPLOAD/FIND states into Msess.
+  Bound M2 is an UPLOAD/INFORMATION protocol model, not Msess.
+end note
+@enduml

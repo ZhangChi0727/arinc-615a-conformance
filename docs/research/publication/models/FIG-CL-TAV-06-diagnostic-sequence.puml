@@ -1,0 +1,27 @@
+@startuml FIG-CL-TAV-06
+skinparam shadowing false
+title FIG-CL-TAV-06 Diagnostic sequence\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nfailure, overlapping observation, preparatory action, later distinguishing test
+
+actor Operator
+participant "Msess" as S
+participant "Mprot" as P
+participant "Analysis / Diagnosis" as A
+
+Operator -> S : start session, H0 = {h_normal} union H_single
+S -> S : Select ta (worst remaining 2; overlap possible)
+S -> P : Execute ta
+P --> S : observation class a (keeps h1 and h2)
+S -> A : Izk
+A --> S : Hk = {h1, h2}; overlapping observation, not proved equivalent
+S -> S : no currently usable distinguisher at qk
+S -> P : Prep action (changes observable q)
+P --> S : qk+1
+S -> S : Select later distinguishing test tb
+S -> P : Execute tb
+P --> S : observation that splits h1 / h2
+A --> S : Hk singleton or still indistinguishable
+note over S, A
+  Prep is a session step. It must spend the same
+  cmin / B or Kmax resource as an ordinary test.
+end note
+@enduml

@@ -423,8 +423,10 @@
         },
         {
           "path": "docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md",
+          "commit": "3423583b7812c69893585a41856715172f712733",
           "byteCount": 130983,
-          "sha256": "c089a64e5feb80d8816d652bf9a150a89bd3c4b45a3f95887a109fa6e564fd3b"
+          "sha256": "c089a64e5feb80d8816d652bf9a150a89bd3c4b45a3f95887a109fa6e564fd3b",
+          "note": "Pinned to the last merged main that still carried the v4.2 report. Successor path bytes under CR-2026-012 are a different identity and must not update this freeze."
         }
       ]
     }

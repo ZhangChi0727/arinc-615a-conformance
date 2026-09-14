@@ -1,0 +1,31 @@
+@startuml FIG-CL-TAV-02
+skinparam shadowing false
+title FIG-CL-TAV-02 Requirement layers\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nmethod goals, protocol CRS and tool requirements stay distinct
+
+package "Method goals" as MG {
+  [CL-RQ1 loop consistency]
+  [CL-RQ2 comparative effect]
+  [CL-RQ3 uncertainty and stopping]
+}
+
+package "Protocol CRS" as PCRS {
+  [INFORMATION]
+  [UPLOAD]
+  [Media Defined DOWNLOAD]
+  [Operator Defined DOWNLOAD]
+  [FIND]
+  [abort / reject / exception / retry]
+}
+
+package "Tool requirements" as TR {
+  [later development-ready PR]
+  [not this increment]
+}
+
+MG ..> PCRS : method uses protocol obligations
+PCRS ..> TR : tool may later implement
+note right of TR
+  Do not mix the three layers into one CRS.
+  New protocol rows wait for source-unit audit.
+end note
+@enduml

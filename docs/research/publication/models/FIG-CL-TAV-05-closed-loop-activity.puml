@@ -1,0 +1,56 @@
+@startuml FIG-CL-TAV-05
+skinparam shadowing false
+title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\ncandidate update, Prep, test selection, budget spend, ERROR and every stop class
+
+start
+:Idle;
+repeat
+  :Select t from T(qk) by one-step minimax s(t);
+  if (resource enough? cost(t) >= cmin and cost(t) <= remaining B, or round < Kmax) then (yes)
+    :Execute t on Mprot;
+    if (instrument / correlation / record valid?) then (yes)
+      :Observe Izk;
+      :Verdict PASS / FAIL / INCONCLUSIVE;
+      :Update Hk = {h in Hk | O(h,t,qk) intersects Izk};
+      :Spend cost(t) from B or count one round;
+      if (Hk empty?) then (yes)
+        :Stop-Empty;
+        stop
+      elseif (|Hk| == 1) then (yes)
+        :Stop-Singleton;
+        stop
+      elseif (named 645-blocked item?) then (yes)
+        :Stop-645;
+        stop
+      elseif (observational equivalence established?) then (yes)
+        :Stop-Equivalent;
+        stop
+      elseif (no currently usable distinguisher?) then (yes)
+        if (Prep can change qk?) then (yes)
+          :Prep action;
+          :Spend same termination resource;
+          :qk+1;
+        else
+          :Stop-NoDistinguisher;
+          stop
+        endif
+      else (continue)
+        :qk+1;
+      endif
+    else (ERROR)
+      :ERROR; do not exclude candidates; Hk unchanged;
+      :Spend >= cmin or one Kmax round;
+      if (termination resource exhausted?) then (yes)
+        :Stop-Error;
+        stop
+      else (retry under same cap)
+        :qk unchanged;
+      endif
+    endif
+  else (no)
+    :Stop-Budget;
+    stop
+  endif
+repeat while (session open?) is (yes)
+stop
+@enduml

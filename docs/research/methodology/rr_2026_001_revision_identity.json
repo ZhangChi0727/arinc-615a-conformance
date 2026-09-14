@@ -15,6 +15,7 @@
     "status": "FIRST-VERSION-DESIGN-DIRECTION",
     "designDirectionAcceptedOn": "2026-09-14",
     "independentMathematicalApproval": false,
-    "independentReviewApproval": false
+    "independentReviewApproval": false,
+    "historicalMathCheckDoesNotProveSuccessorMath": true
   }
 }

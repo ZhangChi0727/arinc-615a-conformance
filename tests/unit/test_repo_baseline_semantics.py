@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import hashlib
+import json
 import subprocess
 from pathlib import Path
 
@@ -847,6 +848,55 @@ def test_historical_methodology_math_identity_is_preserved() -> None:
     assert digest == freeze["displayMathSha256"]
     assert identity["successor"]["independentMathematicalApproval"] is False
     assert identity["successor"]["independentReviewApproval"] is False
+    assert identity["successor"]["historicalMathCheckDoesNotProveSuccessorMath"] is True
+
+
+def test_method_report_frozen_history_must_pin_freeze_commit() -> None:
+    register = controlled_sources()
+    records = register["historicalAssumptions"][0]["frozenRecords"]
+    method = next(row for row in records if row["path"].endswith("RR-2026-001_test_analysis_conformance_methodology.md"))
+    assert method["commit"] == baseline.load_method_math_identity()["historicalFreeze"]["commit"]
+    tracked = set(subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines())
+    assert baseline.frozen_record_errors(records, ROOT, tracked) == []
+    method.pop("commit")
+    errors = baseline.frozen_record_errors(records, ROOT, tracked)
+    assert any("historical freeze commit" in error for error in errors)
+
+
+def test_protocol_source_audit_rejects_batch_rename_and_id_drift() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    assert baseline.protocol_source_audit_errors(audit, crs) == []
+    flipped = copy.deepcopy(audit)
+    flipped["notBatchStatusRename"] = False
+    flipped["status"] = "READY-TO-GENERATE-REQUIREMENTS"
+    flipped["requirementGenerationAllowed"] = True
+    errors = baseline.protocol_source_audit_errors(flipped, crs)
+    assert any("batch status rename" in error for error in errors)
+    assert any("AUDIT-BEFORE-REQUIREMENT-GENERATION" in error for error in errors)
+    assert any("requirement generation" in error for error in errors)
+    missing = copy.deepcopy(audit)
+    missing["deferredUnits"]["DEFERRED-FIND-M9"] = missing["deferredUnits"]["DEFERRED-FIND-M9"][1:]
+    assert any("DEFERRED-FIND-M9" in error for error in baseline.protocol_source_audit_errors(missing, crs))
+
+
+def test_cltav_outline_rejects_title_only_chapters() -> None:
+    text = source("docs/research/publication/RESEARCH_OUTLINE.md")
+    assert baseline.cltav_outline_errors(text) == []
+    stripped = text.replace("- **Claim:**", "- **Title:**", 1)
+    assert any("claim" in error for error in baseline.cltav_outline_errors(stripped))
+
+
+def test_cltav_sysml_rejects_missing_stop_class() -> None:
+    models = {
+        name: source(f"docs/research/publication/models/{name}")
+        for name in baseline.CLTAV_PUML_FILES
+    }
+    assert baseline.cltav_sysml_errors(models) == []
+    models["FIG-CL-TAV-05-closed-loop-activity.puml"] = models[
+        "FIG-CL-TAV-05-closed-loop-activity.puml"
+    ].replace("Stop-Budget", "StopLater")
+    assert any("Stop-Budget" in error for error in baseline.cltav_sysml_errors(models))
 
 
 def test_math_and_mapping_frozen_payloads_are_unchanged() -> None:

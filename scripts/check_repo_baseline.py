@@ -70,6 +70,25 @@ APPENDED_ZH_RE = re.compile(r"^# 中文版$", re.MULTILINE)
 ZH_BOUNDARY_HEADER = "# 中文版"
 
 REPORT_PATH = METHODOLOGY_DIR / "RR-2026-001_test_analysis_conformance_methodology.md"
+METHOD_MATH_IDENTITY_PATH = METHODOLOGY_DIR / "rr_2026_001_revision_identity.json"
+SOURCE_AUDIT_PATH = ROOT / "configs/research/cltav_protocol_source_audit.json"
+CLTAV_PUML_DIR = RESEARCH / "publication" / "models"
+CLTAV_PUML_FILES = (
+    "FIG-CL-TAV-01-context.puml",
+    "FIG-CL-TAV-02-requirement-layers.puml",
+    "FIG-CL-TAV-03-bdd.puml",
+    "FIG-CL-TAV-04-ibd.puml",
+    "FIG-CL-TAV-05-closed-loop-activity.puml",
+    "FIG-CL-TAV-06-diagnostic-sequence.puml",
+    "FIG-CL-TAV-07-two-state-machines.puml",
+    "FIG-CL-TAV-08-parametric.puml",
+)
+DEFERRED_AUDIT_CODES = (
+    "DEFERRED-FIND-M9",
+    "DEFERRED-DOWNLOAD-M9",
+    "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+)
+SYSML_NOTATION_MARK = "SysML 1.6 notation-based views; executable/metamodel conformance is not claimed"
 EVIDENCE_MANIFEST_PATH = ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md"
 TRACEABILITY_PATH = CONTRACTS_DIR / "TRACEABILITY_SCHEMA.md"
 CLAIMS_PATH = RESEARCH / "CLAIM_EVIDENCE_MATRIX.md"
@@ -120,6 +139,9 @@ REQUIRED_FIXED_FILES = [
     METHODOLOGY_DIR / "METHODOLOGY_CATALOG.md",
     RESEARCH / "publication" / "RESEARCH_OUTLINE.md",
     RESEARCH / "publication" / "PUBLICATION_GUIDE.md",
+    ROOT / "artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md",
+    ROOT / "configs/research/cltav_protocol_source_audit.json",
+    *[CLTAV_PUML_DIR / name for name in CLTAV_PUML_FILES],
     ROOT / "docs/engineering/ENGINEERING_CONTROL.md",
     ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md",
     ROOT / "docs/engineering/design/DESIGN_GUIDE.md",
@@ -170,6 +192,7 @@ REQUIRED_ARCHITECTURE_TERMS = {
     CONTRACTS_DIR / "ARCHITECTURE.md": {
         "Domain boundaries and traceable dependencies",
         "This controlled feedback is not a direct reverse dependency.",
+        "CL-TAV two machines and SysML views",
     },
     ROOT / "docs/tutorial/TUTORIAL_CONTROL.md": {
         "explains_baseline",
@@ -412,6 +435,119 @@ def historical_methodology_math_errors() -> list[str]:
         errors.append("successor methodology identity must not self-assert independent mathematical approval")
     if successor.get("independentReviewApproval") is True:
         errors.append("successor methodology identity must not self-assert independent review approval")
+    if successor.get("historicalMathCheckDoesNotProveSuccessorMath") is not True:
+        errors.append("successor identity must state that the historical math check does not prove successor mathematics")
+    return errors
+
+
+def protocol_source_audit_errors(audit: dict, crs: dict) -> list[str]:
+    """Audit ledger must inventory deferred units without rewriting the bound CRS."""
+    errors: list[str] = []
+    if audit.get("status") != "AUDIT-BEFORE-REQUIREMENT-GENERATION":
+        errors.append("protocol source audit status must be AUDIT-BEFORE-REQUIREMENT-GENERATION")
+    if audit.get("notBatchStatusRename") is not True:
+        errors.append("protocol source audit must forbid batch status rename")
+    if audit.get("requirementGenerationAllowed") is True:
+        errors.append("protocol source audit must not allow requirement generation before source reread")
+    bound = audit.get("boundPackage") or {}
+    inventory = crs.get("inventorySummary") or {}
+    if bound.get("coverageFingerprint") != inventory.get("coverageFingerprint"):
+        errors.append("protocol source audit coverage fingerprint does not match the bound CRS package")
+    if bound.get("requirementsFingerprint") != inventory.get("requirementsFingerprint"):
+        errors.append("protocol source audit requirements fingerprint does not match the bound CRS package")
+    if bound.get("artifactVersion") != crs.get("artifactVersion"):
+        errors.append("protocol source audit artifactVersion does not match the bound CRS package")
+    ledger = {row["id"]: row for row in crs.get("coverageLedger") or []}
+    deferred_units = audit.get("deferredUnits") or {}
+    for code in DEFERRED_AUDIT_CODES:
+        expected_ids = {
+            row_id
+            for row_id, row in ledger.items()
+            if row.get("rationaleCode") == code
+        }
+        recorded = deferred_units.get(code) or []
+        recorded_ids = {item.get("id") for item in recorded}
+        if recorded_ids != expected_ids:
+            errors.append(f"protocol source audit IDs for {code} do not match the bound CRS ledger")
+        for item in recorded:
+            row = ledger.get(item.get("id"))
+            if row is None:
+                continue
+            if row.get("rationaleCode") != code:
+                errors.append(f"protocol source audit row {item.get('id')} does not keep rationale {code}")
+            if item.get("requirementIds"):
+                errors.append(f"protocol source audit row {item.get('id')} must not invent requirementIds")
+            if row.get("requirementIds"):
+                errors.append(
+                    f"bound CRS row {item.get('id')} still has requirements; "
+                    "do not treat deferred rename as complete"
+                )
+    return errors
+
+
+def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
+    """Notation-based SysML views must show the loop, two machines, and stop classes."""
+    errors: list[str] = []
+    for name in CLTAV_PUML_FILES:
+        text = models.get(name, "")
+        if not text:
+            errors.append(f"missing CL-TAV SysML source: {name}")
+            continue
+        if SYSML_NOTATION_MARK not in text:
+            errors.append(f"{name} must declare SysML 1.6 notation-based views")
+    activity = models.get("FIG-CL-TAV-05-closed-loop-activity.puml", "")
+    for token in (
+        "Hk",
+        "Prep",
+        "ERROR",
+        "Stop-Budget",
+        "Stop-NoDistinguisher",
+        "Stop-Equivalent",
+        "Stop-Singleton",
+        "Stop-Empty",
+        "Stop-Error",
+        "Stop-645",
+        "cmin",
+        "Kmax",
+    ):
+        if token not in activity:
+            errors.append(f"closed-loop activity view is missing {token}")
+    machines = models.get("FIG-CL-TAV-07-two-state-machines.puml", "")
+    for token in ("Msess", "Mprot", "Stop-Budget", "Information", "FIND"):
+        if token not in machines:
+            errors.append(f"two-machine view is missing {token}")
+    parametric = models.get("FIG-CL-TAV-08-parametric.puml", "")
+    for token in ("cmin", "Kmax", "Hk"):
+        if token not in parametric:
+            errors.append(f"parametric view is missing {token}")
+    sequence = models.get("FIG-CL-TAV-06-diagnostic-sequence.puml", "")
+    if "Prep" not in sequence or "overlapping" not in sequence:
+        errors.append("diagnostic sequence view must show overlapping observation and Prep")
+    return errors
+
+
+def cltav_outline_errors(outline_text: str) -> list[str]:
+    """Each thesis chapter must carry claim, question, algorithm/architecture, and evidence."""
+    errors: list[str] = []
+    if ZH_MARKER not in outline_text:
+        return ["research outline is missing the Chinese boundary"]
+    english, chinese = outline_text.split(ZH_MARKER, 1)
+    if english.count("- **Claim:**") != 8 or chinese.count("- **论点：**") != 8:
+        errors.append("research outline must state a claim for each of the eight chapters")
+    if english.count("- **Answers:**") != 8 or chinese.count("- **回答：**") != 8:
+        errors.append("research outline must map each chapter to a research question")
+    if english.count("- **Uses:**") != 8 or chinese.count("- **使用：**") != 8:
+        errors.append("research outline must name the algorithm or architecture each chapter uses")
+    if english.count("- **Needs:**") != 8 or chinese.count("- **需要：**") != 8:
+        errors.append("research outline must name the experiment or evidence each chapter needs")
+    for fig in range(1, 9):
+        fig_id = f"FIG-CL-TAV-0{fig}"
+        if fig_id not in english or fig_id not in chinese:
+            errors.append(f"research outline is missing {fig_id}")
+    if "M_{\\mathrm{sess}}" not in english or "M_{\\mathrm{prot}}" not in english:
+        errors.append("research outline must distinguish the verification-session and protocol-operation machines")
+    if "c_{\\min}" not in english or "K_{\\max}" not in english:
+        errors.append("research outline must state the finite-termination rule")
     return errors
 
 
@@ -1311,20 +1447,29 @@ def _unique_rows(rows: object, label: str) -> tuple[dict[str, dict], list[str]]:
     return result, errors
 
 
-def _head_blob_bytes(root: Path, relative: str) -> tuple[bytes | None, str | None]:
+def _git_blob_bytes(root: Path, relative: str, commit: str | None = None) -> tuple[bytes | None, str | None]:
+    locator = f"{commit}:{relative}" if commit else f"HEAD:{relative}"
     result = subprocess.run(
-        ["git", "show", f"HEAD:{relative}"], cwd=root,
+        ["git", "show", locator], cwd=root,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
     )
     if result.returncode != 0:
-        return None, f"cannot read committed Git blob HEAD:{relative}"
+        return None, f"cannot read committed Git blob {locator}"
     return result.stdout, None
+
+
+def _head_blob_bytes(root: Path, relative: str) -> tuple[bytes | None, str | None]:
+    return _git_blob_bytes(root, relative)
 
 
 def frozen_record_errors(
     records: object, root: Path, tracked_paths: set[str], label: str = "frozenRecords",
 ) -> list[str]:
-    """Compare registered identities with committed Git blob bytes, never checkout text."""
+    """Compare registered identities with committed Git blob bytes, never checkout text.
+
+    An optional record-level commit pins historical bytes after the same path
+    later carries a successor revision. HEAD is used only when no commit is named.
+    """
     errors: list[str] = []
     if not isinstance(records, list) or not records:
         return [f"{label} must be a non-empty list"]
@@ -1340,7 +1485,12 @@ def frozen_record_errors(
             errors.append(path_error)
             continue
         assert target is not None
-        payload, blob_error = _head_blob_bytes(root, record["path"])
+        commit = record.get("commit")
+        if commit is not None:
+            if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
+                errors.append(f"{item_label}.commit must be a 40-character lowercase SHA")
+                continue
+        payload, blob_error = _git_blob_bytes(root, record["path"], commit)
         if blob_error:
             errors.append(blob_error)
             continue
@@ -1349,6 +1499,13 @@ def frozen_record_errors(
             errors.append(f"{item_label} byteCount differs from committed Git blob")
         if record.get("sha256") != hashlib.sha256(payload).hexdigest():
             errors.append(f"{item_label} sha256 differs from committed Git blob")
+        if record.get("path") == "docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md":
+            freeze_commit = load_method_math_identity().get("historicalFreeze", {}).get("commit")
+            if commit != freeze_commit:
+                errors.append(
+                    f"{item_label} must pin the methodology report to the historical freeze commit, "
+                    "not to successor HEAD bytes"
+                )
     return errors
 
 
@@ -1872,6 +2029,15 @@ def main() -> int:
         if term not in report_text:
             errors.append(f"methodology report is missing required term: {term}")
     errors.extend(historical_methodology_math_errors())
+    crs_package = json.loads(read(ROOT / "configs/requirements/arinc_615a3_m1_crs.json"))
+    audit_package = json.loads(read(SOURCE_AUDIT_PATH))
+    errors.extend(protocol_source_audit_errors(audit_package, crs_package))
+    errors.extend(cltav_outline_errors(read(RESEARCH / "publication" / "RESEARCH_OUTLINE.md")))
+    errors.extend(
+        cltav_sysml_errors(
+            {name: read(CLTAV_PUML_DIR / name) for name in CLTAV_PUML_FILES}
+        )
+    )
 
     for legacy in LEGACY_FILENAMES:
         if (METHODOLOGY_DIR / legacy).exists():
