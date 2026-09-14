@@ -873,11 +873,67 @@ def test_protocol_source_audit_rejects_batch_rename_and_id_drift() -> None:
     flipped["requirementGenerationAllowed"] = True
     errors = baseline.protocol_source_audit_errors(flipped, crs)
     assert any("batch status rename" in error for error in errors)
-    assert any("AUDIT-BEFORE-REQUIREMENT-GENERATION" in error for error in errors)
-    assert any("requirement generation" in error for error in errors)
+    assert any("declared audit-phase" in error for error in errors)
     missing = copy.deepcopy(audit)
     missing["deferredUnits"]["DEFERRED-FIND-M9"] = missing["deferredUnits"]["DEFERRED-FIND-M9"][1:]
     assert any("DEFERRED-FIND-M9" in error for error in baseline.protocol_source_audit_errors(missing, crs))
+    implicit = copy.deepcopy(audit)
+    del implicit["requirementGenerationAllowed"]
+    assert any("requirementGenerationAllowed" in error for error in baseline.protocol_source_audit_errors(implicit, crs))
+
+
+def test_protocol_source_audit_rejects_locator_and_duplicate_drift() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    row = copy.deepcopy(audit["deferredUnits"]["DEFERRED-FIND-M9"][0])
+    mutated = copy.deepcopy(audit)
+    mutated["deferredUnits"]["DEFERRED-FIND-M9"][0]["sourceUnitId"] = "UNRELATED-SOURCE"
+    assert any("sourceUnitId" in error for error in baseline.protocol_source_audit_errors(mutated, crs))
+    duplicated = copy.deepcopy(audit)
+    duplicated["deferredUnits"]["DEFERRED-FIND-M9"].append(row)
+    assert any("duplicate" in error for error in baseline.protocol_source_audit_errors(duplicated, crs))
+    missing_field = copy.deepcopy(audit)
+    del missing_field["deferredUnits"]["DEFERRED-FIND-M9"][0]["clause"]
+    assert any("clause" in error for error in baseline.protocol_source_audit_errors(missing_field, crs))
+    drifted = copy.deepcopy(audit)
+    drifted["summary"]["deferredFutureScope"]["byRationale"]["DEFERRED-FIND-M9"] = 0
+    assert any("summary count" in error for error in baseline.protocol_source_audit_errors(drifted, crs))
+    groups = copy.deepcopy(audit)
+    groups["clauseGroups"]["DEFERRED-FIND-M9"][0]["coverageIds"] = ["COV-M1-00001"]
+    assert any("clauseGroups" in error for error in baseline.protocol_source_audit_errors(groups, crs))
+    for field in baseline.AUDIT_UNIT_FIELDS:
+        if field == "id":
+            continue
+        field_mutated = copy.deepcopy(audit)
+        row = field_mutated["deferredUnits"]["DEFERRED-FIND-M9"][0]
+        if field == "requirementIds":
+            row[field] = ["CRS-UNRELATED"]
+        elif isinstance(row.get(field), int):
+            row[field] = int(row[field] or 0) + 99999
+        else:
+            row[field] = f"UNRELATED-{field}"
+        errors = baseline.protocol_source_audit_errors(field_mutated, crs)
+        assert any(field in error for error in errors), field
+
+
+def test_protocol_source_audit_allows_declared_future_status_pairs() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    in_progress = copy.deepcopy(audit)
+    in_progress["status"] = "SOURCE-UNIT-AUDIT-IN-PROGRESS"
+    in_progress["requirementGenerationAllowed"] = False
+    assert baseline.protocol_source_audit_errors(in_progress, crs) == []
+    complete = copy.deepcopy(audit)
+    complete["status"] = "AUDIT-COMPLETE-REQUIREMENT-GENERATION-ALLOWED"
+    complete["requirementGenerationAllowed"] = True
+    errors = baseline.protocol_source_audit_errors(complete, crs)
+    assert not any("requirementGenerationAllowed" in error for error in errors)
+    assert not any("declared audit-phase" in error for error in errors)
+    complete["requirementGenerationAllowed"] = False
+    assert any(
+        "requirementGenerationAllowed" in error
+        for error in baseline.protocol_source_audit_errors(complete, crs)
+    )
 
 
 def test_cltav_outline_rejects_title_only_chapters() -> None:
@@ -897,6 +953,12 @@ def test_cltav_sysml_rejects_missing_stop_class() -> None:
         "FIG-CL-TAV-05-closed-loop-activity.puml"
     ].replace("Stop-Budget", "StopLater")
     assert any("Stop-Budget" in error for error in baseline.cltav_sysml_errors(models))
+    machines = {
+        name: source(f"docs/research/publication/models/{name}")
+        for name in baseline.CLTAV_PUML_FILES
+    }
+    machines["FIG-CL-TAV-07-two-state-machines.puml"] += "\nInformation --> Upload\n"
+    assert any("Information" in error for error in baseline.cltav_sysml_errors(machines))
 
 
 def test_math_and_mapping_frozen_payloads_are_unchanged() -> None:
