@@ -26,7 +26,7 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "cadf89035f6b071dc77e33c356dd88a1efc421bc",
+        "gitBlobOid": "59182b17f637b5902823b691b9d1689181bb5a0a",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -36,12 +36,12 @@
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "ec1117a6e1180f521be31fb503ad3f5faf9aca41",
+        "gitBlobOid": "2ef75dc52c6a6d52b96a8fb833b09eed7a1a4dae",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "aa5b26f0cc2d98c72c619cf6ccfce3316f324bfa",
+        "gitBlobOid": "a95516ec68882fedd04605da5b2ba84455a5e9cc",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "3a06b248314a77590a18fe7adf6a1adffd1423e3",
+        "gitBlobOid": "cae02477dea69ae124a32bec41dca741cc4324f8",
         "role": "SUCCESSOR-M1-DELTA"
       }
     ],
@@ -69,7 +69,7 @@
     },
     "approvedHeadTree": "2810bcaa76003eef791348607b068d76d91b5103",
     "successorDelta": {
-      "changeRequest": "CR-2026-011",
+      "changeRequest": "CR-2026-012",
       "authorizationRequest": "CR-2026-009",
       "doesNotTransplantFrozenApproval": true,
       "preservedFrozenInputs": [
@@ -148,8 +148,8 @@
           "role": "M1-IMMUTABLE-INPUT"
         }
       ],
-      "currentInputArtifactCommit": "e1c6056c72c4618ad502e6406ce2869f1881ad4b",
-      "currentInputArtifactTree": "3d6b7926b13f32df7eda6b96746130ead0a954d6"
+      "currentInputArtifactCommit": "60efdd7b970554a653c1db35ca907a9dada663c0",
+      "currentInputArtifactTree": "770fb4269a24712e8d4304a86923b504cec00d38"
     }
   },
   "sequenceEndpointBindings": [
@@ -12657,6 +12657,378 @@
       "modelTargetIds": [
         "SCOPE"
       ]
+    },
+    {
+      "requirementId": "CRS-M1-00385",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00386",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00387",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00388",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00389",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00390",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00391",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00392",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00393",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00394",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00395",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00396",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00397",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00398",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00399",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00400",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00401",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00402",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00403",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00404",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00405",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00406",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00407",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00408",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00409",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00410",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00411",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00412",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00413",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00414",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00415",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
     }
   ],
   "traceRelations": [
@@ -17884,6 +18256,347 @@
       "rationaleCode": "Transition T_ABORT_FROM_S_UPL_LUS_XFER cites this obligation.",
       "rationaleEn": "Transition T_ABORT_FROM_S_UPL_LUS_XFER cites this obligation.",
       "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_LUS_XFER 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00385-0476",
+      "requirementId": "CRS-M1-00385",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00386-0477",
+      "requirementId": "CRS-M1-00386",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00387-0478",
+      "requirementId": "CRS-M1-00387",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00388-0479",
+      "requirementId": "CRS-M1-00388",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00389-0480",
+      "requirementId": "CRS-M1-00389",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00390-0481",
+      "requirementId": "CRS-M1-00390",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00391-0482",
+      "requirementId": "CRS-M1-00391",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00392-0483",
+      "requirementId": "CRS-M1-00392",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00393-0484",
+      "requirementId": "CRS-M1-00393",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00394-0485",
+      "requirementId": "CRS-M1-00394",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00395-0486",
+      "requirementId": "CRS-M1-00395",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00396-0487",
+      "requirementId": "CRS-M1-00396",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00397-0488",
+      "requirementId": "CRS-M1-00397",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00398-0489",
+      "requirementId": "CRS-M1-00398",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00399-0490",
+      "requirementId": "CRS-M1-00399",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00400-0491",
+      "requirementId": "CRS-M1-00400",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00401-0492",
+      "requirementId": "CRS-M1-00401",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00402-0493",
+      "requirementId": "CRS-M1-00402",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00403-0494",
+      "requirementId": "CRS-M1-00403",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00404-0495",
+      "requirementId": "CRS-M1-00404",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00405-0496",
+      "requirementId": "CRS-M1-00405",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00406-0497",
+      "requirementId": "CRS-M1-00406",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00407-0498",
+      "requirementId": "CRS-M1-00407",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00408-0499",
+      "requirementId": "CRS-M1-00408",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00409-0500",
+      "requirementId": "CRS-M1-00409",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00410-0501",
+      "requirementId": "CRS-M1-00410",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00411-0502",
+      "requirementId": "CRS-M1-00411",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00412-0503",
+      "requirementId": "CRS-M1-00412",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00413-0504",
+      "requirementId": "CRS-M1-00413",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00414-0505",
+      "requirementId": "CRS-M1-00414",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00415-0506",
+      "requirementId": "CRS-M1-00415",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
+      "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
     }
   ],
   "infrastructurePremises": [
@@ -17981,8 +18694,8 @@
       "ownerRole": "PRODUCT-SCOPE",
       "deadlineGate": "SCOPE-EXPANSION-GATE",
       "evidence": [],
-      "noteEn": "FIND remains deferred.",
-      "noteZh": "FIND 保持延期。"
+      "noteEn": "FIND CRS candidates exist under CR-2026-012; bound M2 still does not model FIND. MODEL-REFINEMENT-PENDING.",
+      "noteZh": "CR-2026-012 下已有 FIND CRS 候选；绑定 M2 仍不建模 FIND。模型精化待定。"
     },
     {
       "id": "F-2",
@@ -18570,19 +19283,19 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 384,
-    "dispositionCount": 384,
-    "traceCount": 475,
+    "requirementCount": 415,
+    "dispositionCount": 415,
+    "traceCount": 506,
     "stateCount": 35,
     "transitionCount": 65,
     "timingCount": 23,
     "fieldConstraintCount": 52,
-    "dispositionsFingerprint": "99eec40d08e16c9c2a72ebba8ee4845fe843d34c1879f3c43383aa7eabf040c1",
+    "dispositionsFingerprint": "be10282c33be66c6f23fa1d9ef02f54d06f80bb3d5630cf45eb94bbf1710fe8e",
     "modelFingerprint": "e3cd631efdb7b54c2808ebf07a76062204553a3bc69326a25dc185acd29a5cfc",
     "timingFingerprint": "ccf8ed38a7cfd18363b57f72bf2d51bcbc7e5c91e1a48f83c84393b1e1c36e9c",
-    "inputFingerprint": "dd1f841b5b1b7c1489f313ec8cafda41acd7b2b0841d5f53f9227b375f47951c",
+    "inputFingerprint": "19bafc398beb947f432257099ed4d598107975632ebcef9b5fb84c5492e05adf",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
-    "actionFingerprint": "4dd9cbe58b38efd7e6fcea09a33118b548d2790d2f8cefcd5085f69320c5bac0",
+    "actionFingerprint": "af4925f709b87f65014a13e74c4f83569eec73ee54be78536bf91939608ddbe0",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
     "witnessFingerprint": "3de3d3bf3b1b9c6eb9ee0e6ab65234ec5957762185e51093aeb10534986e6643",
     "blockingFingerprint": "ed1c2d23ae210315decd37ee16af46d55b7e8eb29359bbd7f1a6d42ca0444aa6",

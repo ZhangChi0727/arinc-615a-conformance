@@ -11,9 +11,9 @@
 - Sign-off: https://github.com/ZhangChi0727/arinc-615a-conformance/pull/13#issuecomment-5594842302 (`COMMENTED`, `APPROVE WITH ACTIONS`)
 - Independence: `NOT-CLAIMED-NAMED-INDEPENDENT-REVIEWER`
 - M1 NET-ISSUE-EDITION snapshot blocksM1Approval=`True` — Historical snapshot on the merged M1 tree. External owner sign-off and merge bound that Head. The boolean does not reopen the merge. CR-2026-009 accepted 664P3-1 as this M2 input edition; 664P7 remains recorded and AFDX stays unselected.
-- Successor delta `CR-2026-011` authorized by `CR-2026-009`; doesNotTransplantFrozenApproval=`True`
+- Successor delta `CR-2026-012` authorized by `CR-2026-009`; doesNotTransplantFrozenApproval=`True`
 - Predecessor input artifact commit `402e8371b0237aec4691bab0b44e502f4ac1a7c4` tree `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
-- Current input artifact commit `e1c6056c72c4618ad502e6406ce2869f1881ad4b` tree `3d6b7926b13f32df7eda6b96746130ead0a954d6`
+- Current input artifact commit `60efdd7b970554a653c1db35ca907a9dada663c0` tree `770fb4269a24712e8d4304a86923b504cec00d38`
 
 ## Scope
 
@@ -794,6 +794,37 @@
 | `CRS-M1-00382` | INTERFACE-PREMISE | `IF_TFTP` |
 | `CRS-M1-00383` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00384` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00385` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00386` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00387` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00388` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00389` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00390` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00391` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00392` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00393` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00394` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00395` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00396` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00397` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00398` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00399` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00400` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00401` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00402` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00403` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00404` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00405` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00406` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00407` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00408` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00409` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00410` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00411` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00412` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00413` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00414` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00415` | SCOPE-CONSTRAINT | `SCOPE` |
 
 ## Trace relations
 
@@ -1274,6 +1305,37 @@
 | `TR-CRS-M1-00341-0473` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_WAIT_LUS0001` | Transition T_ABORT_FROM_S_UPL_WAIT_LUS0001 cites this obligation. |
 | `TR-CRS-M1-00341-0474` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUR_XFER` | Transition T_ABORT_FROM_S_UPL_LUR_XFER cites this obligation. |
 | `TR-CRS-M1-00341-0475` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUS_XFER` | Transition T_ABORT_FROM_S_UPL_LUS_XFER cites this obligation. |
+| `TR-CRS-M1-00385-0476` | `CRS-M1-00385` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00386-0477` | `CRS-M1-00386` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00387-0478` | `CRS-M1-00387` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00388-0479` | `CRS-M1-00388` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00389-0480` | `CRS-M1-00389` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00390-0481` | `CRS-M1-00390` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00391-0482` | `CRS-M1-00391` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00392-0483` | `CRS-M1-00392` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00393-0484` | `CRS-M1-00393` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00394-0485` | `CRS-M1-00394` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00395-0486` | `CRS-M1-00395` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00396-0487` | `CRS-M1-00396` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00397-0488` | `CRS-M1-00397` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00398-0489` | `CRS-M1-00398` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00399-0490` | `CRS-M1-00399` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00400-0491` | `CRS-M1-00400` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00401-0492` | `CRS-M1-00401` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00402-0493` | `CRS-M1-00402` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00403-0494` | `CRS-M1-00403` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00404-0495` | `CRS-M1-00404` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00405-0496` | `CRS-M1-00405` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00406-0497` | `CRS-M1-00406` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00407-0498` | `CRS-M1-00407` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00408-0499` | `CRS-M1-00408` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00409-0500` | `CRS-M1-00409` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00410-0501` | `CRS-M1-00410` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00411-0502` | `CRS-M1-00411` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00412-0503` | `CRS-M1-00412` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00413-0504` | `CRS-M1-00413` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00414-0505` | `CRS-M1-00414` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
+| `TR-CRS-M1-00415-0506` | `CRS-M1-00415` | SCOPE | `SCOPE` | FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior. |
 
 ## Infrastructure premises
 
@@ -1288,7 +1350,7 @@
 | `A-2` | `CANDIDATE-PARTIAL` | M2-RG1 | PROFILE-MODEL-REFINEMENT-GATE | RFC-2347 option transfer and RFC-2348 block-size are candidate edges; 1785/2349 remain without an active 615A unit. |
 | `A-3` | `CANDIDATE-IN-MODEL` | M2-RG2 | PROFILE-MODEL-REFINEMENT-GATE | Attachment 4 equation restored with retry terms; clocks enable timeout transitions. |
 | `A-4` | `DEFERRED` | FUTURE-TAXONOMY-CR | SCOPE-EXPANSION-GATE | requirementKind taxonomy not executed. |
-| `F-1` | `DEFERRED` | PRODUCT-SCOPE | SCOPE-EXPANSION-GATE | FIND remains deferred. |
+| `F-1` | `DEFERRED` | PRODUCT-SCOPE | SCOPE-EXPANSION-GATE | FIND CRS candidates exist under CR-2026-012; bound M2 still does not model FIND. MODEL-REFINEMENT-PENDING. |
 | `F-2` | `DEFERRED` | PRODUCT-SCOPE | SCOPE-EXPANSION-GATE | AFDX remains unselected. |
 | `F-3` | `RETAINED-EXCLUSION` | M2-RG0 | SCOPE-EXPANSION-GATE | 665 media-set exclusion retained. |
 | `F-4` | `INCOMPLETE-IDENTITY-ONLY` | M2-RG1 | PROFILE-MODEL-REFINEMENT-GATE | P2 identity only; no clause-level model target. |
@@ -1389,9 +1451,9 @@
 - 签署：https://github.com/ZhangChi0727/arinc-615a-conformance/pull/13#issuecomment-5594842302（`COMMENTED`，`APPROVE WITH ACTIONS`）
 - 独立性：`NOT-CLAIMED-NAMED-INDEPENDENT-REVIEWER`
 - M1 NET-ISSUE-EDITION 快照 blocksM1Approval=`True` — 已合并 M1 树上的历史快照。外部所有者签署与合并绑定了该 Head。该布尔值不重开合并。CR-2026-009 接受 664P3-1 作为本 M2 输入版次；664P7 保持已登记且 AFDX 未选。
-- 后继增量 `CR-2026-011` 由 `CR-2026-009` 授权；doesNotTransplantFrozenApproval=`True`
+- 后继增量 `CR-2026-012` 由 `CR-2026-009` 授权；doesNotTransplantFrozenApproval=`True`
 - 前序输入制品提交 `402e8371b0237aec4691bab0b44e502f4ac1a7c4` 树 `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
-- 当前输入制品提交 `e1c6056c72c4618ad502e6406ce2869f1881ad4b` 树 `3d6b7926b13f32df7eda6b96746130ead0a954d6`
+- 当前输入制品提交 `60efdd7b970554a653c1db35ca907a9dada663c0` 树 `770fb4269a24712e8d4304a86923b504cec00d38`
 
 ## 范围
 
@@ -2172,6 +2234,37 @@
 | `CRS-M1-00382` | INTERFACE-PREMISE | `IF_TFTP` |
 | `CRS-M1-00383` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00384` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00385` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00386` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00387` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00388` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00389` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00390` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00391` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00392` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00393` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00394` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00395` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00396` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00397` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00398` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00399` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00400` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00401` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00402` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00403` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00404` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00405` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00406` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00407` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00408` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00409` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00410` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00411` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00412` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00413` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00414` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00415` | SCOPE-CONSTRAINT | `SCOPE` |
 
 ## 追踪关系
 
@@ -2652,6 +2745,37 @@
 | `TR-CRS-M1-00341-0473` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_WAIT_LUS0001` | 迁移 T_ABORT_FROM_S_UPL_WAIT_LUS0001 引用此义务。 |
 | `TR-CRS-M1-00341-0474` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUR_XFER` | 迁移 T_ABORT_FROM_S_UPL_LUR_XFER 引用此义务。 |
 | `TR-CRS-M1-00341-0475` | `CRS-M1-00341` | TRANSITION | `T_ABORT_FROM_S_UPL_LUS_XFER` | 迁移 T_ABORT_FROM_S_UPL_LUS_XFER 引用此义务。 |
+| `TR-CRS-M1-00385-0476` | `CRS-M1-00385` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00386-0477` | `CRS-M1-00386` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00387-0478` | `CRS-M1-00387` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00388-0479` | `CRS-M1-00388` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00389-0480` | `CRS-M1-00389` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00390-0481` | `CRS-M1-00390` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00391-0482` | `CRS-M1-00391` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00392-0483` | `CRS-M1-00392` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00393-0484` | `CRS-M1-00393` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00394-0485` | `CRS-M1-00394` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00395-0486` | `CRS-M1-00395` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00396-0487` | `CRS-M1-00396` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00397-0488` | `CRS-M1-00397` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00398-0489` | `CRS-M1-00398` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00399-0490` | `CRS-M1-00399` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00400-0491` | `CRS-M1-00400` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00401-0492` | `CRS-M1-00401` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00402-0493` | `CRS-M1-00402` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00403-0494` | `CRS-M1-00403` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00404-0495` | `CRS-M1-00404` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00405-0496` | `CRS-M1-00405` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00406-0497` | `CRS-M1-00406` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00407-0498` | `CRS-M1-00407` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00408-0499` | `CRS-M1-00408` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00409-0500` | `CRS-M1-00409` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00410-0501` | `CRS-M1-00410` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00411-0502` | `CRS-M1-00411` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00412-0503` | `CRS-M1-00412` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00413-0504` | `CRS-M1-00413` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00414-0505` | `CRS-M1-00414` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
+| `TR-CRS-M1-00415-0506` | `CRS-M1-00415` | SCOPE | `SCOPE` | FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。 |
 
 ## 基础设施前提
 
@@ -2666,7 +2790,7 @@
 | `A-2` | `CANDIDATE-PARTIAL` | M2-RG1 | PROFILE-MODEL-REFINEMENT-GATE | RFC-2347 选项传输与 RFC-2348 块大小为候选边；1785/2349 仍无活动 615A 单元。 |
 | `A-3` | `CANDIDATE-IN-MODEL` | M2-RG2 | PROFILE-MODEL-REFINEMENT-GATE | 已恢复带重试项的附件 4 方程；时钟使能超时迁移。 |
 | `A-4` | `DEFERRED` | FUTURE-TAXONOMY-CR | SCOPE-EXPANSION-GATE | 未执行 requirementKind 分类扩展。 |
-| `F-1` | `DEFERRED` | PRODUCT-SCOPE | SCOPE-EXPANSION-GATE | FIND 保持延期。 |
+| `F-1` | `DEFERRED` | PRODUCT-SCOPE | SCOPE-EXPANSION-GATE | CR-2026-012 下已有 FIND CRS 候选；绑定 M2 仍不建模 FIND。模型精化待定。 |
 | `F-2` | `DEFERRED` | PRODUCT-SCOPE | SCOPE-EXPANSION-GATE | AFDX 保持未选择。 |
 | `F-3` | `RETAINED-EXCLUSION` | M2-RG0 | SCOPE-EXPANSION-GATE | 保留 665 媒体集排除。 |
 | `F-4` | `INCOMPLETE-IDENTITY-ONLY` | M2-RG1 | PROFILE-MODEL-REFINEMENT-GATE | 仅有 P2 身份；无条款级模型目标。 |
