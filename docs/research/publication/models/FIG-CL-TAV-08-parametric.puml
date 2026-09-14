@@ -2,13 +2,30 @@
 skinparam shadowing false
 title FIG-CL-TAV-08 Parametric\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nconstraints shown, not claimed solved
 
-constraint I_allow as "I : allowed timing interval"
-constraint eps as "epsilon : measurement error bound"
-constraint J_meas as "J : feasible interval from measurement"
-constraint cmin_b as "cmin > 0 and cost(t) >= cmin\nand cost(ERROR) >= cmin"
-constraint budget as "B finite OR Kmax finite"
-constraint score as "s(t) = worst remaining |Hk|\nover Obs(t,qk)"
-constraint update as "Hk+1 = {h in Hk | O(h,t,qk) intersects Izk}"
+class I_allow <<constraint>> {
+  I : allowed timing interval
+}
+class eps <<constraint>> {
+  epsilon : measurement error bound
+}
+class J_meas <<constraint>> {
+  J : feasible interval from measurement
+}
+class cmin_b <<constraint>> {
+  cmin > 0
+  cost(t) >= cmin
+  cost(ERROR) >= cmin
+}
+class budget <<constraint>> {
+  B finite XOR Kmax finite
+}
+class score <<constraint>> {
+  s(t) = worst remaining |Hk|
+  over Obs(t,qk)
+}
+class update <<constraint>> {
+  Hk+1 = {h in Hk | O(h,t,qk) intersects Izk}
+}
 
 I_allow .. J_meas
 eps .. J_meas
@@ -21,5 +38,6 @@ note bottom
   Positive-but-vanishing costs are not a termination proof.
   ERROR is under the same chosen constraint as ordinary tests.
   Parametric view displays constraints; it does not claim they are solved.
+  Selected mode is BUDGET XOR ROUNDS.
 end note
 @enduml

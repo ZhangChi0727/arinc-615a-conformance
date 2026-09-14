@@ -959,6 +959,7 @@ def test_cltav_sysml_rejects_missing_stop_class() -> None:
     }
     machines["FIG-CL-TAV-07-two-state-machines.puml"] += "\nInformation --> Upload\n"
     assert any("Information" in error for error in baseline.cltav_sysml_errors(machines))
+    assert baseline.cltav_figure_errors() == []
 
 
 def test_math_and_mapping_frozen_payloads_are_unchanged() -> None:

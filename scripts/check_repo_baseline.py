@@ -162,6 +162,7 @@ REQUIRED_FIXED_FILES = [
     ROOT / "configs/research/cltav_protocol_source_audit.json",
     ROOT / "scripts/cltav_loop_spec.py",
     *[CLTAV_PUML_DIR / name for name in CLTAV_PUML_FILES],
+    *[CLTAV_SVG_DIR / name for name in CLTAV_SVG_FILES],
     ROOT / "docs/engineering/ENGINEERING_CONTROL.md",
     ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md",
     ROOT / "docs/engineering/design/DESIGN_GUIDE.md",
@@ -661,6 +662,9 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
         errors.append("diagnostic sequence view must show overlapping observation and Prep")
     if "Izk of tb" not in sequence:
         errors.append("diagnostic sequence view must send the second observation to Analysis")
+    layers = models.get("FIG-CL-TAV-02-requirement-layers.puml", "")
+    if "CRS-M1-00365" not in layers:
+        errors.append("requirement-layer view must include the representative source-to-CRS trace")
     return errors
 
 
@@ -2206,6 +2210,7 @@ def main() -> int:
             {name: read(CLTAV_PUML_DIR / name) for name in CLTAV_PUML_FILES}
         )
     )
+    errors.extend(cltav_figure_errors())
 
     for legacy in LEGACY_FILENAMES:
         if (METHODOLOGY_DIR / legacy).exists():

@@ -49,6 +49,24 @@ that historical objects were not rewritten; it does not prove successor CL-TAV
 mathematics. Keep `independentMathematicalApproval` and
 `independentReviewApproval` false.
 
+## SysML 1.6 notation inventory
+
+These are notation-based views, not an executable SysML metamodel.
+
+| Construct | Used in | Not claimed |
+|---|---|---|
+| Block / class box | FIG-CL-TAV-03 BDD | complete SysML Block stereotype execution |
+| Port / IBD connector | FIG-CL-TAV-04 | generated code or simulation |
+| Activity / action | FIG-CL-TAV-05 | fUML token semantics |
+| Sequence message | FIG-CL-TAV-06 | MSC conformance |
+| State machine | FIG-CL-TAV-07 | composite-state protocol EFSM |
+| Constraint / parametric (`class <<constraint>>` stand-in) | FIG-CL-TAV-08 | solved constraint network |
+| Requirement layer package | FIG-CL-TAV-02 | one mixed CRS |
+
+`satisfy` and `verify` are model relations. They are not executed verification.
+Reader SVG exports are in `artifacts/publications/cltav/figures/` and must match
+the PlantUML sources in `models/`.
+
 ---
 
 # 中文版
@@ -91,3 +109,20 @@ Conformance and Fault Localization—An ARINC 615A Case Study，以及
 不被声称首次发明。冻结提交上的显示数学核验只证明历史对象未被改写，不证明后继
 CL-TAV 数学正确。保持 `independentMathematicalApproval` 与
 `independentReviewApproval` 为 false。
+
+## SysML 1.6 记法清单
+
+这些是记法视图，不是可执行 SysML 元模型。
+
+| 构造 | 用于 | 不声称 |
+|---|---|---|
+| Block／class 框 | FIG-CL-TAV-03 BDD | 完整 SysML Block 版型执行 |
+| 端口／IBD 连接器 | FIG-CL-TAV-04 | 生成代码或仿真 |
+| 活动／动作 | FIG-CL-TAV-05 | fUML 令牌语义 |
+| 序列消息 | FIG-CL-TAV-06 | MSC 符合性 |
+| 状态机 | FIG-CL-TAV-07 | 复合状态协议 EFSM |
+| 约束／参数（`class <<constraint>>` 记法替代） | FIG-CL-TAV-08 | 已求解约束网 |
+| 需求层次包 | FIG-CL-TAV-02 | 混成一类 CRS |
+
+`satisfy` 与 `verify` 是模型关系，不是已执行验证。读者 SVG 导出位于
+`artifacts/publications/cltav/figures/`，须与 `models/` 中的 PlantUML 源对应。

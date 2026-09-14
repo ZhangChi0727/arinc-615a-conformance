@@ -12,7 +12,24 @@ Eight chapters. Each chapter in `docs/research/publication/RESEARCH_OUTLINE.md` 
 
 ## System-engineering views
 
-SysML 1.6 notation-based PlantUML sources: `docs/research/publication/models/FIG-CL-TAV-01` through `08`. Executable or complete metamodel conformance is not claimed. Two machines: verification session \(M_{\mathrm{sess}}\) and protocol operation \(M_{\mathrm{prot}}\), joined only by interfaces and observations.
+SysML 1.6 notation-based PlantUML sources: [`../../../docs/research/publication/models/`](../../../docs/research/publication/models/). Executable or complete metamodel conformance is not claimed. Two machines remain independent; communication is FIG-CL-TAV-04 ports, not a cross-machine state transition. Bound M2 is INFORMATION/UPLOAD only.
+
+| ID | Caption | Reader figure |
+|---|---|---|
+| FIG-CL-TAV-01 | Context: IUT, adapter, 645 boundary | [svg](figures/FIG-CL-TAV-01-context.svg) |
+| FIG-CL-TAV-02 | Requirement layers and CRS-M1-00365 trace | [svg](figures/FIG-CL-TAV-02-requirement-layers.svg) |
+| FIG-CL-TAV-03 | BDD blocks | [svg](figures/FIG-CL-TAV-03-bdd.svg) |
+| FIG-CL-TAV-04 | IBD ports | [svg](figures/FIG-CL-TAV-04-ibd.svg) |
+| FIG-CL-TAV-05 | Closed-loop activity with admissible set | [svg](figures/FIG-CL-TAV-05-closed-loop-activity.svg) |
+| FIG-CL-TAV-06 | Diagnostic sequence; second Izk to Analysis | [svg](figures/FIG-CL-TAV-06-diagnostic-sequence.svg) |
+| FIG-CL-TAV-07 | Two machines as independent boxes | [svg](figures/FIG-CL-TAV-07-two-state-machines.svg) |
+| FIG-CL-TAV-08 | Parametric constraints, not a solved network | [svg](figures/FIG-CL-TAV-08-parametric.svg) |
+
+![FIG-CL-TAV-02 Requirement layers and CRS-M1-00365 trace](figures/FIG-CL-TAV-02-requirement-layers.svg)
+
+![FIG-CL-TAV-05 Closed-loop activity](figures/FIG-CL-TAV-05-closed-loop-activity.svg)
+
+![FIG-CL-TAV-07 Two state machines](figures/FIG-CL-TAV-07-two-state-machines.svg)
 
 ## Experiment design
 
@@ -40,7 +57,24 @@ CR-2026-012 的读者入口。权威文件仍是方法报告、DD-028／029／03
 
 ## 系统工程视图
 
-SysML 1.6 记法 PlantUML 源：`docs/research/publication/models/FIG-CL-TAV-01` 至 `08`。不声称可执行或完整元模型符合性。两套机器：验证会话 \(M_{\mathrm{sess}}\) 与协议操作 \(M_{\mathrm{prot}}\)，只通过接口和观测关联。
+SysML 1.6 记法 PlantUML 源：[`../../../docs/research/publication/models/`](../../../docs/research/publication/models/)。不声称可执行或完整元模型符合性。两套机器保持独立；通信是 FIG-CL-TAV-04 端口，不是跨机状态迁移。已绑定 M2 只覆盖 INFORMATION／UPLOAD。
+
+| ID | 图注 | 读者图 |
+|---|---|---|
+| FIG-CL-TAV-01 | 上下文：IUT、适配器、645 边界 | [svg](figures/FIG-CL-TAV-01-context.svg) |
+| FIG-CL-TAV-02 | 需求层次与 CRS-M1-00365 追踪 | [svg](figures/FIG-CL-TAV-02-requirement-layers.svg) |
+| FIG-CL-TAV-03 | BDD 分块 | [svg](figures/FIG-CL-TAV-03-bdd.svg) |
+| FIG-CL-TAV-04 | IBD 端口 | [svg](figures/FIG-CL-TAV-04-ibd.svg) |
+| FIG-CL-TAV-05 | 带可准入集合的闭环活动 | [svg](figures/FIG-CL-TAV-05-closed-loop-activity.svg) |
+| FIG-CL-TAV-06 | 诊断序列；第二次 Izk 进入 Analysis | [svg](figures/FIG-CL-TAV-06-diagnostic-sequence.svg) |
+| FIG-CL-TAV-07 | 两套独立机器 | [svg](figures/FIG-CL-TAV-07-two-state-machines.svg) |
+| FIG-CL-TAV-08 | 参数约束，不是已求解网络 | [svg](figures/FIG-CL-TAV-08-parametric.svg) |
+
+![FIG-CL-TAV-02 需求层次与 CRS-M1-00365 追踪](figures/FIG-CL-TAV-02-requirement-layers.svg)
+
+![FIG-CL-TAV-05 闭环活动](figures/FIG-CL-TAV-05-closed-loop-activity.svg)
+
+![FIG-CL-TAV-07 两套状态机](figures/FIG-CL-TAV-07-two-state-machines.svg)
 
 ## 实验设计
 

@@ -45,12 +45,12 @@ Each chapter below states the claim it must carry, the CL-RQ it answers, the alg
 
 ### Chapter 2 Related work and problem definition
 
-- **Claim:** Existing requirements-based testing, ioco-style conformance, mutation adequacy and diagnostic classifiers are ingredients, not a closed observation→update→select loop with explicit stopping.
+- **Claim:** Requirements-based testing, ioco-style conformance, mutation adequacy and diagnostic classifiers each supply part of detection or localization. Whether a cited method already forms an observation→update→select loop with explicit finite termination, preparatory actions and unknown-effect `ERROR` remains a literature question to check against feedback mechanism, fault domain, timing uncertainty, cost objective and stopping guarantee. It is not a proved absence and not a first-invention claim for CL-TAV.
 - **Answers:** positions CL-RQ1 against related work; keeps RQ6 (transfer) explicitly unanswered.
 - **Uses:** no CL-TAV equations; defines the three comparison arms used later (CL-T, CL-A, CL-TA vs CL-LOOP).
 - **Needs:** literature already cited in RR-2026-001; no new “first invention” wording.
 - **Figures:** optional related-work map, not SysML.
-- **Have / gap:** §1.6 novelty boundary exists. Gap is a problem statement that names overlapping observations, preparatory actions and vanishing costs.
+- **Have / gap:** §1.6 novelty boundary exists. Gap is a method-by-method comparison of those five attributes, not a blanket “not a closed loop” verdict.
 
 ### Chapter 3 System-engineering design and CL-TAV architecture
 
@@ -112,10 +112,10 @@ CL-TAV models **two** machines. They must not be merged into one protocol EFSM.
 
 | Machine | States (first version) | Alphabet / interface | Must not |
 |---|---|---|---|
-| Verification session \(M_{\mathrm{sess}}\) | Idle, Select, Execute, Update, Prep, Stop-Budget, Stop-NoDistinguisher, Stop-Equivalent, Stop-Singleton, Stop-Empty, Stop-Error, Stop-645 | selects tests, consumes budget/\(K_{\max}\), updates \(H_k\), records `ERROR` | copy UPLOAD/FIND protocol states as its own |
-| Protocol operation \(M_{\mathrm{prot}}\) | the IUT-facing 615A operation states (INFORMATION, UPLOAD, DOWNLOAD modes, FIND, abort/reject) | messages, files, timers visible on the observation interface | silently update \(H_k\) or spend verification budget |
+| Verification session \(M_{\mathrm{sess}}\) | Idle, Admit, Select, Execute, Update, ErrorHandle, Recover, Prep, and the stop classes | selects from \(A(q_k)\) through FIG-CL-TAV-04 ports; one resource mode | copy UPLOAD/FIND protocol states as its own |
+| Protocol operation \(M_{\mathrm{prot}}\) | bound M2 INFORMATION/UPLOAD black box; DOWNLOAD/FIND listed as planned scope without behavior edges | messages, files, timers on the observation port | silently update \(H_k\) or spend verification budget; unaudited Information→other-operation edges |
 
-Association: an Execute step of \(M_{\mathrm{sess}}\) applies a stimulus to \(M_{\mathrm{prot}}\) and reads \(I_{z_k}\) from the observation port. Preparatory actions are session steps whose protocol effect is only to change observable \(q_k\) so that a later test in \(T(q_{k+1})\) can distinguish. Bound M2 remains an UPLOAD/INFORMATION protocol model; it is not \(M_{\mathrm{sess}}\) and does not cover new CRS services.
+Association: an Execute step of \(M_{\mathrm{sess}}\) applies a stimulus to \(M_{\mathrm{prot}}\) through FIG-CL-TAV-04 ports and reads \(I_{z_k}\). That association is not a cross-machine state transition. Preparatory actions are session steps in \(A(q_k)\). Bound M2 remains an UPLOAD/INFORMATION protocol model; it is not \(M_{\mathrm{sess}}\) and does not cover new CRS services.
 
 ## SysML views
 
@@ -124,12 +124,12 @@ Editable sources live in [`models/`](models/). They are **SysML 1.6 notation-bas
 | ID | View | Algorithm / architecture content that must appear |
 |---|---|---|
 | FIG-CL-TAV-01 | Context | IUT, adapter, operator, network/clock, 645 integrity boundary |
-| FIG-CL-TAV-02 | Requirement layers | method goals ≠ protocol CRS ≠ tool requirements |
+| FIG-CL-TAV-02 | Requirement layers | method goals ≠ protocol CRS ≠ tool requirements; representative source→CRS→constraint trace with real IDs |
 | FIG-CL-TAV-03 | BDD | Test, Observation, Analysis, Diagnosis, Selection, Evidence as separate blocks |
 | FIG-CL-TAV-04 | IBD | trace, constraint, candidate-set, test-selection, budget ports |
-| FIG-CL-TAV-05 | Closed-loop activity | execute → observe → verdict → update \(H_k\) → select or stop, including Prep, budget spend, `ERROR` |
-| FIG-CL-TAV-06 | Diagnostic sequence | failure, overlapping observation, preparatory action, later distinguishing test |
-| FIG-CL-TAV-07 | Two state machines | \(M_{\mathrm{sess}}\) stop classes vs \(M_{\mathrm{prot}}\) operation states, joined only by observation |
+| FIG-CL-TAV-05 | Closed-loop activity | admissible \(A(q_k)\) first, selected-mode XOR, charge once, Prep, `ERROR` split, every stop class |
+| FIG-CL-TAV-06 | Diagnostic sequence | overlapping observation, preparatory action, later distinguishing test, second \(I_{z_k}\) into Analysis |
+| FIG-CL-TAV-07 | Two state machines | \(M_{\mathrm{sess}}\) vs bound-M2 black box; ports not cross-machine transitions |
 | FIG-CL-TAV-08 | Parametric | \(I\), \(\varepsilon\), \(J\), \(c_{\min}\), \(B\) or \(K_{\max}\), remaining-set score |
 
 ## Source audit before CRS generation
@@ -191,12 +191,12 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 
 ### 第2章 相关工作与问题定义
 
-- **论点：** 基于需求的测试、ioco 符合、变异充分性和诊断分类器都是元件，不是带显式停止的观测→更新→选择闭环。
+- **论点：** 基于需求的测试、ioco 符合、变异充分性和诊断分类器各自提供检测或定位的一部分。某一被引方法是否已经构成带显式有限终止、准备性动作和效果未知 `ERROR` 的观测→更新→选择闭环，仍须按反馈机制、故障域、时序不确定性、成本目标和停止保证对照文献，不能由术语分类得出“已有工作都不是闭环”，也不得据此声称 CL-TAV 首次发明。
 - **回答：** 把 CL-RQ1 放到相关工作中；RQ6 明确未回答。
 - **使用：** 不用 CL-TAV 方程；定义后文比较臂 CL-T、CL-A、CL-TA 与 CL-LOOP。
 - **需要：** RR-2026-001 已引用文献；不得新写“首次发明”。
 - **图：** 可选相关工作图，不是 SysML。
-- **已有／缺口：** §1.6 创新边界已有。缺口是点名重叠观测、准备性动作和趋零成本的问题陈述。
+- **已有／缺口：** §1.6 创新边界已有。缺口是按上述五个属性做方法对方法比较，而不是总括“不是闭环”。
 
 ### 第3章 系统工程设计与 CL-TAV 架构
 
@@ -258,10 +258,10 @@ CL-TAV 建**两套**机器，不得并成一个协议 EFSM。
 
 | 机器 | 首版状态 | 字母表／接口 | 禁止 |
 |---|---|---|---|
-| 验证会话 \(M_{\mathrm{sess}}\) | Idle、Select、Execute、Update、Prep、Stop-Budget、Stop-NoDistinguisher、Stop-Equivalent、Stop-Singleton、Stop-Empty、Stop-Error、Stop-645 | 选择测试、消耗预算／\(K_{\max}\)、更新 \(H_k\)、记录 `ERROR` | 把 UPLOAD／FIND 协议状态当成自己的状态 |
-| 协议操作 \(M_{\mathrm{prot}}\) | IUT 可见的 615A 操作状态（INFORMATION、UPLOAD、DOWNLOAD 模式、FIND、中断／拒绝） | 观测接口上可见的消息、文件、计时器 | 静默更新 \(H_k\) 或消耗验证预算 |
+| 验证会话 \(M_{\mathrm{sess}}\) | Idle、Admit、Select、Execute、Update、ErrorHandle、Recover、Prep 及停止类 | 经 FIG-CL-TAV-04 端口从 \(A(q_k)\) 选择；一种资源模式 | 把 UPLOAD／FIND 协议状态当成自己的状态 |
+| 协议操作 \(M_{\mathrm{prot}}\) | 已绑定 M2 的 INFORMATION／UPLOAD 黑箱；DOWNLOAD／FIND 仅作计划范围、无行为边 | 观测端口上的消息、文件、计时器 | 静默更新 \(H_k\) 或消耗验证预算；无依据的 Information→其他操作边 |
 
-关联：\(M_{\mathrm{sess}}\) 的 Execute 对 \(M_{\mathrm{prot}}\) 施加刺激，并从观测端口读取 \(I_{z_k}\)。准备性动作是会话步骤，其协议效果只是改变可观测 \(q_k\)，使 \(T(q_{k+1})\) 中的后续测试可区分。已绑定 M2 仍是 UPLOAD／INFORMATION 协议模型；它不是 \(M_{\mathrm{sess}}\)，也不覆盖新 CRS 服务。
+关联：\(M_{\mathrm{sess}}\) 的 Execute 经 FIG-CL-TAV-04 端口对 \(M_{\mathrm{prot}}\) 施加刺激并读取 \(I_{z_k}\)。该关联不是跨机状态迁移。准备性动作是 \(A(q_k)\) 中的会话步骤。已绑定 M2 仍是 UPLOAD／INFORMATION 协议模型；它不是 \(M_{\mathrm{sess}}\)，也不覆盖新 CRS 服务。
 
 ## SysML 视图
 
@@ -270,12 +270,12 @@ CL-TAV 建**两套**机器，不得并成一个协议 EFSM。
 | ID | 视图 | 必须出现的算法／架构内容 |
 |---|---|---|
 | FIG-CL-TAV-01 | 上下文 | IUT、适配器、操作者、网络／时钟、645 完整性边界 |
-| FIG-CL-TAV-02 | 需求层次 | 方法目标 ≠ 协议 CRS ≠ 工具需求 |
+| FIG-CL-TAV-02 | 需求层次 | 方法目标 ≠ 协议 CRS ≠ 工具需求；带真实 ID 的来源→CRS→约束代表追踪 |
 | FIG-CL-TAV-03 | BDD | Test、Observation、Analysis、Diagnosis、Selection、Evidence 分块 |
 | FIG-CL-TAV-04 | IBD | trace、constraint、候选集、测试选择、预算端口 |
-| FIG-CL-TAV-05 | 闭环活动 | 执行→观测→判定→更新 \(H_k\)→选择或停止，含 Prep、预算消耗、`ERROR` |
-| FIG-CL-TAV-06 | 诊断序列 | 失败、重叠观测、准备性动作、随后的区分测试 |
-| FIG-CL-TAV-07 | 两套状态机 | \(M_{\mathrm{sess}}\) 停止类与 \(M_{\mathrm{prot}}\) 操作状态，只通过观测连接 |
+| FIG-CL-TAV-05 | 闭环活动 | 先构造可准入 \(A(q_k)\)、所选模式 XOR、一次计费、Prep、拆分 `ERROR`、全部停止类 |
+| FIG-CL-TAV-06 | 诊断序列 | 重叠观测、准备性动作、随后的区分测试、第二次 \(I_{z_k}\) 进入 Analysis |
+| FIG-CL-TAV-07 | 两套状态机 | \(M_{\mathrm{sess}}\) 对已绑定 M2 黑箱；端口而非跨机状态迁移 |
 | FIG-CL-TAV-08 | 参数 | \(I\)、\(\varepsilon\)、\(J\)、\(c_{\min}\)、\(B\) 或 \(K_{\max}\)、剩余集评分 |
 
 ## 来源审计先于 CRS 生成

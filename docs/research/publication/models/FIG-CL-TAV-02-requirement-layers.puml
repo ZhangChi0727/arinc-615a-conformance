@@ -1,6 +1,6 @@
 @startuml FIG-CL-TAV-02
 skinparam shadowing false
-title FIG-CL-TAV-02 Requirement layers\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nmethod goals, protocol CRS and tool requirements stay distinct
+title FIG-CL-TAV-02 Requirement layers and representative trace\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nmethod goals, protocol CRS and tool requirements stay distinct
 
 package "Method goals" as MG {
   [CL-RQ1 loop consistency]
@@ -24,8 +24,27 @@ package "Tool requirements" as TR {
 
 MG ..> PCRS : method uses protocol obligations
 PCRS ..> TR : tool may later implement
-note right of TR
-  Do not mix the three layers into one CRS.
-  New protocol rows wait for source-unit audit.
+
+package "Representative trace E1 subset" as TRACE {
+  [SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E007-7726A816FFE7] as SRC
+  [CRS-M1-00365] as CRS365
+  [CRS-M1-00366] as CRS366
+  [CRS-M1-00367] as CRS367
+  [constraint: LUR write order] as CON
+  [Test / Analysis planned VC] as TA
+  [tool module later PR] as TOOL
+  [Evidence not executed] as EV
+}
+
+SRC --> CRS365 : source unit to requirement
+CRS365 --> CRS366
+CRS366 --> CRS367
+CRS367 --> CON
+CON --> TA
+TA ..> TOOL : planned
+TOOL ..> EV : planned; satisfy/verify are model relations,\nnot executed verification
+note bottom of TRACE
+  Real bound-M1 IDs. DOWNLOAD/FIND traces wait for source-unit audit.
+  No executed verify is claimed.
 end note
 @enduml
