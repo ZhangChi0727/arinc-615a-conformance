@@ -613,27 +613,41 @@ budget mode \((c_{\min},B)\) or round mode \(K_{\max}\).
 
 Before scoring, form the admissible action set \(A(q_k)\) of tests,
 preparatory actions and recovery actions that meet preconditions **and** the
-selected-mode resource constraint. Charge each executed action, including
-`ERROR`, exactly once after admission. Do not execute Prep, Recover or a retry
-from outside \(A(q_k)\). If \(A(q_k)=\emptyset\), classify the stop
-(Stop-Budget / Stop-NoDistinguisher / Stop-Error); do not take
-\(\arg\min\) of an empty set.
+selected-mode resource constraint, then the selectable set \(S\subseteq A(q_k)\):
+currently valid strictly-reducing tests, else Prep, else Recover. Charge each
+executed action, including `ERROR`, exactly once after admission. Do not
+execute from nonempty \(A\) when \(S=\emptyset\) (Admit table A2–A5). Do not
+take \(\arg\min\) of an empty \(S\).
 
-Score only admissible tests that are **strictly reducing**: some finite
-observation class leaves a proper subset of \(H_k\). The score
+Project \(\mathrm{Obs}(t,q_k)\) onto current \(H_k\) and keep only nonempty
+survivor sets. Score only tests that are **strictly reducing** on that
+currently valid collection: some class satisfies
+\(0<|\mathrm{survivors}|<|H_k|\). Empty intersections from already-excluded
+hypotheses are not extra score classes and do not create distinguishing value.
+A test with no currently valid class is a prediction gap, not a score-0
+perfect test. An executed observation that empties \(H_k\) remains Stop-Empty.
+
+The score
 
 \[
-s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|
+s(t) = \max_{o \in \mathrm{Obs}_{\mathrm{cur}}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|
 \]
 
-is one-step minimax among those tests. \(s(t)=|H_k|\) means the worst class
-does not shrink; it does **not** mean the test has no diagnostic value.
-Select \(\arg\min s(t)\) over strictly-reducing tests in \(A(q_k)\). If that
-set is empty, select an admissible Prep; if none, an admissible Recover.
-Uninformative tests stay out of the minimax set even when they are in
-\(A(q_k)\). Ties: smaller \(\mathrm{cost}(t)\), then stable id. This is
-**one-step minimax in remaining-candidate cardinality**. It is not global
-optimality, not minimum total test cost, and not an optimal diagnostic
+uses the same currently valid nonempty classes. \(s(t)=|H_k|\) means the worst
+valid class does not shrink; it does **not** mean the test has no diagnostic
+value. Select \(\arg\min s(t)\) over strictly-reducing tests in \(S\). If none,
+select Prep; if none, Recover. Uninformative tests may stay in \(A\) but not in
+\(S\). Ties: smaller \(\mathrm{cost}(t)\), then stable id.
+
+Admit/Select table, matching FIG-CL-TAV-05/07 and the walker: **A1** \(S\)
+nonempty, execute; **A2** KNOWN, a strictly-reducing TEST or Prep exists but is
+unaffordable, Stop-Budget; **A3** KNOWN, no strictly-reducing TEST and no Prep,
+Stop-NoDistinguisher; **A4** UNKNOWN, Recover not eligible, Stop-Error;
+**A5** UNKNOWN, Recover eligible but unaffordable, Stop-Budget. Keep the ERROR
+and UNKNOWN facts under A5. Recover returns to KNOWN only after the declared
+target is confirmed; an unconfirmed Recover stays UNKNOWN and re-enters Admit.
+This is **one-step minimax in remaining-candidate cardinality**. It is not
+global optimality, not minimum total test cost, and not an optimal diagnostic
 strategy.
 
 Not default this round (allowed later as comparison arms; a new DD is required
@@ -667,8 +681,9 @@ diagnostic value. Distinguish three “cannot shrink” returns:
 
 Update-path stop classes are exclusive in this order, matching FIG-CL-TAV-05,
 FIG-CL-TAV-07 and the bounded walker: Stop-Empty, Stop-Singleton, Stop-645,
-Stop-Equivalent, then Stop-Budget; otherwise continue. Recover-not-admissible
-is an ErrorHandle stop only under unknown-effect.
+Stop-Equivalent, then Stop-Budget; otherwise continue. Admit uses A1–A5:
+Recover-not-eligible is A4 Stop-Error under unknown-effect; eligible but
+unaffordable Recover is A5 Stop-Budget and does not erase the ERROR record.
 
 Unknown-effect recovery is an explicit eligibility (declared recovery target
 and `recover_when_unknown`), not `enabled_at` of the untrusted \(q\). \(H_k\)
@@ -721,8 +736,8 @@ default complexity claim.
    Worst-case remaining count is 2 because \(a\) keeps both. Outcomes \(b\) or
    \(c\) distinguish. Do not discard the test as having no diagnostic value.
 5. **No distinguishing test now; a preparatory action may enable one.** From
-   observable \(q_k\) no executable test has a strictly-reducing observation
-   class (some uninformative tests may still have \(s(t)=|H_k|\)). If a Prep is
+   observable \(q_k\) no executable test has a currently valid strictly-reducing
+   observation class (some uninformative tests may still have \(s(t)=|H_k|\)). If a Prep is
    in \(A(q_k)\), execute it and recompute; do not spend the budget on the
    uninformative tests. If a strictly-reducing test exists but is unaffordable,
    return Stop-Budget, not proved equivalence. If neither distinguisher nor Prep
@@ -1118,22 +1133,31 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 观测类。须声明**一种**资源模式，禁止用逻辑或把预算模式与轮次模式混用：预算模式
 \((c_{\min},B)\) 或轮次模式 \(K_{\max}\)。
 
-评分前先构造可准入动作集合 \(A(q_k)\)：满足前置条件**并且**满足所选模式资源约束的
-测试、准备性动作和恢复动作。每个已执行动作（含 `ERROR`）只在准入后计费一次。不得在
-\(A(q_k)\) 之外执行 Prep、Recover 或重试。若 \(A(q_k)=\emptyset\)，先分类停止
-（Stop-Budget／Stop-NoDistinguisher／Stop-Error），禁止对空集合取 \(\arg\min\)。
+评分前先构造可准入集合 \(A(q_k)\)：满足前置条件**并且**满足所选模式资源约束的
+测试、准备性动作和恢复动作；再构造可选集合 \(S\subseteq A(q_k)\)：当前有效的严格缩小
+测试，否则 Prep，否则 Recover。每个已执行动作（含 `ERROR`）只在准入后计费一次。\(A\)
+非空但 \(S=\emptyset\) 时按 Admit 表 A2–A5 分类，不得 Execute。禁止对空 \(S\) 取
+\(\arg\min\)。
 
-只对可准入且**严格缩小**的测试评分：某一有限观测类使剩余候选成为 \(H_k\) 的真子集。
+把 \(\mathrm{Obs}(t,q_k)\) 投影到当前 \(H_k\)，只保留非空幸存集。只对在该**当前有效**
+集合上**严格缩小**的测试评分：某一类满足 \(0<|\mathrm{survivors}|<|H_k|\)。已排除假设
+造成的空交集不是额外评分类，也不构成区分价值。没有当前有效类的测试是预测缺口，不是
+score=0 的完美测试。实际执行得到空 \(H_k\) 仍为 Stop-Empty。
 
 \[
-s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|
+s(t) = \max_{o \in \mathrm{Obs}_{\mathrm{cur}}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|
 \]
 
-只在这些测试上做一步 minimax。\(s(t)=|H_k|\) 表示最坏类不缩小，**不等于**没有诊断价值。
-在 \(A(q_k)\) 中对严格缩小测试取 \(\arg\min s(t)\)。若该集合为空，再选可准入 Prep；若仍无，
-再选可准入 Recover。无信息测试即使已在 \(A(q_k)\) 中也不进入 minimax 集合。并列时先更小
-\(\mathrm{cost}(t)\)，再稳定测试 ID。这是**候选数量意义下的一步 minimax**，不是全局最优、
-最小总测试成本或最优诊断策略。
+评分只用同一当前有效非空类。\(s(t)=|H_k|\) 表示最坏有效类不缩小，**不等于**没有诊断
+价值。在 \(S\) 中对严格缩小测试取 \(\arg\min s(t)\)；若无则 Prep；若无则 Recover。
+无信息测试可以留在 \(A\) 中但不进入 \(S\)。并列时先更小 \(\mathrm{cost}(t)\)，再稳定
+ID。Admit/Select 表与 FIG-CL-TAV-05／07 及走查器相同：**A1** \(S\) 非空则执行；
+**A2** KNOWN 且存在严格缩小 TEST 或 Prep 但不可负担，Stop-Budget；**A3** KNOWN 且无
+严格缩小 TEST 也无 Prep，Stop-NoDistinguisher；**A4** UNKNOWN 且 Recover 无资格，
+Stop-Error；**A5** UNKNOWN 且 Recover 有资格但不可负担，Stop-Budget。A5 须保留 ERROR
+与 UNKNOWN 事实。Recover 仅在确认已声明目标后回到 KNOWN；未确认则保持 UNKNOWN 并回到
+Admit。这是**候选数量意义下的一步 minimax**，不是全局最优、最小总测试成本或最优诊断
+策略。
 
 本轮不作默认（可作为后继比较臂；替换默认须新 DD）：
 
@@ -1162,7 +1186,8 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 
 更新路径停止类按下述顺序互斥，与 FIG-CL-TAV-05、FIG-CL-TAV-07 及有界走查器相同：
 Stop-Empty、Stop-Singleton、Stop-645、Stop-Equivalent，然后 Stop-Budget；否则继续。
-Recover 不可用只在效果未知的 ErrorHandle 下构成停止。
+Admit 使用 A1–A5：Recover 无资格在效果未知下为 A4 Stop-Error；有资格但不可负担为 A5
+Stop-Budget，且不得抹掉 ERROR 记录。
 
 效果未知的恢复是显式资格（已声明恢复目标且 `recover_when_unknown`），不是对不可信
 \(q\) 比较 `enabled_at`。\(H_k\) 保留与 \(q\) 恢复分开。Recover 仅在确认已声明目标后
@@ -1203,7 +1228,7 @@ Recover 不可用只在效果未知的 ErrorHandle 下构成停止。
    \(\{a,c\}\)。因 \(a\) 会保留二者，最坏剩余数为 2；但 \(b\) 或 \(c\) 能够区分。不得把该
    测试当成没有诊断价值而丢弃。
 5. **当前没有区分测试，准备动作后可能可区分。** 在可观测 \(q_k\) 上没有任何可执行测试具有
-   严格缩小的观测类（无信息测试仍可能 \(s(t)=|H_k|\)）。若 Prep 属于 \(A(q_k)\)，则执行后再
+   当前有效的严格缩小观测类（无信息测试仍可能 \(s(t)=|H_k|\)）。若 Prep 属于 \(A(q_k)\)，则执行后再
    计算，不得把预算花在无信息测试上。存在严格缩小测试但不可负担时返回 Stop-Budget，不是
    已证明等价。既无区分测试也无 Prep 时，返回“当前没有可用区分测试”，而不是“任何序列都
    不能区分”。

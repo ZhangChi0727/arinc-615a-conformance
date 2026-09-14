@@ -183,8 +183,9 @@ be merged into the IUT protocol-operation machine \(M_{\mathrm{prot}}\).
 Recover, Prep and the stop classes Stop-Budget, Stop-NoDistinguisher,
 Stop-Equivalent, Stop-Singleton, Stop-Empty, Stop-Error and Stop-645. It
 declares one resource mode: budget \(B\) with \(c_{\min}>0\), or round cap
-\(K_{\max}\). Actions are admitted into \(A(q_k)\) before selection. `ERROR`
-does not exclude candidates; unknown-effect marks \(q\) unknown. \(M_{\mathrm{prot}}\)
+\(K_{\max}\). Actions are admitted into \(A(q_k)\), then selectable \(S\).
+Nonempty \(A\) does not imply Execute. `ERROR` does not exclude candidates;
+unknown-effect marks \(q\) unknown. \(M_{\mathrm{prot}}\)
 is an interface black box: bound M2 covers INFORMATION/UPLOAD only; Media
 Defined DOWNLOAD, Operator Defined DOWNLOAD and FIND are planned CRS scope
 without unaudited behavior edges. Association is only through FIG-CL-TAV-04
@@ -202,9 +203,9 @@ declared subset:
 | FIG-CL-TAV-02 | Requirement layers | method goals, protocol CRS, tool requirements stay distinct; representative source→CRS trace |
 | FIG-CL-TAV-03 | BDD | Test, Observation, Analysis, Diagnosis, Selection, Evidence |
 | FIG-CL-TAV-04 | IBD | trace, constraint, candidate-set, test-selection, budget ports |
-| FIG-CL-TAV-05 | Closed-loop activity | admissible \(A(q_k)\), strictly-reducing minimax then Prep, XOR, charge once, exclusive P1–P5 stops, `ERROR` split |
+| FIG-CL-TAV-05 | Closed-loop activity | \(A\) then \(S\), Admit A1–A5, currently valid strictly-reducing minimax then Prep, XOR, charge once, exclusive P1–P5 stops, `ERROR` split |
 | FIG-CL-TAV-06 | Diagnostic sequence | overlapping observation, preparatory action, later distinguishing test, second \(I_{z_k}\) into Analysis |
-| FIG-CL-TAV-07 | Two state machines | \(M_{\mathrm{sess}}\) versus bound-M2 black box; P1–P5 stops; ports not cross-machine transitions |
+| FIG-CL-TAV-07 | Two state machines | \(M_{\mathrm{sess}}\) versus bound-M2 black box; Admit A1–A5; P1–P5 stops; ports not cross-machine transitions |
 | FIG-CL-TAV-08 | Parametric | \(I\), \(\varepsilon\), \(J\), \(c_{\min}\), \(B\) or \(K_{\max}\), remaining-set score |
 
 ---
@@ -321,7 +322,7 @@ CL-TAV 增加验证会话机器 \(M_{\mathrm{sess}}\)，不得并入 IUT 协议�
 ErrorHandle、Recover、Prep 以及停止类 Stop-Budget、Stop-NoDistinguisher、
 Stop-Equivalent、Stop-Singleton、Stop-Empty、Stop-Error 和 Stop-645。它声明一种
 资源模式：带 \(c_{\min}>0\) 的预算 \(B\)，或轮次上限 \(K_{\max}\)。动作先进入
-\(A(q_k)\) 再选择。`ERROR` 不排除候选；效果未知则将 \(q\) 标为未知。
+\(A(q_k)\)，再形成可选 \(S\)。\(A\) 非空不等于 Execute。`ERROR` 不排除候选；效果未知则将 \(q\) 标为未知。
 \(M_{\mathrm{prot}}\) 是接口化黑箱：已绑定 M2 只覆盖 INFORMATION／UPLOAD；Media
 Defined DOWNLOAD、Operator Defined DOWNLOAD 与 FIND 是计划中的 CRS 范围，不画未经
 审计的行为边。关联只通过 FIG-CL-TAV-04 端口。已绑定 M2 不是 \(M_{\mathrm{sess}}\)。
@@ -337,7 +338,7 @@ Defined DOWNLOAD、Operator Defined DOWNLOAD 与 FIND 是计划中的 CRS 范围
 | FIG-CL-TAV-02 | 需求层次 | 方法目标、协议 CRS、工具需求保持分离；带真实 ID 的来源→CRS 代表追踪 |
 | FIG-CL-TAV-03 | BDD | Test、Observation、Analysis、Diagnosis、Selection、Evidence |
 | FIG-CL-TAV-04 | IBD | trace、constraint、候选集、测试选择、预算端口 |
-| FIG-CL-TAV-05 | 闭环活动 | 可准入 \(A(q_k)\)、先严格缩小再 Prep、XOR、一次计费、互斥 P1–P5 停止、拆分 `ERROR` |
+| FIG-CL-TAV-05 | 闭环活动 | 先 \(A\) 再 \(S\)、Admit A1–A5、当前有效严格缩小再 Prep、XOR、一次计费、互斥 P1–P5 停止、拆分 `ERROR` |
 | FIG-CL-TAV-06 | 诊断序列 | 重叠观测、准备性动作、随后的区分测试、第二次 \(I_{z_k}\) 进入 Analysis |
-| FIG-CL-TAV-07 | 两套状态机 | \(M_{\mathrm{sess}}\) 对已绑定 M2 黑箱；P1–P5 停止；只通过端口连接 |
+| FIG-CL-TAV-07 | 两套状态机 | \(M_{\mathrm{sess}}\) 对已绑定 M2 黑箱；Admit A1–A5；P1–P5 停止；只通过端口连接 |
 | FIG-CL-TAV-08 | 参数 | \(I\)、\(\varepsilon\)、\(J\)、\(c_{\min}\)、\(B\) 或 \(K_{\max}\)、剩余集评分 |

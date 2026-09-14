@@ -45,6 +45,16 @@ UPDATE_STOP_PRIORITY = (
     "Stop-Budget",
 )
 
+# Admit/Select table shared with FIG-CL-TAV-05/07. A is resource-admissible;
+# S is the finally selectable subset. A nonempty does not imply Execute.
+ADMIT_SELECT_TABLE = {
+    "A1": "S nonempty: execute the chosen action",
+    "A2": "KNOWN: a strictly-reducing TEST or Prep exists but is unaffordable: Stop-Budget",
+    "A3": "KNOWN: no strictly-reducing TEST and no Prep: Stop-NoDistinguisher",
+    "A4": "UNKNOWN: Recover not eligible: Stop-Error",
+    "A5": "UNKNOWN: Recover eligible but unaffordable: Stop-Budget",
+}
+
 
 def _is_int(value: object) -> bool:
     return isinstance(value, int) and not isinstance(value, bool)
@@ -165,23 +175,48 @@ def remaining_after(action: Action, hk: set[str], obs: frozenset[str]) -> set[st
     return set(hk) & set(obs)
 
 
-def can_strictly_reduce(action: Action, hk: set[str]) -> bool:
-    """True iff some finite observation class leaves a proper subset of Hk.
+def current_valid_classes(action: Action, hk: set[str]) -> tuple[set[str], ...]:
+    """Project declared classes onto Hk and keep currently realizable nonempty sets.
 
-    s(t)=|Hk| is worst-case non-shrinkage. It is not 'no diagnostic value'.
+    Empty intersections belong to already-excluded hypotheses or are out-of-model
+    at selection time. They are not extra score classes. A later executed
+    observation that empties Hk is still Stop-Empty.
+    """
+    if not action.obs_classes:
+        return ()
+    return tuple(
+        remaining
+        for obs in action.obs_classes
+        if (remaining := remaining_after(action, hk, obs))
+    )
+
+
+def can_strictly_reduce(action: Action, hk: set[str]) -> bool:
+    """True iff some *currently valid* nonempty class leaves a proper subset of Hk.
+
+    Require 0 < |survivors| < |Hk|. s(t)=|Hk| is worst-case non-shrinkage, not
+    'no diagnostic value'. Classes that project to empty are not distinguishing
+    value. A test with obs_classes but no current valid class is a prediction
+    gap, not a score-0 perfect test.
     """
     if action.kind is not ActionKind.TEST or not hk:
         return False
     if action.obs_classes:
-        return any(remaining_after(action, hk, obs) != hk for obs in action.obs_classes)
+        valid = current_valid_classes(action, hk)
+        if not valid:
+            return False
+        return any(len(survivors) < len(hk) for survivors in valid)
     if action.worst_remaining is not None:
-        return action.worst_remaining < len(hk)
+        return 0 < action.worst_remaining < len(hk)
     return False
 
 
 def worst_remaining_count(action: Action, hk: set[str]) -> int:
+    valid = current_valid_classes(action, hk)
+    if valid:
+        return max(len(survivors) for survivors in valid)
     if action.obs_classes:
-        return max(len(remaining_after(action, hk, obs)) for obs in action.obs_classes)
+        return len(hk)
     if action.worst_remaining is not None:
         return action.worst_remaining
     return len(hk)
@@ -225,6 +260,7 @@ def select(session: Session, actions: list[Action]) -> Action | None:
 
 
 def classify_empty(session: Session, library: list[Action]) -> str:
+    """Admit table A2–A5 when selectable S is empty, even if A is not."""
     if session.q_status is QStatus.UNKNOWN:
         eligible = [action for action in library if recover_eligible(action)]
         if eligible:
@@ -240,6 +276,26 @@ def classify_empty(session: Session, library: list[Action]) -> str:
     if distinguisher or preps:
         return "Stop-Budget"
     return "Stop-NoDistinguisher"
+
+
+def admit_decision(session: Session, library: list[Action]) -> str:
+    actions = admissible(session, library)
+    if select(session, actions) is not None:
+        return "A1"
+    if session.q_status is QStatus.UNKNOWN:
+        if any(recover_eligible(action) for action in library):
+            return "A5"
+        return "A4"
+    enabled = [
+        action
+        for action in library
+        if action.kind is not ActionKind.RECOVER and session.q in action.enabled_at
+    ]
+    if any(can_strictly_reduce(action, session.Hk) for action in enabled) or any(
+        action.kind is ActionKind.PREP for action in enabled
+    ):
+        return "A2"
+    return "A3"
 
 
 def admit_or_stop(session: Session, library: list[Action]) -> Action | None:
@@ -338,6 +394,9 @@ def step(
             named_645=named_645,
             equivalent=equivalent,
         )
+        if session.stop is None and session.q_status is QStatus.UNKNOWN:
+            if select(session, admissible(session, library)) is None:
+                session.stop = classify_empty(session, library)
         return chosen
     if observation is None:
         raise ValueError("valid execution requires an observation remaining-set")

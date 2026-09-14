@@ -655,6 +655,10 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
         "confirmed not sent",
         "Charge cost once",
         "strictly-reducing",
+        "selectable",
+        "A1",
+        "A5",
+        "unconfirmed",
         "P1",
         "P5",
         "Stop-Budget",
@@ -669,10 +673,10 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
     ):
         if token not in activity:
             errors.append(f"closed-loop activity view is missing {token}")
-    if "or round < Kmax" in activity:
-        errors.append("closed-loop activity view must not OR budget and round modes")
+    if "if (A empty?)" in activity and "S empty" not in activity:
+        errors.append("closed-loop activity view must not Execute from nonempty A without selectable S")
     machines = models.get("FIG-CL-TAV-07-two-state-machines.puml", "")
-    for token in ("Msess", "Mprot", "Admit", "ErrorHandle", "bound M2", "FIG-CL-TAV-04", "FIND", "P1", "P5"):
+    for token in ("Msess", "Mprot", "Admit", "ErrorHandle", "bound M2", "FIG-CL-TAV-04", "FIND", "P1", "P5", "A1", "A5", "unconfirmed"):
         if token not in machines:
             errors.append(f"two-machine view is missing {token}")
     if "Information -->" in machines:

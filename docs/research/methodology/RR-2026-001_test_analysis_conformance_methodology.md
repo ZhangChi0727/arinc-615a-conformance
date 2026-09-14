@@ -584,7 +584,7 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
-\(\mathrm{Obs}(t,q_k)\) uses the same uncertainty partitions as \(I_{z_k}\). Score only strictly-reducing tests in the admissible set \(A(q_k)\) under one selected resource mode (budget \(c_{\min},B\) or rounds \(K_{\max}\), never a logical OR of both): some finite observation class must leave a proper subset of \(H_k\). \(s(t)=|H_k|\) is worst-case non-shrinkage, not “no diagnostic value.” If that minimax set is empty, select Prep, else Recover. Uninformative tests in \(A(q_k)\) are not selected. Prep, Recover and retries use that same pre-admission and one-shot charging rule. `ERROR` does not exclude candidates; confirmed-not-sent does not change \(q\)-status, unknown-effect marks \(q\) unknown until a recovery-eligible Recover is confirmed. This is one-step minimax in remaining-candidate count, not global optimality. Out-of-model observations are inconsistency, not extra score classes. Positive-but-vanishing costs are not a termination proof. Algorithm details, three-way cannot-shrink stopping and walk-throughs are in DD-029. They are not proved theorems and are not implemented in this increment.
+\(\mathrm{Obs}(t,q_k)\) uses the same uncertainty partitions as \(I_{z_k}\). Project those classes onto current \(H_k\) and score only currently valid nonempty survivor sets. A test is strictly reducing iff some such class satisfies \(0<|\mathrm{survivors}|<|H_k|\). Empty intersections from excluded hypotheses are not extra score classes and are not distinguishing value; a test with no currently valid class is a prediction gap, not a score-0 perfect test. An executed empty \(H_k\) remains Stop-Empty. Form selectable \(S\subseteq A(q_k)\) under one selected resource mode (budget \(c_{\min},B\) or rounds \(K_{\max}\), never a logical OR of both). If \(S\) is empty, classify Admit A2–A5 even when \(A\) is nonempty. If the minimax set is empty, select Prep, else Recover. Uninformative tests in \(A\) are not selected. Prep, Recover and retries use that same pre-admission and one-shot charging rule. `ERROR` does not exclude candidates; confirmed-not-sent does not change \(q\)-status, unknown-effect marks \(q\) unknown until a recovery-eligible Recover is confirmed. Eligible but unaffordable Recover is A5 Stop-Budget and keeps the ERROR/UNKNOWN facts. This is one-step minimax in remaining-candidate count, not global optimality. Out-of-model observations are inconsistency, not extra score classes. Positive-but-vanishing costs are not a termination proof. Algorithm details, three-way cannot-shrink stopping and walk-throughs are in DD-029. They are not proved theorems and are not implemented in this increment.
 
 ---
 
@@ -752,7 +752,7 @@ Each gate produces signed findings and one of `APPROVE`, `APPROVE WITH ACTIONS`,
 After an executed observation is recorded:
 
 1. Update \(H_k\) under DD-029. `ERROR` does not exclude candidates. Confirmed-not-sent does not change \(q\)-status; unknown-effect marks \(q\) unknown until a recovery-eligible Recover is confirmed.
-2. Form \(A(q_k)\), then select by one-step minimax among strictly-reducing tests, else Prep, else Recover. Charge once. Do not \(\arg\min\) an empty set. Do not spend budget on uninformative tests when Prep is admissible.
+2. Form \(A(q_k)\) then selectable \(S\). Select by one-step minimax among currently valid strictly-reducing tests, else Prep, else Recover. Charge once. If \(S=\emptyset\), classify A2–A5; do not Execute from nonempty \(A\).
 3. Stop under the exclusive update order Empty, Singleton, 645, Equivalent, then Budget; or under no currently usable distinguishing test, selected-mode resource exhausted at Admit, or retry-capped / unrecoverable `ERROR`.
 4. Do not write “no one-step distinguishing test now” as “no later sequence can distinguish.”
 
@@ -2134,7 +2134,7 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
-\(\mathrm{Obs}(t,q_k)\) 使用与 \(I_{z_k}\) 相同的不确定性分区。只对选定资源模式（预算 \(c_{\min},B\) 或轮次 \(K_{\max}\)，禁止二者逻辑或）下可准入且严格缩小的测试评分：某一有限观测类须使剩余候选成为 \(H_k\) 的真子集。\(s(t)=|H_k|\) 是最坏不缩小，不是“没有诊断价值”。若该 minimax 集合为空，再选 Prep，否则 Recover。\(A(q_k)\) 中的无信息测试不被选中。Prep、Recover 与重试使用同一执行前准入和一次计费规则。`ERROR` 不排除候选；确认未发送不改变 \(q\) 状态，效果未知则将 \(q\) 标为未知直至具备恢复资格的 Recover 被确认。这是候选数量意义下的一步 minimax，不是全局最优。模型外观测按不一致处置，不是评分中的额外类。仅“每次成本为正”不能证明有限终止。算法细节、三分“不能缩小”停止与走查见 DD-029。它们不是已证明定理，本增量也不实现。
+\(\mathrm{Obs}(t,q_k)\) 使用与 \(I_{z_k}\) 相同的不确定性分区。把观测类投影到当前 \(H_k\)，只对当前有效的非空幸存集评分。测试严格缩小当且仅当某一此类满足 \(0<|\mathrm{survivors}|<|H_k|\)。已排除假设造成的空交集不是额外评分类，也不构成区分价值；没有当前有效类的测试是预测缺口，不是 score=0 的完美测试。实际执行得到空 \(H_k\) 仍为 Stop-Empty。在选定资源模式（预算 \(c_{\min},B\) 或轮次 \(K_{\max}\)，禁止二者逻辑或）下由 \(A(q_k)\) 形成可选 \(S\)。\(S\) 为空时即使 \(A\) 非空也按 Admit A2–A5 分类。若 minimax 集合为空，再选 Prep，否则 Recover。\(A\) 中的无信息测试不被选中。Prep、Recover 与重试使用同一执行前准入和一次计费规则。`ERROR` 不排除候选；确认未发送不改变 \(q\) 状态，效果未知则将 \(q\) 标为未知直至具备恢复资格的 Recover 被确认。有资格但不可负担的 Recover 为 A5 Stop-Budget，并保留 ERROR／UNKNOWN 事实。这是候选数量意义下的一步 minimax，不是全局最优。模型外观测按不一致处置，不是评分中的额外类。仅“每次成本为正”不能证明有限终止。算法细节、三分“不能缩小”停止与走查见 DD-029。它们不是已证明定理，本增量也不实现。
 
 ---
 
@@ -2298,7 +2298,7 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 在记录一次已执行观测之后：
 
 1. 按 DD-029 更新 \(H_k\)。`ERROR` 不排除候选。确认未发送不改变 \(q\) 状态；效果未知则将 \(q\) 标为未知直至具备恢复资格的 Recover 被确认。
-2. 先构造 \(A(q_k)\)，再对严格缩小测试做一步 minimax，否则 Prep，否则 Recover。只计费一次。禁止对空集合取 \(\arg\min\)。Prep 可准入时不得把预算花在无信息测试上。
+2. 先构造 \(A(q_k)\) 再构造可选 \(S\)。对当前有效的严格缩小测试做一步 minimax，否则 Prep，否则 Recover。只计费一次。\(S=\emptyset\) 时按 A2–A5 分类，不得因 \(A\) 非空而 Execute。
 3. 更新路径按 Empty、Singleton、645、Equivalent、然后 Budget 的互斥顺序停止；或在当前没有可用区分测试、Admit 时所选模式资源耗尽、达重试上限或不可恢复的 `ERROR` 下停止。
 4. 不得把“当前无一步区分测试”写成“任何后续序列都不能区分”。
 

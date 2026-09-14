@@ -394,6 +394,133 @@ def test_update_stop_priority_table_matches_figures() -> None:
         "Stop-Equivalent",
         "Stop-Budget",
     )
+    assert set(loop.ADMIT_SELECT_TABLE) == {"A1", "A2", "A3", "A4", "A5"}
+
+
+def test_excluded_hypothesis_class_is_not_distinguishing_value() -> None:
+    test = loop.Action(
+        "t",
+        loop.ActionKind.TEST,
+        1,
+        frozenset({"q0"}),
+        next_q="q0",
+        obs_classes=(frozenset({"h1", "h2"}), frozenset({"h3"})),
+    )
+    prep = loop.Action("prep", loop.ActionKind.PREP, 1, frozenset({"q0"}), next_q="q1")
+    hk = _hyps("h1", "h2")
+    assert loop.current_valid_classes(test, hk) == ({"h1", "h2"},)
+    assert loop.can_strictly_reduce(test, hk) is False
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=hk, q="q0",
+        B=2, remaining_B=2,
+    )
+    library = [test, prep]
+    assert loop.admit_decision(session, library) == "A1"
+    chosen = loop.step(session, library, observation=_hyps("h1", "h2"))
+    assert chosen is not None and chosen.id == "prep"
+
+
+def test_explicit_empty_class_does_not_make_a_test_valuable() -> None:
+    empty_only = loop.Action(
+        "empty",
+        loop.ActionKind.TEST,
+        1,
+        frozenset({"q0"}),
+        obs_classes=(frozenset(),),
+    )
+    gap = loop.Action(
+        "gap",
+        loop.ActionKind.TEST,
+        1,
+        frozenset({"q0"}),
+        obs_classes=(frozenset({"h3"}),),
+    )
+    hk = _hyps("h1", "h2")
+    assert loop.can_strictly_reduce(empty_only, hk) is False
+    assert loop.can_strictly_reduce(gap, hk) is False
+    assert loop.worst_remaining_count(gap, hk) == 2
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=hk, q="q0",
+        B=2, remaining_B=2,
+    )
+    assert loop.step(session, [gap], observation=_hyps("h1")) is None
+    assert session.stop == "Stop-NoDistinguisher"
+    assert session.charges == []
+    assert loop.admit_decision(
+        loop.Session(loop.ResourceMode.BUDGET, cmin=1, Hk=hk, q="q0", B=2, remaining_B=2),
+        [gap],
+    ) == "A3"
+
+
+def test_unknown_eligible_recover_unaffordable_is_stop_budget() -> None:
+    library = [
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q1"),
+        loop.Action(
+            "recover",
+            loop.ActionKind.RECOVER,
+            2,
+            frozenset({"unreachable"}),
+            next_q="q_sync",
+            recover_when_unknown=True,
+        ),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=1, remaining_B=1, retry_cap=3,
+    )
+    loop.step(session, library, error=loop.ErrorKind.UNKNOWN_EFFECT)
+    assert session.stop == "Stop-Budget"
+    assert session.q_status is loop.QStatus.UNKNOWN
+    assert session.history[0].startswith("ERROR:UNKNOWN_EFFECT")
+    assert session.charges == [("t1", 1)]
+    assert loop.admit_decision(session, library) == "A5"
+
+
+def test_uninformative_only_is_a3_not_execute() -> None:
+    library = [
+        loop.Action(
+            "uninformative",
+            loop.ActionKind.TEST,
+            1,
+            frozenset({"q0"}),
+            obs_classes=(frozenset({"h1", "h2"}),),
+        ),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=3, remaining_B=3,
+    )
+    assert loop.admit_decision(session, library) == "A3"
+    assert loop.admissible(session, library)
+    assert loop.select(session, loop.admissible(session, library)) is None
+    assert loop.step(session, library, observation=_hyps("h1", "h2")) is None
+    assert session.stop == "Stop-NoDistinguisher"
+    assert session.charges == []
+
+
+def test_unconfirmed_recover_then_unaffordable_stays_unknown() -> None:
+    library = [
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q1"),
+        loop.Action(
+            "recover",
+            loop.ActionKind.RECOVER,
+            1,
+            frozenset({"unreachable"}),
+            next_q="q_sync",
+            recover_when_unknown=True,
+        ),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=2, remaining_B=2, retry_cap=3,
+    )
+    loop.step(session, library, error=loop.ErrorKind.UNKNOWN_EFFECT)
+    chosen = loop.step(session, library, observation=_hyps("h1", "h2"))
+    assert chosen is not None and chosen.id == "recover"
+    assert session.q_status is loop.QStatus.UNKNOWN
+    assert session.q == "q0"
+    assert session.stop == "Stop-Budget"
+    assert session.charges == [("t1", 1), ("recover", 1)]
 
 
 def test_resource_domain_rejects_non_finite_and_non_integer_inputs() -> None:

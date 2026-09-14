@@ -5,17 +5,24 @@ title FIG-CL-TAV-07 Two state machines\nSysML 1.6 notation-based views; executab
 state Msess as "Msess verification session" {
   [*] --> Idle
   Idle --> Admit
-  Admit --> Select : admissible A nonempty
-  Admit --> StopBudget : strictly-reducing test or Prep exists but unaffordable
-  Admit --> StopNoDistinguisher : no strictly-reducing test and no Prep
-  Admit --> StopError : q unknown and Recover not admissible
-  Select --> Execute : chosen from A strictly-reducing TEST, else Prep, else Recover
-  Execute --> Update : valid Izk
+  Admit --> Select : A1 selectable S nonempty
+  Admit --> StopBudget : A2 strictly-reducing TEST or Prep unaffordable
+  Admit --> StopNoDistinguisher : A3 no strictly-reducing TEST and no Prep
+  Admit --> StopError : A4 q unknown and Recover not eligible
+  Admit --> StopBudget : A5 q unknown and Recover eligible unaffordable
+  Select --> Execute : chosen from S
+  Execute --> Update : TEST or Prep valid Izk
+  Execute --> RecoverConfirm : Recover valid record
   Execute --> ErrorHandle : ERROR
+  RecoverConfirm --> Update : target confirmed
+  RecoverConfirm --> Admit : unconfirmed; q UNKNOWN
+  RecoverConfirm --> StopBudget : unconfirmed A5
+  RecoverConfirm --> StopError : unconfirmed A4
   ErrorHandle --> StopError : retry cap reached
-  ErrorHandle --> StopError : unknown-effect and Recover not admissible
+  ErrorHandle --> StopError : unknown-effect A4 Recover not eligible
+  ErrorHandle --> StopBudget : unknown-effect A5 Recover eligible unaffordable
   ErrorHandle --> Admit : confirmed not sent and retry remaining
-  ErrorHandle --> Admit : unknown-effect and retry remaining and Recover admissible
+  ErrorHandle --> Admit : unknown-effect and Recover in S
   Update --> StopEmpty : P1 Hk empty
   Update --> StopSingleton : P2 |Hk| == 1
   Update --> Stop645 : P3 named 645-blocked
@@ -30,12 +37,9 @@ state Mprot as "Mprot protocol black box" {
 }
 
 note bottom of Msess
-  Update stop priority equals FIG-CL-TAV-05 and the walker:
-  P1 Stop-Empty, P2 Stop-Singleton, P3 Stop-645,
-  P4 Stop-Equivalent, P5 Stop-Budget, else Admit.
-  Guards are mutually exclusive by that order, not by arrow order.
-  Recover not admissible stops only on unknown-effect.
-  Independent machines. Stimulus and observation use FIG-CL-TAV-04 ports.
-  This note is not a state transition between Msess and Mprot.
+  Admit/Select table A1-A5 equals FIG-CL-TAV-05 and the walker.
+  A nonempty does not imply Execute. S empty uses A2-A5.
+  Update priority P1-P5 is unchanged.
+  Independent machines use FIG-CL-TAV-04 ports, not a cross-machine transition.
 end note
 @enduml

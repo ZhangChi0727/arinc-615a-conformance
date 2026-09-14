@@ -20,9 +20,9 @@ SysML 1.6 notation-based PlantUML sources: [`../../../docs/research/publication/
 | FIG-CL-TAV-02 | Requirement layers and CRS-M1-00365 trace | [svg](figures/FIG-CL-TAV-02-requirement-layers.svg) |
 | FIG-CL-TAV-03 | BDD blocks | [svg](figures/FIG-CL-TAV-03-bdd.svg) |
 | FIG-CL-TAV-04 | IBD ports | [svg](figures/FIG-CL-TAV-04-ibd.svg) |
-| FIG-CL-TAV-05 | Closed-loop activity; strictly-reducing then Prep; P1–P5 stops | [svg](figures/FIG-CL-TAV-05-closed-loop-activity.svg) |
+| FIG-CL-TAV-05 | Closed-loop activity; A then S; Admit A1-A5 | [svg](figures/FIG-CL-TAV-05-closed-loop-activity.svg) |
 | FIG-CL-TAV-06 | Diagnostic sequence; Prep over uninformative; second Izk to Analysis | [svg](figures/FIG-CL-TAV-06-diagnostic-sequence.svg) |
-| FIG-CL-TAV-07 | Two machines; exclusive P1–P5 stops | [svg](figures/FIG-CL-TAV-07-two-state-machines.svg) |
+| FIG-CL-TAV-07 | Two machines; Admit A1-A5; exclusive P1–P5 stops | [svg](figures/FIG-CL-TAV-07-two-state-machines.svg) |
 | FIG-CL-TAV-08 | Parametric constraints, not a solved network | [svg](figures/FIG-CL-TAV-08-parametric.svg) |
 
 ![FIG-CL-TAV-02 Requirement layers and CRS-M1-00365 trace](figures/FIG-CL-TAV-02-requirement-layers.svg)
@@ -65,9 +65,9 @@ SysML 1.6 记法 PlantUML 源：[`../../../docs/research/publication/models/`](.
 | FIG-CL-TAV-02 | 需求层次与 CRS-M1-00365 追踪 | [svg](figures/FIG-CL-TAV-02-requirement-layers.svg) |
 | FIG-CL-TAV-03 | BDD 分块 | [svg](figures/FIG-CL-TAV-03-bdd.svg) |
 | FIG-CL-TAV-04 | IBD 端口 | [svg](figures/FIG-CL-TAV-04-ibd.svg) |
-| FIG-CL-TAV-05 | 闭环活动；先严格缩小再 Prep；P1–P5 停止 | [svg](figures/FIG-CL-TAV-05-closed-loop-activity.svg) |
+| FIG-CL-TAV-05 | 闭环活动；先 A 再 S；Admit A1-A5 | [svg](figures/FIG-CL-TAV-05-closed-loop-activity.svg) |
 | FIG-CL-TAV-06 | 诊断序列；Prep 优先于无信息测试；第二次 Izk 进入 Analysis | [svg](figures/FIG-CL-TAV-06-diagnostic-sequence.svg) |
-| FIG-CL-TAV-07 | 两套机器；互斥 P1–P5 停止 | [svg](figures/FIG-CL-TAV-07-two-state-machines.svg) |
+| FIG-CL-TAV-07 | 两套机器；Admit A1-A5；互斥 P1–P5 停止 | [svg](figures/FIG-CL-TAV-07-two-state-machines.svg) |
 | FIG-CL-TAV-08 | 参数约束，不是已求解网络 | [svg](figures/FIG-CL-TAV-08-parametric.svg) |
 
 ![FIG-CL-TAV-02 需求层次与 CRS-M1-00365 追踪](figures/FIG-CL-TAV-02-requirement-layers.svg)
