@@ -53,14 +53,14 @@ silently redefine the Core.
 **CL-TAV method, paper plan and expanded protocol CRS candidate**
 
 - Record the bounded M2 ordinary merge as a preserved fact. That exit covers UPLOAD/INFORMATION only. This increment does not transplant that approval onto new CRS services and does not start M3.
-- Adopt CL-TAV as the successor research method (CR-2026-012 / DD-028). Candidate algorithm, stop rules and comparison baselines are in DD-029 and await design-direction confirmation before algorithm assertions are hardened.
+- Adopt CL-TAV as the successor research method (CR-2026-012 / DD-028). First-version algorithm direction was accepted 2026-09-14 in DD-029; that is not independent mathematical or RG approval.
 - Expand protocol CRS so INFORMATION, UPLOAD, Media Defined DOWNLOAD, Operator Defined DOWNLOAD, FIND and source-stated abort/reject/exception/retry obligations are audited. Conditional network variants stay separate from the current Compliant instance. ARINC 645 unique algorithm details remain BLOCKED-SOURCE-645.
 - Keep protocol CRS semantically complete in this PR. Tool requirements, verification specifications, interface/configuration contracts and development-ready acceptance belong to a later PR after this CRS is independently accepted. Old M2 does not automatically cover the new scope.
 
 State changes:
 
 - Bounded M2 merge of PR #14 is recorded. M3 remains blocked. CR-2026-012 is the successor method/paper/expanded-protocol-CRS increment.
-- currentStop remains EXECUTABLE-FOUNDATION-GATE for M3 implementation. Design-direction confirmation of DD-029 is required before hardening CL-TAV algorithm assertions.
+- currentStop remains EXECUTABLE-FOUNDATION-GATE for M3 implementation. DD-029 first-version design direction was accepted 2026-09-14 and is not independent mathematical or RG approval.
 
 Unchanged boundaries:
 
@@ -72,12 +72,12 @@ Unchanged boundaries:
 
 ## Current stop
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3 implementation. PR #14 recorded a bounded M2 ordinary merge; that approval is not transplanted onto expanded CRS. Confirm DD-029 design direction, then complete CR-2026-012 method/paper/CRS consistency review on one Head.
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3 implementation. PR #14 recorded a bounded M2 ordinary merge; that approval is not transplanted onto expanded CRS. Complete CR-2026-012 method/paper/CRS consistency review on one Head. The 2026-09-14 DD-029 design-direction acceptance is not independent approval.
 
 ## Next development steps
 
-- Confirm or replace the DD-029 candidate algorithm direction, then complete the method report, paper plan and expanded protocol CRS in this increment.
-- Request complete-range RG0/RG1 and method/math/architecture review on the final unchanged Head. Do not start the development-ready PR, M3, tag or self-approval.
+- Complete the paper outline, expanded protocol CRS and remaining CR-2026-012 consistency artifacts on this branch.
+- Request complete-range RG0/RG1 and method/math/architecture review on the final unchanged Head. Do not treat the 2026-09-14 design-direction acceptance as independent approval, and do not start the development-ready PR, M3, tag or self-approval.
 
 ## 当前开发图景
 
@@ -103,14 +103,14 @@ Unchanged boundaries:
 **CL-TAV 方法、论文计划与扩大协议 CRS 候选**
 
 - 将有界 M2 普通合并作为保留事实记录。该出口只覆盖 UPLOAD／INFORMATION。本增量不把该批准移植到新 CRS 服务，也不启动 M3。
-- 以 CL-TAV 为后继研究方法（CR-2026-012／DD-028）。候选算法、停止规则与比较基线见 DD-029，在设计方向确认前不固化算法断言。
+- 以 CL-TAV 为后继研究方法（CR-2026-012／DD-028）。首版算法方向已于 2026-09-14 在 DD-029 接受；那不是独立数学或 RG 批准。
 - 扩大协议 CRS，使 INFORMATION、UPLOAD、Media Defined DOWNLOAD、Operator Defined DOWNLOAD、FIND 及来源已规定的中断／拒绝／异常／重试义务接受审计。条件化网络变体与当前 Compliant 实例分开。ARINC 645 独有算法细节保持 BLOCKED-SOURCE-645。
 - 本 PR 的协议 CRS 必须语义正确且范围完整。工具需求、验证规格、接口／配置契约和开发就绪验收属于扩大 CRS 被独立接受之后的后继 PR。旧 M2 不会自动覆盖新范围。
 
 状态变化：
 
 - PR #14 的有界 M2 合并已记录。M3 保持阻塞。CR-2026-012 为后继方法／论文／扩大协议 CRS 增量。
-- 对 M3 实现而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。固化 CL-TAV 算法断言前须确认 DD-029 设计方向。
+- 对 M3 实现而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。DD-029 首版设计方向已于 2026-09-14 接受，不是独立数学或 RG 批准。
 
 保持不变的边界：
 
@@ -122,12 +122,12 @@ Unchanged boundaries:
 
 ## 当前停点
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3 实现。PR #14 记录了有界 M2 普通合并；该批准不移植到扩大 CRS。先确认 DD-029 设计方向，再在同一 Head 上完成 CR-2026-012 方法／论文／CRS 一致性评审。
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3 实现。PR #14 记录了有界 M2 普通合并；该批准不移植到扩大 CRS。在同一 Head 上完成 CR-2026-012 方法／论文／CRS 一致性评审。2026-09-14 对 DD-029 的设计方向接受不是独立批准。
 
 ## 下一步开发计划
 
-- 确认或替换 DD-029 候选算法方向，然后在本增量完成方法报告、论文计划与扩大协议 CRS。
-- 在最终不变 Head 上请求完整范围 RG0／RG1 以及方法／数学／架构评审。不启动开发就绪 PR、M3、tag 或自批。
+- 在本分支完成论文大纲、扩大协议 CRS 及 CR-2026-012 其余一致性产物。
+- 在最终不变 Head 上请求完整范围 RG0／RG1 以及方法／数学／架构评审。不得把 2026-09-14 设计方向接受当成独立批准，也不启动开发就绪 PR、M3、tag 或自批。
 <!-- project-status:end -->
 
 ## Read by role / 按角色继续阅读

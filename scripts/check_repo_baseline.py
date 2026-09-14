@@ -130,6 +130,7 @@ REQUIRED_FIXED_FILES = [
     ROOT / "docs/tutorial/sources/COMMON_TUTORIAL_PLAN.md",
     ROOT / "docs/tutorial/sources/ARINC615A_TUTORIAL_PLAN.md",
     REPORT_PATH,
+    METHODOLOGY_DIR / "rr_2026_001_revision_identity.json",
     ARCHIVED_READER_REPORT_PATH,
 ]
 
@@ -277,8 +278,7 @@ INSTANCE_ADDITIONAL_EXPECTED = {
 }
 EXTERNAL_ROLE_LOCATORS = {row[0] for row in METHOD_MAPPING_EXPECTED.values()}
 ACCEPTANCE_IDS = {f"AC-{number:02d}" for number in range(1, 13)}
-REPORT_DISPLAY_MATH_BLOCKS = 94
-REPORT_DISPLAY_MATH_SHA256 = "2050040b3d2572f5eca3b9b7b93fed472e7e236e1951f8c88702534dbe3a24cb"
+METHOD_MATH_IDENTITY_PATH = METHODOLOGY_DIR / "rr_2026_001_revision_identity.json"
 
 
 def read(path: Path) -> str:
@@ -367,6 +367,52 @@ def display_math_fingerprint(text: str) -> tuple[int, str]:
     blocks = re.findall(r"(?ms)^\\\[$.*?^\\\]$", text)
     payload = "\n".join(blocks).encode("utf-8")
     return len(blocks), hashlib.sha256(payload).hexdigest()
+
+
+def git_show_file(commit: str, rel_path: str) -> str | None:
+    result = subprocess.run(
+        ["git", "show", f"{commit}:{rel_path.replace(chr(92), '/')}"],
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if result.returncode != 0:
+        return None
+    return result.stdout.decode("utf-8")
+
+
+def load_method_math_identity() -> dict:
+    return json.loads(METHOD_MATH_IDENTITY_PATH.read_text(encoding="utf-8"))
+
+
+def historical_methodology_math_errors() -> list[str]:
+    """Historical commit objects keep the frozen math identity; the worktree successor does not."""
+    errors: list[str] = []
+    try:
+        identity = load_method_math_identity()
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"cannot load methodology math identity: {exc}"]
+    freeze = identity.get("historicalFreeze") or {}
+    report_path = identity.get("reportPath")
+    commit = freeze.get("commit")
+    if not isinstance(report_path, str) or not isinstance(commit, str):
+        return ["methodology math identity is missing reportPath or historicalFreeze.commit"]
+    text = git_show_file(commit, report_path)
+    if text is None:
+        return [f"cannot read historical methodology object {commit}:{report_path}"]
+    count, digest = display_math_fingerprint(text)
+    if count != freeze.get("displayMathBlocks") or digest != freeze.get("displayMathSha256"):
+        errors.append(
+            "historical methodology display mathematics drifted from the recorded freeze identity: "
+            f"blocks={count}, sha256={digest}"
+        )
+    successor = identity.get("successor") or {}
+    if successor.get("independentMathematicalApproval") is True:
+        errors.append("successor methodology identity must not self-assert independent mathematical approval")
+    if successor.get("independentReviewApproval") is True:
+        errors.append("successor methodology identity must not self-assert independent review approval")
+    return errors
 
 
 def validate_gvs_binding(errors: list[str]) -> None:
@@ -1825,12 +1871,7 @@ def main() -> int:
     for term in REQUIRED_REPORT_TERMS:
         if term not in report_text:
             errors.append(f"methodology report is missing required term: {term}")
-    math_count, math_digest = display_math_fingerprint(report_text)
-    if math_count != REPORT_DISPLAY_MATH_BLOCKS or math_digest != REPORT_DISPLAY_MATH_SHA256:
-        errors.append(
-            "methodology display mathematics changed from the frozen v4.2.1 payload: "
-            f"blocks={math_count}, sha256={math_digest}"
-        )
+    errors.extend(historical_methodology_math_errors())
 
     for legacy in LEGACY_FILENAMES:
         if (METHODOLOGY_DIR / legacy).exists():

@@ -837,8 +837,18 @@ def test_status_rejects_method_identity_conflation() -> None:
     assert any("conflated" in error for error in baseline.sync.status_errors(data, ROOT))
 
 
+def test_historical_methodology_math_identity_is_preserved() -> None:
+    identity = baseline.load_method_math_identity()
+    freeze = identity["historicalFreeze"]
+    text = baseline.git_show_file(freeze["commit"], identity["reportPath"])
+    assert text is not None
+    count, digest = baseline.display_math_fingerprint(text)
+    assert count == freeze["displayMathBlocks"]
+    assert digest == freeze["displayMathSha256"]
+    assert identity["successor"]["independentMathematicalApproval"] is False
+    assert identity["successor"]["independentReviewApproval"] is False
+
+
 def test_math_and_mapping_frozen_payloads_are_unchanged() -> None:
-    count, digest = baseline.display_math_fingerprint(source(baseline.REPORT_PATH.relative_to(ROOT)))
-    assert count == baseline.REPORT_DISPLAY_MATH_BLOCKS
-    assert digest == baseline.REPORT_DISPLAY_MATH_SHA256
+    test_historical_methodology_math_identity_is_preserved()
     assert baseline.mapping_reconciliation_errors(source("docs/control/contracts/GVS_INSTANCE_MAPPING.md")) == []

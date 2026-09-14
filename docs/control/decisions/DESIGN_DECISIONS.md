@@ -542,33 +542,54 @@ Test and Analysis is not claimed as a first invention.
 
 ## DD-029 — Candidate CL-TAV algorithm, observation abstraction and stop rules
 
-**Decision status: CANDIDATE design direction.** This is the §17.3 stop. It is
-not “user already decided.” Algorithm-related assertions must not be hardened
-until the user or a named method reviewer confirms the direction. Source audit
-and outline work that do not depend on these choices may continue.
+**Decision status: first-version design direction, accepted 2026-09-14.** This is
+technical design-direction acceptance under CR-2026-012. It is **not** final
+mathematical-correctness approval and is **not** independent RG0/RG1/RG2
+approval. Remaining formulas, proofs and experiment plans stay open to later
+independent review.
 
 ### Adopted baseline (candidate)
 
 Use a finite hypothesis set, set-valued compatibility and a bounded budget.
-Do not require probability priors. Do not introduce HMM/DTMC/Bayesian machinery
-unless a later CR states a distinct problem that those tools uniquely address.
+Do not adopt default probability priors, HMM, DTMC or Bayesian machinery at
+this research stage. Those tools remain optional later comparison arms under a
+new DD, not silent replacements.
+
+First-version hypothesis domain:
+
+\[
+H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}.
+\]
+
+There is no first-version option that omits \(h_{\mathrm{normal}}\).
+\(H_{\mathrm{single}}\) is the declared finite set of single-fault hypotheses.
+Single-fault is a **research-domain restriction**, not a claim that a real
+system has only one fault. Multi-fault objects are localizable only when listed
+as an explicit finite subset \(H_{\mathrm{multi}}\subseteq 2^{H_{\mathrm{single}}}\).
+An out-of-domain fault need not produce \(H_k=\emptyset\); it may be
+observationally identical to some in-domain hypothesis. The algorithm therefore
+does not promise to detect every out-of-domain fault. If only
+\(h_{\mathrm{normal}}\) remains, that is **not** a complete protocol-conformance
+PASS.
 
 Objects:
 
-- \(H_0\): declared initial hypothesis set, including a no-fault / specified
-  normal-behaviour hypothesis or an explicit “no no-fault element” rule.
-- \(q_k\): current session / IUT-facing state and executed history. Test
-  selection must not assume the IUT resets every round.
-- \(H_k \subseteq H_0\): hypotheses still compatible with observations after
-  round \(k\).
-- \(T(q_k)\): tests executable in \(q_k\). Each test has \(\mathrm{cost}(t)>0\)
-  in one declared unit (do not mix seconds, bytes and counts in one budget).
-- \(O(h,t,q_k)\): abstract observations allowed by the declared model; may
-  include timeout / data / timing partitions. Under nondeterminism, sets for
-  different \(h\) may overlap.
-- \(I_{z_k}\): feasible observation set corresponding to the actual measurement,
-  including measurement uncertainty. Instrument/correlation failure returns
-  `ERROR` and does **not** exclude hypotheses.
+- \(q_k\): **observable session state / history summary**, not the unknown true
+  internal IUT state. Test selection must not assume the IUT resets every round.
+- When internal IUT state is not directly observed, each hypothesis may carry a
+  possible-state set \(S_k(h)\). Whole-history compatibility requires that there
+  exists a state path consistent with the entire executed history. Finding one
+  compatible state independently in each round is not sufficient.
+- \(H_k \subseteq H_0\): hypotheses still compatible after round \(k\).
+- \(T(q_k)\): tests executable in the observable \(q_k\). Each test has
+  \(\mathrm{cost}(t)>0\) in one declared unit.
+- \(O(h,t,q_k)\): abstract observations allowed by the declared model under
+  hypothesis \(h\). Sets for different \(h\) may overlap.
+- \(I_{z_k}\): feasible observation set of the actual measurement, including the
+  **same** measurement-uncertainty partition used when scoring tests. Selecting
+  a test under exact observations and applying error only at execution is
+  forbidden. Instrument/correlation failure returns `ERROR` and does **not**
+  exclude hypotheses.
 
 Candidate update (compatibility, not probability):
 
@@ -576,36 +597,36 @@ Candidate update (compatibility, not probability):
 H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 \]
 
-State and history must be updated with the executed test, the recorded
-observation class, and correlation keys. The set formula alone is not a complete
-algorithm.
+If the realized observation class lies outside \(\bigcup_{h\in H_k}O(h,t_k,q_k)\),
+treat it as model/hypothesis/observation inconsistency, not as a silent extra
+class inside the minimax score. State, history, correlation keys and, when
+used, \(S_k(h)\) must be updated. The set formula alone is not a complete
+algorithm. This specification does not require implementing a state estimator
+in this increment.
 
 ### Selection rule (candidate) and alternatives
 
+Let \(\mathrm{Obs}(t,q_k)\) cover the valid observation classes that current
+candidates can produce under the same uncertainty partitions as \(I_{z_k}\).
 For every executable test with remaining budget \(\ge \mathrm{cost}(t)\),
-compute the worst-case remaining candidate count over visible observation
-classes:
 
 \[
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
 Select \(\arg\min_t s(t)\). Ties: smaller \(\mathrm{cost}(t)\), then stable
-test id. This is an interpretable minimax baseline, **not** claimed optimal.
+test id. This is **one-step minimax in remaining-candidate cardinality**. It is
+not global optimality, not minimum total test cost, and not an optimal
+diagnostic strategy.
 
-Rejected as the default (may appear later as comparison arms, not replacements
-without a new DD):
+Not default this round (allowed later as comparison arms; a new DD is required
+before replacing the default):
 
-| Alternative | Why not default |
+| Alternative | Why not default this round |
 |---|---|
-| Shannon information gain | Requires a probability distribution and usually disjoint partitions |
-| Unit-cost expected remaining-set reduction | Still needs a distribution or an undeclared uniform prior |
-| Multi-step lookahead | Higher complexity; only justified if the one-step baseline is shown insufficient |
-
-Single-fault first: \(H_0\) contains one no-fault hypothesis plus one hypothesis
-per declared fault. Multi-fault combinations are an optional later expansion
-because \(|H|\) grows combinatorially; if enabled, they must be an explicit
-finite subset, not “all combinations.”
+| Shannon information gain | Needs a probability model. Overlapping observation sets are allowed; disjointness is **not** required |
+| Unit-cost expected remaining-set reduction | Needs a distribution or an undeclared uniform prior |
+| Multi-step lookahead | Not withheld until one-step minimax is “proved insufficient.” Unused as default in this round to keep complexity explicit and to keep an interpretable baseline |
 
 Continuous time/data are used only through declared finite conservative
 partitions. Direct enumeration applies only when \(O\) is a finite computable
@@ -613,26 +634,39 @@ partition.
 
 ### Stop / return semantics (candidate)
 
+Worst-case remaining count not decreasing does **not** mean a test has no
+diagnostic value. Distinguish three “cannot shrink” returns:
+
 | Condition | Return | Forbidden shortcut |
 |---|---|---|
-| Budget exhausted | Current \(H_k\) and unnamed pending obligations | Invent a unique location |
-| \(|H_{k+1}|=1\) | Locate only inside the declared hypothesis domain and valid observation conditions | Automatic protocol PASS |
-| Several remaining, no distinguishing executable test | Indistinguishable set | Repeat the same test forever |
+| Budget insufficient | Current \(H_k\); distinguishing tests exist but cost more than remaining budget | Invent a unique location; borrow another unit’s budget |
+| No currently usable distinguishing test | Current \(H_k\), relative only to present \(q_k\), the declared test library and present analysis | Write this as “no later test sequence can distinguish.” A preparatory action may change \(q\) so that a later test distinguishes |
+| Observational equivalence established | Indistinguishable set, only after the corresponding analysis is completed | Equate “no one-step distinguishing test now” with proved observational equivalence |
+| \(|H_{k+1}|=1\) | Locate only inside the declared hypothesis domain and valid observation conditions | Automatic protocol PASS, including when the singleton is \(h_{\mathrm{normal}}\) |
 | \(H_{k+1}=\emptyset\) | Model / hypothesis / observation inconsistency; keep diagnostic data | Pick the “nearest” fault |
-| Instrument `ERROR` | Invalid tool/correlation/record; distinct from IUT `FAIL` | Use ERROR to exclude faults |
+| Instrument `ERROR` | Invalid tool/correlation/record; distinct from IUT `FAIL`; do not exclude candidates | Use ERROR to kill hypotheses; retry without a finite cap |
 | Named 645-blocked item | Explicit inconclusive | Silent removal from the coverage denominator |
+| Budget exhausted or round cap | Current \(H_k\) and pending obligations | Infinite looping |
+
+Finite termination: every executable test has strictly positive cost, and/or a
+declared maximum round count \(K_{\max}\) is set. `ERROR` still consumes the
+recorded cost and is limited by a retry bound so that repeated instrument
+failures cannot loop forever.
 
 ### Complexity accounting (candidate)
 
-Count: \(|H_k|\), \(|T(q_k)|\), number of observation classes per test, and
-oracle/constraint evaluation as **not** \(O(1)\) unless a later bound says so.
-A one-step minimax pass is \(O(|T| \cdot |H| \cdot |O_{\mathrm{class}}|)\) plus
-oracle cost. Do not hide oracle or trace-correlation cost.
+Count: \(|H_k|\), \(|T(q_k)|\), number of observation classes per test, possible
+state-set updates, and oracle/constraint evaluation as **not** \(O(1)\) unless
+a later bound says so. A one-step minimax pass is
+\(O(|T| \cdot |H| \cdot |O_{\mathrm{class}}|)\) plus oracle and correlation
+cost. Do not hide those costs. Multi-step lookahead is excluded from the
+default complexity claim.
 
-### Three walk-throughs (illustrative, not 615A constants)
+### Walk-throughs (illustrative, not 615A constants)
 
 1. **Timing with error (teaching numbers only; not CRS values).** Allowed
    interval \(I=[0,10]\,\mathrm{ms}\), error bound \(\varepsilon=1\,\mathrm{ms}\).
+   The same \(J\) partitions are used both to score tests and to update \(H_k\).
    Measured 8 ms → \(J=[7,9]\subseteq I\) → time constraint PASS. Measured 10 ms
    → \(J=[9,11]\) overlaps \(I\) → INCONCLUSIVE. Measured 12 ms → \(J=[11,13]\)
    disjoint from \(I\) → FAIL. Missing/mismatched records are `ERROR`, not a
@@ -640,29 +674,37 @@ oracle cost. Do not hide oracle or trace-correlation cost.
 2. **Feedback changes the next test.** \(H=\{h_1,h_2,h_3,h_4\}\), equal cost.
    \(t_a\) splits \(\{h_1,h_2\}\) vs \(\{h_3,h_4\}\) (worst remaining 2);
    \(t_b\) splits \(\{h_1\}\) vs \(\{h_2,h_3,h_4\}\) (worst remaining 3). Choose
-   \(t_a\). After observing the first class, recompute from the new \(q_{k+1}\)
-   to separate \(h_1/h_2\); do not replay the first-round menu. If no separator
-   remains, return \(\{h_1,h_2\}\).
-3. **Budget exhaustion.** If the distinguishing test for \(\{h_1,h_2\}\) costs
-   more than remaining budget, stop and return that set. Do not borrow budget
-   from another unit.
+   \(t_a\). After observing the first class, recompute from the new \(q_{k+1}\).
+3. **Budget insufficient.** A distinguishing test exists for \(\{h_1,h_2\}\) but
+   costs more than remaining budget. Return that set under “budget
+   insufficient,” not under proved observational equivalence.
+4. **Overlapping observations: worst-case count does not shrink, some outcomes
+   still distinguish.** \(h_1\) allows \(\{a,b\}\), \(h_2\) allows \(\{a,c\}\).
+   Worst-case remaining count is 2 because \(a\) keeps both. Outcomes \(b\) or
+   \(c\) distinguish. Do not discard the test as having no diagnostic value.
+5. **No distinguishing test now; a preparatory action may enable one.** From
+   observable \(q_k\) every executable test has \(s(t)=|H_k|\). A preparatory
+   test changes \(q\) so that a later test splits \(H_k\). Return “no currently
+   usable distinguishing test,” not “no sequence can distinguish.”
+6. **Out-of-domain fault remains compatible with an in-domain candidate.** True
+   fault \(h^\star\notin H_0\) produces the same observations as some
+   \(h_i\in H_{\mathrm{single}}\). Updates never empty \(H_k\). The algorithm
+   may localize \(h_i\) and will not automatically announce out-of-domain
+   failure.
+7. **Consecutive `ERROR`s do not exclude candidates, but consume budget.** Each
+   `ERROR` leaves \(H_k\) unchanged, records cost, and increments the retry
+   counter. At the retry bound or when budget is exhausted, stop with the same
+   candidate set and an instrument-invalid record.
 
-### Confirmation checklist (design direction only)
+### Design-direction acceptance record (2026-09-14)
 
-Please confirm or replace:
-
-1. Minimax remaining-set selection as the default, with the listed alternatives
-   as comparison arms only.
-2. Single-fault \(H_0\) plus optional explicit finite multi-fault subset.
-3. Set-valued compatibility; no default probability.
-4. Stop/return table above.
-5. SysML 1.6 notation-based views (DD-030) and M2 bound-input isolation (DD-030).
+Accepted as first-version CL-TAV direction: one-step minimax; \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\); set-valued compatibility without default probability; the three-way “cannot shrink” stop table with finite termination; SysML 1.6 notation views and bound-M2 isolation (DD-030). The tightening in this DD is mandatory. This record is not independent mathematical approval.
 
 **Scope:** Candidate algorithm and experimental comparison logic; not an
 implementation and not a proved theorem.
 
-**Status:** Candidate under CR-2026-012, awaiting concentrated design-direction
-confirmation. Not independent mathematical approval.
+**Status:** First-version design direction accepted 2026-09-14 under CR-2026-012.
+Not independent mathematical approval. Not independent RG approval.
 
 ---
 
@@ -970,13 +1012,38 @@ RR-2026-001 v4.2 的冻结身份保留；允许在旧→新处置清单与独立
 
 ## DD-029——候选 CL-TAV 算法、观测抽象与停止规则
 
-**状态为候选设计方向，不是“用户已决定”。** 来源审计与不依赖这些选择的大纲工作可以继续。在用户或指定方法评审者确认方向前，不得把算法相关断言写硬。
+**状态：2026-09-14 接受的首版设计方向。** 这是 CR-2026-012 下的技术设计方向接受，**不是**
+最终数学正确性批准，也**不是**独立 RG0／RG1／RG2 批准。其余公式、证明和实验方案仍接受
+后续独立评审。
 
 ### 采用的基线（候选）
 
-采用有限假设集、集合式相容与有界预算。不要求概率先验。除非后继 CR 证明 HMM／DTMC／Bayesian 能单独解决一个不同问题，否则不引入这些机制。
+采用有限假设集、集合式相容与有界预算。本阶段不采用默认概率先验、HMM、DTMC 或
+Bayesian。它们仍可作为后继比较臂，但不能静默替换默认机制。
 
-对象：\(H_0\) 为声明的初始假设集（含无故障或明确的无“无故障”规则）；\(q_k\) 为当前会话／面向 IUT 的状态与已执行历史，选择测试不得假设每轮自动复位；\(H_k \subseteq H_0\) 为第 \(k\) 轮后仍相容的假设；\(T(q_k)\) 为当前可执行测试，每个测试 \(\mathrm{cost}(t)>0\) 且预算单位单一；\(O(h,t,q_k)\) 为声明模型允许的抽象观测，非确定时不同 \(h\) 的集合可重叠；\(I_{z_k}\) 为测量对应的可行观测集合，仪器／关联失败返回 `ERROR`，不用它排除假设。
+首版假设域：
+
+\[
+H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}.
+\]
+
+首版不再保留“可以没有无故障元素”的选项。\(H_{\mathrm{single}}\) 是已声明的有限单故障
+假设集。单故障是**研究假设域限制**，不是现实系统一定只有一个故障。多故障只有在明确列出
+的有限组合 \(H_{\mathrm{multi}}\subseteq 2^{H_{\mathrm{single}}}\) 中才属于可定位对象。
+域外故障不一定使 \(H_k=\emptyset\)，也可能与某个域内假设表现相同，因此不能承诺自动识别
+所有域外故障。若只剩 \(h_{\mathrm{normal}}\)，仍**不等于**完整协议符合性 PASS。
+
+对象：
+
+- \(q_k\)：**可观测会话状态／历史摘要**，不是未知的真实 IUT 内部状态。选择测试不得假设
+  每轮自动复位。
+- 当内部状态不可直接观测时，每个假设可维护可能状态集合 \(S_k(h)\)。整段历史相容要求存在
+  与全部已执行历史一致的状态路径；不能每轮各找一个相容状态就算整体相容。
+- \(H_k \subseteq H_0\)：第 \(k\) 轮后仍相容的假设。
+- \(T(q_k)\)：在可观测 \(q_k\) 下可执行的测试，\(\mathrm{cost}(t)>0\) 且预算单位单一。
+- \(O(h,t,q_k)\)：声明模型在假设 \(h\) 下允许的抽象观测；不同 \(h\) 的集合可重叠。
+- \(I_{z_k}\)：实际测量对应的可行观测集合，必须使用与选测试时**同一**测量不确定性分区。
+  禁止选测试时假设精确观测、执行时才考虑误差。仪器／关联失败返回 `ERROR`，不排除假设。
 
 候选更新（相容，不是概率）：
 
@@ -984,64 +1051,90 @@ RR-2026-001 v4.2 的冻结身份保留；允许在旧→新处置清单与独立
 H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 \]
 
-必须同时更新状态、历史、已执行测试、观测类别和关联键。仅有该集合公式不算完整算法。
+若实现观测类落在 \(\bigcup_{h\in H_k}O(h,t_k,q_k)\) 之外，按模型／假设／观测不一致处置，
+不得把它当作 minimax 评分里的沉默额外类。必须更新状态、历史、关联键以及（若使用）
+\(S_k(h)\)。仅有该集合公式不算完整算法。本增量不要求实现状态估计器。
 
 ### 选择规则（候选）与替代方案
 
-对每个可执行且剩余预算 \(\ge \mathrm{cost}(t)\) 的测试，按可见观测类计算最坏剩余候选数：
+\(\mathrm{Obs}(t,q_k)\) 应覆盖当前候选在与 \(I_{z_k}\) 相同不确定性分区下可能产生的有效
+观测类。对每个可执行且剩余预算 \(\ge \mathrm{cost}(t)\) 的测试：
 
 \[
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
-选择 \(\arg\min_t s(t)\)。并列时先更小 \(\mathrm{cost}(t)\)，再稳定测试 ID。这是可解释的极小极大基线，**不**声称最优。
+选择 \(\arg\min_t s(t)\)。并列时先更小 \(\mathrm{cost}(t)\)，再稳定测试 ID。这是**候选
+数量意义下的一步 minimax**，不是全局最优、最小总测试成本或最优诊断策略。
 
-默认不采用（可作比较臂，无新 DD 不得替换）：
+本轮不作默认（可作为后继比较臂；替换默认须新 DD）：
 
-| 替代 | 不作默认的原因 |
+| 替代 | 本轮不作默认的原因 |
 |---|---|
-| Shannon 信息增益 | 需要概率分布，且通常要求互斥分区 |
-| 单位成本期望剩余集缩减 | 仍需要分布或未声明的均匀先验 |
-| 多步前瞻 | 复杂度更高；仅在一步基线被证明不足时才有理由 |
-
-单故障优先：\(H_0\) 含一个无故障假设加上每个已声明故障一个假设。多故障组合只作为可选的显式有限子集，因为 \(|H|\) 组合爆炸；不得写成“所有组合”。
+| Shannon 信息增益 | 需要概率模型。允许不同故障的可能观测集合重叠，**不**要求互不重叠 |
+| 单位成本期望剩余集缩减 | 需要分布或未声明的均匀先验 |
+| 多步前瞻 | 不是等一步方法“被证明不足”才允许研究。本轮不默认使用，是为了明确控制复杂度并建立可解释基线 |
 
 连续时间／数据只通过已声明的有限保守分区使用。仅当 \(O\) 为有限可计算分区时直接枚举。
 
 ### 停止／返回语义（候选）
 
+最坏剩余数不下降**不等于**该测试没有诊断价值。三种“不能缩小”必须分开返回：
+
 | 条件 | 返回 | 禁止捷径 |
 |---|---|---|
-| 预算耗尽 | 当前 \(H_k\) 与未决义务 | 伪造唯一定位 |
-| \(|H_{k+1}|=1\) | 仅在声明假设域与有效观测条件下定位 | 自动协议 PASS |
-| 多个剩余且无区分性可执行测试 | 不可区分集合 | 无限重复同一测试 |
+| 预算不足 | 当前 \(H_k\)；存在区分测试但成本超过剩余预算 | 伪造唯一定位；从另一单位借预算 |
+| 当前没有可用区分测试 | 当前 \(H_k\)，仅相对于现在的 \(q_k\)、测试库和分析能力 | 写成“任何后续测试序列都不能区分”。准备性动作可能改变 \(q\) 使后续测试可区分 |
+| 已证明观测等价 | 不可区分集合，且须完成相应分析 | 把“当前无一步区分测试”当成已证明观测等价 |
+| \(|H_{k+1}|=1\) | 仅在声明假设域与有效观测条件下定位 | 自动协议 PASS，包括单例为 \(h_{\mathrm{normal}}\) |
 | \(H_{k+1}=\emptyset\) | 模型／假设／观测不一致；保留诊断数据 | 硬选“最接近”故障 |
-| 仪器 `ERROR` | 工具／关联／记录无效；与 IUT `FAIL` 分开 | 用 ERROR 排除故障 |
+| 仪器 `ERROR` | 工具／关联／记录无效；与 IUT `FAIL` 分开；不排除候选 | 用 ERROR 排除假设；无上限重试 |
 | 具名 645 阻塞项 | 显式未决 | 从覆盖分母静默删除 |
+| 预算耗尽或轮次上限 | 当前 \(H_k\) 与未决义务 | 无限循环 |
+
+有限终止：每个可执行测试成本严格为正，和／或声明最大轮数 \(K_{\max}\)。`ERROR` 仍计入
+实际消耗，并受重试上限约束，避免仪器失败无限循环。
 
 ### 复杂度记账（候选）
 
-计入 \(|H_k|\)、\(|T(q_k)|\)、每测试观测类数，以及 oracle／约束评价（除非后继给出界限，否则**不是** \(O(1)\)）。一步极小极大为 \(O(|T| \cdot |H| \cdot |O_{\mathrm{class}}|)\) 加上 oracle 代价。不得隐藏 oracle 或 trace 关联代价。
+计入 \(|H_k|\)、\(|T(q_k)|\)、每测试观测类数、可能的状态集合更新，以及 oracle／约束评价
+（除非后继给出界限，否则**不是** \(O(1)\)）。一步极小极大为
+\(O(|T| \cdot |H| \cdot |O_{\mathrm{class}}|)\) 加上 oracle 与关联代价。不得隐藏这些代价。
+多步前瞻不纳入默认复杂度主张。
 
-### 三项走查（示例，不是 615A 常数）
+### 走查（示例，不是 615A 常数）
 
-1. **带误差的时序（仅教学数值，不得写入 CRS）。** 允许区间 \(I=[0,10]\,\mathrm{ms}\)，误差界 \(\varepsilon=1\,\mathrm{ms}\)。测得 8 ms → \(J=[7,9]\subseteq I\) → 时间约束 PASS。测得 10 ms → \(J=[9,11]\) 与 \(I\) 重叠 → INCONCLUSIVE。测得 12 ms → \(J=[11,13]\) 与 \(I\) 不相交 → FAIL。缺记录或错配是 `ERROR`，不是简单超时 FAIL。
-2. **反馈改变下一测试。** \(H=\{h_1,h_2,h_3,h_4\}\)，成本相同。\(t_a\) 划分为 \(\{h_1,h_2\}\) 与 \(\{h_3,h_4\}\)（最坏剩余 2）；\(t_b\) 划分为 \(\{h_1\}\) 与 \(\{h_2,h_3,h_4\}\)（最坏剩余 3）。选择 \(t_a\)。观测到第一类后，从新的 \(q_{k+1}\) 再计算以区分 \(h_1/h_2\)；不要重放第一轮菜单。若无区分测试，返回 \(\{h_1,h_2\}\)。
-3. **预算耗尽。** 若区分 \(\{h_1,h_2\}\) 的测试成本超过剩余预算，停止并返回该集合。不得从另一单位借预算。
+1. **带误差的时序（仅教学数值，不得写入 CRS）。** 允许区间 \(I=[0,10]\,\mathrm{ms}\)，
+   误差界 \(\varepsilon=1\,\mathrm{ms}\)。评分与更新使用同一 \(J\) 分区。测得 8 ms →
+   \(J=[7,9]\subseteq I\) → 时间约束 PASS。测得 10 ms → \(J=[9,11]\) 与 \(I\) 重叠 →
+   INCONCLUSIVE。测得 12 ms → \(J=[11,13]\) 与 \(I\) 不相交 → FAIL。缺记录或错配是
+   `ERROR`，不是简单超时 FAIL。
+2. **反馈改变下一测试。** \(H=\{h_1,h_2,h_3,h_4\}\)，成本相同。\(t_a\) 划分为
+   \(\{h_1,h_2\}\) 与 \(\{h_3,h_4\}\)（最坏剩余 2）；\(t_b\) 划分为 \(\{h_1\}\) 与
+   \(\{h_2,h_3,h_4\}\)（最坏剩余 3）。选择 \(t_a\)。观测后从新的 \(q_{k+1}\) 再计算。
+3. **预算不足。** \(\{h_1,h_2\}\) 存在区分测试但成本超过剩余预算。按“预算不足”返回该集合，
+   而不是已证明观测等价。
+4. **重叠观测：最坏不缩小，但部分结果可区分。** \(h_1\) 允许 \(\{a,b\}\)，\(h_2\) 允许
+   \(\{a,c\}\)。因 \(a\) 会保留二者，最坏剩余数为 2；但 \(b\) 或 \(c\) 能够区分。不得把该
+   测试当成没有诊断价值而丢弃。
+5. **当前没有区分测试，准备动作后可能可区分。** 在可观测 \(q_k\) 上每个可执行测试都有
+   \(s(t)=|H_k|\)。一次准备性测试改变 \(q\) 后，后续测试可以分裂 \(H_k\)。返回“当前没有
+   可用区分测试”，而不是“任何序列都不能区分”。
+6. **域外故障仍与域内候选相容。** 真实故障 \(h^\star\notin H_0\) 与某个
+   \(h_i\in H_{\mathrm{single}}\) 产生相同观测。更新不会清空 \(H_k\)。算法可能把 \(h_i\)
+   当作定位结果，不会自动宣布域外失败。
+7. **连续 `ERROR` 不排除候选，但会消耗预算。** 每次 `ERROR` 保持 \(H_k\) 不变，记录成本并
+   增加重试计数。到达重试上限或预算耗尽时停止，返回同一候选集和仪器无效记录。
 
-### 确认清单（仅设计方向）
+### 设计方向接受记录（2026-09-14）
 
-请确认或替换：
-
-1. 以最坏剩余候选数最小化为默认选择，所列替代仅作比较臂。
-2. 单故障 \(H_0\)，外加可选的显式有限多故障子集。
-3. 集合式相容；无默认概率。
-4. 上表停止／返回规则。
-5. SysML 1.6 记法视图与 M2 绑定输入隔离（DD-030）。
+已接受为首版 CL-TAV 方向：一步 minimax；\(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\)；
+无默认概率的集合式相容；三分“不能缩小”停止表与有限终止；SysML 1.6 记法视图与绑定 M2 隔离
+（DD-030）。本 DD 中的收紧为必须项。本记录不是独立数学批准。
 
 **范围：** 候选算法与实验比较逻辑；不是实现，也不是已证明定理。
 
-**状态：** 在 CR-2026-012 下为候选，等待集中设计方向确认。不是独立数学批准。
+**状态：** 2026-09-14 在 CR-2026-012 下接受为首版设计方向。不是独立数学批准。不是独立 RG 批准。
 
 ## DD-030——扩大协议 CRS、分离工具需求、隔离已绑定 M2 输入
 
