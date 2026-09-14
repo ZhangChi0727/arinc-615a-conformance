@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0",
   "artifactId": "ARINC615A3-M1-CRS",
-  "artifactVersion": "M1-CANDIDATE-2",
+  "artifactVersion": "M1-CANDIDATE-3",
   "candidateDisposition": "ADOPT",
   "sourceBindings": [
     {
@@ -13780,8 +13780,8 @@
       "sourceTextHash": "a9e32b5321e932e89fbe657c87e6a8e10b08874f47b645574b35929c34aa0f73",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -13804,8 +13804,8 @@
       "sourceTextHash": "1809112fdb4929c9f0e5bb014b313eccca3b1fd0b4116a630d3e4bc14adcca3a",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -13828,8 +13828,8 @@
       "sourceTextHash": "87e5225963cd0feca6b04c9e63c26632c6766832afe81e62559bdb7a73dcb4d9",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -13852,8 +13852,8 @@
       "sourceTextHash": "093bbe82727e27188e7c45cf8e6faa132617030afa2ac025f6afc1035841c5ef",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -13875,15 +13875,17 @@
       },
       "sourceTextHash": "36878c1f8e7e0703fe9a3259a3c8bb968e3fa644457478d0ca7f3efd846baebe",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00385"
+      ]
     },
     {
       "id": "COV-M1-00571",
@@ -38339,8 +38341,8 @@
       "sourceTextHash": "b443a5630f89f2075717ebed1ad209edc3ca70194a785926f30ca2715a717ee8",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-COMMENTARY",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -38363,8 +38365,8 @@
       "sourceTextHash": "6aa9c6c48086821b4f8df816b6a13b641bf7016b7a5a5a5915708b08d898ada9",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -38387,8 +38389,8 @@
       "sourceTextHash": "000a6ce60a8e48e3e5f0089004a301efd34e53067fc1d29547d138639055221c",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -38411,8 +38413,8 @@
       "sourceTextHash": "0302a467885abfdd4772c9e16c57edab91b02231248202d63170f1c669d13303",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -38435,8 +38437,8 @@
       "sourceTextHash": "6514f177fd44328b945f3e053d42a7bfe2462f75e760cdcf8d7b38741dcd0944",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -38459,8 +38461,8 @@
       "sourceTextHash": "8b6950287147b79bfdf59a01c329f98489e6dcf914216a1c9908126439ef1e3f",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "FIND-CONDITIONAL-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -38482,15 +38484,17 @@
       },
       "sourceTextHash": "b1ed10de43c743545c34394c3d2e6b5cf10d4f1c20068f3cb53d4c3e92617820",
       "sourceModality": "SHOULD",
-      "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "FIND-CONDITIONAL-NETWORK-OR-PRELOAD",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00386"
+      ]
     },
     {
       "id": "COV-M1-01588",
@@ -38507,14 +38511,16 @@
       "sourceTextHash": "9166dcc8150868f454848abe8913e55dc44aa6165930c83611ba87180d5c4fd3",
       "sourceModality": "MAY",
       "conformanceEffect": "OPTIONAL",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "FIND-CONDITIONAL-NETWORK-OR-PRELOAD",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00387"
+      ]
     },
     {
       "id": "COV-M1-01589",
@@ -38531,8 +38537,8 @@
       "sourceTextHash": "49dddc4e151f12358113f494a6e2baf65a165a84362bbc9cc1d9ca0d93aa21b9",
       "sourceModality": "COMMENTARY",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-COMMENTARY",
       "atomicity": {
         "ownershipKind": "COMMENTARY",
         "sentenceCount": 0,
@@ -38555,8 +38561,8 @@
       "sourceTextHash": "5835d3f1cb27f9d6ba925dc846a8ac0905bb0ac25c94edbae783606c59585293",
       "sourceModality": "COMMENTARY",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-COMMENTARY",
       "atomicity": {
         "ownershipKind": "COMMENTARY",
         "sentenceCount": 0,
@@ -38579,8 +38585,8 @@
       "sourceTextHash": "97c78d32da92a1d0848ebe0f69425f476b94e2afdc9c0859b763a8c51cb3f7ae",
       "sourceModality": "COMMENTARY",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-COMMENTARY",
       "atomicity": {
         "ownershipKind": "COMMENTARY",
         "sentenceCount": 0,
@@ -38603,8 +38609,8 @@
       "sourceTextHash": "674ffce49ea166d8098c07415d18acb9ad2e1fb2bf9e731c9450c965c6620f78",
       "sourceModality": "COMMENTARY",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-COMMENTARY",
       "atomicity": {
         "ownershipKind": "COMMENTARY",
         "sentenceCount": 0,
@@ -38627,8 +38633,8 @@
       "sourceTextHash": "3df3069c86accabf7a507d3d55c33e57e8b8e5b758436fbcdaa109b57ece4a85",
       "sourceModality": "COMMENTARY",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-COMMENTARY",
       "atomicity": {
         "ownershipKind": "COMMENTARY",
         "sentenceCount": 0,
@@ -38651,8 +38657,8 @@
       "sourceTextHash": "683b8392253f6e9f606727f3f09b3e3e18cbae47a3c9bab818773f78980deaa3",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -38675,8 +38681,8 @@
       "sourceTextHash": "be9dbdccc5974e1434c1ebd77e06fdd0ca4de8803a93d7ee7b1369e69c955dda",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -38699,8 +38705,8 @@
       "sourceTextHash": "fded447bf5e7a9dbed4646b8e17e3a1ca016e568e1716ea4aaf01332beba87f4",
       "sourceModality": "COMMENTARY",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-COMMENTARY",
       "atomicity": {
         "ownershipKind": "COMMENTARY",
         "sentenceCount": 0,
@@ -38723,8 +38729,8 @@
       "sourceTextHash": "40449dd36e9f06dbdc16459f30a5fabb1dafd1398e557c76b37ea577730ae1b6",
       "sourceModality": "COMMENTARY",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-COMMENTARY",
       "atomicity": {
         "ownershipKind": "COMMENTARY",
         "sentenceCount": 0,
@@ -38747,8 +38753,8 @@
       "sourceTextHash": "b3186ae8a118760aa9cf6418ec873a99f290662cc88eeec411b560271e0884dc",
       "sourceModality": "COMMENTARY",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-COMMENTARY",
       "atomicity": {
         "ownershipKind": "COMMENTARY",
         "sentenceCount": 0,
@@ -38771,8 +38777,8 @@
       "sourceTextHash": "dc011865ad26fc5a6defa7a22d338294b976733abffee720f12075f8a372a5b9",
       "sourceModality": "COMMENTARY",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-COMMENTARY",
       "atomicity": {
         "ownershipKind": "COMMENTARY",
         "sentenceCount": 0,
@@ -38795,8 +38801,8 @@
       "sourceTextHash": "1c1801adfb0b6dfa5b386ca7b7743c1c808d2c850ad892a1d7bbe5be24520697",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -38818,15 +38824,17 @@
       },
       "sourceTextHash": "ad843d1c9edfb801219e361690173730417b4fc65e32f7fcc15840ff707fbb83",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00388"
+      ]
     },
     {
       "id": "COV-M1-01602",
@@ -38843,14 +38851,16 @@
       "sourceTextHash": "aeb96a80314f2a0899978b382859580b9dbc336d148fc8b0589a572097b6fdc3",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00389"
+      ]
     },
     {
       "id": "COV-M1-01603",
@@ -38867,8 +38877,8 @@
       "sourceTextHash": "7c39bda671e2b2105466c46299722dbba87abe5cd89ed411a20867dd5fadbc08",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -38891,8 +38901,8 @@
       "sourceTextHash": "fcd0f4e030cfeddc0edf969bbcf34935b4b92a2e1635830b106a21b0f0fd4370",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "FIND-CONDITIONAL-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -38915,8 +38925,8 @@
       "sourceTextHash": "f178271163dfdce4bbc2ba215f784361471c95524c09bb734051d6e98546142d",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -38938,15 +38948,17 @@
       },
       "sourceTextHash": "1e8680ad628738183ea6f984c6d350b07d1e5e6cc3af5318789ad595e0d213eb",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00390"
+      ]
     },
     {
       "id": "COV-M1-01607",
@@ -38963,8 +38975,8 @@
       "sourceTextHash": "30fc1bceb89168157647ded159876dfb824c388a4d2f9cb40450e9f279918d88",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -38987,14 +38999,16 @@
       "sourceTextHash": "3ce166eda700ce6a555aeb4a066397ccdf8f45c27dbda9a9d6cc92e9b8a9c977",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00391"
+      ]
     },
     {
       "id": "COV-M1-01609",
@@ -39011,14 +39025,16 @@
       "sourceTextHash": "e98f49fbfbdf4b9aec7a04abec3db7abe6430722509e23c0ddc1d74b04c3a8b9",
       "sourceModality": "MAY",
       "conformanceEffect": "OPTIONAL",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00392"
+      ]
     },
     {
       "id": "COV-M1-01610",
@@ -39035,8 +39051,8 @@
       "sourceTextHash": "6022c5275ccb0e72222b37fe7b82f834df5641a6329c2c4486924c41bdc9a2ca",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39059,8 +39075,8 @@
       "sourceTextHash": "52eccbe7cb0f8c4c373adbae962af0d0b80570d7ab4120891f675acae9a0755d",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39083,8 +39099,8 @@
       "sourceTextHash": "25fa5a319925ce8549fedbb99ded4d97cb9db2a940f3b82d4e9f581f6d68a06d",
       "sourceModality": "COMMENTARY",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-COMMENTARY",
       "atomicity": {
         "ownershipKind": "COMMENTARY",
         "sentenceCount": 0,
@@ -39107,8 +39123,8 @@
       "sourceTextHash": "43fc5e78c9ff35989f754a6a0ef2a849081dcc0f8d03dc74fcf353a5185b0beb",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39131,14 +39147,16 @@
       "sourceTextHash": "76e6ae59c360f3777dd01a1a52a68d015d537087efeac16d3151fb83ca8863b4",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00393"
+      ]
     },
     {
       "id": "COV-M1-01615",
@@ -39154,15 +39172,17 @@
       },
       "sourceTextHash": "a1ca1ef64c11267167126ff49c6e63a2a0abdf5d3ea958703c23f694376b4028",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00394"
+      ]
     },
     {
       "id": "COV-M1-01616",
@@ -39179,8 +39199,8 @@
       "sourceTextHash": "d77333d773756c79342128f028685addbf3ef085530de446e8bd55e686597d9b",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39203,8 +39223,8 @@
       "sourceTextHash": "46953bcd3e0e693658a70149432ecd010b446cb6caa4eec5dccfed27a9ef12dd",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39227,8 +39247,8 @@
       "sourceTextHash": "9c92144e4252efb8957fce5694bab7d985c41d22f42cee2f5dc07c9218ea6306",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39251,8 +39271,8 @@
       "sourceTextHash": "77fe8166c2204811e1e7d52a561823ece319ad6528d544b601b612b473c74ef1",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39275,8 +39295,8 @@
       "sourceTextHash": "1cf78e6b2adff805433a86be1ffb3657aa6866456b5494a3d1c9cf7e7bf4c126",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39299,14 +39319,16 @@
       "sourceTextHash": "db0febbe9664b8db3214dea75fe5b5d594466e59870d4945ab119d8bb2442d95",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00395"
+      ]
     },
     {
       "id": "COV-M1-01622",
@@ -39322,15 +39344,17 @@
       },
       "sourceTextHash": "412b0fd7b45d178f6cb44bed5f84f03acfa1ba911da7d8a931b39d8232ba8639",
       "sourceModality": "SHOULD",
-      "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "FIND-CONDITIONAL-NETWORK-OR-PRELOAD",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00396"
+      ]
     },
     {
       "id": "COV-M1-01623",
@@ -39346,15 +39370,17 @@
       },
       "sourceTextHash": "b443a5630f89f2075717ebed1ad209edc3ca70194a785926f30ca2715a717ee8",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00397"
+      ]
     },
     {
       "id": "COV-M1-01624",
@@ -39370,15 +39396,17 @@
       },
       "sourceTextHash": "0bfe8d84b7a9cb29f160a5e931acb8e6d4287a83fec87e9f6949bac58ae79445",
       "sourceModality": "SHOULD",
-      "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "FIND-CONDITIONAL-NETWORK-OR-PRELOAD",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00398"
+      ]
     },
     {
       "id": "COV-M1-01625",
@@ -39395,14 +39423,16 @@
       "sourceTextHash": "dc8d7b76a7b9021b70ae12a00ef2f2399d7b9a1b02c3538d3f588945e5e02939",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00399"
+      ]
     },
     {
       "id": "COV-M1-01626",
@@ -39419,14 +39449,16 @@
       "sourceTextHash": "fc8da6118fff0082321a2504f88ec640dc49149483abb782cbc200b188f73342",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00400"
+      ]
     },
     {
       "id": "COV-M1-01627",
@@ -39443,14 +39475,16 @@
       "sourceTextHash": "99f468d5d3114bafc988fde2478f2827ee6820382763804a2fe8068f49257b1f",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00401"
+      ]
     },
     {
       "id": "COV-M1-01628",
@@ -39467,8 +39501,8 @@
       "sourceTextHash": "edd675936dbc028820ea45ed7e1a5a70379a37ada70aa4fa69ba352cd403b3d8",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39491,14 +39525,16 @@
       "sourceTextHash": "d2a70fefe0650eca24428f35178cc42f9a1287df86f3da2496776c3b38da4d7d",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00402"
+      ]
     },
     {
       "id": "COV-M1-01630",
@@ -39515,14 +39551,16 @@
       "sourceTextHash": "21d8c06816d17f20910f01582869e696f3de637cf3ea76da1e41ccf5a0ccc452",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00403"
+      ]
     },
     {
       "id": "COV-M1-01631",
@@ -39539,14 +39577,16 @@
       "sourceTextHash": "e5dbdb9636e9342727645c418b44a04967c3438294ea1b08be6af2b801017e26",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00404"
+      ]
     },
     {
       "id": "COV-M1-01632",
@@ -39563,8 +39603,8 @@
       "sourceTextHash": "542c79f19ba12d7297588b1cad1fd1ab1923c74583c6d2b36f2f6ab7b000e102",
       "sourceModality": "COMMENTARY",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-COMMENTARY",
       "atomicity": {
         "ownershipKind": "COMMENTARY",
         "sentenceCount": 0,
@@ -39587,14 +39627,16 @@
       "sourceTextHash": "98dcc47dcb2b5b97fb2ec7316b95487a60f33955a87dcefc8d10e55147f2978b",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00405"
+      ]
     },
     {
       "id": "COV-M1-01634",
@@ -39611,14 +39653,16 @@
       "sourceTextHash": "4d7fb8bc839c337d5561109d08bbdb369db78d4114df5ddd0b860500540e59d6",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00406"
+      ]
     },
     {
       "id": "COV-M1-01635",
@@ -39635,8 +39679,8 @@
       "sourceTextHash": "ca51bb7d3f5737d04a9d4047ab7d3c196420600c947df2fe6621e7360dd3c628",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39658,15 +39702,17 @@
       },
       "sourceTextHash": "0f2d63ca1d3e5b4a1050e2395248bbbdb19f8d133f8a8c5a3887e617cc4e9d1d",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00407"
+      ]
     },
     {
       "id": "COV-M1-01637",
@@ -39683,14 +39729,16 @@
       "sourceTextHash": "d8483d058800474b4998cf33def5bf0173d313e1b7125209f0cce269277da22b",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00408"
+      ]
     },
     {
       "id": "COV-M1-01638",
@@ -39707,14 +39755,16 @@
       "sourceTextHash": "2dd2663eb0a1e29504d4419118831163281179d3cf04a1cba6183be80aec67a9",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00409"
+      ]
     },
     {
       "id": "COV-M1-01639",
@@ -39731,8 +39781,8 @@
       "sourceTextHash": "8fb1b3ae32bbed50d0389d63c33fd423f8ca8e97fa2c9d91e414233d82605ae0",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39755,8 +39805,8 @@
       "sourceTextHash": "92e5b9489e9b709d0b9908ae9acc282e1b16666879674ff6ed245c10ec521187",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39779,8 +39829,8 @@
       "sourceTextHash": "9c6ea4657638c5958f3aed7c48c77649963f0e8471a13180930708511771cda8",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39803,8 +39853,8 @@
       "sourceTextHash": "54fb52547cb65e5410e1f6286384abcc4194f6924798776f6f3fb80becb55a09",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39827,8 +39877,8 @@
       "sourceTextHash": "8792d25931213aca866af7f303997b2dcc60cc14c788a2fbbbf4ac8ffeed9ddb",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39851,8 +39901,8 @@
       "sourceTextHash": "ab97415a59e9a834894605fd2bd82d8b7c4d58722c0ab7fc60e090e2fdb50e27",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-SUPPORTING-DESCRIPTION",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -39875,8 +39925,8 @@
       "sourceTextHash": "94e1a030cfd11885463fffa74ae3525f65e9fe75536c4cc649bdb0579da79ee9",
       "sourceModality": "COMMENTARY",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-COMMENTARY",
       "atomicity": {
         "ownershipKind": "COMMENTARY",
         "sentenceCount": 0,
@@ -39898,15 +39948,17 @@
       },
       "sourceTextHash": "db234db803f947705952f70280d1bbb5bfb82f78a90670df2f93b18df0c5b22d",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00410"
+      ]
     },
     {
       "id": "COV-M1-01647",
@@ -39922,15 +39974,17 @@
       },
       "sourceTextHash": "48cb9ff4518dc79fea85c73f5827c5b73b8135c697aaf8375c2c666831329239",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00411"
+      ]
     },
     {
       "id": "COV-M1-01648",
@@ -39946,15 +40000,17 @@
       },
       "sourceTextHash": "913b305af452448d1e49bca91982445f408b72f566481522aa87571e8e3f3c7a",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00412"
+      ]
     },
     {
       "id": "COV-M1-01649",
@@ -39970,15 +40026,17 @@
       },
       "sourceTextHash": "14ef51a05aea01c14db58292a666c0115e699ddde7df7c557041c51e37946a76",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00413"
+      ]
     },
     {
       "id": "COV-M1-01650",
@@ -39994,15 +40052,17 @@
       },
       "sourceTextHash": "22ba44db74a656ebd0faff4e51eaef0bd4ca33b43a5a3fa8b8e8b74ceb7be7e3",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00414"
+      ]
     },
     {
       "id": "COV-M1-01651",
@@ -40018,15 +40078,17 @@
       },
       "sourceTextHash": "4a05e0bb28096cdeb51488531e1ef00c326789ee64a030084d3f25f5fb0566ab",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00415"
+      ]
     },
     {
       "id": "COV-M1-01652",
@@ -40043,8 +40105,8 @@
       "sourceTextHash": "ef890ea5f89ec9083534947789c00b15d1bdbb672701d93cf0eb4efbe8478a7c",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-EXAMPLE",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -40067,8 +40129,8 @@
       "sourceTextHash": "153c71a2088617e4a7106440aa3f9f20379f9543ef1e05e9d3d7e20284857e54",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-      "rationaleCode": "DEFERRED-FIND-M9",
+      "applicabilityDecision": "OUT-OF-PROFILE",
+      "rationaleCode": "NON-NORMATIVE-FIND-EXAMPLE",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -86859,6 +86921,1340 @@
         "sourceCoverageId": "COV-M1-02793",
         "status": "CANDIDATE"
       }
+    },
+    {
+      "id": "CRS-M1-00385",
+      "sourceUnitId": "SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-005-36878C1F8E7E",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "5.3.3",
+        "tableOrFigure": null,
+        "documentPage": 32,
+        "pdfPage": 44,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "36878c1f8e7e0703fe9a3259a3c8bb968e3fa644457478d0ca7f3efd846baebe",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "When a FIND initiator or FIND host is implemented, FIND shall use UDP port 1001 decimal.",
+      "generatedSemanticProjectionZh": "在实现 FIND 发起方或 FIND 主机时，FIND 必须使用十进制 UDP 端口 1001。",
+      "semantic": {
+        "actor": "FIND-PROTOCOL",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "USE-UDP-PORT-1001",
+        "objects": [
+          "UDP-PORT-1001"
+        ],
+        "observableEffect": "FIND-PORT-1001-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-00570",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00386",
+      "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-006-B1ED10DE43C7",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-1",
+        "tableOrFigure": null,
+        "documentPage": 95,
+        "pdfPage": 107,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "b1ed10de43c743545c34394c3d2e6b5cf10d4f1c20068f3cb53d4c3e92617820",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "When the path can carry FIND traffic, the data loader shall run FIND at least once before data-load operations.",
+      "generatedSemanticProjectionZh": "在路径能够承载 FIND 业务时，数据加载器必须在数据加载操作前至少运行一次 FIND。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-PATH-CARRIES-TRAFFIC-AND-BEFORE-DATA-LOAD",
+        "action": "RUN-FIND-AT-LEAST-ONCE",
+        "objects": [
+          "FIND-REQUEST"
+        ],
+        "observableEffect": "FIND-PRELOAD-RUN-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "FIND-CONDITIONAL-NETWORK-OR-PRELOAD",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01587",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00387",
+      "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-007-9166DCC81508",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-1",
+        "tableOrFigure": null,
+        "documentPage": 95,
+        "pdfPage": 107,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "9166dcc8150868f454848abe8913e55dc44aa6165930c83611ba87180d5c4fd3",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "On a FIND-capable path, the data loader may run FIND again and register answers before each later operation.",
+      "generatedSemanticProjectionZh": "在能够承载 FIND 的路径上，数据加载器可以在后续每次操作前再次运行 FIND 并登记应答。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-PATH-CARRIES-TRAFFIC-AND-BEFORE-LATER-OPERATION",
+        "action": "MAY-RERUN-FIND-AND-REGISTER-ANSWERS",
+        "objects": [
+          "FIND-REQUEST",
+          "FIND-ANSWER"
+        ],
+        "observableEffect": "FIND-OPTIONAL-RERUN-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "MAY",
+      "conformanceEffect": "OPTIONAL",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "FIND-CONDITIONAL-NETWORK-OR-PRELOAD",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01588",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00388",
+      "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-011-AD843D1C9EDF",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-1",
+        "tableOrFigure": null,
+        "documentPage": 95,
+        "pdfPage": 107,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 11
+      },
+      "sourceTextHash": "ad843d1c9edfb801219e361690173730417b4fc65e32f7fcc15840ff707fbb83",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "FIND request and answer packets shall use the well-known UDP port 1001 decimal.",
+      "generatedSemanticProjectionZh": "FIND 请求与应答分组必须使用众所周知的十进制 UDP 端口 1001。",
+      "semantic": {
+        "actor": "FIND-PROTOCOL",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "USE-WELL-KNOWN-UDP-PORT-1001",
+        "objects": [
+          "UDP-PORT-1001"
+        ],
+        "observableEffect": "FIND-ATTACHMENT-PORT-1001-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01601",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00389",
+      "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-012-AEB96A80314F",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-1",
+        "tableOrFigure": null,
+        "documentPage": 95,
+        "pdfPage": 107,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 12
+      },
+      "sourceTextHash": "aeb96a80314f2a0899978b382859580b9dbc336d148fc8b0589a572097b6fdc3",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The FIND request packet and the FIND answer packet shall use the same UDP port number.",
+      "generatedSemanticProjectionZh": "FIND 请求分组与 FIND 应答分组必须使用同一 UDP 端口号。",
+      "semantic": {
+        "actor": "FIND-PROTOCOL",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "USE-SAME-PORT-FOR-REQUEST-AND-ANSWER",
+        "objects": [
+          "FIND-REQUEST",
+          "FIND-ANSWER",
+          "UDP-PORT-1001"
+        ],
+        "observableEffect": "FIND-SHARED-PORT-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01602",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00390",
+      "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-003-1E8680AD6287",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-2",
+        "tableOrFigure": null,
+        "documentPage": 96,
+        "pdfPage": 108,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "1e8680ad628738183ea6f984c6d350b07d1e5e6cc3af5318789ad595e0d213eb",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "After sending a FIND request, the data loader shall keep a three-second window for FIND answers.",
+      "generatedSemanticProjectionZh": "发出 FIND 请求后，数据加载器必须为 FIND 应答保持三秒窗口。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "KEEP-THREE-SECOND-FIND-ANSWER-WINDOW",
+        "objects": [
+          "FIND-ANSWER-WINDOW-3-S"
+        ],
+        "observableEffect": "FIND-LOADER-WINDOW-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01606",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00391",
+      "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-2",
+        "tableOrFigure": null,
+        "documentPage": 96,
+        "pdfPage": 108,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "3ce166eda700ce6a555aeb4a066397ccdf8f45c27dbda9a9d6cc92e9b8a9c977",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A FIND host shall send its FIND answer within a two-second timeout of the request.",
+      "generatedSemanticProjectionZh": "FIND 主机必须在收到请求后的两秒超时内发出 FIND 应答。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "ANSWER-FIND-REQUEST-WITHIN-TWO-SECONDS",
+        "objects": [
+          "FIND-ANSWER",
+          "FIND-HOST-TIMEOUT-2-S"
+        ],
+        "observableEffect": "FIND-HOST-TIMEOUT-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01608",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00392",
+      "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-006-E98F49FBFBDF",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-2",
+        "tableOrFigure": null,
+        "documentPage": 96,
+        "pdfPage": 108,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "e98f49fbfbdf4b9aec7a04abec3db7abe6430722509e23c0ddc1d74b04c3a8b9",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A FIND host may be omitted from registration if its answer is late or missing.",
+      "generatedSemanticProjectionZh": "若 FIND 应答迟到或缺失，FIND 主机可以不被登记。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "ACCEPT-LATE-OR-MISSING-ANSWER-MAY-BE-UNREGISTERED",
+        "objects": [
+          "FIND-TARGET-REGISTRATION"
+        ],
+        "observableEffect": "FIND-LATE-ANSWER-RISK-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "MAY",
+      "conformanceEffect": "OPTIONAL",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01609",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00393",
+      "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-010-76E6AE59C360",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-2",
+        "tableOrFigure": null,
+        "documentPage": 96,
+        "pdfPage": 108,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "76e6ae59c360f3777dd01a1a52a68d015d537087efeac16d3151fb83ca8863b4",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A FIND host shall send no answer to an illegal or invalid FIND request.",
+      "generatedSemanticProjectionZh": "对于非法或无效的 FIND 请求，FIND 主机不得发出应答。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SEND-NO-ANSWER-TO-ILLEGAL-FIND-REQUEST",
+        "objects": [
+          "ILLEGAL-FIND-REQUEST"
+        ],
+        "observableEffect": "FIND-ILLEGAL-REQUEST-SILENCE-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01614",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00394",
+      "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-011-A1CA1EF64C11",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-2",
+        "tableOrFigure": null,
+        "documentPage": 96,
+        "pdfPage": 108,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 11
+      },
+      "sourceTextHash": "a1ca1ef64c11267167126ff49c6e63a2a0abdf5d3ea958703c23f694376b4028",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The data loader shall ignore an invalid FIND answer.",
+      "generatedSemanticProjectionZh": "数据加载器必须忽略无效的 FIND 应答。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "IGNORE-INVALID-FIND-ANSWER",
+        "objects": [
+          "INVALID-FIND-ANSWER"
+        ],
+        "observableEffect": "FIND-INVALID-ANSWER-IGNORE-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01615",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00395",
+      "sourceUnitId": "SU-ARINC-615A-3-3-4-P108-PROSE-SENTENCE-001-DB0FEBBE9664",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-4",
+        "tableOrFigure": null,
+        "documentPage": 96,
+        "pdfPage": 108,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "db0febbe9664b8db3214dea75fe5b5d594466e59870d4945ab119d8bb2442d95",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "In an Information Request, the data loader shall set the source MAC address to its own MAC address.",
+      "generatedSemanticProjectionZh": "在信息请求中，数据加载器必须把源 MAC 地址设为自己的 MAC 地址。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IRQ-SOURCE-MAC-TO-DATA-LOADER",
+        "objects": [
+          "IRQ-SOURCE-MAC"
+        ],
+        "observableEffect": "IRQ-SOURCE-MAC-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01621",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00396",
+      "sourceUnitId": "SU-ARINC-615A-3-3-4-P108-PROSE-SENTENCE-002-412B0FD7B45D",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-4",
+        "tableOrFigure": null,
+        "documentPage": 96,
+        "pdfPage": 108,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "412b0fd7b45d178f6cb44bed5f84f03acfa1ba911da7d8a931b39d8232ba8639",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "When the path can carry FIND, the data loader shall set the Information Request destination MAC to a unicast, multicast or broadcast MAC.",
+      "generatedSemanticProjectionZh": "在路径能够承载 FIND 时，数据加载器必须把信息请求的目的 MAC 设为单播、组播或广播 MAC。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-PATH-CARRIES-TRAFFIC",
+        "action": "SET-IRQ-DESTINATION-MAC-TO-UNICAST-MULTICAST-OR-BROADCAST",
+        "objects": [
+          "IRQ-DESTINATION-MAC"
+        ],
+        "observableEffect": "IRQ-DESTINATION-MAC-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "FIND-CONDITIONAL-NETWORK-OR-PRELOAD",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01622",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00397",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-003-B443A5630F89",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-3",
+        "tableOrFigure": null,
+        "documentPage": 97,
+        "pdfPage": 109,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "b443a5630f89f2075717ebed1ad209edc3ca70194a785926f30ca2715a717ee8",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "In an Information Request, the data loader shall set the source IP address to its own IP address.",
+      "generatedSemanticProjectionZh": "在信息请求中，数据加载器必须把源 IP 地址设为自己的 IP 地址。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IRQ-SOURCE-IP-TO-DATA-LOADER",
+        "objects": [
+          "IRQ-SOURCE-IP"
+        ],
+        "observableEffect": "IRQ-SOURCE-IP-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01623",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00398",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-004-0BFE8D84B7A9",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-3",
+        "tableOrFigure": null,
+        "documentPage": 97,
+        "pdfPage": 109,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "0bfe8d84b7a9cb29f160a5e931acb8e6d4287a83fec87e9f6949bac58ae79445",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "When the path can carry FIND, the data loader shall set the Information Request destination IP to a unicast, multicast or broadcast IP, including limited or all-ones broadcast.",
+      "generatedSemanticProjectionZh": "在路径能够承载 FIND 时，数据加载器必须把信息请求的目的 IP 设为单播、组播或广播 IP，包括有限广播或全 1 广播。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-PATH-CARRIES-TRAFFIC",
+        "action": "SET-IRQ-DESTINATION-IP-TO-UNICAST-MULTICAST-OR-BROADCAST",
+        "objects": [
+          "IRQ-DESTINATION-IP"
+        ],
+        "observableEffect": "IRQ-DESTINATION-IP-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "FIND-CONDITIONAL-NETWORK-OR-PRELOAD",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01624",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00399",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-005-DC8D7B76A7B9",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-3",
+        "tableOrFigure": null,
+        "documentPage": 97,
+        "pdfPage": 109,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "dc8d7b76a7b9021b70ae12a00ef2f2399d7b9a1b02c3538d3f588945e5e02939",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The data loader shall set the Information Request opcode to 0x0001.",
+      "generatedSemanticProjectionZh": "数据加载器必须把信息请求操作码设为 0x0001。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IRQ-OPCODE-TO-0001",
+        "objects": [
+          "IRQ-OPCODE-0001"
+        ],
+        "observableEffect": "IRQ-OPCODE-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01625",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00400",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-006-FC8DA6118FFF",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-3",
+        "tableOrFigure": null,
+        "documentPage": 97,
+        "pdfPage": 109,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "fc8da6118fff0082321a2504f88ec640dc49149483abb782cbc200b188f73342",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The data loader shall set the Information Request data list to a single ASCII NUL terminator.",
+      "generatedSemanticProjectionZh": "数据加载器必须把信息请求数据表设为单个 ASCII 空字符终止符。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IRQ-DATA-LIST-TO-ASCII-NUL",
+        "objects": [
+          "IRQ-DATA-LIST",
+          "ASCII-NUL"
+        ],
+        "observableEffect": "IRQ-DATA-LIST-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01626",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00401",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-007-99F468D5D311",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-3",
+        "tableOrFigure": null,
+        "documentPage": 97,
+        "pdfPage": 109,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "99f468d5d3114bafc988fde2478f2827ee6820382763804a2fe8068f49257b1f",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The data loader shall terminate the Information Request packet with 0x10.",
+      "generatedSemanticProjectionZh": "数据加载器必须以 0x10 结束信息请求分组。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "TERMINATE-IRQ-PACKET-WITH-DLE",
+        "objects": [
+          "IRQ-PACKET-TERMINATOR-DLE"
+        ],
+        "observableEffect": "IRQ-TERMINATOR-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01627",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00402",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-001-D2A70FEFE065",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-5",
+        "tableOrFigure": null,
+        "documentPage": 97,
+        "pdfPage": 109,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "d2a70fefe0650eca24428f35178cc42f9a1287df86f3da2496776c3b38da4d7d",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "In an Information Answer, the FIND host shall set the source MAC address to the target-hardware MAC address.",
+      "generatedSemanticProjectionZh": "在信息应答中，FIND 主机必须把源 MAC 地址设为目标硬件 MAC 地址。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IAN-SOURCE-MAC-TO-FIND-HOST",
+        "objects": [
+          "IAN-SOURCE-MAC"
+        ],
+        "observableEffect": "IAN-SOURCE-MAC-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01629",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00403",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-002-21D8C06816D1",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-5",
+        "tableOrFigure": null,
+        "documentPage": 97,
+        "pdfPage": 109,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "21d8c06816d17f20910f01582869e696f3de637cf3ea76da1e41ccf5a0ccc452",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The FIND host shall set the Information Answer destination MAC to the source MAC of the associated Information Request.",
+      "generatedSemanticProjectionZh": "FIND 主机必须把信息应答的目的 MAC 设为对应信息请求的源 MAC。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IAN-DESTINATION-MAC-TO-ASSOCIATED-IRQ-SOURCE-MAC",
+        "objects": [
+          "IAN-DESTINATION-MAC"
+        ],
+        "observableEffect": "IAN-DESTINATION-MAC-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01630",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00404",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-003-E5DBDB9636E9",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-5",
+        "tableOrFigure": null,
+        "documentPage": 97,
+        "pdfPage": 109,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "e5dbdb9636e9342727645c418b44a04967c3438294ea1b08be6af2b801017e26",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "In an Information Answer, the FIND host shall set the source IP address to the target-hardware IP address.",
+      "generatedSemanticProjectionZh": "在信息应答中，FIND 主机必须把源 IP 地址设为目标硬件 IP 地址。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IAN-SOURCE-IP-TO-FIND-HOST",
+        "objects": [
+          "IAN-SOURCE-IP"
+        ],
+        "observableEffect": "IAN-SOURCE-IP-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01631",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00405",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-004-98DCC47DCB2B",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-5",
+        "tableOrFigure": null,
+        "documentPage": 97,
+        "pdfPage": 109,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "98dcc47dcb2b5b97fb2ec7316b95487a60f33955a87dcefc8d10e55147f2978b",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The FIND host shall set the Information Answer destination IP to the source IP of the associated Information Request.",
+      "generatedSemanticProjectionZh": "FIND 主机必须把信息应答的目的 IP 设为对应信息请求的源 IP。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IAN-DESTINATION-IP-TO-ASSOCIATED-IRQ-SOURCE-IP",
+        "objects": [
+          "IAN-DESTINATION-IP"
+        ],
+        "observableEffect": "IAN-DESTINATION-IP-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01633",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00406",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-005-4D7FB8BC839C",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-5",
+        "tableOrFigure": null,
+        "documentPage": 97,
+        "pdfPage": 109,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "4d7fb8bc839c337d5561109d08bbdb369db78d4114df5ddd0b860500540e59d6",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The FIND host shall set the Information Answer opcode to 0x0002.",
+      "generatedSemanticProjectionZh": "FIND 主机必须把信息应答操作码设为 0x0002。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IAN-OPCODE-TO-0002",
+        "objects": [
+          "IAN-OPCODE-0002"
+        ],
+        "observableEffect": "IAN-OPCODE-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01634",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00407",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-007-0F2D63CA1D3E",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-5",
+        "tableOrFigure": null,
+        "documentPage": 97,
+        "pdfPage": 109,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "0f2d63ca1d3e5b4a1050e2395248bbbdb19f8d133f8a8c5a3887e617cc4e9d1d",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The FIND host shall encode an empty Information Answer parameter as a single ASCII NUL byte.",
+      "generatedSemanticProjectionZh": "FIND 主机必须把空的信息应答参数编码为单个 ASCII 空字节。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "ENCODE-EMPTY-IAN-PARAMETER-AS-SINGLE-NUL",
+        "objects": [
+          "EMPTY-IAN-PARAMETER",
+          "ASCII-NUL"
+        ],
+        "observableEffect": "IAN-EMPTY-FIELD-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01636",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00408",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-008-D8483D058800",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-5",
+        "tableOrFigure": null,
+        "documentPage": 97,
+        "pdfPage": 109,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "d8483d058800474b4998cf33def5bf0173d313e1b7125209f0cce269277da22b",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The FIND host shall omit embedded NUL bytes from available Information Answer parameter strings.",
+      "generatedSemanticProjectionZh": "FIND 主机必须从已提供的信息应答参数字符串中省略内嵌空字节。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "OMIT-EMBEDDED-NUL-FROM-IAN-STRINGS",
+        "objects": [
+          "IAN-PARAMETER-STRING"
+        ],
+        "observableEffect": "IAN-NO-EMBEDDED-NUL-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01637",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00409",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-009-2DD2663EB0A1",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "3-5",
+        "tableOrFigure": null,
+        "documentPage": 97,
+        "pdfPage": 109,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "2dd2663eb0a1e29504d4419118831163281179d3cf04a1cba6183be80aec67a9",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The FIND host shall terminate the Information Answer packet with 0x10.",
+      "generatedSemanticProjectionZh": "FIND 主机必须以 0x10 结束信息应答分组。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "TERMINATE-IAN-PACKET-WITH-DLE",
+        "objects": [
+          "IAN-PACKET-TERMINATOR-DLE"
+        ],
+        "observableEffect": "IAN-TERMINATOR-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01638",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00410",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-012-DB234DB803F9",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-3",
+        "tableOrFigure": null,
+        "documentPage": 98,
+        "pdfPage": 110,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 12
+      },
+      "sourceTextHash": "db234db803f947705952f70280d1bbb5bfb82f78a90670df2f93b18df0c5b22d",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The FIND host shall encode Information Answer parameter values as NUL-terminated strings in Attachment 3 section 6 order.",
+      "generatedSemanticProjectionZh": "FIND 主机必须按附件 3 第 6 节顺序，把信息应答参数值编码为空字符终止字符串。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "ENCODE-IAN-PARAMETERS-AS-NUL-TERMINATED-STRINGS-IN-SECTION-3-6-ORDER",
+        "objects": [
+          "IAN-PARAMETER-STRINGS"
+        ],
+        "observableEffect": "IAN-PARAMETER-ORDER-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01646",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00411",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-013-48CB9FF4518D",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-3",
+        "tableOrFigure": null,
+        "documentPage": 98,
+        "pdfPage": 110,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 13
+      },
+      "sourceTextHash": "48cb9ff4518dc79fea85c73f5827c5b73b8135c697aaf8375c2c666831329239",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The FIND host shall limit Target Hardware Identifier to 15 characters excluding the terminator.",
+      "generatedSemanticProjectionZh": "FIND 主机必须把目标硬件标识符限制为不含终止符的 15 个字符。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "LIMIT-TARGET-HARDWARE-IDENTIFIER-TO-15-CHARACTERS-EXCLUDING-TERMINATOR",
+        "objects": [
+          "TARGET-HARDWARE-IDENTIFIER",
+          "LENGTH-15"
+        ],
+        "observableEffect": "THW-ID-LENGTH-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01647",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00412",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-014-913B305AF452",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-3",
+        "tableOrFigure": null,
+        "documentPage": 98,
+        "pdfPage": 110,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 14
+      },
+      "sourceTextHash": "913b305af452448d1e49bca91982445f408b72f566481522aa87571e8e3f3c7a",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The FIND host shall limit Target Type Name to 8 characters excluding the terminator.",
+      "generatedSemanticProjectionZh": "FIND 主机必须把目标类型名限制为不含终止符的 8 个字符。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "LIMIT-TARGET-TYPE-NAME-TO-8-CHARACTERS-EXCLUDING-TERMINATOR",
+        "objects": [
+          "TARGET-TYPE-NAME",
+          "LENGTH-8"
+        ],
+        "observableEffect": "TARGET-TYPE-NAME-LENGTH-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01648",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00413",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-015-14EF51A05AEA",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-3",
+        "tableOrFigure": null,
+        "documentPage": 98,
+        "pdfPage": 110,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 15
+      },
+      "sourceTextHash": "14ef51a05aea01c14db58292a666c0115e699ddde7df7c557041c51e37946a76",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The FIND host shall limit Target Position to 8 characters excluding the terminator.",
+      "generatedSemanticProjectionZh": "FIND 主机必须把目标位置限制为不含终止符的 8 个字符。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "LIMIT-TARGET-POSITION-TO-8-CHARACTERS-EXCLUDING-TERMINATOR",
+        "objects": [
+          "TARGET-POSITION",
+          "LENGTH-8"
+        ],
+        "observableEffect": "TARGET-POSITION-LENGTH-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01649",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00414",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-016-22BA44DB74A6",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-3",
+        "tableOrFigure": null,
+        "documentPage": 98,
+        "pdfPage": 110,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 16
+      },
+      "sourceTextHash": "22ba44db74a656ebd0faff4e51eaef0bd4ca33b43a5a3fa8b8e8b74ceb7be7e3",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The FIND host shall limit Literal Name to 20 characters excluding the terminator.",
+      "generatedSemanticProjectionZh": "FIND 主机必须把字面名限制为不含终止符的 20 个字符。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "LIMIT-LITERAL-NAME-TO-20-CHARACTERS-EXCLUDING-TERMINATOR",
+        "objects": [
+          "LITERAL-NAME",
+          "LENGTH-20"
+        ],
+        "observableEffect": "LITERAL-NAME-LENGTH-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01650",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00415",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-017-4A05E0BB2809",
+      "source": {
+        "sourceId": "ARINC-615A-3",
+        "clause": "ATTACHMENT-3",
+        "tableOrFigure": null,
+        "documentPage": 98,
+        "pdfPage": 110,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 17
+      },
+      "sourceTextHash": "4a05e0bb28096cdeb51488531e1ef00c326789ee64a030084d3f25f5fb0566ab",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The FIND host shall encode Manufacturer Code as 3 characters excluding the terminator.",
+      "generatedSemanticProjectionZh": "FIND 主机必须把制造商代码编码为不含终止符的 3 个字符。",
+      "semantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "ENCODE-MANUFACTURER-CODE-AS-3-CHARACTERS-EXCLUDING-TERMINATOR",
+        "objects": [
+          "MANUFACTURER-CODE",
+          "LENGTH-3"
+        ],
+        "observableEffect": "MANUFACTURER-CODE-LENGTH-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "FIND-PROTOCOL-SUPPORT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-01651",
+        "status": "CANDIDATE"
+      }
     }
   ],
   "dependencies": [
@@ -87010,24 +88406,24 @@
     "rg0": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "rg1": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "reviewHead": "UNBOUND-DRAFT",
-    "sourceInventoryFingerprint": "4b9a16c0bc81626a73439cab21368c8f86e0a447000d10d3f8f7980b3f867f2d",
+    "sourceInventoryFingerprint": "539b505c1d4b4b1546dc7a4d29716a4a0976fcf1468ac7c017dac65a70790b59",
     "sectionSpanManifestPath": "configs/requirements/m1_source_section_spans.json",
     "sectionSpanManifestFingerprint": "7411f0afe45a73a761242099a7cff358d6a1b71a78ca6167a61ac20c51eca6ec",
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "f84879eb6ae689592c79cc96ceea18d7555f2260ed1af9a07d366539f1352816",
+    "semanticAssertionFingerprint": "1d8adcd9c291925b18275954677b0b3c67fc7f70714278cf8813df59c334a99f",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
   },
   "inventorySummary": {
     "coverageCount": 2796,
-    "requirementCount": 384,
+    "requirementCount": 415,
     "dependencyCount": 14,
     "gapCount": 1,
-    "coverageFingerprint": "01470d751abdc20b28ac6b75e79f308f53b458dd3e7beafcbd9e229e598fdde6",
-    "requirementsFingerprint": "b9d7ed46e0fb8be95ecd747ad47bf0451b3b81c52ab601397456b14031a099bf"
+    "coverageFingerprint": "72bc6b1ef647d312a60b929446a72787f41c85a25fbdc82ef18301ac4ce0c258",
+    "requirementsFingerprint": "d75c1fc7d5b9887b077513ad5a2a5937bcb7282ff15710eb9587eb2eb0d64371"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

@@ -37,7 +37,7 @@ Four arms CL-T, CL-A, CL-TA, CL-LOOP; detection, localization and ablation famil
 
 ## Expanded CRS index and audit
 
-Current bound package still has 2796 coverage units and 384 requirements. FIND 78/78, DOWNLOAD 365/365 and AFDX appendix 13/13 source units have candidate reread notes. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. Bound rows stay deferred. 664/665/RFC body audits remain pending. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename deferred labels. Tool software requirements are out of this PR.
+Current bound package is M1-CANDIDATE-3: 2796 coverage units and 415 requirements. FIND REQUIRED/OPTIONAL reread candidates are written as 31 bilingual CRS rows; commentary and examples stay non-normative. Bound M2 does not model FIND. DOWNLOAD 365/365 and AFDX appendix 13/13 remain deferred. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. 664/665/RFC body audits remain pending. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename remaining deferred labels. Tool software requirements are out of this PR.
 
 ## Historical versus successor evidence
 
@@ -82,7 +82,7 @@ SysML 1.6 记法 PlantUML 源：[`../../../docs/research/publication/models/`](.
 
 ## 扩大 CRS 索引与审计
 
-当前绑定包仍为 2796 条 coverage、384 条需求。FIND 78/78、DOWNLOAD 365/365 与 AFDX 附录 13/13 条来源单元已有候选重读记录。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。绑定行仍延期。664／665／RFC 正文审计仍待进行。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名延期标签。工具软件需求不属于本 PR。
+当前绑定包为 M1-CANDIDATE-3：2796 条 coverage、415 条需求。FIND 的 REQUIRED／OPTIONAL 重读候选已写成 31 条双语 CRS；评注与示例保持非规范。绑定 M2 不建模 FIND。DOWNLOAD 365/365 与 AFDX 附录 13/13 仍延期。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。664／665／RFC 正文审计仍待进行。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名仍延期的标签。工具软件需求不属于本 PR。
 
 ## 历史与后继证据
 

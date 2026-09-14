@@ -518,9 +518,17 @@ def test_appendix_e_afdx_is_deferred_and_attachment_3_find_is_deferred_not_infor
 
     att3 = [row for row in data["coverageLedger"] if row["source"].get("pdfPage") in {107, 108, 109, 110}]
     assert att3, "Attachment 3 coverage must exist"
-    reclassified = [row for row in att3 if row["rationaleCode"] == "DEFERRED-FIND-M9"]
+    find_codes = {
+        "FIND-PROTOCOL-SUPPORT",
+        "FIND-SUPPORTING-DESCRIPTION",
+        "FIND-CONDITIONAL-NETWORK-OR-PRELOAD",
+        "FIND-CONDITIONAL-DESCRIPTION",
+        "NON-NORMATIVE-FIND-COMMENTARY",
+        "NON-NORMATIVE-FIND-EXAMPLE",
+    }
+    assert all(row["rationaleCode"] in find_codes for row in att3)
+    assert not any(row["rationaleCode"] == "DEFERRED-FIND-M9" for row in att3)
     still_informative = [row for row in att3 if row["rationaleCode"] == "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE"]
-    assert reclassified, "Attachment 3 must have entries reclassified to DEFERRED-FIND-M9"
     assert not still_informative, "no Attachment 3 leaf should stay as NON-PROTOCOL-PRODUCT-OR-INFORMATIVE"
 
 

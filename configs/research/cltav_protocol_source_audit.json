@@ -1,23 +1,23 @@
 {
   "schemaVersion": "1.0",
   "artifactId": "CLTAV-PROTOCOL-SOURCE-AUDIT",
-  "status": "SOURCE-UNIT-AUDIT-IN-PROGRESS",
+  "status": "PARTIAL-CRS-GENERATION-IN-PROGRESS",
   "notBatchStatusRename": true,
-  "requirementGenerationAllowed": false,
+  "requirementGenerationAllowed": true,
   "changeRequest": "CR-2026-012",
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-2",
+    "artifactVersion": "M1-CANDIDATE-3",
     "coverageCount": 2796,
-    "requirementCount": 384,
-    "coverageFingerprint": "01470d751abdc20b28ac6b75e79f308f53b458dd3e7beafcbd9e229e598fdde6",
-    "requirementsFingerprint": "b9d7ed46e0fb8be95ecd747ad47bf0451b3b81c52ab601397456b14031a099bf",
+    "requirementCount": 415,
+    "coverageFingerprint": "72bc6b1ef647d312a60b929446a72787f41c85a25fbdc82ef18301ac4ce0c258",
+    "requirementsFingerprint": "d75c1fc7d5b9887b077513ad5a2a5937bcb7282ff15710eb9587eb2eb0d64371",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "This ledger inventories current coverage units. It does not rewrite the bound package and is not a CRS status change."
+    "note": "FIND REQUIRED/OPTIONAL candidates are written into M1-CANDIDATE-3. DOWNLOAD and AFDX appendix remain deferred. Bound M2 does not model FIND. This is not independent RG approval."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -28,180 +28,46 @@
   ],
   "summary": {
     "coverageCount": 2796,
-    "requirementCount": 384,
+    "requirementCount": 415,
     "applicabilityDecisions": {
-      "OUT-OF-PROFILE": 962,
-      "APPLICABLE-SUPPORTING": 1092,
-      "DEFERRED-FUTURE-SCOPE": 456,
-      "APPLICABLE-BASE": 286
+      "OUT-OF-PROFILE": 977,
+      "APPLICABLE-SUPPORTING": 1149,
+      "APPLICABLE-BASE": 286,
+      "DEFERRED-FUTURE-SCOPE": 378,
+      "CONDITIONAL": 6
     },
     "rationaleCodes": {
       "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE": 902,
       "INTERPRETATION-AND-DEPENDENCY-SUPPORT": 37,
       "COMMON-PROTOCOL-SUPPORT": 453,
-      "DEFERRED-FIND-M9": 78,
+      "FIND-SUPPORTING-DESCRIPTION": 30,
+      "FIND-PROTOCOL-SUPPORT": 27,
       "INFORMATION-BOOTSTRAP-SUPPORT": 251,
       "UPLOAD-BASE-VCS": 286,
       "DEFERRED-DOWNLOAD-M9": 365,
+      "NON-NORMATIVE-FIND-COMMENTARY": 13,
+      "FIND-CONDITIONAL-DESCRIPTION": 2,
+      "FIND-CONDITIONAL-NETWORK-OR-PRELOAD": 4,
+      "NON-NORMATIVE-FIND-EXAMPLE": 2,
       "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING": 13,
       "NOT-TRIGGERED-BY-CURRENT-SERVICE": 60,
       "TRIGGERED-BOUNDED-6655": 351
     },
     "deferredFutureScope": {
-      "total": 456,
+      "total": 378,
       "byRationale": {
-        "DEFERRED-FIND-M9": 78,
+        "DEFERRED-FIND-M9": 0,
         "DEFERRED-DOWNLOAD-M9": 365,
         "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING": 13
       }
     }
   },
   "clauseGroups": {
-    "DEFERRED-FIND-M9": [
-      {
-        "count": 21,
-        "coverageIds": [
-          "COV-M1-01582",
-          "COV-M1-01583",
-          "COV-M1-01584",
-          "COV-M1-01585",
-          "COV-M1-01586",
-          "COV-M1-01587",
-          "COV-M1-01588",
-          "COV-M1-01589",
-          "COV-M1-01590",
-          "COV-M1-01591",
-          "COV-M1-01592",
-          "COV-M1-01593",
-          "COV-M1-01594",
-          "COV-M1-01595",
-          "COV-M1-01596",
-          "COV-M1-01597",
-          "COV-M1-01598",
-          "COV-M1-01599",
-          "COV-M1-01600",
-          "COV-M1-01601",
-          "COV-M1-01602"
-        ],
-        "clause": "3-1",
-        "tableOrFigure": null
-      },
-      {
-        "count": 18,
-        "coverageIds": [
-          "COV-M1-01581",
-          "COV-M1-01603",
-          "COV-M1-01623",
-          "COV-M1-01624",
-          "COV-M1-01625",
-          "COV-M1-01626",
-          "COV-M1-01627",
-          "COV-M1-01628",
-          "COV-M1-01642",
-          "COV-M1-01643",
-          "COV-M1-01644",
-          "COV-M1-01645",
-          "COV-M1-01646",
-          "COV-M1-01647",
-          "COV-M1-01648",
-          "COV-M1-01649",
-          "COV-M1-01650",
-          "COV-M1-01651"
-        ],
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null
-      },
-      {
-        "count": 12,
-        "coverageIds": [
-          "COV-M1-01604",
-          "COV-M1-01605",
-          "COV-M1-01606",
-          "COV-M1-01607",
-          "COV-M1-01608",
-          "COV-M1-01609",
-          "COV-M1-01610",
-          "COV-M1-01611",
-          "COV-M1-01612",
-          "COV-M1-01613",
-          "COV-M1-01614",
-          "COV-M1-01615"
-        ],
-        "clause": "3-2",
-        "tableOrFigure": null
-      },
-      {
-        "count": 10,
-        "coverageIds": [
-          "COV-M1-01629",
-          "COV-M1-01630",
-          "COV-M1-01631",
-          "COV-M1-01632",
-          "COV-M1-01633",
-          "COV-M1-01634",
-          "COV-M1-01635",
-          "COV-M1-01636",
-          "COV-M1-01637",
-          "COV-M1-01638"
-        ],
-        "clause": "3-5",
-        "tableOrFigure": null
-      },
-      {
-        "count": 5,
-        "coverageIds": [
-          "COV-M1-01616",
-          "COV-M1-01617",
-          "COV-M1-01618",
-          "COV-M1-01619",
-          "COV-M1-01620"
-        ],
-        "clause": "3-3",
-        "tableOrFigure": null
-      },
-      {
-        "count": 5,
-        "coverageIds": [
-          "COV-M1-00566",
-          "COV-M1-00567",
-          "COV-M1-00568",
-          "COV-M1-00569",
-          "COV-M1-00570"
-        ],
-        "clause": "5.3.3",
-        "tableOrFigure": null
-      },
-      {
-        "count": 3,
-        "coverageIds": [
-          "COV-M1-01639",
-          "COV-M1-01640",
-          "COV-M1-01641"
-        ],
-        "clause": "3-6",
-        "tableOrFigure": null
-      },
-      {
-        "count": 2,
-        "coverageIds": [
-          "COV-M1-01621",
-          "COV-M1-01622"
-        ],
-        "clause": "3-4",
-        "tableOrFigure": null
-      },
-      {
-        "count": 2,
-        "coverageIds": [
-          "COV-M1-01652",
-          "COV-M1-01653"
-        ],
-        "clause": "3-7",
-        "tableOrFigure": null
-      }
-    ],
+    "DEFERRED-FIND-M9": [],
     "DEFERRED-DOWNLOAD-M9": [
       {
+        "clause": "6.4.7",
+        "tableOrFigure": null,
         "count": 80,
         "coverageIds": [
           "COV-M1-01293",
@@ -284,11 +150,11 @@
           "COV-M1-01370",
           "COV-M1-01371",
           "COV-M1-01372"
-        ],
-        "clause": "6.4.7",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.3.3",
+        "tableOrFigure": null,
         "count": 54,
         "coverageIds": [
           "COV-M1-00916",
@@ -345,11 +211,11 @@
           "COV-M1-00967",
           "COV-M1-00968",
           "COV-M1-00969"
-        ],
-        "clause": "6.3.3",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.3.4",
+        "tableOrFigure": null,
         "count": 28,
         "coverageIds": [
           "COV-M1-00970",
@@ -380,11 +246,11 @@
           "COV-M1-00995",
           "COV-M1-00996",
           "COV-M1-00997"
-        ],
-        "clause": "6.3.4",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.4.8",
+        "tableOrFigure": null,
         "count": 21,
         "coverageIds": [
           "COV-M1-01373",
@@ -408,11 +274,11 @@
           "COV-M1-01391",
           "COV-M1-01392",
           "COV-M1-01393"
-        ],
-        "clause": "6.4.8",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.4.6",
+        "tableOrFigure": null,
         "count": 20,
         "coverageIds": [
           "COV-M1-01273",
@@ -435,11 +301,11 @@
           "COV-M1-01290",
           "COV-M1-01291",
           "COV-M1-01292"
-        ],
-        "clause": "6.4.6",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "5.4.4.1",
+        "tableOrFigure": null,
         "count": 18,
         "coverageIds": [
           "COV-M1-00702",
@@ -460,11 +326,11 @@
           "COV-M1-00717",
           "COV-M1-00718",
           "COV-M1-00719"
-        ],
-        "clause": "5.4.4.1",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.4.7",
+        "tableOrFigure": "Table 6.4.7-1",
         "count": 16,
         "coverageIds": [
           "COV-M1-02689",
@@ -483,11 +349,11 @@
           "COV-M1-02702",
           "COV-M1-02703",
           "COV-M1-02704"
-        ],
-        "clause": "6.4.7",
-        "tableOrFigure": "Table 6.4.7-1"
+        ]
       },
       {
+        "clause": "6.4.9",
+        "tableOrFigure": null,
         "count": 16,
         "coverageIds": [
           "COV-M1-01394",
@@ -506,11 +372,11 @@
           "COV-M1-01407",
           "COV-M1-01408",
           "COV-M1-01409"
-        ],
-        "clause": "6.4.9",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "5.4.4.2",
+        "tableOrFigure": null,
         "count": 15,
         "coverageIds": [
           "COV-M1-00720",
@@ -528,11 +394,11 @@
           "COV-M1-00732",
           "COV-M1-00733",
           "COV-M1-00734"
-        ],
-        "clause": "5.4.4.2",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "5.4.4",
+        "tableOrFigure": null,
         "count": 12,
         "coverageIds": [
           "COV-M1-00690",
@@ -547,11 +413,11 @@
           "COV-M1-00699",
           "COV-M1-00700",
           "COV-M1-00701"
-        ],
-        "clause": "5.4.4",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "5.4.4.3",
+        "tableOrFigure": null,
         "count": 12,
         "coverageIds": [
           "COV-M1-00735",
@@ -566,11 +432,11 @@
           "COV-M1-00744",
           "COV-M1-00745",
           "COV-M1-00746"
-        ],
-        "clause": "5.4.4.3",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.3.3",
+        "tableOrFigure": "Section 6.3.3 sequence chart",
         "count": 12,
         "coverageIds": [
           "COV-M1-02762",
@@ -585,11 +451,11 @@
           "COV-M1-02771",
           "COV-M1-02772",
           "COV-M1-02773"
-        ],
-        "clause": "6.3.3",
-        "tableOrFigure": "Section 6.3.3 sequence chart"
+        ]
       },
       {
+        "clause": "6.3.4",
+        "tableOrFigure": "Section 6.3.4 sequence chart",
         "count": 12,
         "coverageIds": [
           "COV-M1-02774",
@@ -604,11 +470,11 @@
           "COV-M1-02783",
           "COV-M1-02784",
           "COV-M1-02785"
-        ],
-        "clause": "6.3.4",
-        "tableOrFigure": "Section 6.3.4 sequence chart"
+        ]
       },
       {
+        "clause": "6.4.6",
+        "tableOrFigure": "Table 6.4.6-1",
         "count": 8,
         "coverageIds": [
           "COV-M1-02681",
@@ -619,11 +485,11 @@
           "COV-M1-02686",
           "COV-M1-02687",
           "COV-M1-02688"
-        ],
-        "clause": "6.4.6",
-        "tableOrFigure": "Table 6.4.6-1"
+        ]
       },
       {
+        "clause": "6.4.8",
+        "tableOrFigure": "Table 6.4.8-1",
         "count": 8,
         "coverageIds": [
           "COV-M1-02705",
@@ -634,11 +500,11 @@
           "COV-M1-02710",
           "COV-M1-02711",
           "COV-M1-02712"
-        ],
-        "clause": "6.4.8",
-        "tableOrFigure": "Table 6.4.8-1"
+        ]
       },
       {
+        "clause": "6.4.9",
+        "tableOrFigure": "Table 6.4.9-1",
         "count": 6,
         "coverageIds": [
           "COV-M1-02713",
@@ -647,187 +513,187 @@
           "COV-M1-02716",
           "COV-M1-02717",
           "COV-M1-02718"
-        ],
-        "clause": "6.4.9",
-        "tableOrFigure": "Table 6.4.9-1"
+        ]
       },
       {
+        "clause": "6.2.10.2",
+        "tableOrFigure": null,
         "count": 3,
         "coverageIds": [
           "COV-M1-00805",
           "COV-M1-00806",
           "COV-M1-00807"
-        ],
-        "clause": "6.2.10.2",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.14.2",
+        "tableOrFigure": null,
         "count": 3,
         "coverageIds": [
           "COV-M1-00820",
           "COV-M1-00821",
           "COV-M1-00822"
-        ],
-        "clause": "6.2.14.2",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.13.1",
+        "tableOrFigure": null,
         "count": 2,
         "coverageIds": [
           "COV-M1-00815",
           "COV-M1-00816"
-        ],
-        "clause": "6.2.13.1",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.15.2",
+        "tableOrFigure": null,
         "count": 2,
         "coverageIds": [
           "COV-M1-00825",
           "COV-M1-00826"
-        ],
-        "clause": "6.2.15.2",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.10.1",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00804"
-        ],
-        "clause": "6.2.10.1",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.10.3",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00808"
-        ],
-        "clause": "6.2.10.3",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.11.1",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00809"
-        ],
-        "clause": "6.2.11.1",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.11.2",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00810"
-        ],
-        "clause": "6.2.11.2",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.11.3",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00811"
-        ],
-        "clause": "6.2.11.3",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.12.1",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00812"
-        ],
-        "clause": "6.2.12.1",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.12.2",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00813"
-        ],
-        "clause": "6.2.12.2",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.12.3",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00814"
-        ],
-        "clause": "6.2.12.3",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.13.2",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00817"
-        ],
-        "clause": "6.2.13.2",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.13.3",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00818"
-        ],
-        "clause": "6.2.13.3",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.14.1",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00819"
-        ],
-        "clause": "6.2.14.1",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.14.3",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00823"
-        ],
-        "clause": "6.2.14.3",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.15.1",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00824"
-        ],
-        "clause": "6.2.15.1",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.15.3",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00827"
-        ],
-        "clause": "6.2.15.3",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.16.1",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00828"
-        ],
-        "clause": "6.2.16.1",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.16.2",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00829"
-        ],
-        "clause": "6.2.16.2",
-        "tableOrFigure": null
+        ]
       },
       {
+        "clause": "6.2.16.3",
+        "tableOrFigure": null,
         "count": 1,
         "coverageIds": [
           "COV-M1-00830"
-        ],
-        "clause": "6.2.16.3",
-        "tableOrFigure": null
+        ]
       }
     ],
     "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING": [
       {
+        "clause": "APPENDIX-E",
+        "tableOrFigure": null,
         "count": 13,
         "coverageIds": [
           "COV-M1-01960",
@@ -843,951 +709,12 @@
           "COV-M1-01970",
           "COV-M1-01971",
           "COV-M1-01972"
-        ],
-        "clause": "APPENDIX-E",
-        "tableOrFigure": null
+        ]
       }
     ]
   },
   "deferredUnits": {
-    "DEFERRED-FIND-M9": [
-      {
-        "id": "COV-M1-00566",
-        "sourceUnitId": "SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-001-A9E32B5321E9",
-        "clause": "5.3.3",
-        "tableOrFigure": null,
-        "documentPage": 32,
-        "pdfPage": 44,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 1,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-00567",
-        "sourceUnitId": "SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-002-1809112FDB49",
-        "clause": "5.3.3",
-        "tableOrFigure": null,
-        "documentPage": 32,
-        "pdfPage": 44,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 2,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-00568",
-        "sourceUnitId": "SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-003-87E5225963CD",
-        "clause": "5.3.3",
-        "tableOrFigure": null,
-        "documentPage": 32,
-        "pdfPage": 44,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 3,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-00569",
-        "sourceUnitId": "SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-004-093BBE82727E",
-        "clause": "5.3.3",
-        "tableOrFigure": null,
-        "documentPage": 32,
-        "pdfPage": 44,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 4,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-00570",
-        "sourceUnitId": "SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-005-36878C1F8E7E",
-        "clause": "5.3.3",
-        "tableOrFigure": null,
-        "documentPage": 32,
-        "pdfPage": 44,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 5,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01581",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P107-PROSE-SENTENCE-001-B443A5630F89",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 1,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01582",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-001-6AA9C6C48086",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 1,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01583",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-002-000A6CE60A8E",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 2,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01584",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-003-0302A467885A",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 3,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01585",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-004-6514F177FD44",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 4,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01586",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-005-8B6950287147",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 5,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01587",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-006-B1ED10DE43C7",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 6,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01588",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-007-9166DCC81508",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 7,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01589",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-001-49DDDC4E151F",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "COMMENTARY",
-        "fragmentOrdinal": 1,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01590",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-002-5835D3F1CB27",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "COMMENTARY",
-        "fragmentOrdinal": 2,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01591",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-003-97C78D32DA92",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "COMMENTARY",
-        "fragmentOrdinal": 3,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01592",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-004-674FFCE49EA1",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "COMMENTARY",
-        "fragmentOrdinal": 4,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01593",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-005-3DF3069C86AC",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "COMMENTARY",
-        "fragmentOrdinal": 5,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01594",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-008-683B8392253F",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 8,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01595",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-009-BE9DBDCCC597",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 9,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01596",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-006-FDED447BF5E7",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "COMMENTARY",
-        "fragmentOrdinal": 6,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01597",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-007-40449DD36E9F",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "COMMENTARY",
-        "fragmentOrdinal": 7,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01598",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-008-B3186AE8A118",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "COMMENTARY",
-        "fragmentOrdinal": 8,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01599",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-009-DC011865AD26",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "COMMENTARY",
-        "fragmentOrdinal": 9,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01600",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-010-1C1801ADFB0B",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 10,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01601",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-011-AD843D1C9EDF",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 11,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01602",
-        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-012-AEB96A80314F",
-        "clause": "3-1",
-        "tableOrFigure": null,
-        "documentPage": 95,
-        "pdfPage": 107,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 12,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01603",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P108-PROSE-SENTENCE-002-7C39BDA671E2",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 2,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01604",
-        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-001-FCD0F4E030CF",
-        "clause": "3-2",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 1,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01605",
-        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF",
-        "clause": "3-2",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 2,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01606",
-        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-003-1E8680AD6287",
-        "clause": "3-2",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 3,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01607",
-        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891",
-        "clause": "3-2",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 4,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01608",
-        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700",
-        "clause": "3-2",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 5,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01609",
-        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-006-E98F49FBFBDF",
-        "clause": "3-2",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 6,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01610",
-        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-007-6022C5275CCB",
-        "clause": "3-2",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 7,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01611",
-        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-008-52ECCBE7CB0F",
-        "clause": "3-2",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 8,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01612",
-        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-COMMENTARY-001-25FA5A319925",
-        "clause": "3-2",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "COMMENTARY",
-        "fragmentOrdinal": 1,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01613",
-        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-009-43FC5E78C9FF",
-        "clause": "3-2",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 9,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01614",
-        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-010-76E6AE59C360",
-        "clause": "3-2",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 10,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01615",
-        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-011-A1CA1EF64C11",
-        "clause": "3-2",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 11,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01616",
-        "sourceUnitId": "SU-ARINC-615A-3-3-3-P108-PROSE-SENTENCE-001-D77333D77375",
-        "clause": "3-3",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 1,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01617",
-        "sourceUnitId": "SU-ARINC-615A-3-3-3-P108-PROSE-SENTENCE-002-46953BCD3E0E",
-        "clause": "3-3",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 2,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01618",
-        "sourceUnitId": "SU-ARINC-615A-3-3-3-P108-PROSE-SENTENCE-003-9C92144E4252",
-        "clause": "3-3",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 3,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01619",
-        "sourceUnitId": "SU-ARINC-615A-3-3-3-P108-PROSE-SENTENCE-004-77FE8166C220",
-        "clause": "3-3",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 4,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01620",
-        "sourceUnitId": "SU-ARINC-615A-3-3-3-P108-PROSE-SENTENCE-005-1CF78E6B2ADF",
-        "clause": "3-3",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 5,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01621",
-        "sourceUnitId": "SU-ARINC-615A-3-3-4-P108-PROSE-SENTENCE-001-DB0FEBBE9664",
-        "clause": "3-4",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 1,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01622",
-        "sourceUnitId": "SU-ARINC-615A-3-3-4-P108-PROSE-SENTENCE-002-412B0FD7B45D",
-        "clause": "3-4",
-        "tableOrFigure": null,
-        "documentPage": 96,
-        "pdfPage": 108,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 2,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01623",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-003-B443A5630F89",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 3,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01624",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-004-0BFE8D84B7A9",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 4,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01625",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-005-DC8D7B76A7B9",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 5,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01626",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-006-FC8DA6118FFF",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 6,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01627",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-007-99F468D5D311",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 7,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01628",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-008-EDD675936DBC",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 8,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01629",
-        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-001-D2A70FEFE065",
-        "clause": "3-5",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 1,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01630",
-        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-002-21D8C06816D1",
-        "clause": "3-5",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 2,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01631",
-        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-003-E5DBDB9636E9",
-        "clause": "3-5",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 3,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01632",
-        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-COMMENTARY-001-542C79F19BA1",
-        "clause": "3-5",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "COMMENTARY",
-        "fragmentOrdinal": 1,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01633",
-        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-004-98DCC47DCB2B",
-        "clause": "3-5",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 4,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01634",
-        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-005-4D7FB8BC839C",
-        "clause": "3-5",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 5,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01635",
-        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-006-CA51BB7D3F57",
-        "clause": "3-5",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 6,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01636",
-        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-007-0F2D63CA1D3E",
-        "clause": "3-5",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 7,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01637",
-        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-008-D8483D058800",
-        "clause": "3-5",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 8,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01638",
-        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-009-2DD2663EB0A1",
-        "clause": "3-5",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 9,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01639",
-        "sourceUnitId": "SU-ARINC-615A-3-3-6-P109-PROSE-SENTENCE-001-8FB1B3AE32BB",
-        "clause": "3-6",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 1,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01640",
-        "sourceUnitId": "SU-ARINC-615A-3-3-6-P109-PROSE-SENTENCE-002-92E5B9489E9B",
-        "clause": "3-6",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 2,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01641",
-        "sourceUnitId": "SU-ARINC-615A-3-3-6-P109-PROSE-SENTENCE-003-9C6EA4657638",
-        "clause": "3-6",
-        "tableOrFigure": null,
-        "documentPage": 97,
-        "pdfPage": 109,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 3,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01642",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-009-54FB52547CB6",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 98,
-        "pdfPage": 110,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 9,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01643",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-010-8792D2593121",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 98,
-        "pdfPage": 110,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 10,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01644",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-011-AB97415A59E9",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 98,
-        "pdfPage": 110,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 11,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01645",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-COMMENTARY-001-94E1A030CFD1",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 98,
-        "pdfPage": 110,
-        "fragmentKind": "COMMENTARY",
-        "fragmentOrdinal": 1,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01646",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-012-DB234DB803F9",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 98,
-        "pdfPage": 110,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 12,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01647",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-013-48CB9FF4518D",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 98,
-        "pdfPage": 110,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 13,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01648",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-014-913B305AF452",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 98,
-        "pdfPage": 110,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 14,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01649",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-015-14EF51A05AEA",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 98,
-        "pdfPage": 110,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 15,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01650",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-016-22BA44DB74A6",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 98,
-        "pdfPage": 110,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 16,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01651",
-        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-017-4A05E0BB2809",
-        "clause": "ATTACHMENT-3",
-        "tableOrFigure": null,
-        "documentPage": 98,
-        "pdfPage": 110,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 17,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01652",
-        "sourceUnitId": "SU-ARINC-615A-3-3-7-P110-PROSE-SENTENCE-001-EF890EA5F89E",
-        "clause": "3-7",
-        "tableOrFigure": null,
-        "documentPage": 98,
-        "pdfPage": 110,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 1,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      },
-      {
-        "id": "COV-M1-01653",
-        "sourceUnitId": "SU-ARINC-615A-3-3-7-P110-PROSE-SENTENCE-002-153C71A20886",
-        "clause": "3-7",
-        "tableOrFigure": null,
-        "documentPage": 98,
-        "pdfPage": 110,
-        "fragmentKind": "PROSE-SENTENCE",
-        "fragmentOrdinal": 2,
-        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
-        "requirementIds": []
-      }
-    ],
+    "DEFERRED-FIND-M9": [],
     "DEFERRED-DOWNLOAD-M9": [
       {
         "id": "COV-M1-00690",
@@ -6391,19 +5318,18 @@
       134
     ],
     "startedOn": "2026-09-14",
-    "scopeThisIncrement": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+    "scopeThisIncrement": "FIND-CRS-FROM-REREAD",
     "unitsRead": 456,
     "pendingCodes": [],
-    "doesNotRewriteBoundPackage": true,
+    "doesNotRewriteBoundPackage": false,
     "requirementGenerationAllowed": false,
     "proprietaryTextExcluded": true,
     "sharedFindNetworkCondition": "Only when the path between data loader and target carries FIND traffic (broadcast, multicast or unicast). Gateways or mixed aircraft networks may not.",
     "notes": [
-      "FIND 78/78, DOWNLOAD 365/365 and AFDX appendix 13/13 candidates are recorded. Bound M1 rows stay deferred until bilingual CRS rows are written from these candidates.",
-      "Media Defined and Operator Defined DOWNLOAD stay separate. Ordinary Ethernet, Compliant, Profiled and AFDX stay separate. Appendix E does not activate the current Compliant instance.",
-      "664P7 is acquired and is the pointer target for UDP-over-AFDX details, but the P7 body, 664P2/P3, 665-5 and the RFCs remain PENDING-SOURCE-UNIT-REREAD. 664 Part 4 is not acquired; Appendix E already allows the integrator to identify address requirements.",
-      "Having Appendix E and 664P7 does not create an AFDX hardware test environment. Software Ethernet experiments do not prove AFDX guarantees.",
-      "Commentary and examples stay non-normative. Requirement generation remains forbidden."
+      "FIND REQUIRED and OPTIONAL candidates are written as bilingual CRS rows in M1-CANDIDATE-3. Commentary and examples stay non-normative. Informative FIND descriptions stay coverage-only.",
+      "Media Defined and Operator Defined DOWNLOAD stay deferred and separate. AFDX appendix stays a conditional deployment and does not activate the current Compliant instance.",
+      "Bound M2 does not model FIND; new FIND requirement ids are model-refinement pending. 664/665/RFC body audits remain pending.",
+      "Software Ethernet experiments do not prove AFDX hardware. This is not independent RG, mathematical or architecture approval."
     ],
     "units": [
       {
@@ -15610,10 +14536,96 @@
     ],
     "completedCodes": [
       "DEFERRED-FIND-M9",
-      "DEFERRED-DOWNLOAD-M9"
+      "DEFERRED-DOWNLOAD-M9",
+      "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING"
     ],
     "mediaDefinedCondition": "When Media Defined DOWNLOAD is implemented and used.",
     "operatorDefinedCondition": "When Operator Defined DOWNLOAD is implemented and used.",
-    "afdxDeploymentCondition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance."
+    "afdxDeploymentCondition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+    "generatedCodes": [
+      "DEFERRED-FIND-M9"
+    ],
+    "generatedUnitIdsByCode": {
+      "DEFERRED-FIND-M9": [
+        "COV-M1-00566",
+        "COV-M1-00567",
+        "COV-M1-00568",
+        "COV-M1-00569",
+        "COV-M1-00570",
+        "COV-M1-01581",
+        "COV-M1-01582",
+        "COV-M1-01583",
+        "COV-M1-01584",
+        "COV-M1-01585",
+        "COV-M1-01586",
+        "COV-M1-01587",
+        "COV-M1-01588",
+        "COV-M1-01589",
+        "COV-M1-01590",
+        "COV-M1-01591",
+        "COV-M1-01592",
+        "COV-M1-01593",
+        "COV-M1-01594",
+        "COV-M1-01595",
+        "COV-M1-01596",
+        "COV-M1-01597",
+        "COV-M1-01598",
+        "COV-M1-01599",
+        "COV-M1-01600",
+        "COV-M1-01601",
+        "COV-M1-01602",
+        "COV-M1-01603",
+        "COV-M1-01604",
+        "COV-M1-01605",
+        "COV-M1-01606",
+        "COV-M1-01607",
+        "COV-M1-01608",
+        "COV-M1-01609",
+        "COV-M1-01610",
+        "COV-M1-01611",
+        "COV-M1-01612",
+        "COV-M1-01613",
+        "COV-M1-01614",
+        "COV-M1-01615",
+        "COV-M1-01616",
+        "COV-M1-01617",
+        "COV-M1-01618",
+        "COV-M1-01619",
+        "COV-M1-01620",
+        "COV-M1-01621",
+        "COV-M1-01622",
+        "COV-M1-01623",
+        "COV-M1-01624",
+        "COV-M1-01625",
+        "COV-M1-01626",
+        "COV-M1-01627",
+        "COV-M1-01628",
+        "COV-M1-01629",
+        "COV-M1-01630",
+        "COV-M1-01631",
+        "COV-M1-01632",
+        "COV-M1-01633",
+        "COV-M1-01634",
+        "COV-M1-01635",
+        "COV-M1-01636",
+        "COV-M1-01637",
+        "COV-M1-01638",
+        "COV-M1-01639",
+        "COV-M1-01640",
+        "COV-M1-01641",
+        "COV-M1-01642",
+        "COV-M1-01643",
+        "COV-M1-01644",
+        "COV-M1-01645",
+        "COV-M1-01646",
+        "COV-M1-01647",
+        "COV-M1-01648",
+        "COV-M1-01649",
+        "COV-M1-01650",
+        "COV-M1-01651",
+        "COV-M1-01652",
+        "COV-M1-01653"
+      ]
+    }
   }
 }

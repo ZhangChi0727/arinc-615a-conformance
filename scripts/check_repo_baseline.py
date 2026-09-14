@@ -88,6 +88,7 @@ CLTAV_SVG_FILES = tuple(name.replace(".puml", ".svg") for name in CLTAV_PUML_FIL
 AUDIT_STATUS_GENERATION = {
     "AUDIT-BEFORE-REQUIREMENT-GENERATION": False,
     "SOURCE-UNIT-AUDIT-IN-PROGRESS": False,
+    "PARTIAL-CRS-GENERATION-IN-PROGRESS": True,
     "AUDIT-COMPLETE-REQUIREMENT-GENERATION-ALLOWED": True,
 }
 DEFERRED_AUDIT_CODES = (
@@ -589,9 +590,9 @@ def protocol_source_audit_errors(audit: dict, crs: dict) -> list[str]:
             errors.append(f"protocol source audit {code} contains duplicate coverage ids")
         if set(recorded_ids) - {None, ""} != set(expected_rows):
             errors.append(f"protocol source audit IDs for {code} do not match the bound CRS ledger")
-        if by_rationale.get(code) != len(expected_rows):
+        if by_rationale.get(code, 0) != len(expected_rows):
             errors.append(f"protocol source audit summary count for {code} does not match the bound CRS ledger")
-        if rationale_counts.get(code) != len(expected_rows):
+        if rationale_counts.get(code, 0) != len(expected_rows):
             errors.append(f"protocol source audit rationaleCodes.{code} does not match the bound CRS ledger")
         locators: list[dict] = []
         for item in recorded:
@@ -659,6 +660,14 @@ def protocol_source_audit_errors(audit: dict, crs: dict) -> list[str]:
     if future.get("total") != deferred_total:
         errors.append("protocol source audit summary.deferredFutureScope.total does not match the bound CRS ledger")
     errors.extend(source_reread_errors(audit))
+    reread = audit.get("sourceReread") or {}
+    generated_ids_by_code = reread.get("generatedUnitIdsByCode") or {}
+    for code in reread.get("generatedCodes") or []:
+        if not isinstance(code, str):
+            continue
+        for row_id in generated_ids_by_code.get(code) or []:
+            if row_id not in ledger:
+                errors.append(f"{code} generated inventory id {row_id} is absent from the bound CRS ledger")
     return errors
 
 
@@ -674,11 +683,11 @@ def expected_download_mode(clause: str) -> str:
 
 
 def source_reread_errors(audit: dict) -> list[str]:
-    """FIND/DOWNLOAD reread candidates. Not CRS generation and not source-text storage."""
+    """FIND/DOWNLOAD/AFDX reread candidates. Generated codes may rewrite the bound package."""
     errors: list[str] = []
     reread = audit.get("sourceReread")
     status = audit.get("status")
-    if status == "SOURCE-UNIT-AUDIT-IN-PROGRESS" and not isinstance(reread, dict):
+    if status in {"SOURCE-UNIT-AUDIT-IN-PROGRESS", "PARTIAL-CRS-GENERATION-IN-PROGRESS"} and not isinstance(reread, dict):
         errors.append("source-unit audit in progress must record sourceReread")
         return errors
     if reread is None:
@@ -688,11 +697,19 @@ def source_reread_errors(audit: dict) -> list[str]:
         return errors
     if reread.get("requirementGenerationAllowed") is not False:
         errors.append("sourceReread must not allow requirement generation")
-    if reread.get("doesNotRewriteBoundPackage") is not True:
+    generated_codes = {code for code in (reread.get("generatedCodes") or []) if isinstance(code, str)}
+    unknown_generated = generated_codes - set(DEFERRED_AUDIT_CODES)
+    if unknown_generated:
+        errors.append("sourceReread generatedCodes contains an undeclared deferred rationale")
+    if generated_codes:
+        if reread.get("doesNotRewriteBoundPackage") is not False:
+            errors.append("sourceReread must record bound-package rewrite after generated codes")
+    elif reread.get("doesNotRewriteBoundPackage") is not True:
         errors.append("sourceReread must not rewrite the bound package")
     if reread.get("proprietaryTextExcluded") is not True:
         errors.append("sourceReread must exclude proprietary source text")
     deferred = audit.get("deferredUnits") or {}
+    generated_ids_by_code = reread.get("generatedUnitIdsByCode") or {}
     units = reread.get("units")
     if not isinstance(units, list):
         errors.append("sourceReread units must be a list")
@@ -706,7 +723,11 @@ def source_reread_errors(audit: dict) -> list[str]:
         errors.append("sourceReread unitsRead does not match recorded units")
     completed = [code for code in (reread.get("completedCodes") or []) if isinstance(code, str)]
     current = reread.get("scopeThisIncrement")
-    active = [code for code in completed + [current] if isinstance(code, str) and code]
+    active = [
+        code
+        for code in completed + [current]
+        if isinstance(code, str) and code and code in DEFERRED_AUDIT_CODES
+    ]
     pending = set(reread.get("pendingCodes") or [])
     recorded_codes = {
         item.get("frozenRationaleCode")
@@ -717,13 +738,25 @@ def source_reread_errors(audit: dict) -> list[str]:
         errors.append("sourceReread completed/current codes do not match recorded rationale codes")
     if pending & recorded_codes:
         errors.append("sourceReread pendingCodes must not include recorded codes")
+    if generated_codes - recorded_codes:
+        errors.append("sourceReread generatedCodes must be a subset of recorded rationale codes")
     for code in sorted(recorded_codes):
-        expected_ids = [row.get("id") for row in deferred.get(code) or [] if isinstance(row, dict)]
         got_ids = [
             item.get("id")
             for item in units
             if isinstance(item, dict) and item.get("frozenRationaleCode") == code
         ]
+        if code in generated_codes:
+            expected_ids = generated_ids_by_code.get(code) or []
+            if not isinstance(expected_ids, list):
+                errors.append(f"{code} generated inventory must be a list")
+                continue
+            if set(filter(None, got_ids)) != set(filter(None, expected_ids)):
+                errors.append(f"{code} sourceReread IDs do not match generated inventory")
+            if len(got_ids) != len(expected_ids):
+                errors.append(f"{code} sourceReread unit count does not match generated inventory")
+            continue
+        expected_ids = [row.get("id") for row in deferred.get(code) or [] if isinstance(row, dict)]
         if set(filter(None, got_ids)) != set(filter(None, expected_ids)):
             errors.append(f"{code} sourceReread IDs do not match deferred units")
         if len(got_ids) != len(expected_ids):

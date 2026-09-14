@@ -9932,6 +9932,689 @@
       "expectedSourceModality": "FIGURE-CONSTRAINT",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00385",
+      "sourceUnitId": "SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-005-36878C1F8E7E",
+      "sourceTextHash": "36878c1f8e7e0703fe9a3259a3c8bb968e3fa644457478d0ca7f3efd846baebe",
+      "expectedSemantic": {
+        "actor": "FIND-PROTOCOL",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "USE-UDP-PORT-1001",
+        "objects": [
+          "UDP-PORT-1001"
+        ],
+        "observableEffect": "FIND-PORT-1001-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When a FIND initiator or FIND host is implemented, FIND shall use UDP port 1001 decimal.",
+      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 发起方或 FIND 主机时，FIND 必须使用十进制 UDP 端口 1001。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00386",
+      "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-006-B1ED10DE43C7",
+      "sourceTextHash": "b1ed10de43c743545c34394c3d2e6b5cf10d4f1c20068f3cb53d4c3e92617820",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-PATH-CARRIES-TRAFFIC-AND-BEFORE-DATA-LOAD",
+        "action": "RUN-FIND-AT-LEAST-ONCE",
+        "objects": [
+          "FIND-REQUEST"
+        ],
+        "observableEffect": "FIND-PRELOAD-RUN-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When the path can carry FIND traffic, the data loader shall run FIND at least once before data-load operations.",
+      "expectedGeneratedSemanticProjectionZh": "在路径能够承载 FIND 业务时，数据加载器必须在数据加载操作前至少运行一次 FIND。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00387",
+      "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-007-9166DCC81508",
+      "sourceTextHash": "9166dcc8150868f454848abe8913e55dc44aa6165930c83611ba87180d5c4fd3",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-PATH-CARRIES-TRAFFIC-AND-BEFORE-LATER-OPERATION",
+        "action": "MAY-RERUN-FIND-AND-REGISTER-ANSWERS",
+        "objects": [
+          "FIND-REQUEST",
+          "FIND-ANSWER"
+        ],
+        "observableEffect": "FIND-OPTIONAL-RERUN-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "On a FIND-capable path, the data loader may run FIND again and register answers before each later operation.",
+      "expectedGeneratedSemanticProjectionZh": "在能够承载 FIND 的路径上，数据加载器可以在后续每次操作前再次运行 FIND 并登记应答。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00388",
+      "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-011-AD843D1C9EDF",
+      "sourceTextHash": "ad843d1c9edfb801219e361690173730417b4fc65e32f7fcc15840ff707fbb83",
+      "expectedSemantic": {
+        "actor": "FIND-PROTOCOL",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "USE-WELL-KNOWN-UDP-PORT-1001",
+        "objects": [
+          "UDP-PORT-1001"
+        ],
+        "observableEffect": "FIND-ATTACHMENT-PORT-1001-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "FIND request and answer packets shall use the well-known UDP port 1001 decimal.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 请求与应答分组必须使用众所周知的十进制 UDP 端口 1001。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00389",
+      "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-012-AEB96A80314F",
+      "sourceTextHash": "aeb96a80314f2a0899978b382859580b9dbc336d148fc8b0589a572097b6fdc3",
+      "expectedSemantic": {
+        "actor": "FIND-PROTOCOL",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "USE-SAME-PORT-FOR-REQUEST-AND-ANSWER",
+        "objects": [
+          "FIND-REQUEST",
+          "FIND-ANSWER",
+          "UDP-PORT-1001"
+        ],
+        "observableEffect": "FIND-SHARED-PORT-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The FIND request packet and the FIND answer packet shall use the same UDP port number.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 请求分组与 FIND 应答分组必须使用同一 UDP 端口号。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00390",
+      "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-003-1E8680AD6287",
+      "sourceTextHash": "1e8680ad628738183ea6f984c6d350b07d1e5e6cc3af5318789ad595e0d213eb",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "KEEP-THREE-SECOND-FIND-ANSWER-WINDOW",
+        "objects": [
+          "FIND-ANSWER-WINDOW-3-S"
+        ],
+        "observableEffect": "FIND-LOADER-WINDOW-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "After sending a FIND request, the data loader shall keep a three-second window for FIND answers.",
+      "expectedGeneratedSemanticProjectionZh": "发出 FIND 请求后，数据加载器必须为 FIND 应答保持三秒窗口。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00391",
+      "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700",
+      "sourceTextHash": "3ce166eda700ce6a555aeb4a066397ccdf8f45c27dbda9a9d6cc92e9b8a9c977",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "ANSWER-FIND-REQUEST-WITHIN-TWO-SECONDS",
+        "objects": [
+          "FIND-ANSWER",
+          "FIND-HOST-TIMEOUT-2-S"
+        ],
+        "observableEffect": "FIND-HOST-TIMEOUT-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "A FIND host shall send its FIND answer within a two-second timeout of the request.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须在收到请求后的两秒超时内发出 FIND 应答。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00392",
+      "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-006-E98F49FBFBDF",
+      "sourceTextHash": "e98f49fbfbdf4b9aec7a04abec3db7abe6430722509e23c0ddc1d74b04c3a8b9",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "ACCEPT-LATE-OR-MISSING-ANSWER-MAY-BE-UNREGISTERED",
+        "objects": [
+          "FIND-TARGET-REGISTRATION"
+        ],
+        "observableEffect": "FIND-LATE-ANSWER-RISK-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "A FIND host may be omitted from registration if its answer is late or missing.",
+      "expectedGeneratedSemanticProjectionZh": "若 FIND 应答迟到或缺失，FIND 主机可以不被登记。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00393",
+      "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-010-76E6AE59C360",
+      "sourceTextHash": "76e6ae59c360f3777dd01a1a52a68d015d537087efeac16d3151fb83ca8863b4",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SEND-NO-ANSWER-TO-ILLEGAL-FIND-REQUEST",
+        "objects": [
+          "ILLEGAL-FIND-REQUEST"
+        ],
+        "observableEffect": "FIND-ILLEGAL-REQUEST-SILENCE-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "A FIND host shall send no answer to an illegal or invalid FIND request.",
+      "expectedGeneratedSemanticProjectionZh": "对于非法或无效的 FIND 请求，FIND 主机不得发出应答。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00394",
+      "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-011-A1CA1EF64C11",
+      "sourceTextHash": "a1ca1ef64c11267167126ff49c6e63a2a0abdf5d3ea958703c23f694376b4028",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "IGNORE-INVALID-FIND-ANSWER",
+        "objects": [
+          "INVALID-FIND-ANSWER"
+        ],
+        "observableEffect": "FIND-INVALID-ANSWER-IGNORE-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The data loader shall ignore an invalid FIND answer.",
+      "expectedGeneratedSemanticProjectionZh": "数据加载器必须忽略无效的 FIND 应答。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00395",
+      "sourceUnitId": "SU-ARINC-615A-3-3-4-P108-PROSE-SENTENCE-001-DB0FEBBE9664",
+      "sourceTextHash": "db0febbe9664b8db3214dea75fe5b5d594466e59870d4945ab119d8bb2442d95",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IRQ-SOURCE-MAC-TO-DATA-LOADER",
+        "objects": [
+          "IRQ-SOURCE-MAC"
+        ],
+        "observableEffect": "IRQ-SOURCE-MAC-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "expectedGeneratedSemanticProjectionEn": "In an Information Request, the data loader shall set the source MAC address to its own MAC address.",
+      "expectedGeneratedSemanticProjectionZh": "在信息请求中，数据加载器必须把源 MAC 地址设为自己的 MAC 地址。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00396",
+      "sourceUnitId": "SU-ARINC-615A-3-3-4-P108-PROSE-SENTENCE-002-412B0FD7B45D",
+      "sourceTextHash": "412b0fd7b45d178f6cb44bed5f84f03acfa1ba911da7d8a931b39d8232ba8639",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-PATH-CARRIES-TRAFFIC",
+        "action": "SET-IRQ-DESTINATION-MAC-TO-UNICAST-MULTICAST-OR-BROADCAST",
+        "objects": [
+          "IRQ-DESTINATION-MAC"
+        ],
+        "observableEffect": "IRQ-DESTINATION-MAC-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When the path can carry FIND, the data loader shall set the Information Request destination MAC to a unicast, multicast or broadcast MAC.",
+      "expectedGeneratedSemanticProjectionZh": "在路径能够承载 FIND 时，数据加载器必须把信息请求的目的 MAC 设为单播、组播或广播 MAC。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00397",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-003-B443A5630F89",
+      "sourceTextHash": "b443a5630f89f2075717ebed1ad209edc3ca70194a785926f30ca2715a717ee8",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IRQ-SOURCE-IP-TO-DATA-LOADER",
+        "objects": [
+          "IRQ-SOURCE-IP"
+        ],
+        "observableEffect": "IRQ-SOURCE-IP-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "expectedGeneratedSemanticProjectionEn": "In an Information Request, the data loader shall set the source IP address to its own IP address.",
+      "expectedGeneratedSemanticProjectionZh": "在信息请求中，数据加载器必须把源 IP 地址设为自己的 IP 地址。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00398",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-004-0BFE8D84B7A9",
+      "sourceTextHash": "0bfe8d84b7a9cb29f160a5e931acb8e6d4287a83fec87e9f6949bac58ae79445",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-PATH-CARRIES-TRAFFIC",
+        "action": "SET-IRQ-DESTINATION-IP-TO-UNICAST-MULTICAST-OR-BROADCAST",
+        "objects": [
+          "IRQ-DESTINATION-IP"
+        ],
+        "observableEffect": "IRQ-DESTINATION-IP-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When the path can carry FIND, the data loader shall set the Information Request destination IP to a unicast, multicast or broadcast IP, including limited or all-ones broadcast.",
+      "expectedGeneratedSemanticProjectionZh": "在路径能够承载 FIND 时，数据加载器必须把信息请求的目的 IP 设为单播、组播或广播 IP，包括有限广播或全 1 广播。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00399",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-005-DC8D7B76A7B9",
+      "sourceTextHash": "dc8d7b76a7b9021b70ae12a00ef2f2399d7b9a1b02c3538d3f588945e5e02939",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IRQ-OPCODE-TO-0001",
+        "objects": [
+          "IRQ-OPCODE-0001"
+        ],
+        "observableEffect": "IRQ-OPCODE-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The data loader shall set the Information Request opcode to 0x0001.",
+      "expectedGeneratedSemanticProjectionZh": "数据加载器必须把信息请求操作码设为 0x0001。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00400",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-006-FC8DA6118FFF",
+      "sourceTextHash": "fc8da6118fff0082321a2504f88ec640dc49149483abb782cbc200b188f73342",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IRQ-DATA-LIST-TO-ASCII-NUL",
+        "objects": [
+          "IRQ-DATA-LIST",
+          "ASCII-NUL"
+        ],
+        "observableEffect": "IRQ-DATA-LIST-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The data loader shall set the Information Request data list to a single ASCII NUL terminator.",
+      "expectedGeneratedSemanticProjectionZh": "数据加载器必须把信息请求数据表设为单个 ASCII 空字符终止符。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00401",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-007-99F468D5D311",
+      "sourceTextHash": "99f468d5d3114bafc988fde2478f2827ee6820382763804a2fe8068f49257b1f",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "TERMINATE-IRQ-PACKET-WITH-DLE",
+        "objects": [
+          "IRQ-PACKET-TERMINATOR-DLE"
+        ],
+        "observableEffect": "IRQ-TERMINATOR-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "FIND-HOST"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The data loader shall terminate the Information Request packet with 0x10.",
+      "expectedGeneratedSemanticProjectionZh": "数据加载器必须以 0x10 结束信息请求分组。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00402",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-001-D2A70FEFE065",
+      "sourceTextHash": "d2a70fefe0650eca24428f35178cc42f9a1287df86f3da2496776c3b38da4d7d",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IAN-SOURCE-MAC-TO-FIND-HOST",
+        "objects": [
+          "IAN-SOURCE-MAC"
+        ],
+        "observableEffect": "IAN-SOURCE-MAC-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "In an Information Answer, the FIND host shall set the source MAC address to the target-hardware MAC address.",
+      "expectedGeneratedSemanticProjectionZh": "在信息应答中，FIND 主机必须把源 MAC 地址设为目标硬件 MAC 地址。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00403",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-002-21D8C06816D1",
+      "sourceTextHash": "21d8c06816d17f20910f01582869e696f3de637cf3ea76da1e41ccf5a0ccc452",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IAN-DESTINATION-MAC-TO-ASSOCIATED-IRQ-SOURCE-MAC",
+        "objects": [
+          "IAN-DESTINATION-MAC"
+        ],
+        "observableEffect": "IAN-DESTINATION-MAC-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The FIND host shall set the Information Answer destination MAC to the source MAC of the associated Information Request.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须把信息应答的目的 MAC 设为对应信息请求的源 MAC。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00404",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-003-E5DBDB9636E9",
+      "sourceTextHash": "e5dbdb9636e9342727645c418b44a04967c3438294ea1b08be6af2b801017e26",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IAN-SOURCE-IP-TO-FIND-HOST",
+        "objects": [
+          "IAN-SOURCE-IP"
+        ],
+        "observableEffect": "IAN-SOURCE-IP-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "In an Information Answer, the FIND host shall set the source IP address to the target-hardware IP address.",
+      "expectedGeneratedSemanticProjectionZh": "在信息应答中，FIND 主机必须把源 IP 地址设为目标硬件 IP 地址。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00405",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-004-98DCC47DCB2B",
+      "sourceTextHash": "98dcc47dcb2b5b97fb2ec7316b95487a60f33955a87dcefc8d10e55147f2978b",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IAN-DESTINATION-IP-TO-ASSOCIATED-IRQ-SOURCE-IP",
+        "objects": [
+          "IAN-DESTINATION-IP"
+        ],
+        "observableEffect": "IAN-DESTINATION-IP-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The FIND host shall set the Information Answer destination IP to the source IP of the associated Information Request.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须把信息应答的目的 IP 设为对应信息请求的源 IP。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00406",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-005-4D7FB8BC839C",
+      "sourceTextHash": "4d7fb8bc839c337d5561109d08bbdb369db78d4114df5ddd0b860500540e59d6",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "SET-IAN-OPCODE-TO-0002",
+        "objects": [
+          "IAN-OPCODE-0002"
+        ],
+        "observableEffect": "IAN-OPCODE-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The FIND host shall set the Information Answer opcode to 0x0002.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须把信息应答操作码设为 0x0002。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00407",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-007-0F2D63CA1D3E",
+      "sourceTextHash": "0f2d63ca1d3e5b4a1050e2395248bbbdb19f8d133f8a8c5a3887e617cc4e9d1d",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "ENCODE-EMPTY-IAN-PARAMETER-AS-SINGLE-NUL",
+        "objects": [
+          "EMPTY-IAN-PARAMETER",
+          "ASCII-NUL"
+        ],
+        "observableEffect": "IAN-EMPTY-FIELD-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The FIND host shall encode an empty Information Answer parameter as a single ASCII NUL byte.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须把空的信息应答参数编码为单个 ASCII 空字节。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00408",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-008-D8483D058800",
+      "sourceTextHash": "d8483d058800474b4998cf33def5bf0173d313e1b7125209f0cce269277da22b",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "OMIT-EMBEDDED-NUL-FROM-IAN-STRINGS",
+        "objects": [
+          "IAN-PARAMETER-STRING"
+        ],
+        "observableEffect": "IAN-NO-EMBEDDED-NUL-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The FIND host shall omit embedded NUL bytes from available Information Answer parameter strings.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须从已提供的信息应答参数字符串中省略内嵌空字节。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00409",
+      "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-009-2DD2663EB0A1",
+      "sourceTextHash": "2dd2663eb0a1e29504d4419118831163281179d3cf04a1cba6183be80aec67a9",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "TERMINATE-IAN-PACKET-WITH-DLE",
+        "objects": [
+          "IAN-PACKET-TERMINATOR-DLE"
+        ],
+        "observableEffect": "IAN-TERMINATOR-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The FIND host shall terminate the Information Answer packet with 0x10.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须以 0x10 结束信息应答分组。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00410",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-012-DB234DB803F9",
+      "sourceTextHash": "db234db803f947705952f70280d1bbb5bfb82f78a90670df2f93b18df0c5b22d",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "ENCODE-IAN-PARAMETERS-AS-NUL-TERMINATED-STRINGS-IN-SECTION-3-6-ORDER",
+        "objects": [
+          "IAN-PARAMETER-STRINGS"
+        ],
+        "observableEffect": "IAN-PARAMETER-ORDER-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The FIND host shall encode Information Answer parameter values as NUL-terminated strings in Attachment 3 section 6 order.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须按附件 3 第 6 节顺序，把信息应答参数值编码为空字符终止字符串。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00411",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-013-48CB9FF4518D",
+      "sourceTextHash": "48cb9ff4518dc79fea85c73f5827c5b73b8135c697aaf8375c2c666831329239",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "LIMIT-TARGET-HARDWARE-IDENTIFIER-TO-15-CHARACTERS-EXCLUDING-TERMINATOR",
+        "objects": [
+          "TARGET-HARDWARE-IDENTIFIER",
+          "LENGTH-15"
+        ],
+        "observableEffect": "THW-ID-LENGTH-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The FIND host shall limit Target Hardware Identifier to 15 characters excluding the terminator.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须把目标硬件标识符限制为不含终止符的 15 个字符。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00412",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-014-913B305AF452",
+      "sourceTextHash": "913b305af452448d1e49bca91982445f408b72f566481522aa87571e8e3f3c7a",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "LIMIT-TARGET-TYPE-NAME-TO-8-CHARACTERS-EXCLUDING-TERMINATOR",
+        "objects": [
+          "TARGET-TYPE-NAME",
+          "LENGTH-8"
+        ],
+        "observableEffect": "TARGET-TYPE-NAME-LENGTH-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The FIND host shall limit Target Type Name to 8 characters excluding the terminator.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须把目标类型名限制为不含终止符的 8 个字符。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00413",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-015-14EF51A05AEA",
+      "sourceTextHash": "14ef51a05aea01c14db58292a666c0115e699ddde7df7c557041c51e37946a76",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "LIMIT-TARGET-POSITION-TO-8-CHARACTERS-EXCLUDING-TERMINATOR",
+        "objects": [
+          "TARGET-POSITION",
+          "LENGTH-8"
+        ],
+        "observableEffect": "TARGET-POSITION-LENGTH-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The FIND host shall limit Target Position to 8 characters excluding the terminator.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须把目标位置限制为不含终止符的 8 个字符。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00414",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-016-22BA44DB74A6",
+      "sourceTextHash": "22ba44db74a656ebd0faff4e51eaef0bd4ca33b43a5a3fa8b8e8b74ceb7be7e3",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "LIMIT-LITERAL-NAME-TO-20-CHARACTERS-EXCLUDING-TERMINATOR",
+        "objects": [
+          "LITERAL-NAME",
+          "LENGTH-20"
+        ],
+        "observableEffect": "LITERAL-NAME-LENGTH-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The FIND host shall limit Literal Name to 20 characters excluding the terminator.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须把字面名限制为不含终止符的 20 个字符。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00415",
+      "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-017-4A05E0BB2809",
+      "sourceTextHash": "4a05e0bb28096cdeb51488531e1ef00c326789ee64a030084d3f25f5fb0566ab",
+      "expectedSemantic": {
+        "actor": "FIND-HOST",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "ENCODE-MANUFACTURER-CODE-AS-3-CHARACTERS-EXCLUDING-TERMINATOR",
+        "objects": [
+          "MANUFACTURER-CODE",
+          "LENGTH-3"
+        ],
+        "observableEffect": "MANUFACTURER-CODE-LENGTH-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE",
+        "receiver": "DATA-LOADER"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The FIND host shall encode Manufacturer Code as 3 characters excluding the terminator.",
+      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须把制造商代码编码为不含终止符的 3 个字符。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
     }
   ],
   "networkReferenceReview": {
