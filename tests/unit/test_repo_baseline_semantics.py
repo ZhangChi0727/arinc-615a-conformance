@@ -923,6 +923,23 @@ def test_protocol_source_audit_rejects_locator_and_duplicate_drift() -> None:
     bound_count = copy.deepcopy(audit)
     bound_count["boundPackage"]["coverageCount"] = 1
     assert any("boundPackage.coverageCount" in error for error in baseline.protocol_source_audit_errors(bound_count, crs))
+    missing_reread = copy.deepcopy(audit)
+    missing_reread["status"] = "SOURCE-UNIT-AUDIT-IN-PROGRESS"
+    missing_reread["requirementGenerationAllowed"] = False
+    missing_reread.pop("sourceReread", None)
+    assert any("sourceReread" in error for error in baseline.protocol_source_audit_errors(missing_reread, crs))
+    promoted = copy.deepcopy(audit)
+    commentary = next(
+        row
+        for row in promoted["sourceReread"]["units"]
+        if row["frozenSourceModality"] == "COMMENTARY"
+    )
+    commentary["candidateApplicability"] = "APPLICABLE"
+    assert any("commentary" in error for error in baseline.protocol_source_audit_errors(promoted, crs))
+    dropped = copy.deepcopy(audit)
+    dropped["sourceReread"]["units"] = dropped["sourceReread"]["units"][1:]
+    dropped["sourceReread"]["unitsRead"] = len(dropped["sourceReread"]["units"])
+    assert any("FIND sourceReread IDs" in error for error in baseline.protocol_source_audit_errors(dropped, crs))
 
 
 def test_protocol_source_audit_allows_declared_future_status_pairs() -> None:

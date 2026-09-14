@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0",
   "artifactId": "CLTAV-PROTOCOL-SOURCE-AUDIT",
-  "status": "AUDIT-BEFORE-REQUIREMENT-GENERATION",
+  "status": "SOURCE-UNIT-AUDIT-IN-PROGRESS",
   "notBatchStatusRename": true,
   "requirementGenerationAllowed": false,
   "changeRequest": "CR-2026-012",
@@ -6359,5 +6359,1550 @@
     "sourceId": "ARINC-645",
     "status": "BLOCKED-SOURCE-645",
     "note": "Unique algorithm, constant and naming details stay blocked. Obligations already explicit in 615A/665 remain in scope and must not be deleted because 645 is missing."
+  },
+  "sourceReread": {
+    "standard": "ARINC-615A-3",
+    "localPdf": "local-references/ARINC615A-3.pdf",
+    "pdfPagesRead": [
+      44,
+      107,
+      108,
+      109,
+      110
+    ],
+    "startedOn": "2026-09-14",
+    "scopeThisIncrement": "DEFERRED-FIND-M9",
+    "unitsRead": 78,
+    "pendingCodes": [
+      "DEFERRED-DOWNLOAD-M9",
+      "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING"
+    ],
+    "doesNotRewriteBoundPackage": true,
+    "requirementGenerationAllowed": false,
+    "proprietaryTextExcluded": true,
+    "sharedFindNetworkCondition": "Only when the path between data loader and target carries FIND traffic (broadcast, multicast or unicast). Gateways or mixed aircraft networks may not.",
+    "notes": [
+      "FIND is now in CR-2026-012 protocol scope, but bound M1 rows stay DEFERRED-FIND-M9 until bilingual CRS rows are written from these candidates.",
+      "Commentary is not promoted to SHALL. Examples stay non-normative.",
+      "Media Defined DOWNLOAD and Operator Defined DOWNLOAD are not name-swapped UPLOAD copies and are not in this increment."
+    ],
+    "units": [
+      {
+        "id": "COV-M1-00566",
+        "sourceUnitId": "SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-001-A9E32B5321E9",
+        "clause": "5.3.3",
+        "pdfPage": 44,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "DATA-LOADER",
+        "condition": "When FIND is used to discover 615A loadable target hardware.",
+        "action": "dynamically identify network subscribers and obtain communication parameters",
+        "objects": [
+          "MAC address",
+          "IP address",
+          "target hardware identifier",
+          "position"
+        ],
+        "notes": "5.3.3 purpose statement; body of FIND is Attachment 3."
+      },
+      {
+        "id": "COV-M1-00567",
+        "sourceUnitId": "SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-002-1809112FDB49",
+        "clause": "5.3.3",
+        "pdfPage": 44,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "ARINC-615A-3",
+        "condition": "unconditional pointer",
+        "action": "define FIND in Attachment 3",
+        "objects": [
+          "FIND protocol"
+        ],
+        "notes": "Cross-reference only; do not invent Attachment 3 content here."
+      },
+      {
+        "id": "COV-M1-00568",
+        "sourceUnitId": "SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-003-87E5225963CD",
+        "clause": "5.3.3",
+        "pdfPage": 44,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "carry FIND over UDP; use data-link fields for MAC addresses",
+        "objects": [
+          "UDP packet",
+          "MAC address"
+        ],
+        "notes": "Stack binding, not a TFTP option."
+      },
+      {
+        "id": "COV-M1-00569",
+        "sourceUnitId": "SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-004-093BBE82727E",
+        "clause": "5.3.3",
+        "pdfPage": 44,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "use IP-layer fields for IP addresses",
+        "objects": [
+          "IP address"
+        ],
+        "notes": "Companion to the UDP/MAC sentence."
+      },
+      {
+        "id": "COV-M1-00570",
+        "sourceUnitId": "SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-005-36878C1F8E7E",
+        "clause": "5.3.3",
+        "pdfPage": 44,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "use UDP port 1001 decimal for FIND",
+        "objects": [
+          "UDP port 1001"
+        ],
+        "notes": "Well-known FIND port stated in 5.3.3 and Attachment 3."
+      },
+      {
+        "id": "COV-M1-01581",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P107-PROSE-SENTENCE-001-B443A5630F89",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 107,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "ARINC-615A-3",
+        "condition": "section identity",
+        "action": "title Attachment 3 as FIND Identification of Network Devices",
+        "objects": [
+          "FIND"
+        ],
+        "notes": "Heading / identity, not an actor obligation."
+      },
+      {
+        "id": "COV-M1-01582",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-001-6AA9C6C48086",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-INITIATOR",
+        "condition": "When FIND is used to discover 615A loadable target hardware.",
+        "action": "dynamically obtain host parameters listed in 3-1",
+        "objects": [
+          "FIND host parameters"
+        ],
+        "notes": "Opens the 3-1 obtain-list; bullets follow as separate units."
+      },
+      {
+        "id": "COV-M1-01583",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-002-000A6CE60A8E",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-INITIATOR",
+        "condition": "When FIND is used to discover 615A loadable target hardware.",
+        "action": "obtain MAC address of each available FIND host",
+        "objects": [
+          "MAC address"
+        ],
+        "notes": "3-1 bullet."
+      },
+      {
+        "id": "COV-M1-01584",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-003-0302A467885A",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-INITIATOR",
+        "condition": "When FIND is used to discover 615A loadable target hardware.",
+        "action": "obtain IP address of each available FIND host",
+        "objects": [
+          "IP address"
+        ],
+        "notes": "3-1 bullet."
+      },
+      {
+        "id": "COV-M1-01585",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-004-6514F177FD44",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-INITIATOR",
+        "condition": "When FIND is used to discover 615A loadable target hardware.",
+        "action": "obtain identity and functional characteristics of each available FIND host",
+        "objects": [
+          "identity",
+          "functional characteristics"
+        ],
+        "notes": "3-1 bullet; later 3-6 enumerates the payload strings."
+      },
+      {
+        "id": "COV-M1-01586",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-005-8B6950287147",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "DATA-LOADER",
+        "condition": "Only when the path between data loader and target carries FIND traffic (broadcast, multicast or unicast). Gateways or mixed aircraft networks may not.",
+        "action": "identify 615A loadable target hardware present at request time, then present the list to the operator",
+        "objects": [
+          "615A loadable target hardware",
+          "operator selection list"
+        ],
+        "notes": "Requires FIND-capable path; not every aircraft network."
+      },
+      {
+        "id": "COV-M1-01587",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-006-B1ED10DE43C7",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "DATA-LOADER",
+        "condition": "Only when the path between data loader and target carries FIND traffic (broadcast, multicast or unicast). Gateways or mixed aircraft networks may not. Before data-load operations.",
+        "action": "run FIND at least once before data-load operations",
+        "objects": [
+          "FIND request"
+        ],
+        "notes": "Source SHOULD. Do not treat as proved on networks that cannot carry FIND."
+      },
+      {
+        "id": "COV-M1-01588",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-007-9166DCC81508",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "MAY",
+        "frozenConformanceEffect": "OPTIONAL",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "OPTIONAL",
+        "actor": "DATA-LOADER",
+        "condition": "Only when the path between data loader and target carries FIND traffic (broadcast, multicast or unicast). Gateways or mixed aircraft networks may not. Before each subsequent operation.",
+        "action": "may run FIND again and register answers before each operation",
+        "objects": [
+          "FIND request",
+          "FIND answers"
+        ],
+        "notes": "Source MAY; does not replace the at-least-once SHOULD."
+      },
+      {
+        "id": "COV-M1-01589",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-001-49DDDC4E151F",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "COMMENTARY",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "IMPLEMENTER",
+        "condition": "commentary",
+        "action": "do not assume every aircraft network supports FIND",
+        "objects": [
+          "aircraft network"
+        ],
+        "notes": "Commentary caution; becomes a condition on FIND obligations, not a SHALL."
+      },
+      {
+        "id": "COV-M1-01590",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-002-5835D3F1CB27",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "COMMENTARY",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "IMPLEMENTER",
+        "condition": "commentary",
+        "action": "use broadcast or unicast FIND only if the intervening network supports it",
+        "objects": [
+          "broadcast FIND",
+          "unicast FIND"
+        ],
+        "notes": "Commentary; gateways may not forward FIND."
+      },
+      {
+        "id": "COV-M1-01591",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-003-97C78D32DA92",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "COMMENTARY",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "IMPLEMENTER",
+        "condition": "commentary",
+        "action": "expect FIND to fail when gateways or missing allocations drop FIND traffic",
+        "objects": [
+          "gateway",
+          "FIND traffic"
+        ],
+        "notes": "Commentary on deployment limits."
+      },
+      {
+        "id": "COV-M1-01592",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-004-674FFCE49EA1",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "COMMENTARY",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "IMPLEMENTER",
+        "condition": "commentary",
+        "action": "FIND may be unusable for onboard loading on mixed or non-broadcast aircraft networks",
+        "objects": [
+          "onboard data loading"
+        ],
+        "notes": "Commentary; shop/Ethernet use remains in scope."
+      },
+      {
+        "id": "COV-M1-01593",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-005-3DF3069C86AC",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "COMMENTARY",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "IMPLEMENTER",
+        "condition": "commentary",
+        "action": "FIND is useful for load tools on Ethernet or shop LRUs with an Ethernet interface",
+        "objects": [
+          "Ethernet LRU",
+          "load tool"
+        ],
+        "notes": "Commentary use-case, not a new protocol field."
+      },
+      {
+        "id": "COV-M1-01594",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-008-683B8392253F",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "do not perform dynamic address allocation inside FIND",
+        "objects": [
+          "IP address allocation"
+        ],
+        "notes": "Negative capability of FIND itself."
+      },
+      {
+        "id": "COV-M1-01595",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-009-BE9DBDCCC597",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-INITIATOR-AND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "assume IP assignments already exist before FIND",
+        "objects": [
+          "IP address assignment"
+        ],
+        "notes": "Precondition; addressing method is out of 615A."
+      },
+      {
+        "id": "COV-M1-01596",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-006-FDED447BF5E7",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "COMMENTARY",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "IMPLEMENTER",
+        "condition": "commentary",
+        "action": "configure loader and target addresses by some means other than FIND",
+        "objects": [
+          "network addresses"
+        ],
+        "notes": "Commentary restating 01594/01595."
+      },
+      {
+        "id": "COV-M1-01597",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-007-40449DD36E9F",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "COMMENTARY",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "ARINC-615A-3",
+        "condition": "commentary",
+        "action": "do not read 615A/FIND as a network-addressing specification",
+        "objects": [
+          "network addressing"
+        ],
+        "notes": "Commentary scope limit."
+      },
+      {
+        "id": "COV-M1-01598",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-008-B3186AE8A118",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "COMMENTARY",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "IMPLEMENTER",
+        "condition": "commentary",
+        "action": "note that a broadcast FIND request is used when host count and addresses are unknown",
+        "objects": [
+          "FIND request",
+          "broadcast"
+        ],
+        "notes": "Commentary. IRQ destination allowing unicast/multicast/broadcast is 01622/01624."
+      },
+      {
+        "id": "COV-M1-01599",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-COMMENTARY-009-DC011865AD26",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "COMMENTARY",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "IMPLEMENTER",
+        "condition": "commentary",
+        "action": "note that each FIND host answers with a unicast to the data-loader address",
+        "objects": [
+          "FIND answer",
+          "unicast"
+        ],
+        "notes": "Commentary companion to 01598. IAN destination fields are 01630/01633."
+      },
+      {
+        "id": "COV-M1-01600",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-010-1C1801ADFB0B",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "encapsulate FIND data in a UDP datagram",
+        "objects": [
+          "UDP datagram"
+        ],
+        "notes": "Same stack as 5.3.3."
+      },
+      {
+        "id": "COV-M1-01601",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-011-AD843D1C9EDF",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "use well-known UDP port 1001 decimal",
+        "objects": [
+          "UDP port 1001"
+        ],
+        "notes": "Repeats 5.3.3 port; request and answer share it via 01602."
+      },
+      {
+        "id": "COV-M1-01602",
+        "sourceUnitId": "SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-012-AEB96A80314F",
+        "clause": "3-1",
+        "pdfPage": 107,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "use the same port number for request and answer packets",
+        "objects": [
+          "FIND request",
+          "FIND answer",
+          "UDP port 1001"
+        ],
+        "notes": "Source SHOULD."
+      },
+      {
+        "id": "COV-M1-01603",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P108-PROSE-SENTENCE-002-7C39BDA671E2",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "take MAC and IP values from Ethernet and IP header fields, not FIND payload",
+        "objects": [
+          "MAC address",
+          "IP address"
+        ],
+        "notes": "Attachment 3 bridging sentence into 3-2."
+      },
+      {
+        "id": "COV-M1-01604",
+        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-001-FCD0F4E030CF",
+        "clause": "3-2",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "DATA-LOADER",
+        "condition": "Only when the path between data loader and target carries FIND traffic (broadcast, multicast or unicast). Gateways or mixed aircraft networks may not.",
+        "action": "send a broadcast FIND request to all FIND hosts",
+        "objects": [
+          "FIND request"
+        ],
+        "notes": "3-2 overview of initiator behaviour."
+      },
+      {
+        "id": "COV-M1-01605",
+        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF",
+        "clause": "3-2",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "DATA-LOADER",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "wait for FIND responses after the request",
+        "objects": [
+          "FIND answers"
+        ],
+        "notes": "Opens the registration window."
+      },
+      {
+        "id": "COV-M1-01606",
+        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-003-1E8680AD6287",
+        "clause": "3-2",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "DATA-LOADER",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "keep a 3-second window for FIND responses",
+        "objects": [
+          "3-second response window"
+        ],
+        "notes": "Stated numeric window; frozen FACT, candidate required timing if FIND is implemented."
+      },
+      {
+        "id": "COV-M1-01607",
+        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891",
+        "clause": "3-2",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "DATA-LOADER",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "register all valid responses as possible load targets and close registration when the window expires",
+        "objects": [
+          "valid FIND answers",
+          "target registration"
+        ],
+        "notes": "Registration close is part of the same 3-2 paragraph."
+      },
+      {
+        "id": "COV-M1-01608",
+        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700",
+        "clause": "3-2",
+        "pdfPage": 108,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "respond to a FIND request within a 2-second timeout",
+        "objects": [
+          "FIND answer",
+          "2-second timeout"
+        ],
+        "notes": "Source SHOULD. Hosts that miss the window risk omission (01609)."
+      },
+      {
+        "id": "COV-M1-01609",
+        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-006-E98F49FBFBDF",
+        "clause": "3-2",
+        "pdfPage": 108,
+        "frozenSourceModality": "MAY",
+        "frozenConformanceEffect": "OPTIONAL",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "OPTIONAL",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "accept that a late or missing answer may not be registered",
+        "objects": [
+          "target registration"
+        ],
+        "notes": "Source MAY / risk statement, not a second timeout."
+      },
+      {
+        "id": "COV-M1-01610",
+        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-007-6022C5275CCB",
+        "clause": "3-2",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-INITIATOR",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "take needed information from message structure or FIND payload",
+        "objects": [
+          "FIND packet data",
+          "message structure"
+        ],
+        "notes": "Overview; 3-4/3-5/3-6 give the fields."
+      },
+      {
+        "id": "COV-M1-01611",
+        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-008-52ECCBE7CB0F",
+        "clause": "3-2",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "read target MAC and IP from UDP/IP datagram headers",
+        "objects": [
+          "MAC address",
+          "IP address"
+        ],
+        "notes": "LRU identification position is payload, not this unit."
+      },
+      {
+        "id": "COV-M1-01612",
+        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-COMMENTARY-001-25FA5A319925",
+        "clause": "3-2",
+        "pdfPage": 108,
+        "frozenSourceModality": "COMMENTARY",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "IMPLEMENTER",
+        "condition": "commentary",
+        "action": "treat loader vs host timeout difference as network propagation delay",
+        "objects": [
+          "3-second loader window",
+          "2-second host timeout"
+        ],
+        "notes": "Commentary explaining 01606 vs 01608."
+      },
+      {
+        "id": "COV-M1-01613",
+        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-009-43FC5E78C9FF",
+        "clause": "3-2",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "do not define FIND protocol error codes",
+        "objects": [
+          "FIND errors"
+        ],
+        "notes": "No FIND error management; illegal handling is 01614/01615."
+      },
+      {
+        "id": "COV-M1-01614",
+        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-010-76E6AE59C360",
+        "clause": "3-2",
+        "pdfPage": 108,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "send no answer to an illegal or invalid FIND request",
+        "objects": [
+          "illegal FIND request"
+        ],
+        "notes": "Source SHOULD. Negative obligation."
+      },
+      {
+        "id": "COV-M1-01615",
+        "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-011-A1CA1EF64C11",
+        "clause": "3-2",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "DATA-LOADER",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "ignore an invalid FIND answer",
+        "objects": [
+          "invalid FIND answer"
+        ],
+        "notes": "Frozen FACT; candidate required loader behaviour."
+      },
+      {
+        "id": "COV-M1-01616",
+        "sourceUnitId": "SU-ARINC-615A-3-3-3-P108-PROSE-SENTENCE-001-D77333D77375",
+        "clause": "3-3",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "use exactly two FIND packet types: Information Request and Information Answer",
+        "objects": [
+          "IRQ",
+          "IAN"
+        ],
+        "notes": "3-3 packet taxonomy."
+      },
+      {
+        "id": "COV-M1-01617",
+        "sourceUnitId": "SU-ARINC-615A-3-3-3-P108-PROSE-SENTENCE-002-46953BCD3E0E",
+        "clause": "3-3",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "build each packet from a header plus a variable-length data portion",
+        "objects": [
+          "2-byte header",
+          "data list"
+        ],
+        "notes": "Header holds opcode; data list is payload."
+      },
+      {
+        "id": "COV-M1-01618",
+        "sourceUnitId": "SU-ARINC-615A-3-3-3-P108-PROSE-SENTENCE-003-9C92144E4252",
+        "clause": "3-3",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "encode opcode 1 as Information Request (IRQ)",
+        "objects": [
+          "opcode 1",
+          "IRQ"
+        ],
+        "notes": "Opcode table row."
+      },
+      {
+        "id": "COV-M1-01619",
+        "sourceUnitId": "SU-ARINC-615A-3-3-3-P108-PROSE-SENTENCE-004-77FE8166C220",
+        "clause": "3-3",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "encode opcode 2 as Information Answer (IAN)",
+        "objects": [
+          "opcode 2",
+          "IAN"
+        ],
+        "notes": "Opcode table row."
+      },
+      {
+        "id": "COV-M1-01620",
+        "sourceUnitId": "SU-ARINC-615A-3-3-3-P108-PROSE-SENTENCE-005-1CF78E6B2ADF",
+        "clause": "3-3",
+        "pdfPage": 108,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "put IAN payload parameters in Attachment 3 section 6 / 3-6 list",
+        "objects": [
+          "IAN data list"
+        ],
+        "notes": "Forward reference to 3-6."
+      },
+      {
+        "id": "COV-M1-01621",
+        "sourceUnitId": "SU-ARINC-615A-3-3-4-P108-PROSE-SENTENCE-001-DB0FEBBE9664",
+        "clause": "3-4",
+        "pdfPage": 108,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "DATA-LOADER",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "set IRQ source MAC to the data-loader (initiator) MAC",
+        "objects": [
+          "source MAC address"
+        ],
+        "notes": "3-4 Information Request. Source SHOULD."
+      },
+      {
+        "id": "COV-M1-01622",
+        "sourceUnitId": "SU-ARINC-615A-3-3-4-P108-PROSE-SENTENCE-002-412B0FD7B45D",
+        "clause": "3-4",
+        "pdfPage": 108,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "DATA-LOADER",
+        "condition": "Only when the path between data loader and target carries FIND traffic (broadcast, multicast or unicast). Gateways or mixed aircraft networks may not.",
+        "action": "set IRQ destination MAC to unicast, multicast, or broadcast MAC",
+        "objects": [
+          "destination MAC address"
+        ],
+        "notes": "Source SHOULD. Choice depends on what the network will forward."
+      },
+      {
+        "id": "COV-M1-01623",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-003-B443A5630F89",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 109,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "DATA-LOADER",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "set IRQ source IP to the data-loader (initiator) IP",
+        "objects": [
+          "source IP address"
+        ],
+        "notes": "Continues 3-4 on the next page; source uses should."
+      },
+      {
+        "id": "COV-M1-01624",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-004-0BFE8D84B7A9",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 109,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "DATA-LOADER",
+        "condition": "Only when the path between data loader and target carries FIND traffic (broadcast, multicast or unicast). Gateways or mixed aircraft networks may not.",
+        "action": "set IRQ destination IP to unicast, multicast, or broadcast IP, including limited or all-ones broadcast",
+        "objects": [
+          "destination IP address"
+        ],
+        "notes": "Source SHOULD. Example class-C broadcast is illustrative, not a single required address."
+      },
+      {
+        "id": "COV-M1-01625",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-005-DC8D7B76A7B9",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 109,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "DATA-LOADER",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "set IRQ opcode to 0x0001",
+        "objects": [
+          "opcode IRQ 0x0001"
+        ],
+        "notes": "Source SHOULD."
+      },
+      {
+        "id": "COV-M1-01626",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-006-FC8DA6118FFF",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 109,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "DATA-LOADER",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "set IRQ data list to a null ASCII string terminator 0x00",
+        "objects": [
+          "IRQ data list",
+          "0x00"
+        ],
+        "notes": "Source SHOULD."
+      },
+      {
+        "id": "COV-M1-01627",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-007-99F468D5D311",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 109,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "DATA-LOADER",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "terminate the IRQ packet with 0x10",
+        "objects": [
+          "packet terminator 0x10"
+        ],
+        "notes": "Source SHOULD."
+      },
+      {
+        "id": "COV-M1-01628",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-008-EDD675936DBC",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 109,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "close the Information Request packet definition before 3-5",
+        "objects": [
+          "IRQ packet"
+        ],
+        "notes": "Remainder of 3-4 framing; field rules are 01621-01627."
+      },
+      {
+        "id": "COV-M1-01629",
+        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-001-D2A70FEFE065",
+        "clause": "3-5",
+        "pdfPage": 109,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "set IAN source MAC to the target-hardware (FIND host) MAC",
+        "objects": [
+          "source MAC address"
+        ],
+        "notes": "3-5 Information Answer. Source SHOULD."
+      },
+      {
+        "id": "COV-M1-01630",
+        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-002-21D8C06816D1",
+        "clause": "3-5",
+        "pdfPage": 109,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "set IAN destination MAC to the source MAC of the associated IRQ",
+        "objects": [
+          "destination MAC address"
+        ],
+        "notes": "Source SHOULD."
+      },
+      {
+        "id": "COV-M1-01631",
+        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-003-E5DBDB9636E9",
+        "clause": "3-5",
+        "pdfPage": 109,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "set IAN source IP to the target-hardware (FIND host) IP",
+        "objects": [
+          "source IP address"
+        ],
+        "notes": "Source SHOULD."
+      },
+      {
+        "id": "COV-M1-01632",
+        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-COMMENTARY-001-542C79F19BA1",
+        "clause": "3-5",
+        "pdfPage": 109,
+        "frozenSourceModality": "COMMENTARY",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "IMPLEMENTER",
+        "condition": "commentary",
+        "action": "allow a proxy or concentrator FIND host to emit more than one IAN for one IRQ",
+        "objects": [
+          "proxy FIND host",
+          "multiple IAN"
+        ],
+        "notes": "Commentary; do not require unique one-answer-per-hardware without this case."
+      },
+      {
+        "id": "COV-M1-01633",
+        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-004-98DCC47DCB2B",
+        "clause": "3-5",
+        "pdfPage": 109,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "set IAN destination IP to the source IP of the associated IRQ",
+        "objects": [
+          "destination IP address"
+        ],
+        "notes": "Source SHOULD."
+      },
+      {
+        "id": "COV-M1-01634",
+        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-005-4D7FB8BC839C",
+        "clause": "3-5",
+        "pdfPage": 109,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "set IAN opcode to 0x0002",
+        "objects": [
+          "opcode IAN 0x0002"
+        ],
+        "notes": "Source SHOULD."
+      },
+      {
+        "id": "COV-M1-01635",
+        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-006-CA51BB7D3F57",
+        "clause": "3-5",
+        "pdfPage": 109,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "encode IAN data as null-terminated strings in the 3-6 parameter structure",
+        "objects": [
+          "IAN data list"
+        ],
+        "notes": "Payload layout; lengths in 01647-01651."
+      },
+      {
+        "id": "COV-M1-01636",
+        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-007-0F2D63CA1D3E",
+        "clause": "3-5",
+        "pdfPage": 109,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "encode an empty parameter as a single null byte",
+        "objects": [
+          "empty field",
+          "0x00"
+        ],
+        "notes": "Frozen FACT; candidate required encoding."
+      },
+      {
+        "id": "COV-M1-01637",
+        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-008-D8483D058800",
+        "clause": "3-5",
+        "pdfPage": 109,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "omit embedded null bytes from available parameter strings",
+        "objects": [
+          "IAN string"
+        ],
+        "notes": "Source SHOULD."
+      },
+      {
+        "id": "COV-M1-01638",
+        "sourceUnitId": "SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-009-2DD2663EB0A1",
+        "clause": "3-5",
+        "pdfPage": 109,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "terminate the IAN packet with 0x10",
+        "objects": [
+          "packet terminator 0x10"
+        ],
+        "notes": "Source SHOULD."
+      },
+      {
+        "id": "COV-M1-01639",
+        "sourceUnitId": "SU-ARINC-615A-3-3-6-P109-PROSE-SENTENCE-001-8FB1B3AE32BB",
+        "clause": "3-6",
+        "pdfPage": 109,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "DATA-LOADER",
+        "condition": "When FIND is used to discover 615A loadable target hardware.",
+        "action": "obtain the 3-6 parameter list for each Target Hardware Identifier",
+        "objects": [
+          "THW_ID",
+          "initialization parameters"
+        ],
+        "notes": "3-6 list introduction."
+      },
+      {
+        "id": "COV-M1-01640",
+        "sourceUnitId": "SU-ARINC-615A-3-3-6-P109-PROSE-SENTENCE-002-92E5B9489E9B",
+        "clause": "3-6",
+        "pdfPage": 109,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "include Target Hardware Identifier in the IAN parameter list",
+        "objects": [
+          "Target Hardware Identifier"
+        ],
+        "notes": "First 3-6 parameter. Example strings stay examples."
+      },
+      {
+        "id": "COV-M1-01641",
+        "sourceUnitId": "SU-ARINC-615A-3-3-6-P109-PROSE-SENTENCE-003-9C6EA4657638",
+        "clause": "3-6",
+        "pdfPage": 109,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "include Target Type Name in the IAN parameter list",
+        "objects": [
+          "Target Type Name"
+        ],
+        "notes": "Second 3-6 parameter."
+      },
+      {
+        "id": "COV-M1-01642",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-009-54FB52547CB6",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 110,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "include Target Position in the IAN parameter list",
+        "objects": [
+          "Target Position"
+        ],
+        "notes": "Continues 3-6 on the next page."
+      },
+      {
+        "id": "COV-M1-01643",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-010-8792D2593121",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 110,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "include Literal Name in the IAN parameter list",
+        "objects": [
+          "Literal Name"
+        ],
+        "notes": "3-6 parameter."
+      },
+      {
+        "id": "COV-M1-01644",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-011-AB97415A59E9",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 110,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "include Manufacturer Code in the IAN parameter list",
+        "objects": [
+          "Manufacturer Code"
+        ],
+        "notes": "3-6 parameter; 665 identification method is commentary 01645."
+      },
+      {
+        "id": "COV-M1-01645",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-COMMENTARY-001-94E1A030CFD1",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 110,
+        "frozenSourceModality": "COMMENTARY",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "IMPLEMENTER",
+        "condition": "commentary",
+        "action": "identify the manufacturer using the method in ARINC 665",
+        "objects": [
+          "Manufacturer Code",
+          "ARINC 665"
+        ],
+        "notes": "Commentary pointer. 665-5 is available; do not mark SOURCE-BLOCKED. Later CRS may add DEP-ARINC-6655."
+      },
+      {
+        "id": "COV-M1-01646",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-012-DB234DB803F9",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 110,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "encode IAN parameter values as null-terminated strings in the 3-6 order",
+        "objects": [
+          "IAN parameter strings"
+        ],
+        "notes": "Frozen FACT; candidate required encoding."
+      },
+      {
+        "id": "COV-M1-01647",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-013-48CB9FF4518D",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 110,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "limit Target Hardware Identifier to 15 characters excluding terminator",
+        "objects": [
+          "Target Hardware Identifier",
+          "15"
+        ],
+        "notes": "Size limit."
+      },
+      {
+        "id": "COV-M1-01648",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-014-913B305AF452",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 110,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "limit Target Type Name to 8 characters excluding terminator",
+        "objects": [
+          "Target Type Name",
+          "8"
+        ],
+        "notes": "Size limit."
+      },
+      {
+        "id": "COV-M1-01649",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-015-14EF51A05AEA",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 110,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "limit Target Position to 8 characters excluding terminator",
+        "objects": [
+          "Target Position",
+          "8"
+        ],
+        "notes": "Size limit."
+      },
+      {
+        "id": "COV-M1-01650",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-016-22BA44DB74A6",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 110,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "limit Literal Name to 20 characters excluding terminator",
+        "objects": [
+          "Literal Name",
+          "20"
+        ],
+        "notes": "Size limit."
+      },
+      {
+        "id": "COV-M1-01651",
+        "sourceUnitId": "SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-017-4A05E0BB2809",
+        "clause": "ATTACHMENT-3",
+        "pdfPage": 110,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "FIND-HOST",
+        "condition": "Whenever a FIND initiator or FIND host is implemented.",
+        "action": "encode Manufacturer Code as 3 characters excluding terminator",
+        "objects": [
+          "Manufacturer Code",
+          "3"
+        ],
+        "notes": "Size limit."
+      },
+      {
+        "id": "COV-M1-01652",
+        "sourceUnitId": "SU-ARINC-615A-3-3-7-P110-PROSE-SENTENCE-001-EF890EA5F89E",
+        "clause": "3-7",
+        "pdfPage": 110,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "ARINC-615A-3",
+        "condition": "example",
+        "action": "illustrate an IRQ with opcode 0x0001, null data, terminator 0x10",
+        "objects": [
+          "IRQ example"
+        ],
+        "notes": "3-7 example. Does not add fields beyond 3-4."
+      },
+      {
+        "id": "COV-M1-01653",
+        "sourceUnitId": "SU-ARINC-615A-3-3-7-P110-PROSE-SENTENCE-002-153C71A20886",
+        "clause": "3-7",
+        "pdfPage": 110,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-FIND-M9",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "ARINC-615A-3",
+        "condition": "example",
+        "action": "illustrate an IAN with opcode 0x0002 and the five 3-6 strings",
+        "objects": [
+          "IAN example"
+        ],
+        "notes": "3-7 example. Sample strings are not required identities."
+      }
+    ]
   }
 }

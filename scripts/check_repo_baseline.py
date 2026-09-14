@@ -107,6 +107,30 @@ AUDIT_UNIT_FIELDS = (
     "applicabilityDecision",
     "requirementIds",
 )
+SOURCE_REREAD_APPLICABILITY = (
+    "APPLICABLE",
+    "CONDITIONALLY-APPLICABLE",
+    "JUSTIFIED-NOT-APPLICABLE",
+    "NON-NORMATIVE",
+    "SOURCE-BLOCKED",
+)
+SOURCE_REREAD_UNIT_FIELDS = (
+    "id",
+    "sourceUnitId",
+    "clause",
+    "pdfPage",
+    "frozenSourceModality",
+    "frozenConformanceEffect",
+    "frozenApplicabilityDecision",
+    "frozenRationaleCode",
+    "candidateApplicability",
+    "candidateConformanceEffect",
+    "actor",
+    "condition",
+    "action",
+    "objects",
+    "notes",
+)
 SYSML_NOTATION_MARK = "SysML 1.6 notation-based views; executable/metamodel conformance is not claimed"
 EVIDENCE_MANIFEST_PATH = ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md"
 TRACEABILITY_PATH = CONTRACTS_DIR / "TRACEABILITY_SCHEMA.md"
@@ -626,6 +650,65 @@ def protocol_source_audit_errors(audit: dict, crs: dict) -> list[str]:
     future = summary.get("deferredFutureScope") or {}
     if future.get("total") != deferred_total:
         errors.append("protocol source audit summary.deferredFutureScope.total does not match the bound CRS ledger")
+    errors.extend(source_reread_errors(audit))
+    return errors
+
+
+def source_reread_errors(audit: dict) -> list[str]:
+    """FIND/DOWNLOAD reread candidates. Not CRS generation and not source-text storage."""
+    errors: list[str] = []
+    reread = audit.get("sourceReread")
+    status = audit.get("status")
+    if status == "SOURCE-UNIT-AUDIT-IN-PROGRESS" and not isinstance(reread, dict):
+        errors.append("source-unit audit in progress must record sourceReread")
+        return errors
+    if reread is None:
+        return errors
+    if not isinstance(reread, dict):
+        errors.append("sourceReread must be an object")
+        return errors
+    if reread.get("requirementGenerationAllowed") is not False:
+        errors.append("sourceReread must not allow requirement generation")
+    if reread.get("doesNotRewriteBoundPackage") is not True:
+        errors.append("sourceReread must not rewrite the bound package")
+    if reread.get("proprietaryTextExcluded") is not True:
+        errors.append("sourceReread must exclude proprietary source text")
+    find_rows = (audit.get("deferredUnits") or {}).get("DEFERRED-FIND-M9") or []
+    find_ids = [row.get("id") for row in find_rows if isinstance(row, dict)]
+    units = reread.get("units")
+    if reread.get("scopeThisIncrement") == "DEFERRED-FIND-M9":
+        if not isinstance(units, list):
+            errors.append("FIND sourceReread units must be a list")
+            return errors
+        recorded_ids = [item.get("id") if isinstance(item, dict) else None for item in units]
+        if None in recorded_ids or "" in recorded_ids:
+            errors.append("FIND sourceReread contains a row without id")
+        if len(recorded_ids) != len(set(filter(None, recorded_ids))):
+            errors.append("FIND sourceReread contains duplicate coverage ids")
+        if set(filter(None, recorded_ids)) != set(find_ids):
+            errors.append("FIND sourceReread IDs do not match deferred FIND units")
+        if reread.get("unitsRead") != len(find_ids):
+            errors.append("FIND sourceReread unitsRead does not match deferred FIND units")
+        for item in units:
+            if not isinstance(item, dict):
+                errors.append("FIND sourceReread contains a non-object row")
+                continue
+            missing = [field for field in SOURCE_REREAD_UNIT_FIELDS if field not in item]
+            if missing:
+                errors.append(f"FIND sourceReread row {item.get('id')} is missing {missing[0]}")
+                continue
+            if item.get("frozenApplicabilityDecision") != "DEFERRED-FUTURE-SCOPE":
+                errors.append(f"FIND sourceReread row {item.get('id')} must keep frozen DEFERRED-FUTURE-SCOPE")
+            if item.get("frozenRationaleCode") != "DEFERRED-FIND-M9":
+                errors.append(f"FIND sourceReread row {item.get('id')} must keep frozen DEFERRED-FIND-M9")
+            if item.get("candidateApplicability") not in SOURCE_REREAD_APPLICABILITY:
+                errors.append(f"FIND sourceReread row {item.get('id')} has an undeclared candidateApplicability")
+            if item.get("frozenSourceModality") == "COMMENTARY" and item.get("candidateApplicability") != "NON-NORMATIVE":
+                errors.append(f"FIND sourceReread row {item.get('id')} must not promote commentary")
+            if not isinstance(item.get("objects"), list) or not item.get("objects"):
+                errors.append(f"FIND sourceReread row {item.get('id')} must list objects")
+            if not item.get("actor") or not item.get("action"):
+                errors.append(f"FIND sourceReread row {item.get('id')} must record actor and action")
     return errors
 
 
