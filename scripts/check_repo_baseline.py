@@ -120,6 +120,8 @@ SOURCE_REREAD_DOWNLOAD_MODES = (
     "SHARED",
     "MEDIA-ORGANIZATION",
 )
+AFDX_RATIONALE = "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING"
+AFDX_UNCONDITIONAL_APPLICABILITY = "APPLICABLE"
 SOURCE_REREAD_UNIT_FIELDS = (
     "id",
     "sourceUnitId",
@@ -750,6 +752,13 @@ def source_reread_errors(audit: dict) -> list[str]:
                 errors.append(f"sourceReread row {item.get('id')} must declare a DOWNLOAD mode")
             elif mode != expected_download_mode(str(item.get("clause") or "")):
                 errors.append(f"sourceReread row {item.get('id')} must not mix Media Defined and Operator Defined DOWNLOAD")
+        if item.get("frozenRationaleCode") == AFDX_RATIONALE:
+            if item.get("deploymentVariant") != "AFDX":
+                errors.append(f"sourceReread row {item.get('id')} must declare the AFDX deployment variant")
+            if item.get("candidateApplicability") == AFDX_UNCONDITIONAL_APPLICABILITY:
+                errors.append(
+                    f"sourceReread row {item.get('id')} must not treat AFDX appendix as the current Compliant instance"
+                )
     return errors
 
 

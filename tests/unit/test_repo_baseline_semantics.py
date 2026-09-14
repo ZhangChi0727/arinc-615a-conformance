@@ -970,6 +970,33 @@ def test_protocol_source_audit_rejects_locator_and_duplicate_drift() -> None:
         "DEFERRED-DOWNLOAD-M9" in error and "IDs" in error
         for error in baseline.protocol_source_audit_errors(dropped_download, crs)
     )
+    activated = copy.deepcopy(audit)
+    afdx = next(
+        row
+        for row in activated["sourceReread"]["units"]
+        if row.get("frozenRationaleCode") == "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING"
+    )
+    afdx["candidateApplicability"] = "APPLICABLE"
+    assert any(
+        "Compliant instance" in error
+        for error in baseline.protocol_source_audit_errors(activated, crs)
+    )
+    dropped_afdx = copy.deepcopy(audit)
+    afdx_units = [
+        row
+        for row in dropped_afdx["sourceReread"]["units"]
+        if row.get("frozenRationaleCode") == "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING"
+    ]
+    dropped_afdx["sourceReread"]["units"] = [
+        row
+        for row in dropped_afdx["sourceReread"]["units"]
+        if row.get("id") != afdx_units[0]["id"]
+    ]
+    dropped_afdx["sourceReread"]["unitsRead"] = len(dropped_afdx["sourceReread"]["units"])
+    assert any(
+        "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING" in error and "IDs" in error
+        for error in baseline.protocol_source_audit_errors(dropped_afdx, crs)
+    )
 
 
 def test_protocol_source_audit_allows_declared_future_status_pairs() -> None:

@@ -6352,7 +6352,7 @@
       "sourceId": "ARINC-664-7",
       "role": "CONDITIONAL-AFDX-REFERENCE",
       "status": "PENDING-SOURCE-UNIT-REREAD",
-      "note": "Complete applicability audit before generating new CRS rows. Do not treat register presence as requirement text."
+      "note": "615A-3 Appendix E pointer reread is recorded. That does not complete the 664P7 body audit or create an AFDX hardware test environment. Do not treat register presence as requirement text."
     }
   ],
   "blockedSource": {
@@ -6387,23 +6387,23 @@
       107,
       108,
       109,
-      110
+      110,
+      134
     ],
     "startedOn": "2026-09-14",
-    "scopeThisIncrement": "DEFERRED-DOWNLOAD-M9",
-    "unitsRead": 443,
-    "pendingCodes": [
-      "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING"
-    ],
+    "scopeThisIncrement": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+    "unitsRead": 456,
+    "pendingCodes": [],
     "doesNotRewriteBoundPackage": true,
     "requirementGenerationAllowed": false,
     "proprietaryTextExcluded": true,
     "sharedFindNetworkCondition": "Only when the path between data loader and target carries FIND traffic (broadcast, multicast or unicast). Gateways or mixed aircraft networks may not.",
     "notes": [
-      "FIND 78/78 remains recorded. DOWNLOAD 365/365 candidates are now recorded. Bound M1 rows stay DEFERRED-FIND-M9 and DEFERRED-DOWNLOAD-M9 until bilingual CRS rows are written from these candidates.",
-      "Media Defined DOWNLOAD and Operator Defined DOWNLOAD stay separate. They are not name-swapped UPLOAD copies. LND/LNR are media-mode; LNO/LNL/LNA are operator-mode; LNS and File Receipt are shared.",
-      "Commentary and examples stay non-normative. Requirement generation remains forbidden.",
-      "AFDX appendix units remain unread."
+      "FIND 78/78, DOWNLOAD 365/365 and AFDX appendix 13/13 candidates are recorded. Bound M1 rows stay deferred until bilingual CRS rows are written from these candidates.",
+      "Media Defined and Operator Defined DOWNLOAD stay separate. Ordinary Ethernet, Compliant, Profiled and AFDX stay separate. Appendix E does not activate the current Compliant instance.",
+      "664P7 is acquired and is the pointer target for UDP-over-AFDX details, but the P7 body, 664P2/P3, 665-5 and the RFCs remain PENDING-SOURCE-UNIT-REREAD. 664 Part 4 is not acquired; Appendix E already allows the integrator to identify address requirements.",
+      "Having Appendix E and 664P7 does not create an AFDX hardware test environment. Software Ethernet experiments do not prove AFDX guarantees.",
+      "Commentary and examples stay non-normative. Requirement generation remains forbidden."
     ],
     "units": [
       {
@@ -15339,12 +15339,281 @@
         ],
         "notes": "Sequence event 12.",
         "downloadMode": "OPERATOR-DEFINED"
+      },
+      {
+        "id": "COV-M1-01960",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-001-4F47D3B33062",
+        "clause": "APPENDIX-E",
+        "pdfPage": 134,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "ARINC-615A-3",
+        "condition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+        "action": "title Appendix E as dataloading over AFDX",
+        "objects": [
+          "APPENDIX-E"
+        ],
+        "notes": "Heading / identity, not an actor obligation.",
+        "deploymentVariant": "AFDX"
+      },
+      {
+        "id": "COV-M1-01961",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-002-515B9E955F1D",
+        "clause": "APPENDIX-E",
+        "pdfPage": 134,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "ARINC-615A-3",
+        "condition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+        "action": "name the appendix subject as 615A dataloading over AFDX",
+        "objects": [
+          "AFDX"
+        ],
+        "notes": "Title line. Ordinary Ethernet remains a separate deployment.",
+        "deploymentVariant": "AFDX"
+      },
+      {
+        "id": "COV-M1-01962",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-003-4F1CD0BD1FCA",
+        "clause": "APPENDIX-E",
+        "pdfPage": 134,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "ARINC-615A-3",
+        "condition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+        "action": "define 615A-over-AFDX as carrying the same UDP frames on an AFDX network instead of ordinary Ethernet",
+        "objects": [
+          "UDP",
+          "AFDX",
+          "Ethernet"
+        ],
+        "notes": "Deployment substitution of the UDP path. TFTP/615A operations are not redefined here.",
+        "deploymentVariant": "AFDX"
+      },
+      {
+        "id": "COV-M1-01963",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-004-8CEC541FF8EE",
+        "clause": "APPENDIX-E",
+        "pdfPage": 134,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "ARINC-615A-3",
+        "condition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+        "action": "point UDP-over-AFDX to ARINC 664 Part 7",
+        "objects": [
+          "ARINC-664-7"
+        ],
+        "notes": "Pointer only. 664P7 is acquired (2005-06-27) but its body remains PENDING-SOURCE-UNIT-REREAD.",
+        "deploymentVariant": "AFDX"
+      },
+      {
+        "id": "COV-M1-01964",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-005-3747CE56C453",
+        "clause": "APPENDIX-E",
+        "pdfPage": 134,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "ARINC-615A-3",
+        "condition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+        "action": "introduce example 615A-over-AFDX dataloading systems",
+        "objects": [
+          "examples"
+        ],
+        "notes": "Example lead-in. Not a third network profile.",
+        "deploymentVariant": "AFDX"
+      },
+      {
+        "id": "COV-M1-01965",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-006-1A3ED90E6DEC",
+        "clause": "APPENDIX-E",
+        "pdfPage": 134,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "ARINC-615A-3",
+        "condition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+        "action": "illustrate an Ethernet dataloader reaching AFDX through an Avionics Interconnecting Device",
+        "objects": [
+          "AID",
+          "Ethernet dataloader"
+        ],
+        "notes": "Example. The AID description is attributed to a future 664P7 supplement, not the acquired 2005 P7. Software Ethernet tests do not prove AFDX hardware.",
+        "deploymentVariant": "AFDX"
+      },
+      {
+        "id": "COV-M1-01966",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-007-E2E000945641",
+        "clause": "APPENDIX-E",
+        "pdfPage": 134,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+        "candidateApplicability": "NON-NORMATIVE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "ARINC-615A-3",
+        "condition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+        "action": "illustrate an AFDX-interface dataloader connected directly to the AFDX network",
+        "objects": [
+          "AFDX dataloader"
+        ],
+        "notes": "Example of a second architecture. Direct AFDX hardware is not claimed available.",
+        "deploymentVariant": "AFDX"
+      },
+      {
+        "id": "COV-M1-01967",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-008-123ADFD1F0A0",
+        "clause": "APPENDIX-E",
+        "pdfPage": 134,
+        "frozenSourceModality": "MAY",
+        "frozenConformanceEffect": "OPTIONAL",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "OPTIONAL",
+        "actor": "DATA-LOADER",
+        "condition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+        "action": "use FIND or a network configuration file to identify targets on the AFDX network",
+        "objects": [
+          "FIND",
+          "network configuration file"
+        ],
+        "notes": "Source MAY. FIND-on-AFDX still needs multicast or unicast; broadcast is not assumed.",
+        "deploymentVariant": "AFDX"
+      },
+      {
+        "id": "COV-M1-01968",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-009-F63DBE601757",
+        "clause": "APPENDIX-E",
+        "pdfPage": 134,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "FIND-PROTOCOL",
+        "condition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+        "action": "treat FIND-over-AFDX as needing special handling because AFDX does not directly support broadcast",
+        "objects": [
+          "FIND",
+          "broadcast"
+        ],
+        "notes": "Constraint on the FIND path, not a waiver of Attachment 3.",
+        "deploymentVariant": "AFDX"
+      },
+      {
+        "id": "COV-M1-01969",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-010-C57B7897F472",
+        "clause": "APPENDIX-E",
+        "pdfPage": 134,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "AFDX-NETWORK",
+        "condition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+        "action": "carry FIND as multicast or unicast rather than broadcast",
+        "objects": [
+          "multicast",
+          "unicast"
+        ],
+        "notes": "AFDX supported message kinds for FIND. Ordinary Ethernet broadcast FIND stays a different deployment.",
+        "deploymentVariant": "AFDX"
+      },
+      {
+        "id": "COV-M1-01970",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-011-E6FB447853B2",
+        "clause": "APPENDIX-E",
+        "pdfPage": 134,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "DATA-LOADER",
+        "condition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+        "action": "use the TFTP protocol described in 615A-3 for 615A operations over AFDX",
+        "objects": [
+          "TFTP"
+        ],
+        "notes": "Source SHOULD. AFDX replaces the UDP/Ethernet carrying, not the 615A TFTP operations.",
+        "deploymentVariant": "AFDX"
+      },
+      {
+        "id": "COV-M1-01971",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-012-BD359EF6302E",
+        "clause": "APPENDIX-E",
+        "pdfPage": 134,
+        "frozenSourceModality": "FACT",
+        "frozenConformanceEffect": "INFORMATIVE",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "INFORMATIVE",
+        "actor": "ARINC-615A-3",
+        "condition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+        "action": "leave specific AFDX details to 664 Part 7",
+        "objects": [
+          "ARINC-664-7"
+        ],
+        "notes": "Second pointer. Do not copy P7 VL/BAG/jitter tables into this appendix unit.",
+        "deploymentVariant": "AFDX"
+      },
+      {
+        "id": "COV-M1-01972",
+        "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-013-B5690D59EDBF",
+        "clause": "APPENDIX-E",
+        "pdfPage": 134,
+        "frozenSourceModality": "SHOULD",
+        "frozenConformanceEffect": "REQUIRED",
+        "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "frozenRationaleCode": "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+        "candidateApplicability": "CONDITIONALLY-APPLICABLE",
+        "candidateConformanceEffect": "REQUIRED",
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance.",
+        "action": "apply aviation data-network address rules from 664 Part 4, or identify the address requirements",
+        "objects": [
+          "address rules",
+          "ARINC-664-4"
+        ],
+        "notes": "Source SHOULD. 664 Part 4 is not in the acquired source set; the integrator alternative is in this 615A sentence. Do not invent Part 4 tables.",
+        "deploymentVariant": "AFDX"
       }
     ],
     "completedCodes": [
-      "DEFERRED-FIND-M9"
+      "DEFERRED-FIND-M9",
+      "DEFERRED-DOWNLOAD-M9"
     ],
     "mediaDefinedCondition": "When Media Defined DOWNLOAD is implemented and used.",
-    "operatorDefinedCondition": "When Operator Defined DOWNLOAD is implemented and used."
+    "operatorDefinedCondition": "When Operator Defined DOWNLOAD is implemented and used.",
+    "afdxDeploymentCondition": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet. This does not activate the current Compliant Ethernet instance."
   }
 }

@@ -37,7 +37,7 @@ Four arms CL-T, CL-A, CL-TA, CL-LOOP; detection, localization and ablation famil
 
 ## Expanded CRS index and audit
 
-Current bound package still has 2796 coverage units and 384 requirements. FIND 78/78 and DOWNLOAD 365/365 source units have candidate reread notes; Media Defined and Operator Defined DOWNLOAD stay separate; bound rows stay `DEFERRED-FIND-M9` / `DEFERRED-DOWNLOAD-M9`. AFDX appendix units stay unread. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename deferred labels. Tool software requirements are out of this PR.
+Current bound package still has 2796 coverage units and 384 requirements. FIND 78/78, DOWNLOAD 365/365 and AFDX appendix 13/13 source units have candidate reread notes. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. Bound rows stay deferred. 664/665/RFC body audits remain pending. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename deferred labels. Tool software requirements are out of this PR.
 
 ## Historical versus successor evidence
 
@@ -82,7 +82,7 @@ SysML 1.6 记法 PlantUML 源：[`../../../docs/research/publication/models/`](.
 
 ## 扩大 CRS 索引与审计
 
-当前绑定包仍为 2796 条 coverage、384 条需求。FIND 78/78 与 DOWNLOAD 365/365 条来源单元已有候选重读记录；Media Defined 与 Operator Defined DOWNLOAD 保持分开；绑定行仍为 `DEFERRED-FIND-M9`／`DEFERRED-DOWNLOAD-M9`。AFDX 附录单元尚未重读。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名延期标签。工具软件需求不属于本 PR。
+当前绑定包仍为 2796 条 coverage、384 条需求。FIND 78/78、DOWNLOAD 365/365 与 AFDX 附录 13/13 条来源单元已有候选重读记录。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。绑定行仍延期。664／665／RFC 正文审计仍待进行。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名延期标签。工具软件需求不属于本 PR。
 
 ## 历史与后继证据
 

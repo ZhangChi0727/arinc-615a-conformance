@@ -14,14 +14,14 @@
       "Adopt CL-TAV as the successor research method (CR-2026-012 / DD-028). First-version algorithm direction was accepted 2026-09-14 in DD-029; that is not independent mathematical or RG approval.",
       "Expand protocol CRS so INFORMATION, UPLOAD, Media Defined DOWNLOAD, Operator Defined DOWNLOAD, FIND and source-stated abort/reject/exception/retry obligations are audited. Conditional network variants stay separate from the current Compliant instance. ARINC 645 unique algorithm details remain BLOCKED-SOURCE-645.",
       "Keep protocol CRS semantically complete in this PR, but write new rows only after source-unit audit. Tool requirements, verification specifications, interface/configuration contracts and development-ready acceptance belong to a later PR after this CRS is independently accepted. Old M2 does not automatically cover the new scope.",
-      "Record FIND 78/78 and DOWNLOAD 365/365 source-unit reread candidates against 615A-3. Media Defined and Operator Defined DOWNLOAD stay separate. Bound CRS rows stay deferred. AFDX appendix units remain unread. This is not independent architecture, mathematical or RG approval."
+      "Record FIND 78/78, DOWNLOAD 365/365 and AFDX appendix 13/13 source-unit reread candidates against 615A-3. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. Bound CRS rows stay deferred. 664/665/RFC body audits remain pending. This is not independent architecture, mathematical or RG approval."
     ],
     "summaryZh": [
       "将有界 M2 普通合并作为保留事实记录。该出口只覆盖 UPLOAD／INFORMATION。本增量不把该批准移植到新 CRS 服务，也不启动 M3。",
       "以 CL-TAV 为后继研究方法（CR-2026-012／DD-028）。首版算法方向已于 2026-09-14 在 DD-029 接受；那不是独立数学或 RG 批准。",
       "扩大协议 CRS，使 INFORMATION、UPLOAD、Media Defined DOWNLOAD、Operator Defined DOWNLOAD、FIND 及来源已规定的中断／拒绝／异常／重试义务接受审计。条件化网络变体与当前 Compliant 实例分开。ARINC 645 独有算法细节保持 BLOCKED-SOURCE-645。",
       "本 PR 的协议 CRS 必须语义正确且范围完整，但新行只能在来源单元审计之后撰写。工具需求、验证规格、接口／配置契约和开发就绪验收属于扩大 CRS 被独立接受之后的后继 PR。旧 M2 不会自动覆盖新范围。",
-      "已对 FIND 78/78 条与 DOWNLOAD 365/365 条对照 615A-3 记录来源重读候选。Media Defined 与 Operator Defined DOWNLOAD 保持分开。绑定 CRS 行仍延期。AFDX 附录单元尚未重读。这不是独立架构、数学或 RG 批准。"
+      "已对 FIND 78/78、DOWNLOAD 365/365 与 AFDX 附录 13/13 条对照 615A-3 记录来源重读候选。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。绑定 CRS 行仍延期。664／665／RFC 正文审计仍待进行。这不是独立架构、数学或 RG 批准。"
     ],
     "stateChanges": [
       "Bounded M2 merge of PR #14 is recorded. M3 remains blocked. CR-2026-012 is the successor method/paper/expanded-protocol-CRS increment.",
@@ -67,11 +67,11 @@
       "objectiveZh": "本停点仍禁止 M3 实现。PR #14 记录了有界 M2 普通合并；该批准不移植到扩大 CRS。在同一 Head 上完成 CR-2026-012 方法／论文／CRS 一致性评审。2026-09-14 对 DD-029 的设计方向接受不是独立批准。"
     },
     "nextSteps": [
-      "Continue AFDX appendix source-unit reread (13 DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING units) on this branch. FIND 78/78 and DOWNLOAD 365/365 candidate rereads are recorded; bound deferred rows are unchanged. Do not batch-rename DEFERRED-* labels or generate CRS rows from templates.",
+      "Write bilingual CRS rows from the recorded FIND, DOWNLOAD and AFDX-appendix candidates. Complete 665-5, 664P2/P3/P7 and RFC applicability audits. Do not batch-rename DEFERRED-* labels or generate CRS rows from templates. Software Ethernet tests do not prove AFDX hardware.",
       "Request complete-range RG0/RG1 and method/math/architecture review on the final unchanged Head. Do not treat the 2026-09-14 design-direction acceptance as independent approval, and do not start the development-ready PR, M3, tag or self-approval."
     ],
     "nextStepsZh": [
-      "在本分支继续 AFDX 附录来源单元重读（13 条 DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING）。FIND 78/78 与 DOWNLOAD 365/365 条候选重读已记录；绑定延期行未改。不得把 DEFERRED-* 标签批量改名，也不得按模板生成 CRS 行。",
+      "按已记录的 FIND、DOWNLOAD 与 AFDX 附录候选撰写双语 CRS 行。完成 665-5、664P2／P3／P7 与 RFC 适用性审计。不得把 DEFERRED-* 标签批量改名，也不得按模板生成 CRS 行。普通以太网软件试验不能证明 AFDX 硬件保证。",
       "在最终不变 Head 上请求完整范围 RG0／RG1 以及方法／数学／架构评审。不得把 2026-09-14 设计方向接受当成独立批准，也不启动开发就绪 PR、M3、tag 或自批。"
     ],
     "blockedActions": [

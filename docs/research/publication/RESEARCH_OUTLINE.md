@@ -134,7 +134,7 @@ Editable sources live in [`models/`](models/). They are **SysML 1.6 notation-bas
 
 ## Source audit before CRS generation
 
-New protocol CRS rows are **not** produced in this increment by renaming `DEFERRED-FIND-M9` or `DEFERRED-DOWNLOAD-M9`. The ledger [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) now records FIND 78/78 and DOWNLOAD 365/365 candidate rereads; Media Defined and Operator Defined DOWNLOAD stay separate. AFDX appendix units still need re-reading against 615A-3 before any requirement text is written. Bound deferred labels stay. Batch template fill is forbidden. Tool software requirements stay out of this PR.
+New protocol CRS rows are **not** produced in this increment by renaming deferred labels. The ledger [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) now records FIND 78/78, DOWNLOAD 365/365 and AFDX appendix 13/13 candidate rereads. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. 664/665/RFC body audits remain pending. Bound deferred labels stay. Batch template fill is forbidden. Tool software requirements stay out of this PR.
 
 ## Historical versus successor evidence
 
@@ -280,7 +280,7 @@ CL-TAV 建**两套**机器，不得并成一个协议 EFSM。
 
 ## 来源审计先于 CRS 生成
 
-本增量**不**靠把 `DEFERRED-FIND-M9` 或 `DEFERRED-DOWNLOAD-M9` 改名来产生新协议 CRS 行。清单 [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) 已记录 FIND 78/78 与 DOWNLOAD 365/365 条候选重读；Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 附录单元仍须对照 615A-3 重读后才能写需求正文。绑定延期标签保持不变。禁止批量套模板。工具软件需求不属于本 PR。
+本增量**不**靠把延期标签改名来产生新协议 CRS 行。清单 [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) 已记录 FIND 78/78、DOWNLOAD 365/365 与 AFDX 附录 13/13 条候选重读。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。664／665／RFC 正文审计仍待进行。绑定延期标签保持不变。禁止批量套模板。工具软件需求不属于本 PR。
 
 ## 历史与后继证据
 
