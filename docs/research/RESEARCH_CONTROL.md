@@ -4,27 +4,44 @@ This document controls ARINC-domain research, experiments and claim ownership.
 Current lifecycle state is shown only in the [root README](../../README.md) and
 [`project-status.json`](../../project-status.json). Controlled source identities
 are in [`controlled_sources.json`](../../configs/research/controlled_sources.json).
-The M1 output is the authoritative
+The successor research method is **CL-TAV** (Closed-Loop Test–Analysis
+Verification) under [CR-2026-012](../control/changes/CR-2026-012.md). The
+protocol CRS authority remains the
 [`CRS/applicability package`](../../configs/requirements/arinc_615a3_m1_crs.json);
 its [review view](../control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md) is generated.
-Merged M1 remains the immutable CRS input. The M2 candidate authority is the
-[`observable timed model package`](../../configs/models/arinc_615a3_m2_model.json);
-its [review view](../control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md) is generated.
-M3 stays blocked until this model is independently approved and ordinarily merged.
+Historical merged M1 bytes remain a preserved identity. Expanding that package
+creates a **new** successor identity; it does not rewrite frozen blobs and does
+not transplant PR #13/#14 approvals. The merged bounded M2 package is
+[`observable timed model`](../../configs/models/arinc_615a3_m2_model.json); it
+covers the bound UPLOAD/INFORMATION input only. New CRS services are
+model-refinement pending. M3 implementation stays blocked. The successor
+development-ready PR is not this increment.
 
 ## 1. Research objective and authority boundary
 
-Evaluate how the commit-bound Candidate GVS Core can be refined into a credible
-ARINC 615A Profile, Binding, Configuration and evidence-producing instance.
-The method repository owns Generic objects and cross-instance synthesis. This
-repository owns ARINC source/applicability research, product semantics, IUT
-refinement, instance execution and bounded feedback. It may specialize but may
-not reverse-define the Generic Core.
+Evaluate **CL-TAV**: a closed loop of test, observation, constraint verdict /
+diagnosis and next-test selection for protocol conformance verification and
+fault localization, using ARINC 615A as the case. CRS, SysML, models and
+evidence mechanisms support that loop; they do not replace it. The combination
+of Test and Analysis is not claimed as a first invention.
 
-ARINC research is conducted under, not in place of, the Candidate GVS Core.
-ARINC specialization may not reverse-define the Generic Core.
+Evaluate how the commit-bound Candidate GVS Core can still be refined into a
+credible ARINC 615A Profile, Binding, Configuration and evidence-producing
+instance. The method repository owns Generic objects and cross-instance
+synthesis. This repository owns ARINC source/applicability research, product
+semantics, IUT refinement, instance execution and bounded feedback. It may
+specialize but may not reverse-define the Generic Core.
 Cross-instance generalization and RQ8 closure remain the method repository's
-synthesis responsibility.
+synthesis responsibility and are not completed by deleting historical RQ6 from
+the successor report. ARINC research is conducted under, not in place of, the Candidate GVS Core.
+
+Protocol CRS scope under CR-2026-012 includes INFORMATION, UPLOAD, Media
+Defined DOWNLOAD, Operator Defined DOWNLOAD, FIND, and source-stated
+interrupt/reject/exception/retry obligations, plus a complete applicability
+audit of 665-5, 664P2/P3-1/P7 and the registered RFCs. Ordinary Ethernet,
+Compliant, Profiled and AFDX are configuration variants, not one instance.
+ARINC 645 unique algorithm details remain `BLOCKED-SOURCE-645`; already
+explicit 615A/665 integrity obligations stay in the CRS.
 
 ## 2. Method Inputs → ARINC Domain/Product Refinement → Instance Evidence → Controlled Feedback
 
@@ -44,15 +61,20 @@ synthesis responsibility.
 
 ARINC 615A-3 is the sole active protocol authority. `A4` is a wire value, not an
 edition. Historical source assumptions are non-authoritative and are governed by
-the controlled source register and change record. ARINC 665-5 is bounded and ARINC 645 remains open. Source migration
+the controlled source register and change record. ARINC 665-5 is in full
+applicability audit for triggered load-data/media-set clauses. ARINC 645 remains
+the only unacquired original standard; it blocks unique algorithm details, not
+whole obligation classes already stated in 615A/665. Source migration
 requires an acquired/identified source, applicability delta, CR and independent
-review; no future edition is preselected.
+review; no future edition is preselected. “Study later” is not an acceptable
+blanket disposition for an already-held source unit.
 
-The research model is one lightweight observable timed EFSM plus bounded
-Test-Analysis. Initial Analysis covers obligation traceability, state/
-transition/timing coverage, robust timing/error budgets and finite-domain
-mutation/held-out adequacy. DTMC, HMM/ML and Bayesian calibration are deferred;
-TTCN-3 is neither a dependency nor selected platform.
+The protocol behavioural model remains one lightweight observable timed EFSM.
+CL-TAV wraps Test and Analysis into an explicit diagnosis and next-test loop
+(candidate: DD-029). The merged M2 EFSM does not automatically cover expanded
+CRS services. DTMC, HMM/ML and Bayesian calibration stay out of the default
+algorithm; TTCN-3 is neither a dependency nor selected platform. Confirmatory
+experiments are planned in this increment and not executed.
 
 ## 4. One research sequence, mapped to the serial delivery route
 
@@ -66,8 +88,12 @@ TTCN-3 is neither a dependency nor selected platform.
 | R5 | replication and synthesis | M9 separately approved scope expansion and later cross-instance work |
 
 R0–R5 are research views of M0–M9, not a competing lifecycle. Each delivery
-stage is serial and independently reviewed. M1 is the immutable merged CRS input.
-M3 must not start before M2 is independently approved and ordinarily merged.
+stage is serial and independently reviewed. Historical merged M1 is a preserved
+input identity. CR-2026-012 is a successor protocol-CRS expansion, not M3.
+M3 must not start in this increment. Expanding CRS does not flip
+SCOPE-EXPANSION-GATE by itself and does not grant the old M2 new-service
+coverage. A later development-ready PR, after this CRS is accepted, supplies
+tool requirements and implementation contracts.
 
 ## 5. Open-source and claim discipline
 
@@ -89,20 +115,32 @@ evaluation, protocol conformance, certification or authority acceptance.
 本文档控制 ARINC 领域研究、实验和主张归属。当前生命周期状态只在[根 README](../../README.md)
 和 [`project-status.json`](../../project-status.json) 展示；来源身份由
 [`controlled_sources.json`](../../configs/research/controlled_sources.json) 控制。
-M1 输出由权威
-[`CRS/适用性数据包`](../../configs/requirements/arinc_615a3_m1_crs.json) 承载；
+后继研究方法为 [CR-2026-012](../control/changes/CR-2026-012.md) 下的 **CL-TAV**。
+协议 CRS 权威仍为
+[`CRS/适用性数据包`](../../configs/requirements/arinc_615a3_m1_crs.json)；
 [评审视图](../control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md) 为生成物。
-已合并 M1 仍为不可变 CRS 输入。M2 候选权威为
-[`可观测时序模型数据包`](../../configs/models/arinc_615a3_m2_model.json)；
-[评审视图](../control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md) 为生成物。
-在该模型获独立批准并普通合并前，M3 保持阻塞。
+历史已合并 M1 字节是保留身份；扩大该包产生**新**后继身份，不改写冻结 blob，也不移植
+PR #13／#14 批准。已合并有界 M2 为
+[`可观测时序模型`](../../configs/models/arinc_615a3_m2_model.json)，只覆盖其绑定的
+UPLOAD／INFORMATION 输入；新 CRS 服务为模型细化待完成。本增量不启动 M3，也不是
+开发就绪后继 PR。
 
 ## 1. 研究目标与权威边界
 
-评价不可变提交绑定的 Candidate GVS Core 如何精化为可信的 ARINC 615A Profile、Binding、
-Configuration 和证据生产实例。方法仓库拥有 Generic 对象和跨实例综合；本仓库拥有 ARINC
-来源/适用性研究、产品语义、IUT 精化、实例执行和有边界反馈。可以专门化，不能反向定义 Generic Core。
-跨实例推广和 RQ8 关闭仍由方法仓库综合。
+评价 **CL-TAV**：以测试、观测、约束判定／诊断与后续测试选择构成闭环，用于协议符合性
+验证与故障定位，并以 ARINC 615A 为案例。CRS、SysML、模型与证据机制是支撑，不能替代
+该闭环。不把 Test 与 Analysis 的组合宣称为首次发明。
+
+仍评价不可变提交绑定的 Candidate GVS Core 如何精化为可信的 ARINC 615A Profile、
+Binding、Configuration 和证据生产实例。方法仓库拥有 Generic 对象和跨实例综合；本仓库
+拥有 ARINC 来源／适用性研究、产品语义、IUT 精化、实例执行和有边界反馈。可以专门化，
+不能反向定义 Generic Core。跨实例推广和 RQ8 关闭仍由方法仓库综合，不因删除历史
+RQ6 而视为完成。
+
+CR-2026-012 下协议 CRS 范围包括 INFORMATION、UPLOAD、Media Defined DOWNLOAD、
+Operator Defined DOWNLOAD、FIND 及来源已规定的中断／拒绝／异常／重试，并对 665-5、
+664P2／P3-1／P7 与已登记 RFC 做完整适用性审计。普通 Ethernet、Compliant、Profiled、
+AFDX 是配置变体，不是同一实例。ARINC 645 独有算法细节保持 `BLOCKED-SOURCE-645`。
 
 ## 2. 方法输入 → ARINC 领域／产品精化 → 实例证据 → 受控反馈
 
@@ -121,12 +159,15 @@ Configuration 和证据生产实例。方法仓库拥有 Generic 对象和跨实
 ## 3. 来源与模型纪律
 
 615A-3 是唯一活动协议权威；`A4` 是线值而非版次。历史来源假设不具权威性，并由受控来源
-登记册与变更记录治理。665-5 有边界，645 保持开放。来源迁移需取得并登记来源、完成适用性差分、CR
-和独立评审；不预选未来版本。
+登记册与变更记录治理。665-5 对其触发的加载数据／媒体集条款做完整适用性审计。645 是
+唯一未取得的原文，只阻塞独有算法细节，不删除 615A／665 已明示的义务类别。来源迁移需
+取得并登记来源、完成适用性差分、CR 和独立评审；不预选未来版本。已有来源活动条款不得
+再用“以后研究”作为笼统处置。
 
-研究模型是单一轻量可观测 timed EFSM 加有界 Test-Analysis。首轮 Analysis 覆盖义务追踪、
-状态/迁移/时序覆盖、稳健时序/误差预算和有限故障域 mutation/held-out adequacy。延期
-DTMC、HMM/ML 与 Bayesian calibration；TTCN-3 不是依赖或选定平台。
+协议行为模型仍是单一轻量可观测 timed EFSM。CL-TAV 把 Test 与 Analysis 做成显式诊断与
+后续测试闭环（候选：DD-029）。已合并 M2 不自动覆盖扩大后的 CRS 服务。默认算法不引入
+DTMC、HMM／ML 或 Bayesian calibration；TTCN-3 不是依赖或选定平台。本增量只规划确认性
+实验，不执行。
 
 ## 4. 单一研究序列与串行交付路线的映射
 
@@ -139,7 +180,10 @@ DTMC、HMM/ML 与 Bayesian calibration；TTCN-3 不是依赖或选定平台。
 | R4 | 有界充分性与诊断 | M8 有限故障域覆盖/mutation |
 | R5 | 复现与综合 | M9 单独批准的范围扩展及以后跨实例工作 |
 
-R0～R5 是 M0～M9 的研究视图，不是竞争生命周期。交付阶段串行且分别评审；已合并 M1 为不可变 CRS 输入，M2 未独立批准并普通合并前不得启动 M3。
+R0～R5 是 M0～M9 的研究视图，不是竞争生命周期。交付阶段串行且分别评审。历史已合并 M1
+是保留输入身份。CR-2026-012 是后继协议 CRS 扩大，不是 M3。本增量不得启动 M3。扩大 CRS
+本身不翻转 SCOPE-EXPANSION-GATE，也不授予旧 M2 新服务覆盖。扩大 CRS 被接受后，后继
+开发就绪 PR 再提供工具需求与实现契约。
 
 ## 5. 开源与主张纪律
 

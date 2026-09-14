@@ -39,18 +39,24 @@ Each layer is independently replaceable and testable. `DatagramIO`, `Clock` and
 control and complete traces. Transport cannot import operation or claim logic;
 tools cannot promote evidence or claims. Information may bootstrap engineering
 without changing the formal base claim. Upload remains the first formal base
-VCS operation, followed by Download; Information/FIND expansion needs a later
-scope decision.
+VCS operation in the serial engineering route, followed by Download. Protocol
+CRS expansion under CR-2026-012 (INFORMATION, both DOWNLOAD modes, FIND, and
+conditional network variants) is a requirements/research increment; it is **not**
+authorization to implement those operations and does **not** wait for a further
+“scope decision” before the CRS audit. Implementation of codec, engine, cases
+and Configuration remains out of this increment and out of M3 until a later
+development-ready PR is authorized.
 
 ## 3. Behavioral and analysis direction
 
 Use one lightweight observable timed EFSM as the shared behavioral/timing/oracle
-skeleton after M1 CRS approval. Retain Test-Analysis, with initial Analysis
-limited to obligation traceability, state/transition/timing coverage, robust
-timing margins and measurement-error budgets, and finite-fault mutation/held-
-out adequacy. DTMC is not protocol semantics; HMM/ML diagnosis and Bayesian
-calibration are deferred. FMEA may classify/prioritize faults, not decide
-conformance. TTCN-3 is not a dependency or selected execution platform.
+skeleton for protocol modelling. CL-TAV (CR-2026-012 / DD-028 / DD-029) is the
+successor research method wrapping Test and Analysis; this engineering control
+does not implement that loop. DTMC is not protocol semantics; HMM/ML diagnosis
+and Bayesian calibration are not default engineering machinery. FMEA may
+classify/prioritize faults, not decide conformance. TTCN-3 is not a dependency
+or selected execution platform. The merged M2 model does not cover expanded CRS
+services until a later model CR binds them.
 
 ## 4. Open-source reuse boundary
 
@@ -113,15 +119,19 @@ Observation / Result / Evidence / Decision / Claim
 
 各层可独立替换和测试。`DatagramIO`、`Clock`、`TraceSink` 是确定性测试、时序误差控制和完整
 trace 的注入边界。传输层不得导入操作或主张逻辑，工具不得晋级证据或主张。Information 可
-用于工程 bootstrap，但不改变正式 base claim。Upload 仍是首个正式 base VCS 操作，随后是
-Download；扩大 Information/FIND 需后续范围决定。
+用于工程 bootstrap，但不改变正式 base claim。Upload 仍是串行工程路线上的首个正式
+base VCS 操作，随后是 Download。CR-2026-012 下的协议 CRS 扩大（INFORMATION、两种
+DOWNLOAD、FIND 及条件化网络变体）是需求／研究增量，**不是**实现这些操作的授权，也
+**不再**把 CRS 审计本身挂在另一次“范围决定”之后。codec、引擎、用例和 Configuration
+的实现仍不属于本增量，在后继开发就绪 PR 获授权前也不进入 M3。
 
 ## 3. 行为与分析方向
 
-M1 CRS 批准后使用单一轻量可观测 timed EFSM 作为行为/时序/oracle 骨架。保留 Test-
-Analysis，首轮 Analysis 仅覆盖义务追踪、状态/迁移/时序覆盖、稳健时序裕量与测量误差预算、
-有限故障域 mutation/held-out adequacy。DTMC 不是协议语义；延期 HMM/ML 诊断和 Bayesian
-calibration。FMEA 只能分类/排序故障，不能判定符合性。TTCN-3 不是依赖或选定执行平台。
+M1 CRS 扩大后仍使用单一轻量可观测 timed EFSM 作为协议行为／时序／oracle 骨架。
+CL-TAV（CR-2026-012／DD-028／DD-029）是后继研究方法，本工程控制文件不实现该闭环。
+DTMC 不是协议语义；HMM／ML 诊断和 Bayesian calibration 不是默认工程机制。FMEA 只能
+分类／排序故障，不能判定符合性。TTCN-3 不是依赖或选定执行平台。已合并 M2 在后继
+模型 CR 绑定前不覆盖扩大后的 CRS 服务。
 
 ## 4. 开源复用边界
 

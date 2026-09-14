@@ -454,10 +454,13 @@
       "DD-018",
       "DD-024",
       "DD-025",
-      "DD-026"
+      "DD-026",
+      "DD-028",
+      "DD-029",
+      "DD-030"
     ],
     "behaviorModel": "LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM",
-    "verificationMethod": "BOUNDED-TEST-ANALYSIS",
+    "verificationMethod": "CL-TAV",
     "deferredModels": [
       "DTMC",
       "HMM-ML",
@@ -481,7 +484,7 @@
     "currentStageId": "M2",
     "nextStageId": "M3",
     "candidateDisposition": "ADOPT",
-    "formalActivationControlPath": "docs/control/changes/CR-2026-008.md",
+    "formalActivationControlPath": "docs/control/changes/CR-2026-012.md",
     "repositoryMergeEvidence": "EXTERNAL-VERIFICATION-REQUIRED",
     "independentApproval": "NOT-AUTOMATED",
     "nextStageEntryRule": "PROHIBITED-UNTIL-APPROVAL-AND-ORDINARY-MERGE-VERIFIED"
