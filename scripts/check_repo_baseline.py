@@ -114,6 +114,12 @@ SOURCE_REREAD_APPLICABILITY = (
     "NON-NORMATIVE",
     "SOURCE-BLOCKED",
 )
+SOURCE_REREAD_DOWNLOAD_MODES = (
+    "MEDIA-DEFINED",
+    "OPERATOR-DEFINED",
+    "SHARED",
+    "MEDIA-ORGANIZATION",
+)
 SOURCE_REREAD_UNIT_FIELDS = (
     "id",
     "sourceUnitId",
@@ -654,6 +660,17 @@ def protocol_source_audit_errors(audit: dict, crs: dict) -> list[str]:
     return errors
 
 
+def expected_download_mode(clause: str) -> str:
+    """Media Defined and Operator Defined DOWNLOAD stay separate after reread."""
+    if clause.startswith(("5.4.4.1", "6.2.10", "6.4.6")) or clause == "6.3.3":
+        return "MEDIA-DEFINED"
+    if clause.startswith(("5.4.4.2", "6.2.14", "6.2.15", "6.2.16", "6.4.8", "6.4.9")) or clause == "6.3.4":
+        return "OPERATOR-DEFINED"
+    if clause.startswith("5.4.4.3"):
+        return "MEDIA-ORGANIZATION"
+    return "SHARED"
+
+
 def source_reread_errors(audit: dict) -> list[str]:
     """FIND/DOWNLOAD reread candidates. Not CRS generation and not source-text storage."""
     errors: list[str] = []
@@ -673,42 +690,66 @@ def source_reread_errors(audit: dict) -> list[str]:
         errors.append("sourceReread must not rewrite the bound package")
     if reread.get("proprietaryTextExcluded") is not True:
         errors.append("sourceReread must exclude proprietary source text")
-    find_rows = (audit.get("deferredUnits") or {}).get("DEFERRED-FIND-M9") or []
-    find_ids = [row.get("id") for row in find_rows if isinstance(row, dict)]
+    deferred = audit.get("deferredUnits") or {}
     units = reread.get("units")
-    if reread.get("scopeThisIncrement") == "DEFERRED-FIND-M9":
-        if not isinstance(units, list):
-            errors.append("FIND sourceReread units must be a list")
-            return errors
-        recorded_ids = [item.get("id") if isinstance(item, dict) else None for item in units]
-        if None in recorded_ids or "" in recorded_ids:
-            errors.append("FIND sourceReread contains a row without id")
-        if len(recorded_ids) != len(set(filter(None, recorded_ids))):
-            errors.append("FIND sourceReread contains duplicate coverage ids")
-        if set(filter(None, recorded_ids)) != set(find_ids):
-            errors.append("FIND sourceReread IDs do not match deferred FIND units")
-        if reread.get("unitsRead") != len(find_ids):
-            errors.append("FIND sourceReread unitsRead does not match deferred FIND units")
-        for item in units:
-            if not isinstance(item, dict):
-                errors.append("FIND sourceReread contains a non-object row")
-                continue
-            missing = [field for field in SOURCE_REREAD_UNIT_FIELDS if field not in item]
-            if missing:
-                errors.append(f"FIND sourceReread row {item.get('id')} is missing {missing[0]}")
-                continue
-            if item.get("frozenApplicabilityDecision") != "DEFERRED-FUTURE-SCOPE":
-                errors.append(f"FIND sourceReread row {item.get('id')} must keep frozen DEFERRED-FUTURE-SCOPE")
-            if item.get("frozenRationaleCode") != "DEFERRED-FIND-M9":
-                errors.append(f"FIND sourceReread row {item.get('id')} must keep frozen DEFERRED-FIND-M9")
-            if item.get("candidateApplicability") not in SOURCE_REREAD_APPLICABILITY:
-                errors.append(f"FIND sourceReread row {item.get('id')} has an undeclared candidateApplicability")
-            if item.get("frozenSourceModality") == "COMMENTARY" and item.get("candidateApplicability") != "NON-NORMATIVE":
-                errors.append(f"FIND sourceReread row {item.get('id')} must not promote commentary")
-            if not isinstance(item.get("objects"), list) or not item.get("objects"):
-                errors.append(f"FIND sourceReread row {item.get('id')} must list objects")
-            if not item.get("actor") or not item.get("action"):
-                errors.append(f"FIND sourceReread row {item.get('id')} must record actor and action")
+    if not isinstance(units, list):
+        errors.append("sourceReread units must be a list")
+        return errors
+    recorded_ids = [item.get("id") if isinstance(item, dict) else None for item in units]
+    if None in recorded_ids or "" in recorded_ids:
+        errors.append("sourceReread contains a row without id")
+    if len(list(filter(None, recorded_ids))) != len(set(filter(None, recorded_ids))):
+        errors.append("sourceReread contains duplicate coverage ids")
+    if reread.get("unitsRead") != len(units):
+        errors.append("sourceReread unitsRead does not match recorded units")
+    completed = [code for code in (reread.get("completedCodes") or []) if isinstance(code, str)]
+    current = reread.get("scopeThisIncrement")
+    active = [code for code in completed + [current] if isinstance(code, str) and code]
+    pending = set(reread.get("pendingCodes") or [])
+    recorded_codes = {
+        item.get("frozenRationaleCode")
+        for item in units
+        if isinstance(item, dict) and item.get("frozenRationaleCode")
+    }
+    if set(active) != recorded_codes:
+        errors.append("sourceReread completed/current codes do not match recorded rationale codes")
+    if pending & recorded_codes:
+        errors.append("sourceReread pendingCodes must not include recorded codes")
+    for code in sorted(recorded_codes):
+        expected_ids = [row.get("id") for row in deferred.get(code) or [] if isinstance(row, dict)]
+        got_ids = [
+            item.get("id")
+            for item in units
+            if isinstance(item, dict) and item.get("frozenRationaleCode") == code
+        ]
+        if set(filter(None, got_ids)) != set(filter(None, expected_ids)):
+            errors.append(f"{code} sourceReread IDs do not match deferred units")
+        if len(got_ids) != len(expected_ids):
+            errors.append(f"{code} sourceReread unit count does not match deferred units")
+    for item in units:
+        if not isinstance(item, dict):
+            errors.append("sourceReread contains a non-object row")
+            continue
+        missing = [field for field in SOURCE_REREAD_UNIT_FIELDS if field not in item]
+        if missing:
+            errors.append(f"sourceReread row {item.get('id')} is missing {missing[0]}")
+            continue
+        if item.get("frozenApplicabilityDecision") != "DEFERRED-FUTURE-SCOPE":
+            errors.append(f"sourceReread row {item.get('id')} must keep frozen DEFERRED-FUTURE-SCOPE")
+        if item.get("candidateApplicability") not in SOURCE_REREAD_APPLICABILITY:
+            errors.append(f"sourceReread row {item.get('id')} has an undeclared candidateApplicability")
+        if item.get("frozenSourceModality") == "COMMENTARY" and item.get("candidateApplicability") != "NON-NORMATIVE":
+            errors.append(f"sourceReread row {item.get('id')} must not promote commentary")
+        if not isinstance(item.get("objects"), list) or not item.get("objects"):
+            errors.append(f"sourceReread row {item.get('id')} must list objects")
+        if not item.get("actor") or not item.get("action"):
+            errors.append(f"sourceReread row {item.get('id')} must record actor and action")
+        if item.get("frozenRationaleCode") == "DEFERRED-DOWNLOAD-M9":
+            mode = item.get("downloadMode")
+            if mode not in SOURCE_REREAD_DOWNLOAD_MODES:
+                errors.append(f"sourceReread row {item.get('id')} must declare a DOWNLOAD mode")
+            elif mode != expected_download_mode(str(item.get("clause") or "")):
+                errors.append(f"sourceReread row {item.get('id')} must not mix Media Defined and Operator Defined DOWNLOAD")
     return errors
 
 

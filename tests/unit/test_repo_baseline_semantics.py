@@ -939,7 +939,37 @@ def test_protocol_source_audit_rejects_locator_and_duplicate_drift() -> None:
     dropped = copy.deepcopy(audit)
     dropped["sourceReread"]["units"] = dropped["sourceReread"]["units"][1:]
     dropped["sourceReread"]["unitsRead"] = len(dropped["sourceReread"]["units"])
-    assert any("FIND sourceReread IDs" in error for error in baseline.protocol_source_audit_errors(dropped, crs))
+    assert any(
+        "DEFERRED-FIND-M9" in error and "IDs" in error
+        for error in baseline.protocol_source_audit_errors(dropped, crs)
+    )
+    mixed = copy.deepcopy(audit)
+    media = next(
+        row
+        for row in mixed["sourceReread"]["units"]
+        if row.get("downloadMode") == "MEDIA-DEFINED"
+    )
+    media["downloadMode"] = "OPERATOR-DEFINED"
+    assert any(
+        "Media Defined and Operator Defined" in error
+        for error in baseline.protocol_source_audit_errors(mixed, crs)
+    )
+    dropped_download = copy.deepcopy(audit)
+    download_units = [
+        row
+        for row in dropped_download["sourceReread"]["units"]
+        if row.get("frozenRationaleCode") == "DEFERRED-DOWNLOAD-M9"
+    ]
+    dropped_download["sourceReread"]["units"] = [
+        row
+        for row in dropped_download["sourceReread"]["units"]
+        if row.get("id") != download_units[0]["id"]
+    ]
+    dropped_download["sourceReread"]["unitsRead"] = len(dropped_download["sourceReread"]["units"])
+    assert any(
+        "DEFERRED-DOWNLOAD-M9" in error and "IDs" in error
+        for error in baseline.protocol_source_audit_errors(dropped_download, crs)
+    )
 
 
 def test_protocol_source_audit_allows_declared_future_status_pairs() -> None:
