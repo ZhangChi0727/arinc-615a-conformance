@@ -26,7 +26,7 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "59182b17f637b5902823b691b9d1689181bb5a0a",
+        "gitBlobOid": "00682fd3e141b03774918696318dd131798f9a75",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -36,12 +36,12 @@
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "2ef75dc52c6a6d52b96a8fb833b09eed7a1a4dae",
+        "gitBlobOid": "21bcf7b60a7769050a1800c96db9993193a1108c",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "a95516ec68882fedd04605da5b2ba84455a5e9cc",
+        "gitBlobOid": "9a16c0e223e75272faf208cda33940530d01a710",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "cae02477dea69ae124a32bec41dca741cc4324f8",
+        "gitBlobOid": "5328da539d5c259a89dc3041d61c6ae3e98ddfc8",
         "role": "SUCCESSOR-M1-DELTA"
       }
     ],
@@ -148,8 +148,8 @@
           "role": "M1-IMMUTABLE-INPUT"
         }
       ],
-      "currentInputArtifactCommit": "60efdd7b970554a653c1db35ca907a9dada663c0",
-      "currentInputArtifactTree": "770fb4269a24712e8d4304a86923b504cec00d38"
+      "currentInputArtifactCommit": "7daf8730872f5347be1906b902c742b79cde0208",
+      "currentInputArtifactTree": "ce7ceff1f6fe285a48d7831d6aed8f69649c88a6"
     }
   },
   "sequenceEndpointBindings": [
@@ -5447,6 +5447,618 @@
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "",
         "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LNR-FIELD-FILE-LENGTH",
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-FILE-LENGTH",
+        "m1RequirementId": "CRS-M1-00459",
+        "ordinal": 1,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNR-FILE-BYTES",
+        "predicateEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNR at the tabulated width and table ordinal 1.",
+        "predicateZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNR 的 FIELD-FILE-LENGTH。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNR-FIELD-PROTOCOL-VERSION",
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-PROTOCOL-VERSION",
+        "m1RequirementId": "CRS-M1-00460",
+        "ordinal": 2,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNR-FILE-BYTES",
+        "predicateEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNR at the tabulated width and table ordinal 2.",
+        "predicateZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNR 的 FIELD-PROTOCOL-VERSION。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNR-FIELD-NUMBER-OF-FILES",
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-NUMBER-OF-FILES",
+        "m1RequirementId": "CRS-M1-00461",
+        "ordinal": 3,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNR-FILE-BYTES",
+        "predicateEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNR at the tabulated width and table ordinal 3.",
+        "predicateZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNR 的 FIELD-NUMBER-OF-FILES。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNR-FIELD-FILE-NAME-LENGTH",
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-FILE-NAME-LENGTH",
+        "m1RequirementId": "CRS-M1-00462",
+        "ordinal": 4,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNR-FILE-BYTES",
+        "predicateEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNR at the tabulated width and table ordinal 4.",
+        "predicateZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNR 的 FIELD-FILE-NAME-LENGTH。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNR-FIELD-FILE-NAME",
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-FILE-NAME",
+        "m1RequirementId": "CRS-M1-00463",
+        "ordinal": 5,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNR-FILE-BYTES",
+        "predicateEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNR at the tabulated width and table ordinal 5.",
+        "predicateZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNR 的 FIELD-FILE-NAME。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNR-FIELD-USER-DEFINED-DATA-LENGTH",
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-USER-DEFINED-DATA-LENGTH",
+        "m1RequirementId": "CRS-M1-00464",
+        "ordinal": 6,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNR-FILE-BYTES",
+        "predicateEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-USER-DEFINED-DATA-LENGTH of LNR at the tabulated width and table ordinal 6.",
+        "predicateZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA-LENGTH。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNR-FIELD-USER-DEFINED-DATA",
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-USER-DEFINED-DATA",
+        "m1RequirementId": "CRS-M1-00465",
+        "ordinal": 7,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "encodingRule": "LENGTH-PREFIXED-BINARY",
+        "terminationRule": "LENGTH-PREFIXED-PER-TABLE",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNR-FILE-BYTES",
+        "predicateEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-USER-DEFINED-DATA of LNR at the tabulated width and table ordinal 7.",
+        "predicateZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-FILE-LENGTH",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-FILE-LENGTH",
+        "m1RequirementId": "CRS-M1-00466",
+        "ordinal": 1,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNS at the tabulated width and table ordinal 1.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNS 的 FIELD-FILE-LENGTH。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-PROTOCOL-VERSION",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-PROTOCOL-VERSION",
+        "m1RequirementId": "CRS-M1-00467",
+        "ordinal": 2,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNS at the tabulated width and table ordinal 2.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNS 的 FIELD-PROTOCOL-VERSION。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-DOWNLOAD-OPERATION-STATUS-CODE",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-DOWNLOAD-OPERATION-STATUS-CODE",
+        "m1RequirementId": "CRS-M1-00468",
+        "ordinal": 3,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-OPERATION-STATUS-CODE of LNS at the tabulated width and table ordinal 3.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNS 的 FIELD-DOWNLOAD-OPERATION-STATUS-CODE。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH",
+        "m1RequirementId": "CRS-M1-00469",
+        "ordinal": 4,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH of LNS at the tabulated width and table ordinal 4.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNS 的 FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-DOWNLOAD-STATUS-DESCRIPTION",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-DOWNLOAD-STATUS-DESCRIPTION",
+        "m1RequirementId": "CRS-M1-00470",
+        "ordinal": 5,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-STATUS-DESCRIPTION of LNS at the tabulated width and table ordinal 5.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNS 的 FIELD-DOWNLOAD-STATUS-DESCRIPTION。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-COUNTER",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-COUNTER",
+        "m1RequirementId": "CRS-M1-00471",
+        "ordinal": 6,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-COUNTER of LNS at the tabulated width and table ordinal 6.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNS 的 FIELD-COUNTER。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-EXCEPTION-TIMER",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-EXCEPTION-TIMER",
+        "m1RequirementId": "CRS-M1-00472",
+        "ordinal": 7,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-EXCEPTION-TIMER of LNS at the tabulated width and table ordinal 7.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNS 的 FIELD-EXCEPTION-TIMER。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-ESTIMATED-TIME",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-ESTIMATED-TIME",
+        "m1RequirementId": "CRS-M1-00473",
+        "ordinal": 8,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-ESTIMATED-TIME of LNS at the tabulated width and table ordinal 8.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 8 个字段位置编码 LNS 的 FIELD-ESTIMATED-TIME。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-DOWNLOAD-LIST-RATIO",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-DOWNLOAD-LIST-RATIO",
+        "m1RequirementId": "CRS-M1-00474",
+        "ordinal": 9,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-LIST-RATIO of LNS at the tabulated width and table ordinal 9.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 9 个字段位置编码 LNS 的 FIELD-DOWNLOAD-LIST-RATIO。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-NUMBER-OF-FILES",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-NUMBER-OF-FILES",
+        "m1RequirementId": "CRS-M1-00475",
+        "ordinal": 10,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNS at the tabulated width and table ordinal 10.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 10 个字段位置编码 LNS 的 FIELD-NUMBER-OF-FILES。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-FILE-NAME-LENGTH",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-FILE-NAME-LENGTH",
+        "m1RequirementId": "CRS-M1-00476",
+        "ordinal": 11,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNS at the tabulated width and table ordinal 11.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 11 个字段位置编码 LNS 的 FIELD-FILE-NAME-LENGTH。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-FILE-NAME",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-FILE-NAME",
+        "m1RequirementId": "CRS-M1-00477",
+        "ordinal": 12,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNS at the tabulated width and table ordinal 12.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 12 个字段位置编码 LNS 的 FIELD-FILE-NAME。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-FILE-STATUS",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-FILE-STATUS",
+        "m1RequirementId": "CRS-M1-00478",
+        "ordinal": 13,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-STATUS of LNS at the tabulated width and table ordinal 13.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 13 个字段位置编码 LNS 的 FIELD-FILE-STATUS。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-FILE-STATUS-DESCRIPTION-LENGTH",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-FILE-STATUS-DESCRIPTION-LENGTH",
+        "m1RequirementId": "CRS-M1-00479",
+        "ordinal": 14,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-STATUS-DESCRIPTION-LENGTH of LNS at the tabulated width and table ordinal 14.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 14 个字段位置编码 LNS 的 FIELD-FILE-STATUS-DESCRIPTION-LENGTH。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNS-FIELD-FILE-STATUS-DESCRIPTION",
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-FILE-STATUS-DESCRIPTION",
+        "m1RequirementId": "CRS-M1-00480",
+        "ordinal": 15,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNS-FILE-BYTES",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-STATUS-DESCRIPTION of LNS at the tabulated width and table ordinal 15.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 15 个字段位置编码 LNS 的 FIELD-FILE-STATUS-DESCRIPTION。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNL-FIELD-FILE-LENGTH",
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-FILE-LENGTH",
+        "m1RequirementId": "CRS-M1-00481",
+        "ordinal": 1,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNL-FILE-BYTES",
+        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNL at the tabulated width and table ordinal 1.",
+        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNL 的 FIELD-FILE-LENGTH。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNL-FIELD-PROTOCOL-VERSION",
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-PROTOCOL-VERSION",
+        "m1RequirementId": "CRS-M1-00482",
+        "ordinal": 2,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNL-FILE-BYTES",
+        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNL at the tabulated width and table ordinal 2.",
+        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNL 的 FIELD-PROTOCOL-VERSION。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNL-FIELD-NUMBER-OF-FILES",
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-NUMBER-OF-FILES",
+        "m1RequirementId": "CRS-M1-00483",
+        "ordinal": 3,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNL-FILE-BYTES",
+        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNL at the tabulated width and table ordinal 3.",
+        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNL 的 FIELD-NUMBER-OF-FILES。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNL-FIELD-FILE-NAME-LENGTH",
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-FILE-NAME-LENGTH",
+        "m1RequirementId": "CRS-M1-00484",
+        "ordinal": 4,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNL-FILE-BYTES",
+        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNL at the tabulated width and table ordinal 4.",
+        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNL 的 FIELD-FILE-NAME-LENGTH。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNL-FIELD-FILE-NAME",
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-FILE-NAME",
+        "m1RequirementId": "CRS-M1-00485",
+        "ordinal": 5,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNL-FILE-BYTES",
+        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNL at the tabulated width and table ordinal 5.",
+        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNL 的 FIELD-FILE-NAME。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNL-FIELD-FILE-DESCRIPTION-LENGTH",
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-FILE-DESCRIPTION-LENGTH",
+        "m1RequirementId": "CRS-M1-00486",
+        "ordinal": 6,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNL-FILE-BYTES",
+        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-DESCRIPTION-LENGTH of LNL at the tabulated width and table ordinal 6.",
+        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNL 的 FIELD-FILE-DESCRIPTION-LENGTH。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNL-FIELD-FILE-DESCRIPTION",
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-FILE-DESCRIPTION",
+        "m1RequirementId": "CRS-M1-00487",
+        "ordinal": 7,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNL-FILE-BYTES",
+        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-DESCRIPTION of LNL at the tabulated width and table ordinal 7.",
+        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNL 的 FIELD-FILE-DESCRIPTION。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNA-FIELD-FILE-LENGTH",
+        "protocolFile": "LNA",
+        "fieldId": "FIELD-FILE-LENGTH",
+        "m1RequirementId": "CRS-M1-00488",
+        "ordinal": 1,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNA-FILE-BYTES",
+        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNA at the tabulated width and table ordinal 1.",
+        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNA 的 FIELD-FILE-LENGTH。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNA-FIELD-PROTOCOL-VERSION",
+        "protocolFile": "LNA",
+        "fieldId": "FIELD-PROTOCOL-VERSION",
+        "m1RequirementId": "CRS-M1-00489",
+        "ordinal": 2,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNA-FILE-BYTES",
+        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNA at the tabulated width and table ordinal 2.",
+        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNA 的 FIELD-PROTOCOL-VERSION。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNA-FIELD-NUMBER-OF-FILES",
+        "protocolFile": "LNA",
+        "fieldId": "FIELD-NUMBER-OF-FILES",
+        "m1RequirementId": "CRS-M1-00490",
+        "ordinal": 3,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LNA-FILE-BYTES",
+        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNA at the tabulated width and table ordinal 3.",
+        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNA 的 FIELD-NUMBER-OF-FILES。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNA-FIELD-FILE-NAME-LENGTH",
+        "protocolFile": "LNA",
+        "fieldId": "FIELD-FILE-NAME-LENGTH",
+        "m1RequirementId": "CRS-M1-00491",
+        "ordinal": 4,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNA-FILE-BYTES",
+        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNA at the tabulated width and table ordinal 4.",
+        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNA 的 FIELD-FILE-NAME-LENGTH。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LNA-FIELD-FILE-NAME",
+        "protocolFile": "LNA",
+        "fieldId": "FIELD-FILE-NAME",
+        "m1RequirementId": "CRS-M1-00492",
+        "ordinal": 5,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-FILE-RECORD",
+        "checkLocation": "LNA-FILE-BYTES",
+        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNA at the tabulated width and table ordinal 5.",
+        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNA 的 FIELD-FILE-NAME。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
       }
     ],
     "statusConstraints": [
@@ -13029,6 +13641,1254 @@
       "modelTargetIds": [
         "SCOPE"
       ]
+    },
+    {
+      "requirementId": "CRS-M1-00416",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00417",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00418",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00419",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00420",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00421",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00422",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00423",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00424",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00425",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00426",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00427",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00428",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00429",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00430",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00431",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00432",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00433",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00434",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00435",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00436",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00437",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00438",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00439",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00440",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00441",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00442",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00443",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00444",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00445",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00446",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00447",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00448",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00449",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00450",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00451",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00452",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00453",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00454",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00455",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00456",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00457",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00458",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00459",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNR-FIELD-FILE-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00460",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNR-FIELD-PROTOCOL-VERSION"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00461",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNR-FIELD-NUMBER-OF-FILES"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00462",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNR-FIELD-FILE-NAME-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00463",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNR-FIELD-FILE-NAME"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00464",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNR-FIELD-USER-DEFINED-DATA-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00465",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNR-FIELD-USER-DEFINED-DATA"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00466",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-FILE-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00467",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-PROTOCOL-VERSION"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00468",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-DOWNLOAD-OPERATION-STATUS-CODE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00469",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00470",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-DOWNLOAD-STATUS-DESCRIPTION"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00471",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-COUNTER"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00472",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-EXCEPTION-TIMER"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00473",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-ESTIMATED-TIME"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00474",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-DOWNLOAD-LIST-RATIO"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00475",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-NUMBER-OF-FILES"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00476",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-FILE-NAME-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00477",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-FILE-NAME"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00478",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-FILE-STATUS"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00479",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-FILE-STATUS-DESCRIPTION-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00480",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNS-FIELD-FILE-STATUS-DESCRIPTION"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00481",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNL-FIELD-FILE-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00482",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNL-FIELD-PROTOCOL-VERSION"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00483",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNL-FIELD-NUMBER-OF-FILES"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00484",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNL-FIELD-FILE-NAME-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00485",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNL-FIELD-FILE-NAME"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00486",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNL-FIELD-FILE-DESCRIPTION-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00487",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNL-FIELD-FILE-DESCRIPTION"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00488",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNA-FIELD-FILE-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00489",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNA-FIELD-PROTOCOL-VERSION"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00490",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNA-FIELD-NUMBER-OF-FILES"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00491",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNA-FIELD-FILE-NAME-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00492",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LNA-FIELD-FILE-NAME"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00493",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00494",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00495",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00496",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00497",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00498",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00499",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00500",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00501",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00502",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00503",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00504",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00505",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00506",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00507",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00508",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00509",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00510",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00511",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00512",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00513",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00514",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00515",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00516",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00517",
+      "sourceId": "ARINC-615A-3",
+      "operation": "AFDX-DEPLOYMENT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00518",
+      "sourceId": "ARINC-615A-3",
+      "operation": "AFDX-DEPLOYMENT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00519",
+      "sourceId": "ARINC-615A-3",
+      "operation": "AFDX-DEPLOYMENT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
     }
   ],
   "traceRelations": [
@@ -18597,6 +20457,1150 @@
       "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
       "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
       "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00416-0507",
+      "requirementId": "CRS-M1-00416",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00417-0508",
+      "requirementId": "CRS-M1-00417",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00418-0509",
+      "requirementId": "CRS-M1-00418",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00419-0510",
+      "requirementId": "CRS-M1-00419",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00420-0511",
+      "requirementId": "CRS-M1-00420",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00421-0512",
+      "requirementId": "CRS-M1-00421",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00422-0513",
+      "requirementId": "CRS-M1-00422",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00423-0514",
+      "requirementId": "CRS-M1-00423",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00424-0515",
+      "requirementId": "CRS-M1-00424",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00425-0516",
+      "requirementId": "CRS-M1-00425",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00426-0517",
+      "requirementId": "CRS-M1-00426",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00427-0518",
+      "requirementId": "CRS-M1-00427",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00428-0519",
+      "requirementId": "CRS-M1-00428",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00429-0520",
+      "requirementId": "CRS-M1-00429",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00430-0521",
+      "requirementId": "CRS-M1-00430",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00431-0522",
+      "requirementId": "CRS-M1-00431",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00432-0523",
+      "requirementId": "CRS-M1-00432",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00433-0524",
+      "requirementId": "CRS-M1-00433",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00434-0525",
+      "requirementId": "CRS-M1-00434",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00435-0526",
+      "requirementId": "CRS-M1-00435",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00436-0527",
+      "requirementId": "CRS-M1-00436",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00437-0528",
+      "requirementId": "CRS-M1-00437",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00438-0529",
+      "requirementId": "CRS-M1-00438",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00439-0530",
+      "requirementId": "CRS-M1-00439",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00440-0531",
+      "requirementId": "CRS-M1-00440",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00441-0532",
+      "requirementId": "CRS-M1-00441",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00442-0533",
+      "requirementId": "CRS-M1-00442",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00443-0534",
+      "requirementId": "CRS-M1-00443",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00444-0535",
+      "requirementId": "CRS-M1-00444",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00445-0536",
+      "requirementId": "CRS-M1-00445",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00446-0537",
+      "requirementId": "CRS-M1-00446",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00447-0538",
+      "requirementId": "CRS-M1-00447",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00448-0539",
+      "requirementId": "CRS-M1-00448",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00449-0540",
+      "requirementId": "CRS-M1-00449",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00450-0541",
+      "requirementId": "CRS-M1-00450",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00451-0542",
+      "requirementId": "CRS-M1-00451",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00452-0543",
+      "requirementId": "CRS-M1-00452",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00453-0544",
+      "requirementId": "CRS-M1-00453",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00454-0545",
+      "requirementId": "CRS-M1-00454",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00455-0546",
+      "requirementId": "CRS-M1-00455",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00456-0547",
+      "requirementId": "CRS-M1-00456",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00457-0548",
+      "requirementId": "CRS-M1-00457",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00458-0549",
+      "requirementId": "CRS-M1-00458",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00459-0550",
+      "requirementId": "CRS-M1-00459",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNR-FIELD-FILE-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00460-0551",
+      "requirementId": "CRS-M1-00460",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNR-FIELD-PROTOCOL-VERSION",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00461-0552",
+      "requirementId": "CRS-M1-00461",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNR-FIELD-NUMBER-OF-FILES",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00462-0553",
+      "requirementId": "CRS-M1-00462",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNR-FIELD-FILE-NAME-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00463-0554",
+      "requirementId": "CRS-M1-00463",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNR-FIELD-FILE-NAME",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00464-0555",
+      "requirementId": "CRS-M1-00464",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNR-FIELD-USER-DEFINED-DATA-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00465-0556",
+      "requirementId": "CRS-M1-00465",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNR-FIELD-USER-DEFINED-DATA",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00466-0557",
+      "requirementId": "CRS-M1-00466",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-FILE-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00467-0558",
+      "requirementId": "CRS-M1-00467",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-PROTOCOL-VERSION",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00468-0559",
+      "requirementId": "CRS-M1-00468",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-DOWNLOAD-OPERATION-STATUS-CODE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00469-0560",
+      "requirementId": "CRS-M1-00469",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00470-0561",
+      "requirementId": "CRS-M1-00470",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-DOWNLOAD-STATUS-DESCRIPTION",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00471-0562",
+      "requirementId": "CRS-M1-00471",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-COUNTER",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00472-0563",
+      "requirementId": "CRS-M1-00472",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-EXCEPTION-TIMER",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00473-0564",
+      "requirementId": "CRS-M1-00473",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-ESTIMATED-TIME",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00474-0565",
+      "requirementId": "CRS-M1-00474",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-DOWNLOAD-LIST-RATIO",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00475-0566",
+      "requirementId": "CRS-M1-00475",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-NUMBER-OF-FILES",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00476-0567",
+      "requirementId": "CRS-M1-00476",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-FILE-NAME-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00477-0568",
+      "requirementId": "CRS-M1-00477",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-FILE-NAME",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00478-0569",
+      "requirementId": "CRS-M1-00478",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-FILE-STATUS",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00479-0570",
+      "requirementId": "CRS-M1-00479",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-FILE-STATUS-DESCRIPTION-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00480-0571",
+      "requirementId": "CRS-M1-00480",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNS-FIELD-FILE-STATUS-DESCRIPTION",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00481-0572",
+      "requirementId": "CRS-M1-00481",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNL-FIELD-FILE-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00482-0573",
+      "requirementId": "CRS-M1-00482",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNL-FIELD-PROTOCOL-VERSION",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00483-0574",
+      "requirementId": "CRS-M1-00483",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNL-FIELD-NUMBER-OF-FILES",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00484-0575",
+      "requirementId": "CRS-M1-00484",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNL-FIELD-FILE-NAME-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00485-0576",
+      "requirementId": "CRS-M1-00485",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNL-FIELD-FILE-NAME",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00486-0577",
+      "requirementId": "CRS-M1-00486",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNL-FIELD-FILE-DESCRIPTION-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00487-0578",
+      "requirementId": "CRS-M1-00487",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNL-FIELD-FILE-DESCRIPTION",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00488-0579",
+      "requirementId": "CRS-M1-00488",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNA-FIELD-FILE-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00489-0580",
+      "requirementId": "CRS-M1-00489",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNA-FIELD-PROTOCOL-VERSION",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00490-0581",
+      "requirementId": "CRS-M1-00490",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNA-FIELD-NUMBER-OF-FILES",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00491-0582",
+      "requirementId": "CRS-M1-00491",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNA-FIELD-FILE-NAME-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00492-0583",
+      "requirementId": "CRS-M1-00492",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LNA-FIELD-FILE-NAME",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-FIELD-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD field constraint is recorded; bound M2 does not model DOWNLOAD behavior.",
+      "rationaleZh": "DOWNLOAD 字段约束已记录；绑定 M2 不建模 DOWNLOAD 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00493-0584",
+      "requirementId": "CRS-M1-00493",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00494-0585",
+      "requirementId": "CRS-M1-00494",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00495-0586",
+      "requirementId": "CRS-M1-00495",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00496-0587",
+      "requirementId": "CRS-M1-00496",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00497-0588",
+      "requirementId": "CRS-M1-00497",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00498-0589",
+      "requirementId": "CRS-M1-00498",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00499-0590",
+      "requirementId": "CRS-M1-00499",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00500-0591",
+      "requirementId": "CRS-M1-00500",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00501-0592",
+      "requirementId": "CRS-M1-00501",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00502-0593",
+      "requirementId": "CRS-M1-00502",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00503-0594",
+      "requirementId": "CRS-M1-00503",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00504-0595",
+      "requirementId": "CRS-M1-00504",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00505-0596",
+      "requirementId": "CRS-M1-00505",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00506-0597",
+      "requirementId": "CRS-M1-00506",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00507-0598",
+      "requirementId": "CRS-M1-00507",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00508-0599",
+      "requirementId": "CRS-M1-00508",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00509-0600",
+      "requirementId": "CRS-M1-00509",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00510-0601",
+      "requirementId": "CRS-M1-00510",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00511-0602",
+      "requirementId": "CRS-M1-00511",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00512-0603",
+      "requirementId": "CRS-M1-00512",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00513-0604",
+      "requirementId": "CRS-M1-00513",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00514-0605",
+      "requirementId": "CRS-M1-00514",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00515-0606",
+      "requirementId": "CRS-M1-00515",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00516-0607",
+      "requirementId": "CRS-M1-00516",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00517-0608",
+      "requirementId": "CRS-M1-00517",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00518-0609",
+      "requirementId": "CRS-M1-00518",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00519-0610",
+      "requirementId": "CRS-M1-00519",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
+      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
     }
   ],
   "infrastructurePremises": [
@@ -18703,8 +21707,8 @@
       "ownerRole": "PRODUCT-SCOPE",
       "deadlineGate": "SCOPE-EXPANSION-GATE",
       "evidence": [],
-      "noteEn": "AFDX remains unselected.",
-      "noteZh": "AFDX 保持未选择。"
+      "noteEn": "AFDX CRS candidates exist as conditional deployment; bound M2 remains unselected. MODEL-REFINEMENT-PENDING.",
+      "noteZh": "AFDX CRS 候选为条件化部署；绑定 M2 仍未选择 AFDX。模型精化待定。"
     },
     {
       "id": "F-3",
@@ -19283,19 +22287,19 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 415,
-    "dispositionCount": 415,
-    "traceCount": 506,
+    "requirementCount": 519,
+    "dispositionCount": 519,
+    "traceCount": 610,
     "stateCount": 35,
     "transitionCount": 65,
     "timingCount": 23,
-    "fieldConstraintCount": 52,
-    "dispositionsFingerprint": "be10282c33be66c6f23fa1d9ef02f54d06f80bb3d5630cf45eb94bbf1710fe8e",
-    "modelFingerprint": "e3cd631efdb7b54c2808ebf07a76062204553a3bc69326a25dc185acd29a5cfc",
+    "fieldConstraintCount": 86,
+    "dispositionsFingerprint": "9a0d8af040fb5ee13128c06cb50a07b48e37da54023302d442c75027659e82b9",
+    "modelFingerprint": "ba0dea4a93d2c32a7bd5e285fba9dc99d958e88a658b3ccb3e4afda27649cc7e",
     "timingFingerprint": "ccf8ed38a7cfd18363b57f72bf2d51bcbc7e5c91e1a48f83c84393b1e1c36e9c",
-    "inputFingerprint": "19bafc398beb947f432257099ed4d598107975632ebcef9b5fb84c5492e05adf",
+    "inputFingerprint": "d78a5191eef7858889e4cc4616fad4be4e6985bb364f8f2ffb5890c990f9ff14",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
-    "actionFingerprint": "af4925f709b87f65014a13e74c4f83569eec73ee54be78536bf91939608ddbe0",
+    "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
     "witnessFingerprint": "3de3d3bf3b1b9c6eb9ee0e6ab65234ec5957762185e51093aeb10534986e6643",
     "blockingFingerprint": "ed1c2d23ae210315decd37ee16af46d55b7e8eb29359bbd7f1a6d42ca0444aa6",
