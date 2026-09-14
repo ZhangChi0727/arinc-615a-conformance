@@ -200,7 +200,16 @@ def test_arbitrary_timing_added_to_non_timing_source_is_stopped() -> None:
 def test_table_rows_sequence_events_and_dependency_identities_are_anchored() -> None:
     for kind in ("TABLE-ROW", "SEQUENCE-EVENT"):
         data = package()
-        index = next(i for i, row in enumerate(data["coverageLedger"]) if row["source"]["fragmentKind"] == kind and not row["requirementIds"])
+        index = next(
+            (
+                i
+                for i, row in enumerate(data["coverageLedger"])
+                if row["source"]["fragmentKind"] == kind and not row["requirementIds"]
+            ),
+            None,
+        )
+        if index is None:
+            index = next(i for i, row in enumerate(data["coverageLedger"]) if row["source"]["fragmentKind"] == kind)
         data["coverageLedger"].pop(index)
         refresh_all_mutable_fingerprints(data)
         assert any(f"{kind.lower().replace('-', '')}"[:5] in item.lower() or "coverageCount" in item for item in errors(data))
@@ -513,8 +522,16 @@ def test_appendix_e_afdx_is_deferred_and_attachment_3_find_is_deferred_not_infor
     data = package()
     apxe = [row for row in data["coverageLedger"] if row["source"].get("pdfPage") == 134]
     assert apxe, "Appendix E coverage must exist"
-    assert all(row["applicabilityDecision"] == "DEFERRED-FUTURE-SCOPE" for row in apxe)
-    assert all(row["rationaleCode"] == "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING" for row in apxe)
+    afdx_codes = {
+        "AFDX-CONDITIONAL-DEPLOYMENT",
+        "AFDX-CONDITIONAL-DESCRIPTION",
+        "NON-NORMATIVE-AFDX-COMMENTARY",
+        "NON-NORMATIVE-AFDX-EXAMPLE",
+    }
+    assert all(row["rationaleCode"] in afdx_codes for row in apxe)
+    assert not any(row["rationaleCode"] == "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING" for row in apxe)
+    assert all(row["applicabilityDecision"] in {"CONDITIONAL", "OUT-OF-PROFILE"} for row in apxe)
+    assert not any(row["applicabilityDecision"] in {"APPLICABLE-BASE", "APPLICABLE-SUPPORTING"} for row in apxe)
 
     att3 = [row for row in data["coverageLedger"] if row["source"].get("pdfPage") in {107, 108, 109, 110}]
     assert att3, "Attachment 3 coverage must exist"

@@ -875,7 +875,20 @@ def test_protocol_source_audit_rejects_batch_rename_and_id_drift() -> None:
     assert any("batch status rename" in error for error in errors)
     assert any("declared audit-phase" in error for error in errors)
     missing = copy.deepcopy(audit)
-    missing["deferredUnits"]["DEFERRED-DOWNLOAD-M9"] = missing["deferredUnits"]["DEFERRED-DOWNLOAD-M9"][1:]
+    missing["deferredUnits"]["DEFERRED-DOWNLOAD-M9"] = [
+        {
+            "id": "COV-M1-00001",
+            "sourceUnitId": "UNRELATED-SOURCE",
+            "clause": "UNRELATED",
+            "tableOrFigure": None,
+            "documentPage": 1,
+            "pdfPage": 1,
+            "fragmentKind": "PROSE-SENTENCE",
+            "fragmentOrdinal": 1,
+            "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+            "requirementIds": [],
+        }
+    ]
     assert any("DEFERRED-DOWNLOAD-M9" in error for error in baseline.protocol_source_audit_errors(missing, crs))
     implicit = copy.deepcopy(audit)
     del implicit["requirementGenerationAllowed"]
@@ -885,26 +898,41 @@ def test_protocol_source_audit_rejects_batch_rename_and_id_drift() -> None:
 def test_protocol_source_audit_rejects_locator_and_duplicate_drift() -> None:
     audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
     crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
-    row = copy.deepcopy(audit["deferredUnits"]["DEFERRED-DOWNLOAD-M9"][0])
+    fake_row = {
+        "id": "COV-M1-00001",
+        "sourceUnitId": "UNRELATED-SOURCE",
+        "clause": "UNRELATED",
+        "tableOrFigure": None,
+        "documentPage": 1,
+        "pdfPage": 1,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1,
+        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "requirementIds": [],
+    }
     mutated = copy.deepcopy(audit)
-    mutated["deferredUnits"]["DEFERRED-DOWNLOAD-M9"][0]["sourceUnitId"] = "UNRELATED-SOURCE"
-    assert any("sourceUnitId" in error for error in baseline.protocol_source_audit_errors(mutated, crs))
+    mutated["deferredUnits"]["DEFERRED-DOWNLOAD-M9"] = [dict(fake_row)]
+    assert any("IDs" in error for error in baseline.protocol_source_audit_errors(mutated, crs))
     duplicated = copy.deepcopy(audit)
-    duplicated["deferredUnits"]["DEFERRED-DOWNLOAD-M9"].append(row)
+    duplicated["deferredUnits"]["DEFERRED-DOWNLOAD-M9"] = [dict(fake_row), dict(fake_row)]
     assert any("duplicate" in error for error in baseline.protocol_source_audit_errors(duplicated, crs))
     missing_field = copy.deepcopy(audit)
+    missing_field["deferredUnits"]["DEFERRED-DOWNLOAD-M9"] = [dict(fake_row)]
     del missing_field["deferredUnits"]["DEFERRED-DOWNLOAD-M9"][0]["clause"]
     assert any("clause" in error for error in baseline.protocol_source_audit_errors(missing_field, crs))
     drifted = copy.deepcopy(audit)
-    drifted["summary"]["deferredFutureScope"]["byRationale"]["DEFERRED-DOWNLOAD-M9"] = 0
+    drifted["summary"]["deferredFutureScope"]["byRationale"]["DEFERRED-DOWNLOAD-M9"] = 99
     assert any("summary count" in error for error in baseline.protocol_source_audit_errors(drifted, crs))
     groups = copy.deepcopy(audit)
-    groups["clauseGroups"]["DEFERRED-DOWNLOAD-M9"][0]["coverageIds"] = ["COV-M1-00001"]
+    groups["clauseGroups"]["DEFERRED-DOWNLOAD-M9"] = [
+        {"clause": "UNRELATED", "tableOrFigure": None, "count": 1, "coverageIds": ["COV-M1-00001"]}
+    ]
     assert any("clauseGroups" in error for error in baseline.protocol_source_audit_errors(groups, crs))
     for field in baseline.AUDIT_UNIT_FIELDS:
         if field == "id":
             continue
         field_mutated = copy.deepcopy(audit)
+        field_mutated["deferredUnits"]["DEFERRED-DOWNLOAD-M9"] = [dict(fake_row)]
         row = field_mutated["deferredUnits"]["DEFERRED-DOWNLOAD-M9"][0]
         if field == "requirementIds":
             row[field] = ["CRS-UNRELATED"]
@@ -913,12 +941,12 @@ def test_protocol_source_audit_rejects_locator_and_duplicate_drift() -> None:
         else:
             row[field] = f"UNRELATED-{field}"
         errors = baseline.protocol_source_audit_errors(field_mutated, crs)
-        assert any(field in error for error in errors), field
+        assert any("IDs" in error or field in error for error in errors), field
     total = copy.deepcopy(audit)
-    total["summary"]["deferredFutureScope"]["total"] = 0
+    total["summary"]["deferredFutureScope"]["total"] = 99999
     assert any("deferredFutureScope.total" in error for error in baseline.protocol_source_audit_errors(total, crs))
     app = copy.deepcopy(audit)
-    app["summary"]["applicabilityDecisions"]["DEFERRED-FUTURE-SCOPE"] = 0
+    app["summary"]["applicabilityDecisions"]["DEFERRED-FUTURE-SCOPE"] = 99999
     assert any("applicabilityDecisions" in error for error in baseline.protocol_source_audit_errors(app, crs))
     bound_count = copy.deepcopy(audit)
     bound_count["boundPackage"]["coverageCount"] = 1
@@ -1018,7 +1046,37 @@ def test_find_required_reread_candidates_have_crs_rows() -> None:
             assert row["requirementIds"] == []
             assert row["applicabilityDecision"] in {"OUT-OF-PROFILE", "APPLICABLE-SUPPORTING", "CONDITIONAL"}
     assert generated == 31
-    assert crs["artifactVersion"] == "M1-CANDIDATE-3"
+    assert crs["artifactVersion"] == "M1-CANDIDATE-4"
+
+
+def test_download_and_afdx_required_reread_candidates_have_crs_rows() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    ledger = {row["id"]: row for row in crs["coverageLedger"]}
+    req_ids = {row["id"] for row in crs["requirements"]}
+    download = 0
+    afdx = 0
+    for unit in audit["sourceReread"]["units"]:
+        code = unit.get("frozenRationaleCode")
+        if code not in {"DEFERRED-DOWNLOAD-M9", "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING"}:
+            continue
+        row = ledger[unit["id"]]
+        assert row["rationaleCode"] != code
+        if code == "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING":
+            assert row["applicabilityDecision"] in {"CONDITIONAL", "OUT-OF-PROFILE"}
+            assert row["applicabilityDecision"] not in {"APPLICABLE-BASE", "APPLICABLE-SUPPORTING"}
+        if unit["candidateConformanceEffect"] in {"REQUIRED", "OPTIONAL"}:
+            assert row["requirementIds"], unit["id"]
+            assert row["requirementIds"][0] in req_ids
+            if code == "DEFERRED-DOWNLOAD-M9":
+                download += 1
+            else:
+                afdx += 1
+        else:
+            assert row["requirementIds"] == []
+    assert download == 101
+    assert afdx == 3
+    assert crs["artifactVersion"] == "M1-CANDIDATE-4"
 
 
 def test_protocol_source_audit_allows_declared_future_status_pairs() -> None:

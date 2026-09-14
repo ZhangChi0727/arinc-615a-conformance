@@ -258,8 +258,11 @@ def network_reference_errors(data: dict[str, Any], register: dict[str, Any],
         if any(i not in indices["issues"] for i in relation.get("issueIds", [])):
             errors.append(f"network relation {rid} has a dangling issue")
         if relation.get("relation") == "CONDITIONAL-DEPLOYMENT-REFERENCE":
-            if (relation.get("condition") != "IF-AFDX-TRANSPORT-CHOSEN" or relation.get("disposition") != "DEFERRED-FUTURE-SCOPE"
-                    or owner.get("applicabilityDecision") != "DEFERRED-FUTURE-SCOPE" or owner.get("requirementIds")):
+            if relation.get("condition") != "IF-AFDX-TRANSPORT-CHOSEN":
+                errors.append(f"network relation {rid} cannot activate a deferred deployment")
+            elif owner.get("applicabilityDecision") in {"APPLICABLE-BASE", "APPLICABLE-SUPPORTING"}:
+                errors.append(f"network relation {rid} cannot activate a deferred deployment")
+            elif owner.get("applicabilityDecision") not in {"DEFERRED-FUTURE-SCOPE", "CONDITIONAL", "OUT-OF-PROFILE"}:
                 errors.append(f"network relation {rid} cannot activate a deferred deployment")
     for iid, issue in indices["issues"].items():
         if (issue.get("status") not in {"OPEN", "RESOLVED-BY-SCOPE-DECISION", "SOURCE-ACQUIRED-REVIEW-PENDING"}

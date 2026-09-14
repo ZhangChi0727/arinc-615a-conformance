@@ -37,7 +37,7 @@ Four arms CL-T, CL-A, CL-TA, CL-LOOP; detection, localization and ablation famil
 
 ## Expanded CRS index and audit
 
-Current bound package is M1-CANDIDATE-3: 2796 coverage units and 415 requirements. FIND REQUIRED/OPTIONAL reread candidates are written as 31 bilingual CRS rows; commentary and examples stay non-normative. Bound M2 does not model FIND. DOWNLOAD 365/365 and AFDX appendix 13/13 remain deferred. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. 664/665/RFC body audits remain pending. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename remaining deferred labels. Tool software requirements are out of this PR.
+Current bound package is M1-CANDIDATE-4: 2796 coverage units and 519 requirements. FIND, DOWNLOAD and AFDX-appendix REQUIRED/OPTIONAL reread candidates are written as bilingual CRS rows (31 FIND + 101 DOWNLOAD + 3 AFDX); commentary and examples stay non-normative. Bound M2 does not model FIND, DOWNLOAD or AFDX. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. 664/665/RFC body audits remain pending. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename remaining deferred labels. Tool software requirements are out of this PR.
 
 ## Historical versus successor evidence
 
@@ -82,7 +82,7 @@ SysML 1.6 记法 PlantUML 源：[`../../../docs/research/publication/models/`](.
 
 ## 扩大 CRS 索引与审计
 
-当前绑定包为 M1-CANDIDATE-3：2796 条 coverage、415 条需求。FIND 的 REQUIRED／OPTIONAL 重读候选已写成 31 条双语 CRS；评注与示例保持非规范。绑定 M2 不建模 FIND。DOWNLOAD 365/365 与 AFDX 附录 13/13 仍延期。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。664／665／RFC 正文审计仍待进行。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名仍延期的标签。工具软件需求不属于本 PR。
+当前绑定包为 M1-CANDIDATE-4：2796 条 coverage、519 条需求。FIND、DOWNLOAD 与 AFDX 附录的 REQUIRED／OPTIONAL 重读候选已写成双语 CRS（FIND 31＋DOWNLOAD 101＋AFDX 3）；评注与示例保持非规范。绑定 M2 不建模 FIND、DOWNLOAD 或 AFDX。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。664／665／RFC 正文审计仍待进行。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名仍延期的标签。工具软件需求不属于本 PR。
 
 ## 历史与后继证据
 

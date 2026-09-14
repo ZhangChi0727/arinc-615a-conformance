@@ -10615,6 +10615,2623 @@
       "expectedSourceModality": "FACT",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00416",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-007-CA89CD0344A9",
+      "sourceTextHash": "ca89cd0344a90fee2d8b82645d523aaf3ab1f7f1791b447dd0601432737e1b5f",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "IMPLEMENT-BOTH-MEDIA-DEFINED-OPERATOR-DEFINED-DOWNLOAD",
+        "objects": [
+          "MEDIA-DEFINED",
+          "OPERATOR-DEFINED"
+        ],
+        "observableEffect": "IMPLEMENT-BOTH-MEDIA-DEFINED-OPERATOR-DEFINED-DOWNLOAD-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the data loader shall implement both Media Defined and Operator Defined DOWNLOAD.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须实现 both 媒体定义 and 操作员定义 DOWNLOAD。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00417",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-008-EB64770DFDD9",
+      "sourceTextHash": "eb64770dfdd9e4921cce076d41e11707867f11e33e63a2cafdfce3772bd91479",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "IMPLEMENT-NONE-ONE-BOTH-DOWNLOAD-MODES",
+        "objects": [
+          "MEDIA-DEFINED",
+          "OPERATOR-DEFINED"
+        ],
+        "observableEffect": "IMPLEMENT-NONE-ONE-BOTH-DOWNLOAD-MODES-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the target hardware may implement none, one, or both DOWNLOAD modes.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件可以实现 none, one, or both DOWNLOAD modes。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00418",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-009-DD0255D27FB0",
+      "sourceTextHash": "dd0255d27fb021201ce30b77ab84f00cef93c6ea972f76e4db6353ea6f354e04",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "SPECIFY-TFTP-OPTIONS-SUPPLY-DATA-INTEGRITY-CHECK-TRANSFER",
+        "objects": [
+          "TFTP-OPTIONS"
+        ],
+        "observableEffect": "SPECIFY-TFTP-OPTIONS-SUPPLY-DATA-INTEGRITY-CHECK-TRANSFER-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the data loader may specify TFTP options that supply a data-integrity check for the transfer.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器可以规定 TFTP options that supply a data-integrity check for the transfer。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00419",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-010-12B60035E133",
+      "sourceTextHash": "12b60035e1334d0aea8f2c6195ca06dd69c0a40ed37b02e63e559295284104ac",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "IMPLEMENT-TFTP-INTEGRITY-OPTION",
+        "objects": [
+          "TFTP-OPTION"
+        ],
+        "observableEffect": "IMPLEMENT-TFTP-INTEGRITY-OPTION-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the target hardware may implement that TFTP integrity option.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件可以实现 that TFTP integrity option。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00420",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-011-3CF28DC21423",
+      "sourceTextHash": "3cf28dc214230a243c3e516d0888c7c458a7027eedab414404b1a3243323d033",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "IT-SUPPORTS-OFFERED-CHECK-VALUE-VALIDATE-DATA-TRANSFER",
+        "objects": [
+          "CHECK-VALUE"
+        ],
+        "observableEffect": "IT-SUPPORTS-OFFERED-CHECK-VALUE-VALIDATE-DATA-TRANSFER-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the data loader shall if it supports the offered check value, validate the data transfer.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须if it supports the offered check value, 校验 the data transfer。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00421",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-012-D9C78F1A4E4C",
+      "sourceTextHash": "d9c78f1a4e4c46b74686bfa5f53835ae1157f6155ba5997c940631fb2fd345bd",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "TREAT-CHECKSUM-VALIDATION-INFORMATION-ONLY-STILL-EXPORT-FILE",
+        "objects": [
+          "CHECKSUM",
+          "EXPORT"
+        ],
+        "observableEffect": "TREAT-CHECKSUM-VALIDATION-INFORMATION-ONLY-STILL-EXPORT-FILE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the data loader shall treat checksum validation as information only and still export the file.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须把 校验和 validation as information only and still export the file。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00422",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-004-E7A9E12EDE22",
+      "sourceTextHash": "e7a9e12ede22f7916b58f62f977b39e0a77247ae51cbae82ad5f84c9ec577ce7",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "USE-LNR-ALREADY-STORED-ARINC-665-PART-MEDIA",
+        "objects": [
+          "LNR",
+          "ARINC-665-PART"
+        ],
+        "observableEffect": "USE-LNR-ALREADY-STORED-ARINC-665-PART-MEDIA-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data loader may use an LNR already stored in an ARINC 665 part on the media.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器可以使用 an LNR already stored in an ARINC 665 part on the media。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00423",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-006-F3361F00DCE2",
+      "sourceTextHash": "f3361f00dce2a9314da446f394ef80b98780ba0793a5e62ee94adee5da0d8edf",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "EXAMINE-EACH-PART-HEADER-OFFER-HEADERS-WHOSE-DOWNLOAD-BIT-SET",
+        "objects": [
+          "DOWNLOAD-BIT",
+          "HEADER-FILE"
+        ],
+        "observableEffect": "EXAMINE-EACH-PART-HEADER-OFFER-HEADERS-WHOSE-DOWNLOAD-BIT-SE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data loader shall examine each part header and offer headers whose download bit is set.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须检查 each part header and 提供 headers whose download bit is set。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00424",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-007-A88849FBE53E",
+      "sourceTextHash": "a88849fbe53e0e8ea004d52deddfe17fc312f6a2bd0c62858f2bb1e05920d32e",
+      "expectedSemantic": {
+        "actor": "OPERATOR",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "MORE-THAN-ONE-DOWNLOAD-BIT-HEADER-EXISTS-SELECT-ONE",
+        "objects": [
+          "HEADER-FILE"
+        ],
+        "observableEffect": "MORE-THAN-ONE-DOWNLOAD-BIT-HEADER-EXISTS-SELECT-ONE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the operator may if more than one download-bit header exists, select one.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，操作员可以if more than one download-bit header exists, 选择 one。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00425",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-001-EDC984053CA0",
+      "sourceTextHash": "edc984053ca0bbf606ac43a7ab2c70544e9d387c00abce247c1df766fcf433f6",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION",
+        "action": "UNABLE-WRITE-WHEN-REMOVABLE-MEDIA-BOTH-LNR-SOURCE-DOWNLOAD-DESTINATION",
+        "objects": [
+          "REMOVABLE-MEDIA"
+        ],
+        "observableEffect": "UNABLE-WRITE-WHEN-REMOVABLE-MEDIA-BOTH-LNR-SOURCE-DOWNLOAD-D-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader may be unable to write when removable media is both LNR source and download destination.",
+      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器可以执行“be unable to write when removable media is both LNR source and download destination”。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00426",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-002-1036539E638B",
+      "sourceTextHash": "1036539e638b8b7c0a3bf8673c58b07f60cd7a4d99789acc93aea9c126550f82",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION",
+        "action": "PROMPT-OPERATOR-REPLACE-SELECT-WRITABLE-MEDIA-BEFORE-STARTING-DOWNLOAD",
+        "objects": [
+          "WRITABLE-MEDIA"
+        ],
+        "observableEffect": "PROMPT-OPERATOR-REPLACE-SELECT-WRITABLE-MEDIA-BEFORE-STARTIN-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader shall prompt the operator to replace or select writable media before starting DOWNLOAD.",
+      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须prompt the operator to replace or 选择 writable media before starting DOWNLOAD。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00427",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-003-3B9221D5DF13",
+      "sourceTextHash": "3b9221d5df13c64574b35c841900c89737de9641a51bc464c66ac61b338e9947",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION",
+        "action": "FAIL-DOWNLOAD-WRITE-STILL-FAILS-AFTER-ASKING-WRITABLE-MEDIA",
+        "objects": [
+          "WRITABLE-MEDIA"
+        ],
+        "observableEffect": "FAIL-DOWNLOAD-WRITE-STILL-FAILS-AFTER-ASKING-WRITABLE-MEDIA-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader shall fail DOWNLOAD if the write still fails after asking for writable media.",
+      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须执行“fail DOWNLOAD if the write still fails after asking for writable media”。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00428",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-004-C40353394C94",
+      "sourceTextHash": "c40353394c94be1ae13111d1858613b724160f9c96fa3ebaef5be7dcf9d2133b",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION",
+        "action": "CREATE-NEW-DNLD-DATA-THW-ID-POS-NUMBER-DIRECTORY-EACH",
+        "objects": [
+          "DNLD-DATA"
+        ],
+        "observableEffect": "CREATE-NEW-DNLD-DATA-THW-ID-POS-NUMBER-DIRECTORY-EACH-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader shall create a new DNLD_DATA_<THW_ID_POS>_<number> directory for each download.",
+      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须执行“create a new DNLD_DATA_<THW_ID_POS>_<number> directory for each download”。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00429",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-008-4B56712D118C",
+      "sourceTextHash": "4b56712d118ca5054483d4d035713caff881bcf883bfd4e10d0afb37b072b629",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION",
+        "action": "CREATE-DNLD-INFO-THW-ID-POS-NUMBER-MANUFACTURER-SPECIFIC-DOWNLOAD",
+        "objects": [
+          "DNLD-INFO"
+        ],
+        "observableEffect": "CREATE-DNLD-INFO-THW-ID-POS-NUMBER-MANUFACTURER-SPECIFIC-DOW-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader may create DNLD_INFO_<THW_ID_POS>_<number> for manufacturer-specific download information.",
+      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器可以执行“create DNLD_INFO_<THW_ID_POS>_<number> for manufacturer-specific download information”。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00430",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-033-EC6A3B3AFA4A",
+      "sourceTextHash": "ec6a3b3afa4af3f6c40c983e2b64b9e3f23dc3ee80d58747e93d3b97fb940265",
+      "expectedSemantic": {
+        "actor": "OPERATOR",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "SELECT-MEDIA-TYPE-MEDIA-DEFINED-DOWNLOAD",
+        "objects": [
+          "MEDIA-TYPE"
+        ],
+        "observableEffect": "SELECT-MEDIA-TYPE-MEDIA-DEFINED-DOWNLOAD-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the operator shall select the media type for Media Defined DOWNLOAD.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，操作员必须选择 the media type for 媒体定义 DOWNLOAD。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00431",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-038-2ED4ABAC4193",
+      "sourceTextHash": "2ed4abac41932f3900f95fc9c89037b81eecf9f0f913289e315e661c8899f803",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY",
+        "objects": [
+          "LNS",
+          "ATTACHMENT-4"
+        ],
+        "observableEffect": "SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the target hardware shall send status files within the Attachment 4 DLP maximum delay.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须发送 状态文件s within the 附件 4 DLP maximum delay。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00432",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-040-18B50A8E503C",
+      "sourceTextHash": "18b50a8e503c808818caff0e97d6f9776f7d02a0495339e556b01c2ba14f2b53",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSIDE-TIMEOUT",
+        "objects": [
+          "LNS",
+          "STATUS-CODE",
+          "STATUS-DESCRIPTION"
+        ],
+        "observableEffect": "FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSID-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the target hardware shall on fatal error emit a status file with matching code and description inside the timeout.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须on fatal error emit a 状态文件 with matching code and description inside the timeout。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00433",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-041-7AC0400C9DB1",
+      "sourceTextHash": "7ac0400c9db1195a3bc6857b4f12ea1e7fe0cffd8173a9cd39888d86a31a82cd",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT",
+        "objects": [
+          "ABORT-5-3-2-3-6",
+          "INTERRUPT-6-3-6"
+        ],
+        "observableEffect": "SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the target hardware may send a status file immediately to carry an abort or interrupt.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，目标硬件可以发送 a 状态文件 immediately to carry an 中止 or interrupt。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00434",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-050-D8862D88C46E",
+      "sourceTextHash": "d8862d88c46e45e23550fa0c5c780b1b3e7bc361960f56d7da4e25afffe630a5",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHOUT-WAITING-IT",
+        "objects": [
+          "EXCEPTION-TIMER"
+        ],
+        "observableEffect": "TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHO-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data loader shall if the target answers before Exception Timer elapses, continue without waiting it out.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须执行“if the target answers before Exception Timer elapses, continue without waiting it out”。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00435",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-051-E812AC346D09",
+      "sourceTextHash": "e812ac346d09524ca46089f05eba33305d02569bc0605593b7e0904b247c127d",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT",
+        "objects": [
+          "EXCEPTION-TIMER"
+        ],
+        "observableEffect": "MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the target hardware shall minimize Exception Timer so the silent phase stays short.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须尽量缩短 Exception Timer so the silent phase stays short。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00436",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-052-91F9A68124BD",
+      "sourceTextHash": "91f9a68124bdb3a9096e27377b9406f679791053236e62399cf2ace26e5a0ec7",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-TIMER",
+        "objects": [
+          "EXCEPTION-TIMER",
+          "LNS"
+        ],
+        "observableEffect": "ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-T-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data loader shall abort DOWNLOAD if no new status file arrives before Exception Timer expires.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须中止 DOWNLOAD if no new 状态文件 arrives before Exception Timer expires。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00437",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-007-18AB4BEB6990",
+      "sourceTextHash": "18ab4beb6990d9795e2daa3120c452720334ac63b3e8d9c33dd7a319cc606459",
+      "expectedSemantic": {
+        "actor": "OPERATOR",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ABLE-SELECT-MEDIA-TYPE-OPERATOR-DEFINED-DOWNLOAD",
+        "objects": [
+          "MEDIA-TYPE"
+        ],
+        "observableEffect": "ABLE-SELECT-MEDIA-TYPE-OPERATOR-DEFINED-DOWNLOAD-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the operator shall be able to select the media type for Operator Defined DOWNLOAD.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，操作员必须be able to 选择 the media type for 操作员定义 DOWNLOAD。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00438",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-012-2ED4ABAC4193",
+      "sourceTextHash": "2ed4abac41932f3900f95fc9c89037b81eecf9f0f913289e315e661c8899f803",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY--00981",
+        "objects": [
+          "LNS",
+          "ATTACHMENT-4"
+        ],
+        "observableEffect": "SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the target hardware shall send status files within the Attachment 4 DLP maximum delay.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须发送 状态文件s within the 附件 4 DLP maximum delay。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00439",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-014-9F2F8E73FD5D",
+      "sourceTextHash": "9f2f8e73fd5d6b1efaf399c8682285cc9fd020f033485e0e88537df416c50cfc",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSIDE-TIMEOUT--00983",
+        "objects": [
+          "LNS",
+          "STATUS-CODE",
+          "STATUS-DESCRIPTION"
+        ],
+        "observableEffect": "FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSID-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the target hardware shall on fatal error emit a status file with matching code and description inside the timeout.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须on fatal error emit a 状态文件 with matching code and description inside the timeout。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00440",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-015-7AC0400C9DB1",
+      "sourceTextHash": "7ac0400c9db1195a3bc6857b4f12ea1e7fe0cffd8173a9cd39888d86a31a82cd",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT--00984",
+        "objects": [
+          "ABORT-5-3-2-3-6",
+          "INTERRUPT-6-3-6"
+        ],
+        "observableEffect": "SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the target hardware may send a status file immediately to carry an abort or interrupt.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，目标硬件可以发送 a 状态文件 immediately to carry an 中止 or interrupt。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00441",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-024-D8862D88C46E",
+      "sourceTextHash": "d8862d88c46e45e23550fa0c5c780b1b3e7bc361960f56d7da4e25afffe630a5",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHOUT-WAITING-IT--00993",
+        "objects": [
+          "EXCEPTION-TIMER"
+        ],
+        "observableEffect": "TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHO-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the data loader shall if the target answers before Exception Timer elapses, continue without waiting it out.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须执行“if the target answers before Exception Timer elapses, continue without waiting it out”。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00442",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-025-E812AC346D09",
+      "sourceTextHash": "e812ac346d09524ca46089f05eba33305d02569bc0605593b7e0904b247c127d",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT--00994",
+        "objects": [
+          "EXCEPTION-TIMER"
+        ],
+        "observableEffect": "MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the target hardware shall minimize Exception Timer so the silent phase stays short.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须尽量缩短 Exception Timer so the silent phase stays short。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00443",
+      "sourceUnitId": "SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-026-464E9E6694A8",
+      "sourceTextHash": "464e9e6694a8e7229b4233a797e1a3c6a2538e56cd63eecc5f4e31ff81c2b1ef",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-TIMER--00995",
+        "objects": [
+          "EXCEPTION-TIMER",
+          "LNS"
+        ],
+        "observableEffect": "ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-T-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the data loader shall abort DOWNLOAD if no new status file arrives before Exception Timer expires.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须中止 DOWNLOAD if no new 状态文件 arrives before Exception Timer expires。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00444",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-6-P091-PROSE-SENTENCE-016-1532165AA3AE",
+      "sourceTextHash": "1532165aa3aecd0ab96f2127d49a7b7f39b89014f9b1d18eebe0123be7dba9ef",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ZERO-TERMINATE-LNR-FILE-NAME-0X00",
+        "objects": [
+          "OBJ-0X00"
+        ],
+        "observableEffect": "ZERO-TERMINATE-LNR-FILE-NAME-0X00-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNR File Name with 0x00.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNR File Name with 0x00”。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00445",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-028-83077CACF0DC",
+      "sourceTextHash": "83077cacf0dcb2e88d31e759281055e2eecf45a9d59ca82f15e036301ea02869",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "OTHER-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD-LEFTOVER",
+        "objects": [
+          "DOWNLOAD-STATUS-DESCRIPTION"
+        ],
+        "observableEffect": "OTHER-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer may for other status codes ignore description content, which may hold leftover data.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方可以执行“for other status codes ignore description content, which may hold leftover data”。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00446",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-030-B1FB47BD2E90",
+      "sourceTextHash": "b1fb47bd2e90b49c34a3de5715af8f5e165317f45ddbe6c9527bd05934f5b5ea",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "USE-ONLY-PRINTABLE-CHARACTERS-DOWNLOAD-STATUS-DESCRIPTION-NO-CONTROL-CHARACTERS",
+        "objects": [
+          "DOWNLOAD-STATUS-DESCRIPTION"
+        ],
+        "observableEffect": "USE-ONLY-PRINTABLE-CHARACTERS-DOWNLOAD-STATUS-DESCRIPTION-NO-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall use only printable characters in Download Status Description, with no control characters, max 255.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in Download Status Description, with no control characters, max 255。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00447",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-031-1532165AA3AE",
+      "sourceTextHash": "1532165aa3aecd0ab96f2127d49a7b7f39b89014f9b1d18eebe0123be7dba9ef",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ZERO-TERMINATE-DOWNLOAD-STATUS-DESCRIPTION-0X00",
+        "objects": [
+          "OBJ-0X00"
+        ],
+        "observableEffect": "ZERO-TERMINATE-DOWNLOAD-STATUS-DESCRIPTION-0X00-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate Download Status Description with 0x00.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate Download Status Description with 0x00”。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00448",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-040-BFA9E163247A",
+      "sourceTextHash": "bfa9e163247aaf32bb27f93df818b5c1872e79fb7310ff67cc1fe74ee8456e4d",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "SET-EXCEPTION-TIMER-0X0000-EVERY-OTHER-STATUS-CODE",
+        "objects": [
+          "EXCEPTION-TIMER",
+          "OBJ-0X0000"
+        ],
+        "observableEffect": "SET-EXCEPTION-TIMER-0X0000-EVERY-OTHER-STATUS-CODE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall set Exception Timer to 0x0000 for every other status code.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“set Exception Timer to 0x0000 for every other status code”。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00449",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-045-16B3A57C8CEC",
+      "sourceTextHash": "16b3a57c8cec0cee880605bda5c552fed9ae861f32cd3afd7dbd212a405b4114",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "PROVIDE-ESTIMATED-TIME-SOON-POSSIBLE-DURING-OPERATION",
+        "objects": [
+          "ESTIMATED-TIME"
+        ],
+        "observableEffect": "PROVIDE-ESTIMATED-TIME-SOON-POSSIBLE-DURING-OPERATION-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the target hardware shall provide Estimated Time as soon as possible during the operation.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件必须执行“provide Estimated Time as soon as possible during the operation”。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00450",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-048-581419285745",
+      "sourceTextHash": "58141928574572240705ce63f1fb96d396d256ff8866c51a6c651520418facec",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "TARGET-DOES-NOT-GIVE-ESTIMATED-TIME-SET-FIELD-0XFFFF",
+        "objects": [
+          "ESTIMATED-TIME",
+          "OBJ-0XFFFF"
+        ],
+        "observableEffect": "TARGET-DOES-NOT-GIVE-ESTIMATED-TIME-SET-FIELD-0XFFFF-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall if the target does not give Estimated Time, set the field to 0xFFFF.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“if the target does not give Estimated Time, set the field to 0xFFFF”。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00451",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-058-1532165AA3AE",
+      "sourceTextHash": "1532165aa3aecd0ab96f2127d49a7b7f39b89014f9b1d18eebe0123be7dba9ef",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ZERO-TERMINATE-LNS-FILE-NAME-0X00",
+        "objects": [
+          "OBJ-0X00"
+        ],
+        "observableEffect": "ZERO-TERMINATE-LNS-FILE-NAME-0X00-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNS File Name with 0x00.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNS File Name with 0x00”。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00452",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-077-6BCAB56CC15C",
+      "sourceTextHash": "6bcab56cc15c7dac87ebe3dfae0c8962562bfbb2d56769f6f3ac0dd62958fd75",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "OTHER-FILE-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD",
+        "objects": [
+          "FILE-STATUS-DESCRIPTION"
+        ],
+        "observableEffect": "OTHER-FILE-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer may for other file status codes ignore description content, which may hold leftover data.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方可以执行“for other file status codes ignore description content, which may hold leftover data”。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00453",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-079-53AAFA003A8B",
+      "sourceTextHash": "53aafa003a8b0788a430c7426ca2fd6bc5a45d6f2e3526d6449fe1d943dabfb2",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "USE-ONLY-PRINTABLE-CHARACTERS-FILE-STATUS-DESCRIPTION-NO-CONTROL-CHARACTERS",
+        "objects": [
+          "FILE-STATUS-DESCRIPTION"
+        ],
+        "observableEffect": "USE-ONLY-PRINTABLE-CHARACTERS-FILE-STATUS-DESCRIPTION-NO-CON-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall use only printable characters in File Status Description, with no control characters, max 255.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in File Status Description, with no control characters, max 255。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00454",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-080-1532165AA3AE",
+      "sourceTextHash": "1532165aa3aecd0ab96f2127d49a7b7f39b89014f9b1d18eebe0123be7dba9ef",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ZERO-TERMINATE-FILE-STATUS-DESCRIPTION-0X00",
+        "objects": [
+          "OBJ-0X00"
+        ],
+        "observableEffect": "ZERO-TERMINATE-FILE-STATUS-DESCRIPTION-0X00-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate File Status Description with 0x00.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate File Status Description with 0x00”。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00455",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-8-P095-PROSE-SENTENCE-015-1532165AA3AE",
+      "sourceTextHash": "1532165aa3aecd0ab96f2127d49a7b7f39b89014f9b1d18eebe0123be7dba9ef",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ZERO-TERMINATE-LNL-FILE-NAME-0X00",
+        "objects": [
+          "OBJ-0X00"
+        ],
+        "observableEffect": "ZERO-TERMINATE-LNL-FILE-NAME-0X00-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNL File Name with 0x00.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNL File Name with 0x00”。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00456",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-8-P096-PROSE-SENTENCE-020-53AAFA003A8B",
+      "sourceTextHash": "53aafa003a8b0788a430c7426ca2fd6bc5a45d6f2e3526d6449fe1d943dabfb2",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "USE-ONLY-PRINTABLE-CHARACTERS-LNL-FILE-DESCRIPTION-NO-CONTROL-CHARACTERS",
+        "objects": [
+          "FILE-DESCRIPTION"
+        ],
+        "observableEffect": "USE-ONLY-PRINTABLE-CHARACTERS-LNL-FILE-DESCRIPTION-NO-CONTRO-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall use only printable characters in LNL File Description, with no control characters, max 255.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in LNL File Description, with no control characters, max 255。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00457",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-8-P096-PROSE-SENTENCE-021-1532165AA3AE",
+      "sourceTextHash": "1532165aa3aecd0ab96f2127d49a7b7f39b89014f9b1d18eebe0123be7dba9ef",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ZERO-TERMINATE-LNL-FILE-DESCRIPTION-0X00",
+        "objects": [
+          "OBJ-0X00"
+        ],
+        "observableEffect": "ZERO-TERMINATE-LNL-FILE-DESCRIPTION-0X00-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNL File Description with 0x00.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNL File Description with 0x00”。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00458",
+      "sourceUnitId": "SU-ARINC-615A-3-6-4-9-P096-PROSE-SENTENCE-016-1532165AA3AE",
+      "sourceTextHash": "1532165aa3aecd0ab96f2127d49a7b7f39b89014f9b1d18eebe0123be7dba9ef",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ZERO-TERMINATE-LNA-FILE-NAME-0X00",
+        "objects": [
+          "OBJ-0X00"
+        ],
+        "observableEffect": "ZERO-TERMINATE-LNA-FILE-NAME-0X00-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNA File Name with 0x00.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNA File Name with 0x00”。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00459",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_6-1-R002",
+      "sourceTextHash": "00b945cdf86f6e0f2551a447dc71985e8e32d3ee9378089bf4429be2ff7d041b",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-LENGTH",
+          "LNR"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNR at the tabulated width and table ordinal 1.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNR 的 FIELD-FILE-LENGTH。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-FILE-LENGTH",
+        "ordinal": 1,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00460",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_6-1-R003",
+      "sourceTextHash": "d1f23f10d295892c0a2681cacbb5d67460108a52b020fc15bb5cd1ef538a6bde",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-PROTOCOL-VERSION",
+          "LNR"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNR at the tabulated width and table ordinal 2.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNR 的 FIELD-PROTOCOL-VERSION。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-PROTOCOL-VERSION",
+        "ordinal": 2,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00461",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_6-1-R004",
+      "sourceTextHash": "69dd6ea4839ccc2b017cb44f840588518b5f1fa5cbcce5afd18c8812ca770775",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-NUMBER-OF-FILES",
+          "LNR"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNR at the tabulated width and table ordinal 3.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNR 的 FIELD-NUMBER-OF-FILES。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-NUMBER-OF-FILES",
+        "ordinal": 3,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00462",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_6-1-R005",
+      "sourceTextHash": "3edb6d62e7d7db96474dcd275fb745bb5ba9304d911c0dc8f4dda8ac510d5e5e",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-NAME-LENGTH",
+          "LNR"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNR at the tabulated width and table ordinal 4.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNR 的 FIELD-FILE-NAME-LENGTH。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-FILE-NAME-LENGTH",
+        "ordinal": 4,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00463",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_6-1-R006",
+      "sourceTextHash": "61a682bbcf9f1c33824f815fc43d130cf4f3899ec8fa6f2673c16e9decef7764",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-NAME",
+          "LNR"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNR at the tabulated width and table ordinal 5.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNR 的 FIELD-FILE-NAME。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-FILE-NAME",
+        "ordinal": 5,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00464",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_6-1-R007",
+      "sourceTextHash": "8c7452fb8fb0e3649669900eb35b9e4e7c000343bcee000dc1e64a318bf86b6f",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-USER-DEFINED-DATA-LENGTH",
+          "LNR"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-USER-DEFINED-DATA-LENGTH of LNR at the tabulated width and table ordinal 6.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA-LENGTH。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-USER-DEFINED-DATA-LENGTH",
+        "ordinal": 6,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00465",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_6-1-R008",
+      "sourceTextHash": "9ba21991abb5415f4db05671b327814cdee795f902f0358fc8449e1e576c2c8e",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-USER-DEFINED-DATA",
+          "LNR"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-USER-DEFINED-DATA of LNR at the tabulated width and table ordinal 7.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNR",
+        "fieldId": "FIELD-USER-DEFINED-DATA",
+        "ordinal": 7,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "LENGTH-PREFIXED-BINARY",
+        "terminationRule": "LENGTH-PREFIXED-PER-TABLE",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00466",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R002",
+      "sourceTextHash": "00b945cdf86f6e0f2551a447dc71985e8e32d3ee9378089bf4429be2ff7d041b",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-LENGTH",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNS at the tabulated width and table ordinal 1.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNS 的 FIELD-FILE-LENGTH。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-FILE-LENGTH",
+        "ordinal": 1,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00467",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R003",
+      "sourceTextHash": "d1f23f10d295892c0a2681cacbb5d67460108a52b020fc15bb5cd1ef538a6bde",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-PROTOCOL-VERSION",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNS at the tabulated width and table ordinal 2.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNS 的 FIELD-PROTOCOL-VERSION。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-PROTOCOL-VERSION",
+        "ordinal": 2,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00468",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R004",
+      "sourceTextHash": "bd9db27d4dc9eed47eaa72a81137a54fd4e78e53d0c8976d676a60338f569551",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-DOWNLOAD-OPERATION-STATUS-CODE",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-OPERATION-STATUS-CODE of LNS at the tabulated width and table ordinal 3.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNS 的 FIELD-DOWNLOAD-OPERATION-STATUS-CODE。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-DOWNLOAD-OPERATION-STATUS-CODE",
+        "ordinal": 3,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00469",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R005",
+      "sourceTextHash": "82599b7bf453db066d5e837c777b6be9607ac59915d3fc7c54545d0b3176a6fb",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH of LNS at the tabulated width and table ordinal 4.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNS 的 FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH",
+        "ordinal": 4,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00470",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R006",
+      "sourceTextHash": "c976b9623977b555da2543d0d4bf7a7eb62c77ac6d22d796ebfc8aa035227e47",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-DOWNLOAD-STATUS-DESCRIPTION",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-STATUS-DESCRIPTION of LNS at the tabulated width and table ordinal 5.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNS 的 FIELD-DOWNLOAD-STATUS-DESCRIPTION。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-DOWNLOAD-STATUS-DESCRIPTION",
+        "ordinal": 5,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00471",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R007",
+      "sourceTextHash": "7ac89137c7abfcd7c7ffeca3ea3d231e8816c11de70a1d377273807225f77ae1",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-COUNTER",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-COUNTER of LNS at the tabulated width and table ordinal 6.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNS 的 FIELD-COUNTER。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-COUNTER",
+        "ordinal": 6,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00472",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R008",
+      "sourceTextHash": "c030007b1d3f95753cebab2a8c9303d778d852a11b1c94dc9f6100faea39bbab",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-EXCEPTION-TIMER",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-EXCEPTION-TIMER of LNS at the tabulated width and table ordinal 7.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNS 的 FIELD-EXCEPTION-TIMER。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-EXCEPTION-TIMER",
+        "ordinal": 7,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00473",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R009",
+      "sourceTextHash": "eba3f8ed0798aa2c6e03180331ab0199c1a4ba46f1d2bb74d60da9e991c81584",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-ESTIMATED-TIME",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-ESTIMATED-TIME of LNS at the tabulated width and table ordinal 8.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 8 个字段位置编码 LNS 的 FIELD-ESTIMATED-TIME。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-ESTIMATED-TIME",
+        "ordinal": 8,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00474",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R010",
+      "sourceTextHash": "ca8d28550241b9d13915878c91a25ad1dc6b53abba271f62d91375e2dd1487ee",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-DOWNLOAD-LIST-RATIO",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-LIST-RATIO of LNS at the tabulated width and table ordinal 9.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 9 个字段位置编码 LNS 的 FIELD-DOWNLOAD-LIST-RATIO。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-DOWNLOAD-LIST-RATIO",
+        "ordinal": 9,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00475",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R011",
+      "sourceTextHash": "69dd6ea4839ccc2b017cb44f840588518b5f1fa5cbcce5afd18c8812ca770775",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-NUMBER-OF-FILES",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNS at the tabulated width and table ordinal 10.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 10 个字段位置编码 LNS 的 FIELD-NUMBER-OF-FILES。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-NUMBER-OF-FILES",
+        "ordinal": 10,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00476",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R012",
+      "sourceTextHash": "3edb6d62e7d7db96474dcd275fb745bb5ba9304d911c0dc8f4dda8ac510d5e5e",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-NAME-LENGTH",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNS at the tabulated width and table ordinal 11.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 11 个字段位置编码 LNS 的 FIELD-FILE-NAME-LENGTH。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-FILE-NAME-LENGTH",
+        "ordinal": 11,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00477",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R013",
+      "sourceTextHash": "61a682bbcf9f1c33824f815fc43d130cf4f3899ec8fa6f2673c16e9decef7764",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-NAME",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNS at the tabulated width and table ordinal 12.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 12 个字段位置编码 LNS 的 FIELD-FILE-NAME。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-FILE-NAME",
+        "ordinal": 12,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00478",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R014",
+      "sourceTextHash": "6126f8b87e0043baab01d7d459cdd0dd4bcd65281b2ccdedea3745543e9f351d",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-STATUS",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-STATUS of LNS at the tabulated width and table ordinal 13.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 13 个字段位置编码 LNS 的 FIELD-FILE-STATUS。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-FILE-STATUS",
+        "ordinal": 13,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00479",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R015",
+      "sourceTextHash": "d93a47ffb61c192401a10d6b361cfc8d083535dc01ff7f2f1ba451d53ec88d85",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-STATUS-DESCRIPTION-LENGTH",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-STATUS-DESCRIPTION-LENGTH of LNS at the tabulated width and table ordinal 14.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 14 个字段位置编码 LNS 的 FIELD-FILE-STATUS-DESCRIPTION-LENGTH。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-FILE-STATUS-DESCRIPTION-LENGTH",
+        "ordinal": 14,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00480",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_7-1-R016",
+      "sourceTextHash": "bf028677eca1add26b18f1108a657fab5403542851c093fa516fc5b09e6af6bd",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-STATUS-DESCRIPTION",
+          "LNS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-STATUS-DESCRIPTION of LNS at the tabulated width and table ordinal 15.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 15 个字段位置编码 LNS 的 FIELD-FILE-STATUS-DESCRIPTION。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNS",
+        "fieldId": "FIELD-FILE-STATUS-DESCRIPTION",
+        "ordinal": 15,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00481",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_8-1-R002",
+      "sourceTextHash": "00b945cdf86f6e0f2551a447dc71985e8e32d3ee9378089bf4429be2ff7d041b",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-LENGTH",
+          "LNL"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNL at the tabulated width and table ordinal 1.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNL 的 FIELD-FILE-LENGTH。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-FILE-LENGTH",
+        "ordinal": 1,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00482",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_8-1-R003",
+      "sourceTextHash": "d1f23f10d295892c0a2681cacbb5d67460108a52b020fc15bb5cd1ef538a6bde",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-PROTOCOL-VERSION",
+          "LNL"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNL at the tabulated width and table ordinal 2.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNL 的 FIELD-PROTOCOL-VERSION。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-PROTOCOL-VERSION",
+        "ordinal": 2,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00483",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_8-1-R004",
+      "sourceTextHash": "69dd6ea4839ccc2b017cb44f840588518b5f1fa5cbcce5afd18c8812ca770775",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-NUMBER-OF-FILES",
+          "LNL"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNL at the tabulated width and table ordinal 3.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNL 的 FIELD-NUMBER-OF-FILES。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-NUMBER-OF-FILES",
+        "ordinal": 3,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00484",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_8-1-R005",
+      "sourceTextHash": "3edb6d62e7d7db96474dcd275fb745bb5ba9304d911c0dc8f4dda8ac510d5e5e",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-NAME-LENGTH",
+          "LNL"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNL at the tabulated width and table ordinal 4.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNL 的 FIELD-FILE-NAME-LENGTH。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-FILE-NAME-LENGTH",
+        "ordinal": 4,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00485",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_8-1-R006",
+      "sourceTextHash": "61a682bbcf9f1c33824f815fc43d130cf4f3899ec8fa6f2673c16e9decef7764",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-NAME",
+          "LNL"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNL at the tabulated width and table ordinal 5.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNL 的 FIELD-FILE-NAME。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-FILE-NAME",
+        "ordinal": 5,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00486",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_8-1-R007",
+      "sourceTextHash": "52b768c9833d3cf1cf5e4f2bc54a6b0b127dd32010776e61edad8daf1999ff1d",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-DESCRIPTION-LENGTH",
+          "LNL"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-DESCRIPTION-LENGTH of LNL at the tabulated width and table ordinal 6.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNL 的 FIELD-FILE-DESCRIPTION-LENGTH。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-FILE-DESCRIPTION-LENGTH",
+        "ordinal": 6,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00487",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_8-1-R008",
+      "sourceTextHash": "4047174e7da074e1476caf1bf5c8a7299d2aaa7f9ac0baf5dfd1241b7842847b",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-DESCRIPTION",
+          "LNL"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-DESCRIPTION of LNL at the tabulated width and table ordinal 7.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNL 的 FIELD-FILE-DESCRIPTION。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNL",
+        "fieldId": "FIELD-FILE-DESCRIPTION",
+        "ordinal": 7,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00488",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_9-1-R002",
+      "sourceTextHash": "00b945cdf86f6e0f2551a447dc71985e8e32d3ee9378089bf4429be2ff7d041b",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-LENGTH",
+          "LNA"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNA at the tabulated width and table ordinal 1.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNA 的 FIELD-FILE-LENGTH。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNA",
+        "fieldId": "FIELD-FILE-LENGTH",
+        "ordinal": 1,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00489",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_9-1-R003",
+      "sourceTextHash": "d1f23f10d295892c0a2681cacbb5d67460108a52b020fc15bb5cd1ef538a6bde",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-PROTOCOL-VERSION",
+          "LNA"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNA at the tabulated width and table ordinal 2.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNA 的 FIELD-PROTOCOL-VERSION。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNA",
+        "fieldId": "FIELD-PROTOCOL-VERSION",
+        "ordinal": 2,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00490",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_9-1-R004",
+      "sourceTextHash": "69dd6ea4839ccc2b017cb44f840588518b5f1fa5cbcce5afd18c8812ca770775",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-NUMBER-OF-FILES",
+          "LNA"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNA at the tabulated width and table ordinal 3.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNA 的 FIELD-NUMBER-OF-FILES。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNA",
+        "fieldId": "FIELD-NUMBER-OF-FILES",
+        "ordinal": 3,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00491",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_9-1-R005",
+      "sourceTextHash": "3edb6d62e7d7db96474dcd275fb745bb5ba9304d911c0dc8f4dda8ac510d5e5e",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-NAME-LENGTH",
+          "LNA"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNA at the tabulated width and table ordinal 4.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNA 的 FIELD-FILE-NAME-LENGTH。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNA",
+        "fieldId": "FIELD-FILE-NAME-LENGTH",
+        "ordinal": 4,
+        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00492",
+      "sourceUnitId": "SU-ARINC-615A-3-TABLE-6_4_9-1-R006",
+      "sourceTextHash": "b09e47ace055b7be7a70a050dc12177b148bd6c36c95b2e3fbfb0c004fe89ef5",
+      "expectedSemantic": {
+        "actor": "PROTOCOL-FILE-PRODUCER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ENCODE-TABULATED-FIELD",
+        "objects": [
+          "FIELD-FILE-NAME",
+          "LNA"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNA at the tabulated width and table ordinal 5.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNA 的 FIELD-FILE-NAME。",
+      "expectedSourceModality": "TABLE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [],
+      "expectedFieldConstraint": {
+        "protocolFile": "LNA",
+        "fieldId": "FIELD-FILE-NAME",
+        "ordinal": 5,
+        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "ZERO-TERMINATED-ASCII",
+        "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
+        "noteRefs": []
+      }
+    },
+    {
+      "requirementId": "CRS-M1-00493",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E001-93E2E1579D6F",
+      "sourceTextHash": "93e2e1579d6fb695e92238a7191b568ea6ee0c0423e61ef73e628d02df950656",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER-APPLICATION",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ISSUE-DOWNLOADING-MEDIA-INITIALIZATION-START-MEDIA-MODE-CHART",
+        "objects": [
+          "DOWNLOADING-MEDIA-INITIALIZATION"
+        ],
+        "observableEffect": "ISSUE-DOWNLOADING-MEDIA-INITIALIZATION-START-MEDIA-MODE-CHAR-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data-loader application shall issue Downloading_Media_Initialization to start the media-mode chart.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器应用层必须发出 Downloading_Media_Initialization to start the media-mode chart。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00494",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E002-56059C7FBCE3",
+      "sourceTextHash": "56059c7fbce35dbaaa5999f935a75cefaf2fb9d4af4bc22c9221ef1dff43eb7a",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER-PROTOCOL",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "TFTP-READ-LND-TARGET",
+        "objects": [
+          "LND"
+        ],
+        "observableEffect": "TFTP-READ-LND-TARGET-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall TFTP-read LND from the target.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须执行“TFTP-read LND from the target”。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00495",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E003-7572FB4A7D49",
+      "sourceTextHash": "7572fb4a7d49727922b501dcc56e21fc34549184be8a472ddba9161ff26ab384",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "TRANSFER-LND-ANSWER-WAIT-RETRY",
+        "objects": [
+          "LND",
+          "WAIT"
+        ],
+        "observableEffect": "TRANSFER-LND-ANSWER-WAIT-RETRY-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the target hardware shall transfer LND or answer WAIT for retry.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须传送 LND or answer WAIT for retry。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00496",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E004-F7FB3AED0BF8",
+      "sourceTextHash": "f7fb3aed0bf8df015cada55e3f9697072ce63750a9b770152e2c79e8f725db19",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER-PROTOCOL",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LND-OUTCOME",
+        "objects": [
+          "DOWNLOADING-INITIALIZATION-RESPONSE"
+        ],
+        "observableEffect": "EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LND-OUTCOME-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall emit Downloading_Initialization_Response from the LND outcome.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须执行“emit Downloading_Initialization_Response from the LND outcome”。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00497",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E005-DDC22BBE77AD",
+      "sourceTextHash": "ddc22bbe77ad3ffcb7fe8d6fcde6031c058875250155af59e497b1fd33305667",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "END-MEDIA-DEFINED-DOWNLOAD-DENY",
+        "objects": [
+          "DENY"
+        ],
+        "observableEffect": "END-MEDIA-DEFINED-DOWNLOAD-DENY-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data loader shall end Media Defined DOWNLOAD on deny.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须结束 媒体定义 DOWNLOAD on deny。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00498",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E006-FFDAE5BD327A",
+      "sourceTextHash": "ffdae5bd327a6a0e60cdbe2f7f802c72bf9719f2c7cd089ab0bfa2c7f6b4e554",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER-PROTOCOL",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ACCEPT-TFTP-WRITE-LNR-TARGET",
+        "objects": [
+          "LNR"
+        ],
+        "observableEffect": "ACCEPT-TFTP-WRITE-LNR-TARGET-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall on accept, TFTP-write LNR to the target.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须执行“on accept, TFTP-write LNR to the target”。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00499",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E007-465C743F7A74",
+      "sourceTextHash": "465c743f7a74e95a481ffb1ef8b4a7f3ba0b8623fcc30d024aba51376afb180d",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "RECEIVE-ANALYZE-LNR",
+        "objects": [
+          "LNR"
+        ],
+        "observableEffect": "RECEIVE-ANALYZE-LNR-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the target hardware shall receive and analyze LNR.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须接收 and analyze LNR。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00500",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E008-4F5A7B67B142",
+      "sourceTextHash": "4f5a7b67b142feace87d54031939717457dbf8d8f9c80219232a1b9846161f3c",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "TFTP-WRITE-LNS-INCLUDING-ACCEPTED-NOT-STARTED-0X0001",
+        "objects": [
+          "LNS",
+          "OBJ-0X0001"
+        ],
+        "observableEffect": "TFTP-WRITE-LNS-INCLUDING-ACCEPTED-NOT-STARTED-0X0001-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the target hardware shall TFTP-write LNS, including accepted-not-started 0x0001.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须执行“TFTP-write LNS, including accepted-not-started 0x0001”。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00501",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E009-0C4A2E52223E",
+      "sourceTextHash": "0c4a2e52223e57181769fc722d65c60e9b9b0f8150ebc078a64e9ea813e6ae1e",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "TFTP-SEND-EACH-LNR-LISTED-DATA-FILE",
+        "objects": [
+          "DATA-FILES"
+        ],
+        "observableEffect": "TFTP-SEND-EACH-LNR-LISTED-DATA-FILE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the target hardware shall TFTP-send each LNR-listed data file.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须TFTP-发送 each LNR-listed data file。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00502",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E010-C4CF6F527181",
+      "sourceTextHash": "c4cf6f52718116cd1b7507023144971315c66117c3c9f835885f04cc7998c689",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER-PROTOCOL",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE",
+        "objects": [
+          "DOWNLOADING-FILE-RECEIPT"
+        ],
+        "observableEffect": "ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall issue Downloading_File_Receipt for each received file.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_Receipt for each 接收d file。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00503",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E011-86839F050632",
+      "sourceTextHash": "86839f0506327c46b64e1a526ca7d290b6722bfb93be9622307c29465516bfd6",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "REPEAT-REMAINING-FILES-LNS-PROGRESS",
+        "objects": [
+          "LNS"
+        ],
+        "observableEffect": "REPEAT-REMAINING-FILES-LNS-PROGRESS-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the target hardware shall repeat remaining files with LNS progress.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须重复 remaining files with LNS progress。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00504",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E012-9EC73921C558",
+      "sourceTextHash": "9ec73921c558af83b3e585a3ca1acd5b30b77f67900156ad4514a61ecc402313",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
+        "action": "END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRONO",
+        "objects": [
+          "LNS",
+          "ATTACHMENT-4"
+        ],
+        "observableEffect": "END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRON-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the target hardware shall end after final LNS complete or fatal; honour Attachment 4 chrono timeouts.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须结束 after final LNS 完成 or fatal; honour 附件 4 chrono timeouts。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00505",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E001-D20446C4AA87",
+      "sourceTextHash": "d20446c4aa87638626faeb4011e7bfdc32519302fc97abff12a4ac105c802d42",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER-APPLICATION",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ISSUE-DOWNLOADING-OPERATOR-INITIALIZATION-START-OPERATOR-MODE-CHART",
+        "objects": [
+          "DOWNLOADING-OPERATOR-INITIALIZATION"
+        ],
+        "observableEffect": "ISSUE-DOWNLOADING-OPERATOR-INITIALIZATION-START-OPERATOR-MOD-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the data-loader application shall issue Downloading_Operator_Initialization to start the operator-mode chart.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，数据加载器应用层必须发出 Downloading_Operator_Initialization to start the operator-mode chart。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00506",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E002-FA62BFEC08D9",
+      "sourceTextHash": "fa62bfec08d97dcf264b7dfa6e5855788a8125472294eaddceadfee98a62500e",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER-PROTOCOL",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "TFTP-READ-LNO-TARGET",
+        "objects": [
+          "LNO"
+        ],
+        "observableEffect": "TFTP-READ-LNO-TARGET-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall TFTP-read LNO from the target.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须执行“TFTP-read LNO from the target”。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00507",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E003-4E7C61B06179",
+      "sourceTextHash": "4e7c61b061797c443ce7847f477479290b39668da6fe2a90fe7ea525b292fc1b",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "TRANSFER-LNO-ANSWER-WAIT-RETRY",
+        "objects": [
+          "LNO",
+          "WAIT"
+        ],
+        "observableEffect": "TRANSFER-LNO-ANSWER-WAIT-RETRY-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the target hardware shall transfer LNO or answer WAIT for retry.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须传送 LNO or answer WAIT for retry。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00508",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E004-4DD6ECF8E15C",
+      "sourceTextHash": "4dd6ecf8e15c775c3bd2f550f5542e310a858a1151dd4b7186dfeef81a73c8dd",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER-PROTOCOL",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LNO-OUTCOME",
+        "objects": [
+          "DOWNLOADING-INITIALIZATION-RESPONSE"
+        ],
+        "observableEffect": "EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LNO-OUTCOME-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall emit Downloading_Initialization_Response from the LNO outcome.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须执行“emit Downloading_Initialization_Response from the LNO outcome”。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00509",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E005-22221ABB2116",
+      "sourceTextHash": "22221abb2116858a6d9853919705d9d735e357554b1dc416a8d03bc031e1280a",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "END-OPERATOR-DEFINED-DOWNLOAD-DENY",
+        "objects": [
+          "DENY"
+        ],
+        "observableEffect": "END-OPERATOR-DEFINED-DOWNLOAD-DENY-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the data loader shall end Operator Defined DOWNLOAD on deny.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须结束 操作员定义 DOWNLOAD on deny。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00510",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E006-145A7178D4F7",
+      "sourceTextHash": "145a7178d4f738f83475e5bd55b973d07cd2172b45611e5164caa5ac85075bc1",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ACCEPT-TFTP-WRITE-LNL-LOADER",
+        "objects": [
+          "LNL"
+        ],
+        "observableEffect": "ACCEPT-TFTP-WRITE-LNL-LOADER-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the target hardware shall on accept, TFTP-write LNL to the loader.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须执行“on accept, TFTP-write LNL to the loader”。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00511",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E007-BB90540A19D7",
+      "sourceTextHash": "bb90540a19d7caf4962d2ce0854e62a4b685664510794d2b5d0d87b4dd120356",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER-PROTOCOL",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ISSUE-DOWNLOADING-FILE-LIST-RECEIPT",
+        "objects": [
+          "DOWNLOADING-FILE-LIST-RECEIPT"
+        ],
+        "observableEffect": "ISSUE-DOWNLOADING-FILE-LIST-RECEIPT-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall issue Downloading_File_List_Receipt.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_List_Receipt。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00512",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E008-1FFC2020C9F9",
+      "sourceTextHash": "1ffc2020c9f90bad7380c3b116f4b29cbf0e67dc2a4fdab24b2ab211d463abfd",
+      "expectedSemantic": {
+        "actor": "OPERATOR",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "SELECT-FILES-LOADER-TFTP-WRITES-LNA-FILE-SELECTION",
+        "objects": [
+          "LNA",
+          "FILE-SELECTION"
+        ],
+        "observableEffect": "SELECT-FILES-LOADER-TFTP-WRITES-LNA-FILE-SELECTION-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the operator shall select files; loader TFTP-writes LNA as File_Selection.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，操作员必须选择 files; loader TFTP-writes LNA as File_Selection。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00513",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E009-0C4A2E52223E",
+      "sourceTextHash": "0c4a2e52223e57181769fc722d65c60e9b9b0f8150ebc078a64e9ea813e6ae1e",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "TFTP-SEND-EACH-LNA-LISTED-DATA-FILE",
+        "objects": [
+          "DATA-FILES"
+        ],
+        "observableEffect": "TFTP-SEND-EACH-LNA-LISTED-DATA-FILE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the target hardware shall TFTP-send each LNA-listed data file.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须TFTP-发送 each LNA-listed data file。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00514",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E010-C4CF6F527181",
+      "sourceTextHash": "c4cf6f52718116cd1b7507023144971315c66117c3c9f835885f04cc7998c689",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER-PROTOCOL",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE--02783",
+        "objects": [
+          "DOWNLOADING-FILE-RECEIPT"
+        ],
+        "observableEffect": "ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall issue Downloading_File_Receipt for each received file.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_Receipt for each 接收d file。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00515",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E011-86839F050632",
+      "sourceTextHash": "86839f0506327c46b64e1a526ca7d290b6722bfb93be9622307c29465516bfd6",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "REPEAT-REMAINING-FILES-LNS-PROGRESS--02784",
+        "objects": [
+          "LNS"
+        ],
+        "observableEffect": "REPEAT-REMAINING-FILES-LNS-PROGRESS-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the target hardware shall repeat remaining files with LNS progress.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须重复 remaining files with LNS progress。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00516",
+      "sourceUnitId": "SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E012-9EC73921C558",
+      "sourceTextHash": "9ec73921c558af83b3e585a3ca1acd5b30b77f67900156ad4514a61ecc402313",
+      "expectedSemantic": {
+        "actor": "TARGET-HARDWARE",
+        "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
+        "action": "END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRONO--02785",
+        "objects": [
+          "LNS",
+          "ATTACHMENT-4"
+        ],
+        "observableEffect": "END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRON-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the target hardware shall end after final LNS complete or fatal; honour Attachment 4 chrono timeouts.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须结束 after final LNS 完成 or fatal; honour 附件 4 chrono timeouts。",
+      "expectedSourceModality": "FIGURE-CONSTRAINT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00517",
+      "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-008-123ADFD1F0A0",
+      "sourceTextHash": "123adfd1f0a056301ea758114bcbafa30eeabaea4e50e7ea5a50ed43e082913d",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX",
+        "action": "USE-FIND-NETWORK-CONFIGURATION-FILE-IDENTIFY-TARGETS-AFDX-NETWORK",
+        "objects": [
+          "FIND",
+          "NETWORK-CONFIGURATION-FILE"
+        ],
+        "observableEffect": "USE-FIND-NETWORK-CONFIGURATION-FILE-IDENTIFY-TARGETS-AFDX-NE-OBSERVABLE",
+        "operation": "AFDX-DEPLOYMENT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet, the data loader may use FIND or a network configuration file to identify targets on the AFDX network. This does not activate the current Compliant Ethernet instance.",
+      "expectedGeneratedSemanticProjectionZh": "在配置的部署把 615A 承载于 AFDX 而非普通以太网时，数据加载器可以使用 FIND or a network configuration file to identify targets on the AFDX network。这不激活当前 Compliant 以太网实例。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00518",
+      "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-011-E6FB447853B2",
+      "sourceTextHash": "e6fb447853b2371d493b8fd8188e6e67c025583b5931753a369a91680c226250",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX",
+        "action": "USE-TFTP-PROTOCOL-DESCRIBED-615A-3-615A-OPERATIONS-OVER-AFDX",
+        "objects": [
+          "TFTP"
+        ],
+        "observableEffect": "USE-TFTP-PROTOCOL-DESCRIBED-615A-3-615A-OPERATIONS-OVER-AFDX-OBSERVABLE",
+        "operation": "AFDX-DEPLOYMENT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet, the data loader shall use the TFTP protocol described in 615A-3 for 615A operations over AFDX. This does not activate the current Compliant Ethernet instance.",
+      "expectedGeneratedSemanticProjectionZh": "在配置的部署把 615A 承载于 AFDX 而非普通以太网时，数据加载器必须使用 the TFTP protocol described in 615A-3 for 615A operations over AFDX。这不激活当前 Compliant 以太网实例。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00519",
+      "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-013-B5690D59EDBF",
+      "sourceTextHash": "b5690d59edbf39c39ccc42d59e68b5a49679094f70f91349613e93c9b1933914",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX",
+        "action": "APPLY-AVIATION-DATA-NETWORK-ADDRESS-RULES-664-PART-4-IDENTIFY",
+        "objects": [
+          "ADDRESS-RULES",
+          "ARINC-664-4"
+        ],
+        "observableEffect": "APPLY-AVIATION-DATA-NETWORK-ADDRESS-RULES-664-PART-4-IDENTIF-OBSERVABLE",
+        "operation": "AFDX-DEPLOYMENT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet, the system integrator shall apply aviation data-network address rules from 664 Part 4, or identify the address requirements. This does not activate the current Compliant Ethernet instance.",
+      "expectedGeneratedSemanticProjectionZh": "在配置的部署把 615A 承载于 AFDX 而非普通以太网时，系统集成商必须适用 aviation data-network address rules from 664 Part 4, or identify the address requirements。这不激活当前 Compliant 以太网实例。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
     }
   ],
   "networkReferenceReview": {

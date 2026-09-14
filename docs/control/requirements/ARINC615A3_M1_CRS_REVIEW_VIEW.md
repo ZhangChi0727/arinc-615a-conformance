@@ -13,12 +13,12 @@
 ## Inventory
 
 - Coverage rows: 2796
-- CRS items: 415
+- CRS items: 519
 - Dependencies: 14
 - Gaps: 1
-- Coverage fingerprint: `72bc6b1ef647d312a60b929446a72787f41c85a25fbdc82ef18301ac4ce0c258`
-- Requirements fingerprint: `d75c1fc7d5b9887b077513ad5a2a5937bcb7282ff15710eb9587eb2eb0d64371`
-- Source-unit fingerprint: `539b505c1d4b4b1546dc7a4d29716a4a0976fcf1468ac7c017dac65a70790b59`
+- Coverage fingerprint: `b7c0249106431f1d4168b3a234fd302c6780cae721beb7aeb4466ab3d12866fe`
+- Requirements fingerprint: `6248afd58e0a6b97e1056ca13a1a4d4b15001a451e99cd86ff34751072505d6c`
+- Source-unit fingerprint: `26d5022648eba24d476575a8d2fd1c6b8bed5626c5545da2df0a9397d4886fde`
 - Automated checks cover structure and cross-record consistency only; proprietary-source completeness and fidelity require external RG0 review.
 - `generatedSemanticProjectionEn/Zh` are assertion-bound drift projections, not independent RG1 evidence.
 - 665 edge policy: `REQUIREMENT-LEVEL-615A-TO-665-EDGES-DEFERRED-TO-M2-ATTACHMENT-RECONCILIATION`
@@ -27,21 +27,21 @@
 
 - `APPLICABLE-BASE`: 89
 - `APPLICABLE-SUPPORTING`: 322
-- `CONDITIONAL`: 4
+- `CONDITIONAL`: 108
 
 ## Source modality
 
 - `FACT`: 12
-- `FIGURE-CONSTRAINT`: 39
-- `MAY`: 44
-- `MUST`: 13
-- `SHOULD`: 214
-- `TABLE-CONSTRAINT`: 93
+- `FIGURE-CONSTRAINT`: 63
+- `MAY`: 56
+- `MUST`: 15
+- `SHOULD`: 246
+- `TABLE-CONSTRAINT`: 127
 
 ## Conformance effect
 
-- `CONDITIONAL-REQUIRED`: 3
-- `OPTIONAL`: 44
+- `CONDITIONAL-REQUIRED`: 95
+- `OPTIONAL`: 56
 - `REQUIRED`: 368
 
 ## Open dependencies and gaps
@@ -544,6 +544,110 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `CRS-M1-00413` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-015-14EF51A05AEA`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `LIMIT-TARGET-POSITION-TO-8-CHARACTERS-EXCLUDING-TERMINATOR` / `TARGET-POSITION, LENGTH-8` / `TARGET-POSITION-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall limit Target Position to 8 characters excluding the terminator.<br>FIND 主机必须把目标位置限制为不含终止符的 8 个字符。 | — | — |
 | `CRS-M1-00414` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-016-22BA44DB74A6`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `LIMIT-LITERAL-NAME-TO-20-CHARACTERS-EXCLUDING-TERMINATOR` / `LITERAL-NAME, LENGTH-20` / `LITERAL-NAME-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall limit Literal Name to 20 characters excluding the terminator.<br>FIND 主机必须把字面名限制为不含终止符的 20 个字符。 | — | — |
 | `CRS-M1-00415` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-017-4A05E0BB2809`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `ENCODE-MANUFACTURER-CODE-AS-3-CHARACTERS-EXCLUDING-TERMINATOR` / `MANUFACTURER-CODE, LENGTH-3` / `MANUFACTURER-CODE-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall encode Manufacturer Code as 3 characters excluding the terminator.<br>FIND 主机必须把制造商代码编码为不含终止符的 3 个字符。 | — | — |
+| `CRS-M1-00416` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-007-CA89CD0344A9`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IMPLEMENT-BOTH-MEDIA-DEFINED-OPERATOR-DEFINED-DOWNLOAD` / `MEDIA-DEFINED, OPERATOR-DEFINED` / `IMPLEMENT-BOTH-MEDIA-DEFINED-OPERATOR-DEFINED-DOWNLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the data loader shall implement both Media Defined and Operator Defined DOWNLOAD.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须实现 both 媒体定义 and 操作员定义 DOWNLOAD。 | — | — |
+| `CRS-M1-00417` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-008-EB64770DFDD9`<br>`ARINC-615A-3 5.4.4 p.38` | `TARGET-HARDWARE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IMPLEMENT-NONE-ONE-BOTH-DOWNLOAD-MODES` / `MEDIA-DEFINED, OPERATOR-DEFINED` / `IMPLEMENT-NONE-ONE-BOTH-DOWNLOAD-MODES-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the target hardware may implement none, one, or both DOWNLOAD modes.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件可以实现 none, one, or both DOWNLOAD modes。 | — | — |
+| `CRS-M1-00418` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-009-DD0255D27FB0`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SPECIFY-TFTP-OPTIONS-SUPPLY-DATA-INTEGRITY-CHECK-TRANSFER` / `TFTP-OPTIONS` / `SPECIFY-TFTP-OPTIONS-SUPPLY-DATA-INTEGRITY-CHECK-TRANSFER-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the data loader may specify TFTP options that supply a data-integrity check for the transfer.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器可以规定 TFTP options that supply a data-integrity check for the transfer。 | — | — |
+| `CRS-M1-00419` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-010-12B60035E133`<br>`ARINC-615A-3 5.4.4 p.38` | `TARGET-HARDWARE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IMPLEMENT-TFTP-INTEGRITY-OPTION` / `TFTP-OPTION` / `IMPLEMENT-TFTP-INTEGRITY-OPTION-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the target hardware may implement that TFTP integrity option.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件可以实现 that TFTP integrity option。 | — | — |
+| `CRS-M1-00420` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-011-3CF28DC21423`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IT-SUPPORTS-OFFERED-CHECK-VALUE-VALIDATE-DATA-TRANSFER` / `CHECK-VALUE` / `IT-SUPPORTS-OFFERED-CHECK-VALUE-VALIDATE-DATA-TRANSFER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the data loader shall if it supports the offered check value, validate the data transfer.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须if it supports the offered check value, 校验 the data transfer。 | — | — |
+| `CRS-M1-00421` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-012-D9C78F1A4E4C`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TREAT-CHECKSUM-VALIDATION-INFORMATION-ONLY-STILL-EXPORT-FILE` / `CHECKSUM, EXPORT` / `TREAT-CHECKSUM-VALIDATION-INFORMATION-ONLY-STILL-EXPORT-FILE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the data loader shall treat checksum validation as information only and still export the file.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须把 校验和 validation as information only and still export the file。 | — | — |
+| `CRS-M1-00422` | `SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-004-E7A9E12EDE22`<br>`ARINC-615A-3 5.4.4.1 p.38` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `USE-LNR-ALREADY-STORED-ARINC-665-PART-MEDIA` / `LNR, ARINC-665-PART` / `USE-LNR-ALREADY-STORED-ARINC-665-PART-MEDIA-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data loader may use an LNR already stored in an ARINC 665 part on the media.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器可以使用 an LNR already stored in an ARINC 665 part on the media。 | — | — |
+| `CRS-M1-00423` | `SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-006-F3361F00DCE2`<br>`ARINC-615A-3 5.4.4.1 p.38` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `EXAMINE-EACH-PART-HEADER-OFFER-HEADERS-WHOSE-DOWNLOAD-BIT-SET` / `DOWNLOAD-BIT, HEADER-FILE` / `EXAMINE-EACH-PART-HEADER-OFFER-HEADERS-WHOSE-DOWNLOAD-BIT-SE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data loader shall examine each part header and offer headers whose download bit is set.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须检查 each part header and 提供 headers whose download bit is set。 | — | — |
+| `CRS-M1-00424` | `SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-007-A88849FBE53E`<br>`ARINC-615A-3 5.4.4.1 p.38` | `OPERATOR` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `MORE-THAN-ONE-DOWNLOAD-BIT-HEADER-EXISTS-SELECT-ONE` / `HEADER-FILE` / `MORE-THAN-ONE-DOWNLOAD-BIT-HEADER-EXISTS-SELECT-ONE-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the operator may if more than one download-bit header exists, select one.<br>在实现并使用媒体定义 DOWNLOAD 时，操作员可以if more than one download-bit header exists, 选择 one。 | — | — |
+| `CRS-M1-00425` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-001-EDC984053CA0`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `UNABLE-WRITE-WHEN-REMOVABLE-MEDIA-BOTH-LNR-SOURCE-DOWNLOAD-DESTINATION` / `REMOVABLE-MEDIA` / `UNABLE-WRITE-WHEN-REMOVABLE-MEDIA-BOTH-LNR-SOURCE-DOWNLOAD-D-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When removable media is the LNR source and the destination of downloaded data, the data loader may be unable to write when removable media is both LNR source and download destination.<br>在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器可以执行“be unable to write when removable media is both LNR source and download destination”。 | — | — |
+| `CRS-M1-00426` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-002-1036539E638B`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `PROMPT-OPERATOR-REPLACE-SELECT-WRITABLE-MEDIA-BEFORE-STARTING-DOWNLOAD` / `WRITABLE-MEDIA` / `PROMPT-OPERATOR-REPLACE-SELECT-WRITABLE-MEDIA-BEFORE-STARTIN-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When removable media is the LNR source and the destination of downloaded data, the data loader shall prompt the operator to replace or select writable media before starting DOWNLOAD.<br>在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须prompt the operator to replace or 选择 writable media before starting DOWNLOAD。 | — | — |
+| `CRS-M1-00427` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-003-3B9221D5DF13`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `FAIL-DOWNLOAD-WRITE-STILL-FAILS-AFTER-ASKING-WRITABLE-MEDIA` / `WRITABLE-MEDIA` / `FAIL-DOWNLOAD-WRITE-STILL-FAILS-AFTER-ASKING-WRITABLE-MEDIA-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When removable media is the LNR source and the destination of downloaded data, the data loader shall fail DOWNLOAD if the write still fails after asking for writable media.<br>在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须执行“fail DOWNLOAD if the write still fails after asking for writable media”。 | — | — |
+| `CRS-M1-00428` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-004-C40353394C94`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `CREATE-NEW-DNLD-DATA-THW-ID-POS-NUMBER-DIRECTORY-EACH` / `DNLD-DATA` / `CREATE-NEW-DNLD-DATA-THW-ID-POS-NUMBER-DIRECTORY-EACH-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When removable media is the LNR source and the destination of downloaded data, the data loader shall create a new DNLD_DATA_<THW_ID_POS>_<number> directory for each download.<br>在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须执行“create a new DNLD_DATA_<THW_ID_POS>_<number> directory for each download”。 | — | — |
+| `CRS-M1-00429` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-008-4B56712D118C`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `CREATE-DNLD-INFO-THW-ID-POS-NUMBER-MANUFACTURER-SPECIFIC-DOWNLOAD` / `DNLD-INFO` / `CREATE-DNLD-INFO-THW-ID-POS-NUMBER-MANUFACTURER-SPECIFIC-DOW-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When removable media is the LNR source and the destination of downloaded data, the data loader may create DNLD_INFO_<THW_ID_POS>_<number> for manufacturer-specific download information.<br>在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器可以执行“create DNLD_INFO_<THW_ID_POS>_<number> for manufacturer-specific download information”。 | — | — |
+| `CRS-M1-00430` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-033-EC6A3B3AFA4A`<br>`ARINC-615A-3 6.3.3 p.58` | `OPERATOR` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `SELECT-MEDIA-TYPE-MEDIA-DEFINED-DOWNLOAD` / `MEDIA-TYPE` / `SELECT-MEDIA-TYPE-MEDIA-DEFINED-DOWNLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the operator shall select the media type for Media Defined DOWNLOAD.<br>在实现并使用媒体定义 DOWNLOAD 时，操作员必须选择 the media type for 媒体定义 DOWNLOAD。 | — | — |
+| `CRS-M1-00431` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-038-2ED4ABAC4193`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY` / `LNS, ATTACHMENT-4` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall send status files within the Attachment 4 DLP maximum delay.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须发送 状态文件s within the 附件 4 DLP maximum delay。 | — | — |
+| `CRS-M1-00432` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-040-18B50A8E503C`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSIDE-TIMEOUT` / `LNS, STATUS-CODE, STATUS-DESCRIPTION` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSID-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall on fatal error emit a status file with matching code and description inside the timeout.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须on fatal error emit a 状态文件 with matching code and description inside the timeout。 | — | — |
+| `CRS-M1-00433` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-041-7AC0400C9DB1`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT` / `ABORT-5-3-2-3-6, INTERRUPT-6-3-6` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware may send a status file immediately to carry an abort or interrupt.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件可以发送 a 状态文件 immediately to carry an 中止 or interrupt。 | — | — |
+| `CRS-M1-00434` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-050-D8862D88C46E`<br>`ARINC-615A-3 6.3.3 p.58` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHOUT-WAITING-IT` / `EXCEPTION-TIMER` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data loader shall if the target answers before Exception Timer elapses, continue without waiting it out.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须执行“if the target answers before Exception Timer elapses, continue without waiting it out”。 | — | — |
+| `CRS-M1-00435` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-051-E812AC346D09`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT` / `EXCEPTION-TIMER` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall minimize Exception Timer so the silent phase stays short.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须尽量缩短 Exception Timer so the silent phase stays short。 | — | — |
+| `CRS-M1-00436` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-052-91F9A68124BD`<br>`ARINC-615A-3 6.3.3 p.58` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-TIMER` / `EXCEPTION-TIMER, LNS` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-T-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data loader shall abort DOWNLOAD if no new status file arrives before Exception Timer expires.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须中止 DOWNLOAD if no new 状态文件 arrives before Exception Timer expires。 | — | — |
+| `CRS-M1-00437` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-007-18AB4BEB6990`<br>`ARINC-615A-3 6.3.4 p.61` | `OPERATOR` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ABLE-SELECT-MEDIA-TYPE-OPERATOR-DEFINED-DOWNLOAD` / `MEDIA-TYPE` / `ABLE-SELECT-MEDIA-TYPE-OPERATOR-DEFINED-DOWNLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the operator shall be able to select the media type for Operator Defined DOWNLOAD.<br>在实现并使用操作员定义 DOWNLOAD 时，操作员必须be able to 选择 the media type for 操作员定义 DOWNLOAD。 | — | — |
+| `CRS-M1-00438` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-012-2ED4ABAC4193`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY--00981` / `LNS, ATTACHMENT-4` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall send status files within the Attachment 4 DLP maximum delay.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须发送 状态文件s within the 附件 4 DLP maximum delay。 | — | — |
+| `CRS-M1-00439` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-014-9F2F8E73FD5D`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSIDE-TIMEOUT--00983` / `LNS, STATUS-CODE, STATUS-DESCRIPTION` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSID-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall on fatal error emit a status file with matching code and description inside the timeout.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须on fatal error emit a 状态文件 with matching code and description inside the timeout。 | — | — |
+| `CRS-M1-00440` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-015-7AC0400C9DB1`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT--00984` / `ABORT-5-3-2-3-6, INTERRUPT-6-3-6` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware may send a status file immediately to carry an abort or interrupt.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件可以发送 a 状态文件 immediately to carry an 中止 or interrupt。 | — | — |
+| `CRS-M1-00441` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-024-D8862D88C46E`<br>`ARINC-615A-3 6.3.4 p.61` | `DATA-LOADER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHOUT-WAITING-IT--00993` / `EXCEPTION-TIMER` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data loader shall if the target answers before Exception Timer elapses, continue without waiting it out.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须执行“if the target answers before Exception Timer elapses, continue without waiting it out”。 | — | — |
+| `CRS-M1-00442` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-025-E812AC346D09`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT--00994` / `EXCEPTION-TIMER` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall minimize Exception Timer so the silent phase stays short.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须尽量缩短 Exception Timer so the silent phase stays short。 | — | — |
+| `CRS-M1-00443` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-026-464E9E6694A8`<br>`ARINC-615A-3 6.3.4 p.61` | `DATA-LOADER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-TIMER--00995` / `EXCEPTION-TIMER, LNS` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-T-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data loader shall abort DOWNLOAD if no new status file arrives before Exception Timer expires.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须中止 DOWNLOAD if no new 状态文件 arrives before Exception Timer expires。 | — | — |
+| `CRS-M1-00444` | `SU-ARINC-615A-3-6-4-6-P091-PROSE-SENTENCE-016-1532165AA3AE`<br>`ARINC-615A-3 6.4.6 p.79` | `PROTOCOL-FILE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNR-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNR-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNR File Name with 0x00.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNR File Name with 0x00”。 | — | — |
+| `CRS-M1-00445` | `SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-028-83077CACF0DC`<br>`ARINC-615A-3 6.4.7 p.80` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `OTHER-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD-LEFTOVER` / `DOWNLOAD-STATUS-DESCRIPTION` / `OTHER-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer may for other status codes ignore description content, which may hold leftover data.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方可以执行“for other status codes ignore description content, which may hold leftover data”。 | — | — |
+| `CRS-M1-00446` | `SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-030-B1FB47BD2E90`<br>`ARINC-615A-3 6.4.7 p.80` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `USE-ONLY-PRINTABLE-CHARACTERS-DOWNLOAD-STATUS-DESCRIPTION-NO-CONTROL-CHARACTERS` / `DOWNLOAD-STATUS-DESCRIPTION` / `USE-ONLY-PRINTABLE-CHARACTERS-DOWNLOAD-STATUS-DESCRIPTION-NO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall use only printable characters in Download Status Description, with no control characters, max 255.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in Download Status Description, with no control characters, max 255。 | — | — |
+| `CRS-M1-00447` | `SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-031-1532165AA3AE`<br>`ARINC-615A-3 6.4.7 p.80` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-DOWNLOAD-STATUS-DESCRIPTION-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-DOWNLOAD-STATUS-DESCRIPTION-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate Download Status Description with 0x00.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate Download Status Description with 0x00”。 | — | — |
+| `CRS-M1-00448` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-040-BFA9E163247A`<br>`ARINC-615A-3 6.4.7 p.81` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SET-EXCEPTION-TIMER-0X0000-EVERY-OTHER-STATUS-CODE` / `EXCEPTION-TIMER, OBJ-0X0000` / `SET-EXCEPTION-TIMER-0X0000-EVERY-OTHER-STATUS-CODE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall set Exception Timer to 0x0000 for every other status code.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“set Exception Timer to 0x0000 for every other status code”。 | — | — |
+| `CRS-M1-00449` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-045-16B3A57C8CEC`<br>`ARINC-615A-3 6.4.7 p.81` | `TARGET-HARDWARE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `PROVIDE-ESTIMATED-TIME-SOON-POSSIBLE-DURING-OPERATION` / `ESTIMATED-TIME` / `PROVIDE-ESTIMATED-TIME-SOON-POSSIBLE-DURING-OPERATION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the target hardware shall provide Estimated Time as soon as possible during the operation.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件必须执行“provide Estimated Time as soon as possible during the operation”。 | — | — |
+| `CRS-M1-00450` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-048-581419285745`<br>`ARINC-615A-3 6.4.7 p.81` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TARGET-DOES-NOT-GIVE-ESTIMATED-TIME-SET-FIELD-0XFFFF` / `ESTIMATED-TIME, OBJ-0XFFFF` / `TARGET-DOES-NOT-GIVE-ESTIMATED-TIME-SET-FIELD-0XFFFF-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall if the target does not give Estimated Time, set the field to 0xFFFF.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“if the target does not give Estimated Time, set the field to 0xFFFF”。 | — | — |
+| `CRS-M1-00451` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-058-1532165AA3AE`<br>`ARINC-615A-3 6.4.7 p.81` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNS-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNS-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNS File Name with 0x00.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNS File Name with 0x00”。 | — | — |
+| `CRS-M1-00452` | `SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-077-6BCAB56CC15C`<br>`ARINC-615A-3 6.4.7 p.82` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `OTHER-FILE-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD` / `FILE-STATUS-DESCRIPTION` / `OTHER-FILE-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer may for other file status codes ignore description content, which may hold leftover data.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方可以执行“for other file status codes ignore description content, which may hold leftover data”。 | — | — |
+| `CRS-M1-00453` | `SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-079-53AAFA003A8B`<br>`ARINC-615A-3 6.4.7 p.82` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `USE-ONLY-PRINTABLE-CHARACTERS-FILE-STATUS-DESCRIPTION-NO-CONTROL-CHARACTERS` / `FILE-STATUS-DESCRIPTION` / `USE-ONLY-PRINTABLE-CHARACTERS-FILE-STATUS-DESCRIPTION-NO-CON-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall use only printable characters in File Status Description, with no control characters, max 255.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in File Status Description, with no control characters, max 255。 | — | — |
+| `CRS-M1-00454` | `SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-080-1532165AA3AE`<br>`ARINC-615A-3 6.4.7 p.82` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-FILE-STATUS-DESCRIPTION-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-FILE-STATUS-DESCRIPTION-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate File Status Description with 0x00.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate File Status Description with 0x00”。 | — | — |
+| `CRS-M1-00455` | `SU-ARINC-615A-3-6-4-8-P095-PROSE-SENTENCE-015-1532165AA3AE`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNL-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNL-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNL File Name with 0x00.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNL File Name with 0x00”。 | — | — |
+| `CRS-M1-00456` | `SU-ARINC-615A-3-6-4-8-P096-PROSE-SENTENCE-020-53AAFA003A8B`<br>`ARINC-615A-3 6.4.8 p.84` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `USE-ONLY-PRINTABLE-CHARACTERS-LNL-FILE-DESCRIPTION-NO-CONTROL-CHARACTERS` / `FILE-DESCRIPTION` / `USE-ONLY-PRINTABLE-CHARACTERS-LNL-FILE-DESCRIPTION-NO-CONTRO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall use only printable characters in LNL File Description, with no control characters, max 255.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in LNL File Description, with no control characters, max 255。 | — | — |
+| `CRS-M1-00457` | `SU-ARINC-615A-3-6-4-8-P096-PROSE-SENTENCE-021-1532165AA3AE`<br>`ARINC-615A-3 6.4.8 p.84` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNL-FILE-DESCRIPTION-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNL-FILE-DESCRIPTION-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNL File Description with 0x00.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNL File Description with 0x00”。 | — | — |
+| `CRS-M1-00458` | `SU-ARINC-615A-3-6-4-9-P096-PROSE-SENTENCE-016-1532165AA3AE`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNA-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNA-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNA File Name with 0x00.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNA File Name with 0x00”。 | — | — |
+| `CRS-M1-00459` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R002`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNR at the tabulated width and table ordinal 1.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNR 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00460` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R003`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNR at the tabulated width and table ordinal 2.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNR 的 FIELD-PROTOCOL-VERSION。 | — | — |
+| `CRS-M1-00461` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R004`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNR at the tabulated width and table ordinal 3.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNR 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00462` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R005`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNR at the tabulated width and table ordinal 4.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNR 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00463` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R006`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNR at the tabulated width and table ordinal 5.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNR 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00464` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R007`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-USER-DEFINED-DATA-LENGTH, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-USER-DEFINED-DATA-LENGTH of LNR at the tabulated width and table ordinal 6.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA-LENGTH。 | — | — |
+| `CRS-M1-00465` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R008`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-USER-DEFINED-DATA, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-USER-DEFINED-DATA of LNR at the tabulated width and table ordinal 7.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA。 | — | — |
+| `CRS-M1-00466` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R002`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNS at the tabulated width and table ordinal 1.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNS 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00467` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R003`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNS at the tabulated width and table ordinal 2.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNS 的 FIELD-PROTOCOL-VERSION。 | — | — |
+| `CRS-M1-00468` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R004`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-OPERATION-STATUS-CODE, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-OPERATION-STATUS-CODE of LNS at the tabulated width and table ordinal 3.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNS 的 FIELD-DOWNLOAD-OPERATION-STATUS-CODE。 | — | — |
+| `CRS-M1-00469` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R005`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH of LNS at the tabulated width and table ordinal 4.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNS 的 FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH。 | — | — |
+| `CRS-M1-00470` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R006`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-STATUS-DESCRIPTION, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-STATUS-DESCRIPTION of LNS at the tabulated width and table ordinal 5.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNS 的 FIELD-DOWNLOAD-STATUS-DESCRIPTION。 | — | — |
+| `CRS-M1-00471` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R007`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-COUNTER, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-COUNTER of LNS at the tabulated width and table ordinal 6.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNS 的 FIELD-COUNTER。 | — | — |
+| `CRS-M1-00472` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R008`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-EXCEPTION-TIMER, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-EXCEPTION-TIMER of LNS at the tabulated width and table ordinal 7.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNS 的 FIELD-EXCEPTION-TIMER。 | — | — |
+| `CRS-M1-00473` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R009`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-ESTIMATED-TIME, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-ESTIMATED-TIME of LNS at the tabulated width and table ordinal 8.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 8 个字段位置编码 LNS 的 FIELD-ESTIMATED-TIME。 | — | — |
+| `CRS-M1-00474` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R010`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-LIST-RATIO, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-LIST-RATIO of LNS at the tabulated width and table ordinal 9.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 9 个字段位置编码 LNS 的 FIELD-DOWNLOAD-LIST-RATIO。 | — | — |
+| `CRS-M1-00475` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R011`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNS at the tabulated width and table ordinal 10.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 10 个字段位置编码 LNS 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00476` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R012`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNS at the tabulated width and table ordinal 11.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 11 个字段位置编码 LNS 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00477` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R013`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNS at the tabulated width and table ordinal 12.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 12 个字段位置编码 LNS 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00478` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R014`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-STATUS, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-STATUS of LNS at the tabulated width and table ordinal 13.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 13 个字段位置编码 LNS 的 FIELD-FILE-STATUS。 | — | — |
+| `CRS-M1-00479` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R015`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-STATUS-DESCRIPTION-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-STATUS-DESCRIPTION-LENGTH of LNS at the tabulated width and table ordinal 14.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 14 个字段位置编码 LNS 的 FIELD-FILE-STATUS-DESCRIPTION-LENGTH。 | — | — |
+| `CRS-M1-00480` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R016`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-STATUS-DESCRIPTION, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-STATUS-DESCRIPTION of LNS at the tabulated width and table ordinal 15.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 15 个字段位置编码 LNS 的 FIELD-FILE-STATUS-DESCRIPTION。 | — | — |
+| `CRS-M1-00481` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R002`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNL at the tabulated width and table ordinal 1.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNL 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00482` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R003`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNL at the tabulated width and table ordinal 2.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNL 的 FIELD-PROTOCOL-VERSION。 | — | — |
+| `CRS-M1-00483` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R004`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNL at the tabulated width and table ordinal 3.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNL 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00484` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R005`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNL at the tabulated width and table ordinal 4.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNL 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00485` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R006`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNL at the tabulated width and table ordinal 5.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNL 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00486` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R007`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-DESCRIPTION-LENGTH, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-DESCRIPTION-LENGTH of LNL at the tabulated width and table ordinal 6.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNL 的 FIELD-FILE-DESCRIPTION-LENGTH。 | — | — |
+| `CRS-M1-00487` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R008`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-DESCRIPTION, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-DESCRIPTION of LNL at the tabulated width and table ordinal 7.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNL 的 FIELD-FILE-DESCRIPTION。 | — | — |
+| `CRS-M1-00488` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R002`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNA at the tabulated width and table ordinal 1.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNA 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00489` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R003`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNA at the tabulated width and table ordinal 2.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNA 的 FIELD-PROTOCOL-VERSION。 | — | — |
+| `CRS-M1-00490` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R004`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNA at the tabulated width and table ordinal 3.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNA 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00491` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R005`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNA at the tabulated width and table ordinal 4.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNA 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00492` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R006`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNA at the tabulated width and table ordinal 5.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNA 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00493` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E001-93E2E1579D6F`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-APPLICATION` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-MEDIA-INITIALIZATION-START-MEDIA-MODE-CHART` / `DOWNLOADING-MEDIA-INITIALIZATION` / `ISSUE-DOWNLOADING-MEDIA-INITIALIZATION-START-MEDIA-MODE-CHAR-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data-loader application shall issue Downloading_Media_Initialization to start the media-mode chart.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器应用层必须发出 Downloading_Media_Initialization to start the media-mode chart。 | — | — |
+| `CRS-M1-00494` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E002-56059C7FBCE3`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TFTP-READ-LND-TARGET` / `LND` / `TFTP-READ-LND-TARGET-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall TFTP-read LND from the target.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须执行“TFTP-read LND from the target”。 | — | — |
+| `CRS-M1-00495` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E003-7572FB4A7D49`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TRANSFER-LND-ANSWER-WAIT-RETRY` / `LND, WAIT` / `TRANSFER-LND-ANSWER-WAIT-RETRY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall transfer LND or answer WAIT for retry.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须传送 LND or answer WAIT for retry。 | — | — |
+| `CRS-M1-00496` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E004-F7FB3AED0BF8`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LND-OUTCOME` / `DOWNLOADING-INITIALIZATION-RESPONSE` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LND-OUTCOME-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall emit Downloading_Initialization_Response from the LND outcome.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须执行“emit Downloading_Initialization_Response from the LND outcome”。 | — | — |
+| `CRS-M1-00497` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E005-DDC22BBE77AD`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `END-MEDIA-DEFINED-DOWNLOAD-DENY` / `DENY` / `END-MEDIA-DEFINED-DOWNLOAD-DENY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data loader shall end Media Defined DOWNLOAD on deny.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须结束 媒体定义 DOWNLOAD on deny。 | — | — |
+| `CRS-M1-00498` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E006-FFDAE5BD327A`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ACCEPT-TFTP-WRITE-LNR-TARGET` / `LNR` / `ACCEPT-TFTP-WRITE-LNR-TARGET-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall on accept, TFTP-write LNR to the target.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须执行“on accept, TFTP-write LNR to the target”。 | — | — |
+| `CRS-M1-00499` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E007-465C743F7A74`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `RECEIVE-ANALYZE-LNR` / `LNR` / `RECEIVE-ANALYZE-LNR-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall receive and analyze LNR.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须接收 and analyze LNR。 | — | — |
+| `CRS-M1-00500` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E008-4F5A7B67B142`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TFTP-WRITE-LNS-INCLUDING-ACCEPTED-NOT-STARTED-0X0001` / `LNS, OBJ-0X0001` / `TFTP-WRITE-LNS-INCLUDING-ACCEPTED-NOT-STARTED-0X0001-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall TFTP-write LNS, including accepted-not-started 0x0001.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须执行“TFTP-write LNS, including accepted-not-started 0x0001”。 | — | — |
+| `CRS-M1-00501` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E009-0C4A2E52223E`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TFTP-SEND-EACH-LNR-LISTED-DATA-FILE` / `DATA-FILES` / `TFTP-SEND-EACH-LNR-LISTED-DATA-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall TFTP-send each LNR-listed data file.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须TFTP-发送 each LNR-listed data file。 | — | — |
+| `CRS-M1-00502` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E010-C4CF6F527181`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE` / `DOWNLOADING-FILE-RECEIPT` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall issue Downloading_File_Receipt for each received file.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_Receipt for each 接收d file。 | — | — |
+| `CRS-M1-00503` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E011-86839F050632`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `REPEAT-REMAINING-FILES-LNS-PROGRESS` / `LNS` / `REPEAT-REMAINING-FILES-LNS-PROGRESS-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall repeat remaining files with LNS progress.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须重复 remaining files with LNS progress。 | — | — |
+| `CRS-M1-00504` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E012-9EC73921C558`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRONO` / `LNS, ATTACHMENT-4` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRON-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall end after final LNS complete or fatal; honour Attachment 4 chrono timeouts.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须结束 after final LNS 完成 or fatal; honour 附件 4 chrono timeouts。 | — | — |
+| `CRS-M1-00505` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E001-D20446C4AA87`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-APPLICATION` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-OPERATOR-INITIALIZATION-START-OPERATOR-MODE-CHART` / `DOWNLOADING-OPERATOR-INITIALIZATION` / `ISSUE-DOWNLOADING-OPERATOR-INITIALIZATION-START-OPERATOR-MOD-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data-loader application shall issue Downloading_Operator_Initialization to start the operator-mode chart.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器应用层必须发出 Downloading_Operator_Initialization to start the operator-mode chart。 | — | — |
+| `CRS-M1-00506` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E002-FA62BFEC08D9`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TFTP-READ-LNO-TARGET` / `LNO` / `TFTP-READ-LNO-TARGET-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall TFTP-read LNO from the target.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须执行“TFTP-read LNO from the target”。 | — | — |
+| `CRS-M1-00507` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E003-4E7C61B06179`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TRANSFER-LNO-ANSWER-WAIT-RETRY` / `LNO, WAIT` / `TRANSFER-LNO-ANSWER-WAIT-RETRY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall transfer LNO or answer WAIT for retry.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须传送 LNO or answer WAIT for retry。 | — | — |
+| `CRS-M1-00508` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E004-4DD6ECF8E15C`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LNO-OUTCOME` / `DOWNLOADING-INITIALIZATION-RESPONSE` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LNO-OUTCOME-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall emit Downloading_Initialization_Response from the LNO outcome.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须执行“emit Downloading_Initialization_Response from the LNO outcome”。 | — | — |
+| `CRS-M1-00509` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E005-22221ABB2116`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `END-OPERATOR-DEFINED-DOWNLOAD-DENY` / `DENY` / `END-OPERATOR-DEFINED-DOWNLOAD-DENY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data loader shall end Operator Defined DOWNLOAD on deny.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须结束 操作员定义 DOWNLOAD on deny。 | — | — |
+| `CRS-M1-00510` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E006-145A7178D4F7`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ACCEPT-TFTP-WRITE-LNL-LOADER` / `LNL` / `ACCEPT-TFTP-WRITE-LNL-LOADER-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall on accept, TFTP-write LNL to the loader.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须执行“on accept, TFTP-write LNL to the loader”。 | — | — |
+| `CRS-M1-00511` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E007-BB90540A19D7`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-FILE-LIST-RECEIPT` / `DOWNLOADING-FILE-LIST-RECEIPT` / `ISSUE-DOWNLOADING-FILE-LIST-RECEIPT-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall issue Downloading_File_List_Receipt.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_List_Receipt。 | — | — |
+| `CRS-M1-00512` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E008-1FFC2020C9F9`<br>`ARINC-615A-3 6.3.4 p.60` | `OPERATOR` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SELECT-FILES-LOADER-TFTP-WRITES-LNA-FILE-SELECTION` / `LNA, FILE-SELECTION` / `SELECT-FILES-LOADER-TFTP-WRITES-LNA-FILE-SELECTION-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the operator shall select files; loader TFTP-writes LNA as File_Selection.<br>在实现并使用操作员定义 DOWNLOAD 时，操作员必须选择 files; loader TFTP-writes LNA as File_Selection。 | — | — |
+| `CRS-M1-00513` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E009-0C4A2E52223E`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TFTP-SEND-EACH-LNA-LISTED-DATA-FILE` / `DATA-FILES` / `TFTP-SEND-EACH-LNA-LISTED-DATA-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall TFTP-send each LNA-listed data file.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须TFTP-发送 each LNA-listed data file。 | — | — |
+| `CRS-M1-00514` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E010-C4CF6F527181`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE--02783` / `DOWNLOADING-FILE-RECEIPT` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall issue Downloading_File_Receipt for each received file.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_Receipt for each 接收d file。 | — | — |
+| `CRS-M1-00515` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E011-86839F050632`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `REPEAT-REMAINING-FILES-LNS-PROGRESS--02784` / `LNS` / `REPEAT-REMAINING-FILES-LNS-PROGRESS-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall repeat remaining files with LNS progress.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须重复 remaining files with LNS progress。 | — | — |
+| `CRS-M1-00516` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E012-9EC73921C558`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRONO--02785` / `LNS, ATTACHMENT-4` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRON-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall end after final LNS complete or fatal; honour Attachment 4 chrono timeouts.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须结束 after final LNS 完成 or fatal; honour 附件 4 chrono timeouts。 | — | — |
+| `CRS-M1-00517` | `SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-008-123ADFD1F0A0`<br>`ARINC-615A-3 APPENDIX-E p.122` | `DATA-LOADER` / `WHEN-615A-IS-CARRIED-OVER-AFDX` / `USE-FIND-NETWORK-CONFIGURATION-FILE-IDENTIFY-TARGETS-AFDX-NETWORK` / `FIND, NETWORK-CONFIGURATION-FILE` / `USE-FIND-NETWORK-CONFIGURATION-FILE-IDENTIFY-TARGETS-AFDX-NE-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When the configured deployment carries 615A over AFDX rather than ordinary Ethernet, the data loader may use FIND or a network configuration file to identify targets on the AFDX network. This does not activate the current Compliant Ethernet instance.<br>在配置的部署把 615A 承载于 AFDX 而非普通以太网时，数据加载器可以使用 FIND or a network configuration file to identify targets on the AFDX network。这不激活当前 Compliant 以太网实例。 | — | — |
+| `CRS-M1-00518` | `SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-011-E6FB447853B2`<br>`ARINC-615A-3 APPENDIX-E p.122` | `DATA-LOADER` / `WHEN-615A-IS-CARRIED-OVER-AFDX` / `USE-TFTP-PROTOCOL-DESCRIBED-615A-3-615A-OPERATIONS-OVER-AFDX` / `TFTP` / `USE-TFTP-PROTOCOL-DESCRIBED-615A-3-615A-OPERATIONS-OVER-AFDX-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When the configured deployment carries 615A over AFDX rather than ordinary Ethernet, the data loader shall use the TFTP protocol described in 615A-3 for 615A operations over AFDX. This does not activate the current Compliant Ethernet instance.<br>在配置的部署把 615A 承载于 AFDX 而非普通以太网时，数据加载器必须使用 the TFTP protocol described in 615A-3 for 615A operations over AFDX。这不激活当前 Compliant 以太网实例。 | — | — |
+| `CRS-M1-00519` | `SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-013-B5690D59EDBF`<br>`ARINC-615A-3 APPENDIX-E p.122` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX` / `APPLY-AVIATION-DATA-NETWORK-ADDRESS-RULES-664-PART-4-IDENTIFY` / `ADDRESS-RULES, ARINC-664-4` / `APPLY-AVIATION-DATA-NETWORK-ADDRESS-RULES-664-PART-4-IDENTIF-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When the configured deployment carries 615A over AFDX rather than ordinary Ethernet, the system integrator shall apply aviation data-network address rules from 664 Part 4, or identify the address requirements. This does not activate the current Compliant Ethernet instance.<br>在配置的部署把 615A 承载于 AFDX 而非普通以太网时，系统集成商必须适用 aviation data-network address rules from 664 Part 4, or identify the address requirements。这不激活当前 Compliant 以太网实例。 | — | — |
 
 ## Observable timing semantics
 
@@ -696,6 +800,40 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `CRS-M1-00331` | `LUS` / `16` | `FIELD-LOAD-STATUS` | `16` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00332` | `LUS` / `17` | `FIELD-LOAD-STATUS-DESCRIPTION-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00333` | `LUS` / `18` | `FIELD-LOAD-STATUS-DESCRIPTION` | `0..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00459` | `LNR` / `1` | `FIELD-FILE-LENGTH` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00460` | `LNR` / `2` | `FIELD-PROTOCOL-VERSION` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00461` | `LNR` / `3` | `FIELD-NUMBER-OF-FILES` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00462` | `LNR` / `4` | `FIELD-FILE-NAME-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00463` | `LNR` / `5` | `FIELD-FILE-NAME` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
+| `CRS-M1-00464` | `LNR` / `6` | `FIELD-USER-DEFINED-DATA-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00465` | `LNR` / `7` | `FIELD-USER-DEFINED-DATA` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `LENGTH-PREFIXED-BINARY` / `LENGTH-PREFIXED-PER-TABLE` | — |
+| `CRS-M1-00466` | `LNS` / `1` | `FIELD-FILE-LENGTH` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00467` | `LNS` / `2` | `FIELD-PROTOCOL-VERSION` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00468` | `LNS` / `3` | `FIELD-DOWNLOAD-OPERATION-STATUS-CODE` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00469` | `LNS` / `4` | `FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00470` | `LNS` / `5` | `FIELD-DOWNLOAD-STATUS-DESCRIPTION` | `TABLE-DEFINED-VARIABLE-WIDTH` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
+| `CRS-M1-00471` | `LNS` / `6` | `FIELD-COUNTER` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00472` | `LNS` / `7` | `FIELD-EXCEPTION-TIMER` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00473` | `LNS` / `8` | `FIELD-ESTIMATED-TIME` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00474` | `LNS` / `9` | `FIELD-DOWNLOAD-LIST-RATIO` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00475` | `LNS` / `10` | `FIELD-NUMBER-OF-FILES` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00476` | `LNS` / `11` | `FIELD-FILE-NAME-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00477` | `LNS` / `12` | `FIELD-FILE-NAME` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
+| `CRS-M1-00478` | `LNS` / `13` | `FIELD-FILE-STATUS` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00479` | `LNS` / `14` | `FIELD-FILE-STATUS-DESCRIPTION-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00480` | `LNS` / `15` | `FIELD-FILE-STATUS-DESCRIPTION` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
+| `CRS-M1-00481` | `LNL` / `1` | `FIELD-FILE-LENGTH` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00482` | `LNL` / `2` | `FIELD-PROTOCOL-VERSION` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00483` | `LNL` / `3` | `FIELD-NUMBER-OF-FILES` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00484` | `LNL` / `4` | `FIELD-FILE-NAME-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00485` | `LNL` / `5` | `FIELD-FILE-NAME` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
+| `CRS-M1-00486` | `LNL` / `6` | `FIELD-FILE-DESCRIPTION-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00487` | `LNL` / `7` | `FIELD-FILE-DESCRIPTION` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
+| `CRS-M1-00488` | `LNA` / `1` | `FIELD-FILE-LENGTH` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00489` | `LNA` / `2` | `FIELD-PROTOCOL-VERSION` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00490` | `LNA` / `3` | `FIELD-NUMBER-OF-FILES` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00491` | `LNA` / `4` | `FIELD-FILE-NAME-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00492` | `LNA` / `5` | `FIELD-FILE-NAME` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
 
 ## Structured Table 6.4.10-1 constraints
 
@@ -1034,309 +1172,306 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 - `COV-M1-00353` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-00354` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-00355` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-M1-00690` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00691` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00692` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00693` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00694` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00695` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00696` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00697` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00698` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00699` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00700` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00701` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00702` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00703` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00704` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00705` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00706` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00707` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00708` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00709` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00710` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00711` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00712` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00713` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00714` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00715` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00716` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00717` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00718` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00719` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00720` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00721` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00722` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00723` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00724` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00725` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00726` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00727` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00728` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00729` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00730` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00731` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00732` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00733` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00734` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00735` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00736` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00737` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00738` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00739` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00740` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00741` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00742` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00743` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00744` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00745` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00746` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00804` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00805` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00806` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00807` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00808` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00809` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00810` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00811` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00812` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00813` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00814` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00815` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00816` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00817` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00818` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00819` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00820` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00821` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00822` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00823` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00824` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00825` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00826` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00827` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00828` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00829` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00830` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00916` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00917` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00918` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00919` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00920` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00921` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00922` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00923` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00924` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00925` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00926` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00927` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00928` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00929` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00930` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00931` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00932` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00933` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00934` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00935` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00936` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00937` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00938` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00939` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00940` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00941` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00942` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00943` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00944` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00945` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00946` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00947` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00948` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00949` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00950` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00951` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00952` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00953` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00954` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00955` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00956` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00957` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00958` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00959` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00960` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00961` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00962` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00963` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00964` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00965` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00966` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00967` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00968` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00969` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00970` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00971` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00972` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00973` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00974` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00975` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00976` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00977` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00978` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00979` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00980` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00981` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00982` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00983` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00984` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00985` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00986` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00987` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00988` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00989` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00990` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00991` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00992` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00993` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00994` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00995` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00996` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00997` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01273` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01274` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01275` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01276` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01277` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01278` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01279` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01280` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01281` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01282` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01283` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01284` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01285` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01286` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01287` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01288` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01289` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01290` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01291` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01292` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01293` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01294` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01295` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01296` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01297` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01298` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01299` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01300` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01301` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01302` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01303` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01304` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01305` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01306` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01307` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01308` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01309` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01310` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01311` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01312` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01313` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01314` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01315` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01316` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01317` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01318` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01319` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01320` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01321` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01322` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01323` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01324` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01325` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01326` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01327` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01328` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01329` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01330` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01331` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01332` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01333` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01334` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01335` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01336` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01337` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01338` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01339` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01340` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01341` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01342` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01343` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01344` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01345` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01346` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01347` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01348` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01349` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01350` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01351` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01352` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01353` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01354` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01355` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01356` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01357` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01358` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01359` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01360` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01361` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01362` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01363` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01364` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01365` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01366` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01367` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01368` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01369` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01370` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01371` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01372` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01373` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01374` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01375` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01376` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01377` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01378` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01379` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01380` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01381` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01382` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01383` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01384` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01385` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01386` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01387` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01388` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01389` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01390` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01391` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01392` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01393` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01394` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01395` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01396` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01397` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01398` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01399` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01400` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01401` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01402` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01403` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01404` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01405` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01406` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01407` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01408` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01409` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00692` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00693` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00694` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00696` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00697` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00698` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00699` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00700` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00701` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00702` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00703` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00704` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00705` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00706` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00707` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00708` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00709` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00710` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00711` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00712` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00713` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00714` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00715` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00716` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00717` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00718` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00719` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00720` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00721` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00722` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00723` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00724` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00725` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00726` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00727` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00728` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00729` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00730` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00731` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00732` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00733` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00734` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00735` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00736` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00737` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00738` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00739` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION
+- `COV-M1-00740` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION
+- `COV-M1-00741` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION
+- `COV-M1-00742` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00743` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION
+- `COV-M1-00744` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-EXAMPLE
+- `COV-M1-00745` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-EXAMPLE
+- `COV-M1-00746` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-EXAMPLE
+- `COV-M1-00804` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00805` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00806` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00807` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00808` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00809` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00810` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00811` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00812` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00813` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00814` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00815` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00816` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00817` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00818` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00819` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00820` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00821` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00822` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00823` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00824` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00825` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00826` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00827` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00828` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00829` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00830` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00916` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00917` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00918` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00919` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00920` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00921` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00922` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00923` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00924` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00925` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00926` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00927` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00928` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00929` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00930` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00931` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00932` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00933` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00934` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00935` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00936` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00937` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00938` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00939` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00940` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00941` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00942` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00943` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00944` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00945` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00946` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00947` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00948` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00949` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00950` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00951` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00952` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00953` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00954` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00955` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00956` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00957` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00958` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00959` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00960` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00961` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00962` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00963` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00964` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00965` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00966` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00967` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00968` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00969` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00970` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00971` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00972` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00973` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00974` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00975` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00976` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00977` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00978` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00979` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00980` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00981` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00982` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00983` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00984` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00985` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00986` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00987` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00988` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00989` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00990` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00991` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00992` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00993` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00994` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00995` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00996` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00997` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01273` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01274` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01275` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01276` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01277` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01278` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01279` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01280` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01281` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01282` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01283` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01284` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01285` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01286` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01287` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01288` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-01289` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01290` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01291` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01292` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01293` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01294` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01295` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01296` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01297` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01298` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01299` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01300` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01301` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01302` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01303` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01304` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01305` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01306` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01307` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01308` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01309` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01310` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01311` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01312` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01313` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01314` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01315` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01316` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01317` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01318` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01319` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01320` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01321` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01322` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01323` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01324` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01325` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01326` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01327` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01328` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01329` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01330` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01331` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01332` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01333` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01334` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01335` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01336` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01337` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01338` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01339` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01340` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01341` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01342` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01343` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01344` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01345` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01346` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01347` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01348` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01349` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01350` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01351` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01352` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01353` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01354` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01355` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01356` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01357` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01358` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01359` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01360` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01361` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01362` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01363` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01364` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01365` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01366` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01367` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01368` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01369` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01370` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01371` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01372` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01373` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01374` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01375` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01376` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01377` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01378` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01379` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01380` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01381` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01382` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01383` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01384` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01385` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01386` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01387` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-01388` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01389` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01390` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01391` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01392` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-01393` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-01394` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01395` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01396` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01397` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01398` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01399` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01400` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01401` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01402` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01403` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01404` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01405` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01406` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01407` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01408` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01409` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
 - `COV-M1-01413` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01414` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01415` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
@@ -1742,19 +1877,19 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 - `COV-M1-01957` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01958` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01959` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-M1-01960` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01961` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01962` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01963` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01964` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01965` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01966` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01967` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01968` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01969` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01970` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01971` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01972` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
+- `COV-M1-01960` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01961` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01962` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01963` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01964` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01965` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01966` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01967` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-01968` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01969` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01970` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-01971` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01972` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
 - `COV-M1-01973` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01974` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01975` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
@@ -2015,68 +2150,68 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 - `COV-M1-02581` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
 - `COV-M1-02582` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
 - `COV-M1-02583` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02681` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02682` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02683` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02684` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02685` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02686` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02687` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02688` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02689` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02690` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02691` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02692` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02693` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02694` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02695` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02696` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02697` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02698` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02699` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02700` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02701` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02702` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02703` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02704` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02705` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02706` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02707` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02708` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02709` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02710` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02711` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02712` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02713` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02714` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02715` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02716` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02717` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02718` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02762` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02763` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02764` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02765` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02766` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02767` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02768` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02769` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02770` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02771` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02772` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02773` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02774` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02775` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02776` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02777` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02778` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02779` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02780` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02781` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02782` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02783` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02784` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02785` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02681` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02682` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02683` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02684` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02685` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02686` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02687` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02688` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02689` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02690` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02691` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02692` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02693` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02694` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02695` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02696` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02697` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02698` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02699` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02700` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02701` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02702` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02703` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02704` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02705` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02706` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02707` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02708` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02709` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02710` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02711` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02712` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02713` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02714` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02715` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02716` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02717` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02718` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02762` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02763` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02764` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02765` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02766` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02767` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02768` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02769` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02770` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02771` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02772` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02773` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02774` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02775` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02776` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02777` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02778` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02779` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02780` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02781` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02782` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02783` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02784` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02785` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
 
 # 中文版
 
@@ -2093,12 +2228,12 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 ## 清单
 
 - 覆盖行：2796
-- CRS 项：415
+- CRS 项：519
 - 依赖：14
 - 缺口：1
-- 覆盖指纹：`72bc6b1ef647d312a60b929446a72787f41c85a25fbdc82ef18301ac4ce0c258`
-- 需求指纹：`d75c1fc7d5b9887b077513ad5a2a5937bcb7282ff15710eb9587eb2eb0d64371`
-- 来源单元指纹：`539b505c1d4b4b1546dc7a4d29716a4a0976fcf1468ac7c017dac65a70790b59`
+- 覆盖指纹：`b7c0249106431f1d4168b3a234fd302c6780cae721beb7aeb4466ab3d12866fe`
+- 需求指纹：`6248afd58e0a6b97e1056ca13a1a4d4b15001a451e99cd86ff34751072505d6c`
+- 来源单元指纹：`26d5022648eba24d476575a8d2fd1c6b8bed5626c5545da2df0a9397d4886fde`
 - 自动检查只覆盖结构与跨记录一致性；专有来源的完整性与忠实度仍须外部 RG0 评审。
 - `generatedSemanticProjectionEn/Zh` 是受断言约束的漂移投影，不是独立 RG1 证据。
 - 665 边政策：`REQUIREMENT-LEVEL-615A-TO-665-EDGES-DEFERRED-TO-M2-ATTACHMENT-RECONCILIATION`
@@ -2107,21 +2242,21 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 
 - `APPLICABLE-BASE`：89
 - `APPLICABLE-SUPPORTING`：322
-- `CONDITIONAL`：4
+- `CONDITIONAL`：108
 
 ## 来源模态
 
 - `FACT`：12
-- `FIGURE-CONSTRAINT`：39
-- `MAY`：44
-- `MUST`：13
-- `SHOULD`：214
-- `TABLE-CONSTRAINT`：93
+- `FIGURE-CONSTRAINT`：63
+- `MAY`：56
+- `MUST`：15
+- `SHOULD`：246
+- `TABLE-CONSTRAINT`：127
 
 ## 符合性效果
 
-- `CONDITIONAL-REQUIRED`：3
-- `OPTIONAL`：44
+- `CONDITIONAL-REQUIRED`：95
+- `OPTIONAL`：56
 - `REQUIRED`：368
 
 ## 开放依赖与缺口
@@ -2624,6 +2759,110 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `CRS-M1-00413` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-015-14EF51A05AEA`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `LIMIT-TARGET-POSITION-TO-8-CHARACTERS-EXCLUDING-TERMINATOR` / `TARGET-POSITION, LENGTH-8` / `TARGET-POSITION-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须把目标位置限制为不含终止符的 8 个字符。 | — | — |
 | `CRS-M1-00414` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-016-22BA44DB74A6`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `LIMIT-LITERAL-NAME-TO-20-CHARACTERS-EXCLUDING-TERMINATOR` / `LITERAL-NAME, LENGTH-20` / `LITERAL-NAME-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须把字面名限制为不含终止符的 20 个字符。 | — | — |
 | `CRS-M1-00415` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-017-4A05E0BB2809`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `ENCODE-MANUFACTURER-CODE-AS-3-CHARACTERS-EXCLUDING-TERMINATOR` / `MANUFACTURER-CODE, LENGTH-3` / `MANUFACTURER-CODE-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须把制造商代码编码为不含终止符的 3 个字符。 | — | — |
+| `CRS-M1-00416` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-007-CA89CD0344A9`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IMPLEMENT-BOTH-MEDIA-DEFINED-OPERATOR-DEFINED-DOWNLOAD` / `MEDIA-DEFINED, OPERATOR-DEFINED` / `IMPLEMENT-BOTH-MEDIA-DEFINED-OPERATOR-DEFINED-DOWNLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须实现 both 媒体定义 and 操作员定义 DOWNLOAD。 | — | — |
+| `CRS-M1-00417` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-008-EB64770DFDD9`<br>`ARINC-615A-3 5.4.4 p.38` | `TARGET-HARDWARE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IMPLEMENT-NONE-ONE-BOTH-DOWNLOAD-MODES` / `MEDIA-DEFINED, OPERATOR-DEFINED` / `IMPLEMENT-NONE-ONE-BOTH-DOWNLOAD-MODES-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件可以实现 none, one, or both DOWNLOAD modes。 | — | — |
+| `CRS-M1-00418` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-009-DD0255D27FB0`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SPECIFY-TFTP-OPTIONS-SUPPLY-DATA-INTEGRITY-CHECK-TRANSFER` / `TFTP-OPTIONS` / `SPECIFY-TFTP-OPTIONS-SUPPLY-DATA-INTEGRITY-CHECK-TRANSFER-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器可以规定 TFTP options that supply a data-integrity check for the transfer。 | — | — |
+| `CRS-M1-00419` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-010-12B60035E133`<br>`ARINC-615A-3 5.4.4 p.38` | `TARGET-HARDWARE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IMPLEMENT-TFTP-INTEGRITY-OPTION` / `TFTP-OPTION` / `IMPLEMENT-TFTP-INTEGRITY-OPTION-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件可以实现 that TFTP integrity option。 | — | — |
+| `CRS-M1-00420` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-011-3CF28DC21423`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IT-SUPPORTS-OFFERED-CHECK-VALUE-VALIDATE-DATA-TRANSFER` / `CHECK-VALUE` / `IT-SUPPORTS-OFFERED-CHECK-VALUE-VALIDATE-DATA-TRANSFER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须if it supports the offered check value, 校验 the data transfer。 | — | — |
+| `CRS-M1-00421` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-012-D9C78F1A4E4C`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TREAT-CHECKSUM-VALIDATION-INFORMATION-ONLY-STILL-EXPORT-FILE` / `CHECKSUM, EXPORT` / `TREAT-CHECKSUM-VALIDATION-INFORMATION-ONLY-STILL-EXPORT-FILE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须把 校验和 validation as information only and still export the file。 | — | — |
+| `CRS-M1-00422` | `SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-004-E7A9E12EDE22`<br>`ARINC-615A-3 5.4.4.1 p.38` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `USE-LNR-ALREADY-STORED-ARINC-665-PART-MEDIA` / `LNR, ARINC-665-PART` / `USE-LNR-ALREADY-STORED-ARINC-665-PART-MEDIA-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器可以使用 an LNR already stored in an ARINC 665 part on the media。 | — | — |
+| `CRS-M1-00423` | `SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-006-F3361F00DCE2`<br>`ARINC-615A-3 5.4.4.1 p.38` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `EXAMINE-EACH-PART-HEADER-OFFER-HEADERS-WHOSE-DOWNLOAD-BIT-SET` / `DOWNLOAD-BIT, HEADER-FILE` / `EXAMINE-EACH-PART-HEADER-OFFER-HEADERS-WHOSE-DOWNLOAD-BIT-SE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须检查 each part header and 提供 headers whose download bit is set。 | — | — |
+| `CRS-M1-00424` | `SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-007-A88849FBE53E`<br>`ARINC-615A-3 5.4.4.1 p.38` | `OPERATOR` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `MORE-THAN-ONE-DOWNLOAD-BIT-HEADER-EXISTS-SELECT-ONE` / `HEADER-FILE` / `MORE-THAN-ONE-DOWNLOAD-BIT-HEADER-EXISTS-SELECT-ONE-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，操作员可以if more than one download-bit header exists, 选择 one。 | — | — |
+| `CRS-M1-00425` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-001-EDC984053CA0`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `UNABLE-WRITE-WHEN-REMOVABLE-MEDIA-BOTH-LNR-SOURCE-DOWNLOAD-DESTINATION` / `REMOVABLE-MEDIA` / `UNABLE-WRITE-WHEN-REMOVABLE-MEDIA-BOTH-LNR-SOURCE-DOWNLOAD-D-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器可以执行“be unable to write when removable media is both LNR source and download destination”。 | — | — |
+| `CRS-M1-00426` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-002-1036539E638B`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `PROMPT-OPERATOR-REPLACE-SELECT-WRITABLE-MEDIA-BEFORE-STARTING-DOWNLOAD` / `WRITABLE-MEDIA` / `PROMPT-OPERATOR-REPLACE-SELECT-WRITABLE-MEDIA-BEFORE-STARTIN-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须prompt the operator to replace or 选择 writable media before starting DOWNLOAD。 | — | — |
+| `CRS-M1-00427` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-003-3B9221D5DF13`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `FAIL-DOWNLOAD-WRITE-STILL-FAILS-AFTER-ASKING-WRITABLE-MEDIA` / `WRITABLE-MEDIA` / `FAIL-DOWNLOAD-WRITE-STILL-FAILS-AFTER-ASKING-WRITABLE-MEDIA-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须执行“fail DOWNLOAD if the write still fails after asking for writable media”。 | — | — |
+| `CRS-M1-00428` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-004-C40353394C94`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `CREATE-NEW-DNLD-DATA-THW-ID-POS-NUMBER-DIRECTORY-EACH` / `DNLD-DATA` / `CREATE-NEW-DNLD-DATA-THW-ID-POS-NUMBER-DIRECTORY-EACH-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须执行“create a new DNLD_DATA_<THW_ID_POS>_<number> directory for each download”。 | — | — |
+| `CRS-M1-00429` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-008-4B56712D118C`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `CREATE-DNLD-INFO-THW-ID-POS-NUMBER-MANUFACTURER-SPECIFIC-DOWNLOAD` / `DNLD-INFO` / `CREATE-DNLD-INFO-THW-ID-POS-NUMBER-MANUFACTURER-SPECIFIC-DOW-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器可以执行“create DNLD_INFO_<THW_ID_POS>_<number> for manufacturer-specific download information”。 | — | — |
+| `CRS-M1-00430` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-033-EC6A3B3AFA4A`<br>`ARINC-615A-3 6.3.3 p.58` | `OPERATOR` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `SELECT-MEDIA-TYPE-MEDIA-DEFINED-DOWNLOAD` / `MEDIA-TYPE` / `SELECT-MEDIA-TYPE-MEDIA-DEFINED-DOWNLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，操作员必须选择 the media type for 媒体定义 DOWNLOAD。 | — | — |
+| `CRS-M1-00431` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-038-2ED4ABAC4193`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY` / `LNS, ATTACHMENT-4` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须发送 状态文件s within the 附件 4 DLP maximum delay。 | — | — |
+| `CRS-M1-00432` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-040-18B50A8E503C`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSIDE-TIMEOUT` / `LNS, STATUS-CODE, STATUS-DESCRIPTION` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSID-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须on fatal error emit a 状态文件 with matching code and description inside the timeout。 | — | — |
+| `CRS-M1-00433` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-041-7AC0400C9DB1`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT` / `ABORT-5-3-2-3-6, INTERRUPT-6-3-6` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件可以发送 a 状态文件 immediately to carry an 中止 or interrupt。 | — | — |
+| `CRS-M1-00434` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-050-D8862D88C46E`<br>`ARINC-615A-3 6.3.3 p.58` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHOUT-WAITING-IT` / `EXCEPTION-TIMER` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须执行“if the target answers before Exception Timer elapses, continue without waiting it out”。 | — | — |
+| `CRS-M1-00435` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-051-E812AC346D09`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT` / `EXCEPTION-TIMER` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须尽量缩短 Exception Timer so the silent phase stays short。 | — | — |
+| `CRS-M1-00436` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-052-91F9A68124BD`<br>`ARINC-615A-3 6.3.3 p.58` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-TIMER` / `EXCEPTION-TIMER, LNS` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-T-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须中止 DOWNLOAD if no new 状态文件 arrives before Exception Timer expires。 | — | — |
+| `CRS-M1-00437` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-007-18AB4BEB6990`<br>`ARINC-615A-3 6.3.4 p.61` | `OPERATOR` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ABLE-SELECT-MEDIA-TYPE-OPERATOR-DEFINED-DOWNLOAD` / `MEDIA-TYPE` / `ABLE-SELECT-MEDIA-TYPE-OPERATOR-DEFINED-DOWNLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，操作员必须be able to 选择 the media type for 操作员定义 DOWNLOAD。 | — | — |
+| `CRS-M1-00438` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-012-2ED4ABAC4193`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY--00981` / `LNS, ATTACHMENT-4` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须发送 状态文件s within the 附件 4 DLP maximum delay。 | — | — |
+| `CRS-M1-00439` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-014-9F2F8E73FD5D`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSIDE-TIMEOUT--00983` / `LNS, STATUS-CODE, STATUS-DESCRIPTION` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSID-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须on fatal error emit a 状态文件 with matching code and description inside the timeout。 | — | — |
+| `CRS-M1-00440` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-015-7AC0400C9DB1`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT--00984` / `ABORT-5-3-2-3-6, INTERRUPT-6-3-6` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件可以发送 a 状态文件 immediately to carry an 中止 or interrupt。 | — | — |
+| `CRS-M1-00441` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-024-D8862D88C46E`<br>`ARINC-615A-3 6.3.4 p.61` | `DATA-LOADER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHOUT-WAITING-IT--00993` / `EXCEPTION-TIMER` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须执行“if the target answers before Exception Timer elapses, continue without waiting it out”。 | — | — |
+| `CRS-M1-00442` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-025-E812AC346D09`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT--00994` / `EXCEPTION-TIMER` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须尽量缩短 Exception Timer so the silent phase stays short。 | — | — |
+| `CRS-M1-00443` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-026-464E9E6694A8`<br>`ARINC-615A-3 6.3.4 p.61` | `DATA-LOADER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-TIMER--00995` / `EXCEPTION-TIMER, LNS` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-T-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须中止 DOWNLOAD if no new 状态文件 arrives before Exception Timer expires。 | — | — |
+| `CRS-M1-00444` | `SU-ARINC-615A-3-6-4-6-P091-PROSE-SENTENCE-016-1532165AA3AE`<br>`ARINC-615A-3 6.4.6 p.79` | `PROTOCOL-FILE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNR-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNR-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNR File Name with 0x00”。 | — | — |
+| `CRS-M1-00445` | `SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-028-83077CACF0DC`<br>`ARINC-615A-3 6.4.7 p.80` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `OTHER-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD-LEFTOVER` / `DOWNLOAD-STATUS-DESCRIPTION` / `OTHER-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方可以执行“for other status codes ignore description content, which may hold leftover data”。 | — | — |
+| `CRS-M1-00446` | `SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-030-B1FB47BD2E90`<br>`ARINC-615A-3 6.4.7 p.80` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `USE-ONLY-PRINTABLE-CHARACTERS-DOWNLOAD-STATUS-DESCRIPTION-NO-CONTROL-CHARACTERS` / `DOWNLOAD-STATUS-DESCRIPTION` / `USE-ONLY-PRINTABLE-CHARACTERS-DOWNLOAD-STATUS-DESCRIPTION-NO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in Download Status Description, with no control characters, max 255。 | — | — |
+| `CRS-M1-00447` | `SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-031-1532165AA3AE`<br>`ARINC-615A-3 6.4.7 p.80` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-DOWNLOAD-STATUS-DESCRIPTION-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-DOWNLOAD-STATUS-DESCRIPTION-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate Download Status Description with 0x00”。 | — | — |
+| `CRS-M1-00448` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-040-BFA9E163247A`<br>`ARINC-615A-3 6.4.7 p.81` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SET-EXCEPTION-TIMER-0X0000-EVERY-OTHER-STATUS-CODE` / `EXCEPTION-TIMER, OBJ-0X0000` / `SET-EXCEPTION-TIMER-0X0000-EVERY-OTHER-STATUS-CODE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“set Exception Timer to 0x0000 for every other status code”。 | — | — |
+| `CRS-M1-00449` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-045-16B3A57C8CEC`<br>`ARINC-615A-3 6.4.7 p.81` | `TARGET-HARDWARE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `PROVIDE-ESTIMATED-TIME-SOON-POSSIBLE-DURING-OPERATION` / `ESTIMATED-TIME` / `PROVIDE-ESTIMATED-TIME-SOON-POSSIBLE-DURING-OPERATION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件必须执行“provide Estimated Time as soon as possible during the operation”。 | — | — |
+| `CRS-M1-00450` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-048-581419285745`<br>`ARINC-615A-3 6.4.7 p.81` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TARGET-DOES-NOT-GIVE-ESTIMATED-TIME-SET-FIELD-0XFFFF` / `ESTIMATED-TIME, OBJ-0XFFFF` / `TARGET-DOES-NOT-GIVE-ESTIMATED-TIME-SET-FIELD-0XFFFF-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“if the target does not give Estimated Time, set the field to 0xFFFF”。 | — | — |
+| `CRS-M1-00451` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-058-1532165AA3AE`<br>`ARINC-615A-3 6.4.7 p.81` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNS-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNS-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNS File Name with 0x00”。 | — | — |
+| `CRS-M1-00452` | `SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-077-6BCAB56CC15C`<br>`ARINC-615A-3 6.4.7 p.82` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `OTHER-FILE-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD` / `FILE-STATUS-DESCRIPTION` / `OTHER-FILE-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方可以执行“for other file status codes ignore description content, which may hold leftover data”。 | — | — |
+| `CRS-M1-00453` | `SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-079-53AAFA003A8B`<br>`ARINC-615A-3 6.4.7 p.82` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `USE-ONLY-PRINTABLE-CHARACTERS-FILE-STATUS-DESCRIPTION-NO-CONTROL-CHARACTERS` / `FILE-STATUS-DESCRIPTION` / `USE-ONLY-PRINTABLE-CHARACTERS-FILE-STATUS-DESCRIPTION-NO-CON-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in File Status Description, with no control characters, max 255。 | — | — |
+| `CRS-M1-00454` | `SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-080-1532165AA3AE`<br>`ARINC-615A-3 6.4.7 p.82` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-FILE-STATUS-DESCRIPTION-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-FILE-STATUS-DESCRIPTION-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate File Status Description with 0x00”。 | — | — |
+| `CRS-M1-00455` | `SU-ARINC-615A-3-6-4-8-P095-PROSE-SENTENCE-015-1532165AA3AE`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNL-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNL-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNL File Name with 0x00”。 | — | — |
+| `CRS-M1-00456` | `SU-ARINC-615A-3-6-4-8-P096-PROSE-SENTENCE-020-53AAFA003A8B`<br>`ARINC-615A-3 6.4.8 p.84` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `USE-ONLY-PRINTABLE-CHARACTERS-LNL-FILE-DESCRIPTION-NO-CONTROL-CHARACTERS` / `FILE-DESCRIPTION` / `USE-ONLY-PRINTABLE-CHARACTERS-LNL-FILE-DESCRIPTION-NO-CONTRO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in LNL File Description, with no control characters, max 255。 | — | — |
+| `CRS-M1-00457` | `SU-ARINC-615A-3-6-4-8-P096-PROSE-SENTENCE-021-1532165AA3AE`<br>`ARINC-615A-3 6.4.8 p.84` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNL-FILE-DESCRIPTION-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNL-FILE-DESCRIPTION-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNL File Description with 0x00”。 | — | — |
+| `CRS-M1-00458` | `SU-ARINC-615A-3-6-4-9-P096-PROSE-SENTENCE-016-1532165AA3AE`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNA-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNA-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNA File Name with 0x00”。 | — | — |
+| `CRS-M1-00459` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R002`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNR 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00460` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R003`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNR 的 FIELD-PROTOCOL-VERSION。 | — | — |
+| `CRS-M1-00461` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R004`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNR 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00462` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R005`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNR 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00463` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R006`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNR 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00464` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R007`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-USER-DEFINED-DATA-LENGTH, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA-LENGTH。 | — | — |
+| `CRS-M1-00465` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R008`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-USER-DEFINED-DATA, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA。 | — | — |
+| `CRS-M1-00466` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R002`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNS 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00467` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R003`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNS 的 FIELD-PROTOCOL-VERSION。 | — | — |
+| `CRS-M1-00468` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R004`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-OPERATION-STATUS-CODE, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNS 的 FIELD-DOWNLOAD-OPERATION-STATUS-CODE。 | — | — |
+| `CRS-M1-00469` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R005`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNS 的 FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH。 | — | — |
+| `CRS-M1-00470` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R006`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-STATUS-DESCRIPTION, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNS 的 FIELD-DOWNLOAD-STATUS-DESCRIPTION。 | — | — |
+| `CRS-M1-00471` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R007`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-COUNTER, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNS 的 FIELD-COUNTER。 | — | — |
+| `CRS-M1-00472` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R008`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-EXCEPTION-TIMER, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNS 的 FIELD-EXCEPTION-TIMER。 | — | — |
+| `CRS-M1-00473` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R009`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-ESTIMATED-TIME, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 8 个字段位置编码 LNS 的 FIELD-ESTIMATED-TIME。 | — | — |
+| `CRS-M1-00474` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R010`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-LIST-RATIO, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 9 个字段位置编码 LNS 的 FIELD-DOWNLOAD-LIST-RATIO。 | — | — |
+| `CRS-M1-00475` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R011`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 10 个字段位置编码 LNS 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00476` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R012`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 11 个字段位置编码 LNS 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00477` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R013`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 12 个字段位置编码 LNS 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00478` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R014`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-STATUS, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 13 个字段位置编码 LNS 的 FIELD-FILE-STATUS。 | — | — |
+| `CRS-M1-00479` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R015`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-STATUS-DESCRIPTION-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 14 个字段位置编码 LNS 的 FIELD-FILE-STATUS-DESCRIPTION-LENGTH。 | — | — |
+| `CRS-M1-00480` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R016`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-STATUS-DESCRIPTION, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 15 个字段位置编码 LNS 的 FIELD-FILE-STATUS-DESCRIPTION。 | — | — |
+| `CRS-M1-00481` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R002`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNL 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00482` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R003`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNL 的 FIELD-PROTOCOL-VERSION。 | — | — |
+| `CRS-M1-00483` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R004`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNL 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00484` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R005`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNL 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00485` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R006`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNL 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00486` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R007`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-DESCRIPTION-LENGTH, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNL 的 FIELD-FILE-DESCRIPTION-LENGTH。 | — | — |
+| `CRS-M1-00487` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R008`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-DESCRIPTION, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNL 的 FIELD-FILE-DESCRIPTION。 | — | — |
+| `CRS-M1-00488` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R002`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNA 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00489` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R003`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNA 的 FIELD-PROTOCOL-VERSION。 | — | — |
+| `CRS-M1-00490` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R004`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNA 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00491` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R005`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNA 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00492` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R006`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNA 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00493` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E001-93E2E1579D6F`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-APPLICATION` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-MEDIA-INITIALIZATION-START-MEDIA-MODE-CHART` / `DOWNLOADING-MEDIA-INITIALIZATION` / `ISSUE-DOWNLOADING-MEDIA-INITIALIZATION-START-MEDIA-MODE-CHAR-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器应用层必须发出 Downloading_Media_Initialization to start the media-mode chart。 | — | — |
+| `CRS-M1-00494` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E002-56059C7FBCE3`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TFTP-READ-LND-TARGET` / `LND` / `TFTP-READ-LND-TARGET-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须执行“TFTP-read LND from the target”。 | — | — |
+| `CRS-M1-00495` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E003-7572FB4A7D49`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TRANSFER-LND-ANSWER-WAIT-RETRY` / `LND, WAIT` / `TRANSFER-LND-ANSWER-WAIT-RETRY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须传送 LND or answer WAIT for retry。 | — | — |
+| `CRS-M1-00496` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E004-F7FB3AED0BF8`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LND-OUTCOME` / `DOWNLOADING-INITIALIZATION-RESPONSE` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LND-OUTCOME-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须执行“emit Downloading_Initialization_Response from the LND outcome”。 | — | — |
+| `CRS-M1-00497` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E005-DDC22BBE77AD`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `END-MEDIA-DEFINED-DOWNLOAD-DENY` / `DENY` / `END-MEDIA-DEFINED-DOWNLOAD-DENY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须结束 媒体定义 DOWNLOAD on deny。 | — | — |
+| `CRS-M1-00498` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E006-FFDAE5BD327A`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ACCEPT-TFTP-WRITE-LNR-TARGET` / `LNR` / `ACCEPT-TFTP-WRITE-LNR-TARGET-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须执行“on accept, TFTP-write LNR to the target”。 | — | — |
+| `CRS-M1-00499` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E007-465C743F7A74`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `RECEIVE-ANALYZE-LNR` / `LNR` / `RECEIVE-ANALYZE-LNR-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须接收 and analyze LNR。 | — | — |
+| `CRS-M1-00500` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E008-4F5A7B67B142`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TFTP-WRITE-LNS-INCLUDING-ACCEPTED-NOT-STARTED-0X0001` / `LNS, OBJ-0X0001` / `TFTP-WRITE-LNS-INCLUDING-ACCEPTED-NOT-STARTED-0X0001-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须执行“TFTP-write LNS, including accepted-not-started 0x0001”。 | — | — |
+| `CRS-M1-00501` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E009-0C4A2E52223E`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TFTP-SEND-EACH-LNR-LISTED-DATA-FILE` / `DATA-FILES` / `TFTP-SEND-EACH-LNR-LISTED-DATA-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须TFTP-发送 each LNR-listed data file。 | — | — |
+| `CRS-M1-00502` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E010-C4CF6F527181`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE` / `DOWNLOADING-FILE-RECEIPT` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_Receipt for each 接收d file。 | — | — |
+| `CRS-M1-00503` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E011-86839F050632`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `REPEAT-REMAINING-FILES-LNS-PROGRESS` / `LNS` / `REPEAT-REMAINING-FILES-LNS-PROGRESS-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须重复 remaining files with LNS progress。 | — | — |
+| `CRS-M1-00504` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E012-9EC73921C558`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRONO` / `LNS, ATTACHMENT-4` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRON-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须结束 after final LNS 完成 or fatal; honour 附件 4 chrono timeouts。 | — | — |
+| `CRS-M1-00505` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E001-D20446C4AA87`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-APPLICATION` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-OPERATOR-INITIALIZATION-START-OPERATOR-MODE-CHART` / `DOWNLOADING-OPERATOR-INITIALIZATION` / `ISSUE-DOWNLOADING-OPERATOR-INITIALIZATION-START-OPERATOR-MOD-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器应用层必须发出 Downloading_Operator_Initialization to start the operator-mode chart。 | — | — |
+| `CRS-M1-00506` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E002-FA62BFEC08D9`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TFTP-READ-LNO-TARGET` / `LNO` / `TFTP-READ-LNO-TARGET-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须执行“TFTP-read LNO from the target”。 | — | — |
+| `CRS-M1-00507` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E003-4E7C61B06179`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TRANSFER-LNO-ANSWER-WAIT-RETRY` / `LNO, WAIT` / `TRANSFER-LNO-ANSWER-WAIT-RETRY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须传送 LNO or answer WAIT for retry。 | — | — |
+| `CRS-M1-00508` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E004-4DD6ECF8E15C`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LNO-OUTCOME` / `DOWNLOADING-INITIALIZATION-RESPONSE` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LNO-OUTCOME-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须执行“emit Downloading_Initialization_Response from the LNO outcome”。 | — | — |
+| `CRS-M1-00509` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E005-22221ABB2116`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `END-OPERATOR-DEFINED-DOWNLOAD-DENY` / `DENY` / `END-OPERATOR-DEFINED-DOWNLOAD-DENY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须结束 操作员定义 DOWNLOAD on deny。 | — | — |
+| `CRS-M1-00510` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E006-145A7178D4F7`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ACCEPT-TFTP-WRITE-LNL-LOADER` / `LNL` / `ACCEPT-TFTP-WRITE-LNL-LOADER-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须执行“on accept, TFTP-write LNL to the loader”。 | — | — |
+| `CRS-M1-00511` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E007-BB90540A19D7`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-FILE-LIST-RECEIPT` / `DOWNLOADING-FILE-LIST-RECEIPT` / `ISSUE-DOWNLOADING-FILE-LIST-RECEIPT-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_List_Receipt。 | — | — |
+| `CRS-M1-00512` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E008-1FFC2020C9F9`<br>`ARINC-615A-3 6.3.4 p.60` | `OPERATOR` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SELECT-FILES-LOADER-TFTP-WRITES-LNA-FILE-SELECTION` / `LNA, FILE-SELECTION` / `SELECT-FILES-LOADER-TFTP-WRITES-LNA-FILE-SELECTION-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，操作员必须选择 files; loader TFTP-writes LNA as File_Selection。 | — | — |
+| `CRS-M1-00513` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E009-0C4A2E52223E`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TFTP-SEND-EACH-LNA-LISTED-DATA-FILE` / `DATA-FILES` / `TFTP-SEND-EACH-LNA-LISTED-DATA-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须TFTP-发送 each LNA-listed data file。 | — | — |
+| `CRS-M1-00514` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E010-C4CF6F527181`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE--02783` / `DOWNLOADING-FILE-RECEIPT` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_Receipt for each 接收d file。 | — | — |
+| `CRS-M1-00515` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E011-86839F050632`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `REPEAT-REMAINING-FILES-LNS-PROGRESS--02784` / `LNS` / `REPEAT-REMAINING-FILES-LNS-PROGRESS-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须重复 remaining files with LNS progress。 | — | — |
+| `CRS-M1-00516` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E012-9EC73921C558`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRONO--02785` / `LNS, ATTACHMENT-4` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRON-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须结束 after final LNS 完成 or fatal; honour 附件 4 chrono timeouts。 | — | — |
+| `CRS-M1-00517` | `SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-008-123ADFD1F0A0`<br>`ARINC-615A-3 APPENDIX-E p.122` | `DATA-LOADER` / `WHEN-615A-IS-CARRIED-OVER-AFDX` / `USE-FIND-NETWORK-CONFIGURATION-FILE-IDENTIFY-TARGETS-AFDX-NETWORK` / `FIND, NETWORK-CONFIGURATION-FILE` / `USE-FIND-NETWORK-CONFIGURATION-FILE-IDENTIFY-TARGETS-AFDX-NE-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在配置的部署把 615A 承载于 AFDX 而非普通以太网时，数据加载器可以使用 FIND or a network configuration file to identify targets on the AFDX network。这不激活当前 Compliant 以太网实例。 | — | — |
+| `CRS-M1-00518` | `SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-011-E6FB447853B2`<br>`ARINC-615A-3 APPENDIX-E p.122` | `DATA-LOADER` / `WHEN-615A-IS-CARRIED-OVER-AFDX` / `USE-TFTP-PROTOCOL-DESCRIBED-615A-3-615A-OPERATIONS-OVER-AFDX` / `TFTP` / `USE-TFTP-PROTOCOL-DESCRIBED-615A-3-615A-OPERATIONS-OVER-AFDX-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在配置的部署把 615A 承载于 AFDX 而非普通以太网时，数据加载器必须使用 the TFTP protocol described in 615A-3 for 615A operations over AFDX。这不激活当前 Compliant 以太网实例。 | — | — |
+| `CRS-M1-00519` | `SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-013-B5690D59EDBF`<br>`ARINC-615A-3 APPENDIX-E p.122` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX` / `APPLY-AVIATION-DATA-NETWORK-ADDRESS-RULES-664-PART-4-IDENTIFY` / `ADDRESS-RULES, ARINC-664-4` / `APPLY-AVIATION-DATA-NETWORK-ADDRESS-RULES-664-PART-4-IDENTIF-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在配置的部署把 615A 承载于 AFDX 而非普通以太网时，系统集成商必须适用 aviation data-network address rules from 664 Part 4, or identify the address requirements。这不激活当前 Compliant 以太网实例。 | — | — |
 
 ## 可观察时序语义
 
@@ -2776,6 +3015,40 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `CRS-M1-00331` | `LUS` / `16` | `FIELD-LOAD-STATUS` | `16` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00332` | `LUS` / `17` | `FIELD-LOAD-STATUS-DESCRIPTION-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00333` | `LUS` / `18` | `FIELD-LOAD-STATUS-DESCRIPTION` | `0..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00459` | `LNR` / `1` | `FIELD-FILE-LENGTH` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00460` | `LNR` / `2` | `FIELD-PROTOCOL-VERSION` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00461` | `LNR` / `3` | `FIELD-NUMBER-OF-FILES` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00462` | `LNR` / `4` | `FIELD-FILE-NAME-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00463` | `LNR` / `5` | `FIELD-FILE-NAME` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
+| `CRS-M1-00464` | `LNR` / `6` | `FIELD-USER-DEFINED-DATA-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00465` | `LNR` / `7` | `FIELD-USER-DEFINED-DATA` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `LENGTH-PREFIXED-BINARY` / `LENGTH-PREFIXED-PER-TABLE` | — |
+| `CRS-M1-00466` | `LNS` / `1` | `FIELD-FILE-LENGTH` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00467` | `LNS` / `2` | `FIELD-PROTOCOL-VERSION` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00468` | `LNS` / `3` | `FIELD-DOWNLOAD-OPERATION-STATUS-CODE` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00469` | `LNS` / `4` | `FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00470` | `LNS` / `5` | `FIELD-DOWNLOAD-STATUS-DESCRIPTION` | `TABLE-DEFINED-VARIABLE-WIDTH` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
+| `CRS-M1-00471` | `LNS` / `6` | `FIELD-COUNTER` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00472` | `LNS` / `7` | `FIELD-EXCEPTION-TIMER` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00473` | `LNS` / `8` | `FIELD-ESTIMATED-TIME` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00474` | `LNS` / `9` | `FIELD-DOWNLOAD-LIST-RATIO` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00475` | `LNS` / `10` | `FIELD-NUMBER-OF-FILES` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00476` | `LNS` / `11` | `FIELD-FILE-NAME-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00477` | `LNS` / `12` | `FIELD-FILE-NAME` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
+| `CRS-M1-00478` | `LNS` / `13` | `FIELD-FILE-STATUS` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00479` | `LNS` / `14` | `FIELD-FILE-STATUS-DESCRIPTION-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00480` | `LNS` / `15` | `FIELD-FILE-STATUS-DESCRIPTION` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
+| `CRS-M1-00481` | `LNL` / `1` | `FIELD-FILE-LENGTH` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00482` | `LNL` / `2` | `FIELD-PROTOCOL-VERSION` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00483` | `LNL` / `3` | `FIELD-NUMBER-OF-FILES` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00484` | `LNL` / `4` | `FIELD-FILE-NAME-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00485` | `LNL` / `5` | `FIELD-FILE-NAME` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
+| `CRS-M1-00486` | `LNL` / `6` | `FIELD-FILE-DESCRIPTION-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00487` | `LNL` / `7` | `FIELD-FILE-DESCRIPTION` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
+| `CRS-M1-00488` | `LNA` / `1` | `FIELD-FILE-LENGTH` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00489` | `LNA` / `2` | `FIELD-PROTOCOL-VERSION` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00490` | `LNA` / `3` | `FIELD-NUMBER-OF-FILES` | `TABLE-DEFINED-WIDTH` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00491` | `LNA` / `4` | `FIELD-FILE-NAME-LENGTH` | `TABLE-DEFINED-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00492` | `LNA` / `5` | `FIELD-FILE-NAME` | `TABLE-DEFINED-VARIABLE-WIDTH` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | — |
 
 ## 结构化 Table 6.4.10-1 约束
 
@@ -3114,309 +3387,306 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 - `COV-M1-00353` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-00354` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-00355` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-M1-00690` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00691` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00692` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00693` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00694` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00695` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00696` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00697` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00698` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00699` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00700` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00701` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00702` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00703` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00704` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00705` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00706` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00707` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00708` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00709` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00710` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00711` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00712` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00713` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00714` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00715` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00716` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00717` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00718` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00719` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00720` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00721` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00722` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00723` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00724` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00725` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00726` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00727` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00728` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00729` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00730` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00731` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00732` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00733` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00734` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00735` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00736` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00737` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00738` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00739` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00740` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00741` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00742` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00743` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00744` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00745` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00746` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00804` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00805` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00806` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00807` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00808` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00809` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00810` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00811` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00812` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00813` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00814` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00815` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00816` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00817` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00818` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00819` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00820` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00821` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00822` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00823` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00824` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00825` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00826` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00827` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00828` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00829` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00830` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00916` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00917` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00918` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00919` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00920` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00921` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00922` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00923` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00924` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00925` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00926` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00927` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00928` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00929` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00930` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00931` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00932` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00933` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00934` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00935` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00936` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00937` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00938` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00939` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00940` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00941` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00942` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00943` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00944` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00945` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00946` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00947` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00948` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00949` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00950` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00951` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00952` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00953` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00954` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00955` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00956` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00957` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00958` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00959` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00960` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00961` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00962` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00963` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00964` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00965` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00966` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00967` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00968` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00969` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00970` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00971` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00972` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00973` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00974` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00975` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00976` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00977` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00978` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00979` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00980` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00981` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00982` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00983` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00984` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00985` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00986` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00987` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00988` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00989` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00990` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00991` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00992` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00993` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00994` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00995` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00996` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00997` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01273` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01274` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01275` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01276` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01277` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01278` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01279` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01280` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01281` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01282` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01283` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01284` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01285` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01286` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01287` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01288` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01289` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01290` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01291` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01292` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01293` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01294` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01295` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01296` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01297` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01298` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01299` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01300` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01301` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01302` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01303` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01304` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01305` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01306` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01307` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01308` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01309` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01310` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01311` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01312` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01313` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01314` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01315` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01316` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01317` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01318` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01319` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01320` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01321` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01322` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01323` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01324` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01325` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01326` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01327` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01328` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01329` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01330` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01331` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01332` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01333` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01334` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01335` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01336` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01337` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01338` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01339` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01340` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01341` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01342` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01343` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01344` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01345` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01346` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01347` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01348` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01349` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01350` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01351` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01352` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01353` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01354` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01355` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01356` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01357` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01358` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01359` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01360` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01361` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01362` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01363` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01364` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01365` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01366` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01367` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01368` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01369` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01370` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01371` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01372` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01373` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01374` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01375` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01376` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01377` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01378` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01379` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01380` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01381` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01382` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01383` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01384` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01385` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01386` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01387` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01388` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01389` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01390` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01391` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01392` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01393` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01394` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01395` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01396` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01397` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01398` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01399` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01400` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01401` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01402` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01403` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01404` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01405` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01406` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01407` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01408` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01409` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00692` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00693` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00694` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00696` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00697` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00698` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00699` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00700` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00701` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00702` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00703` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00704` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00705` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00706` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00707` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00708` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00709` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00710` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00711` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00712` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00713` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00714` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00715` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00716` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00717` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00718` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00719` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00720` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00721` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00722` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00723` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00724` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00725` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00726` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00727` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00728` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00729` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00730` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00731` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00732` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00733` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00734` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00735` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00736` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00737` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00738` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00739` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION
+- `COV-M1-00740` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION
+- `COV-M1-00741` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION
+- `COV-M1-00742` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00743` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION
+- `COV-M1-00744` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-EXAMPLE
+- `COV-M1-00745` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-EXAMPLE
+- `COV-M1-00746` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-EXAMPLE
+- `COV-M1-00804` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00805` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00806` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00807` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00808` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00809` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00810` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00811` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00812` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00813` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00814` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00815` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00816` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00817` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00818` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00819` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00820` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00821` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00822` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00823` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00824` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00825` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00826` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00827` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00828` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00829` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00830` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00916` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00917` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00918` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00919` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00920` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00921` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00922` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00923` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00924` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00925` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00926` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00927` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00928` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00929` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00930` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00931` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00932` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00933` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00934` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00935` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00936` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00937` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00938` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00939` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00940` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00941` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00942` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00943` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00944` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00945` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00946` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00947` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00948` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00949` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00950` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00951` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00952` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00953` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00954` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00955` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00956` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00957` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00958` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00959` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00960` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00961` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00962` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00963` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00964` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00965` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00966` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00967` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00968` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00969` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00970` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00971` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00972` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00973` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00974` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00975` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00976` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00977` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00978` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00979` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00980` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00981` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00982` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00983` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00984` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00985` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00986` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00987` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00988` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00989` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00990` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00991` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00992` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00993` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00994` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00995` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00996` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00997` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01273` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01274` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01275` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01276` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01277` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01278` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01279` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01280` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01281` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01282` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01283` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01284` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01285` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01286` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01287` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01288` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-01289` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01290` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01291` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01292` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01293` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01294` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01295` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01296` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01297` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01298` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01299` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01300` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01301` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01302` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01303` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01304` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01305` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01306` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01307` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01308` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01309` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01310` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01311` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01312` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01313` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01314` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01315` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01316` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01317` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01318` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01319` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01320` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01321` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01322` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01323` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01324` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01325` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01326` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01327` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01328` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01329` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01330` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01331` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01332` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01333` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01334` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01335` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01336` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01337` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01338` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01339` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01340` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01341` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01342` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01343` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01344` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01345` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01346` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01347` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01348` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01349` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01350` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01351` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01352` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01353` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01354` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01355` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01356` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01357` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01358` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01359` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01360` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01361` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01362` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01363` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01364` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01365` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01366` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01367` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01368` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01369` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01370` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01371` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01372` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01373` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01374` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01375` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01376` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01377` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01378` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01379` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01380` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01381` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01382` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01383` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01384` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01385` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01386` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01387` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-01388` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01389` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01390` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01391` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01392` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-01393` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-01394` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01395` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01396` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01397` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01398` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01399` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01400` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01401` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01402` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01403` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01404` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01405` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01406` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01407` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01408` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01409` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
 - `COV-M1-01413` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01414` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01415` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
@@ -3822,19 +4092,19 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 - `COV-M1-01957` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01958` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01959` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-M1-01960` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01961` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01962` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01963` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01964` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01965` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01966` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01967` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01968` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01969` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01970` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01971` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01972` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
+- `COV-M1-01960` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01961` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01962` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01963` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01964` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01965` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01966` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01967` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-01968` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01969` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01970` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-01971` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01972` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
 - `COV-M1-01973` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01974` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01975` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
@@ -4095,65 +4365,65 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 - `COV-M1-02581` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
 - `COV-M1-02582` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
 - `COV-M1-02583` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02681` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02682` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02683` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02684` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02685` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02686` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02687` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02688` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02689` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02690` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02691` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02692` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02693` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02694` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02695` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02696` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02697` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02698` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02699` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02700` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02701` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02702` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02703` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02704` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02705` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02706` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02707` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02708` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02709` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02710` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02711` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02712` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02713` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02714` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02715` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02716` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02717` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02718` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02762` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02763` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02764` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02765` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02766` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02767` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02768` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02769` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02770` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02771` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02772` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02773` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02774` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02775` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02776` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02777` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02778` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02779` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02780` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02781` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02782` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02783` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02784` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02785` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02681` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02682` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02683` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02684` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02685` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02686` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02687` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02688` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02689` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02690` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02691` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02692` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02693` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02694` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02695` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02696` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02697` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02698` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02699` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02700` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02701` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02702` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02703` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02704` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02705` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02706` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02707` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02708` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02709` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02710` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02711` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02712` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02713` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02714` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02715` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02716` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02717` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02718` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02762` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02763` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02764` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02765` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02766` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02767` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02768` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02769` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02770` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02771` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02772` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02773` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02774` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02775` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02776` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02777` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02778` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02779` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02780` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02781` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02782` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02783` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02784` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02785` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
