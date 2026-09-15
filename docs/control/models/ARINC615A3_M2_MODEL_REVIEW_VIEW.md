@@ -13,7 +13,7 @@
 - M1 NET-ISSUE-EDITION snapshot blocksM1Approval=`True` — Historical snapshot on the merged M1 tree. External owner sign-off and merge bound that Head. The boolean does not reopen the merge. CR-2026-009 accepted 664P3-1 as this M2 input edition; 664P7 remains recorded and AFDX stays unselected.
 - Successor delta `CR-2026-012` authorized by `CR-2026-009`; doesNotTransplantFrozenApproval=`True`
 - Predecessor input artifact commit `402e8371b0237aec4691bab0b44e502f4ac1a7c4` tree `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
-- Current input artifact commit `31e161a750e10481e6817e8e70a60172d8b2e69d` tree `bf4a898938f7d1b6a11be6d1c2341498b5bd7066`
+- Current input artifact commit `c83fda060c8216b75402f780c433fc1ac3f16139` tree `4a9057f17c403155be546748d3d71038b728105d`
 
 ## Scope
 
@@ -1715,7 +1715,7 @@
 - M1 NET-ISSUE-EDITION 快照 blocksM1Approval=`True` — 已合并 M1 树上的历史快照。外部所有者签署与合并绑定了该 Head。该布尔值不重开合并。CR-2026-009 接受 664P3-1 作为本 M2 输入版次；664P7 保持已登记且 AFDX 未选。
 - 后继增量 `CR-2026-012` 由 `CR-2026-009` 授权；doesNotTransplantFrozenApproval=`True`
 - 前序输入制品提交 `402e8371b0237aec4691bab0b44e502f4ac1a7c4` 树 `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
-- 当前输入制品提交 `31e161a750e10481e6817e8e70a60172d8b2e69d` 树 `bf4a898938f7d1b6a11be6d1c2341498b5bd7066`
+- 当前输入制品提交 `c83fda060c8216b75402f780c433fc1ac3f16139` 树 `4a9057f17c403155be546748d3d71038b728105d`
 
 ## 范围
 
