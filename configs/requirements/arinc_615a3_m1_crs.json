@@ -87463,7 +87463,7 @@
         "intervalRole": "DEADLINE-FROM-ZERO-TO-SOURCE-CONSTANT",
         "trigger": "FIND-REQUEST-RECEIVED-BY-HOST",
         "response": "FIND-ANSWER-SENT-BY-HOST",
-        "cancellation": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
+        "cancellation": "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS",
         "supersedingTrigger": "NONE",
         "correlationKey": "FIND-REQUEST-INSTANCE",
         "pairingPolicy": "PAIR-FIND-REQUEST-WITH-HOST-ANSWER",
@@ -88637,7 +88637,10 @@
       "rationaleCode": "DOWNLOAD-SHARED",
       "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
       "ambiguityStatus": "NONE-OBSERVED",
-      "dependencyIds": [],
+      "dependencyIds": [
+        "DEP-RFC-1350",
+        "DEP-RFC-2347"
+      ],
       "gapIds": [],
       "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
       "rhoRA": {
@@ -88679,7 +88682,9 @@
       "rationaleCode": "DOWNLOAD-SHARED",
       "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
       "ambiguityStatus": "NONE-OBSERVED",
-      "dependencyIds": [],
+      "dependencyIds": [
+        "DEP-RFC-2347"
+      ],
       "gapIds": [],
       "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
       "rhoRA": {
@@ -88721,7 +88726,9 @@
       "rationaleCode": "DOWNLOAD-SHARED",
       "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
       "ambiguityStatus": "NONE-OBSERVED",
-      "dependencyIds": [],
+      "dependencyIds": [
+        "DEP-RFC-1350"
+      ],
       "gapIds": [],
       "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
       "rhoRA": {
@@ -88807,7 +88814,9 @@
       "rationaleCode": "DOWNLOAD-MEDIA-DEFINED",
       "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
       "ambiguityStatus": "NONE-OBSERVED",
-      "dependencyIds": [],
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
       "gapIds": [],
       "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
       "rhoRA": {
@@ -88850,7 +88859,9 @@
       "rationaleCode": "DOWNLOAD-MEDIA-DEFINED",
       "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
       "ambiguityStatus": "NONE-OBSERVED",
-      "dependencyIds": [],
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
       "gapIds": [],
       "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
       "rhoRA": {
@@ -93433,7 +93444,7 @@
         "intervalRole": "EXACT-SOURCE-CONSTANT",
         "trigger": "FIND-REQUEST-SENT",
         "response": "FIND-ANSWER-WINDOW-LIFETIME-ELAPSED",
-        "cancellation": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
+        "cancellation": "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS",
         "supersedingTrigger": "NONE",
         "correlationKey": "FIND-REQUEST-INSTANCE",
         "pairingPolicy": "PAIR-FIND-REQUEST-WITH-REGISTRATION-WINDOW",
@@ -93510,7 +93521,7 @@
         "intervalRole": "EXACT-SOURCE-CONSTANT",
         "trigger": "FIND-REQUEST-SENT",
         "response": "FIND-ANSWER-REGISTRATION-CLOSED",
-        "cancellation": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
+        "cancellation": "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS",
         "supersedingTrigger": "NONE",
         "correlationKey": "FIND-REQUEST-INSTANCE",
         "pairingPolicy": "PAIR-FIND-REQUEST-WITH-REGISTRATION-CLOSE",
@@ -93856,7 +93867,7 @@
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "7f715896dee5afb97a4a33d8db503dda9b03c3dcb9862207e367fe0c67f43c58",
+    "semanticAssertionFingerprint": "295171c638090de74ee261e32f43c2c79a0b210c5a0c07064a14edd5d48b6130",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
@@ -93867,7 +93878,7 @@
     "dependencyCount": 14,
     "gapCount": 1,
     "coverageFingerprint": "806a197c7ec644f55d05dd8a6a31f80390ece5ccfe2e7d55a6816da6e2c04dfd",
-    "requirementsFingerprint": "d9e4f22496734c5635f518b881f6c7ce9d8bd1a4fdea1f296b225f4422eacd3b"
+    "requirementsFingerprint": "bb33461582d2ff7f336561420660454f6ae1bf782369c8917624abeecc49fe54"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

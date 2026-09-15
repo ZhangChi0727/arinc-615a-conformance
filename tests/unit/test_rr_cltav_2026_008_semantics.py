@@ -99,6 +99,7 @@ def test_close_timeline_uses_request_origin_not_expiry_delay() -> None:
     assert close["trigger"] == "FIND-REQUEST-SENT"
     assert close["trigger"] == window["trigger"]
     assert close["clockStart"] == "CORRELATED-TRIGGER-TIMESTAMP"
+    assert close["cancellation"] == window["cancellation"] == host["cancellation"] == "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS"
 
     on_time = {
         window["trigger"]: 0,

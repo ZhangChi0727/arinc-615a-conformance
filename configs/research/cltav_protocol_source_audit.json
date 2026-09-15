@@ -12,12 +12,12 @@
     "coverageCount": 2796,
     "requirementCount": 524,
     "coverageFingerprint": "806a197c7ec644f55d05dd8a6a31f80390ece5ccfe2e7d55a6816da6e2c04dfd",
-    "requirementsFingerprint": "d9e4f22496734c5635f518b881f6c7ce9d8bd1a4fdea1f296b225f4422eacd3b",
+    "requirementsFingerprint": "bb33461582d2ff7f336561420660454f6ae1bf782369c8917624abeecc49fe54",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "Limited R8-F01 APPROVE Head 13d4be7 is unchanged. Package A records bounded 665/664/RFC applicability. FIND/DOWNLOAD remain research-expanded, not instance-bound. This is not independent RG approval and does not authorize merge."
+    "note": "Package B increment on the limited APPROVE lineage: FIND abort does not waive the 2 s / 3 s clocks; DOWNLOAD TFTP/665 supporting edges are recorded without closing 645 or AFDX. This is not independent RG approval and does not authorize merge."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -9875,58 +9875,7 @@
           "ARINC-664-4"
         ],
         "status": "NOT-YET-BOUND",
-        "note": "Empty dependencyIds does not mean no dependency."
-      },
-      {
-        "requirementId": "CRS-M1-00418",
-        "pendingSourceIds": [
-          "RFC-1350",
-          "ARINC-665-5"
-        ],
-        "status": "NOT-YET-BOUND"
-      },
-      {
-        "requirementId": "CRS-M1-00419",
-        "pendingSourceIds": [
-          "RFC-1350",
-          "ARINC-665-5"
-        ],
-        "status": "NOT-YET-BOUND"
-      },
-      {
-        "requirementId": "CRS-M1-00420",
-        "pendingSourceIds": [
-          "RFC-1350"
-        ],
-        "status": "NOT-YET-BOUND"
-      },
-      {
-        "requirementId": "CRS-M1-00421",
-        "pendingSourceIds": [
-          "RFC-1350"
-        ],
-        "status": "NOT-YET-BOUND"
-      },
-      {
-        "requirementId": "CRS-M1-00422",
-        "pendingSourceIds": [
-          "RFC-1350"
-        ],
-        "status": "NOT-YET-BOUND"
-      },
-      {
-        "requirementId": "CRS-M1-00423",
-        "pendingSourceIds": [
-          "RFC-1350"
-        ],
-        "status": "NOT-YET-BOUND"
-      },
-      {
-        "requirementId": "CRS-M1-00424",
-        "pendingSourceIds": [
-          "RFC-1350"
-        ],
-        "status": "NOT-YET-BOUND"
+        "note": "664 Part 4 is not in this PR source set; the integrator-identified alternative remains available."
       }
     ]
   },
@@ -9937,7 +9886,7 @@
     "notIndependentApproval": true,
     "645BindingThisPr": false,
     "findAbortAdjudication": {
-      "status": "ADJUDICATED-UNSUPPORTED-CANCEL",
+      "status": "APPLIED-IN-CRS",
       "code": "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS",
       "appliesToRequirementIds": [
         "CRS-M1-00391",
@@ -9945,7 +9894,8 @@
         "CRS-M1-00521"
       ],
       "summaryEn": "No 615A unit states that aborting FIND waives the 2-second host answer deadline or the 3-second registration window. Abort is therefore an unsupported cancel of those clocks, not an UNRESOLVED protocol exemption. Package B must replace PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT with this named non-waiver.",
-      "summaryZh": "没有 615A 单元规定中止 FIND 可豁免 2 秒主机应答期限或 3 秒登记窗口。因此中止不是这些时钟的支持取消条件，也不是未决的协议豁免。执行包 B 须将 PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT 替换为该具名不豁免。"
+      "summaryZh": "没有 615A 单元规定中止 FIND 可豁免 2 秒主机应答期限或 3 秒登记窗口。因此中止不是这些时钟的支持取消条件，也不是未决的协议豁免。执行包 B 须将 PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT 替换为该具名不豁免。",
+      "crsCancellation": "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS"
     },
     "arinc664Part4": {
       "status": "NOT-IN-THIS-PR-SOURCE-SET",

@@ -10101,7 +10101,7 @@
         "intervalRole": "DEADLINE-FROM-ZERO-TO-SOURCE-CONSTANT",
         "trigger": "FIND-REQUEST-RECEIVED-BY-HOST",
         "response": "FIND-ANSWER-SENT-BY-HOST",
-        "cancellation": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
+        "cancellation": "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS",
         "supersedingTrigger": "NONE",
         "correlationKey": "FIND-REQUEST-INSTANCE",
         "pairingPolicy": "PAIR-FIND-REQUEST-WITH-HOST-ANSWER",
@@ -10715,7 +10715,10 @@
       "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器可以规定 TFTP options that supply a data-integrity check for the transfer。",
       "expectedSourceModality": "MAY",
       "expectedConformanceEffect": "OPTIONAL",
-      "expectedDependencyIds": []
+      "expectedDependencyIds": [
+        "DEP-RFC-1350",
+        "DEP-RFC-2347"
+      ]
     },
     {
       "requirementId": "CRS-M1-00419",
@@ -10736,7 +10739,9 @@
       "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件可以实现 that TFTP integrity option。",
       "expectedSourceModality": "MAY",
       "expectedConformanceEffect": "OPTIONAL",
-      "expectedDependencyIds": []
+      "expectedDependencyIds": [
+        "DEP-RFC-2347"
+      ]
     },
     {
       "requirementId": "CRS-M1-00420",
@@ -10757,7 +10762,9 @@
       "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须if it supports the offered check value, 校验 the data transfer。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
-      "expectedDependencyIds": []
+      "expectedDependencyIds": [
+        "DEP-RFC-1350"
+      ]
     },
     {
       "requirementId": "CRS-M1-00421",
@@ -10801,7 +10808,9 @@
       "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器可以使用 an LNR already stored in an ARINC 665 part on the media。",
       "expectedSourceModality": "MAY",
       "expectedConformanceEffect": "OPTIONAL",
-      "expectedDependencyIds": []
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ]
     },
     {
       "requirementId": "CRS-M1-00423",
@@ -10823,7 +10832,9 @@
       "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须检查 each part header and 提供 headers whose download bit is set。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
-      "expectedDependencyIds": []
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ]
     },
     {
       "requirementId": "CRS-M1-00424",
@@ -13383,7 +13394,7 @@
         "intervalRole": "EXACT-SOURCE-CONSTANT",
         "trigger": "FIND-REQUEST-SENT",
         "response": "FIND-ANSWER-WINDOW-LIFETIME-ELAPSED",
-        "cancellation": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
+        "cancellation": "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS",
         "supersedingTrigger": "NONE",
         "correlationKey": "FIND-REQUEST-INSTANCE",
         "pairingPolicy": "PAIR-FIND-REQUEST-WITH-REGISTRATION-WINDOW",
@@ -13439,7 +13450,7 @@
         "intervalRole": "EXACT-SOURCE-CONSTANT",
         "trigger": "FIND-REQUEST-SENT",
         "response": "FIND-ANSWER-REGISTRATION-CLOSED",
-        "cancellation": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
+        "cancellation": "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS",
         "supersedingTrigger": "NONE",
         "correlationKey": "FIND-REQUEST-INSTANCE",
         "pairingPolicy": "PAIR-FIND-REQUEST-WITH-REGISTRATION-CLOSE",

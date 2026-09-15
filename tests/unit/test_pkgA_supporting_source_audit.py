@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 AUDIT = ROOT / "configs/research/cltav_protocol_source_audit.json"
-SPANS = ROOT / "configs/requirements/m1_source_section_spans.json""
+SPANS = ROOT / "configs/requirements/m1_source_section_spans.json"
 
 REQUIRED_SOURCES = (
     "ARINC-665-5",
@@ -92,8 +92,9 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
     assert blocked["localFileAcquired"] is True
     assert blocked["boundThisPr"] is False
     abort = data["supportingSourceApplicabilityAudit"]["findAbortAdjudication"]
-    assert abort["status"] == "ADJUDICATED-UNSUPPORTED-CANCEL"
+    assert abort["status"] == "APPLIED-IN-CRS"
     assert abort["code"] == "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS"
+    assert abort["crsCancellation"] == "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS"
     part4 = data["supportingSourceApplicabilityAudit"]["arinc664Part4"]
     assert part4["status"] == "NOT-IN-THIS-PR-SOURCE-SET"
     assert part4["affectedRequirementId"] == "CRS-M1-00519"
