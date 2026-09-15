@@ -1448,6 +1448,14 @@ def package_errors(
         errors.append("scope cannot activate AFDX or P3 profiled deviations")
     if data["scope"].get("networkMode") != "COMPLIANT":
         errors.append("network mode must remain COMPLIANT")
+    if list(data["scope"].get("services") or []) != ["UPLOAD", "INFORMATION"]:
+        errors.append("bound M2 services cannot activate DOWNLOAD, FIND, or AFDX")
+    if list(data["scope"].get("deferredServices") or []) != ["DOWNLOAD", "FIND"]:
+        errors.append("bound M2 deferred services must remain DOWNLOAD and FIND")
+    if any("FIND" in (row.get("id") or "") or "DOWNLOAD" in (row.get("id") or "") for row in model["transitions"]):
+        errors.append("bound M2 transitions cannot execute FIND or DOWNLOAD")
+    if any("CLK_FIND" in (row.get("resets") or []) for row in model["transitions"]):
+        errors.append("bound M2 transitions cannot reset the observational FIND clock")
 
     variables = {row["id"]: row for row in model["variables"]}
     for name, row in variables.items():

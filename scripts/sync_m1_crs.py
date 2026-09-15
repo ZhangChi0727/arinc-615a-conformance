@@ -276,6 +276,98 @@ def network_reference_errors(data: dict[str, Any], register: dict[str, Any],
     return errors
 
 
+REGISTERED_FIND_ANSWER_HASH = "1e8680ad628738183ea6f984c6d350b07d1e5e6cc3af5318789ad595e0d213eb"
+FIND_ANSWER_WINDOW_HASH = "f178271163dfdce4bbc2ba215f784361471c95524c09bb734051d6e98546142d"
+FIND_INFORMATION_LOCATION_HASH = "e98f49fbfbdf4b9aec7a04abec3db7abe6430722509e23c0ddc1d74b04c3a8b9"
+ASCII_PROTOCOL_VERSION_IDS = ("CRS-M1-00460", "CRS-M1-00467", "CRS-M1-00482", "CRS-M1-00489")
+
+
+def reviewed_expanded_source_errors(data: dict[str, Any]) -> list[str]:
+    """Hardcoded RR-CLTAV-2026-006 bindings. Refreshing fingerprints cannot repair these."""
+    errors: list[str] = []
+    req = {row.get("id"): row for row in data.get("requirements") or []}
+    cov = {row.get("id"): row for row in data.get("coverageLedger") or []}
+
+    if "CRS-M1-00425" in req:
+        errors.append("CRS-M1-00425 write-failure risk cannot remain a permitted CRS action")
+    row_735 = cov.get("COV-M1-00735") or {}
+    if row_735.get("requirementIds") or row_735.get("conformanceEffect") != "INFORMATIVE":
+        errors.append("COV-M1-00735 write-failure risk must stay informative coverage")
+
+    row_390 = req.get("CRS-M1-00390") or {}
+    if row_390.get("sourceTextHash") != REGISTERED_FIND_ANSWER_HASH:
+        errors.append("CRS-M1-00390 is not bound to the register-valid-answers source hash")
+    if (row_390.get("semantic") or {}).get("action") != "REGISTER-VALID-FIND-ANSWERS-AS-LOAD-TARGETS":
+        errors.append("CRS-M1-00390 does not carry the register-valid-answers obligation")
+    if (row_390.get("rhoRA") or {}).get("sourceCoverageId") != "COV-M1-01606":
+        errors.append("CRS-M1-00390 is not owned by COV-M1-01606")
+
+    row_520 = req.get("CRS-M1-00520") or {}
+    timing_520 = row_520.get("timing") or {}
+    if row_520.get("sourceTextHash") != FIND_ANSWER_WINDOW_HASH:
+        errors.append("CRS-M1-00520 is not bound to the three-second window source hash")
+    if (row_520.get("semantic") or {}).get("action") != "KEEP-THREE-SECOND-FIND-ANSWER-WINDOW":
+        errors.append("CRS-M1-00520 does not carry the FIND answer window obligation")
+    if timing_520.get("timingFamily") != "FIND-ANSWER-REGISTRATION-WINDOW":
+        errors.append("CRS-M1-00520 timing family is not the FIND answer registration window")
+    if timing_520.get("lowerBound") != 0 or timing_520.get("upperBound") != 3:
+        errors.append("CRS-M1-00520 window bounds are not the 0-to-3-second upper bound")
+
+    row_391 = req.get("CRS-M1-00391") or {}
+    timing_391 = row_391.get("timing") or {}
+    if timing_391.get("timingFamily") != "FIND-HOST-ANSWER-DEADLINE":
+        errors.append("CRS-M1-00391 timing family is not the FIND host answer deadline")
+    if timing_391.get("lowerBound") != 0 or timing_391.get("upperBound") != 2:
+        errors.append("CRS-M1-00391 host deadline bounds are not the 0-to-2-second upper bound")
+    if timing_520.get("upperBound") == timing_391.get("upperBound"):
+        errors.append("FIND answer window and host deadline cannot share the same upper bound")
+
+    row_392 = req.get("CRS-M1-00392") or {}
+    objects_392 = set((row_392.get("semantic") or {}).get("objects") or [])
+    if row_392.get("sourceTextHash") != FIND_INFORMATION_LOCATION_HASH:
+        errors.append("CRS-M1-00392 is not bound to the message-structure-or-FIND-data source hash")
+    if objects_392 != {"MESSAGE-STRUCTURE", "FIND-PACKET-DATA"}:
+        errors.append("CRS-M1-00392 lost the message-structure or FIND-packet-data alternative")
+    if row_392.get("conformanceEffect") != "CONDITIONAL-REQUIRED":
+        errors.append("CRS-M1-00392 location MAY cannot become an unconditioned permission")
+
+    for cov_id, rid in (
+        ("COV-M1-00739", "CRS-M1-00522"),
+        ("COV-M1-00740", "CRS-M1-00523"),
+        ("COV-M1-01607", "CRS-M1-00521"),
+        ("COV-M1-01618", "CRS-M1-00524"),
+    ):
+        if rid not in (cov.get(cov_id) or {}).get("requirementIds", []):
+            errors.append(f"{cov_id} definitional constraint lost its CRS owner {rid}")
+
+    for rid in ASCII_PROTOCOL_VERSION_IDS:
+        fc = (req.get(rid) or {}).get("fieldConstraint") or {}
+        if fc.get("encodingRule") != "FIXED-WIDTH-ASCII" or fc.get("widthBitsExpression") != "16":
+            errors.append(f"{rid} Protocol Version is not two ASCII characters")
+    ratio = (req.get("CRS-M1-00474") or {}).get("fieldConstraint") or {}
+    if ratio.get("encodingRule") != "FIXED-WIDTH-ASCII" or ratio.get("widthBitsExpression") != "24":
+        errors.append("CRS-M1-00474 Download List Ratio is not three ASCII characters")
+    for rid in ("CRS-M1-00464", "CRS-M1-00465"):
+        if ((req.get(rid) or {}).get("fieldConstraint") or {}).get("repeatScope") != "ONCE":
+            errors.append(f"{rid} LNR user-defined tail cannot repeat per file record")
+    estimated = (req.get("CRS-M1-00473") or {}).get("fieldConstraint") or {}
+    special = {(item.get("code"), item.get("meaningCode")) for item in estimated.get("specialValues") or []}
+    if ("0xFFFF", "ESTIMATED-TIME-NOT-GIVEN") not in special:
+        errors.append("CRS-M1-00473 Estimated Time lost the 0xFFFF not-given sentinel")
+
+    alt = set(((req.get("CRS-M1-00519") or {}).get("semantic") or {}).get("objects") or [])
+    if not {"ARINC-664-4-ADDRESS-RULES", "INTEGRATOR-IDENTIFIED-ADDRESS-REQUIREMENTS"} <= alt:
+        errors.append("CRS-M1-00519 lost the 664P4 or integrator-identified address alternative")
+
+    for row in data.get("requirements") or []:
+        if str(row.get("id") or "") < "CRS-M1-00385":
+            continue
+        zh = row.get("generatedSemanticProjectionZh") or ""
+        if "执行“" in zh or "必须prompt" in zh or zh.startswith("【中文】"):
+            errors.append(f"{row.get('id')} Chinese view dumps an English action")
+    return errors
+
+
 def package_errors(data: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     required = ("sourceBindings", "coverageLedger", "requirements", "dependencies", "gaps", "reviewControl", "inventorySummary", "activation")
@@ -294,6 +386,7 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         return [f"M1 controlled review input is unavailable: {exc}"]
     errors.extend(page_account_errors(section_manifest, source_register))
     errors.extend(network_reference_errors(data, source_register, section_manifest, semantic_assertions))
+    errors.extend(reviewed_expanded_source_errors(data))
     # STABLE_INVARIANT: compare independent acquisition identity, not a self seal.
     try:
         acquisition_path = (ROOT / source_register["acquisitionRecordPath"]).resolve()
