@@ -26,7 +26,7 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "a2a7e8b4c463783677bc5c108dee1d856a5f675b",
+        "gitBlobOid": "73f695f834480f6faf4ae0c7d8777a2938d114fd",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -36,12 +36,12 @@
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "412b2cbe7b842c9ed3518189751743d4012c7bde",
+        "gitBlobOid": "ff55568fb18fd237c8593467795885ed7db76a59",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "44b666b8a32ca32892d3ae64a5aed55bbb23dc18",
+        "gitBlobOid": "7cbe1043a1f0dd555081ac0992eac97e1a41eeef",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "07c39ae5880ca2769c079e387496b4d0b323fff5",
+        "gitBlobOid": "b78ae6a9bafab5577c430340fe253d6b839ffc9b",
         "role": "SUCCESSOR-M1-DELTA"
       }
     ],
@@ -148,8 +148,8 @@
           "role": "M1-IMMUTABLE-INPUT"
         }
       ],
-      "currentInputArtifactCommit": "5f4b4d4157f662ce8eafbbd11e989ce75b8feb4b",
-      "currentInputArtifactTree": "4cc2268821302a28da4037ecbf2639b11a5f775a"
+      "currentInputArtifactCommit": "31e161a750e10481e6817e8e70a60172d8b2e69d",
+      "currentInputArtifactTree": "bf4a898938f7d1b6a11be6d1c2341498b5bd7066"
     }
   },
   "sequenceEndpointBindings": [
@@ -8702,12 +8702,12 @@
     {
       "id": "TIM-CRS-M1-00521",
       "requirementId": "CRS-M1-00521",
-      "trigger": "FIND-ANSWER-WINDOW-LIFETIME-ELAPSED",
+      "trigger": "FIND-REQUEST-SENT",
       "response": "FIND-ANSWER-REGISTRATION-CLOSED",
       "cancel": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
       "supersede": "NONE",
       "correlationKey": "FIND-REQUEST-INSTANCE",
-      "pairingPolicy": "PAIR-WINDOW-EXPIRY-WITH-REGISTRATION-CLOSE",
+      "pairingPolicy": "PAIR-FIND-REQUEST-WITH-REGISTRATION-CLOSE",
       "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
       "clockId": "CLK_FIND",
       "resets": [],
@@ -22663,8 +22663,8 @@
     "fieldConstraintCount": 86,
     "dispositionsFingerprint": "ccf56807d102004dde361db35906ec892624cafb68c0adb823a9954fe2f906db",
     "modelFingerprint": "dbe9dd733581724aa311b20b9fd0742f157e7d38d2a7518166fa365bef44a3cf",
-    "timingFingerprint": "1a5830659bbc1b7c506d8160d1225e84247edac6ad75499243baea8045fd454e",
-    "inputFingerprint": "f1c7336e64f27addefbca89dc600bc4ae7aea8f1977e0de263fb55d34e71e77d",
+    "timingFingerprint": "fe437f9a904aa86018d58256f034fe59421dfe6b129e6e5ecaa28e4eedb312e8",
+    "inputFingerprint": "2cc35bddab9560fc6a857d8d2270f5af52bd005226ed97a9042db3806da168eb",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
