@@ -154,7 +154,22 @@ non-default comparison model.
 
 ## 登记、统计与发布
 
-每项实验一个目录；确认实验前登记。探索性 pilot 与预注册确认实验分开。结果进入论文或发布主张前，登记／偏差、溯源、措辞与否定／不确定结果均须可见。
+每项实验一个目录：
+
+```text
+artifacts/experiments/EXP-YYYY-NNN/
+  registration.yaml
+  environment.json
+  cases.json
+  raw/
+  derived/
+  scripts/
+  results.md
+  deviations.md
+  review/
+```
+
+确认实验前登记。探索性 pilot 与预注册确认实验分开。结果进入论文或发布主张前，登记／偏差、溯源、措辞与否定／不确定结果均须可见。
 
 ## 历史 v4.2 登记（非活动设计）
 
