@@ -47,7 +47,8 @@ FAMILY_CONSTRAINT_KIND = {
     "STATUS-EXCEPTION-SILENCE-DEADLINE": "DEADLINE-UPPER-BOUND",
     "STATUS-BEFORE-EXCEPTION-DELAY-OR-ABORT": "DEADLINE-UPPER-BOUND",
     "TFTP-PACKET-ANSWER-DEADLINE": "DEADLINE-UPPER-BOUND",
-    "FIND-ANSWER-REGISTRATION-WINDOW": "DURATION-UPPER-BOUND",
+    "FIND-ANSWER-REGISTRATION-WINDOW": "CONSTANT-DEFINITION",
+    "FIND-REGISTRATION-CLOSE-AT-EXPIRY": "CONSTANT-DEFINITION",
     "FIND-HOST-ANSWER-DEADLINE": "DEADLINE-UPPER-BOUND",
     "TFTP-PACKET-TRANSMISSION-DURATION-BOUND": "DURATION-UPPER-BOUND",
     "TFTP-SUBSCRIBER-PROCESSING-DURATION-BOUND": "DURATION-UPPER-BOUND",
@@ -57,6 +58,7 @@ FAMILY_CONSTRAINT_KIND = {
 FIELD_AXES = (
     "protocolFile", "fieldId", "ordinal", "widthBitsExpression",
     "encodingRule", "terminationRule", "presenceCondition", "repeatScope",
+    "useCondition", "inactiveRequiredValue",
 )
 STATUS_AXES = (
     "kind", "code", "meaningCode", "displayMode", "targetTextRule",
@@ -861,7 +863,10 @@ def timing_kind_errors(row: dict[str, Any], timing: dict[str, Any]) -> list[str]
     errors: list[str] = []
     family = timing.get("timingFamily")
     expected_kind = FAMILY_CONSTRAINT_KIND.get(family)
-    if timing.get("provenanceKind") == "FIXED-SOURCE-CONSTANT":
+    if (
+        timing.get("provenanceKind") == "FIXED-SOURCE-CONSTANT"
+        and timing.get("lowerBound") == timing.get("upperBound")
+    ):
         expected_kind = "CONSTANT-DEFINITION"
     if row.get("staticCheck") == "EQUATION-STRUCTURAL":
         expected_kind = "SOURCE-EQUATION"
@@ -882,6 +887,11 @@ def timing_kind_errors(row: dict[str, Any], timing: dict[str, Any]) -> list[str]
     elif kind in {"DEADLINE-UPPER-BOUND", "DURATION-UPPER-BOUND", "PROHIBITION-WINDOW-UPPER-BOUND"}:
         if isinstance(expr, dict) and expr.get("kind") == "COMPARE" and expr.get("op") not in {"LE", "LT"}:
             errors.append(f"timing {row.get('id')} in-window constraint is not an upper bound")
+        if timing.get("intervalRole") == "EXACT-SOURCE-CONSTANT":
+            errors.append(f"timing {row.get('id')} exact source constant cannot be an early-satisfying upper bound")
+    elif kind == "CONSTANT-DEFINITION":
+        if isinstance(expr, dict) and expr.get("kind") == "COMPARE" and expr.get("op") != "EQ":
+            errors.append(f"timing {row.get('id')} exact-lifetime or close-at-expiry constraint is not an equality")
     elif kind == "SOURCE-EQUATION" or row.get("staticCheck") == "EQUATION-STRUCTURAL":
         source = timing.get("sourceRelation") or row.get("sourceRelation") or ""
         errors.extend(source_equation_structure_errors(row, source, expr))

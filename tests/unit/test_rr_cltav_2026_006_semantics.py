@@ -111,29 +111,30 @@ def test_download_field_encoding_repeat_and_sentinel_mutations_fail() -> None:
     data = m1_package()
     req(data, "CRS-M1-00460")["fieldConstraint"]["encodingRule"] = "UNSIGNED-INT-BIG-ENDIAN"
     refresh_m1(data)
-    assert any("Protocol Version is not two ASCII characters" in item for item in m1_errors(data))
+    assert any("RC-PROTOCOL-VERSION-ASCII" in item and "encodingRule" in item for item in m1_errors(data))
 
     data = m1_package()
     req(data, "CRS-M1-00474")["fieldConstraint"]["encodingRule"] = "UNSIGNED-INT-BIG-ENDIAN"
     refresh_m1(data)
-    assert any("Download List Ratio is not three ASCII characters" in item for item in m1_errors(data))
+    assert any("RC-DOWNLOAD-LIST-RATIO-ASCII" in item and "encodingRule" in item for item in m1_errors(data))
 
     data = m1_package()
     req(data, "CRS-M1-00464")["fieldConstraint"]["repeatScope"] = "PER-FILE-RECORD"
     req(data, "CRS-M1-00465")["fieldConstraint"]["repeatScope"] = "PER-FILE-RECORD"
     refresh_m1(data)
-    assert any("cannot repeat per file record" in item for item in m1_errors(data))
+    assert any("RC-LNR-TAIL-ONCE" in item and "repeatScope" in item for item in m1_errors(data))
 
     data = m1_package()
     req(data, "CRS-M1-00473")["fieldConstraint"]["specialValues"] = []
     refresh_m1(data)
-    assert any("0xFFFF not-given sentinel" in item for item in m1_errors(data))
+    assert any("RC-LNS-ESTIMATED-TIME-PRESENCE-USE" in item and "specialValues" in item for item in m1_errors(data))
 
 
 def test_deleting_root_index_or_header_ownership_fails() -> None:
     for cov_id, rid in (
         ("COV-M1-00739", "CRS-M1-00522"),
         ("COV-M1-00740", "CRS-M1-00523"),
+        ("COV-M1-00741", "CRS-M1-00525"),
         ("COV-M1-01618", "CRS-M1-00524"),
     ):
         data = m1_package()
@@ -173,21 +174,21 @@ def test_missing_or_swapped_find_timing_fails() -> None:
     req(data, "CRS-M1-00520").pop("timing")
     refresh_m1(data)
     found = m1_errors(data)
-    assert any("FIND answer registration window" in item or "window bounds" in item for item in found)
+    assert any("RC-FIND-WINDOW" in item for item in found)
 
     data = m1_package()
-    req(data, "CRS-M1-00520")["timing"]["upperBound"] = 2
-    req(data, "CRS-M1-00391")["timing"]["upperBound"] = 3
+    req(data, "CRS-M1-00520")["timing"]["lowerBound"] = 0
+    req(data, "CRS-M1-00520")["timing"]["upperBound"] = 3
     refresh_m1(data)
     found = m1_errors(data)
-    assert any("0-to-3-second" in item or "0-to-2-second" in item or "same upper bound" in item for item in found)
+    assert any("early-close interval" in item or "RC-FIND-WINDOW-LIFETIME" in item for item in found)
 
     data = m1_package()
     req(data, "CRS-M1-00520")["timing"]["timingFamily"] = "FIND-HOST-ANSWER-DEADLINE"
     req(data, "CRS-M1-00391")["timing"]["timingFamily"] = "FIND-ANSWER-REGISTRATION-WINDOW"
     refresh_m1(data)
     found = m1_errors(data)
-    assert any("registration window" in item or "host answer deadline" in item for item in found)
+    assert any("RC-FIND-WINDOW-LIFETIME" in item or "RC-FIND-HOST-DEADLINE" in item for item in found)
 
 
 def test_chinese_english_action_dump_fails() -> None:
