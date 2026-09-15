@@ -10048,16 +10048,17 @@
       "expectedSemantic": {
         "actor": "DATA-LOADER",
         "condition": "WHEN-FIND-IMPLEMENTED",
-        "action": "KEEP-THREE-SECOND-FIND-ANSWER-WINDOW",
+        "action": "REGISTER-VALID-FIND-ANSWERS-AS-LOAD-TARGETS",
         "objects": [
-          "FIND-ANSWER-WINDOW-3-S"
+          "VALID-FIND-ANSWERS",
+          "LOAD-TARGET-REGISTRATION"
         ],
-        "observableEffect": "FIND-LOADER-WINDOW-OBSERVABLE",
+        "observableEffect": "VALID-FIND-ANSWER-REGISTRATION-OBSERVABLE",
         "operation": "FIND",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "After sending a FIND request, the data loader shall keep a three-second window for FIND answers.",
-      "expectedGeneratedSemanticProjectionZh": "发出 FIND 请求后，数据加载器必须为 FIND 应答保持三秒窗口。",
+      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, the data loader shall register all valid FIND answers as possible load targets.",
+      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须把所有有效 FIND 应答登记为可能的加载目标。",
       "expectedSourceModality": "FACT",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": []
@@ -10069,17 +10070,17 @@
       "expectedSemantic": {
         "actor": "FIND-HOST",
         "condition": "WHEN-FIND-IMPLEMENTED",
-        "action": "ANSWER-FIND-REQUEST-WITHIN-TWO-SECONDS",
+        "action": "ANSWER-FIND-REQUEST-WITHIN-TWO-SECOND-UPPER-BOUND",
         "objects": [
           "FIND-ANSWER",
-          "FIND-HOST-TIMEOUT-2-S"
+          "FIND-HOST-TIMEOUT-UPPER-BOUND-2-S"
         ],
-        "observableEffect": "FIND-HOST-TIMEOUT-OBSERVABLE",
+        "observableEffect": "FIND-HOST-ANSWER-WITHIN-TWO-SECOND-UPPER-BOUND-OBSERVABLE",
         "operation": "FIND",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "A FIND host shall send its FIND answer within a two-second timeout of the request.",
-      "expectedGeneratedSemanticProjectionZh": "FIND 主机必须在收到请求后的两秒超时内发出 FIND 应答。",
+      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, a FIND host shall send its FIND answer within a two-second upper bound of the request. Missing that bound risks omission from registration; that risk is not a permission to omit the answer.",
+      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，FIND 主机必须在请求后的两秒上界内发出 FIND 应答。超过该上界有不被登记的风险；该风险不是可以不应答的许可。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": []
@@ -10089,20 +10090,21 @@
       "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-006-E98F49FBFBDF",
       "sourceTextHash": "e98f49fbfbdf4b9aec7a04abec3db7abe6430722509e23c0ddc1d74b04c3a8b9",
       "expectedSemantic": {
-        "actor": "FIND-HOST",
+        "actor": "FIND-INITIATOR",
         "condition": "WHEN-FIND-IMPLEMENTED",
-        "action": "ACCEPT-LATE-OR-MISSING-ANSWER-MAY-BE-UNREGISTERED",
+        "action": "TAKE-NEEDED-INFORMATION-FROM-MESSAGE-STRUCTURE-OR-FIND-PACKET-DATA",
         "objects": [
-          "FIND-TARGET-REGISTRATION"
+          "MESSAGE-STRUCTURE",
+          "FIND-PACKET-DATA"
         ],
-        "observableEffect": "FIND-LATE-ANSWER-RISK-OBSERVABLE",
+        "observableEffect": "FIND-INFORMATION-LOCATION-ALTERNATIVE-OBSERVABLE",
         "operation": "FIND",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "A FIND host may be omitted from registration if its answer is late or missing.",
-      "expectedGeneratedSemanticProjectionZh": "若 FIND 应答迟到或缺失，FIND 主机可以不被登记。",
+      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, the initiator shall take needed information from the message structure or from FIND packet data. This records the alternative locations; it does not activate AFDX and does not permit omitting needed information.",
+      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，发起方必须从报文结构或 FIND 分组数据中取得所需信息。这记录两种承载位置，不激活 AFDX，也不允许省略所需信息。",
       "expectedSourceModality": "MAY",
-      "expectedConformanceEffect": "OPTIONAL",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
     },
     {
@@ -10811,27 +10813,6 @@
       "expectedDependencyIds": []
     },
     {
-      "requirementId": "CRS-M1-00425",
-      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-001-EDC984053CA0",
-      "sourceTextHash": "edc984053ca0bbf606ac43a7ab2c70544e9d387c00abce247c1df766fcf433f6",
-      "expectedSemantic": {
-        "actor": "DATA-LOADER",
-        "condition": "WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION",
-        "action": "UNABLE-WRITE-WHEN-REMOVABLE-MEDIA-BOTH-LNR-SOURCE-DOWNLOAD-DESTINATION",
-        "objects": [
-          "REMOVABLE-MEDIA"
-        ],
-        "observableEffect": "UNABLE-WRITE-WHEN-REMOVABLE-MEDIA-BOTH-LNR-SOURCE-DOWNLOAD-D-OBSERVABLE",
-        "operation": "DOWNLOAD",
-        "polarity": "AFFIRMATIVE"
-      },
-      "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader may be unable to write when removable media is both LNR source and download destination.",
-      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器可以执行“be unable to write when removable media is both LNR source and download destination”。",
-      "expectedSourceModality": "MAY",
-      "expectedConformanceEffect": "OPTIONAL",
-      "expectedDependencyIds": []
-    },
-    {
       "requirementId": "CRS-M1-00426",
       "sourceUnitId": "SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-002-1036539E638B",
       "sourceTextHash": "1036539e638b8b7c0a3bf8673c58b07f60cd7a4d99789acc93aea9c126550f82",
@@ -10889,7 +10870,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader shall create a new DNLD_DATA_<THW_ID_POS>_<number> directory for each download.",
-      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须执行“create a new DNLD_DATA_<THW_ID_POS>_<number> directory for each download”。",
+      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须为每次下载新建 DNLD_DATA_<THW_ID_POS>_<number> 目录。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -13231,6 +13212,116 @@
       "expectedGeneratedSemanticProjectionZh": "在配置的部署把 615A 承载于 AFDX 而非普通以太网时，系统集成商必须适用 aviation data-network address rules from 664 Part 4, or identify the address requirements。这不激活当前 Compliant 以太网实例。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00520",
+      "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF",
+      "sourceTextHash": "f178271163dfdce4bbc2ba215f784361471c95524c09bb734051d6e98546142d",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "KEEP-THREE-SECOND-FIND-ANSWER-WINDOW",
+        "objects": [
+          "FIND-ANSWER-WINDOW-3-S"
+        ],
+        "observableEffect": "FIND-ANSWER-WINDOW-UPPER-BOUND-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, the data loader shall keep a three-second window for FIND answers after sending a FIND request. The window length is an upper bound, not a requirement that every answer arrive at exactly three seconds.",
+      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在发出 FIND 请求后为 FIND 应答保持三秒窗口。该窗口长度是上界，并不要求每个应答恰好在第三秒到达。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00521",
+      "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891",
+      "sourceTextHash": "30fc1bceb89168157647ded159876dfb824c388a4d2f9cb40450e9f279918d88",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "CLOSE-FIND-ANSWER-REGISTRATION-WHEN-WINDOW-EXPIRES",
+        "objects": [
+          "FIND-ANSWER-REGISTRATION",
+          "FIND-ANSWER-WINDOW-3-S"
+        ],
+        "observableEffect": "FIND-REGISTRATION-CLOSE-AT-WINDOW-END-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, the data loader shall close FIND-answer registration when the three-second window expires.",
+      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在三秒窗口到期时关闭 FIND 应答登记。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00522",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-005-D462FF831585",
+      "sourceTextHash": "d462ff831585e38a41d47b3e544aa3806302b8ab56f681ae00240afb028f1e39",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION",
+        "action": "CREATE-DNLD-DATA-DIRECTORY-IN-DOWNLOAD-MEDIA-ROOT",
+        "objects": [
+          "DNLD-DATA-DIRECTORY",
+          "DOWNLOAD-MEDIA-ROOT"
+        ],
+        "observableEffect": "DNLD-DATA-DIRECTORY-IN-ROOT-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader shall create the DNLD_DATA directory in the root directory of the download media.",
+      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须在下载媒体的根目录下创建 DNLD_DATA 目录。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00523",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-006-ED9F856333F8",
+      "sourceTextHash": "ed9f856333f8e119c64a498b6ced7ba18b9e4ad0bed7184d9f56dc3e7faf539c",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION",
+        "action": "INCREMENT-DNLD-DATA-NUMBER-FROM-ONE-EACH-DOWNLOAD",
+        "objects": [
+          "DNLD-DATA-NUMBER",
+          "DNLD-DATA-DIRECTORY"
+        ],
+        "observableEffect": "DNLD-DATA-NUMBER-STARTS-AT-ONE-AND-INCREMENTS-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader shall increment <number> on each download, starting at 1, so successive DNLD_DATA directory names stay unique.",
+      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须在每次下载时递增 <number>，且从 1 开始，以使相继 DNLD_DATA 目录名保持唯一。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00524",
+      "sourceUnitId": "SU-ARINC-615A-3-3-3-P108-PROSE-SENTENCE-003-9C92144E4252",
+      "sourceTextHash": "9c92144e4252efb8957fce5694bab7d985c41d22f42cee2f5dc07c9218ea6306",
+      "expectedSemantic": {
+        "actor": "FIND-PROTOCOL",
+        "condition": "WHEN-FIND-IMPLEMENTED",
+        "action": "ENCODE-FIND-PACKET-AS-TWO-BYTE-HEADER-PLUS-VARIABLE-DATA",
+        "objects": [
+          "FIND-HEADER-2-BYTE",
+          "FIND-VARIABLE-LENGTH-DATA",
+          "FIND-OPCODE"
+        ],
+        "observableEffect": "FIND-HEADER-AND-DATA-LAYOUT-OBSERVABLE",
+        "operation": "FIND",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, each FIND packet shall contain a header plus a variable-length data portion. The header is two bytes and carries the opcode.",
+      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，每个 FIND 分组必须包含报头和可变长度数据区。报头为两字节并承载操作码。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": []
     }
   ],

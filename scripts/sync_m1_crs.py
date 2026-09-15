@@ -28,6 +28,8 @@ REQUIRED_PROFILE_SCOPE_KEYS = {
     "baseOperation",
     "supportingOperation",
     "deferredOperations",
+    "instanceBoundOperations",
+    "researchExpandedOperations",
     "configurationStatus",
     "bounded665ProfileScopeTriggerIds",
     "bounded665EdgePolicy",
@@ -354,6 +356,12 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         errors.append("profileScope.supportingOperation must remain INFORMATION")
     if scope.get("deferredOperations") != ["DOWNLOAD", "FIND"]:
         errors.append("profileScope.deferredOperations must remain DOWNLOAD and FIND")
+    if scope.get("instanceBoundOperations") != ["UPLOAD", "INFORMATION"]:
+        errors.append("profileScope.instanceBoundOperations must remain UPLOAD and INFORMATION")
+    if scope.get("researchExpandedOperations") != ["DOWNLOAD", "FIND"]:
+        errors.append("profileScope.researchExpandedOperations must remain DOWNLOAD and FIND")
+    if "FIND" in (scope.get("instanceBoundOperations") or []) or "DOWNLOAD" in (scope.get("instanceBoundOperations") or []):
+        errors.append("research-expanded FIND/DOWNLOAD cannot be inferred as the current instance bound operations")
     if scope.get("configurationStatus") != "NOT YET ESTABLISHED":
         errors.append("profileScope.configurationStatus must remain NOT YET ESTABLISHED")
     edge_policy = scope.get("bounded665EdgePolicy", {})

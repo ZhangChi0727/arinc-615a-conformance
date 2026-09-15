@@ -562,6 +562,7 @@
                     "enum": [
                         "UNSIGNED-INT-BIG-ENDIAN",
                         "ZERO-TERMINATED-ASCII",
+                        "FIXED-WIDTH-ASCII",
                         "LENGTH-PREFIXED-BINARY",
                         "RESERVED-ZERO-FILL",
                         "PROSE-DEFINED"
@@ -576,6 +577,27 @@
                     "items": {
                         "type": "string",
                         "minLength": 1
+                    }
+                },
+                "specialValues": {
+                    "type": "array",
+                    "uniqueItems": true,
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                            "code",
+                            "meaningCode"
+                        ],
+                        "properties": {
+                            "code": {
+                                "type": "string",
+                                "minLength": 1
+                            },
+                            "meaningCode": {
+                                "$ref": "#/$defs/id"
+                            }
+                        }
                     }
                 }
             }
@@ -609,6 +631,8 @@
                 "baseOperation",
                 "supportingOperation",
                 "deferredOperations",
+                "instanceBoundOperations",
+                "researchExpandedOperations",
                 "configurationStatus",
                 "bounded665ProfileScopeTriggerIds",
                 "bounded665EdgePolicy"
@@ -625,6 +649,28 @@
                     ]
                 },
                 "deferredOperations": {
+                    "type": "array",
+                    "minItems": 2,
+                    "uniqueItems": true,
+                    "items": {
+                        "enum": [
+                            "DOWNLOAD",
+                            "FIND"
+                        ]
+                    }
+                },
+                "instanceBoundOperations": {
+                    "type": "array",
+                    "minItems": 2,
+                    "uniqueItems": true,
+                    "items": {
+                        "enum": [
+                            "UPLOAD",
+                            "INFORMATION"
+                        ]
+                    }
+                },
+                "researchExpandedOperations": {
                     "type": "array",
                     "minItems": 2,
                     "uniqueItems": true,
