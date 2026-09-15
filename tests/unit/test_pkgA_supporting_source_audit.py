@@ -68,8 +68,31 @@ def test_665_batch_file_is_inside_survey_and_media_set_was_readjudicated() -> No
     source = next(row for row in data["supportingSourceApplicabilityAudit"]["sources"] if row["sourceId"] == "ARINC-665-5")
     batch = next(row for row in source["units"] if row["id"] == "SAU-665-2-3")
     media = next(row for row in source["units"] if row["id"] == "SAU-665-3")
-    assert batch["pdfPages"] == [32, 35]
+    assert batch["pdfPages"] == [30, 35]
+    assert batch["leafCrsStatus"] == "PARTIAL-LEAF-CRS-EMITTED"
+    assert batch["leafCrsStatus"] != "LEAF-CRS-CLOSED"
     assert batch["applicabilityDecision"] == "APPLICABLE-SUPPORTING"
+    crs = json.loads((ROOT / "configs/requirements/arinc_615a3_m1_crs.json").read_text(encoding="utf-8"))
+    batch_reqs = [
+        row for row in crs["requirements"]
+        if row["source"]["sourceId"] == "ARINC-665-5" and str(row["source"].get("clause") or "").startswith("2.3")
+    ]
+    assert any(row["semantic"]["action"] == "DO-NOT-TRANSFER-BATCH-FILE-TO-TARGET-HARDWARE" for row in batch_reqs)
+    assert any(row["semantic"]["action"] == "IDENTIFY-BATCH-FILE-WITH-LUB-EXTENSION" for row in batch_reqs)
+    assert all(row["reviewStatus"] == "PENDING-EXTERNAL-INDEPENDENT-REVIEW" for row in batch_reqs)
+    assert all(row["refinementDisposition"] in {"PROFILE-SCOPE-ONLY", "DEPENDENCY-BLOCKED"} for row in batch_reqs)
+    table_rows = [
+        row for row in batch_reqs
+        if row["source"].get("tableOrFigure") == "Table 2.3.1-1" and row["source"].get("fragmentKind") == "TABLE-ROW"
+    ]
+    assert len(table_rows) == 22
+    for row in table_rows:
+        constraint = row["fieldConstraint"]
+        assert constraint["protocolFile"] == "LUB"
+        assert "TABLE-DEFINED" not in constraint["widthBitsExpression"]
+        assert constraint["widthBitsExpression"]
+        if "CEILING" in constraint["widthBitsExpression"]:
+            assert "LENGTH" in constraint["widthBitsExpression"]
     assert media["pdfPages"] == [36, 54]
     assert media["applicabilityDecision"] == "OUT-OF-PROFILE"
     assert "ETHERNET-UPLOAD" not in media["rationaleCode"]
@@ -102,7 +125,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-7"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-8"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])

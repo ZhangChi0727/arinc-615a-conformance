@@ -260,6 +260,10 @@
     {
       "tableId": "Table 6.4.10-1",
       "constraintKind": "statusTableConstraint"
+    },
+    {
+      "tableId": "Table 2.3.1-1",
+      "constraintKind": "fieldConstraint"
     }
   ],
   "sources": [

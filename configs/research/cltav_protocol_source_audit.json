@@ -8,16 +8,16 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-7",
-    "coverageCount": 2796,
-    "requirementCount": 524,
-    "coverageFingerprint": "806a197c7ec644f55d05dd8a6a31f80390ece5ccfe2e7d55a6816da6e2c04dfd",
-    "requirementsFingerprint": "bb33461582d2ff7f336561420660454f6ae1bf782369c8917624abeecc49fe54",
+    "artifactVersion": "M1-CANDIDATE-8",
+    "coverageCount": 2871,
+    "requirementCount": 566,
+    "coverageFingerprint": "3e3d2b7774b13d7d9f50878f03119e18f2d43df5b3d61059c4315b7ea5c14ebc",
+    "requirementsFingerprint": "91e272a9084d8b4353e557169ea2daba6e4a66b63034a107c6e5f59ee89e609d",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "Package B increment on the limited APPROVE lineage: FIND abort does not waive the 2 s / 3 s clocks; DOWNLOAD TFTP/665 supporting edges are recorded without closing 645 or AFDX. This is not independent RG approval and does not authorize merge."
+    "note": "Package B increment: FIND abort does not waive the 2 s / 3 s clocks; 665 section 2.3 batch-file leaf CRS is partial, including Table 2.3.1-1 row-level fieldConstraint rows. This is not independent RG approval and does not authorize merge."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -27,11 +27,11 @@
     "Ordinary Ethernet, Compliant, Profiled and AFDX stay separate configuration dimensions."
   ],
   "summary": {
-    "coverageCount": 2796,
-    "requirementCount": 524,
+    "coverageCount": 2871,
+    "requirementCount": 566,
     "applicabilityDecisions": {
-      "OUT-OF-PROFILE": 989,
-      "APPLICABLE-SUPPORTING": 1152,
+      "OUT-OF-PROFILE": 973,
+      "APPLICABLE-SUPPORTING": 1243,
       "APPLICABLE-BASE": 286,
       "CONDITIONAL": 369
     },
@@ -59,8 +59,9 @@
       "NON-NORMATIVE-AFDX-EXAMPLE": 5,
       "AFDX-CONDITIONAL-DESCRIPTION": 5,
       "AFDX-CONDITIONAL-DEPLOYMENT": 3,
-      "NOT-TRIGGERED-BY-CURRENT-SERVICE": 60,
+      "NOT-TRIGGERED-BY-CURRENT-SERVICE": 44,
       "TRIGGERED-BOUNDED-6655": 351,
+      "TRIGGERED-BATCH-FILE-FOR-615A-LOADER": 91,
       "NON-NORMATIVE-DOWNLOAD-COMMENTARY": 4
     },
     "deferredFutureScope": {
@@ -10004,7 +10005,7 @@
             "clause": "2.3",
             "clauseTitleEn": "Batch File Part (.LUB) for 615A loaders",
             "pdfPages": [
-              32,
+              30,
               35
             ],
             "unitKind": "SECTION",
@@ -10016,9 +10017,9 @@
               "UPLOAD"
             ],
             "relationTo615A": "SOURCE-EXPLICIT-615A-LOADER-USE",
-            "leafCrsStatus": "PACKAGE-B-PENDING",
-            "summaryEn": "Clause 2.3 states batch files are distributed to onboard and off-board 615A loaders to automate multi-LSP setup and are not transferred to target hardware. Prior UPLOAD-only page account excluded these pages as media-set; that exclusion is withdrawn. Leaf CRS for Table 2.3.1-1 is Package B.",
-            "summaryZh": "2.3 规定批处理文件分发给机上/机下 615A 加载器以自动设置多 LSP，且不传给目标硬件。先前按 UPLOAD 把这些页排除为媒体集，现撤回。表 2.3.1-1 的叶级 CRS 属执行包 B。"
+            "leafCrsStatus": "PARTIAL-LEAF-CRS-EMITTED",
+            "summaryEn": "Clause 2.3 batch files are distributed to onboard/off-board 615A loaders and are not transferred to target hardware. Sentence-leaf CRS and Table 2.3.1-1 row-level fieldConstraint rows are emitted with real widths or controlling-length equations. Remaining field-prose refinements stay open. This is not leaf-CRS-closed.",
+            "summaryZh": "2.3 批处理文件分发给机上/机下 615A 加载器，不传给目标硬件。句级 CRS 与表 2.3.1-1 行级字段约束已发出，宽度为表列值或由长度字段控制的方程。其余字段散文细化仍开放。这不是叶级 CRS 已闭合。"
           },
           {
             "id": "SAU-665-2-2-4",
@@ -10266,9 +10267,9 @@
         "openIssues": [
           {
             "id": "SAU-665-ISSUE-BATCH-LEAF",
-            "status": "PACKAGE-B",
-            "noteEn": "Clause 2.3 is now inside the page account. Sentence/table leaf CRS for the batch file is not in this audit commit.",
-            "noteZh": "条款 2.3 现已计入页码账。批处理文件的句/表叶级 CRS 不在本审计提交中。"
+            "status": "PACKAGE-B-PARTIAL",
+            "noteEn": "Table 2.3.1-1 row-level fieldConstraint CRS is now emitted. Remaining 2.3 field-prose and 645 CRC algorithm identity keep this unit partial, not leaf-CRS-closed.",
+            "noteZh": "表 2.3.1-1 行级字段约束 CRS 现已发出。其余 2.3 字段散文与 645 CRC 算法身份使本单元保持部分完成，不是叶级 CRS 已闭合。"
           }
         ],
         "dispositionCounts": {

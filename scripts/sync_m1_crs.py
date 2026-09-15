@@ -456,6 +456,27 @@ def reviewed_contract_errors(data: dict[str, Any], assertions: dict[str, Any]) -
     return errors
 
 
+FIND_ABORT_CLOCK_IDS = ("CRS-M1-00391", "CRS-M1-00520", "CRS-M1-00521")
+FIND_ABORT_CANCELLATION = "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS"
+
+
+def find_abort_clock_errors(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    req = {row.get("id"): row for row in data.get("requirements") or []}
+    for rid in FIND_ABORT_CLOCK_IDS:
+        row = req.get(rid) or {}
+        cancellation = (row.get("timing") or {}).get("cancellation")
+        if cancellation != FIND_ABORT_CANCELLATION:
+            errors.append(f"{rid} FIND clock cancellation must be {FIND_ABORT_CANCELLATION}")
+        en = row.get("generatedSemanticProjectionEn") or ""
+        zh = row.get("generatedSemanticProjectionZh") or ""
+        if "does not waive" not in en.lower():
+            errors.append(f"{rid} English projection must state FIND abort does not waive the clock")
+        if "不豁免" not in zh:
+            errors.append(f"{rid} Chinese projection must state FIND abort does not waive the clock")
+    return errors
+
+
 def reviewed_expanded_source_errors(data: dict[str, Any], assertions: dict[str, Any] | None = None) -> list[str]:
     """Reviewed FIND/DOWNLOAD contracts live in assertions; this checks their relations."""
     errors: list[str] = []
@@ -465,6 +486,7 @@ def reviewed_expanded_source_errors(data: dict[str, Any], assertions: dict[str, 
         except (OSError, json.JSONDecodeError) as exc:
             return [f"reviewed contracts are unavailable: {exc}"]
     errors.extend(reviewed_contract_errors(data, assertions))
+    errors.extend(find_abort_clock_errors(data))
     errors.extend(field_note_registry_errors(data))
     errors.extend(field_presence_use_errors(data))
     errors.extend(timing_interval_role_errors(data))

@@ -131,6 +131,50 @@ def test_close_timeline_uses_request_origin_not_expiry_delay() -> None:
     assert not interval_holds(host, host_late)
 
 
+def test_find_abort_does_not_waive_late_close_or_late_host_answer() -> None:
+    data = m1_package()
+    close = req(data, "CRS-M1-00521")["timing"]
+    window = req(data, "CRS-M1-00520")["timing"]
+    host = req(data, "CRS-M1-00391")["timing"]
+    assert close["cancellation"] == window["cancellation"] == host["cancellation"] == "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS"
+    for row in (close, window, host):
+        assert "ABORT" not in row["trigger"]
+        assert "ABORT" not in row["response"]
+
+    abort_present = {
+        window["trigger"]: 0,
+        window["response"]: 3,
+        close["response"]: 6,
+        "FIND-ABORT": 0.5,
+    }
+    assert not interval_holds(close, abort_present)
+    assert interval_holds(window, abort_present)
+
+    late_host = {host["trigger"]: 0, host["response"]: 3, "FIND-ABORT": 0.5}
+    assert not interval_holds(host, late_host)
+    on_time_host = {host["trigger"]: 0, host["response"]: 2, "FIND-ABORT": 0.5}
+    assert interval_holds(host, on_time_host)
+
+
+def test_reverting_find_abort_waiver_fails_after_refresh() -> None:
+    data = m1_package()
+    for rid in ("CRS-M1-00391", "CRS-M1-00520", "CRS-M1-00521"):
+        req(data, rid)["timing"]["cancellation"] = "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT"
+        req(data, rid)["generatedSemanticProjectionEn"] = "Abort waives FIND clocks."
+        req(data, rid)["generatedSemanticProjectionZh"] = "中止豁免 FIND 时钟。"
+    refresh_m1(data)
+    found = m1_errors(data)
+    assert any("FIND-ABORT-DOES-NOT-WAIVE-WINDOWS" in item for item in found)
+    assert any("does not waive" in item or "不豁免" in item for item in found)
+
+    model = m2_package()
+    for rid in ("CRS-M1-00391", "CRS-M1-00520", "CRS-M1-00521"):
+        catalog(model, rid)["cancel"] = "FIND-OPERATION-ABORTED"
+    refresh_m2(model)
+    found = m2_errors(model)
+    assert any("cancel drifted from M1" in item for item in found)
+
+
 def test_reverting_close_trigger_to_expiry_fails_after_refresh() -> None:
     data = m1_package()
     req(data, "CRS-M1-00521")["timing"]["trigger"] = req(data, "CRS-M1-00520")["timing"]["response"]

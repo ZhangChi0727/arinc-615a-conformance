@@ -1517,6 +1517,8 @@ def package_errors(
                 errors.append(f"timing {row.get('id')} response drifted from M1")
             if row.get("pairingPolicy") != timing.get("pairingPolicy"):
                 errors.append(f"timing {row.get('id')} pairingPolicy drifted from M1")
+            if row.get("cancel") != timing.get("cancellation"):
+                errors.append(f"timing {row.get('id')} cancel drifted from M1")
             if row.get("m1LowerBoundary") != timing.get("lowerBoundary") or row.get("m1UpperBoundary") != timing.get("upperBoundary"):
                 errors.append(f"timing {row.get('id')} m1 endpoint copy drifted from M1")
             if row.get("constraintKind") == "NOT-BEFORE-LOWER-BOUND" and timing.get("lowerBoundary") == "UNRESOLVED":

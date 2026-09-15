@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0",
   "artifactId": "ARINC615A3-M1-CRS",
-  "artifactVersion": "M1-CANDIDATE-7",
+  "artifactVersion": "M1-CANDIDATE-8",
   "candidateDisposition": "ADOPT",
   "sourceBindings": [
     {
@@ -62347,14 +62347,16 @@
       "sourceTextHash": "e7511ec8b8be9faa9083ef27b806b39397ad81992ebed95e9fe3ea84967bcbdb",
       "sourceModality": "MAY",
       "conformanceEffect": "OPTIONAL",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00526"
+      ]
     },
     {
       "id": "COV-M1-02568",
@@ -62369,10 +62371,10 @@
         "fragmentOrdinal": 1
       },
       "sourceTextHash": "04a2b008205d01393ba830258daff5e47e1a95cc51229263a2ca857156d97eaa",
-      "sourceModality": "SHOULD",
-      "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -62395,8 +62397,8 @@
       "sourceTextHash": "340ce2bd66b454cd16a6632c00238d59e4a2a309e724efd842d58d21229b945f",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -62443,14 +62445,16 @@
       "sourceTextHash": "7082d7150b84f10d69a21bfffec697dfba898f1ba398f6dd67c9c4fcab41d092",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00527"
+      ]
     },
     {
       "id": "COV-M1-02572",
@@ -62467,8 +62471,8 @@
       "sourceTextHash": "83910d3c8053423696e5075973ded6f568bc385b33f23a9d04a49992919a2704",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -62491,8 +62495,8 @@
       "sourceTextHash": "f6987645b26c6f81da3b89f1a8c2e5bf26fcc50450891cd9bf3fd1ea22cb955a",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -62515,14 +62519,16 @@
       "sourceTextHash": "285fd5c05bdeb650c1ad593b878b9507ee0412d67c10189a1ab03b85f108ce16",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00528"
+      ]
     },
     {
       "id": "COV-M1-02575",
@@ -62539,14 +62545,16 @@
       "sourceTextHash": "81534b10bdad7bce2577b893895efa45d2cb8a78cfe9c85b4b592101d981a3a6",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00529"
+      ]
     },
     {
       "id": "COV-M1-02576",
@@ -62563,14 +62571,16 @@
       "sourceTextHash": "56edf793754866ed84162837d46c5060453b8e89606bcea75f634d95c0551e36",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00530"
+      ]
     },
     {
       "id": "COV-M1-02577",
@@ -62587,14 +62597,16 @@
       "sourceTextHash": "73139160ea3f79035d3a680e5085f58d3daa52495f2b708a6d329270870b9f04",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00531"
+      ]
     },
     {
       "id": "COV-M1-02578",
@@ -62611,14 +62623,16 @@
       "sourceTextHash": "a1c9c9eeafcf564c277c16334b010be4dc2686f9a10182156ceb6ec97cebb2d9",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00532"
+      ]
     },
     {
       "id": "COV-M1-02579",
@@ -62635,8 +62649,8 @@
       "sourceTextHash": "f5ac6d53c4bd35b1e11a6272dc44da6b76d6e2390b9078c72402b72783285bb6",
       "sourceModality": "FACT",
       "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -62659,14 +62673,16 @@
       "sourceTextHash": "e373c6e2421a96f4cbb89e7787c0d2df0192e41929b47e61d4c87daff7beaf62",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00533"
+      ]
     },
     {
       "id": "COV-M1-02581",
@@ -62682,15 +62698,17 @@
       },
       "sourceTextHash": "14c42482077f4c9e999498470a59b7bbd155bc48491008f150793f3e473f67a6",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00534"
+      ]
     },
     {
       "id": "COV-M1-02582",
@@ -62706,15 +62724,17 @@
       },
       "sourceTextHash": "bca2bc43a1a34ae5f6cd4333e144583d4a2420320c9de3e908655253438353f4",
       "sourceModality": "FACT",
-      "conformanceEffect": "INFORMATIVE",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00535"
+      ]
     },
     {
       "id": "COV-M1-02583",
@@ -62731,14 +62751,16 @@
       "sourceTextHash": "bee78b9e25ed3711c7368ee0b5f999a1a1c0d45fe3d1d2a88af694953da354eb",
       "sourceModality": "SHOULD",
       "conformanceEffect": "REQUIRED",
-      "applicabilityDecision": "OUT-OF-PROFILE",
-      "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
         "singleOwner": true
       },
-      "requirementIds": []
+      "requirementIds": [
+        "CRS-M1-00536"
+      ]
     },
     {
       "id": "COV-M1-02584",
@@ -68231,6 +68253,1868 @@
         "singleOwner": true
       },
       "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02797",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-P032-PROSE-SENTENCE-003-4D0CE9619492",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3",
+        "tableOrFigure": null,
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "4d0ce9619492d7c58dfe459d4db9112d2604711f4eab35e441e34da16c184d35",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02798",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-P032-PROSE-SENTENCE-004-1614073EC0DA",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3",
+        "tableOrFigure": null,
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "1614073ec0da7c43b8661ea049f28a26d92d84a785318eba11c13f85381ff0df",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02799",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-P032-PROSE-SENTENCE-007-200DE263B6F2",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3",
+        "tableOrFigure": null,
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "200de263b6f2622664ca20b8e15f8ad82a58d95ba2ff1d8ab20ea0e9cda30ec4",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02800",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-P032-PROSE-SENTENCE-008-E28E342E6227",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3",
+        "tableOrFigure": null,
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "e28e342e6227c1c61269be166e93e994e2e39339d979f7adf89c77ea70d564e1",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02801",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-2-P032-PROSE-SENTENCE-001-A4C713095594",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.2",
+        "tableOrFigure": null,
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "a4c713095594a95b481df8cdf4176d6157cd9e2f8c5d3442e77ad0887eb84312",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02802",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-2-P032-PROSE-SENTENCE-002-79DEDA3F0A7A",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.2",
+        "tableOrFigure": null,
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "79deda3f0a7ad073851a0821ddfa2bab077d551b1c4652917df2906c01e9343c",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02803",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-3-P032-PROSE-SENTENCE-001-07120FC5FECE",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.3",
+        "tableOrFigure": null,
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "07120fc5fece3bfbf6df54211b67f14fd65f7d9bb32f945c2fad5f1de3f8741a",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02804",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-4-P033-PROSE-SENTENCE-001-950EEAD4BFA9",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.4",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "950eead4bfa9100c21395fc105c9343b00074d27e9a3f44f6c3325632bc9c056",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02805",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-5-P033-PROSE-SENTENCE-001-D39CAFDDE98D",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.5",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "d39cafdde98d6415b9bc3749ef43290948eb5d90e11748cfa6124d6fb8621760",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02806",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-6-P033-PROSE-SENTENCE-001-B0745F7F3F78",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.6",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "b0745f7f3f78ba977175ba276f08d6e58d947e0df9e0f38820cdd63063539702",
+      "sourceModality": "MAY",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02807",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-7-P033-PROSE-SENTENCE-001-85A74B75BC3D",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.7",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "85a74b75bc3d57df8d803e643b7f6e6da0836bc6b31e02e81f33e5dbb01bf63f",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02808",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-001-CD2F980ECAAD",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.8",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "cd2f980ecaadd0e469ad1bfeda89e6366d8eba7913ce1f2f8d77853f22cc3c08",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02809",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-002-14957CC0EE75",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.8",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "14957cc0ee757b834539756b87c166982f2a440ac9e8d162672aa99a9be0e6e6",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02810",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-003-CA9D6749B1E7",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.8",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "ca9d6749b1e7574c52662b879545db1acd6a1b4de30fe6409dac8c087d379cf9",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02811",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-9-P033-PROSE-SENTENCE-001-37210AE320F9",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.9",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "37210ae320f9a02d758dc36d93e63f67345aac8c37896d3098f07782a2227a77",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02812",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-9-P033-PROSE-SENTENCE-002-DF06B1AE9E4A",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.9",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "df06b1ae9e4ad29c30731fe29ce1bb4f7b5627881ad701315154fc79443f76cb",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02813",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-001-6238B2C14CAF",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.10",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "6238b2c14caf2563a5557394a45989ed5d8b27fc0d3dcff73effa9b92b4dcb92",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02814",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-002-14957CC0EE75",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.10",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "14957cc0ee757b834539756b87c166982f2a440ac9e8d162672aa99a9be0e6e6",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02815",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-003-CA9D6749B1E7",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.10",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "ca9d6749b1e7574c52662b879545db1acd6a1b4de30fe6409dac8c087d379cf9",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02816",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-004-49D5CE38BD4B",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.10",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "49d5ce38bd4b31cde3072cf0b0ac5e411b952751e8c903b57937156d9b6c8ef9",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02817",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-COMMENTARY-001-EAC318BBCED1",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.10",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "COMMENTARY",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "eac318bbced112aa5acba313c7b16a3266ceef434a11a32362add7bf09dd79b6",
+      "sourceModality": "COMMENTARY",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "COMMENTARY",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02818",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-11-P033-PROSE-SENTENCE-001-B832BEAD3004",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.11",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "b832bead3004b1a2024cf9a7574bfd7c58a5e9062983e38b955719527c9afca0",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02819",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-12-P033-PROSE-SENTENCE-001-51F8853C49AB",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.12",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "51f8853c49ab43550f534dc7056995464f07eef59960fcd3600dc3e1d17cb853",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02820",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-13-P034-PROSE-SENTENCE-001-10A78FF7C992",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.13",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "10a78ff7c992c0e176c06edd2d27674094fd22b6405f01a6a9d27b4615fa7929",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02821",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-001-6C46D8F794E1",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.14",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "6c46d8f794e1718d74113e7002d876f47fc0bb7cbe1892b169e66036d904df15",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02822",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-002-14957CC0EE75",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.14",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "14957cc0ee757b834539756b87c166982f2a440ac9e8d162672aa99a9be0e6e6",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02823",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-003-CA9D6749B1E7",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.14",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "ca9d6749b1e7574c52662b879545db1acd6a1b4de30fe6409dac8c087d379cf9",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02824",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-005-0BE3738D451A",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.14",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "0be3738d451aae386a3de4c3f0d903d23dae24d8f9612c1db46a113b814f4178",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02825",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-006-0BB4C5167464",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.14",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "0bb4c5167464cf018b640fd82983912e83c3d2b4054bc53ae7b6bd2c49f4c52c",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02826",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-007-F728BBF0BB35",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.14",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "f728bbf0bb3574017cd4a6146a010f39257dab8dd7ffd9cb8e4eb17b78a957a4",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02827",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-15-P034-PROSE-SENTENCE-001-BE0892BD03B3",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.15",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "be0892bd03b38879abf3b2c83aa3f8bd45af56403fdea8e9bb937d7a5abb390f",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02828",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-16-P034-PROSE-SENTENCE-001-F71F4DF1A130",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.16",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "f71f4df1a130b8bb18024fe94310f56d7f3e978ebd156d172bcacd9cce0fcea6",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02829",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-002-EB03E6E8B2C2",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.17",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "eb03e6e8b2c29e4087c97c4d5e54d5c2c9d1f706565265f75c02722f1634fc3a",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02830",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-003-14957CC0EE75",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.17",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "14957cc0ee757b834539756b87c166982f2a440ac9e8d162672aa99a9be0e6e6",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02831",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-004-CA9D6749B1E7",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.17",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "ca9d6749b1e7574c52662b879545db1acd6a1b4de30fe6409dac8c087d379cf9",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02832",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-005-7FE318C16891",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.17",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "7fe318c16891dda3bfe2ba9b074709d92eb0c2657ce1710b8bc8b5cbe3305c13",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02833",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-006-36F14C7EFAD7",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.17",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "36f14c7efad7dd0ba215086d9e6a6a9a8b34241747662b11969d0b2cd7cce938",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02834",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-007-3E0BD2C78076",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.17",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "3e0bd2c7807634b695422ca9a46c20aaa37fbb0a662b184bc862dd3e3706e6c7",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02835",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-18-P034-PROSE-SENTENCE-001-A0FF5B212350",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.18",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "a0ff5b2123502894d0eaea2cb69cc6fa261f5f11446c5bbdde3f6dfeb9d187de",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02836",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-18-P034-PROSE-SENTENCE-002-AE35CDA97957",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.18",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "ae35cda97957904eae9c1243240fd6c53400c00b7a60b250ba3371c5b6d857d4",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02837",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-002-2B0551BA0908",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.19",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "2b0551ba09081fe6ab308070f40fc1161620554bf397b86ffc2b6c1457bc3b2b",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02838",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-003-49DF05775CBF",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.19",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "49df05775cbfefa4517354fc5746a7401859a2f1c147a4e258d278bef11cd1e8",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02839",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P035-PROSE-SENTENCE-005-7E047E5900B9",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.19",
+        "tableOrFigure": null,
+        "documentPage": 25,
+        "pdfPage": 35,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "7e047e5900b962ae45639af0c340a3d79bf77810446e28a9f7fb3ce379ee94ca",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02840",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P035-PROSE-SENTENCE-006-CA9D6749B1E7",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.19",
+        "tableOrFigure": null,
+        "documentPage": 25,
+        "pdfPage": 35,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "ca9d6749b1e7574c52662b879545db1acd6a1b4de30fe6409dac8c087d379cf9",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": []
+    },
+    {
+      "id": "COV-M1-02841",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-1-P032-PROSE-SENTENCE-001-8941510B5311",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.1",
+        "tableOrFigure": null,
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "8941510b53112e62506e45dd0c392d33e0478f7c871aa7fe4afc7d44ce481706",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00537"
+      ]
+    },
+    {
+      "id": "COV-M1-02842",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-004-86427B46E466",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.8",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "86427b46e466953bd53d18c72b9a880071a246c645834469aa305341c6163d2b",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00538"
+      ]
+    },
+    {
+      "id": "COV-M1-02843",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-005-B74330A54136",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.8",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "b74330a54136f6dcc80421c6cf981c61d5a49b3f8196803b701fe3e803d4e884",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00539"
+      ]
+    },
+    {
+      "id": "COV-M1-02844",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-12-P033-PROSE-SENTENCE-002-6F1E1E9893E9",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.12",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "6f1e1e9893e903f1a574e3820c327fc23c65c1e1035ba4a17cc1ae53367aa57a",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00540"
+      ]
+    },
+    {
+      "id": "COV-M1-02845",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-004-CA370AEF0845",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.14",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "ca370aef084512b20e2b760b0d59d0e2cd71a68c0e0266662aa1f63782f0fafc",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00541"
+      ]
+    },
+    {
+      "id": "COV-M1-02846",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-001-F4394EF0EEC6",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.17",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "f4394ef0eec6541cf5e52a3f361d84822e921692f9f7ee107baa99359677f900",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00542"
+      ]
+    },
+    {
+      "id": "COV-M1-02847",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-001-4385D6046683",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.19",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "4385d604668309fd76024ec17683a16ad903b7036abee0186096a480a5af8592",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00543"
+      ]
+    },
+    {
+      "id": "COV-M1-02848",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-001-216B865544A5",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.20",
+        "tableOrFigure": null,
+        "documentPage": 25,
+        "pdfPage": 35,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "216b865544a5706bf01ef17dab9223e6b1c145a8a9e4564ecfac23a1f776899a",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00544"
+      ]
+    },
+    {
+      "id": "COV-M1-02849",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-002-2E8577AE49D2",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.20",
+        "tableOrFigure": null,
+        "documentPage": 25,
+        "pdfPage": 35,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "2e8577ae49d29039787cd45da75095d355cc7b8eb8467ea391d9e8060dc24cbc",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00545"
+      ]
+    },
+    {
+      "id": "COV-M1-02850",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R001",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "758dc002c72bd1e79bd6e7df2c786caedfc53736dcaf11377acb569aef747f7a",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00546"
+      ]
+    },
+    {
+      "id": "COV-M1-02851",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R002",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "c2684d3e0ec8d05d49ebf16261f679c6b804e9f6510cc73862022afdb405229e",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00547"
+      ]
+    },
+    {
+      "id": "COV-M1-02852",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R003",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "ff8ca7d005b4daf99346f3edf06677b28b791e24a07cf64bc6af97c17aec41b2",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00548"
+      ]
+    },
+    {
+      "id": "COV-M1-02853",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R004",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "38c3add273470ebed057c9b550be89ee0c164d523740291f57a4f9784a768b1d",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00549"
+      ]
+    },
+    {
+      "id": "COV-M1-02854",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R005",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "d18468662585459a5b222fbe78fee456a927daabe50f9a1e93a477690087027b",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00550"
+      ]
+    },
+    {
+      "id": "COV-M1-02855",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R006",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "8efe8fe4de8d0b5ba22e9f6448c33e181e727ab58ba0dd0c060250788a98ce9d",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00551"
+      ]
+    },
+    {
+      "id": "COV-M1-02856",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R007",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "0abcc2d9fc94d68ee8490a9da90e6fa2b4da0e296557d8fb78fc979c0cbb507d",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00552"
+      ]
+    },
+    {
+      "id": "COV-M1-02857",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R008",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "4ba69e519256865dde026e5d261b29e8105de1aa37becc4cee0e3335a5bcab08",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00553"
+      ]
+    },
+    {
+      "id": "COV-M1-02858",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R009",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "40b35c45917bedd377e6944d33d2cac5574a8ecc88fa6d3d17dcd3dee2770158",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00554"
+      ]
+    },
+    {
+      "id": "COV-M1-02859",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R010",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "8659f868caa86598bad985337f1a8985d017b3313f1504c623d51de6d3fdb145",
+      "sourceModality": "MAY",
+      "conformanceEffect": "OPTIONAL",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00555"
+      ]
+    },
+    {
+      "id": "COV-M1-02860",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R011",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 11
+      },
+      "sourceTextHash": "52b205b117f483b42884b21d6981fd9638aa5970afe475ab500fb215e38599f7",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00556"
+      ]
+    },
+    {
+      "id": "COV-M1-02861",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R012",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 12
+      },
+      "sourceTextHash": "d8771d147101b9dcc64f0f67a928bbf5635d3b502bacc5f916ca760a5d77db93",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00557"
+      ]
+    },
+    {
+      "id": "COV-M1-02862",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R013",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 13
+      },
+      "sourceTextHash": "1241e3deec216c8f70dcd37d9df1882f418a81ae8fb29e67011a0677f31c2b9a",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00558"
+      ]
+    },
+    {
+      "id": "COV-M1-02863",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R014",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 14
+      },
+      "sourceTextHash": "0a9dcf6d016c01200566b88de7cf4b64c03b04739cd1b0a0110c8abf641007c5",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00559"
+      ]
+    },
+    {
+      "id": "COV-M1-02864",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R015",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 15
+      },
+      "sourceTextHash": "30dc6846bd2f8791af6cc7ce8ed389ceebcb79ce255071f771650605754862f0",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00560"
+      ]
+    },
+    {
+      "id": "COV-M1-02865",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R016",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 16
+      },
+      "sourceTextHash": "c74435a58a9dac0798d959f19ef8e8d124652d737790357ccdaa2673aaa9c0bc",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00561"
+      ]
+    },
+    {
+      "id": "COV-M1-02866",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R017",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 17
+      },
+      "sourceTextHash": "d7220c49e2b9e5027243d0d4b9eb0619db79b52626b56eae806f27da2e0e4e8a",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00562"
+      ]
+    },
+    {
+      "id": "COV-M1-02867",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R018",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 18
+      },
+      "sourceTextHash": "21227b25a54d29444f6e7cec15687be673581828b52f6d4ac520a3a09789ed83",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00563"
+      ]
+    },
+    {
+      "id": "COV-M1-02868",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R019",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 19
+      },
+      "sourceTextHash": "950044b7fd37ce3caf331a6c1fef9dc835f37fd1420fa482ffcd2a3f361b7739",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00564"
+      ]
+    },
+    {
+      "id": "COV-M1-02869",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R020",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 20
+      },
+      "sourceTextHash": "5cc8f76194b8120073b8fa735c83af3ad99b13f952cfe3fd0212d94bdc286497",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00565"
+      ]
+    },
+    {
+      "id": "COV-M1-02870",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R021",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 21
+      },
+      "sourceTextHash": "bf85305ee2f2b75b4f911f44a91ad02e721774d7b6cf3e47a6d05890b90082fc",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00566"
+      ]
+    },
+    {
+      "id": "COV-M1-02871",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R022",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 22
+      },
+      "sourceTextHash": "e9f0db8d12fbc16380dae30f0d8cf40b73501d7a905f55cb898da24f57cf6d3c",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00567"
+      ]
     }
   ],
   "requirements": [
@@ -87418,8 +89302,8 @@
       },
       "sourceTextHash": "3ce166eda700ce6a555aeb4a066397ccdf8f45c27dbda9a9d6cc92e9b8a9c977",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "When FIND is implemented, a FIND host shall send its FIND answer within a two-second upper bound of receiving a legal request. An earlier answer satisfies the deadline; the three-second registration window does not extend this host bound.",
-      "generatedSemanticProjectionZh": "在实现 FIND 时，FIND 主机必须在收到合法请求后的两秒上界内发出 FIND 应答。更早的应答满足该期限；三秒登记窗口不能延长该主机上界。",
+      "generatedSemanticProjectionEn": "When FIND is implemented, a FIND host shall send its FIND answer within a two-second upper bound of receiving a legal request. An earlier answer satisfies the deadline; the three-second registration window does not extend this host bound. Aborting FIND does not waive the two-second host-answer deadline.",
+      "generatedSemanticProjectionZh": "在实现 FIND 时，FIND 主机必须在收到合法请求后的两秒上界内发出 FIND 应答。更早的应答满足该期限；三秒登记窗口不能延长该主机上界。中止 FIND 不豁免该两秒主机应答期限。",
       "semantic": {
         "actor": "FIND-HOST",
         "condition": "WHEN-FIND-IMPLEMENTED",
@@ -93400,8 +95284,8 @@
       },
       "sourceTextHash": "f178271163dfdce4bbc2ba215f784361471c95524c09bb734051d6e98546142d",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "When FIND is implemented, the data loader shall keep a three-second FIND-answer registration window after sending a FIND request. That three-second value is the window lifetime, not a host-answer deadline and not a permission to close registration early.",
-      "generatedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在发出 FIND 请求后保持三秒 FIND 应答登记窗口。该三秒是窗口寿命，不是主机应答期限，也不是可以提前关闭登记的许可。",
+      "generatedSemanticProjectionEn": "When FIND is implemented, the data loader shall keep a three-second FIND-answer registration window after sending a FIND request. That three-second value is the window lifetime, not a host-answer deadline and not a permission to close registration early. Aborting FIND does not waive the three-second registration-window lifetime.",
+      "generatedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在发出 FIND 请求后保持三秒 FIND 应答登记窗口。该三秒是窗口寿命，不是主机应答期限，也不是可以提前关闭登记的许可。中止 FIND 不豁免该三秒登记窗口寿命。",
       "semantic": {
         "actor": "DATA-LOADER",
         "condition": "WHEN-FIND-IMPLEMENTED",
@@ -93476,8 +95360,8 @@
       },
       "sourceTextHash": "30fc1bceb89168157647ded159876dfb824c388a4d2f9cb40450e9f279918d88",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "When FIND is implemented, the data loader shall close FIND-answer registration three seconds after the FIND request is sent. That close is the same logical instant as the three-second window lifetime elapsing; it is not a second three-second delay after expiry.",
-      "generatedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在发出 FIND 请求后三秒关闭 FIND 应答登记。该关闭与三秒窗口寿命到期是同一逻辑时刻，而不是到期后再延迟三秒。",
+      "generatedSemanticProjectionEn": "When FIND is implemented, the data loader shall close FIND-answer registration three seconds after the FIND request is sent. That close is the same logical instant as the three-second window lifetime elapsing; it is not a second three-second delay after expiry. Aborting FIND does not waive close-at-expiry of the three-second window.",
+      "generatedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在发出 FIND 请求后三秒关闭 FIND 应答登记。该关闭与三秒窗口寿命到期是同一逻辑时刻，而不是到期后再延迟三秒。中止 FIND 不豁免该三秒窗口到期关闭。",
       "semantic": {
         "actor": "DATA-LOADER",
         "condition": "WHEN-FIND-IMPLEMENTED",
@@ -93710,6 +95594,2720 @@
         "sourceCoverageId": "COV-M1-00741",
         "status": "CANDIDATE"
       }
+    },
+    {
+      "id": "CRS-M1-00526",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-P030-PROSE-SENTENCE-001-E7511EC8B8BE",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 30,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "e7511ec8b8be9faa9083ef27b806b39397ad81992ebed95e9fe3ea84967bcbdb",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "An ARINC 615A data-loading system may use the batch-file formats defined in 665 §2.3.",
+      "generatedSemanticProjectionZh": "ARINC 615A 数据加载系统可以使用 665 §2.3 定义的批处理文件格式。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-ARINC-615A-DATA-LOADING-IS-USED",
+        "action": "MAY-USE-BATCH-FILE-FORMAT",
+        "objects": [
+          "BATCH-FILE-PART"
+        ],
+        "observableEffect": "BATCH-FILE-FORMAT-AVAILABLE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "MAY",
+      "conformanceEffect": "OPTIONAL",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02567",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00527",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-004-7082D7150B84",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 31,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "7082d7150b84f10d69a21bfffec697dfba898f1ba398f6dd67c9c4fcab41d092",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A batch file part shall let the maintainer load the selected LSPs for each target hardware position without picking every LSP individually.",
+      "generatedSemanticProjectionZh": "批处理文件件必须让维护人员按目标硬件位置加载所选 LSP，而不必逐个挑选。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "LET-BATCH-FILE-SELECT-LSPS-PER-TARGET-HW-POSITION",
+        "objects": [
+          "BATCH-FILE-PART",
+          "LOADABLE-SOFTWARE-PART"
+        ],
+        "observableEffect": "BATCH-FILE-MULTI-LSP-SELECTION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02571",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00528",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-007-285FD5C05BDE",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 31,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "285fd5c05bdeb650c1ad593b878b9507ee0412d67c10189a1ab03b85f108ce16",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A batch file part shall be identified with the .LUB extension.",
+      "generatedSemanticProjectionZh": "批处理文件件必须用 .LUB 扩展名标识。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "IDENTIFY-BATCH-FILE-WITH-LUB-EXTENSION",
+        "objects": [
+          "BATCH-FILE-PART",
+          "LUB-EXTENSION"
+        ],
+        "observableEffect": "BATCH-FILE-EXTENSION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02574",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00529",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-008-81534B10BDAD",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 31,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "81534b10bdad7bce2577b893895efa45d2cb8a78cfe9c85b4b592101d981a3a6",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Header file names referenced in a batch file shall match the case of the actual file names.",
+      "generatedSemanticProjectionZh": "批处理文件中引用的头文件名必须与实际文件名的大小写一致。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "MATCH-REFERENCED-HEADER-FILE-NAME-CASE",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "observableEffect": "HEADER-FILE-NAME-CASE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02575",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00530",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-009-56EDF7937548",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 31,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "56edf793754866ed84162837d46c5060453b8e89606bcea75f634d95c0551e36",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The first three characters of a batch-file name shall be the manufacturer code of the creator.",
+      "generatedSemanticProjectionZh": "批处理文件名的前三个字符必须是创建方的制造商代码。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "PREFIX-BATCH-FILE-NAME-WITH-MANUFACTURER-CODE",
+        "objects": [
+          "BATCH-FILE-NAME",
+          "MANUFACTURER-CODE"
+        ],
+        "observableEffect": "BATCH-FILE-NAME-PREFIX-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02576",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00531",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-010-73139160EA3F",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 31,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "73139160ea3f79035d3a680e5085f58d3daa52495f2b708a6d329270870b9f04",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The remainder of a batch-file name shall be unique for each batch file defined under that manufacturer code.",
+      "generatedSemanticProjectionZh": "同一制造商代码下每个批处理文件名的其余部分必须唯一。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "KEEP-BATCH-FILE-NAME-UNIQUE-PER-MANUFACTURER-CODE",
+        "objects": [
+          "BATCH-FILE-NAME"
+        ],
+        "observableEffect": "BATCH-FILE-NAME-UNIQUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02577",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00532",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-011-A1C9C9EEAFCF",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 31,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 11
+      },
+      "sourceTextHash": "a1c9c9eeafcf564c277c16334b010be4dc2686f9a10182156ceb6ec97cebb2d9",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A batch-file part number shall be unique within the set of LSP and batch-file parts under the same manufacturer code.",
+      "generatedSemanticProjectionZh": "同一制造商代码下，批处理文件件号必须在 LSP 与批处理文件集合中唯一。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "KEEP-BATCH-FILE-PART-NUMBER-UNIQUE-AMONG-LSP-AND-BFP",
+        "objects": [
+          "BATCH-FILE-PART-NUMBER"
+        ],
+        "observableEffect": "BATCH-FILE-PN-UNIQUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02578",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00533",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-013-E373C6E2421A",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 31,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 13
+      },
+      "sourceTextHash": "e373c6e2421a96f4cbb89e7787c0d2df0192e41929b47e61d4c87daff7beaf62",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Header file names referenced in a batch file shall be complete names including extensions and shall omit path references.",
+      "generatedSemanticProjectionZh": "批处理文件中引用的头文件名必须是含扩展名的完整文件名，且不得包含路径。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "REFERENCE-COMPLETE-HEADER-FILE-NAME-WITHOUT-PATH",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "observableEffect": "HEADER-FILE-NAME-COMPLETE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02580",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00534",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-014-14C42482077F",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 31,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 14
+      },
+      "sourceTextHash": "14c42482077f4c9e999498470a59b7bbd155bc48491008f150793f3e473f67a6",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Batch files are distributed to onboard and off-board ARINC 615A loaders and are used only to automate multi-LSP setup.",
+      "generatedSemanticProjectionZh": "批处理文件分发给机上和机下 ARINC 615A 加载器，仅用于自动完成多 LSP 设置。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-USING-BATCH-FILE-PART",
+        "action": "USE-BATCH-FILE-ONLY-TO-AUTOMATE-MULTI-LSP-SETUP",
+        "objects": [
+          "BATCH-FILE-PART",
+          "DATA-LOADER"
+        ],
+        "observableEffect": "BATCH-FILE-LOADER-USE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02581",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00535",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-015-BCA2BC43A1A3",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 31,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 15
+      },
+      "sourceTextHash": "bca2bc43a1a34ae5f6cd4333e144583d4a2420320c9de3e908655253438353f4",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A batch file part shall not be transferred to target hardware.",
+      "generatedSemanticProjectionZh": "批处理文件件不得传送到目标硬件。",
+      "semantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-USING-BATCH-FILE-PART",
+        "action": "DO-NOT-TRANSFER-BATCH-FILE-TO-TARGET-HARDWARE",
+        "objects": [
+          "BATCH-FILE-PART",
+          "TARGET-HARDWARE"
+        ],
+        "observableEffect": "BATCH-FILE-NOT-TRANSFERRED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02582",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00536",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-016-BEE78B9E25ED",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 31,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 16
+      },
+      "sourceTextHash": "bee78b9e25ed3711c7368ee0b5f999a1a1c0d45fe3d1d2a88af694953da354eb",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A batch file shall contain the information defined in Table 2.3.1-1.",
+      "generatedSemanticProjectionZh": "批处理文件必须包含表 2.3.1-1 规定的信息。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "INCLUDE-BATCH-FILE-CONTENT-DEFINED-BY-TABLE-2-3-1-1",
+        "objects": [
+          "BATCH-FILE-PART",
+          "TABLE-2.3.1-1"
+        ],
+        "observableEffect": "BATCH-FILE-TABLE-CONTENT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02583",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00537",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-1-P032-PROSE-SENTENCE-001-8941510B5311",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.1",
+        "tableOrFigure": null,
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "8941510b53112e62506e45dd0c392d33e0478f7c871aa7fe4afc7d44ce481706",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Batch File Length is the number of 16-bit words in the batch file.",
+      "generatedSemanticProjectionZh": "批处理文件长度是该文件中 16 位字的数量。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE-BATCH-FILE-LENGTH-IN-16-BIT-WORDS",
+        "objects": [
+          "BATCH-FILE-LENGTH"
+        ],
+        "observableEffect": "BATCH-FILE-LENGTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02841",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00538",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-004-86427B46E466",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.8",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "86427b46e466953bd53d18c72b9a880071a246c645834469aa305341c6163d2b",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A batch-file part number shall follow the software-load PN format in 665 §2.1.1.",
+      "generatedSemanticProjectionZh": "批处理文件件号必须符合 665 §2.1.1 的软件加载件号格式。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "MAKE-BATCH-FILE-PN-COMPLIANT-WITH-SOFTWARE-LOAD-PN-FORMAT",
+        "objects": [
+          "BATCH-FILE-PN"
+        ],
+        "observableEffect": "BATCH-FILE-PN-FORMAT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02842",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00539",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-005-B74330A54136",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.8",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "b74330a54136f6dcc80421c6cf981c61d5a49b3f8196803b701fe3e803d4e884",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A batch-file part number shall be unique from any LSP part number and any MSP part number.",
+      "generatedSemanticProjectionZh": "批处理文件件号必须不同于任何 LSP 件号和任何 MSP 件号。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "KEEP-BATCH-FILE-PN-DISTINCT-FROM-LSP-AND-MSP",
+        "objects": [
+          "BATCH-FILE-PN"
+        ],
+        "observableEffect": "BATCH-FILE-PN-DISTINCT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02843",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00540",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-12-P033-PROSE-SENTENCE-002-6F1E1E9893E9",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.12",
+        "tableOrFigure": null,
+        "documentPage": 23,
+        "pdfPage": 33,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "6f1e1e9893e903f1a574e3820c327fc23c65c1e1035ba4a17cc1ae53367aa57a",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The load-list block pointer of the last load-list block shall be zero.",
+      "generatedSemanticProjectionZh": "最后一个加载列表块的指针必须为零。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "SET-LAST-LOAD-LIST-BLOCK-POINTER-TO-ZERO",
+        "objects": [
+          "LOAD-LIST-BLOCK-POINTER"
+        ],
+        "observableEffect": "LAST-LOAD-LIST-POINTER-ZERO-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02844",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00541",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-004-CA370AEF0845",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.14",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "ca370aef084512b20e2b760b0d59d0e2cd71a68c0e0266662aa1f63782f0fafc",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The Target HW ID POS value shall match the THW_ID_POS of the target hardware loaded by this batch file part.",
+      "generatedSemanticProjectionZh": "Target HW ID POS 必须与该批处理文件要加载的目标硬件 THW_ID_POS 一致。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "MATCH-TARGET-HW-ID-POS-TO-TARGET-HARDWARE",
+        "objects": [
+          "TARGET-HW-ID-POS"
+        ],
+        "observableEffect": "TARGET-HW-ID-POS-MATCH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02845",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00542",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-001-F4394EF0EEC6",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.17",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "f4394ef0eec6541cf5e52a3f361d84822e921692f9f7ee107baa99359677f900",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The header file name shall match the header file of the LSP identified by the Load PN field.",
+      "generatedSemanticProjectionZh": "头文件名必须与 Load PN 字段所标识 LSP 的头文件一致。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "MATCH-HEADER-FILE-NAME-TO-LISTED-LSP",
+        "objects": [
+          "HEADER-FILE-NAME",
+          "LOAD-PN"
+        ],
+        "observableEffect": "HEADER-FILE-NAME-MATCH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02846",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00543",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-001-4385D6046683",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.19",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 34,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "4385d604668309fd76024ec17683a16ad903b7036abee0186096a480a5af8592",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The Load PN shall match the LSP part number to be loaded to that Target HW ID POS.",
+      "generatedSemanticProjectionZh": "Load PN 必须与要加载到该 Target HW ID POS 的 LSP 件号一致。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "MATCH-LOAD-PN-TO-LSP-FOR-TARGET-HW-ID-POS",
+        "objects": [
+          "LOAD-PN",
+          "TARGET-HW-ID-POS"
+        ],
+        "observableEffect": "LOAD-PN-MATCH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02847",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00544",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-001-216B865544A5",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.20",
+        "tableOrFigure": null,
+        "documentPage": 25,
+        "pdfPage": 35,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "216b865544a5706bf01ef17dab9223e6b1c145a8a9e4564ecfac23a1f776899a",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The Batch File CRC is a 16-bit CRC covering the batch file with the CRC field excluded. Algorithm identity remains blocked by ARINC 645.",
+      "generatedSemanticProjectionZh": "批处理文件 CRC 是覆盖该文件且不含 CRC 字段自身的 16 位 CRC。算法身份仍由 ARINC 645 阻塞。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "PLACE-BATCH-FILE-CRC-COVERING-FILE-EXCLUDING-CRC-FIELD",
+        "objects": [
+          "BATCH-FILE-CRC"
+        ],
+        "observableEffect": "BATCH-FILE-CRC-FIELD-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-645"
+      ],
+      "gapIds": [
+        "GAP-ARINC-645"
+      ],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02848",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "BLOCKED-BY-ARINC-645",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "DEPENDENCY-BLOCKED",
+      "refinementRationaleEn": "ARINC 645 is acquired locally but is not bound in this PR; CRC algorithm identity stays not established.",
+      "refinementRationaleZh": "ARINC 645 本地已取得但本 PR 不绑定；CRC 算法身份仍未建立。"
+    },
+    {
+      "id": "CRS-M1-00545",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-002-2E8577AE49D2",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1.20",
+        "tableOrFigure": null,
+        "documentPage": 25,
+        "pdfPage": 35,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "2e8577ae49d29039787cd45da75095d355cc7b8eb8467ea391d9e8060dc24cbc",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The Batch File CRC shall be computed as defined in ARINC 645. This PR records the 665 trigger but does not bind 645.",
+      "generatedSemanticProjectionZh": "批处理文件 CRC 须按 ARINC 645 计算。本 PR 只记录 665 触发点，不绑定 645。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "COMPUTE-BATCH-FILE-CRC-PER-ARINC-645",
+        "objects": [
+          "BATCH-FILE-CRC"
+        ],
+        "observableEffect": "BATCH-FILE-CRC-ALGORITHM-BLOCKED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-645"
+      ],
+      "gapIds": [
+        "GAP-ARINC-645"
+      ],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02849",
+        "status": "CANDIDATE"
+      },
+      "bounded665Decision": "BLOCKED-BY-ARINC-645",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "DEPENDENCY-BLOCKED",
+      "refinementRationaleEn": "ARINC 645 is acquired locally but is not bound in this PR; CRC algorithm identity stays not established.",
+      "refinementRationaleZh": "ARINC 645 本地已取得但本 PR 不绑定；CRC 算法身份仍未建立。"
+    },
+    {
+      "id": "CRS-M1-00546",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R001",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "758dc002c72bd1e79bd6e7df2c786caedfc53736dcaf11377acb569aef747f7a",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Batch File Length field of LUB as 32 bits counting 16-bit words in the file.",
+      "generatedSemanticProjectionZh": "将 LUB 的批处理文件长度字段编码为 32 位，并以 16 位字计数整个文件。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-BATCH-FILE-LENGTH"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02850",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-BATCH-FILE-LENGTH",
+        "ordinal": 1,
+        "widthBitsExpression": "32",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00547",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R002",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "c2684d3e0ec8d05d49ebf16261f679c6b804e9f6510cc73862022afdb405229e",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Batch File Format Version field of LUB as 16 bits.",
+      "generatedSemanticProjectionZh": "将 LUB 的批处理文件格式版本字段编码为 16 位。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-BATCH-FILE-FORMAT-VERSION"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02851",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-BATCH-FILE-FORMAT-VERSION",
+        "ordinal": 2,
+        "widthBitsExpression": "16",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00548",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R003",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "ff8ca7d005b4daf99346f3edf06677b28b791e24a07cf64bc6af97c17aec41b2",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Spare field of LUB as 16 reserved zero bits used to align the following pointers.",
+      "generatedSemanticProjectionZh": "将 LUB 的 Spare 字段编码为 16 位保留填零，用于对齐随后的指针。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-SPARE"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02852",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-SPARE",
+        "ordinal": 3,
+        "widthBitsExpression": "16",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "RESERVED-ZERO-FILL",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00549",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R004",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "38c3add273470ebed057c9b550be89ee0c164d523740291f57a4f9784a768b1d",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Pointer to Batch File PN Length field of LUB as 32 bits.",
+      "generatedSemanticProjectionZh": "将 LUB 的批处理文件件号长度指针字段编码为 32 位。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-POINTER-TO-BATCH-FILE-PN-LENGTH"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02853",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-POINTER-TO-BATCH-FILE-PN-LENGTH",
+        "ordinal": 4,
+        "widthBitsExpression": "32",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00550",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R005",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "d18468662585459a5b222fbe78fee456a927daabe50f9a1e93a477690087027b",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Pointer to Number of Target HW ID Load-List Blocks field of LUB as 32 bits.",
+      "generatedSemanticProjectionZh": "将 LUB 的目标硬件标识加载列表块数目指针字段编码为 32 位。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02854",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS",
+        "ordinal": 5,
+        "widthBitsExpression": "32",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00551",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R006",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "8efe8fe4de8d0b5ba22e9f6448c33e181e727ab58ba0dd0c060250788a98ce9d",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Keep Expansion Point 1 of LUB at the tabulated width of 0 bits.",
+      "generatedSemanticProjectionZh": "将 LUB 扩展点 1 保持为表列的 0 位宽度。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-EXPANSION-POINT-1"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02855",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-EXPANSION-POINT-1",
+        "ordinal": 6,
+        "widthBitsExpression": "0",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "RESERVED-ZERO-FILL",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00552",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R007",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "0abcc2d9fc94d68ee8490a9da90e6fa2b4da0e296557d8fb78fc979c0cbb507d",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Batch File PN Length field of LUB as 16 bits. The value is the character count excluding NULs used to pad an odd length.",
+      "generatedSemanticProjectionZh": "将 LUB 的批处理文件件号长度字段编码为 16 位。该值为字符数，不含用于补齐奇数长度的 NUL。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-BATCH-FILE-PN-LENGTH"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02856",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-BATCH-FILE-PN-LENGTH",
+        "ordinal": 7,
+        "widthBitsExpression": "16",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00553",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R008",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "4ba69e519256865dde026e5d261b29e8105de1aa37becc4cee0e3335a5bcab08",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Batch File PN field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(BATCH-FILE-PN-LENGTH/2) bits, using one or more 16-bit words when present.",
+      "generatedSemanticProjectionZh": "将 LUB 的批处理文件件号编码为 8 位 ASCII，分配宽度为 16*CEILING(BATCH-FILE-PN-LENGTH/2) 位；出现时使用一个或多个 16 位字。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-BATCH-FILE-PN"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02857",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-BATCH-FILE-PN",
+        "ordinal": 8,
+        "widthBitsExpression": "16*CEILING(BATCH-FILE-PN-LENGTH/2)",
+        "repeatScope": "ONCE",
+        "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "NUL-PADDED-TO-EVEN-OCTET",
+        "noteRefs": [
+          "LUB-NOTE-1-VARIABLE-16BIT-WORDS"
+        ]
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00554",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R009",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "40b35c45917bedd377e6944d33d2cac5574a8ecc88fa6d3d17dcd3dee2770158",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Comment Length field of LUB as 16 bits.",
+      "generatedSemanticProjectionZh": "将 LUB 的注释长度字段编码为 16 位。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-COMMENT-LENGTH"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02858",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-COMMENT-LENGTH",
+        "ordinal": 9,
+        "widthBitsExpression": "16",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00555",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R010",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "8659f868caa86598bad985337f1a8985d017b3313f1504c623d51de6d3fdb145",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the optional Comment field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(COMMENT-LENGTH/2) bits; omit the field when unused.",
+      "generatedSemanticProjectionZh": "将 LUB 的可选注释字段编码为 8 位 ASCII，分配宽度为 16*CEILING(COMMENT-LENGTH/2) 位；未使用时省略该字段。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-COMMENT"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "MAY",
+      "conformanceEffect": "OPTIONAL",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02859",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-COMMENT",
+        "ordinal": 10,
+        "widthBitsExpression": "16*CEILING(COMMENT-LENGTH/2)",
+        "repeatScope": "ONCE",
+        "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "NUL-PADDED-TO-EVEN-OCTET",
+        "noteRefs": [
+          "LUB-NOTE-1-VARIABLE-16BIT-WORDS",
+          "LUB-NOTE-2-OPTIONAL-OMITTED"
+        ]
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00556",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R011",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 11
+      },
+      "sourceTextHash": "52b205b117f483b42884b21d6981fd9638aa5970afe475ab500fb215e38599f7",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Keep Expansion Point 2 of LUB at the tabulated width of 0 bits.",
+      "generatedSemanticProjectionZh": "将 LUB 扩展点 2 保持为表列的 0 位宽度。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-EXPANSION-POINT-2"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02860",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-EXPANSION-POINT-2",
+        "ordinal": 11,
+        "widthBitsExpression": "0",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "RESERVED-ZERO-FILL",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00557",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R012",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 12
+      },
+      "sourceTextHash": "d8771d147101b9dcc64f0f67a928bbf5635d3b502bacc5f916ca760a5d77db93",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Number of Target HW ID Load-List Blocks field of LUB as 16 bits.",
+      "generatedSemanticProjectionZh": "将 LUB 的目标硬件标识加载列表块数目字段编码为 16 位。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02861",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS",
+        "ordinal": 12,
+        "widthBitsExpression": "16",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00558",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R013",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 13
+      },
+      "sourceTextHash": "1241e3deec216c8f70dcd37d9df1882f418a81ae8fb29e67011a0677f31c2b9a",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Pointer to Next Target HW ID Load-List Block field of LUB as 16 bits per load-list block, holding the relative 16-bit-word offset to the next block.",
+      "generatedSemanticProjectionZh": "将 LUB 的下一目标硬件标识加载列表块指针按每个加载列表块编码为 16 位，存放到下一块的相对 16 位字偏移。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02862",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK",
+        "ordinal": 13,
+        "widthBitsExpression": "16",
+        "repeatScope": "PER-TARGET-HW-ID-LOAD-LIST-BLOCK",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": [
+          "LUB-REPEAT-PER-TARGET-HW-ID-LOAD-LIST-BLOCK"
+        ]
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00559",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R014",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 14
+      },
+      "sourceTextHash": "0a9dcf6d016c01200566b88de7cf4b64c03b04739cd1b0a0110c8abf641007c5",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Target HW ID POS Length field of LUB as 16 bits per load-list block. The value is the character count excluding NULs used to pad an odd length.",
+      "generatedSemanticProjectionZh": "将 LUB 的 Target HW ID POS 长度按每个加载列表块编码为 16 位。该值为字符数，不含用于补齐奇数长度的 NUL。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-TARGET-HW-ID-POS-LENGTH"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02863",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-TARGET-HW-ID-POS-LENGTH",
+        "ordinal": 14,
+        "widthBitsExpression": "16",
+        "repeatScope": "PER-TARGET-HW-ID-LOAD-LIST-BLOCK",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": [
+          "LUB-REPEAT-PER-TARGET-HW-ID-LOAD-LIST-BLOCK"
+        ]
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00560",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R015",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 15
+      },
+      "sourceTextHash": "30dc6846bd2f8791af6cc7ce8ed389ceebcb79ce255071f771650605754862f0",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Target HW ID POS field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(TARGET-HW-ID-POS-LENGTH/2) bits, once per load-list block when the length is positive.",
+      "generatedSemanticProjectionZh": "将 LUB 的 Target HW ID POS 编码为 8 位 ASCII，分配宽度为 16*CEILING(TARGET-HW-ID-POS-LENGTH/2) 位；每个加载列表块在长度为正时出现一次。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-TARGET-HW-ID-POS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02864",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-TARGET-HW-ID-POS",
+        "ordinal": 15,
+        "widthBitsExpression": "16*CEILING(TARGET-HW-ID-POS-LENGTH/2)",
+        "repeatScope": "PER-TARGET-HW-ID-LOAD-LIST-BLOCK",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "NUL-PADDED-TO-EVEN-OCTET",
+        "noteRefs": [
+          "LUB-NOTE-1-VARIABLE-16BIT-WORDS",
+          "LUB-REPEAT-PER-TARGET-HW-ID-LOAD-LIST-BLOCK"
+        ]
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00561",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R016",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 16
+      },
+      "sourceTextHash": "c74435a58a9dac0798d959f19ef8e8d124652d737790357ccdaa2673aaa9c0bc",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Number of Loads for Target HW ID POS field of LUB as 16 bits per load-list block.",
+      "generatedSemanticProjectionZh": "将 LUB 的目标硬件位置加载数目按每个加载列表块编码为 16 位。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02865",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS",
+        "ordinal": 16,
+        "widthBitsExpression": "16",
+        "repeatScope": "PER-TARGET-HW-ID-LOAD-LIST-BLOCK",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": [
+          "LUB-REPEAT-PER-TARGET-HW-ID-LOAD-LIST-BLOCK"
+        ]
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00562",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R017",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 17
+      },
+      "sourceTextHash": "d7220c49e2b9e5027243d0d4b9eb0619db79b52626b56eae806f27da2e0e4e8a",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Header File Name Length field of LUB as 16 bits per load of one Target HW ID.",
+      "generatedSemanticProjectionZh": "将 LUB 的头文件名长度按同一目标硬件标识下的每个加载编码为 16 位。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-HEADER-FILE-NAME-LENGTH"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02866",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-HEADER-FILE-NAME-LENGTH",
+        "ordinal": 17,
+        "widthBitsExpression": "16",
+        "repeatScope": "PER-LOAD-OF-ONE-TARGET-HW-ID",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": [
+          "LUB-REPEAT-PER-LOAD-OF-ONE-TARGET-HW-ID"
+        ]
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00563",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R018",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 18
+      },
+      "sourceTextHash": "21227b25a54d29444f6e7cec15687be673581828b52f6d4ac520a3a09789ed83",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Header File Name field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(HEADER-FILE-NAME-LENGTH/2) bits, once per load when the length is positive.",
+      "generatedSemanticProjectionZh": "将 LUB 的头文件名编码为 8 位 ASCII，分配宽度为 16*CEILING(HEADER-FILE-NAME-LENGTH/2) 位；每个加载在长度为正时出现一次。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-HEADER-FILE-NAME"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02867",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-HEADER-FILE-NAME",
+        "ordinal": 18,
+        "widthBitsExpression": "16*CEILING(HEADER-FILE-NAME-LENGTH/2)",
+        "repeatScope": "PER-LOAD-OF-ONE-TARGET-HW-ID",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "NUL-PADDED-TO-EVEN-OCTET",
+        "noteRefs": [
+          "LUB-NOTE-1-VARIABLE-16BIT-WORDS",
+          "LUB-REPEAT-PER-LOAD-OF-ONE-TARGET-HW-ID"
+        ]
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00564",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R019",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 19
+      },
+      "sourceTextHash": "950044b7fd37ce3caf331a6c1fef9dc835f37fd1420fa482ffcd2a3f361b7739",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Load PN Length field of LUB as 16 bits per load of one Target HW ID.",
+      "generatedSemanticProjectionZh": "将 LUB 的加载件号长度按同一目标硬件标识下的每个加载编码为 16 位。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-LOAD-PN-LENGTH"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02868",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-LOAD-PN-LENGTH",
+        "ordinal": 19,
+        "widthBitsExpression": "16",
+        "repeatScope": "PER-LOAD-OF-ONE-TARGET-HW-ID",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": [
+          "LUB-REPEAT-PER-LOAD-OF-ONE-TARGET-HW-ID"
+        ]
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00565",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R020",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 20
+      },
+      "sourceTextHash": "5cc8f76194b8120073b8fa735c83af3ad99b13f952cfe3fd0212d94bdc286497",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Load PN field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(LOAD-PN-LENGTH/2) bits, once per load when the length is positive.",
+      "generatedSemanticProjectionZh": "将 LUB 的加载件号编码为 8 位 ASCII，分配宽度为 16*CEILING(LOAD-PN-LENGTH/2) 位；每个加载在长度为正时出现一次。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-LOAD-PN"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02869",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-LOAD-PN",
+        "ordinal": 20,
+        "widthBitsExpression": "16*CEILING(LOAD-PN-LENGTH/2)",
+        "repeatScope": "PER-LOAD-OF-ONE-TARGET-HW-ID",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "NUL-PADDED-TO-EVEN-OCTET",
+        "noteRefs": [
+          "LUB-NOTE-1-VARIABLE-16BIT-WORDS",
+          "LUB-REPEAT-PER-LOAD-OF-ONE-TARGET-HW-ID"
+        ]
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00566",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R021",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 21
+      },
+      "sourceTextHash": "bf85305ee2f2b75b4f911f44a91ad02e721774d7b6cf3e47a6d05890b90082fc",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Keep Expansion Point 3 of LUB at the tabulated width of 0 bits.",
+      "generatedSemanticProjectionZh": "将 LUB 扩展点 3 保持为表列的 0 位宽度。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-EXPANSION-POINT-3"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02870",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-EXPANSION-POINT-3",
+        "ordinal": 21,
+        "widthBitsExpression": "0",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "RESERVED-ZERO-FILL",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      },
+      "bounded665Decision": "APPLICABLE-AS-BOUNDED-6655-REFERENCE",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "PROFILE-SCOPE-ONLY",
+      "refinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "refinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "id": "CRS-M1-00567",
+      "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R022",
+      "source": {
+        "sourceId": "ARINC-665-5",
+        "clause": "2.3.1",
+        "tableOrFigure": "Table 2.3.1-1",
+        "documentPage": 22,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 22
+      },
+      "sourceTextHash": "e9f0db8d12fbc16380dae30f0d8cf40b73501d7a905f55cb898da24f57cf6d3c",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode the Batch File CRC field of LUB as 16 bits covering the file with the CRC field excluded. Algorithm identity remains blocked by ARINC 645.",
+      "generatedSemanticProjectionZh": "将 LUB 的批处理文件 CRC 字段编码为 16 位，覆盖该文件且不含 CRC 字段自身。算法身份仍由 ARINC 645 阻塞。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE",
+        "objects": [
+          "FIELD-BATCH-FILE-CRC"
+        ],
+        "observableEffect": "FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-645"
+      ],
+      "gapIds": [
+        "GAP-ARINC-645"
+      ],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02871",
+        "status": "CANDIDATE"
+      },
+      "fieldConstraint": {
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-BATCH-FILE-CRC",
+        "ordinal": 22,
+        "widthBitsExpression": "16",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "noteRefs": []
+      },
+      "bounded665Decision": "BLOCKED-BY-ARINC-645",
+      "triggeredByRequirementIds": [],
+      "profileScopeTriggerIds": [
+        "CRS-M1-00001",
+        "CRS-M1-00016",
+        "CRS-M1-00018",
+        "CRS-M1-00042",
+        "CRS-M1-00046",
+        "CRS-M1-00085"
+      ],
+      "triggerRelations": [],
+      "refinementDisposition": "DEPENDENCY-BLOCKED",
+      "refinementRationaleEn": "ARINC 645 is acquired locally but is not bound in this PR; CRC algorithm identity stays not established.",
+      "refinementRationaleZh": "ARINC 645 本地已取得但本 PR 不绑定；CRC 算法身份仍未建立。"
     }
   ],
   "dependencies": [
@@ -93861,24 +98459,24 @@
     "rg0": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "rg1": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "reviewHead": "UNBOUND-DRAFT",
-    "sourceInventoryFingerprint": "6de712854823ea8ebf7040306ae6c76540f9dc6356acf3fff75c108c53e55241",
+    "sourceInventoryFingerprint": "2cb9a05fa82db51e25b6321802437bb6a5eb7f8bb12dd8d6426b344cf8ff0789",
     "sectionSpanManifestPath": "configs/requirements/m1_source_section_spans.json",
-    "sectionSpanManifestFingerprint": "a347600795ad6434af08c96986a45f1fba1587e6c1a0054087727780fec1f4d0",
+    "sectionSpanManifestFingerprint": "02db5e7b246295534ea8c85403f65426886573a466cd996885923c8c66974730",
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "295171c638090de74ee261e32f43c2c79a0b210c5a0c07064a14edd5d48b6130",
+    "semanticAssertionFingerprint": "a8b755fc2ba78067ea9d6bf680b110d3c1b4303c3bfd1ac87313232ffab635f1",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
   },
   "inventorySummary": {
-    "coverageCount": 2796,
-    "requirementCount": 524,
+    "coverageCount": 2871,
+    "requirementCount": 566,
     "dependencyCount": 14,
     "gapCount": 1,
-    "coverageFingerprint": "806a197c7ec644f55d05dd8a6a31f80390ece5ccfe2e7d55a6816da6e2c04dfd",
-    "requirementsFingerprint": "bb33461582d2ff7f336561420660454f6ae1bf782369c8917624abeecc49fe54"
+    "coverageFingerprint": "3e3d2b7774b13d7d9f50878f03119e18f2d43df5b3d61059c4315b7ea5c14ebc",
+    "requirementsFingerprint": "91e272a9084d8b4353e557169ea2daba6e4a66b63034a107c6e5f59ee89e609d"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",
@@ -94894,6 +99492,34 @@
       "id": "PROTOCOL-VERSION-TWO-ASCII-CHARACTERS",
       "kind": "LOCAL-NOTE",
       "definitionEn": "Local note: Protocol Version is two ASCII characters.",
+      "sourceUnitIds": []
+    },
+    {
+      "id": "LUB-NOTE-1-VARIABLE-16BIT-WORDS",
+      "kind": "LOCAL-NOTE",
+      "definitionEn": "Table 2.3.1-1 note 1: variable-length field; when used, allocate one or more 16-bit words.",
+      "definitionZh": "表 2.3.1-1 注 1：可变长度字段；使用时分配一个或多个 16 位字。",
+      "sourceUnitIds": []
+    },
+    {
+      "id": "LUB-NOTE-2-OPTIONAL-OMITTED",
+      "kind": "LOCAL-NOTE",
+      "definitionEn": "Table 2.3.1-1 note 2: optional field; omit the field when it is not used.",
+      "definitionZh": "表 2.3.1-1 注 2：可选字段；未使用时省略。",
+      "sourceUnitIds": []
+    },
+    {
+      "id": "LUB-REPEAT-PER-TARGET-HW-ID-LOAD-LIST-BLOCK",
+      "kind": "LOCAL-NOTE",
+      "definitionEn": "Table 2.3.1-1 '+' marker: the field repeats once per Target HW ID Load-List Block.",
+      "definitionZh": "表 2.3.1-1 的 “+” 标记：该字段按每个目标硬件标识加载列表块重复一次。",
+      "sourceUnitIds": []
+    },
+    {
+      "id": "LUB-REPEAT-PER-LOAD-OF-ONE-TARGET-HW-ID",
+      "kind": "LOCAL-NOTE",
+      "definitionEn": "Table 2.3.1-1 '+#' marker: the field repeats once per load of one Target HW ID.",
+      "definitionZh": "表 2.3.1-1 的 “+#” 标记：该字段按同一目标硬件标识下的每个加载重复一次。",
       "sourceUnitIds": []
     }
   ]
