@@ -13,7 +13,7 @@
 - M1 NET-ISSUE-EDITION snapshot blocksM1Approval=`True` — Historical snapshot on the merged M1 tree. External owner sign-off and merge bound that Head. The boolean does not reopen the merge. CR-2026-009 accepted 664P3-1 as this M2 input edition; 664P7 remains recorded and AFDX stays unselected.
 - Successor delta `CR-2026-012` authorized by `CR-2026-009`; doesNotTransplantFrozenApproval=`True`
 - Predecessor input artifact commit `402e8371b0237aec4691bab0b44e502f4ac1a7c4` tree `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
-- Current input artifact commit `7daf8730872f5347be1906b902c742b79cde0208` tree `ce7ceff1f6fe285a48d7831d6aed8f69649c88a6`
+- Current input artifact commit `c3bdf0f043e766567f7c8d3a759e722f6753a7ad` tree `5183add99fd7ae3566431a4c35e0c2f5bb0f7eba`
 
 ## Scope
 
@@ -147,6 +147,7 @@
 | `CLK_DLP` | PER-CORRELATION-KEY | TARGET-OPERATION-AND-DLP-TRANSFER-SEQUENCE | `T_INF_ACCEPT_INIT`, `T_UPL_ACCEPT_INIT`, `T_UPL_LUR_WRQ`, `T_UPL_FILE_RRQ` | Inter-operation / inter-transfer DLP clock. |
 | `CLK_EXCEPTION` | PER-CORRELATION-KEY | STATUS-EXCEPTION-OBJECT | `T_ENTER_UPL_EXC`, `T_ENTER_INF_EXC`, `T_INF_LCS_WRQ` | Exception silence clock. |
 | `CLK_WAIT` | PER-CORRELATION-KEY | TFTP-PEER-AND-REJECTED-TRANSFER-REQUEST | `T_WAIT_FROM_UPL_FILE`, `T_WAIT_FROM_UPL_LUR`, `T_WAIT_FROM_INF_LCI`, `T_WAIT_FROM_INF_LCL` | Delay since the WAIT message that forbids retry until the carried timer elapses. |
+| `CLK_FIND` | PER-CORRELATION-KEY | FIND-REQUEST-INSTANCE |  | Observational FIND request/answer clock. Bound M2 transitions do not reset it. |
 
 ## Invariants
 
@@ -439,6 +440,8 @@
 | `TIM-CRS-M1-00188` | `CRS-M1-00188` | `CLK_DLP` | SOURCE-EQUATION | 0..DLP-TO-MINUS-RETRY-AND-NETWORK-TERMS s | `{"kind":"COMPARE","op":"GT","left":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"DLP_RETRY","unit":"1"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"LITERAL","value":1,"unit":"1"},"unit":"1"},"unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"MUL","left":{"kind":"LITERAL","value":2,"unit":"1"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":4,"unit":"1"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/OPEN | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
 | `TIM-CRS-M1-00305` | `CRS-M1-00305` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
 | `TIM-CRS-M1-00322` | `CRS-M1-00322` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00520` | `CRS-M1-00520` | `CLK_FIND` | DURATION-UPPER-BOUND | 0..3 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_FIND"},"right":{"kind":"LITERAL","value":3,"unit":"s"}}` | — | CLOSED/CLOSED | `RELATION-BOUND` | FIND-ANSWER-WINDOW-UPPER-BOUND |
+| `TIM-CRS-M1-00391` | `CRS-M1-00391` | `CLK_FIND` | DEADLINE-UPPER-BOUND | 0..2 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_FIND"},"right":{"kind":"LITERAL","value":2,"unit":"s"}}` | — | CLOSED/CLOSED | `RELATION-BOUND` | FIND-HOST-ANSWER-UPPER-BOUND |
 
 ## Requirement dispositions
 
@@ -834,7 +837,7 @@
 | `CRS-M1-00388` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00389` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00390` | SCOPE-CONSTRAINT | `SCOPE` |
-| `CRS-M1-00391` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00391` | SCOPE-CONSTRAINT | `SCOPE`, `TIM-CRS-M1-00391`, `CLK_FIND` |
 | `CRS-M1-00392` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00393` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00394` | SCOPE-CONSTRAINT | `SCOPE` |
@@ -868,7 +871,6 @@
 | `CRS-M1-00422` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00423` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00424` | SCOPE-CONSTRAINT | `SCOPE` |
-| `CRS-M1-00425` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00426` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00427` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00428` | SCOPE-CONSTRAINT | `SCOPE` |
@@ -963,6 +965,11 @@
 | `CRS-M1-00517` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00518` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00519` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00520` | SCOPE-CONSTRAINT | `SCOPE`, `TIM-CRS-M1-00520`, `CLK_FIND` |
+| `CRS-M1-00521` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00522` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00523` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00524` | SCOPE-CONSTRAINT | `SCOPE` |
 
 ## Trace relations
 
@@ -1483,7 +1490,6 @@
 | `TR-CRS-M1-00422-0513` | `CRS-M1-00422` | SCOPE | `SCOPE` | DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior. |
 | `TR-CRS-M1-00423-0514` | `CRS-M1-00423` | SCOPE | `SCOPE` | DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior. |
 | `TR-CRS-M1-00424-0515` | `CRS-M1-00424` | SCOPE | `SCOPE` | DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior. |
-| `TR-CRS-M1-00425-0516` | `CRS-M1-00425` | SCOPE | `SCOPE` | DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior. |
 | `TR-CRS-M1-00426-0517` | `CRS-M1-00426` | SCOPE | `SCOPE` | DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior. |
 | `TR-CRS-M1-00427-0518` | `CRS-M1-00427` | SCOPE | `SCOPE` | DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior. |
 | `TR-CRS-M1-00428-0519` | `CRS-M1-00428` | SCOPE | `SCOPE` | DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior. |
@@ -1578,6 +1584,15 @@
 | `TR-CRS-M1-00517-0608` | `CRS-M1-00517` | SCOPE | `SCOPE` | DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior. |
 | `TR-CRS-M1-00518-0609` | `CRS-M1-00518` | SCOPE | `SCOPE` | DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior. |
 | `TR-CRS-M1-00519-0610` | `CRS-M1-00519` | SCOPE | `SCOPE` | DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior. |
+| `TR-CRS-M1-00520-0611` | `CRS-M1-00520` | SCOPE | `SCOPE` | Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD. |
+| `TR-CRS-M1-00520-0612` | `CRS-M1-00520` | TIMING | `TIM-CRS-M1-00520` | Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD. |
+| `TR-CRS-M1-00520-0613` | `CRS-M1-00520` | CLOCK | `CLK_FIND` | Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD. |
+| `TR-CRS-M1-00521-0614` | `CRS-M1-00521` | SCOPE | `SCOPE` | Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD. |
+| `TR-CRS-M1-00522-0615` | `CRS-M1-00522` | SCOPE | `SCOPE` | Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD. |
+| `TR-CRS-M1-00523-0616` | `CRS-M1-00523` | SCOPE | `SCOPE` | Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD. |
+| `TR-CRS-M1-00524-0617` | `CRS-M1-00524` | SCOPE | `SCOPE` | Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD. |
+| `TR-CRS-M1-00391-0618` | `CRS-M1-00391` | TIMING | `TIM-CRS-M1-00391` | FIND timing is catalogued for later error-interval judgement; bound M2 does not run FIND. |
+| `TR-CRS-M1-00391-0619` | `CRS-M1-00391` | CLOCK | `CLK_FIND` | FIND clock is observational in the catalog only. |
 
 ## Infrastructure premises
 
@@ -1695,7 +1710,7 @@
 - M1 NET-ISSUE-EDITION 快照 blocksM1Approval=`True` — 已合并 M1 树上的历史快照。外部所有者签署与合并绑定了该 Head。该布尔值不重开合并。CR-2026-009 接受 664P3-1 作为本 M2 输入版次；664P7 保持已登记且 AFDX 未选。
 - 后继增量 `CR-2026-012` 由 `CR-2026-009` 授权；doesNotTransplantFrozenApproval=`True`
 - 前序输入制品提交 `402e8371b0237aec4691bab0b44e502f4ac1a7c4` 树 `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
-- 当前输入制品提交 `7daf8730872f5347be1906b902c742b79cde0208` 树 `ce7ceff1f6fe285a48d7831d6aed8f69649c88a6`
+- 当前输入制品提交 `c3bdf0f043e766567f7c8d3a759e722f6753a7ad` 树 `5183add99fd7ae3566431a4c35e0c2f5bb0f7eba`
 
 ## 范围
 
@@ -1829,6 +1844,7 @@
 | `CLK_DLP` | PER-CORRELATION-KEY | TARGET-OPERATION-AND-DLP-TRANSFER-SEQUENCE | `T_INF_ACCEPT_INIT`, `T_UPL_ACCEPT_INIT`, `T_UPL_LUR_WRQ`, `T_UPL_FILE_RRQ` | 操作间／传输间 DLP 时钟。 |
 | `CLK_EXCEPTION` | PER-CORRELATION-KEY | STATUS-EXCEPTION-OBJECT | `T_ENTER_UPL_EXC`, `T_ENTER_INF_EXC`, `T_INF_LCS_WRQ` | 异常静默时钟。 |
 | `CLK_WAIT` | PER-CORRELATION-KEY | TFTP-PEER-AND-REJECTED-TRANSFER-REQUEST | `T_WAIT_FROM_UPL_FILE`, `T_WAIT_FROM_UPL_LUR`, `T_WAIT_FROM_INF_LCI`, `T_WAIT_FROM_INF_LCL` | 自 WAIT 消息起的时延；在所携定时器到期前禁止重试。 |
+| `CLK_FIND` | PER-CORRELATION-KEY | FIND-REQUEST-INSTANCE |  | 观察用 FIND 请求／应答时钟。绑定 M2 迁移不复位该时钟。 |
 
 ## 不变量
 
@@ -2121,6 +2137,8 @@
 | `TIM-CRS-M1-00188` | `CRS-M1-00188` | `CLK_DLP` | SOURCE-EQUATION | 0..DLP-TO-MINUS-RETRY-AND-NETWORK-TERMS s | `{"kind":"COMPARE","op":"GT","left":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"DLP_RETRY","unit":"1"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"LITERAL","value":1,"unit":"1"},"unit":"1"},"unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"MUL","left":{"kind":"LITERAL","value":2,"unit":"1"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":4,"unit":"1"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/OPEN | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
 | `TIM-CRS-M1-00305` | `CRS-M1-00305` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
 | `TIM-CRS-M1-00322` | `CRS-M1-00322` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
+| `TIM-CRS-M1-00520` | `CRS-M1-00520` | `CLK_FIND` | DURATION-UPPER-BOUND | 0..3 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_FIND"},"right":{"kind":"LITERAL","value":3,"unit":"s"}}` | — | CLOSED/CLOSED | `RELATION-BOUND` | FIND-ANSWER-WINDOW-UPPER-BOUND |
+| `TIM-CRS-M1-00391` | `CRS-M1-00391` | `CLK_FIND` | DEADLINE-UPPER-BOUND | 0..2 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_FIND"},"right":{"kind":"LITERAL","value":2,"unit":"s"}}` | — | CLOSED/CLOSED | `RELATION-BOUND` | FIND-HOST-ANSWER-UPPER-BOUND |
 
 ## 需求处置
 
@@ -2516,7 +2534,7 @@
 | `CRS-M1-00388` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00389` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00390` | SCOPE-CONSTRAINT | `SCOPE` |
-| `CRS-M1-00391` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00391` | SCOPE-CONSTRAINT | `SCOPE`, `TIM-CRS-M1-00391`, `CLK_FIND` |
 | `CRS-M1-00392` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00393` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00394` | SCOPE-CONSTRAINT | `SCOPE` |
@@ -2550,7 +2568,6 @@
 | `CRS-M1-00422` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00423` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00424` | SCOPE-CONSTRAINT | `SCOPE` |
-| `CRS-M1-00425` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00426` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00427` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00428` | SCOPE-CONSTRAINT | `SCOPE` |
@@ -2645,6 +2662,11 @@
 | `CRS-M1-00517` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00518` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00519` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00520` | SCOPE-CONSTRAINT | `SCOPE`, `TIM-CRS-M1-00520`, `CLK_FIND` |
+| `CRS-M1-00521` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00522` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00523` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00524` | SCOPE-CONSTRAINT | `SCOPE` |
 
 ## 追踪关系
 
@@ -3165,7 +3187,6 @@
 | `TR-CRS-M1-00422-0513` | `CRS-M1-00422` | SCOPE | `SCOPE` | DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。 |
 | `TR-CRS-M1-00423-0514` | `CRS-M1-00423` | SCOPE | `SCOPE` | DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。 |
 | `TR-CRS-M1-00424-0515` | `CRS-M1-00424` | SCOPE | `SCOPE` | DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。 |
-| `TR-CRS-M1-00425-0516` | `CRS-M1-00425` | SCOPE | `SCOPE` | DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。 |
 | `TR-CRS-M1-00426-0517` | `CRS-M1-00426` | SCOPE | `SCOPE` | DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。 |
 | `TR-CRS-M1-00427-0518` | `CRS-M1-00427` | SCOPE | `SCOPE` | DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。 |
 | `TR-CRS-M1-00428-0519` | `CRS-M1-00428` | SCOPE | `SCOPE` | DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。 |
@@ -3260,6 +3281,15 @@
 | `TR-CRS-M1-00517-0608` | `CRS-M1-00517` | SCOPE | `SCOPE` | DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。 |
 | `TR-CRS-M1-00518-0609` | `CRS-M1-00518` | SCOPE | `SCOPE` | DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。 |
 | `TR-CRS-M1-00519-0610` | `CRS-M1-00519` | SCOPE | `SCOPE` | DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。 |
+| `TR-CRS-M1-00520-0611` | `CRS-M1-00520` | SCOPE | `SCOPE` | 扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。 |
+| `TR-CRS-M1-00520-0612` | `CRS-M1-00520` | TIMING | `TIM-CRS-M1-00520` | 扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。 |
+| `TR-CRS-M1-00520-0613` | `CRS-M1-00520` | CLOCK | `CLK_FIND` | 扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。 |
+| `TR-CRS-M1-00521-0614` | `CRS-M1-00521` | SCOPE | `SCOPE` | 扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。 |
+| `TR-CRS-M1-00522-0615` | `CRS-M1-00522` | SCOPE | `SCOPE` | 扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。 |
+| `TR-CRS-M1-00523-0616` | `CRS-M1-00523` | SCOPE | `SCOPE` | 扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。 |
+| `TR-CRS-M1-00524-0617` | `CRS-M1-00524` | SCOPE | `SCOPE` | 扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。 |
+| `TR-CRS-M1-00391-0618` | `CRS-M1-00391` | TIMING | `TIM-CRS-M1-00391` | FIND 时序已编入目录供后续误差区间判定；绑定 M2 不运行 FIND。 |
+| `TR-CRS-M1-00391-0619` | `CRS-M1-00391` | CLOCK | `CLK_FIND` | FIND 时钟仅用于目录观察，不进入绑定状态机迁移。 |
 
 ## 基础设施前提
 

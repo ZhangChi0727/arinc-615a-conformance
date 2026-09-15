@@ -26,22 +26,22 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "00682fd3e141b03774918696318dd131798f9a75",
+        "gitBlobOid": "a38ac5892c46603232a5450f6378d410884d2e43",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_crs_package.schema.json",
-        "gitBlobOid": "f5a052ff27d15d7cf28cf58cd05ea7cf51cc1482",
-        "role": "M1-IMMUTABLE-INPUT"
+        "gitBlobOid": "53f2749aa0938b50ad63ca2dbc1cb06f95811a47",
+        "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "21bcf7b60a7769050a1800c96db9993193a1108c",
+        "gitBlobOid": "84fa15b49b721b6ba830ae0ca4764faa25cd60b7",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "9a16c0e223e75272faf208cda33940530d01a710",
+        "gitBlobOid": "fda14f43c4cb47bd140dcaac7f6063ff9b63638c",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "5328da539d5c259a89dc3041d61c6ae3e98ddfc8",
+        "gitBlobOid": "ff8e1a1f225000014c325614c5ea44a1af48b3f4",
         "role": "SUCCESSOR-M1-DELTA"
       }
     ],
@@ -148,8 +148,8 @@
           "role": "M1-IMMUTABLE-INPUT"
         }
       ],
-      "currentInputArtifactCommit": "7daf8730872f5347be1906b902c742b79cde0208",
-      "currentInputArtifactTree": "ce7ceff1f6fe285a48d7831d6aed8f69649c88a6"
+      "currentInputArtifactCommit": "c3bdf0f043e766567f7c8d3a759e722f6753a7ad",
+      "currentInputArtifactTree": "5183add99fd7ae3566431a4c35e0c2f5bb0f7eba"
     }
   },
   "sequenceEndpointBindings": [
@@ -1618,6 +1618,19 @@
         ],
         "meaningEn": "Delay since the WAIT message that forbids retry until the carried timer elapses.",
         "meaningZh": "自 WAIT 消息起的时延；在所携定时器到期前禁止重试。"
+      },
+      {
+        "id": "CLK_FIND",
+        "unit": "s",
+        "growsDuringDelay": true,
+        "scope": "PER-CORRELATION-KEY",
+        "correlationKey": "FIND-REQUEST-INSTANCE",
+        "instanceBinding": "EVENT-CORRELATION-KEY",
+        "resetPolicy": "NOT-RESET-BY-BOUND-M2-TRANSITIONS",
+        "cancelPolicy": "CLEAR-INSTANCE-ON-CANCEL-OR-SUPERSEDE",
+        "resetOn": [],
+        "meaningEn": "Observational FIND request/answer clock. Bound M2 transitions do not reset it.",
+        "meaningZh": "观察用 FIND 请求／应答时钟。绑定 M2 迁移不复位该时钟。"
       }
     ],
     "transitions": [
@@ -5454,7 +5467,7 @@
         "fieldId": "FIELD-FILE-LENGTH",
         "m1RequirementId": "CRS-M1-00459",
         "ordinal": 1,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "32",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
@@ -5472,14 +5485,14 @@
         "fieldId": "FIELD-PROTOCOL-VERSION",
         "m1RequirementId": "CRS-M1-00460",
         "ordinal": 2,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "widthBitsExpression": "16",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "FIXED-TWO-ASCII-CHARACTERS",
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
         "checkLocation": "LNR-FILE-BYTES",
-        "predicateEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNR at the tabulated width and table ordinal 2.",
-        "predicateZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNR 的 FIELD-PROTOCOL-VERSION。",
+        "predicateEn": "When the corresponding DOWNLOAD mode is used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNR as two ASCII characters at table ordinal 2.",
+        "predicateZh": "在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNR 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
         "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
@@ -5490,7 +5503,7 @@
         "fieldId": "FIELD-NUMBER-OF-FILES",
         "m1RequirementId": "CRS-M1-00461",
         "ordinal": 3,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
@@ -5508,7 +5521,7 @@
         "fieldId": "FIELD-FILE-NAME-LENGTH",
         "m1RequirementId": "CRS-M1-00462",
         "ordinal": 4,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
@@ -5526,7 +5539,7 @@
         "fieldId": "FIELD-FILE-NAME",
         "m1RequirementId": "CRS-M1-00463",
         "ordinal": 5,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "8-TO-2040",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
@@ -5544,11 +5557,11 @@
         "fieldId": "FIELD-USER-DEFINED-DATA-LENGTH",
         "m1RequirementId": "CRS-M1-00464",
         "ordinal": 6,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
-        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
         "checkLocation": "LNR-FILE-BYTES",
         "predicateEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-USER-DEFINED-DATA-LENGTH of LNR at the tabulated width and table ordinal 6.",
         "predicateZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA-LENGTH。",
@@ -5562,11 +5575,11 @@
         "fieldId": "FIELD-USER-DEFINED-DATA",
         "m1RequirementId": "CRS-M1-00465",
         "ordinal": 7,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "0-TO-2040",
         "encodingRule": "LENGTH-PREFIXED-BINARY",
         "terminationRule": "LENGTH-PREFIXED-PER-TABLE",
-        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
-        "repeatScope": "PER-FILE-RECORD",
+        "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "ONCE",
         "checkLocation": "LNR-FILE-BYTES",
         "predicateEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-USER-DEFINED-DATA of LNR at the tabulated width and table ordinal 7.",
         "predicateZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA。",
@@ -5580,7 +5593,7 @@
         "fieldId": "FIELD-FILE-LENGTH",
         "m1RequirementId": "CRS-M1-00466",
         "ordinal": 1,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "32",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
@@ -5598,14 +5611,14 @@
         "fieldId": "FIELD-PROTOCOL-VERSION",
         "m1RequirementId": "CRS-M1-00467",
         "ordinal": 2,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "widthBitsExpression": "16",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "FIXED-TWO-ASCII-CHARACTERS",
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
         "checkLocation": "LNS-FILE-BYTES",
-        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNS at the tabulated width and table ordinal 2.",
-        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNS 的 FIELD-PROTOCOL-VERSION。",
+        "predicateEn": "When the corresponding DOWNLOAD mode is used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNS as two ASCII characters at table ordinal 2.",
+        "predicateZh": "在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNS 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
         "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
@@ -5616,7 +5629,7 @@
         "fieldId": "FIELD-DOWNLOAD-OPERATION-STATUS-CODE",
         "m1RequirementId": "CRS-M1-00468",
         "ordinal": 3,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
@@ -5634,7 +5647,7 @@
         "fieldId": "FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH",
         "m1RequirementId": "CRS-M1-00469",
         "ordinal": 4,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
@@ -5652,7 +5665,7 @@
         "fieldId": "FIELD-DOWNLOAD-STATUS-DESCRIPTION",
         "m1RequirementId": "CRS-M1-00470",
         "ordinal": 5,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "0-TO-2040",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
@@ -5670,7 +5683,7 @@
         "fieldId": "FIELD-COUNTER",
         "m1RequirementId": "CRS-M1-00471",
         "ordinal": 6,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
@@ -5688,10 +5701,10 @@
         "fieldId": "FIELD-EXCEPTION-TIMER",
         "m1RequirementId": "CRS-M1-00472",
         "ordinal": 7,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "ALWAYS",
+        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
         "repeatScope": "ONCE",
         "checkLocation": "LNS-FILE-BYTES",
         "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-EXCEPTION-TIMER of LNS at the tabulated width and table ordinal 7.",
@@ -5706,17 +5719,27 @@
         "fieldId": "FIELD-ESTIMATED-TIME",
         "m1RequirementId": "CRS-M1-00473",
         "ordinal": 8,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "ALWAYS",
+        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
         "repeatScope": "ONCE",
         "checkLocation": "LNS-FILE-BYTES",
-        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-ESTIMATED-TIME of LNS at the tabulated width and table ordinal 8.",
-        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 8 个字段位置编码 LNS 的 FIELD-ESTIMATED-TIME。",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is used, the protocol-file producer shall encode LNS Estimated Time as a 16-bit raw field. Status 0x0002 or 0x0004 carry remaining seconds; 0xFFFF means the estimate is not given and must not be decoded as ordinary remaining seconds; other status codes set the field to 0x0000.",
+        "predicateZh": "在使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Estimated Time 编为 16 位原始字段。状态 0x0002 或 0x0004 携带剩余秒数；0xFFFF 表示未给出估计，不得解码为普通剩余秒数；其他状态码把该字段置为 0x0000。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
-        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。",
+        "specialValues": [
+          {
+            "code": "0xFFFF",
+            "meaningCode": "ESTIMATED-TIME-NOT-GIVEN"
+          },
+          {
+            "code": "0x0000",
+            "meaningCode": "ESTIMATED-TIME-UNUSED-FOR-OTHER-STATUS"
+          }
+        ]
       },
       {
         "id": "FC-LNS-FIELD-DOWNLOAD-LIST-RATIO",
@@ -5724,14 +5747,14 @@
         "fieldId": "FIELD-DOWNLOAD-LIST-RATIO",
         "m1RequirementId": "CRS-M1-00474",
         "ordinal": 9,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "widthBitsExpression": "24",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "RIGHT-ADJUSTED-LEADING-BLANKS",
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
         "checkLocation": "LNS-FILE-BYTES",
-        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-LIST-RATIO of LNS at the tabulated width and table ordinal 9.",
-        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 9 个字段位置编码 LNS 的 FIELD-DOWNLOAD-LIST-RATIO。",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is used, the protocol-file producer shall encode LNS Download List Ratio as three right-adjusted ASCII characters with leading blanks, not as an integer.",
+        "predicateZh": "在使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Download List Ratio 编为三个右对齐、前导空白的 ASCII 字符，而不是整数。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
         "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
@@ -5742,7 +5765,7 @@
         "fieldId": "FIELD-NUMBER-OF-FILES",
         "m1RequirementId": "CRS-M1-00475",
         "ordinal": 10,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
@@ -5760,7 +5783,7 @@
         "fieldId": "FIELD-FILE-NAME-LENGTH",
         "m1RequirementId": "CRS-M1-00476",
         "ordinal": 11,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
@@ -5778,7 +5801,7 @@
         "fieldId": "FIELD-FILE-NAME",
         "m1RequirementId": "CRS-M1-00477",
         "ordinal": 12,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "8-TO-2040",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
@@ -5796,7 +5819,7 @@
         "fieldId": "FIELD-FILE-STATUS",
         "m1RequirementId": "CRS-M1-00478",
         "ordinal": 13,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
@@ -5814,7 +5837,7 @@
         "fieldId": "FIELD-FILE-STATUS-DESCRIPTION-LENGTH",
         "m1RequirementId": "CRS-M1-00479",
         "ordinal": 14,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
@@ -5832,7 +5855,7 @@
         "fieldId": "FIELD-FILE-STATUS-DESCRIPTION",
         "m1RequirementId": "CRS-M1-00480",
         "ordinal": 15,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "0-TO-2040",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
@@ -5850,7 +5873,7 @@
         "fieldId": "FIELD-FILE-LENGTH",
         "m1RequirementId": "CRS-M1-00481",
         "ordinal": 1,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "32",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
@@ -5868,14 +5891,14 @@
         "fieldId": "FIELD-PROTOCOL-VERSION",
         "m1RequirementId": "CRS-M1-00482",
         "ordinal": 2,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "widthBitsExpression": "16",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "FIXED-TWO-ASCII-CHARACTERS",
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
         "checkLocation": "LNL-FILE-BYTES",
-        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNL at the tabulated width and table ordinal 2.",
-        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNL 的 FIELD-PROTOCOL-VERSION。",
+        "predicateEn": "When the corresponding DOWNLOAD mode is used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNL as two ASCII characters at table ordinal 2.",
+        "predicateZh": "在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNL 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
         "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
@@ -5886,7 +5909,7 @@
         "fieldId": "FIELD-NUMBER-OF-FILES",
         "m1RequirementId": "CRS-M1-00483",
         "ordinal": 3,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
@@ -5904,7 +5927,7 @@
         "fieldId": "FIELD-FILE-NAME-LENGTH",
         "m1RequirementId": "CRS-M1-00484",
         "ordinal": 4,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
@@ -5922,7 +5945,7 @@
         "fieldId": "FIELD-FILE-NAME",
         "m1RequirementId": "CRS-M1-00485",
         "ordinal": 5,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "8-TO-2040",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
@@ -5940,7 +5963,7 @@
         "fieldId": "FIELD-FILE-DESCRIPTION-LENGTH",
         "m1RequirementId": "CRS-M1-00486",
         "ordinal": 6,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
@@ -5958,7 +5981,7 @@
         "fieldId": "FIELD-FILE-DESCRIPTION",
         "m1RequirementId": "CRS-M1-00487",
         "ordinal": 7,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "0-TO-2040",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
@@ -5976,7 +5999,7 @@
         "fieldId": "FIELD-FILE-LENGTH",
         "m1RequirementId": "CRS-M1-00488",
         "ordinal": 1,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "32",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
@@ -5994,14 +6017,14 @@
         "fieldId": "FIELD-PROTOCOL-VERSION",
         "m1RequirementId": "CRS-M1-00489",
         "ordinal": 2,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "widthBitsExpression": "16",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "FIXED-TWO-ASCII-CHARACTERS",
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
         "checkLocation": "LNA-FILE-BYTES",
-        "predicateEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNA at the tabulated width and table ordinal 2.",
-        "predicateZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNA 的 FIELD-PROTOCOL-VERSION。",
+        "predicateEn": "When the corresponding DOWNLOAD mode is used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNA as two ASCII characters at table ordinal 2.",
+        "predicateZh": "在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNA 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
         "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
@@ -6012,7 +6035,7 @@
         "fieldId": "FIELD-NUMBER-OF-FILES",
         "m1RequirementId": "CRS-M1-00490",
         "ordinal": 3,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
@@ -6030,7 +6053,7 @@
         "fieldId": "FIELD-FILE-NAME-LENGTH",
         "m1RequirementId": "CRS-M1-00491",
         "ordinal": 4,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
@@ -6048,7 +6071,7 @@
         "fieldId": "FIELD-FILE-NAME",
         "m1RequirementId": "CRS-M1-00492",
         "ordinal": 5,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "8-TO-2040",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
@@ -8568,6 +8591,108 @@
       "enablementEventIds": [
         "EV_TIMEOUT_EXCEPTION"
       ]
+    },
+    {
+      "id": "TIM-CRS-M1-00520",
+      "requirementId": "CRS-M1-00520",
+      "trigger": "FIND-REQUEST-SENT",
+      "response": "FIND-ANSWER-REGISTRATION-WINDOW-CLOSED",
+      "cancel": "FIND-OPERATION-ABORTED",
+      "supersede": "NONE",
+      "correlationKey": "FIND-REQUEST-INSTANCE",
+      "pairingPolicy": "PAIR-FIND-REQUEST-WITH-REGISTRATION-WINDOW",
+      "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+      "clockId": "CLK_FIND",
+      "resets": [],
+      "constraintKind": "DURATION-UPPER-BOUND",
+      "parameterOrigin": "SYMBOLIC-SOURCE-PARAMETER",
+      "m1LowerBoundary": "CLOSED",
+      "m1UpperBoundary": "CLOSED",
+      "lowerBound": 0,
+      "upperBound": 3,
+      "lowerBoundary": "CLOSED",
+      "upperBoundary": "CLOSED",
+      "unit": "s",
+      "boundKind": "FIXED-RANGE",
+      "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
+      "sourceParameter": "FIND-ANSWER-WINDOW-3-S",
+      "expression": {
+        "kind": "COMPARE",
+        "op": "LE",
+        "left": {
+          "kind": "CLOCK",
+          "name": "CLK_FIND"
+        },
+        "right": {
+          "kind": "LITERAL",
+          "value": 3,
+          "unit": "s"
+        }
+      },
+      "sourceEvidenceUnitIds": [
+        "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF",
+        "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891"
+      ],
+      "staticCheck": "RELATION-BOUND",
+      "observationWindow": "FIND-ANSWER-WINDOW-UPPER-BOUND",
+      "observationRoleEn": "FIND protocol event timestamps; bound M2 does not execute FIND.",
+      "observationRoleZh": "FIND 协议事件时间戳；绑定 M2 不执行 FIND。",
+      "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
+      "errorBudgetEn": "Error budget is parameterized at Project Configuration. This catalog item is not an executable FIND test.",
+      "errorBudgetZh": "误差预算在 Project Configuration 参数化。本目录项不是可执行 FIND 试验。",
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": []
+    },
+    {
+      "id": "TIM-CRS-M1-00391",
+      "requirementId": "CRS-M1-00391",
+      "trigger": "FIND-REQUEST-RECEIVED-BY-HOST",
+      "response": "FIND-ANSWER-SENT-BY-HOST",
+      "cancel": "ILLEGAL-FIND-REQUEST-OR-FIND-ABORTED",
+      "supersede": "NONE",
+      "correlationKey": "FIND-REQUEST-INSTANCE",
+      "pairingPolicy": "PAIR-FIND-REQUEST-WITH-HOST-ANSWER",
+      "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+      "clockId": "CLK_FIND",
+      "resets": [],
+      "constraintKind": "DEADLINE-UPPER-BOUND",
+      "parameterOrigin": "SYMBOLIC-SOURCE-PARAMETER",
+      "m1LowerBoundary": "CLOSED",
+      "m1UpperBoundary": "CLOSED",
+      "lowerBound": 0,
+      "upperBound": 2,
+      "lowerBoundary": "CLOSED",
+      "upperBoundary": "CLOSED",
+      "unit": "s",
+      "boundKind": "FIXED-RANGE",
+      "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
+      "sourceParameter": "FIND-HOST-TIMEOUT-2-S",
+      "expression": {
+        "kind": "COMPARE",
+        "op": "LE",
+        "left": {
+          "kind": "CLOCK",
+          "name": "CLK_FIND"
+        },
+        "right": {
+          "kind": "LITERAL",
+          "value": 2,
+          "unit": "s"
+        }
+      },
+      "sourceEvidenceUnitIds": [
+        "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700",
+        "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF"
+      ],
+      "staticCheck": "RELATION-BOUND",
+      "observationWindow": "FIND-HOST-ANSWER-UPPER-BOUND",
+      "observationRoleEn": "FIND protocol event timestamps; bound M2 does not execute FIND.",
+      "observationRoleZh": "FIND 协议事件时间戳；绑定 M2 不执行 FIND。",
+      "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
+      "errorBudgetEn": "Error budget is parameterized at Project Configuration. This catalog item is not an executable FIND test.",
+      "errorBudgetZh": "误差预算在 Project Configuration 参数化。本目录项不是可执行 FIND 试验。",
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": []
     }
   ],
   "requirementDispositions": [
@@ -13351,7 +13476,9 @@
       "kind": "SCOPE-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "SCOPE"
+        "SCOPE",
+        "TIM-CRS-M1-00391",
+        "CLK_FIND"
       ]
     },
     {
@@ -13740,18 +13867,6 @@
     },
     {
       "requirementId": "CRS-M1-00424",
-      "sourceId": "ARINC-615A-3",
-      "operation": "DOWNLOAD",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "MAY",
-      "kind": "SCOPE-CONSTRAINT",
-      "ownerRole": "M2-MODEL",
-      "modelTargetIds": [
-        "SCOPE"
-      ]
-    },
-    {
-      "requirementId": "CRS-M1-00425",
       "sourceId": "ARINC-615A-3",
       "operation": "DOWNLOAD",
       "polarity": "AFFIRMATIVE",
@@ -14884,6 +14999,68 @@
       "operation": "AFDX-DEPLOYMENT",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00520",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE",
+        "TIM-CRS-M1-00520",
+        "CLK_FIND"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00521",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00522",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00523",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00524",
+      "sourceId": "ARINC-615A-3",
+      "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
       "kind": "SCOPE-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
@@ -20558,17 +20735,6 @@
       "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
     },
     {
-      "id": "TR-CRS-M1-00425-0516",
-      "requirementId": "CRS-M1-00425",
-      "targetKind": "SCOPE",
-      "targetId": "SCOPE",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "MAY",
-      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
-      "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
-      "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
-    },
-    {
       "id": "TR-CRS-M1-00426-0517",
       "requirementId": "CRS-M1-00426",
       "targetKind": "SCOPE",
@@ -21601,6 +21767,105 @@
       "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
       "rationaleEn": "DOWNLOAD/AFDX obligation is recorded in expanded CRS; bound M2 does not model that behavior.",
       "rationaleZh": "DOWNLOAD／AFDX 义务已记入扩大 CRS；绑定 M2 不建模该行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00520-0611",
+      "requirementId": "CRS-M1-00520",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD.",
+      "rationaleZh": "扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。"
+    },
+    {
+      "id": "TR-CRS-M1-00520-0612",
+      "requirementId": "CRS-M1-00520",
+      "targetKind": "TIMING",
+      "targetId": "TIM-CRS-M1-00520",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD.",
+      "rationaleZh": "扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。"
+    },
+    {
+      "id": "TR-CRS-M1-00520-0613",
+      "requirementId": "CRS-M1-00520",
+      "targetKind": "CLOCK",
+      "targetId": "CLK_FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD.",
+      "rationaleZh": "扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。"
+    },
+    {
+      "id": "TR-CRS-M1-00521-0614",
+      "requirementId": "CRS-M1-00521",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD.",
+      "rationaleZh": "扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。"
+    },
+    {
+      "id": "TR-CRS-M1-00522-0615",
+      "requirementId": "CRS-M1-00522",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD.",
+      "rationaleZh": "扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。"
+    },
+    {
+      "id": "TR-CRS-M1-00523-0616",
+      "requirementId": "CRS-M1-00523",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD.",
+      "rationaleZh": "扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。"
+    },
+    {
+      "id": "TR-CRS-M1-00524-0617",
+      "requirementId": "CRS-M1-00524",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD.",
+      "rationaleZh": "扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。"
+    },
+    {
+      "id": "TR-CRS-M1-00391-0618",
+      "requirementId": "CRS-M1-00391",
+      "targetKind": "TIMING",
+      "targetId": "TIM-CRS-M1-00391",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "FIND timing is catalogued for later error-interval judgement; bound M2 does not run FIND.",
+      "rationaleZh": "FIND 时序已编入目录供后续误差区间判定；绑定 M2 不运行 FIND。"
+    },
+    {
+      "id": "TR-CRS-M1-00391-0619",
+      "requirementId": "CRS-M1-00391",
+      "targetKind": "CLOCK",
+      "targetId": "CLK_FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "FIND clock is observational in the catalog only.",
+      "rationaleZh": "FIND 时钟仅用于目录观察，不进入绑定状态机迁移。"
     }
   ],
   "infrastructurePremises": [
@@ -22287,17 +22552,17 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 519,
-    "dispositionCount": 519,
-    "traceCount": 610,
+    "requirementCount": 523,
+    "dispositionCount": 523,
+    "traceCount": 618,
     "stateCount": 35,
     "transitionCount": 65,
-    "timingCount": 23,
+    "timingCount": 25,
     "fieldConstraintCount": 86,
-    "dispositionsFingerprint": "9a0d8af040fb5ee13128c06cb50a07b48e37da54023302d442c75027659e82b9",
-    "modelFingerprint": "ba0dea4a93d2c32a7bd5e285fba9dc99d958e88a658b3ccb3e4afda27649cc7e",
-    "timingFingerprint": "ccf8ed38a7cfd18363b57f72bf2d51bcbc7e5c91e1a48f83c84393b1e1c36e9c",
-    "inputFingerprint": "d78a5191eef7858889e4cc4616fad4be4e6985bb364f8f2ffb5890c990f9ff14",
+    "dispositionsFingerprint": "a831e845f10adc9a105b82ec16c121aeed4966224ec5738218717af6c5afd851",
+    "modelFingerprint": "b272ac126b13a7e887db7fa2bf26304bc3acf2c336b02bcd84f0d595b6d54179",
+    "timingFingerprint": "dacc00e5eb83bccca321d568ca29534577a51520a085f8928885acd5222ce4de",
+    "inputFingerprint": "eebf5b2f9d63bef2bcd62c397f5d06017af98b370f8cd7980faa3d963bf49423",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
