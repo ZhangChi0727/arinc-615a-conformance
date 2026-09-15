@@ -40,8 +40,9 @@ Defined DOWNLOAD, Operator Defined DOWNLOAD, FIND, and source-stated
 interrupt/reject/exception/retry obligations, plus a complete applicability
 audit of 665-5, 664P2/P3-1/P7 and the registered RFCs. Ordinary Ethernet,
 Compliant, Profiled and AFDX are configuration variants, not one instance.
-ARINC 645 unique algorithm details remain `BLOCKED-SOURCE-645`; already
-explicit 615A/665 integrity obligations stay in the CRS.
+ARINC 645 unique algorithm details remain `BLOCKED-SOURCE-645`. The 645 file is
+locally acquired and is **not bound** in this PR; already explicit 615A/665
+integrity field-presence obligations stay in the CRS.
 
 ## 2. Method Inputs → ARINC Domain/Product Refinement → Instance Evidence → Controlled Feedback
 
@@ -51,7 +52,7 @@ explicit 615A/665 integrity obligations stay in the CRS.
 | Observation → Oracle → Result → Evidence → Argument → Claim | Method repository | Realize and audit the chain in the ARINC domain |
 | ARINC 615A protocol authority | ARINC repository source register | Use only registered ARINC 615A-3; do not reproduce proprietary text |
 | ARINC 665 data formats | ARINC repository source register | Use 665-5 only within requirement-level applicability decisions; never claim 665-3 equivalence |
-| CRC/check-value/naming algorithms | ARINC 645, currently open | Keep affected integrity capabilities unearned until source, applicability and CRS gates close |
+| CRC/check-value/naming algorithms | ARINC 645, locally acquired, not bound this PR | Keep affected integrity capabilities unearned until 615A-triggered applicability and CRS gates close |
 | Protocol states, messages, timing and errors | ARINC repository | Refine a lightweight observable timed EFSM after CRS approval |
 | IUT, environment, tools, clocks and error budget | ARINC repository | Establish only through a reviewed Project Configuration |
 | Tests, analyses and execution evidence | ARINC repository | Produce instance-scoped results; no automatic Generic promotion |
@@ -62,8 +63,10 @@ explicit 615A/665 integrity obligations stay in the CRS.
 ARINC 615A-3 is the sole active protocol authority. `A4` is a wire value, not an
 edition. Historical source assumptions are non-authoritative and are governed by
 the controlled source register and change record. ARINC 665-5 is in full
-applicability audit for triggered load-data/media-set clauses. ARINC 645 remains
-the only unacquired original standard; it blocks unique algorithm details, not
+applicability audit for triggered load-data/media-set clauses. ARINC 645 is
+locally acquired and remains unbound: `BLOCKED-SOURCE-645` now means the
+controlled package has no accepted 645 bind, not that the file is absent. It
+blocks unique algorithm details, not
 whole obligation classes already stated in 615A/665. Source migration
 requires an acquired/identified source, applicability delta, CR and independent
 review; no future edition is preselected. “Study later” is not an acceptable
@@ -143,7 +146,8 @@ RQ6 而视为完成。
 CR-2026-012 下协议 CRS 范围包括 INFORMATION、UPLOAD、Media Defined DOWNLOAD、
 Operator Defined DOWNLOAD、FIND 及来源已规定的中断／拒绝／异常／重试，并对 665-5、
 664P2／P3-1／P7 与已登记 RFC 做完整适用性审计。普通 Ethernet、Compliant、Profiled、
-AFDX 是配置变体，不是同一实例。ARINC 645 独有算法细节保持 `BLOCKED-SOURCE-645`。
+AFDX 是配置变体，不是同一实例。ARINC 645 独有算法细节保持 `BLOCKED-SOURCE-645`：
+本地已取得原文，本 PR 不绑定。
 
 ## 2. 方法输入 → ARINC 领域／产品精化 → 实例证据 → 受控反馈
 
@@ -153,7 +157,7 @@ AFDX 是配置变体，不是同一实例。ARINC 645 独有算法细节保持 `
 | Observation → Oracle → Result → Evidence → Argument → Claim | 方法仓库 | 在 ARINC 领域实现并审计该链 |
 | ARINC 615A 协议权威 | 本仓库来源登记册 | 只使用登记的 615A-3，不复刻专有正文 |
 | ARINC 665 数据格式 | 本仓库来源登记册 | 仅按需求级适用性决定使用 665-5，不声称等价 665-3 |
-| CRC/check-value/命名算法 | 当前开放的 ARINC 645 | 来源、适用性和 CRS 门关闭前不得取得相关完整性能力 |
+| CRC/check-value/命名算法 | ARINC 645，本地已取得、本 PR 未绑定 | 615A 触发的适用性与 CRS 门关闭前不得取得相关完整性能力 |
 | 协议状态、消息、时序与错误 | 本仓库 | CRS 批准后精化轻量可观测 timed EFSM |
 | IUT、环境、工具、时钟与误差预算 | 本仓库 | 仅通过受评审 Project Configuration 建立 |
 | Test、Analysis 与执行证据 | 本仓库 | 产生实例范围结果，不自动晋级 Generic 结论 |
@@ -162,8 +166,9 @@ AFDX 是配置变体，不是同一实例。ARINC 645 独有算法细节保持 `
 ## 3. 来源与模型纪律
 
 615A-3 是唯一活动协议权威；`A4` 是线值而非版次。历史来源假设不具权威性，并由受控来源
-登记册与变更记录治理。665-5 对其触发的加载数据／媒体集条款做完整适用性审计。645 是
-唯一未取得的原文，只阻塞独有算法细节，不删除 615A／665 已明示的义务类别。来源迁移需
+登记册与变更记录治理。665-5 对其触发的加载数据／媒体集条款做完整适用性审计。645 本地
+已取得但仍未绑定：`BLOCKED-SOURCE-645` 表示受控包尚无已接受的 645 绑定，不是物理文件不存在。
+它只阻塞独有算法细节，不删除 615A／665 已明示的义务类别。来源迁移需
 取得并登记来源、完成适用性差分、CR 和独立评审；不预选未来版本。已有来源活动条款不得
 再用“以后研究”作为笼统处置。新协议 CRS 行须等待
 [`cltav_protocol_source_audit.json`](../../configs/research/cltav_protocol_source_audit.json)

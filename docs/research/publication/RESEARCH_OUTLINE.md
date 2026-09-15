@@ -74,7 +74,7 @@ Each chapter below states the claim it must carry, the CL-RQ it answers, the alg
 
 - **Claim:** A later development-ready PR can implement the loop; this chapter only plans modules, oracles, comparison arms, isolation and metrics.
 - **Answers:** CL-RQ2 (what will be compared) and the engineering half of CL-RQ1.
-- **Uses:** four arms CL-T / CL-A / CL-TA / CL-LOOP; detection, localization and ablation families from the work order; no shared secretly-stronger oracle.
+- **Uses:** four arms CL-T / CL-A / CL-TA / CL-LOOP in `EXPERIMENT_PLAN.md` (EXP-CLTAV-DETECT / LOCATE / ABLATION); no shared secretly-stronger oracle.
 - **Needs:** registered experiment protocol before any confirmatory run. No Configuration, no live load.
 - **Figures:** reuse FIG-CL-TAV-04 ports as the future tool boundary.
 - **Have / gap:** method report §8.1 lists arms. Gap is executable experiment configuration, which belongs to a later PR.
@@ -90,9 +90,9 @@ Each chapter below states the claim it must carry, the CL-RQ it answers, the alg
 
 ### Chapter 7 Discussion, limitations and further work
 
-- **Claim:** first-version CL-TAV is bounded by single-fault \(H_0\), one-step selection, missing ARINC 645 algorithms, and notation-only SysML.
+- **Claim:** first-version CL-TAV is bounded by single-fault \(H_0\), one-step selection, unbound ARINC 645 algorithms, and notation-only SysML.
 - **Answers:** interprets CL-RQ3 limitations; does not close RQ6.
-- **Uses:** threats already in method report §11; 645 `BLOCKED-SOURCE-645`; out-of-domain faults may mimic in-domain hypotheses.
+- **Uses:** threats already in method report §11; 645 locally acquired and `BLOCKED-SOURCE-645` unbound; out-of-domain faults may mimic in-domain hypotheses.
 - **Needs:** no new experiment.
 - **Figures:** none.
 - **Have / gap:** limitation list exists in DD-029. Discussion prose waits for results.
@@ -134,7 +134,11 @@ Editable sources live in [`models/`](models/). They are **SysML 1.6 notation-bas
 
 ## Source audit before CRS generation
 
-FIND, DOWNLOAD and AFDX-appendix bilingual CRS are corrected in `M1-CANDIDATE-7` after RR-CLTAV-2026-008 REWORK (currently 2796 coverage / 524 requirements; FIND 34 + DOWNLOAD 103 + AFDX 3). Remaining 665/664/RFC body audits are **not** produced by renaming deferred labels. The ledger [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) keeps FIND 78/78, DOWNLOAD 365/365 and AFDX appendix 13/13 reread records. `profileScope.instanceBoundOperations` stay UPLOAD/INFORMATION; `researchExpandedOperations` are DOWNLOAD/FIND. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Batch template fill is forbidden. Tool software requirements stay out of this PR.
+FIND, DOWNLOAD and AFDX-appendix bilingual CRS continue in `M1-CANDIDATE-8`
+(currently 2871 coverage / 566 requirements after 665 §2.3 batch-file leaf CRS;
+FIND abort does not waive the 2 s / 3 s clocks). Remaining 665 Table 2.3.1-1
+field-prose refinements and 664/RFC leaf CRS stay **not** closed by renaming.
+The ledger [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) keeps FIND 78/78, DOWNLOAD 365/365 and AFDX appendix 13/13 reread records. `profileScope.instanceBoundOperations` stay UPLOAD/INFORMATION; `researchExpandedOperations` are DOWNLOAD/FIND. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Batch template fill is forbidden. Tool software requirements stay out of this PR. ARINC 645 is locally acquired and not bound.
 
 ## Historical versus successor evidence
 
@@ -220,7 +224,7 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 
 - **论点：** 后继开发就绪 PR 才能实现该闭环；本章只规划模块、oracle、比较臂、隔离和指标。
 - **回答：** CL-RQ2（将比较什么）以及 CL-RQ1 的工程一半。
-- **使用：** 四臂 CL-T／CL-A／CL-TA／CL-LOOP；工作单中的检测、定位、消融；不得共用暗中更强的 oracle。
+- **使用：** `EXPERIMENT_PLAN.md` 中的四臂 CL-T／CL-A／CL-TA／CL-LOOP（EXP-CLTAV-DETECT／LOCATE／ABLATION）；不得共用暗中更强的 oracle。
 - **需要：** 确认性运行前先登记实验协议。无 Configuration，无实网加载。
 - **图：** 复用 FIG-CL-TAV-04 端口作为未来工具边界。
 - **已有／缺口：** 方法报告 §8.1 已列比较臂。缺口是可执行实验配置，属于后继 PR。
@@ -236,9 +240,9 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 
 ### 第7章 讨论、局限与后续工作
 
-- **论点：** 首版 CL-TAV 受单故障 \(H_0\)、一步选择、缺失 645 算法和仅记法 SysML 约束。
+- **论点：** 首版 CL-TAV 受单故障 \(H_0\)、一步选择、未绑定的 645 算法和仅记法 SysML 约束。
 - **回答：** 解释 CL-RQ3 的局限；不关闭 RQ6。
-- **使用：** 方法报告 §11 的威胁；645 `BLOCKED-SOURCE-645`；域外故障可能与域内假设相同。
+- **使用：** 方法报告 §11 的威胁；645 本地已取得且 `BLOCKED-SOURCE-645` 未绑定；域外故障可能与域内假设相同。
 - **需要：** 无新实验。
 - **图：** 无。
 - **已有／缺口：** DD-029 已有局限清单。讨论正文等结果。
@@ -280,7 +284,7 @@ CL-TAV 建**两套**机器，不得并成一个协议 EFSM。
 
 ## 来源审计先于 CRS 生成
 
-FIND、DOWNLOAD 与 AFDX 附录双语 CRS 已按 RR-CLTAV-2026-008 REWORK 纠正为 `M1-CANDIDATE-7`（当前 2796 条 coverage／524 条需求；FIND 34＋DOWNLOAD 103＋AFDX 3）。其余 665／664／RFC 正文审计**不**靠改名延期标签产生。清单 [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) 仍保存 FIND 78/78、DOWNLOAD 365/365 与 AFDX 附录 13/13 条重读记录。`profileScope.instanceBoundOperations` 仍为 UPLOAD／INFORMATION；`researchExpandedOperations` 为 DOWNLOAD／FIND。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。禁止批量套模板。工具软件需求不属于本 PR。
+FIND、DOWNLOAD 与 AFDX 附录双语 CRS 继续在 `M1-CANDIDATE-8`（当前 2871 条 coverage／566 条需求，含 665 §2.3 批处理文件叶级 CRS；FIND 中止不豁免 2 秒／3 秒时钟）。其余 665 表 2.3.1-1 字段散文细化与 664／RFC 叶级 CRS **不**靠改名延期标签闭合。清单 [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) 仍保存 FIND 78/78、DOWNLOAD 365/365 与 AFDX 附录 13/13 条重读记录。`profileScope.instanceBoundOperations` 仍为 UPLOAD／INFORMATION；`researchExpandedOperations` 为 DOWNLOAD／FIND。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。禁止批量套模板。工具软件需求不属于本 PR。ARINC 645 本地已取得但未绑定。
 
 ## 历史与后继证据
 

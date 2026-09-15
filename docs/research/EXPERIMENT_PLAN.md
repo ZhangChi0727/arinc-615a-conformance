@@ -3,13 +3,86 @@
 | Field | Value |
 |---|---|
 | **Plan ID** | EXP-PLAN-2026-001 |
-| **Version** | 1.1 |
-| **Status** | Baseline protocol; individual experiments require registration |
-| **Governing report** | RR-2026-001 v4.2 §§8–12 |
+| **Version** | 2.0 |
+| **Status** | Active CL-TAV protocol; confirmatory runs are not executed in this PR |
+| **Governing method** | CL-TAV / CR-2026-012 / DD-029; RR-2026-001 successor text |
 
-## Experiment registry
+This is the **active** experiment protocol for the CL-TAV increment. Historical
+EXP-001–007 under RR-2026-001 v4.2 remain a frozen registry; they are not the
+current comparison design.
 
-Create one directory per experiment:
+No confirmatory numbers are filled here. Formal sample size and effect
+thresholds are frozen only after a declared pilot or external justification.
+Passing unit tests does not show that CL-TAV outperforms any arm.
+
+## Fair comparison arms
+
+All arms use the same information pool, action pool, basic verdicts and declared
+fault domain. Costs are charged as specified; Analysis-only is not forced to
+invent a sampling cost it does not spend.
+
+| Arm | Fair definition | Cost reporting |
+|---|---|---|
+| CL-T (Test-only) | Same test pool and fault domain; predetermined selection; no analysis feedback into the next test | acquisition budget only |
+| CL-A (Analysis-only) | Same prior and pre-allowed input records; no hidden extra tests | prior-input and compute budgets only |
+| CL-TA (fixed Test→Analysis) | Same total budget: collect first with a frozen policy, then analyse; selection does not close the loop | acquisition then compute, separately |
+| CL-LOOP (CL-TAV) | Same information and action pool; analysis update chooses the next action; Prep / Recover / failed retry costs are charged | acquisition, compute, prep/recover, retries |
+
+Direct numeric comparison is allowed only where the same denominator and the
+same charged resource apply. Otherwise report the budgets side by side and say
+which conclusions are comparable.
+
+## Three experiment groups
+
+Each group states hypothesis, experimental unit, normal and fault construction,
+development/held-out isolation, pairing or randomization, reset, invalid or
+equivalent-fault handling, stopping rule and metrics. INCONCLUSIVE and ERROR
+are first-class outcomes, not silent misses.
+
+### EXP-CLTAV-DETECT — detection and error judgement
+
+- **Hypothesis:** Under the same detection budget, CL-LOOP does not increase
+  missed detections relative to CL-T, and does not convert equality-timing
+  uncertainty into PASS by rewriting source constants.
+- **Unit:** one IUT session / one declared fault or normal instance.
+- **Construction:** normal instances plus injected protocol faults that the
+  declared domain can name; invalid and equivalent faults are classified and
+  excluded from the detection denominator.
+- **Isolation:** development instances never enter the confirmatory held-out
+  set after any selector or oracle change.
+- **Metrics:** miss rate, false alarm, INCONCLUSIVE, ERROR; denominators exclude
+  abstentions from PASS/FAIL rates.
+- **Timing:** FIND abort does not waive the 2 s host answer deadline or the 3 s
+  registration window. Equality timing under nonzero measurement error may only
+  return INCONCLUSIVE.
+
+### EXP-CLTAV-LOCATE — finite-domain localization / candidate reduction
+
+- **Hypothesis:** Under the same localization budget, CL-LOOP reduces the
+  surviving candidate set more than CL-T or CL-TA without excluding the true
+  in-domain fault when the compatibility update is applied.
+- **Unit:** one diagnosis episode over the declared \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\).
+- **Construction:** single-fault instances inside the declared domain; out-of-domain
+  faults are reported separately and cannot refute in-domain localization.
+- **Metrics:** true-fault exclusion rate, localization accuracy or surviving-set
+  size, diagnostic rounds, resource consumed. A singleton normal hypothesis is
+  not protocol PASS.
+- **Stopping:** P1–P5 remain exclusive; `ERROR` spends the same resource.
+
+### EXP-CLTAV-ABLATION — feedback, timing uncertainty and cost
+
+- **Hypothesis:** Removing analysis feedback, ignoring Prep/Recover cost, or
+  collapsing the two FIND clocks each changes detection or localization relative
+  to the specified CL-LOOP.
+- **Unit:** same as DETECT/LOCATE, with one factor disabled per cell.
+- **Factors:** no feedback (CL-T or CL-TA); Prep/Recover uncharged; FIND abort
+  treated as a clock waiver (negative control; the specified method forbids it).
+- **Metrics:** same primary metrics as the parent group, plus charged cost and
+  rounds.
+
+## Registration, statistics and release
+
+Create one directory per registered experiment:
 
 ```text
 artifacts/experiments/EXP-YYYY-NNN/
@@ -24,165 +97,65 @@ artifacts/experiments/EXP-YYYY-NNN/
   review/
 ```
 
-Large or confidential raw data may be stored outside Git, but its immutable
-identifier, checksum, access classification, and retention location must remain
-in `registration.yaml`.
+Required registration fields remain: ID, owner, date, hypothesis, RQ/CL-RQ,
+baseline/CRS/model/VCS/IUT/tool/environment versions, experimental and sampling
+units, inclusion/exclusion, development/held-out split, primary outcomes,
+stopping rationale, randomization/reset/isolation/seeds, time source and error
+budget where timing is observed, planned statistical model, deviations and
+gates.
 
-## Required registration fields
+Keep exploratory pilot analysis separate from pre-registered confirmation.
+An experiment result may enter a thesis, paper, or release claim only when
+registration and deviations are complete, provenance is reproducible, wording
+matches the earned claim status, and negative or inconclusive results remain
+visible.
 
-- experiment ID, owner, date, hypothesis, and RQ;
-- baseline, CRS, EFSM, VCS, IUT, tool, and environment versions;
-- experimental unit and sampling unit;
-- inclusion/exclusion rules for runs and mutants;
-- development/held-out split procedure;
-- primary and secondary outcomes;
-- sample-size or stopping rationale;
-- randomization, reset, isolation, and seed policy;
-- time source, timestamp locations, resolution, trigger/response pairing,
-  clock-reset semantics, and timing-error budget where timing is observed;
-- planned statistical model and uncertainty interval;
-- deviation handling and applicable gates.
+## Historical v4.2 registry (not the active design)
 
-## Core studies
-
-### EXP-001 — Requirement extraction reproducibility
-
-Two reviewers independently extract and classify requirements. Report agreement
-before adjudication, disagreement types, adjudication effort, and final CRS
-changes. Do not use agreement alone as evidence of semantic correctness.
-
-### EXP-002 — Coverage and derivation comparison
-
-Compare the following baselines from RR-2026-001:
-
-- B0 existing engineering/ICD set;
-- B1 traceability only;
-- B2-U requirement plus untimed EFSM obligation coverage;
-- B2-T B2-U plus clock-augmented EFSM, timing partitions, and robust timing oracle;
-- B3 B2-T refined using development mutants.
-
-Primary outcomes are obligation coverage and held-out detection. Report VCS
-size, derivation effort, execution time, review findings, and rework.
-
-### EXP-003 — Finite-fault-domain adequacy
-
-Pre-register fault operators, classify invalid/equivalent mutants, keep
-development and held-out instances separate, and report every survivor.
-The evaluation population is \(\mathcal M_{\mathrm{eval}}\); no result is
-generalized beyond it without a separately justified sampling model.
-
-### EXP-004 — Deterministic timed conformance
-
-For each selected timing obligation, register trigger/response/cancellation and
-silence semantics, \(L_r,U_r\), units, time source, timestamp chain, clock
-resets, and an auditable error budget. Exercise early, nominal, boundary, late,
-and no-response partitions as applicable. Compare B2-U with B2-T, evaluate
-robust versus naive point-threshold verdicts against controlled timing truth,
-and evaluate held-out timing faults. Report every timing
-PASS/FAIL/INCONCLUSIVE/ERROR and preserve the observation interval and boundary
-margin.
-
-### EXP-005 — Operational repeatability
-
-For selected obligations, execute valid repeated runs under a declared regime.
-Report \(c_j/n_j\), exact intervals, INCONCLUSIVE/ERROR counts, order effects,
-clustering checks, drift, clock metadata, and reset integrity. For timing
-obligations, define success only through the robust timing oracle. This study
-estimates operational PASS probability, not conformance belief.
-
-### EXP-006 — Calibration and probabilistic interpretation
-
-Use independently adjudicated conforming and held-out nonconforming instances
-to estimate true-PASS and false-PASS rates. Propagate parameter uncertainty and
-evaluate prior sensitivity. If calibration is unrepresentative or too small,
-stop at T2.
-
-### EXP-007 — Failure diagnosis
-
-Evaluate simple interpretable baselines before temporal models. Split by fault
-instance, report macro metrics and abstention, and prohibit HMM use unless the
-temporal-state, identifiability, data, and performance conditions in §7.4 hold.
-
-## Analysis controls
-
-- keep exploratory and confirmatory analyses visibly separate;
-- calculate intervals for proportions and differences;
-- disclose multiple comparisons and class imbalance;
-- report missing, excluded, inconclusive, and erroneous observations;
-- preserve original held-out outcomes after any VCS revision;
-- make each table and figure reproducible from versioned scripts and data.
-
-## Experiment release gate
-
-An experiment result may enter a thesis, paper, or release claim only when:
-
-1. the registration and deviations are complete;
-2. raw-to-derived provenance is reproducible;
-3. applicable RG5/G4/G5/G6 records are approved;
-4. wording matches the achieved assurance tier;
-5. negative and inconclusive results remain visible.
+EXP-001–007 (requirement-extraction reproducibility, B0–B3 coverage comparison,
+finite-fault-domain adequacy, deterministic timed conformance, operational
+repeatability, calibration/HMM, failure diagnosis) remain historical under
+RR-2026-001 v4.2. They may be cited as prior protocol. They do not define the
+CL-TAV arms or the three groups above. HMM/Bayesian calibration stays a
+non-default comparison model.
 
 ---
 
 # 中文版
 
-## 实验登记册
+本文件是 CL-TAV 增量的**活动**实验方案。RR-2026-001 v4.2 下的 EXP-001～007 只作为冻结登记保留，不再作为当前对照设计。本 PR 不填确认性数字；正式样本量与效应阈值须在声明的 pilot 或外部依据之后冻结。单元测试通过不表示 CL-TAV 优于任一对照臂。
 
-登记册列出 EXP-001 至 EXP-007 的负责人、状态、RQ、基线、主要结局和门禁，并保存被取消或得到否定结果的实验。
+## 公平对照臂
 
-```text
-artifacts/experiments/EXP-YYYY-NNN/
-  registration.yaml
-  environment.json
-  cases.json
-  raw/
-  derived/
-  scripts/
-  results.md
-  deviations.md
-  review/
-```
+四臂共用同一信息池、动作池、基本判定与声明故障域。Analysis-only 不承担其未花费的采集成本。
 
-大型或保密原始数据可以存放在 Git 之外，但 registration 必须保存不可变标识、校验和、访问分类和保留位置。
+| 对照臂 | 公平定义 | 成本报告 |
+|---|---|---|
+| CL-T（仅测试） | 同一测试池与故障域，预定选择，分析不反馈到下一测试 | 只报告采集预算 |
+| CL-A（仅分析） | 同等先验与预先允许的输入记录，不靠隐藏额外测试获信息 | 只报告先验输入与计算预算 |
+| CL-TA（固定先测后析） | 同一总预算下先按冻结策略采集再分析，选择不闭环 | 采集与计算分开报告 |
+| CL-LOOP（CL-TAV） | 同一信息与动作池，分析更新后选择下一动作，计入 Prep／Recover／失败重试 | 采集、计算、准备／恢复、重试 |
 
-## 必需注册字段
+仅在同一分母且同一计费资源下做直接数值比较；否则并列报告预算并说明哪些结论可公平比较。
 
-每项实验都要记录 ID、负责人、日期、假设/RQ、基线/CRS/模型/VCS/IUT/工具/环境版本、实验与抽样单位、纳入排除规则、开发/留出划分、主要结局、停止理由、随机化/重置/隔离/种子、统计模型、偏差和门禁。观察时序时还必须记录时间源、时间戳位置和分辨率、触发/响应配对、时钟复位及误差预算。
+## 三组实验
 
-## 核心研究
+### EXP-CLTAV-DETECT——检测与错误判定
 
-### EXP-001——需求提取可复现性
+假设：同一检测预算下，CL-LOOP 相对 CL-T 不增加漏检，且不以改写来源常数把等式时序不确定性变成 PASS。单位为一会话／一声明故障或正常实例。指标含漏检、误报、INCONCLUSIVE、ERROR；拒答不进入 PASS／FAIL 分母。FIND 中止不豁免 2 秒主机期限与 3 秒登记窗口。
 
-- EXP-001：双人独立需求提取、分歧和裁决；
+### EXP-CLTAV-LOCATE——有限域定位／候选缩减
 
-### EXP-002——覆盖与导出比较
+假设：同一定位预算下，CL-LOOP 比 CL-T 或 CL-TA 更能缩小幸存候选集，且在相容更新下不误排除域内真故障。域为 \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\)。正常单候选不是协议 PASS。停止条件 P1～P5 互斥；`ERROR` 消耗同一资源。
 
-- EXP-002：比较 B0、B1、B2-U、B2-T 和 B3 的义务覆盖、规模、工时和留出检测；
+### EXP-CLTAV-ABLATION——反馈、时序不确定性与成本
 
-### EXP-003——有限故障域充分性
+假设：去掉分析反馈、不计 Prep／Recover 成本、或把 FIND 中止当作时钟豁免，都会相对既定 CL-LOOP 改变检测或定位。后一因素是反例对照，规格禁止该豁免。
 
-- EXP-003：预注册有限故障域，分离开发/留出实例并报告全部存活体；
+## 登记、统计与发布
 
-### EXP-004——确定性时序符合性
+每项实验一个目录；确认实验前登记。探索性 pilot 与预注册确认实验分开。结果进入论文或发布主张前，登记／偏差、溯源、措辞与否定／不确定结果均须可见。
 
-- EXP-004：确定性时序符合性。注册触发/响应/取消/静默语义和 \([L_r,U_r]\)，覆盖过早、标称、边界、过晚及无响应，比较稳健 oracle 与朴素点阈值，并使用留出时序故障；
+## 历史 v4.2 登记（非活动设计）
 
-### EXP-005——运行重复性
-
-- EXP-005：运行重复性。报告区间、顺序、聚类、漂移、时钟元数据和重置完整性；
-
-### EXP-006——校准与概率解释
-
-- EXP-006：仅用独立符合/不符合实例进行校准；不足时停留在 T2；
-
-### EXP-007——故障诊断
-
-- EXP-007：先评价简单可解释诊断基线，只有满足物理状态含义、可识别性、数据量和性能条件时才使用 HMM。
-
-## 分析控制
-
-预注册主要指标和方向；开发/留出分离；报告排除、无效/等价故障和全部否定结果；时序分析检查顺序、批次、聚类和漂移；多重比较和类别不平衡必须显式处理。
-
-## 实验发布门
-
-只有注册和偏差完整、原始到派生证据可复现、适用门禁获批、措辞与层级一致且负向/不确定结果仍可见时，实验结果才能进入论文或发布主张。
+EXP-001～007 仍按 RR-2026-001 v4.2 保留为历史方案，可被引用，但不定义上述四臂与三组。HMM／贝叶斯校准保持非默认比较模型。

@@ -2,12 +2,12 @@
 
 This matrix controls what may be stated in reports, releases, and thesis text.
 Status is earned by evidence; implementation progress alone cannot promote it.
-The `RB-2026-001-v4.3` migration candidate proposes local ARINC/Profile claim
-categories for certification-oriented assurance, engineering, and instance
-research. They have no active authority before merge, are not Generic GVS Core
-claims, and have external correspondence `NOT-DETERMINED`. Historical T0–T3
-labels are not silently converted and remain valid only under their frozen
-baseline wording.
+The active research method is **CL-TAV**. Unit tests, walk-throughs and CI do
+not show that CL-TAV outperforms any comparison arm. Historical
+`RB-2026-001-v4.2` T0–T3 labels remain valid only under their frozen baseline
+wording. The v4.3 ARINC/Profile claim categories are retained as local
+assurance vocabulary; they are not Generic GVS Core claims, and external
+correspondence stays `NOT-DETERMINED`.
 
 ## ARINC/Profile certification-oriented claim candidates
 
@@ -20,6 +20,25 @@ baseline wording.
 | A-COMP | Named protocol-level compliance claims are supported by a complete controlled evidence package | compliance evidence index, objective satisfaction records, limitations and non-claims | A4 |
 
 `A4` does not depend on research maturity `R4` or `R5`.
+
+## CL-TAV contribution claims (this increment)
+
+These map proposed contributions onto theory, the experiment plan, or
+system-engineering artefacts. Status is **Specified** or **To be verified**.
+Passing tests is not Result, Evidence, or a superiority Claim.
+
+| Claim ID | Permitted claim | Required evidence | Status |
+|---|---|---|---|
+| CL-SPEC | First-version CL-TAV objects, update, one-step minimax, Prep/Recover/ERROR and exclusive stops are specified | method report, DD-029, loop walk-throughs | Specified; independent math review open |
+| CL-ARCH | Verification-session and protocol-operation machines join only by declared interfaces | SysML FIG-CL-TAV-01..08, DD-030 | Specified; notation views, not executable metamodel |
+| CL-DETECT | Detection and error-judgement comparison of CL-T / CL-A / CL-TA / CL-LOOP | EXP-CLTAV-DETECT registration and later held-out runs | To be verified; no numbers in this PR |
+| CL-LOCATE | In-domain localization / candidate reduction under the same budget | EXP-CLTAV-LOCATE | To be verified |
+| CL-ABLATION | Feedback, FIND-clock non-waiver and Prep/Recover cost change outcomes | EXP-CLTAV-ABLATION, including the forbidden abort-waiver negative control | To be verified |
+| CL-CRS | Expanded protocol CRS is reviewable for INFORMATION, UPLOAD, both DOWNLOAD modes, FIND and bounded 665/664/RFC support | M1 package, source audit, bilingual review view | Specified as candidate; not independently approved |
+
+Observation → Result → Evidence → Argument/Decision → Claim stays the control
+boundary. ARINC 645 is locally acquired and not bound; CRC/check-value/naming
+capabilities stay not established.
 
 ## Engineering claims
 
@@ -41,12 +60,11 @@ baseline wording.
 Research maturity does not grant certification status. Failure to reach `R4` or
 `R5` does not block `A4`.
 
-## Superseded historical claims
+## Historical claims
 
-These historical claims were defined under `RB-2026-001-v4.2`. The unmerged
-v4.3 candidate proposes the following migration destinations but does not
-supersede or silently relabel them. They remain valid only under their
-historical baseline wording and are retained for traceability.
+These claims were defined under `RB-2026-001-v4.2`. The v4.3 vocabulary below is
+a retained mapping, not a silent relabel and not a second active research
+main-line. They remain valid only under their historical baseline wording.
 
 | Historical claim | v4.3 replacement | Note |
 |---|---|---|
@@ -98,9 +116,17 @@ permitted.
 # 中文版
 
 本矩阵控制报告、发布和论文允许使用的主张。状态由证据获得，实现进度本身不能晋级。
-`RB-2026-001-v4.3` 迁移候选提出本地 ARINC/Profile 的面向认证、工程和实例研究主张类别；
-合并前不具有生效权威，不是 Generic GVS Core 主张，外部对应为 `NOT-DETERMINED`。
-历史 T0–T3 不静默转换，仅在冻结历史基线措辞下有效。
+活动研究方法是 **CL-TAV**。单元测试、走查和 CI 不表示 CL-TAV 优于任一对照臂。
+历史 `RB-2026-001-v4.2` 的 T0–T3 仅在冻结基线措辞下有效。v4.3 的 ARINC/Profile
+主张类别作为本地保证词汇保留，不是 Generic GVS Core 主张，外部对应为 `NOT-DETERMINED`。
+
+## CL-TAV 贡献主张（本增量）
+
+CL-SPEC：首版对象、更新、一步 minimax、Prep／Recover／ERROR 与互斥停止已规格化，独立数学评审仍开放。
+CL-ARCH：会话机与协议机仅经声明接口连接，图为记法视图。
+CL-DETECT／CL-LOCATE／CL-ABLATION：四臂三组实验待验证，本 PR 不填数字。
+CL-CRS：扩大协议 CRS 为可评审候选，不是独立批准。
+观察→结果→证据→论证／决策→主张边界保持。ARINC 645 本地已取得但未绑定。
 
 ## ARINC/Profile 面向认证候选主张
 
@@ -114,10 +140,9 @@ E-TIME：在声明测量误差预算下，命名时序义务对指定执行得�
 
 R-MUT：VCS 检测到声明评价的有效非等价变异体或故障集；R-HOLDOUT：留出故障检测性能已测量；R-CAL：证据解释在声明观测模型下已校准；R-DIAG：声明故障类在留出性能下定位；R-XFER：指定方法要素在第二协议实例上复现。研究成熟度不授予认证状态；未达 `R4`/`R5` 不阻塞 `A4`。
 
-## 已超越的历史主张
+## 历史主张
 
-下列历史主张定义于 `RB-2026-001-v4.2`。未合并的 v4.3 只提出下列迁移目的地，不超越
-也不静默重标历史主张。它们仅在历史基线措辞下有效，并保留以供追踪。
+下列主张定义于 `RB-2026-001-v4.2`。下表 v4.3 词汇是保留映射，不是静默重标，也不是第二条活动研究主线。它们仅在历史基线措辞下有效。
 
 | 历史主张 | v4.3 替代 | 说明 |
 |---|---|---|
