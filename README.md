@@ -56,7 +56,7 @@ silently redefine the Core.
 - Adopt CL-TAV as the successor research method (CR-2026-012 / DD-028). First-version algorithm direction was accepted 2026-09-14 in DD-029; that is not independent mathematical or RG approval.
 - Expand protocol CRS so INFORMATION, UPLOAD, Media Defined DOWNLOAD, Operator Defined DOWNLOAD, FIND and source-stated abort/reject/exception/retry obligations are audited. Conditional network variants stay separate from the current Compliant instance. ARINC 645 unique algorithm details remain BLOCKED-SOURCE-645.
 - Keep protocol CRS semantically complete in this PR, but write new rows only after source-unit audit. Tool requirements, verification specifications, interface/configuration contracts and development-ready acceptance belong to a later PR after this CRS is independently accepted. Old M2 does not automatically cover the new scope.
-- Write FIND, DOWNLOAD and AFDX-appendix bilingual CRS into M1-CANDIDATE-4 from recorded REQUIRED/OPTIONAL reread candidates (31 FIND + 101 DOWNLOAD + 3 AFDX; commentary/examples stay non-normative). Bound M2 does not model FIND, DOWNLOAD or AFDX. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. 664/665/RFC body audits remain pending. This is not independent architecture, mathematical or RG approval.
+- Correct FIND/DOWNLOAD/AFDX expanded CRS in M1-CANDIDATE-5 after RR-CLTAV-2026-006 REWORK: source hashes now match register/window/information-location propositions, DOWNLOAD field encodings and FIND timing contracts are restored, and Chinese views no longer dump English actions. Current inventory is 2796 coverage / 523 requirements (FIND 34 + DOWNLOAD 102 + AFDX 3 after splits and one revocation). instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 still does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. 664/665/RFC body audits remain pending. This is not independent architecture, mathematical or RG approval.
 
 State changes:
 
@@ -73,12 +73,12 @@ Unchanged boundaries:
 
 ## Current stop
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3 implementation. PR #14 recorded a bounded M2 ordinary merge; that approval is not transplanted onto expanded CRS. Complete CR-2026-012 method/paper/CRS consistency review on one Head. The 2026-09-14 DD-029 design-direction acceptance is not independent approval.
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3 implementation. PR #14 recorded a bounded M2 ordinary merge; that approval is not transplanted onto expanded CRS. RR-CLTAV-2026-006 Must items were corrected locally in M1-CANDIDATE-5; that is a limited re-review candidate, not method/paper/expanded-CRS approval. Complete remaining 665/664/RFC audits, then request review on one unchanged Head. The 2026-09-14 DD-029 design-direction acceptance is not independent approval.
 
 ## Next development steps
 
-- Complete 665-5, 664P2/P3/P7 body and RFC applicability audits. Do not batch-rename remaining deferred labels or generate CRS rows from templates. Software Ethernet tests do not prove AFDX hardware.
-- Request complete-range RG0/RG1 and method/math/architecture review on the final unchanged Head. Do not treat the 2026-09-14 design-direction acceptance as independent approval, and do not start the development-ready PR, M3, tag or self-approval.
+- Complete 665-5, 664P2/P3/P7 body and RFC applicability audits. Empty dependencyIds on expanded rows do not mean no dependency; 00418–00424 and 00519 remain listed as not-yet-bound. Do not batch-rename remaining deferred labels or generate CRS rows from templates. Software Ethernet tests do not prove AFDX hardware.
+- Request a limited re-review of the RR-CLTAV-2026-006 corrections, then complete-range RG0/RG1 and method/math/architecture review on the final unchanged Head. Do not treat the 2026-09-14 design-direction acceptance as independent approval, and do not start the development-ready PR, M3, tag or self-approval.
 
 ## 当前开发图景
 
@@ -107,7 +107,7 @@ Unchanged boundaries:
 - 以 CL-TAV 为后继研究方法（CR-2026-012／DD-028）。首版算法方向已于 2026-09-14 在 DD-029 接受；那不是独立数学或 RG 批准。
 - 扩大协议 CRS，使 INFORMATION、UPLOAD、Media Defined DOWNLOAD、Operator Defined DOWNLOAD、FIND 及来源已规定的中断／拒绝／异常／重试义务接受审计。条件化网络变体与当前 Compliant 实例分开。ARINC 645 独有算法细节保持 BLOCKED-SOURCE-645。
 - 本 PR 的协议 CRS 必须语义正确且范围完整，但新行只能在来源单元审计之后撰写。工具需求、验证规格、接口／配置契约和开发就绪验收属于扩大 CRS 被独立接受之后的后继 PR。旧 M2 不会自动覆盖新范围。
-- 已按已记录的 REQUIRED／OPTIONAL 重读候选把 FIND、DOWNLOAD 与 AFDX 附录双语 CRS 写入 M1-CANDIDATE-4（FIND 31＋DOWNLOAD 101＋AFDX 3；评注／示例保持非规范）。绑定 M2 不建模 FIND、DOWNLOAD 或 AFDX。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。664／665／RFC 正文审计仍待进行。这不是独立架构、数学或 RG 批准。
+- 已按 RR-CLTAV-2026-006 REWORK 把 FIND／DOWNLOAD／AFDX 扩大 CRS 纠正为 M1-CANDIDATE-5：来源散列与登记／窗口／信息位置命题对齐，DOWNLOAD 字段编码与 FIND 时序契约已恢复，中文视图不再回填英文动作。当前清单为 2796 条 coverage／523 条需求（拆分与一项撤销后为 FIND 34＋DOWNLOAD 102＋AFDX 3）。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 仍不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。664／665／RFC 正文审计仍待进行。这不是独立架构、数学或 RG 批准。
 
 状态变化：
 
@@ -124,12 +124,12 @@ Unchanged boundaries:
 
 ## 当前停点
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3 实现。PR #14 记录了有界 M2 普通合并；该批准不移植到扩大 CRS。在同一 Head 上完成 CR-2026-012 方法／论文／CRS 一致性评审。2026-09-14 对 DD-029 的设计方向接受不是独立批准。
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3 实现。PR #14 记录了有界 M2 普通合并；该批准不移植到扩大 CRS。RR-CLTAV-2026-006 的 Must 项已在 M1-CANDIDATE-5 本地纠正，这只是有限复审候选，不是方法／论文／扩大 CRS 批准。完成剩余 665／664／RFC 审计后，在同一不变 Head 上请求评审。2026-09-14 对 DD-029 的设计方向接受不是独立批准。
 
 ## 下一步开发计划
 
-- 完成 665-5、664P2／P3／P7 正文与 RFC 适用性审计。不得把仍延期的标签批量改名，也不得按模板生成 CRS 行。普通以太网软件试验不能证明 AFDX 硬件保证。
-- 在最终不变 Head 上请求完整范围 RG0／RG1 以及方法／数学／架构评审。不得把 2026-09-14 设计方向接受当成独立批准，也不启动开发就绪 PR、M3、tag 或自批。
+- 完成 665-5、664P2／P3／P7 正文与 RFC 适用性审计。扩大行上的空 dependencyIds 不表示已确认无依赖；00418–00424 与 00519 仍登记为尚未绑定。不得把仍延期的标签批量改名，也不得按模板生成 CRS 行。普通以太网软件试验不能证明 AFDX 硬件保证。
+- 先请求对 RR-CLTAV-2026-006 修正的有限复审，再在最终不变 Head 上请求完整范围 RG0／RG1 以及方法／数学／架构评审。不得把 2026-09-14 设计方向接受当成独立批准，也不启动开发就绪 PR、M3、tag 或自批。
 <!-- project-status:end -->
 
 ## Read by role / 按角色继续阅读

@@ -134,7 +134,7 @@ Editable sources live in [`models/`](models/). They are **SysML 1.6 notation-bas
 
 ## Source audit before CRS generation
 
-FIND, DOWNLOAD and AFDX-appendix REQUIRED/OPTIONAL reread candidates are written as bilingual rows in `M1-CANDIDATE-4` (31 FIND + 101 DOWNLOAD + 3 AFDX). Remaining 665/664/RFC body audits are **not** produced by renaming deferred labels. The ledger [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) keeps FIND 78/78, DOWNLOAD 365/365 and AFDX appendix 13/13 reread records. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. Bound M2 does not model FIND, DOWNLOAD or AFDX. Batch template fill is forbidden. Tool software requirements stay out of this PR.
+FIND, DOWNLOAD and AFDX-appendix bilingual CRS are corrected in `M1-CANDIDATE-5` after RR-CLTAV-2026-006 REWORK (currently 2796 coverage / 523 requirements; FIND 34 + DOWNLOAD 102 + AFDX 3 after splits and one revocation). Remaining 665/664/RFC body audits are **not** produced by renaming deferred labels. The ledger [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) keeps FIND 78/78, DOWNLOAD 365/365 and AFDX appendix 13/13 reread records. `profileScope.instanceBoundOperations` stay UPLOAD/INFORMATION; `researchExpandedOperations` are DOWNLOAD/FIND. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Batch template fill is forbidden. Tool software requirements stay out of this PR.
 
 ## Historical versus successor evidence
 
@@ -280,7 +280,7 @@ CL-TAV 建**两套**机器，不得并成一个协议 EFSM。
 
 ## 来源审计先于 CRS 生成
 
-FIND、DOWNLOAD 与 AFDX 附录的 REQUIRED／OPTIONAL 重读候选已作为双语行写入 `M1-CANDIDATE-4`（FIND 31＋DOWNLOAD 101＋AFDX 3）。其余 665／664／RFC 正文审计**不**靠改名延期标签产生。清单 [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) 仍保存 FIND 78/78、DOWNLOAD 365/365 与 AFDX 附录 13/13 条重读记录。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。绑定 M2 不建模 FIND、DOWNLOAD 或 AFDX。禁止批量套模板。工具软件需求不属于本 PR。
+FIND、DOWNLOAD 与 AFDX 附录双语 CRS 已按 RR-CLTAV-2026-006 REWORK 纠正为 `M1-CANDIDATE-5`（当前 2796 条 coverage／523 条需求；拆分与一项撤销后为 FIND 34＋DOWNLOAD 102＋AFDX 3）。其余 665／664／RFC 正文审计**不**靠改名延期标签产生。清单 [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) 仍保存 FIND 78/78、DOWNLOAD 365/365 与 AFDX 附录 13/13 条重读记录。`profileScope.instanceBoundOperations` 仍为 UPLOAD／INFORMATION；`researchExpandedOperations` 为 DOWNLOAD／FIND。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。禁止批量套模板。工具软件需求不属于本 PR。
 
 ## 历史与后继证据
 
