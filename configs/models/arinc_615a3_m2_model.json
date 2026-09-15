@@ -26,7 +26,7 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "8155e22f554a9bf59c649f67d3514eebf3af995c",
+        "gitBlobOid": "cfd5f8210ebac1fc1b0bdfc0cda9690e867aafff",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -36,17 +36,17 @@
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "8bb9c2b3a7aa5a1aad763a189683ef157a3aec8c",
+        "gitBlobOid": "4f113ec96516173258ce19d7423ec06bf5caff4c",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "4804867c402e1c82d33d40b0acebaa114e3953f7",
+        "gitBlobOid": "fcabf48b35dea32086fb804f6142ca0a24283665",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_source_section_spans.json",
-        "gitBlobOid": "7ff0ed0f9987c5900e04bed564887391a9629480",
+        "gitBlobOid": "2f355d79e34f75c27082c97b1b45ab637630fc60",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "da78303baf4dd2c31aaf3e956dec4becae5a4398",
+        "gitBlobOid": "436d1addf25f32370f9bac0843d3861abe6607a2",
         "role": "SUCCESSOR-M1-DELTA"
       }
     ],
@@ -148,8 +148,8 @@
           "role": "M1-IMMUTABLE-INPUT"
         }
       ],
-      "currentInputArtifactCommit": "c83fda060c8216b75402f780c433fc1ac3f16139",
-      "currentInputArtifactTree": "4a9057f17c403155be546748d3d71038b728105d"
+      "currentInputArtifactCommit": "385e470f1af3c62d28925a9ee2aa349833b9ab83",
+      "currentInputArtifactTree": "b1a658cc42450a3ccec23b674768415bab8d7730"
     }
   },
   "sequenceEndpointBindings": [
@@ -6097,6 +6097,402 @@
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
         "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+      },
+      {
+        "id": "FC-LUB-FIELD-BATCH-FILE-LENGTH",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-BATCH-FILE-LENGTH",
+        "m1RequirementId": "CRS-M1-00546",
+        "ordinal": 1,
+        "widthBitsExpression": "32",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Batch File Length field of LUB as 32 bits counting 16-bit words in the file.",
+        "predicateZh": "将 LUB 的批处理文件长度字段编码为 32 位，并以 16 位字计数整个文件。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-BATCH-FILE-FORMAT-VERSION",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-BATCH-FILE-FORMAT-VERSION",
+        "m1RequirementId": "CRS-M1-00547",
+        "ordinal": 2,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Batch File Format Version field of LUB as 16 bits.",
+        "predicateZh": "将 LUB 的批处理文件格式版本字段编码为 16 位。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-SPARE",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-SPARE",
+        "m1RequirementId": "CRS-M1-00548",
+        "ordinal": 3,
+        "widthBitsExpression": "16",
+        "encodingRule": "RESERVED-ZERO-FILL",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Spare field of LUB as 16 reserved zero bits used to align the following pointers.",
+        "predicateZh": "将 LUB 的 Spare 字段编码为 16 位保留填零，用于对齐随后的指针。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-POINTER-TO-BATCH-FILE-PN-LENGTH",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-POINTER-TO-BATCH-FILE-PN-LENGTH",
+        "m1RequirementId": "CRS-M1-00549",
+        "ordinal": 4,
+        "widthBitsExpression": "32",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Pointer to Batch File PN Length field of LUB as 32 bits.",
+        "predicateZh": "将 LUB 的批处理文件件号长度指针字段编码为 32 位。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS",
+        "m1RequirementId": "CRS-M1-00550",
+        "ordinal": 5,
+        "widthBitsExpression": "32",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Pointer to Number of Target HW ID Load-List Blocks field of LUB as 32 bits.",
+        "predicateZh": "将 LUB 的目标硬件标识加载列表块数目指针字段编码为 32 位。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-EXPANSION-POINT-1",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-EXPANSION-POINT-1",
+        "m1RequirementId": "CRS-M1-00551",
+        "ordinal": 6,
+        "widthBitsExpression": "0",
+        "encodingRule": "RESERVED-ZERO-FILL",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Keep Expansion Point 1 of LUB at the tabulated width of 0 bits.",
+        "predicateZh": "将 LUB 扩展点 1 保持为表列的 0 位宽度。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-BATCH-FILE-PN-LENGTH",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-BATCH-FILE-PN-LENGTH",
+        "m1RequirementId": "CRS-M1-00552",
+        "ordinal": 7,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Batch File PN Length field of LUB as 16 bits. The value is the character count excluding NULs used to pad an odd length.",
+        "predicateZh": "将 LUB 的批处理文件件号长度字段编码为 16 位。该值为字符数，不含用于补齐奇数长度的 NUL。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-BATCH-FILE-PN",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-BATCH-FILE-PN",
+        "m1RequirementId": "CRS-M1-00553",
+        "ordinal": 8,
+        "widthBitsExpression": "16*CEILING(BATCH-FILE-PN-LENGTH/2)",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "NUL-PADDED-TO-EVEN-OCTET",
+        "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Batch File PN field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(BATCH-FILE-PN-LENGTH/2) bits, using one or more 16-bit words when present.",
+        "predicateZh": "将 LUB 的批处理文件件号编码为 8 位 ASCII，分配宽度为 16*CEILING(BATCH-FILE-PN-LENGTH/2) 位；出现时使用一个或多个 16 位字。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-COMMENT-LENGTH",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-COMMENT-LENGTH",
+        "m1RequirementId": "CRS-M1-00554",
+        "ordinal": 9,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Comment Length field of LUB as 16 bits.",
+        "predicateZh": "将 LUB 的注释长度字段编码为 16 位。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-COMMENT",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-COMMENT",
+        "m1RequirementId": "CRS-M1-00555",
+        "ordinal": 10,
+        "widthBitsExpression": "16*CEILING(COMMENT-LENGTH/2)",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "NUL-PADDED-TO-EVEN-OCTET",
+        "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the optional Comment field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(COMMENT-LENGTH/2) bits; omit the field when unused.",
+        "predicateZh": "将 LUB 的可选注释字段编码为 8 位 ASCII，分配宽度为 16*CEILING(COMMENT-LENGTH/2) 位；未使用时省略该字段。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-EXPANSION-POINT-2",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-EXPANSION-POINT-2",
+        "m1RequirementId": "CRS-M1-00556",
+        "ordinal": 11,
+        "widthBitsExpression": "0",
+        "encodingRule": "RESERVED-ZERO-FILL",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Keep Expansion Point 2 of LUB at the tabulated width of 0 bits.",
+        "predicateZh": "将 LUB 扩展点 2 保持为表列的 0 位宽度。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS",
+        "m1RequirementId": "CRS-M1-00557",
+        "ordinal": 12,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Number of Target HW ID Load-List Blocks field of LUB as 16 bits.",
+        "predicateZh": "将 LUB 的目标硬件标识加载列表块数目字段编码为 16 位。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK",
+        "m1RequirementId": "CRS-M1-00558",
+        "ordinal": 13,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-TARGET-HW-ID-LOAD-LIST-BLOCK",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Pointer to Next Target HW ID Load-List Block field of LUB as 16 bits per load-list block, holding the relative 16-bit-word offset to the next block.",
+        "predicateZh": "将 LUB 的下一目标硬件标识加载列表块指针按每个加载列表块编码为 16 位，存放到下一块的相对 16 位字偏移。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-TARGET-HW-ID-POS-LENGTH",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-TARGET-HW-ID-POS-LENGTH",
+        "m1RequirementId": "CRS-M1-00559",
+        "ordinal": 14,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-TARGET-HW-ID-LOAD-LIST-BLOCK",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Target HW ID POS Length field of LUB as 16 bits per load-list block. The value is the character count excluding NULs used to pad an odd length.",
+        "predicateZh": "将 LUB 的 Target HW ID POS 长度按每个加载列表块编码为 16 位。该值为字符数，不含用于补齐奇数长度的 NUL。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-TARGET-HW-ID-POS",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-TARGET-HW-ID-POS",
+        "m1RequirementId": "CRS-M1-00560",
+        "ordinal": 15,
+        "widthBitsExpression": "16*CEILING(TARGET-HW-ID-POS-LENGTH/2)",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "NUL-PADDED-TO-EVEN-OCTET",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-TARGET-HW-ID-LOAD-LIST-BLOCK",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Target HW ID POS field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(TARGET-HW-ID-POS-LENGTH/2) bits, once per load-list block when the length is positive.",
+        "predicateZh": "将 LUB 的 Target HW ID POS 编码为 8 位 ASCII，分配宽度为 16*CEILING(TARGET-HW-ID-POS-LENGTH/2) 位；每个加载列表块在长度为正时出现一次。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS",
+        "m1RequirementId": "CRS-M1-00561",
+        "ordinal": 16,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-TARGET-HW-ID-LOAD-LIST-BLOCK",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Number of Loads for Target HW ID POS field of LUB as 16 bits per load-list block.",
+        "predicateZh": "将 LUB 的目标硬件位置加载数目按每个加载列表块编码为 16 位。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-HEADER-FILE-NAME-LENGTH",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-HEADER-FILE-NAME-LENGTH",
+        "m1RequirementId": "CRS-M1-00562",
+        "ordinal": 17,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-LOAD-OF-ONE-TARGET-HW-ID",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Header File Name Length field of LUB as 16 bits per load of one Target HW ID.",
+        "predicateZh": "将 LUB 的头文件名长度按同一目标硬件标识下的每个加载编码为 16 位。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-HEADER-FILE-NAME",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-HEADER-FILE-NAME",
+        "m1RequirementId": "CRS-M1-00563",
+        "ordinal": 18,
+        "widthBitsExpression": "16*CEILING(HEADER-FILE-NAME-LENGTH/2)",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "NUL-PADDED-TO-EVEN-OCTET",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-LOAD-OF-ONE-TARGET-HW-ID",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Header File Name field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(HEADER-FILE-NAME-LENGTH/2) bits, once per load when the length is positive.",
+        "predicateZh": "将 LUB 的头文件名编码为 8 位 ASCII，分配宽度为 16*CEILING(HEADER-FILE-NAME-LENGTH/2) 位；每个加载在长度为正时出现一次。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-LOAD-PN-LENGTH",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-LOAD-PN-LENGTH",
+        "m1RequirementId": "CRS-M1-00564",
+        "ordinal": 19,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "repeatScope": "PER-LOAD-OF-ONE-TARGET-HW-ID",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Load PN Length field of LUB as 16 bits per load of one Target HW ID.",
+        "predicateZh": "将 LUB 的加载件号长度按同一目标硬件标识下的每个加载编码为 16 位。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-LOAD-PN",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-LOAD-PN",
+        "m1RequirementId": "CRS-M1-00565",
+        "ordinal": 20,
+        "widthBitsExpression": "16*CEILING(LOAD-PN-LENGTH/2)",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "NUL-PADDED-TO-EVEN-OCTET",
+        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "repeatScope": "PER-LOAD-OF-ONE-TARGET-HW-ID",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Load PN field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(LOAD-PN-LENGTH/2) bits, once per load when the length is positive.",
+        "predicateZh": "将 LUB 的加载件号编码为 8 位 ASCII，分配宽度为 16*CEILING(LOAD-PN-LENGTH/2) 位；每个加载在长度为正时出现一次。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-EXPANSION-POINT-3",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-EXPANSION-POINT-3",
+        "m1RequirementId": "CRS-M1-00566",
+        "ordinal": 21,
+        "widthBitsExpression": "0",
+        "encodingRule": "RESERVED-ZERO-FILL",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Keep Expansion Point 3 of LUB at the tabulated width of 0 bits.",
+        "predicateZh": "将 LUB 扩展点 3 保持为表列的 0 位宽度。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
+      },
+      {
+        "id": "FC-LUB-FIELD-BATCH-FILE-CRC",
+        "protocolFile": "LUB",
+        "fieldId": "FIELD-BATCH-FILE-CRC",
+        "m1RequirementId": "CRS-M1-00567",
+        "ordinal": 22,
+        "widthBitsExpression": "16",
+        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
+        "presenceCondition": "ALWAYS",
+        "repeatScope": "ONCE",
+        "checkLocation": "LUB-FILE-BYTES",
+        "predicateEn": "Encode the Batch File CRC field of LUB as 16 bits covering the file with the CRC field excluded. Algorithm identity remains blocked by ARINC 645.",
+        "predicateZh": "将 LUB 的批处理文件 CRC 字段编码为 16 位，覆盖该文件且不含 CRC 字段自身。算法身份仍由 ARINC 645 阻塞。",
+        "m1FileIdentityConflict": false,
+        "conflictNoteEn": "",
+        "conflictNoteZh": ""
       }
     ],
     "statusConstraints": [
@@ -7074,6 +7470,212 @@
         "action": "ENCODE",
         "predicateEn": "Actor SOFTWARE-PACKAGE-PRODUCER shall perform ENCODE on SOFTWARE-PART, NETWORK-INTERFACE, FILE-CONTENT under WHEN-PRODUCING-ARINC-665-DATA-OBJECT; evidence is the resulting ENCODED-FIELD-OBSERVABLE.",
         "predicateZh": "参与者“软件包生成方”在“生成 ARINC 665 数据对象时”下必须对“软件加载件、网络接口、FILE-CONTENT”执行“编码或赋值”；证据是“编码字段可被观察”。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-MAY-USE-BATCH-FILE-FORMAT-CRS-M1-00526",
+        "m1RequirementId": "CRS-M1-00526",
+        "objects": [
+          "BATCH-FILE-PART"
+        ],
+        "action": "MAY-USE-BATCH-FILE-FORMAT",
+        "predicateEn": "An ARINC 615A data-loading system may use the batch-file formats defined in 665 §2.3.",
+        "predicateZh": "ARINC 615A 数据加载系统可以使用 665 §2.3 定义的批处理文件格式。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-LET-BATCH-FILE-SELECT-LSPS-PER-TARGET-HW-POSITION-CRS-M1-00527",
+        "m1RequirementId": "CRS-M1-00527",
+        "objects": [
+          "BATCH-FILE-PART",
+          "LOADABLE-SOFTWARE-PART"
+        ],
+        "action": "LET-BATCH-FILE-SELECT-LSPS-PER-TARGET-HW-POSITION",
+        "predicateEn": "A batch file part shall let the maintainer load the selected LSPs for each target hardware position without picking every LSP individually.",
+        "predicateZh": "批处理文件件必须让维护人员按目标硬件位置加载所选 LSP，而不必逐个挑选。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-IDENTIFY-BATCH-FILE-WITH-LUB-EXTENSION-CRS-M1-00528",
+        "m1RequirementId": "CRS-M1-00528",
+        "objects": [
+          "BATCH-FILE-PART",
+          "LUB-EXTENSION"
+        ],
+        "action": "IDENTIFY-BATCH-FILE-WITH-LUB-EXTENSION",
+        "predicateEn": "A batch file part shall be identified with the .LUB extension.",
+        "predicateZh": "批处理文件件必须用 .LUB 扩展名标识。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-MATCH-REFERENCED-HEADER-FILE-NAME-CASE-CRS-M1-00529",
+        "m1RequirementId": "CRS-M1-00529",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "action": "MATCH-REFERENCED-HEADER-FILE-NAME-CASE",
+        "predicateEn": "Header file names referenced in a batch file shall match the case of the actual file names.",
+        "predicateZh": "批处理文件中引用的头文件名必须与实际文件名的大小写一致。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-PREFIX-BATCH-FILE-NAME-WITH-MANUFACTURER-CODE-CRS-M1-00530",
+        "m1RequirementId": "CRS-M1-00530",
+        "objects": [
+          "BATCH-FILE-NAME",
+          "MANUFACTURER-CODE"
+        ],
+        "action": "PREFIX-BATCH-FILE-NAME-WITH-MANUFACTURER-CODE",
+        "predicateEn": "The first three characters of a batch-file name shall be the manufacturer code of the creator.",
+        "predicateZh": "批处理文件名的前三个字符必须是创建方的制造商代码。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-KEEP-BATCH-FILE-NAME-UNIQUE-PER-MANUFACTURER-CODE-CRS-M1-00531",
+        "m1RequirementId": "CRS-M1-00531",
+        "objects": [
+          "BATCH-FILE-NAME"
+        ],
+        "action": "KEEP-BATCH-FILE-NAME-UNIQUE-PER-MANUFACTURER-CODE",
+        "predicateEn": "The remainder of a batch-file name shall be unique for each batch file defined under that manufacturer code.",
+        "predicateZh": "同一制造商代码下每个批处理文件名的其余部分必须唯一。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-KEEP-BATCH-FILE-PART-NUMBER-UNIQUE-AMONG-LSP-AND-BFP-CRS-M1-00532",
+        "m1RequirementId": "CRS-M1-00532",
+        "objects": [
+          "BATCH-FILE-PART-NUMBER"
+        ],
+        "action": "KEEP-BATCH-FILE-PART-NUMBER-UNIQUE-AMONG-LSP-AND-BFP",
+        "predicateEn": "A batch-file part number shall be unique within the set of LSP and batch-file parts under the same manufacturer code.",
+        "predicateZh": "同一制造商代码下，批处理文件件号必须在 LSP 与批处理文件集合中唯一。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-REFERENCE-COMPLETE-HEADER-FILE-NAME-WITHOUT-PATH-CRS-M1-00533",
+        "m1RequirementId": "CRS-M1-00533",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "action": "REFERENCE-COMPLETE-HEADER-FILE-NAME-WITHOUT-PATH",
+        "predicateEn": "Header file names referenced in a batch file shall be complete names including extensions and shall omit path references.",
+        "predicateZh": "批处理文件中引用的头文件名必须是含扩展名的完整文件名，且不得包含路径。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-USE-BATCH-FILE-ONLY-TO-AUTOMATE-MULTI-LSP-SETUP-CRS-M1-00534",
+        "m1RequirementId": "CRS-M1-00534",
+        "objects": [
+          "BATCH-FILE-PART",
+          "DATA-LOADER"
+        ],
+        "action": "USE-BATCH-FILE-ONLY-TO-AUTOMATE-MULTI-LSP-SETUP",
+        "predicateEn": "Batch files are distributed to onboard and off-board ARINC 615A loaders and are used only to automate multi-LSP setup.",
+        "predicateZh": "批处理文件分发给机上和机下 ARINC 615A 加载器，仅用于自动完成多 LSP 设置。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-DO-NOT-TRANSFER-BATCH-FILE-TO-TARGET-HARDWARE-CRS-M1-00535",
+        "m1RequirementId": "CRS-M1-00535",
+        "objects": [
+          "BATCH-FILE-PART",
+          "TARGET-HARDWARE"
+        ],
+        "action": "DO-NOT-TRANSFER-BATCH-FILE-TO-TARGET-HARDWARE",
+        "predicateEn": "A batch file part shall not be transferred to target hardware.",
+        "predicateZh": "批处理文件件不得传送到目标硬件。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-INCLUDE-BATCH-FILE-CONTENT-DEFINED-BY-TABLE-2-3-1-1-CRS-M1-00536",
+        "m1RequirementId": "CRS-M1-00536",
+        "objects": [
+          "BATCH-FILE-PART",
+          "TABLE-2.3.1-1"
+        ],
+        "action": "INCLUDE-BATCH-FILE-CONTENT-DEFINED-BY-TABLE-2-3-1-1",
+        "predicateEn": "A batch file shall contain the information defined in Table 2.3.1-1.",
+        "predicateZh": "批处理文件必须包含表 2.3.1-1 规定的信息。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-ENCODE-BATCH-FILE-LENGTH-IN-16-BIT-WORDS-CRS-M1-00537",
+        "m1RequirementId": "CRS-M1-00537",
+        "objects": [
+          "BATCH-FILE-LENGTH"
+        ],
+        "action": "ENCODE-BATCH-FILE-LENGTH-IN-16-BIT-WORDS",
+        "predicateEn": "Batch File Length is the number of 16-bit words in the batch file.",
+        "predicateZh": "批处理文件长度是该文件中 16 位字的数量。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-MAKE-BATCH-FILE-PN-COMPLIANT-WITH-SOFTWARE-LOAD-PN-FORMAT-CRS-M1-00538",
+        "m1RequirementId": "CRS-M1-00538",
+        "objects": [
+          "BATCH-FILE-PN"
+        ],
+        "action": "MAKE-BATCH-FILE-PN-COMPLIANT-WITH-SOFTWARE-LOAD-PN-FORMAT",
+        "predicateEn": "A batch-file part number shall follow the software-load PN format in 665 §2.1.1.",
+        "predicateZh": "批处理文件件号必须符合 665 §2.1.1 的软件加载件号格式。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-KEEP-BATCH-FILE-PN-DISTINCT-FROM-LSP-AND-MSP-CRS-M1-00539",
+        "m1RequirementId": "CRS-M1-00539",
+        "objects": [
+          "BATCH-FILE-PN"
+        ],
+        "action": "KEEP-BATCH-FILE-PN-DISTINCT-FROM-LSP-AND-MSP",
+        "predicateEn": "A batch-file part number shall be unique from any LSP part number and any MSP part number.",
+        "predicateZh": "批处理文件件号必须不同于任何 LSP 件号和任何 MSP 件号。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-SET-LAST-LOAD-LIST-BLOCK-POINTER-TO-ZERO-CRS-M1-00540",
+        "m1RequirementId": "CRS-M1-00540",
+        "objects": [
+          "LOAD-LIST-BLOCK-POINTER"
+        ],
+        "action": "SET-LAST-LOAD-LIST-BLOCK-POINTER-TO-ZERO",
+        "predicateEn": "The load-list block pointer of the last load-list block shall be zero.",
+        "predicateZh": "最后一个加载列表块的指针必须为零。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-MATCH-TARGET-HW-ID-POS-TO-TARGET-HARDWARE-CRS-M1-00541",
+        "m1RequirementId": "CRS-M1-00541",
+        "objects": [
+          "TARGET-HW-ID-POS"
+        ],
+        "action": "MATCH-TARGET-HW-ID-POS-TO-TARGET-HARDWARE",
+        "predicateEn": "The Target HW ID POS value shall match the THW_ID_POS of the target hardware loaded by this batch file part.",
+        "predicateZh": "Target HW ID POS 必须与该批处理文件要加载的目标硬件 THW_ID_POS 一致。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-MATCH-HEADER-FILE-NAME-TO-LISTED-LSP-CRS-M1-00542",
+        "m1RequirementId": "CRS-M1-00542",
+        "objects": [
+          "HEADER-FILE-NAME",
+          "LOAD-PN"
+        ],
+        "action": "MATCH-HEADER-FILE-NAME-TO-LISTED-LSP",
+        "predicateEn": "The header file name shall match the header file of the LSP identified by the Load PN field.",
+        "predicateZh": "头文件名必须与 Load PN 字段所标识 LSP 的头文件一致。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-MATCH-LOAD-PN-TO-LSP-FOR-TARGET-HW-ID-POS-CRS-M1-00543",
+        "m1RequirementId": "CRS-M1-00543",
+        "objects": [
+          "LOAD-PN",
+          "TARGET-HW-ID-POS"
+        ],
+        "action": "MATCH-LOAD-PN-TO-LSP-FOR-TARGET-HW-ID-POS",
+        "predicateEn": "The Load PN shall match the LSP part number to be loaded to that Target HW ID POS.",
+        "predicateZh": "Load PN 必须与要加载到该 Target HW ID POS 的 LSP 件号一致。",
         "checkLocation": "ARINC-665-DATA-OBJECT"
       }
     ],
@@ -15135,6 +15737,511 @@
       "modelTargetIds": [
         "SCOPE"
       ]
+    },
+    {
+      "requirementId": "CRS-M1-00526",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-MAY-USE-BATCH-FILE-FORMAT-CRS-M1-00526"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00527",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-LET-BATCH-FILE-SELECT-LSPS-PER-TARGET-HW-POSITION-CRS-M1-00527"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00528",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-IDENTIFY-BATCH-FILE-WITH-LUB-EXTENSION-CRS-M1-00528"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00529",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-MATCH-REFERENCED-HEADER-FILE-NAME-CASE-CRS-M1-00529"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00530",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-PREFIX-BATCH-FILE-NAME-WITH-MANUFACTURER-CODE-CRS-M1-00530"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00531",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-KEEP-BATCH-FILE-NAME-UNIQUE-PER-MANUFACTURER-CODE-CRS-M1-00531"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00532",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-KEEP-BATCH-FILE-PART-NUMBER-UNIQUE-AMONG-LSP-AND-BFP-CRS-M1-00532"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00533",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-REFERENCE-COMPLETE-HEADER-FILE-NAME-WITHOUT-PATH-CRS-M1-00533"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00534",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-USE-BATCH-FILE-ONLY-TO-AUTOMATE-MULTI-LSP-SETUP-CRS-M1-00534"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00535",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-DO-NOT-TRANSFER-BATCH-FILE-TO-TARGET-HARDWARE-CRS-M1-00535"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00536",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-INCLUDE-BATCH-FILE-CONTENT-DEFINED-BY-TABLE-2-3-1-1-CRS-M1-00536"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00537",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-ENCODE-BATCH-FILE-LENGTH-IN-16-BIT-WORDS-CRS-M1-00537"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00538",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-MAKE-BATCH-FILE-PN-COMPLIANT-WITH-SOFTWARE-LOAD-PN-FORMAT-CRS-M1-00538"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00539",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-KEEP-BATCH-FILE-PN-DISTINCT-FROM-LSP-AND-MSP-CRS-M1-00539"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00540",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-SET-LAST-LOAD-LIST-BLOCK-POINTER-TO-ZERO-CRS-M1-00540"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00541",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-MATCH-TARGET-HW-ID-POS-TO-TARGET-HARDWARE-CRS-M1-00541"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00542",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-MATCH-HEADER-FILE-NAME-TO-LISTED-LSP-CRS-M1-00542"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00543",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-MATCH-LOAD-PN-TO-LSP-FOR-TARGET-HW-ID-POS-CRS-M1-00543"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00544",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DEPENDENCY-BLOCKED",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "IF_INTEGRITY"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00545",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DEPENDENCY-BLOCKED",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "IF_INTEGRITY"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00546",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-BATCH-FILE-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00547",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-BATCH-FILE-FORMAT-VERSION"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00548",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-SPARE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00549",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-POINTER-TO-BATCH-FILE-PN-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00550",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00551",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-EXPANSION-POINT-1"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00552",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-BATCH-FILE-PN-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00553",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-BATCH-FILE-PN"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00554",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-COMMENT-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00555",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-COMMENT"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00556",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-EXPANSION-POINT-2"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00557",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00558",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00559",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-TARGET-HW-ID-POS-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00560",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-TARGET-HW-ID-POS"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00561",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00562",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-HEADER-FILE-NAME-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00563",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-HEADER-FILE-NAME"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00564",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-LOAD-PN-LENGTH"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00565",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-LOAD-PN"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00566",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-EXPANSION-POINT-3"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00567",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "DEPENDENCY-BLOCKED",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "FC-LUB-FIELD-BATCH-FILE-CRC",
+        "IF_INTEGRITY"
+      ]
     }
   ],
   "traceRelations": [
@@ -21968,6 +23075,479 @@
       "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
       "rationaleEn": "FIND clock is observational in the catalog only.",
       "rationaleZh": "FIND 时钟仅用于目录观察，不进入绑定状态机迁移。"
+    },
+    {
+      "id": "TR-CRS-M1-00526-0623",
+      "requirementId": "CRS-M1-00526",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-MAY-USE-BATCH-FILE-FORMAT-CRS-M1-00526",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00527-0624",
+      "requirementId": "CRS-M1-00527",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-LET-BATCH-FILE-SELECT-LSPS-PER-TARGET-HW-POSITION-CRS-M1-00527",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00528-0625",
+      "requirementId": "CRS-M1-00528",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-IDENTIFY-BATCH-FILE-WITH-LUB-EXTENSION-CRS-M1-00528",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00529-0626",
+      "requirementId": "CRS-M1-00529",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-MATCH-REFERENCED-HEADER-FILE-NAME-CASE-CRS-M1-00529",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00530-0627",
+      "requirementId": "CRS-M1-00530",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-PREFIX-BATCH-FILE-NAME-WITH-MANUFACTURER-CODE-CRS-M1-00530",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00531-0628",
+      "requirementId": "CRS-M1-00531",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-KEEP-BATCH-FILE-NAME-UNIQUE-PER-MANUFACTURER-CODE-CRS-M1-00531",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00532-0629",
+      "requirementId": "CRS-M1-00532",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-KEEP-BATCH-FILE-PART-NUMBER-UNIQUE-AMONG-LSP-AND-BFP-CRS-M1-00532",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00533-0630",
+      "requirementId": "CRS-M1-00533",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-REFERENCE-COMPLETE-HEADER-FILE-NAME-WITHOUT-PATH-CRS-M1-00533",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00534-0631",
+      "requirementId": "CRS-M1-00534",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-USE-BATCH-FILE-ONLY-TO-AUTOMATE-MULTI-LSP-SETUP-CRS-M1-00534",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00535-0632",
+      "requirementId": "CRS-M1-00535",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-DO-NOT-TRANSFER-BATCH-FILE-TO-TARGET-HARDWARE-CRS-M1-00535",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00536-0633",
+      "requirementId": "CRS-M1-00536",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-INCLUDE-BATCH-FILE-CONTENT-DEFINED-BY-TABLE-2-3-1-1-CRS-M1-00536",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00537-0634",
+      "requirementId": "CRS-M1-00537",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-ENCODE-BATCH-FILE-LENGTH-IN-16-BIT-WORDS-CRS-M1-00537",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00538-0635",
+      "requirementId": "CRS-M1-00538",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-MAKE-BATCH-FILE-PN-COMPLIANT-WITH-SOFTWARE-LOAD-PN-FORMAT-CRS-M1-00538",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00539-0636",
+      "requirementId": "CRS-M1-00539",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-KEEP-BATCH-FILE-PN-DISTINCT-FROM-LSP-AND-MSP-CRS-M1-00539",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00540-0637",
+      "requirementId": "CRS-M1-00540",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-SET-LAST-LOAD-LIST-BLOCK-POINTER-TO-ZERO-CRS-M1-00540",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00541-0638",
+      "requirementId": "CRS-M1-00541",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-MATCH-TARGET-HW-ID-POS-TO-TARGET-HARDWARE-CRS-M1-00541",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00542-0639",
+      "requirementId": "CRS-M1-00542",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-MATCH-HEADER-FILE-NAME-TO-LISTED-LSP-CRS-M1-00542",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00543-0640",
+      "requirementId": "CRS-M1-00543",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-MATCH-LOAD-PN-TO-LSP-FOR-TARGET-HW-ID-POS-CRS-M1-00543",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00544-0641",
+      "requirementId": "CRS-M1-00544",
+      "targetKind": "INTERFACE",
+      "targetId": "IF_INTEGRITY",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-CRC-BLOCKED-BY-645",
+      "rationaleEn": "CRC algorithm identity remains blocked by unbound ARINC 645; integrity interface stays not established.",
+      "rationaleZh": "CRC 算法身份仍由未绑定的 ARINC 645 阻塞；完整性接口保持未建立。"
+    },
+    {
+      "id": "TR-CRS-M1-00545-0642",
+      "requirementId": "CRS-M1-00545",
+      "targetKind": "INTERFACE",
+      "targetId": "IF_INTEGRITY",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-CRC-BLOCKED-BY-645",
+      "rationaleEn": "CRC algorithm identity remains blocked by unbound ARINC 645; integrity interface stays not established.",
+      "rationaleZh": "CRC 算法身份仍由未绑定的 ARINC 645 阻塞；完整性接口保持未建立。"
+    },
+    {
+      "id": "TR-CRS-M1-00546-0643",
+      "requirementId": "CRS-M1-00546",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-BATCH-FILE-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00547-0644",
+      "requirementId": "CRS-M1-00547",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-BATCH-FILE-FORMAT-VERSION",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00548-0645",
+      "requirementId": "CRS-M1-00548",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-SPARE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00549-0646",
+      "requirementId": "CRS-M1-00549",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-POINTER-TO-BATCH-FILE-PN-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00550-0647",
+      "requirementId": "CRS-M1-00550",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00551-0648",
+      "requirementId": "CRS-M1-00551",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-EXPANSION-POINT-1",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00552-0649",
+      "requirementId": "CRS-M1-00552",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-BATCH-FILE-PN-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00553-0650",
+      "requirementId": "CRS-M1-00553",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-BATCH-FILE-PN",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00554-0651",
+      "requirementId": "CRS-M1-00554",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-COMMENT-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00555-0652",
+      "requirementId": "CRS-M1-00555",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-COMMENT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00556-0653",
+      "requirementId": "CRS-M1-00556",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-EXPANSION-POINT-2",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00557-0654",
+      "requirementId": "CRS-M1-00557",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00558-0655",
+      "requirementId": "CRS-M1-00558",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00559-0656",
+      "requirementId": "CRS-M1-00559",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-TARGET-HW-ID-POS-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00560-0657",
+      "requirementId": "CRS-M1-00560",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-TARGET-HW-ID-POS",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00561-0658",
+      "requirementId": "CRS-M1-00561",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00562-0659",
+      "requirementId": "CRS-M1-00562",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-HEADER-FILE-NAME-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00563-0660",
+      "requirementId": "CRS-M1-00563",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-HEADER-FILE-NAME",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00564-0661",
+      "requirementId": "CRS-M1-00564",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-LOAD-PN-LENGTH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00565-0662",
+      "requirementId": "CRS-M1-00565",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-LOAD-PN",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00566-0663",
+      "requirementId": "CRS-M1-00566",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-EXPANSION-POINT-3",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00567-0664",
+      "requirementId": "CRS-M1-00567",
+      "targetKind": "FIELD-CONSTRAINT",
+      "targetId": "FC-LUB-FIELD-BATCH-FILE-CRC",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-FIELD",
+      "rationaleEn": "665 batch-file table row recorded as a field constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件表行记为字段约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00567-0665",
+      "requirementId": "CRS-M1-00567",
+      "targetKind": "INTERFACE",
+      "targetId": "IF_INTEGRITY",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "665-BATCH-FILE-CRC-BLOCKED-BY-645",
+      "rationaleEn": "CRC algorithm identity remains blocked by unbound ARINC 645; integrity interface stays not established.",
+      "rationaleZh": "CRC 算法身份仍由未绑定的 ARINC 645 阻塞；完整性接口保持未建立。"
     }
   ],
   "infrastructurePremises": [
@@ -22654,17 +24234,17 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 524,
-    "dispositionCount": 524,
-    "traceCount": 621,
+    "requirementCount": 566,
+    "dispositionCount": 566,
+    "traceCount": 664,
     "stateCount": 35,
     "transitionCount": 65,
     "timingCount": 26,
-    "fieldConstraintCount": 86,
-    "dispositionsFingerprint": "ccf56807d102004dde361db35906ec892624cafb68c0adb823a9954fe2f906db",
-    "modelFingerprint": "dbe9dd733581724aa311b20b9fd0742f157e7d38d2a7518166fa365bef44a3cf",
+    "fieldConstraintCount": 108,
+    "dispositionsFingerprint": "259af6424d6489ab4ee476532517fddb0306d872f21a41d8eaad630c0c1ebfff",
+    "modelFingerprint": "4d47a572fd83f731e34c97885cd886f822c417fd1140c956bb9be74294a064e8",
     "timingFingerprint": "91e71d517ccc388f446a681b7f13007a3de69e687e49fbb299c5df28430d1e92",
-    "inputFingerprint": "4e93a24c9533086661e962f7a76db6a702b5493d9b233fcce6d1b2f7fda329c7",
+    "inputFingerprint": "ef3f37750b8dbd4752f87ae82383566904a308bd5c2ea944a01d1e238ba2c3b5",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
