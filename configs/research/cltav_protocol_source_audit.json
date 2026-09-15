@@ -8,16 +8,16 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-6",
+    "artifactVersion": "M1-CANDIDATE-7",
     "coverageCount": 2796,
     "requirementCount": 524,
     "coverageFingerprint": "806a197c7ec644f55d05dd8a6a31f80390ece5ccfe2e7d55a6816da6e2c04dfd",
-    "requirementsFingerprint": "5d68d75718bb3a4b587339be8a0c6a1ccb5cd4bb0d85f18e2b2d56fdd5675700",
+    "requirementsFingerprint": "d9e4f22496734c5635f518b881f6c7ce9d8bd1a4fdea1f296b225f4422eacd3b",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "RR-CLTAV-2026-007 rework: FIND window lifetime is distinct from the host answer deadline, LNS Exception Timer/Estimated Time stay physically present, and DNLD_DATA start-at-1 is owned by COV-M1-00741. Bound M2 still does not execute FIND/DOWNLOAD/AFDX. This is not independent RG approval."
+    "note": "RR-CLTAV-2026-008 rework: FIND registration close is measured from FIND-REQUEST-SENT, the same 3 s origin as the window lifetime. Bound M2 still does not execute FIND. This is not independent RG approval."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -152,7 +152,7 @@
     "proprietaryTextExcluded": true,
     "sharedFindNetworkCondition": "Only when the path between data loader and target carries FIND traffic (broadcast, multicast or unicast). Gateways or mixed aircraft networks may not.",
     "notes": [
-      "FIND, DOWNLOAD and AFDX-appendix bilingual CRS are corrected in M1-CANDIDATE-6 after RR-CLTAV-2026-007 REWORK. Commentary and examples stay non-normative.",
+      "FIND, DOWNLOAD and AFDX-appendix bilingual CRS are corrected in M1-CANDIDATE-7 after RR-CLTAV-2026-008 REWORK. Commentary and examples stay non-normative.",
       "Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance.",
       "Bound M2 does not execute FIND, DOWNLOAD or AFDX. FIND timing is observational catalog only. Protocol Version and Download List Ratio are fixed-width ASCII; LNR user-defined tail fields do not repeat per file.",
       "664/665/RFC body audits remain pending. Empty dependencyIds do not mean no dependency. Software Ethernet experiments do not prove AFDX hardware. This is not independent RG, mathematical or architecture approval."

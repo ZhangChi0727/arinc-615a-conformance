@@ -361,6 +361,30 @@ def timing_interval_role_errors(data: dict[str, Any]) -> list[str]:
             role_ids = [item.get("sourceUnitId") for item in roles]
             if role_ids != list(timing.get("sourceEvidenceUnitIds") or []):
                 errors.append(f"{rid} sourceEvidenceRoles must list the same units as sourceEvidenceUnitIds")
+    errors.extend(stacked_exact_constant_origin_errors(data))
+    return errors
+
+
+def stacked_exact_constant_origin_errors(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    timings = [(row.get("id"), row["timing"]) for row in data.get("requirements") or [] if row.get("timing")]
+    by_response = {timing.get("response"): (rid, timing) for rid, timing in timings}
+    for rid, timing in timings:
+        origin = by_response.get(timing.get("trigger"))
+        if origin is None or origin[0] == rid:
+            continue
+        origin_id, origin_timing = origin
+        if (
+            timing.get("intervalRole") == "EXACT-SOURCE-CONSTANT"
+            and origin_timing.get("intervalRole") == "EXACT-SOURCE-CONSTANT"
+            and timing.get("sourceParameter") == origin_timing.get("sourceParameter")
+            and timing.get("upperBound") == origin_timing.get("upperBound")
+            and isinstance(timing.get("upperBound"), (int, float))
+            and timing.get("upperBound") != 0
+        ):
+            errors.append(
+                f"{rid} measures the same source constant from {origin_id}'s response, shifting the time origin"
+            )
     return errors
 
 

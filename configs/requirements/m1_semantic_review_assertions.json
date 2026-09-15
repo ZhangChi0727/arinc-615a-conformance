@@ -13417,8 +13417,8 @@
         "operation": "FIND",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, the data loader shall close FIND-answer registration when the three-second window lifetime elapses, not earlier. Measurement error is a later configuration parameter and does not change the source constant.",
-      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在三秒窗口寿命到期时关闭 FIND 应答登记，而不是更早关闭。测量误差是后续配置参数，不能用来改写该来源常数。",
+      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, the data loader shall close FIND-answer registration three seconds after the FIND request is sent. That close is the same logical instant as the three-second window lifetime elapsing; it is not a second three-second delay after expiry.",
+      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在发出 FIND 请求后三秒关闭 FIND 应答登记。该关闭与三秒窗口寿命到期是同一逻辑时刻，而不是到期后再延迟三秒。",
       "expectedSourceModality": "FACT",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
@@ -13437,14 +13437,14 @@
           }
         ],
         "intervalRole": "EXACT-SOURCE-CONSTANT",
-        "trigger": "FIND-ANSWER-WINDOW-LIFETIME-ELAPSED",
+        "trigger": "FIND-REQUEST-SENT",
         "response": "FIND-ANSWER-REGISTRATION-CLOSED",
         "cancellation": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
         "supersedingTrigger": "NONE",
         "correlationKey": "FIND-REQUEST-INSTANCE",
-        "pairingPolicy": "PAIR-WINDOW-EXPIRY-WITH-REGISTRATION-CLOSE",
+        "pairingPolicy": "PAIR-FIND-REQUEST-WITH-REGISTRATION-CLOSE",
         "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
-        "silenceSemantics": "REGISTRATION-CLOSES-WHEN-LIFETIME-ELAPSES",
+        "silenceSemantics": "REGISTRATION-CLOSES-AT-WINDOW-LIFETIME-FROM-REQUEST",
         "lowerBound": 3,
         "upperBound": 3,
         "unit": "s",
@@ -14417,7 +14417,9 @@
         "upperBound": 3,
         "sourceEvidenceUnitIds": [
           "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891"
-        ]
+        ],
+        "trigger": "FIND-REQUEST-SENT",
+        "pairingPolicy": "PAIR-FIND-REQUEST-WITH-REGISTRATION-CLOSE"
       }
     },
     {

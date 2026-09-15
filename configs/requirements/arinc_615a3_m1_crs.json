@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0",
   "artifactId": "ARINC615A3-M1-CRS",
-  "artifactVersion": "M1-CANDIDATE-6",
+  "artifactVersion": "M1-CANDIDATE-7",
   "candidateDisposition": "ADOPT",
   "sourceBindings": [
     {
@@ -93465,8 +93465,8 @@
       },
       "sourceTextHash": "30fc1bceb89168157647ded159876dfb824c388a4d2f9cb40450e9f279918d88",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "When FIND is implemented, the data loader shall close FIND-answer registration when the three-second window lifetime elapses, not earlier. Measurement error is a later configuration parameter and does not change the source constant.",
-      "generatedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在三秒窗口寿命到期时关闭 FIND 应答登记，而不是更早关闭。测量误差是后续配置参数，不能用来改写该来源常数。",
+      "generatedSemanticProjectionEn": "When FIND is implemented, the data loader shall close FIND-answer registration three seconds after the FIND request is sent. That close is the same logical instant as the three-second window lifetime elapsing; it is not a second three-second delay after expiry.",
+      "generatedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在发出 FIND 请求后三秒关闭 FIND 应答登记。该关闭与三秒窗口寿命到期是同一逻辑时刻，而不是到期后再延迟三秒。",
       "semantic": {
         "actor": "DATA-LOADER",
         "condition": "WHEN-FIND-IMPLEMENTED",
@@ -93508,14 +93508,14 @@
           }
         ],
         "intervalRole": "EXACT-SOURCE-CONSTANT",
-        "trigger": "FIND-ANSWER-WINDOW-LIFETIME-ELAPSED",
+        "trigger": "FIND-REQUEST-SENT",
         "response": "FIND-ANSWER-REGISTRATION-CLOSED",
         "cancellation": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
         "supersedingTrigger": "NONE",
         "correlationKey": "FIND-REQUEST-INSTANCE",
-        "pairingPolicy": "PAIR-WINDOW-EXPIRY-WITH-REGISTRATION-CLOSE",
+        "pairingPolicy": "PAIR-FIND-REQUEST-WITH-REGISTRATION-CLOSE",
         "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
-        "silenceSemantics": "REGISTRATION-CLOSES-WHEN-LIFETIME-ELAPSES",
+        "silenceSemantics": "REGISTRATION-CLOSES-AT-WINDOW-LIFETIME-FROM-REQUEST",
         "lowerBound": 3,
         "upperBound": 3,
         "unit": "s",
@@ -93856,7 +93856,7 @@
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "8e3edd4ae4a712db4c341fa2df9435397e34bba2442f36c10cbd13ec9f93d6fc",
+    "semanticAssertionFingerprint": "7f715896dee5afb97a4a33d8db503dda9b03c3dcb9862207e367fe0c67f43c58",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
@@ -93867,7 +93867,7 @@
     "dependencyCount": 14,
     "gapCount": 1,
     "coverageFingerprint": "806a197c7ec644f55d05dd8a6a31f80390ece5ccfe2e7d55a6816da6e2c04dfd",
-    "requirementsFingerprint": "5d68d75718bb3a4b587339be8a0c6a1ccb5cd4bb0d85f18e2b2d56fdd5675700"
+    "requirementsFingerprint": "d9e4f22496734c5635f518b881f6c7ce9d8bd1a4fdea1f296b225f4422eacd3b"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",
