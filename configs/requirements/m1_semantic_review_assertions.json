@@ -1,5 +1,5 @@
 {
-  "schemaVersion": "2.1",
+  "schemaVersion": "2.2",
   "artifactId": "ARINC-M1-SEMANTIC-REVIEW-ASSERTIONS",
   "reviewBasis": "AUTHOR-SOURCE-CHECKED-CANDIDATE-PENDING-EXTERNAL-RG1",
   "projectionPolicy": "GENERATED-TEMPLATE-PROJECTIONS-ARE-DRIFT-ANCHORS-NOT-INDEPENDENT-RG1-EVIDENCE",
@@ -10079,23 +10079,29 @@
         "operation": "FIND",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, a FIND host shall send its FIND answer within a two-second upper bound of the request. Missing that bound risks omission from registration; that risk is not a permission to omit the answer.",
-      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，FIND 主机必须在请求后的两秒上界内发出 FIND 应答。超过该上界有不被登记的风险；该风险不是可以不应答的许可。",
+      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, a FIND host shall send its FIND answer within a two-second upper bound of receiving a legal request. An earlier answer satisfies the deadline; the three-second registration window does not extend this host bound.",
+      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，FIND 主机必须在收到合法请求后的两秒上界内发出 FIND 应答。更早的应答满足该期限；三秒登记窗口不能延长该主机上界。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedTiming": {
         "timingFamily": "FIND-HOST-ANSWER-DEADLINE",
-        "provenanceKind": "SYMBOLIC-SOURCE-PARAMETER",
+        "provenanceKind": "FIXED-SOURCE-CONSTANT",
         "sourceParameter": "FIND-HOST-TIMEOUT-2-S",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700",
-          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF"
+          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700"
         ],
+        "sourceEvidenceRoles": [
+          {
+            "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700",
+            "role": "DEFINES-HOST-ANSWER-DEADLINE"
+          }
+        ],
+        "intervalRole": "DEADLINE-FROM-ZERO-TO-SOURCE-CONSTANT",
         "trigger": "FIND-REQUEST-RECEIVED-BY-HOST",
         "response": "FIND-ANSWER-SENT-BY-HOST",
-        "cancellation": "ILLEGAL-FIND-REQUEST-OR-FIND-ABORTED",
+        "cancellation": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
         "supersedingTrigger": "NONE",
         "correlationKey": "FIND-REQUEST-INSTANCE",
         "pairingPolicy": "PAIR-FIND-REQUEST-WITH-HOST-ANSWER",
@@ -12016,8 +12022,8 @@
         "operation": "DOWNLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-EXCEPTION-TIMER of LNS at the tabulated width and table ordinal 7.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNS 的 FIELD-EXCEPTION-TIMER。",
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode LNS Exception Timer as a physically present 16-bit field at table ordinal 7. The field is used on status 0x0002 or 0x0004 as remaining seconds in 0..65535; other statuses keep the field and store 0x0000.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Exception Timer 编为表序 7 的固定 16 位字段。该字段在状态 0x0002 或 0x0004 用作 0..65535 的剩余秒数；其他状态仍保留该字段并置 0x0000。",
       "expectedSourceModality": "TABLE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [],
@@ -12027,12 +12033,20 @@
         "ordinal": 7,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": [
           "LNS-EXCEPTION-TIMER-WHEN-STATUS-0002-OR-0004"
-        ]
+        ],
+        "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "inactiveRequiredValue": "0x0000",
+        "valueDomain": {
+          "rawEncoding": "UINT16-BIG-ENDIAN",
+          "activeMin": 0,
+          "activeMax": 65535,
+          "activeUnit": "s"
+        }
       }
     },
     {
@@ -12051,8 +12065,8 @@
         "operation": "DOWNLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is used, the protocol-file producer shall encode LNS Estimated Time as a 16-bit raw field. Status 0x0002 or 0x0004 carry remaining seconds; 0xFFFF means the estimate is not given and must not be decoded as ordinary remaining seconds; other status codes set the field to 0x0000.",
-      "expectedGeneratedSemanticProjectionZh": "在使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Estimated Time 编为 16 位原始字段。状态 0x0002 或 0x0004 携带剩余秒数；0xFFFF 表示未给出估计，不得解码为普通剩余秒数；其他状态码把该字段置为 0x0000。",
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is used, the protocol-file producer shall encode LNS Estimated Time as a physically present 16-bit field at table ordinal 8. Status 0x0002 or 0x0004 carry remaining seconds in 0..32767, with 0xFFFF meaning not given; other statuses keep the field and store 0x0000. Inactive 0x0000 is unused filler, not a not-given sentinel.",
+      "expectedGeneratedSemanticProjectionZh": "在使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Estimated Time 编为表序 8 的固定 16 位字段。状态 0x0002 或 0x0004 携带 0..32767 的剩余秒数，0xFFFF 表示未给出；其他状态仍保留该字段并置 0x0000。非活动的 0x0000 是未使用填充，不是未给出哨兵。",
       "expectedSourceModality": "TABLE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [],
@@ -12062,7 +12076,7 @@
         "ordinal": 8,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": [
@@ -12072,13 +12086,20 @@
         "specialValues": [
           {
             "code": "0xFFFF",
-            "meaningCode": "ESTIMATED-TIME-NOT-GIVEN"
-          },
-          {
-            "code": "0x0000",
-            "meaningCode": "ESTIMATED-TIME-UNUSED-FOR-OTHER-STATUS"
+            "meaningCode": "ESTIMATED-TIME-NOT-GIVEN",
+            "appliesWhen": "USE-CONDITION-ACTIVE"
           }
-        ]
+        ],
+        "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "inactiveRequiredValue": "0x0000",
+        "valueDomain": {
+          "rawEncoding": "INT16-TWO-COMPLEMENT-ON-UINT16",
+          "signedSourceMin": -1,
+          "signedSourceMax": 32767,
+          "activeMin": 0,
+          "activeMax": 32767,
+          "activeUnit": "s"
+        }
       }
     },
     {
@@ -13336,33 +13357,39 @@
         "objects": [
           "FIND-ANSWER-WINDOW-3-S"
         ],
-        "observableEffect": "FIND-ANSWER-WINDOW-UPPER-BOUND-OBSERVABLE",
+        "observableEffect": "FIND-ANSWER-WINDOW-LIFETIME-OBSERVABLE",
         "operation": "FIND",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, the data loader shall keep a three-second window for FIND answers after sending a FIND request. The window length is an upper bound, not a requirement that every answer arrive at exactly three seconds.",
-      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在发出 FIND 请求后为 FIND 应答保持三秒窗口。该窗口长度是上界，并不要求每个应答恰好在第三秒到达。",
+      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, the data loader shall keep a three-second FIND-answer registration window after sending a FIND request. That three-second value is the window lifetime, not a host-answer deadline and not a permission to close registration early.",
+      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在发出 FIND 请求后保持三秒 FIND 应答登记窗口。该三秒是窗口寿命，不是主机应答期限，也不是可以提前关闭登记的许可。",
       "expectedSourceModality": "FACT",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [],
       "expectedTiming": {
         "timingFamily": "FIND-ANSWER-REGISTRATION-WINDOW",
-        "provenanceKind": "SYMBOLIC-SOURCE-PARAMETER",
+        "provenanceKind": "FIXED-SOURCE-CONSTANT",
         "sourceParameter": "FIND-ANSWER-WINDOW-3-S",
         "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
         "sourceEvidenceUnitIds": [
-          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF",
-          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891"
+          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF"
         ],
+        "sourceEvidenceRoles": [
+          {
+            "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF",
+            "role": "DEFINES-FIXED-WINDOW-LIFETIME"
+          }
+        ],
+        "intervalRole": "EXACT-SOURCE-CONSTANT",
         "trigger": "FIND-REQUEST-SENT",
-        "response": "FIND-ANSWER-REGISTRATION-WINDOW-CLOSED",
-        "cancellation": "FIND-OPERATION-ABORTED",
+        "response": "FIND-ANSWER-WINDOW-LIFETIME-ELAPSED",
+        "cancellation": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
         "supersedingTrigger": "NONE",
         "correlationKey": "FIND-REQUEST-INSTANCE",
         "pairingPolicy": "PAIR-FIND-REQUEST-WITH-REGISTRATION-WINDOW",
         "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
-        "silenceSemantics": "WINDOW-CLOSES-AT-SOURCE-UPPER-BOUND",
-        "lowerBound": 0,
+        "silenceSemantics": "WINDOW-LIFETIME-IS-SOURCE-CONSTANT",
+        "lowerBound": 3,
         "upperBound": 3,
         "unit": "s",
         "lowerBoundary": "CLOSED",
@@ -13390,11 +13417,45 @@
         "operation": "FIND",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, the data loader shall close FIND-answer registration when the three-second window expires.",
-      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在三秒窗口到期时关闭 FIND 应答登记。",
+      "expectedGeneratedSemanticProjectionEn": "When FIND is implemented, the data loader shall close FIND-answer registration when the three-second window lifetime elapses, not earlier. Measurement error is a later configuration parameter and does not change the source constant.",
+      "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在三秒窗口寿命到期时关闭 FIND 应答登记，而不是更早关闭。测量误差是后续配置参数，不能用来改写该来源常数。",
       "expectedSourceModality": "FACT",
       "expectedConformanceEffect": "REQUIRED",
-      "expectedDependencyIds": []
+      "expectedDependencyIds": [],
+      "expectedTiming": {
+        "timingFamily": "FIND-REGISTRATION-CLOSE-AT-EXPIRY",
+        "provenanceKind": "FIXED-SOURCE-CONSTANT",
+        "sourceParameter": "FIND-ANSWER-WINDOW-3-S",
+        "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
+        "sourceEvidenceUnitIds": [
+          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891"
+        ],
+        "sourceEvidenceRoles": [
+          {
+            "sourceUnitId": "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891",
+            "role": "DEFINES-CLOSE-AT-WINDOW-EXPIRY"
+          }
+        ],
+        "intervalRole": "EXACT-SOURCE-CONSTANT",
+        "trigger": "FIND-ANSWER-WINDOW-LIFETIME-ELAPSED",
+        "response": "FIND-ANSWER-REGISTRATION-CLOSED",
+        "cancellation": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
+        "supersedingTrigger": "NONE",
+        "correlationKey": "FIND-REQUEST-INSTANCE",
+        "pairingPolicy": "PAIR-WINDOW-EXPIRY-WITH-REGISTRATION-CLOSE",
+        "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+        "silenceSemantics": "REGISTRATION-CLOSES-WHEN-LIFETIME-ELAPSES",
+        "lowerBound": 3,
+        "upperBound": 3,
+        "unit": "s",
+        "lowerBoundary": "CLOSED",
+        "upperBoundary": "CLOSED",
+        "clockStart": "CORRELATED-TRIGGER-TIMESTAMP",
+        "clockResets": [],
+        "observationState": "OBSERVABLE-IN-PRINCIPLE",
+        "errorBudgetState": "FUTURE-CONFIGURATION-DEPENDENT",
+        "ambiguityStatus": "NONE-OBSERVED"
+      }
     },
     {
       "requirementId": "CRS-M1-00522",
@@ -13425,17 +13486,17 @@
       "expectedSemantic": {
         "actor": "DATA-LOADER",
         "condition": "WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION",
-        "action": "INCREMENT-DNLD-DATA-NUMBER-FROM-ONE-EACH-DOWNLOAD",
+        "action": "INCREMENT-DNLD-DATA-NUMBER-EACH-DOWNLOAD",
         "objects": [
           "DNLD-DATA-NUMBER",
           "DNLD-DATA-DIRECTORY"
         ],
-        "observableEffect": "DNLD-DATA-NUMBER-STARTS-AT-ONE-AND-INCREMENTS-OBSERVABLE",
+        "observableEffect": "DNLD-DATA-NUMBER-INCREMENTS-OBSERVABLE",
         "operation": "DOWNLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader shall increment <number> on each download, starting at 1, so successive DNLD_DATA directory names stay unique.",
-      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须在每次下载时递增 <number>，且从 1 开始，以使相继 DNLD_DATA 目录名保持唯一。",
+      "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader shall increment <number> on each download so successive DNLD_DATA directory names stay unique.",
+      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须在每次下载时递增 <number>，以使相继 DNLD_DATA 目录名保持唯一。",
       "expectedSourceModality": "FACT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -13461,6 +13522,27 @@
       "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，每个 FIND 分组必须包含报头和可变长度数据区。报头为两字节并承载操作码。",
       "expectedSourceModality": "FACT",
       "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": []
+    },
+    {
+      "requirementId": "CRS-M1-00525",
+      "sourceUnitId": "SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-007-FF9E1B1FACD7",
+      "sourceTextHash": "ff9e1b1facd7d976fb9bd33c07d14923eb670000b5cf8bb871170df1a9f89462",
+      "expectedSemantic": {
+        "actor": "DATA-LOADER",
+        "condition": "WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION",
+        "action": "START-DNLD-DATA-NUMBER-AT-ONE",
+        "objects": [
+          "DNLD-DATA-NUMBER"
+        ],
+        "observableEffect": "DNLD-DATA-NUMBER-STARTS-AT-ONE-OBSERVABLE",
+        "operation": "DOWNLOAD",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader shall start <number> at 1.",
+      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须把 <number> 从 1 开始。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
     }
   ],
@@ -14275,5 +14357,233 @@
         "storagePolicy": "PUBLIC-TEXT-NO-REPOSITORY-COPY"
       }
     ]
-  }
+  },
+  "reviewedContracts": [
+    {
+      "id": "RC-NO-WRITE-FAILURE-PERMISSION",
+      "kind": "REQUIREMENT-ABSENT",
+      "requirementId": "CRS-M1-00425"
+    },
+    {
+      "id": "RC-WRITE-FAILURE-RISK-INFORMATIVE",
+      "kind": "COVERAGE-INFORMATIVE-EMPTY",
+      "coverageId": "COV-M1-00735"
+    },
+    {
+      "id": "RC-FIND-REGISTER-BINDING",
+      "kind": "REQUIREMENT-BINDING",
+      "requirementId": "CRS-M1-00390",
+      "expected": {
+        "sourceTextHash": "1e8680ad628738183ea6f984c6d350b07d1e5e6cc3af5318789ad595e0d213eb",
+        "semantic.action": "REGISTER-VALID-FIND-ANSWERS-AS-LOAD-TARGETS",
+        "rhoRA.sourceCoverageId": "COV-M1-01606"
+      }
+    },
+    {
+      "id": "RC-FIND-WINDOW-LIFETIME",
+      "kind": "TIMING-CONTRACT",
+      "requirementId": "CRS-M1-00520",
+      "expected": {
+        "timingFamily": "FIND-ANSWER-REGISTRATION-WINDOW",
+        "intervalRole": "EXACT-SOURCE-CONSTANT",
+        "provenanceKind": "FIXED-SOURCE-CONSTANT",
+        "response": "FIND-ANSWER-WINDOW-LIFETIME-ELAPSED",
+        "lowerBound": 3,
+        "upperBound": 3,
+        "sourceEvidenceUnitIds": [
+          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF"
+        ]
+      }
+    },
+    {
+      "id": "RC-FIND-WINDOW-SOURCE",
+      "kind": "REQUIREMENT-BINDING",
+      "requirementId": "CRS-M1-00520",
+      "expected": {
+        "sourceTextHash": "f178271163dfdce4bbc2ba215f784361471c95524c09bb734051d6e98546142d",
+        "semantic.action": "KEEP-THREE-SECOND-FIND-ANSWER-WINDOW"
+      }
+    },
+    {
+      "id": "RC-FIND-CLOSE-AT-EXPIRY",
+      "kind": "TIMING-CONTRACT",
+      "requirementId": "CRS-M1-00521",
+      "expected": {
+        "timingFamily": "FIND-REGISTRATION-CLOSE-AT-EXPIRY",
+        "intervalRole": "EXACT-SOURCE-CONSTANT",
+        "provenanceKind": "FIXED-SOURCE-CONSTANT",
+        "response": "FIND-ANSWER-REGISTRATION-CLOSED",
+        "lowerBound": 3,
+        "upperBound": 3,
+        "sourceEvidenceUnitIds": [
+          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891"
+        ]
+      }
+    },
+    {
+      "id": "RC-FIND-HOST-DEADLINE",
+      "kind": "TIMING-CONTRACT",
+      "requirementId": "CRS-M1-00391",
+      "expected": {
+        "timingFamily": "FIND-HOST-ANSWER-DEADLINE",
+        "intervalRole": "DEADLINE-FROM-ZERO-TO-SOURCE-CONSTANT",
+        "provenanceKind": "FIXED-SOURCE-CONSTANT",
+        "response": "FIND-ANSWER-SENT-BY-HOST",
+        "lowerBound": 0,
+        "upperBound": 2,
+        "sourceEvidenceUnitIds": [
+          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700"
+        ]
+      }
+    },
+    {
+      "id": "RC-WINDOW-AND-DEADLINE-DISTINCT",
+      "kind": "TIMING-BOUNDS-MUST-DIFFER",
+      "requirementIds": [
+        "CRS-M1-00520",
+        "CRS-M1-00391"
+      ],
+      "axis": "upperBound"
+    },
+    {
+      "id": "RC-FIND-INFO-LOCATION",
+      "kind": "REQUIREMENT-BINDING",
+      "requirementId": "CRS-M1-00392",
+      "expected": {
+        "sourceTextHash": "e98f49fbfbdf4b9aec7a04abec3db7abe6430722509e23c0ddc1d74b04c3a8b9"
+      }
+    },
+    {
+      "id": "RC-FIND-INFO-ALTERNATIVE",
+      "kind": "SEMANTIC-OBJECT-SET",
+      "requirementId": "CRS-M1-00392",
+      "mustInclude": [
+        "MESSAGE-STRUCTURE",
+        "FIND-PACKET-DATA"
+      ],
+      "conformanceEffect": "CONDITIONAL-REQUIRED"
+    },
+    {
+      "id": "RC-COVERAGE-OWNERSHIP",
+      "kind": "COVERAGE-OWNERSHIP",
+      "bindings": [
+        [
+          "COV-M1-00739",
+          "CRS-M1-00522"
+        ],
+        [
+          "COV-M1-00740",
+          "CRS-M1-00523"
+        ],
+        [
+          "COV-M1-00741",
+          "CRS-M1-00525"
+        ],
+        [
+          "COV-M1-01607",
+          "CRS-M1-00521"
+        ],
+        [
+          "COV-M1-01618",
+          "CRS-M1-00524"
+        ]
+      ]
+    },
+    {
+      "id": "RC-DNLD-INCREMENT",
+      "kind": "REQUIREMENT-BINDING",
+      "requirementId": "CRS-M1-00523",
+      "expected": {
+        "sourceTextHash": "ed9f856333f8e119c64a498b6ced7ba18b9e4ad0bed7184d9f56dc3e7faf539c",
+        "semantic.action": "INCREMENT-DNLD-DATA-NUMBER-EACH-DOWNLOAD",
+        "rhoRA.sourceCoverageId": "COV-M1-00740"
+      }
+    },
+    {
+      "id": "RC-DNLD-START-AT-ONE",
+      "kind": "REQUIREMENT-BINDING",
+      "requirementId": "CRS-M1-00525",
+      "expected": {
+        "sourceTextHash": "ff9e1b1facd7d976fb9bd33c07d14923eb670000b5cf8bb871170df1a9f89462",
+        "semantic.action": "START-DNLD-DATA-NUMBER-AT-ONE",
+        "rhoRA.sourceCoverageId": "COV-M1-00741"
+      }
+    },
+    {
+      "id": "RC-PROTOCOL-VERSION-ASCII",
+      "kind": "FIELD-ENCODING",
+      "requirementIds": [
+        "CRS-M1-00460",
+        "CRS-M1-00467",
+        "CRS-M1-00482",
+        "CRS-M1-00489"
+      ],
+      "expected": {
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "widthBitsExpression": "16"
+      }
+    },
+    {
+      "id": "RC-DOWNLOAD-LIST-RATIO-ASCII",
+      "kind": "FIELD-ENCODING",
+      "requirementIds": [
+        "CRS-M1-00474"
+      ],
+      "expected": {
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "widthBitsExpression": "24"
+      }
+    },
+    {
+      "id": "RC-LNR-TAIL-ONCE",
+      "kind": "FIELD-ENCODING",
+      "requirementIds": [
+        "CRS-M1-00464",
+        "CRS-M1-00465"
+      ],
+      "expected": {
+        "repeatScope": "ONCE"
+      }
+    },
+    {
+      "id": "RC-LNS-EXCEPTION-TIMER-PRESENCE-USE",
+      "kind": "FIELD-PRESENCE-AND-USE",
+      "requirementId": "CRS-M1-00472",
+      "expected": {
+        "presenceCondition": "ALWAYS",
+        "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "inactiveRequiredValue": "0x0000"
+      }
+    },
+    {
+      "id": "RC-LNS-ESTIMATED-TIME-PRESENCE-USE",
+      "kind": "FIELD-PRESENCE-AND-USE",
+      "requirementId": "CRS-M1-00473",
+      "expected": {
+        "presenceCondition": "ALWAYS",
+        "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "inactiveRequiredValue": "0x0000",
+        "specialValues": [
+          {
+            "code": "0xFFFF",
+            "meaningCode": "ESTIMATED-TIME-NOT-GIVEN",
+            "appliesWhen": "USE-CONDITION-ACTIVE"
+          }
+        ],
+        "valueDomain.activeMax": 32767
+      },
+      "forbiddenSpecialMeanings": [
+        "ESTIMATED-TIME-UNUSED-FOR-OTHER-STATUS"
+      ]
+    },
+    {
+      "id": "RC-AFDX-ADDRESS-ALTERNATIVE",
+      "kind": "SEMANTIC-OBJECT-SET",
+      "requirementId": "CRS-M1-00519",
+      "mustInclude": [
+        "ARINC-664-4-ADDRESS-RULES",
+        "INTEGRATOR-IDENTIFIED-ADDRESS-REQUIREMENTS"
+      ]
+    }
+  ]
 }

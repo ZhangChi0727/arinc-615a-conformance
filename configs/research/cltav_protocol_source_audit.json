@@ -8,16 +8,16 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-5",
+    "artifactVersion": "M1-CANDIDATE-6",
     "coverageCount": 2796,
-    "requirementCount": 523,
-    "coverageFingerprint": "abade2fd0cbbe5a1a29c3228474075c1bfaa1b51e81ca9bfcae3e0950c713d4b",
-    "requirementsFingerprint": "6a9dc14d68a79cb99d246f48d6e2528cb3c7ec2a26c082aa115e4e1dbbb8b4a7",
+    "requirementCount": 524,
+    "coverageFingerprint": "806a197c7ec644f55d05dd8a6a31f80390ece5ccfe2e7d55a6816da6e2c04dfd",
+    "requirementsFingerprint": "5d68d75718bb3a4b587339be8a0c6a1ccb5cd4bb0d85f18e2b2d56fdd5675700",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "RR-CLTAV-2026-006 rework: FIND source bindings, DOWNLOAD field encodings and FIND timing are corrected in M1-CANDIDATE-5. Bound M2 still does not execute FIND/DOWNLOAD/AFDX. This is not independent RG approval."
+    "note": "RR-CLTAV-2026-007 rework: FIND window lifetime is distinct from the host answer deadline, LNS Exception Timer/Estimated Time stay physically present, and DNLD_DATA start-at-1 is owned by COV-M1-00741. Bound M2 still does not execute FIND/DOWNLOAD/AFDX. This is not independent RG approval."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -28,7 +28,7 @@
   ],
   "summary": {
     "coverageCount": 2796,
-    "requirementCount": 523,
+    "requirementCount": 524,
     "applicabilityDecisions": {
       "OUT-OF-PROFILE": 989,
       "APPLICABLE-SUPPORTING": 1152,
@@ -48,8 +48,8 @@
       "DOWNLOAD-MEDIA-DEFINED-DESCRIPTION": 86,
       "DOWNLOAD-MEDIA-DEFINED": 30,
       "DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION": 81,
-      "DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION": 3,
-      "DOWNLOAD-MEDIA-ORGANIZATION": 6,
+      "DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION": 2,
+      "DOWNLOAD-MEDIA-ORGANIZATION": 7,
       "NON-NORMATIVE-DOWNLOAD-EXAMPLE": 3,
       "DOWNLOAD-OPERATOR-DEFINED": 35,
       "NON-NORMATIVE-FIND-COMMENTARY": 13,
@@ -152,7 +152,7 @@
     "proprietaryTextExcluded": true,
     "sharedFindNetworkCondition": "Only when the path between data loader and target carries FIND traffic (broadcast, multicast or unicast). Gateways or mixed aircraft networks may not.",
     "notes": [
-      "FIND, DOWNLOAD and AFDX-appendix bilingual CRS are corrected in M1-CANDIDATE-5 after RR-CLTAV-2026-006 REWORK. Commentary and examples stay non-normative.",
+      "FIND, DOWNLOAD and AFDX-appendix bilingual CRS are corrected in M1-CANDIDATE-6 after RR-CLTAV-2026-007 REWORK. Commentary and examples stay non-normative.",
       "Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance.",
       "Bound M2 does not execute FIND, DOWNLOAD or AFDX. FIND timing is observational catalog only. Protocol Version and Download List Ratio are fixed-width ASCII; LNR user-defined tail fields do not repeat per file.",
       "664/665/RFC body audits remain pending. Empty dependencyIds do not mean no dependency. Software Ethernet experiments do not prove AFDX hardware. This is not independent RG, mathematical or architecture approval."
@@ -2707,11 +2707,11 @@
         "candidateConformanceEffect": "REQUIRED",
         "actor": "DATA-LOADER",
         "condition": "When removable media is the LNR source and the destination of downloaded data.",
-        "action": "increment <number> on each download, starting at 1",
+        "action": "increment <number> on each download",
         "objects": [
           "<number>"
         ],
-        "notes": "Naming uniqueness constraint owned as CRS.",
+        "notes": "RR-CLTAV-2026-007: increment ownership stays on COV-M1-00740 / CRS-M1-00523.",
         "downloadMode": "MEDIA-ORGANIZATION"
       },
       {
@@ -2724,14 +2724,14 @@
         "frozenApplicabilityDecision": "DEFERRED-FUTURE-SCOPE",
         "frozenRationaleCode": "DEFERRED-DOWNLOAD-M9",
         "candidateApplicability": "CONDITIONALLY-APPLICABLE",
-        "candidateConformanceEffect": "INFORMATIVE",
+        "candidateConformanceEffect": "REQUIRED",
         "actor": "DATA-LOADER",
         "condition": "When removable media is the LNR source and the destination of downloaded data.",
-        "action": "use the incremental index so successive directory names stay unique",
+        "action": "start <number> at 1",
         "objects": [
           "<number>"
         ],
-        "notes": "Companion to the start-at-1 unit.",
+        "notes": "RR-CLTAV-2026-007: start-at-1 ownership is CRS-M1-00525.",
         "downloadMode": "MEDIA-ORGANIZATION"
       },
       {

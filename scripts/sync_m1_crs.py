@@ -65,6 +65,7 @@ def timing_provenance_projection(data: dict[str, Any]) -> list[dict[str, Any]]:
             "sourceUnitId": row["sourceUnitId"], "provenanceKind": row["timing"].get("provenanceKind"),
             "sourceParameter": row["timing"].get("sourceParameter"), "lowerBound": row["timing"].get("lowerBound"),
             "upperBound": row["timing"].get("upperBound"), "timingFamily": row["timing"].get("timingFamily"),
+            "intervalRole": row["timing"].get("intervalRole"),
             "trigger": row["timing"].get("trigger"), "response": row["timing"].get("response"),
             "cancellation": row["timing"].get("cancellation"), "supersedingTrigger": row["timing"].get("supersedingTrigger"),
             "correlationKey": row["timing"].get("correlationKey"), "pairingPolicy": row["timing"].get("pairingPolicy"),
@@ -279,86 +280,170 @@ def network_reference_errors(data: dict[str, Any], register: dict[str, Any],
 REGISTERED_FIND_ANSWER_HASH = "1e8680ad628738183ea6f984c6d350b07d1e5e6cc3af5318789ad595e0d213eb"
 FIND_ANSWER_WINDOW_HASH = "f178271163dfdce4bbc2ba215f784361471c95524c09bb734051d6e98546142d"
 FIND_INFORMATION_LOCATION_HASH = "e98f49fbfbdf4b9aec7a04abec3db7abe6430722509e23c0ddc1d74b04c3a8b9"
-ASCII_PROTOCOL_VERSION_IDS = ("CRS-M1-00460", "CRS-M1-00467", "CRS-M1-00482", "CRS-M1-00489")
 
 
-def reviewed_expanded_source_errors(data: dict[str, Any]) -> list[str]:
-    """Hardcoded RR-CLTAV-2026-006 bindings. Refreshing fingerprints cannot repair these."""
+def _nested_get(row: Any, path: str) -> Any:
+    current = row
+    for part in path.split("."):
+        if not isinstance(current, dict):
+            return None
+        current = current.get(part)
+    return current
+
+
+def field_note_registry_errors(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    registry_rows = data.get("fieldNoteRegistry") or []
+    registry = {row.get("id"): row for row in registry_rows}
+    if len(registry) != len(registry_rows):
+        errors.append("fieldNoteRegistry ids are not unique")
+    used: set[str] = set()
+    for row in data.get("requirements") or []:
+        for note in ((row.get("fieldConstraint") or {}).get("noteRefs") or []):
+            used.add(note)
+            item = registry.get(note)
+            if item is None:
+                errors.append(f"field note {note} is not in fieldNoteRegistry")
+                continue
+            kind = item.get("kind")
+            if kind not in {"LOCAL-NOTE", "SOURCE-LOCATOR"}:
+                errors.append(f"field note {note} lacks a resolvable kind")
+            if kind == "SOURCE-LOCATOR" and not item.get("sourceUnitIds"):
+                errors.append(f"field note {note} source locator has no sourceUnitIds")
+            if not item.get("definitionEn"):
+                errors.append(f"field note {note} has no local definition")
+    return errors
+
+
+def field_presence_use_errors(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for row in data.get("requirements") or []:
+        fc = row.get("fieldConstraint")
+        if not fc:
+            continue
+        if fc.get("useCondition"):
+            if fc.get("presenceCondition") != "ALWAYS":
+                errors.append(f"{row.get('id')} useCondition cannot omit a physically present field")
+            if not fc.get("inactiveRequiredValue"):
+                errors.append(f"{row.get('id')} useCondition lacks inactiveRequiredValue")
+        meanings = {item.get("meaningCode") for item in fc.get("specialValues") or []}
+        if fc.get("useCondition") and any("UNUSED" in (meaning or "") for meaning in meanings):
+            inactive_only = {
+                item.get("meaningCode")
+                for item in fc.get("specialValues") or []
+                if item.get("appliesWhen") == "USE-CONDITION-INACTIVE"
+            }
+            if any("UNUSED" in (meaning or "") for meaning in meanings - inactive_only):
+                errors.append(f"{row.get('id')} must not treat the inactive filler as an unconditional unused sentinel")
+    return errors
+
+
+def timing_interval_role_errors(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for row in data.get("requirements") or []:
+        timing = row.get("timing")
+        if not timing:
+            continue
+        rid = row.get("id")
+        role = timing.get("intervalRole")
+        lower, upper = timing.get("lowerBound"), timing.get("upperBound")
+        if role == "EXACT-SOURCE-CONSTANT" and lower != upper:
+            errors.append(f"{rid} exact source constant cannot use an early-close interval")
+        if role == "DEADLINE-FROM-ZERO-TO-SOURCE-CONSTANT":
+            if lower != 0 or not isinstance(upper, (int, float)) or upper <= 0:
+                errors.append(f"{rid} host answer deadline bounds are not a zero-to-constant upper bound")
+            if lower == upper:
+                errors.append(f"{rid} host answer deadline cannot collapse to an exact arrival time")
+        if role in {"EXACT-SOURCE-CONSTANT", "DEADLINE-FROM-ZERO-TO-SOURCE-CONSTANT"} and timing.get("provenanceKind") == "SYMBOLIC-SOURCE-PARAMETER":
+            errors.append(f"{rid} fixed source constant must not be labelled symbolic")
+        roles = timing.get("sourceEvidenceRoles") or []
+        if roles:
+            role_ids = [item.get("sourceUnitId") for item in roles]
+            if role_ids != list(timing.get("sourceEvidenceUnitIds") or []):
+                errors.append(f"{rid} sourceEvidenceRoles must list the same units as sourceEvidenceUnitIds")
+    return errors
+
+
+def reviewed_contract_errors(data: dict[str, Any], assertions: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     req = {row.get("id"): row for row in data.get("requirements") or []}
     cov = {row.get("id"): row for row in data.get("coverageLedger") or []}
+    for contract in assertions.get("reviewedContracts") or []:
+        cid = contract.get("id")
+        kind = contract.get("kind")
+        if kind == "REQUIREMENT-ABSENT":
+            if contract.get("requirementId") in req:
+                errors.append(f"{cid}: {contract.get('requirementId')} cannot remain a permitted CRS action")
+        elif kind == "COVERAGE-INFORMATIVE-EMPTY":
+            row = cov.get(contract.get("coverageId")) or {}
+            if row.get("requirementIds") or row.get("conformanceEffect") != "INFORMATIVE":
+                errors.append(f"{cid}: {contract.get('coverageId')} must stay informative coverage")
+        elif kind == "REQUIREMENT-BINDING":
+            rid = contract.get("requirementId")
+            row = req.get(rid) or {}
+            for path, expected in (contract.get("expected") or {}).items():
+                if _nested_get(row, path) != expected:
+                    errors.append(f"{cid}: {rid} {path} does not match the reviewed contract")
+        elif kind == "COVERAGE-OWNERSHIP":
+            for cov_id, rid in contract.get("bindings") or []:
+                if rid not in (cov.get(cov_id) or {}).get("requirementIds", []):
+                    errors.append(f"{cid}: {cov_id} lost its CRS owner {rid}")
+        elif kind == "FIELD-ENCODING":
+            expected = contract.get("expected") or {}
+            for rid in contract.get("requirementIds") or []:
+                fc = (req.get(rid) or {}).get("fieldConstraint") or {}
+                for key, value in expected.items():
+                    if fc.get(key) != value:
+                        errors.append(f"{cid}: {rid} field {key} does not match the reviewed contract")
+        elif kind == "FIELD-PRESENCE-AND-USE":
+            rid = contract.get("requirementId")
+            fc = (req.get(rid) or {}).get("fieldConstraint") or {}
+            for path, expected in (contract.get("expected") or {}).items():
+                actual = fc.get("specialValues") if path == "specialValues" else _nested_get(fc, path)
+                if actual != expected:
+                    errors.append(f"{cid}: {rid} field {path} does not match the reviewed contract")
+            for meaning in contract.get("forbiddenSpecialMeanings") or []:
+                meanings = {item.get("meaningCode") for item in fc.get("specialValues") or []}
+                if meaning in meanings:
+                    errors.append(f"{cid}: {rid} still treats {meaning} as an unconditional special value")
+        elif kind == "TIMING-CONTRACT":
+            rid = contract.get("requirementId")
+            timing = (req.get(rid) or {}).get("timing") or {}
+            for path, expected in (contract.get("expected") or {}).items():
+                if _nested_get(timing, path) != expected:
+                    errors.append(f"{cid}: {rid} timing {path} does not match the reviewed contract")
+        elif kind == "TIMING-BOUNDS-MUST-DIFFER":
+            axis = contract.get("axis") or "upperBound"
+            values = [((req.get(rid) or {}).get("timing") or {}).get(axis) for rid in contract.get("requirementIds") or []]
+            if len(values) >= 2 and len(set(values)) < len(values):
+                errors.append(f"{cid}: FIND answer window and host deadline cannot share the same {axis}")
+        elif kind == "SEMANTIC-OBJECT-SET":
+            rid = contract.get("requirementId")
+            row = req.get(rid) or {}
+            objects = set((row.get("semantic") or {}).get("objects") or [])
+            needed = set(contract.get("mustInclude") or [])
+            if not needed <= objects:
+                errors.append(f"{cid}: {rid} lost required alternative objects")
+            expected_effect = contract.get("conformanceEffect")
+            if expected_effect and row.get("conformanceEffect") != expected_effect:
+                errors.append(f"{cid}: {rid} conformanceEffect does not match the reviewed contract")
+        else:
+            errors.append(f"{cid}: unknown reviewed contract kind {kind}")
+    return errors
 
-    if "CRS-M1-00425" in req:
-        errors.append("CRS-M1-00425 write-failure risk cannot remain a permitted CRS action")
-    row_735 = cov.get("COV-M1-00735") or {}
-    if row_735.get("requirementIds") or row_735.get("conformanceEffect") != "INFORMATIVE":
-        errors.append("COV-M1-00735 write-failure risk must stay informative coverage")
 
-    row_390 = req.get("CRS-M1-00390") or {}
-    if row_390.get("sourceTextHash") != REGISTERED_FIND_ANSWER_HASH:
-        errors.append("CRS-M1-00390 is not bound to the register-valid-answers source hash")
-    if (row_390.get("semantic") or {}).get("action") != "REGISTER-VALID-FIND-ANSWERS-AS-LOAD-TARGETS":
-        errors.append("CRS-M1-00390 does not carry the register-valid-answers obligation")
-    if (row_390.get("rhoRA") or {}).get("sourceCoverageId") != "COV-M1-01606":
-        errors.append("CRS-M1-00390 is not owned by COV-M1-01606")
-
-    row_520 = req.get("CRS-M1-00520") or {}
-    timing_520 = row_520.get("timing") or {}
-    if row_520.get("sourceTextHash") != FIND_ANSWER_WINDOW_HASH:
-        errors.append("CRS-M1-00520 is not bound to the three-second window source hash")
-    if (row_520.get("semantic") or {}).get("action") != "KEEP-THREE-SECOND-FIND-ANSWER-WINDOW":
-        errors.append("CRS-M1-00520 does not carry the FIND answer window obligation")
-    if timing_520.get("timingFamily") != "FIND-ANSWER-REGISTRATION-WINDOW":
-        errors.append("CRS-M1-00520 timing family is not the FIND answer registration window")
-    if timing_520.get("lowerBound") != 0 or timing_520.get("upperBound") != 3:
-        errors.append("CRS-M1-00520 window bounds are not the 0-to-3-second upper bound")
-
-    row_391 = req.get("CRS-M1-00391") or {}
-    timing_391 = row_391.get("timing") or {}
-    if timing_391.get("timingFamily") != "FIND-HOST-ANSWER-DEADLINE":
-        errors.append("CRS-M1-00391 timing family is not the FIND host answer deadline")
-    if timing_391.get("lowerBound") != 0 or timing_391.get("upperBound") != 2:
-        errors.append("CRS-M1-00391 host deadline bounds are not the 0-to-2-second upper bound")
-    if timing_520.get("upperBound") == timing_391.get("upperBound"):
-        errors.append("FIND answer window and host deadline cannot share the same upper bound")
-
-    row_392 = req.get("CRS-M1-00392") or {}
-    objects_392 = set((row_392.get("semantic") or {}).get("objects") or [])
-    if row_392.get("sourceTextHash") != FIND_INFORMATION_LOCATION_HASH:
-        errors.append("CRS-M1-00392 is not bound to the message-structure-or-FIND-data source hash")
-    if objects_392 != {"MESSAGE-STRUCTURE", "FIND-PACKET-DATA"}:
-        errors.append("CRS-M1-00392 lost the message-structure or FIND-packet-data alternative")
-    if row_392.get("conformanceEffect") != "CONDITIONAL-REQUIRED":
-        errors.append("CRS-M1-00392 location MAY cannot become an unconditioned permission")
-
-    for cov_id, rid in (
-        ("COV-M1-00739", "CRS-M1-00522"),
-        ("COV-M1-00740", "CRS-M1-00523"),
-        ("COV-M1-01607", "CRS-M1-00521"),
-        ("COV-M1-01618", "CRS-M1-00524"),
-    ):
-        if rid not in (cov.get(cov_id) or {}).get("requirementIds", []):
-            errors.append(f"{cov_id} definitional constraint lost its CRS owner {rid}")
-
-    for rid in ASCII_PROTOCOL_VERSION_IDS:
-        fc = (req.get(rid) or {}).get("fieldConstraint") or {}
-        if fc.get("encodingRule") != "FIXED-WIDTH-ASCII" or fc.get("widthBitsExpression") != "16":
-            errors.append(f"{rid} Protocol Version is not two ASCII characters")
-    ratio = (req.get("CRS-M1-00474") or {}).get("fieldConstraint") or {}
-    if ratio.get("encodingRule") != "FIXED-WIDTH-ASCII" or ratio.get("widthBitsExpression") != "24":
-        errors.append("CRS-M1-00474 Download List Ratio is not three ASCII characters")
-    for rid in ("CRS-M1-00464", "CRS-M1-00465"):
-        if ((req.get(rid) or {}).get("fieldConstraint") or {}).get("repeatScope") != "ONCE":
-            errors.append(f"{rid} LNR user-defined tail cannot repeat per file record")
-    estimated = (req.get("CRS-M1-00473") or {}).get("fieldConstraint") or {}
-    special = {(item.get("code"), item.get("meaningCode")) for item in estimated.get("specialValues") or []}
-    if ("0xFFFF", "ESTIMATED-TIME-NOT-GIVEN") not in special:
-        errors.append("CRS-M1-00473 Estimated Time lost the 0xFFFF not-given sentinel")
-
-    alt = set(((req.get("CRS-M1-00519") or {}).get("semantic") or {}).get("objects") or [])
-    if not {"ARINC-664-4-ADDRESS-RULES", "INTEGRATOR-IDENTIFIED-ADDRESS-REQUIREMENTS"} <= alt:
-        errors.append("CRS-M1-00519 lost the 664P4 or integrator-identified address alternative")
-
+def reviewed_expanded_source_errors(data: dict[str, Any], assertions: dict[str, Any] | None = None) -> list[str]:
+    """Reviewed FIND/DOWNLOAD contracts live in assertions; this checks their relations."""
+    errors: list[str] = []
+    if assertions is None:
+        try:
+            assertions = json.loads(SEMANTIC_ASSERTION_PATH.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            return [f"reviewed contracts are unavailable: {exc}"]
+    errors.extend(reviewed_contract_errors(data, assertions))
+    errors.extend(field_note_registry_errors(data))
+    errors.extend(field_presence_use_errors(data))
+    errors.extend(timing_interval_role_errors(data))
     for row in data.get("requirements") or []:
         if str(row.get("id") or "") < "CRS-M1-00385":
             continue
@@ -386,7 +471,7 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         return [f"M1 controlled review input is unavailable: {exc}"]
     errors.extend(page_account_errors(section_manifest, source_register))
     errors.extend(network_reference_errors(data, source_register, section_manifest, semantic_assertions))
-    errors.extend(reviewed_expanded_source_errors(data))
+    errors.extend(reviewed_expanded_source_errors(data, semantic_assertions))
     # STABLE_INVARIANT: compare independent acquisition identity, not a self seal.
     try:
         acquisition_path = (ROOT / source_register["acquisitionRecordPath"]).resolve()
@@ -590,7 +675,12 @@ def package_errors(data: dict[str, Any]) -> list[str]:
                 source_unit_id != row.get("sourceUnitId") for source_unit_id in evidence_ids
             ):
                 errors.append(f"requirement {row.get('id')} symbolic/message timing requires independent source evidence")
-            if provenance == "FIXED-SOURCE-CONSTANT" and evidence_ids == [row.get("sourceUnitId")] and timing.get("lowerBound") != timing.get("upperBound"):
+            if (
+                provenance == "FIXED-SOURCE-CONSTANT"
+                and evidence_ids == [row.get("sourceUnitId")]
+                and timing.get("lowerBound") != timing.get("upperBound")
+                and timing.get("intervalRole") != "DEADLINE-FROM-ZERO-TO-SOURCE-CONSTANT"
+            ):
                 errors.append(f"requirement {row.get('id')} self-evidenced fixed timing must bind one exact source constant")
             for boundary in ("lowerBoundary", "upperBoundary"):
                 if timing.get(boundary) not in {"OPEN", "CLOSED", "UNBOUNDED", "UNRESOLVED"}:
@@ -873,10 +963,11 @@ def render(data: dict[str, Any]) -> str:
     for row in (item for item in requirements if item["source"]["sourceId"] == "ARINC-665-5"):
         relations = ", ".join(f"`{item['requirementId']}` ({item['relation']})" for item in row['triggerRelations']) or "—"
         lines.append(f"| `{row['id']}` | {', '.join(f'`{item}`' for item in row['profileScopeTriggerIds'])} | `{row['refinementDisposition']}` — {row['refinementRationaleEn']} | {relations} |")
-    lines += ["", "## Structured protocol-file field constraints", "", "| CRS | File / ordinal | Field | Width | Repetition / presence | Encoding / termination | Notes |", "|---|---|---|---|---|---|---|"]
+    lines += ["", "## Structured protocol-file field constraints", "", "| CRS | File / ordinal | Field | Width | Repetition / presence / use | Encoding / termination | Notes |", "|---|---|---|---|---|---|---|"]
     for row in (item for item in requirements if "fieldConstraint" in item):
         c = row["fieldConstraint"]
-        lines.append(f"| `{row['id']}` | `{c['protocolFile']}` / `{c['ordinal']}` | `{c['fieldId']}` | `{c['widthBitsExpression']}` | `{c['repeatScope']}` / `{c['presenceCondition']}` | `{c['encodingRule']}` / `{c['terminationRule']}` | {', '.join(c['noteRefs']) or '—'} |")
+        use = c.get("useCondition") or "—"
+        lines.append(f"| `{row['id']}` | `{c['protocolFile']}` / `{c['ordinal']}` | `{c['fieldId']}` | `{c['widthBitsExpression']}` | `{c['repeatScope']}` / `{c['presenceCondition']}` / `{use}` | `{c['encodingRule']}` / `{c['terminationRule']}` | {', '.join(c['noteRefs']) or '—'} |")
     lines += ["", "## Structured Table 6.4.10-1 constraints", "", "| CRS | Code / kind | Meaning / substitution | Display | Target text | Files / operations |", "|---|---|---|---|---|---|"]
     for row in (item for item in requirements if "statusTableConstraint" in item):
         constraint = row["statusTableConstraint"]
@@ -927,10 +1018,11 @@ def render(data: dict[str, Any]) -> str:
     for row in (item for item in requirements if item["source"]["sourceId"] == "ARINC-665-5"):
         relations = ", ".join(f"`{item['requirementId']}` ({item['relation']})" for item in row['triggerRelations']) or "—"
         lines.append(f"| `{row['id']}` | {', '.join(f'`{item}`' for item in row['profileScopeTriggerIds'])} | `{row['refinementDisposition']}` — {row['refinementRationaleZh']} | {relations} |")
-    lines += ["", "## 结构化协议文件字段约束", "", "| CRS | 文件／序号 | 字段 | 位宽 | 重复／出现条件 | 编码／终止 | 注释 |", "|---|---|---|---|---|---|---|"]
+    lines += ["", "## 结构化协议文件字段约束", "", "| CRS | 文件／序号 | 字段 | 位宽 | 重复／出现／使用 | 编码／终止 | 注释 |", "|---|---|---|---|---|---|---|"]
     for row in (item for item in requirements if "fieldConstraint" in item):
         c = row["fieldConstraint"]
-        lines.append(f"| `{row['id']}` | `{c['protocolFile']}` / `{c['ordinal']}` | `{c['fieldId']}` | `{c['widthBitsExpression']}` | `{c['repeatScope']}` / `{c['presenceCondition']}` | `{c['encodingRule']}` / `{c['terminationRule']}` | {', '.join(c['noteRefs']) or '—'} |")
+        use = c.get("useCondition") or "—"
+        lines.append(f"| `{row['id']}` | `{c['protocolFile']}` / `{c['ordinal']}` | `{c['fieldId']}` | `{c['widthBitsExpression']}` | `{c['repeatScope']}` / `{c['presenceCondition']}` / `{use}` | `{c['encodingRule']}` / `{c['terminationRule']}` | {', '.join(c['noteRefs']) or '—'} |")
     lines += ["", "## 结构化 Table 6.4.10-1 约束", "", "| CRS | 状态码／类型 | 含义／替换 | 显示 | 目标文本 | 文件／操作 |", "|---|---|---|---|---|---|"]
     for row in (item for item in requirements if "statusTableConstraint" in item):
         constraint = row["statusTableConstraint"]
