@@ -93852,7 +93852,7 @@
     "reviewHead": "UNBOUND-DRAFT",
     "sourceInventoryFingerprint": "6de712854823ea8ebf7040306ae6c76540f9dc6356acf3fff75c108c53e55241",
     "sectionSpanManifestPath": "configs/requirements/m1_source_section_spans.json",
-    "sectionSpanManifestFingerprint": "7411f0afe45a73a761242099a7cff358d6a1b71a78ca6167a61ac20c51eca6ec",
+    "sectionSpanManifestFingerprint": "a347600795ad6434af08c96986a45f1fba1587e6c1a0054087727780fec1f4d0",
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",

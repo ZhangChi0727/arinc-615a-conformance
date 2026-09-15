@@ -9,7 +9,7 @@
   "sequenceEventCount": 63,
   "timingProvenanceFingerprint": "2571c2a4b5f4cbf2c44db971965a49922dd26a45c357788a9ac90aeebeb634b9",
   "dependencySourceIdentityFingerprint": "d99901d0ab3eadb9d092dce8bc4e17732fbc30a2622ee400a668ef4b80e98ae5",
-  "sectionSpanManifestFingerprint": "7411f0afe45a73a761242099a7cff358d6a1b71a78ca6167a61ac20c51eca6ec",
+  "sectionSpanManifestFingerprint": "a347600795ad6434af08c96986a45f1fba1587e6c1a0054087727780fec1f4d0",
   "semanticAssertionFingerprint": "7f715896dee5afb97a4a33d8db503dda9b03c3dcb9862207e367fe0c67f43c58",
   "statusTableFingerprint": "626a7fa96d83853eb3a369da0de78ae866a44f1d24fd6d91b3092e734ed85cbf",
   "automaticAssuranceBoundary": "This anchor detects package-only coordinated edits. It does not prove proprietary-source completeness or semantic fidelity; those remain external RG0 and RG1 review responsibilities.",

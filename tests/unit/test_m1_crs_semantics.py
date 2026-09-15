@@ -559,7 +559,9 @@ def test_bounded_665_media_set_exclusion_is_explicitly_recorded() -> None:
     )
     assert media_set_entry is not None
     assert media_set_entry["sourceId"] == "ARINC-665-5"
-    assert "MEDIA-SET-NOT-USED-BY-ETHERNET-UPLOAD" in media_set_entry["rationaleCode"]
+    assert media_set_entry["excludedPdfPages"] == [36, 54]
+    assert "MEDIA-SET-PHYSICAL-MEMBERS-NOT-TRIGGERED" in media_set_entry["rationaleCode"]
+    assert "ETHERNET-UPLOAD" not in media_set_entry["rationaleCode"]
 
 
 @pytest.mark.parametrize("field,value", [

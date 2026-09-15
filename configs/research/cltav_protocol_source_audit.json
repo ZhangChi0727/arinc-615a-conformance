@@ -17,7 +17,7 @@
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "RR-CLTAV-2026-008 rework: FIND registration close is measured from FIND-REQUEST-SENT, the same 3 s origin as the window lifetime. Bound M2 still does not execute FIND. This is not independent RG approval."
+    "note": "Limited R8-F01 APPROVE Head 13d4be7 is unchanged. Package A records bounded 665/664/RFC applicability. FIND/DOWNLOAD remain research-expanded, not instance-bound. This is not independent RG approval and does not authorize merge."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -82,36 +82,14 @@
     "DEFERRED-DOWNLOAD-M9": [],
     "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING": []
   },
-  "applicabilityAuditPending": [
-    {
-      "sourceId": "ARINC-665-5",
-      "role": "BOUNDED-DATA-FORMAT-REFERENCE",
-      "status": "PENDING-SOURCE-UNIT-REREAD",
-      "note": "Complete applicability audit before generating new CRS rows. Do not treat register presence as requirement text."
-    },
-    {
-      "sourceId": "ARINC-664-2",
-      "role": "BOUNDED-PHYSICAL-LINK-REFERENCE",
-      "status": "PENDING-SOURCE-UNIT-REREAD",
-      "note": "Complete applicability audit before generating new CRS rows. Do not treat register presence as requirement text."
-    },
-    {
-      "sourceId": "ARINC-664-3",
-      "role": "BOUNDED-NETWORK-SERVICES-REFERENCE",
-      "status": "PENDING-SOURCE-UNIT-REREAD",
-      "note": "Complete applicability audit before generating new CRS rows. Do not treat register presence as requirement text."
-    },
-    {
-      "sourceId": "ARINC-664-7",
-      "role": "CONDITIONAL-AFDX-REFERENCE",
-      "status": "PENDING-SOURCE-UNIT-REREAD",
-      "note": "615A-3 Appendix E pointer reread is recorded. That does not complete the 664P7 body audit or create an AFDX hardware test environment. Do not treat register presence as requirement text."
-    }
-  ],
+  "applicabilityAuditPending": [],
   "blockedSource": {
     "sourceId": "ARINC-645",
     "status": "BLOCKED-SOURCE-645",
-    "note": "Unique algorithm, constant and naming details stay blocked. Obligations already explicit in 615A/665 remain in scope and must not be deleted because 645 is missing."
+    "localFileAcquired": true,
+    "boundThisPr": false,
+    "note": "The ARINC 645-1 2021 file is held locally. This PR does not admit 645 applicability or CRS binding. Unique algorithm, constant and naming details stay blocked. Obligations already explicit in 615A/665 remain in scope and must not be deleted because 645 is unbound in this PR.",
+    "noteZh": "本地已持有 ARINC 645-1 2021 文件。本 PR 不纳入 645 适用性或 CRS 绑定。独有算法、常数与命名细节保持阻塞。615A/665 已明确的义务仍在范围内，不得因本 PR 未绑定 645 而删除。"
   },
   "sourceReread": {
     "standard": "ARINC-615A-3",
@@ -155,7 +133,7 @@
       "FIND, DOWNLOAD and AFDX-appendix bilingual CRS are corrected in M1-CANDIDATE-7 after RR-CLTAV-2026-008 REWORK. Commentary and examples stay non-normative.",
       "Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance.",
       "Bound M2 does not execute FIND, DOWNLOAD or AFDX. FIND timing is observational catalog only. Protocol Version and Download List Ratio are fixed-width ASCII; LNR user-defined tail fields do not repeat per file.",
-      "664/665/RFC body audits remain pending. Empty dependencyIds do not mean no dependency. Software Ethernet experiments do not prove AFDX hardware. This is not independent RG, mathematical or architecture approval."
+      "665/664/RFC bounded clause-level applicability is recorded in supportingSourceApplicabilityAudit. Empty dependencyIds still do not mean no dependency. 645 is acquired locally but not bound. Software Ethernet experiments do not prove AFDX hardware. This is not independent RG, mathematical or architecture approval."
     ],
     "units": [
       {
@@ -9949,6 +9927,2452 @@
           "RFC-1350"
         ],
         "status": "NOT-YET-BOUND"
+      }
+    ]
+  },
+  "supportingSourceApplicabilityAudit": {
+    "boundHead": "13d4be79377e109a18170a7dcec0e792c54d5f83",
+    "changeRequest": "CR-2026-012",
+    "assuranceBoundary": "Clause/section-level bounded applicability for 665-5, 664 P2/P3/P7 and RFC 768/791/1122/1123/1350/1785/2347/2348/2349. Not sentence-leaf CRS, not independent RG approval, not capability establishment, not AFDX instance activation.",
+    "notIndependentApproval": true,
+    "645BindingThisPr": false,
+    "findAbortAdjudication": {
+      "status": "ADJUDICATED-UNSUPPORTED-CANCEL",
+      "code": "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS",
+      "appliesToRequirementIds": [
+        "CRS-M1-00391",
+        "CRS-M1-00520",
+        "CRS-M1-00521"
+      ],
+      "summaryEn": "No 615A unit states that aborting FIND waives the 2-second host answer deadline or the 3-second registration window. Abort is therefore an unsupported cancel of those clocks, not an UNRESOLVED protocol exemption. Package B must replace PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT with this named non-waiver.",
+      "summaryZh": "没有 615A 单元规定中止 FIND 可豁免 2 秒主机应答期限或 3 秒登记窗口。因此中止不是这些时钟的支持取消条件，也不是未决的协议豁免。执行包 B 须将 PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT 替换为该具名不豁免。"
+    },
+    "arinc664Part4": {
+      "status": "NOT-IN-THIS-PR-SOURCE-SET",
+      "affectedRequirementId": "CRS-M1-00519",
+      "summaryEn": "Appendix E allows 664 Part 4 address rules or integrator-identified requirements. Part 4 is not acquired in this PR. The integrator alternative remains available; this is not a forced purchase and does not activate AFDX.",
+      "summaryZh": "附录 E 允许 664 第 4 部分地址规则或集成商指明的要求。本 PR 未取得第 4 部分。集成商替代路径仍可用；这不是强制采购，也不激活 AFDX。"
+    },
+    "sources": [
+      {
+        "sourceId": "ARINC-665-5",
+        "role": "BOUNDED-DATA-FORMAT-REFERENCE",
+        "edition": "665-5",
+        "sha256": "340cfbac1788ee3409d4b5f58f715fa37b19c69c105d311ed4d540f9350da9d8",
+        "pageCount": 139,
+        "pageAccount": {
+          "frontMatterPdfPages": [
+            1,
+            10
+          ],
+          "surveyedPdfPages": [
+            11,
+            35
+          ],
+          "excludedPdfPages": [
+            36,
+            139
+          ],
+          "priorSurveyError": "Pages 32-35 are clause 2.3 Batch File Part, previously excluded as media-set. They are now inside the bounded survey. Clause 3 actually starts at pdf page 36."
+        },
+        "coverageDenominator": {
+          "kind": "TOC-CLAUSE-AND-BACK-MATTER-GROUP",
+          "count": 16,
+          "assuranceBoundary": "CLAUSE-LEVEL-BOUNDED-APPLICABILITY-NOT-SENTENCE-LEAF-FOR-NEW-PAGES"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "units": [
+          {
+            "id": "SAU-665-FRONT",
+            "clause": "FRONT-MATTER",
+            "clauseTitleEn": "Title, disclaimer, foreword, contents",
+            "pdfPages": [
+              1,
+              10
+            ],
+            "unitKind": "FRONT-MATTER",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Front matter identifies the edition; it is not an actor obligation.",
+            "summaryZh": "扉页与目录标识版本，不是参与者义务。"
+          },
+          {
+            "id": "SAU-665-1",
+            "clause": "1",
+            "clauseTitleEn": "Introduction, conventions, file-format evolution, target hardware ID",
+            "pdfPages": [
+              11,
+              15
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "TRIGGERED-BOUNDED-6655",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "PROFILE-SCOPE-AND-EXISTING-LEAF",
+            "leafCrsStatus": "EXISTING-351-TRIGGERED-ROWS",
+            "summaryEn": "Introduction and file-format version facts already surveyed on pdf pages 11-15. Loader tolerance of PN-format variation is 615A-facing.",
+            "summaryZh": "引言与文件格式版本已在 pdf 11-15 页调查。加载器对件号格式偏差的容忍面向 615A。"
+          },
+          {
+            "id": "SAU-665-2-LSP",
+            "clause": "2.1-2.2",
+            "clauseTitleEn": "Loadable Software Parts: PN, header, data and support files",
+            "pdfPages": [
+              16,
+              31
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TRIGGERED-BOUNDED-6655",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "PROFILE-SCOPE-AND-EXISTING-LEAF",
+            "leafCrsStatus": "EXISTING-351-TRIGGERED-ROWS",
+            "summaryEn": "Header, data and support file layout is used by INFORMATION, UPLOAD, both DOWNLOAD modes and FIND whenever a 665 part is transferred or listed. Existing leaf rows cover this region. CRC/check-value algorithm identity stays blocked by 645.",
+            "summaryZh": "凡传输或列出 665 件时，INFORMATION/UPLOAD/两种 DOWNLOAD/FIND 都使用头文件、数据文件与支持文件布局。现有叶行覆盖该区域。CRC/校验值算法身份仍由 645 阻塞。"
+          },
+          {
+            "id": "SAU-665-2-3",
+            "clause": "2.3",
+            "clauseTitleEn": "Batch File Part (.LUB) for 615A loaders",
+            "pdfPages": [
+              32,
+              35
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TRIGGERED-BATCH-FILE-FOR-615A-LOADER",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD"
+            ],
+            "relationTo615A": "SOURCE-EXPLICIT-615A-LOADER-USE",
+            "leafCrsStatus": "PACKAGE-B-PENDING",
+            "summaryEn": "Clause 2.3 states batch files are distributed to onboard and off-board 615A loaders to automate multi-LSP setup and are not transferred to target hardware. Prior UPLOAD-only page account excluded these pages as media-set; that exclusion is withdrawn. Leaf CRS for Table 2.3.1-1 is Package B.",
+            "summaryZh": "2.3 规定批处理文件分发给机上/机下 615A 加载器以自动设置多 LSP，且不传给目标硬件。先前按 UPLOAD 把这些页排除为媒体集，现撤回。表 2.3.1-1 的叶级 CRS 属执行包 B。"
+          },
+          {
+            "id": "SAU-665-2-2-4",
+            "clause": "2.2.4",
+            "clauseTitleEn": "Data and support file compression and encryption options",
+            "pdfPages": [
+              30,
+              31
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Compression and encryption options are not triggered by the 615A operations in this PR.",
+            "summaryZh": "压缩与加密选项未被本 PR 的 615A 操作触发。"
+          },
+          {
+            "id": "SAU-665-3",
+            "clause": "3",
+            "clauseTitleEn": "Loadable Media Set Parts (physical MSP members, LOADS.LUM, FILES.LUM)",
+            "pdfPages": [
+              36,
+              54
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "MEDIA-SET-PHYSICAL-MEMBERS-NOT-TRIGGERED-BY-ETHERNET-OR-LSP-ON-MEDIA",
+            "triggeredByOperations": [
+              "DOWNLOAD-MEDIA-DEFINED"
+            ],
+            "relationTo615A": "NO-DIRECT-EDGE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Re-adjudicated against FIND and both DOWNLOAD modes. Media Defined DOWNLOAD uses an LSP header and the download flag already in clause 2.2.3.1.3.1, not MSP member sequence / LOADS.LUM / FILES.LUM. Reactivate only if a deployment uses 665 physical media-set members as the organization.",
+            "summaryZh": "已对 FIND 与两种 DOWNLOAD 重裁。媒体定义 DOWNLOAD 使用的是条款 2.2.3.1.3.1 的 LSP 头与下载标志，而不是 MSP 成员序号或 LOADS.LUM/FILES.LUM。仅当部署以 665 物理媒体集成员为组织方式时才重新激活。"
+          },
+          {
+            "id": "SAU-665-4",
+            "clause": "4",
+            "clauseTitleEn": "Cyclic redundancy checks relocated to ARINC 645",
+            "pdfPages": [
+              55,
+              55
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "DEPENDENCY-BLOCKED",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "RELOCATED-TO-645-NOT-BOUND-THIS-PR",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "BLOCKED-SOURCE-645",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "The 665-5 body relocates CRC computation to 645. Unique algorithm/constant details stay blocked this PR even though the 645 file is now held locally. Header CRC field presence in clause 2 remains.",
+            "summaryZh": "665-5 正文将 CRC 计算迁至 645。即便本地已持有 645 文件，本 PR 仍不绑定其独有算法/常数。条款 2 中的头 CRC 字段存在性仍保留。"
+          },
+          {
+            "id": "SAU-665-5",
+            "clause": "5",
+            "clauseTitleEn": "Integrity check methods relocated to ARINC 645",
+            "pdfPages": [
+              56,
+              56
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "DEPENDENCY-BLOCKED",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "RELOCATED-TO-645-NOT-BOUND-THIS-PR",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "BLOCKED-SOURCE-645",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Integrity-check methods were relocated to 645. Check-value type/length fields in the header stay as 665 field presence; algorithm identity is not established this PR.",
+            "summaryZh": "完整性检查方法已迁至 645。头中的校验值类型/长度仍作为 665 字段存在性；算法身份本 PR 不建立。"
+          },
+          {
+            "id": "SAU-665-ATT1",
+            "clause": "ATTACHMENT-1",
+            "clauseTitleEn": "Manufacturer code assignments",
+            "pdfPages": [
+              57,
+              57
+            ],
+            "unitKind": "ATTACHMENT",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "TRIGGERED-BOUNDED-6655",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "PROFILE-SCOPE",
+            "leafCrsStatus": "EXISTING-LEAF-VIA-2-1-2",
+            "summaryEn": "Manufacturer codes support PN format already surveyed in 2.1.2. Not a new 615A protocol action.",
+            "summaryZh": "制造商代码支撑已在 2.1.2 调查的件号格式，不是新的 615A 协议动作。"
+          },
+          {
+            "id": "SAU-665-APP-AC",
+            "clause": "APPENDIX-A-C",
+            "clauseTitleEn": "Part structure and file-format illustrations",
+            "pdfPages": [
+              58,
+              67
+            ],
+            "unitKind": "APPENDIX",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-NORMATIVE-STRUCTURE-ILLUSTRATION",
+            "triggeredByOperations": [],
+            "relationTo615A": "INFORMATIONAL-CROSS-CHECK",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Structure illustrations restated from clauses 2-3; they do not add actor obligations.",
+            "summaryZh": "结构图示复述条款 2-3，不增加参与者义务。"
+          },
+          {
+            "id": "SAU-665-APP-D",
+            "clause": "APPENDIX-D",
+            "clauseTitleEn": "Examples",
+            "pdfPages": [
+              68,
+              68
+            ],
+            "unitKind": "APPENDIX",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-NORMATIVE-EXAMPLE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Examples are not protocol obligations.",
+            "summaryZh": "示例不是协议义务。"
+          },
+          {
+            "id": "SAU-665-APP-EKL",
+            "clause": "APPENDIX-E-K-L",
+            "clauseTitleEn": "CRC / CC calculation methods and reference files",
+            "pdfPages": [
+              69,
+              79
+            ],
+            "unitKind": "APPENDIX",
+            "applicabilityDecision": "DEPENDENCY-BLOCKED",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "RELOCATED-TO-645-NOT-BOUND-THIS-PR",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "BLOCKED-SOURCE-645",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Calculation methods belong to the 645 successor bind. They cannot be used as algorithm-conformance evidence this PR.",
+            "summaryZh": "计算方法属 645 后继绑定。本 PR 不得将其作为算法符合性证据。"
+          },
+          {
+            "id": "SAU-665-APP-REST",
+            "clause": "APPENDIX-F-J",
+            "clauseTitleEn": "Compatibility, acronyms, terminology, reference guide, manufacturer-code request",
+            "pdfPages": [
+              70,
+              77
+            ],
+            "unitKind": "APPENDIX",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Back-matter guidance is outside the bounded 615A data-format surface.",
+            "summaryZh": "附录指导不在有界 615A 数据格式表面内。"
+          },
+          {
+            "id": "SAU-665-APP-M",
+            "clause": "APPENDIX-M",
+            "clauseTitleEn": "Considerations for Supplement 2",
+            "pdfPages": [
+              80,
+              90
+            ],
+            "unitKind": "APPENDIX",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-NORMATIVE-IMPLEMENTATION-NOTE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Supplement-2 implementation notes are not current leaf obligations.",
+            "summaryZh": "补篇 2 实现说明不是当前叶义务。"
+          },
+          {
+            "id": "SAU-665-SUP",
+            "clause": "SUPPLEMENT-1-5",
+            "clauseTitleEn": "Historical supplements",
+            "pdfPages": [
+              91,
+              134
+            ],
+            "unitKind": "SUPPLEMENT",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "SUPPLEMENT-COVER-AND-CHANGE-HISTORY",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Supplements are edition history. The consolidated 665-5 body is the candidate text.",
+            "summaryZh": "补篇是版本历史。合并后的 665-5 正文是候选文本。"
+          },
+          {
+            "id": "SAU-665-ERRATA",
+            "clause": "ERRATA-APIM",
+            "clauseTitleEn": "Errata and APIM",
+            "pdfPages": [
+              135,
+              139
+            ],
+            "unitKind": "BACK-MATTER",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "ERRATA-AND-APIM-OUTSIDE-BOUNDED-SURVEY",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Errata/APIM pages are not actor obligations.",
+            "summaryZh": "勘误与 APIM 页不是参与者义务。"
+          }
+        ],
+        "openIssues": [
+          {
+            "id": "SAU-665-ISSUE-BATCH-LEAF",
+            "status": "PACKAGE-B",
+            "noteEn": "Clause 2.3 is now inside the page account. Sentence/table leaf CRS for the batch file is not in this audit commit.",
+            "noteZh": "条款 2.3 现已计入页码账。批处理文件的句/表叶级 CRS 不在本审计提交中。"
+          }
+        ],
+        "dispositionCounts": {
+          "OUT-OF-PROFILE": 9,
+          "APPLICABLE-SUPPORTING": 4,
+          "DEPENDENCY-BLOCKED": 3
+        }
+      },
+      {
+        "sourceId": "ARINC-664-2",
+        "role": "BOUNDED-PHYSICAL-LINK-REFERENCE",
+        "edition": "664-Part-2",
+        "sha256": "177594eed4cb8a13f370a1a3ded88baf881816f83ab0528eb435acad621063d5",
+        "pageCount": 53,
+        "pageAccount": {
+          "registryBindingPdfPages": [
+            1,
+            53
+          ],
+          "leafSurveyClaimed": false
+        },
+        "coverageDenominator": {
+          "kind": "TOC-SECTION",
+          "count": 12,
+          "assuranceBoundary": "CLAUSE-LEVEL-BOUNDED-APPLICABILITY-NOT-SENTENCE-LEAF-CRS"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "capabilityStatus": "NOT-ESTABLISHED",
+        "units": [
+          {
+            "id": "SAU-P2-FRONT",
+            "clause": "FRONT-MATTER",
+            "clauseTitleEn": "Cover, disclaimer, contents",
+            "pdfPages": [
+              1,
+              7
+            ],
+            "unitKind": "FRONT-MATTER",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Front matter identifies the 2003 Ethernet physical/data-link edition.",
+            "summaryZh": "扉页标识 2003 年以太网物理/数据链路版次。"
+          },
+          {
+            "id": "SAU-P2-1",
+            "clause": "1",
+            "clauseTitleEn": "Introduction, related documents, precedence",
+            "pdfPages": [
+              8,
+              11
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "ETHERNET-PHYSICAL-PREMISE",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "INFRASTRUCTURE-PREMISE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "P2 is the physical/data-link reference behind 615A Ethernet transfer. IEEE 802.3 is required reading. This does not establish the ETHERNET-PHYSICAL-LINK-SEMANTICS capability.",
+            "summaryZh": "P2 是 615A 以太网传输背后的物理/数据链路参考。IEEE 802.3 为必读。这并不建立 ETHERNET-PHYSICAL-LINK-SEMANTICS 能力。"
+          },
+          {
+            "id": "SAU-P2-2",
+            "clause": "2",
+            "clauseTitleEn": "General description: topologies, MAC, addressing, auto-negotiation, 10/100/1000",
+            "pdfPages": [
+              12,
+              16
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "ETHERNET-PHYSICAL-PREMISE",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "INFRASTRUCTURE-PREMISE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "MAC frame, addressing and duplex facts are infrastructure for ordinary Ethernet. They are not 615A operation timeouts.",
+            "summaryZh": "MAC 帧、寻址与双工是普通以太网的基础设施，不是 615A 操作时限。"
+          },
+          {
+            "id": "SAU-P2-3-CU",
+            "clause": "3-COPPER",
+            "clauseTitleEn": "Ethernet physical layer: 10/100BASE-TX avionics copper installations",
+            "pdfPages": [
+              17,
+              24
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "ETHERNET-PHYSICAL-PREMISE",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "INFRASTRUCTURE-PREMISE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Copper 100BASE-TX avionics/cabin/severe installations are the relevant physical options for ordinary Ethernet. Deployment parameter choice remains with the integrator; this PR does not pick a cable plant.",
+            "summaryZh": "铜缆 100BASE-TX 机载/客舱/严酷安装是普通以太网的相关物理选项。部署参数仍由集成商选择；本 PR 不选定线缆设施。"
+          },
+          {
+            "id": "SAU-P2-3-FX",
+            "clause": "3-FIBER",
+            "clauseTitleEn": "100BASE-FX / 1000BASE fiber text reserved for future supplement",
+            "pdfPages": [
+              20,
+              21
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "FUTURE-SUPPLEMENT-PLACEHOLDER",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Fiber clauses are placeholders, not current 615A Ethernet obligations.",
+            "summaryZh": "光纤条款为占位，不是当前 615A 以太网义务。"
+          },
+          {
+            "id": "SAU-P2-COMPONENTS",
+            "clause": "3-COMPONENTS",
+            "clauseTitleEn": "Aircraft network link components, connectors, reference plane",
+            "pdfPages": [
+              22,
+              28
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "ETHERNET-PHYSICAL-PREMISE",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "INFRASTRUCTURE-PREMISE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Connector and reference-plane values are installation constraints, not 615A FIND/UPLOAD timing.",
+            "summaryZh": "连接器与参考面数值是安装约束，不是 615A FIND/UPLOAD 时序。"
+          },
+          {
+            "id": "SAU-P2-APP-C",
+            "clause": "APPENDIX-C",
+            "clauseTitleEn": "Avionics 100BASE-TX link example",
+            "pdfPages": [
+              30,
+              32
+            ],
+            "unitKind": "APPENDIX",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-NORMATIVE-EXAMPLE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Worked example, not a 615A protocol action.",
+            "summaryZh": "计算示例，不是 615A 协议动作。"
+          },
+          {
+            "id": "SAU-P2-APP-TEST",
+            "clause": "APPENDIX-H",
+            "clauseTitleEn": "Receiver test procedures",
+            "pdfPages": [
+              40,
+              45
+            ],
+            "unitKind": "APPENDIX",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "PHYSICAL-TEST-PROCEDURE-NOT-615A-CRS",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Hardware receiver tests are outside protocol CRS.",
+            "summaryZh": "硬件接收测试不在协议 CRS 内。"
+          },
+          {
+            "id": "SAU-P2-APIM",
+            "clause": "APIM",
+            "clauseTitleEn": "Project initiation form",
+            "pdfPages": [
+              50,
+              53
+            ],
+            "unitKind": "BACK-MATTER",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "APIM-OUTSIDE-BOUNDED-SURVEY",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "APIM is not an actor obligation.",
+            "summaryZh": "APIM 不是参与者义务。"
+          },
+          {
+            "id": "SAU-P2-AFDX",
+            "clause": "CROSS-P7",
+            "clauseTitleEn": "Deterministic Ethernet extensions live in Part 7",
+            "pdfPages": [
+              1,
+              53
+            ],
+            "unitKind": "CROSS-REFERENCE",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "AFDX-SPECIFIC-EXTENSIONS-ARE-P7",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "P2 limitations already record that AFDX deterministic extensions are in Part 7. Ordinary Ethernet and AFDX stay separate.",
+            "summaryZh": "P2 限制已记录 AFDX 确定性扩展在第 7 部分。普通以太网与 AFDX 保持分离。"
+          },
+          {
+            "id": "SAU-P2-NOT-TIMEOUT",
+            "clause": "CROSS-615A-TIMING",
+            "clauseTitleEn": "Physical-layer delay is not a 615A operation deadline",
+            "pdfPages": [
+              1,
+              53
+            ],
+            "unitKind": "CROSS-REFERENCE",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NETWORK-DELAY-IS-NOT-615A-TIMEOUT",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Link budgets and reference-plane timing must not be rewritten as 615A FIND 2 s / 3 s or status-file deadlines.",
+            "summaryZh": "链路预算与参考面时序不得改写为 615A FIND 2 秒/3 秒或状态文件期限。"
+          },
+          {
+            "id": "SAU-P2-CAP",
+            "clause": "CAPABILITY",
+            "clauseTitleEn": "ETHERNET-PHYSICAL-LINK-SEMANTICS remains not established",
+            "pdfPages": [
+              1,
+              53
+            ],
+            "unitKind": "CAPABILITY-BOUNDARY",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "SOURCE-RECEIPT-DOES-NOT-ESTABLISH-CAPABILITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "INFRASTRUCTURE-PREMISE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Completing this bounded audit does not mark the Ethernet physical-link capability established.",
+            "summaryZh": "完成本有界审计并不把以太网物理链路能力标为已建立。"
+          }
+        ],
+        "openIssues": [],
+        "dispositionCounts": {
+          "OUT-OF-PROFILE": 6,
+          "CONDITIONAL": 6
+        }
+      },
+      {
+        "sourceId": "ARINC-664-3",
+        "role": "BOUNDED-NETWORK-SERVICES-REFERENCE",
+        "edition": "664P3-1",
+        "sha256": "86cda84f4b0e1555fe2975942eaae53178ae3f7b151a7ff50a4022df6d958b90",
+        "pageCount": 90,
+        "pageAccount": {
+          "registryBindingPdfPages": [
+            1,
+            90
+          ],
+          "leafSurveyClaimed": false,
+          "existingInspectionRegions": 10
+        },
+        "coverageDenominator": {
+          "kind": "TOC-CLAUSE",
+          "count": 18,
+          "assuranceBoundary": "CLAUSE-LEVEL-BOUNDED-APPLICABILITY-PLUS-EXISTING-INSPECTION-REGIONS"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "networkMode": "COMPLIANT",
+        "profiledSelected": false,
+        "units": [
+          {
+            "id": "SAU-P3-FRONT",
+            "clause": "FRONT-MATTER",
+            "clauseTitleEn": "Cover through contents",
+            "pdfPages": [
+              1,
+              7
+            ],
+            "unitKind": "FRONT-MATTER",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Front matter identifies 664P3-1.",
+            "summaryZh": "扉页标识 664P3-1。"
+          },
+          {
+            "id": "SAU-P3-1-2",
+            "clause": "1.2",
+            "clauseTitleEn": "Compliant versus profiled networks",
+            "pdfPages": [
+              8,
+              9
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "COMPLIANT-INSTANCE-SELECTED",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "NETWORK-CONSTRAINT-RECONCILIATION",
+            "leafCrsStatus": "INSPECTION-REGION-EXISTS",
+            "summaryEn": "Existing NET-P3-SCOPE. Interoperability across compliant/profiled is not automatic. Current instance remains Compliant.",
+            "summaryZh": "已有 NET-P3-SCOPE。Compliant/Profiled 之间互操作性不自动成立。当前实例保持 Compliant。"
+          },
+          {
+            "id": "SAU-P3-1-5",
+            "clause": "1.5",
+            "clauseTitleEn": "Document precedence and RFC option restriction",
+            "pdfPages": [
+              13,
+              13
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "P3-PRECEDENCE-RESTRICTS-RFC-OPTIONS",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "NETWORK-CONSTRAINT-RECONCILIATION",
+            "leafCrsStatus": "INSPECTION-REGION-EXISTS",
+            "summaryEn": "Existing NET-P3-PRECEDENCE. P3 restricts RFC options inside its profile. This is not a licence to drop 615A TFTP option rules.",
+            "summaryZh": "已有 NET-P3-PRECEDENCE。P3 在其 profile 内限制 RFC 选项。这不是取消 615A TFTP 选项规则的许可。"
+          },
+          {
+            "id": "SAU-P3-2-SVC",
+            "clause": "2.3.1-2.3.14",
+            "clauseTitleEn": "Internet services other than 615A data loader",
+            "pdfPages": [
+              14,
+              20
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Broadcast, multicast, diagnostics, routing, FTP, telnet, HTTP, DNS, SNMP and remote access are not 615A protocol operations.",
+            "summaryZh": "广播、组播、诊断、路由、FTP、Telnet、HTTP、DNS、SNMP 与远程访问不是 615A 协议操作。"
+          },
+          {
+            "id": "SAU-P3-2-615A",
+            "clause": "2.3.15",
+            "clauseTitleEn": "ARINC 615A data-loader service mapping",
+            "pdfPages": [
+              20,
+              20
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "P3-MAPS-615A-DATALOADER-SERVICE",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "PACKAGE-B-PENDING",
+            "summaryEn": "P3 names 615A data loading as a file-transfer service on the aircraft internet. It does not replace 615A operation definitions.",
+            "summaryZh": "P3 将 615A 数据加载列为航空互联网上的文件传输服务，并不取代 615A 操作定义。"
+          },
+          {
+            "id": "SAU-P3-3-2-TFTP",
+            "clause": "3.2.2-3.2.3",
+            "clauseTitleEn": "TFTP and Data-Loader TFTP",
+            "pdfPages": [
+              21,
+              21
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "P3-TFTP-POINTS-BACK-TO-615A",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "INSPECTION-REGION-EXISTS",
+            "summaryEn": "Existing NET-P3-TFTP. Base TFTP cites option RFCs; DL-TFTP implementation details refer back to 615A. Citing P3 does not bind every TFTP option RFC to every CRS row.",
+            "summaryZh": "已有 NET-P3-TFTP。基础 TFTP 引用选项 RFC；DL-TFTP 实现细节回引 615A。引用 P3 并不把每个 TFTP 选项 RFC 绑到每条 CRS。"
+          },
+          {
+            "id": "SAU-P3-3-2-OTHER",
+            "clause": "3.2.1/3.2.4-3.2.7",
+            "clauseTitleEn": "FTP, Telnet, HTTP, DNS, SNMP",
+            "pdfPages": [
+              21,
+              21
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Other application protocols are not 615A dataloading.",
+            "summaryZh": "其他应用协议不是 615A 数据加载。"
+          },
+          {
+            "id": "SAU-P3-3-3-TCP",
+            "clause": "3.3.1",
+            "clauseTitleEn": "TCP",
+            "pdfPages": [
+              22,
+              28
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "615A uses UDP/TFTP, not TCP.",
+            "summaryZh": "615A 使用 UDP/TFTP，不使用 TCP。"
+          },
+          {
+            "id": "SAU-P3-3-3-UDP",
+            "clause": "3.3.2",
+            "clauseTitleEn": "UDP minimum transport and profiled table",
+            "pdfPages": [
+              29,
+              30
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "UDP-MINIMUM-TRANSPORT",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "NETWORK-CONSTRAINT-RECONCILIATION",
+            "leafCrsStatus": "INSPECTION-REGION-EXISTS",
+            "summaryEn": "Existing NET-P3-UDP-RULE/TABLE. Compliant path keeps UDP. Profiled X/E markings are unselected and must not weaken 615A.",
+            "summaryZh": "已有 NET-P3-UDP-RULE/TABLE。Compliant 路径保持 UDP。未选择的 Profiled X/E 标记不得削弱 615A。"
+          },
+          {
+            "id": "SAU-P3-3-4-IP",
+            "clause": "3.4.1",
+            "clauseTitleEn": "IPv4, fragmentation, MTU",
+            "pdfPages": [
+              31,
+              36
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "IPV4-AND-FRAGMENT-RECONCILIATION",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "NETWORK-CONSTRAINT-RECONCILIATION",
+            "leafCrsStatus": "INSPECTION-REGION-EXISTS",
+            "summaryEn": "Existing NET-P3-IP-RULE/TABLE/FRAGMENT/MTU. Profiled reassembly deviations cannot erase the 615A Data Loader fragmentation/reassembly obligation. MTU is packet sizing, not a 615A deadline.",
+            "summaryZh": "已有 NET-P3-IP-RULE/TABLE/FRAGMENT/MTU。Profiled 重组偏差不能抹去 615A 数据加载器的分片/重组义务。MTU 是报文尺寸，不是 615A 期限。"
+          },
+          {
+            "id": "SAU-P3-3-4-V6",
+            "clause": "3.4.3",
+            "clauseTitleEn": "IPv6",
+            "pdfPages": [
+              36,
+              40
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "IPV6-NOT-SELECTED",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "IPv6 is not the current 615A instance network.",
+            "summaryZh": "IPv6 不是当前 615A 实例网络。"
+          },
+          {
+            "id": "SAU-P3-3-4-SEC",
+            "clause": "3.4.4",
+            "clauseTitleEn": "IPsec",
+            "pdfPages": [
+              40,
+              50
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "IPsec is not a 615A dataloading obligation.",
+            "summaryZh": "IPsec 不是 615A 数据加载义务。"
+          },
+          {
+            "id": "SAU-P3-3-5-ARP",
+            "clause": "3.5.1",
+            "clauseTitleEn": "ARP",
+            "pdfPages": [
+              58,
+              58
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "ARP-DEPLOYMENT-SELECTION",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "INSPECTION-REGION-EXISTS",
+            "summaryEn": "Existing NET-P3-ARP. Dynamic vs static mapping is a deployment choice with a named selector (integrator), not UNRESOLVED silence.",
+            "summaryZh": "已有 NET-P3-ARP。动态与静态映射是带具名选择者（集成商）的部署选择，不是无说明的 UNRESOLVED。"
+          },
+          {
+            "id": "SAU-P3-ATT12",
+            "clause": "ATT-1-2",
+            "clauseTitleEn": "Example Compliant SICS/PICS",
+            "pdfPages": [
+              60,
+              77
+            ],
+            "unitKind": "ATTACHMENT",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-NORMATIVE-EXAMPLE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "SICS/PICS examples are not leaf CRS and do not select Profiled exceptions.",
+            "summaryZh": "SICS/PICS 示例不是叶 CRS，也不选择 Profiled 例外。"
+          },
+          {
+            "id": "SAU-P3-ATT3",
+            "clause": "ATT-3",
+            "clauseTitleEn": "IPv6 SICS example",
+            "pdfPages": [
+              78,
+              78
+            ],
+            "unitKind": "ATTACHMENT",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "IPV6-NOT-SELECTED",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "IPv6 example attachment is unused.",
+            "summaryZh": "IPv6 示例附件不使用。"
+          },
+          {
+            "id": "SAU-P3-APP",
+            "clause": "APPENDIX-A-B",
+            "clauseTitleEn": "Glossary and acronyms",
+            "pdfPages": [
+              79,
+              82
+            ],
+            "unitKind": "APPENDIX",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Glossary only.",
+            "summaryZh": "仅词汇表。"
+          },
+          {
+            "id": "SAU-P3-SUP",
+            "clause": "SUPPLEMENT-APIM-ERRATA",
+            "clauseTitleEn": "Supplement 1, APIM, errata",
+            "pdfPages": [
+              83,
+              90
+            ],
+            "unitKind": "BACK-MATTER",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "SUPPLEMENT-COVER-AND-CHANGE-HISTORY",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Back matter is not a 615A action.",
+            "summaryZh": "后文不是 615A 动作。"
+          },
+          {
+            "id": "SAU-P3-EDITION",
+            "clause": "EDITION",
+            "clauseTitleEn": "P3-1 is a historical candidate edition",
+            "pdfPages": [
+              1,
+              90
+            ],
+            "unitKind": "IDENTITY",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "EDITION-NOT-LATEST-CLAIM",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Existing NET-ISSUE-EDITION. Receipt of P3-1 is not a claim that it is the latest published Part 3.",
+            "summaryZh": "已有 NET-ISSUE-EDITION。收到 P3-1 并不声称它是最新发布的第 3 部分。"
+          }
+        ],
+        "openIssues": [
+          {
+            "id": "SAU-P3-ISSUE-RFC1122",
+            "status": "OPEN-INFRASTRUCTURE",
+            "noteEn": "IPv4/UDP host communication remains NOT-ESTABLISHED. This audit does not close NET-ISSUE-RFC1122.",
+            "noteZh": "IPv4/UDP 主机通信仍为 NOT-ESTABLISHED。本审计不关闭 NET-ISSUE-RFC1122。"
+          }
+        ],
+        "dispositionCounts": {
+          "OUT-OF-PROFILE": 10,
+          "CONDITIONAL": 4,
+          "APPLICABLE-SUPPORTING": 4
+        }
+      },
+      {
+        "sourceId": "ARINC-664-7",
+        "role": "CONDITIONAL-AFDX-REFERENCE",
+        "edition": "664P7",
+        "sha256": "63ef56b2e0061bdb8a8554fc9cdb522d2ba7c4a0dc52003856d7022eb9889f71",
+        "pageCount": 145,
+        "pageAccount": {
+          "registryBindingPdfPages": [
+            1,
+            145
+          ],
+          "leafSurveyClaimed": false,
+          "existingInspectionRegions": 7
+        },
+        "coverageDenominator": {
+          "kind": "TOC-CLAUSE",
+          "count": 14,
+          "assuranceBoundary": "CLAUSE-LEVEL-CONDITIONAL-AFDX-NOT-CURRENT-INSTANCE"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "afdxSelected": false,
+        "units": [
+          {
+            "id": "SAU-P7-FRONT",
+            "clause": "FRONT-MATTER",
+            "clauseTitleEn": "Cover through contents",
+            "pdfPages": [
+              1,
+              8
+            ],
+            "unitKind": "FRONT-MATTER",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Front matter identifies 664P7 base edition.",
+            "summaryZh": "扉页标识 664P7 基础版。"
+          },
+          {
+            "id": "SAU-P7-1-2",
+            "clause": "1.2",
+            "clauseTitleEn": "Scope of AFDX / deterministic Ethernet",
+            "pdfPages": [
+              9,
+              11
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "AFDX-CONDITIONAL-DEPLOYMENT",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "INSPECTION-REGION-EXISTS",
+            "summaryEn": "Existing NET-P7-SCOPE. Applies only when 615A is carried over AFDX. Current Compliant Ethernet instance stays inactive for these units.",
+            "summaryZh": "已有 NET-P7-SCOPE。仅当 615A 承载于 AFDX 时适用。当前 Compliant 以太网实例对这些单元保持未激活。"
+          },
+          {
+            "id": "SAU-P7-2",
+            "clause": "2",
+            "clauseTitleEn": "Overview: switched Ethernet, scalability, ordinal integrity, performance",
+            "pdfPages": [
+              12,
+              16
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "AFDX-CONDITIONAL-DEPLOYMENT",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "System overview. Network performance numbers are not 615A operation deadlines.",
+            "summaryZh": "系统概述。网络性能数字不是 615A 操作期限。"
+          },
+          {
+            "id": "SAU-P7-3",
+            "clause": "3",
+            "clauseTitleEn": "End-system: VL, BAG, jitter, MAC constraints",
+            "pdfPages": [
+              17,
+              55
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "AFDX-END-SYSTEM-WHEN-SELECTED",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "INSPECTION-REGION-EXISTS",
+            "summaryEn": "End-system VL/BAG/jitter are AFDX deployment obligations if AFDX is chosen. They do not rewrite TFTP/615A operations. Existing NET-P7-TFTP/IP/ADDRESS/PERFORMANCE regions inspect this surface.",
+            "summaryZh": "若选择 AFDX，端系统 VL/BAG/抖动是部署义务。它们不改写 TFTP/615A 操作。已有 NET-P7-TFTP/IP/ADDRESS/PERFORMANCE 区域检查该表面。"
+          },
+          {
+            "id": "SAU-P7-4",
+            "clause": "4",
+            "clauseTitleEn": "Switch specification",
+            "pdfPages": [
+              56,
+              79
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "INSPECTION-REGION-EXISTS",
+            "summaryEn": "Existing NET-P7-SWITCH. Switch behaviour is not proved by ordinary Ethernet tests.",
+            "summaryZh": "已有 NET-P7-SWITCH。交换机行为不能用普通以太网试验证明。"
+          },
+          {
+            "id": "SAU-P7-5",
+            "clause": "5",
+            "clauseTitleEn": "System issues",
+            "pdfPages": [
+              80,
+              81
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "AFDX-CONDITIONAL-DEPLOYMENT",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "System integration issues for AFDX, not 615A FIND semantics.",
+            "summaryZh": "AFDX 系统集成问题，不是 615A FIND 语义。"
+          },
+          {
+            "id": "SAU-P7-ATT1",
+            "clause": "ATT-1",
+            "clauseTitleEn": "Data format",
+            "pdfPages": [
+              82,
+              101
+            ],
+            "unitKind": "ATTACHMENT",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "AFDX-DATA-FORMAT-WHEN-SELECTED",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "AFDX frame/data format is deployment-conditional.",
+            "summaryZh": "AFDX 帧/数据格式为部署条件。"
+          },
+          {
+            "id": "SAU-P7-ATT2",
+            "clause": "ATT-2",
+            "clauseTitleEn": "IP/ICMP, UDP and TCP profile provisions",
+            "pdfPages": [
+              102,
+              132
+            ],
+            "unitKind": "ATTACHMENT",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "INSPECTION-REGION-EXISTS",
+            "summaryEn": "Existing NET-P7-IP. AFDX IP/UDP profile does not replace RFC identity or 615A TFTP rules. TCP remains unused by 615A.",
+            "summaryZh": "已有 NET-P7-IP。AFDX 的 IP/UDP profile 不取代 RFC 身份或 615A TFTP 规则。615A 仍不使用 TCP。"
+          },
+          {
+            "id": "SAU-P7-APP-A",
+            "clause": "APPENDIX-A",
+            "clauseTitleEn": "Example ES identification",
+            "pdfPages": [
+              133,
+              133
+            ],
+            "unitKind": "APPENDIX",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-NORMATIVE-EXAMPLE",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "INFORMATIONAL-CROSS-CHECK",
+            "leafCrsStatus": "INSPECTION-REGION-EXISTS",
+            "summaryEn": "Existing NET-P7-EXAMPLE. Example only.",
+            "summaryZh": "已有 NET-P7-EXAMPLE。仅为示例。"
+          },
+          {
+            "id": "SAU-P7-APP-B",
+            "clause": "APPENDIX-B",
+            "clauseTitleEn": "ARINC 429 to AFDX formatting guidelines",
+            "pdfPages": [
+              134,
+              137
+            ],
+            "unitKind": "APPENDIX",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "429 mapping is outside 615A dataloading.",
+            "summaryZh": "429 映射不在 615A 数据加载内。"
+          },
+          {
+            "id": "SAU-P7-APP-CD",
+            "clause": "APPENDIX-C-D",
+            "clauseTitleEn": "Terminology and services-to-protocol mapping",
+            "pdfPages": [
+              138,
+              140
+            ],
+            "unitKind": "APPENDIX",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "AFDX-CONDITIONAL-DEPLOYMENT",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Informative mapping; 615A Appendix E remains the 615A-side pointer.",
+            "summaryZh": "信息性映射；615A 侧指针仍是附录 E。"
+          },
+          {
+            "id": "SAU-P7-615A-E",
+            "clause": "CROSS-615A-APPENDIX-E",
+            "clauseTitleEn": "615A Appendix E points to P7; P7 does not replace 615A operations",
+            "pdfPages": [
+              9,
+              12
+            ],
+            "unitKind": "CROSS-REFERENCE",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "APPENDIX-E-POINTER-IS-NOT-P7-BODY-SUBSTITUTE",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "EXISTING-615A-LEAF",
+            "summaryEn": "Reading 615A Appendix E is not a substitute for this P7 body audit. Conversely, P7 does not redefine FIND/UPLOAD/DOWNLOAD.",
+            "summaryZh": "阅读 615A 附录 E 不能代替本次 P7 正文审计。反之，P7 也不重定义 FIND/UPLOAD/DOWNLOAD。"
+          },
+          {
+            "id": "SAU-P7-P4",
+            "clause": "CROSS-664-4",
+            "clauseTitleEn": "Addressing alternative: 664P4 or integrator-identified rules",
+            "pdfPages": [
+              1,
+              145
+            ],
+            "unitKind": "CROSS-REFERENCE",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "P4-OR-INTEGRATOR-ALTERNATIVE-NOT-IN-THIS-PR",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "CRS-M1-00519-REMAINS-NOT-YET-BOUND",
+            "summaryEn": "615A already allows 664 Part 4 address rules or integrator-identified requirements. 664-4 is not in this PR source set. The alternative is not a forced purchase and does not auto-activate AFDX.",
+            "summaryZh": "615A 已允许 664 第 4 部分地址规则或集成商指明的要求。664-4 不在本 PR 来源集合。该替代不是强制采购，也不自动激活 AFDX。"
+          },
+          {
+            "id": "SAU-P7-AID",
+            "clause": "AID-FUTURE",
+            "clauseTitleEn": "AID future-supplement addressing remains open",
+            "pdfPages": [
+              1,
+              145
+            ],
+            "unitKind": "IDENTITY",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "AID-FUTURE-SUPPLEMENT-UNSELECTED",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Existing NET-ISSUE-AID. No AID edition is selected this PR.",
+            "summaryZh": "已有 NET-ISSUE-AID。本 PR 未选择 AID 版次。"
+          }
+        ],
+        "openIssues": [
+          {
+            "id": "SAU-P7-ISSUE-NO-HW",
+            "status": "OPEN-ENVIRONMENT",
+            "noteEn": "No AFDX hardware test environment is created. Software Ethernet experiments do not prove AFDX guarantees.",
+            "noteZh": "未建立 AFDX 硬件试验环境。软件以太网试验不能证明 AFDX 保证。"
+          }
+        ],
+        "dispositionCounts": {
+          "OUT-OF-PROFILE": 3,
+          "CONDITIONAL": 11
+        }
+      },
+      {
+        "sourceId": "RFC-768",
+        "role": "PUBLIC-UDP-IDENTITY",
+        "edition": "RFC-768",
+        "sha256": "7dc8880e1ecef9c3f9da0db4b876a16e96bfa4f0953cc9d977d414f8f680c2f0",
+        "coverageDenominator": {
+          "kind": "RFC-SECTION",
+          "count": 5,
+          "assuranceBoundary": "IDENTITY-AND-TRIGGERED-FIELDS-NOT-HOST-STACK-CONFORMANCE"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "units": [
+          {
+            "id": "SAU-768-INTRO",
+            "clause": "Introduction",
+            "clauseTitleEn": "UDP purpose",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "UDP-IDENTITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "UDP is the datagram service under 615A TFTP. Delivery and duplicate protection are not guaranteed by UDP itself.",
+            "summaryZh": "UDP 是 615A TFTP 之下的数据报服务。UDP 本身不保证交付与去重。"
+          },
+          {
+            "id": "SAU-768-FMT",
+            "clause": "Format",
+            "clauseTitleEn": "UDP header layout",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "UDP-HEADER-IDENTITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Source port, destination port, length and checksum identify the UDP datagram used by 615A. This is identity, not a claim that a particular stack is proven.",
+            "summaryZh": "源端口、目的端口、长度与校验和标识 615A 所用 UDP 数据报。这是身份，不是某协议栈已获证明。"
+          },
+          {
+            "id": "SAU-768-FIELDS",
+            "clause": "Fields",
+            "clauseTitleEn": "Port, length, checksum semantics",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "UDP-FIELD-IDENTITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Port and checksum behaviour are the UDP fields 615A TFTP rides on. 664P3 may further restrict checksum handling on a Compliant network.",
+            "summaryZh": "端口与校验和是 615A TFTP 所依赖的 UDP 字段。664P3 可在 Compliant 网络上进一步限制校验和处理。"
+          },
+          {
+            "id": "SAU-768-USER",
+            "clause": "User Interface",
+            "clauseTitleEn": "Application send/receive interface",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-AS-615A-CRS",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "The RFC 768 user-interface sketch is not a 615A actor obligation.",
+            "summaryZh": "RFC 768 的用户接口简述不是 615A 参与者义务。"
+          },
+          {
+            "id": "SAU-768-IP",
+            "clause": "IP Interface",
+            "clauseTitleEn": "UDP over IP",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "UDP-OVER-IPV4-IDENTITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "UDP assumes IP. IPv4 identity is RFC 791; host requirements remain RFC 1122 and NOT-ESTABLISHED.",
+            "summaryZh": "UDP 假定 IP。IPv4 身份是 RFC 791；主机要求仍是 RFC 1122 且 NOT-ESTABLISHED。"
+          }
+        ],
+        "openIssues": [],
+        "dispositionCounts": {
+          "APPLICABLE-SUPPORTING": 4,
+          "OUT-OF-PROFILE": 1
+        }
+      },
+      {
+        "sourceId": "RFC-791",
+        "role": "PUBLIC-IPV4-IDENTITY",
+        "edition": "RFC-791",
+        "sha256": "6cfb387fcecfc1b72f2f69343c5b6951b5d263d708162e2b5c66ab8f394f6265",
+        "coverageDenominator": {
+          "kind": "RFC-SECTION",
+          "count": 8,
+          "assuranceBoundary": "TRIGGERED-IPV4-DATAGRAM-NOT-FULL-GATEWAY-CONFORMANCE"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "units": [
+          {
+            "id": "SAU-791-1",
+            "clause": "1",
+            "clauseTitleEn": "Introduction",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Motivation and scope are not 615A actions.",
+            "summaryZh": "动机与范围不是 615A 动作。"
+          },
+          {
+            "id": "SAU-791-2",
+            "clause": "2",
+            "clauseTitleEn": "Overview and relation to other protocols",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "IPV4-IDENTITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "IPv4 is the network protocol under 615A UDP/TFTP on ordinary Ethernet.",
+            "summaryZh": "在普通以太网中，IPv4 是 615A UDP/TFTP 之下的网络协议。"
+          },
+          {
+            "id": "SAU-791-3-1",
+            "clause": "3.1",
+            "clauseTitleEn": "Internet header format",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "IPV4-HEADER-IDENTITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Version, header length, total length, identification, flags, fragment offset, TTL, protocol and addresses are the IPv4 header 615A traffic uses.",
+            "summaryZh": "版本、头长度、总长度、标识、标志、分片偏移、TTL、协议与地址是 615A 流量使用的 IPv4 头。"
+          },
+          {
+            "id": "SAU-791-FRAG",
+            "clause": "3.2-fragment",
+            "clauseTitleEn": "Fragmentation and reassembly",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "IPV4-FRAGMENT-REASSEMBLY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "NETWORK-CONSTRAINT-RECONCILIATION",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "615A Data Loader fragmentation/reassembly is reconciled with this IPv4 mechanism. 664P3 profiled deviations cannot erase that 615A obligation.",
+            "summaryZh": "615A 数据加载器分片/重组与此 IPv4 机制对账。664P3 的 Profiled 偏差不能抹去该 615A 义务。"
+          },
+          {
+            "id": "SAU-791-GW",
+            "clause": "2.4",
+            "clauseTitleEn": "Gateways",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Gateway requirements are not 615A dataloading CRS.",
+            "summaryZh": "网关要求不是 615A 数据加载 CRS。"
+          },
+          {
+            "id": "SAU-791-IF",
+            "clause": "3.3",
+            "clauseTitleEn": "Interfaces",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-AS-615A-CRS",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "RFC 791 module interfaces are not 615A protocol files.",
+            "summaryZh": "RFC 791 模块接口不是 615A 协议文件。"
+          },
+          {
+            "id": "SAU-791-OPT",
+            "clause": "3.1-options",
+            "clauseTitleEn": "IP options",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "IP options are not adopted as 615A protocol options.",
+            "summaryZh": "IP 选项未被采纳为 615A 协议选项。"
+          },
+          {
+            "id": "SAU-791-CAP",
+            "clause": "CAPABILITY",
+            "clauseTitleEn": "IP identity capability remains not established as a stack claim",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "SOURCE-RECEIPT-DOES-NOT-ESTABLISH-CAPABILITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "INFRASTRUCTURE-PREMISE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Registering RFC 791 identity does not prove a host IP implementation.",
+            "summaryZh": "登记 RFC 791 身份并不证明主机 IP 实现。"
+          }
+        ],
+        "openIssues": [],
+        "dispositionCounts": {
+          "OUT-OF-PROFILE": 4,
+          "APPLICABLE-SUPPORTING": 3,
+          "CONDITIONAL": 1
+        }
+      },
+      {
+        "sourceId": "RFC-1122",
+        "role": "PUBLIC-HOST-COMMUNICATION-REQUIREMENTS",
+        "edition": "RFC-1122",
+        "sha256": "9f526e6bebc868324fedb90aebbcf6e5b15c53fd373ca5d5ce1c2cdcd264e04f",
+        "coverageDenominator": {
+          "kind": "RFC-CHAPTER",
+          "count": 6,
+          "assuranceBoundary": "TRIGGERED-LINK-IP-UDP-PREMISE-NOT-FULL-HOST-CONFORMANCE"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "units": [
+          {
+            "id": "SAU-1122-1",
+            "clause": "1",
+            "clauseTitleEn": "Introduction",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Host-requirement introduction is not a 615A action.",
+            "summaryZh": "主机要求引言不是 615A 动作。"
+          },
+          {
+            "id": "SAU-1122-2",
+            "clause": "2",
+            "clauseTitleEn": "Link layer",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "LINK-LAYER-HOST-PREMISE",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "INFRASTRUCTURE-PREMISE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Link-layer host behaviour is an infrastructure premise behind Ethernet. It is not established by this audit.",
+            "summaryZh": "链路层主机行为是以太网背后的基础设施前提。本审计不将其标为已建立。"
+          },
+          {
+            "id": "SAU-1122-3",
+            "clause": "3",
+            "clauseTitleEn": "Internet layer protocols",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "IPV4-HOST-COMMUNICATION-PREMISE",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "INFRASTRUCTURE-PREMISE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "IPv4 host communication remains NOT-ESTABLISHED (existing NET-ISSUE-RFC1122 / NET-PREMISE-IPV4-UDP).",
+            "summaryZh": "IPv4 主机通信仍为 NOT-ESTABLISHED（已有 NET-ISSUE-RFC1122 / NET-PREMISE-IPV4-UDP）。"
+          },
+          {
+            "id": "SAU-1122-4-UDP",
+            "clause": "4-UDP",
+            "clauseTitleEn": "UDP transport host requirements",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "UDP-HOST-COMMUNICATION-PREMISE",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "INFRASTRUCTURE-PREMISE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "UDP host requirements are the infrastructure under 615A TFTP. Capability IPV4-UDP-HOST-COMMUNICATION-SEMANTICS stays NOT-ESTABLISHED.",
+            "summaryZh": "UDP 主机要求是 615A TFTP 之下的基础设施。能力 IPV4-UDP-HOST-COMMUNICATION-SEMANTICS 仍为 NOT-ESTABLISHED。"
+          },
+          {
+            "id": "SAU-1122-4-TCP",
+            "clause": "4-TCP",
+            "clauseTitleEn": "TCP transport host requirements",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "TCP is not used by 615A dataloading.",
+            "summaryZh": "615A 数据加载不使用 TCP。"
+          },
+          {
+            "id": "SAU-1122-5",
+            "clause": "5",
+            "clauseTitleEn": "References",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "References only.",
+            "summaryZh": "仅参考文献。"
+          }
+        ],
+        "openIssues": [
+          {
+            "id": "SAU-1122-ISSUE-NOT-ESTABLISHED",
+            "status": "OPEN-INFRASTRUCTURE",
+            "noteEn": "Host IPv4/UDP communication is still an unverified prerequisite, not a closed 1122 conformance claim.",
+            "noteZh": "主机 IPv4/UDP 通信仍是未验证前提，不是已闭合的 1122 符合性主张。"
+          }
+        ],
+        "dispositionCounts": {
+          "OUT-OF-PROFILE": 3,
+          "CONDITIONAL": 3
+        }
+      },
+      {
+        "sourceId": "RFC-1123",
+        "role": "PUBLIC-HOST-APPLICATION-REQUIREMENTS",
+        "edition": "RFC-1123",
+        "sha256": "3d019cc4777d1ead76c212711d56768bde9361312cd209846b62d2e41dd0301d",
+        "coverageDenominator": {
+          "kind": "RFC-CHAPTER",
+          "count": 8,
+          "assuranceBoundary": "ONLY-TFTP-APPLICATION-CLAUSE-TRIGGERED"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "units": [
+          {
+            "id": "SAU-1123-1",
+            "clause": "1",
+            "clauseTitleEn": "Introduction",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Not a 615A action.",
+            "summaryZh": "不是 615A 动作。"
+          },
+          {
+            "id": "SAU-1123-2",
+            "clause": "2",
+            "clauseTitleEn": "General issues",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Host names, DNS use and TOS are not 615A protocol files.",
+            "summaryZh": "主机名、DNS 使用与 TOS 不是 615A 协议文件。"
+          },
+          {
+            "id": "SAU-1123-3",
+            "clause": "3",
+            "clauseTitleEn": "Telnet",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Telnet is not 615A dataloading.",
+            "summaryZh": "Telnet 不是 615A 数据加载。"
+          },
+          {
+            "id": "SAU-1123-4-1",
+            "clause": "4.1",
+            "clauseTitleEn": "FTP",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "FTP is not 615A TFTP.",
+            "summaryZh": "FTP 不是 615A TFTP。"
+          },
+          {
+            "id": "SAU-1123-4-2",
+            "clause": "4.2",
+            "clauseTitleEn": "TFTP application host requirements",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TFTP-HOST-APPLICATION-PREMISE",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "RFC 1123 §4.2 adds host TFTP notes: octet/netascii modes, UDP header, Sorcerer's Apprentice, timeout, extensions, access control and broadcast RRQ. 615A uses octet TFTP with its own option set; mail/netascii and broadcast-RRQ are not adopted. Sorcerer's Apprentice remains a TFTP-base constraint alongside RFC 1350.",
+            "summaryZh": "RFC 1123 §4.2 补充主机 TFTP 说明：octet/netascii、UDP 头、术士学徒、超时、扩展、访问控制与广播 RRQ。615A 使用带自有选项集的 octet TFTP；不采用 mail/netascii 与广播 RRQ。术士学徒与 RFC 1350 同为 TFTP 基础约束。"
+          },
+          {
+            "id": "SAU-1123-5",
+            "clause": "5",
+            "clauseTitleEn": "Mail",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "SMTP is unused.",
+            "summaryZh": "不使用 SMTP。"
+          },
+          {
+            "id": "SAU-1123-6",
+            "clause": "6",
+            "clauseTitleEn": "Support services",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "DNS and remote management are unused.",
+            "summaryZh": "不使用 DNS 与远程管理。"
+          },
+          {
+            "id": "SAU-1123-7",
+            "clause": "7",
+            "clauseTitleEn": "References",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "References only.",
+            "summaryZh": "仅参考文献。"
+          }
+        ],
+        "openIssues": [],
+        "dispositionCounts": {
+          "OUT-OF-PROFILE": 7,
+          "APPLICABLE-SUPPORTING": 1
+        }
+      },
+      {
+        "sourceId": "RFC-1350",
+        "role": "PUBLIC-TFTP-BASE",
+        "edition": "RFC-1350",
+        "sha256": "39c9534e5fa6fecd3ac083ffd6256c2cc9a58f9f1058cb2e472d1782040231f9",
+        "coverageDenominator": {
+          "kind": "RFC-SECTION",
+          "count": 8,
+          "assuranceBoundary": "TFTP-BASE-USED-BY-615A-NOT-MAIL-MODE"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "units": [
+          {
+            "id": "SAU-1350-1",
+            "clause": "1",
+            "clauseTitleEn": "Purpose",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "TFTP-BASE-IDENTITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "TFTP transfers files over UDP. 615A uses this base with 615A-defined files and options.",
+            "summaryZh": "TFTP 经 UDP 传文件。615A 在此基础上使用自有文件与选项。"
+          },
+          {
+            "id": "SAU-1350-2",
+            "clause": "2",
+            "clauseTitleEn": "Overview of the protocol",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TFTP-LOCKSTEP-IDENTITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Lock-step RRQ/WRQ, DATA, ACK and ERROR are the TFTP exchanges 615A file transfer uses.",
+            "summaryZh": "锁步 RRQ/WRQ、DATA、ACK 与 ERROR 是 615A 文件传输使用的 TFTP 交换。"
+          },
+          {
+            "id": "SAU-1350-3",
+            "clause": "3",
+            "clauseTitleEn": "Relation to other protocols",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "TFTP-OVER-UDP-IDENTITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "TFTP runs on UDP. IP/UDP identities are separate RFCs.",
+            "summaryZh": "TFTP 运行于 UDP。IP/UDP 身份是独立 RFC。"
+          },
+          {
+            "id": "SAU-1350-4",
+            "clause": "4",
+            "clauseTitleEn": "Initial connection protocol",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TFTP-RRQ-WRQ-TID",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "RRQ/WRQ and TID assignment are the connection start 615A TFTP uses. Mail mode is not used.",
+            "summaryZh": "RRQ/WRQ 与 TID 分配是 615A TFTP 的连接起点。不使用 mail 模式。"
+          },
+          {
+            "id": "SAU-1350-5",
+            "clause": "5",
+            "clauseTitleEn": "TFTP packets",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TFTP-PACKET-TYPES",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "RRQ, WRQ, DATA, ACK and ERROR packet layouts are the TFTP packet types. Option acknowledgements come from RFC 2347, not this section.",
+            "summaryZh": "RRQ、WRQ、DATA、ACK 与 ERROR 是 TFTP 包类型。选项确认来自 RFC 2347，不是本节。"
+          },
+          {
+            "id": "SAU-1350-6",
+            "clause": "6",
+            "clauseTitleEn": "Normal termination",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TFTP-NORMAL-END",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Short final DATA block terminates a 615A TFTP transfer.",
+            "summaryZh": "短最后 DATA 块结束 615A TFTP 传输。"
+          },
+          {
+            "id": "SAU-1350-7",
+            "clause": "7",
+            "clauseTitleEn": "Premature termination",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TFTP-ERROR-ABORT",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "ERROR aborts the TFTP transfer. This is TFTP-layer abort, not a waiver of 615A FIND 2 s / 3 s clocks.",
+            "summaryZh": "ERROR 中止 TFTP 传输。这是 TFTP 层中止，不是对 615A FIND 2 秒/3 秒时钟的豁免。"
+          },
+          {
+            "id": "SAU-1350-MAIL",
+            "clause": "mail-mode",
+            "clauseTitleEn": "Mail transfer mode",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Mail mode is not used by 615A.",
+            "summaryZh": "615A 不使用 mail 模式。"
+          }
+        ],
+        "openIssues": [
+          {
+            "id": "SAU-1350-ISSUE-CRS-EDGE",
+            "status": "PACKAGE-B",
+            "noteEn": "CRS-M1-00418..00424 still list RFC-1350 as NOT-YET-BOUND. Package B must emit explicit edges or keep named non-edge with rationale.",
+            "noteZh": "CRS-M1-00418..00424 仍将 RFC-1350 列为 NOT-YET-BOUND。执行包 B 必须给出显式边，或保留具名无边及理由。"
+          }
+        ],
+        "dispositionCounts": {
+          "APPLICABLE-SUPPORTING": 7,
+          "OUT-OF-PROFILE": 1
+        }
+      },
+      {
+        "sourceId": "RFC-1785",
+        "role": "PUBLIC-TFTP-OPTION-NEGOTIATION-ANALYSIS",
+        "edition": "RFC-1785",
+        "sha256": "801d0c80d09549f694c0837c346934822c4212476fa63cbdf0a99ad8f522ea35",
+        "coverageDenominator": {
+          "kind": "RFC-SECTION",
+          "count": 2,
+          "assuranceBoundary": "INFORMATIONAL-ONLY-NO-NEW-OBLIGATION"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "units": [
+          {
+            "id": "SAU-1785-ABS",
+            "clause": "Abstract",
+            "clauseTitleEn": "Informational option-negotiation analysis",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "INFORMATIONAL-RFC-NO-STANDARD",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "INFORMATIONAL-CROSS-CHECK",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "RFC 1785 is Informational. It does not specify an Internet standard and adds no 615A actor obligation.",
+            "summaryZh": "RFC 1785 为 Informational，不规定因特网标准，也不增加 615A 参与者义务。"
+          },
+          {
+            "id": "SAU-1785-TEST",
+            "clause": "Test Results",
+            "clauseTitleEn": "Behaviour of servers that ignore options",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "INFORMATIONAL-RFC-NO-STANDARD",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "INFORMATIONAL-CROSS-CHECK",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Test narrative about legacy servers. 615A already says an unimplemented option must not fail the transfer; that obligation stays on 615A, not on this RFC.",
+            "summaryZh": "关于遗留服务器的试验叙述。615A 已规定未实现选项不得使传输失败；该义务在 615A，不在本 RFC。"
+          }
+        ],
+        "openIssues": [],
+        "dispositionCounts": {
+          "OUT-OF-PROFILE": 2
+        }
+      },
+      {
+        "sourceId": "RFC-2347",
+        "role": "PUBLIC-TFTP-OPTION-EXTENSION",
+        "edition": "RFC-2347",
+        "sha256": "dd858f38246b61dc46863a907e2834567270a92b03660a6bb120dc4a3339fb26",
+        "coverageDenominator": {
+          "kind": "RFC-SECTION",
+          "count": 4,
+          "assuranceBoundary": "OPTION-MECHANISM-ONLY-ADOPTED-OPTIONS-ARE-2348-2349-AND-615A"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "units": [
+          {
+            "id": "SAU-2347-INTRO",
+            "clause": "Introduction",
+            "clauseTitleEn": "Backward-compatible option negotiation",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TFTP-OPTION-MECHANISM",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Option negotiation is the mechanism 615A uses when TFTP options are present. Unimplemented options must not fail the transfer (615A), consistent with this extension.",
+            "summaryZh": "当存在 TFTP 选项时，615A 使用该选项协商机制。未实现选项不得使传输失败（615A），与此扩展一致。"
+          },
+          {
+            "id": "SAU-2347-PKT",
+            "clause": "Packet Formats",
+            "clauseTitleEn": "OACK packet",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TFTP-OACK-IDENTITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "OACK is the option-acknowledgement packet. 615A does not invent a different option packet type.",
+            "summaryZh": "OACK 是选项确认包。615A 不另造选项包类型。"
+          },
+          {
+            "id": "SAU-2347-NEG",
+            "clause": "Options",
+            "clauseTitleEn": "Request-respond-acknowledge option sequence",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TFTP-OPTION-SEQUENCE",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "Options append to RRQ/WRQ. Only blksize, timeout and tsize are adopted from 2348/2349 plus any 615A-defined integrity option. Other options stay unimplemented and non-fatal.",
+            "summaryZh": "选项附于 RRQ/WRQ。仅采纳 2348/2349 的 blksize、timeout、tsize 以及 615A 定义的完整性选项。其他选项保持未实现且非致命。"
+          },
+          {
+            "id": "SAU-2347-SEC",
+            "clause": "Security Considerations",
+            "clauseTitleEn": "Security considerations",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "No additional 615A actor obligation.",
+            "summaryZh": "无额外 615A 参与者义务。"
+          }
+        ],
+        "openIssues": [],
+        "dispositionCounts": {
+          "APPLICABLE-SUPPORTING": 3,
+          "OUT-OF-PROFILE": 1
+        }
+      },
+      {
+        "sourceId": "RFC-2348",
+        "role": "PUBLIC-TFTP-BLOCKSIZE-OPTION",
+        "edition": "RFC-2348",
+        "sha256": "fcd1e9959ef7bbacb20e3564c6c93089e77fbef62ea60e453e83d9d540bfac09",
+        "coverageDenominator": {
+          "kind": "RFC-SECTION",
+          "count": 2,
+          "assuranceBoundary": "BLKSIZE-AS-ADOPTED-BY-615A"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "units": [
+          {
+            "id": "SAU-2348-BLK",
+            "clause": "Blocksize Option Specification",
+            "clauseTitleEn": "blksize option",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TFTP-BLKSIZE-ADOPTED",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "615A requires the data loader to implement TFTP block size. The option name and negotiation are RFC 2348; 615A may further constrain permitted sizes.",
+            "summaryZh": "615A 要求数据加载器实现 TFTP 块大小。选项名与协商是 RFC 2348；615A 可进一步约束允许的大小。"
+          },
+          {
+            "id": "SAU-2348-SEC",
+            "clause": "Security Considerations",
+            "clauseTitleEn": "Security considerations",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "No additional 615A actor obligation.",
+            "summaryZh": "无额外 615A 参与者义务。"
+          }
+        ],
+        "openIssues": [],
+        "dispositionCounts": {
+          "APPLICABLE-SUPPORTING": 1,
+          "OUT-OF-PROFILE": 1
+        }
+      },
+      {
+        "sourceId": "RFC-2349",
+        "role": "PUBLIC-TFTP-TIMEOUT-TSIZE-OPTIONS",
+        "edition": "RFC-2349",
+        "sha256": "327758e6bf9178593bd48771be24682700e07fd682f1a468c0f54751196b4db6",
+        "coverageDenominator": {
+          "kind": "RFC-SECTION",
+          "count": 3,
+          "assuranceBoundary": "TIMEOUT-AND-TSIZE-AS-ADOPTED-BY-615A"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "units": [
+          {
+            "id": "SAU-2349-TO",
+            "clause": "Timeout Interval Option Specification",
+            "clauseTitleEn": "timeout option",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TFTP-TIMEOUT-OPTION-ADOPTED",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "RFC 2349 timeout is a TFTP retransmission interval option. It is not the 615A FIND 2 s host deadline or 3 s registration window.",
+            "summaryZh": "RFC 2349 timeout 是 TFTP 重传间隔选项，不是 615A FIND 的 2 秒主机期限或 3 秒登记窗口。"
+          },
+          {
+            "id": "SAU-2349-TS",
+            "clause": "Transfer Size Option Specification",
+            "clauseTitleEn": "tsize option",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TFTP-TSIZE-ADOPTED",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "615A compares transfer size when the option is used. Mismatch handling stays on the 615A row, not a silent RFC import.",
+            "summaryZh": "当使用该选项时，615A 比较传输大小。失配处理留在 615A 行上，不是静默导入 RFC。"
+          },
+          {
+            "id": "SAU-2349-SEC",
+            "clause": "Security Considerations",
+            "clauseTitleEn": "Security considerations",
+            "pdfPages": [],
+            "unitKind": "RFC-SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-YET-EMITTED",
+            "summaryEn": "No additional 615A actor obligation.",
+            "summaryZh": "无额外 615A 参与者义务。"
+          }
+        ],
+        "openIssues": [],
+        "dispositionCounts": {
+          "APPLICABLE-SUPPORTING": 2,
+          "OUT-OF-PROFILE": 1
+        }
       }
     ]
   }

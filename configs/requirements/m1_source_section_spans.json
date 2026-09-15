@@ -56,11 +56,11 @@
     {
       "sourceId": "ARINC-665-5",
       "pdfPages": [
-        32,
+        36,
         139
       ],
       "kind": "OUTSIDE-BOUNDED-SURVEY",
-      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-MEDIA-SET-NOT-USED-BY-ETHERNET-UPLOAD"
+      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-MEDIA-SET-CRC-APPENDICES-AFTER-CLAUSE-2-INCLUDING-BATCH-FILE"
     },
     {
       "sourceId": "ARINC-664-2",
@@ -96,32 +96,32 @@
       "excludedClausePrefix": "3",
       "clauseTitleEn": "Loadable Media Set Parts",
       "excludedPdfPages": [
-        32,
-        45
+        36,
+        54
       ],
-      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-MEDIA-SET-NOT-USED-BY-ETHERNET-UPLOAD",
-      "conditionForReactivation": "MEDIA-BASED-DELIVERY-ADDED-TO-PROFILE-SCOPE"
+      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-MEDIA-SET-PHYSICAL-MEMBERS-NOT-TRIGGERED-BY-ETHERNET-OR-LSP-ON-MEDIA",
+      "conditionForReactivation": "DEPLOYMENT-USES-ARINC-665-PHYSICAL-MEDIA-SET-MEMBERS-AS-ORGANIZATION"
     },
     {
       "sourceId": "ARINC-665-5",
-      "excludedClausePrefix": "4",
-      "clauseTitleEn": "Loadable Software Distribution Container Format",
+      "excludedClausePrefix": "4-5",
+      "clauseTitleEn": "CRC and integrity-check methods relocated to ARINC 645",
       "excludedPdfPages": [
-        46,
-        60
+        55,
+        56
       ],
-      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-DISTRIBUTION-CONTAINER-NOT-USED-BY-BOUNDED-UPLOAD",
-      "conditionForReactivation": "CONTAINER-BASED-DELIVERY-ADDED-TO-PROFILE-SCOPE"
+      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-RELOCATED-TO-645-NOT-BOUND-THIS-PR",
+      "conditionForReactivation": "SUCCESSOR-PR-BINDS-615A-TRIGGERED-645-CLAUSES"
     },
     {
       "sourceId": "ARINC-665-5",
-      "excludedClausePrefix": "5-onwards",
-      "clauseTitleEn": "Loadable Software Airline Modifiable Information, Legacy Compatibility, Back Matter",
+      "excludedClausePrefix": "ATTACHMENT-APPENDICES-SUPPLEMENTS",
+      "clauseTitleEn": "Attachments, appendices, supplements, errata and APIM",
       "excludedPdfPages": [
-        61,
+        57,
         139
       ],
-      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-BEYOND-CURRENT-M1-PROFILE-SURFACE",
+      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-BACK-MATTER-OUTSIDE-CURRENT-LEAF-SURVEY",
       "conditionForReactivation": "PROFILE-SCOPE-EXPANSION-VIA-CONTROLLED-CR"
     }
   ],
@@ -506,11 +506,11 @@
           "namespace": "BOUNDED-SURVEY",
           "documentPages": [
             1,
-            21
+            25
           ],
           "pdfPages": [
             11,
-            31
+            35
           ]
         }
       ]
