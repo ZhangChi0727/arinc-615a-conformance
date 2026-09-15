@@ -10083,7 +10083,35 @@
       "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，FIND 主机必须在请求后的两秒上界内发出 FIND 应答。超过该上界有不被登记的风险；该风险不是可以不应答的许可。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "REQUIRED",
-      "expectedDependencyIds": []
+      "expectedDependencyIds": [],
+      "expectedTiming": {
+        "timingFamily": "FIND-HOST-ANSWER-DEADLINE",
+        "provenanceKind": "SYMBOLIC-SOURCE-PARAMETER",
+        "sourceParameter": "FIND-HOST-TIMEOUT-2-S",
+        "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
+        "sourceEvidenceUnitIds": [
+          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700",
+          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF"
+        ],
+        "trigger": "FIND-REQUEST-RECEIVED-BY-HOST",
+        "response": "FIND-ANSWER-SENT-BY-HOST",
+        "cancellation": "ILLEGAL-FIND-REQUEST-OR-FIND-ABORTED",
+        "supersedingTrigger": "NONE",
+        "correlationKey": "FIND-REQUEST-INSTANCE",
+        "pairingPolicy": "PAIR-FIND-REQUEST-WITH-HOST-ANSWER",
+        "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+        "silenceSemantics": "TIMEOUT-ONLY-AT-SOURCE-UPPER-BOUND",
+        "lowerBound": 0,
+        "upperBound": 2,
+        "unit": "s",
+        "lowerBoundary": "CLOSED",
+        "upperBoundary": "CLOSED",
+        "clockStart": "CORRELATED-TRIGGER-TIMESTAMP",
+        "clockResets": [],
+        "observationState": "OBSERVABLE-IN-PRINCIPLE",
+        "errorBudgetState": "FUTURE-CONFIGURATION-DEPENDENT",
+        "ambiguityStatus": "NONE-OBSERVED"
+      }
     },
     {
       "requirementId": "CRS-M1-00392",
@@ -10828,7 +10856,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader shall prompt the operator to replace or select writable media before starting DOWNLOAD.",
-      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须prompt the operator to replace or 选择 writable media before starting DOWNLOAD。",
+      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须在开始 DOWNLOAD 前提示操作员更换或选择可写媒体。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -10849,7 +10877,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader shall fail DOWNLOAD if the write still fails after asking for writable media.",
-      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须执行“fail DOWNLOAD if the write still fails after asking for writable media”。",
+      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，若在要求可写媒体之后写入仍然失败，数据加载器必须使 DOWNLOAD 失败。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -10891,7 +10919,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When removable media is the LNR source and the destination of downloaded data, the data loader may create DNLD_INFO_<THW_ID_POS>_<number> for manufacturer-specific download information.",
-      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器可以执行“create DNLD_INFO_<THW_ID_POS>_<number> for manufacturer-specific download information”。",
+      "expectedGeneratedSemanticProjectionZh": "在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器可以为制造商专用下载信息创建 DNLD_INFO_<THW_ID_POS>_<number> 文件。",
       "expectedSourceModality": "MAY",
       "expectedConformanceEffect": "OPTIONAL",
       "expectedDependencyIds": []
@@ -11000,7 +11028,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data loader shall if the target answers before Exception Timer elapses, continue without waiting it out.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须执行“if the target answers before Exception Timer elapses, continue without waiting it out”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，若目标在 Exception Timer 到期前应答，数据加载器必须继续而不把该定时器等待完毕。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -11152,7 +11180,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the data loader shall if the target answers before Exception Timer elapses, continue without waiting it out.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须执行“if the target answers before Exception Timer elapses, continue without waiting it out”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，若目标在 Exception Timer 到期前应答，数据加载器必须继续而不把该定时器等待完毕。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -11216,7 +11244,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNR File Name with 0x00.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNR File Name with 0x00”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNR File Name 的零终止。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -11237,7 +11265,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer may for other status codes ignore description content, which may hold leftover data.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方可以执行“for other status codes ignore description content, which may hold leftover data”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方对其他状态码可以忽略描述字段内容，其中可能残留数据。",
       "expectedSourceModality": "MAY",
       "expectedConformanceEffect": "OPTIONAL",
       "expectedDependencyIds": []
@@ -11279,7 +11307,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate Download Status Description with 0x00.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate Download Status Description with 0x00”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 Download Status Description 的零终止。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -11301,7 +11329,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall set Exception Timer to 0x0000 for every other status code.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“set Exception Timer to 0x0000 for every other status code”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把其他状态码的 Exception Timer 置为 0x0000。",
       "expectedSourceModality": "MUST",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -11322,7 +11350,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the target hardware shall provide Estimated Time as soon as possible during the operation.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件必须执行“provide Estimated Time as soon as possible during the operation”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件必须在操作过程中尽快提供 Estimated Time。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -11344,7 +11372,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall if the target does not give Estimated Time, set the field to 0xFFFF.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“if the target does not give Estimated Time, set the field to 0xFFFF”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，若目标未给出 Estimated Time，协议文件生成方必须把该字段置为 0xFFFF。",
       "expectedSourceModality": "MUST",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -11365,7 +11393,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNS File Name with 0x00.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNS File Name with 0x00”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNS File Name 的零终止。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -11386,7 +11414,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer may for other file status codes ignore description content, which may hold leftover data.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方可以执行“for other file status codes ignore description content, which may hold leftover data”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方对其他文件状态码可以忽略描述字段内容，其中可能残留数据。",
       "expectedSourceModality": "MAY",
       "expectedConformanceEffect": "OPTIONAL",
       "expectedDependencyIds": []
@@ -11428,7 +11456,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate File Status Description with 0x00.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate File Status Description with 0x00”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 File Status Description 的零终止。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -11449,7 +11477,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNL File Name with 0x00.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNL File Name with 0x00”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNL File Name 的零终止。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -11491,7 +11519,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNL File Description with 0x00.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNL File Description with 0x00”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNL File Description 的零终止。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -11512,7 +11540,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNA File Name with 0x00.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须执行“zero-terminate LNA File Name with 0x00”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNA File Name 的零终止。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -11542,12 +11570,14 @@
         "protocolFile": "LNR",
         "fieldId": "FIELD-FILE-LENGTH",
         "ordinal": 1,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "32",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNR-FILE-LENGTH-32"
+        ]
       }
     },
     {
@@ -11566,8 +11596,8 @@
         "operation": "DOWNLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNR at the tabulated width and table ordinal 2.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNR 的 FIELD-PROTOCOL-VERSION。",
+      "expectedGeneratedSemanticProjectionEn": "When the corresponding DOWNLOAD mode is used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNR as two ASCII characters at table ordinal 2.",
+      "expectedGeneratedSemanticProjectionZh": "在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNR 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。",
       "expectedSourceModality": "TABLE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [],
@@ -11575,12 +11605,14 @@
         "protocolFile": "LNR",
         "fieldId": "FIELD-PROTOCOL-VERSION",
         "ordinal": 2,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "FIXED-TWO-ASCII-CHARACTERS",
+        "noteRefs": [
+          "PROTOCOL-VERSION-TWO-ASCII-CHARACTERS"
+        ]
       }
     },
     {
@@ -11608,12 +11640,14 @@
         "protocolFile": "LNR",
         "fieldId": "FIELD-NUMBER-OF-FILES",
         "ordinal": 3,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNR-NUMBER-OF-FILES-16"
+        ]
       }
     },
     {
@@ -11641,12 +11675,14 @@
         "protocolFile": "LNR",
         "fieldId": "FIELD-FILE-NAME-LENGTH",
         "ordinal": 4,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "repeatScope": "PER-FILE-RECORD",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNR-FILE-NAME-LENGTH-REPEAT"
+        ]
       }
     },
     {
@@ -11674,12 +11710,14 @@
         "protocolFile": "LNR",
         "fieldId": "FIELD-FILE-NAME",
         "ordinal": 5,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "8-TO-2040",
         "repeatScope": "PER-FILE-RECORD",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
-        "noteRefs": []
+        "noteRefs": [
+          "LNR-FILE-NAME-REPEAT"
+        ]
       }
     },
     {
@@ -11707,12 +11745,14 @@
         "protocolFile": "LNR",
         "fieldId": "FIELD-USER-DEFINED-DATA-LENGTH",
         "ordinal": 6,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
-        "repeatScope": "PER-FILE-RECORD",
-        "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
+        "widthBitsExpression": "8",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNR-USER-DATA-LENGTH-ONCE"
+        ]
       }
     },
     {
@@ -11740,12 +11780,14 @@
         "protocolFile": "LNR",
         "fieldId": "FIELD-USER-DEFINED-DATA",
         "ordinal": 7,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
-        "repeatScope": "PER-FILE-RECORD",
-        "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
+        "widthBitsExpression": "0-TO-2040",
+        "repeatScope": "ONCE",
+        "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
         "encodingRule": "LENGTH-PREFIXED-BINARY",
         "terminationRule": "LENGTH-PREFIXED-PER-TABLE",
-        "noteRefs": []
+        "noteRefs": [
+          "LNR-USER-DATA-ONCE-NOT-PER-FILE"
+        ]
       }
     },
     {
@@ -11773,12 +11815,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-FILE-LENGTH",
         "ordinal": 1,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "32",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNS-FIELD-FILE-LENGTH-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -11797,8 +11841,8 @@
         "operation": "DOWNLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNS at the tabulated width and table ordinal 2.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNS 的 FIELD-PROTOCOL-VERSION。",
+      "expectedGeneratedSemanticProjectionEn": "When the corresponding DOWNLOAD mode is used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNS as two ASCII characters at table ordinal 2.",
+      "expectedGeneratedSemanticProjectionZh": "在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNS 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。",
       "expectedSourceModality": "TABLE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [],
@@ -11806,12 +11850,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-PROTOCOL-VERSION",
         "ordinal": 2,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "FIXED-TWO-ASCII-CHARACTERS",
+        "noteRefs": [
+          "PROTOCOL-VERSION-TWO-ASCII-CHARACTERS"
+        ]
       }
     },
     {
@@ -11839,12 +11885,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-DOWNLOAD-OPERATION-STATUS-CODE",
         "ordinal": 3,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNS-FIELD-DOWNLOAD-OPERATION-STATUS-CODE-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -11872,12 +11920,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH",
         "ordinal": 4,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNS-FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -11905,12 +11955,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-DOWNLOAD-STATUS-DESCRIPTION",
         "ordinal": 5,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "0-TO-2040",
         "repeatScope": "ONCE",
         "presenceCondition": "WHEN-LENGTH-FIELD-POSITIVE",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
-        "noteRefs": []
+        "noteRefs": [
+          "LNS-FIELD-DOWNLOAD-STATUS-DESCRIPTION-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -11938,12 +11990,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-COUNTER",
         "ordinal": 6,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNS-FIELD-COUNTER-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -11971,12 +12025,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-EXCEPTION-TIMER",
         "ordinal": 7,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS",
+        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNS-EXCEPTION-TIMER-WHEN-STATUS-0002-OR-0004"
+        ]
       }
     },
     {
@@ -11995,8 +12051,8 @@
         "operation": "DOWNLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-ESTIMATED-TIME of LNS at the tabulated width and table ordinal 8.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 8 个字段位置编码 LNS 的 FIELD-ESTIMATED-TIME。",
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is used, the protocol-file producer shall encode LNS Estimated Time as a 16-bit raw field. Status 0x0002 or 0x0004 carry remaining seconds; 0xFFFF means the estimate is not given and must not be decoded as ordinary remaining seconds; other status codes set the field to 0x0000.",
+      "expectedGeneratedSemanticProjectionZh": "在使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Estimated Time 编为 16 位原始字段。状态 0x0002 或 0x0004 携带剩余秒数；0xFFFF 表示未给出估计，不得解码为普通剩余秒数；其他状态码把该字段置为 0x0000。",
       "expectedSourceModality": "TABLE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [],
@@ -12004,12 +12060,25 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-ESTIMATED-TIME",
         "ordinal": 8,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "ALWAYS",
+        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNS-ESTIMATED-TIME-WHEN-STATUS-0002-OR-0004",
+          "LNS-ESTIMATED-TIME-UNKNOWN-IS-0xFFFF"
+        ],
+        "specialValues": [
+          {
+            "code": "0xFFFF",
+            "meaningCode": "ESTIMATED-TIME-NOT-GIVEN"
+          },
+          {
+            "code": "0x0000",
+            "meaningCode": "ESTIMATED-TIME-UNUSED-FOR-OTHER-STATUS"
+          }
+        ]
       }
     },
     {
@@ -12028,8 +12097,8 @@
         "operation": "DOWNLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-LIST-RATIO of LNS at the tabulated width and table ordinal 9.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 9 个字段位置编码 LNS 的 FIELD-DOWNLOAD-LIST-RATIO。",
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined or Operator Defined DOWNLOAD is used, the protocol-file producer shall encode LNS Download List Ratio as three right-adjusted ASCII characters with leading blanks, not as an integer.",
+      "expectedGeneratedSemanticProjectionZh": "在使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Download List Ratio 编为三个右对齐、前导空白的 ASCII 字符，而不是整数。",
       "expectedSourceModality": "TABLE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [],
@@ -12037,12 +12106,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-DOWNLOAD-LIST-RATIO",
         "ordinal": 9,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "24",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "RIGHT-ADJUSTED-LEADING-BLANKS",
+        "noteRefs": [
+          "LNS-DOWNLOAD-LIST-RATIO-THREE-ASCII-PERCENT"
+        ]
       }
     },
     {
@@ -12070,12 +12141,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-NUMBER-OF-FILES",
         "ordinal": 10,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNS-FIELD-NUMBER-OF-FILES-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12103,12 +12176,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-FILE-NAME-LENGTH",
         "ordinal": 11,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "repeatScope": "PER-FILE-RECORD",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNS-FIELD-FILE-NAME-LENGTH-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12136,12 +12211,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-FILE-NAME",
         "ordinal": 12,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "8-TO-2040",
         "repeatScope": "PER-FILE-RECORD",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
-        "noteRefs": []
+        "noteRefs": [
+          "LNS-FIELD-FILE-NAME-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12169,12 +12246,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-FILE-STATUS",
         "ordinal": 13,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "repeatScope": "PER-FILE-RECORD",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNS-FIELD-FILE-STATUS-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12202,12 +12281,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-FILE-STATUS-DESCRIPTION-LENGTH",
         "ordinal": 14,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "repeatScope": "PER-FILE-RECORD",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNS-FIELD-FILE-STATUS-DESCRIPTION-LENGTH-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12235,12 +12316,14 @@
         "protocolFile": "LNS",
         "fieldId": "FIELD-FILE-STATUS-DESCRIPTION",
         "ordinal": 15,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "0-TO-2040",
         "repeatScope": "PER-FILE-RECORD",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
-        "noteRefs": []
+        "noteRefs": [
+          "LNS-FIELD-FILE-STATUS-DESCRIPTION-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12268,12 +12351,14 @@
         "protocolFile": "LNL",
         "fieldId": "FIELD-FILE-LENGTH",
         "ordinal": 1,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "32",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNL-FIELD-FILE-LENGTH-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12292,8 +12377,8 @@
         "operation": "DOWNLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNL at the tabulated width and table ordinal 2.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNL 的 FIELD-PROTOCOL-VERSION。",
+      "expectedGeneratedSemanticProjectionEn": "When the corresponding DOWNLOAD mode is used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNL as two ASCII characters at table ordinal 2.",
+      "expectedGeneratedSemanticProjectionZh": "在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNL 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。",
       "expectedSourceModality": "TABLE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [],
@@ -12301,12 +12386,14 @@
         "protocolFile": "LNL",
         "fieldId": "FIELD-PROTOCOL-VERSION",
         "ordinal": 2,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "FIXED-TWO-ASCII-CHARACTERS",
+        "noteRefs": [
+          "PROTOCOL-VERSION-TWO-ASCII-CHARACTERS"
+        ]
       }
     },
     {
@@ -12334,12 +12421,14 @@
         "protocolFile": "LNL",
         "fieldId": "FIELD-NUMBER-OF-FILES",
         "ordinal": 3,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNL-FIELD-NUMBER-OF-FILES-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12367,12 +12456,14 @@
         "protocolFile": "LNL",
         "fieldId": "FIELD-FILE-NAME-LENGTH",
         "ordinal": 4,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "repeatScope": "PER-FILE-RECORD",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNL-FIELD-FILE-NAME-LENGTH-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12400,12 +12491,14 @@
         "protocolFile": "LNL",
         "fieldId": "FIELD-FILE-NAME",
         "ordinal": 5,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "8-TO-2040",
         "repeatScope": "PER-FILE-RECORD",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
-        "noteRefs": []
+        "noteRefs": [
+          "LNL-FIELD-FILE-NAME-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12433,12 +12526,14 @@
         "protocolFile": "LNL",
         "fieldId": "FIELD-FILE-DESCRIPTION-LENGTH",
         "ordinal": 6,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "repeatScope": "PER-FILE-RECORD",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNL-FIELD-FILE-DESCRIPTION-LENGTH-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12466,12 +12561,14 @@
         "protocolFile": "LNL",
         "fieldId": "FIELD-FILE-DESCRIPTION",
         "ordinal": 7,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "0-TO-2040",
         "repeatScope": "PER-FILE-RECORD",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
-        "noteRefs": []
+        "noteRefs": [
+          "LNL-FIELD-FILE-DESCRIPTION-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12499,12 +12596,14 @@
         "protocolFile": "LNA",
         "fieldId": "FIELD-FILE-LENGTH",
         "ordinal": 1,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "32",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNA-FIELD-FILE-LENGTH-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12523,8 +12622,8 @@
         "operation": "DOWNLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNA at the tabulated width and table ordinal 2.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 2 个字段位置编码 LNA 的 FIELD-PROTOCOL-VERSION。",
+      "expectedGeneratedSemanticProjectionEn": "When the corresponding DOWNLOAD mode is used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNA as two ASCII characters at table ordinal 2.",
+      "expectedGeneratedSemanticProjectionZh": "在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNA 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。",
       "expectedSourceModality": "TABLE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [],
@@ -12532,12 +12631,14 @@
         "protocolFile": "LNA",
         "fieldId": "FIELD-PROTOCOL-VERSION",
         "ordinal": 2,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
-        "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "terminationRule": "FIXED-TWO-ASCII-CHARACTERS",
+        "noteRefs": [
+          "PROTOCOL-VERSION-TWO-ASCII-CHARACTERS"
+        ]
       }
     },
     {
@@ -12565,12 +12666,14 @@
         "protocolFile": "LNA",
         "fieldId": "FIELD-NUMBER-OF-FILES",
         "ordinal": 3,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNA-FIELD-NUMBER-OF-FILES-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12598,12 +12701,14 @@
         "protocolFile": "LNA",
         "fieldId": "FIELD-FILE-NAME-LENGTH",
         "ordinal": 4,
-        "widthBitsExpression": "TABLE-DEFINED-WIDTH",
+        "widthBitsExpression": "8",
         "repeatScope": "PER-FILE-RECORD",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [
+          "LNA-FIELD-FILE-NAME-LENGTH-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12631,12 +12736,14 @@
         "protocolFile": "LNA",
         "fieldId": "FIELD-FILE-NAME",
         "ordinal": 5,
-        "widthBitsExpression": "TABLE-DEFINED-VARIABLE-WIDTH",
+        "widthBitsExpression": "8-TO-2040",
         "repeatScope": "PER-FILE-RECORD",
         "presenceCondition": "PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE",
         "encodingRule": "ZERO-TERMINATED-ASCII",
         "terminationRule": "ZERO-TERMINATED-PER-SECTION-6.4",
-        "noteRefs": []
+        "noteRefs": [
+          "LNA-FIELD-FILE-NAME-TABLE-WIDTH"
+        ]
       }
     },
     {
@@ -12676,7 +12783,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall TFTP-read LND from the target.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须执行“TFTP-read LND from the target”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须用 TFTP 从目标读取 LND。",
       "expectedSourceModality": "FIGURE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -12719,7 +12826,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall emit Downloading_Initialization_Response from the LND outcome.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须执行“emit Downloading_Initialization_Response from the LND outcome”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须根据 LND 结果发出 Downloading_Initialization_Response。",
       "expectedSourceModality": "FIGURE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -12752,16 +12859,18 @@
       "expectedSemantic": {
         "actor": "DATA-LOADER-PROTOCOL",
         "condition": "WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED",
-        "action": "ACCEPT-TFTP-WRITE-LNR-TARGET",
+        "action": "AFTER-ACCEPT-WRITE-LNR-TO-TARGET-BY-TFTP",
         "objects": [
-          "LNR"
+          "LNR",
+          "TARGET-HARDWARE",
+          "TFTP"
         ],
         "observableEffect": "ACCEPT-TFTP-WRITE-LNR-TARGET-OBSERVABLE",
         "operation": "DOWNLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall on accept, TFTP-write LNR to the target.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须执行“on accept, TFTP-write LNR to the target”。",
+      "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall, after accept, write LNR to the target hardware using TFTP.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须在接受之后用 TFTP 把 LNR 写到目标硬件。",
       "expectedSourceModality": "FIGURE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -12804,7 +12913,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Media Defined DOWNLOAD is implemented and used, the target hardware shall TFTP-write LNS, including accepted-not-started 0x0001.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须执行“TFTP-write LNS, including accepted-not-started 0x0001”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须用 TFTP 写 LNS，并包含已接受但未开始的 0x0001。",
       "expectedSourceModality": "FIGURE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -12931,7 +13040,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall TFTP-read LNO from the target.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须执行“TFTP-read LNO from the target”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须用 TFTP 从目标读取 LNO。",
       "expectedSourceModality": "FIGURE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -12974,7 +13083,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall emit Downloading_Initialization_Response from the LNO outcome.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须执行“emit Downloading_Initialization_Response from the LNO outcome”。",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须根据 LNO 结果发出 Downloading_Initialization_Response。",
       "expectedSourceModality": "FIGURE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -13007,16 +13116,18 @@
       "expectedSemantic": {
         "actor": "TARGET-HARDWARE",
         "condition": "WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED",
-        "action": "ACCEPT-TFTP-WRITE-LNL-LOADER",
+        "action": "AFTER-ACCEPT-WRITE-LNL-TO-LOADER-BY-TFTP",
         "objects": [
-          "LNL"
+          "LNL",
+          "DATA-LOADER",
+          "TFTP"
         ],
         "observableEffect": "ACCEPT-TFTP-WRITE-LNL-LOADER-OBSERVABLE",
         "operation": "DOWNLOAD",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the target hardware shall on accept, TFTP-write LNL to the loader.",
-      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须执行“on accept, TFTP-write LNL to the loader”。",
+      "expectedGeneratedSemanticProjectionEn": "When Operator Defined DOWNLOAD is implemented and used, the target hardware shall, after accept, write LNL to the data loader using TFTP.",
+      "expectedGeneratedSemanticProjectionZh": "在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须在接受之后用 TFTP 把 LNL 写到加载器。",
       "expectedSourceModality": "FIGURE-CONSTRAINT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -13199,17 +13310,17 @@
       "expectedSemantic": {
         "actor": "SYSTEM-INTEGRATOR",
         "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX",
-        "action": "APPLY-AVIATION-DATA-NETWORK-ADDRESS-RULES-664-PART-4-IDENTIFY",
+        "action": "APPLY-664P4-ADDRESS-RULES-OR-INTEGRATOR-IDENTIFIED-REQUIREMENTS",
         "objects": [
-          "ADDRESS-RULES",
-          "ARINC-664-4"
+          "ARINC-664-4-ADDRESS-RULES",
+          "INTEGRATOR-IDENTIFIED-ADDRESS-REQUIREMENTS"
         ],
-        "observableEffect": "APPLY-AVIATION-DATA-NETWORK-ADDRESS-RULES-664-PART-4-IDENTIF-OBSERVABLE",
+        "observableEffect": "AFDX-ADDRESS-RULE-ALTERNATIVE-OBSERVABLE",
         "operation": "AFDX-DEPLOYMENT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet, the system integrator shall apply aviation data-network address rules from 664 Part 4, or identify the address requirements. This does not activate the current Compliant Ethernet instance.",
-      "expectedGeneratedSemanticProjectionZh": "在配置的部署把 615A 承载于 AFDX 而非普通以太网时，系统集成商必须适用 aviation data-network address rules from 664 Part 4, or identify the address requirements。这不激活当前 Compliant 以太网实例。",
+      "expectedGeneratedSemanticProjectionEn": "When the configured deployment carries 615A over AFDX rather than ordinary Ethernet, the system integrator shall apply aviation data-network address rules from 664 Part 4, or identify integrator-specified address requirements. The alternative remains open; this does not select Part 4 automatically and does not activate the current Compliant Ethernet instance.",
+      "expectedGeneratedSemanticProjectionZh": "在配置的部署把 615A 承载于 AFDX 而非普通以太网时，系统集成商必须适用 664 Part 4 的航空数据网络地址规则，或指出集成商识别的地址要求。这两条路径保持可选择，不自动选定 Part 4，也不激活当前 Compliant 以太网实例。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": []
@@ -13233,7 +13344,35 @@
       "expectedGeneratedSemanticProjectionZh": "在实现 FIND 时，数据加载器必须在发出 FIND 请求后为 FIND 应答保持三秒窗口。该窗口长度是上界，并不要求每个应答恰好在第三秒到达。",
       "expectedSourceModality": "FACT",
       "expectedConformanceEffect": "REQUIRED",
-      "expectedDependencyIds": []
+      "expectedDependencyIds": [],
+      "expectedTiming": {
+        "timingFamily": "FIND-ANSWER-REGISTRATION-WINDOW",
+        "provenanceKind": "SYMBOLIC-SOURCE-PARAMETER",
+        "sourceParameter": "FIND-ANSWER-WINDOW-3-S",
+        "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
+        "sourceEvidenceUnitIds": [
+          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF",
+          "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891"
+        ],
+        "trigger": "FIND-REQUEST-SENT",
+        "response": "FIND-ANSWER-REGISTRATION-WINDOW-CLOSED",
+        "cancellation": "FIND-OPERATION-ABORTED",
+        "supersedingTrigger": "NONE",
+        "correlationKey": "FIND-REQUEST-INSTANCE",
+        "pairingPolicy": "PAIR-FIND-REQUEST-WITH-REGISTRATION-WINDOW",
+        "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+        "silenceSemantics": "WINDOW-CLOSES-AT-SOURCE-UPPER-BOUND",
+        "lowerBound": 0,
+        "upperBound": 3,
+        "unit": "s",
+        "lowerBoundary": "CLOSED",
+        "upperBoundary": "CLOSED",
+        "clockStart": "CORRELATED-TRIGGER-TIMESTAMP",
+        "clockResets": [],
+        "observationState": "OBSERVABLE-IN-PRINCIPLE",
+        "errorBudgetState": "FUTURE-CONFIGURATION-DEPENDENT",
+        "ambiguityStatus": "NONE-OBSERVED"
+      }
     },
     {
       "requirementId": "CRS-M1-00521",

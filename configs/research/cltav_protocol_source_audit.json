@@ -12,7 +12,7 @@
     "coverageCount": 2796,
     "requirementCount": 523,
     "coverageFingerprint": "abade2fd0cbbe5a1a29c3228474075c1bfaa1b51e81ca9bfcae3e0950c713d4b",
-    "requirementsFingerprint": "50bf11df25f91753c8109672f6e81dbf7a45a3d17144ed60144eb87da77bea90",
+    "requirementsFingerprint": "6a9dc14d68a79cb99d246f48d6e2528cb3c7ec2a26c082aa115e4e1dbbb8b4a7",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
@@ -9888,6 +9888,67 @@
         "change": "ADDED",
         "covers": "COV-M1-01618",
         "note": "FIND two-byte header plus variable data."
+      }
+    ],
+    "openRequirementDependencies": [
+      {
+        "requirementId": "CRS-M1-00519",
+        "pendingSourceIds": [
+          "ARINC-664-4"
+        ],
+        "status": "NOT-YET-BOUND",
+        "note": "Empty dependencyIds does not mean no dependency."
+      },
+      {
+        "requirementId": "CRS-M1-00418",
+        "pendingSourceIds": [
+          "RFC-1350",
+          "ARINC-665-5"
+        ],
+        "status": "NOT-YET-BOUND"
+      },
+      {
+        "requirementId": "CRS-M1-00419",
+        "pendingSourceIds": [
+          "RFC-1350",
+          "ARINC-665-5"
+        ],
+        "status": "NOT-YET-BOUND"
+      },
+      {
+        "requirementId": "CRS-M1-00420",
+        "pendingSourceIds": [
+          "RFC-1350"
+        ],
+        "status": "NOT-YET-BOUND"
+      },
+      {
+        "requirementId": "CRS-M1-00421",
+        "pendingSourceIds": [
+          "RFC-1350"
+        ],
+        "status": "NOT-YET-BOUND"
+      },
+      {
+        "requirementId": "CRS-M1-00422",
+        "pendingSourceIds": [
+          "RFC-1350"
+        ],
+        "status": "NOT-YET-BOUND"
+      },
+      {
+        "requirementId": "CRS-M1-00423",
+        "pendingSourceIds": [
+          "RFC-1350"
+        ],
+        "status": "NOT-YET-BOUND"
+      },
+      {
+        "requirementId": "CRS-M1-00424",
+        "pendingSourceIds": [
+          "RFC-1350"
+        ],
+        "status": "NOT-YET-BOUND"
       }
     ]
   }

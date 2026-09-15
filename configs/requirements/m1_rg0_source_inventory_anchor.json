@@ -7,14 +7,14 @@
   "tableRowCount": 146,
   "tableFootnoteCount": 1,
   "sequenceEventCount": 63,
-  "timingProvenanceFingerprint": "b98d5f5e55f9e587fd7be8bd5be5dd792504a7dfbdba31f3799e6c84d7504a8c",
+  "timingProvenanceFingerprint": "652427f6c06ac90210e2eec6399e65429252739177a186eb19abde2c8142907b",
   "dependencySourceIdentityFingerprint": "d99901d0ab3eadb9d092dce8bc4e17732fbc30a2622ee400a668ef4b80e98ae5",
   "sectionSpanManifestFingerprint": "7411f0afe45a73a761242099a7cff358d6a1b71a78ca6167a61ac20c51eca6ec",
-  "semanticAssertionFingerprint": "c06a25e02fdd8ab03dd15c03cd90d3e37c660d21367825dd533c8985a87cf0ba",
+  "semanticAssertionFingerprint": "176df837a88aefab737d27798b272e4f368d30e91eb5cdbdd9d68c4ee83df99c",
   "statusTableFingerprint": "626a7fa96d83853eb3a369da0de78ae866a44f1d24fd6d91b3092e734ed85cbf",
   "automaticAssuranceBoundary": "This anchor detects package-only coordinated edits. It does not prove proprietary-source completeness or semantic fidelity; those remain external RG0 and RG1 review responsibilities.",
   "人工保证边界": "本锚点用于发现仅修改数据包的协同篡改；它不证明专有来源的完整性或语义忠实度，后两者仍由外部 RG0 与 RG1 评审负责。",
-  "fieldConstraintFingerprint": "d8d2aecb9d9273ac4ca54c828065f1ea8123ff65306c6fca0cac44b17a9ce71f",
+  "fieldConstraintFingerprint": "0de6490d2436aaaf41d323ef17a1724ef5d2f93c3d0400dd5e641047d10fc1ce",
   "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
   "registeredSourceIdentityFingerprint": "66739ec2b42d7dfa95f96fc0ced11ff643ff5f109cc44a0c525ceb746f6c5aad"
 }
