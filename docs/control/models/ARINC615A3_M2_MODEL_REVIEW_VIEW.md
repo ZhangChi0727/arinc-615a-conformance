@@ -13,7 +13,7 @@
 - M1 NET-ISSUE-EDITION snapshot blocksM1Approval=`True` — Historical snapshot on the merged M1 tree. External owner sign-off and merge bound that Head. The boolean does not reopen the merge. CR-2026-009 accepted 664P3-1 as this M2 input edition; 664P7 remains recorded and AFDX stays unselected.
 - Successor delta `CR-2026-012` authorized by `CR-2026-009`; doesNotTransplantFrozenApproval=`True`
 - Predecessor input artifact commit `402e8371b0237aec4691bab0b44e502f4ac1a7c4` tree `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
-- Current input artifact commit `c3bdf0f043e766567f7c8d3a759e722f6753a7ad` tree `5183add99fd7ae3566431a4c35e0c2f5bb0f7eba`
+- Current input artifact commit `5f4b4d4157f662ce8eafbbd11e989ce75b8feb4b` tree `4cc2268821302a28da4037ecbf2639b11a5f775a`
 
 ## Scope
 
@@ -440,8 +440,9 @@
 | `TIM-CRS-M1-00188` | `CRS-M1-00188` | `CLK_DLP` | SOURCE-EQUATION | 0..DLP-TO-MINUS-RETRY-AND-NETWORK-TERMS s | `{"kind":"COMPARE","op":"GT","left":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"DLP_RETRY","unit":"1"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"LITERAL","value":1,"unit":"1"},"unit":"1"},"unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"MUL","left":{"kind":"LITERAL","value":2,"unit":"1"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":4,"unit":"1"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/OPEN | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
 | `TIM-CRS-M1-00305` | `CRS-M1-00305` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
 | `TIM-CRS-M1-00322` | `CRS-M1-00322` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00520` | `CRS-M1-00520` | `CLK_FIND` | DURATION-UPPER-BOUND | 0..3 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_FIND"},"right":{"kind":"LITERAL","value":3,"unit":"s"}}` | — | CLOSED/CLOSED | `RELATION-BOUND` | FIND-ANSWER-WINDOW-UPPER-BOUND |
+| `TIM-CRS-M1-00520` | `CRS-M1-00520` | `CLK_FIND` | CONSTANT-DEFINITION | 3..3 s | `{"kind":"LITERAL","value":3,"unit":"s"}` | — | CLOSED/CLOSED | `CONSTANT-DEFINITION` | FIND-ANSWER-WINDOW-LIFETIME |
 | `TIM-CRS-M1-00391` | `CRS-M1-00391` | `CLK_FIND` | DEADLINE-UPPER-BOUND | 0..2 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_FIND"},"right":{"kind":"LITERAL","value":2,"unit":"s"}}` | — | CLOSED/CLOSED | `RELATION-BOUND` | FIND-HOST-ANSWER-UPPER-BOUND |
+| `TIM-CRS-M1-00521` | `CRS-M1-00521` | `CLK_FIND` | CONSTANT-DEFINITION | 3..3 s | `{"kind":"COMPARE","op":"EQ","left":{"kind":"CLOCK","name":"CLK_FIND"},"right":{"kind":"LITERAL","value":3,"unit":"s"}}` | — | CLOSED/CLOSED | `CONSTANT-DEFINITION` | FIND-REGISTRATION-CLOSE-AT-EXPIRY |
 
 ## Requirement dispositions
 
@@ -966,10 +967,11 @@
 | `CRS-M1-00518` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00519` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00520` | SCOPE-CONSTRAINT | `SCOPE`, `TIM-CRS-M1-00520`, `CLK_FIND` |
-| `CRS-M1-00521` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00521` | SCOPE-CONSTRAINT | `SCOPE`, `TIM-CRS-M1-00521`, `CLK_FIND` |
 | `CRS-M1-00522` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00523` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00524` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00525` | SCOPE-CONSTRAINT | `SCOPE` |
 
 ## Trace relations
 
@@ -1593,6 +1595,9 @@
 | `TR-CRS-M1-00524-0617` | `CRS-M1-00524` | SCOPE | `SCOPE` | Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD. |
 | `TR-CRS-M1-00391-0618` | `CRS-M1-00391` | TIMING | `TIM-CRS-M1-00391` | FIND timing is catalogued for later error-interval judgement; bound M2 does not run FIND. |
 | `TR-CRS-M1-00391-0619` | `CRS-M1-00391` | CLOCK | `CLK_FIND` | FIND clock is observational in the catalog only. |
+| `TR-CRS-M1-00525-0620` | `CRS-M1-00525` | SCOPE | `SCOPE` | Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD. |
+| `TR-CRS-M1-00521-0621` | `CRS-M1-00521` | TIMING | `TIM-CRS-M1-00521` | FIND timing is catalogued for later error-interval judgement; bound M2 does not run FIND. |
+| `TR-CRS-M1-00521-0622` | `CRS-M1-00521` | CLOCK | `CLK_FIND` | FIND clock is observational in the catalog only. |
 
 ## Infrastructure premises
 
@@ -1710,7 +1715,7 @@
 - M1 NET-ISSUE-EDITION 快照 blocksM1Approval=`True` — 已合并 M1 树上的历史快照。外部所有者签署与合并绑定了该 Head。该布尔值不重开合并。CR-2026-009 接受 664P3-1 作为本 M2 输入版次；664P7 保持已登记且 AFDX 未选。
 - 后继增量 `CR-2026-012` 由 `CR-2026-009` 授权；doesNotTransplantFrozenApproval=`True`
 - 前序输入制品提交 `402e8371b0237aec4691bab0b44e502f4ac1a7c4` 树 `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
-- 当前输入制品提交 `c3bdf0f043e766567f7c8d3a759e722f6753a7ad` 树 `5183add99fd7ae3566431a4c35e0c2f5bb0f7eba`
+- 当前输入制品提交 `5f4b4d4157f662ce8eafbbd11e989ce75b8feb4b` 树 `4cc2268821302a28da4037ecbf2639b11a5f775a`
 
 ## 范围
 
@@ -2137,8 +2142,9 @@
 | `TIM-CRS-M1-00188` | `CRS-M1-00188` | `CLK_DLP` | SOURCE-EQUATION | 0..DLP-TO-MINUS-RETRY-AND-NETWORK-TERMS s | `{"kind":"COMPARE","op":"GT","left":{"kind":"SYMBOL","name":"DLP_TO","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"DURATION_TIME","unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"DLP_RETRY","unit":"1"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"LITERAL","value":1,"unit":"1"},"unit":"1"},"unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"BINARY","op":"MUL","left":{"kind":"SYMBOL","name":"TFTP_RETRY","unit":"1"},"right":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"unit":"s"},"right":{"kind":"BINARY","op":"MUL","left":{"kind":"LITERAL","value":2,"unit":"1"},"right":{"kind":"BINARY","op":"DIV","left":{"kind":"SYMBOL","name":"TFTP_TO","unit":"s"},"right":{"kind":"LITERAL","value":4,"unit":"1"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"},"unit":"s"}}` | T_INF_ACCEPT_INIT, T_UPL_ACCEPT_INIT, T_UPL_LUR_WRQ, T_UPL_FILE_RRQ | CLOSED/OPEN | `EQUATION-STRUCTURAL` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
 | `TIM-CRS-M1-00305` | `CRS-M1-00305` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
 | `TIM-CRS-M1-00322` | `CRS-M1-00322` | `CLK_EXCEPTION` | DEADLINE-UPPER-BOUND | None..EXCEPTION_TIMER s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_EXCEPTION"},"right":{"kind":"SYMBOL","name":"EXCEPTION_TIMER","unit":"s"}}` | T_ENTER_UPL_EXC, T_ENTER_INF_EXC, T_INF_LCS_WRQ | UNRESOLVED/UNRESOLVED | `RELATION-BOUND` | TIMEOUT-ONLY-AT-SOURCE-BOUND-DEADLINE |
-| `TIM-CRS-M1-00520` | `CRS-M1-00520` | `CLK_FIND` | DURATION-UPPER-BOUND | 0..3 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_FIND"},"right":{"kind":"LITERAL","value":3,"unit":"s"}}` | — | CLOSED/CLOSED | `RELATION-BOUND` | FIND-ANSWER-WINDOW-UPPER-BOUND |
+| `TIM-CRS-M1-00520` | `CRS-M1-00520` | `CLK_FIND` | CONSTANT-DEFINITION | 3..3 s | `{"kind":"LITERAL","value":3,"unit":"s"}` | — | CLOSED/CLOSED | `CONSTANT-DEFINITION` | FIND-ANSWER-WINDOW-LIFETIME |
 | `TIM-CRS-M1-00391` | `CRS-M1-00391` | `CLK_FIND` | DEADLINE-UPPER-BOUND | 0..2 s | `{"kind":"COMPARE","op":"LE","left":{"kind":"CLOCK","name":"CLK_FIND"},"right":{"kind":"LITERAL","value":2,"unit":"s"}}` | — | CLOSED/CLOSED | `RELATION-BOUND` | FIND-HOST-ANSWER-UPPER-BOUND |
+| `TIM-CRS-M1-00521` | `CRS-M1-00521` | `CLK_FIND` | CONSTANT-DEFINITION | 3..3 s | `{"kind":"COMPARE","op":"EQ","left":{"kind":"CLOCK","name":"CLK_FIND"},"right":{"kind":"LITERAL","value":3,"unit":"s"}}` | — | CLOSED/CLOSED | `CONSTANT-DEFINITION` | FIND-REGISTRATION-CLOSE-AT-EXPIRY |
 
 ## 需求处置
 
@@ -2663,10 +2669,11 @@
 | `CRS-M1-00518` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00519` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00520` | SCOPE-CONSTRAINT | `SCOPE`, `TIM-CRS-M1-00520`, `CLK_FIND` |
-| `CRS-M1-00521` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00521` | SCOPE-CONSTRAINT | `SCOPE`, `TIM-CRS-M1-00521`, `CLK_FIND` |
 | `CRS-M1-00522` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00523` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00524` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00525` | SCOPE-CONSTRAINT | `SCOPE` |
 
 ## 追踪关系
 
@@ -3290,6 +3297,9 @@
 | `TR-CRS-M1-00524-0617` | `CRS-M1-00524` | SCOPE | `SCOPE` | 扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。 |
 | `TR-CRS-M1-00391-0618` | `CRS-M1-00391` | TIMING | `TIM-CRS-M1-00391` | FIND 时序已编入目录供后续误差区间判定；绑定 M2 不运行 FIND。 |
 | `TR-CRS-M1-00391-0619` | `CRS-M1-00391` | CLOCK | `CLK_FIND` | FIND 时钟仅用于目录观察，不进入绑定状态机迁移。 |
+| `TR-CRS-M1-00525-0620` | `CRS-M1-00525` | SCOPE | `SCOPE` | 扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。 |
+| `TR-CRS-M1-00521-0621` | `CRS-M1-00521` | TIMING | `TIM-CRS-M1-00521` | FIND 时序已编入目录供后续误差区间判定；绑定 M2 不运行 FIND。 |
+| `TR-CRS-M1-00521-0622` | `CRS-M1-00521` | CLOCK | `CLK_FIND` | FIND 时钟仅用于目录观察，不进入绑定状态机迁移。 |
 
 ## 基础设施前提
 

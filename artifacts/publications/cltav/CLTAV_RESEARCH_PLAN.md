@@ -37,7 +37,7 @@ Four arms CL-T, CL-A, CL-TA, CL-LOOP; detection, localization and ablation famil
 
 ## Expanded CRS index and audit
 
-Current bound package is M1-CANDIDATE-5: 2796 coverage units and 523 requirements after RR-CLTAV-2026-006 REWORK (FIND 34 + DOWNLOAD 102 + AFDX 3 following splits and one revocation). Commentary and examples stay non-normative. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. 664/665/RFC body audits remain pending. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename remaining deferred labels. Tool software requirements are out of this PR.
+Current bound package is M1-CANDIDATE-6: 2796 coverage units and 524 requirements after RR-CLTAV-2026-007 REWORK (FIND 34 + DOWNLOAD 103 + AFDX 3). Commentary and examples stay non-normative. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. 664/665/RFC body audits remain pending. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename remaining deferred labels. Tool software requirements are out of this PR.
 
 ## Historical versus successor evidence
 
@@ -82,7 +82,7 @@ SysML 1.6 记法 PlantUML 源：[`../../../docs/research/publication/models/`](.
 
 ## 扩大 CRS 索引与审计
 
-当前绑定包为 M1-CANDIDATE-5：经 RR-CLTAV-2026-006 REWORK 后为 2796 条 coverage、523 条需求（拆分与一项撤销后为 FIND 34＋DOWNLOAD 102＋AFDX 3）。评注与示例保持非规范。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。664／665／RFC 正文审计仍待进行。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名仍延期的标签。工具软件需求不属于本 PR。
+当前绑定包为 M1-CANDIDATE-6：经 RR-CLTAV-2026-007 REWORK 后为 2796 条 coverage、524 条需求（FIND 34＋DOWNLOAD 103＋AFDX 3）。评注与示例保持非规范。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。664／665／RFC 正文审计仍待进行。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名仍延期的标签。工具软件需求不属于本 PR。
 
 ## 历史与后继证据
 

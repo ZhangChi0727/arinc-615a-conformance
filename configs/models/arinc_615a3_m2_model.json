@@ -26,22 +26,22 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "a38ac5892c46603232a5450f6378d410884d2e43",
+        "gitBlobOid": "a2a7e8b4c463783677bc5c108dee1d856a5f675b",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_crs_package.schema.json",
-        "gitBlobOid": "53f2749aa0938b50ad63ca2dbc1cb06f95811a47",
+        "gitBlobOid": "f81fdeb26f538334754fffe27fdb45fc27569dc1",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "84fa15b49b721b6ba830ae0ca4764faa25cd60b7",
+        "gitBlobOid": "412b2cbe7b842c9ed3518189751743d4012c7bde",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "fda14f43c4cb47bd140dcaac7f6063ff9b63638c",
+        "gitBlobOid": "44b666b8a32ca32892d3ae64a5aed55bbb23dc18",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "ff8e1a1f225000014c325614c5ea44a1af48b3f4",
+        "gitBlobOid": "07c39ae5880ca2769c079e387496b4d0b323fff5",
         "role": "SUCCESSOR-M1-DELTA"
       }
     ],
@@ -148,8 +148,8 @@
           "role": "M1-IMMUTABLE-INPUT"
         }
       ],
-      "currentInputArtifactCommit": "c3bdf0f043e766567f7c8d3a759e722f6753a7ad",
-      "currentInputArtifactTree": "5183add99fd7ae3566431a4c35e0c2f5bb0f7eba"
+      "currentInputArtifactCommit": "5f4b4d4157f662ce8eafbbd11e989ce75b8feb4b",
+      "currentInputArtifactTree": "4cc2268821302a28da4037ecbf2639b11a5f775a"
     }
   },
   "sequenceEndpointBindings": [
@@ -5704,14 +5704,22 @@
         "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
         "checkLocation": "LNS-FILE-BYTES",
-        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-EXCEPTION-TIMER of LNS at the tabulated width and table ordinal 7.",
-        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNS 的 FIELD-EXCEPTION-TIMER。",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode LNS Exception Timer as a physically present 16-bit field at table ordinal 7. The field is used on status 0x0002 or 0x0004 as remaining seconds in 0..65535; other statuses keep the field and store 0x0000.",
+        "predicateZh": "在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Exception Timer 编为表序 7 的固定 16 位字段。该字段在状态 0x0002 或 0x0004 用作 0..65535 的剩余秒数；其他状态仍保留该字段并置 0x0000。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
-        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。"
+        "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。",
+        "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "inactiveRequiredValue": "0x0000",
+        "valueDomain": {
+          "rawEncoding": "UINT16-BIG-ENDIAN",
+          "activeMin": 0,
+          "activeMax": 65535,
+          "activeUnit": "s"
+        }
       },
       {
         "id": "FC-LNS-FIELD-ESTIMATED-TIME",
@@ -5722,24 +5730,31 @@
         "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
         "checkLocation": "LNS-FILE-BYTES",
-        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is used, the protocol-file producer shall encode LNS Estimated Time as a 16-bit raw field. Status 0x0002 or 0x0004 carry remaining seconds; 0xFFFF means the estimate is not given and must not be decoded as ordinary remaining seconds; other status codes set the field to 0x0000.",
-        "predicateZh": "在使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Estimated Time 编为 16 位原始字段。状态 0x0002 或 0x0004 携带剩余秒数；0xFFFF 表示未给出估计，不得解码为普通剩余秒数；其他状态码把该字段置为 0x0000。",
+        "predicateEn": "When Media Defined or Operator Defined DOWNLOAD is used, the protocol-file producer shall encode LNS Estimated Time as a physically present 16-bit field at table ordinal 8. Status 0x0002 or 0x0004 carry remaining seconds in 0..32767, with 0xFFFF meaning not given; other statuses keep the field and store 0x0000. Inactive 0x0000 is unused filler, not a not-given sentinel.",
+        "predicateZh": "在使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Estimated Time 编为表序 8 的固定 16 位字段。状态 0x0002 或 0x0004 携带 0..32767 的剩余秒数，0xFFFF 表示未给出；其他状态仍保留该字段并置 0x0000。非活动的 0x0000 是未使用填充，不是未给出哨兵。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "DOWNLOAD field recorded; bound M2 does not execute DOWNLOAD.",
         "conflictNoteZh": "已记录 DOWNLOAD 字段；绑定 M2 不执行 DOWNLOAD。",
         "specialValues": [
           {
             "code": "0xFFFF",
-            "meaningCode": "ESTIMATED-TIME-NOT-GIVEN"
-          },
-          {
-            "code": "0x0000",
-            "meaningCode": "ESTIMATED-TIME-UNUSED-FOR-OTHER-STATUS"
+            "meaningCode": "ESTIMATED-TIME-NOT-GIVEN",
+            "appliesWhen": "USE-CONDITION-ACTIVE"
           }
-        ]
+        ],
+        "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "inactiveRequiredValue": "0x0000",
+        "valueDomain": {
+          "rawEncoding": "INT16-TWO-COMPLEMENT-ON-UINT16",
+          "signedSourceMin": -1,
+          "signedSourceMax": 32767,
+          "activeMin": 0,
+          "activeMax": 32767,
+          "activeUnit": "s"
+        }
       },
       {
         "id": "FC-LNS-FIELD-DOWNLOAD-LIST-RATIO",
@@ -8596,45 +8611,36 @@
       "id": "TIM-CRS-M1-00520",
       "requirementId": "CRS-M1-00520",
       "trigger": "FIND-REQUEST-SENT",
-      "response": "FIND-ANSWER-REGISTRATION-WINDOW-CLOSED",
-      "cancel": "FIND-OPERATION-ABORTED",
+      "response": "FIND-ANSWER-WINDOW-LIFETIME-ELAPSED",
+      "cancel": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
       "supersede": "NONE",
       "correlationKey": "FIND-REQUEST-INSTANCE",
       "pairingPolicy": "PAIR-FIND-REQUEST-WITH-REGISTRATION-WINDOW",
       "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
       "clockId": "CLK_FIND",
       "resets": [],
-      "constraintKind": "DURATION-UPPER-BOUND",
-      "parameterOrigin": "SYMBOLIC-SOURCE-PARAMETER",
+      "constraintKind": "CONSTANT-DEFINITION",
+      "parameterOrigin": "FIXED-SOURCE-CONSTANT",
       "m1LowerBoundary": "CLOSED",
       "m1UpperBoundary": "CLOSED",
-      "lowerBound": 0,
+      "lowerBound": 3,
       "upperBound": 3,
       "lowerBoundary": "CLOSED",
       "upperBoundary": "CLOSED",
       "unit": "s",
-      "boundKind": "FIXED-RANGE",
+      "boundKind": "FIXED-EQUAL",
       "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
       "sourceParameter": "FIND-ANSWER-WINDOW-3-S",
       "expression": {
-        "kind": "COMPARE",
-        "op": "LE",
-        "left": {
-          "kind": "CLOCK",
-          "name": "CLK_FIND"
-        },
-        "right": {
-          "kind": "LITERAL",
-          "value": 3,
-          "unit": "s"
-        }
+        "kind": "LITERAL",
+        "value": 3,
+        "unit": "s"
       },
       "sourceEvidenceUnitIds": [
-        "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF",
-        "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891"
+        "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF"
       ],
-      "staticCheck": "RELATION-BOUND",
-      "observationWindow": "FIND-ANSWER-WINDOW-UPPER-BOUND",
+      "staticCheck": "CONSTANT-DEFINITION",
+      "observationWindow": "FIND-ANSWER-WINDOW-LIFETIME",
       "observationRoleEn": "FIND protocol event timestamps; bound M2 does not execute FIND.",
       "observationRoleZh": "FIND 协议事件时间戳；绑定 M2 不执行 FIND。",
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
@@ -8648,7 +8654,7 @@
       "requirementId": "CRS-M1-00391",
       "trigger": "FIND-REQUEST-RECEIVED-BY-HOST",
       "response": "FIND-ANSWER-SENT-BY-HOST",
-      "cancel": "ILLEGAL-FIND-REQUEST-OR-FIND-ABORTED",
+      "cancel": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
       "supersede": "NONE",
       "correlationKey": "FIND-REQUEST-INSTANCE",
       "pairingPolicy": "PAIR-FIND-REQUEST-WITH-HOST-ANSWER",
@@ -8656,7 +8662,7 @@
       "clockId": "CLK_FIND",
       "resets": [],
       "constraintKind": "DEADLINE-UPPER-BOUND",
-      "parameterOrigin": "SYMBOLIC-SOURCE-PARAMETER",
+      "parameterOrigin": "FIXED-SOURCE-CONSTANT",
       "m1LowerBoundary": "CLOSED",
       "m1UpperBoundary": "CLOSED",
       "lowerBound": 0,
@@ -8681,11 +8687,60 @@
         }
       },
       "sourceEvidenceUnitIds": [
-        "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700",
-        "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF"
+        "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700"
       ],
       "staticCheck": "RELATION-BOUND",
       "observationWindow": "FIND-HOST-ANSWER-UPPER-BOUND",
+      "observationRoleEn": "FIND protocol event timestamps; bound M2 does not execute FIND.",
+      "observationRoleZh": "FIND 协议事件时间戳；绑定 M2 不执行 FIND。",
+      "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
+      "errorBudgetEn": "Error budget is parameterized at Project Configuration. This catalog item is not an executable FIND test.",
+      "errorBudgetZh": "误差预算在 Project Configuration 参数化。本目录项不是可执行 FIND 试验。",
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": []
+    },
+    {
+      "id": "TIM-CRS-M1-00521",
+      "requirementId": "CRS-M1-00521",
+      "trigger": "FIND-ANSWER-WINDOW-LIFETIME-ELAPSED",
+      "response": "FIND-ANSWER-REGISTRATION-CLOSED",
+      "cancel": "PROJECT-ASSUMPTION-UNRESOLVED-FIND-ABORT",
+      "supersede": "NONE",
+      "correlationKey": "FIND-REQUEST-INSTANCE",
+      "pairingPolicy": "PAIR-WINDOW-EXPIRY-WITH-REGISTRATION-CLOSE",
+      "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+      "clockId": "CLK_FIND",
+      "resets": [],
+      "constraintKind": "CONSTANT-DEFINITION",
+      "parameterOrigin": "FIXED-SOURCE-CONSTANT",
+      "m1LowerBoundary": "CLOSED",
+      "m1UpperBoundary": "CLOSED",
+      "lowerBound": 3,
+      "upperBound": 3,
+      "lowerBoundary": "CLOSED",
+      "upperBoundary": "CLOSED",
+      "unit": "s",
+      "boundKind": "FIXED-EQUAL",
+      "sourceRelation": "SOURCE-DEFINES-DEADLINE-OR-DURATION",
+      "sourceParameter": "FIND-ANSWER-WINDOW-3-S",
+      "expression": {
+        "kind": "COMPARE",
+        "op": "EQ",
+        "left": {
+          "kind": "CLOCK",
+          "name": "CLK_FIND"
+        },
+        "right": {
+          "kind": "LITERAL",
+          "value": 3,
+          "unit": "s"
+        }
+      },
+      "sourceEvidenceUnitIds": [
+        "SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891"
+      ],
+      "staticCheck": "CONSTANT-DEFINITION",
+      "observationWindow": "FIND-REGISTRATION-CLOSE-AT-EXPIRY",
       "observationRoleEn": "FIND protocol event timestamps; bound M2 does not execute FIND.",
       "observationRoleZh": "FIND 协议事件时间戳；绑定 M2 不执行 FIND。",
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
@@ -15028,7 +15083,9 @@
       "kind": "SCOPE-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "SCOPE"
+        "SCOPE",
+        "TIM-CRS-M1-00521",
+        "CLK_FIND"
       ]
     },
     {
@@ -15059,6 +15116,18 @@
       "requirementId": "CRS-M1-00524",
       "sourceId": "ARINC-615A-3",
       "operation": "FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00525",
+      "sourceId": "ARINC-615A-3",
+      "operation": "DOWNLOAD",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "FACT",
       "kind": "SCOPE-CONSTRAINT",
@@ -21866,6 +21935,39 @@
       "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
       "rationaleEn": "FIND clock is observational in the catalog only.",
       "rationaleZh": "FIND 时钟仅用于目录观察，不进入绑定状态机迁移。"
+    },
+    {
+      "id": "TR-CRS-M1-00525-0620",
+      "requirementId": "CRS-M1-00525",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD.",
+      "rationaleZh": "扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。"
+    },
+    {
+      "id": "TR-CRS-M1-00521-0621",
+      "requirementId": "CRS-M1-00521",
+      "targetKind": "TIMING",
+      "targetId": "TIM-CRS-M1-00521",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "FIND timing is catalogued for later error-interval judgement; bound M2 does not run FIND.",
+      "rationaleZh": "FIND 时序已编入目录供后续误差区间判定；绑定 M2 不运行 FIND。"
+    },
+    {
+      "id": "TR-CRS-M1-00521-0622",
+      "requirementId": "CRS-M1-00521",
+      "targetKind": "CLOCK",
+      "targetId": "CLK_FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "FIND clock is observational in the catalog only.",
+      "rationaleZh": "FIND 时钟仅用于目录观察，不进入绑定状态机迁移。"
     }
   ],
   "infrastructurePremises": [
@@ -22552,17 +22654,17 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 523,
-    "dispositionCount": 523,
-    "traceCount": 618,
+    "requirementCount": 524,
+    "dispositionCount": 524,
+    "traceCount": 621,
     "stateCount": 35,
     "transitionCount": 65,
-    "timingCount": 25,
+    "timingCount": 26,
     "fieldConstraintCount": 86,
-    "dispositionsFingerprint": "a831e845f10adc9a105b82ec16c121aeed4966224ec5738218717af6c5afd851",
-    "modelFingerprint": "b272ac126b13a7e887db7fa2bf26304bc3acf2c336b02bcd84f0d595b6d54179",
-    "timingFingerprint": "dacc00e5eb83bccca321d568ca29534577a51520a085f8928885acd5222ce4de",
-    "inputFingerprint": "eebf5b2f9d63bef2bcd62c397f5d06017af98b370f8cd7980faa3d963bf49423",
+    "dispositionsFingerprint": "ccf56807d102004dde361db35906ec892624cafb68c0adb823a9954fe2f906db",
+    "modelFingerprint": "dbe9dd733581724aa311b20b9fd0742f157e7d38d2a7518166fa365bef44a3cf",
+    "timingFingerprint": "1a5830659bbc1b7c506d8160d1225e84247edac6ad75499243baea8045fd454e",
+    "inputFingerprint": "f1c7336e64f27addefbca89dc600bc4ae7aea8f1977e0de263fb55d34e71e77d",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",

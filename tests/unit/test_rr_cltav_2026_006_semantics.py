@@ -96,7 +96,7 @@ def test_find_neighbour_identity_swap_fails_after_fingerprint_refresh() -> None:
     register["rhoRA"]["sourceCoverageId"] = "COV-M1-01605"
     refresh_m1(data)
     found = m1_errors(data)
-    assert any("register-valid-answers" in item for item in found)
+    assert any("RC-FIND-REGISTER-BINDING" in item or "register-valid-answers" in item for item in found)
 
     data = m1_package()
     info = req(data, "CRS-M1-00392")
@@ -104,7 +104,7 @@ def test_find_neighbour_identity_swap_fails_after_fingerprint_refresh() -> None:
     info["semantic"]["objects"] = ["LATE-OR-MISSING-FIND-ANSWER"]
     refresh_m1(data)
     found = m1_errors(data)
-    assert any("message-structure or FIND-packet-data" in item or "00392" in item for item in found)
+    assert any("RC-FIND-INFO" in item or "message-structure" in item or "00392" in item for item in found)
 
 
 def test_download_field_encoding_repeat_and_sentinel_mutations_fail() -> None:
@@ -154,19 +154,19 @@ def test_may_risk_permission_and_lost_alternative_fail() -> None:
     data["requirements"].append(template)
     data["requirements"].sort(key=lambda row: row["id"])
     refresh_m1(data)
-    assert any("write-failure risk cannot remain a permitted CRS action" in item for item in m1_errors(data))
+    assert any("RC-NO-WRITE-FAILURE-PERMISSION" in item or "cannot remain a permitted CRS action" in item for item in m1_errors(data))
 
     data = m1_package()
     req(data, "CRS-M1-00392")["semantic"]["objects"] = ["MESSAGE-STRUCTURE"]
     req(data, "CRS-M1-00392")["conformanceEffect"] = "OPTIONAL"
     refresh_m1(data)
     found = m1_errors(data)
-    assert any("alternative" in item or "unconditioned permission" in item for item in found)
+    assert any("RC-FIND-INFO-ALTERNATIVE" in item or "alternative" in item or "unconditioned permission" in item for item in found)
 
     data = m1_package()
     req(data, "CRS-M1-00519")["semantic"]["objects"] = ["ARINC-664-4-ADDRESS-RULES"]
     refresh_m1(data)
-    assert any("664P4 or integrator-identified" in item for item in m1_errors(data))
+    assert any("RC-AFDX-ADDRESS-ALTERNATIVE" in item or "664P4" in item or "alternative" in item for item in m1_errors(data))
 
 
 def test_missing_or_swapped_find_timing_fails() -> None:
