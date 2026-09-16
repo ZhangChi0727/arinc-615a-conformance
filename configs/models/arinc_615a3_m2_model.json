@@ -1545,6 +1545,79 @@
         ],
         "meaningEn": "Wait-message timer value.",
         "meaningZh": "等待消息定时器值。"
+      },
+      {
+        "id": "MAX_JITTER",
+        "unit": "us",
+        "kind": "SYMBOLIC-SOURCE-PARAMETER",
+        "value": null,
+        "domain": "non-negative",
+        "sourceRequirementIds": [
+          "CRS-M1-00684",
+          "CRS-M1-00685"
+        ],
+        "meaningEn": "Observed max_jitter in the 664-7 End-System output formulas.",
+        "meaningZh": "664-7 端系统输出公式中的观测 max_jitter。"
+      },
+      {
+        "id": "LMAX",
+        "unit": "1",
+        "kind": "SYMBOLIC-SOURCE-PARAMETER",
+        "value": null,
+        "domain": "non-negative",
+        "sourceRequirementIds": [
+          "CRS-M1-00684"
+        ],
+        "meaningEn": "Lmax in octets in the load-dependent max_jitter summand.",
+        "meaningZh": "负载相关 max_jitter 加项中以八位组计的 Lmax。"
+      },
+      {
+        "id": "NBW",
+        "unit": "1",
+        "kind": "SYMBOLIC-SOURCE-PARAMETER",
+        "value": null,
+        "domain": "non-negative",
+        "sourceRequirementIds": [
+          "CRS-M1-00684"
+        ],
+        "meaningEn": "Medium bandwidth Nbw in bits/s. The load term is seconds before *1000000 conversion to us.",
+        "meaningZh": "介质带宽 Nbw，单位比特每秒。负载项在乘 1000000 换成微秒前是秒。"
+      },
+      {
+        "id": "FRAME_DELAY",
+        "unit": "us",
+        "kind": "SYMBOLIC-SOURCE-PARAMETER",
+        "value": null,
+        "domain": "non-negative",
+        "sourceRequirementIds": [
+          "CRS-M1-00682"
+        ],
+        "meaningEn": "Frame delay added to the 150 us TX technological-latency bound.",
+        "meaningZh": "加到发送方向 150 微秒技术时延上界上的帧时延。"
+      },
+      {
+        "id": "TECH_LAT_TX",
+        "unit": "us",
+        "kind": "SYMBOLIC-SOURCE-PARAMETER",
+        "value": null,
+        "domain": "non-negative",
+        "sourceRequirementIds": [
+          "CRS-M1-00682"
+        ],
+        "meaningEn": "Measured TX technological latency between the named endpoints.",
+        "meaningZh": "在具名端点之间测得的发送方向技术时延。"
+      },
+      {
+        "id": "TECH_LAT_RX",
+        "unit": "us",
+        "kind": "SYMBOLIC-SOURCE-PARAMETER",
+        "value": null,
+        "domain": "non-negative",
+        "sourceRequirementIds": [
+          "CRS-M1-00683"
+        ],
+        "meaningEn": "Measured RX technological latency between the named endpoints.",
+        "meaningZh": "在具名端点之间测得的接收方向技术时延。"
       }
     ],
     "clocks": [
@@ -1631,6 +1704,19 @@
         "resetOn": [],
         "meaningEn": "Observational FIND request/answer clock. Bound M2 transitions do not reset it.",
         "meaningZh": "观察用 FIND 请求／应答时钟。绑定 M2 迁移不复位该时钟。"
+      },
+      {
+        "id": "CLK_AFDX_ES",
+        "unit": "us",
+        "growsDuringDelay": true,
+        "scope": "PER-CORRELATION-KEY",
+        "correlationKey": "AFDX-END-SYSTEM-MEASUREMENT-INSTANCE",
+        "instanceBinding": "EVENT-CORRELATION-KEY",
+        "resetPolicy": "NOT-RESET-BY-BOUND-M2-TRANSITIONS",
+        "cancelPolicy": "CLEAR-INSTANCE-ON-CANCEL-OR-SUPERSEDE",
+        "resetOn": [],
+        "meaningEn": "Observational AFDX End-System technological-latency and jitter clock. Bound M2 transitions do not reset it.",
+        "meaningZh": "观察用 AFDX 端系统技术时延与抖动时钟。绑定 M2 迁移不复位该时钟。"
       }
     ],
     "transitions": [
@@ -8960,22 +9046,27 @@
         "m1RequirementId": "CRS-M1-00682",
         "objects": [
           "AFDX-TECHNOLOGICAL-LATENCY",
-          "FRAME-DELAY"
+          "FRAME-DELAY",
+          "EMPTY-BUFFERS",
+          "NO-CONFLICTING-RESOURCE-ACCESS",
+          "NO-IP-FRAGMENTATION"
         ],
         "action": "KEEP-TX-TECHNOLOGICAL-LATENCY-BELOW-150US-PLUS-FRAME-DELAY",
-        "predicateEn": "If AFDX is chosen, End-System technological latency in transmission is bounded below 150 microseconds plus frame delay.",
-        "predicateZh": "若选择 AFDX，端系统发送方向技术时延须低于 150 微秒加帧时延。",
+        "predicateEn": "If AFDX is chosen and TX technological latency is measured with empty buffers, no conflicting resource access and no IP fragmentation, that latency is strictly below 150 microseconds plus frame delay. Equality at 150 us plus frame delay fails. This is not a 615A operation timeout.",
+        "predicateZh": "若选择 AFDX，且发送方向技术时延在空缓冲、无冲突资源访问且无 IP 分片下测量，则该时延须严格低于 150 微秒加帧时延。等于 150 微秒加帧时延即失败。这不是 615A 操作超时。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
         "id": "OBJ-SUPPORTING-KEEP-RX-TECHNOLOGICAL-LATENCY-BELOW-150-MICROSECONDS-CRS-M1-00683",
         "m1RequirementId": "CRS-M1-00683",
         "objects": [
-          "AFDX-TECHNOLOGICAL-LATENCY"
+          "AFDX-TECHNOLOGICAL-LATENCY",
+          "EMPTY-BUFFERS",
+          "NO-CONFLICTING-RESOURCE-ACCESS"
         ],
         "action": "KEEP-RX-TECHNOLOGICAL-LATENCY-BELOW-150-MICROSECONDS",
-        "predicateEn": "If AFDX is chosen, End-System technological latency in reception is bounded below 150 microseconds.",
-        "predicateZh": "若选择 AFDX，端系统接收方向技术时延须低于 150 微秒。",
+        "predicateEn": "If AFDX is chosen and RX technological latency is measured with empty buffers and without conflicting resource access, that latency is strictly below 150 microseconds. Equality at 150 us fails. This is not a 615A operation timeout.",
+        "predicateZh": "若选择 AFDX，且接收方向技术时延在空缓冲且无冲突资源访问下测量，则该时延须严格低于 150 微秒。等于 150 微秒即失败。这不是 615A 操作超时。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -8984,22 +9075,24 @@
         "objects": [
           "AFDX-JITTER",
           "LMAX",
-          "NBW"
+          "NBW",
+          "MAX-JITTER-500US-EQUATION"
         ],
         "action": "BOUND-MAX-JITTER-BY-40US-PLUS-VL-LOAD-TERM",
-        "predicateEn": "If AFDX is chosen, max_jitter is at most 40 microseconds plus the sum over VLs of ((20 bytes + Lmax_i bytes) times 8 bits/byte) divided by medium bandwidth Nbw.",
-        "predicateZh": "若选择 AFDX，max_jitter 至多为 40 微秒加上各 VL 的 ((20 字节 + Lmax_i 字节) × 8 位/字节) / 介质带宽 Nbw。",
+        "predicateEn": "If AFDX is chosen, max_jitter in microseconds is at most 40 us plus the sum over VLs of ((20 octets + Lmax_i octets) * 8 bits/octet / Nbw bits/s) converted from seconds to microseconds by multiplying 1000000. Both this formula and the 500 us formula must hold.",
+        "predicateZh": "若选择 AFDX，以微秒计的 max_jitter 至多为 40 微秒加上各 VL 的 ((20 八位组 + Lmax_i 八位组) × 8 位/八位组 / Nbw 比特每秒) 由秒乘 1000000 换成微秒后的和。此式与 500 微秒公式必须同时成立。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
         "id": "OBJ-SUPPORTING-BOUND-MAX-JITTER-BY-500-MICROSECONDS-EQUATION-CRS-M1-00685",
         "m1RequirementId": "CRS-M1-00685",
         "objects": [
-          "AFDX-JITTER"
+          "AFDX-JITTER",
+          "MAX-JITTER-LOAD-EQUATION"
         ],
         "action": "BOUND-MAX-JITTER-BY-500-MICROSECONDS-EQUATION",
-        "predicateEn": "If AFDX is chosen, the second max_jitter formula is max_jitter at most 500 microseconds.",
-        "predicateZh": "若选择 AFDX，第二个 max_jitter 公式为 max_jitter 至多 500 微秒。",
+        "predicateEn": "If AFDX is chosen, the second recovered formula is max_jitter at most 500 microseconds. It must hold together with the load-dependent formula; satisfying 500 us alone is not enough.",
+        "predicateZh": "若选择 AFDX，第二个已恢复公式为 max_jitter 至多 500 微秒。它必须与负载相关公式同时成立；仅满足 500 微秒不够。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -9009,8 +9102,8 @@
           "MAC-SOURCE-ADDRESS"
         ],
         "action": "ENCODE-MAC-SOURCE-AS-INDIVIDUAL-AND-LOCALLY-ADMINISTERED",
-        "predicateEn": "If AFDX is chosen, the MAC source address is an Individual and Locally Administered IEEE 802.3 address. No unique construction algorithm is recommended.",
-        "predicateZh": "若选择 AFDX，MAC 源地址是符合 IEEE 802.3 的单播且本地管理地址。未推荐唯一构造算法。",
+        "predicateEn": "If AFDX is chosen, the MAC source address is an Individual and Locally Administered IEEE 802.3 address.",
+        "predicateZh": "若选择 AFDX，MAC 源地址是符合 IEEE 802.3 的单播且本地管理地址。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -9297,6 +9390,253 @@
         "action": "ALLOCATE-TABLE-2-1-ADDRESSES-FROM-RFC1918-PRIVATE-RANGES",
         "predicateEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, Table 2-1 address allocations are taken from RFC 1918 private ranges. This does not select Part 4 automatically.",
         "predicateZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，表 2-1 地址分配取自 RFC 1918 私有范围。这不自动选定第 4 部分。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-MEASURE-TX-TECHNOLOGICAL-LATENCY-BETWEEN-PARTITION-DATA-AND-PHYSICAL-MEDIA-CRS-M1-00711",
+        "m1RequirementId": "CRS-M1-00711",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY",
+          "TX-MEASUREMENT-START",
+          "TX-MEASUREMENT-END"
+        ],
+        "action": "MEASURE-TX-TECHNOLOGICAL-LATENCY-BETWEEN-PARTITION-DATA-AND-PHYSICAL-MEDIA",
+        "predicateEn": "If AFDX is chosen, transmission technological latency is the duration from the last bit of hosted-partition data available to End-System communication services to the last bit of the corresponding Ethernet frame on the physical media.",
+        "predicateZh": "若选择 AFDX，发送方向技术时延是从宿主分区数据最后一比特可供端系统通信服务使用，到相应以太网帧最后一比特出现在物理介质上的持续时间。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-START-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-PARTITION-BIT-IS-AVAILABLE-CRS-M1-00712",
+        "m1RequirementId": "CRS-M1-00712",
+        "objects": [
+          "TX-MEASUREMENT-START"
+        ],
+        "action": "START-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-PARTITION-BIT-IS-AVAILABLE",
+        "predicateEn": "If AFDX is chosen, the TX technological-latency start point is the last bit of hosted-partition data becoming available to End-System communication services.",
+        "predicateZh": "若选择 AFDX，发送方向技术时延起点是宿主分区数据最后一比特可供端系统通信服务使用。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-END-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-ON-MEDIA-CRS-M1-00713",
+        "m1RequirementId": "CRS-M1-00713",
+        "objects": [
+          "TX-MEASUREMENT-END"
+        ],
+        "action": "END-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-ON-MEDIA",
+        "predicateEn": "If AFDX is chosen, the TX technological-latency end point is the last bit of the corresponding Ethernet frame transmitted on the physical media.",
+        "predicateZh": "若选择 AFDX，发送方向技术时延终点是相应以太网帧最后一比特发送到物理介质。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-MEASURE-TX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-NO-CONTENTION-AND-NO-IP-FRAGMENTATION-CRS-M1-00714",
+        "m1RequirementId": "CRS-M1-00714",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY",
+          "EMPTY-BUFFERS",
+          "NO-CONFLICTING-RESOURCE-ACCESS",
+          "NO-IP-FRAGMENTATION"
+        ],
+        "action": "MEASURE-TX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-NO-CONTENTION-AND-NO-IP-FRAGMENTATION",
+        "predicateEn": "If AFDX is chosen, TX technological latency is measured with empty buffers, no conflicting resource access and no IP fragmentation. Absent those premises the 150 us bound cannot FAIL an IUT.",
+        "predicateZh": "若选择 AFDX，发送方向技术时延在空缓冲、无冲突资源访问且无 IP 分片的前提下测量。缺少这些前提时，不得仅凭 150 微秒上界判定 IUT 违规。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-DISTINGUISH-TECHNOLOGICAL-LATENCY-FROM-CONFIGURATION-LOAD-LATENCY-CRS-M1-00715",
+        "m1RequirementId": "CRS-M1-00715",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY",
+          "CONFIGURATION-LATENCY"
+        ],
+        "action": "DISTINGUISH-TECHNOLOGICAL-LATENCY-FROM-CONFIGURATION-LOAD-LATENCY",
+        "predicateEn": "Commentary: total End-System latency has technological latency independent of traffic load and configuration latency that depends on configuration and traffic load. The 150 us bound is not a load-independent universal timeout.",
+        "predicateZh": "评注：端系统总时延包含与流量负载无关的技术时延，以及取决于配置与流量负载的配置时延。150 微秒上界不是与负载无关的普遍超时。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-DEFINE-TECHNOLOGICAL-LATENCY-AS-ACCEPT-PROCESS-AND-BEGIN-TX-WITH-NO-OTHER-TASK-CRS-M1-00716",
+        "m1RequirementId": "CRS-M1-00716",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY"
+        ],
+        "action": "DEFINE-TECHNOLOGICAL-LATENCY-AS-ACCEPT-PROCESS-AND-BEGIN-TX-WITH-NO-OTHER-TASK",
+        "predicateEn": "Commentary: technological latency is the time to accept, process and begin transmitting application data when the End System is performing no other task.",
+        "predicateZh": "评注：技术时延是端系统在不执行其他任务时接受、处理并开始发送应用数据所需的时间。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-ADD-FRAME-DELAY-FOR-PHYSICAL-LAYER-DELIVERY-CRS-M1-00717",
+        "m1RequirementId": "CRS-M1-00717",
+        "objects": [
+          "FRAME-DELAY"
+        ],
+        "action": "ADD-FRAME-DELAY-FOR-PHYSICAL-LAYER-DELIVERY",
+        "predicateEn": "Commentary: frame delay covers delivery of the frame to the physical layer and is added to the 150 us technological-latency bound in transmission.",
+        "predicateZh": "评注：帧时延覆盖把帧递送到物理层的时间，并加到发送方向 150 微秒技术时延上界上。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-START-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-RECEIVED-CRS-M1-00718",
+        "m1RequirementId": "CRS-M1-00718",
+        "objects": [
+          "RX-MEASUREMENT-START"
+        ],
+        "action": "START-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-RECEIVED",
+        "predicateEn": "If AFDX is chosen, the RX technological-latency start point is the last bit of an Ethernet frame received on the physical media attachment.",
+        "predicateZh": "若选择 AFDX，接收方向技术时延起点是以太网帧最后一比特在物理介质连接点被接收。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-END-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-DATA-BIT-IS-AVAILABLE-TO-PARTITION-CRS-M1-00719",
+        "m1RequirementId": "CRS-M1-00719",
+        "objects": [
+          "RX-MEASUREMENT-END"
+        ],
+        "action": "END-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-DATA-BIT-IS-AVAILABLE-TO-PARTITION",
+        "predicateEn": "If AFDX is chosen, the RX technological-latency end point is the last bit of the corresponding data becoming available to the End-System hosted partition.",
+        "predicateZh": "若选择 AFDX，接收方向技术时延终点是相应数据最后一比特可供端系统宿主分区使用。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-MEASURE-RX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-AND-NO-CONTENTION-CRS-M1-00720",
+        "m1RequirementId": "CRS-M1-00720",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY",
+          "EMPTY-BUFFERS",
+          "NO-CONFLICTING-RESOURCE-ACCESS"
+        ],
+        "action": "MEASURE-RX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-AND-NO-CONTENTION",
+        "predicateEn": "If AFDX is chosen, RX technological latency is measured with empty buffers and without conflicting resource access. Absent those premises the 150 us bound cannot FAIL an IUT.",
+        "predicateZh": "若选择 AFDX，接收方向技术时延在空缓冲且无冲突资源访问的前提下测量。缺少这些前提时，不得仅凭 150 微秒上界判定 IUT 违规。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-SATISFY-BOTH-MAX-JITTER-EQUATIONS-SIMULTANEOUSLY-CRS-M1-00721",
+        "m1RequirementId": "CRS-M1-00721",
+        "objects": [
+          "AFDX-JITTER",
+          "MAX-JITTER-LOAD-EQUATION",
+          "MAX-JITTER-500US-EQUATION"
+        ],
+        "action": "SATISFY-BOTH-MAX-JITTER-EQUATIONS-SIMULTANEOUSLY",
+        "predicateEn": "If AFDX is chosen, max_jitter at the End-System output must satisfy both recovered formulas at once. Meeting only the 500 us cap is not sufficient.",
+        "predicateZh": "若选择 AFDX，端系统输出的 max_jitter 必须同时满足两个已恢复公式。仅满足 500 微秒上限不够。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-TREAT-MAX-JITTER-AS-MICROSECONDS-NBW-AS-BITS-PER-SECOND-AND-LMAX-AS-OCTETS-CRS-M1-00722",
+        "m1RequirementId": "CRS-M1-00722",
+        "objects": [
+          "AFDX-JITTER",
+          "NBW",
+          "LMAX"
+        ],
+        "action": "TREAT-MAX-JITTER-AS-MICROSECONDS-NBW-AS-BITS-PER-SECOND-AND-LMAX-AS-OCTETS",
+        "predicateEn": "If AFDX is chosen, max_jitter is in microseconds, Nbw is medium bandwidth in bits/s, and Lmax is in octets. The load term ((20 + Lmax) * 8 / Nbw) is seconds and is converted to microseconds by multiplying 1000000 before adding 40 us.",
+        "predicateZh": "若选择 AFDX，max_jitter 以微秒计，Nbw 是比特每秒的介质带宽，Lmax 以八位组计。负载项 ((20 + Lmax) × 8 / Nbw) 的量纲是秒，须乘 1000000 换成微秒后再与 40 微秒相加。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-COMPOSE-MAC-SOURCE-AS-24-PLUS-16-PLUS-3-PLUS-5-BIT-FIELDS-CRS-M1-00723",
+        "m1RequirementId": "CRS-M1-00723",
+        "objects": [
+          "MAC-SOURCE-ADDRESS",
+          "MAC-SOURCE-CONSTANT-FIELD",
+          "MAC-SOURCE-USER-DEFINED-ID",
+          "MAC-SOURCE-INTERFACE-ID",
+          "MAC-SOURCE-CONSTANT-TAIL"
+        ],
+        "action": "COMPOSE-MAC-SOURCE-AS-24-PLUS-16-PLUS-3-PLUS-5-BIT-FIELDS",
+        "predicateEn": "If AFDX is chosen, the MAC source is a 48-bit non-overlapping concatenation of 24-bit constant, 16-bit User_Defined_ID, 3-bit Interface_ID and 5-bit constant tail.",
+        "predicateZh": "若选择 AFDX，MAC 源地址是 48 位不重叠拼接：24 位常数、16 位 User_Defined_ID、3 位 Interface_ID 与 5 位常数尾字段。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-SET-MAC-SOURCE-CONSTANT-TAIL-TO-00000-CRS-M1-00724",
+        "m1RequirementId": "CRS-M1-00724",
+        "objects": [
+          "MAC-SOURCE-CONSTANT-TAIL"
+        ],
+        "action": "SET-MAC-SOURCE-CONSTANT-TAIL-TO-00000",
+        "predicateEn": "If AFDX is chosen, the MAC-source constant tail is the 5-bit field 0 0000 in Figure 3-11.",
+        "predicateZh": "若选择 AFDX，MAC 源地址常数尾字段是图 3-11 中的 5 位值 0 0000。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-TREAT-MAC-SOURCE-CONSTRUCTION-ALGORITHM-AS-NOT-UNIQUELY-RECOMMENDED-CRS-M1-00725",
+        "m1RequirementId": "CRS-M1-00725",
+        "objects": [
+          "MAC-SOURCE-ADDRESS"
+        ],
+        "action": "TREAT-MAC-SOURCE-CONSTRUCTION-ALGORITHM-AS-NOT-UNIQUELY-RECOMMENDED",
+        "predicateEn": "Commentary: no unique MAC-source construction algorithm is recommended. That does not waive the Figure 3-11 field widths, constants or Interface_ID encodings.",
+        "predicateZh": "评注：未推荐唯一 MAC 源地址构造算法。这并不免除图 3-11 的字段宽度、常数或 Interface_ID 编码约束。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-RECORD-INTERFACE-ID-000-AS-NOT-USED-CRS-M1-00726",
+        "m1RequirementId": "CRS-M1-00726",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "action": "RECORD-INTERFACE-ID-000-AS-NOT-USED",
+        "predicateEn": "If AFDX is chosen, Interface_ID 000 is recorded as Not used. The source does not state that unused encodings are prohibited.",
+        "predicateZh": "若选择 AFDX，Interface_ID 000 登记为未使用。原文未把未使用等同于禁止。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-RECORD-INTERFACE-ID-011-AS-NOT-USED-CRS-M1-00727",
+        "m1RequirementId": "CRS-M1-00727",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "action": "RECORD-INTERFACE-ID-011-AS-NOT-USED",
+        "predicateEn": "If AFDX is chosen, Interface_ID 011 is recorded as Not used. Unused is not treated as prohibited unless the source says so.",
+        "predicateZh": "若选择 AFDX，Interface_ID 011 登记为未使用。除非原文禁止，未使用不等于禁止。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-RECORD-INTERFACE-ID-100-AS-NOT-USED-CRS-M1-00728",
+        "m1RequirementId": "CRS-M1-00728",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "action": "RECORD-INTERFACE-ID-100-AS-NOT-USED",
+        "predicateEn": "If AFDX is chosen, Interface_ID 100 is recorded as Not used. Unused is not treated as prohibited unless the source says so.",
+        "predicateZh": "若选择 AFDX，Interface_ID 100 登记为未使用。除非原文禁止，未使用不等于禁止。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-RECORD-INTERFACE-ID-101-AS-NOT-USED-CRS-M1-00729",
+        "m1RequirementId": "CRS-M1-00729",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "action": "RECORD-INTERFACE-ID-101-AS-NOT-USED",
+        "predicateEn": "If AFDX is chosen, Interface_ID 101 is recorded as Not used. Unused is not treated as prohibited unless the source says so.",
+        "predicateZh": "若选择 AFDX，Interface_ID 101 登记为未使用。除非原文禁止，未使用不等于禁止。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-RECORD-INTERFACE-ID-110-AS-SOURCE-NOR-USED-CRS-M1-00730",
+        "m1RequirementId": "CRS-M1-00730",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "action": "RECORD-INTERFACE-ID-110-AS-SOURCE-NOR-USED",
+        "predicateEn": "If AFDX is chosen, Interface_ID 110 is recorded with the source wording Nor used. That is a coverage disposition, not a prohibition.",
+        "predicateZh": "若选择 AFDX，Interface_ID 110 按原文 Nor used 登记。这是覆盖处置，不是禁止。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-RECORD-INTERFACE-ID-111-AS-NOT-USED-CRS-M1-00731",
+        "m1RequirementId": "CRS-M1-00731",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "action": "RECORD-INTERFACE-ID-111-AS-NOT-USED",
+        "predicateEn": "If AFDX is chosen, Interface_ID 111 is recorded as Not used. Unused is not treated as prohibited unless the source says so.",
+        "predicateZh": "若选择 AFDX，Interface_ID 111 登记为未使用。除非原文禁止，未使用不等于禁止。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       }
     ],
@@ -10969,6 +11309,280 @@
       "errorBudgetClass": "PROTOCOL-TIME-NOT-INSTRUMENT-ERROR",
       "errorBudgetEn": "Error budget is parameterized at Project Configuration. This catalog item is not an executable FIND test.",
       "errorBudgetZh": "误差预算在 Project Configuration 参数化。本目录项不是可执行 FIND 试验。",
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": []
+    },
+    {
+      "id": "TIM-CRS-M1-00682",
+      "requirementId": "CRS-M1-00682",
+      "trigger": "LAST-BIT-OF-HOSTED-PARTITION-DATA-AVAILABLE-TO-ES-COMMUNICATION-SERVICES",
+      "response": "LAST-BIT-OF-CORRESPONDING-ETHERNET-FRAME-ON-PHYSICAL-MEDIA",
+      "cancel": "MEASUREMENT-PREMISES-NOT-MET",
+      "supersede": "NONE",
+      "correlationKey": "AFDX-END-SYSTEM-TECHNOLOGICAL-LATENCY-MEASUREMENT",
+      "pairingPolicy": "PAIR-NAMED-MEASUREMENT-ENDPOINTS",
+      "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+      "clockId": "CLK_AFDX_ES",
+      "resets": [],
+      "constraintKind": "SOURCE-EQUATION",
+      "parameterOrigin": "SYMBOLIC-SOURCE-EQUATION",
+      "m1LowerBoundary": "CLOSED",
+      "m1UpperBoundary": "OPEN",
+      "lowerBound": 0,
+      "upperBound": "ONE-HUNDRED-FIFTY-MICROSECONDS-PLUS-FRAME-DELAY",
+      "lowerBoundary": "CLOSED",
+      "upperBoundary": "OPEN",
+      "unit": "us",
+      "boundKind": "SOURCE-EQUATION",
+      "sourceRelation": "TECH-LAT-TX < 150 + FRAME-DELAY",
+      "sourceParameter": "TECH-LAT-TX",
+      "expression": {
+        "kind": "COMPARE",
+        "op": "LT",
+        "left": {
+          "kind": "SYMBOL",
+          "name": "TECH_LAT_TX",
+          "unit": "us"
+        },
+        "right": {
+          "kind": "BINARY",
+          "op": "ADD",
+          "left": {
+            "kind": "LITERAL",
+            "value": 150,
+            "unit": "us"
+          },
+          "right": {
+            "kind": "SYMBOL",
+            "name": "FRAME_DELAY",
+            "unit": "us"
+          },
+          "unit": "us"
+        }
+      },
+      "sourceEvidenceUnitIds": [
+        "SU-ARINC-664-7-3.2.4.1-P023-PROSE-SENTENCE-001-60532CA921FC",
+        "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-003-44239DB2F60A",
+        "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-006-8D72879FD3A5"
+      ],
+      "staticCheck": "EQUATION-STRUCTURAL",
+      "observationWindow": "AFDX-TX-TECH-LATENCY-STRICT-OPEN-BOUND",
+      "observationRoleEn": "Conditional AFDX End-System measurement; bound M2 does not execute AFDX or treat this as a 615A operation timeout.",
+      "observationRoleZh": "条件 AFDX 端系统测量；绑定 M2 不执行 AFDX，也不把它当作 615A 操作超时。",
+      "errorBudgetClass": "NETWORK-CONSTRAINT-NOT-615A-OPERATION-TIMEOUT",
+      "errorBudgetEn": "This catalog item is a 664-7 network constraint. Missing measurement premises yield INCONCLUSIVE, not FAIL. It is not a 615A FIND/TFTP/DLP timeout.",
+      "errorBudgetZh": "本目录项是 664-7 网络约束。缺少测量前提时结论为 INCONCLUSIVE 而非 FAIL。它不是 615A FIND／TFTP／DLP 超时。",
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": []
+    },
+    {
+      "id": "TIM-CRS-M1-00683",
+      "requirementId": "CRS-M1-00683",
+      "trigger": "LAST-BIT-OF-ETHERNET-FRAME-RECEIVED-ON-PHYSICAL-MEDIA-ATTACHMENT",
+      "response": "LAST-BIT-OF-CORRESPONDING-DATA-AVAILABLE-TO-HOSTED-PARTITION",
+      "cancel": "MEASUREMENT-PREMISES-NOT-MET",
+      "supersede": "NONE",
+      "correlationKey": "AFDX-END-SYSTEM-TECHNOLOGICAL-LATENCY-MEASUREMENT",
+      "pairingPolicy": "PAIR-NAMED-MEASUREMENT-ENDPOINTS",
+      "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+      "clockId": "CLK_AFDX_ES",
+      "resets": [],
+      "constraintKind": "SOURCE-EQUATION",
+      "parameterOrigin": "SYMBOLIC-SOURCE-EQUATION",
+      "m1LowerBoundary": "CLOSED",
+      "m1UpperBoundary": "OPEN",
+      "lowerBound": 0,
+      "upperBound": 150,
+      "lowerBoundary": "CLOSED",
+      "upperBoundary": "OPEN",
+      "unit": "us",
+      "boundKind": "SOURCE-EQUATION",
+      "sourceRelation": "TECH-LAT-RX < 150",
+      "sourceParameter": "TECH-LAT-RX",
+      "expression": {
+        "kind": "COMPARE",
+        "op": "LT",
+        "left": {
+          "kind": "SYMBOL",
+          "name": "TECH_LAT_RX",
+          "unit": "us"
+        },
+        "right": {
+          "kind": "LITERAL",
+          "value": 150,
+          "unit": "us"
+        }
+      },
+      "sourceEvidenceUnitIds": [
+        "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-002-510E7A75E217",
+        "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-007-1CDDD6B34C3E",
+        "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-008-824150EBC26E",
+        "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-009-BEE0AC634C0C"
+      ],
+      "staticCheck": "EQUATION-STRUCTURAL",
+      "observationWindow": "AFDX-RX-TECH-LATENCY-STRICT-OPEN-BOUND",
+      "observationRoleEn": "Conditional AFDX End-System measurement; bound M2 does not execute AFDX or treat this as a 615A operation timeout.",
+      "observationRoleZh": "条件 AFDX 端系统测量；绑定 M2 不执行 AFDX，也不把它当作 615A 操作超时。",
+      "errorBudgetClass": "NETWORK-CONSTRAINT-NOT-615A-OPERATION-TIMEOUT",
+      "errorBudgetEn": "This catalog item is a 664-7 network constraint. Missing measurement premises yield INCONCLUSIVE, not FAIL. It is not a 615A FIND/TFTP/DLP timeout.",
+      "errorBudgetZh": "本目录项是 664-7 网络约束。缺少测量前提时结论为 INCONCLUSIVE 而非 FAIL。它不是 615A FIND／TFTP／DLP 超时。",
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": []
+    },
+    {
+      "id": "TIM-CRS-M1-00684",
+      "requirementId": "CRS-M1-00684",
+      "trigger": "VL-FRAME-AT-END-SYSTEM-OUTPUT",
+      "response": "MAX-JITTER-OBSERVED-FOR-THAT-VL",
+      "cancel": "AFDX-TRANSPORT-NOT-SELECTED",
+      "supersede": "NONE",
+      "correlationKey": "AFDX-VL-AT-END-SYSTEM-OUTPUT",
+      "pairingPolicy": "PAIR-VL-OUTPUT-WITH-MAX-JITTER-BOUND",
+      "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+      "clockId": "CLK_AFDX_ES",
+      "resets": [],
+      "constraintKind": "SOURCE-EQUATION",
+      "parameterOrigin": "SYMBOLIC-SOURCE-EQUATION",
+      "m1LowerBoundary": "CLOSED",
+      "m1UpperBoundary": "CLOSED",
+      "lowerBound": 0,
+      "upperBound": "FORTY-MICROSECONDS-PLUS-CONVERTED-VL-LOAD-TERM",
+      "lowerBoundary": "CLOSED",
+      "upperBoundary": "CLOSED",
+      "unit": "us",
+      "boundKind": "SOURCE-EQUATION",
+      "sourceRelation": "MAX-JITTER <= 40 + (((20 + LMAX) * 8) / NBW) * 1000000",
+      "sourceParameter": "MAX-JITTER-LOAD-EQUATION",
+      "expression": {
+        "kind": "COMPARE",
+        "op": "LE",
+        "left": {
+          "kind": "SYMBOL",
+          "name": "MAX_JITTER",
+          "unit": "us"
+        },
+        "right": {
+          "kind": "BINARY",
+          "op": "ADD",
+          "left": {
+            "kind": "LITERAL",
+            "value": 40,
+            "unit": "us"
+          },
+          "right": {
+            "kind": "BINARY",
+            "op": "MUL",
+            "left": {
+              "kind": "BINARY",
+              "op": "DIV",
+              "left": {
+                "kind": "BINARY",
+                "op": "MUL",
+                "left": {
+                  "kind": "BINARY",
+                  "op": "ADD",
+                  "left": {
+                    "kind": "LITERAL",
+                    "value": 20,
+                    "unit": "1"
+                  },
+                  "right": {
+                    "kind": "SYMBOL",
+                    "name": "LMAX",
+                    "unit": "1"
+                  },
+                  "unit": "1"
+                },
+                "right": {
+                  "kind": "LITERAL",
+                  "value": 8,
+                  "unit": "1"
+                },
+                "unit": "1"
+              },
+              "right": {
+                "kind": "SYMBOL",
+                "name": "NBW",
+                "unit": "1"
+              },
+              "unit": "s"
+            },
+            "right": {
+              "kind": "LITERAL",
+              "value": 1000000,
+              "unit": "1"
+            },
+            "unit": "us"
+          },
+          "unit": "us"
+        }
+      },
+      "sourceEvidenceUnitIds": [
+        "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD",
+        "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948",
+        "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-002-7A1296CF6117",
+        "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-003-E8E54C6C0881"
+      ],
+      "staticCheck": "EQUATION-STRUCTURAL",
+      "observationWindow": "AFDX-MAX-JITTER-LOAD-EQUATION",
+      "observationRoleEn": "Conditional AFDX End-System measurement; bound M2 does not execute AFDX or treat this as a 615A operation timeout.",
+      "observationRoleZh": "条件 AFDX 端系统测量；绑定 M2 不执行 AFDX，也不把它当作 615A 操作超时。",
+      "errorBudgetClass": "NETWORK-CONSTRAINT-NOT-615A-OPERATION-TIMEOUT",
+      "errorBudgetEn": "This catalog item is a 664-7 network constraint. Missing measurement premises yield INCONCLUSIVE, not FAIL. It is not a 615A FIND/TFTP/DLP timeout.",
+      "errorBudgetZh": "本目录项是 664-7 网络约束。缺少测量前提时结论为 INCONCLUSIVE 而非 FAIL。它不是 615A FIND／TFTP／DLP 超时。",
+      "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
+      "enablementEventIds": []
+    },
+    {
+      "id": "TIM-CRS-M1-00685",
+      "requirementId": "CRS-M1-00685",
+      "trigger": "VL-FRAME-AT-END-SYSTEM-OUTPUT",
+      "response": "MAX-JITTER-OBSERVED-FOR-THAT-VL",
+      "cancel": "AFDX-TRANSPORT-NOT-SELECTED",
+      "supersede": "NONE",
+      "correlationKey": "AFDX-VL-AT-END-SYSTEM-OUTPUT",
+      "pairingPolicy": "PAIR-VL-OUTPUT-WITH-MAX-JITTER-BOUND",
+      "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+      "clockId": "CLK_AFDX_ES",
+      "resets": [],
+      "constraintKind": "SOURCE-EQUATION",
+      "parameterOrigin": "SYMBOLIC-SOURCE-EQUATION",
+      "m1LowerBoundary": "CLOSED",
+      "m1UpperBoundary": "CLOSED",
+      "lowerBound": 0,
+      "upperBound": 500,
+      "lowerBoundary": "CLOSED",
+      "upperBoundary": "CLOSED",
+      "unit": "us",
+      "boundKind": "SOURCE-EQUATION",
+      "sourceRelation": "MAX-JITTER <= 500",
+      "sourceParameter": "MAX-JITTER-500US-EQUATION",
+      "expression": {
+        "kind": "COMPARE",
+        "op": "LE",
+        "left": {
+          "kind": "SYMBOL",
+          "name": "MAX_JITTER",
+          "unit": "us"
+        },
+        "right": {
+          "kind": "LITERAL",
+          "value": 500,
+          "unit": "us"
+        }
+      },
+      "sourceEvidenceUnitIds": [
+        "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948",
+        "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD",
+        "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-002-7A1296CF6117"
+      ],
+      "staticCheck": "EQUATION-STRUCTURAL",
+      "observationWindow": "AFDX-MAX-JITTER-500US-EQUATION",
+      "observationRoleEn": "Conditional AFDX End-System measurement; bound M2 does not execute AFDX or treat this as a 615A operation timeout.",
+      "observationRoleZh": "条件 AFDX 端系统测量；绑定 M2 不执行 AFDX，也不把它当作 615A 操作超时。",
+      "errorBudgetClass": "NETWORK-CONSTRAINT-NOT-615A-OPERATION-TIMEOUT",
+      "errorBudgetEn": "This catalog item is a 664-7 network constraint. Missing measurement premises yield INCONCLUSIVE, not FAIL. It is not a 615A FIND/TFTP/DLP timeout.",
+      "errorBudgetZh": "本目录项是 664-7 网络约束。缺少测量前提时结论为 INCONCLUSIVE 而非 FAIL。它不是 615A FIND／TFTP／DLP 超时。",
       "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
       "enablementEventIds": []
     }
@@ -19241,7 +19855,9 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "OBJ-SUPPORTING-KEEP-TX-TECHNOLOGICAL-LATENCY-BELOW-150US-PLUS-FRAME-DELAY-CRS-M1-00682"
+        "OBJ-SUPPORTING-KEEP-TX-TECHNOLOGICAL-LATENCY-BELOW-150US-PLUS-FRAME-DELAY-CRS-M1-00682",
+        "TIM-CRS-M1-00682",
+        "CLK_AFDX_ES"
       ]
     },
     {
@@ -19253,7 +19869,9 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "OBJ-SUPPORTING-KEEP-RX-TECHNOLOGICAL-LATENCY-BELOW-150-MICROSECONDS-CRS-M1-00683"
+        "OBJ-SUPPORTING-KEEP-RX-TECHNOLOGICAL-LATENCY-BELOW-150-MICROSECONDS-CRS-M1-00683",
+        "TIM-CRS-M1-00683",
+        "CLK_AFDX_ES"
       ]
     },
     {
@@ -19265,7 +19883,9 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "OBJ-SUPPORTING-BOUND-MAX-JITTER-BY-40US-PLUS-VL-LOAD-TERM-CRS-M1-00684"
+        "OBJ-SUPPORTING-BOUND-MAX-JITTER-BY-40US-PLUS-VL-LOAD-TERM-CRS-M1-00684",
+        "TIM-CRS-M1-00684",
+        "CLK_AFDX_ES"
       ]
     },
     {
@@ -19277,7 +19897,9 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "OBJ-SUPPORTING-BOUND-MAX-JITTER-BY-500-MICROSECONDS-EQUATION-CRS-M1-00685"
+        "OBJ-SUPPORTING-BOUND-MAX-JITTER-BY-500-MICROSECONDS-EQUATION-CRS-M1-00685",
+        "TIM-CRS-M1-00685",
+        "CLK_AFDX_ES"
       ]
     },
     {
@@ -19578,6 +20200,258 @@
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
         "OBJ-SUPPORTING-ALLOCATE-TABLE-2-1-ADDRESSES-FROM-RFC1918-PRIVATE-RANGES-CRS-M1-00710"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00711",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-MEASURE-TX-TECHNOLOGICAL-LATENCY-BETWEEN-PARTITION-DATA-AND-PHYSICAL-MEDIA-CRS-M1-00711"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00712",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-START-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-PARTITION-BIT-IS-AVAILABLE-CRS-M1-00712"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00713",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-END-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-ON-MEDIA-CRS-M1-00713"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00714",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-MEASURE-TX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-NO-CONTENTION-AND-NO-IP-FRAGMENTATION-CRS-M1-00714"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00715",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-DISTINGUISH-TECHNOLOGICAL-LATENCY-FROM-CONFIGURATION-LOAD-LATENCY-CRS-M1-00715"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00716",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-DEFINE-TECHNOLOGICAL-LATENCY-AS-ACCEPT-PROCESS-AND-BEGIN-TX-WITH-NO-OTHER-TASK-CRS-M1-00716"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00717",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-ADD-FRAME-DELAY-FOR-PHYSICAL-LAYER-DELIVERY-CRS-M1-00717"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00718",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-START-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-RECEIVED-CRS-M1-00718"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00719",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-END-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-DATA-BIT-IS-AVAILABLE-TO-PARTITION-CRS-M1-00719"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00720",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-MEASURE-RX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-AND-NO-CONTENTION-CRS-M1-00720"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00721",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-SATISFY-BOTH-MAX-JITTER-EQUATIONS-SIMULTANEOUSLY-CRS-M1-00721"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00722",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-TREAT-MAX-JITTER-AS-MICROSECONDS-NBW-AS-BITS-PER-SECOND-AND-LMAX-AS-OCTETS-CRS-M1-00722"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00723",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-COMPOSE-MAC-SOURCE-AS-24-PLUS-16-PLUS-3-PLUS-5-BIT-FIELDS-CRS-M1-00723"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00724",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-SET-MAC-SOURCE-CONSTANT-TAIL-TO-00000-CRS-M1-00724"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00725",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-TREAT-MAC-SOURCE-CONSTRUCTION-ALGORITHM-AS-NOT-UNIQUELY-RECOMMENDED-CRS-M1-00725"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00726",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-RECORD-INTERFACE-ID-000-AS-NOT-USED-CRS-M1-00726"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00727",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-RECORD-INTERFACE-ID-011-AS-NOT-USED-CRS-M1-00727"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00728",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-RECORD-INTERFACE-ID-100-AS-NOT-USED-CRS-M1-00728"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00729",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-RECORD-INTERFACE-ID-101-AS-NOT-USED-CRS-M1-00729"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00730",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-RECORD-INTERFACE-ID-110-AS-SOURCE-NOR-USED-CRS-M1-00730"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00731",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-RECORD-INTERFACE-ID-111-AS-NOT-USED-CRS-M1-00731"
       ]
     }
   ],
@@ -19955,6 +20829,94 @@
       "rationaleCode": "Clock used by this timing obligation.",
       "rationaleEn": "Clock used by this timing obligation.",
       "rationaleZh": "此时序义务使用的时钟。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0454",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_FROM_UPL_FILE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_FROM_UPL_FILE cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_FROM_UPL_FILE cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_FROM_UPL_FILE 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0455",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_FROM_UPL_LUR",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_FROM_UPL_LUR cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_FROM_UPL_LUR cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_FROM_UPL_LUR 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0456",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_FROM_INF_LCI",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_FROM_INF_LCI cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_FROM_INF_LCI cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_FROM_INF_LCI 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0457",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_FROM_INF_LCL",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_FROM_INF_LCL cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_FROM_INF_LCL cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_FROM_INF_LCL 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0458",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_RETRY_UPL_FILE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_RETRY_UPL_FILE cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_RETRY_UPL_FILE cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_RETRY_UPL_FILE 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0459",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_RETRY_UPL_LUR",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_RETRY_UPL_LUR cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_RETRY_UPL_LUR cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_RETRY_UPL_LUR 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0460",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_RETRY_INF_LCI",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_RETRY_INF_LCI cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_RETRY_INF_LCI cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_RETRY_INF_LCI 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00032-0461",
+      "requirementId": "CRS-M1-00032",
+      "targetKind": "TRANSITION",
+      "targetId": "T_WAIT_RETRY_INF_LCL",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_WAIT_RETRY_INF_LCL cites this obligation.",
+      "rationaleEn": "Transition T_WAIT_RETRY_INF_LCL cites this obligation.",
+      "rationaleZh": "迁移 T_WAIT_RETRY_INF_LCL 引用此义务。"
     },
     {
       "id": "TR-CRS-M1-00033-0035",
@@ -20782,6 +21744,28 @@
       "rationaleZh": "此时序义务使用的时钟。"
     },
     {
+      "id": "TR-CRS-M1-00099-0452",
+      "requirementId": "CRS-M1-00099",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ENTER_UPL_EXC",
+      "polarity": "NEGATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_ENTER_UPL_EXC cites this obligation.",
+      "rationaleEn": "Transition T_ENTER_UPL_EXC cites this obligation.",
+      "rationaleZh": "迁移 T_ENTER_UPL_EXC 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00099-0453",
+      "requirementId": "CRS-M1-00099",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ENTER_INF_EXC",
+      "polarity": "NEGATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_ENTER_INF_EXC cites this obligation.",
+      "rationaleEn": "Transition T_ENTER_INF_EXC cites this obligation.",
+      "rationaleZh": "迁移 T_ENTER_INF_EXC 引用此义务。"
+    },
+    {
       "id": "TR-CRS-M1-00100-0110",
       "requirementId": "CRS-M1-00100",
       "targetKind": "TRANSITION",
@@ -20846,6 +21830,28 @@
       "rationaleCode": "Clock used by this timing obligation.",
       "rationaleEn": "Clock used by this timing obligation.",
       "rationaleZh": "此时序义务使用的时钟。"
+    },
+    {
+      "id": "TR-CRS-M1-00101-0449",
+      "requirementId": "CRS-M1-00101",
+      "targetKind": "TRANSITION",
+      "targetId": "T_UPL_EXC_TO",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_UPL_EXC_TO cites this obligation.",
+      "rationaleEn": "Transition T_UPL_EXC_TO cites this obligation.",
+      "rationaleZh": "迁移 T_UPL_EXC_TO 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00101-0451",
+      "requirementId": "CRS-M1-00101",
+      "targetKind": "TRANSITION",
+      "targetId": "T_INF_EXC_TO",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_INF_EXC_TO cites this obligation.",
+      "rationaleEn": "Transition T_INF_EXC_TO cites this obligation.",
+      "rationaleZh": "迁移 T_INF_EXC_TO 引用此义务。"
     },
     {
       "id": "TR-CRS-M1-00102-0116",
@@ -21011,6 +22017,17 @@
       "rationaleCode": "Clock used by this timing obligation.",
       "rationaleEn": "Clock used by this timing obligation.",
       "rationaleZh": "此时序义务使用的时钟。"
+    },
+    {
+      "id": "TR-CRS-M1-00108-0450",
+      "requirementId": "CRS-M1-00108",
+      "targetKind": "TRANSITION",
+      "targetId": "T_UPL_EXC_TO",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_UPL_EXC_TO cites this obligation.",
+      "rationaleEn": "Transition T_UPL_EXC_TO cites this obligation.",
+      "rationaleZh": "迁移 T_UPL_EXC_TO 引用此义务。"
     },
     {
       "id": "TR-CRS-M1-00109-0131",
@@ -21838,6 +22855,50 @@
       "rationaleZh": "此时序义务使用的时钟。"
     },
     {
+      "id": "TR-CRS-M1-00177-0442",
+      "requirementId": "CRS-M1-00177",
+      "targetKind": "TRANSITION",
+      "targetId": "T_INF_TFTP_TO",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_INF_TFTP_TO cites this obligation.",
+      "rationaleEn": "Transition T_INF_TFTP_TO cites this obligation.",
+      "rationaleZh": "迁移 T_INF_TFTP_TO 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00177-0443",
+      "requirementId": "CRS-M1-00177",
+      "targetKind": "TRANSITION",
+      "targetId": "T_UPL_TFTP_TO",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_UPL_TFTP_TO cites this obligation.",
+      "rationaleEn": "Transition T_UPL_TFTP_TO cites this obligation.",
+      "rationaleZh": "迁移 T_UPL_TFTP_TO 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00177-0444",
+      "requirementId": "CRS-M1-00177",
+      "targetKind": "TRANSITION",
+      "targetId": "T_UPL_LUR_TFTP_TO",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_UPL_LUR_TFTP_TO cites this obligation.",
+      "rationaleEn": "Transition T_UPL_LUR_TFTP_TO cites this obligation.",
+      "rationaleZh": "迁移 T_UPL_LUR_TFTP_TO 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00177-0445",
+      "requirementId": "CRS-M1-00177",
+      "targetKind": "TRANSITION",
+      "targetId": "T_UPL_FILE_TFTP_TO",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_UPL_FILE_TFTP_TO cites this obligation.",
+      "rationaleEn": "Transition T_UPL_FILE_TFTP_TO cites this obligation.",
+      "rationaleZh": "迁移 T_UPL_FILE_TFTP_TO 引用此义务。"
+    },
+    {
       "id": "TR-CRS-M1-00178-0206",
       "requirementId": "CRS-M1-00178",
       "targetKind": "INTERFACE",
@@ -22080,6 +23141,28 @@
       "rationaleZh": "此时序义务使用的时钟。"
     },
     {
+      "id": "TR-CRS-M1-00187-0446",
+      "requirementId": "CRS-M1-00187",
+      "targetKind": "TRANSITION",
+      "targetId": "T_UPL_DLP_TO",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_UPL_DLP_TO cites this obligation.",
+      "rationaleEn": "Transition T_UPL_DLP_TO cites this obligation.",
+      "rationaleZh": "迁移 T_UPL_DLP_TO 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00187-0447",
+      "requirementId": "CRS-M1-00187",
+      "targetKind": "TRANSITION",
+      "targetId": "T_UPL_LUR_DLP_TO",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_UPL_LUR_DLP_TO cites this obligation.",
+      "rationaleEn": "Transition T_UPL_LUR_DLP_TO cites this obligation.",
+      "rationaleZh": "迁移 T_UPL_LUR_DLP_TO 引用此义务。"
+    },
+    {
       "id": "TR-CRS-M1-00188-0228",
       "requirementId": "CRS-M1-00188",
       "targetKind": "INTERFACE",
@@ -22111,6 +23194,17 @@
       "rationaleCode": "Clock used by this timing obligation.",
       "rationaleEn": "Clock used by this timing obligation.",
       "rationaleZh": "此时序义务使用的时钟。"
+    },
+    {
+      "id": "TR-CRS-M1-00188-0448",
+      "requirementId": "CRS-M1-00188",
+      "targetKind": "TRANSITION",
+      "targetId": "T_UPL_LUR_DLP_TO",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "Transition T_UPL_LUR_DLP_TO cites this obligation.",
+      "rationaleEn": "Transition T_UPL_LUR_DLP_TO cites this obligation.",
+      "rationaleZh": "迁移 T_UPL_LUR_DLP_TO 引用此义务。"
     },
     {
       "id": "TR-CRS-M1-00189-0231",
@@ -23829,6 +24923,28 @@
       "rationaleZh": "状态码谓词 ST-CRS-M1-00340。"
     },
     {
+      "id": "TR-CRS-M1-00340-0463",
+      "requirementId": "CRS-M1-00340",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_TH",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_TH cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_TH cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_TH 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00340-0464",
+      "requirementId": "CRS-M1-00340",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORTED",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORTED cites this obligation.",
+      "rationaleEn": "Transition T_ABORTED cites this obligation.",
+      "rationaleZh": "迁移 T_ABORTED 引用此义务。"
+    },
+    {
       "id": "TR-CRS-M1-00341-0387",
       "requirementId": "CRS-M1-00341",
       "targetKind": "STATUS-CONSTRAINT",
@@ -23838,6 +24954,138 @@
       "rationaleCode": "Status-code predicate ST-CRS-M1-00341.",
       "rationaleEn": "Status-code predicate ST-CRS-M1-00341.",
       "rationaleZh": "状态码谓词 ST-CRS-M1-00341。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0462",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_DL",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_DL cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_DL cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_DL 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0465",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORTED",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORTED cites this obligation.",
+      "rationaleEn": "Transition T_ABORTED cites this obligation.",
+      "rationaleZh": "迁移 T_ABORTED 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0466",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_FROM_S_INF_LCI_RRQ",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_FROM_S_INF_LCI_RRQ cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_FROM_S_INF_LCI_RRQ cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_FROM_S_INF_LCI_RRQ 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0467",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_FROM_S_INF_LCL_XFER",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_FROM_S_INF_LCL_XFER cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_FROM_S_INF_LCL_XFER cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_FROM_S_INF_LCL_XFER 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0468",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_FROM_S_INF_LCS_XFER",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_FROM_S_INF_LCS_XFER cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_FROM_S_INF_LCS_XFER cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_FROM_S_INF_LCS_XFER 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0469",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_FROM_S_INF_EXCEPTION",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_FROM_S_INF_EXCEPTION cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_FROM_S_INF_EXCEPTION cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_FROM_S_INF_EXCEPTION 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0470",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_FROM_S_WAIT_RETRY",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_FROM_S_WAIT_RETRY cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_FROM_S_WAIT_RETRY cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_FROM_S_WAIT_RETRY 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0471",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_FROM_S_UPL_LUI_XFER",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_FROM_S_UPL_LUI_XFER cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_FROM_S_UPL_LUI_XFER cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_LUI_XFER 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0472",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_FROM_S_UPL_LIST_SENT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_FROM_S_UPL_LIST_SENT cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_FROM_S_UPL_LIST_SENT cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_LIST_SENT 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0473",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_FROM_S_UPL_WAIT_LUS0001",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_FROM_S_UPL_WAIT_LUS0001 cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_FROM_S_UPL_WAIT_LUS0001 cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_WAIT_LUS0001 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0474",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_FROM_S_UPL_LUR_XFER",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_FROM_S_UPL_LUR_XFER cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_FROM_S_UPL_LUR_XFER cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_LUR_XFER 引用此义务。"
+    },
+    {
+      "id": "TR-CRS-M1-00341-0475",
+      "requirementId": "CRS-M1-00341",
+      "targetKind": "TRANSITION",
+      "targetId": "T_ABORT_FROM_S_UPL_LUS_XFER",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "Transition T_ABORT_FROM_S_UPL_LUS_XFER cites this obligation.",
+      "rationaleEn": "Transition T_ABORT_FROM_S_UPL_LUS_XFER cites this obligation.",
+      "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_LUS_XFER 引用此义务。"
     },
     {
       "id": "TR-CRS-M1-00342-0388",
@@ -23959,6 +25207,17 @@
       "rationaleCode": "Sequence-chart obligation maps to T_INF_LCL_WRQ.",
       "rationaleEn": "Sequence-chart obligation maps to T_INF_LCL_WRQ.",
       "rationaleZh": "序列图义务映射到 T_INF_LCL_WRQ。"
+    },
+    {
+      "id": "TR-CRS-M1-00351-0441",
+      "requirementId": "CRS-M1-00351",
+      "targetKind": "TRANSITION",
+      "targetId": "T_INF_ACCEPT_INIT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FIGURE-CONSTRAINT",
+      "rationaleCode": "Transition T_INF_ACCEPT_INIT cites this obligation.",
+      "rationaleEn": "Transition T_INF_ACCEPT_INIT cites this obligation.",
+      "rationaleZh": "迁移 T_INF_ACCEPT_INIT 引用此义务。"
     },
     {
       "id": "TR-CRS-M1-00352-0399",
@@ -24423,391 +25682,6 @@
       "rationaleZh": "非行为／Profile 义务 TERMINATE 保持为范围或适用性约束。"
     },
     {
-      "id": "TR-CRS-M1-00351-0441",
-      "requirementId": "CRS-M1-00351",
-      "targetKind": "TRANSITION",
-      "targetId": "T_INF_ACCEPT_INIT",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FIGURE-CONSTRAINT",
-      "rationaleCode": "Transition T_INF_ACCEPT_INIT cites this obligation.",
-      "rationaleEn": "Transition T_INF_ACCEPT_INIT cites this obligation.",
-      "rationaleZh": "迁移 T_INF_ACCEPT_INIT 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00177-0442",
-      "requirementId": "CRS-M1-00177",
-      "targetKind": "TRANSITION",
-      "targetId": "T_INF_TFTP_TO",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_INF_TFTP_TO cites this obligation.",
-      "rationaleEn": "Transition T_INF_TFTP_TO cites this obligation.",
-      "rationaleZh": "迁移 T_INF_TFTP_TO 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00177-0443",
-      "requirementId": "CRS-M1-00177",
-      "targetKind": "TRANSITION",
-      "targetId": "T_UPL_TFTP_TO",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_UPL_TFTP_TO cites this obligation.",
-      "rationaleEn": "Transition T_UPL_TFTP_TO cites this obligation.",
-      "rationaleZh": "迁移 T_UPL_TFTP_TO 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00177-0444",
-      "requirementId": "CRS-M1-00177",
-      "targetKind": "TRANSITION",
-      "targetId": "T_UPL_LUR_TFTP_TO",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_UPL_LUR_TFTP_TO cites this obligation.",
-      "rationaleEn": "Transition T_UPL_LUR_TFTP_TO cites this obligation.",
-      "rationaleZh": "迁移 T_UPL_LUR_TFTP_TO 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00177-0445",
-      "requirementId": "CRS-M1-00177",
-      "targetKind": "TRANSITION",
-      "targetId": "T_UPL_FILE_TFTP_TO",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_UPL_FILE_TFTP_TO cites this obligation.",
-      "rationaleEn": "Transition T_UPL_FILE_TFTP_TO cites this obligation.",
-      "rationaleZh": "迁移 T_UPL_FILE_TFTP_TO 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00187-0446",
-      "requirementId": "CRS-M1-00187",
-      "targetKind": "TRANSITION",
-      "targetId": "T_UPL_DLP_TO",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_UPL_DLP_TO cites this obligation.",
-      "rationaleEn": "Transition T_UPL_DLP_TO cites this obligation.",
-      "rationaleZh": "迁移 T_UPL_DLP_TO 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00187-0447",
-      "requirementId": "CRS-M1-00187",
-      "targetKind": "TRANSITION",
-      "targetId": "T_UPL_LUR_DLP_TO",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_UPL_LUR_DLP_TO cites this obligation.",
-      "rationaleEn": "Transition T_UPL_LUR_DLP_TO cites this obligation.",
-      "rationaleZh": "迁移 T_UPL_LUR_DLP_TO 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00188-0448",
-      "requirementId": "CRS-M1-00188",
-      "targetKind": "TRANSITION",
-      "targetId": "T_UPL_LUR_DLP_TO",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_UPL_LUR_DLP_TO cites this obligation.",
-      "rationaleEn": "Transition T_UPL_LUR_DLP_TO cites this obligation.",
-      "rationaleZh": "迁移 T_UPL_LUR_DLP_TO 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00101-0449",
-      "requirementId": "CRS-M1-00101",
-      "targetKind": "TRANSITION",
-      "targetId": "T_UPL_EXC_TO",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_UPL_EXC_TO cites this obligation.",
-      "rationaleEn": "Transition T_UPL_EXC_TO cites this obligation.",
-      "rationaleZh": "迁移 T_UPL_EXC_TO 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00108-0450",
-      "requirementId": "CRS-M1-00108",
-      "targetKind": "TRANSITION",
-      "targetId": "T_UPL_EXC_TO",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_UPL_EXC_TO cites this obligation.",
-      "rationaleEn": "Transition T_UPL_EXC_TO cites this obligation.",
-      "rationaleZh": "迁移 T_UPL_EXC_TO 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00101-0451",
-      "requirementId": "CRS-M1-00101",
-      "targetKind": "TRANSITION",
-      "targetId": "T_INF_EXC_TO",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_INF_EXC_TO cites this obligation.",
-      "rationaleEn": "Transition T_INF_EXC_TO cites this obligation.",
-      "rationaleZh": "迁移 T_INF_EXC_TO 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00099-0452",
-      "requirementId": "CRS-M1-00099",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ENTER_UPL_EXC",
-      "polarity": "NEGATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_ENTER_UPL_EXC cites this obligation.",
-      "rationaleEn": "Transition T_ENTER_UPL_EXC cites this obligation.",
-      "rationaleZh": "迁移 T_ENTER_UPL_EXC 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00099-0453",
-      "requirementId": "CRS-M1-00099",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ENTER_INF_EXC",
-      "polarity": "NEGATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_ENTER_INF_EXC cites this obligation.",
-      "rationaleEn": "Transition T_ENTER_INF_EXC cites this obligation.",
-      "rationaleZh": "迁移 T_ENTER_INF_EXC 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00032-0454",
-      "requirementId": "CRS-M1-00032",
-      "targetKind": "TRANSITION",
-      "targetId": "T_WAIT_FROM_UPL_FILE",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_WAIT_FROM_UPL_FILE cites this obligation.",
-      "rationaleEn": "Transition T_WAIT_FROM_UPL_FILE cites this obligation.",
-      "rationaleZh": "迁移 T_WAIT_FROM_UPL_FILE 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00032-0455",
-      "requirementId": "CRS-M1-00032",
-      "targetKind": "TRANSITION",
-      "targetId": "T_WAIT_FROM_UPL_LUR",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_WAIT_FROM_UPL_LUR cites this obligation.",
-      "rationaleEn": "Transition T_WAIT_FROM_UPL_LUR cites this obligation.",
-      "rationaleZh": "迁移 T_WAIT_FROM_UPL_LUR 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00032-0456",
-      "requirementId": "CRS-M1-00032",
-      "targetKind": "TRANSITION",
-      "targetId": "T_WAIT_FROM_INF_LCI",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_WAIT_FROM_INF_LCI cites this obligation.",
-      "rationaleEn": "Transition T_WAIT_FROM_INF_LCI cites this obligation.",
-      "rationaleZh": "迁移 T_WAIT_FROM_INF_LCI 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00032-0457",
-      "requirementId": "CRS-M1-00032",
-      "targetKind": "TRANSITION",
-      "targetId": "T_WAIT_FROM_INF_LCL",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_WAIT_FROM_INF_LCL cites this obligation.",
-      "rationaleEn": "Transition T_WAIT_FROM_INF_LCL cites this obligation.",
-      "rationaleZh": "迁移 T_WAIT_FROM_INF_LCL 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00032-0458",
-      "requirementId": "CRS-M1-00032",
-      "targetKind": "TRANSITION",
-      "targetId": "T_WAIT_RETRY_UPL_FILE",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_WAIT_RETRY_UPL_FILE cites this obligation.",
-      "rationaleEn": "Transition T_WAIT_RETRY_UPL_FILE cites this obligation.",
-      "rationaleZh": "迁移 T_WAIT_RETRY_UPL_FILE 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00032-0459",
-      "requirementId": "CRS-M1-00032",
-      "targetKind": "TRANSITION",
-      "targetId": "T_WAIT_RETRY_UPL_LUR",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_WAIT_RETRY_UPL_LUR cites this obligation.",
-      "rationaleEn": "Transition T_WAIT_RETRY_UPL_LUR cites this obligation.",
-      "rationaleZh": "迁移 T_WAIT_RETRY_UPL_LUR 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00032-0460",
-      "requirementId": "CRS-M1-00032",
-      "targetKind": "TRANSITION",
-      "targetId": "T_WAIT_RETRY_INF_LCI",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_WAIT_RETRY_INF_LCI cites this obligation.",
-      "rationaleEn": "Transition T_WAIT_RETRY_INF_LCI cites this obligation.",
-      "rationaleZh": "迁移 T_WAIT_RETRY_INF_LCI 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00032-0461",
-      "requirementId": "CRS-M1-00032",
-      "targetKind": "TRANSITION",
-      "targetId": "T_WAIT_RETRY_INF_LCL",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "Transition T_WAIT_RETRY_INF_LCL cites this obligation.",
-      "rationaleEn": "Transition T_WAIT_RETRY_INF_LCL cites this obligation.",
-      "rationaleZh": "迁移 T_WAIT_RETRY_INF_LCL 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00341-0462",
-      "requirementId": "CRS-M1-00341",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORT_DL",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORT_DL cites this obligation.",
-      "rationaleEn": "Transition T_ABORT_DL cites this obligation.",
-      "rationaleZh": "迁移 T_ABORT_DL 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00340-0463",
-      "requirementId": "CRS-M1-00340",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORT_TH",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORT_TH cites this obligation.",
-      "rationaleEn": "Transition T_ABORT_TH cites this obligation.",
-      "rationaleZh": "迁移 T_ABORT_TH 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00340-0464",
-      "requirementId": "CRS-M1-00340",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORTED",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORTED cites this obligation.",
-      "rationaleEn": "Transition T_ABORTED cites this obligation.",
-      "rationaleZh": "迁移 T_ABORTED 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00341-0465",
-      "requirementId": "CRS-M1-00341",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORTED",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORTED cites this obligation.",
-      "rationaleEn": "Transition T_ABORTED cites this obligation.",
-      "rationaleZh": "迁移 T_ABORTED 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00341-0466",
-      "requirementId": "CRS-M1-00341",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORT_FROM_S_INF_LCI_RRQ",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORT_FROM_S_INF_LCI_RRQ cites this obligation.",
-      "rationaleEn": "Transition T_ABORT_FROM_S_INF_LCI_RRQ cites this obligation.",
-      "rationaleZh": "迁移 T_ABORT_FROM_S_INF_LCI_RRQ 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00341-0467",
-      "requirementId": "CRS-M1-00341",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORT_FROM_S_INF_LCL_XFER",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORT_FROM_S_INF_LCL_XFER cites this obligation.",
-      "rationaleEn": "Transition T_ABORT_FROM_S_INF_LCL_XFER cites this obligation.",
-      "rationaleZh": "迁移 T_ABORT_FROM_S_INF_LCL_XFER 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00341-0468",
-      "requirementId": "CRS-M1-00341",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORT_FROM_S_INF_LCS_XFER",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORT_FROM_S_INF_LCS_XFER cites this obligation.",
-      "rationaleEn": "Transition T_ABORT_FROM_S_INF_LCS_XFER cites this obligation.",
-      "rationaleZh": "迁移 T_ABORT_FROM_S_INF_LCS_XFER 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00341-0469",
-      "requirementId": "CRS-M1-00341",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORT_FROM_S_INF_EXCEPTION",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORT_FROM_S_INF_EXCEPTION cites this obligation.",
-      "rationaleEn": "Transition T_ABORT_FROM_S_INF_EXCEPTION cites this obligation.",
-      "rationaleZh": "迁移 T_ABORT_FROM_S_INF_EXCEPTION 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00341-0470",
-      "requirementId": "CRS-M1-00341",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORT_FROM_S_WAIT_RETRY",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORT_FROM_S_WAIT_RETRY cites this obligation.",
-      "rationaleEn": "Transition T_ABORT_FROM_S_WAIT_RETRY cites this obligation.",
-      "rationaleZh": "迁移 T_ABORT_FROM_S_WAIT_RETRY 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00341-0471",
-      "requirementId": "CRS-M1-00341",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORT_FROM_S_UPL_LUI_XFER",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORT_FROM_S_UPL_LUI_XFER cites this obligation.",
-      "rationaleEn": "Transition T_ABORT_FROM_S_UPL_LUI_XFER cites this obligation.",
-      "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_LUI_XFER 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00341-0472",
-      "requirementId": "CRS-M1-00341",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORT_FROM_S_UPL_LIST_SENT",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORT_FROM_S_UPL_LIST_SENT cites this obligation.",
-      "rationaleEn": "Transition T_ABORT_FROM_S_UPL_LIST_SENT cites this obligation.",
-      "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_LIST_SENT 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00341-0473",
-      "requirementId": "CRS-M1-00341",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORT_FROM_S_UPL_WAIT_LUS0001",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORT_FROM_S_UPL_WAIT_LUS0001 cites this obligation.",
-      "rationaleEn": "Transition T_ABORT_FROM_S_UPL_WAIT_LUS0001 cites this obligation.",
-      "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_WAIT_LUS0001 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00341-0474",
-      "requirementId": "CRS-M1-00341",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORT_FROM_S_UPL_LUR_XFER",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORT_FROM_S_UPL_LUR_XFER cites this obligation.",
-      "rationaleEn": "Transition T_ABORT_FROM_S_UPL_LUR_XFER cites this obligation.",
-      "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_LUR_XFER 引用此义务。"
-    },
-    {
-      "id": "TR-CRS-M1-00341-0475",
-      "requirementId": "CRS-M1-00341",
-      "targetKind": "TRANSITION",
-      "targetId": "T_ABORT_FROM_S_UPL_LUS_XFER",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "TABLE-CONSTRAINT",
-      "rationaleCode": "Transition T_ABORT_FROM_S_UPL_LUS_XFER cites this obligation.",
-      "rationaleEn": "Transition T_ABORT_FROM_S_UPL_LUS_XFER cites this obligation.",
-      "rationaleZh": "迁移 T_ABORT_FROM_S_UPL_LUS_XFER 引用此义务。"
-    },
-    {
       "id": "TR-CRS-M1-00385-0476",
       "requirementId": "CRS-M1-00385",
       "targetKind": "SCOPE",
@@ -24883,6 +25757,28 @@
       "rationaleCode": "FIND-CRS-MODEL-REFINEMENT-PENDING",
       "rationaleEn": "FIND obligation is recorded in expanded CRS; bound M2 does not model FIND behavior.",
       "rationaleZh": "FIND 义务已记入扩大 CRS；绑定 M2 不建模 FIND 行为。"
+    },
+    {
+      "id": "TR-CRS-M1-00391-0618",
+      "requirementId": "CRS-M1-00391",
+      "targetKind": "TIMING",
+      "targetId": "TIM-CRS-M1-00391",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "FIND timing is catalogued for later error-interval judgement; bound M2 does not run FIND.",
+      "rationaleZh": "FIND 时序已编入目录供后续误差区间判定；绑定 M2 不运行 FIND。"
+    },
+    {
+      "id": "TR-CRS-M1-00391-0619",
+      "requirementId": "CRS-M1-00391",
+      "targetKind": "CLOCK",
+      "targetId": "CLK_FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "FIND clock is observational in the catalog only.",
+      "rationaleZh": "FIND 时钟仅用于目录观察，不进入绑定状态机迁移。"
     },
     {
       "id": "TR-CRS-M1-00392-0483",
@@ -26326,6 +27222,28 @@
       "rationaleZh": "扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。"
     },
     {
+      "id": "TR-CRS-M1-00521-0621",
+      "requirementId": "CRS-M1-00521",
+      "targetKind": "TIMING",
+      "targetId": "TIM-CRS-M1-00521",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "FIND timing is catalogued for later error-interval judgement; bound M2 does not run FIND.",
+      "rationaleZh": "FIND 时序已编入目录供后续误差区间判定；绑定 M2 不运行 FIND。"
+    },
+    {
+      "id": "TR-CRS-M1-00521-0622",
+      "requirementId": "CRS-M1-00521",
+      "targetKind": "CLOCK",
+      "targetId": "CLK_FIND",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "FIND clock is observational in the catalog only.",
+      "rationaleZh": "FIND 时钟仅用于目录观察，不进入绑定状态机迁移。"
+    },
+    {
       "id": "TR-CRS-M1-00522-0615",
       "requirementId": "CRS-M1-00522",
       "targetKind": "SCOPE",
@@ -26359,28 +27277,6 @@
       "rationaleZh": "扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。"
     },
     {
-      "id": "TR-CRS-M1-00391-0618",
-      "requirementId": "CRS-M1-00391",
-      "targetKind": "TIMING",
-      "targetId": "TIM-CRS-M1-00391",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
-      "rationaleEn": "FIND timing is catalogued for later error-interval judgement; bound M2 does not run FIND.",
-      "rationaleZh": "FIND 时序已编入目录供后续误差区间判定；绑定 M2 不运行 FIND。"
-    },
-    {
-      "id": "TR-CRS-M1-00391-0619",
-      "requirementId": "CRS-M1-00391",
-      "targetKind": "CLOCK",
-      "targetId": "CLK_FIND",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "SHOULD",
-      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
-      "rationaleEn": "FIND clock is observational in the catalog only.",
-      "rationaleZh": "FIND 时钟仅用于目录观察，不进入绑定状态机迁移。"
-    },
-    {
       "id": "TR-CRS-M1-00525-0620",
       "requirementId": "CRS-M1-00525",
       "targetKind": "SCOPE",
@@ -26390,28 +27286,6 @@
       "rationaleCode": "DOWNLOAD-OR-AFDX-MODEL-REFINEMENT-PENDING",
       "rationaleEn": "Expanded CRS recorded; bound M2 does not execute FIND/DOWNLOAD.",
       "rationaleZh": "扩大 CRS 已记录；绑定 M2 不执行 FIND／DOWNLOAD。"
-    },
-    {
-      "id": "TR-CRS-M1-00521-0621",
-      "requirementId": "CRS-M1-00521",
-      "targetKind": "TIMING",
-      "targetId": "TIM-CRS-M1-00521",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
-      "rationaleEn": "FIND timing is catalogued for later error-interval judgement; bound M2 does not run FIND.",
-      "rationaleZh": "FIND 时序已编入目录供后续误差区间判定；绑定 M2 不运行 FIND。"
-    },
-    {
-      "id": "TR-CRS-M1-00521-0622",
-      "requirementId": "CRS-M1-00521",
-      "targetKind": "CLOCK",
-      "targetId": "CLK_FIND",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "FIND-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
-      "rationaleEn": "FIND clock is observational in the catalog only.",
-      "rationaleZh": "FIND 时钟仅用于目录观察，不进入绑定状态机迁移。"
     },
     {
       "id": "TR-CRS-M1-00526-0623",
@@ -27316,6 +28190,17 @@
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     },
     {
+      "id": "TR-CRS-M1-00607-0883",
+      "requirementId": "CRS-M1-00607",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-PROVIDE-SECURE-RELIABLE-PARTITION-DATA-EXCHANGE-CRS-M1-00607",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
       "id": "TR-CRS-M1-00608-0809",
       "requirementId": "CRS-M1-00608",
       "targetKind": "OBJECT-CONSTRAINT",
@@ -27360,10 +28245,10 @@
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     },
     {
-      "id": "TR-CRS-M1-00628-0813",
-      "requirementId": "CRS-M1-00628",
+      "id": "TR-CRS-M1-00612-0884",
+      "requirementId": "CRS-M1-00612",
       "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-KEEP-UDP-LENGTH-AT-LEAST-EIGHT-OCTETS-CRS-M1-00628",
+      "targetId": "OBJ-SUPPORTING-IMPLEMENT-IPV4-ADDRESSING-AND-FRAGMENTATION-CRS-M1-00612",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "FACT",
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
@@ -27393,28 +28278,6 @@
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     },
     {
-      "id": "TR-CRS-M1-00629-0817",
-      "requirementId": "CRS-M1-00629",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-VERIFY-IP-HEADER-CHECKSUM-AND-SILENTLY-DISCARD-BAD-CRS-M1-00629",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "MUST",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
-      "id": "TR-CRS-M1-00630-0818",
-      "requirementId": "CRS-M1-00630",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-SUPPORT-IPV4-REASSEMBLY-CRS-M1-00630",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "MUST",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
       "id": "TR-CRS-M1-00615-0819",
       "requirementId": "CRS-M1-00615",
       "targetKind": "OBJECT-CONSTRAINT",
@@ -27426,12 +28289,12 @@
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     },
     {
-      "id": "TR-CRS-M1-00631-0820",
-      "requirementId": "CRS-M1-00631",
+      "id": "TR-CRS-M1-00616-0885",
+      "requirementId": "CRS-M1-00616",
       "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-SILENTLY-DISCARD-UDP-DATAGRAM-WITH-INVALID-CHECKSUM-CRS-M1-00631",
+      "targetId": "OBJ-SUPPORTING-APPLY-RFC-1123-TFTP-HOST-NOTES-WITHOUT-ADOPTING-MAIL-NETASCII-OR-BROADCAST-RRQ-CRS-M1-00616",
       "polarity": "AFFIRMATIVE",
-      "sourceModality": "MUST",
+      "sourceModality": "FACT",
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
       "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
@@ -27463,72 +28326,6 @@
       "requirementId": "CRS-M1-00619",
       "targetKind": "OBJECT-CONSTRAINT",
       "targetId": "OBJ-SUPPORTING-PLACE-OPCODE-IN-TFTP-HEADER-CRS-M1-00619",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
-      "id": "TR-CRS-M1-00632-0825",
-      "requirementId": "CRS-M1-00632",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-ENCODE-RRQ-WRQ-AS-OPCODE-FILENAME-AND-MODE-CRS-M1-00632",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
-      "id": "TR-CRS-M1-00633-0826",
-      "requirementId": "CRS-M1-00633",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-TERMINATE-TFTP-FILENAME-WITH-NUL-CRS-M1-00633",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
-      "id": "TR-CRS-M1-00634-0827",
-      "requirementId": "CRS-M1-00634",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-ENCODE-DATA-PACKET-WITH-BLOCK-NUMBER-AND-DATA-CRS-M1-00634",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
-      "id": "TR-CRS-M1-00635-0828",
-      "requirementId": "CRS-M1-00635",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-LIMIT-TFTP-DATA-FIELD-TO-ZERO-THROUGH-512-BYTES-CRS-M1-00635",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
-      "id": "TR-CRS-M1-00636-0829",
-      "requirementId": "CRS-M1-00636",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-ENCODE-ACK-PACKET-WITH-OPCODE-4-AND-BLOCK-NUMBER-CRS-M1-00636",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
-      "id": "TR-CRS-M1-00637-0830",
-      "requirementId": "CRS-M1-00637",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-ENCODE-ERROR-PACKET-AS-OPCODE-ERROR-CODE-AND-MESSAGE-CRS-M1-00637",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "FACT",
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
@@ -27602,6 +28399,138 @@
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     },
     {
+      "id": "TR-CRS-M1-00626-0840",
+      "requirementId": "CRS-M1-00626",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENCODE-TIMEOUT-AS-ASCII-SECONDS-FROM-1-THROUGH-255-CRS-M1-00626",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00627-0842",
+      "requirementId": "CRS-M1-00627",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-REQUEST-TSIZE-ZERO-ON-RRQ-AND-RETURN-SIZE-IN-OACK-CRS-M1-00627",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00628-0813",
+      "requirementId": "CRS-M1-00628",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-KEEP-UDP-LENGTH-AT-LEAST-EIGHT-OCTETS-CRS-M1-00628",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00629-0817",
+      "requirementId": "CRS-M1-00629",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-VERIFY-IP-HEADER-CHECKSUM-AND-SILENTLY-DISCARD-BAD-CRS-M1-00629",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00630-0818",
+      "requirementId": "CRS-M1-00630",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-SUPPORT-IPV4-REASSEMBLY-CRS-M1-00630",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00631-0820",
+      "requirementId": "CRS-M1-00631",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-SILENTLY-DISCARD-UDP-DATAGRAM-WITH-INVALID-CHECKSUM-CRS-M1-00631",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00632-0825",
+      "requirementId": "CRS-M1-00632",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENCODE-RRQ-WRQ-AS-OPCODE-FILENAME-AND-MODE-CRS-M1-00632",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00633-0826",
+      "requirementId": "CRS-M1-00633",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-TERMINATE-TFTP-FILENAME-WITH-NUL-CRS-M1-00633",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00634-0827",
+      "requirementId": "CRS-M1-00634",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENCODE-DATA-PACKET-WITH-BLOCK-NUMBER-AND-DATA-CRS-M1-00634",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00635-0828",
+      "requirementId": "CRS-M1-00635",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-LIMIT-TFTP-DATA-FIELD-TO-ZERO-THROUGH-512-BYTES-CRS-M1-00635",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00636-0829",
+      "requirementId": "CRS-M1-00636",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENCODE-ACK-PACKET-WITH-OPCODE-4-AND-BLOCK-NUMBER-CRS-M1-00636",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00637-0830",
+      "requirementId": "CRS-M1-00637",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENCODE-ERROR-PACKET-AS-OPCODE-ERROR-CODE-AND-MESSAGE-CRS-M1-00637",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
       "id": "TR-CRS-M1-00638-0837",
       "requirementId": "CRS-M1-00638",
       "targetKind": "OBJECT-CONSTRAINT",
@@ -27635,34 +28564,12 @@
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     },
     {
-      "id": "TR-CRS-M1-00626-0840",
-      "requirementId": "CRS-M1-00626",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-ENCODE-TIMEOUT-AS-ASCII-SECONDS-FROM-1-THROUGH-255-CRS-M1-00626",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
       "id": "TR-CRS-M1-00641-0841",
       "requirementId": "CRS-M1-00641",
       "targetKind": "OBJECT-CONSTRAINT",
       "targetId": "OBJ-SUPPORTING-ECHO-CLIENT-TIMEOUT-VALUE-IN-OACK-CRS-M1-00641",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "MUST",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
-      "id": "TR-CRS-M1-00627-0842",
-      "requirementId": "CRS-M1-00627",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-REQUEST-TSIZE-ZERO-ON-RRQ-AND-RETURN-SIZE-IN-OACK-CRS-M1-00627",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
       "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
@@ -28020,6 +28927,17 @@
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     },
     {
+      "id": "TR-CRS-M1-00674-0899",
+      "requirementId": "CRS-M1-00674",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-KEEP-VL-JITTER-AT-OR-BELOW-500-MICROSECONDS-CRS-M1-00674",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
       "id": "TR-CRS-M1-00675-0876",
       "requirementId": "CRS-M1-00675",
       "targetKind": "OBJECT-CONSTRAINT",
@@ -28097,39 +29015,6 @@
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     },
     {
-      "id": "TR-CRS-M1-00607-0883",
-      "requirementId": "CRS-M1-00607",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-PROVIDE-SECURE-RELIABLE-PARTITION-DATA-EXCHANGE-CRS-M1-00607",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
-      "id": "TR-CRS-M1-00612-0884",
-      "requirementId": "CRS-M1-00612",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-IMPLEMENT-IPV4-ADDRESSING-AND-FRAGMENTATION-CRS-M1-00612",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
-      "id": "TR-CRS-M1-00616-0885",
-      "requirementId": "CRS-M1-00616",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-APPLY-RFC-1123-TFTP-HOST-NOTES-WITHOUT-ADOPTING-MAIL-NETASCII-OR-BROADCAST-RRQ-CRS-M1-00616",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
       "id": "TR-CRS-M1-00682-0886",
       "requirementId": "CRS-M1-00682",
       "targetKind": "OBJECT-CONSTRAINT",
@@ -28139,6 +29024,28 @@
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
       "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00682-0937",
+      "requirementId": "CRS-M1-00682",
+      "targetKind": "TIMING",
+      "targetId": "TIM-CRS-M1-00682",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "AFDX-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "AFDX timing is catalogued as a conditional network constraint; bound M2 does not execute AFDX.",
+      "rationaleZh": "AFDX 时序作为条件网络约束编入目录；绑定 M2 不执行 AFDX。"
+    },
+    {
+      "id": "TR-CRS-M1-00682-0938",
+      "requirementId": "CRS-M1-00682",
+      "targetKind": "CLOCK",
+      "targetId": "CLK_AFDX_ES",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "AFDX-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "AFDX End-System clock is observational in the catalog only.",
+      "rationaleZh": "AFDX 端系统时钟仅用于目录观察，不进入绑定状态机迁移。"
     },
     {
       "id": "TR-CRS-M1-00683-0887",
@@ -28152,6 +29059,28 @@
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     },
     {
+      "id": "TR-CRS-M1-00683-0939",
+      "requirementId": "CRS-M1-00683",
+      "targetKind": "TIMING",
+      "targetId": "TIM-CRS-M1-00683",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "AFDX-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "AFDX timing is catalogued as a conditional network constraint; bound M2 does not execute AFDX.",
+      "rationaleZh": "AFDX 时序作为条件网络约束编入目录；绑定 M2 不执行 AFDX。"
+    },
+    {
+      "id": "TR-CRS-M1-00683-0940",
+      "requirementId": "CRS-M1-00683",
+      "targetKind": "CLOCK",
+      "targetId": "CLK_AFDX_ES",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "AFDX-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "AFDX End-System clock is observational in the catalog only.",
+      "rationaleZh": "AFDX 端系统时钟仅用于目录观察，不进入绑定状态机迁移。"
+    },
+    {
       "id": "TR-CRS-M1-00684-0888",
       "requirementId": "CRS-M1-00684",
       "targetKind": "OBJECT-CONSTRAINT",
@@ -28163,6 +29092,28 @@
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     },
     {
+      "id": "TR-CRS-M1-00684-0941",
+      "requirementId": "CRS-M1-00684",
+      "targetKind": "TIMING",
+      "targetId": "TIM-CRS-M1-00684",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "AFDX-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "AFDX timing is catalogued as a conditional network constraint; bound M2 does not execute AFDX.",
+      "rationaleZh": "AFDX 时序作为条件网络约束编入目录；绑定 M2 不执行 AFDX。"
+    },
+    {
+      "id": "TR-CRS-M1-00684-0942",
+      "requirementId": "CRS-M1-00684",
+      "targetKind": "CLOCK",
+      "targetId": "CLK_AFDX_ES",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "AFDX-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "AFDX End-System clock is observational in the catalog only.",
+      "rationaleZh": "AFDX 端系统时钟仅用于目录观察，不进入绑定状态机迁移。"
+    },
+    {
       "id": "TR-CRS-M1-00685-0889",
       "requirementId": "CRS-M1-00685",
       "targetKind": "OBJECT-CONSTRAINT",
@@ -28172,6 +29123,28 @@
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
       "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00685-0943",
+      "requirementId": "CRS-M1-00685",
+      "targetKind": "TIMING",
+      "targetId": "TIM-CRS-M1-00685",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "AFDX-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "AFDX timing is catalogued as a conditional network constraint; bound M2 does not execute AFDX.",
+      "rationaleZh": "AFDX 时序作为条件网络约束编入目录；绑定 M2 不执行 AFDX。"
+    },
+    {
+      "id": "TR-CRS-M1-00685-0944",
+      "requirementId": "CRS-M1-00685",
+      "targetKind": "CLOCK",
+      "targetId": "CLK_AFDX_ES",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "AFDX-TIMING-CATALOG-NOT-EXECUTABLE-IN-BOUND-M2",
+      "rationaleEn": "AFDX End-System clock is observational in the catalog only.",
+      "rationaleZh": "AFDX 端系统时钟仅用于目录观察，不进入绑定状态机迁移。"
     },
     {
       "id": "TR-CRS-M1-00686-0890",
@@ -28266,17 +29239,6 @@
       "requirementId": "CRS-M1-00694",
       "targetKind": "OBJECT-CONSTRAINT",
       "targetId": "OBJ-SUPPORTING-ENCODE-INTERFACE-ID-010-AS-NETWORK-B-CRS-M1-00694",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
-      "id": "TR-CRS-M1-00674-0899",
-      "requirementId": "CRS-M1-00674",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-KEEP-VL-JITTER-AT-OR-BELOW-500-MICROSECONDS-CRS-M1-00674",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "FACT",
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
@@ -28458,6 +29420,237 @@
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
       "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution or activate AFDX.",
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD／INFORMATION 执行，也不激活 AFDX。"
+    },
+    {
+      "id": "TR-CRS-M1-00711-0916",
+      "requirementId": "CRS-M1-00711",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-MEASURE-TX-TECHNOLOGICAL-LATENCY-BETWEEN-PARTITION-DATA-AND-PHYSICAL-MEDIA-CRS-M1-00711",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00712-0917",
+      "requirementId": "CRS-M1-00712",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-START-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-PARTITION-BIT-IS-AVAILABLE-CRS-M1-00712",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00713-0918",
+      "requirementId": "CRS-M1-00713",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-END-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-ON-MEDIA-CRS-M1-00713",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00714-0919",
+      "requirementId": "CRS-M1-00714",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-MEASURE-TX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-NO-CONTENTION-AND-NO-IP-FRAGMENTATION-CRS-M1-00714",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00715-0920",
+      "requirementId": "CRS-M1-00715",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-DISTINGUISH-TECHNOLOGICAL-LATENCY-FROM-CONFIGURATION-LOAD-LATENCY-CRS-M1-00715",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00716-0921",
+      "requirementId": "CRS-M1-00716",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-DEFINE-TECHNOLOGICAL-LATENCY-AS-ACCEPT-PROCESS-AND-BEGIN-TX-WITH-NO-OTHER-TASK-CRS-M1-00716",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00717-0922",
+      "requirementId": "CRS-M1-00717",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ADD-FRAME-DELAY-FOR-PHYSICAL-LAYER-DELIVERY-CRS-M1-00717",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00718-0923",
+      "requirementId": "CRS-M1-00718",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-START-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-RECEIVED-CRS-M1-00718",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00719-0924",
+      "requirementId": "CRS-M1-00719",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-END-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-DATA-BIT-IS-AVAILABLE-TO-PARTITION-CRS-M1-00719",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00720-0925",
+      "requirementId": "CRS-M1-00720",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-MEASURE-RX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-AND-NO-CONTENTION-CRS-M1-00720",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00721-0926",
+      "requirementId": "CRS-M1-00721",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-SATISFY-BOTH-MAX-JITTER-EQUATIONS-SIMULTANEOUSLY-CRS-M1-00721",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00722-0927",
+      "requirementId": "CRS-M1-00722",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-TREAT-MAX-JITTER-AS-MICROSECONDS-NBW-AS-BITS-PER-SECOND-AND-LMAX-AS-OCTETS-CRS-M1-00722",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00723-0928",
+      "requirementId": "CRS-M1-00723",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-COMPOSE-MAC-SOURCE-AS-24-PLUS-16-PLUS-3-PLUS-5-BIT-FIELDS-CRS-M1-00723",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00724-0929",
+      "requirementId": "CRS-M1-00724",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-SET-MAC-SOURCE-CONSTANT-TAIL-TO-00000-CRS-M1-00724",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00725-0930",
+      "requirementId": "CRS-M1-00725",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-TREAT-MAC-SOURCE-CONSTRUCTION-ALGORITHM-AS-NOT-UNIQUELY-RECOMMENDED-CRS-M1-00725",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00726-0931",
+      "requirementId": "CRS-M1-00726",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-RECORD-INTERFACE-ID-000-AS-NOT-USED-CRS-M1-00726",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00727-0932",
+      "requirementId": "CRS-M1-00727",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-RECORD-INTERFACE-ID-011-AS-NOT-USED-CRS-M1-00727",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00728-0933",
+      "requirementId": "CRS-M1-00728",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-RECORD-INTERFACE-ID-100-AS-NOT-USED-CRS-M1-00728",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00729-0934",
+      "requirementId": "CRS-M1-00729",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-RECORD-INTERFACE-ID-101-AS-NOT-USED-CRS-M1-00729",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00730-0935",
+      "requirementId": "CRS-M1-00730",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-RECORD-INTERFACE-ID-110-AS-SOURCE-NOR-USED-CRS-M1-00730",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00731-0936",
+      "requirementId": "CRS-M1-00731",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-RECORD-INTERFACE-ID-111-AS-NOT-USED-CRS-M1-00731",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     }
   ],
   "infrastructurePremises": [
@@ -29144,16 +30337,16 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 709,
-    "dispositionCount": 709,
-    "traceCount": 807,
+    "requirementCount": 730,
+    "dispositionCount": 730,
+    "traceCount": 836,
     "stateCount": 35,
     "transitionCount": 65,
-    "timingCount": 26,
+    "timingCount": 30,
     "fieldConstraintCount": 108,
-    "dispositionsFingerprint": "7927a01a49462600e4dc9b6102a561eae3761f092ea66ea5b54f7fc482cc6a77",
-    "modelFingerprint": "c93811fb82568c4278626dd790a23d744c9c1b3db6bcda53ce177615d866278a",
-    "timingFingerprint": "91e71d517ccc388f446a681b7f13007a3de69e687e49fbb299c5df28430d1e92",
+    "dispositionsFingerprint": "22f526d8ab59d73f36f2a42fd19116b49d2fe0f2e9319575fe4060845a4f17be",
+    "modelFingerprint": "aea4bd9c9f8392ce1ffacc67efe24e9b9e4fec24d35329ad5110a56e471e4738",
+    "timingFingerprint": "524d7da7e5c9dd52065a3c8a22469a8c9d6b2aed2871660d80fd2bde0b0747bc",
     "inputFingerprint": "06e675113fe07726913b7a291daccb46c520c64c2acacd6b5369d47c09d4e6c7",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",

@@ -154,7 +154,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-14"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-15"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
@@ -222,6 +222,7 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
     assert "SAU-P7-3-REMAINING-VL-BAG-JITTER" not in remaining
     assert "SAU-791-3-1-REMAINING-FIELD-WIDTHS" not in remaining
     assert remaining["SAU-1123-4-2-REMAINING-NETASCII-AND-NONSTANDARD-EXTENSIONS"]["disposition"] == "OUT-OF-PROFILE"
+    assert remaining["SAU-1123-4-2-REMAINING-IMPLEMENTATION-EXPONENTIAL-BACKOFF"]["disposition"] == "INFORMATIVE"
     assert "SAU-P7-3-REMAINING-MAX-JITTER-EQUATION-AND-MAC-SOURCE" not in remaining
     assert remaining["SAU-665-2-3-REMAINING-CRC-ALGORITHM-IDENTITY"]["disposition"] == "DEPENDENCY-BLOCKED"
     assert remaining["SAU-665-2-3-REMAINING-INFORMATIVE-NOTES-AND-LOCATORS"]["disposition"] == "INFORMATIVE"
@@ -375,4 +376,186 @@ def test_tftp_end_condition_combines_default_and_negotiated_blksize() -> None:
     assert "256" in negotiated["generatedSemanticProjectionEn"]
     assert "integral multiple" in zero["generatedSemanticProjectionEn"]
     assert "never requested" in fallback["generatedSemanticProjectionEn"]
+
+
+P7_PRINT_PAGES = {18: 10, 19: 11, 21: 13, 22: 14, 23: 15, 24: 16, 25: 17, 26: 18, 27: 19}
+MAC_FIELDS = (("CONSTANT", 24), ("USER-DEFINED-ID", 16), ("INTERFACE-ID", 3), ("CONSTANT-TAIL", 5))
+
+
+def _crs() -> dict:
+    return json.loads((ROOT / "configs/requirements/arinc_615a3_m1_crs.json").read_text(encoding="utf-8"))
+
+
+def test_p7_print_pages_are_not_pdf_indexes() -> None:
+    crs = _crs()
+    this_round = [
+        row
+        for row in crs["requirements"]
+        if row["source"]["sourceId"] == "ARINC-664-7" and 666 <= int(row["id"].rsplit("-", 1)[1]) <= 694
+    ]
+    assert this_round
+    for row in this_round:
+        pdf_page = row["source"]["pdfPage"]
+        document_page = row["source"]["documentPage"]
+        assert pdf_page in P7_PRINT_PAGES
+        assert document_page == P7_PRINT_PAGES[pdf_page]
+        assert document_page != pdf_page
+    coverage = [
+        row
+        for row in crs["coverageLedger"]
+        if row["source"]["sourceId"] == "ARINC-664-7"
+        and row["source"]["pdfPage"] in P7_PRINT_PAGES
+        and any(666 <= int(req_id.rsplit("-", 1)[1]) for req_id in row.get("requirementIds") or [])
+    ]
+    assert coverage
+    for row in coverage:
+        assert row["source"]["documentPage"] == P7_PRINT_PAGES[row["source"]["pdfPage"]]
+    p4 = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00710")
+    assert p4["source"]["documentPage"] == 19
+    assert p4["source"]["pdfPage"] == 25
+
+
+def _latency_verdict(measured: float, bound: float, premises_met: bool, *, strict: bool) -> str:
+    if not premises_met:
+        return "INCONCLUSIVE"
+    if strict:
+        return "PASS" if measured < bound else "FAIL"
+    return "PASS" if measured <= bound else "FAIL"
+
+
+def _both_jitter_hold(max_jitter_us: float, lmax_octets: float, nbw_bps: float, vl_count: int = 1) -> bool:
+    load_s = vl_count * ((20 + lmax_octets) * 8) / nbw_bps
+    load_us = load_s * 1_000_000
+    return max_jitter_us <= 40 + load_us and max_jitter_us <= 500
+
+
+def test_p7_technological_latency_and_jitter_contracts() -> None:
+    import copy
+    import sys
+
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import sync_m2_model as m2sync
+
+    crs = _crs()
+    by_id = {row["id"]: row for row in crs["requirements"]}
+    tx = by_id["CRS-M1-00682"]
+    rx = by_id["CRS-M1-00683"]
+    eq1 = by_id["CRS-M1-00684"]
+    eq2 = by_id["CRS-M1-00685"]
+    both = next(
+        row for row in crs["requirements"] if row["semantic"]["action"] == "SATISFY-BOTH-MAX-JITTER-EQUATIONS-SIMULTANEOUSLY"
+    )
+    units = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "TREAT-MAX-JITTER-AS-MICROSECONDS-NBW-AS-BITS-PER-SECOND-AND-LMAX-AS-OCTETS"
+    )
+    assert tx["source"]["documentPage"] == 15 and tx["source"]["pdfPage"] == 23
+    assert rx["source"]["documentPage"] == 16 and rx["source"]["pdfPage"] == 24
+    assert eq1["source"]["documentPage"] == 17 and eq1["source"]["pdfPage"] == 25
+    assert "EMPTY-BUFFERS" in tx["semantic"]["objects"]
+    assert tx["timing"]["upperBoundary"] == "OPEN"
+    assert rx["timing"]["upperBoundary"] == "OPEN"
+    assert tx["timing"]["observationState"] == "CONFIGURATION-DEPENDENT"
+    assert rx["timing"]["cancellation"] == "MEASUREMENT-PREMISES-NOT-MET"
+    assert tx["timing"]["errorBudgetState"] == "NOT-REQUIRED"
+    assert tx["timing"]["sourceRelation"] == "TECH-LAT-TX < 150 + FRAME-DELAY"
+    assert rx["timing"]["sourceRelation"] == "TECH-LAT-RX < 150"
+    assert _latency_verdict(150, 150, True, strict=True) == "FAIL"
+    assert _latency_verdict(149.9, 150, True, strict=True) == "PASS"
+    assert _latency_verdict(200, 150, False, strict=True) == "INCONCLUSIVE"
+    assert _latency_verdict(150, 150, True, strict=False) == "PASS"
+    assert eq1["timing"]["sourceRelation"] == "MAX-JITTER <= 40 + (((20 + LMAX) * 8) / NBW) * 1000000"
+    assert eq2["timing"]["sourceRelation"] == "MAX-JITTER <= 500"
+    assert eq1["timing"]["silenceSemantics"] == "BOTH-MAX-JITTER-EQUATIONS-MUST-HOLD"
+    assert "1000000" in units["generatedSemanticProjectionEn"]
+    assert "bits/s" in units["generatedSemanticProjectionEn"]
+    assert "octets" in units["generatedSemanticProjectionEn"]
+    assert both["semantic"]["action"] == "SATISFY-BOTH-MAX-JITTER-EQUATIONS-SIMULTANEOUSLY"
+    assert _both_jitter_hold(40, 64, 100_000_000) is True
+    assert _both_jitter_hold(400, 64, 100_000_000) is False
+    assert 400 <= 500
+    m2 = json.loads((ROOT / "configs/models/arinc_615a3_m2_model.json").read_text(encoding="utf-8"))
+    load_row = next(row for row in m2["timingCatalog"] if row["requirementId"] == "CRS-M1-00684")
+    assert load_row["expression"]["op"] == "LE"
+    assert m2sync.source_equation_structure_errors(load_row, eq1["timing"]["sourceRelation"], load_row["expression"]) == []
+    broken = copy.deepcopy(load_row)
+    broken["expression"]["op"] = "GE"
+    assert m2sync.source_equation_structure_errors(broken, eq1["timing"]["sourceRelation"], broken["expression"])
+    one_only = copy.deepcopy(load_row)
+    one_only["expression"] = {
+        "kind": "COMPARE",
+        "op": "LE",
+        "left": {"kind": "SYMBOL", "name": "MAX_JITTER"},
+        "right": {"kind": "LITERAL", "value": 500},
+    }
+    assert m2sync.source_equation_structure_errors(one_only, eq1["timing"]["sourceRelation"], one_only["expression"])
+    assert m2["scope"]["afdxSelected"] is False
+    assert list(m2["scope"]["services"]) == ["UPLOAD", "INFORMATION"]
+    assert any(row["id"] == "CLK_AFDX_ES" for row in m2["model"]["clocks"])
+    assert not any("CLK_AFDX_ES" in (row.get("resets") or []) for row in m2["model"]["transitions"])
+
+
+def test_p7_mac_source_is_complete_48_bit_binding() -> None:
+    crs = _crs()
+    composition = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "COMPOSE-MAC-SOURCE-AS-24-PLUS-16-PLUS-3-PLUS-5-BIT-FIELDS"
+    )
+    tail = next(row for row in crs["requirements"] if row["semantic"]["action"] == "SET-MAC-SOURCE-CONSTANT-TAIL-TO-00000")
+    commentary = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "TREAT-MAC-SOURCE-CONSTRUCTION-ALGORITHM-AS-NOT-UNIQUELY-RECOMMENDED"
+    )
+    ieee = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "ENCODE-MAC-SOURCE-AS-INDIVIDUAL-AND-LOCALLY-ADMINISTERED"
+    )
+    assert composition["source"]["documentPage"] == 19
+    assert composition["source"]["pdfPage"] == 27
+    assert tail["source"]["tableOrFigure"] == "Figure 3-11"
+    widths = [width for _name, width in MAC_FIELDS]
+    assert sum(widths) == 48
+    starts = []
+    cursor = 0
+    for width in widths:
+        starts.append(cursor)
+        cursor += width
+    assert cursor == 48
+    assert starts == [0, 24, 40, 43]
+    overlapping = any(
+        start < other_start + other_width and other_start < start + width
+        for (start, width) in zip(starts, widths)
+        for (other_start, other_width) in zip(starts, widths)
+        if (start, width) != (other_start, other_width)
+    )
+    assert overlapping is False
+    assert 24 + 16 + 3 != 48
+    assert "00000" in tail["generatedSemanticProjectionEn"] or "0 0000" in tail["generatedSemanticProjectionEn"]
+    assert commentary["sourceModality"] == "COMMENTARY"
+    assert commentary["conformanceEffect"] == "INFORMATIVE"
+    assert "No unique" not in ieee["generatedSemanticProjectionEn"]
+    encodings = {}
+    for row in crs["requirements"]:
+        action = row["semantic"]["action"]
+        if action == "ENCODE-INTERFACE-ID-001-AS-NETWORK-A":
+            encodings["001"] = row
+        elif action == "ENCODE-INTERFACE-ID-010-AS-NETWORK-B":
+            encodings["010"] = row
+        elif action.startswith("RECORD-INTERFACE-ID-") and action.endswith("-AS-NOT-USED"):
+            encodings[action.split("-")[3]] = row
+        elif action == "RECORD-INTERFACE-ID-110-AS-SOURCE-NOR-USED":
+            encodings["110"] = row
+    assert set(encodings) == {"000", "001", "010", "011", "100", "101", "110", "111"}
+    assert encodings["001"]["conformanceEffect"] == "CONDITIONAL-REQUIRED"
+    assert encodings["010"]["conformanceEffect"] == "CONDITIONAL-REQUIRED"
+    for code in ("000", "011", "100", "101", "110", "111"):
+        assert encodings[code]["conformanceEffect"] == "INFORMATIVE"
+        assert encodings[code]["conformanceEffect"] != "PROHIBITED"
+    assert encodings["001"]["semantic"]["action"] != encodings["010"]["semantic"]["action"]
+    wrong_tail = "11111"
+    assert wrong_tail not in tail["generatedSemanticProjectionEn"]
 

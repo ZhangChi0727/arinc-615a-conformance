@@ -8,16 +8,16 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-14",
-    "coverageCount": 2999,
-    "requirementCount": 709,
-    "coverageFingerprint": "01adfd19d8b3374d5b131de4befd308ec8ace96747bf04e2b67dd30b92bf0524",
-    "requirementsFingerprint": "ddc4d4e22d12caf8df09495274c6d9bcf2982586cf1ca1636d9b80063baa0e2f",
+    "artifactVersion": "M1-CANDIDATE-15",
+    "coverageCount": 3020,
+    "requirementCount": 730,
+    "coverageFingerprint": "126963de03d6a644a917a0bd3f0bea08e4fd3080666a566c539b73b1abc75ba5",
+    "requirementsFingerprint": "d33d9c45c398c41e3598ef953cfaca80838fcfc7a77825f8043e103f3988b2cd",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "664P4-1 address-rule leaves are emitted for the first CRS-M1-00519 alternative. The integrator-identified path remains open. This does not select Part 4 or activate AFDX. 665 section 2.3 in-scope leaves stay emitted, not independently closed. 645 stays acquired-not-bound. This is not independent RG approval."
+    "note": "P7 technological-latency endpoints/premises, both max_jitter equations with unit conversion, and MAC source 48-bit composition including the 5-bit tail and remaining Interface_ID encodings are bound as leaf CRS. 665 section 2.3 in-scope leaves stay emitted, not independently closed. Part 4 remains an open alternative. 645 stays acquired-not-bound. This is not independent RG approval."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -27,13 +27,13 @@
     "Ordinary Ethernet, Compliant, Profiled and AFDX stay separate configuration dimensions."
   ],
   "summary": {
-    "coverageCount": 2999,
-    "requirementCount": 709,
+    "coverageCount": 3020,
+    "requirementCount": 730,
     "applicabilityDecisions": {
       "OUT-OF-PROFILE": 973,
       "APPLICABLE-SUPPORTING": 1309,
       "APPLICABLE-BASE": 286,
-      "CONDITIONAL": 431
+      "CONDITIONAL": 452
     },
     "rationaleCodes": {
       "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE": 902,
@@ -149,7 +149,28 @@
       "P4-ALL-NETWORK-ADDRESS-UNIQUENESS": 1,
       "P4-PORT-59-615A-TFTP": 1,
       "P4-PORT-24922-FIND-CLIENT": 1,
-      "P4-TABLE-2-1-RFC1918-PRIVATE": 1
+      "P4-TABLE-2-1-RFC1918-PRIVATE": 1,
+      "AFDX-TX-TECHNOLOGICAL-LATENCY-ENDPOINTS": 1,
+      "AFDX-TX-LATENCY-START-ENDPOINT": 1,
+      "AFDX-TX-LATENCY-END-ENDPOINT": 1,
+      "AFDX-TX-LATENCY-EMPTY-BUFFER-PREMISE": 1,
+      "AFDX-TECHNOLOGICAL-VS-CONFIGURATION-LATENCY": 1,
+      "AFDX-TECHNOLOGICAL-LATENCY-NO-OTHER-TASK": 1,
+      "AFDX-FRAME-DELAY-PHYSICAL-LAYER": 1,
+      "AFDX-RX-LATENCY-START-ENDPOINT": 1,
+      "AFDX-RX-LATENCY-END-ENDPOINT": 1,
+      "AFDX-RX-LATENCY-EMPTY-BUFFER-PREMISE": 1,
+      "AFDX-MAX-JITTER-BOTH-EQUATIONS": 1,
+      "AFDX-MAX-JITTER-UNITS": 1,
+      "AFDX-MAC-SOURCE-48-BIT-FIELD-COMPOSITION": 1,
+      "AFDX-MAC-SOURCE-CONSTANT-TAIL": 1,
+      "AFDX-MAC-SOURCE-NO-UNIQUE-ALGORITHM": 1,
+      "AFDX-MAC-SOURCE-INTERFACE-ID-000-NOT-USED": 1,
+      "AFDX-MAC-SOURCE-INTERFACE-ID-011-NOT-USED": 1,
+      "AFDX-MAC-SOURCE-INTERFACE-ID-100-NOT-USED": 1,
+      "AFDX-MAC-SOURCE-INTERFACE-ID-101-NOT-USED": 1,
+      "AFDX-MAC-SOURCE-INTERFACE-ID-110-NOT-USED": 1,
+      "AFDX-MAC-SOURCE-INTERFACE-ID-111-NOT-USED": 1
     },
     "deferredFutureScope": {
       "total": 0,
@@ -15642,8 +15663,8 @@
             ],
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
-            "summaryEn": "If AFDX is chosen, VL/BAG/jitter encoding is bound, including the two max_jitter formulas recovered from PDF layout, 150 us technological latency, and MAC source construction (IEEE class, constant field, User_Defined_ID and Interface_ID). No unique MAC-source algorithm is recommended. This is not independent RG approval.",
-            "summaryZh": "若选择 AFDX，已绑定 VL／BAG／抖动编码，包括从 PDF 版面恢复的两个 max_jitter 公式、150 微秒技术时延与 MAC 源地址构造（IEEE 类别、常数字段、User_Defined_ID 与 Interface_ID）。未推荐唯一 MAC 源构造算法。这不是独立 RG 批准。",
+            "summaryEn": "If AFDX is chosen, VL/BAG/jitter encoding is bound, including both max_jitter formulas with units and second-to-microsecond conversion, technological-latency endpoints and empty-buffer premises, and MAC source construction (IEEE class, 24-bit constant, 16-bit User_Defined_ID, 3-bit Interface_ID, 5-bit constant tail, and all eight Figure 3-12 encodings). Unused Interface_ID values are coverage dispositions, not prohibitions. No unique MAC-source algorithm is recommended. This is not independent RG approval.",
+            "summaryZh": "若选择 AFDX，已绑定 VL／BAG／抖动编码，包括带单位及秒到微秒换算的两个 max_jitter 公式、技术时延测量端点与空缓冲前提，以及 MAC 源地址构造（IEEE 类别、24 位常数、16 位 User_Defined_ID、3 位 Interface_ID、5 位常数尾字段，以及图 3-12 全部八个编码）。未使用的 Interface_ID 是覆盖处置不是禁止。未推荐唯一 MAC 源构造算法。这不是独立 RG 批准。",
             "leafCoverageIds": [
               "COV-M1-02886",
               "COV-M1-02955",
@@ -15668,7 +15689,28 @@
               "COV-M1-02980",
               "COV-M1-02981",
               "COV-M1-02982",
-              "COV-M1-02983"
+              "COV-M1-02983",
+              "COV-M1-03000",
+              "COV-M1-03001",
+              "COV-M1-03002",
+              "COV-M1-03003",
+              "COV-M1-03004",
+              "COV-M1-03005",
+              "COV-M1-03006",
+              "COV-M1-03007",
+              "COV-M1-03008",
+              "COV-M1-03009",
+              "COV-M1-03010",
+              "COV-M1-03011",
+              "COV-M1-03012",
+              "COV-M1-03013",
+              "COV-M1-03014",
+              "COV-M1-03015",
+              "COV-M1-03016",
+              "COV-M1-03017",
+              "COV-M1-03018",
+              "COV-M1-03019",
+              "COV-M1-03020"
             ],
             "leafRequirementIds": [
               "CRS-M1-00607",
@@ -15694,7 +15736,28 @@
               "CRS-M1-00691",
               "CRS-M1-00692",
               "CRS-M1-00693",
-              "CRS-M1-00694"
+              "CRS-M1-00694",
+              "CRS-M1-00711",
+              "CRS-M1-00712",
+              "CRS-M1-00713",
+              "CRS-M1-00714",
+              "CRS-M1-00715",
+              "CRS-M1-00716",
+              "CRS-M1-00717",
+              "CRS-M1-00718",
+              "CRS-M1-00719",
+              "CRS-M1-00720",
+              "CRS-M1-00721",
+              "CRS-M1-00722",
+              "CRS-M1-00723",
+              "CRS-M1-00724",
+              "CRS-M1-00725",
+              "CRS-M1-00726",
+              "CRS-M1-00727",
+              "CRS-M1-00728",
+              "CRS-M1-00729",
+              "CRS-M1-00730",
+              "CRS-M1-00731"
             ],
             "remainingSubunits": [],
             "admittedLeafUnits": [
@@ -15888,6 +15951,174 @@
                   "CRS-M1-00694"
                 ],
                 "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-002-F0CDAB79C8E2",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-03000",
+                "requirementIds": [
+                  "CRS-M1-00711"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-003-44239DB2F60A",
+                "clause": "3.2.4.1"
+              },
+              {
+                "coverageId": "COV-M1-03001",
+                "requirementIds": [
+                  "CRS-M1-00712"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-004-B2F9DADDEDF5",
+                "clause": "3.2.4.1"
+              },
+              {
+                "coverageId": "COV-M1-03002",
+                "requirementIds": [
+                  "CRS-M1-00713"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-005-9B58887C088F",
+                "clause": "3.2.4.1"
+              },
+              {
+                "coverageId": "COV-M1-03003",
+                "requirementIds": [
+                  "CRS-M1-00714"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-006-8D72879FD3A5",
+                "clause": "3.2.4.1"
+              },
+              {
+                "coverageId": "COV-M1-03004",
+                "requirementIds": [
+                  "CRS-M1-00715"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-001-4B93E0D081F7",
+                "clause": "3.2.4.1"
+              },
+              {
+                "coverageId": "COV-M1-03005",
+                "requirementIds": [
+                  "CRS-M1-00716"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-002-F6362C6DA30A",
+                "clause": "3.2.4.1"
+              },
+              {
+                "coverageId": "COV-M1-03006",
+                "requirementIds": [
+                  "CRS-M1-00717"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-003-6E1BCB3D2E11",
+                "clause": "3.2.4.1"
+              },
+              {
+                "coverageId": "COV-M1-03007",
+                "requirementIds": [
+                  "CRS-M1-00718"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-007-1CDDD6B34C3E",
+                "clause": "3.2.4.1"
+              },
+              {
+                "coverageId": "COV-M1-03008",
+                "requirementIds": [
+                  "CRS-M1-00719"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-008-824150EBC26E",
+                "clause": "3.2.4.1"
+              },
+              {
+                "coverageId": "COV-M1-03009",
+                "requirementIds": [
+                  "CRS-M1-00720"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-009-BEE0AC634C0C",
+                "clause": "3.2.4.1"
+              },
+              {
+                "coverageId": "COV-M1-03010",
+                "requirementIds": [
+                  "CRS-M1-00721"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-002-7A1296CF6117",
+                "clause": "3.2.4.3"
+              },
+              {
+                "coverageId": "COV-M1-03011",
+                "requirementIds": [
+                  "CRS-M1-00722"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-003-E8E54C6C0881",
+                "clause": "3.2.4.3"
+              },
+              {
+                "coverageId": "COV-M1-03012",
+                "requirementIds": [
+                  "CRS-M1-00723"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-003-F168177B9A90",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-03013",
+                "requirementIds": [
+                  "CRS-M1-00724"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-004-F1E35DF3FF8A",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-03014",
+                "requirementIds": [
+                  "CRS-M1-00725"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-COMMENTARY-001-3B49302B2721",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-03015",
+                "requirementIds": [
+                  "CRS-M1-00726"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-005-0A0C502A2190",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-03016",
+                "requirementIds": [
+                  "CRS-M1-00727"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-006-DFB1D506427E",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-03017",
+                "requirementIds": [
+                  "CRS-M1-00728"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-007-F7A240692D0C",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-03018",
+                "requirementIds": [
+                  "CRS-M1-00729"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-008-03258840BB7B",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-03019",
+                "requirementIds": [
+                  "CRS-M1-00730"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-009-B3132C35E340",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-03020",
+                "requirementIds": [
+                  "CRS-M1-00731"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-010-9E853859DACB",
                 "clause": "3.2.5.2"
               }
             ]
@@ -17267,6 +17498,12 @@
                 "disposition": "OUT-OF-PROFILE",
                 "summaryEn": "netascii is a generic-host MUST in the RFC 1123 summary via RFC-783; 615A uses octet TFTP only. Non-standard TFTP extensions in 4.2.3.3 were never standardized and are not adopted. Octet mode remains on the RFC 1350 leaves.",
                 "summaryZh": "netascii 是 RFC 1123 汇总表经 RFC-783 的通用主机 MUST；615A 只使用 octet TFTP。4.2.3.3 中非标准 TFTP 扩展从未标准化，也不采用。octet 模式仍在 RFC 1350 叶上。"
+              },
+              {
+                "id": "SAU-1123-4-2-REMAINING-IMPLEMENTATION-EXPONENTIAL-BACKOFF",
+                "disposition": "INFORMATIVE",
+                "summaryEn": "RFC 1123 §4.2.3.2 IMPLEMENTATION says TCP retransmission algorithms are a useful base and that at least exponential backoff of retransmission timeout is necessary. That note is implementation guidance under the bound MUST adaptive-timeout leaf CRS-M1-00663; it is not adopted as a separate 615A MUST, and it is not a FIND 2 s / 3 s clock rule.",
+                "summaryZh": "RFC 1123 §4.2.3.2 IMPLEMENTATION 说明 TCP 重传算法可作为基础，并且重传超时至少需要指数退避。该说明是已绑定 MUST 自适应超时叶 CRS-M1-00663 下的实现指导，不作为单独的 615A MUST 采用，也不是 FIND 2 秒／3 秒时钟规则。"
               }
             ],
             "admittedLeafUnits": [

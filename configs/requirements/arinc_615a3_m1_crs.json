@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0",
   "artifactId": "ARINC615A3-M1-CRS",
-  "artifactVersion": "M1-CANDIDATE-14",
+  "artifactVersion": "M1-CANDIDATE-15",
   "candidateDisposition": "ADOPT",
   "sourceBindings": [
     {
@@ -72321,7 +72321,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.1",
         "tableOrFigure": null,
-        "documentPage": 18,
+        "documentPage": 10,
         "pdfPage": 18,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
@@ -72347,7 +72347,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.1",
         "tableOrFigure": null,
-        "documentPage": 18,
+        "documentPage": 10,
         "pdfPage": 18,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 2
@@ -72373,7 +72373,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.2",
         "tableOrFigure": null,
-        "documentPage": 19,
+        "documentPage": 11,
         "pdfPage": 19,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
@@ -72399,7 +72399,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.3",
         "tableOrFigure": null,
-        "documentPage": 21,
+        "documentPage": 13,
         "pdfPage": 21,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
@@ -72425,7 +72425,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.3",
         "tableOrFigure": null,
-        "documentPage": 21,
+        "documentPage": 13,
         "pdfPage": 21,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 2
@@ -72451,7 +72451,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.3",
         "tableOrFigure": null,
-        "documentPage": 21,
+        "documentPage": 13,
         "pdfPage": 21,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 3
@@ -72477,7 +72477,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.3",
         "tableOrFigure": null,
-        "documentPage": 21,
+        "documentPage": 13,
         "pdfPage": 21,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 4
@@ -72503,7 +72503,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.3",
         "tableOrFigure": null,
-        "documentPage": 21,
+        "documentPage": 13,
         "pdfPage": 21,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 5
@@ -72529,7 +72529,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.4.3",
         "tableOrFigure": null,
-        "documentPage": 25,
+        "documentPage": 17,
         "pdfPage": 25,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
@@ -72555,7 +72555,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.1",
         "tableOrFigure": null,
-        "documentPage": 26,
+        "documentPage": 18,
         "pdfPage": 26,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
@@ -72737,7 +72737,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.4.1",
         "tableOrFigure": null,
-        "documentPage": 23,
+        "documentPage": 15,
         "pdfPage": 23,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
@@ -72763,7 +72763,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.4.1",
         "tableOrFigure": null,
-        "documentPage": 24,
+        "documentPage": 16,
         "pdfPage": 24,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 2
@@ -72789,7 +72789,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.4.3",
         "tableOrFigure": null,
-        "documentPage": 25,
+        "documentPage": 17,
         "pdfPage": 25,
         "fragmentKind": "EQUATION",
         "fragmentOrdinal": 1
@@ -72815,7 +72815,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.4.3",
         "tableOrFigure": null,
-        "documentPage": 25,
+        "documentPage": 17,
         "pdfPage": 25,
         "fragmentKind": "EQUATION",
         "fragmentOrdinal": 2
@@ -72841,7 +72841,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
@@ -72867,7 +72867,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 2
@@ -72893,7 +72893,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 3
@@ -72919,7 +72919,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 4
@@ -72945,7 +72945,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 5
@@ -72971,7 +72971,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 6
@@ -72997,7 +72997,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 7
@@ -73023,7 +73023,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": "Figure 3-12",
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "TABLE-ROW",
         "fragmentOrdinal": 1
@@ -73049,7 +73049,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": "Figure 3-12",
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "TABLE-ROW",
         "fragmentOrdinal": 2
@@ -73482,6 +73482,552 @@
       },
       "requirementIds": [
         "CRS-M1-00710"
+      ]
+    },
+    {
+      "id": "COV-M1-03000",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-003-44239DB2F60A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 14,
+        "pdfPage": 22,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "44239db2f60ad8b573e7f73ba8a59a53fa79bf6476c20718c5e1d875b7244e08",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-TX-TECHNOLOGICAL-LATENCY-ENDPOINTS",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00711"
+      ]
+    },
+    {
+      "id": "COV-M1-03001",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-004-B2F9DADDEDF5",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 14,
+        "pdfPage": 22,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "b2f9daddedf5dc70394b6cf3fb0455f450ffc95104ff6bb2752d33d06baa6248",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-TX-LATENCY-START-ENDPOINT",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00712"
+      ]
+    },
+    {
+      "id": "COV-M1-03002",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-005-9B58887C088F",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 14,
+        "pdfPage": 22,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "9b58887c088fbea33625697ab848ab8a72edee728bf75b47ef3c72a5b6acf0af",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-TX-LATENCY-END-ENDPOINT",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00713"
+      ]
+    },
+    {
+      "id": "COV-M1-03003",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-006-8D72879FD3A5",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 14,
+        "pdfPage": 22,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "8d72879fd3a5b6b6ee989dd1da4813fabd70e664ab745b10276bf4958a78475b",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-TX-LATENCY-EMPTY-BUFFER-PREMISE",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00714"
+      ]
+    },
+    {
+      "id": "COV-M1-03004",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-001-4B93E0D081F7",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 15,
+        "pdfPage": 23,
+        "fragmentKind": "COMMENTARY",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "4b93e0d081f779a82ad8daf9775d384fa69c4a3f2e4d36987505e0e6bcfe0d02",
+      "sourceModality": "COMMENTARY",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-TECHNOLOGICAL-VS-CONFIGURATION-LATENCY",
+      "atomicity": {
+        "ownershipKind": "COMMENTARY",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00715"
+      ]
+    },
+    {
+      "id": "COV-M1-03005",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-002-F6362C6DA30A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 15,
+        "pdfPage": 23,
+        "fragmentKind": "COMMENTARY",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "f6362c6da30ac483737d656f1c4ddab164ea241104038e6f34bb4dc49e5bdac7",
+      "sourceModality": "COMMENTARY",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-TECHNOLOGICAL-LATENCY-NO-OTHER-TASK",
+      "atomicity": {
+        "ownershipKind": "COMMENTARY",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00716"
+      ]
+    },
+    {
+      "id": "COV-M1-03006",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-003-6E1BCB3D2E11",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 15,
+        "pdfPage": 23,
+        "fragmentKind": "COMMENTARY",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "6e1bcb3d2e11faa6bb88c6a65ab4b865700b804086666de596c9261ec1c143a3",
+      "sourceModality": "COMMENTARY",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-FRAME-DELAY-PHYSICAL-LAYER",
+      "atomicity": {
+        "ownershipKind": "COMMENTARY",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00717"
+      ]
+    },
+    {
+      "id": "COV-M1-03007",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-007-1CDDD6B34C3E",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 16,
+        "pdfPage": 24,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "1cddd6b34c3e0d7681c4d7aac42374ffbd97b2d0dc83df611e86a73b41534a47",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-RX-LATENCY-START-ENDPOINT",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00718"
+      ]
+    },
+    {
+      "id": "COV-M1-03008",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-008-824150EBC26E",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 16,
+        "pdfPage": 24,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "824150ebc26ea619127d9f17f3fdee1023838d7fa5ec2f7b7c176656929bf5a3",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-RX-LATENCY-END-ENDPOINT",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00719"
+      ]
+    },
+    {
+      "id": "COV-M1-03009",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-009-BEE0AC634C0C",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 16,
+        "pdfPage": 24,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "bee0ac634c0c5dc9f9f51867427b8844763ac1cc820163b4a09001bf1fa225a9",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-RX-LATENCY-EMPTY-BUFFER-PREMISE",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00720"
+      ]
+    },
+    {
+      "id": "COV-M1-03010",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-002-7A1296CF6117",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.3",
+        "tableOrFigure": null,
+        "documentPage": 17,
+        "pdfPage": 25,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "7a1296cf6117d81539e7a6dffa53c41bc7e62793c671bbdae138154dfe0f9173",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAX-JITTER-BOTH-EQUATIONS",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00721"
+      ]
+    },
+    {
+      "id": "COV-M1-03011",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-003-E8E54C6C0881",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.3",
+        "tableOrFigure": null,
+        "documentPage": 17,
+        "pdfPage": 25,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "e8e54c6c08811ee252a5607e57150be5ee5dbada4ab97e8a08c1151b805059ba",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAX-JITTER-UNITS",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00722"
+      ]
+    },
+    {
+      "id": "COV-M1-03012",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-003-F168177B9A90",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-11",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "f168177b9a909443212beb03cf10af5ddc920f86aa862c0b7392cf4f0959406e",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-48-BIT-FIELD-COMPOSITION",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00723"
+      ]
+    },
+    {
+      "id": "COV-M1-03013",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-004-F1E35DF3FF8A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-11",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "f1e35df3ff8ad1d05a363f14f4cf8ccfd1ddbc809c4be9a68722883441d71639",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-CONSTANT-TAIL",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00724"
+      ]
+    },
+    {
+      "id": "COV-M1-03014",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-COMMENTARY-001-3B49302B2721",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "COMMENTARY",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "3b49302b2721e92e392fb0c0d9de1a989351c319f55a1320bb71e73fad24fb6a",
+      "sourceModality": "COMMENTARY",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-NO-UNIQUE-ALGORITHM",
+      "atomicity": {
+        "ownershipKind": "COMMENTARY",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00725"
+      ]
+    },
+    {
+      "id": "COV-M1-03015",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-005-0A0C502A2190",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-12",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "0a0c502a21902cf69f1463f9da1f1081289535eaaf4ceb044c4973b554dacf4c",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-INTERFACE-ID-000-NOT-USED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00726"
+      ]
+    },
+    {
+      "id": "COV-M1-03016",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-006-DFB1D506427E",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-12",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "dfb1d506427e93d391ec43732c895d0dfe6a758c0abcc7a78e726ee681f19c6f",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-INTERFACE-ID-011-NOT-USED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00727"
+      ]
+    },
+    {
+      "id": "COV-M1-03017",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-007-F7A240692D0C",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-12",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "f7a240692d0cbb53a26df60876302eda05745068dc271eb8bfc2206e4fc895ac",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-INTERFACE-ID-100-NOT-USED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00728"
+      ]
+    },
+    {
+      "id": "COV-M1-03018",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-008-03258840BB7B",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-12",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "03258840bb7b380f468801c8805cd04e821652fa4690c94e3920eb0ddcdc7409",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-INTERFACE-ID-101-NOT-USED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00729"
+      ]
+    },
+    {
+      "id": "COV-M1-03019",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-009-B3132C35E340",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-12",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "b3132c35e3400328a49af1d344c12ed6236efdb80c5dc743028e84d9d2779db2",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-INTERFACE-ID-110-NOT-USED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00730"
+      ]
+    },
+    {
+      "id": "COV-M1-03020",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-010-9E853859DACB",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-12",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "9e853859dacb9863462811587e793bf12fd2e3d6cf72662ec429f71039b7577d",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-INTERFACE-ID-111-NOT-USED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00731"
       ]
     }
   ],
@@ -106643,7 +107189,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.1",
         "tableOrFigure": null,
-        "documentPage": 18,
+        "documentPage": 10,
         "pdfPage": 18,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
@@ -106689,7 +107235,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.1",
         "tableOrFigure": null,
-        "documentPage": 18,
+        "documentPage": 10,
         "pdfPage": 18,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 2
@@ -106735,7 +107281,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.2",
         "tableOrFigure": null,
-        "documentPage": 19,
+        "documentPage": 11,
         "pdfPage": 19,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
@@ -106781,7 +107327,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.3",
         "tableOrFigure": null,
-        "documentPage": 21,
+        "documentPage": 13,
         "pdfPage": 21,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
@@ -106827,7 +107373,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.3",
         "tableOrFigure": null,
-        "documentPage": 21,
+        "documentPage": 13,
         "pdfPage": 21,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 2
@@ -106874,7 +107420,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.3",
         "tableOrFigure": null,
-        "documentPage": 21,
+        "documentPage": 13,
         "pdfPage": 21,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 3
@@ -106920,7 +107466,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.3",
         "tableOrFigure": null,
-        "documentPage": 21,
+        "documentPage": 13,
         "pdfPage": 21,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 4
@@ -106966,7 +107512,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.3",
         "tableOrFigure": null,
-        "documentPage": 21,
+        "documentPage": 13,
         "pdfPage": 21,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 5
@@ -107012,7 +107558,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.4.3",
         "tableOrFigure": null,
-        "documentPage": 25,
+        "documentPage": 17,
         "pdfPage": 25,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
@@ -107058,7 +107604,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.1",
         "tableOrFigure": null,
-        "documentPage": 26,
+        "documentPage": 18,
         "pdfPage": 26,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
@@ -107381,22 +107927,25 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.4.1",
         "tableOrFigure": null,
-        "documentPage": 23,
+        "documentPage": 15,
         "pdfPage": 23,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
       },
       "sourceTextHash": "60532ca921fc6c15db9a3c926f89899db454974d4502f81b6596fc8fc4813365",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, End-System technological latency in transmission is bounded below 150 microseconds plus frame delay.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，端系统发送方向技术时延须低于 150 微秒加帧时延。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen and TX technological latency is measured with empty buffers, no conflicting resource access and no IP fragmentation, that latency is strictly below 150 microseconds plus frame delay. Equality at 150 us plus frame delay fails. This is not a 615A operation timeout.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，且发送方向技术时延在空缓冲、无冲突资源访问且无 IP 分片下测量，则该时延须严格低于 150 微秒加帧时延。等于 150 微秒加帧时延即失败。这不是 615A 操作超时。",
       "semantic": {
         "actor": "AFDX-END-SYSTEM",
-        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "condition": "WHEN-AFDX-IS-SELECTED-AND-TX-TECH-LATENCY-IS-MEASURED-WITH-EMPTY-BUFFERS-NO-CONTENTION-AND-NO-IP-FRAGMENTATION",
         "action": "KEEP-TX-TECHNOLOGICAL-LATENCY-BELOW-150US-PLUS-FRAME-DELAY",
         "objects": [
           "AFDX-TECHNOLOGICAL-LATENCY",
-          "FRAME-DELAY"
+          "FRAME-DELAY",
+          "EMPTY-BUFFERS",
+          "NO-CONFLICTING-RESOURCE-ACCESS",
+          "NO-IP-FRAGMENTATION"
         ],
         "observableEffect": "AFDX-TX-TECHNOLOGICAL-LATENCY-OBSERVABLE",
         "operation": "DATA-OBJECT",
@@ -107419,7 +107968,36 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "AFDX-TX-TECHNOLOGICAL-LATENCY-150US",
-      "splitRationale": "Transmission 150 us plus frame delay is this sentence; reception 150 us is a separate leaf."
+      "splitRationale": "Transmission 150 us plus frame delay is this sentence; reception 150 us is a separate leaf.",
+      "timing": {
+        "timingFamily": "AFDX-ES-TX-TECHNOLOGICAL-LATENCY",
+        "provenanceKind": "SYMBOLIC-SOURCE-EQUATION",
+        "sourceParameter": "TECH-LAT-TX",
+        "sourceRelation": "TECH-LAT-TX < 150 + FRAME-DELAY",
+        "sourceEvidenceUnitIds": [
+          "SU-ARINC-664-7-3.2.4.1-P023-PROSE-SENTENCE-001-60532CA921FC",
+          "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-003-44239DB2F60A",
+          "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-006-8D72879FD3A5"
+        ],
+        "trigger": "LAST-BIT-OF-HOSTED-PARTITION-DATA-AVAILABLE-TO-ES-COMMUNICATION-SERVICES",
+        "response": "LAST-BIT-OF-CORRESPONDING-ETHERNET-FRAME-ON-PHYSICAL-MEDIA",
+        "cancellation": "MEASUREMENT-PREMISES-NOT-MET",
+        "supersedingTrigger": "NONE",
+        "correlationKey": "AFDX-END-SYSTEM-TECHNOLOGICAL-LATENCY-MEASUREMENT",
+        "pairingPolicy": "PAIR-NAMED-MEASUREMENT-ENDPOINTS",
+        "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+        "silenceSemantics": "INCONCLUSIVE-WHEN-MEASUREMENT-PREMISES-ABSENT",
+        "lowerBound": 0,
+        "upperBound": "ONE-HUNDRED-FIFTY-MICROSECONDS-PLUS-FRAME-DELAY",
+        "unit": "us",
+        "lowerBoundary": "CLOSED",
+        "upperBoundary": "OPEN",
+        "clockStart": "CORRELATED-TRIGGER-TIMESTAMP",
+        "clockResets": [],
+        "observationState": "CONFIGURATION-DEPENDENT",
+        "errorBudgetState": "NOT-REQUIRED",
+        "ambiguityStatus": "NONE-OBSERVED"
+      }
     },
     {
       "id": "CRS-M1-00683",
@@ -107428,21 +108006,23 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.4.1",
         "tableOrFigure": null,
-        "documentPage": 24,
+        "documentPage": 16,
         "pdfPage": 24,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 2
       },
       "sourceTextHash": "510e7a75e2175c365c99bb872962608373e46276637171a863ba1211876077f3",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, End-System technological latency in reception is bounded below 150 microseconds.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，端系统接收方向技术时延须低于 150 微秒。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen and RX technological latency is measured with empty buffers and without conflicting resource access, that latency is strictly below 150 microseconds. Equality at 150 us fails. This is not a 615A operation timeout.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，且接收方向技术时延在空缓冲且无冲突资源访问下测量，则该时延须严格低于 150 微秒。等于 150 微秒即失败。这不是 615A 操作超时。",
       "semantic": {
         "actor": "AFDX-END-SYSTEM",
-        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "condition": "WHEN-AFDX-IS-SELECTED-AND-RX-TECH-LATENCY-IS-MEASURED-WITH-EMPTY-BUFFERS-AND-NO-CONTENTION",
         "action": "KEEP-RX-TECHNOLOGICAL-LATENCY-BELOW-150-MICROSECONDS",
         "objects": [
-          "AFDX-TECHNOLOGICAL-LATENCY"
+          "AFDX-TECHNOLOGICAL-LATENCY",
+          "EMPTY-BUFFERS",
+          "NO-CONFLICTING-RESOURCE-ACCESS"
         ],
         "observableEffect": "AFDX-RX-TECHNOLOGICAL-LATENCY-OBSERVABLE",
         "operation": "DATA-OBJECT",
@@ -107465,7 +108045,37 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "AFDX-RX-TECHNOLOGICAL-LATENCY-150US",
-      "splitRationale": "Reception 150 us is this sentence; transmission 150 us plus frame delay is a separate leaf."
+      "splitRationale": "Reception 150 us is this sentence; transmission 150 us plus frame delay is a separate leaf.",
+      "timing": {
+        "timingFamily": "AFDX-ES-RX-TECHNOLOGICAL-LATENCY",
+        "provenanceKind": "SYMBOLIC-SOURCE-EQUATION",
+        "sourceParameter": "TECH-LAT-RX",
+        "sourceRelation": "TECH-LAT-RX < 150",
+        "sourceEvidenceUnitIds": [
+          "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-002-510E7A75E217",
+          "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-007-1CDDD6B34C3E",
+          "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-008-824150EBC26E",
+          "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-009-BEE0AC634C0C"
+        ],
+        "trigger": "LAST-BIT-OF-ETHERNET-FRAME-RECEIVED-ON-PHYSICAL-MEDIA-ATTACHMENT",
+        "response": "LAST-BIT-OF-CORRESPONDING-DATA-AVAILABLE-TO-HOSTED-PARTITION",
+        "cancellation": "MEASUREMENT-PREMISES-NOT-MET",
+        "supersedingTrigger": "NONE",
+        "correlationKey": "AFDX-END-SYSTEM-TECHNOLOGICAL-LATENCY-MEASUREMENT",
+        "pairingPolicy": "PAIR-NAMED-MEASUREMENT-ENDPOINTS",
+        "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+        "silenceSemantics": "INCONCLUSIVE-WHEN-MEASUREMENT-PREMISES-ABSENT",
+        "lowerBound": 0,
+        "upperBound": 150,
+        "unit": "us",
+        "lowerBoundary": "CLOSED",
+        "upperBoundary": "OPEN",
+        "clockStart": "CORRELATED-TRIGGER-TIMESTAMP",
+        "clockResets": [],
+        "observationState": "CONFIGURATION-DEPENDENT",
+        "errorBudgetState": "NOT-REQUIRED",
+        "ambiguityStatus": "NONE-OBSERVED"
+      }
     },
     {
       "id": "CRS-M1-00684",
@@ -107474,15 +108084,15 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.4.3",
         "tableOrFigure": null,
-        "documentPage": 25,
+        "documentPage": 17,
         "pdfPage": 25,
         "fragmentKind": "EQUATION",
         "fragmentOrdinal": 1
       },
       "sourceTextHash": "a9b1a06d3cdd1f54f5aad9a160a566e2b45d066f05ab7d9daec52aadeb63a008",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, max_jitter is at most 40 microseconds plus the sum over VLs of ((20 bytes + Lmax_i bytes) times 8 bits/byte) divided by medium bandwidth Nbw.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，max_jitter 至多为 40 微秒加上各 VL 的 ((20 字节 + Lmax_i 字节) × 8 位/字节) / 介质带宽 Nbw。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, max_jitter in microseconds is at most 40 us plus the sum over VLs of ((20 octets + Lmax_i octets) * 8 bits/octet / Nbw bits/s) converted from seconds to microseconds by multiplying 1000000. Both this formula and the 500 us formula must hold.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，以微秒计的 max_jitter 至多为 40 微秒加上各 VL 的 ((20 八位组 + Lmax_i 八位组) × 8 位/八位组 / Nbw 比特每秒) 由秒乘 1000000 换成微秒后的和。此式与 500 微秒公式必须同时成立。",
       "semantic": {
         "actor": "AFDX-END-SYSTEM",
         "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
@@ -107490,7 +108100,8 @@
         "objects": [
           "AFDX-JITTER",
           "LMAX",
-          "NBW"
+          "NBW",
+          "MAX-JITTER-500US-EQUATION"
         ],
         "observableEffect": "AFDX-MAX-JITTER-LOAD-EQUATION-OBSERVABLE",
         "operation": "DATA-OBJECT",
@@ -107513,7 +108124,37 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "AFDX-MAX-JITTER-LOAD-EQUATION",
-      "splitRationale": "Load-dependent max_jitter formula is this equation; the 500 us formula is a separate leaf."
+      "splitRationale": "Load-dependent max_jitter formula is this equation; the 500 us formula is a separate leaf.",
+      "timing": {
+        "timingFamily": "AFDX-MAX-JITTER-LOAD-EQUATION",
+        "provenanceKind": "SYMBOLIC-SOURCE-EQUATION",
+        "sourceParameter": "MAX-JITTER-LOAD-EQUATION",
+        "sourceRelation": "MAX-JITTER <= 40 + (((20 + LMAX) * 8) / NBW) * 1000000",
+        "sourceEvidenceUnitIds": [
+          "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD",
+          "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948",
+          "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-002-7A1296CF6117",
+          "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-003-E8E54C6C0881"
+        ],
+        "trigger": "VL-FRAME-AT-END-SYSTEM-OUTPUT",
+        "response": "MAX-JITTER-OBSERVED-FOR-THAT-VL",
+        "cancellation": "AFDX-TRANSPORT-NOT-SELECTED",
+        "supersedingTrigger": "NONE",
+        "correlationKey": "AFDX-VL-AT-END-SYSTEM-OUTPUT",
+        "pairingPolicy": "PAIR-VL-OUTPUT-WITH-MAX-JITTER-BOUND",
+        "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+        "silenceSemantics": "BOTH-MAX-JITTER-EQUATIONS-MUST-HOLD",
+        "lowerBound": 0,
+        "upperBound": "FORTY-MICROSECONDS-PLUS-CONVERTED-VL-LOAD-TERM",
+        "unit": "us",
+        "lowerBoundary": "CLOSED",
+        "upperBoundary": "CLOSED",
+        "clockStart": "CORRELATED-TRIGGER-TIMESTAMP",
+        "clockResets": [],
+        "observationState": "CONFIGURATION-DEPENDENT",
+        "errorBudgetState": "NOT-REQUIRED",
+        "ambiguityStatus": "SOURCE-EQUATION-OPERATORS-RECOVERED-FROM-PDF-LAYOUT"
+      }
     },
     {
       "id": "CRS-M1-00685",
@@ -107522,21 +108163,22 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.4.3",
         "tableOrFigure": null,
-        "documentPage": 25,
+        "documentPage": 17,
         "pdfPage": 25,
         "fragmentKind": "EQUATION",
         "fragmentOrdinal": 2
       },
       "sourceTextHash": "66170063b94897df43a184607b9d077a62b0aa575d3a5d865aa216c553c97e4f",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, the second max_jitter formula is max_jitter at most 500 microseconds.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，第二个 max_jitter 公式为 max_jitter 至多 500 微秒。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the second recovered formula is max_jitter at most 500 microseconds. It must hold together with the load-dependent formula; satisfying 500 us alone is not enough.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，第二个已恢复公式为 max_jitter 至多 500 微秒。它必须与负载相关公式同时成立；仅满足 500 微秒不够。",
       "semantic": {
         "actor": "AFDX-END-SYSTEM",
         "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
         "action": "BOUND-MAX-JITTER-BY-500-MICROSECONDS-EQUATION",
         "objects": [
-          "AFDX-JITTER"
+          "AFDX-JITTER",
+          "MAX-JITTER-LOAD-EQUATION"
         ],
         "observableEffect": "AFDX-MAX-JITTER-500US-EQUATION-OBSERVABLE",
         "operation": "DATA-OBJECT",
@@ -107559,7 +108201,36 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "AFDX-MAX-JITTER-500US-EQUATION",
-      "splitRationale": "500 us formula is this equation; the load-dependent formula and the 500 us prose cap are separate leaves."
+      "splitRationale": "500 us formula is this equation; the load-dependent formula and the 500 us prose cap are separate leaves.",
+      "timing": {
+        "timingFamily": "AFDX-MAX-JITTER-500US-EQUATION",
+        "provenanceKind": "SYMBOLIC-SOURCE-EQUATION",
+        "sourceParameter": "MAX-JITTER-500US-EQUATION",
+        "sourceRelation": "MAX-JITTER <= 500",
+        "sourceEvidenceUnitIds": [
+          "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948",
+          "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD",
+          "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-002-7A1296CF6117"
+        ],
+        "trigger": "VL-FRAME-AT-END-SYSTEM-OUTPUT",
+        "response": "MAX-JITTER-OBSERVED-FOR-THAT-VL",
+        "cancellation": "AFDX-TRANSPORT-NOT-SELECTED",
+        "supersedingTrigger": "NONE",
+        "correlationKey": "AFDX-VL-AT-END-SYSTEM-OUTPUT",
+        "pairingPolicy": "PAIR-VL-OUTPUT-WITH-MAX-JITTER-BOUND",
+        "concurrencyPolicy": "INDEPENDENT-CLOCK-PER-CORRELATION-KEY",
+        "silenceSemantics": "BOTH-MAX-JITTER-EQUATIONS-MUST-HOLD",
+        "lowerBound": 0,
+        "upperBound": 500,
+        "unit": "us",
+        "lowerBoundary": "CLOSED",
+        "upperBoundary": "CLOSED",
+        "clockStart": "CORRELATED-TRIGGER-TIMESTAMP",
+        "clockResets": [],
+        "observationState": "CONFIGURATION-DEPENDENT",
+        "errorBudgetState": "NOT-REQUIRED",
+        "ambiguityStatus": "SOURCE-EQUATION-OPERATORS-RECOVERED-FROM-PDF-LAYOUT"
+      }
     },
     {
       "id": "CRS-M1-00686",
@@ -107568,15 +108239,15 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 1
       },
       "sourceTextHash": "037a0dea370a7d59bf582a2e30aa4a538cf945c4b3872988407dd43f3bc09302",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, the MAC source address is an Individual and Locally Administered IEEE 802.3 address. No unique construction algorithm is recommended.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，MAC 源地址是符合 IEEE 802.3 的单播且本地管理地址。未推荐唯一构造算法。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the MAC source address is an Individual and Locally Administered IEEE 802.3 address.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，MAC 源地址是符合 IEEE 802.3 的单播且本地管理地址。",
       "semantic": {
         "actor": "AFDX-END-SYSTEM",
         "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
@@ -107605,7 +108276,7 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "AFDX-MAC-SOURCE-IEEE-CLASS",
-      "splitRationale": "Address class is this sentence; constant field and Interface_ID are separate leaves."
+      "splitRationale": "Address class is this sentence; construction-algorithm commentary and Figure 3-11 fields are separate leaves."
     },
     {
       "id": "CRS-M1-00687",
@@ -107614,7 +108285,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 2
@@ -107661,7 +108332,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 3
@@ -107707,7 +108378,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 4
@@ -107753,7 +108424,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 5
@@ -107799,7 +108470,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 6
@@ -107845,7 +108516,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": null,
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "PROSE-SENTENCE",
         "fragmentOrdinal": 7
@@ -107891,7 +108562,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": "Figure 3-12",
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "TABLE-ROW",
         "fragmentOrdinal": 1
@@ -107938,7 +108609,7 @@
         "sourceId": "ARINC-664-7",
         "clause": "3.2.5.2",
         "tableOrFigure": "Figure 3-12",
-        "documentPage": 27,
+        "documentPage": 19,
         "pdfPage": 27,
         "fragmentKind": "TABLE-ROW",
         "fragmentOrdinal": 2
@@ -108689,6 +109360,988 @@
         "sourceCoverageId": "COV-M1-02999",
         "status": "CANDIDATE"
       }
+    },
+    {
+      "id": "CRS-M1-00711",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-003-44239DB2F60A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 14,
+        "pdfPage": 22,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "44239db2f60ad8b573e7f73ba8a59a53fa79bf6476c20718c5e1d875b7244e08",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, transmission technological latency is the duration from the last bit of hosted-partition data available to End-System communication services to the last bit of the corresponding Ethernet frame on the physical media.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，发送方向技术时延是从宿主分区数据最后一比特可供端系统通信服务使用，到相应以太网帧最后一比特出现在物理介质上的持续时间。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "MEASURE-TX-TECHNOLOGICAL-LATENCY-BETWEEN-PARTITION-DATA-AND-PHYSICAL-MEDIA",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY",
+          "TX-MEASUREMENT-START",
+          "TX-MEASUREMENT-END"
+        ],
+        "observableEffect": "AFDX-TX-LATENCY-ENDPOINT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-TX-TECHNOLOGICAL-LATENCY-ENDPOINTS",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03000",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-TX-LATENCY-ENDPOINTS",
+      "splitRationale": "TX measurement endpoints are this sentence; the 150 us bound is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00712",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-004-B2F9DADDEDF5",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 14,
+        "pdfPage": 22,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "b2f9daddedf5dc70394b6cf3fb0455f450ffc95104ff6bb2752d33d06baa6248",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the TX technological-latency start point is the last bit of hosted-partition data becoming available to End-System communication services.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，发送方向技术时延起点是宿主分区数据最后一比特可供端系统通信服务使用。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "START-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-PARTITION-BIT-IS-AVAILABLE",
+        "objects": [
+          "TX-MEASUREMENT-START"
+        ],
+        "observableEffect": "AFDX-TX-LATENCY-START-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-TX-LATENCY-START-ENDPOINT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03001",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-TX-LATENCY-START",
+      "splitRationale": "TX start endpoint is this fragment; the TX end endpoint is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00713",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-005-9B58887C088F",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 14,
+        "pdfPage": 22,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "9b58887c088fbea33625697ab848ab8a72edee728bf75b47ef3c72a5b6acf0af",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the TX technological-latency end point is the last bit of the corresponding Ethernet frame transmitted on the physical media.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，发送方向技术时延终点是相应以太网帧最后一比特发送到物理介质。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "END-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-ON-MEDIA",
+        "objects": [
+          "TX-MEASUREMENT-END"
+        ],
+        "observableEffect": "AFDX-TX-LATENCY-END-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-TX-LATENCY-END-ENDPOINT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03002",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-TX-LATENCY-END",
+      "splitRationale": "TX end endpoint is this fragment; the TX start endpoint is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00714",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-006-8D72879FD3A5",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 14,
+        "pdfPage": 22,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "8d72879fd3a5b6b6ee989dd1da4813fabd70e664ab745b10276bf4958a78475b",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, TX technological latency is measured with empty buffers, no conflicting resource access and no IP fragmentation. Absent those premises the 150 us bound cannot FAIL an IUT.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，发送方向技术时延在空缓冲、无冲突资源访问且无 IP 分片的前提下测量。缺少这些前提时，不得仅凭 150 微秒上界判定 IUT 违规。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "MEASURE-TX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-NO-CONTENTION-AND-NO-IP-FRAGMENTATION",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY",
+          "EMPTY-BUFFERS",
+          "NO-CONFLICTING-RESOURCE-ACCESS",
+          "NO-IP-FRAGMENTATION"
+        ],
+        "observableEffect": "AFDX-TX-LATENCY-PREMISE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-TX-LATENCY-EMPTY-BUFFER-PREMISE",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03003",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-TX-LATENCY-PREMISES",
+      "splitRationale": "TX empty-buffer premises are this sentence; RX premises are a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00715",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-001-4B93E0D081F7",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 15,
+        "pdfPage": 23,
+        "fragmentKind": "COMMENTARY",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "4b93e0d081f779a82ad8daf9775d384fa69c4a3f2e4d36987505e0e6bcfe0d02",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Commentary: total End-System latency has technological latency independent of traffic load and configuration latency that depends on configuration and traffic load. The 150 us bound is not a load-independent universal timeout.",
+      "generatedSemanticProjectionZh": "评注：端系统总时延包含与流量负载无关的技术时延，以及取决于配置与流量负载的配置时延。150 微秒上界不是与负载无关的普遍超时。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "DISTINGUISH-TECHNOLOGICAL-LATENCY-FROM-CONFIGURATION-LOAD-LATENCY",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY",
+          "CONFIGURATION-LATENCY"
+        ],
+        "observableEffect": "AFDX-LATENCY-KIND-DISTINCTION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "COMMENTARY",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-TECHNOLOGICAL-VS-CONFIGURATION-LATENCY",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03004",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-TECH-VS-CONFIG-LATENCY",
+      "splitRationale": "Load-independence of technological latency is this commentary; the numeric bound is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00716",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-002-F6362C6DA30A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 15,
+        "pdfPage": 23,
+        "fragmentKind": "COMMENTARY",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "f6362c6da30ac483737d656f1c4ddab164ea241104038e6f34bb4dc49e5bdac7",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Commentary: technological latency is the time to accept, process and begin transmitting application data when the End System is performing no other task.",
+      "generatedSemanticProjectionZh": "评注：技术时延是端系统在不执行其他任务时接受、处理并开始发送应用数据所需的时间。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "DEFINE-TECHNOLOGICAL-LATENCY-AS-ACCEPT-PROCESS-AND-BEGIN-TX-WITH-NO-OTHER-TASK",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY"
+        ],
+        "observableEffect": "AFDX-TECH-LATENCY-DEFINITION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "COMMENTARY",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-TECHNOLOGICAL-LATENCY-NO-OTHER-TASK",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03005",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-TECH-LATENCY-DEFINITION",
+      "splitRationale": "No-other-task definition is this commentary; frame delay is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00717",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-003-6E1BCB3D2E11",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 15,
+        "pdfPage": 23,
+        "fragmentKind": "COMMENTARY",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "6e1bcb3d2e11faa6bb88c6a65ab4b865700b804086666de596c9261ec1c143a3",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Commentary: frame delay covers delivery of the frame to the physical layer and is added to the 150 us technological-latency bound in transmission.",
+      "generatedSemanticProjectionZh": "评注：帧时延覆盖把帧递送到物理层的时间，并加到发送方向 150 微秒技术时延上界上。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "ADD-FRAME-DELAY-FOR-PHYSICAL-LAYER-DELIVERY",
+        "objects": [
+          "FRAME-DELAY"
+        ],
+        "observableEffect": "AFDX-FRAME-DELAY-DEFINITION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "COMMENTARY",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-FRAME-DELAY-PHYSICAL-LAYER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03006",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-FRAME-DELAY-DEFINITION",
+      "splitRationale": "Frame-delay meaning is this commentary; the 150 us numeric bound is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00718",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-007-1CDDD6B34C3E",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 16,
+        "pdfPage": 24,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "1cddd6b34c3e0d7681c4d7aac42374ffbd97b2d0dc83df611e86a73b41534a47",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the RX technological-latency start point is the last bit of an Ethernet frame received on the physical media attachment.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，接收方向技术时延起点是以太网帧最后一比特在物理介质连接点被接收。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "START-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-RECEIVED",
+        "objects": [
+          "RX-MEASUREMENT-START"
+        ],
+        "observableEffect": "AFDX-RX-LATENCY-START-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-RX-LATENCY-START-ENDPOINT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03007",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-RX-LATENCY-START",
+      "splitRationale": "RX start endpoint is this sentence; the RX end endpoint is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00719",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-008-824150EBC26E",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 16,
+        "pdfPage": 24,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "824150ebc26ea619127d9f17f3fdee1023838d7fa5ec2f7b7c176656929bf5a3",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the RX technological-latency end point is the last bit of the corresponding data becoming available to the End-System hosted partition.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，接收方向技术时延终点是相应数据最后一比特可供端系统宿主分区使用。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "END-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-DATA-BIT-IS-AVAILABLE-TO-PARTITION",
+        "objects": [
+          "RX-MEASUREMENT-END"
+        ],
+        "observableEffect": "AFDX-RX-LATENCY-END-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-RX-LATENCY-END-ENDPOINT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03008",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-RX-LATENCY-END",
+      "splitRationale": "RX end endpoint is this sentence; the RX start endpoint is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00720",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-009-BEE0AC634C0C",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.1",
+        "tableOrFigure": null,
+        "documentPage": 16,
+        "pdfPage": 24,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "bee0ac634c0c5dc9f9f51867427b8844763ac1cc820163b4a09001bf1fa225a9",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, RX technological latency is measured with empty buffers and without conflicting resource access. Absent those premises the 150 us bound cannot FAIL an IUT.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，接收方向技术时延在空缓冲且无冲突资源访问的前提下测量。缺少这些前提时，不得仅凭 150 微秒上界判定 IUT 违规。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "MEASURE-RX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-AND-NO-CONTENTION",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY",
+          "EMPTY-BUFFERS",
+          "NO-CONFLICTING-RESOURCE-ACCESS"
+        ],
+        "observableEffect": "AFDX-RX-LATENCY-PREMISE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-RX-LATENCY-EMPTY-BUFFER-PREMISE",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03009",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-RX-LATENCY-PREMISES",
+      "splitRationale": "RX empty-buffer premises are this sentence; TX premises are a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00721",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-002-7A1296CF6117",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.3",
+        "tableOrFigure": null,
+        "documentPage": 17,
+        "pdfPage": 25,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "7a1296cf6117d81539e7a6dffa53c41bc7e62793c671bbdae138154dfe0f9173",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, max_jitter at the End-System output must satisfy both recovered formulas at once. Meeting only the 500 us cap is not sufficient.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，端系统输出的 max_jitter 必须同时满足两个已恢复公式。仅满足 500 微秒上限不够。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "SATISFY-BOTH-MAX-JITTER-EQUATIONS-SIMULTANEOUSLY",
+        "objects": [
+          "AFDX-JITTER",
+          "MAX-JITTER-LOAD-EQUATION",
+          "MAX-JITTER-500US-EQUATION"
+        ],
+        "observableEffect": "AFDX-MAX-JITTER-BOTH-EQUATIONS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAX-JITTER-BOTH-EQUATIONS",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03010",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-MAX-JITTER-BOTH-EQUATIONS",
+      "splitRationale": "Both-formulas conjunction is this sentence; each hashed equation is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00722",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-003-E8E54C6C0881",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.3",
+        "tableOrFigure": null,
+        "documentPage": 17,
+        "pdfPage": 25,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "e8e54c6c08811ee252a5607e57150be5ee5dbada4ab97e8a08c1151b805059ba",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, max_jitter is in microseconds, Nbw is medium bandwidth in bits/s, and Lmax is in octets. The load term ((20 + Lmax) * 8 / Nbw) is seconds and is converted to microseconds by multiplying 1000000 before adding 40 us.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，max_jitter 以微秒计，Nbw 是比特每秒的介质带宽，Lmax 以八位组计。负载项 ((20 + Lmax) × 8 / Nbw) 的量纲是秒，须乘 1000000 换成微秒后再与 40 微秒相加。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "TREAT-MAX-JITTER-AS-MICROSECONDS-NBW-AS-BITS-PER-SECOND-AND-LMAX-AS-OCTETS",
+        "objects": [
+          "AFDX-JITTER",
+          "NBW",
+          "LMAX"
+        ],
+        "observableEffect": "AFDX-MAX-JITTER-UNIT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAX-JITTER-UNITS",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03011",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-MAX-JITTER-UNITS",
+      "splitRationale": "Unit declarations are this note; the hashed equations are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00723",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-003-F168177B9A90",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-11",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "f168177b9a909443212beb03cf10af5ddc920f86aa862c0b7392cf4f0959406e",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the MAC source is a 48-bit non-overlapping concatenation of 24-bit constant, 16-bit User_Defined_ID, 3-bit Interface_ID and 5-bit constant tail.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，MAC 源地址是 48 位不重叠拼接：24 位常数、16 位 User_Defined_ID、3 位 Interface_ID 与 5 位常数尾字段。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "COMPOSE-MAC-SOURCE-AS-24-PLUS-16-PLUS-3-PLUS-5-BIT-FIELDS",
+        "objects": [
+          "MAC-SOURCE-ADDRESS",
+          "MAC-SOURCE-CONSTANT-FIELD",
+          "MAC-SOURCE-USER-DEFINED-ID",
+          "MAC-SOURCE-INTERFACE-ID",
+          "MAC-SOURCE-CONSTANT-TAIL"
+        ],
+        "observableEffect": "AFDX-MAC-SOURCE-48-BIT-COMPOSITION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-48-BIT-FIELD-COMPOSITION",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03012",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-MAC-SOURCE-48-BIT-COMPOSITION",
+      "splitRationale": "Field widths and order are this figure row; the 5-bit tail value is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00724",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-004-F1E35DF3FF8A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-11",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "f1e35df3ff8ad1d05a363f14f4cf8ccfd1ddbc809c4be9a68722883441d71639",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the MAC-source constant tail is the 5-bit field 0 0000 in Figure 3-11.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，MAC 源地址常数尾字段是图 3-11 中的 5 位值 0 0000。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "SET-MAC-SOURCE-CONSTANT-TAIL-TO-00000",
+        "objects": [
+          "MAC-SOURCE-CONSTANT-TAIL"
+        ],
+        "observableEffect": "AFDX-MAC-SOURCE-CONSTANT-TAIL-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-CONSTANT-TAIL",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03013",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-MAC-SOURCE-CONSTANT-TAIL",
+      "splitRationale": "5-bit tail value is this figure field; the 24-bit constant field is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00725",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-COMMENTARY-001-3B49302B2721",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "COMMENTARY",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "3b49302b2721e92e392fb0c0d9de1a989351c319f55a1320bb71e73fad24fb6a",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Commentary: no unique MAC-source construction algorithm is recommended. That does not waive the Figure 3-11 field widths, constants or Interface_ID encodings.",
+      "generatedSemanticProjectionZh": "评注：未推荐唯一 MAC 源地址构造算法。这并不免除图 3-11 的字段宽度、常数或 Interface_ID 编码约束。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "TREAT-MAC-SOURCE-CONSTRUCTION-ALGORITHM-AS-NOT-UNIQUELY-RECOMMENDED",
+        "objects": [
+          "MAC-SOURCE-ADDRESS"
+        ],
+        "observableEffect": "AFDX-MAC-SOURCE-ALGORITHM-COMMENTARY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "COMMENTARY",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-NO-UNIQUE-ALGORITHM",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03014",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-MAC-SOURCE-NO-UNIQUE-ALGORITHM",
+      "splitRationale": "Algorithm commentary is this sentence; IEEE class and field layout are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00726",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-005-0A0C502A2190",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-12",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "0a0c502a21902cf69f1463f9da1f1081289535eaaf4ceb044c4973b554dacf4c",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Interface_ID 000 is recorded as Not used. The source does not state that unused encodings are prohibited.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，Interface_ID 000 登记为未使用。原文未把未使用等同于禁止。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "RECORD-INTERFACE-ID-000-AS-NOT-USED",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "observableEffect": "AFDX-INTERFACE-ID-000-NOT-USED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-INTERFACE-ID-000-NOT-USED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03015",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-INTERFACE-ID-000-NOT-USED",
+      "splitRationale": "000 Not used is this table row; network A/B encodings are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00727",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-006-DFB1D506427E",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-12",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "dfb1d506427e93d391ec43732c895d0dfe6a758c0abcc7a78e726ee681f19c6f",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Interface_ID 011 is recorded as Not used. Unused is not treated as prohibited unless the source says so.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，Interface_ID 011 登记为未使用。除非原文禁止，未使用不等于禁止。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "RECORD-INTERFACE-ID-011-AS-NOT-USED",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "observableEffect": "AFDX-INTERFACE-ID-011-NOT-USED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-INTERFACE-ID-011-NOT-USED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03016",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-INTERFACE-ID-011-NOT-USED",
+      "splitRationale": "011 Not used is this table row; 000 is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00728",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-007-F7A240692D0C",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-12",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "f7a240692d0cbb53a26df60876302eda05745068dc271eb8bfc2206e4fc895ac",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Interface_ID 100 is recorded as Not used. Unused is not treated as prohibited unless the source says so.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，Interface_ID 100 登记为未使用。除非原文禁止，未使用不等于禁止。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "RECORD-INTERFACE-ID-100-AS-NOT-USED",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "observableEffect": "AFDX-INTERFACE-ID-100-NOT-USED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-INTERFACE-ID-100-NOT-USED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03017",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-INTERFACE-ID-100-NOT-USED",
+      "splitRationale": "100 Not used is this table row; 101 is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00729",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-008-03258840BB7B",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-12",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "03258840bb7b380f468801c8805cd04e821652fa4690c94e3920eb0ddcdc7409",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Interface_ID 101 is recorded as Not used. Unused is not treated as prohibited unless the source says so.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，Interface_ID 101 登记为未使用。除非原文禁止，未使用不等于禁止。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "RECORD-INTERFACE-ID-101-AS-NOT-USED",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "observableEffect": "AFDX-INTERFACE-ID-101-NOT-USED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-INTERFACE-ID-101-NOT-USED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03018",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-INTERFACE-ID-101-NOT-USED",
+      "splitRationale": "101 Not used is this table row; 110 is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00730",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-009-B3132C35E340",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-12",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "b3132c35e3400328a49af1d344c12ed6236efdb80c5dc743028e84d9d2779db2",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Interface_ID 110 is recorded with the source wording Nor used. That is a coverage disposition, not a prohibition.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，Interface_ID 110 按原文 Nor used 登记。这是覆盖处置，不是禁止。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "RECORD-INTERFACE-ID-110-AS-SOURCE-NOR-USED",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "observableEffect": "AFDX-INTERFACE-ID-110-NOT-USED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-INTERFACE-ID-110-NOT-USED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03019",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-INTERFACE-ID-110-NOT-USED",
+      "splitRationale": "110 source wording is this table row; 111 is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00731",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-010-9E853859DACB",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.2",
+        "tableOrFigure": "Figure 3-12",
+        "documentPage": 19,
+        "pdfPage": 27,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "9e853859dacb9863462811587e793bf12fd2e3d6cf72662ec429f71039b7577d",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Interface_ID 111 is recorded as Not used. Unused is not treated as prohibited unless the source says so.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，Interface_ID 111 登记为未使用。除非原文禁止，未使用不等于禁止。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "RECORD-INTERFACE-ID-111-AS-NOT-USED",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "observableEffect": "AFDX-INTERFACE-ID-111-NOT-USED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAC-SOURCE-INTERFACE-ID-111-NOT-USED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03020",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-INTERFACE-ID-111-NOT-USED",
+      "splitRationale": "111 Not used is this table row; network A encoding is a separate leaf."
     }
   ],
   "dependencies": [
@@ -108854,24 +110507,24 @@
     "rg0": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "rg1": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "reviewHead": "UNBOUND-DRAFT",
-    "sourceInventoryFingerprint": "ac16c710d900abf226b52f17d7a7a03502991d4e61aa22fe6235aefecec0a87d",
+    "sourceInventoryFingerprint": "ed5057bc3161c39a24942e0abfcedc12580709edf00c28fb924a334ebdef3595",
     "sectionSpanManifestPath": "configs/requirements/m1_source_section_spans.json",
     "sectionSpanManifestFingerprint": "2630995a15aa2fe1d789f338d24d416f8ab32e0b028f75ad6928e0297b9b09e0",
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "9f4c433a7fe1fe602def675f97e0d7a7930d6aeb0d36174eaf67f614609ae40a",
+    "semanticAssertionFingerprint": "3b103f3a82eac9755f6ce27e16b3472aef6f080c4d7c81785d3a40b8c809564b",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
   },
   "inventorySummary": {
-    "coverageCount": 2999,
-    "requirementCount": 709,
+    "coverageCount": 3020,
+    "requirementCount": 730,
     "dependencyCount": 15,
     "gapCount": 1,
-    "coverageFingerprint": "01adfd19d8b3374d5b131de4befd308ec8ace96747bf04e2b67dd30b92bf0524",
-    "requirementsFingerprint": "ddc4d4e22d12caf8df09495274c6d9bcf2982586cf1ca1636d9b80063baa0e2f"
+    "coverageFingerprint": "126963de03d6a644a917a0bd3f0bea08e4fd3080666a566c539b73b1abc75ba5",
+    "requirementsFingerprint": "d33d9c45c398c41e3598ef953cfaca80838fcfc7a77825f8043e103f3988b2cd"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",
