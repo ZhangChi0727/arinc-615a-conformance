@@ -302,4 +302,3 @@ def test_tftp_end_condition_combines_default_and_negotiated_blksize() -> None:
     assert "integral multiple" in zero["generatedSemanticProjectionEn"]
     assert "never requested" in fallback["generatedSemanticProjectionEn"]
 
-
