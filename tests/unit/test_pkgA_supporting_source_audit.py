@@ -130,7 +130,54 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-9"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-10"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
+
+
+ALLOWED_LEAF_STATUS = {
+    "NOT-REQUIRED",
+    "LEAF-CRS-EMITTED",
+    "EXISTING-351-TRIGGERED-ROWS",
+    "EXISTING-LEAF-VIA-2-1-2",
+    "EXISTING-615A-LEAF",
+    "CRS-M1-00519-REMAINS-NOT-YET-BOUND",
+}
+
+
+def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
+    data = audit()
+    leftover = []
+    for source in data["supportingSourceApplicabilityAudit"]["sources"]:
+        for unit in source["units"]:
+            status = unit["leafCrsStatus"]
+            if status not in ALLOWED_LEAF_STATUS:
+                leftover.append((source["sourceId"], unit["id"], status))
+            if (
+                source["sourceId"] not in {"ARINC-615A-3", "ARINC-665-5"}
+                and unit["conformanceEffect"] == "REQUIRED"
+                and unit["applicabilityDecision"] != "OUT-OF-PROFILE"
+            ):
+                assert status == "LEAF-CRS-EMITTED", (unit["id"], status)
+    assert leftover == []
+    part4 = data["supportingSourceApplicabilityAudit"]["arinc664Part4"]
+    assert part4["affectedRequirementId"] == "CRS-M1-00519"
+    crs = json.loads((ROOT / "configs/requirements/arinc_615a3_m1_crs.json").read_text(encoding="utf-8"))
+    rfc_rows = [row for row in crs["requirements"] if str(row["source"]["sourceId"]).startswith("RFC-")]
+    p3_rows = [row for row in crs["requirements"] if row["source"]["sourceId"] == "ARINC-664-3"]
+    p7_rows = [row for row in crs["requirements"] if row["source"]["sourceId"] == "ARINC-664-7"]
+    assert rfc_rows
+    assert p3_rows
+    assert p7_rows
+    assert all(row["reviewStatus"] == "PENDING-EXTERNAL-INDEPENDENT-REVIEW" for row in rfc_rows + p3_rows + p7_rows)
+    deps = {row["id"]: row for row in crs["dependencies"]}
+    for dep_id in ("DEP-RFC-1350", "DEP-RFC-768", "DEP-ARINC-664-3", "DEP-ARINC-664-7"):
+        assert deps[dep_id]["status"] == "OPEN-DEPENDENCY"
+    spans = json.loads(SPANS.read_text(encoding="utf-8"))
+    by_id = {row["sourceId"]: row for row in spans["sources"]}
+    assert by_id["ARINC-664-2"]["spans"][0]["pdfPages"] == [8, 28]
+    assert any(row["pdfPages"] == [8, 36] for row in by_id["ARINC-664-3"]["spans"])
+    assert "RFC-1350" in by_id
+    assert "RFC-768" in by_id
+

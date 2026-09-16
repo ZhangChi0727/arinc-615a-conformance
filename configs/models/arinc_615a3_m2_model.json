@@ -8075,6 +8075,289 @@
         "predicateEn": "If the Load PN character count is odd, append one NUL.",
         "predicateZh": "若 Load PN 字符数为奇数，则追加一个 NUL。",
         "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-RESTRICT-RFC-OPTIONS-INSIDE-P3-PROFILE-WITHOUT-DROPPING-615A-TFTP-OPTIONS-CRS-M1-00604",
+        "m1RequirementId": "CRS-M1-00604",
+        "objects": [
+          "IETF-RFC-OPTIONS",
+          "ARINC-615A-TFTP-OPTIONS"
+        ],
+        "action": "RESTRICT-RFC-OPTIONS-INSIDE-P3-PROFILE-WITHOUT-DROPPING-615A-TFTP-OPTIONS",
+        "predicateEn": "This specification is based on the IETF RFCs and may restrict RFC options inside its 664P3 profile; that restriction is not a licence to drop ARINC 615A TFTP option rules.",
+        "predicateZh": "本规范以 IETF RFC 为基础，并可在其 664P3 profile 内限制 RFC 选项；该限制不是取消 ARINC 615A TFTP 选项规则的许可。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-KEEP-UDP-AS-MINIMUM-TRANSPORT-CRS-M1-00605",
+        "m1RequirementId": "CRS-M1-00605",
+        "objects": [
+          "UDP-TRANSPORT"
+        ],
+        "action": "KEEP-UDP-AS-MINIMUM-TRANSPORT",
+        "predicateEn": "The Compliant path keeps UDP as the minimum transport. Unselected Profiled X/E markings must not weaken ARINC 615A.",
+        "predicateZh": "Compliant 路径保持 UDP 为最低传输。未选择的 Profiled X/E 标记不得削弱 ARINC 615A。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-RECONCILE-IPV4-FRAGMENTATION-WITHOUT-ERASING-615A-DATALOADER-REASSEMBLY-CRS-M1-00606",
+        "m1RequirementId": "CRS-M1-00606",
+        "objects": [
+          "IPV4-DATAGRAM",
+          "FRAGMENTATION-AND-REASSEMBLY"
+        ],
+        "action": "RECONCILE-IPV4-FRAGMENTATION-WITHOUT-ERASING-615A-DATALOADER-REASSEMBLY",
+        "predicateEn": "IPv4, fragmentation and MTU on the Compliant path must be reconciled with the ARINC 615A Data Loader fragmentation/reassembly obligation. Profiled reassembly deviations cannot erase that 615A obligation. MTU is packet sizing, not a 615A deadline.",
+        "predicateZh": "Compliant 路径上的 IPv4、分片与 MTU 必须与 ARINC 615A 数据加载器的分片/重组义务对账。Profiled 重组偏差不能抹去该 615A 义务。MTU 是报文尺寸，不是 615A 期限。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-PROVIDE-VL-BAG-AND-JITTER-END-SYSTEM-SERVICES-CRS-M1-00607",
+        "m1RequirementId": "CRS-M1-00607",
+        "objects": [
+          "VIRTUAL-LINK",
+          "BANDWIDTH-ALLOCATION-GAP",
+          "JITTER"
+        ],
+        "action": "PROVIDE-VL-BAG-AND-JITTER-END-SYSTEM-SERVICES",
+        "predicateEn": "If AFDX is chosen, the End System must provide VL/BAG/jitter services. Those deployment obligations do not rewrite TFTP or ARINC 615A operations.",
+        "predicateZh": "若选择 AFDX，端系统必须提供 VL/BAG/抖动服务。这些部署义务不改写 TFTP 或 ARINC 615A 操作。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-APPLY-AFDX-SWITCH-SPECIFICATION-CRS-M1-00608",
+        "m1RequirementId": "CRS-M1-00608",
+        "objects": [
+          "AFDX-SWITCH-BEHAVIOUR"
+        ],
+        "action": "APPLY-AFDX-SWITCH-SPECIFICATION",
+        "predicateEn": "If AFDX is chosen, switch behaviour is an AFDX deployment obligation. Ordinary Ethernet tests do not prove that switch behaviour.",
+        "predicateZh": "若选择 AFDX，交换机行为是 AFDX 部署义务。普通以太网试验不能证明该交换机行为。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-APPLY-AFDX-IP-UDP-PROFILE-WITHOUT-REPLACING-RFC-OR-615A-TFTP-CRS-M1-00609",
+        "m1RequirementId": "CRS-M1-00609",
+        "objects": [
+          "IPV4-PROFILE",
+          "UDP-PROFILE"
+        ],
+        "action": "APPLY-AFDX-IP-UDP-PROFILE-WITHOUT-REPLACING-RFC-OR-615A-TFTP",
+        "predicateEn": "If AFDX is chosen, the AFDX IP/UDP profile applies. It does not replace RFC identity or ARINC 615A TFTP rules. TCP remains unused by 615A.",
+        "predicateZh": "若选择 AFDX，则适用 AFDX 的 IP/UDP profile。它不取代 RFC 身份或 ARINC 615A TFTP 规则。615A 仍不使用 TCP。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-ENCODE-UDP-HEADER-AS-SOURCE-PORT-DESTINATION-PORT-LENGTH-AND-CHECKSUM-CRS-M1-00610",
+        "m1RequirementId": "CRS-M1-00610",
+        "objects": [
+          "UDP-HEADER"
+        ],
+        "action": "ENCODE-UDP-HEADER-AS-SOURCE-PORT-DESTINATION-PORT-LENGTH-AND-CHECKSUM",
+        "predicateEn": "A UDP datagram used by ARINC 615A TFTP is identified by source port, destination port, length and checksum. This is identity, not a claim that a particular host stack is proven.",
+        "predicateZh": "ARINC 615A TFTP 所用 UDP 数据报由源端口、目的端口、长度与校验和标识。这是身份，不是某主机协议栈已获证明。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-APPLY-UDP-PORT-LENGTH-AND-CHECKSUM-FIELD-SEMANTICS-CRS-M1-00611",
+        "m1RequirementId": "CRS-M1-00611",
+        "objects": [
+          "UDP-SOURCE-PORT",
+          "UDP-DESTINATION-PORT",
+          "UDP-LENGTH",
+          "UDP-CHECKSUM"
+        ],
+        "action": "APPLY-UDP-PORT-LENGTH-AND-CHECKSUM-FIELD-SEMANTICS",
+        "predicateEn": "UDP port, length and checksum behaviour are the fields ARINC 615A TFTP rides on. 664P3 may further restrict checksum handling on a Compliant network.",
+        "predicateZh": "UDP 端口、长度与校验和是 ARINC 615A TFTP 所依赖的字段。664P3 可在 Compliant 网络上进一步限制校验和处理。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-ENCODE-IPV4-HEADER-IDENTITY-FIELDS-CRS-M1-00612",
+        "m1RequirementId": "CRS-M1-00612",
+        "objects": [
+          "IPV4-HEADER"
+        ],
+        "action": "ENCODE-IPV4-HEADER-IDENTITY-FIELDS",
+        "predicateEn": "Version, header length, total length, identification, flags, fragment offset, TTL, protocol and addresses are the IPv4 header ARINC 615A traffic uses.",
+        "predicateZh": "版本、头长度、总长度、标识、标志、分片偏移、TTL、协议与地址是 ARINC 615A 流量使用的 IPv4 头。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-RECONCILE-IPV4-FRAGMENTATION-AND-REASSEMBLY-WITH-615A-DATALOADER-CRS-M1-00613",
+        "m1RequirementId": "CRS-M1-00613",
+        "objects": [
+          "IPV4-FRAGMENTATION",
+          "IPV4-REASSEMBLY"
+        ],
+        "action": "RECONCILE-IPV4-FRAGMENTATION-AND-REASSEMBLY-WITH-615A-DATALOADER",
+        "predicateEn": "ARINC 615A Data Loader fragmentation/reassembly is reconciled with this IPv4 mechanism. 664P3 Profiled deviations cannot erase that 615A obligation.",
+        "predicateZh": "ARINC 615A 数据加载器分片/重组与此 IPv4 机制对账。664P3 的 Profiled 偏差不能抹去该 615A 义务。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-TREAT-RFC-1122-INTERNET-LAYER-AS-UNESTABLISHED-HOST-PREMISE-CRS-M1-00614",
+        "m1RequirementId": "CRS-M1-00614",
+        "objects": [
+          "IPV4-HOST-COMMUNICATION"
+        ],
+        "action": "TREAT-RFC-1122-INTERNET-LAYER-AS-UNESTABLISHED-HOST-PREMISE",
+        "predicateEn": "RFC 1122 Internet-layer host requirements remain the infrastructure premise under ARINC 615A. Registering the RFC identity does not establish IPV4-UDP-HOST-COMMUNICATION-SEMANTICS.",
+        "predicateZh": "RFC 1122 互联网层主机要求仍是 ARINC 615A 之下的基础设施前提。登记 RFC 身份并不建立 IPV4-UDP-HOST-COMMUNICATION-SEMANTICS。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-TREAT-RFC-1122-UDP-AS-UNESTABLISHED-HOST-PREMISE-CRS-M1-00615",
+        "m1RequirementId": "CRS-M1-00615",
+        "objects": [
+          "UDP-HOST-COMMUNICATION"
+        ],
+        "action": "TREAT-RFC-1122-UDP-AS-UNESTABLISHED-HOST-PREMISE",
+        "predicateEn": "RFC 1122 UDP host requirements are the infrastructure under ARINC 615A TFTP. Capability IPV4-UDP-HOST-COMMUNICATION-SEMANTICS stays NOT-ESTABLISHED.",
+        "predicateZh": "RFC 1122 UDP 主机要求是 ARINC 615A TFTP 之下的基础设施。能力 IPV4-UDP-HOST-COMMUNICATION-SEMANTICS 仍为 NOT-ESTABLISHED。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-APPLY-RFC-1123-TFTP-HOST-NOTES-WITHOUT-ADOPTING-MAIL-NETASCII-OR-BROADCAST-RRQ-CRS-M1-00616",
+        "m1RequirementId": "CRS-M1-00616",
+        "objects": [
+          "TFTP-OCTET-MODE",
+          "SORCERERS-APPRENTICE"
+        ],
+        "action": "APPLY-RFC-1123-TFTP-HOST-NOTES-WITHOUT-ADOPTING-MAIL-NETASCII-OR-BROADCAST-RRQ",
+        "predicateEn": "RFC 1123 section 4.2 adds host TFTP notes. ARINC 615A uses octet TFTP with its own option set; mail/netascii and broadcast-RRQ are not adopted. Sorcerer's Apprentice remains a TFTP-base constraint alongside RFC 1350.",
+        "predicateZh": "RFC 1123 第 4.2 节补充主机 TFTP 说明。ARINC 615A 使用带自有选项集的 octet TFTP；不采用 mail/netascii 与广播 RRQ。术士学徒与 RFC 1350 同为 TFTP 基础约束。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-USE-LOCKSTEP-RRQ-WRQ-DATA-ACK-AND-ERROR-CRS-M1-00617",
+        "m1RequirementId": "CRS-M1-00617",
+        "objects": [
+          "TFTP-RRQ",
+          "TFTP-WRQ",
+          "TFTP-DATA",
+          "TFTP-ACK",
+          "TFTP-ERROR"
+        ],
+        "action": "USE-LOCKSTEP-RRQ-WRQ-DATA-ACK-AND-ERROR",
+        "predicateEn": "Lock-step RRQ/WRQ, DATA, ACK and ERROR are the TFTP exchanges ARINC 615A file transfer uses.",
+        "predicateZh": "锁步 RRQ/WRQ、DATA、ACK 与 ERROR 是 ARINC 615A 文件传输使用的 TFTP 交换。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-ASSIGN-TID-ON-RRQ-OR-WRQ-WITHOUT-MAIL-MODE-CRS-M1-00618",
+        "m1RequirementId": "CRS-M1-00618",
+        "objects": [
+          "TFTP-TID",
+          "TFTP-RRQ",
+          "TFTP-WRQ"
+        ],
+        "action": "ASSIGN-TID-ON-RRQ-OR-WRQ-WITHOUT-MAIL-MODE",
+        "predicateEn": "RRQ/WRQ and TID assignment are the connection start ARINC 615A TFTP uses. Mail mode is not used.",
+        "predicateZh": "RRQ/WRQ 与 TID 分配是 ARINC 615A TFTP 的连接起点。不使用 mail 模式。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-USE-RRQ-WRQ-DATA-ACK-AND-ERROR-PACKET-LAYOUTS-CRS-M1-00619",
+        "m1RequirementId": "CRS-M1-00619",
+        "objects": [
+          "TFTP-PACKET-TYPES"
+        ],
+        "action": "USE-RRQ-WRQ-DATA-ACK-AND-ERROR-PACKET-LAYOUTS",
+        "predicateEn": "RRQ, WRQ, DATA, ACK and ERROR packet layouts are the TFTP packet types. Option acknowledgements come from RFC 2347, not this section.",
+        "predicateZh": "RRQ、WRQ、DATA、ACK 与 ERROR 是 TFTP 包类型。选项确认来自 RFC 2347，不是本节。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-TERMINATE-ON-SHORT-FINAL-DATA-BLOCK-CRS-M1-00620",
+        "m1RequirementId": "CRS-M1-00620",
+        "objects": [
+          "TFTP-FINAL-DATA-BLOCK"
+        ],
+        "action": "TERMINATE-ON-SHORT-FINAL-DATA-BLOCK",
+        "predicateEn": "A short final DATA block terminates an ARINC 615A TFTP transfer.",
+        "predicateZh": "短最后 DATA 块结束 ARINC 615A TFTP 传输。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-ABORT-TFTP-TRANSFER-WITHOUT-WAIVING-615A-FIND-CLOCKS-CRS-M1-00621",
+        "m1RequirementId": "CRS-M1-00621",
+        "objects": [
+          "TFTP-ERROR"
+        ],
+        "action": "ABORT-TFTP-TRANSFER-WITHOUT-WAIVING-615A-FIND-CLOCKS",
+        "predicateEn": "ERROR aborts the TFTP transfer. This is TFTP-layer abort, not a waiver of the ARINC 615A FIND 2 s host deadline or 3 s registration window.",
+        "predicateZh": "ERROR 中止 TFTP 传输。这是 TFTP 层中止，不是对 ARINC 615A FIND 2 秒主机期限或 3 秒登记窗口的豁免。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-NEGOTIATE-TFTP-OPTIONS-WITH-BACKWARD-COMPATIBLE-EXTENSION-CRS-M1-00622",
+        "m1RequirementId": "CRS-M1-00622",
+        "objects": [
+          "TFTP-OPTION-NEGOTIATION"
+        ],
+        "action": "NEGOTIATE-TFTP-OPTIONS-WITH-BACKWARD-COMPATIBLE-EXTENSION",
+        "predicateEn": "Option negotiation is the mechanism ARINC 615A uses when TFTP options are present. Unimplemented options must not fail the transfer, consistent with this extension.",
+        "predicateZh": "当存在 TFTP 选项时，ARINC 615A 使用该选项协商机制。未实现选项不得使传输失败，与此扩展一致。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-ACKNOWLEDGE-OPTIONS-WITH-OACK-CRS-M1-00623",
+        "m1RequirementId": "CRS-M1-00623",
+        "objects": [
+          "TFTP-OACK"
+        ],
+        "action": "ACKNOWLEDGE-OPTIONS-WITH-OACK",
+        "predicateEn": "OACK is the option-acknowledgement packet. ARINC 615A does not invent a different option packet type.",
+        "predicateZh": "OACK 是选项确认包。ARINC 615A 不另造选项包类型。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-APPEND-ADOPTED-OPTIONS-TO-RRQ-OR-WRQ-CRS-M1-00624",
+        "m1RequirementId": "CRS-M1-00624",
+        "objects": [
+          "TFTP-BLKSIZE",
+          "TFTP-TIMEOUT",
+          "TFTP-TSIZE",
+          "TFTP-INTEGRITY-OPTION"
+        ],
+        "action": "APPEND-ADOPTED-OPTIONS-TO-RRQ-OR-WRQ",
+        "predicateEn": "Options append to RRQ/WRQ. Only blksize, timeout and tsize are adopted from RFC 2348/2349 plus any 615A-defined integrity option. Other options stay unimplemented and non-fatal.",
+        "predicateZh": "选项附于 RRQ/WRQ。仅采纳 RFC 2348/2349 的 blksize、timeout、tsize 以及 615A 定义的完整性选项。其他选项保持未实现且非致命。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-NEGOTIATE-TFTP-BLOCKSIZE-AS-RFC-2348-CRS-M1-00625",
+        "m1RequirementId": "CRS-M1-00625",
+        "objects": [
+          "TFTP-BLKSIZE"
+        ],
+        "action": "NEGOTIATE-TFTP-BLOCKSIZE-AS-RFC-2348",
+        "predicateEn": "ARINC 615A requires the data loader to implement TFTP block size. The option name and negotiation are RFC 2348; 615A may further constrain permitted sizes.",
+        "predicateZh": "ARINC 615A 要求数据加载器实现 TFTP 块大小。选项名与协商是 RFC 2348；615A 可进一步约束允许的大小。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-NEGOTIATE-TFTP-RETRANSMISSION-INTERVAL-WITHOUT-REPLACING-615A-FIND-CLOCKS-CRS-M1-00626",
+        "m1RequirementId": "CRS-M1-00626",
+        "objects": [
+          "TFTP-TIMEOUT-OPTION"
+        ],
+        "action": "NEGOTIATE-TFTP-RETRANSMISSION-INTERVAL-WITHOUT-REPLACING-615A-FIND-CLOCKS",
+        "predicateEn": "RFC 2349 timeout is a TFTP retransmission interval option. It is not the ARINC 615A FIND 2 s host deadline or 3 s registration window.",
+        "predicateZh": "RFC 2349 timeout 是 TFTP 重传间隔选项，不是 ARINC 615A FIND 的 2 秒主机期限或 3 秒登记窗口。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-COMPARE-TRANSFER-SIZE-WHEN-TSIZE-IS-USED-CRS-M1-00627",
+        "m1RequirementId": "CRS-M1-00627",
+        "objects": [
+          "TFTP-TSIZE"
+        ],
+        "action": "COMPARE-TRANSFER-SIZE-WHEN-TSIZE-IS-USED",
+        "predicateEn": "ARINC 615A compares transfer size when the tsize option is used. Mismatch handling stays on the 615A row, not a silent RFC import.",
+        "predicateZh": "当使用 tsize 选项时，ARINC 615A 比较传输大小。失配处理留在 615A 行上，不是静默导入 RFC。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
       }
     ],
     "interfaces": {
@@ -17072,6 +17355,294 @@
       "modelTargetIds": [
         "OBJ-BATCH-FILE-PAD-ODD-LOAD-PN-WITH-NUL-CRS-M1-00603"
       ]
+    },
+    {
+      "requirementId": "CRS-M1-00604",
+      "sourceId": "ARINC-664-3",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-RESTRICT-RFC-OPTIONS-INSIDE-P3-PROFILE-WITHOUT-DROPPING-615A-TFTP-OPTIONS-CRS-M1-00604"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00605",
+      "sourceId": "ARINC-664-3",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-KEEP-UDP-AS-MINIMUM-TRANSPORT-CRS-M1-00605"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00606",
+      "sourceId": "ARINC-664-3",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-RECONCILE-IPV4-FRAGMENTATION-WITHOUT-ERASING-615A-DATALOADER-REASSEMBLY-CRS-M1-00606"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00607",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-PROVIDE-VL-BAG-AND-JITTER-END-SYSTEM-SERVICES-CRS-M1-00607"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00608",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-APPLY-AFDX-SWITCH-SPECIFICATION-CRS-M1-00608"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00609",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-APPLY-AFDX-IP-UDP-PROFILE-WITHOUT-REPLACING-RFC-OR-615A-TFTP-CRS-M1-00609"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00610",
+      "sourceId": "RFC-768",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-ENCODE-UDP-HEADER-AS-SOURCE-PORT-DESTINATION-PORT-LENGTH-AND-CHECKSUM-CRS-M1-00610"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00611",
+      "sourceId": "RFC-768",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-APPLY-UDP-PORT-LENGTH-AND-CHECKSUM-FIELD-SEMANTICS-CRS-M1-00611"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00612",
+      "sourceId": "RFC-791",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-ENCODE-IPV4-HEADER-IDENTITY-FIELDS-CRS-M1-00612"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00613",
+      "sourceId": "RFC-791",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-RECONCILE-IPV4-FRAGMENTATION-AND-REASSEMBLY-WITH-615A-DATALOADER-CRS-M1-00613"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00614",
+      "sourceId": "RFC-1122",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-TREAT-RFC-1122-INTERNET-LAYER-AS-UNESTABLISHED-HOST-PREMISE-CRS-M1-00614"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00615",
+      "sourceId": "RFC-1122",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-TREAT-RFC-1122-UDP-AS-UNESTABLISHED-HOST-PREMISE-CRS-M1-00615"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00616",
+      "sourceId": "RFC-1123",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-APPLY-RFC-1123-TFTP-HOST-NOTES-WITHOUT-ADOPTING-MAIL-NETASCII-OR-BROADCAST-RRQ-CRS-M1-00616"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00617",
+      "sourceId": "RFC-1350",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-USE-LOCKSTEP-RRQ-WRQ-DATA-ACK-AND-ERROR-CRS-M1-00617"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00618",
+      "sourceId": "RFC-1350",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-ASSIGN-TID-ON-RRQ-OR-WRQ-WITHOUT-MAIL-MODE-CRS-M1-00618"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00619",
+      "sourceId": "RFC-1350",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-USE-RRQ-WRQ-DATA-ACK-AND-ERROR-PACKET-LAYOUTS-CRS-M1-00619"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00620",
+      "sourceId": "RFC-1350",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-TERMINATE-ON-SHORT-FINAL-DATA-BLOCK-CRS-M1-00620"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00621",
+      "sourceId": "RFC-1350",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-ABORT-TFTP-TRANSFER-WITHOUT-WAIVING-615A-FIND-CLOCKS-CRS-M1-00621"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00622",
+      "sourceId": "RFC-2347",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-NEGOTIATE-TFTP-OPTIONS-WITH-BACKWARD-COMPATIBLE-EXTENSION-CRS-M1-00622"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00623",
+      "sourceId": "RFC-2347",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-ACKNOWLEDGE-OPTIONS-WITH-OACK-CRS-M1-00623"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00624",
+      "sourceId": "RFC-2347",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-APPEND-ADOPTED-OPTIONS-TO-RRQ-OR-WRQ-CRS-M1-00624"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00625",
+      "sourceId": "RFC-2348",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-NEGOTIATE-TFTP-BLOCKSIZE-AS-RFC-2348-CRS-M1-00625"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00626",
+      "sourceId": "RFC-2349",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-NEGOTIATE-TFTP-RETRANSMISSION-INTERVAL-WITHOUT-REPLACING-615A-FIND-CLOCKS-CRS-M1-00626"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00627",
+      "sourceId": "RFC-2349",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-COMPARE-TRANSFER-SIZE-WHEN-TSIZE-IS-USED-CRS-M1-00627"
+      ]
     }
   ],
   "traceRelations": [
@@ -24774,6 +25345,270 @@
       "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
       "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
       "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00604-0702",
+      "requirementId": "CRS-M1-00604",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-RESTRICT-RFC-OPTIONS-INSIDE-P3-PROFILE-WITHOUT-DROPPING-615A-TFTP-OPTIONS-CRS-M1-00604",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00605-0703",
+      "requirementId": "CRS-M1-00605",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-KEEP-UDP-AS-MINIMUM-TRANSPORT-CRS-M1-00605",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00606-0704",
+      "requirementId": "CRS-M1-00606",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-RECONCILE-IPV4-FRAGMENTATION-WITHOUT-ERASING-615A-DATALOADER-REASSEMBLY-CRS-M1-00606",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00607-0705",
+      "requirementId": "CRS-M1-00607",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-PROVIDE-VL-BAG-AND-JITTER-END-SYSTEM-SERVICES-CRS-M1-00607",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00608-0706",
+      "requirementId": "CRS-M1-00608",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-APPLY-AFDX-SWITCH-SPECIFICATION-CRS-M1-00608",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00609-0707",
+      "requirementId": "CRS-M1-00609",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-APPLY-AFDX-IP-UDP-PROFILE-WITHOUT-REPLACING-RFC-OR-615A-TFTP-CRS-M1-00609",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00610-0708",
+      "requirementId": "CRS-M1-00610",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENCODE-UDP-HEADER-AS-SOURCE-PORT-DESTINATION-PORT-LENGTH-AND-CHECKSUM-CRS-M1-00610",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00611-0709",
+      "requirementId": "CRS-M1-00611",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-APPLY-UDP-PORT-LENGTH-AND-CHECKSUM-FIELD-SEMANTICS-CRS-M1-00611",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00612-0710",
+      "requirementId": "CRS-M1-00612",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENCODE-IPV4-HEADER-IDENTITY-FIELDS-CRS-M1-00612",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00613-0711",
+      "requirementId": "CRS-M1-00613",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-RECONCILE-IPV4-FRAGMENTATION-AND-REASSEMBLY-WITH-615A-DATALOADER-CRS-M1-00613",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00614-0712",
+      "requirementId": "CRS-M1-00614",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-TREAT-RFC-1122-INTERNET-LAYER-AS-UNESTABLISHED-HOST-PREMISE-CRS-M1-00614",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00615-0713",
+      "requirementId": "CRS-M1-00615",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-TREAT-RFC-1122-UDP-AS-UNESTABLISHED-HOST-PREMISE-CRS-M1-00615",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00616-0714",
+      "requirementId": "CRS-M1-00616",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-APPLY-RFC-1123-TFTP-HOST-NOTES-WITHOUT-ADOPTING-MAIL-NETASCII-OR-BROADCAST-RRQ-CRS-M1-00616",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00617-0715",
+      "requirementId": "CRS-M1-00617",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-USE-LOCKSTEP-RRQ-WRQ-DATA-ACK-AND-ERROR-CRS-M1-00617",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00618-0716",
+      "requirementId": "CRS-M1-00618",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ASSIGN-TID-ON-RRQ-OR-WRQ-WITHOUT-MAIL-MODE-CRS-M1-00618",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00619-0717",
+      "requirementId": "CRS-M1-00619",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-USE-RRQ-WRQ-DATA-ACK-AND-ERROR-PACKET-LAYOUTS-CRS-M1-00619",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00620-0718",
+      "requirementId": "CRS-M1-00620",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-TERMINATE-ON-SHORT-FINAL-DATA-BLOCK-CRS-M1-00620",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00621-0719",
+      "requirementId": "CRS-M1-00621",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ABORT-TFTP-TRANSFER-WITHOUT-WAIVING-615A-FIND-CLOCKS-CRS-M1-00621",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00622-0720",
+      "requirementId": "CRS-M1-00622",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-NEGOTIATE-TFTP-OPTIONS-WITH-BACKWARD-COMPATIBLE-EXTENSION-CRS-M1-00622",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00623-0721",
+      "requirementId": "CRS-M1-00623",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ACKNOWLEDGE-OPTIONS-WITH-OACK-CRS-M1-00623",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00624-0722",
+      "requirementId": "CRS-M1-00624",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-APPEND-ADOPTED-OPTIONS-TO-RRQ-OR-WRQ-CRS-M1-00624",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00625-0723",
+      "requirementId": "CRS-M1-00625",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-NEGOTIATE-TFTP-BLOCKSIZE-AS-RFC-2348-CRS-M1-00625",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00626-0724",
+      "requirementId": "CRS-M1-00626",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-NEGOTIATE-TFTP-RETRANSMISSION-INTERVAL-WITHOUT-REPLACING-615A-FIND-CLOCKS-CRS-M1-00626",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00627-0725",
+      "requirementId": "CRS-M1-00627",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-COMPARE-TRANSFER-SIZE-WHEN-TSIZE-IS-USED-CRS-M1-00627",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     }
   ],
   "infrastructurePremises": [
@@ -25460,15 +26295,15 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 602,
-    "dispositionCount": 602,
-    "traceCount": 700,
+    "requirementCount": 626,
+    "dispositionCount": 626,
+    "traceCount": 724,
     "stateCount": 35,
     "transitionCount": 65,
     "timingCount": 26,
     "fieldConstraintCount": 108,
-    "dispositionsFingerprint": "84120987410bcaecc6eafb7125bf83901c80e6e0fd9331f9fb1bbb3c0e202934",
-    "modelFingerprint": "31e6e6dbf30b46cdd615142f333d8d66c3ce8f1723133767aa99cb9af11d16f1",
+    "dispositionsFingerprint": "7502248eb533333e05b0c2dc17e9b85f6d9e2007bee45ba6877a03ab2b26625d",
+    "modelFingerprint": "c1b2bb9e36a4c87c25206206d8da3e655e13d8b5fef90e7a1a5911b9925ab0f4",
     "timingFingerprint": "91e71d517ccc388f446a681b7f13007a3de69e687e49fbb299c5df28430d1e92",
     "inputFingerprint": "7ae6b9a4703223220d603ce59f53e98b78e512acb5134f51772e5621d1f57091",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",

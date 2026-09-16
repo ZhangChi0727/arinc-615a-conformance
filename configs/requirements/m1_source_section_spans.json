@@ -66,28 +66,73 @@
       "sourceId": "ARINC-664-2",
       "pdfPages": [
         1,
+        7
+      ],
+      "kind": "FRONT-MATTER",
+      "rationaleCode": "TITLE-AND-FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY"
+    },
+    {
+      "sourceId": "ARINC-664-2",
+      "pdfPages": [
+        29,
         53
       ],
-      "kind": "REGISTRY-ONLY-BINDING",
-      "rationaleCode": "REGISTRY-BOUND-BUT-PAGE-LEVEL-SURVEY-DEFERRED-TO-M2-INFRASTRUCTURE-BINDING"
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "BOUNDED-664P2-SCOPE-EXCLUSION-AFTER-PHYSICAL-SURVEY"
     },
     {
       "sourceId": "ARINC-664-3",
       "pdfPages": [
         1,
+        7
+      ],
+      "kind": "FRONT-MATTER",
+      "rationaleCode": "TITLE-AND-FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY"
+    },
+    {
+      "sourceId": "ARINC-664-3",
+      "pdfPages": [
+        37,
+        57
+      ],
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "BOUNDED-664P3-SCOPE-EXCLUSION-IPV6-IPSEC-UNSELECTED"
+    },
+    {
+      "sourceId": "ARINC-664-3",
+      "pdfPages": [
+        59,
         90
       ],
-      "kind": "REGISTRY-ONLY-BINDING",
-      "rationaleCode": "FULL-LEAF-SURVEY-NOT-CLAIMED-BOUNDED-REGIONS-IN-NETWORK-REVIEW"
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "BOUNDED-664P3-SCOPE-EXCLUSION-AFTER-ARP-SURVEY"
     },
     {
       "sourceId": "ARINC-664-7",
       "pdfPages": [
         1,
+        8
+      ],
+      "kind": "FRONT-MATTER",
+      "rationaleCode": "TITLE-AND-FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY"
+    },
+    {
+      "sourceId": "ARINC-664-7",
+      "pdfPages": [
+        133,
+        137
+      ],
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "BOUNDED-664P7-SCOPE-EXCLUSION-NON-NORMATIVE-EXAMPLES"
+    },
+    {
+      "sourceId": "ARINC-664-7",
+      "pdfPages": [
+        141,
         145
       ],
-      "kind": "REGISTRY-ONLY-BINDING",
-      "rationaleCode": "FULL-LEAF-SURVEY-NOT-CLAIMED-BOUNDED-REGIONS-IN-NETWORK-REVIEW"
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "BOUNDED-664P7-SCOPE-EXCLUSION-AFTER-APPENDIX-C-D"
     }
   ],
   "boundedSourceScopeExclusion": [
@@ -515,6 +560,204 @@
           "pdfPages": [
             11,
             35
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "ARINC-664-2",
+      "spans": [
+        {
+          "namespace": "BOUNDED-SURVEY",
+          "documentPages": [
+            8,
+            28
+          ],
+          "pdfPages": [
+            8,
+            28
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "ARINC-664-3",
+      "spans": [
+        {
+          "namespace": "BOUNDED-SURVEY-INTERNET-PROFILE",
+          "documentPages": [
+            8,
+            36
+          ],
+          "pdfPages": [
+            8,
+            36
+          ]
+        },
+        {
+          "namespace": "BOUNDED-SURVEY-ARP",
+          "documentPages": [
+            58,
+            58
+          ],
+          "pdfPages": [
+            58,
+            58
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "ARINC-664-7",
+      "spans": [
+        {
+          "namespace": "BOUNDED-SURVEY-AFDX-BODY",
+          "documentPages": [
+            9,
+            132
+          ],
+          "pdfPages": [
+            9,
+            132
+          ]
+        },
+        {
+          "namespace": "BOUNDED-SURVEY-APPENDIX-C-D",
+          "documentPages": [
+            138,
+            140
+          ],
+          "pdfPages": [
+            138,
+            140
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-768",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            4
+          ],
+          "pdfPages": [
+            1,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-791",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            52
+          ],
+          "pdfPages": [
+            1,
+            52
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-1122",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            117
+          ],
+          "pdfPages": [
+            1,
+            117
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-1123",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            99
+          ],
+          "pdfPages": [
+            1,
+            99
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-1350",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            12
+          ],
+          "pdfPages": [
+            1,
+            12
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-2347",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            8
+          ],
+          "pdfPages": [
+            1,
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-2348",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            6
+          ],
+          "pdfPages": [
+            1,
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-2349",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            6
+          ],
+          "pdfPages": [
+            1,
+            6
           ]
         }
       ]

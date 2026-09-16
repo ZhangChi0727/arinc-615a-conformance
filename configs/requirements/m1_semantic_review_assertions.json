@@ -15935,6 +15935,577 @@
       "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
       "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
       "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00604",
+      "sourceUnitId": "SU-ARINC-664-3-1.5-P013-PROSE-SENTENCE-001-05CAF96BD6AD",
+      "sourceTextHash": "05caf96bd6ad5fb019671de9d483f70cdff0e9fd51387e8476d1a8cf3e5adbe7",
+      "expectedSemantic": {
+        "actor": "ARINC-664P3-COMPLIANT-NETWORK",
+        "condition": "WHEN-OPERATING-ON-664P3-COMPLIANT-NETWORK",
+        "action": "RESTRICT-RFC-OPTIONS-INSIDE-P3-PROFILE-WITHOUT-DROPPING-615A-TFTP-OPTIONS",
+        "objects": [
+          "IETF-RFC-OPTIONS",
+          "ARINC-615A-TFTP-OPTIONS"
+        ],
+        "observableEffect": "P3-PRECEDENCE-OVER-RFC-OPTIONS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "This specification is based on the IETF RFCs and may restrict RFC options inside its 664P3 profile; that restriction is not a licence to drop ARINC 615A TFTP option rules.",
+      "expectedGeneratedSemanticProjectionZh": "本规范以 IETF RFC 为基础，并可在其 664P3 profile 内限制 RFC 选项；该限制不是取消 ARINC 615A TFTP 选项规则的许可。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-3"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00605",
+      "sourceUnitId": "SU-ARINC-664-3-3.3.2-P030-PROSE-SENTENCE-001-CCC4EE5A6E0D",
+      "sourceTextHash": "ccc4ee5a6e0dbe03612fc6aa648fd62d79bb2f144dc2fcce5e2624ff13c46a1d",
+      "expectedSemantic": {
+        "actor": "ARINC-664P3-COMPLIANT-NETWORK",
+        "condition": "WHEN-OPERATING-ON-664P3-COMPLIANT-NETWORK",
+        "action": "KEEP-UDP-AS-MINIMUM-TRANSPORT",
+        "objects": [
+          "UDP-TRANSPORT"
+        ],
+        "observableEffect": "UDP-MINIMUM-TRANSPORT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The Compliant path keeps UDP as the minimum transport. Unselected Profiled X/E markings must not weaken ARINC 615A.",
+      "expectedGeneratedSemanticProjectionZh": "Compliant 路径保持 UDP 为最低传输。未选择的 Profiled X/E 标记不得削弱 ARINC 615A。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-3"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00606",
+      "sourceUnitId": "SU-ARINC-664-3-3.4.1-P031-PROSE-SENTENCE-001-F754CAD114E9",
+      "sourceTextHash": "f754cad114e9fe3ad54b9cc32f45f69b94f68f81c8fc86c4dfbbd9919f652a8c",
+      "expectedSemantic": {
+        "actor": "ARINC-664P3-COMPLIANT-NETWORK",
+        "condition": "WHEN-OPERATING-ON-664P3-COMPLIANT-NETWORK",
+        "action": "RECONCILE-IPV4-FRAGMENTATION-WITHOUT-ERASING-615A-DATALOADER-REASSEMBLY",
+        "objects": [
+          "IPV4-DATAGRAM",
+          "FRAGMENTATION-AND-REASSEMBLY"
+        ],
+        "observableEffect": "IPV4-FRAGMENT-RECONCILIATION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "IPv4, fragmentation and MTU on the Compliant path must be reconciled with the ARINC 615A Data Loader fragmentation/reassembly obligation. Profiled reassembly deviations cannot erase that 615A obligation. MTU is packet sizing, not a 615A deadline.",
+      "expectedGeneratedSemanticProjectionZh": "Compliant 路径上的 IPv4、分片与 MTU 必须与 ARINC 615A 数据加载器的分片/重组义务对账。Profiled 重组偏差不能抹去该 615A 义务。MTU 是报文尺寸，不是 615A 期限。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-3"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00607",
+      "sourceUnitId": "SU-ARINC-664-7-3-P017-PROSE-SENTENCE-001-F27753145FAD",
+      "sourceTextHash": "f27753145fadf45004165bff3050eb0fa6c52b4eaf3a5fab0b7c92926bec600d",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "PROVIDE-VL-BAG-AND-JITTER-END-SYSTEM-SERVICES",
+        "objects": [
+          "VIRTUAL-LINK",
+          "BANDWIDTH-ALLOCATION-GAP",
+          "JITTER"
+        ],
+        "observableEffect": "AFDX-END-SYSTEM-CONSTRAINT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the End System must provide VL/BAG/jitter services. Those deployment obligations do not rewrite TFTP or ARINC 615A operations.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，端系统必须提供 VL/BAG/抖动服务。这些部署义务不改写 TFTP 或 ARINC 615A 操作。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00608",
+      "sourceUnitId": "SU-ARINC-664-7-4-P056-PROSE-SENTENCE-001-88A56573443E",
+      "sourceTextHash": "88a56573443eb67e48fd191cedafa45d4c3a0cccf2e07eaa689338b20b68c0ee",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "APPLY-AFDX-SWITCH-SPECIFICATION",
+        "objects": [
+          "AFDX-SWITCH-BEHAVIOUR"
+        ],
+        "observableEffect": "AFDX-SWITCH-CONSTRAINT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, switch behaviour is an AFDX deployment obligation. Ordinary Ethernet tests do not prove that switch behaviour.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，交换机行为是 AFDX 部署义务。普通以太网试验不能证明该交换机行为。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00609",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P102-PROSE-SENTENCE-001-E2D358962040",
+      "sourceTextHash": "e2d3589620400bebe129bf88c72590255000460414ea1e09d7401e186cfb09e8",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "APPLY-AFDX-IP-UDP-PROFILE-WITHOUT-REPLACING-RFC-OR-615A-TFTP",
+        "objects": [
+          "IPV4-PROFILE",
+          "UDP-PROFILE"
+        ],
+        "observableEffect": "AFDX-IP-UDP-PROFILE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the AFDX IP/UDP profile applies. It does not replace RFC identity or ARINC 615A TFTP rules. TCP remains unused by 615A.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，则适用 AFDX 的 IP/UDP profile。它不取代 RFC 身份或 ARINC 615A TFTP 规则。615A 仍不使用 TCP。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00610",
+      "sourceUnitId": "SU-RFC-768-FORMAT-P001-PROSE-SENTENCE-001-36CFD2AEB86D",
+      "sourceTextHash": "36cfd2aeb86dab033816438190e6ee521858f70b908537fe800060e07cead484",
+      "expectedSemantic": {
+        "actor": "UDP-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-UDP",
+        "action": "ENCODE-UDP-HEADER-AS-SOURCE-PORT-DESTINATION-PORT-LENGTH-AND-CHECKSUM",
+        "objects": [
+          "UDP-HEADER"
+        ],
+        "observableEffect": "UDP-HEADER-LAYOUT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "A UDP datagram used by ARINC 615A TFTP is identified by source port, destination port, length and checksum. This is identity, not a claim that a particular host stack is proven.",
+      "expectedGeneratedSemanticProjectionZh": "ARINC 615A TFTP 所用 UDP 数据报由源端口、目的端口、长度与校验和标识。这是身份，不是某主机协议栈已获证明。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-768"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00611",
+      "sourceUnitId": "SU-RFC-768-FIELDS-P001-PROSE-SENTENCE-001-A8F3EE89266B",
+      "sourceTextHash": "a8f3ee89266be4197b2ede5bc5c9ace6965995c372b3222fd8db40119460fa87",
+      "expectedSemantic": {
+        "actor": "UDP-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-UDP",
+        "action": "APPLY-UDP-PORT-LENGTH-AND-CHECKSUM-FIELD-SEMANTICS",
+        "objects": [
+          "UDP-SOURCE-PORT",
+          "UDP-DESTINATION-PORT",
+          "UDP-LENGTH",
+          "UDP-CHECKSUM"
+        ],
+        "observableEffect": "UDP-FIELD-SEMANTICS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "UDP port, length and checksum behaviour are the fields ARINC 615A TFTP rides on. 664P3 may further restrict checksum handling on a Compliant network.",
+      "expectedGeneratedSemanticProjectionZh": "UDP 端口、长度与校验和是 ARINC 615A TFTP 所依赖的字段。664P3 可在 Compliant 网络上进一步限制校验和处理。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-768"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00612",
+      "sourceUnitId": "SU-RFC-791-3.1-P017-PROSE-SENTENCE-001-87F0D8C59886",
+      "sourceTextHash": "87f0d8c59886311ec971074aff7511678a9f9d58718954a176ce355066cfb460",
+      "expectedSemantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ENCODE-IPV4-HEADER-IDENTITY-FIELDS",
+        "objects": [
+          "IPV4-HEADER"
+        ],
+        "observableEffect": "IPV4-HEADER-IDENTITY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Version, header length, total length, identification, flags, fragment offset, TTL, protocol and addresses are the IPv4 header ARINC 615A traffic uses.",
+      "expectedGeneratedSemanticProjectionZh": "版本、头长度、总长度、标识、标志、分片偏移、TTL、协议与地址是 ARINC 615A 流量使用的 IPv4 头。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-791"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00613",
+      "sourceUnitId": "SU-RFC-791-3.2-FRAGMENT-P030-PROSE-SENTENCE-001-AC1F03CBD48F",
+      "sourceTextHash": "ac1f03cbd48f263201d0c1bd0d81eb514424c41509bcb716c10e9573873e19c6",
+      "expectedSemantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "RECONCILE-IPV4-FRAGMENTATION-AND-REASSEMBLY-WITH-615A-DATALOADER",
+        "objects": [
+          "IPV4-FRAGMENTATION",
+          "IPV4-REASSEMBLY"
+        ],
+        "observableEffect": "IPV4-FRAGMENT-REASSEMBLY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "ARINC 615A Data Loader fragmentation/reassembly is reconciled with this IPv4 mechanism. 664P3 Profiled deviations cannot erase that 615A obligation.",
+      "expectedGeneratedSemanticProjectionZh": "ARINC 615A 数据加载器分片/重组与此 IPv4 机制对账。664P3 的 Profiled 偏差不能抹去该 615A 义务。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-791"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00614",
+      "sourceUnitId": "SU-RFC-1122-3-P027-PROSE-SENTENCE-001-9AC4D695C2CD",
+      "sourceTextHash": "9ac4d695c2cda48addda5b2c36a9db85d2a9e4104a24cbbfcf116736a75d976f",
+      "expectedSemantic": {
+        "actor": "IPV4-HOST",
+        "condition": "WHEN-CLAIMING-IPV4-HOST-COMMUNICATION-FOR-615A",
+        "action": "TREAT-RFC-1122-INTERNET-LAYER-AS-UNESTABLISHED-HOST-PREMISE",
+        "objects": [
+          "IPV4-HOST-COMMUNICATION"
+        ],
+        "observableEffect": "IPV4-HOST-PREMISE-NOT-ESTABLISHED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "RFC 1122 Internet-layer host requirements remain the infrastructure premise under ARINC 615A. Registering the RFC identity does not establish IPV4-UDP-HOST-COMMUNICATION-SEMANTICS.",
+      "expectedGeneratedSemanticProjectionZh": "RFC 1122 互联网层主机要求仍是 ARINC 615A 之下的基础设施前提。登记 RFC 身份并不建立 IPV4-UDP-HOST-COMMUNICATION-SEMANTICS。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-1122"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00615",
+      "sourceUnitId": "SU-RFC-1122-4-UDP-P077-PROSE-SENTENCE-001-C56AA01DD478",
+      "sourceTextHash": "c56aa01dd478192931bf9c17b5981b414d61cd982458da4bd60219cbb5cd61ae",
+      "expectedSemantic": {
+        "actor": "UDP-HOST",
+        "condition": "WHEN-CLAIMING-UDP-HOST-COMMUNICATION-FOR-615A",
+        "action": "TREAT-RFC-1122-UDP-AS-UNESTABLISHED-HOST-PREMISE",
+        "objects": [
+          "UDP-HOST-COMMUNICATION"
+        ],
+        "observableEffect": "UDP-HOST-PREMISE-NOT-ESTABLISHED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "RFC 1122 UDP host requirements are the infrastructure under ARINC 615A TFTP. Capability IPV4-UDP-HOST-COMMUNICATION-SEMANTICS stays NOT-ESTABLISHED.",
+      "expectedGeneratedSemanticProjectionZh": "RFC 1122 UDP 主机要求是 ARINC 615A TFTP 之下的基础设施。能力 IPV4-UDP-HOST-COMMUNICATION-SEMANTICS 仍为 NOT-ESTABLISHED。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-1122"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00616",
+      "sourceUnitId": "SU-RFC-1123-4.2-P044-PROSE-SENTENCE-001-594A8731FD9A",
+      "sourceTextHash": "594a8731fd9ae1ec756b1264aeea0a377fe60c8306146654cd9a12f0d36e827b",
+      "expectedSemantic": {
+        "actor": "TFTP-HOST",
+        "condition": "WHEN-USING-TFTP-AS-615A-FILE-TRANSFER",
+        "action": "APPLY-RFC-1123-TFTP-HOST-NOTES-WITHOUT-ADOPTING-MAIL-NETASCII-OR-BROADCAST-RRQ",
+        "objects": [
+          "TFTP-OCTET-MODE",
+          "SORCERERS-APPRENTICE"
+        ],
+        "observableEffect": "TFTP-HOST-APPLICATION-PREMISE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "RFC 1123 section 4.2 adds host TFTP notes. ARINC 615A uses octet TFTP with its own option set; mail/netascii and broadcast-RRQ are not adopted. Sorcerer's Apprentice remains a TFTP-base constraint alongside RFC 1350.",
+      "expectedGeneratedSemanticProjectionZh": "RFC 1123 第 4.2 节补充主机 TFTP 说明。ARINC 615A 使用带自有选项集的 octet TFTP；不采用 mail/netascii 与广播 RRQ。术士学徒与 RFC 1350 同为 TFTP 基础约束。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-1123"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00617",
+      "sourceUnitId": "SU-RFC-1350-2-P002-PROSE-SENTENCE-001-C299C63DEF79",
+      "sourceTextHash": "c299c63def7977d69d3e7cd9c81c937c17ed874694c829108bcdb2778a253783",
+      "expectedSemantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-TRANSFERRING-615A-FILES-OVER-TFTP",
+        "action": "USE-LOCKSTEP-RRQ-WRQ-DATA-ACK-AND-ERROR",
+        "objects": [
+          "TFTP-RRQ",
+          "TFTP-WRQ",
+          "TFTP-DATA",
+          "TFTP-ACK",
+          "TFTP-ERROR"
+        ],
+        "observableEffect": "TFTP-LOCKSTEP-EXCHANGE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Lock-step RRQ/WRQ, DATA, ACK and ERROR are the TFTP exchanges ARINC 615A file transfer uses.",
+      "expectedGeneratedSemanticProjectionZh": "锁步 RRQ/WRQ、DATA、ACK 与 ERROR 是 ARINC 615A 文件传输使用的 TFTP 交换。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-1350"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00618",
+      "sourceUnitId": "SU-RFC-1350-4-P004-PROSE-SENTENCE-001-CE4142E997EF",
+      "sourceTextHash": "ce4142e997ef05471b68558a582fbdbd7197fbb013cecd294fb7d5b36414899d",
+      "expectedSemantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-STARTING-A-615A-TFTP-TRANSFER",
+        "action": "ASSIGN-TID-ON-RRQ-OR-WRQ-WITHOUT-MAIL-MODE",
+        "objects": [
+          "TFTP-TID",
+          "TFTP-RRQ",
+          "TFTP-WRQ"
+        ],
+        "observableEffect": "TFTP-INITIAL-CONNECTION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "RRQ/WRQ and TID assignment are the connection start ARINC 615A TFTP uses. Mail mode is not used.",
+      "expectedGeneratedSemanticProjectionZh": "RRQ/WRQ 与 TID 分配是 ARINC 615A TFTP 的连接起点。不使用 mail 模式。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-1350"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00619",
+      "sourceUnitId": "SU-RFC-1350-5-P005-PROSE-SENTENCE-001-62A5556B4DE1",
+      "sourceTextHash": "62a5556b4de12aacb18187fbed72ed1cf07140cd2cf1f9b4a4972765b851029d",
+      "expectedSemantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-TRANSFERRING-615A-FILES-OVER-TFTP",
+        "action": "USE-RRQ-WRQ-DATA-ACK-AND-ERROR-PACKET-LAYOUTS",
+        "objects": [
+          "TFTP-PACKET-TYPES"
+        ],
+        "observableEffect": "TFTP-PACKET-LAYOUT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "RRQ, WRQ, DATA, ACK and ERROR packet layouts are the TFTP packet types. Option acknowledgements come from RFC 2347, not this section.",
+      "expectedGeneratedSemanticProjectionZh": "RRQ、WRQ、DATA、ACK 与 ERROR 是 TFTP 包类型。选项确认来自 RFC 2347，不是本节。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-1350"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00620",
+      "sourceUnitId": "SU-RFC-1350-6-P008-PROSE-SENTENCE-001-DB40B92B7B8A",
+      "sourceTextHash": "db40b92b7b8ae43e2a575752a21fb5c1f410ced84719cafa85dbbf132d45173d",
+      "expectedSemantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-ENDING-A-615A-TFTP-TRANSFER-NORMALLY",
+        "action": "TERMINATE-ON-SHORT-FINAL-DATA-BLOCK",
+        "objects": [
+          "TFTP-FINAL-DATA-BLOCK"
+        ],
+        "observableEffect": "TFTP-NORMAL-TERMINATION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "A short final DATA block terminates an ARINC 615A TFTP transfer.",
+      "expectedGeneratedSemanticProjectionZh": "短最后 DATA 块结束 ARINC 615A TFTP 传输。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-1350"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00621",
+      "sourceUnitId": "SU-RFC-1350-7-P008-PROSE-SENTENCE-001-283A292170FC",
+      "sourceTextHash": "283a292170fc3daa378c1b70217e0baa2513e3c2f78f9fdf4ae1ad0fbde5f0c9",
+      "expectedSemantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-A-TFTP-ERROR-OCCURS",
+        "action": "ABORT-TFTP-TRANSFER-WITHOUT-WAIVING-615A-FIND-CLOCKS",
+        "objects": [
+          "TFTP-ERROR"
+        ],
+        "observableEffect": "TFTP-ERROR-ABORT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "ERROR aborts the TFTP transfer. This is TFTP-layer abort, not a waiver of the ARINC 615A FIND 2 s host deadline or 3 s registration window.",
+      "expectedGeneratedSemanticProjectionZh": "ERROR 中止 TFTP 传输。这是 TFTP 层中止，不是对 ARINC 615A FIND 2 秒主机期限或 3 秒登记窗口的豁免。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-1350"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00622",
+      "sourceUnitId": "SU-RFC-2347-INTRODUCTION-P001-PROSE-SENTENCE-001-BEC1CC6EAE76",
+      "sourceTextHash": "bec1cc6eae76895396c30b2f178bf0c139df3754430c6ac200725ad4bb0a1ab4",
+      "expectedSemantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-TFTP-OPTIONS-ARE-PRESENT",
+        "action": "NEGOTIATE-TFTP-OPTIONS-WITH-BACKWARD-COMPATIBLE-EXTENSION",
+        "objects": [
+          "TFTP-OPTION-NEGOTIATION"
+        ],
+        "observableEffect": "TFTP-OPTION-MECHANISM-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Option negotiation is the mechanism ARINC 615A uses when TFTP options are present. Unimplemented options must not fail the transfer, consistent with this extension.",
+      "expectedGeneratedSemanticProjectionZh": "当存在 TFTP 选项时，ARINC 615A 使用该选项协商机制。未实现选项不得使传输失败，与此扩展一致。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-2347"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00623",
+      "sourceUnitId": "SU-RFC-2347-PACKET-FORMATS-P001-PROSE-SENTENCE-001-FB7010394ACD",
+      "sourceTextHash": "fb7010394acdd0587c6c20819dd9058f1dd854adabf5fe8880aeb38d9d00fa83",
+      "expectedSemantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-TFTP-OPTIONS-ARE-PRESENT",
+        "action": "ACKNOWLEDGE-OPTIONS-WITH-OACK",
+        "objects": [
+          "TFTP-OACK"
+        ],
+        "observableEffect": "TFTP-OACK-PACKET-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "OACK is the option-acknowledgement packet. ARINC 615A does not invent a different option packet type.",
+      "expectedGeneratedSemanticProjectionZh": "OACK 是选项确认包。ARINC 615A 不另造选项包类型。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-2347"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00624",
+      "sourceUnitId": "SU-RFC-2347-OPTIONS-P002-PROSE-SENTENCE-001-D502F0B59E3B",
+      "sourceTextHash": "d502f0b59e3bdf08665fd510d53cbc988d10216ca39e4d60f518553316c5a343",
+      "expectedSemantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-TFTP-OPTIONS-ARE-PRESENT",
+        "action": "APPEND-ADOPTED-OPTIONS-TO-RRQ-OR-WRQ",
+        "objects": [
+          "TFTP-BLKSIZE",
+          "TFTP-TIMEOUT",
+          "TFTP-TSIZE",
+          "TFTP-INTEGRITY-OPTION"
+        ],
+        "observableEffect": "TFTP-ADOPTED-OPTION-SET-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Options append to RRQ/WRQ. Only blksize, timeout and tsize are adopted from RFC 2348/2349 plus any 615A-defined integrity option. Other options stay unimplemented and non-fatal.",
+      "expectedGeneratedSemanticProjectionZh": "选项附于 RRQ/WRQ。仅采纳 RFC 2348/2349 的 blksize、timeout、tsize 以及 615A 定义的完整性选项。其他选项保持未实现且非致命。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-2347"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00625",
+      "sourceUnitId": "SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P001-PROSE-SENTENCE-001-349932DDE2A8",
+      "sourceTextHash": "349932dde2a8fc95669891a16c06643284a00e9059bfcc69f14fc1f176a36c92",
+      "expectedSemantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-THE-BLKSIZE-OPTION-IS-USED",
+        "action": "NEGOTIATE-TFTP-BLOCKSIZE-AS-RFC-2348",
+        "objects": [
+          "TFTP-BLKSIZE"
+        ],
+        "observableEffect": "TFTP-BLKSIZE-OPTION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "ARINC 615A requires the data loader to implement TFTP block size. The option name and negotiation are RFC 2348; 615A may further constrain permitted sizes.",
+      "expectedGeneratedSemanticProjectionZh": "ARINC 615A 要求数据加载器实现 TFTP 块大小。选项名与协商是 RFC 2348；615A 可进一步约束允许的大小。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-2348"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00626",
+      "sourceUnitId": "SU-RFC-2349-TIMEOUT-INTERVAL-OPTION-SPECIFICATION-P001-PROSE-SENTENCE-001-349932DDE2A8",
+      "sourceTextHash": "349932dde2a8fc95669891a16c06643284a00e9059bfcc69f14fc1f176a36c92",
+      "expectedSemantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-THE-TIMEOUT-OPTION-IS-USED",
+        "action": "NEGOTIATE-TFTP-RETRANSMISSION-INTERVAL-WITHOUT-REPLACING-615A-FIND-CLOCKS",
+        "objects": [
+          "TFTP-TIMEOUT-OPTION"
+        ],
+        "observableEffect": "TFTP-TIMEOUT-OPTION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "RFC 2349 timeout is a TFTP retransmission interval option. It is not the ARINC 615A FIND 2 s host deadline or 3 s registration window.",
+      "expectedGeneratedSemanticProjectionZh": "RFC 2349 timeout 是 TFTP 重传间隔选项，不是 ARINC 615A FIND 的 2 秒主机期限或 3 秒登记窗口。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-2349"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00627",
+      "sourceUnitId": "SU-RFC-2349-TRANSFER-SIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-001-349932DDE2A8",
+      "sourceTextHash": "349932dde2a8fc95669891a16c06643284a00e9059bfcc69f14fc1f176a36c92",
+      "expectedSemantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-THE-TSIZE-OPTION-IS-USED",
+        "action": "COMPARE-TRANSFER-SIZE-WHEN-TSIZE-IS-USED",
+        "objects": [
+          "TFTP-TSIZE"
+        ],
+        "observableEffect": "TFTP-TSIZE-OPTION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "ARINC 615A compares transfer size when the tsize option is used. Mismatch handling stays on the 615A row, not a silent RFC import.",
+      "expectedGeneratedSemanticProjectionZh": "当使用 tsize 选项时，ARINC 615A 比较传输大小。失配处理留在 615A 行上，不是静默导入 RFC。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-RFC-2349"
+      ]
     }
   ],
   "networkReferenceReview": {
