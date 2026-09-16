@@ -37,7 +37,7 @@ Four arms CL-T, CL-A, CL-TA, CL-LOOP; detection, localization and ablation famil
 
 ## Expanded CRS index and audit
 
-Current bound package is M1-CANDIDATE-16: 3020 coverage units and 730 requirements, including 664-7 max_jitter equations with VL summation, 150 us technological latency, MAC source construction, and 664P4-1 address-rule leaves for the first CRS-M1-00519 alternative. The integrator-identified address path remains open; this does not select Part 4 or activate AFDX. FIND abort does not waive the 2 s / 3 s clocks. Commentary and examples stay non-normative. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. 665 §2.3 is not leaf-CRS-closed. ARINC 645 is locally acquired and not bound. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename remaining deferred labels. Tool software requirements are out of this PR.
+Current bound package is M1-CANDIDATE-17: 3034 coverage units and 744 requirements, including 664-7 max_jitter equations with VL summation, 150 us technological latency, MAC source construction, and 664P4-1 address-rule leaves for the first CRS-M1-00519 alternative. The integrator-identified address path remains open; this does not select Part 4 or activate AFDX. FIND abort does not waive the 2 s / 3 s clocks. Commentary and examples stay non-normative. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. 665 §2.3 is not leaf-CRS-closed. ARINC 645 is locally acquired and not bound. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename remaining deferred labels. Tool software requirements are out of this PR.
 
 ## Historical versus successor evidence
 
@@ -82,7 +82,7 @@ SysML 1.6 记法 PlantUML 源：[`../../../docs/research/publication/models/`](.
 
 ## 扩大 CRS 索引与审计
 
-当前绑定包为 M1-CANDIDATE-16：3020 条 coverage、730 条需求，含带 VL 求和的 664-7 max_jitter 公式、150 微秒技术时延、MAC 源地址构造，以及 CRS-M1-00519 第一条替代路径的 664P4-1 地址规则叶。集成商指明的地址路径仍开放；这不选定第 4 部分，也不激活 AFDX。FIND 中止不豁免 2 秒／3 秒时钟。评注与示例保持非规范。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。665 §2.3 不是叶级 CRS 已闭合。ARINC 645 本地已取得但未绑定。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名仍延期的标签。工具软件需求不属于本 PR。
+当前绑定包为 M1-CANDIDATE-17：3034 条 coverage、744 条需求，含带 VL 求和的 664-7 max_jitter 公式、150 微秒技术时延、MAC 源地址构造，以及 CRS-M1-00519 第一条替代路径的 664P4-1 地址规则叶。集成商指明的地址路径仍开放；这不选定第 4 部分，也不激活 AFDX。FIND 中止不豁免 2 秒／3 秒时钟。评注与示例保持非规范。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。665 §2.3 不是叶级 CRS 已闭合。ARINC 645 本地已取得但未绑定。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名仍延期的标签。工具软件需求不属于本 PR。
 
 ## 历史与后继证据
 

@@ -19068,6 +19068,338 @@
       "expectedDependencyIds": [
         "DEP-ARINC-664-7"
       ]
+    },
+    {
+      "requirementId": "CRS-M1-00732",
+      "sourceUnitId": "SU-ARINC-664-3-1.5-P013-PROSE-SENTENCE-002-E1E2DE7AAEF9",
+      "sourceTextHash": "e1e2de7aaef988d6efb3979b569b4396d7e3dd300a0e5c956cb2e55c78319463",
+      "expectedSemantic": {
+        "actor": "ARINC-664P3-COMPLIANT-NETWORK",
+        "condition": "WHEN-OPERATING-ON-664P3-COMPLIANT-NETWORK",
+        "action": "RESTRICT-RFC-OPTIONS-ONLY-FOR-AERONAUTICAL-CONFLICT-OR-AMBIGUITY",
+        "objects": [
+          "IETF-RFC-OPTIONS",
+          "ARINC-664P3-PROFILE"
+        ],
+        "observableEffect": "P3-RFC-OPTION-RESTRICTION-PHILOSOPHY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "664P3 changes IETF RFC provisions only for aeronautical or regulatory conflict, or to restrict implementer options and remove ambiguity. That is not a licence to drop ARINC 615A TFTP option rules.",
+      "expectedGeneratedSemanticProjectionZh": "664P3 仅在航空或监管冲突时，或为消除歧义而限制实现者选项时，才改动 IETF RFC 规定。这不是取消 ARINC 615A TFTP 选项规则的许可。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-3"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00733",
+      "sourceUnitId": "SU-ARINC-664-3-1.5-P013-PROSE-SENTENCE-003-3D1EF7D4894C",
+      "sourceTextHash": "3d1ef7d4894c6ccecbef0ea4d762602ee2c63d540c8b18c25e1ad6157f6c3fee",
+      "expectedSemantic": {
+        "actor": "ARINC-664P3-COMPLIANT-NETWORK",
+        "condition": "WHEN-OPERATING-ON-664P3-COMPLIANT-NETWORK",
+        "action": "LIMIT-P3-CONTENTS-TO-RFC-CHANGES-AND-OPTION-RESTRICTIONS",
+        "objects": [
+          "ARINC-664P3-PROFILE"
+        ],
+        "observableEffect": "P3-CONTENTS-LIMITED-TO-RFC-DELTAS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "664P3 contents are limited to describing RFC changes and option restrictions. Unlisted RFC behaviour is not rewritten here, and 615A TFTP option rules are not erased.",
+      "expectedGeneratedSemanticProjectionZh": "664P3 内容限于描述 RFC 改动与选项限制。未列出的 RFC 行为不在此改写，615A TFTP 选项规则也不被抹去。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-3"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00734",
+      "sourceUnitId": "SU-ARINC-664-7-4.1-P056-PROSE-SENTENCE-001-A03F45C90169",
+      "sourceTextHash": "a03f45c901693b0972b1afc40859b6e494d3d0dd4d647862c7cda3b12397328e",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "COMPOSE-AFDX-SWITCH-FROM-FIVE-FUNCTIONAL-BLOCKS",
+        "objects": [
+          "AFDX-SWITCH-FUNCTIONAL-BLOCKS"
+        ],
+        "observableEffect": "AFDX-SWITCH-FIVE-BLOCKS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the switch consists of the five interacting functional blocks shown in Figure 4-1. Ordinary Ethernet tests do not prove that composition.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，交换机由 图 4-1 所示五个相互作用的功能块组成。普通以太网试验不能证明该组成。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00735",
+      "sourceUnitId": "SU-ARINC-664-7-4.1-P056-PROSE-SENTENCE-002-65C47F79D736",
+      "sourceTextHash": "65c47f79d736b8733dee87fb672458f87a18c861260578c102c99173f41ce19f",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "CONTROL-AFDX-SWITCH-FUNCTIONS-WITH-STATIC-CONFIGURATION-TABLES",
+        "objects": [
+          "AFDX-SWITCH-CONFIGURATION-TABLES"
+        ],
+        "observableEffect": "AFDX-SWITCH-STATIC-CONFIGURATION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, switch functions are controlled by static Configuration Tables. Bound M2 does not execute those tables.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，交换机功能由静态配置表控制。绑定 M2 不执行这些表。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00736",
+      "sourceUnitId": "SU-ARINC-664-7-4.5.1-P064-PROSE-SENTENCE-001-CFAB87A6BA56",
+      "sourceTextHash": "cfab87a6ba56c284dff3b159a677a79fa43d4b5262d5f086387eb3e469683905",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "REQUIRE-SWITCH-END-SYSTEM-TO-COMPLY-WITH-SECTION-3-EXCEPT-REDUNDANCY",
+        "objects": [
+          "AFDX-SWITCH-END-SYSTEM"
+        ],
+        "observableEffect": "AFDX-SWITCH-ES-SECTION-3-COMPLIANCE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the Switch End System complies with Part 7 section 3 except network redundancy. This does not activate AFDX on the current Compliant instance.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，交换机端系统符合第 7 部分第 3 节，网络冗余除外。这不在当前 Compliant 实例上激活 AFDX。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00737",
+      "sourceUnitId": "SU-ARINC-664-7-4.5.2-P064-PROSE-SENTENCE-001-944CABF62B3E",
+      "sourceTextHash": "944cabf62b3ec38aa803e54c429b31f1b4cc50ae2bd80c04ca763de3ce5a97b4",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "USE-SWITCH-END-SYSTEM-UNICAST-MAC-AS-SOURCE-ADDRESS",
+        "objects": [
+          "AFDX-SWITCH-END-SYSTEM",
+          "MAC-SOURCE-ADDRESS"
+        ],
+        "observableEffect": "AFDX-SWITCH-ES-UNICAST-SOURCE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the Switch End System uses its own MAC unicast address as the MAC source when it sends frames.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，交换机端系统发送帧时使用自身 MAC 单播地址作为源地址。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00738",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-001-76972BD77CA0",
+      "sourceTextHash": "76972bd77ca0cf75da6d5742d1b79f35b3f304fef3e199d8e3cd1ae2d0275e36",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "KEEP-615A-SESSION-ACROSS-OPS-TO-DL-TRANSITION",
+        "objects": [
+          "ARINC-615A-SESSION",
+          "AFDX-SWITCH-DL-MODE"
+        ],
+        "observableEffect": "AFDX-SWITCH-OPS-TO-DL-615A-SESSION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, transition from OPS mode to DL mode must not disrupt the ARINC 615A session. Bound M2 still does not execute that switch mode machine.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，从 OPS 模式转入 DL 模式不得中断 ARINC 615A 会话。绑定 M2 仍不执行该交换机模式机。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00739",
+      "sourceUnitId": "SU-ARINC-664-7-4.9.1-P075-PROSE-SENTENCE-001-99914B9848DA",
+      "sourceTextHash": "99914b9848dad666d7a88e0e87759043eb3593e8ca9523b9a229afdfcca2dbae",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "USE-615A-AND-665-TO-UPLOAD-SWITCH-SOFTWARE-AND-CONFIGURATION",
+        "objects": [
+          "ARINC-615A-DATALOADER",
+          "ARINC-665-LOAD"
+        ],
+        "observableEffect": "AFDX-SWITCH-615A-665-UPLOAD-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, ARINC 615A and ARINC 665 are the process and protocols used to upload software and configuration tables into the switch. This does not bind ARINC 645.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，向交换机上传软件与配置表使用 ARINC 615A 与 ARINC 665 过程及协议。这不绑定 ARINC 645。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00740",
+      "sourceUnitId": "SU-ARINC-664-7-4.11.2-P078-PROSE-SENTENCE-001-E51A58BE02E7",
+      "sourceTextHash": "e51a58be02e7044f547051f6fd255f5623a9917592a6734bdb7563a31a05e8c2",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "REQUIRE-AFDX-SWITCH-PHYSICAL-LAYER-TO-COMPLY-WITH-664P2",
+        "objects": [
+          "AFDX-SWITCH-PHYSICAL-LAYER",
+          "ARINC-664-2"
+        ],
+        "observableEffect": "AFDX-SWITCH-P2-PHY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the switch physical layer complies with ARINC 664 Part 2. This does not auto-select Part 4 or activate AFDX.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，交换机物理层符合 ARINC 664 第 2 部分。这不自动选定第 4 部分，也不激活 AFDX。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00741",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-001-9CA770F21732",
+      "sourceTextHash": "9ca770f21732e36c9e3738f15404f3cb18b51aa5685d5ed2efa2f4b6693ca87c",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "TREAT-UDP-IP-OPTIONS-AS-NOT-USED-ON-AFDX",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "IP-OPTIONS"
+        ],
+        "observableEffect": "AFDX-UDP-IP-OPTIONS-NOT-USED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, Attachment 2 marks IP options in UDP NOT APPLICABLE because IP options are not used in AFDX. The RFC 1122 MUST is interpreted as MUST NOT under the bound NOT APPLICABLE rule.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，附件 2 将 UDP 中的 IP 选项标为 NOT APPLICABLE，因为 AFDX 不使用 IP 选项。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 MUST 解释为 MUST NOT。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00742",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-002-C0554B96D7A3",
+      "sourceTextHash": "c0554b96d7a38f63db251ee310a63059a8c79d4fcf46e6c0c3306aa117163365",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "TREAT-UDP-CHECKSUM-AS-NOT-USED-ON-AFDX",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "UDP-CHECKSUM"
+        ],
+        "observableEffect": "AFDX-UDP-CHECKSUM-NOT-USED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, Attachment 2 marks UDP checksum generation/checking NOT APPLICABLE because checksum is not used in AFDX. The RFC 1122 MUST is interpreted as MUST NOT under the bound NOT APPLICABLE rule.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，附件 2 将 UDP 校验和生成/检查标为 NOT APPLICABLE，因为 AFDX 不使用该校验和。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 MUST 解释为 MUST NOT。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00743",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-003-1EBC5D0D6875",
+      "sourceTextHash": "1ebc5d0d687533a3135c995f0c5cc69f22e7b2f79baab5f06c28bdfbf44c4499",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "REQUIRE-AFDX-END-SYSTEM-INTERNET-LAYER-TO-IMPLEMENT-IP",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "IPV4"
+        ],
+        "observableEffect": "AFDX-IMPLEMENT-IP-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the End System Internet layer implements IP as marked MUST in Attachment 2 Table 2-3. This does not replace RFC 791 identity.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，端系统互联网层按附件 2 表 2-3 的 MUST 实现 IP。这不取代 RFC 791 身份。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00744",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-004-A0F0599C244F",
+      "sourceTextHash": "a0f0599c244fd25d4c4b3b46541a5d164ab1ef58ca6c05fb04b1dc528a61c42c",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "REQUIRE-AFDX-END-SYSTEM-INTERNET-LAYER-TO-IMPLEMENT-ICMP",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "ICMP"
+        ],
+        "observableEffect": "AFDX-IMPLEMENT-ICMP-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the End System Internet layer implements ICMP as marked MUST in Attachment 2 Table 2-3. 615A TFTP still does not use ICMP as a file-transfer protocol.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，端系统互联网层按附件 2 表 2-3 的 MUST 实现 ICMP。615A TFTP 仍不把 ICMP 当作文件传输协议。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00745",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-005-44340B4D8C62",
+      "sourceTextHash": "44340b4d8c62ad4b5c002451fb97964221887d2abd47eb49d9055b3b9b02a1cd",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "SILENTLY-DISCARD-NON-IPV4-DATAGRAMS",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "IPV4-VERSION-FIELD"
+        ],
+        "observableEffect": "AFDX-DISCARD-NON-IPV4-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, a datagram whose IP version is not 4 is silently discarded. This does not replace the bound RFC 791 version-field width.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，IP 版本号不是 4 的数据报被静默丢弃。这不取代已绑定的 RFC 791 版本字段宽度。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
     }
   ],
   "networkReferenceReview": {

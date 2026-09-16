@@ -154,7 +154,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-16"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-17"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
@@ -226,6 +226,34 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
     assert "SAU-P7-3-REMAINING-MAX-JITTER-EQUATION-AND-MAC-SOURCE" not in remaining
     assert remaining["SAU-665-2-3-REMAINING-CRC-ALGORITHM-IDENTITY"]["disposition"] == "DEPENDENCY-BLOCKED"
     assert remaining["SAU-665-2-3-REMAINING-INFORMATIVE-NOTES-AND-LOCATORS"]["disposition"] == "INFORMATIVE"
+    assert "SAU-P3-1-5-REMAINING-RFC-BODY" not in remaining
+    assert "SAU-P7-4-REMAINING-SWITCH-BLOCKS" not in remaining
+    assert "SAU-P7-ATT2-REMAINING-TABLE-ROWS" not in remaining
+    assert remaining["SAU-P7-4-REMAINING-SHOP-OPTIONAL"]["disposition"] == "OUT-OF-PROFILE"
+    assert remaining["SAU-P7-4-REMAINING-CONFIG-PIN-AND-MIB-DETAILS"]["disposition"] == "INFORMATIVE"
+    assert remaining["SAU-P7-ATT2-REMAINING-TCP-TABLE-2-1"]["disposition"] == "OUT-OF-PROFILE"
+    assert remaining["SAU-P7-ATT2-REMAINING-TABLE-MARK-LOCATORS"]["disposition"] == "INFORMATIVE"
+    assert not any(item["disposition"] == "NOT-YET-BOUND" for item in remaining.values())
+    p3 = next(
+        unit
+        for source in data["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "ARINC-664-3"
+        for unit in source["units"]
+        if unit["id"] == "SAU-P3-1-5"
+    )
+    assert len(p3["leafRequirementIds"]) >= 3
+    session = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "KEEP-615A-SESSION-ACROSS-OPS-TO-DL-TRANSITION"
+    )
+    assert session["source"]["clause"] == "4.8.4"
+    ip_row = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "REQUIRE-AFDX-END-SYSTEM-INTERNET-LAYER-TO-IMPLEMENT-IP"
+    )
+    assert ip_row["source"]["clause"] == "ATT-2"
 
 
 TRUNCATED_LEAD_IN = "The TFTP Read Request or Write Request packet is modified to include"
