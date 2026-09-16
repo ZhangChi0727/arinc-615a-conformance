@@ -7677,6 +7677,404 @@
         "predicateEn": "The Load PN shall match the LSP part number to be loaded to that Target HW ID POS.",
         "predicateZh": "Load PN 必须与要加载到该 Target HW ID POS 的 LSP 件号一致。",
         "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-DEFINE-BATCH-FILE-FORMAT-VERSION-IN-16-BITS-CRS-M1-00568",
+        "m1RequirementId": "CRS-M1-00568",
+        "objects": [
+          "BATCH-FILE-FORMAT-VERSION"
+        ],
+        "action": "DEFINE-BATCH-FILE-FORMAT-VERSION-IN-16-BITS",
+        "predicateEn": "The Batch File Format Version field is 16 bits.",
+        "predicateZh": "批处理文件格式版本字段为 16 位。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-TAKE-BATCH-FILE-FORMAT-VERSION-FROM-CLAUSE-1-4-1-CRS-M1-00569",
+        "m1RequirementId": "CRS-M1-00569",
+        "objects": [
+          "BATCH-FILE-FORMAT-VERSION"
+        ],
+        "action": "TAKE-BATCH-FILE-FORMAT-VERSION-FROM-CLAUSE-1-4-1",
+        "predicateEn": "The Batch File Format Version value shall follow the file-format version definition in 665 §1.4.1.",
+        "predicateZh": "批处理文件格式版本取值必须遵循 665 §1.4.1 的文件格式版本定义。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-USE-SPARE-TO-ALIGN-FOLLOWING-POINTERS-ON-4-BYTE-BOUNDARIES-CRS-M1-00570",
+        "m1RequirementId": "CRS-M1-00570",
+        "objects": [
+          "SPARE",
+          "POINTER-FIELDS"
+        ],
+        "action": "USE-SPARE-TO-ALIGN-FOLLOWING-POINTERS-ON-4-BYTE-BOUNDARIES",
+        "predicateEn": "The spare field shall align the following pointers, which are defined on 4-byte boundaries.",
+        "predicateZh": "Spare 字段必须对齐随后按 4 字节边界定义的指针。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-POINT-TO-BATCH-FILE-PN-LENGTH-FROM-START-IN-16-BIT-WORDS-CRS-M1-00571",
+        "m1RequirementId": "CRS-M1-00571",
+        "objects": [
+          "POINTER-TO-BATCH-FILE-PN-LENGTH"
+        ],
+        "action": "POINT-TO-BATCH-FILE-PN-LENGTH-FROM-START-IN-16-BIT-WORDS",
+        "predicateEn": "The pointer to Batch File PN Length is an absolute count of 16-bit words from the start of the file.",
+        "predicateZh": "批处理文件件号长度指针是自文件起始计的绝对 16 位字数。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-POINT-TO-LOAD-LIST-BLOCK-COUNT-FROM-START-IN-16-BIT-WORDS-CRS-M1-00572",
+        "m1RequirementId": "CRS-M1-00572",
+        "objects": [
+          "POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS"
+        ],
+        "action": "POINT-TO-LOAD-LIST-BLOCK-COUNT-FROM-START-IN-16-BIT-WORDS",
+        "predicateEn": "The pointer to Number of Target HW ID Load-List Blocks is an absolute count of 16-bit words from the start of the file.",
+        "predicateZh": "目标硬件标识加载列表块数目指针是自文件起始计的绝对 16 位字数。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-MAY-GROW-FILE-FORMAT-AT-EXPANSION-POINTS-CRS-M1-00573",
+        "m1RequirementId": "CRS-M1-00573",
+        "objects": [
+          "EXPANSION-POINTS"
+        ],
+        "action": "MAY-GROW-FILE-FORMAT-AT-EXPANSION-POINTS",
+        "predicateEn": "Expansion points are where later file-format versions may add new fields.",
+        "predicateZh": "扩展点是后续文件格式版本可以新增字段的位置。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-BATCH-FILE-PN-LENGTH-CRS-M1-00574",
+        "m1RequirementId": "CRS-M1-00574",
+        "objects": [
+          "BATCH-FILE-PN-LENGTH"
+        ],
+        "action": "EXCLUDE-NUL-PAD-FROM-BATCH-FILE-PN-LENGTH",
+        "predicateEn": "Batch File PN Length is the character count and shall exclude NULs appended to pad an odd character count.",
+        "predicateZh": "批处理文件件号长度是字符数，不得计入为补齐奇数长度而追加的 NUL。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-ENCODE-BATCH-FILE-PN-AS-8-BIT-ASCII-CRS-M1-00575",
+        "m1RequirementId": "CRS-M1-00575",
+        "objects": [
+          "BATCH-FILE-PN"
+        ],
+        "action": "ENCODE-BATCH-FILE-PN-AS-8-BIT-ASCII",
+        "predicateEn": "Batch File PN shall be 8-bit ASCII whose character count is given by Batch File PN Length.",
+        "predicateZh": "批处理文件件号必须是 8 位 ASCII，字符数由批处理文件件号长度给出。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-ALLOCATE-BATCH-FILE-PN-EVEN-OCTET-WIDTH-CRS-M1-00576",
+        "m1RequirementId": "CRS-M1-00576",
+        "objects": [
+          "BATCH-FILE-PN"
+        ],
+        "action": "ALLOCATE-BATCH-FILE-PN-EVEN-OCTET-WIDTH",
+        "predicateEn": "The Batch File PN field shall be allocated an even number of bytes.",
+        "predicateZh": "批处理文件件号字段必须分配偶数个字节。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-PAD-ODD-BATCH-FILE-PN-WITH-NUL-CRS-M1-00577",
+        "m1RequirementId": "CRS-M1-00577",
+        "objects": [
+          "BATCH-FILE-PN"
+        ],
+        "action": "PAD-ODD-BATCH-FILE-PN-WITH-NUL",
+        "predicateEn": "If the Batch File PN character count is odd, append one NUL.",
+        "predicateZh": "若批处理文件件号字符数为奇数，则追加一个 NUL。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-COMMENT-LENGTH-CRS-M1-00578",
+        "m1RequirementId": "CRS-M1-00578",
+        "objects": [
+          "COMMENT-LENGTH"
+        ],
+        "action": "EXCLUDE-NUL-PAD-FROM-COMMENT-LENGTH",
+        "predicateEn": "Comment Length is the character count and shall exclude NULs appended to pad an odd character count.",
+        "predicateZh": "注释长度是字符数，不得计入为补齐奇数长度而追加的 NUL。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-SET-COMMENT-LENGTH-ZERO-WHEN-NO-COMMENT-CRS-M1-00579",
+        "m1RequirementId": "CRS-M1-00579",
+        "objects": [
+          "COMMENT-LENGTH"
+        ],
+        "action": "SET-COMMENT-LENGTH-ZERO-WHEN-NO-COMMENT",
+        "predicateEn": "If the batch has no comment, Comment Length shall be zero.",
+        "predicateZh": "若该批处理没有注释，注释长度必须为零。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-ENCODE-COMMENT-AS-8-BIT-ASCII-CRS-M1-00580",
+        "m1RequirementId": "CRS-M1-00580",
+        "objects": [
+          "COMMENT"
+        ],
+        "action": "ENCODE-COMMENT-AS-8-BIT-ASCII",
+        "predicateEn": "The Comment field shall be 8-bit ASCII whose character count is given by Comment Length.",
+        "predicateZh": "注释字段必须是 8 位 ASCII，字符数由注释长度给出。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-ALLOCATE-COMMENT-EVEN-OCTET-WIDTH-CRS-M1-00581",
+        "m1RequirementId": "CRS-M1-00581",
+        "objects": [
+          "COMMENT"
+        ],
+        "action": "ALLOCATE-COMMENT-EVEN-OCTET-WIDTH",
+        "predicateEn": "The Comment field shall be allocated an even number of bytes.",
+        "predicateZh": "注释字段必须分配偶数个字节。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-PAD-ODD-COMMENT-WITH-NUL-CRS-M1-00582",
+        "m1RequirementId": "CRS-M1-00582",
+        "objects": [
+          "COMMENT"
+        ],
+        "action": "PAD-ODD-COMMENT-WITH-NUL",
+        "predicateEn": "If the Comment character count is odd, append one NUL.",
+        "predicateZh": "若注释字符数为奇数，则追加一个 NUL。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-OMIT-COMMENT-FIELD-WHEN-COMMENT-LENGTH-ZERO-CRS-M1-00583",
+        "m1RequirementId": "CRS-M1-00583",
+        "objects": [
+          "COMMENT"
+        ],
+        "action": "OMIT-COMMENT-FIELD-WHEN-COMMENT-LENGTH-ZERO",
+        "predicateEn": "If Comment Length is zero, the Comment field shall be omitted.",
+        "predicateZh": "若注释长度为零，则必须省略注释字段。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-COUNT-TARGET-HW-ID-LOAD-LIST-BLOCKS-IN-BATCH-FILE-CRS-M1-00584",
+        "m1RequirementId": "CRS-M1-00584",
+        "objects": [
+          "NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS"
+        ],
+        "action": "COUNT-TARGET-HW-ID-LOAD-LIST-BLOCKS-IN-BATCH-FILE",
+        "predicateEn": "Number of Target HW ID Load-List Blocks is the count of load-list blocks in the batch file.",
+        "predicateZh": "目标硬件标识加载列表块数目是该批处理文件中加载列表块的个数。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-POINT-TO-NEXT-LOAD-LIST-BLOCK-IN-RELATIVE-16-BIT-WORDS-CRS-M1-00585",
+        "m1RequirementId": "CRS-M1-00585",
+        "objects": [
+          "POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK"
+        ],
+        "action": "POINT-TO-NEXT-LOAD-LIST-BLOCK-IN-RELATIVE-16-BIT-WORDS",
+        "predicateEn": "The next load-list-block pointer is a relative count of 16-bit words to the next load-list block.",
+        "predicateZh": "下一加载列表块指针是到下一块的相对 16 位字数。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-TARGET-HW-ID-POS-LENGTH-CRS-M1-00586",
+        "m1RequirementId": "CRS-M1-00586",
+        "objects": [
+          "TARGET-HW-ID-POS-LENGTH"
+        ],
+        "action": "EXCLUDE-NUL-PAD-FROM-TARGET-HW-ID-POS-LENGTH",
+        "predicateEn": "Target HW ID POS Length is the character count and shall exclude NULs appended to pad an odd character count.",
+        "predicateZh": "Target HW ID POS 长度是字符数，不得计入为补齐奇数长度而追加的 NUL。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-ENCODE-TARGET-HW-ID-POS-AS-8-BIT-ASCII-CRS-M1-00587",
+        "m1RequirementId": "CRS-M1-00587",
+        "objects": [
+          "TARGET-HW-ID-POS"
+        ],
+        "action": "ENCODE-TARGET-HW-ID-POS-AS-8-BIT-ASCII",
+        "predicateEn": "Target HW ID POS shall be 8-bit ASCII whose character count is given by Target HW ID POS Length.",
+        "predicateZh": "Target HW ID POS 必须是 8 位 ASCII，字符数由 Target HW ID POS 长度给出。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-ALLOCATE-TARGET-HW-ID-POS-EVEN-OCTET-WIDTH-CRS-M1-00588",
+        "m1RequirementId": "CRS-M1-00588",
+        "objects": [
+          "TARGET-HW-ID-POS"
+        ],
+        "action": "ALLOCATE-TARGET-HW-ID-POS-EVEN-OCTET-WIDTH",
+        "predicateEn": "The Target HW ID POS field shall be allocated an even number of bytes.",
+        "predicateZh": "Target HW ID POS 字段必须分配偶数个字节。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-PAD-ODD-TARGET-HW-ID-POS-WITH-NUL-CRS-M1-00589",
+        "m1RequirementId": "CRS-M1-00589",
+        "objects": [
+          "TARGET-HW-ID-POS"
+        ],
+        "action": "PAD-ODD-TARGET-HW-ID-POS-WITH-NUL",
+        "predicateEn": "If the Target HW ID POS character count is odd, append one NUL.",
+        "predicateZh": "若 Target HW ID POS 字符数为奇数，则追加一个 NUL。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-KEEP-TARGET-HW-ID-POS-CONSISTENT-WITH-LISTED-LSP-HEADERS-CRS-M1-00590",
+        "m1RequirementId": "CRS-M1-00590",
+        "objects": [
+          "TARGET-HW-ID-POS",
+          "HEADER-FILE-TARGET-HW-ID"
+        ],
+        "action": "KEEP-TARGET-HW-ID-POS-CONSISTENT-WITH-LISTED-LSP-HEADERS",
+        "predicateEn": "Target HW ID POS values should stay consistent with the Target HW ID values in the header files of the LSPs listed under that target.",
+        "predicateZh": "Target HW ID POS 应与该目标下列出的 LSP 头文件中的 Target HW ID 保持一致。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-COUNT-LOADS-IN-THE-TARGET-HW-ID-LOAD-LIST-BLOCK-CRS-M1-00591",
+        "m1RequirementId": "CRS-M1-00591",
+        "objects": [
+          "NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS"
+        ],
+        "action": "COUNT-LOADS-IN-THE-TARGET-HW-ID-LOAD-LIST-BLOCK",
+        "predicateEn": "Number of Loads for Target HW ID POS is the count of loads in that target's load-list block.",
+        "predicateZh": "目标硬件标识的加载数目是该目标加载列表块中的加载个数。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-HEADER-FILE-NAME-LENGTH-CRS-M1-00592",
+        "m1RequirementId": "CRS-M1-00592",
+        "objects": [
+          "HEADER-FILE-NAME-LENGTH"
+        ],
+        "action": "EXCLUDE-NUL-PAD-FROM-HEADER-FILE-NAME-LENGTH",
+        "predicateEn": "Header File Name Length is the character count and shall exclude NULs appended to pad an odd character count.",
+        "predicateZh": "头文件名长度是字符数，不得计入为补齐奇数长度而追加的 NUL。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-ENCODE-HEADER-FILE-NAME-AS-8-BIT-ASCII-CRS-M1-00593",
+        "m1RequirementId": "CRS-M1-00593",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "action": "ENCODE-HEADER-FILE-NAME-AS-8-BIT-ASCII",
+        "predicateEn": "Header File Name shall be 8-bit ASCII whose character count is given by Header File Name Length.",
+        "predicateZh": "头文件名必须是 8 位 ASCII，字符数由头文件名长度给出。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-ALLOCATE-HEADER-FILE-NAME-EVEN-OCTET-WIDTH-CRS-M1-00594",
+        "m1RequirementId": "CRS-M1-00594",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "action": "ALLOCATE-HEADER-FILE-NAME-EVEN-OCTET-WIDTH",
+        "predicateEn": "The Header File Name field shall be allocated an even number of bytes.",
+        "predicateZh": "头文件名字段必须分配偶数个字节。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-PAD-ODD-HEADER-FILE-NAME-WITH-NUL-CRS-M1-00595",
+        "m1RequirementId": "CRS-M1-00595",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "action": "PAD-ODD-HEADER-FILE-NAME-WITH-NUL",
+        "predicateEn": "If the Header File Name character count is odd, append one NUL.",
+        "predicateZh": "若头文件名字符数为奇数，则追加一个 NUL。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-USE-HEADER-FILE-NAME-WITHOUT-PATH-CRS-M1-00596",
+        "m1RequirementId": "CRS-M1-00596",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "action": "USE-HEADER-FILE-NAME-WITHOUT-PATH",
+        "predicateEn": "Header File Name is the file name only and shall omit path information.",
+        "predicateZh": "头文件名只含文件名，不得包含路径信息。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-KEEP-HEADER-FILE-NAME-FREE-OF-BACKSLASH-CRS-M1-00597",
+        "m1RequirementId": "CRS-M1-00597",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "action": "KEEP-HEADER-FILE-NAME-FREE-OF-BACKSLASH",
+        "predicateEn": "A file name shall not begin with a backslash and shall not contain a backslash.",
+        "predicateZh": "文件名不得以反斜杠开头，也不得包含反斜杠。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-INCLUDE-HEADER-FILE-NAME-EXTENSIONS-AND-DELIMITERS-CRS-M1-00598",
+        "m1RequirementId": "CRS-M1-00598",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "action": "INCLUDE-HEADER-FILE-NAME-EXTENSIONS-AND-DELIMITERS",
+        "predicateEn": "File names shall include all extensions and delimiters.",
+        "predicateZh": "文件名必须包含全部扩展名与分隔符。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-DEFINE-LOAD-PN-LENGTH-AS-CHARACTER-COUNT-CRS-M1-00599",
+        "m1RequirementId": "CRS-M1-00599",
+        "objects": [
+          "LOAD-PN-LENGTH"
+        ],
+        "action": "DEFINE-LOAD-PN-LENGTH-AS-CHARACTER-COUNT",
+        "predicateEn": "Load PN Length is the number of characters in the Load PN.",
+        "predicateZh": "Load PN 长度是 Load PN 的字符数。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-LOAD-PN-LENGTH-CRS-M1-00600",
+        "m1RequirementId": "CRS-M1-00600",
+        "objects": [
+          "LOAD-PN-LENGTH"
+        ],
+        "action": "EXCLUDE-NUL-PAD-FROM-LOAD-PN-LENGTH",
+        "predicateEn": "Load PN Length shall exclude NULs appended to pad an odd character count.",
+        "predicateZh": "Load PN 长度不得计入为补齐奇数长度而追加的 NUL。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-ENCODE-LOAD-PN-AS-8-BIT-ASCII-CRS-M1-00601",
+        "m1RequirementId": "CRS-M1-00601",
+        "objects": [
+          "LOAD-PN"
+        ],
+        "action": "ENCODE-LOAD-PN-AS-8-BIT-ASCII",
+        "predicateEn": "Load PN shall be 8-bit ASCII whose character count is given by Load PN Length.",
+        "predicateZh": "Load PN 必须是 8 位 ASCII，字符数由 Load PN 长度给出。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-ALLOCATE-LOAD-PN-EVEN-OCTET-WIDTH-CRS-M1-00602",
+        "m1RequirementId": "CRS-M1-00602",
+        "objects": [
+          "LOAD-PN"
+        ],
+        "action": "ALLOCATE-LOAD-PN-EVEN-OCTET-WIDTH",
+        "predicateEn": "The Load PN field shall be allocated an even number of bytes.",
+        "predicateZh": "Load PN 字段必须分配偶数个字节。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
+      },
+      {
+        "id": "OBJ-BATCH-FILE-PAD-ODD-LOAD-PN-WITH-NUL-CRS-M1-00603",
+        "m1RequirementId": "CRS-M1-00603",
+        "objects": [
+          "LOAD-PN"
+        ],
+        "action": "PAD-ODD-LOAD-PN-WITH-NUL",
+        "predicateEn": "If the Load PN character count is odd, append one NUL.",
+        "predicateZh": "若 Load PN 字符数为奇数，则追加一个 NUL。",
+        "checkLocation": "ARINC-665-DATA-OBJECT"
       }
     ],
     "interfaces": {
@@ -16242,6 +16640,438 @@
         "FC-LUB-FIELD-BATCH-FILE-CRC",
         "IF_INTEGRITY"
       ]
+    },
+    {
+      "requirementId": "CRS-M1-00568",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-DEFINE-BATCH-FILE-FORMAT-VERSION-IN-16-BITS-CRS-M1-00568"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00569",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-TAKE-BATCH-FILE-FORMAT-VERSION-FROM-CLAUSE-1-4-1-CRS-M1-00569"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00570",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-USE-SPARE-TO-ALIGN-FOLLOWING-POINTERS-ON-4-BYTE-BOUNDARIES-CRS-M1-00570"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00571",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-POINT-TO-BATCH-FILE-PN-LENGTH-FROM-START-IN-16-BIT-WORDS-CRS-M1-00571"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00572",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-POINT-TO-LOAD-LIST-BLOCK-COUNT-FROM-START-IN-16-BIT-WORDS-CRS-M1-00572"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00573",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-MAY-GROW-FILE-FORMAT-AT-EXPANSION-POINTS-CRS-M1-00573"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00574",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-BATCH-FILE-PN-LENGTH-CRS-M1-00574"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00575",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-ENCODE-BATCH-FILE-PN-AS-8-BIT-ASCII-CRS-M1-00575"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00576",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-ALLOCATE-BATCH-FILE-PN-EVEN-OCTET-WIDTH-CRS-M1-00576"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00577",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-PAD-ODD-BATCH-FILE-PN-WITH-NUL-CRS-M1-00577"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00578",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-COMMENT-LENGTH-CRS-M1-00578"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00579",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-SET-COMMENT-LENGTH-ZERO-WHEN-NO-COMMENT-CRS-M1-00579"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00580",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-ENCODE-COMMENT-AS-8-BIT-ASCII-CRS-M1-00580"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00581",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-ALLOCATE-COMMENT-EVEN-OCTET-WIDTH-CRS-M1-00581"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00582",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-PAD-ODD-COMMENT-WITH-NUL-CRS-M1-00582"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00583",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-OMIT-COMMENT-FIELD-WHEN-COMMENT-LENGTH-ZERO-CRS-M1-00583"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00584",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-COUNT-TARGET-HW-ID-LOAD-LIST-BLOCKS-IN-BATCH-FILE-CRS-M1-00584"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00585",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-POINT-TO-NEXT-LOAD-LIST-BLOCK-IN-RELATIVE-16-BIT-WORDS-CRS-M1-00585"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00586",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-TARGET-HW-ID-POS-LENGTH-CRS-M1-00586"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00587",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-ENCODE-TARGET-HW-ID-POS-AS-8-BIT-ASCII-CRS-M1-00587"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00588",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-ALLOCATE-TARGET-HW-ID-POS-EVEN-OCTET-WIDTH-CRS-M1-00588"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00589",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-PAD-ODD-TARGET-HW-ID-POS-WITH-NUL-CRS-M1-00589"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00590",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-KEEP-TARGET-HW-ID-POS-CONSISTENT-WITH-LISTED-LSP-HEADERS-CRS-M1-00590"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00591",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-COUNT-LOADS-IN-THE-TARGET-HW-ID-LOAD-LIST-BLOCK-CRS-M1-00591"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00592",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-HEADER-FILE-NAME-LENGTH-CRS-M1-00592"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00593",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-ENCODE-HEADER-FILE-NAME-AS-8-BIT-ASCII-CRS-M1-00593"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00594",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-ALLOCATE-HEADER-FILE-NAME-EVEN-OCTET-WIDTH-CRS-M1-00594"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00595",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-PAD-ODD-HEADER-FILE-NAME-WITH-NUL-CRS-M1-00595"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00596",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-USE-HEADER-FILE-NAME-WITHOUT-PATH-CRS-M1-00596"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00597",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-KEEP-HEADER-FILE-NAME-FREE-OF-BACKSLASH-CRS-M1-00597"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00598",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-INCLUDE-HEADER-FILE-NAME-EXTENSIONS-AND-DELIMITERS-CRS-M1-00598"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00599",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-DEFINE-LOAD-PN-LENGTH-AS-CHARACTER-COUNT-CRS-M1-00599"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00600",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-LOAD-PN-LENGTH-CRS-M1-00600"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00601",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-ENCODE-LOAD-PN-AS-8-BIT-ASCII-CRS-M1-00601"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00602",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-ALLOCATE-LOAD-PN-EVEN-OCTET-WIDTH-CRS-M1-00602"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00603",
+      "sourceId": "ARINC-665-5",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-BATCH-FILE-PAD-ODD-LOAD-PN-WITH-NUL-CRS-M1-00603"
+      ]
     }
   ],
   "traceRelations": [
@@ -23548,6 +24378,402 @@
       "rationaleCode": "665-BATCH-FILE-CRC-BLOCKED-BY-645",
       "rationaleEn": "CRC algorithm identity remains blocked by unbound ARINC 645; integrity interface stays not established.",
       "rationaleZh": "CRC 算法身份仍由未绑定的 ARINC 645 阻塞；完整性接口保持未建立。"
+    },
+    {
+      "id": "TR-CRS-M1-00568-0666",
+      "requirementId": "CRS-M1-00568",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-DEFINE-BATCH-FILE-FORMAT-VERSION-IN-16-BITS-CRS-M1-00568",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00569-0667",
+      "requirementId": "CRS-M1-00569",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-TAKE-BATCH-FILE-FORMAT-VERSION-FROM-CLAUSE-1-4-1-CRS-M1-00569",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00570-0668",
+      "requirementId": "CRS-M1-00570",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-USE-SPARE-TO-ALIGN-FOLLOWING-POINTERS-ON-4-BYTE-BOUNDARIES-CRS-M1-00570",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00571-0669",
+      "requirementId": "CRS-M1-00571",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-POINT-TO-BATCH-FILE-PN-LENGTH-FROM-START-IN-16-BIT-WORDS-CRS-M1-00571",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00572-0670",
+      "requirementId": "CRS-M1-00572",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-POINT-TO-LOAD-LIST-BLOCK-COUNT-FROM-START-IN-16-BIT-WORDS-CRS-M1-00572",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00573-0671",
+      "requirementId": "CRS-M1-00573",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-MAY-GROW-FILE-FORMAT-AT-EXPANSION-POINTS-CRS-M1-00573",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00574-0672",
+      "requirementId": "CRS-M1-00574",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-BATCH-FILE-PN-LENGTH-CRS-M1-00574",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00575-0673",
+      "requirementId": "CRS-M1-00575",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-ENCODE-BATCH-FILE-PN-AS-8-BIT-ASCII-CRS-M1-00575",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00576-0674",
+      "requirementId": "CRS-M1-00576",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-ALLOCATE-BATCH-FILE-PN-EVEN-OCTET-WIDTH-CRS-M1-00576",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00577-0675",
+      "requirementId": "CRS-M1-00577",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-PAD-ODD-BATCH-FILE-PN-WITH-NUL-CRS-M1-00577",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00578-0676",
+      "requirementId": "CRS-M1-00578",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-COMMENT-LENGTH-CRS-M1-00578",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00579-0677",
+      "requirementId": "CRS-M1-00579",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-SET-COMMENT-LENGTH-ZERO-WHEN-NO-COMMENT-CRS-M1-00579",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00580-0678",
+      "requirementId": "CRS-M1-00580",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-ENCODE-COMMENT-AS-8-BIT-ASCII-CRS-M1-00580",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00581-0679",
+      "requirementId": "CRS-M1-00581",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-ALLOCATE-COMMENT-EVEN-OCTET-WIDTH-CRS-M1-00581",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00582-0680",
+      "requirementId": "CRS-M1-00582",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-PAD-ODD-COMMENT-WITH-NUL-CRS-M1-00582",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00583-0681",
+      "requirementId": "CRS-M1-00583",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-OMIT-COMMENT-FIELD-WHEN-COMMENT-LENGTH-ZERO-CRS-M1-00583",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00584-0682",
+      "requirementId": "CRS-M1-00584",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-COUNT-TARGET-HW-ID-LOAD-LIST-BLOCKS-IN-BATCH-FILE-CRS-M1-00584",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00585-0683",
+      "requirementId": "CRS-M1-00585",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-POINT-TO-NEXT-LOAD-LIST-BLOCK-IN-RELATIVE-16-BIT-WORDS-CRS-M1-00585",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00586-0684",
+      "requirementId": "CRS-M1-00586",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-TARGET-HW-ID-POS-LENGTH-CRS-M1-00586",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00587-0685",
+      "requirementId": "CRS-M1-00587",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-ENCODE-TARGET-HW-ID-POS-AS-8-BIT-ASCII-CRS-M1-00587",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00588-0686",
+      "requirementId": "CRS-M1-00588",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-ALLOCATE-TARGET-HW-ID-POS-EVEN-OCTET-WIDTH-CRS-M1-00588",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00589-0687",
+      "requirementId": "CRS-M1-00589",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-PAD-ODD-TARGET-HW-ID-POS-WITH-NUL-CRS-M1-00589",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00590-0688",
+      "requirementId": "CRS-M1-00590",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-KEEP-TARGET-HW-ID-POS-CONSISTENT-WITH-LISTED-LSP-HEADERS-CRS-M1-00590",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00591-0689",
+      "requirementId": "CRS-M1-00591",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-COUNT-LOADS-IN-THE-TARGET-HW-ID-LOAD-LIST-BLOCK-CRS-M1-00591",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00592-0690",
+      "requirementId": "CRS-M1-00592",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-HEADER-FILE-NAME-LENGTH-CRS-M1-00592",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00593-0691",
+      "requirementId": "CRS-M1-00593",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-ENCODE-HEADER-FILE-NAME-AS-8-BIT-ASCII-CRS-M1-00593",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00594-0692",
+      "requirementId": "CRS-M1-00594",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-ALLOCATE-HEADER-FILE-NAME-EVEN-OCTET-WIDTH-CRS-M1-00594",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00595-0693",
+      "requirementId": "CRS-M1-00595",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-PAD-ODD-HEADER-FILE-NAME-WITH-NUL-CRS-M1-00595",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00596-0694",
+      "requirementId": "CRS-M1-00596",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-USE-HEADER-FILE-NAME-WITHOUT-PATH-CRS-M1-00596",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00597-0695",
+      "requirementId": "CRS-M1-00597",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-KEEP-HEADER-FILE-NAME-FREE-OF-BACKSLASH-CRS-M1-00597",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00598-0696",
+      "requirementId": "CRS-M1-00598",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-INCLUDE-HEADER-FILE-NAME-EXTENSIONS-AND-DELIMITERS-CRS-M1-00598",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00599-0697",
+      "requirementId": "CRS-M1-00599",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-DEFINE-LOAD-PN-LENGTH-AS-CHARACTER-COUNT-CRS-M1-00599",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00600-0698",
+      "requirementId": "CRS-M1-00600",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-EXCLUDE-NUL-PAD-FROM-LOAD-PN-LENGTH-CRS-M1-00600",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00601-0699",
+      "requirementId": "CRS-M1-00601",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-ENCODE-LOAD-PN-AS-8-BIT-ASCII-CRS-M1-00601",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00602-0700",
+      "requirementId": "CRS-M1-00602",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-ALLOCATE-LOAD-PN-EVEN-OCTET-WIDTH-CRS-M1-00602",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
+    },
+    {
+      "id": "TR-CRS-M1-00603-0701",
+      "requirementId": "CRS-M1-00603",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-BATCH-FILE-PAD-ODD-LOAD-PN-WITH-NUL-CRS-M1-00603",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "665-BATCH-FILE-DATA-OBJECT",
+      "rationaleEn": "665 batch-file predicate recorded as a data-object constraint; bound M2 does not execute batch loading.",
+      "rationaleZh": "665 批处理文件谓词记为数据对象约束；绑定 M2 不执行批处理加载。"
     }
   ],
   "infrastructurePremises": [
@@ -24234,15 +25460,15 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 566,
-    "dispositionCount": 566,
-    "traceCount": 664,
+    "requirementCount": 602,
+    "dispositionCount": 602,
+    "traceCount": 700,
     "stateCount": 35,
     "transitionCount": 65,
     "timingCount": 26,
     "fieldConstraintCount": 108,
-    "dispositionsFingerprint": "259af6424d6489ab4ee476532517fddb0306d872f21a41d8eaad630c0c1ebfff",
-    "modelFingerprint": "4d47a572fd83f731e34c97885cd886f822c417fd1140c956bb9be74294a064e8",
+    "dispositionsFingerprint": "84120987410bcaecc6eafb7125bf83901c80e6e0fd9331f9fb1bbb3c0e202934",
+    "modelFingerprint": "31e6e6dbf30b46cdd615142f333d8d66c3ce8f1723133767aa99cb9af11d16f1",
     "timingFingerprint": "91e71d517ccc388f446a681b7f13007a3de69e687e49fbb299c5df28430d1e92",
     "inputFingerprint": "ef3f37750b8dbd4752f87ae82383566904a308bd5c2ea944a01d1e238ba2c3b5",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",

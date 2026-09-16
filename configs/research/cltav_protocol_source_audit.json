@@ -8,16 +8,16 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-8",
+    "artifactVersion": "M1-CANDIDATE-9",
     "coverageCount": 2871,
-    "requirementCount": 566,
-    "coverageFingerprint": "3e3d2b7774b13d7d9f50878f03119e18f2d43df5b3d61059c4315b7ea5c14ebc",
-    "requirementsFingerprint": "91e272a9084d8b4353e557169ea2daba6e4a66b63034a107c6e5f59ee89e609d",
+    "requirementCount": 602,
+    "coverageFingerprint": "57c7aa526addf7ebff2b73ece2e3a0c7ae33ed89a95d3a05d2c7ff7bd9f0f221",
+    "requirementsFingerprint": "fcc16129cadcb4f2d5c19d71e2c70cf75a8d4427d21798008e2986f28e786662",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "Package B increment: FIND abort does not waive the 2 s / 3 s clocks; 665 section 2.3 batch-file leaf CRS is partial, including Table 2.3.1-1 row-level fieldConstraint rows. This is not independent RG approval and does not authorize merge."
+    "note": "Package B increment: FIND abort does not waive the 2 s / 3 s clocks; 665 section 2.3 batch-file leaf CRS now includes Table 2.3.1-1 and field-prose constraints. Remaining 664/RFC leaf CRS are not all emitted. This is not independent RG approval and does not authorize merge."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -28,7 +28,7 @@
   ],
   "summary": {
     "coverageCount": 2871,
-    "requirementCount": 566,
+    "requirementCount": 602,
     "applicabilityDecisions": {
       "OUT-OF-PROFILE": 973,
       "APPLICABLE-SUPPORTING": 1243,
@@ -10017,9 +10017,9 @@
               "UPLOAD"
             ],
             "relationTo615A": "SOURCE-EXPLICIT-615A-LOADER-USE",
-            "leafCrsStatus": "PARTIAL-LEAF-CRS-EMITTED",
-            "summaryEn": "Clause 2.3 batch files are distributed to onboard/off-board 615A loaders and are not transferred to target hardware. Sentence-leaf CRS and Table 2.3.1-1 row-level fieldConstraint rows are emitted with real widths or controlling-length equations. Remaining field-prose refinements stay open. This is not leaf-CRS-closed.",
-            "summaryZh": "2.3 批处理文件分发给机上/机下 615A 加载器，不传给目标硬件。句级 CRS 与表 2.3.1-1 行级字段约束已发出，宽度为表列值或由长度字段控制的方程。其余字段散文细化仍开放。这不是叶级 CRS 已闭合。"
+            "leafCrsStatus": "LEAF-CRS-EMITTED",
+            "summaryEn": "Clause 2.3 batch files are distributed to onboard/off-board 615A loaders and are not transferred to target hardware. Sentence-leaf CRS, Table 2.3.1-1 fieldConstraint rows, and remaining field-prose constraints are emitted. Table notes, commentary and locator sentences stay coverage-only informative. CRC algorithm identity remains blocked by 645. This is not independent RG approval.",
+            "summaryZh": "2.3 批处理文件分发给机上/机下 615A 加载器，不传给目标硬件。句级 CRS、表 2.3.1-1 字段约束与其余字段散文约束已发出。表注、评注与定位句保持仅覆盖的说明性行。CRC 算法身份仍由 645 阻塞。这不是独立 RG 批准。"
           },
           {
             "id": "SAU-665-2-2-4",
@@ -11163,7 +11163,7 @@
               "AFDX-DEPLOYMENT"
             ],
             "relationTo615A": "INFORMATIONAL-CROSS-CHECK",
-            "leafCrsStatus": "INSPECTION-REGION-EXISTS",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "Existing NET-P7-EXAMPLE. Example only.",
             "summaryZh": "已有 NET-P7-EXAMPLE。仅为示例。"
           },
@@ -11366,7 +11366,7 @@
             "rationaleCode": "NOT-TRIGGERED-AS-615A-CRS",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "The RFC 768 user-interface sketch is not a 615A actor obligation.",
             "summaryZh": "RFC 768 的用户接口简述不是 615A 参与者义务。"
           },
@@ -11422,7 +11422,7 @@
             "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "Motivation and scope are not 615A actions.",
             "summaryZh": "动机与范围不是 615A 动作。"
           },
@@ -11500,7 +11500,7 @@
             "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "Gateway requirements are not 615A dataloading CRS.",
             "summaryZh": "网关要求不是 615A 数据加载 CRS。"
           },
@@ -11515,7 +11515,7 @@
             "rationaleCode": "NOT-TRIGGERED-AS-615A-CRS",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "RFC 791 module interfaces are not 615A protocol files.",
             "summaryZh": "RFC 791 模块接口不是 615A 协议文件。"
           },
@@ -11530,7 +11530,7 @@
             "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "IP options are not adopted as 615A protocol options.",
             "summaryZh": "IP 选项未被采纳为 615A 协议选项。"
           },
@@ -11587,7 +11587,7 @@
             "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "Host-requirement introduction is not a 615A action.",
             "summaryZh": "主机要求引言不是 615A 动作。"
           },
@@ -11665,7 +11665,7 @@
             "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "TCP is not used by 615A dataloading.",
             "summaryZh": "615A 数据加载不使用 TCP。"
           },
@@ -11680,7 +11680,7 @@
             "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "References only.",
             "summaryZh": "仅参考文献。"
           }
@@ -11722,7 +11722,7 @@
             "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "Not a 615A action.",
             "summaryZh": "不是 615A 动作。"
           },
@@ -11737,7 +11737,7 @@
             "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "Host names, DNS use and TOS are not 615A protocol files.",
             "summaryZh": "主机名、DNS 使用与 TOS 不是 615A 协议文件。"
           },
@@ -11752,7 +11752,7 @@
             "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "Telnet is not 615A dataloading.",
             "summaryZh": "Telnet 不是 615A 数据加载。"
           },
@@ -11767,7 +11767,7 @@
             "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "FTP is not 615A TFTP.",
             "summaryZh": "FTP 不是 615A TFTP。"
           },
@@ -11803,7 +11803,7 @@
             "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "SMTP is unused.",
             "summaryZh": "不使用 SMTP。"
           },
@@ -11818,7 +11818,7 @@
             "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "DNS and remote management are unused.",
             "summaryZh": "不使用 DNS 与远程管理。"
           },
@@ -11833,7 +11833,7 @@
             "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "References only.",
             "summaryZh": "仅参考文献。"
           }
@@ -12015,7 +12015,7 @@
             "rationaleCode": "NOT-TRIGGERED-BY-CURRENT-SERVICE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "Mail mode is not used by 615A.",
             "summaryZh": "615A 不使用 mail 模式。"
           }
@@ -12063,7 +12063,7 @@
               "FIND"
             ],
             "relationTo615A": "INFORMATIONAL-CROSS-CHECK",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "RFC 1785 is Informational. It does not specify an Internet standard and adds no 615A actor obligation.",
             "summaryZh": "RFC 1785 为 Informational，不规定因特网标准，也不增加 615A 参与者义务。"
           },
@@ -12084,7 +12084,7 @@
               "FIND"
             ],
             "relationTo615A": "INFORMATIONAL-CROSS-CHECK",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "Test narrative about legacy servers. 615A already says an unimplemented option must not fail the transfer; that obligation stays on 615A, not on this RFC.",
             "summaryZh": "关于遗留服务器的试验叙述。615A 已规定未实现选项不得使传输失败；该义务在 615A，不在本 RFC。"
           }
@@ -12181,7 +12181,7 @@
             "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "No additional 615A actor obligation.",
             "summaryZh": "无额外 615A 参与者义务。"
           }
@@ -12237,7 +12237,7 @@
             "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "No additional 615A actor obligation.",
             "summaryZh": "无额外 615A 参与者义务。"
           }
@@ -12314,7 +12314,7 @@
             "rationaleCode": "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE",
             "triggeredByOperations": [],
             "relationTo615A": "NONE",
-            "leafCrsStatus": "NOT-YET-EMITTED",
+            "leafCrsStatus": "NOT-REQUIRED",
             "summaryEn": "No additional 615A actor obligation.",
             "summaryZh": "无额外 615A 参与者义务。"
           }

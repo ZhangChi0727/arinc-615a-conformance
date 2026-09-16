@@ -14961,6 +14961,980 @@
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
+    },
+    {
+      "requirementId": "CRS-M1-00568",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-2-P032-PROSE-SENTENCE-001-A4C713095594",
+      "sourceTextHash": "a4c713095594a95b481df8cdf4176d6157cd9e2f8c5d3442e77ad0887eb84312",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "DEFINE-BATCH-FILE-FORMAT-VERSION-IN-16-BITS",
+        "objects": [
+          "BATCH-FILE-FORMAT-VERSION"
+        ],
+        "observableEffect": "BATCH-FILE-FORMAT-VERSION-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The Batch File Format Version field is 16 bits.",
+      "expectedGeneratedSemanticProjectionZh": "批处理文件格式版本字段为 16 位。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00569",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-2-P032-PROSE-SENTENCE-002-79DEDA3F0A7A",
+      "sourceTextHash": "79deda3f0a7ad073851a0821ddfa2bab077d551b1c4652917df2906c01e9343c",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "TAKE-BATCH-FILE-FORMAT-VERSION-FROM-CLAUSE-1-4-1",
+        "objects": [
+          "BATCH-FILE-FORMAT-VERSION"
+        ],
+        "observableEffect": "BATCH-FILE-FORMAT-VERSION-IDENTITY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The Batch File Format Version value shall follow the file-format version definition in 665 §1.4.1.",
+      "expectedGeneratedSemanticProjectionZh": "批处理文件格式版本取值必须遵循 665 §1.4.1 的文件格式版本定义。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00570",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-3-P032-PROSE-SENTENCE-001-07120FC5FECE",
+      "sourceTextHash": "07120fc5fece3bfbf6df54211b67f14fd65f7d9bb32f945c2fad5f1de3f8741a",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "USE-SPARE-TO-ALIGN-FOLLOWING-POINTERS-ON-4-BYTE-BOUNDARIES",
+        "objects": [
+          "SPARE",
+          "POINTER-FIELDS"
+        ],
+        "observableEffect": "SPARE-ALIGNMENT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The spare field shall align the following pointers, which are defined on 4-byte boundaries.",
+      "expectedGeneratedSemanticProjectionZh": "Spare 字段必须对齐随后按 4 字节边界定义的指针。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00571",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-4-P033-PROSE-SENTENCE-001-950EEAD4BFA9",
+      "sourceTextHash": "950eead4bfa9100c21395fc105c9343b00074d27e9a3f44f6c3325632bc9c056",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "POINT-TO-BATCH-FILE-PN-LENGTH-FROM-START-IN-16-BIT-WORDS",
+        "objects": [
+          "POINTER-TO-BATCH-FILE-PN-LENGTH"
+        ],
+        "observableEffect": "PN-LENGTH-POINTER-ORIGIN-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The pointer to Batch File PN Length is an absolute count of 16-bit words from the start of the file.",
+      "expectedGeneratedSemanticProjectionZh": "批处理文件件号长度指针是自文件起始计的绝对 16 位字数。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00572",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-5-P033-PROSE-SENTENCE-001-D39CAFDDE98D",
+      "sourceTextHash": "d39cafdde98d6415b9bc3749ef43290948eb5d90e11748cfa6124d6fb8621760",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "POINT-TO-LOAD-LIST-BLOCK-COUNT-FROM-START-IN-16-BIT-WORDS",
+        "objects": [
+          "POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS"
+        ],
+        "observableEffect": "LOAD-LIST-COUNT-POINTER-ORIGIN-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The pointer to Number of Target HW ID Load-List Blocks is an absolute count of 16-bit words from the start of the file.",
+      "expectedGeneratedSemanticProjectionZh": "目标硬件标识加载列表块数目指针是自文件起始计的绝对 16 位字数。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00573",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-6-P033-PROSE-SENTENCE-001-B0745F7F3F78",
+      "sourceTextHash": "b0745f7f3f78ba977175ba276f08d6e58d947e0df9e0f38820cdd63063539702",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "MAY-GROW-FILE-FORMAT-AT-EXPANSION-POINTS",
+        "objects": [
+          "EXPANSION-POINTS"
+        ],
+        "observableEffect": "EXPANSION-POINT-GROWTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Expansion points are where later file-format versions may add new fields.",
+      "expectedGeneratedSemanticProjectionZh": "扩展点是后续文件格式版本可以新增字段的位置。",
+      "expectedSourceModality": "MAY",
+      "expectedConformanceEffect": "OPTIONAL",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00574",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-7-P033-PROSE-SENTENCE-001-85A74B75BC3D",
+      "sourceTextHash": "85a74b75bc3d57df8d803e643b7f6e6da0836bc6b31e02e81f33e5dbb01bf63f",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "EXCLUDE-NUL-PAD-FROM-BATCH-FILE-PN-LENGTH",
+        "objects": [
+          "BATCH-FILE-PN-LENGTH"
+        ],
+        "observableEffect": "BATCH-FILE-PN-LENGTH-EXCLUDES-NUL-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Batch File PN Length is the character count and shall exclude NULs appended to pad an odd character count.",
+      "expectedGeneratedSemanticProjectionZh": "批处理文件件号长度是字符数，不得计入为补齐奇数长度而追加的 NUL。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00575",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-001-CD2F980ECAAD",
+      "sourceTextHash": "cd2f980ecaadd0e469ad1bfeda89e6366d8eba7913ce1f2f8d77853f22cc3c08",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE-BATCH-FILE-PN-AS-8-BIT-ASCII",
+        "objects": [
+          "BATCH-FILE-PN"
+        ],
+        "observableEffect": "BATCH-FILE-PN-ASCII-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Batch File PN shall be 8-bit ASCII whose character count is given by Batch File PN Length.",
+      "expectedGeneratedSemanticProjectionZh": "批处理文件件号必须是 8 位 ASCII，字符数由批处理文件件号长度给出。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00576",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-002-14957CC0EE75",
+      "sourceTextHash": "14957cc0ee757b834539756b87c166982f2a440ac9e8d162672aa99a9be0e6e6",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ALLOCATE-BATCH-FILE-PN-EVEN-OCTET-WIDTH",
+        "objects": [
+          "BATCH-FILE-PN"
+        ],
+        "observableEffect": "BATCH-FILE-PN-EVEN-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The Batch File PN field shall be allocated an even number of bytes.",
+      "expectedGeneratedSemanticProjectionZh": "批处理文件件号字段必须分配偶数个字节。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00577",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-003-CA9D6749B1E7",
+      "sourceTextHash": "ca9d6749b1e7574c52662b879545db1acd6a1b4de30fe6409dac8c087d379cf9",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "PAD-ODD-BATCH-FILE-PN-WITH-NUL",
+        "objects": [
+          "BATCH-FILE-PN"
+        ],
+        "observableEffect": "BATCH-FILE-PN-NUL-PAD-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If the Batch File PN character count is odd, append one NUL.",
+      "expectedGeneratedSemanticProjectionZh": "若批处理文件件号字符数为奇数，则追加一个 NUL。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00578",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-9-P033-PROSE-SENTENCE-001-37210AE320F9",
+      "sourceTextHash": "37210ae320f9a02d758dc36d93e63f67345aac8c37896d3098f07782a2227a77",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "EXCLUDE-NUL-PAD-FROM-COMMENT-LENGTH",
+        "objects": [
+          "COMMENT-LENGTH"
+        ],
+        "observableEffect": "COMMENT-LENGTH-EXCLUDES-NUL-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Comment Length is the character count and shall exclude NULs appended to pad an odd character count.",
+      "expectedGeneratedSemanticProjectionZh": "注释长度是字符数，不得计入为补齐奇数长度而追加的 NUL。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00579",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-9-P033-PROSE-SENTENCE-002-DF06B1AE9E4A",
+      "sourceTextHash": "df06b1ae9e4ad29c30731fe29ce1bb4f7b5627881ad701315154fc79443f76cb",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "SET-COMMENT-LENGTH-ZERO-WHEN-NO-COMMENT",
+        "objects": [
+          "COMMENT-LENGTH"
+        ],
+        "observableEffect": "COMMENT-LENGTH-ZERO-WHEN-ABSENT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If the batch has no comment, Comment Length shall be zero.",
+      "expectedGeneratedSemanticProjectionZh": "若该批处理没有注释，注释长度必须为零。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00580",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-001-6238B2C14CAF",
+      "sourceTextHash": "6238b2c14caf2563a5557394a45989ed5d8b27fc0d3dcff73effa9b92b4dcb92",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE-COMMENT-AS-8-BIT-ASCII",
+        "objects": [
+          "COMMENT"
+        ],
+        "observableEffect": "COMMENT-ASCII-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The Comment field shall be 8-bit ASCII whose character count is given by Comment Length.",
+      "expectedGeneratedSemanticProjectionZh": "注释字段必须是 8 位 ASCII，字符数由注释长度给出。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00581",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-002-14957CC0EE75",
+      "sourceTextHash": "14957cc0ee757b834539756b87c166982f2a440ac9e8d162672aa99a9be0e6e6",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ALLOCATE-COMMENT-EVEN-OCTET-WIDTH",
+        "objects": [
+          "COMMENT"
+        ],
+        "observableEffect": "COMMENT-EVEN-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The Comment field shall be allocated an even number of bytes.",
+      "expectedGeneratedSemanticProjectionZh": "注释字段必须分配偶数个字节。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00582",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-003-CA9D6749B1E7",
+      "sourceTextHash": "ca9d6749b1e7574c52662b879545db1acd6a1b4de30fe6409dac8c087d379cf9",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "PAD-ODD-COMMENT-WITH-NUL",
+        "objects": [
+          "COMMENT"
+        ],
+        "observableEffect": "COMMENT-NUL-PAD-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If the Comment character count is odd, append one NUL.",
+      "expectedGeneratedSemanticProjectionZh": "若注释字符数为奇数，则追加一个 NUL。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00583",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-004-49D5CE38BD4B",
+      "sourceTextHash": "49d5ce38bd4b31cde3072cf0b0ac5e411b952751e8c903b57937156d9b6c8ef9",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "OMIT-COMMENT-FIELD-WHEN-COMMENT-LENGTH-ZERO",
+        "objects": [
+          "COMMENT"
+        ],
+        "observableEffect": "COMMENT-OMITTED-WHEN-LENGTH-ZERO-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If Comment Length is zero, the Comment field shall be omitted.",
+      "expectedGeneratedSemanticProjectionZh": "若注释长度为零，则必须省略注释字段。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00584",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-11-P033-PROSE-SENTENCE-001-B832BEAD3004",
+      "sourceTextHash": "b832bead3004b1a2024cf9a7574bfd7c58a5e9062983e38b955719527c9afca0",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "COUNT-TARGET-HW-ID-LOAD-LIST-BLOCKS-IN-BATCH-FILE",
+        "objects": [
+          "NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS"
+        ],
+        "observableEffect": "LOAD-LIST-BLOCK-COUNT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Number of Target HW ID Load-List Blocks is the count of load-list blocks in the batch file.",
+      "expectedGeneratedSemanticProjectionZh": "目标硬件标识加载列表块数目是该批处理文件中加载列表块的个数。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00585",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-12-P033-PROSE-SENTENCE-001-51F8853C49AB",
+      "sourceTextHash": "51f8853c49ab43550f534dc7056995464f07eef59960fcd3600dc3e1d17cb853",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "POINT-TO-NEXT-LOAD-LIST-BLOCK-IN-RELATIVE-16-BIT-WORDS",
+        "objects": [
+          "POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK"
+        ],
+        "observableEffect": "NEXT-LOAD-LIST-POINTER-RELATIVE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The next load-list-block pointer is a relative count of 16-bit words to the next load-list block.",
+      "expectedGeneratedSemanticProjectionZh": "下一加载列表块指针是到下一块的相对 16 位字数。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00586",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-13-P034-PROSE-SENTENCE-001-10A78FF7C992",
+      "sourceTextHash": "10a78ff7c992c0e176c06edd2d27674094fd22b6405f01a6a9d27b4615fa7929",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "EXCLUDE-NUL-PAD-FROM-TARGET-HW-ID-POS-LENGTH",
+        "objects": [
+          "TARGET-HW-ID-POS-LENGTH"
+        ],
+        "observableEffect": "TARGET-HW-ID-POS-LENGTH-EXCLUDES-NUL-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Target HW ID POS Length is the character count and shall exclude NULs appended to pad an odd character count.",
+      "expectedGeneratedSemanticProjectionZh": "Target HW ID POS 长度是字符数，不得计入为补齐奇数长度而追加的 NUL。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00587",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-001-6C46D8F794E1",
+      "sourceTextHash": "6c46d8f794e1718d74113e7002d876f47fc0bb7cbe1892b169e66036d904df15",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE-TARGET-HW-ID-POS-AS-8-BIT-ASCII",
+        "objects": [
+          "TARGET-HW-ID-POS"
+        ],
+        "observableEffect": "TARGET-HW-ID-POS-ASCII-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Target HW ID POS shall be 8-bit ASCII whose character count is given by Target HW ID POS Length.",
+      "expectedGeneratedSemanticProjectionZh": "Target HW ID POS 必须是 8 位 ASCII，字符数由 Target HW ID POS 长度给出。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00588",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-002-14957CC0EE75",
+      "sourceTextHash": "14957cc0ee757b834539756b87c166982f2a440ac9e8d162672aa99a9be0e6e6",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ALLOCATE-TARGET-HW-ID-POS-EVEN-OCTET-WIDTH",
+        "objects": [
+          "TARGET-HW-ID-POS"
+        ],
+        "observableEffect": "TARGET-HW-ID-POS-EVEN-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The Target HW ID POS field shall be allocated an even number of bytes.",
+      "expectedGeneratedSemanticProjectionZh": "Target HW ID POS 字段必须分配偶数个字节。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00589",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-003-CA9D6749B1E7",
+      "sourceTextHash": "ca9d6749b1e7574c52662b879545db1acd6a1b4de30fe6409dac8c087d379cf9",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "PAD-ODD-TARGET-HW-ID-POS-WITH-NUL",
+        "objects": [
+          "TARGET-HW-ID-POS"
+        ],
+        "observableEffect": "TARGET-HW-ID-POS-NUL-PAD-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If the Target HW ID POS character count is odd, append one NUL.",
+      "expectedGeneratedSemanticProjectionZh": "若 Target HW ID POS 字符数为奇数，则追加一个 NUL。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00590",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-007-F728BBF0BB35",
+      "sourceTextHash": "f728bbf0bb3574017cd4a6146a010f39257dab8dd7ffd9cb8e4eb17b78a957a4",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "KEEP-TARGET-HW-ID-POS-CONSISTENT-WITH-LISTED-LSP-HEADERS",
+        "objects": [
+          "TARGET-HW-ID-POS",
+          "HEADER-FILE-TARGET-HW-ID"
+        ],
+        "observableEffect": "TARGET-HW-ID-POS-HEADER-CONSISTENCY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Target HW ID POS values should stay consistent with the Target HW ID values in the header files of the LSPs listed under that target.",
+      "expectedGeneratedSemanticProjectionZh": "Target HW ID POS 应与该目标下列出的 LSP 头文件中的 Target HW ID 保持一致。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00591",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-15-P034-PROSE-SENTENCE-001-BE0892BD03B3",
+      "sourceTextHash": "be0892bd03b38879abf3b2c83aa3f8bd45af56403fdea8e9bb937d7a5abb390f",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "COUNT-LOADS-IN-THE-TARGET-HW-ID-LOAD-LIST-BLOCK",
+        "objects": [
+          "NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS"
+        ],
+        "observableEffect": "LOAD-COUNT-IN-BLOCK-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Number of Loads for Target HW ID POS is the count of loads in that target's load-list block.",
+      "expectedGeneratedSemanticProjectionZh": "目标硬件标识的加载数目是该目标加载列表块中的加载个数。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00592",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-16-P034-PROSE-SENTENCE-001-F71F4DF1A130",
+      "sourceTextHash": "f71f4df1a130b8bb18024fe94310f56d7f3e978ebd156d172bcacd9cce0fcea6",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "EXCLUDE-NUL-PAD-FROM-HEADER-FILE-NAME-LENGTH",
+        "objects": [
+          "HEADER-FILE-NAME-LENGTH"
+        ],
+        "observableEffect": "HEADER-FILE-NAME-LENGTH-EXCLUDES-NUL-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Header File Name Length is the character count and shall exclude NULs appended to pad an odd character count.",
+      "expectedGeneratedSemanticProjectionZh": "头文件名长度是字符数，不得计入为补齐奇数长度而追加的 NUL。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00593",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-002-EB03E6E8B2C2",
+      "sourceTextHash": "eb03e6e8b2c29e4087c97c4d5e54d5c2c9d1f706565265f75c02722f1634fc3a",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE-HEADER-FILE-NAME-AS-8-BIT-ASCII",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "observableEffect": "HEADER-FILE-NAME-ASCII-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Header File Name shall be 8-bit ASCII whose character count is given by Header File Name Length.",
+      "expectedGeneratedSemanticProjectionZh": "头文件名必须是 8 位 ASCII，字符数由头文件名长度给出。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00594",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-003-14957CC0EE75",
+      "sourceTextHash": "14957cc0ee757b834539756b87c166982f2a440ac9e8d162672aa99a9be0e6e6",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ALLOCATE-HEADER-FILE-NAME-EVEN-OCTET-WIDTH",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "observableEffect": "HEADER-FILE-NAME-EVEN-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The Header File Name field shall be allocated an even number of bytes.",
+      "expectedGeneratedSemanticProjectionZh": "头文件名字段必须分配偶数个字节。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00595",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-004-CA9D6749B1E7",
+      "sourceTextHash": "ca9d6749b1e7574c52662b879545db1acd6a1b4de30fe6409dac8c087d379cf9",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "PAD-ODD-HEADER-FILE-NAME-WITH-NUL",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "observableEffect": "HEADER-FILE-NAME-NUL-PAD-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If the Header File Name character count is odd, append one NUL.",
+      "expectedGeneratedSemanticProjectionZh": "若头文件名字符数为奇数，则追加一个 NUL。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00596",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-005-7FE318C16891",
+      "sourceTextHash": "7fe318c16891dda3bfe2ba9b074709d92eb0c2657ce1710b8bc8b5cbe3305c13",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "USE-HEADER-FILE-NAME-WITHOUT-PATH",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "observableEffect": "HEADER-FILE-NAME-NO-PATH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Header File Name is the file name only and shall omit path information.",
+      "expectedGeneratedSemanticProjectionZh": "头文件名只含文件名，不得包含路径信息。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00597",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-006-36F14C7EFAD7",
+      "sourceTextHash": "36f14c7efad7dd0ba215086d9e6a6a9a8b34241747662b11969d0b2cd7cce938",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "KEEP-HEADER-FILE-NAME-FREE-OF-BACKSLASH",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "observableEffect": "HEADER-FILE-NAME-NO-BACKSLASH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "A file name shall not begin with a backslash and shall not contain a backslash.",
+      "expectedGeneratedSemanticProjectionZh": "文件名不得以反斜杠开头，也不得包含反斜杠。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00598",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-007-3E0BD2C78076",
+      "sourceTextHash": "3e0bd2c7807634b695422ca9a46c20aaa37fbb0a662b184bc862dd3e3706e6c7",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "INCLUDE-HEADER-FILE-NAME-EXTENSIONS-AND-DELIMITERS",
+        "objects": [
+          "HEADER-FILE-NAME"
+        ],
+        "observableEffect": "HEADER-FILE-NAME-EXTENSIONS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "File names shall include all extensions and delimiters.",
+      "expectedGeneratedSemanticProjectionZh": "文件名必须包含全部扩展名与分隔符。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00599",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-18-P034-PROSE-SENTENCE-001-A0FF5B212350",
+      "sourceTextHash": "a0ff5b2123502894d0eaea2cb69cc6fa261f5f11446c5bbdde3f6dfeb9d187de",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "DEFINE-LOAD-PN-LENGTH-AS-CHARACTER-COUNT",
+        "objects": [
+          "LOAD-PN-LENGTH"
+        ],
+        "observableEffect": "LOAD-PN-LENGTH-CHARACTER-COUNT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Load PN Length is the number of characters in the Load PN.",
+      "expectedGeneratedSemanticProjectionZh": "Load PN 长度是 Load PN 的字符数。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00600",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-18-P034-PROSE-SENTENCE-002-AE35CDA97957",
+      "sourceTextHash": "ae35cda97957904eae9c1243240fd6c53400c00b7a60b250ba3371c5b6d857d4",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "EXCLUDE-NUL-PAD-FROM-LOAD-PN-LENGTH",
+        "objects": [
+          "LOAD-PN-LENGTH"
+        ],
+        "observableEffect": "LOAD-PN-LENGTH-EXCLUDES-NUL-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Load PN Length shall exclude NULs appended to pad an odd character count.",
+      "expectedGeneratedSemanticProjectionZh": "Load PN 长度不得计入为补齐奇数长度而追加的 NUL。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00601",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-002-2B0551BA0908",
+      "sourceTextHash": "2b0551ba09081fe6ab308070f40fc1161620554bf397b86ffc2b6c1457bc3b2b",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ENCODE-LOAD-PN-AS-8-BIT-ASCII",
+        "objects": [
+          "LOAD-PN"
+        ],
+        "observableEffect": "LOAD-PN-ASCII-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "Load PN shall be 8-bit ASCII whose character count is given by Load PN Length.",
+      "expectedGeneratedSemanticProjectionZh": "Load PN 必须是 8 位 ASCII，字符数由 Load PN 长度给出。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00602",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P035-PROSE-SENTENCE-005-7E047E5900B9",
+      "sourceTextHash": "7e047e5900b962ae45639af0c340a3d79bf77810446e28a9f7fb3ce379ee94ca",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "ALLOCATE-LOAD-PN-EVEN-OCTET-WIDTH",
+        "objects": [
+          "LOAD-PN"
+        ],
+        "observableEffect": "LOAD-PN-EVEN-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "The Load PN field shall be allocated an even number of bytes.",
+      "expectedGeneratedSemanticProjectionZh": "Load PN 字段必须分配偶数个字节。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
+    },
+    {
+      "requirementId": "CRS-M1-00603",
+      "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P035-PROSE-SENTENCE-006-CA9D6749B1E7",
+      "sourceTextHash": "ca9d6749b1e7574c52662b879545db1acd6a1b4de30fe6409dac8c087d379cf9",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
+        "action": "PAD-ODD-LOAD-PN-WITH-NUL",
+        "objects": [
+          "LOAD-PN"
+        ],
+        "observableEffect": "LOAD-PN-NUL-PAD-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If the Load PN character count is odd, append one NUL.",
+      "expectedGeneratedSemanticProjectionZh": "若 Load PN 字符数为奇数，则追加一个 NUL。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-6655"
+      ],
+      "expectedTriggerRelations": [],
+      "expectedRefinementDisposition": "PROFILE-SCOPE-ONLY",
+      "expectedRefinementRationaleEn": "ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement.",
+      "expectedRefinementRationaleZh": "ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。"
     }
   ],
   "networkReferenceReview": {

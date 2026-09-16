@@ -61,6 +61,8 @@ def test_package_a_sources_are_first_class_tasks_with_denominators() -> None:
             assert row["rationaleCode"]
             assert row["summaryEn"]
             assert row["summaryZh"]
+            if row["applicabilityDecision"] == "OUT-OF-PROFILE":
+                assert row["leafCrsStatus"] == "NOT-REQUIRED"
 
 
 def test_665_batch_file_is_inside_survey_and_media_set_was_readjudicated() -> None:
@@ -69,7 +71,7 @@ def test_665_batch_file_is_inside_survey_and_media_set_was_readjudicated() -> No
     batch = next(row for row in source["units"] if row["id"] == "SAU-665-2-3")
     media = next(row for row in source["units"] if row["id"] == "SAU-665-3")
     assert batch["pdfPages"] == [30, 35]
-    assert batch["leafCrsStatus"] == "PARTIAL-LEAF-CRS-EMITTED"
+    assert batch["leafCrsStatus"] == "LEAF-CRS-EMITTED"
     assert batch["leafCrsStatus"] != "LEAF-CRS-CLOSED"
     assert batch["applicabilityDecision"] == "APPLICABLE-SUPPORTING"
     crs = json.loads((ROOT / "configs/requirements/arinc_615a3_m1_crs.json").read_text(encoding="utf-8"))
@@ -79,6 +81,9 @@ def test_665_batch_file_is_inside_survey_and_media_set_was_readjudicated() -> No
     ]
     assert any(row["semantic"]["action"] == "DO-NOT-TRANSFER-BATCH-FILE-TO-TARGET-HARDWARE" for row in batch_reqs)
     assert any(row["semantic"]["action"] == "IDENTIFY-BATCH-FILE-WITH-LUB-EXTENSION" for row in batch_reqs)
+    assert any(row["semantic"]["action"] == "POINT-TO-BATCH-FILE-PN-LENGTH-FROM-START-IN-16-BIT-WORDS" for row in batch_reqs)
+    assert any(row["semantic"]["action"] == "OMIT-COMMENT-FIELD-WHEN-COMMENT-LENGTH-ZERO" for row in batch_reqs)
+    assert any(row["semantic"]["action"] == "KEEP-HEADER-FILE-NAME-FREE-OF-BACKSLASH" for row in batch_reqs)
     assert all(row["reviewStatus"] == "PENDING-EXTERNAL-INDEPENDENT-REVIEW" for row in batch_reqs)
     assert all(row["refinementDisposition"] in {"PROFILE-SCOPE-ONLY", "DEPENDENCY-BLOCKED"} for row in batch_reqs)
     table_rows = [
@@ -125,7 +130,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-8"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-9"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
