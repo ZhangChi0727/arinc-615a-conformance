@@ -26,22 +26,22 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "711c7b00429fd2e076b66fec7e6c87d7a75cc01d",
+        "gitBlobOid": "52a280ff3569ca227f8005528057d1eacce209dc",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_crs_package.schema.json",
-        "gitBlobOid": "f81fdeb26f538334754fffe27fdb45fc27569dc1",
+        "gitBlobOid": "645676599ee1993e55507bd06aecc0b9951ba6d9",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "d9809ef5e096be6217801231c8972dff928d14f1",
+        "gitBlobOid": "f7c04fba7f88445f8efc2335e2fcaa60ac3a24b8",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "457da2aa2a4fce1cf04f1a2ec9a55bde9069c7d9",
+        "gitBlobOid": "222e8aa758a434811d53f067fdbcbfec87b61bf5",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "8e706317990fd049d4e6359c21cdd2e4b6d6e889",
+        "gitBlobOid": "6cb42daf4a604404bd4e1cd6d21b9780f7a3b812",
         "role": "SUCCESSOR-M1-DELTA"
       }
     ],
@@ -148,8 +148,8 @@
           "role": "M1-IMMUTABLE-INPUT"
         }
       ],
-      "currentInputArtifactCommit": "bd24964d9b510ea0a435c81ecaac9dd968ba129d",
-      "currentInputArtifactTree": "1f42fc798c5cbb8fa31de3b9352cec6475c31103"
+      "currentInputArtifactCommit": "a9e8865d2a470053821a29a01771d9194a15599e",
+      "currentInputArtifactTree": "df6210d293ea1bbc2520ea486a33e4c453b1271f"
     }
   },
   "sequenceEndpointBindings": [
@@ -8550,6 +8550,42 @@
         "action": "MAY-ABORT-WRQ-WITH-ERROR-CODE-3",
         "predicateEn": "If the WRQ tsize is too large for the server, it MAY abort with ERROR code 3.",
         "predicateZh": "若 WRQ tsize 对服务器过大，服务器可以错误码 3 中止。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-TERMINATE-ON-DATA-SHORTER-THAN-NEGOTIATED-BLKSIZE-CRS-M1-00645",
+        "m1RequirementId": "CRS-M1-00645",
+        "objects": [
+          "TFTP-DATA",
+          "TFTP-NEGOTIATED-BLKSIZE"
+        ],
+        "action": "TERMINATE-ON-DATA-SHORTER-THAN-NEGOTIATED-BLKSIZE",
+        "predicateEn": "After blksize is accepted in OACK, a DATA packet shorter than that negotiated blocksize is the final block. A 700-octet DATA after blksize=1024 ends the transfer; a 256-octet DATA after blksize=256 does not.",
+        "predicateZh": "blksize 经 OACK 接受后，短于该协商块大小的 DATA 是最后块。协商 1024 后的 700 八位组 DATA 结束传输；协商 256 后的满 256 八位组 DATA 不结束。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-SEND-ZERO-LENGTH-FINAL-DATA-WHEN-FILE-IS-INTEGRAL-MULTIPLE-OF-BLKSIZE-CRS-M1-00646",
+        "m1RequirementId": "CRS-M1-00646",
+        "objects": [
+          "TFTP-DATA",
+          "TFTP-EFFECTIVE-BLKSIZE"
+        ],
+        "action": "SEND-ZERO-LENGTH-FINAL-DATA-WHEN-FILE-IS-INTEGRAL-MULTIPLE-OF-BLKSIZE",
+        "predicateEn": "If the file length is an integral multiple of the effective blocksize, an extra DATA packet containing no data is sent to end the transfer. Effective blocksize is 512 when blksize was not accepted, otherwise the OACK value.",
+        "predicateZh": "若文件长度是有效块大小的整数倍，须发送不含数据的额外 DATA 包结束传输。未接受 blksize 时有效块大小为 512，否则为 OACK 值。",
+        "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-IGNORE-UNACKNOWLEDGED-OPTION-AND-KEEP-DEFAULT-PARAMETERS-CRS-M1-00647",
+        "m1RequirementId": "CRS-M1-00647",
+        "objects": [
+          "TFTP-OPTION",
+          "TFTP-DEFAULT-512-BLKSIZE"
+        ],
+        "action": "IGNORE-UNACKNOWLEDGED-OPTION-AND-KEEP-DEFAULT-PARAMETERS",
+        "predicateEn": "An option not acknowledged by the server must be ignored by client and server as if it were never requested. Requesting blksize does not change the 512-octet default until that option is accepted in OACK.",
+        "predicateZh": "服务器未确认的选项必须被客户和服务器忽略，如同从未请求。仅请求 blksize 不得改变 512 八位组默认值，直至该选项在 OACK 中被接受。",
         "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
       }
     ],
@@ -18040,6 +18076,42 @@
       "modelTargetIds": [
         "OBJ-SUPPORTING-MAY-ABORT-WRQ-WITH-ERROR-CODE-3-CRS-M1-00644"
       ]
+    },
+    {
+      "requirementId": "CRS-M1-00645",
+      "sourceId": "RFC-2348",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-TERMINATE-ON-DATA-SHORTER-THAN-NEGOTIATED-BLKSIZE-CRS-M1-00645"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00646",
+      "sourceId": "RFC-2348",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-SEND-ZERO-LENGTH-FINAL-DATA-WHEN-FILE-IS-INTEGRAL-MULTIPLE-OF-BLKSIZE-CRS-M1-00646"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00647",
+      "sourceId": "RFC-2347",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-IGNORE-UNACKNOWLEDGED-OPTION-AND-KEEP-DEFAULT-PARAMETERS-CRS-M1-00647"
+      ]
     }
   ],
   "traceRelations": [
@@ -26193,6 +26265,39 @@
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
       "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00645-0846",
+      "requirementId": "CRS-M1-00645",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-TERMINATE-ON-DATA-SHORTER-THAN-NEGOTIATED-BLKSIZE-CRS-M1-00645",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00646-0847",
+      "requirementId": "CRS-M1-00646",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-SEND-ZERO-LENGTH-FINAL-DATA-WHEN-FILE-IS-INTEGRAL-MULTIPLE-OF-BLKSIZE-CRS-M1-00646",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00647-0848",
+      "requirementId": "CRS-M1-00647",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-IGNORE-UNACKNOWLEDGED-OPTION-AND-KEEP-DEFAULT-PARAMETERS-CRS-M1-00647",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     }
   ],
   "infrastructurePremises": [
@@ -26879,17 +26984,17 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 643,
-    "dispositionCount": 643,
-    "traceCount": 741,
+    "requirementCount": 646,
+    "dispositionCount": 646,
+    "traceCount": 744,
     "stateCount": 35,
     "transitionCount": 65,
     "timingCount": 26,
     "fieldConstraintCount": 108,
-    "dispositionsFingerprint": "dd8afe524603d8147ce649b8ed562dcd26b294c55c8e395a12588a8a5b02a33a",
-    "modelFingerprint": "7f9fa625e2065dda99cc2697866122c6f132bb2767866f3b6be9f089c964e8e6",
+    "dispositionsFingerprint": "811b09210ec755bf96070f74f1cd37cc9acd5a9285b621028945e52310a7730a",
+    "modelFingerprint": "279b793ab823d4a19e276d094396814430515db79c56c151ac486f96702ee217",
     "timingFingerprint": "91e71d517ccc388f446a681b7f13007a3de69e687e49fbb299c5df28430d1e92",
-    "inputFingerprint": "cf6ea044b3ee1b17a02fcd4cf8d385edfdd4c77cc5285327210d9831567dac48",
+    "inputFingerprint": "4b9d36301d6be14f0c05ec489e7ee714177ca2cc54ae63e5148fb0ab64ccdcb9",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
