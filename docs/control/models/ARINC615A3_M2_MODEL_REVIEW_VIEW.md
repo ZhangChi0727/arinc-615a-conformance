@@ -13,7 +13,7 @@
 - M1 NET-ISSUE-EDITION snapshot blocksM1Approval=`True` — Historical snapshot on the merged M1 tree. External owner sign-off and merge bound that Head. The boolean does not reopen the merge. CR-2026-009 accepted 664P3-1 as this M2 input edition; 664P7 remains recorded and AFDX stays unselected.
 - Successor delta `CR-2026-012` authorized by `CR-2026-009`; doesNotTransplantFrozenApproval=`True`
 - Predecessor input artifact commit `402e8371b0237aec4691bab0b44e502f4ac1a7c4` tree `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
-- Current input artifact commit `36d02a30ea25ce3022bc9666e90b9c3199839dc9` tree `a68242261a6468b583b42e8172e8de91e69dd1ff`
+- Current input artifact commit `afbb57711a6e2c1957987ea7bfad95dbf83cfb64` tree `29ff821cc9fffc03e58d6c4dbc89713bc0a8cf53`
 
 ## Scope
 
@@ -139,8 +139,8 @@
 | `EXCEPTION_TIMER` | s | MESSAGE-CARRIED-PARAMETER | None | Exception timer carried by LCS/LUS. |
 | `MESSAGE_TIMER_VALUE` | s | MESSAGE-CARRIED-PARAMETER | None | Wait-message timer value. |
 | `MAX_JITTER` | us | SYMBOLIC-SOURCE-PARAMETER | None | Observed max_jitter in the 664-7 End-System output formulas. |
-| `LMAX` | 1 | SYMBOLIC-SOURCE-PARAMETER | None | Lmax in octets in the load-dependent max_jitter summand. |
-| `NBW` | 1 | SYMBOLIC-SOURCE-PARAMETER | None | Medium bandwidth Nbw in bits/s. The load term is seconds before *1000000 conversion to us. |
+| `LMAX_I` | 1 | SYMBOLIC-SOURCE-PARAMETER | None | Per-VL maximum frame length Lmax_i in octets. Indexed over the configured VL set; values may differ. The 20-octet overhead is added inside the sum for each VL. |
+| `NBW` | 1 | SYMBOLIC-SOURCE-PARAMETER | None | Positive medium bandwidth Nbw in bits/s. The load term is seconds before *1000000 conversion to us. Division by zero is undefined. |
 | `FRAME_DELAY` | us | SYMBOLIC-SOURCE-PARAMETER | None | Frame delay added to the 150 us TX technological-latency bound. |
 | `TECH_LAT_TX` | us | SYMBOLIC-SOURCE-PARAMETER | None | Measured TX technological latency between the named endpoints. |
 | `TECH_LAT_RX` | us | SYMBOLIC-SOURCE-PARAMETER | None | Measured RX technological latency between the named endpoints. |
@@ -656,7 +656,7 @@
 | `TIM-CRS-M1-00521` | `CRS-M1-00521` | `CLK_FIND` | CONSTANT-DEFINITION | 3..3 s | `{"kind":"COMPARE","op":"EQ","left":{"kind":"CLOCK","name":"CLK_FIND"},"right":{"kind":"LITERAL","value":3,"unit":"s"}}` | — | CLOSED/CLOSED | `CONSTANT-DEFINITION` | FIND-REGISTRATION-CLOSE-AT-EXPIRY |
 | `TIM-CRS-M1-00682` | `CRS-M1-00682` | `CLK_AFDX_ES` | SOURCE-EQUATION | 0..ONE-HUNDRED-FIFTY-MICROSECONDS-PLUS-FRAME-DELAY us | `{"kind":"COMPARE","op":"LT","left":{"kind":"SYMBOL","name":"TECH_LAT_TX","unit":"us"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"LITERAL","value":150,"unit":"us"},"right":{"kind":"SYMBOL","name":"FRAME_DELAY","unit":"us"},"unit":"us"}}` | — | CLOSED/OPEN | `EQUATION-STRUCTURAL` | AFDX-TX-TECH-LATENCY-STRICT-OPEN-BOUND |
 | `TIM-CRS-M1-00683` | `CRS-M1-00683` | `CLK_AFDX_ES` | SOURCE-EQUATION | 0..150 us | `{"kind":"COMPARE","op":"LT","left":{"kind":"SYMBOL","name":"TECH_LAT_RX","unit":"us"},"right":{"kind":"LITERAL","value":150,"unit":"us"}}` | — | CLOSED/OPEN | `EQUATION-STRUCTURAL` | AFDX-RX-TECH-LATENCY-STRICT-OPEN-BOUND |
-| `TIM-CRS-M1-00684` | `CRS-M1-00684` | `CLK_AFDX_ES` | SOURCE-EQUATION | 0..FORTY-MICROSECONDS-PLUS-CONVERTED-VL-LOAD-TERM us | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"MAX_JITTER","unit":"us"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"LITERAL","value":40,"unit":"us"},"right":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"DIV","left":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"ADD","left":{"kind":"LITERAL","value":20,"unit":"1"},"right":{"kind":"SYMBOL","name":"LMAX","unit":"1"},"unit":"1"},"right":{"kind":"LITERAL","value":8,"unit":"1"},"unit":"1"},"right":{"kind":"SYMBOL","name":"NBW","unit":"1"},"unit":"s"},"right":{"kind":"LITERAL","value":1000000,"unit":"1"},"unit":"us"},"unit":"us"}}` | — | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | AFDX-MAX-JITTER-LOAD-EQUATION |
+| `TIM-CRS-M1-00684` | `CRS-M1-00684` | `CLK_AFDX_ES` | SOURCE-EQUATION | 0..FORTY-MICROSECONDS-PLUS-CONVERTED-VL-LOAD-TERM us | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"MAX_JITTER","unit":"us"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"LITERAL","value":40,"unit":"us"},"right":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"DIV","left":{"kind":"BINARY","op":"MUL","left":{"kind":"LITERAL","value":8,"unit":"1"},"right":{"kind":"SUM","index":"I","domain":"CONFIGURED-VL-SET","unit":"1","body":{"kind":"BINARY","op":"ADD","left":{"kind":"LITERAL","value":20,"unit":"1"},"right":{"kind":"SYMBOL","name":"LMAX_I","unit":"1"},"unit":"1"}},"unit":"1"},"right":{"kind":"SYMBOL","name":"NBW","unit":"1"},"unit":"s"},"right":{"kind":"LITERAL","value":1000000,"unit":"1"},"unit":"us"},"unit":"us"}}` | — | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | AFDX-MAX-JITTER-LOAD-EQUATION |
 | `TIM-CRS-M1-00685` | `CRS-M1-00685` | `CLK_AFDX_ES` | SOURCE-EQUATION | 0..500 us | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"MAX_JITTER","unit":"us"},"right":{"kind":"LITERAL","value":500,"unit":"us"}}` | — | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | AFDX-MAX-JITTER-500US-EQUATION |
 
 ## Requirement dispositions
@@ -2351,7 +2351,7 @@
 - M1 NET-ISSUE-EDITION 快照 blocksM1Approval=`True` — 已合并 M1 树上的历史快照。外部所有者签署与合并绑定了该 Head。该布尔值不重开合并。CR-2026-009 接受 664P3-1 作为本 M2 输入版次；664P7 保持已登记且 AFDX 未选。
 - 后继增量 `CR-2026-012` 由 `CR-2026-009` 授权；doesNotTransplantFrozenApproval=`True`
 - 前序输入制品提交 `402e8371b0237aec4691bab0b44e502f4ac1a7c4` 树 `26ea73a18fafbd4ba93c9dbb2890eb8453b0ad97`
-- 当前输入制品提交 `36d02a30ea25ce3022bc9666e90b9c3199839dc9` 树 `a68242261a6468b583b42e8172e8de91e69dd1ff`
+- 当前输入制品提交 `afbb57711a6e2c1957987ea7bfad95dbf83cfb64` 树 `29ff821cc9fffc03e58d6c4dbc89713bc0a8cf53`
 
 ## 范围
 
@@ -2477,8 +2477,8 @@
 | `EXCEPTION_TIMER` | s | MESSAGE-CARRIED-PARAMETER | None | 由 LCS/LUS 携带的异常定时器。 |
 | `MESSAGE_TIMER_VALUE` | s | MESSAGE-CARRIED-PARAMETER | None | 等待消息定时器值。 |
 | `MAX_JITTER` | us | SYMBOLIC-SOURCE-PARAMETER | None | 664-7 端系统输出公式中的观测 max_jitter。 |
-| `LMAX` | 1 | SYMBOLIC-SOURCE-PARAMETER | None | 负载相关 max_jitter 加项中以八位组计的 Lmax。 |
-| `NBW` | 1 | SYMBOLIC-SOURCE-PARAMETER | None | 介质带宽 Nbw，单位比特每秒。负载项在乘 1000000 换成微秒前是秒。 |
+| `LMAX_I` | 1 | SYMBOLIC-SOURCE-PARAMETER | None | 各 VL 最大帧长 Lmax_i，以八位组计。在已配置 VL 集合上索引，取值可以不同。每个 VL 的 20 八位组开销加在求和内部。 |
+| `NBW` | 1 | SYMBOLIC-SOURCE-PARAMETER | None | 为正的介质带宽 Nbw，单位比特每秒。负载项在乘 1000000 换成微秒前是秒。除以零无定义。 |
 | `FRAME_DELAY` | us | SYMBOLIC-SOURCE-PARAMETER | None | 加到发送方向 150 微秒技术时延上界上的帧时延。 |
 | `TECH_LAT_TX` | us | SYMBOLIC-SOURCE-PARAMETER | None | 在具名端点之间测得的发送方向技术时延。 |
 | `TECH_LAT_RX` | us | SYMBOLIC-SOURCE-PARAMETER | None | 在具名端点之间测得的接收方向技术时延。 |
@@ -2994,7 +2994,7 @@
 | `TIM-CRS-M1-00521` | `CRS-M1-00521` | `CLK_FIND` | CONSTANT-DEFINITION | 3..3 s | `{"kind":"COMPARE","op":"EQ","left":{"kind":"CLOCK","name":"CLK_FIND"},"right":{"kind":"LITERAL","value":3,"unit":"s"}}` | — | CLOSED/CLOSED | `CONSTANT-DEFINITION` | FIND-REGISTRATION-CLOSE-AT-EXPIRY |
 | `TIM-CRS-M1-00682` | `CRS-M1-00682` | `CLK_AFDX_ES` | SOURCE-EQUATION | 0..ONE-HUNDRED-FIFTY-MICROSECONDS-PLUS-FRAME-DELAY us | `{"kind":"COMPARE","op":"LT","left":{"kind":"SYMBOL","name":"TECH_LAT_TX","unit":"us"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"LITERAL","value":150,"unit":"us"},"right":{"kind":"SYMBOL","name":"FRAME_DELAY","unit":"us"},"unit":"us"}}` | — | CLOSED/OPEN | `EQUATION-STRUCTURAL` | AFDX-TX-TECH-LATENCY-STRICT-OPEN-BOUND |
 | `TIM-CRS-M1-00683` | `CRS-M1-00683` | `CLK_AFDX_ES` | SOURCE-EQUATION | 0..150 us | `{"kind":"COMPARE","op":"LT","left":{"kind":"SYMBOL","name":"TECH_LAT_RX","unit":"us"},"right":{"kind":"LITERAL","value":150,"unit":"us"}}` | — | CLOSED/OPEN | `EQUATION-STRUCTURAL` | AFDX-RX-TECH-LATENCY-STRICT-OPEN-BOUND |
-| `TIM-CRS-M1-00684` | `CRS-M1-00684` | `CLK_AFDX_ES` | SOURCE-EQUATION | 0..FORTY-MICROSECONDS-PLUS-CONVERTED-VL-LOAD-TERM us | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"MAX_JITTER","unit":"us"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"LITERAL","value":40,"unit":"us"},"right":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"DIV","left":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"ADD","left":{"kind":"LITERAL","value":20,"unit":"1"},"right":{"kind":"SYMBOL","name":"LMAX","unit":"1"},"unit":"1"},"right":{"kind":"LITERAL","value":8,"unit":"1"},"unit":"1"},"right":{"kind":"SYMBOL","name":"NBW","unit":"1"},"unit":"s"},"right":{"kind":"LITERAL","value":1000000,"unit":"1"},"unit":"us"},"unit":"us"}}` | — | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | AFDX-MAX-JITTER-LOAD-EQUATION |
+| `TIM-CRS-M1-00684` | `CRS-M1-00684` | `CLK_AFDX_ES` | SOURCE-EQUATION | 0..FORTY-MICROSECONDS-PLUS-CONVERTED-VL-LOAD-TERM us | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"MAX_JITTER","unit":"us"},"right":{"kind":"BINARY","op":"ADD","left":{"kind":"LITERAL","value":40,"unit":"us"},"right":{"kind":"BINARY","op":"MUL","left":{"kind":"BINARY","op":"DIV","left":{"kind":"BINARY","op":"MUL","left":{"kind":"LITERAL","value":8,"unit":"1"},"right":{"kind":"SUM","index":"I","domain":"CONFIGURED-VL-SET","unit":"1","body":{"kind":"BINARY","op":"ADD","left":{"kind":"LITERAL","value":20,"unit":"1"},"right":{"kind":"SYMBOL","name":"LMAX_I","unit":"1"},"unit":"1"}},"unit":"1"},"right":{"kind":"SYMBOL","name":"NBW","unit":"1"},"unit":"s"},"right":{"kind":"LITERAL","value":1000000,"unit":"1"},"unit":"us"},"unit":"us"}}` | — | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | AFDX-MAX-JITTER-LOAD-EQUATION |
 | `TIM-CRS-M1-00685` | `CRS-M1-00685` | `CLK_AFDX_ES` | SOURCE-EQUATION | 0..500 us | `{"kind":"COMPARE","op":"LE","left":{"kind":"SYMBOL","name":"MAX_JITTER","unit":"us"},"right":{"kind":"LITERAL","value":500,"unit":"us"}}` | — | CLOSED/CLOSED | `EQUATION-STRUCTURAL` | AFDX-MAX-JITTER-500US-EQUATION |
 
 ## 需求处置
