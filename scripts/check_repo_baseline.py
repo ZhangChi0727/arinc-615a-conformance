@@ -544,7 +544,198 @@ def _count_field(rows, key: str) -> dict[str, int]:
     return counts
 
 
-def protocol_source_audit_errors(audit: dict, crs: dict) -> list[str]:
+def leaf_unit_hash(text: str) -> str:
+    """ARINC-LEAF-UNIT-NFC-LF-HWS-v2: NFC, LF, collapse horizontal whitespace, SHA-256."""
+    canon = unicodedata.normalize("NFC", text.replace("\r\n", "\n").replace("\r", "\n"))
+    canon = re.sub(r"[ \t]+", " ", canon).strip()
+    return hashlib.sha256(canon.encode("utf-8")).hexdigest()
+
+
+def is_complete_prose_sentence(text: str) -> bool:
+    """True for a finished prose sentence. Truncated lead-ins and heading fragments fail."""
+    compact = re.sub(r"\s+", " ", str(text or "")).strip()
+    if len(compact) < 40:
+        return False
+    stripped = compact.rstrip('"').rstrip("'")
+    if stripped.endswith("to include") or stripped.endswith("as follows"):
+        return False
+    if stripped.endswith(":"):
+        return False
+    return bool(re.search(r"[.!?]$", stripped))
+
+
+SUPPORTING_SOURCE_STATUSES = {"BOUNDED-AUDIT-COMPLETE"}
+SUPPORTING_LEAF_STATUSES = {
+    "NOT-REQUIRED",
+    "LEAF-CRS-EMITTED",
+    "EXISTING-351-TRIGGERED-ROWS",
+    "EXISTING-LEAF-VIA-2-1-2",
+    "EXISTING-615A-LEAF",
+    "CRS-M1-00519-REMAINS-NOT-YET-BOUND",
+}
+
+
+def supporting_scope_source_ids(register: dict | None = None) -> set[str]:
+    """Supporting-source scope from the controlled register, not a counted whitelist."""
+    register = CONTROLLED_SOURCES if register is None else register
+    ids: set[str] = set()
+    for row in register.get("sources") or []:
+        if not isinstance(row, dict):
+            continue
+        if row.get("role") == "CURRENT-PROTOCOL-AUTHORITY":
+            continue
+        source_id = row.get("id")
+        if isinstance(source_id, str) and source_id:
+            ids.add(source_id)
+    for row in register.get("openDependencies") or []:
+        if not isinstance(row, dict):
+            continue
+        source_id = row.get("id")
+        if isinstance(source_id, str) and source_id.startswith("RFC-"):
+            ids.add(source_id)
+    return ids
+
+
+def _register_source_digest(register: dict, source_id: str) -> str | None:
+    for row in register.get("sources") or []:
+        if isinstance(row, dict) and row.get("id") == source_id:
+            digest = row.get("sha256")
+            return str(digest) if digest else None
+    for row in register.get("openDependencies") or []:
+        if not isinstance(row, dict) or row.get("id") != source_id:
+            continue
+        retrieval = row.get("publicRetrieval") or {}
+        digest = retrieval.get("retrievedSha256")
+        return str(digest) if digest else None
+    return None
+
+
+def supporting_source_audit_errors(
+    audit: dict,
+    crs: dict,
+    register: dict | None = None,
+) -> list[str]:
+    """Structural supporting-source audit gate. Does not prove source-text completeness."""
+    errors: list[str] = []
+    register = CONTROLLED_SOURCES if register is None else register
+    supporting = audit.get("supportingSourceApplicabilityAudit")
+    if supporting is None:
+        errors.append("supportingSourceApplicabilityAudit is required")
+        return errors
+    if not isinstance(supporting, dict):
+        errors.append("supportingSourceApplicabilityAudit must be an object")
+        return errors
+    if supporting.get("notIndependentApproval") is not True:
+        errors.append("supporting-source audit must not claim independent approval")
+    blocked = audit.get("blockedSource") or {}
+    if "645BindingThisPr" in supporting and supporting.get("645BindingThisPr") is not False:
+        if blocked.get("boundThisPr") is not True:
+            errors.append("supporting-source audit must not bind ARINC 645 in this PR")
+    sources = supporting.get("sources")
+    if not isinstance(sources, list):
+        errors.append("supporting-source audit sources must be a list")
+        return errors
+    if not sources:
+        errors.append("supporting-source audit sources must be non-empty")
+        return errors
+    expected_ids = supporting_scope_source_ids(register)
+    recorded_ids: list[str] = []
+    seen_source: set[str] = set()
+    seen_units: set[str] = set()
+    coverage_by_id = {row["id"]: row for row in crs.get("coverageLedger") or [] if isinstance(row, dict) and row.get("id")}
+    req_by_id = {row["id"]: row for row in crs.get("requirements") or [] if isinstance(row, dict) and row.get("id")}
+    for index, source in enumerate(sources):
+        if not isinstance(source, dict):
+            errors.append(f"supporting-source audit sources[{index}] must be an object")
+            continue
+        source_id = source.get("sourceId")
+        if not isinstance(source_id, str) or not source_id:
+            errors.append(f"supporting-source audit sources[{index}] is missing sourceId")
+            continue
+        if source_id in seen_source:
+            errors.append(f"supporting-source audit contains duplicate sourceId {source_id}")
+        seen_source.add(source_id)
+        recorded_ids.append(source_id)
+        if source.get("status") not in SUPPORTING_SOURCE_STATUSES:
+            errors.append(f"supporting-source {source_id} status is not a declared supporting-audit value")
+        if source.get("independentApproval") is not False:
+            errors.append(f"supporting-source {source_id} must not claim independent approval")
+        expected_digest = _register_source_digest(register, source_id)
+        recorded_digest = source.get("sha256")
+        if expected_digest and recorded_digest and recorded_digest != expected_digest:
+            errors.append(f"supporting-source {source_id} sha256 does not match the controlled register")
+        units = source.get("units")
+        if not isinstance(units, list) or not units:
+            errors.append(f"supporting-source {source_id} units must be a non-empty list")
+            continue
+        denom = source.get("coverageDenominator") or {}
+        if denom.get("count") != len(units):
+            errors.append(f"supporting-source {source_id} coverageDenominator.count does not match units")
+        unit_ids: list[str] = []
+        for unit_index, unit in enumerate(units):
+            if not isinstance(unit, dict):
+                errors.append(f"supporting-source {source_id} units[{unit_index}] must be an object")
+                continue
+            unit_id = unit.get("id")
+            if not isinstance(unit_id, str) or not unit_id:
+                errors.append(f"supporting-source {source_id} contains a unit without id")
+                continue
+            if unit_id in seen_units or unit_id in unit_ids:
+                errors.append(f"supporting-source audit contains duplicate unit id {unit_id}")
+            seen_units.add(unit_id)
+            unit_ids.append(unit_id)
+            leaf_status = unit.get("leafCrsStatus")
+            if leaf_status not in SUPPORTING_LEAF_STATUSES:
+                errors.append(f"supporting-source unit {unit_id} has undeclared leafCrsStatus")
+                continue
+            if leaf_status != "LEAF-CRS-EMITTED":
+                continue
+            leaf_cov = unit.get("leafCoverageIds")
+            leaf_req = unit.get("leafRequirementIds")
+            if not isinstance(leaf_cov, list) or not leaf_cov:
+                errors.append(f"supporting-source unit {unit_id} LEAF-CRS-EMITTED is missing leafCoverageIds")
+                continue
+            if len(leaf_cov) != len(set(leaf_cov)):
+                errors.append(f"supporting-source unit {unit_id} leafCoverageIds contains duplicates")
+            expected_req: list[str] = []
+            for cov_id in leaf_cov:
+                if not isinstance(cov_id, str) or cov_id not in coverage_by_id:
+                    errors.append(f"supporting-source unit {unit_id} leaf coverage {cov_id} is absent from the bound CRS ledger")
+                    continue
+                coverage = coverage_by_id[cov_id]
+                cov_source = (coverage.get("source") or {}).get("sourceId")
+                if cov_source != source_id:
+                    errors.append(f"supporting-source unit {unit_id} leaf coverage {cov_id} is from {cov_source}")
+                for req_id in coverage.get("requirementIds") or []:
+                    if req_id not in expected_req:
+                        expected_req.append(req_id)
+            if not isinstance(leaf_req, list):
+                errors.append(f"supporting-source unit {unit_id} LEAF-CRS-EMITTED is missing leafRequirementIds")
+                continue
+            if len(leaf_req) != len(set(leaf_req)):
+                errors.append(f"supporting-source unit {unit_id} leafRequirementIds contains duplicates")
+            if set(leaf_req) != set(expected_req):
+                errors.append(
+                    f"supporting-source unit {unit_id} leafRequirementIds do not match the bound coverage requirement set"
+                )
+            for req_id in leaf_req:
+                if req_id not in req_by_id:
+                    errors.append(f"supporting-source unit {unit_id} leaf requirement {req_id} is absent from the bound CRS package")
+                    continue
+                req = req_by_id[req_id]
+                req_source = (req.get("source") or {}).get("sourceId")
+                if req_source != source_id:
+                    errors.append(f"supporting-source unit {unit_id} leaf requirement {req_id} is from {req_source}")
+    extra = set(recorded_ids) - expected_ids
+    missing = expected_ids - set(recorded_ids)
+    if extra:
+        errors.append("supporting-source audit contains sources outside the controlled supporting scope")
+    if missing:
+        errors.append("supporting-source audit is missing sources from the controlled supporting scope")
+    return errors
+
+
+def protocol_source_audit_errors(audit: dict, crs: dict, register: dict | None = None) -> list[str]:
     """Row-level navigation identity of the deferred ledger. Not a source-semantics proof."""
     errors: list[str] = []
     status = audit.get("status")
@@ -668,6 +859,7 @@ def protocol_source_audit_errors(audit: dict, crs: dict) -> list[str]:
         for row_id in generated_ids_by_code.get(code) or []:
             if row_id not in ledger:
                 errors.append(f"{code} generated inventory id {row_id} is absent from the bound CRS ledger")
+    errors.extend(supporting_source_audit_errors(audit, crs, register))
     return errors
 
 

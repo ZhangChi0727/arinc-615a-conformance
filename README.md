@@ -56,7 +56,7 @@ silently redefine the Core.
 - Adopt CL-TAV as the successor research method (CR-2026-012 / DD-028). First-version algorithm direction was accepted 2026-09-14 in DD-029; that is not independent mathematical or RG approval.
 - Expand protocol CRS so INFORMATION, UPLOAD, Media Defined DOWNLOAD, Operator Defined DOWNLOAD, FIND and source-stated abort/reject/exception/retry obligations are audited. Conditional network variants stay separate from the current Compliant instance. ARINC 645 unique algorithm details remain BLOCKED-SOURCE-645: locally acquired, not bound in this PR.
 - Keep protocol CRS semantically complete in this PR, but write new rows only after source-unit audit. Tool requirements, verification specifications, interface/configuration contracts and development-ready acceptance belong to a later PR after this CRS is independently accepted. Old M2 does not automatically cover the new scope.
-- Correct remaining RR-CLTAV-2026-008 Must item, then continue Package B: FIND abort does not waive the 2 s host / 3 s registration clocks. Current inventory is M1-CANDIDATE-8 with 2871 coverage / 566 requirements, including 665 §2.3 batch-file leaf CRS that is partial (Table 2.3.1-1 field constraints emitted; remaining field-prose open). instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 still does not execute FIND, DOWNLOAD or AFDX (65 transitions, 26 observational timing rows). ARINC 645 is locally acquired and not bound. This Draft candidate is not independent architecture, mathematical or RG approval.
+- Correct RR-CLTAV-2026-010 source-bind and production-gate findings on the unique Draft PR. Current inventory is M1-CANDIDATE-10 with 2933 coverage / 643 requirements, including 665 §2.3 batch-file leaves and rebound 664/RFC atomic encoding, range and request/response leaves. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 still does not execute FIND, DOWNLOAD or AFDX (65 transitions, 26 observational timing rows). ARINC 645 is locally acquired and not bound. This Draft candidate is not independent architecture, mathematical or RG approval.
 
 State changes:
 
@@ -73,12 +73,12 @@ Unchanged boundaries:
 
 ## Current stop
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3 implementation. PR #14 recorded a bounded M2 ordinary merge; that approval is not transplanted onto expanded CRS. The CL-TAV Draft candidate is M1-CANDIDATE-8 with FIND abort non-waiver and partial 665 section 2.3 leaf CRS; it is not method/paper/expanded-CRS approval. Independent review must pass, and merge requires explicit authorization. Do not Ready, merge or tag on this increment. The 2026-09-14 DD-029 design-direction acceptance is not independent approval.
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3 implementation. PR #14 recorded a bounded M2 ordinary merge; that approval is not transplanted onto expanded CRS. The CL-TAV Draft candidate is M1-CANDIDATE-10 with FIND abort non-waiver and rebound 664/RFC atomic leaves; it is not method/paper/expanded-CRS approval. Independent review must pass, and merge requires explicit authorization. Do not Ready, merge or tag on this increment. The 2026-09-14 DD-029 design-direction acceptance is not independent approval.
 
 ## Next development steps
 
 - Request complete-range RG0/RG1 and method/math/architecture/experiment review on the unique Draft PR. Keep independentMathematicalApproval and independentReviewApproval false. Do not Ready, merge, tag or start M3.
-- Keep 665 section 2.3 partial (not leaf-CRS-closed). ARINC 645 stays acquired-not-bound. Bound M2 stays UPLOAD/INFORMATION.
+- Keep 665 section 2.3 emitted-not-closed. ARINC 645 stays acquired-not-bound. Bound M2 stays UPLOAD/INFORMATION. FIND clock limited approval stays closed.
 
 ## 当前开发图景
 
@@ -107,7 +107,7 @@ Unchanged boundaries:
 - 以 CL-TAV 为后继研究方法（CR-2026-012／DD-028）。首版算法方向已于 2026-09-14 在 DD-029 接受；那不是独立数学或 RG 批准。
 - 扩大协议 CRS，使 INFORMATION、UPLOAD、Media Defined DOWNLOAD、Operator Defined DOWNLOAD、FIND 及来源已规定的中断／拒绝／异常／重试义务接受审计。条件化网络变体与当前 Compliant 实例分开。ARINC 645 独有算法细节保持 BLOCKED-SOURCE-645：本地已取得，本 PR 不绑定。
 - 本 PR 的协议 CRS 必须语义正确且范围完整，但新行只能在来源单元审计之后撰写。工具需求、验证规格、接口／配置契约和开发就绪验收属于扩大 CRS 被独立接受之后的后继 PR。旧 M2 不会自动覆盖新范围。
-- 已按 RR-CLTAV-2026-008 剩余 Must 继续包 B：FIND 中止不豁免 2 秒主机／3 秒登记时钟。当前清单为 M1-CANDIDATE-8，2871 条 coverage／566 条需求，含 665 §2.3 批处理文件叶级 CRS（部分完成：表 2.3.1-1 字段约束已发出，其余字段散文仍开放）。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 仍不执行 FIND、DOWNLOAD 或 AFDX（65 个迁移，26 条观察时序）。ARINC 645 本地已取得但未绑定。本 Draft 候选不是独立架构、数学或 RG 批准。
+- 已按 RR-CLTAV-2026-010 纠正来源绑定与生产门禁。当前清单为 M1-CANDIDATE-10，2933 条 coverage／643 条需求，含 665 §2.3 批处理文件叶与经重绑的 664／RFC 原子编码、值域与请求／应答叶。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 仍不执行 FIND、DOWNLOAD 或 AFDX（65 个迁移，26 条观察时序）。ARINC 645 本地已取得但未绑定。本 Draft 候选不是独立架构、数学或 RG 批准。
 
 状态变化：
 
@@ -124,12 +124,12 @@ Unchanged boundaries:
 
 ## 当前停点
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3 实现。PR #14 记录了有界 M2 普通合并；该批准不移植到扩大 CRS。CL-TAV Draft 候选为 M1-CANDIDATE-8，含 FIND 中止不豁免与部分 665 §2.3 叶级 CRS，不是方法／论文／扩大 CRS 批准。须通过独立评审，合并须明确授权。本增量不转 Ready、不合并、不打标签。2026-09-14 对 DD-029 的设计方向接受不是独立批准。
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3 实现。PR #14 记录了有界 M2 普通合并；该批准不移植到扩大 CRS。CL-TAV Draft 候选为 M1-CANDIDATE-10，含 FIND 中止不豁免与经重绑的 664／RFC 原子叶，不是方法／论文／扩大 CRS 批准。须通过独立评审，合并须明确授权。本增量不转 Ready、不合并、不打标签。2026-09-14 对 DD-029 的设计方向接受不是独立批准。
 
 ## 下一步开发计划
 
 - 在唯一 Draft PR 上请求完整范围 RG0／RG1 以及方法／数学／架构／实验评审。保持 independentMathematicalApproval 与 independentReviewApproval 为 false。不转 Ready、不合并、不打标签、不启动 M3。
-- 665 §2.3 保持部分完成（不是叶级 CRS 已闭合）。ARINC 645 保持已取得未绑定。绑定 M2 仍为 UPLOAD／INFORMATION。
+- 665 §2.3 保持已发出未闭合。ARINC 645 保持已取得未绑定。绑定 M2 仍为 UPLOAD／INFORMATION。FIND 时钟有限批准保持关闭。
 <!-- project-status:end -->
 
 ## Read by role / 按角色继续阅读

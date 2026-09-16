@@ -9,15 +9,15 @@
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
     "artifactVersion": "M1-CANDIDATE-10",
-    "coverageCount": 2916,
-    "requirementCount": 626,
-    "coverageFingerprint": "a246c61a3790efac6caacc29d29a2688281db6365fe3540e09748c65636b9f65",
-    "requirementsFingerprint": "54b5e3a60e282a463e53370939e51f9a8135895d8ee3b4925e54c071d3cd46e4",
+    "coverageCount": 2933,
+    "requirementCount": 643,
+    "coverageFingerprint": "48786e0e3328ab90f3cc9b61355dd281a2c633bc7adee64a06c1c18bd70fa25f",
+    "requirementsFingerprint": "9583de498ddd0fdc161448de23701d8d3b62a3af300eb1e6965571351c6cc787",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "Package B increment: remaining triggered 664 P2/P3/P7 and RFC leaf CRS are emitted. INFORMATIVE units are coverage-only. 664-4/CRS-M1-00519 stays unbound. 645 stays acquired-not-bound. RFC/664-3/664-7 capabilities remain NOT-ESTABLISHED. This is not independent RG approval and does not authorize merge."
+    "note": "RR-CLTAV-2026-010 correction: RFC/664 leaves rebound to complete source sentences with atomic encoding/range/request-response obligations. INFORMATIVE units stay coverage-only. 664-4/CRS-M1-00519 stays unbound. 645 stays acquired-not-bound. RFC/664-3/664-7 capabilities remain NOT-ESTABLISHED. This is not independent RG approval."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -27,13 +27,13 @@
     "Ordinary Ethernet, Compliant, Profiled and AFDX stay separate configuration dimensions."
   ],
   "summary": {
-    "coverageCount": 2916,
-    "requirementCount": 626,
+    "coverageCount": 2933,
+    "requirementCount": 643,
     "applicabilityDecisions": {
       "OUT-OF-PROFILE": 973,
-      "APPLICABLE-SUPPORTING": 1268,
+      "APPLICABLE-SUPPORTING": 1282,
       "APPLICABLE-BASE": 286,
-      "CONDITIONAL": 389
+      "CONDITIONAL": 392
     },
     "rationaleCodes": {
       "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE": 902,
@@ -70,37 +70,33 @@
       "P3-MAPS-615A-DATALOADER-SERVICE": 1,
       "P3-TFTP-POINTS-BACK-TO-615A": 1,
       "UDP-MINIMUM-TRANSPORT": 1,
-      "IPV4-AND-FRAGMENT-RECONCILIATION": 1,
+      "IPV4-AND-FRAGMENT-RECONCILIATION": 2,
       "ARP-DEPLOYMENT-SELECTION": 1,
       "AFDX-END-SYSTEM-WHEN-SELECTED": 1,
       "AFDX-SWITCH-WHEN-SELECTED": 1,
       "AFDX-DATA-FORMAT-WHEN-SELECTED": 1,
       "AFDX-IP-UDP-PROFILE-WHEN-SELECTED": 1,
       "UDP-IDENTITY": 1,
-      "UDP-HEADER-IDENTITY": 1,
-      "UDP-FIELD-IDENTITY": 1,
+      "UDP-HEADER-IDENTITY": 3,
       "UDP-OVER-IPV4-IDENTITY": 1,
       "IPV4-IDENTITY": 1,
       "IPV4-HEADER-IDENTITY": 1,
-      "IPV4-FRAGMENT-REASSEMBLY": 1,
       "SOURCE-RECEIPT-DOES-NOT-ESTABLISH-CAPABILITY": 1,
       "LINK-LAYER-HOST-PREMISE": 1,
-      "IPV4-HOST-COMMUNICATION-PREMISE": 1,
-      "UDP-HOST-COMMUNICATION-PREMISE": 1,
+      "IPV4-HOST-COMMUNICATION-PREMISE": 3,
+      "UDP-HOST-COMMUNICATION-PREMISE": 2,
       "TFTP-HOST-APPLICATION-PREMISE": 1,
       "TFTP-BASE-IDENTITY": 1,
       "TFTP-LOCKSTEP-IDENTITY": 1,
       "TFTP-OVER-UDP-IDENTITY": 1,
-      "TFTP-RRQ-WRQ-TID": 1,
-      "TFTP-PACKET-TYPES": 1,
-      "TFTP-NORMAL-END": 1,
+      "TFTP-INITIAL-CONNECTION": 1,
+      "TFTP-PACKET-LAYOUT": 7,
+      "TFTP-NORMAL-TERMINATION": 1,
       "TFTP-ERROR-ABORT": 1,
-      "TFTP-OPTION-MECHANISM": 1,
-      "TFTP-OACK-IDENTITY": 1,
-      "TFTP-OPTION-SEQUENCE": 1,
-      "TFTP-BLKSIZE-ADOPTED": 1,
-      "TFTP-TIMEOUT-OPTION-ADOPTED": 1,
-      "TFTP-TSIZE-ADOPTED": 1
+      "TFTP-OPTION-MECHANISM": 3,
+      "TFTP-BLKSIZE-ADOPTED": 4,
+      "TFTP-TIMEOUT-OPTION": 2,
+      "TFTP-TSIZE-ADOPTED": 4
     },
     "deferredFutureScope": {
       "total": 0,
@@ -10057,7 +10053,182 @@
             "relationTo615A": "SOURCE-EXPLICIT-615A-LOADER-USE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Clause 2.3 batch files are distributed to onboard/off-board 615A loaders and are not transferred to target hardware. Sentence-leaf CRS, Table 2.3.1-1 fieldConstraint rows, and remaining field-prose constraints are emitted. Table notes, commentary and locator sentences stay coverage-only informative. CRC algorithm identity remains blocked by 645. This is not independent RG approval.",
-            "summaryZh": "2.3 批处理文件分发给机上/机下 615A 加载器，不传给目标硬件。句级 CRS、表 2.3.1-1 字段约束与其余字段散文约束已发出。表注、评注与定位句保持仅覆盖的说明性行。CRC 算法身份仍由 645 阻塞。这不是独立 RG 批准。"
+            "summaryZh": "2.3 批处理文件分发给机上/机下 615A 加载器，不传给目标硬件。句级 CRS、表 2.3.1-1 字段约束与其余字段散文约束已发出。表注、评注与定位句保持仅覆盖的说明性行。CRC 算法身份仍由 645 阻塞。这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02567",
+              "COV-M1-02568",
+              "COV-M1-02569",
+              "COV-M1-02570",
+              "COV-M1-02571",
+              "COV-M1-02572",
+              "COV-M1-02573",
+              "COV-M1-02574",
+              "COV-M1-02575",
+              "COV-M1-02576",
+              "COV-M1-02577",
+              "COV-M1-02578",
+              "COV-M1-02579",
+              "COV-M1-02580",
+              "COV-M1-02581",
+              "COV-M1-02582",
+              "COV-M1-02583",
+              "COV-M1-02797",
+              "COV-M1-02798",
+              "COV-M1-02799",
+              "COV-M1-02800",
+              "COV-M1-02801",
+              "COV-M1-02802",
+              "COV-M1-02803",
+              "COV-M1-02804",
+              "COV-M1-02805",
+              "COV-M1-02806",
+              "COV-M1-02807",
+              "COV-M1-02808",
+              "COV-M1-02809",
+              "COV-M1-02810",
+              "COV-M1-02811",
+              "COV-M1-02812",
+              "COV-M1-02813",
+              "COV-M1-02814",
+              "COV-M1-02815",
+              "COV-M1-02816",
+              "COV-M1-02817",
+              "COV-M1-02818",
+              "COV-M1-02819",
+              "COV-M1-02820",
+              "COV-M1-02821",
+              "COV-M1-02822",
+              "COV-M1-02823",
+              "COV-M1-02824",
+              "COV-M1-02825",
+              "COV-M1-02826",
+              "COV-M1-02827",
+              "COV-M1-02828",
+              "COV-M1-02829",
+              "COV-M1-02830",
+              "COV-M1-02831",
+              "COV-M1-02832",
+              "COV-M1-02833",
+              "COV-M1-02834",
+              "COV-M1-02835",
+              "COV-M1-02836",
+              "COV-M1-02837",
+              "COV-M1-02838",
+              "COV-M1-02839",
+              "COV-M1-02840",
+              "COV-M1-02841",
+              "COV-M1-02842",
+              "COV-M1-02843",
+              "COV-M1-02844",
+              "COV-M1-02845",
+              "COV-M1-02846",
+              "COV-M1-02847",
+              "COV-M1-02848",
+              "COV-M1-02849",
+              "COV-M1-02850",
+              "COV-M1-02851",
+              "COV-M1-02852",
+              "COV-M1-02853",
+              "COV-M1-02854",
+              "COV-M1-02855",
+              "COV-M1-02856",
+              "COV-M1-02857",
+              "COV-M1-02858",
+              "COV-M1-02859",
+              "COV-M1-02860",
+              "COV-M1-02861",
+              "COV-M1-02862",
+              "COV-M1-02863",
+              "COV-M1-02864",
+              "COV-M1-02865",
+              "COV-M1-02866",
+              "COV-M1-02867",
+              "COV-M1-02868",
+              "COV-M1-02869",
+              "COV-M1-02870",
+              "COV-M1-02871"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00526",
+              "CRS-M1-00527",
+              "CRS-M1-00528",
+              "CRS-M1-00529",
+              "CRS-M1-00530",
+              "CRS-M1-00531",
+              "CRS-M1-00532",
+              "CRS-M1-00533",
+              "CRS-M1-00534",
+              "CRS-M1-00535",
+              "CRS-M1-00536",
+              "CRS-M1-00568",
+              "CRS-M1-00569",
+              "CRS-M1-00570",
+              "CRS-M1-00571",
+              "CRS-M1-00572",
+              "CRS-M1-00573",
+              "CRS-M1-00574",
+              "CRS-M1-00575",
+              "CRS-M1-00576",
+              "CRS-M1-00577",
+              "CRS-M1-00578",
+              "CRS-M1-00579",
+              "CRS-M1-00580",
+              "CRS-M1-00581",
+              "CRS-M1-00582",
+              "CRS-M1-00583",
+              "CRS-M1-00584",
+              "CRS-M1-00585",
+              "CRS-M1-00586",
+              "CRS-M1-00587",
+              "CRS-M1-00588",
+              "CRS-M1-00589",
+              "CRS-M1-00590",
+              "CRS-M1-00591",
+              "CRS-M1-00592",
+              "CRS-M1-00593",
+              "CRS-M1-00594",
+              "CRS-M1-00595",
+              "CRS-M1-00596",
+              "CRS-M1-00597",
+              "CRS-M1-00598",
+              "CRS-M1-00599",
+              "CRS-M1-00600",
+              "CRS-M1-00601",
+              "CRS-M1-00602",
+              "CRS-M1-00603",
+              "CRS-M1-00537",
+              "CRS-M1-00538",
+              "CRS-M1-00539",
+              "CRS-M1-00540",
+              "CRS-M1-00541",
+              "CRS-M1-00542",
+              "CRS-M1-00543",
+              "CRS-M1-00544",
+              "CRS-M1-00545",
+              "CRS-M1-00546",
+              "CRS-M1-00547",
+              "CRS-M1-00548",
+              "CRS-M1-00549",
+              "CRS-M1-00550",
+              "CRS-M1-00551",
+              "CRS-M1-00552",
+              "CRS-M1-00553",
+              "CRS-M1-00554",
+              "CRS-M1-00555",
+              "CRS-M1-00556",
+              "CRS-M1-00557",
+              "CRS-M1-00558",
+              "CRS-M1-00559",
+              "CRS-M1-00560",
+              "CRS-M1-00561",
+              "CRS-M1-00562",
+              "CRS-M1-00563",
+              "CRS-M1-00564",
+              "CRS-M1-00565",
+              "CRS-M1-00566",
+              "CRS-M1-00567"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-665-2-2-4",
@@ -10378,7 +10549,12 @@
             "relationTo615A": "INFRASTRUCTURE-PREMISE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "P2 is the physical/data-link reference behind 615A Ethernet transfer. IEEE 802.3 is required reading. This does not establish the ETHERNET-PHYSICAL-LINK-SEMANTICS capability. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "P2 是 615A 以太网传输背后的物理/数据链路参考。IEEE 802.3 为必读。这并不建立 ETHERNET-PHYSICAL-LINK-SEMANTICS 能力。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "P2 是 615A 以太网传输背后的物理/数据链路参考。IEEE 802.3 为必读。这并不建立 ETHERNET-PHYSICAL-LINK-SEMANTICS 能力。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02872"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P2-2",
@@ -10402,7 +10578,12 @@
             "relationTo615A": "INFRASTRUCTURE-PREMISE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "MAC frame, addressing and duplex facts are infrastructure for ordinary Ethernet. They are not 615A operation timeouts. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "MAC 帧、寻址与双工是普通以太网的基础设施，不是 615A 操作时限。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "MAC 帧、寻址与双工是普通以太网的基础设施，不是 615A 操作时限。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02873"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P2-3-CU",
@@ -10426,7 +10607,12 @@
             "relationTo615A": "INFRASTRUCTURE-PREMISE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Copper 100BASE-TX avionics/cabin/severe installations are the relevant physical options for ordinary Ethernet. Deployment parameter choice remains with the integrator; this PR does not pick a cable plant. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "铜缆 100BASE-TX 机载/客舱/严酷安装是普通以太网的相关物理选项。部署参数仍由集成商选择；本 PR 不选定线缆设施。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "铜缆 100BASE-TX 机载/客舱/严酷安装是普通以太网的相关物理选项。部署参数仍由集成商选择；本 PR 不选定线缆设施。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02874"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P2-3-FX",
@@ -10468,7 +10654,12 @@
             "relationTo615A": "INFRASTRUCTURE-PREMISE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Connector and reference-plane values are installation constraints, not 615A FIND/UPLOAD timing. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "连接器与参考面数值是安装约束，不是 615A FIND/UPLOAD 时序。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "连接器与参考面数值是安装约束，不是 615A FIND/UPLOAD 时序。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02875"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P2-APP-C",
@@ -10542,7 +10733,12 @@
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "P2 limitations already record that AFDX deterministic extensions are in Part 7. Ordinary Ethernet and AFDX stay separate. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "P2 限制已记录 AFDX 确定性扩展在第 7 部分。普通以太网与 AFDX 保持分离。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "P2 限制已记录 AFDX 确定性扩展在第 7 部分。普通以太网与 AFDX 保持分离。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02876"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P2-NOT-TIMEOUT",
@@ -10657,7 +10853,12 @@
             "relationTo615A": "NETWORK-CONSTRAINT-RECONCILIATION",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Existing NET-P3-SCOPE. Interoperability across compliant/profiled is not automatic. Current instance remains Compliant. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "已有 NET-P3-SCOPE。Compliant/Profiled 之间互操作性不自动成立。当前实例保持 Compliant。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "已有 NET-P3-SCOPE。Compliant/Profiled 之间互操作性不自动成立。当前实例保持 Compliant。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02877"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P3-1-5",
@@ -10681,7 +10882,21 @@
             "relationTo615A": "NETWORK-CONSTRAINT-RECONCILIATION",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Existing NET-P3-PRECEDENCE. P3 restricts RFC options inside its profile. This is not a licence to drop 615A TFTP option rules. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "已有 NET-P3-PRECEDENCE。P3 在其 profile 内限制 RFC 选项。这不是取消 615A TFTP 选项规则的许可。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "已有 NET-P3-PRECEDENCE。P3 在其 profile 内限制 RFC 选项。这不是取消 615A TFTP 选项规则的许可。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02878"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00604"
+            ],
+            "remainingSubunits": [
+              {
+                "id": "SAU-P3-1-5-REMAINING-RFC-BODY",
+                "disposition": "NOT-YET-BOUND",
+                "summaryEn": "Remaining 1.5 prose beyond the precedence sentence is not claimed as additional leaves.",
+                "summaryZh": "1.5 中优先句以外的其余散文不作为额外叶主张。"
+              }
+            ]
           },
           {
             "id": "SAU-P3-2-SVC",
@@ -10723,7 +10938,12 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "P3 names 615A data loading as a file-transfer service on the aircraft internet. It does not replace 615A operation definitions. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "P3 将 615A 数据加载列为航空互联网上的文件传输服务，并不取代 615A 操作定义。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "P3 将 615A 数据加载列为航空互联网上的文件传输服务，并不取代 615A 操作定义。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02879"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P3-3-2-TFTP",
@@ -10747,7 +10967,12 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Existing NET-P3-TFTP. Base TFTP cites option RFCs; DL-TFTP implementation details refer back to 615A. Citing P3 does not bind every TFTP option RFC to every CRS row. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "已有 NET-P3-TFTP。基础 TFTP 引用选项 RFC；DL-TFTP 实现细节回引 615A。引用 P3 并不把每个 TFTP 选项 RFC 绑到每条 CRS。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "已有 NET-P3-TFTP。基础 TFTP 引用选项 RFC；DL-TFTP 实现细节回引 615A。引用 P3 并不把每个 TFTP 选项 RFC 绑到每条 CRS。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02880"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P3-3-2-OTHER",
@@ -10807,7 +11032,14 @@
             "relationTo615A": "NETWORK-CONSTRAINT-RECONCILIATION",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Existing NET-P3-UDP-RULE/TABLE. Compliant path keeps UDP. Profiled X/E markings are unselected and must not weaken 615A. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "已有 NET-P3-UDP-RULE/TABLE。Compliant 路径保持 UDP。未选择的 Profiled X/E 标记不得削弱 615A。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "已有 NET-P3-UDP-RULE/TABLE。Compliant 路径保持 UDP。未选择的 Profiled X/E 标记不得削弱 615A。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02881"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00605"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P3-3-4-IP",
@@ -10831,7 +11063,14 @@
             "relationTo615A": "NETWORK-CONSTRAINT-RECONCILIATION",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Existing NET-P3-IP-RULE/TABLE/FRAGMENT/MTU. Profiled reassembly deviations cannot erase the 615A Data Loader fragmentation/reassembly obligation. MTU is packet sizing, not a 615A deadline. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "已有 NET-P3-IP-RULE/TABLE/FRAGMENT/MTU。Profiled 重组偏差不能抹去 615A 数据加载器的分片/重组义务。MTU 是报文尺寸，不是 615A 期限。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "已有 NET-P3-IP-RULE/TABLE/FRAGMENT/MTU。Profiled 重组偏差不能抹去 615A 数据加载器的分片/重组义务。MTU 是报文尺寸，不是 615A 期限。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02882"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00606"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P3-3-4-V6",
@@ -10891,7 +11130,12 @@
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Existing NET-P3-ARP. Dynamic vs static mapping is a deployment choice with a named selector (integrator), not UNRESOLVED silence. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "已有 NET-P3-ARP。动态与静态映射是带具名选择者（集成商）的部署选择，不是无说明的 UNRESOLVED。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "已有 NET-P3-ARP。动态与静态映射是带具名选择者（集成商）的部署选择，不是无说明的 UNRESOLVED。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02883"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P3-ATT12",
@@ -11063,7 +11307,12 @@
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Existing NET-P7-SCOPE. Applies only when 615A is carried over AFDX. Current Compliant Ethernet instance stays inactive for these units. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "已有 NET-P7-SCOPE。仅当 615A 承载于 AFDX 时适用。当前 Compliant 以太网实例对这些单元保持未激活。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "已有 NET-P7-SCOPE。仅当 615A 承载于 AFDX 时适用。当前 Compliant 以太网实例对这些单元保持未激活。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02884"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P7-2",
@@ -11083,7 +11332,12 @@
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "System overview. Network performance numbers are not 615A operation deadlines. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "系统概述。网络性能数字不是 615A 操作期限。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "系统概述。网络性能数字不是 615A 操作期限。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02885"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P7-3",
@@ -11103,7 +11357,21 @@
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "End-system VL/BAG/jitter are AFDX deployment obligations if AFDX is chosen. They do not rewrite TFTP/615A operations. Existing NET-P7-TFTP/IP/ADDRESS/PERFORMANCE regions inspect this surface. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "若选择 AFDX，端系统 VL/BAG/抖动是部署义务。它们不改写 TFTP/615A 操作。已有 NET-P7-TFTP/IP/ADDRESS/PERFORMANCE 区域检查该表面。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "若选择 AFDX，端系统 VL/BAG/抖动是部署义务。它们不改写 TFTP/615A 操作。已有 NET-P7-TFTP/IP/ADDRESS/PERFORMANCE 区域检查该表面。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02886"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00607"
+            ],
+            "remainingSubunits": [
+              {
+                "id": "SAU-P7-3-REMAINING-VL-BAG-JITTER",
+                "disposition": "NOT-YET-BOUND",
+                "summaryEn": "Detailed VL, BAG and jitter encoding in chapter 3 remains outside this leaf.",
+                "summaryZh": "第 3 章中 VL、BAG 与抖动的详细编码仍在本叶之外。"
+              }
+            ]
           },
           {
             "id": "SAU-P7-4",
@@ -11123,7 +11391,21 @@
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Existing NET-P7-SWITCH. Switch behaviour is not proved by ordinary Ethernet tests. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "已有 NET-P7-SWITCH。交换机行为不能用普通以太网试验证明。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "已有 NET-P7-SWITCH。交换机行为不能用普通以太网试验证明。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02887"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00608"
+            ],
+            "remainingSubunits": [
+              {
+                "id": "SAU-P7-4-REMAINING-SWITCH-BLOCKS",
+                "disposition": "NOT-YET-BOUND",
+                "summaryEn": "Remaining switch functional blocks in chapter 4 are not claimed closed by this leaf.",
+                "summaryZh": "第 4 章其余交换机功能块不由本叶闭合。"
+              }
+            ]
           },
           {
             "id": "SAU-P7-5",
@@ -11143,7 +11425,12 @@
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "System integration issues for AFDX, not 615A FIND semantics. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "AFDX 系统集成问题，不是 615A FIND 语义。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "AFDX 系统集成问题，不是 615A FIND 语义。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02888"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P7-ATT1",
@@ -11163,7 +11450,12 @@
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "AFDX frame/data format is deployment-conditional. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "AFDX 帧/数据格式为部署条件。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "AFDX 帧/数据格式为部署条件。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02889"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P7-ATT2",
@@ -11183,7 +11475,21 @@
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Existing NET-P7-IP. AFDX IP/UDP profile does not replace RFC identity or 615A TFTP rules. TCP remains unused by 615A. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "已有 NET-P7-IP。AFDX 的 IP/UDP profile 不取代 RFC 身份或 615A TFTP 规则。615A 仍不使用 TCP。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "已有 NET-P7-IP。AFDX 的 IP/UDP profile 不取代 RFC 身份或 615A TFTP 规则。615A 仍不使用 TCP。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02890"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00609"
+            ],
+            "remainingSubunits": [
+              {
+                "id": "SAU-P7-ATT2-REMAINING-TABLE-ROWS",
+                "disposition": "NOT-YET-BOUND",
+                "summaryEn": "Individual Attachment 2 table rows beyond the NOT APPLICABLE rule remain unbound.",
+                "summaryZh": "除 NOT APPLICABLE 规则外，附件 2 各表行仍未绑定。"
+              }
+            ]
           },
           {
             "id": "SAU-P7-APP-A",
@@ -11241,7 +11547,12 @@
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Informative mapping; 615A Appendix E remains the 615A-side pointer. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "信息性映射；615A 侧指针仍是附录 E。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "信息性映射；615A 侧指针仍是附录 E。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02891"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P7-615A-E",
@@ -11349,7 +11660,12 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "UDP is the datagram service under 615A TFTP. Delivery and duplicate protection are not guaranteed by UDP itself. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "UDP 是 615A TFTP 之下的数据报服务。UDP 本身不保证交付与去重。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "UDP 是 615A TFTP 之下的数据报服务。UDP 本身不保证交付与去重。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02892"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-768-FMT",
@@ -11370,7 +11686,14 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Source port, destination port, length and checksum identify the UDP datagram used by 615A. This is identity, not a claim that a particular stack is proven. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "源端口、目的端口、长度与校验和标识 615A 所用 UDP 数据报。这是身份，不是某协议栈已获证明。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "源端口、目的端口、长度与校验和标识 615A 所用 UDP 数据报。这是身份，不是某协议栈已获证明。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02893"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00610"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-768-FIELDS",
@@ -11391,7 +11714,16 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Port and checksum behaviour are the UDP fields 615A TFTP rides on. 664P3 may further restrict checksum handling on a Compliant network. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "端口与校验和是 615A TFTP 所依赖的 UDP 字段。664P3 可在 Compliant 网络上进一步限制校验和处理。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "端口与校验和是 615A TFTP 所依赖的 UDP 字段。664P3 可在 Compliant 网络上进一步限制校验和处理。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02894",
+              "COV-M1-02917"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00611",
+              "CRS-M1-00628"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-768-USER",
@@ -11427,7 +11759,12 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "UDP assumes IP. IPv4 identity is RFC 791; host requirements remain RFC 1122 and NOT-ESTABLISHED. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "UDP 假定 IP。IPv4 身份是 RFC 791；主机要求仍是 RFC 1122 且 NOT-ESTABLISHED。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "UDP 假定 IP。IPv4 身份是 RFC 791；主机要求仍是 RFC 1122 且 NOT-ESTABLISHED。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02895"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           }
         ],
         "openIssues": [],
@@ -11483,7 +11820,12 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "IPv4 is the network protocol under 615A UDP/TFTP on ordinary Ethernet. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "在普通以太网中，IPv4 是 615A UDP/TFTP 之下的网络协议。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "在普通以太网中，IPv4 是 615A UDP/TFTP 之下的网络协议。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02896"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-791-3-1",
@@ -11504,7 +11846,21 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Version, header length, total length, identification, flags, fragment offset, TTL, protocol and addresses are the IPv4 header 615A traffic uses. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "版本、头长度、总长度、标识、标志、分片偏移、TTL、协议与地址是 615A 流量使用的 IPv4 头。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "版本、头长度、总长度、标识、标志、分片偏移、TTL、协议与地址是 615A 流量使用的 IPv4 头。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02897"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00612"
+            ],
+            "remainingSubunits": [
+              {
+                "id": "SAU-791-3-1-REMAINING-FIELD-WIDTHS",
+                "disposition": "NOT-YET-BOUND",
+                "summaryEn": "Individual IPv4 header field widths remain outside this leaf.",
+                "summaryZh": "各 IPv4 头字段宽度仍在本叶之外。"
+              }
+            ]
           },
           {
             "id": "SAU-791-FRAG",
@@ -11525,7 +11881,14 @@
             "relationTo615A": "NETWORK-CONSTRAINT-RECONCILIATION",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "615A Data Loader fragmentation/reassembly is reconciled with this IPv4 mechanism. 664P3 profiled deviations cannot erase that 615A obligation. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "615A 数据加载器分片/重组与此 IPv4 机制对账。664P3 的 Profiled 偏差不能抹去该 615A 义务。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "615A 数据加载器分片/重组与此 IPv4 机制对账。664P3 的 Profiled 偏差不能抹去该 615A 义务。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02898"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00613"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-791-GW",
@@ -11591,7 +11954,12 @@
             "relationTo615A": "INFRASTRUCTURE-PREMISE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Registering RFC 791 identity does not prove a host IP implementation. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "登记 RFC 791 身份并不证明主机 IP 实现。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "登记 RFC 791 身份并不证明主机 IP 实现。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02899"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           }
         ],
         "openIssues": [],
@@ -11648,7 +12016,12 @@
             "relationTo615A": "INFRASTRUCTURE-PREMISE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Link-layer host behaviour is an infrastructure premise behind Ethernet. It is not established by this audit. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "链路层主机行为是以太网背后的基础设施前提。本审计不将其标为已建立。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "链路层主机行为是以太网背后的基础设施前提。本审计不将其标为已建立。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02900"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-1122-3",
@@ -11669,7 +12042,25 @@
             "relationTo615A": "INFRASTRUCTURE-PREMISE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "IPv4 host communication remains NOT-ESTABLISHED (existing NET-ISSUE-RFC1122 / NET-PREMISE-IPV4-UDP). Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "IPv4 主机通信仍为 NOT-ESTABLISHED（已有 NET-ISSUE-RFC1122 / NET-PREMISE-IPV4-UDP）。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "IPv4 主机通信仍为 NOT-ESTABLISHED（已有 NET-ISSUE-RFC1122 / NET-PREMISE-IPV4-UDP）。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02901",
+              "COV-M1-02918",
+              "COV-M1-02919"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00614",
+              "CRS-M1-00629",
+              "CRS-M1-00630"
+            ],
+            "remainingSubunits": [
+              {
+                "id": "SAU-1122-3-REMAINING-ICMP-ROUTING-OPTIONS",
+                "disposition": "CAPABILITY-NOT-ESTABLISHED",
+                "summaryEn": "ICMP, routing, source-route and remaining Internet-layer host MUSTs stay outside this admitted path.",
+                "summaryZh": "ICMP、路由、源路由及其余互联网层主机 MUST 仍在本准入路径之外。"
+              }
+            ]
           },
           {
             "id": "SAU-1122-4-UDP",
@@ -11690,7 +12081,23 @@
             "relationTo615A": "INFRASTRUCTURE-PREMISE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "UDP host requirements are the infrastructure under 615A TFTP. Capability IPV4-UDP-HOST-COMMUNICATION-SEMANTICS stays NOT-ESTABLISHED. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "UDP 主机要求是 615A TFTP 之下的基础设施。能力 IPV4-UDP-HOST-COMMUNICATION-SEMANTICS 仍为 NOT-ESTABLISHED。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "UDP 主机要求是 615A TFTP 之下的基础设施。能力 IPV4-UDP-HOST-COMMUNICATION-SEMANTICS 仍为 NOT-ESTABLISHED。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02902",
+              "COV-M1-02920"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00615",
+              "CRS-M1-00631"
+            ],
+            "remainingSubunits": [
+              {
+                "id": "SAU-1122-4-UDP-REMAINING-MULTICAST-MULTIHOMING",
+                "disposition": "CAPABILITY-NOT-ESTABLISHED",
+                "summaryEn": "UDP multicast, multihoming and remaining 4.1 host issues stay outside this admitted path.",
+                "summaryZh": "UDP 组播、多宿及其余 4.1 主机事项仍在本准入路径之外。"
+              }
+            ]
           },
           {
             "id": "SAU-1122-4-TCP",
@@ -11828,7 +12235,14 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "RFC 1123 §4.2 adds host TFTP notes: octet/netascii modes, UDP header, Sorcerer's Apprentice, timeout, extensions, access control and broadcast RRQ. 615A uses octet TFTP with its own option set; mail/netascii and broadcast-RRQ are not adopted. Sorcerer's Apprentice remains a TFTP-base constraint alongside RFC 1350. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "RFC 1123 §4.2 补充主机 TFTP 说明：octet/netascii、UDP 头、术士学徒、超时、扩展、访问控制与广播 RRQ。615A 使用带自有选项集的 octet TFTP；不采用 mail/netascii 与广播 RRQ。术士学徒与 RFC 1350 同为 TFTP 基础约束。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "RFC 1123 §4.2 补充主机 TFTP 说明：octet/netascii、UDP 头、术士学徒、超时、扩展、访问控制与广播 RRQ。615A 使用带自有选项集的 octet TFTP；不采用 mail/netascii 与广播 RRQ。术士学徒与 RFC 1350 同为 TFTP 基础约束。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02903"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00616"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-1123-5",
@@ -11914,7 +12328,12 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "TFTP transfers files over UDP. 615A uses this base with 615A-defined files and options. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "TFTP 经 UDP 传文件。615A 在此基础上使用自有文件与选项。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "TFTP 经 UDP 传文件。615A 在此基础上使用自有文件与选项。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02904"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-1350-2",
@@ -11935,7 +12354,14 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Lock-step RRQ/WRQ, DATA, ACK and ERROR are the TFTP exchanges 615A file transfer uses. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "锁步 RRQ/WRQ、DATA、ACK 与 ERROR 是 615A 文件传输使用的 TFTP 交换。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "锁步 RRQ/WRQ、DATA、ACK 与 ERROR 是 615A 文件传输使用的 TFTP 交换。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02905"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00617"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-1350-3",
@@ -11956,7 +12382,12 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "TFTP runs on UDP. IP/UDP identities are separate RFCs. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "TFTP 运行于 UDP。IP/UDP 身份是独立 RFC。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "TFTP 运行于 UDP。IP/UDP 身份是独立 RFC。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02906"
+            ],
+            "leafRequirementIds": [],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-1350-4",
@@ -11977,7 +12408,14 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "RRQ/WRQ and TID assignment are the connection start 615A TFTP uses. Mail mode is not used. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "RRQ/WRQ 与 TID 分配是 615A TFTP 的连接起点。不使用 mail 模式。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "RRQ/WRQ 与 TID 分配是 615A TFTP 的连接起点。不使用 mail 模式。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02907"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00618"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-1350-5",
@@ -11998,7 +12436,33 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "RRQ, WRQ, DATA, ACK and ERROR packet layouts are the TFTP packet types. Option acknowledgements come from RFC 2347, not this section. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "RRQ、WRQ、DATA、ACK 与 ERROR 是 TFTP 包类型。选项确认来自 RFC 2347，不是本节。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "RRQ、WRQ、DATA、ACK 与 ERROR 是 TFTP 包类型。选项确认来自 RFC 2347，不是本节。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02908",
+              "COV-M1-02921",
+              "COV-M1-02922",
+              "COV-M1-02923",
+              "COV-M1-02924",
+              "COV-M1-02925",
+              "COV-M1-02926"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00619",
+              "CRS-M1-00632",
+              "CRS-M1-00633",
+              "CRS-M1-00634",
+              "CRS-M1-00635",
+              "CRS-M1-00636",
+              "CRS-M1-00637"
+            ],
+            "remainingSubunits": [
+              {
+                "id": "SAU-1350-5-MAIL-MODE-DETAILS",
+                "disposition": "OUT-OF-PROFILE",
+                "summaryEn": "Mail-mode recipient syntax is not used by ARINC 615A octet TFTP.",
+                "summaryZh": "ARINC 615A octet TFTP 不使用 mail 模式收件人句法。"
+              }
+            ]
           },
           {
             "id": "SAU-1350-6",
@@ -12019,7 +12483,14 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Short final DATA block terminates a 615A TFTP transfer. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "短最后 DATA 块结束 615A TFTP 传输。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "短最后 DATA 块结束 615A TFTP 传输。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02909"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00620"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-1350-7",
@@ -12040,7 +12511,14 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "ERROR aborts the TFTP transfer. This is TFTP-layer abort, not a waiver of 615A FIND 2 s / 3 s clocks. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "ERROR 中止 TFTP 传输。这是 TFTP 层中止，不是对 615A FIND 2 秒/3 秒时钟的豁免。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "ERROR 中止 TFTP 传输。这是 TFTP 层中止，不是对 615A FIND 2 秒/3 秒时钟的豁免。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02910"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00621"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-1350-MAIL",
@@ -12164,7 +12642,14 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Option negotiation is the mechanism 615A uses when TFTP options are present. Unimplemented options must not fail the transfer (615A), consistent with this extension. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "当存在 TFTP 选项时，615A 使用该选项协商机制。未实现选项不得使传输失败（615A），与此扩展一致。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "当存在 TFTP 选项时，615A 使用该选项协商机制。未实现选项不得使传输失败（615A），与此扩展一致。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02911"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00622"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-2347-PKT",
@@ -12185,7 +12670,14 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "OACK is the option-acknowledgement packet. 615A does not invent a different option packet type. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "OACK 是选项确认包。615A 不另造选项包类型。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "OACK 是选项确认包。615A 不另造选项包类型。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02912"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00623"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-2347-NEG",
@@ -12206,7 +12698,14 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "Options append to RRQ/WRQ. Only blksize, timeout and tsize are adopted from 2348/2349 plus any 615A-defined integrity option. Other options stay unimplemented and non-fatal. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "选项附于 RRQ/WRQ。仅采纳 2348/2349 的 blksize、timeout、tsize 以及 615A 定义的完整性选项。其他选项保持未实现且非致命。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "选项附于 RRQ/WRQ。仅采纳 2348/2349 的 blksize、timeout、tsize 以及 615A 定义的完整性选项。其他选项保持未实现且非致命。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02913"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00624"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-2347-SEC",
@@ -12262,7 +12761,27 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "615A requires the data loader to implement TFTP block size. The option name and negotiation are RFC 2348; 615A may further constrain permitted sizes. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "615A 要求数据加载器实现 TFTP 块大小。选项名与协商是 RFC 2348；615A 可进一步约束允许的大小。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "615A 要求数据加载器实现 TFTP 块大小。选项名与协商是 RFC 2348；615A 可进一步约束允许的大小。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02914",
+              "COV-M1-02927",
+              "COV-M1-02928",
+              "COV-M1-02929"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00625",
+              "CRS-M1-00638",
+              "CRS-M1-00639",
+              "CRS-M1-00640"
+            ],
+            "remainingSubunits": [
+              {
+                "id": "SAU-2348-PROOF-OF-CONCEPT",
+                "disposition": "INFORMATIVE",
+                "summaryEn": "Proof-of-concept performance discussion is not a protocol leaf.",
+                "summaryZh": "概念验证性能讨论不是协议叶。"
+              }
+            ]
           },
           {
             "id": "SAU-2348-SEC",
@@ -12318,7 +12837,16 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "RFC 2349 timeout is a TFTP retransmission interval option. It is not the 615A FIND 2 s host deadline or 3 s registration window. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "RFC 2349 timeout 是 TFTP 重传间隔选项，不是 615A FIND 的 2 秒主机期限或 3 秒登记窗口。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "RFC 2349 timeout 是 TFTP 重传间隔选项，不是 615A FIND 的 2 秒主机期限或 3 秒登记窗口。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02915",
+              "COV-M1-02930"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00626",
+              "CRS-M1-00641"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-2349-TS",
@@ -12339,7 +12867,20 @@
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
             "summaryEn": "615A compares transfer size when the option is used. Mismatch handling stays on the 615A row, not a silent RFC import. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "当使用该选项时，615A 比较传输大小。失配处理留在 615A 行上，不是静默导入 RFC。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。"
+            "summaryZh": "当使用该选项时，615A 比较传输大小。失配处理留在 615A 行上，不是静默导入 RFC。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "leafCoverageIds": [
+              "COV-M1-02916",
+              "COV-M1-02931",
+              "COV-M1-02932",
+              "COV-M1-02933"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00627",
+              "CRS-M1-00642",
+              "CRS-M1-00643",
+              "CRS-M1-00644"
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-2349-SEC",

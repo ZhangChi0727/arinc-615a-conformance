@@ -1106,6 +1106,74 @@ def test_protocol_source_audit_allows_declared_future_status_pairs() -> None:
     )
 
 
+def test_supporting_source_audit_production_gate_rejects_missing_duplicate_and_empty_leaves() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    assert baseline.protocol_source_audit_errors(audit, crs) == []
+    missing = copy.deepcopy(audit)
+    del missing["supportingSourceApplicabilityAudit"]
+    assert any(
+        "supportingSourceApplicabilityAudit is required" in error
+        for error in baseline.protocol_source_audit_errors(missing, crs)
+    )
+    duplicated = copy.deepcopy(audit)
+    duplicated["supportingSourceApplicabilityAudit"]["sources"].append(
+        copy.deepcopy(duplicated["supportingSourceApplicabilityAudit"]["sources"][0])
+    )
+    errors = baseline.protocol_source_audit_errors(duplicated, crs)
+    assert any("duplicate sourceId" in error for error in errors)
+    empty_leaves = copy.deepcopy(audit)
+    unit = next(
+        row
+        for source in empty_leaves["supportingSourceApplicabilityAudit"]["sources"]
+        for row in source["units"]
+        if row.get("leafCrsStatus") == "LEAF-CRS-EMITTED"
+    )
+    unit["leafCoverageIds"] = []
+    unit["leafRequirementIds"] = []
+    assert any(
+        "missing leafCoverageIds" in error
+        for error in baseline.protocol_source_audit_errors(empty_leaves, crs)
+    )
+    cross = copy.deepcopy(audit)
+    foreign = next(
+        row["id"]
+        for row in crs["requirements"]
+        if row["source"]["sourceId"] == "ARINC-615A-3"
+    )
+    rfc_unit = next(
+        row
+        for source in cross["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2348"
+        for row in source["units"]
+        if row.get("leafCrsStatus") == "LEAF-CRS-EMITTED"
+    )
+    rfc_unit["leafRequirementIds"] = [foreign]
+    assert any(
+        "leafRequirementIds do not match" in error or "is from ARINC-615A-3" in error
+        for error in baseline.protocol_source_audit_errors(cross, crs)
+    )
+    fake_denom = copy.deepcopy(audit)
+    fake_denom["supportingSourceApplicabilityAudit"]["sources"][0]["coverageDenominator"]["count"] = 1
+    assert any(
+        "coverageDenominator.count" in error
+        for error in baseline.protocol_source_audit_errors(fake_denom, crs)
+    )
+    extension = copy.deepcopy(audit)
+    first_source = extension["supportingSourceApplicabilityAudit"]["sources"][0]
+    extra = copy.deepcopy(first_source["units"][-1])
+    extra["id"] = extra["id"] + "-EXTENSION"
+    extra["leafCrsStatus"] = "NOT-REQUIRED"
+    extra["applicabilityDecision"] = "OUT-OF-PROFILE"
+    extra["conformanceEffect"] = "INFORMATIVE"
+    extra.pop("leafCoverageIds", None)
+    extra.pop("leafRequirementIds", None)
+    extra.pop("remainingSubunits", None)
+    first_source["units"].append(extra)
+    first_source["coverageDenominator"]["count"] = len(first_source["units"])
+    assert baseline.supporting_source_audit_errors(extension, crs) == []
+
+
 def test_cltav_outline_rejects_title_only_chapters() -> None:
     text = source("docs/research/publication/RESEARCH_OUTLINE.md")
     assert baseline.cltav_outline_errors(text) == []

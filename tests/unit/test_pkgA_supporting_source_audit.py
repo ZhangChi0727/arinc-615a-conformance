@@ -45,6 +45,8 @@ def test_package_a_sources_are_first_class_tasks_with_denominators() -> None:
         check=False,
     )
     assert ancestor.returncode == 0
+    source_ids = [row["sourceId"] for row in supporting["sources"]]
+    assert len(source_ids) == len(set(source_ids))
     by_id = {row["sourceId"]: row for row in supporting["sources"]}
     assert list(by_id) == list(REQUIRED_SOURCES)
     for source_id in REQUIRED_SOURCES:
@@ -180,4 +182,69 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
     assert any(row["pdfPages"] == [8, 36] for row in by_id["ARINC-664-3"]["spans"])
     assert "RFC-1350" in by_id
     assert "RFC-768" in by_id
+    for source in data["supportingSourceApplicabilityAudit"]["sources"]:
+        for unit in source["units"]:
+            if unit["leafCrsStatus"] == "LEAF-CRS-EMITTED":
+                assert unit["leafCoverageIds"]
+                assert "leafRequirementIds" in unit
+
+
+TRUNCATED_LEAD_IN = "The TFTP Read Request or Write Request packet is modified to include"
+BLKSIZE_RANGE = 'Valid values range between "8" and "65464" octets, inclusive.'
+TIMEOUT_RANGE = 'Valid values range between "1" and "255" seconds, inclusive.'
+TSIZE_RRQ = (
+    'In Read Request packets, a size of "0" is specified in the request '
+    "and the size of the file, in octets, is returned in the OACK."
+)
+CHECKSUM_CROSS_PAGE = (
+    "Checksum is the 16-bit one's complement of the one's complement sum of a "
+    "pseudo header of information from the IP header, the UDP header, and the "
+    "data, padded with zero octets at the end (if necessary) to make a multiple "
+    "of two octets."
+)
+
+
+def test_rfc_option_leaves_bind_complete_distinct_sentences() -> None:
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "check_repo_baseline", ROOT / "scripts/check_repo_baseline.py"
+    )
+    assert spec and spec.loader
+    baseline = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(baseline)
+    crs = json.loads((ROOT / "configs/requirements/arinc_615a3_m1_crs.json").read_text(encoding="utf-8"))
+    by_id = {row["id"]: row for row in crs["requirements"]}
+    truncated = baseline.leaf_unit_hash(TRUNCATED_LEAD_IN)
+    assert not baseline.is_complete_prose_sentence(TRUNCATED_LEAD_IN)
+    assert baseline.is_complete_prose_sentence(BLKSIZE_RANGE)
+    assert baseline.is_complete_prose_sentence(CHECKSUM_CROSS_PAGE)
+    blksize = by_id["CRS-M1-00625"]
+    timeout = by_id["CRS-M1-00626"]
+    tsize = by_id["CRS-M1-00627"]
+    assert blksize["sourceTextHash"] == baseline.leaf_unit_hash(BLKSIZE_RANGE)
+    assert timeout["sourceTextHash"] == baseline.leaf_unit_hash(TIMEOUT_RANGE)
+    assert tsize["sourceTextHash"] == baseline.leaf_unit_hash(TSIZE_RRQ)
+    assert len({blksize["sourceTextHash"], timeout["sourceTextHash"], tsize["sourceTextHash"]}) == 3
+    assert truncated not in {blksize["sourceTextHash"], timeout["sourceTextHash"], tsize["sourceTextHash"]}
+    assert "UNESTABLISHED" not in by_id["CRS-M1-00614"]["semantic"]["action"]
+    assert "UNESTABLISHED" not in by_id["CRS-M1-00615"]["semantic"]["action"]
+    assert by_id["CRS-M1-00614"]["sourceModality"] == "MUST"
+    assert by_id["CRS-M1-00625"]["sourceModality"] == "FACT"
+    abort = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "MAY-ABORT-RRQ-WITH-ERROR-CODE-3"
+    )
+    assert abort["sourceModality"] == "MAY"
+    assert abort["conformanceEffect"] == "OPTIONAL"
+    assert any(row["semantic"]["action"] == "ENCODE-RRQ-WRQ-AS-OPCODE-FILENAME-AND-MODE" for row in crs["requirements"])
+    assert any(row["semantic"]["action"] == "ECHO-CLIENT-TIMEOUT-VALUE-IN-OACK" for row in crs["requirements"])
+    assert any(row["semantic"]["action"] == "SPECIFY-TSIZE-ON-WRQ-AND-ECHO-IN-OACK" for row in crs["requirements"])
+    checksum = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "COMPUTE-UDP-CHECKSUM-OVER-PSEUDO-HEADER-HEADER-AND-DATA"
+    )
+    assert checksum["sourceTextHash"] == baseline.leaf_unit_hash(CHECKSUM_CROSS_PAGE)
 
