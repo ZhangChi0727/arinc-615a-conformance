@@ -17903,7 +17903,7 @@
         "timingFamily": "AFDX-MAX-JITTER-LOAD-EQUATION",
         "provenanceKind": "SYMBOLIC-SOURCE-EQUATION",
         "sourceParameter": "MAX-JITTER-LOAD-EQUATION",
-        "sourceRelation": "MAX-JITTER <= 40 + (8 * SUM[I-IN-CONFIGURED-VL-SET](20 + LMAX-I) / NBW) * 1000000",
+        "sourceRelation": "MAX-JITTER <= 40 + (8 * SUM{I-IN-CONFIGURED-VL-SET}(20 + LMAX-I) / NBW) * 1000000",
         "sourceEvidenceUnitIds": [
           "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD",
           "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948",

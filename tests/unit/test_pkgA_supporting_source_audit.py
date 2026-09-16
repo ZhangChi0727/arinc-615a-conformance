@@ -568,7 +568,7 @@ def test_p7_technological_latency_and_jitter_contracts() -> None:
     assert _t5_interval_verdict(148, 149, 0, 150, req_upper_open=True) == "PASS"
     assert _t5_interval_verdict(150, 151, 0, 150, req_upper_open=True) == "FAIL"
     assert eq1["timing"]["sourceRelation"] == (
-        "MAX-JITTER <= 40 + (8 * SUM[I-IN-CONFIGURED-VL-SET](20 + LMAX-I) / NBW) * 1000000"
+        "MAX-JITTER <= 40 + (8 * SUM{I-IN-CONFIGURED-VL-SET}(20 + LMAX-I) / NBW) * 1000000"
     )
     assert eq2["timing"]["sourceRelation"] == "MAX-JITTER <= 500"
     assert eq1["timing"]["silenceSemantics"] == "BOTH-MAX-JITTER-EQUATIONS-MUST-HOLD"

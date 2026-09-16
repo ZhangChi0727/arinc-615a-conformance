@@ -12,7 +12,7 @@
     "coverageCount": 3020,
     "requirementCount": 730,
     "coverageFingerprint": "126963de03d6a644a917a0bd3f0bea08e4fd3080666a566c539b73b1abc75ba5",
-    "requirementsFingerprint": "42e6ac24e5c5d67e3b1587483943e3a92d4226c172542a14a015e2444d452100",
+    "requirementsFingerprint": "b49c32f08f8bc863a6b120977b99643c4a23c9ea627a7e54346a0a91fef2d70a",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"

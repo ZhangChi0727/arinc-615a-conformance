@@ -1407,3 +1407,8 @@ def test_cltav_sysml_rejects_missing_stop_class() -> None:
 def test_math_and_mapping_frozen_payloads_are_unchanged() -> None:
     test_historical_methodology_math_identity_is_preserved()
     assert baseline.mapping_reconciliation_errors(source("docs/control/contracts/GVS_INSTANCE_MAPPING.md")) == []
+
+
+def test_local_link_checker_ignores_indexed_sum_in_code() -> None:
+    errors = baseline.local_link_errors()
+    assert not any("20 + LMAX-I" in item or "20 + Lmax_i" in item for item in errors)

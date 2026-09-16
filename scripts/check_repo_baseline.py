@@ -222,6 +222,8 @@ LEGACY_FILENAMES = {
 }
 
 LINK_RE = re.compile(r"!?\[[^\]]*]\(([^)]+)\)")
+CODE_FENCE_BLOCK_RE = re.compile(r"```.*?```", re.DOTALL)
+INLINE_CODE_RE = re.compile(r"`[^`]+`")
 H2_RE = re.compile(r"^## ", re.MULTILINE)
 H3_RE = re.compile(r"^### ", re.MULTILINE)
 MATH_OPEN_RE = re.compile(r"^\\\[$", re.MULTILINE)
@@ -391,6 +393,21 @@ def document_shape(text: str) -> tuple[int, int, int, int, list[str], list[str],
     )
 
 
+def _markdown_code_ranges(text: str) -> list[tuple[int, int]]:
+    ranges = [(match.start(), match.end()) for match in CODE_FENCE_BLOCK_RE.finditer(text)]
+    covered = list(ranges)
+    for match in INLINE_CODE_RE.finditer(text):
+        start, end = match.start(), match.end()
+        if any(lo <= start < hi for lo, hi in covered):
+            continue
+        ranges.append((start, end))
+    return ranges
+
+
+def _inside_range(index: int, ranges: list[tuple[int, int]]) -> bool:
+    return any(start <= index < end for start, end in ranges)
+
+
 def local_link_errors() -> list[str]:
     errors: list[str] = []
     for source in ROOT.rglob("*.md"):
@@ -399,7 +416,10 @@ def local_link_errors() -> list[str]:
         if any(part.startswith(".") for part in source.relative_to(ROOT).parts):
             continue
         text = read(source)
+        skip = _markdown_code_ranges(text)
         for match in LINK_RE.finditer(text):
+            if _inside_range(match.start(), skip):
+                continue
             link = match.group(1).strip().strip("<>")
             if link.startswith(("http://", "https://", "mailto:", "#")):
                 continue

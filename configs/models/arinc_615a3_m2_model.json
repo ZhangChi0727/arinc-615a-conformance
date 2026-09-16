@@ -11453,7 +11453,7 @@
       "upperBoundary": "CLOSED",
       "unit": "us",
       "boundKind": "SOURCE-EQUATION",
-      "sourceRelation": "MAX-JITTER <= 40 + (8 * SUM[I-IN-CONFIGURED-VL-SET](20 + LMAX-I) / NBW) * 1000000",
+      "sourceRelation": "MAX-JITTER <= 40 + (8 * SUM{I-IN-CONFIGURED-VL-SET}(20 + LMAX-I) / NBW) * 1000000",
       "sourceParameter": "MAX-JITTER-LOAD-EQUATION",
       "expression": {
         "kind": "COMPARE",
@@ -30354,7 +30354,7 @@
     "fieldConstraintCount": 108,
     "dispositionsFingerprint": "22f526d8ab59d73f36f2a42fd19116b49d2fe0f2e9319575fe4060845a4f17be",
     "modelFingerprint": "2dfa8ab13e82c1d93c3571480069441937030c1f731d0a83185dc38533a0f907",
-    "timingFingerprint": "a7b960eb5e2e557c78551baa0ac46224ea2efa99c996fd7aeb2a1c5441c6495d",
+    "timingFingerprint": "cd8a13f203f6d2c2f9c82e65646bf9d5b920200a509af92d461096e54f7e6810",
     "inputFingerprint": "ed4bd68f74c7cdcc01cb5c09074fa2941f52a2c844f382b6ce82249f26ba321d",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",

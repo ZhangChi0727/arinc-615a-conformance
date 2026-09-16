@@ -107,7 +107,7 @@ UNPARSED_SOURCE_RELATIONS = {
     "STATUS-RECEIVED-BEFORE-EXCEPTION-DELAY-ELSE-OPERATION-ABORT",
 }
 SOURCE_EQ_TOKEN_RE = re.compile(
-    r"\s*(>=|<=|!=|=>|>|<|=|\(|\)|\[|\]|\+|\*|/|[A-Za-z][A-Za-z0-9-]*|\d+(?:\.\d+)?|-)"
+    r"\s*(>=|<=|!=|=>|>|<|=|\(|\)|\[|\]|\{|\}|\+|\*|/|[A-Za-z][A-Za-z0-9-]*|\d+(?:\.\d+)?|-)"
 )
 SOURCE_COMPARE_TOKEN = {
     ">=": "GE",
@@ -475,14 +475,16 @@ def parse_source_equation(text: Any) -> dict[str, Any] | None:
             return node
         if token == "SUM":
             take()
-            if peek() != "[":
+            opener = peek()
+            if opener not in {"[", "{"}:
                 return None
+            closer = "]" if opener == "[" else "}"
             take()
             domain_token = peek()
             if domain_token is None or not domain_token.startswith("I-IN-"):
                 return None
             take()
-            if peek() != "]":
+            if peek() != closer:
                 return None
             take()
             if peek() != "(":
@@ -611,7 +613,7 @@ def source_equation_structure_errors(row: dict[str, Any], source_relation: str, 
         return [f"timing {row.get('id')} equation structure drifted from the source relation"]
     errors: list[str] = []
     family = row.get("observationWindow") or ""
-    if family == "AFDX-MAX-JITTER-LOAD-EQUATION" or "SUM[I-IN-CONFIGURED-VL-SET]" in source_relation:
+    if family == "AFDX-MAX-JITTER-LOAD-EQUATION" or "SUM{I-IN-CONFIGURED-VL-SET}" in source_relation or "SUM[I-IN-CONFIGURED-VL-SET]" in source_relation:
         errors.extend(afdx_jitter_load_structure_errors(row, expr))
     if family == "AFDX-MAX-JITTER-500US-EQUATION":
         errors.extend(afdx_jitter_cap_structure_errors(row, expr))

@@ -108130,7 +108130,7 @@
         "timingFamily": "AFDX-MAX-JITTER-LOAD-EQUATION",
         "provenanceKind": "SYMBOLIC-SOURCE-EQUATION",
         "sourceParameter": "MAX-JITTER-LOAD-EQUATION",
-        "sourceRelation": "MAX-JITTER <= 40 + (8 * SUM[I-IN-CONFIGURED-VL-SET](20 + LMAX-I) / NBW) * 1000000",
+        "sourceRelation": "MAX-JITTER <= 40 + (8 * SUM{I-IN-CONFIGURED-VL-SET}(20 + LMAX-I) / NBW) * 1000000",
         "sourceEvidenceUnitIds": [
           "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD",
           "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948",
@@ -110515,7 +110515,7 @@
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "13145d8a2dcdaf226f4d267afe23068092dd6c68459be33a63a3f282a1d997c7",
+    "semanticAssertionFingerprint": "9779bbea7bfae49aff5d1657e2b61559040cf8e17ace22e6a607e822c65a8580",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
@@ -110526,7 +110526,7 @@
     "dependencyCount": 15,
     "gapCount": 1,
     "coverageFingerprint": "126963de03d6a644a917a0bd3f0bea08e4fd3080666a566c539b73b1abc75ba5",
-    "requirementsFingerprint": "42e6ac24e5c5d67e3b1587483943e3a92d4226c172542a14a015e2444d452100"
+    "requirementsFingerprint": "b49c32f08f8bc863a6b120977b99643c4a23c9ea627a7e54346a0a91fef2d70a"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",
