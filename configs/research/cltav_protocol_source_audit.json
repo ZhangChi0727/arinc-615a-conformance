@@ -8,16 +8,16 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-11",
-    "coverageCount": 2936,
-    "requirementCount": 646,
-    "coverageFingerprint": "ee23593dda4aac1c07a1fa2bfdf8f744ddd56a1a7138264fe0b7f6861e6b6463",
-    "requirementsFingerprint": "5c17ac8ca2eeabd6e1899cc7ff71bff7a0a56049d59575cea5ca7955af3d3c45",
+    "artifactVersion": "M1-CANDIDATE-12",
+    "coverageCount": 2970,
+    "requirementCount": 680,
+    "coverageFingerprint": "571638b70971e92b694c9ca20b492200f24db872c9e96ad5eb970c595dfde9c2",
+    "requirementsFingerprint": "e2349f0711853f3e53e6b771a3361fec51a6285ea2f1d99ddd02d2c96f4a7e0a",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "RR-CLTAV-2026-010 correction: RFC/664 leaves rebound to complete source sentences with atomic encoding/range/request-response obligations. INFORMATIVE units stay coverage-only. 664-4/CRS-M1-00519 stays unbound. 645 stays acquired-not-bound. RFC/664-3/664-7 capabilities remain NOT-ESTABLISHED. This is not independent RG approval."
+    "note": "Remaining RFC 1123 4.2 host notes, 664-7 VL/BAG/jitter encoding and RFC 791 header-field widths are bound as leaf CRS. 664-4/CRS-M1-00519 stays unbound. 645 stays acquired-not-bound. This is not independent RG approval."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -27,13 +27,13 @@
     "Ordinary Ethernet, Compliant, Profiled and AFDX stay separate configuration dimensions."
   ],
   "summary": {
-    "coverageCount": 2936,
-    "requirementCount": 646,
+    "coverageCount": 2970,
+    "requirementCount": 680,
     "applicabilityDecisions": {
       "OUT-OF-PROFILE": 973,
-      "APPLICABLE-SUPPORTING": 1285,
+      "APPLICABLE-SUPPORTING": 1309,
       "APPLICABLE-BASE": 286,
-      "CONDITIONAL": 392
+      "CONDITIONAL": 402
     },
     "rationaleCodes": {
       "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE": 902,
@@ -97,7 +97,30 @@
       "TFTP-BLKSIZE-ADOPTED": 6,
       "TFTP-TIMEOUT-OPTION": 2,
       "TFTP-TSIZE-ADOPTED": 4,
-      "TFTP-OPTION-SEQUENCE": 1
+      "TFTP-OPTION-SEQUENCE": 1,
+      "IPV4-HEADER-FIELD-WIDTH": 12,
+      "TFTP-MAIL-MODE-NOT-SUPPORTED": 1,
+      "TFTP-UDP-LENGTH-INCLUDES-HEADER": 1,
+      "TFTP-SORCERERS-APPRENTICE-FIX": 1,
+      "TFTP-ADAPTIVE-TIMEOUT": 1,
+      "TFTP-PATHNAME-ACCESS-CONTROL": 1,
+      "TFTP-IGNORE-BROADCAST-REQUEST": 1,
+      "AFDX-VL-SINGLE-SOURCE": 1,
+      "AFDX-VL-UNIDIRECTIONAL": 1,
+      "AFDX-BAG-MINIMUM-INTERVAL": 1,
+      "AFDX-MAX-ADMISSIBLE-JITTER": 1,
+      "AFDX-VL-BANDWIDTH-BAG-LMAX": 1,
+      "AFDX-VL-FRAME-1518": 1,
+      "AFDX-BAG-RANGE": 1,
+      "AFDX-BAG-POWER-OF-TWO": 1,
+      "AFDX-JITTER-500US-CAP": 1,
+      "AFDX-VL-MAC-DESTINATION-IDENTITY": 1,
+      "IPV4-IHL-32-BIT-WORDS": 1,
+      "IPV4-IHL-MINIMUM-5": 1,
+      "IPV4-TOTAL-LENGTH-OCTETS": 1,
+      "IPV4-FRAGMENT-OFFSET-UNITS": 1,
+      "IPV4-OPTIONS-VARIABLE": 1,
+      "IPV4-HEADER-PADDING-32-BIT": 1
     },
     "deferredFutureScope": {
       "total": 0,
@@ -15088,20 +15111,40 @@
             ],
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
-            "summaryEn": "End-system VL/BAG/jitter are AFDX deployment obligations if AFDX is chosen. They do not rewrite TFTP/615A operations. Existing NET-P7-TFTP/IP/ADDRESS/PERFORMANCE regions inspect this surface. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "若选择 AFDX，端系统 VL/BAG/抖动是部署义务。它们不改写 TFTP/615A 操作。已有 NET-P7-TFTP/IP/ADDRESS/PERFORMANCE 区域检查该表面。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "summaryEn": "If AFDX is chosen, VL/BAG/jitter encoding is bound: one source ES per VL, unidirectional VL, BAG minimum interval and 2^k values 1-128 ms, 1518-byte frames, maximum admissible jitter and 500 us cap, VL identity in the MAC destination. The two max_jitter formulas and MAC source construction remain unfinished.",
+            "summaryZh": "若选择 AFDX，已绑定 VL／BAG／抖动编码：每 VL 单一源端系统、单向 VL、BAG 最小间隔与 1-128 ms 的 2^k 取值、1518 字节帧、最大允许抖动与 500 微秒上限、MAC 目的地址中的 VL 身份。两个 max_jitter 公式与 MAC 源地址构造仍未完成。",
             "leafCoverageIds": [
-              "COV-M1-02886"
+              "COV-M1-02886",
+              "COV-M1-02955",
+              "COV-M1-02956",
+              "COV-M1-02957",
+              "COV-M1-02958",
+              "COV-M1-02959",
+              "COV-M1-02960",
+              "COV-M1-02961",
+              "COV-M1-02962",
+              "COV-M1-02963",
+              "COV-M1-02964"
             ],
             "leafRequirementIds": [
-              "CRS-M1-00607"
+              "CRS-M1-00607",
+              "CRS-M1-00666",
+              "CRS-M1-00667",
+              "CRS-M1-00668",
+              "CRS-M1-00669",
+              "CRS-M1-00670",
+              "CRS-M1-00671",
+              "CRS-M1-00672",
+              "CRS-M1-00673",
+              "CRS-M1-00674",
+              "CRS-M1-00675"
             ],
             "remainingSubunits": [
               {
-                "id": "SAU-P7-3-REMAINING-VL-BAG-JITTER",
+                "id": "SAU-P7-3-REMAINING-MAX-JITTER-EQUATION-AND-MAC-SOURCE",
                 "disposition": "NOT-YET-BOUND",
-                "summaryEn": "Detailed VL, BAG and jitter encoding in chapter 3 remains outside this leaf.",
-                "summaryZh": "第 3 章中 VL、BAG 与抖动的详细编码仍在本叶之外。"
+                "summaryEn": "The two max_jitter formulas on 664-7 p17 did not yield a complete hashed equation from PDF text extraction; the 500 us cap is bound separately. End-system 150 us latency and MAC source-address construction stay outside the VL/BAG/jitter encoding leaves.",
+                "summaryZh": "664-7 第 17 页两个 max_jitter 公式未能从 PDF 文本提取得到可散列完整方程；500 微秒上限已单独绑定。端系统 150 微秒时延与 MAC 源地址构造仍在 VL／BAG／抖动编码叶之外。"
               }
             ],
             "admittedLeafUnits": [
@@ -15112,6 +15155,86 @@
                 ],
                 "sourceUnitId": "SU-ARINC-664-7-3-P017-PROSE-SENTENCE-001-702F6DFF5983",
                 "clause": "3"
+              },
+              {
+                "coverageId": "COV-M1-02955",
+                "requirementIds": [
+                  "CRS-M1-00666"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.1-P018-PROSE-SENTENCE-001-B2E9B1E66E16",
+                "clause": "3.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02956",
+                "requirementIds": [
+                  "CRS-M1-00667"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.1-P018-PROSE-SENTENCE-002-3AC3D9B42053",
+                "clause": "3.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02957",
+                "requirementIds": [
+                  "CRS-M1-00668"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.2-P019-PROSE-SENTENCE-001-3F32CD4BF748",
+                "clause": "3.2.2"
+              },
+              {
+                "coverageId": "COV-M1-02958",
+                "requirementIds": [
+                  "CRS-M1-00669"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-001-8AFCAA7FEEA4",
+                "clause": "3.2.3"
+              },
+              {
+                "coverageId": "COV-M1-02959",
+                "requirementIds": [
+                  "CRS-M1-00670"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-002-796A41A0B615",
+                "clause": "3.2.3"
+              },
+              {
+                "coverageId": "COV-M1-02960",
+                "requirementIds": [
+                  "CRS-M1-00671"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-003-1E381797D200",
+                "clause": "3.2.3"
+              },
+              {
+                "coverageId": "COV-M1-02961",
+                "requirementIds": [
+                  "CRS-M1-00672"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-004-8CA2CDF489CD",
+                "clause": "3.2.3"
+              },
+              {
+                "coverageId": "COV-M1-02962",
+                "requirementIds": [
+                  "CRS-M1-00673"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-005-9BC14F6B2E45",
+                "clause": "3.2.3"
+              },
+              {
+                "coverageId": "COV-M1-02963",
+                "requirementIds": [
+                  "CRS-M1-00674"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-001-76031BDF6730",
+                "clause": "3.2.4.3"
+              },
+              {
+                "coverageId": "COV-M1-02964",
+                "requirementIds": [
+                  "CRS-M1-00675"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.1-P026-PROSE-SENTENCE-001-56B6CFE1A3CD",
+                "clause": "3.2.5.1"
               }
             ]
           },
@@ -15799,22 +15922,51 @@
             ],
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
-            "summaryEn": "Version, header length, total length, identification, flags, fragment offset, TTL, protocol and addresses are the IPv4 header 615A traffic uses. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "版本、头长度、总长度、标识、标志、分片偏移、TTL、协议与地址是 615A 流量使用的 IPv4 头。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "summaryEn": "IPv4 header field widths, IHL/Total Length/Fragment Offset units, variable options and 32-bit padding are bound. 615A TFTP over IPv4 uses this header.",
+            "summaryZh": "IPv4 头字段宽度、IHL／Total Length／Fragment Offset 单位、可变选项与 32 位填充已绑定。615A 在 IPv4 上的 TFTP 使用该头。",
             "leafCoverageIds": [
-              "COV-M1-02897"
+              "COV-M1-02897",
+              "COV-M1-02937",
+              "COV-M1-02938",
+              "COV-M1-02939",
+              "COV-M1-02940",
+              "COV-M1-02941",
+              "COV-M1-02942",
+              "COV-M1-02943",
+              "COV-M1-02944",
+              "COV-M1-02945",
+              "COV-M1-02946",
+              "COV-M1-02947",
+              "COV-M1-02948",
+              "COV-M1-02965",
+              "COV-M1-02966",
+              "COV-M1-02967",
+              "COV-M1-02968",
+              "COV-M1-02969",
+              "COV-M1-02970"
             ],
             "leafRequirementIds": [
-              "CRS-M1-00612"
+              "CRS-M1-00612",
+              "CRS-M1-00648",
+              "CRS-M1-00649",
+              "CRS-M1-00650",
+              "CRS-M1-00651",
+              "CRS-M1-00652",
+              "CRS-M1-00653",
+              "CRS-M1-00654",
+              "CRS-M1-00655",
+              "CRS-M1-00656",
+              "CRS-M1-00657",
+              "CRS-M1-00658",
+              "CRS-M1-00659",
+              "CRS-M1-00676",
+              "CRS-M1-00677",
+              "CRS-M1-00678",
+              "CRS-M1-00679",
+              "CRS-M1-00680",
+              "CRS-M1-00681"
             ],
-            "remainingSubunits": [
-              {
-                "id": "SAU-791-3-1-REMAINING-FIELD-WIDTHS",
-                "disposition": "NOT-YET-BOUND",
-                "summaryEn": "Individual IPv4 header field widths remain outside this leaf.",
-                "summaryZh": "各 IPv4 头字段宽度仍在本叶之外。"
-              }
-            ],
+            "remainingSubunits": [],
             "admittedLeafUnits": [
               {
                 "coverageId": "COV-M1-02897",
@@ -15822,6 +15974,150 @@
                   "CRS-M1-00612"
                 ],
                 "sourceUnitId": "SU-RFC-791-3.1-P008-PROSE-SENTENCE-001-443A672321C1",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02937",
+                "requirementIds": [
+                  "CRS-M1-00648"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P017-PROSE-SENTENCE-002-35A7348FF9FA",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02938",
+                "requirementIds": [
+                  "CRS-M1-00649"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P017-PROSE-SENTENCE-003-FBA3366ADD9B",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02939",
+                "requirementIds": [
+                  "CRS-M1-00650"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P018-PROSE-SENTENCE-004-DC1BFA058673",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02940",
+                "requirementIds": [
+                  "CRS-M1-00651"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-005-D93E00A61632",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02941",
+                "requirementIds": [
+                  "CRS-M1-00652"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-006-7E317C05BA7F",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02942",
+                "requirementIds": [
+                  "CRS-M1-00653"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-007-46F185F002B2",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02943",
+                "requirementIds": [
+                  "CRS-M1-00654"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-008-1A3DDA9F5E70",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02944",
+                "requirementIds": [
+                  "CRS-M1-00655"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-009-984FD4C7EC7E",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02945",
+                "requirementIds": [
+                  "CRS-M1-00656"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-010-3425BDE4EE7A",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02946",
+                "requirementIds": [
+                  "CRS-M1-00657"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-011-1F408D481D64",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02947",
+                "requirementIds": [
+                  "CRS-M1-00658"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-012-3A288A418AEE",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02948",
+                "requirementIds": [
+                  "CRS-M1-00659"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-013-C6D7D7BFD7B6",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02965",
+                "requirementIds": [
+                  "CRS-M1-00676"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P017-PROSE-SENTENCE-014-66107CA56FCF",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02966",
+                "requirementIds": [
+                  "CRS-M1-00677"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P017-PROSE-SENTENCE-015-7DC7AF24BE45",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02967",
+                "requirementIds": [
+                  "CRS-M1-00678"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-016-0740AAFF0150",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02968",
+                "requirementIds": [
+                  "CRS-M1-00679"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-017-2F6A6F63ABEF",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02969",
+                "requirementIds": [
+                  "CRS-M1-00680"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P021-PROSE-SENTENCE-018-7D9B36E2E6F2",
+                "clause": "3.1"
+              },
+              {
+                "coverageId": "COV-M1-02970",
+                "requirementIds": [
+                  "CRS-M1-00681"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P029-PROSE-SENTENCE-019-CA2E4BEC637B",
                 "clause": "3.1"
               }
             ]
@@ -16268,20 +16564,32 @@
             ],
             "relationTo615A": "DIRECT-NORMATIVE-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
-            "summaryEn": "RFC 1123 §4.2 adds host TFTP notes: octet/netascii modes, UDP header, Sorcerer's Apprentice, timeout, extensions, access control and broadcast RRQ. 615A uses octet TFTP with its own option set; mail/netascii and broadcast-RRQ are not adopted. Sorcerer's Apprentice remains a TFTP-base constraint alongside RFC 1350. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
-            "summaryZh": "RFC 1123 §4.2 补充主机 TFTP 说明：octet/netascii、UDP 头、术士学徒、超时、扩展、访问控制与广播 RRQ。615A 使用带自有选项集的 octet TFTP；不采用 mail/netascii 与广播 RRQ。术士学徒与 RFC 1350 同为 TFTP 基础约束。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
+            "summaryEn": "RFC 1123 §4.2 host TFTP notes are bound: mail is prohibited, UDP Length includes the 8-octet header, Sorcerer's Apprentice forbids DATA resend on duplicate ACK, timeout is adaptive, pathname access control is required, and broadcast requests are ignored. netascii and non-standard extensions stay out of the 615A profile.",
+            "summaryZh": "RFC 1123 §4.2 主机 TFTP 说明已绑定：禁止 mail、UDP Length 含 8 八位组头、术士学徒禁止因重复 ACK 重发 DATA、超时须自适应、路径名访问控制需要、广播请求忽略。netascii 与非标准扩展仍在 615A 配置之外。",
             "leafCoverageIds": [
-              "COV-M1-02903"
+              "COV-M1-02903",
+              "COV-M1-02949",
+              "COV-M1-02950",
+              "COV-M1-02951",
+              "COV-M1-02952",
+              "COV-M1-02953",
+              "COV-M1-02954"
             ],
             "leafRequirementIds": [
-              "CRS-M1-00616"
+              "CRS-M1-00616",
+              "CRS-M1-00660",
+              "CRS-M1-00661",
+              "CRS-M1-00662",
+              "CRS-M1-00663",
+              "CRS-M1-00664",
+              "CRS-M1-00665"
             ],
             "remainingSubunits": [
               {
-                "id": "SAU-1123-4-2-REMAINING-HOST-NOTE-ATOMS",
-                "disposition": "NOT-YET-BOUND",
-                "summaryEn": "RFC 1123 4.2 host-requirement atoms beyond the 615A octet/option adoption decision remain outside this leaf. Mail/netascii and broadcast-RRQ stay not adopted; they are not closed by this overview row.",
-                "summaryZh": "RFC 1123 §4.2 中超出 615A octet／选项采纳决定的主机要求原子仍在本叶之外。mail／netascii 与广播 RRQ 保持不采用；本概述行不将其闭合。"
+                "id": "SAU-1123-4-2-REMAINING-NETASCII-AND-NONSTANDARD-EXTENSIONS",
+                "disposition": "OUT-OF-PROFILE",
+                "summaryEn": "netascii is a generic-host MUST in the RFC 1123 summary via RFC-783; 615A uses octet TFTP only. Non-standard TFTP extensions in 4.2.3.3 were never standardized and are not adopted. Octet mode remains on the RFC 1350 leaves.",
+                "summaryZh": "netascii 是 RFC 1123 汇总表经 RFC-783 的通用主机 MUST；615A 只使用 octet TFTP。4.2.3.3 中非标准 TFTP 扩展从未标准化，也不采用。octet 模式仍在 RFC 1350 叶上。"
               }
             ],
             "admittedLeafUnits": [
@@ -16292,6 +16600,54 @@
                 ],
                 "sourceUnitId": "SU-RFC-1123-4.2-P044-PROSE-SENTENCE-001-4EE42D37EF0F",
                 "clause": "4.2"
+              },
+              {
+                "coverageId": "COV-M1-02949",
+                "requirementIds": [
+                  "CRS-M1-00660"
+                ],
+                "sourceUnitId": "SU-RFC-1123-4.2.2.1-P044-PROSE-SENTENCE-001-C57FFB7284BF",
+                "clause": "4.2.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02950",
+                "requirementIds": [
+                  "CRS-M1-00661"
+                ],
+                "sourceUnitId": "SU-RFC-1123-4.2.2.2-P044-PROSE-SENTENCE-001-D47D6D4362DF",
+                "clause": "4.2.2.2"
+              },
+              {
+                "coverageId": "COV-M1-02951",
+                "requirementIds": [
+                  "CRS-M1-00662"
+                ],
+                "sourceUnitId": "SU-RFC-1123-4.2.3.1-P044-PROSE-SENTENCE-001-D221776D6159",
+                "clause": "4.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02952",
+                "requirementIds": [
+                  "CRS-M1-00663"
+                ],
+                "sourceUnitId": "SU-RFC-1123-4.2.3.2-P046-PROSE-SENTENCE-001-493633EC7445",
+                "clause": "4.2.3.2"
+              },
+              {
+                "coverageId": "COV-M1-02953",
+                "requirementIds": [
+                  "CRS-M1-00664"
+                ],
+                "sourceUnitId": "SU-RFC-1123-4.2.3.4-P046-PROSE-SENTENCE-001-8C34A8B506F6",
+                "clause": "4.2.3.4"
+              },
+              {
+                "coverageId": "COV-M1-02954",
+                "requirementIds": [
+                  "CRS-M1-00665"
+                ],
+                "sourceUnitId": "SU-RFC-1123-4.2.3.5-P046-PROSE-SENTENCE-001-BC97D4CAC682",
+                "clause": "4.2.3.5"
               }
             ]
           },

@@ -140,7 +140,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-11"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-12"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
@@ -206,12 +206,11 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
                 assert unit["id"] == unbound["auditUnitId"]
             for item in unit.get("remainingSubunits") or []:
                 remaining[item["id"]] = item
-    for remaining_id in (
-        "SAU-1123-4-2-REMAINING-HOST-NOTE-ATOMS",
-        "SAU-P7-3-REMAINING-VL-BAG-JITTER",
-        "SAU-791-3-1-REMAINING-FIELD-WIDTHS",
-    ):
-        assert remaining[remaining_id]["disposition"] == "NOT-YET-BOUND"
+    assert "SAU-1123-4-2-REMAINING-HOST-NOTE-ATOMS" not in remaining
+    assert "SAU-P7-3-REMAINING-VL-BAG-JITTER" not in remaining
+    assert "SAU-791-3-1-REMAINING-FIELD-WIDTHS" not in remaining
+    assert remaining["SAU-1123-4-2-REMAINING-NETASCII-AND-NONSTANDARD-EXTENSIONS"]["disposition"] == "OUT-OF-PROFILE"
+    assert remaining["SAU-P7-3-REMAINING-MAX-JITTER-EQUATION-AND-MAC-SOURCE"]["disposition"] == "NOT-YET-BOUND"
 
 
 TRUNCATED_LEAD_IN = "The TFTP Read Request or Write Request packet is modified to include"
@@ -272,6 +271,20 @@ def test_rfc_option_leaves_bind_complete_distinct_sentences() -> None:
         if row["semantic"]["action"] == "COMPUTE-UDP-CHECKSUM-OVER-PSEUDO-HEADER-HEADER-AND-DATA"
     )
     assert checksum["sourceTextHash"] == baseline.leaf_unit_hash(CHECKSUM_CROSS_PAGE)
+    sas = next(row for row in crs["requirements"] if row["semantic"]["action"] == "NEVER-RESEND-CURRENT-DATA-ON-DUPLICATE-ACK")
+    assert sas["source"]["sourceId"] == "RFC-1123"
+    assert sas["sourceModality"] == "MUST"
+    mail = next(row for row in crs["requirements"] if row["semantic"]["action"] == "DO-NOT-SUPPORT-TFTP-MAIL-TRANSFER-MODE")
+    assert mail["conformanceEffect"] == "PROHIBITED"
+    assert mail["semantic"]["polarity"] == "NEGATIVE"
+    version_width = next(row for row in crs["requirements"] if row["semantic"]["action"] == "ENCODE-VERSION-AS-4-BITS")
+    assert version_width["sourceTextHash"] == baseline.leaf_unit_hash("Version: 4 bits")
+    bag = next(row for row in crs["requirements"] if row["semantic"]["action"] == "RESTRICT-BAG-TO-POWERS-OF-TWO-MILLISECONDS")
+    assert bag["source"]["sourceId"] == "ARINC-664-7"
+    assert "remaining" not in by_id["CRS-M1-00612"]["generatedSemanticProjectionEn"].lower()
+    assert "500" in next(
+        row for row in crs["requirements"] if row["semantic"]["action"] == "KEEP-VL-JITTER-AT-OR-BELOW-500-MICROSECONDS"
+    )["generatedSemanticProjectionEn"]
 
 
 def test_tftp_end_condition_combines_default_and_negotiated_blksize() -> None:

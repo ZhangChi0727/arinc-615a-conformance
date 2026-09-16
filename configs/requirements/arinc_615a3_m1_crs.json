@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0",
   "artifactId": "ARINC615A3-M1-CRS",
-  "artifactVersion": "M1-CANDIDATE-11",
+  "artifactVersion": "M1-CANDIDATE-12",
   "candidateDisposition": "ADOPT",
   "sourceBindings": [
     {
@@ -71835,6 +71835,890 @@
       "requirementIds": [
         "CRS-M1-00647"
       ]
+    },
+    {
+      "id": "COV-M1-02937",
+      "sourceUnitId": "SU-RFC-791-3.1-P017-PROSE-SENTENCE-002-35A7348FF9FA",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 17,
+        "pdfPage": 17,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "35a7348ff9facb25d9adf201de340da026d853e75e2e8cdf50d777af758c8c5b",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00648"
+      ]
+    },
+    {
+      "id": "COV-M1-02938",
+      "sourceUnitId": "SU-RFC-791-3.1-P017-PROSE-SENTENCE-003-FBA3366ADD9B",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 17,
+        "pdfPage": 17,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "fba3366add9b885ae4b97db2b393e31d503a4453e9bfdcb2084e0e3fe022b0ed",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00649"
+      ]
+    },
+    {
+      "id": "COV-M1-02939",
+      "sourceUnitId": "SU-RFC-791-3.1-P018-PROSE-SENTENCE-004-DC1BFA058673",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 18,
+        "pdfPage": 18,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "dc1bfa0586738f9332a54e64733132e73052bd6b702e1c5c892afc7c09c8330c",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00650"
+      ]
+    },
+    {
+      "id": "COV-M1-02940",
+      "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-005-D93E00A61632",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 19,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "d93e00a6163295b0151888434d11a9b3db7925b362b7a4c8c11a233cd9fd57e1",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00651"
+      ]
+    },
+    {
+      "id": "COV-M1-02941",
+      "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-006-7E317C05BA7F",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 19,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "7e317c05ba7ffcc14af799cb866efe05b3e7edbd956c79e41afc0667f7ea8933",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00652"
+      ]
+    },
+    {
+      "id": "COV-M1-02942",
+      "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-007-46F185F002B2",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 19,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "46f185f002b2fa1d22e193e14b2fe5746cca72533ca339bd3931452cd29468a3",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00653"
+      ]
+    },
+    {
+      "id": "COV-M1-02943",
+      "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-008-1A3DDA9F5E70",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 19,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "1a3dda9f5e70166861f8cb4cd7980a15ca4780c8d5ec92b97560c202db53cbcc",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00654"
+      ]
+    },
+    {
+      "id": "COV-M1-02944",
+      "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-009-984FD4C7EC7E",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 20,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "984fd4c7ec7ea18d4efa64315a022e2463a0ff3f9e11bef93cd01dae2984908f",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00655"
+      ]
+    },
+    {
+      "id": "COV-M1-02945",
+      "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-010-3425BDE4EE7A",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 20,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "3425bde4ee7af6007c8b0332bf2fdb730d8c33146da91696bc955d6b6abb5895",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00656"
+      ]
+    },
+    {
+      "id": "COV-M1-02946",
+      "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-011-1F408D481D64",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 20,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 11
+      },
+      "sourceTextHash": "1f408d481d644b0614f8952a769be391c6d3385048aaa0d4675551180e5fc3b3",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00657"
+      ]
+    },
+    {
+      "id": "COV-M1-02947",
+      "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-012-3A288A418AEE",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 20,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 12
+      },
+      "sourceTextHash": "3a288a418aee121bc77bb1ad98c21e55f77592b1769314378f6d4a60418e2861",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00658"
+      ]
+    },
+    {
+      "id": "COV-M1-02948",
+      "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-013-C6D7D7BFD7B6",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 20,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 13
+      },
+      "sourceTextHash": "c6d7d7bfd7b65a8b83338e71910ad46a6dab6c2c766f1686f44ec41e6ff1c40b",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00659"
+      ]
+    },
+    {
+      "id": "COV-M1-02949",
+      "sourceUnitId": "SU-RFC-1123-4.2.2.1-P044-PROSE-SENTENCE-001-C57FFB7284BF",
+      "source": {
+        "sourceId": "RFC-1123",
+        "clause": "4.2.2.1",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 44,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "c57ffb7284bfc4c5297cf900bbcfd91b59a6554f13411dddad13d5e15f599354",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "PROHIBITED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-MAIL-MODE-NOT-SUPPORTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00660"
+      ]
+    },
+    {
+      "id": "COV-M1-02950",
+      "sourceUnitId": "SU-RFC-1123-4.2.2.2-P044-PROSE-SENTENCE-001-D47D6D4362DF",
+      "source": {
+        "sourceId": "RFC-1123",
+        "clause": "4.2.2.2",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 44,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "d47d6d4362dffcc3e691b2e95dffe986f6174cf2e286338940e1d47a064f5c98",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-UDP-LENGTH-INCLUDES-HEADER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00661"
+      ]
+    },
+    {
+      "id": "COV-M1-02951",
+      "sourceUnitId": "SU-RFC-1123-4.2.3.1-P044-PROSE-SENTENCE-001-D221776D6159",
+      "source": {
+        "sourceId": "RFC-1123",
+        "clause": "4.2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 44,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "d221776d615928e6e6f5649ded56b845911ba14134bc989f6f6ce3c36f2ae180",
+      "sourceModality": "MUST",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-SORCERERS-APPRENTICE-FIX",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00662"
+      ]
+    },
+    {
+      "id": "COV-M1-02952",
+      "sourceUnitId": "SU-RFC-1123-4.2.3.2-P046-PROSE-SENTENCE-001-493633EC7445",
+      "source": {
+        "sourceId": "RFC-1123",
+        "clause": "4.2.3.2",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 46,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "493633ec744599d705212a8c56c4c97aced6aae494c5ebdce91a8b6e9ab7b565",
+      "sourceModality": "MUST",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-ADAPTIVE-TIMEOUT",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00663"
+      ]
+    },
+    {
+      "id": "COV-M1-02953",
+      "sourceUnitId": "SU-RFC-1123-4.2.3.4-P046-PROSE-SENTENCE-001-8C34A8B506F6",
+      "source": {
+        "sourceId": "RFC-1123",
+        "clause": "4.2.3.4",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 46,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "8c34a8b506f6887d4db2ee0f6bf146338f95cf4d1f8c2e12fe1381440a1a1c7d",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-PATHNAME-ACCESS-CONTROL",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00664"
+      ]
+    },
+    {
+      "id": "COV-M1-02954",
+      "sourceUnitId": "SU-RFC-1123-4.2.3.5-P046-PROSE-SENTENCE-001-BC97D4CAC682",
+      "source": {
+        "sourceId": "RFC-1123",
+        "clause": "4.2.3.5",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 46,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "bc97d4cac6824de2c3cf80acfe0be496624dfdb66ca2578a853d13008007616c",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-IGNORE-BROADCAST-REQUEST",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00665"
+      ]
+    },
+    {
+      "id": "COV-M1-02955",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.1-P018-PROSE-SENTENCE-001-B2E9B1E66E16",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.1",
+        "tableOrFigure": null,
+        "documentPage": 18,
+        "pdfPage": 18,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "b2e9b1e66e168d72fa8f4c7cff81b9b2f1b87e073cc4ad1a93b509bad97c58b7",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-VL-SINGLE-SOURCE",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00666"
+      ]
+    },
+    {
+      "id": "COV-M1-02956",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.1-P018-PROSE-SENTENCE-002-3AC3D9B42053",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.1",
+        "tableOrFigure": null,
+        "documentPage": 18,
+        "pdfPage": 18,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "3ac3d9b420531ba9955b38e053120657a46818852064e5353896839a3f71d754",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-VL-UNIDIRECTIONAL",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00667"
+      ]
+    },
+    {
+      "id": "COV-M1-02957",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.2-P019-PROSE-SENTENCE-001-3F32CD4BF748",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.2",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 19,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "3f32cd4bf748813f27ea6b63e77a5f112afeb5857c3b8f4aa759f088522e136b",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-BAG-MINIMUM-INTERVAL",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00668"
+      ]
+    },
+    {
+      "id": "COV-M1-02958",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-001-8AFCAA7FEEA4",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.3",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 21,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "8afcaa7feea41927d9ed539d30be08fa8e5edff626cfbd3623c3eeded6fa03c6",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAX-ADMISSIBLE-JITTER",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00669"
+      ]
+    },
+    {
+      "id": "COV-M1-02959",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-002-796A41A0B615",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.3",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 21,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "796a41a0b61521e41361c286539f681dbbcd5015f3c2794590191cef022de058",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-VL-BANDWIDTH-BAG-LMAX",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00670"
+      ]
+    },
+    {
+      "id": "COV-M1-02960",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-003-1E381797D200",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.3",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 21,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "1e381797d2007fa14977bb60e03b6fdd66ac8870dff7e6391c67a1c4a8ce6506",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-VL-FRAME-1518",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00671"
+      ]
+    },
+    {
+      "id": "COV-M1-02961",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-004-8CA2CDF489CD",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.3",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 21,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "8ca2cdf489cd2462ef47ed374532202de6b1b5eb9207238eaa118d3ac1bfcf17",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-BAG-RANGE",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00672"
+      ]
+    },
+    {
+      "id": "COV-M1-02962",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-005-9BC14F6B2E45",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.3",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 21,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "9bc14f6b2e45aa3fa416f1e280eacfa8d2aae122d8a2b19a022ef416537ff3b3",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-BAG-POWER-OF-TWO",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00673"
+      ]
+    },
+    {
+      "id": "COV-M1-02963",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-001-76031BDF6730",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.3",
+        "tableOrFigure": null,
+        "documentPage": 25,
+        "pdfPage": 25,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "76031bdf673024b166ce3c18571b2540bd577a15e9bdc08fdd74e6681ec6d348",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-JITTER-500US-CAP",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00674"
+      ]
+    },
+    {
+      "id": "COV-M1-02964",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.1-P026-PROSE-SENTENCE-001-56B6CFE1A3CD",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.1",
+        "tableOrFigure": null,
+        "documentPage": 26,
+        "pdfPage": 26,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "56b6cfe1a3cdf0959ffa5f84b1c91bbfef84181bbfdfdf4ac9f3ad9bc281b1d0",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-VL-MAC-DESTINATION-IDENTITY",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00675"
+      ]
+    },
+    {
+      "id": "COV-M1-02965",
+      "sourceUnitId": "SU-RFC-791-3.1-P017-PROSE-SENTENCE-014-66107CA56FCF",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 17,
+        "pdfPage": 17,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 14
+      },
+      "sourceTextHash": "66107ca56fcf1def119959dc030148c32cd9a6c59d8d85752bafc6e83c9b9486",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-IHL-32-BIT-WORDS",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00676"
+      ]
+    },
+    {
+      "id": "COV-M1-02966",
+      "sourceUnitId": "SU-RFC-791-3.1-P017-PROSE-SENTENCE-015-7DC7AF24BE45",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 17,
+        "pdfPage": 17,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 15
+      },
+      "sourceTextHash": "7dc7af24be45836642059604561c1dc578a10b3b0dbc5862e5686c6f900a083f",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-IHL-MINIMUM-5",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00677"
+      ]
+    },
+    {
+      "id": "COV-M1-02967",
+      "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-016-0740AAFF0150",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 19,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 16
+      },
+      "sourceTextHash": "0740aaff01502049b379e1f8f2a5755d3d85522175deb6165173a8375f6f642f",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-TOTAL-LENGTH-OCTETS",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00678"
+      ]
+    },
+    {
+      "id": "COV-M1-02968",
+      "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-017-2F6A6F63ABEF",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 20,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 17
+      },
+      "sourceTextHash": "2f6a6f63abef34a747a62d1178a1b14a0213afdbb8844d7c55dcba1dbdf4ba8b",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-FRAGMENT-OFFSET-UNITS",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00679"
+      ]
+    },
+    {
+      "id": "COV-M1-02969",
+      "sourceUnitId": "SU-RFC-791-3.1-P021-PROSE-SENTENCE-018-7D9B36E2E6F2",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 21,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 18
+      },
+      "sourceTextHash": "7d9b36e2e6f2d74030b01f35eebb88b4bffa3f3d34235cf6fcd67ed8db96b7da",
+      "sourceModality": "FACT",
+      "conformanceEffect": "OPTIONAL",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-OPTIONS-VARIABLE",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00680"
+      ]
+    },
+    {
+      "id": "COV-M1-02970",
+      "sourceUnitId": "SU-RFC-791-3.1-P029-PROSE-SENTENCE-019-CA2E4BEC637B",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 29,
+        "pdfPage": 29,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 19
+      },
+      "sourceTextHash": "ca2e4bec637bd739db89809a5ed9d85946c0e121be6946db489e94f331c3c8ec",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-PADDING-32-BIT",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00681"
+      ]
     }
   ],
   "requirements": [
@@ -102266,8 +103150,8 @@
       },
       "sourceTextHash": "702f6dff59835bd790d620b3b46719ade6114fdec17c024052fb061e52fd4c58",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, the End System's main function is to provide services that guarantee secure and reliable data exchange to the partition software. Remaining VL/BAG/jitter encoding is not claimed closed by this leaf.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，端系统的主要功能是向分区软件提供保证安全可靠数据交换的服务。其余 VL/BAG/抖动编码不由本叶闭合。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the End System's main function is to provide services that guarantee secure and reliable data exchange to the partition software.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，端系统的主要功能是向分区软件提供保证安全可靠数据交换的服务。",
       "semantic": {
         "actor": "AFDX-END-SYSTEM",
         "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
@@ -102492,8 +103376,8 @@
       },
       "sourceTextHash": "443a672321c1283cb4fae2c6e84400388003cad2dabfa60f75e0944235ab2e34",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "IPv4 implements addressing and fragmentation as its two basic functions. Remaining header-field widths are not claimed closed by this leaf.",
-      "generatedSemanticProjectionZh": "IPv4 实现寻址与分片两项基本功能。其余头字段宽度不由本叶闭合。",
+      "generatedSemanticProjectionEn": "IPv4 implements addressing and fragmentation as its two basic functions.",
+      "generatedSemanticProjectionZh": "IPv4 实现寻址与分片两项基本功能。",
       "semantic": {
         "actor": "IPV4-DATAGRAM-SENDER",
         "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
@@ -102670,8 +103554,8 @@
       },
       "sourceTextHash": "4ee42d37ef0fc45fd3322426dd047c902b6ed104c1b91a413bf105f13fa4ca07",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "RFC 1123 section 4.2 adds host TFTP notes. ARINC 615A uses octet TFTP with its own option set; mail/netascii and broadcast-RRQ are not adopted.",
-      "generatedSemanticProjectionZh": "RFC 1123 第 4.2 节补充主机 TFTP 说明。ARINC 615A 使用带自有选项集的 octet TFTP；不采用 mail/netascii 与广播 RRQ。",
+      "generatedSemanticProjectionEn": "RFC 1123 section 4.2 adds host TFTP notes. ARINC 615A uses octet TFTP with its own option set; mail is prohibited by 4.2.2.1, netascii stays out of profile, and broadcast requests are silently ignored rather than used as a transfer method.",
+      "generatedSemanticProjectionZh": "RFC 1123 第 4.2 节补充主机 TFTP 说明。ARINC 615A 使用带自有选项集的 octet TFTP；mail 由 4.2.2.1 禁止，netascii 保持出配置，广播请求被静默忽略而不是用作传输方法。",
       "semantic": {
         "actor": "TFTP-HOST",
         "condition": "WHEN-USING-TFTP-AS-615A-FILE-TRANSFER",
@@ -104157,6 +105041,1574 @@
           "rationaleCode": "RFC-2347-UNACKED-OPTION-KEEPS-DEFAULT-512"
         }
       ]
+    },
+    {
+      "id": "CRS-M1-00648",
+      "sourceUnitId": "SU-RFC-791-3.1-P017-PROSE-SENTENCE-002-35A7348FF9FA",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 17,
+        "pdfPage": 17,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "35a7348ff9facb25d9adf201de340da026d853e75e2e8cdf50d777af758c8c5b",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The IPv4 Version field is 4 bits wide. 615A TFTP over IPv4 uses this header field.",
+      "generatedSemanticProjectionZh": "IPv4 Version 字段宽 4 位。615A 在 IPv4 上的 TFTP 使用该头字段。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ENCODE-VERSION-AS-4-BITS",
+        "objects": [
+          "IPV4-VERSION-FIELD"
+        ],
+        "observableEffect": "IPV4-VERSION-FIELD-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02937",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-VERSION-FIELD-WIDTH",
+      "splitRationale": "This labeled width atom is distinct from other IPv4 header-field leaves."
+    },
+    {
+      "id": "CRS-M1-00649",
+      "sourceUnitId": "SU-RFC-791-3.1-P017-PROSE-SENTENCE-003-FBA3366ADD9B",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 17,
+        "pdfPage": 17,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "fba3366add9b885ae4b97db2b393e31d503a4453e9bfdcb2084e0e3fe022b0ed",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The IPv4 IHL field is 4 bits wide. 615A TFTP over IPv4 uses this header field.",
+      "generatedSemanticProjectionZh": "IPv4 IHL 字段宽 4 位。615A 在 IPv4 上的 TFTP 使用该头字段。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ENCODE-IHL-AS-4-BITS",
+        "objects": [
+          "IPV4-IHL-FIELD"
+        ],
+        "observableEffect": "IPV4-IHL-FIELD-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02938",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-IHL-FIELD-WIDTH",
+      "splitRationale": "This labeled width atom is distinct from other IPv4 header-field leaves."
+    },
+    {
+      "id": "CRS-M1-00650",
+      "sourceUnitId": "SU-RFC-791-3.1-P018-PROSE-SENTENCE-004-DC1BFA058673",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 18,
+        "pdfPage": 18,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "dc1bfa0586738f9332a54e64733132e73052bd6b702e1c5c892afc7c09c8330c",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The IPv4 Type of Service field is 8 bits wide. 615A TFTP over IPv4 uses this header field.",
+      "generatedSemanticProjectionZh": "IPv4 Type of Service 字段宽 8 位。615A 在 IPv4 上的 TFTP 使用该头字段。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ENCODE-TOS-AS-8-BITS",
+        "objects": [
+          "IPV4-TOS-FIELD"
+        ],
+        "observableEffect": "IPV4-TOS-FIELD-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02939",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-TOS-FIELD-WIDTH",
+      "splitRationale": "This labeled width atom is distinct from other IPv4 header-field leaves."
+    },
+    {
+      "id": "CRS-M1-00651",
+      "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-005-D93E00A61632",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 19,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "d93e00a6163295b0151888434d11a9b3db7925b362b7a4c8c11a233cd9fd57e1",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The IPv4 Total Length field is 16 bits wide. 615A TFTP over IPv4 uses this header field.",
+      "generatedSemanticProjectionZh": "IPv4 Total Length 字段宽 16 位。615A 在 IPv4 上的 TFTP 使用该头字段。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ENCODE-TOTAL-LENGTH-AS-16-BITS",
+        "objects": [
+          "IPV4-TOTAL-LENGTH-FIELD"
+        ],
+        "observableEffect": "IPV4-TOTAL-LENGTH-FIELD-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02940",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-TOTAL-LENGTH-FIELD-WIDTH",
+      "splitRationale": "This labeled width atom is distinct from other IPv4 header-field leaves."
+    },
+    {
+      "id": "CRS-M1-00652",
+      "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-006-7E317C05BA7F",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 19,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "7e317c05ba7ffcc14af799cb866efe05b3e7edbd956c79e41afc0667f7ea8933",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The IPv4 Identification field is 16 bits wide. 615A TFTP over IPv4 uses this header field.",
+      "generatedSemanticProjectionZh": "IPv4 Identification 字段宽 16 位。615A 在 IPv4 上的 TFTP 使用该头字段。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ENCODE-IDENTIFICATION-AS-16-BITS",
+        "objects": [
+          "IPV4-IDENTIFICATION-FIELD"
+        ],
+        "observableEffect": "IPV4-IDENTIFICATION-FIELD-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02941",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-IDENTIFICATION-FIELD-WIDTH",
+      "splitRationale": "This labeled width atom is distinct from other IPv4 header-field leaves."
+    },
+    {
+      "id": "CRS-M1-00653",
+      "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-007-46F185F002B2",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 19,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "46f185f002b2fa1d22e193e14b2fe5746cca72533ca339bd3931452cd29468a3",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The IPv4 Flags field is 3 bits wide. 615A TFTP over IPv4 uses this header field.",
+      "generatedSemanticProjectionZh": "IPv4 Flags 字段宽 3 位。615A 在 IPv4 上的 TFTP 使用该头字段。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ENCODE-FLAGS-AS-3-BITS",
+        "objects": [
+          "IPV4-FLAGS-FIELD"
+        ],
+        "observableEffect": "IPV4-FLAGS-FIELD-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02942",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-FLAGS-FIELD-WIDTH",
+      "splitRationale": "This labeled width atom is distinct from other IPv4 header-field leaves."
+    },
+    {
+      "id": "CRS-M1-00654",
+      "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-008-1A3DDA9F5E70",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 19,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "1a3dda9f5e70166861f8cb4cd7980a15ca4780c8d5ec92b97560c202db53cbcc",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The IPv4 Fragment Offset field is 13 bits wide. 615A TFTP over IPv4 uses this header field.",
+      "generatedSemanticProjectionZh": "IPv4 Fragment Offset 字段宽 13 位。615A 在 IPv4 上的 TFTP 使用该头字段。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ENCODE-FRAGMENT-OFFSET-AS-13-BITS",
+        "objects": [
+          "IPV4-FRAGMENT-OFFSET-FIELD"
+        ],
+        "observableEffect": "IPV4-FRAGMENT-OFFSET-FIELD-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02943",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-FRAGMENT-OFFSET-FIELD-WIDTH",
+      "splitRationale": "This labeled width atom is distinct from other IPv4 header-field leaves."
+    },
+    {
+      "id": "CRS-M1-00655",
+      "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-009-984FD4C7EC7E",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 20,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "984fd4c7ec7ea18d4efa64315a022e2463a0ff3f9e11bef93cd01dae2984908f",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The IPv4 Time to Live field is 8 bits wide. 615A TFTP over IPv4 uses this header field.",
+      "generatedSemanticProjectionZh": "IPv4 Time to Live 字段宽 8 位。615A 在 IPv4 上的 TFTP 使用该头字段。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ENCODE-TTL-AS-8-BITS",
+        "objects": [
+          "IPV4-TTL-FIELD"
+        ],
+        "observableEffect": "IPV4-TTL-FIELD-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02944",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-TTL-FIELD-WIDTH",
+      "splitRationale": "This labeled width atom is distinct from other IPv4 header-field leaves."
+    },
+    {
+      "id": "CRS-M1-00656",
+      "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-010-3425BDE4EE7A",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 20,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "3425bde4ee7af6007c8b0332bf2fdb730d8c33146da91696bc955d6b6abb5895",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The IPv4 Protocol field is 8 bits wide. 615A TFTP over IPv4 uses this header field.",
+      "generatedSemanticProjectionZh": "IPv4 Protocol 字段宽 8 位。615A 在 IPv4 上的 TFTP 使用该头字段。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ENCODE-PROTOCOL-AS-8-BITS",
+        "objects": [
+          "IPV4-PROTOCOL-FIELD"
+        ],
+        "observableEffect": "IPV4-PROTOCOL-FIELD-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02945",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-PROTOCOL-FIELD-WIDTH",
+      "splitRationale": "This labeled width atom is distinct from other IPv4 header-field leaves."
+    },
+    {
+      "id": "CRS-M1-00657",
+      "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-011-1F408D481D64",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 20,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 11
+      },
+      "sourceTextHash": "1f408d481d644b0614f8952a769be391c6d3385048aaa0d4675551180e5fc3b3",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The IPv4 Header Checksum field is 16 bits wide. 615A TFTP over IPv4 uses this header field.",
+      "generatedSemanticProjectionZh": "IPv4 Header Checksum 字段宽 16 位。615A 在 IPv4 上的 TFTP 使用该头字段。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ENCODE-HEADER-CHECKSUM-AS-16-BITS",
+        "objects": [
+          "IPV4-HEADER-CHECKSUM-FIELD"
+        ],
+        "observableEffect": "IPV4-HEADER-CHECKSUM-FIELD-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02946",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-HEADER-CHECKSUM-FIELD-WIDTH",
+      "splitRationale": "This labeled width atom is distinct from other IPv4 header-field leaves."
+    },
+    {
+      "id": "CRS-M1-00658",
+      "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-012-3A288A418AEE",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 20,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 12
+      },
+      "sourceTextHash": "3a288a418aee121bc77bb1ad98c21e55f77592b1769314378f6d4a60418e2861",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The IPv4 Source Address field is 32 bits wide. 615A TFTP over IPv4 uses this header field.",
+      "generatedSemanticProjectionZh": "IPv4 Source Address 字段宽 32 位。615A 在 IPv4 上的 TFTP 使用该头字段。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ENCODE-SOURCE-ADDRESS-AS-32-BITS",
+        "objects": [
+          "IPV4-SOURCE-ADDRESS-FIELD"
+        ],
+        "observableEffect": "IPV4-SOURCE-ADDRESS-FIELD-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02947",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-SOURCE-ADDRESS-FIELD-WIDTH",
+      "splitRationale": "This labeled width atom is distinct from other IPv4 header-field leaves."
+    },
+    {
+      "id": "CRS-M1-00659",
+      "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-013-C6D7D7BFD7B6",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 20,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 13
+      },
+      "sourceTextHash": "c6d7d7bfd7b65a8b83338e71910ad46a6dab6c2c766f1686f44ec41e6ff1c40b",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The IPv4 Destination Address field is 32 bits wide. 615A TFTP over IPv4 uses this header field.",
+      "generatedSemanticProjectionZh": "IPv4 Destination Address 字段宽 32 位。615A 在 IPv4 上的 TFTP 使用该头字段。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ENCODE-DESTINATION-ADDRESS-AS-32-BITS",
+        "objects": [
+          "IPV4-DESTINATION-ADDRESS-FIELD"
+        ],
+        "observableEffect": "IPV4-DESTINATION-ADDRESS-FIELD-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-FIELD-WIDTH",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02948",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-DESTINATION-ADDRESS-FIELD-WIDTH",
+      "splitRationale": "This labeled width atom is distinct from other IPv4 header-field leaves."
+    },
+    {
+      "id": "CRS-M1-00660",
+      "sourceUnitId": "SU-RFC-1123-4.2.2.1-P044-PROSE-SENTENCE-001-C57FFB7284BF",
+      "source": {
+        "sourceId": "RFC-1123",
+        "clause": "4.2.2.1",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 44,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "c57ffb7284bfc4c5297cf900bbcfd91b59a6554f13411dddad13d5e15f599354",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "TFTP mail transfer mode SHOULD NOT be supported. ARINC 615A file transfer does not use mail mode.",
+      "generatedSemanticProjectionZh": "不应支持 TFTP mail 传输模式。ARINC 615A 文件传输不使用 mail 模式。",
+      "semantic": {
+        "actor": "TFTP-HOST",
+        "condition": "WHEN-USING-TFTP-AS-615A-FILE-TRANSFER",
+        "action": "DO-NOT-SUPPORT-TFTP-MAIL-TRANSFER-MODE",
+        "objects": [
+          "TFTP-MAIL-MODE"
+        ],
+        "observableEffect": "TFTP-MAIL-MODE-ABSENT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "NEGATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "PROHIBITED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-MAIL-MODE-NOT-SUPPORTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-1123"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02949",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "TFTP-MAIL-MODE-FORBIDDEN",
+      "splitRationale": "Mail-mode prohibition is this sentence; SAS and timeout are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00661",
+      "sourceUnitId": "SU-RFC-1123-4.2.2.2-P044-PROSE-SENTENCE-001-D47D6D4362DF",
+      "source": {
+        "sourceId": "RFC-1123",
+        "clause": "4.2.2.2",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 44,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "d47d6d4362dffcc3e691b2e95dffe986f6174cf2e286338940e1d47a064f5c98",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The UDP Length field includes the 8-octet UDP header. This is the RFC 1123 correction of the TFTP/UDP header note.",
+      "generatedSemanticProjectionZh": "UDP Length 字段包含 8 个八位组的 UDP 头。这是 RFC 1123 对 TFTP／UDP 头说明的更正。",
+      "semantic": {
+        "actor": "TFTP-HOST",
+        "condition": "WHEN-USING-TFTP-AS-615A-FILE-TRANSFER",
+        "action": "COUNT-UDP-LENGTH-INCLUDING-EIGHT-OCTET-HEADER",
+        "objects": [
+          "UDP-LENGTH"
+        ],
+        "observableEffect": "UDP-LENGTH-INCLUDES-HEADER-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-UDP-LENGTH-INCLUDES-HEADER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-1123"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02950",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "UDP-LENGTH-INCLUDES-HEADER",
+      "splitRationale": "UDP Length header-inclusion note is this sentence; RFC 768 length is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00662",
+      "sourceUnitId": "SU-RFC-1123-4.2.3.1-P044-PROSE-SENTENCE-001-D221776D6159",
+      "source": {
+        "sourceId": "RFC-1123",
+        "clause": "4.2.3.1",
+        "tableOrFigure": null,
+        "documentPage": 44,
+        "pdfPage": 44,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "d221776d615928e6e6f5649ded56b845911ba14134bc989f6f6ce3c36f2ae180",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "The TFTP DATA sender MUST NOT resend the current DATA packet merely because a duplicate ACK arrived. That is the Sorcerer's Apprentice fix; it is not a FIND-clock rule.",
+      "generatedSemanticProjectionZh": "TFTP DATA 发送方不得仅因收到重复 ACK 而重发当前 DATA 包。这是术士学徒修正，不是 FIND 时钟规则。",
+      "semantic": {
+        "actor": "TFTP-DATA-SENDER",
+        "condition": "WHEN-RECEIVING-A-DUPLICATE-TFTP-ACK",
+        "action": "NEVER-RESEND-CURRENT-DATA-ON-DUPLICATE-ACK",
+        "objects": [
+          "TFTP-DATA",
+          "TFTP-ACK",
+          "SORCERERS-APPRENTICE"
+        ],
+        "observableEffect": "TFTP-NO-DATA-RESEND-ON-DUPLICATE-ACK-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "MUST",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-SORCERERS-APPRENTICE-FIX",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-1123"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02951",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "TFTP-SAS-NO-DATA-RESEND",
+      "splitRationale": "Duplicate-ACK DATA suppression is this sentence; adaptive timeout is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00663",
+      "sourceUnitId": "SU-RFC-1123-4.2.3.2-P046-PROSE-SENTENCE-001-493633EC7445",
+      "source": {
+        "sourceId": "RFC-1123",
+        "clause": "4.2.3.2",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 46,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "493633ec744599d705212a8c56c4c97aced6aae494c5ebdce91a8b6e9ab7b565",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A TFTP implementation MUST use an adaptive retransmission timeout. This is not the RFC 2349 timeout option range and not the ARINC 615A FIND 2 s / 3 s clocks.",
+      "generatedSemanticProjectionZh": "TFTP 实现必须使用自适应重传超时。这不是 RFC 2349 timeout 选项范围，也不是 ARINC 615A FIND 的 2 秒／3 秒时钟。",
+      "semantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-USING-TFTP-AS-615A-FILE-TRANSFER",
+        "action": "USE-ADAPTIVE-TFTP-RETRANSMISSION-TIMEOUT",
+        "objects": [
+          "TFTP-ADAPTIVE-TIMEOUT"
+        ],
+        "observableEffect": "TFTP-ADAPTIVE-TIMEOUT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "MUST",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-ADAPTIVE-TIMEOUT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-1123"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02952",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "TFTP-ADAPTIVE-TIMEOUT",
+      "splitRationale": "Adaptive timeout is this sentence; RFC 2349 timeout option is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00664",
+      "sourceUnitId": "SU-RFC-1123-4.2.3.4-P046-PROSE-SENTENCE-001-8C34A8B506F6",
+      "source": {
+        "sourceId": "RFC-1123",
+        "clause": "4.2.3.4",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 46,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "8c34a8b506f6887d4db2ee0f6bf146338f95cf4d1f8c2e12fe1381440a1a1c7d",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A TFTP server SHOULD have configurable access control over allowed pathnames.",
+      "generatedSemanticProjectionZh": "TFTP 服务器应对允许的路径名提供可配置访问控制。",
+      "semantic": {
+        "actor": "TFTP-SERVER",
+        "condition": "WHEN-SERVING-TFTP-PATHNAMES",
+        "action": "PROVIDE-CONFIGURABLE-TFTP-PATHNAME-ACCESS-CONTROL",
+        "objects": [
+          "TFTP-PATHNAME-ACCESS-CONTROL"
+        ],
+        "observableEffect": "TFTP-PATHNAME-ACCESS-CONTROL-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-PATHNAME-ACCESS-CONTROL",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-1123"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02953",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "TFTP-PATHNAME-ACCESS-CONTROL",
+      "splitRationale": "Pathname access control is this sentence; broadcast ignore is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00665",
+      "sourceUnitId": "SU-RFC-1123-4.2.3.5-P046-PROSE-SENTENCE-001-BC97D4CAC682",
+      "source": {
+        "sourceId": "RFC-1123",
+        "clause": "4.2.3.5",
+        "tableOrFigure": null,
+        "documentPage": 46,
+        "pdfPage": 46,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "bc97d4cac6824de2c3cf80acfe0be496624dfdb66ca2578a853d13008007616c",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A TFTP request sent to a broadcast address SHOULD be silently ignored. 615A dataloading does not use broadcast RRQ as a transfer method.",
+      "generatedSemanticProjectionZh": "发往广播地址的 TFTP 请求应被静默忽略。615A 数据加载不以广播 RRQ 作为传输方法。",
+      "semantic": {
+        "actor": "TFTP-SERVER",
+        "condition": "WHEN-A-TFTP-REQUEST-IS-DIRECTED-TO-A-BROADCAST-ADDRESS",
+        "action": "SILENTLY-IGNORE-BROADCAST-TFTP-REQUEST",
+        "objects": [
+          "TFTP-BROADCAST-REQUEST"
+        ],
+        "observableEffect": "TFTP-BROADCAST-REQUEST-IGNORED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-IGNORE-BROADCAST-REQUEST",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-1123"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02954",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "TFTP-IGNORE-BROADCAST-REQUEST",
+      "splitRationale": "Broadcast-request ignore is this sentence; mail-mode prohibition is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00666",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.1-P018-PROSE-SENTENCE-001-B2E9B1E66E16",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.1",
+        "tableOrFigure": null,
+        "documentPage": 18,
+        "pdfPage": 18,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "b2e9b1e66e168d72fa8f4c7cff81b9b2f1b87e073cc4ad1a93b509bad97c58b7",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, only one End System should be the source of any one Virtual Link.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，任一虚拟链路应只有一个端系统作为源。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "ALLOW-ONLY-ONE-SOURCE-END-SYSTEM-PER-VL",
+        "objects": [
+          "AFDX-VIRTUAL-LINK"
+        ],
+        "observableEffect": "AFDX-VL-SINGLE-SOURCE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-VL-SINGLE-SOURCE",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02955",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-VL-SINGLE-SOURCE",
+      "splitRationale": "Single-source VL rule is this sentence; BAG and jitter leaves are separate."
+    },
+    {
+      "id": "CRS-M1-00667",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.1-P018-PROSE-SENTENCE-002-3AC3D9B42053",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.1",
+        "tableOrFigure": null,
+        "documentPage": 18,
+        "pdfPage": 18,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "3ac3d9b420531ba9955b38e053120657a46818852064e5353896839a3f71d754",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, a Virtual Link is a unidirectional connection from one source End System to one or more destinations.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，虚拟链路是从一个源端系统到一个或多个目的端系统的单向连接。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "TREAT-VL-AS-UNIDIRECTIONAL-ONE-TO-MANY-CONNECTION",
+        "objects": [
+          "AFDX-VIRTUAL-LINK"
+        ],
+        "observableEffect": "AFDX-VL-UNIDIRECTIONAL-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-VL-UNIDIRECTIONAL",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02956",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-VL-UNIDIRECTIONAL",
+      "splitRationale": "Unidirectional VL definition is this sentence; single-source is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00668",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.2-P019-PROSE-SENTENCE-001-3F32CD4BF748",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.2",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 19,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "3f32cd4bf748813f27ea6b63e77a5f112afeb5857c3b8f4aa759f088522e136b",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, BAG is the minimum interval between the first bits of two consecutive frames of the same VL when scheduler jitter is zero.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，在调度抖动为零时，BAG 是同一 VL 连续两帧首比特之间的最小间隔。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "TREAT-BAG-AS-MINIMUM-INTERVAL-BETWEEN-CONSECUTIVE-VL-FRAMES",
+        "objects": [
+          "AFDX-BAG"
+        ],
+        "observableEffect": "AFDX-BAG-INTERVAL-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-BAG-MINIMUM-INTERVAL",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02957",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-BAG-MINIMUM-INTERVAL",
+      "splitRationale": "BAG interval definition is this sentence; BAG=2^k range is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00669",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-001-8AFCAA7FEEA4",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.3",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 21,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "8afcaa7feea41927d9ed539d30be08fa8e5edff626cfbd3623c3eeded6fa03c6",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the bounded scheduler interval on a VL is the maximum admissible jitter.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，虚拟链路上该有界调度间隔即为最大允许抖动。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "BOUND-VL-FRAME-ARRIVAL-BY-MAXIMUM-ADMISSIBLE-JITTER",
+        "objects": [
+          "AFDX-JITTER"
+        ],
+        "observableEffect": "AFDX-MAX-ADMISSIBLE-JITTER-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-MAX-ADMISSIBLE-JITTER",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02958",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-MAX-ADMISSIBLE-JITTER",
+      "splitRationale": "Maximum admissible jitter definition is this sentence; 500 us cap is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00670",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-002-796A41A0B615",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.3",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 21,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "796a41a0b61521e41361c286539f681dbbcd5015f3c2794590191cef022de058",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, each VL's maximum usable bandwidth is characterised by BAG and authorised Lmax.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，每条 VL 的最大可用带宽由 BAG 与授权 Lmax 表征。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "CHARACTERISE-VL-BANDWIDTH-BY-BAG-AND-LMAX",
+        "objects": [
+          "AFDX-BAG",
+          "AFDX-LMAX"
+        ],
+        "observableEffect": "AFDX-VL-BANDWIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-VL-BANDWIDTH-BAG-LMAX",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02959",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-VL-BANDWIDTH-BAG-LMAX",
+      "splitRationale": "BAG/Lmax bandwidth characterisation is this sentence; 1518-byte frame size is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00671",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-003-1E381797D200",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.3",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 21,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "1e381797d2007fa14977bb60e03b6fdd66ac8870dff7e6391c67a1c4a8ce6506",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the End System should accommodate VL frames up to 1518 bytes in transmission and reception.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，端系统应在发送与接收中容纳最大 1518 字节的 VL 帧。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "ACCOMMODATE-VL-FRAMES-UP-TO-1518-BYTES",
+        "objects": [
+          "AFDX-VL-FRAME"
+        ],
+        "observableEffect": "AFDX-VL-FRAME-1518-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-VL-FRAME-1518",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02960",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-VL-FRAME-1518",
+      "splitRationale": "1518-byte VL frame size is this sentence; BAG range is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00672",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-004-8CA2CDF489CD",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.3",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 21,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "8ca2cdf489cd2462ef47ed374532202de6b1b5eb9207238eaa118d3ac1bfcf17",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, traffic shaping should handle BAG values from 1 ms to 128 ms.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，流量整形应能处理 1 ms 至 128 ms 的 BAG 值。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "HANDLE-BAG-VALUES-FROM-1-MS-TO-128-MS",
+        "objects": [
+          "AFDX-BAG"
+        ],
+        "observableEffect": "AFDX-BAG-RANGE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-BAG-RANGE",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02961",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-BAG-RANGE-1-128-MS",
+      "splitRationale": "BAG numeric range is this sentence; BAG=2^k is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00673",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-005-9BC14F6B2E45",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.3",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 21,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "9bc14f6b2e45aa3fa416f1e280eacfa8d2aae122d8a2b19a022ef416537ff3b3",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, BAG values are 2^k milliseconds for integer k from 0 through 7.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，BAG 值为 2^k 毫秒，k 为 0 至 7 的整数。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "RESTRICT-BAG-TO-POWERS-OF-TWO-MILLISECONDS",
+        "objects": [
+          "AFDX-BAG"
+        ],
+        "observableEffect": "AFDX-BAG-POWER-OF-TWO-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-BAG-POWER-OF-TWO",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02962",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-BAG-POWER-OF-TWO",
+      "splitRationale": "BAG=2^k constraint is this sentence; 1-128 ms range is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00674",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-001-76031BDF6730",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.4.3",
+        "tableOrFigure": null,
+        "documentPage": 25,
+        "pdfPage": 25,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "76031bdf673024b166ce3c18571b2540bd577a15e9bdc08fdd74e6681ec6d348",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, VL jitter is bounded at 500 microseconds in all cases. The two-formula max_jitter expression remains a separate hashed-equation gap.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，VL 抖动在所有情况下以 500 微秒为界。双公式 max_jitter 表达式仍是单独的方程缺口。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "KEEP-VL-JITTER-AT-OR-BELOW-500-MICROSECONDS",
+        "objects": [
+          "AFDX-JITTER"
+        ],
+        "observableEffect": "AFDX-JITTER-500US-CAP-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-JITTER-500US-CAP",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02963",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-JITTER-500US-CAP",
+      "splitRationale": "500 us jitter cap is this sentence; the two max_jitter formulas are not claimed hashed."
+    },
+    {
+      "id": "CRS-M1-00675",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.1-P026-PROSE-SENTENCE-001-56B6CFE1A3CD",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "3.2.5.1",
+        "tableOrFigure": null,
+        "documentPage": 26,
+        "pdfPage": 26,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "56b6cfe1a3cdf0959ffa5f84b1c91bbfef84181bbfdfdf4ac9f3ad9bc281b1d0",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, a Virtual Link is identified only by the MAC destination address; the MAC source is the unicast address of the physical interface.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，虚拟链路仅由 MAC 目的地址标识；MAC 源地址是物理接口的单播地址。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "IDENTIFY-VL-ONLY-BY-MAC-DESTINATION-ADDRESS",
+        "objects": [
+          "AFDX-VIRTUAL-LINK",
+          "MAC-DESTINATION-ADDRESS"
+        ],
+        "observableEffect": "AFDX-VL-MAC-DESTINATION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-VL-MAC-DESTINATION-IDENTITY",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02964",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "AFDX-VL-MAC-DESTINATION-IDENTITY",
+      "splitRationale": "VL MAC destination identity is this sentence; MAC source construction algorithm is not claimed closed."
+    },
+    {
+      "id": "CRS-M1-00676",
+      "sourceUnitId": "SU-RFC-791-3.1-P017-PROSE-SENTENCE-014-66107CA56FCF",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 17,
+        "pdfPage": 17,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 14
+      },
+      "sourceTextHash": "66107ca56fcf1def119959dc030148c32cd9a6c59d8d85752bafc6e83c9b9486",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "IPv4 IHL is the internet header length in 32-bit words and points to the beginning of the data.",
+      "generatedSemanticProjectionZh": "IPv4 IHL 是以 32 位字计的互联网头长度，并指向数据起点。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "MEASURE-IHL-IN-32-BIT-WORDS",
+        "objects": [
+          "IPV4-IHL-FIELD"
+        ],
+        "observableEffect": "IPV4-IHL-32-BIT-WORDS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-IHL-32-BIT-WORDS",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02965",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-IHL-32-BIT-WORDS",
+      "splitRationale": "IHL unit is this sentence; the 4-bit width label is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00677",
+      "sourceUnitId": "SU-RFC-791-3.1-P017-PROSE-SENTENCE-015-7DC7AF24BE45",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 17,
+        "pdfPage": 17,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 15
+      },
+      "sourceTextHash": "7dc7af24be45836642059604561c1dc578a10b3b0dbc5862e5686c6f900a083f",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "A correct IPv4 header has IHL at least 5.",
+      "generatedSemanticProjectionZh": "正确的 IPv4 头的 IHL 至少为 5。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "KEEP-IHL-AT-LEAST-5",
+        "objects": [
+          "IPV4-IHL-FIELD"
+        ],
+        "observableEffect": "IPV4-IHL-MINIMUM-5-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-IHL-MINIMUM-5",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02966",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-IHL-MINIMUM-5",
+      "splitRationale": "IHL minimum 5 is this sentence; IHL 32-bit-word unit is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00678",
+      "sourceUnitId": "SU-RFC-791-3.1-P019-PROSE-SENTENCE-016-0740AAFF0150",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 19,
+        "pdfPage": 19,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 16
+      },
+      "sourceTextHash": "0740aaff01502049b379e1f8f2a5755d3d85522175deb6165173a8375f6f642f",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "IPv4 Total Length is the datagram length in octets, including internet header and data.",
+      "generatedSemanticProjectionZh": "IPv4 Total Length 是包含互联网头与数据在内的数据报八位组长度。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "MEASURE-IPV4-TOTAL-LENGTH-IN-OCTETS-INCLUDING-HEADER-AND-DATA",
+        "objects": [
+          "IPV4-TOTAL-LENGTH-FIELD"
+        ],
+        "observableEffect": "IPV4-TOTAL-LENGTH-OCTETS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-TOTAL-LENGTH-OCTETS",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02967",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-TOTAL-LENGTH-OCTETS",
+      "splitRationale": "Total Length unit is this sentence; the 16-bit width label is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00679",
+      "sourceUnitId": "SU-RFC-791-3.1-P020-PROSE-SENTENCE-017-2F6A6F63ABEF",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 20,
+        "pdfPage": 20,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 17
+      },
+      "sourceTextHash": "2f6a6f63abef34a747a62d1178a1b14a0213afdbb8844d7c55dcba1dbdf4ba8b",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "IPv4 Fragment Offset is measured in units of 8 octets (64 bits).",
+      "generatedSemanticProjectionZh": "IPv4 Fragment Offset 以 8 个八位组（64 位）为单位。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "MEASURE-FRAGMENT-OFFSET-IN-8-OCTET-UNITS",
+        "objects": [
+          "IPV4-FRAGMENT-OFFSET-FIELD"
+        ],
+        "observableEffect": "IPV4-FRAGMENT-OFFSET-UNITS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-FRAGMENT-OFFSET-UNITS",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02968",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-FRAGMENT-OFFSET-8-OCTETS",
+      "splitRationale": "Fragment Offset unit is this sentence; the 13-bit width label is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00680",
+      "sourceUnitId": "SU-RFC-791-3.1-P021-PROSE-SENTENCE-018-7D9B36E2E6F2",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 21,
+        "pdfPage": 21,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 18
+      },
+      "sourceTextHash": "7d9b36e2e6f2d74030b01f35eebb88b4bffa3f3d34235cf6fcd67ed8db96b7da",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "IPv4 options may appear or not in a datagram. That presence is variable; it is not a fixed-width header field.",
+      "generatedSemanticProjectionZh": "IPv4 选项可以在数据报中出现或不出现。该出现是可变的，不是固定宽度头字段。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "ALLOW-IPV4-OPTIONS-TO-BE-PRESENT-OR-ABSENT",
+        "objects": [
+          "IPV4-OPTIONS"
+        ],
+        "observableEffect": "IPV4-OPTIONS-PRESENCE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "OPTIONAL",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-OPTIONS-VARIABLE",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02969",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-OPTIONS-VARIABLE",
+      "splitRationale": "Options presence is this sentence; padding is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00681",
+      "sourceUnitId": "SU-RFC-791-3.1-P029-PROSE-SENTENCE-019-CA2E4BEC637B",
+      "source": {
+        "sourceId": "RFC-791",
+        "clause": "3.1",
+        "tableOrFigure": null,
+        "documentPage": 29,
+        "pdfPage": 29,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 19
+      },
+      "sourceTextHash": "ca2e4bec637bd739db89809a5ed9d85946c0e121be6946db489e94f331c3c8ec",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "IPv4 header padding makes the internet header end on a 32-bit boundary. Padding width is therefore variable.",
+      "generatedSemanticProjectionZh": "IPv4 头填充使互联网头结束于 32 位边界。因此填充宽度是可变的。",
+      "semantic": {
+        "actor": "IPV4-DATAGRAM-SENDER",
+        "condition": "WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4",
+        "action": "PAD-IPV4-HEADER-TO-32-BIT-BOUNDARY",
+        "objects": [
+          "IPV4-PADDING"
+        ],
+        "observableEffect": "IPV4-HEADER-PADDING-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "IPV4-HEADER-PADDING-32-BIT",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-791"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02970",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "IPV4-PADDING-32-BIT-BOUNDARY",
+      "splitRationale": "Padding alignment is this sentence; options presence is a separate leaf."
     }
   ],
   "dependencies": [
@@ -104308,24 +106760,24 @@
     "rg0": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "rg1": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "reviewHead": "UNBOUND-DRAFT",
-    "sourceInventoryFingerprint": "aaf8d24a7710ad45fad1a257fe1a5f58f262a2a020be380e7d12974d6eecd18b",
+    "sourceInventoryFingerprint": "e81dfe474574db8a5b53c1082cf2c9ac133eccf53addce82e02ec02129933c73",
     "sectionSpanManifestPath": "configs/requirements/m1_source_section_spans.json",
     "sectionSpanManifestFingerprint": "b528547940c8230e8a9688320e66168208c80d7b9b539342c4c9443facae5e9e",
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "34bc20349a42ddf1f1b4b8ecd34068af6d78125b48202cf8e40d6ebbe5f41958",
+    "semanticAssertionFingerprint": "76b14308e690b4a9c84815863add61a5acc50e82d1f5b46a81edd0f89578ba30",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
   },
   "inventorySummary": {
-    "coverageCount": 2936,
-    "requirementCount": 646,
+    "coverageCount": 2970,
+    "requirementCount": 680,
     "dependencyCount": 14,
     "gapCount": 1,
-    "coverageFingerprint": "ee23593dda4aac1c07a1fa2bfdf8f744ddd56a1a7138264fe0b7f6861e6b6463",
-    "requirementsFingerprint": "5c17ac8ca2eeabd6e1899cc7ff71bff7a0a56049d59575cea5ca7955af3d3c45"
+    "coverageFingerprint": "571638b70971e92b694c9ca20b492200f24db872c9e96ad5eb970c595dfde9c2",
+    "requirementsFingerprint": "e2349f0711853f3e53e6b771a3361fec51a6285ea2f1d99ddd02d2c96f4a7e0a"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",
