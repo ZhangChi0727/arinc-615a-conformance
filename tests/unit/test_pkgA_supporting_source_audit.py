@@ -154,7 +154,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-17"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-18"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
@@ -230,10 +230,17 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
     assert "SAU-P7-4-REMAINING-SWITCH-BLOCKS" not in remaining
     assert "SAU-P7-ATT2-REMAINING-TABLE-ROWS" not in remaining
     assert remaining["SAU-P7-4-REMAINING-SHOP-OPTIONAL"]["disposition"] == "OUT-OF-PROFILE"
-    assert remaining["SAU-P7-4-REMAINING-CONFIG-PIN-AND-MIB-DETAILS"]["disposition"] == "INFORMATIVE"
+    assert remaining["SAU-P7-4-REMAINING-MIB-SNMP-AND-PERIODIC-STATUS"]["disposition"] == "OUT-OF-PROFILE"
+    assert remaining["SAU-P7-4-REMAINING-MIB-SNMP-AND-PERIODIC-STATUS"]["clause"] == "4.6"
+    assert remaining["SAU-P7-4-REMAINING-MIB-SNMP-AND-PERIODIC-STATUS"]["pdfPages"] == [65]
+    assert remaining["SAU-P7-4-REMAINING-CONFIG-PIN-AND-INTERNAL-DETAILS"]["disposition"] == "NOT-YET-BOUND"
+    assert remaining["SAU-P7-4-REMAINING-CONFIG-PIN-AND-INTERNAL-DETAILS"]["pdfPages"] == [65, 79]
     assert remaining["SAU-P7-ATT2-REMAINING-TCP-TABLE-2-1"]["disposition"] == "OUT-OF-PROFILE"
-    assert remaining["SAU-P7-ATT2-REMAINING-TABLE-MARK-LOCATORS"]["disposition"] == "INFORMATIVE"
-    assert not any(item["disposition"] == "NOT-YET-BOUND" for item in remaining.values())
+    assert remaining["SAU-P7-ATT2-REMAINING-GATEWAY-AND-UNMARKED-ROWS"]["disposition"] == "NOT-YET-BOUND"
+    assert remaining["SAU-P7-ATT2-REMAINING-GATEWAY-AND-UNMARKED-ROWS"]["pdfPages"] == [112, 115]
+    assert "SAU-P7-4-REMAINING-CONFIG-PIN-AND-MIB-DETAILS" not in remaining
+    assert "SAU-P7-ATT2-REMAINING-TABLE-MARK-LOCATORS" not in remaining
+    assert any(item["disposition"] == "NOT-YET-BOUND" for item in remaining.values())
     p3 = next(
         unit
         for source in data["supportingSourceApplicabilityAudit"]["sources"]
@@ -254,6 +261,42 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
         if row["semantic"]["action"] == "REQUIRE-AFDX-END-SYSTEM-INTERNET-LAYER-TO-IMPLEMENT-IP"
     )
     assert ip_row["source"]["clause"] == "ATT-2"
+    checksum = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY"
+    )
+    assert checksum["id"] == "CRS-M1-00742"
+    assert "NOT APPLICABLE" not in checksum["generatedSemanticProjectionEn"]
+    assert "MUST NOT" not in checksum["generatedSemanticProjectionEn"] or "00609 is not applied" in checksum["generatedSemanticProjectionEn"]
+    assert checksum["ambiguityStatus"] == "SOURCE-AFDX-TABLE-MARK-AND-UNUSED-COMMENT-UNRESOLVED"
+    assert "GAP-UDP-CHECKSUM-USE-POLICY" in checksum["gapIds"]
+    discard = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "TREAT-SILENT-BAD-UDP-CHECKSUM-DISCARD-AS-NOT-APPLICABLE-ON-AFDX"
+    )
+    assert discard["id"] != checksum["id"]
+    assert discard["source"]["clause"] == "ATT-2"
+    assert any(
+        row["semantic"]["action"] == "PROVIDE-OPS-MODE-615A-INFORMATION-AND-FIND" for row in crs["requirements"]
+    )
+    assert any(
+        row["semantic"]["action"] == "PROVIDE-DL-MODE-615A-INFORMATION-UPLOAD-AND-FIND" for row in crs["requirements"]
+    )
+    assert any(
+        row["semantic"]["action"] == "ENTER-DL-FROM-OPS-ONLY-WHEN-GROUND-UPLOAD-INIT-AND-HEADER-ACCEPTED"
+        for row in crs["requirements"]
+    )
+    philosophy = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00732")
+    contents = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00733")
+    precedence = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00604")
+    assert philosophy["conformanceEffect"] == "INFORMATIVE"
+    assert contents["conformanceEffect"] == "INFORMATIVE"
+    assert philosophy["semantic"]["actor"] == "ARINC-664P3-DOCUMENT-CONTROL"
+    assert "user/regulatory" in philosophy["generatedSemanticProjectionEn"]
+    assert precedence["conformanceEffect"] == "CONDITIONAL-REQUIRED"
+    assert precedence["semantic"]["action"] == "GIVE-664P3-PRECEDENCE-OVER-CONFLICTING-RFC-OPTIONS"
 
 
 TRUNCATED_LEAD_IN = "The TFTP Read Request or Write Request packet is modified to include"
@@ -778,4 +821,49 @@ def test_p7_mac_source_is_complete_48_bit_binding() -> None:
     assert encodings["001"]["semantic"]["action"] != encodings["010"]["semantic"]["action"]
     wrong_tail = "11111"
     assert wrong_tail not in tail["generatedSemanticProjectionEn"]
+
+
+def test_udp_checksum_not_applicable_rewrite_fails_after_fingerprint_refresh() -> None:
+    import copy
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("sync_m1_crs", ROOT / "scripts/sync_m1_crs.py")
+    assert spec and spec.loader
+    m1 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m1)
+    data = json.loads((ROOT / "configs/requirements/arinc_615a3_m1_crs.json").read_text(encoding="utf-8"))
+    row = next(
+        item
+        for item in data["requirements"]
+        if item["semantic"]["action"] == "IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY"
+    )
+    mutated = copy.deepcopy(data)
+    target = next(item for item in mutated["requirements"] if item["id"] == row["id"])
+    target["semantic"]["action"] = "TREAT-UDP-CHECKSUM-AS-NOT-USED-ON-AFDX"
+    target["generatedSemanticProjectionEn"] = (
+        "If AFDX is chosen, Attachment 2 marks UDP checksum generation/checking NOT APPLICABLE "
+        "because checksum is not used in AFDX. The RFC 1122 MUST is interpreted as MUST NOT."
+    )
+    target["ambiguityStatus"] = "NONE-OBSERVED"
+    target["gapIds"] = []
+    summary = mutated["inventorySummary"]
+    summary["coverageFingerprint"] = m1.fingerprint(mutated["coverageLedger"])
+    summary["requirementsFingerprint"] = m1.fingerprint(mutated["requirements"])
+    mutated["reviewControl"]["sourceInventoryFingerprint"] = m1.fingerprint(m1.source_inventory_projection(mutated))
+    found = m1.package_errors(mutated)
+    assert any("semantic assertion" in item or "CRS-M1-00742" in item for item in found)
+
+
+def test_informative_laundering_of_named_remainders_fails() -> None:
+    data = audit()
+    remaining = {}
+    for source in data["supportingSourceApplicabilityAudit"]["sources"]:
+        for unit in source["units"]:
+            for item in unit.get("remainingSubunits") or []:
+                remaining[item["id"]] = item
+    mib = remaining["SAU-P7-4-REMAINING-MIB-SNMP-AND-PERIODIC-STATUS"]
+    leftover = remaining["SAU-P7-ATT2-REMAINING-GATEWAY-AND-UNMARKED-ROWS"]
+    assert mib["disposition"] != "INFORMATIVE"
+    assert leftover["disposition"] != "INFORMATIVE"
+    assert leftover["disposition"] == "NOT-YET-BOUND"
 

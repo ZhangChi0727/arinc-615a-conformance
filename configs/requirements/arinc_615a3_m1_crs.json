@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0",
   "artifactId": "ARINC615A3-M1-CRS",
-  "artifactVersion": "M1-CANDIDATE-17",
+  "artifactVersion": "M1-CANDIDATE-18",
   "candidateDisposition": "ADOPT",
   "sourceBindings": [
     {
@@ -74044,9 +74044,9 @@
       },
       "sourceTextHash": "e1e2de7aaef988d6efb3979b569b4396d7e3dd300a0e5c956cb2e55c78319463",
       "sourceModality": "FACT",
-      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "conformanceEffect": "INFORMATIVE",
       "applicabilityDecision": "CONDITIONAL",
-      "rationaleCode": "P3-PRECEDENCE-RESTRICTS-RFC-OPTIONS",
+      "rationaleCode": "P3-DOCUMENT-CONTROL-INFORMATIVE",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -74070,9 +74070,9 @@
       },
       "sourceTextHash": "3d1ef7d4894c6ccecbef0ea4d762602ee2c63d540c8b18c25e1ad6157f6c3fee",
       "sourceModality": "FACT",
-      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "conformanceEffect": "INFORMATIVE",
       "applicabilityDecision": "CONDITIONAL",
-      "rationaleCode": "P3-PRECEDENCE-RESTRICTS-RFC-OPTIONS",
+      "rationaleCode": "P3-DOCUMENT-CONTROL-INFORMATIVE",
       "atomicity": {
         "ownershipKind": "PROSE-SENTENCE",
         "sentenceCount": 1,
@@ -74392,6 +74392,344 @@
       },
       "requirementIds": [
         "CRS-M1-00745"
+      ]
+    },
+    {
+      "id": "COV-M1-03035",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-006-4D4480F4B5B6",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-2",
+        "documentPage": 104,
+        "pdfPage": 112,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "4d4480f4b5b60d2ae2c5a7bf418dc9d6bd4d93fa62b40c9e250d2b3924ff8347",
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00746"
+      ]
+    },
+    {
+      "id": "COV-M1-03036",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-007-EE88901ECA01",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-2",
+        "documentPage": 104,
+        "pdfPage": 112,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "ee88901eca01ea1b778ea7603a4486a9585995426369dcc0bc42e32a44dbb912",
+      "sourceModality": "MUST",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00747"
+      ]
+    },
+    {
+      "id": "COV-M1-03037",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-008-7481B3A6C175",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-2",
+        "documentPage": 104,
+        "pdfPage": 112,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "7481b3a6c1755bcb6b1192119ad3b2b7fc4a65cbf9144a6ae9415c9435022f62",
+      "sourceModality": "MUST",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00748"
+      ]
+    },
+    {
+      "id": "COV-M1-03038",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-009-1D11C723F49C",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-2",
+        "documentPage": 104,
+        "pdfPage": 112,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "1d11c723f49c1b0cd59d7252a7902d5d0f1c46727ac1d5f728e6109b52e96b57",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00749"
+      ]
+    },
+    {
+      "id": "COV-M1-03039",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-010-06F426B1CA0A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-3",
+        "documentPage": 107,
+        "pdfPage": 115,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "06f426b1ca0a1756b771e1a5bd894a2321421f6bf2b39a0a2931e1c864babe05",
+      "sourceModality": "MUST",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00750"
+      ]
+    },
+    {
+      "id": "COV-M1-03040",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-011-24F4226862A9",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-3",
+        "documentPage": 107,
+        "pdfPage": 115,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 11
+      },
+      "sourceTextHash": "24f4226862a9dd488017ec89e7e4695b28a02b7293a1b58f4ca6094edcc8dad0",
+      "sourceModality": "MAY",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00751"
+      ]
+    },
+    {
+      "id": "COV-M1-03041",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-012-AD290D8425E1",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-3",
+        "documentPage": 107,
+        "pdfPage": 115,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 12
+      },
+      "sourceTextHash": "ad290d8425e1fc97c2ff58f8fbe7224a1006cab22d8b55f321db32078ebd5d35",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00752"
+      ]
+    },
+    {
+      "id": "COV-M1-03042",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-013-DA0C1E503BBE",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-3",
+        "documentPage": 107,
+        "pdfPage": 115,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 13
+      },
+      "sourceTextHash": "da0c1e503bbea9d2258ad49538943d52ac89e83cd6ec1c852ade451471b987ce",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00753"
+      ]
+    },
+    {
+      "id": "COV-M1-03043",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-001-041C80F600BB",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.3",
+        "tableOrFigure": null,
+        "documentPage": 65,
+        "pdfPage": 73,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "041c80f600bb2a5fe513046d3a27873a52376630326019f05e9f02c7d087bb75",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00754"
+      ]
+    },
+    {
+      "id": "COV-M1-03044",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-002-B219C792977C",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.3",
+        "tableOrFigure": null,
+        "documentPage": 65,
+        "pdfPage": 73,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "b219c792977c56af3ed874a211e7d7bf461869ef53f9f303c6fc232ab8ca93bc",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00755"
+      ]
+    },
+    {
+      "id": "COV-M1-03045",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-002-EC7D903BFFB7",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 65,
+        "pdfPage": 73,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "ec7d903bffb7e49400ea42ad834e9cedca57799b287c3aa553b6b1adebfd80e3",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00756"
+      ]
+    },
+    {
+      "id": "COV-M1-03046",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-003-0A7405261FC0",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 65,
+        "pdfPage": 73,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "0a7405261fc0b0598c81ff2c62360893f46df4e66c98b3e6e0c02e10dbd762fa",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00757"
+      ]
+    },
+    {
+      "id": "COV-M1-03047",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-004-81B3C51C4B44",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 65,
+        "pdfPage": 73,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "81b3c51c4b447dfc05c97f150765107bd24883b88cc0780e13ee65b51d139865",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00758"
       ]
     }
   ],
@@ -110723,24 +111061,24 @@
       },
       "sourceTextHash": "e1e2de7aaef988d6efb3979b569b4396d7e3dd300a0e5c956cb2e55c78319463",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "664P3 changes IETF RFC provisions only for aeronautical or regulatory conflict, or to restrict implementer options and remove ambiguity. That is not a licence to drop ARINC 615A TFTP option rules.",
-      "generatedSemanticProjectionZh": "664P3 仅在航空或监管冲突时，或为消除歧义而限制实现者选项时，才改动 IETF RFC 规定。这不是取消 ARINC 615A TFTP 选项规则的许可。",
+      "generatedSemanticProjectionEn": "664P3 document-control philosophy: change IETF RFC provisions only when the aeronautical environment or user/regulatory requirement conflicts with the RFC, or to restrict implementer options and remove ambiguity. This is not an IUT-observable network obligation. CRS-M1-00604 remains the precedence rule.",
+      "generatedSemanticProjectionZh": "664P3 文档编制哲学：仅当航空环境或用户／监管要求与 IETF RFC 冲突，或为消除歧义而限制实现者选项时，才改动 RFC 规定。这不是网络设备可观察义务。CRS-M1-00604 仍是优先规则。",
       "semantic": {
-        "actor": "ARINC-664P3-COMPLIANT-NETWORK",
-        "condition": "WHEN-OPERATING-ON-664P3-COMPLIANT-NETWORK",
-        "action": "RESTRICT-RFC-OPTIONS-ONLY-FOR-AERONAUTICAL-CONFLICT-OR-AMBIGUITY",
+        "actor": "ARINC-664P3-DOCUMENT-CONTROL",
+        "condition": "WHEN-INTERPRETING-664P3-DOCUMENT-SCOPE",
+        "action": "RECORD-P3-RFC-OPTION-RESTRICTION-PHILOSOPHY",
         "objects": [
           "IETF-RFC-OPTIONS",
           "ARINC-664P3-PROFILE"
         ],
-        "observableEffect": "P3-RFC-OPTION-RESTRICTION-PHILOSOPHY-OBSERVABLE",
+        "observableEffect": "P3-DOCUMENT-PHILOSOPHY-CONTROL-RECORD",
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
       "sourceModality": "FACT",
-      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "conformanceEffect": "INFORMATIVE",
       "applicabilityDecision": "CONDITIONAL",
-      "rationaleCode": "P3-PRECEDENCE-RESTRICTS-RFC-OPTIONS",
+      "rationaleCode": "P3-DOCUMENT-CONTROL-INFORMATIVE",
       "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
       "ambiguityStatus": "NONE-OBSERVED",
       "dependencyIds": [
@@ -110754,7 +111092,7 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "P3-1-5-RFC-OPTION-RESTRICTION-PHILOSOPHY",
-      "splitRationale": "Option-restriction philosophy is this sentence; conflict precedence is a separate leaf."
+      "splitRationale": "Document-control philosophy is this informative record; conflict precedence remains CRS-M1-00604."
     },
     {
       "id": "CRS-M1-00733",
@@ -110770,23 +111108,23 @@
       },
       "sourceTextHash": "3d1ef7d4894c6ccecbef0ea4d762602ee2c63d540c8b18c25e1ad6157f6c3fee",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "664P3 contents are limited to describing RFC changes and option restrictions. Unlisted RFC behaviour is not rewritten here, and 615A TFTP option rules are not erased.",
-      "generatedSemanticProjectionZh": "664P3 内容限于描述 RFC 改动与选项限制。未列出的 RFC 行为不在此改写，615A TFTP 选项规则也不被抹去。",
+      "generatedSemanticProjectionEn": "664P3 document-control statement: contents are limited to describing RFC changes and option restrictions. A deployed network cannot limit the contents of the published standard. CRS-M1-00604 remains the precedence rule.",
+      "generatedSemanticProjectionZh": "664P3 文档编制陈述：内容限于描述 RFC 改动与选项限制。已部署网络不能限制已发布标准的内容。CRS-M1-00604 仍是优先规则。",
       "semantic": {
-        "actor": "ARINC-664P3-COMPLIANT-NETWORK",
-        "condition": "WHEN-OPERATING-ON-664P3-COMPLIANT-NETWORK",
-        "action": "LIMIT-P3-CONTENTS-TO-RFC-CHANGES-AND-OPTION-RESTRICTIONS",
+        "actor": "ARINC-664P3-DOCUMENT-CONTROL",
+        "condition": "WHEN-INTERPRETING-664P3-DOCUMENT-SCOPE",
+        "action": "RECORD-P3-CONTENTS-LIMITED-TO-RFC-DELTAS",
         "objects": [
           "ARINC-664P3-PROFILE"
         ],
-        "observableEffect": "P3-CONTENTS-LIMITED-TO-RFC-DELTAS-OBSERVABLE",
+        "observableEffect": "P3-DOCUMENT-CONTENTS-CONTROL-RECORD",
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
       "sourceModality": "FACT",
-      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "conformanceEffect": "INFORMATIVE",
       "applicabilityDecision": "CONDITIONAL",
-      "rationaleCode": "P3-PRECEDENCE-RESTRICTS-RFC-OPTIONS",
+      "rationaleCode": "P3-DOCUMENT-CONTROL-INFORMATIVE",
       "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
       "ambiguityStatus": "NONE-OBSERVED",
       "dependencyIds": [
@@ -110800,7 +111138,7 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "P3-1-5-CONTENTS-LIMITED-TO-DELTAS",
-      "splitRationale": "Scope-of-contents is this sentence; conflict precedence is a separate leaf."
+      "splitRationale": "Contents-limited-to-deltas is this informative record; conflict precedence remains CRS-M1-00604."
     },
     {
       "id": "CRS-M1-00734",
@@ -111173,7 +111511,7 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "ATT2-UDP-IP-OPTIONS-NOT-USED",
-      "splitRationale": "UDP IP-option NOT APPLICABLE is this row; UDP checksum NOT APPLICABLE is a separate leaf."
+      "splitRationale": "UDP IP-option NOT APPLICABLE is this row; UDP checksum generate/check capability is a separate leaf."
     },
     {
       "id": "CRS-M1-00742",
@@ -111189,17 +111527,17 @@
       },
       "sourceTextHash": "c0554b96d7a38f63db251ee310a63059a8c79d4fcf46e6c0c3306aa117163365",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, Attachment 2 marks UDP checksum generation/checking NOT APPLICABLE because checksum is not used in AFDX. The RFC 1122 MUST is interpreted as MUST NOT under the bound NOT APPLICABLE rule.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，附件 2 将 UDP 校验和生成/检查标为 NOT APPLICABLE，因为 AFDX 不使用该校验和。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 MUST 解释为 MUST NOT。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, RFC 1122 requires the host MUST implement the facility to generate and validate UDP checksums. That generate/check capability is retained and is not rewritten as prohibited. The Table 2-2 unused-in-AFDX comment is a separate use statement; silently discarding a bad checksum is a separate row. Interpretation of the table mark versus this RFC MUST remains unresolved and blocks transmit-use verdicts; CRS-M1-00609 is not applied to this capability. This does not activate AFDX.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，RFC 1122 要求主机 MUST 实现生成并校验 UDP checksum 的能力。该生成／校验能力予以保留，不被改写成禁止。表 2-2「AFDX 不使用 checksum」评注是单独的使用陈述；静默丢弃错误 checksum 是单独一行。表格标记相对该 RFC MUST 的解释保持未决，并阻塞发送使用判定；CRS-M1-00609 不适用于该能力。这不激活 AFDX。",
       "semantic": {
         "actor": "AFDX-END-SYSTEM",
         "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
-        "action": "TREAT-UDP-CHECKSUM-AS-NOT-USED-ON-AFDX",
+        "action": "IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY",
         "objects": [
           "AFDX-IP-UDP-PROFILE",
-          "UDP-CHECKSUM"
+          "UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY"
         ],
-        "observableEffect": "AFDX-UDP-CHECKSUM-NOT-USED-OBSERVABLE",
+        "observableEffect": "AFDX-UDP-CHECKSUM-GENERATE-AND-CHECK-OBSERVABLE",
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
@@ -111208,19 +111546,21 @@
       "applicabilityDecision": "CONDITIONAL",
       "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
       "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
-      "ambiguityStatus": "NONE-OBSERVED",
+      "ambiguityStatus": "SOURCE-AFDX-TABLE-MARK-AND-UNUSED-COMMENT-UNRESOLVED",
       "dependencyIds": [
         "DEP-ARINC-664-7"
       ],
-      "gapIds": [],
+      "gapIds": [
+        "GAP-UDP-CHECKSUM-USE-POLICY"
+      ],
       "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
       "rhoRA": {
         "relation": "refines-reviewed-source-unit",
         "sourceCoverageId": "COV-M1-03031",
         "status": "CANDIDATE"
       },
-      "atomicPartId": "ATT2-UDP-CHECKSUM-NOT-USED",
-      "splitRationale": "UDP checksum NOT APPLICABLE is this row; IP-option NOT APPLICABLE is a separate leaf."
+      "atomicPartId": "ATT2-UDP-CHECKSUM-GENERATE-AND-CHECK",
+      "splitRationale": "RFC MUST generate/check facility is this leaf; unused-in-AFDX comment and bad-checksum discard are separate leaves."
     },
     {
       "id": "CRS-M1-00743",
@@ -111362,6 +111702,620 @@
       },
       "atomicPartId": "ATT2-DISCARD-NON-IPV4",
       "splitRationale": "Non-IPv4 discard is this row; implement-IP is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00746",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-006-4D4480F4B5B6",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-2",
+        "documentPage": 104,
+        "pdfPage": 112,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "4d4480f4b5b60d2ae2c5a7bf418dc9d6bd4d93fa62b40c9e250d2b3924ff8347",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Table 2-2 comments that checksum is not used in AFDX. That use comment does not rewrite the generate/check facility as prohibited.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，表 2-2 评注称 AFDX 不使用 checksum。该使用评注不能把生成／校验能力改写成禁止。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "RECORD-AFDX-UDP-CHECKSUM-UNUSED-COMMENT",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "UDP-CHECKSUM-USE-COMMENT"
+        ],
+        "observableEffect": "AFDX-UDP-CHECKSUM-UNUSED-COMMENT-RECORD",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "INFORMATIVE",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03035",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "ATT2-UDP-CHECKSUM-UNUSED-COMMENT",
+      "splitRationale": "Unused-in-AFDX comment is this cell; generate/check capability and bad-checksum discard are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00747",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-007-EE88901ECA01",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-2",
+        "documentPage": 104,
+        "pdfPage": 112,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "ee88901eca01ea1b778ea7603a4486a9585995426369dcc0bc42e32a44dbb912",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Table 2-2 marks silently discarding a bad UDP checksum NOT APPLICABLE. That receive-treatment row is independent of the generate/check capability. The RFC 1122 MUST is interpreted as MUST NOT under the bound NOT APPLICABLE rule. This does not activate AFDX.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，表 2-2 将静默丢弃错误 UDP checksum 标为 NOT APPLICABLE。该接收处理行独立于生成／校验能力。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 MUST 解释为 MUST NOT。这不激活 AFDX。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "TREAT-SILENT-BAD-UDP-CHECKSUM-DISCARD-AS-NOT-APPLICABLE-ON-AFDX",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "UDP-BAD-CHECKSUM-DISCARD"
+        ],
+        "observableEffect": "AFDX-UDP-BAD-CHECKSUM-DISCARD-NOT-APPLICABLE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "MUST",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03036",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "ATT2-UDP-BAD-CHECKSUM-DISCARD-NOT-APPLICABLE",
+      "splitRationale": "Bad-checksum discard is this row; generate/check capability and unused comment are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00748",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-008-7481B3A6C175",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-2",
+        "documentPage": 104,
+        "pdfPage": 112,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "7481b3a6c1755bcb6b1192119ad3b2b7fc4a65cbf9144a6ae9415c9435022f62",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Table 2-2 marks passing ICMP messages to the application layer MUST, limited by the comment to ICMP echo request. Port-unreachable handling is a separate row. This does not activate AFDX.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，表 2-2 将 ICMP 上报应用层标为 MUST，并由评注限定为 ICMP echo request。端口不可达处理是单独一行。这不激活 AFDX。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "PASS-ICMP-MESSAGES-TO-APPLICATION-LIMITED-TO-ECHO-REQUEST",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "ICMP-UPCALL"
+        ],
+        "observableEffect": "AFDX-ICMP-UPCALL-ECHO-REQUEST-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "MUST",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03037",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "ATT2-ICMP-UPCALL-ECHO-REQUEST",
+      "splitRationale": "ICMP upcall MUST with echo-request limit is this row; port unreachable is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00749",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-009-1D11C723F49C",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-2",
+        "documentPage": 104,
+        "pdfPage": 112,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "1d11c723f49c1b0cd59d7252a7902d5d0f1c46727ac1d5f728e6109b52e96b57",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Table 2-2 marks UDP Port Unreachable NOT APPLICABLE, with the comment that only ICMP echo request and echo reply are allowed. The RFC 1122 SHOULD is interpreted as MUST NOT under the bound NOT APPLICABLE rule. ICMP upcall is a separate row. This does not activate AFDX.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，表 2-2 将 UDP Port Unreachable 标为 NOT APPLICABLE，评注仅允许 ICMP echo request／reply。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 SHOULD 解释为 MUST NOT。ICMP 上报是单独一行。这不激活 AFDX。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "TREAT-UDP-PORT-UNREACHABLE-AS-NOT-APPLICABLE-ON-AFDX",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "ICMP-PORT-UNREACHABLE"
+        ],
+        "observableEffect": "AFDX-UDP-PORT-UNREACHABLE-NOT-APPLICABLE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03038",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "ATT2-UDP-PORT-UNREACHABLE-NOT-APPLICABLE",
+      "splitRationale": "Port-unreachable NOT APPLICABLE is this row; ICMP upcall MUST is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00750",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-010-06F426B1CA0A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-3",
+        "documentPage": 107,
+        "pdfPage": 115,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "06f426b1ca0a1756b771e1a5bd894a2321421f6bf2b39a0a2931e1c864babe05",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Table 2-3 marks handling remote multihoming at the application layer MUST NOT. Local multihoming is a separate MUST row. This does not activate AFDX.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，表 2-3 将在应用层处理远端多宿主标为 MUST NOT。本端多宿主是单独的 MUST 行。这不激活 AFDX。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "FORBID-REMOTE-MULTIHOMING-AT-APPLICATION-LAYER-ON-AFDX",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "REMOTE-MULTIHOMING"
+        ],
+        "observableEffect": "AFDX-REMOTE-MULTIHOMING-MUST-NOT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "NEGATIVE"
+      },
+      "sourceModality": "MUST",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03039",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "ATT2-REMOTE-MULTIHOMING-MUST-NOT",
+      "splitRationale": "Remote-multihoming MUST NOT is this row; local multihoming MUST is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00751",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-011-24F4226862A9",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-3",
+        "documentPage": 107,
+        "pdfPage": 115,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 11
+      },
+      "sourceTextHash": "24f4226862a9dd488017ec89e7e4695b28a02b7293a1b58f4ca6094edcc8dad0",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Table 2-3 marks support for local multihoming MUST even though the RFC text is MAY. Remote multihoming is a separate MUST NOT row. This does not activate AFDX.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，表 2-3 将本端多宿主标为 MUST，即使 RFC 文本为 MAY。远端多宿主是单独的 MUST NOT 行。这不激活 AFDX。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "REQUIRE-LOCAL-MULTIHOMING-ON-AFDX",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "LOCAL-MULTIHOMING"
+        ],
+        "observableEffect": "AFDX-LOCAL-MULTIHOMING-MUST-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "MAY",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03040",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "ATT2-LOCAL-MULTIHOMING-MUST",
+      "splitRationale": "Local-multihoming MUST is this row; remote multihoming MUST NOT is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00752",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-012-AD290D8425E1",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-3",
+        "documentPage": 107,
+        "pdfPage": 115,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 12
+      },
+      "sourceTextHash": "ad290d8425e1fc97c2ff58f8fbe7224a1006cab22d8b55f321db32078ebd5d35",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Table 2-3 marks the capability to log discarded datagrams MUST, with the comment logged in MIB. The statistics-counter row is separate. This does not activate AFDX.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，表 2-3 将记录被丢弃数据报的能力标为 MUST，评注为记入 MIB。计数器行是单独的。这不激活 AFDX。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "LOG-DISCARDED-DATAGRAMS-ON-AFDX",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "DISCARDED-DATAGRAM-LOG"
+        ],
+        "observableEffect": "AFDX-DISCARDED-DATAGRAM-LOG-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03041",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "ATT2-LOG-DISCARDED-DATAGRAMS-MUST",
+      "splitRationale": "Discarded-datagram logging MUST is this row; the statistics counter is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00753",
+      "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-013-DA0C1E503BBE",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "ATT-2",
+        "tableOrFigure": "Table 2-3",
+        "documentPage": 107,
+        "pdfPage": 115,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 13
+      },
+      "sourceTextHash": "da0c1e503bbea9d2258ad49538943d52ac89e83cd6ec1c852ade451471b987ce",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, Table 2-3 marks recording discarded-datagram events in a statistics counter MUST, with the comment logged in MIB. The log-capability row is separate. This does not activate AFDX.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，表 2-3 将被丢弃数据报记入统计计数器标为 MUST，评注为记入 MIB。日志能力行是单独的。这不激活 AFDX。",
+      "semantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "RECORD-DISCARDED-DATAGRAMS-IN-COUNTER-ON-AFDX",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "DISCARDED-DATAGRAM-COUNTER"
+        ],
+        "observableEffect": "AFDX-DISCARDED-DATAGRAM-COUNTER-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-IP-UDP-PROFILE-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03042",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "ATT2-RECORD-DISCARDED-DATAGRAM-COUNTER-MUST",
+      "splitRationale": "Discarded-datagram counter MUST is this row; logging capability is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00754",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-001-041C80F600BB",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.3",
+        "tableOrFigure": null,
+        "documentPage": 65,
+        "pdfPage": 73,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "041c80f600bb2a5fe513046d3a27873a52376630326019f05e9f02c7d087bb75",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, after initialization the Switch enters OPS when compatibility checks are correct and shop is not active. Bound M2 still does not execute that switch mode machine.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，初始化后在兼容性检查正确且 SHOP 未激活时进入 OPS。绑定 M2 仍不执行该交换机模式机。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "ENTER-OPS-AFTER-COMPATIBLE-INIT-WHEN-SHOP-INACTIVE",
+        "objects": [
+          "AFDX-SWITCH-OPS-MODE"
+        ],
+        "observableEffect": "AFDX-SWITCH-OPS-ENTRY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03043",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-OPS-ENTRY-AFTER-COMPATIBLE-INIT",
+      "splitRationale": "OPS entry from init is this sentence; OPS 615A INFORMATION/FIND capability is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00755",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-002-B219C792977C",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.3",
+        "tableOrFigure": null,
+        "documentPage": 65,
+        "pdfPage": 73,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "b219c792977c56af3ed874a211e7d7bf461869ef53f9f303c6fc232ab8ca93bc",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, in OPS the Switch End System can perform ARINC 615A Information and FIND. Bound M2 still does not execute FIND or activate AFDX.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，OPS 模式下交换机端系统能够执行 ARINC 615A Information 与 FIND。绑定 M2 仍不执行 FIND，也不激活 AFDX。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "PROVIDE-OPS-MODE-615A-INFORMATION-AND-FIND",
+        "objects": [
+          "ARINC-615A-INFORMATION",
+          "ARINC-615A-FIND",
+          "AFDX-SWITCH-OPS-MODE"
+        ],
+        "observableEffect": "AFDX-SWITCH-OPS-615A-INFORMATION-FIND-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03044",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-OPS-615A-INFORMATION-AND-FIND",
+      "splitRationale": "OPS INFORMATION/FIND capability is this sentence; DL entry prerequisites are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00756",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-002-EC7D903BFFB7",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 65,
+        "pdfPage": 73,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "ec7d903bffb7e49400ea42ad834e9cedca57799b287c3aa553b6b1adebfd80e3",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, from INIT the Switch enters DL only when Switch_Ground_Condition is active and compatibility checks fail or no software is loaded. Bound M2 does not execute that mode machine.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，从 INIT 进入 DL 仅当接地条件有效且兼容性检查失败或无已加载软件。绑定 M2 不执行该模式机。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "ENTER-DL-FROM-INIT-ONLY-WHEN-GROUND-AND-COMPATIBILITY-FAIL-OR-EMPTY",
+        "objects": [
+          "AFDX-SWITCH-DL-MODE",
+          "SWITCH-GROUND-CONDITION"
+        ],
+        "observableEffect": "AFDX-SWITCH-DL-FROM-INIT-ENTRY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03045",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DL-FROM-INIT-GROUND-AND-EMPTY",
+      "splitRationale": "DL entry from INIT is this sentence; DL entry from OPS and DL 615A capabilities are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00757",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-003-0A7405261FC0",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 65,
+        "pdfPage": 73,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "0a7405261fc0b0598c81ff2c62360893f46df4e66c98b3e6e0c02e10dbd762fa",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, from OPS the Switch enters DL only when ground is active, a TH_Uploading_Initialization addressed to the Switch End System is received, and the header file is accepted. Bound M2 does not execute that mode machine.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，从 OPS 进入 DL 仅当接地有效、收到发往本交换机端系统的 TH_Uploading_Initialization，且头文件已被接受。绑定 M2 不执行该模式机。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "ENTER-DL-FROM-OPS-ONLY-WHEN-GROUND-UPLOAD-INIT-AND-HEADER-ACCEPTED",
+        "objects": [
+          "AFDX-SWITCH-DL-MODE",
+          "TH-UPLOADING-INITIALIZATION",
+          "SWITCH-GROUND-CONDITION"
+        ],
+        "observableEffect": "AFDX-SWITCH-DL-FROM-OPS-ENTRY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03046",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DL-FROM-OPS-GROUND-UPLOAD-INIT-HEADER",
+      "splitRationale": "DL entry from OPS is this sentence; session non-disruption and DL 615A capabilities are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00758",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-004-81B3C51C4B44",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 65,
+        "pdfPage": 73,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "81b3c51c4b447dfc05c97f150765107bd24883b88cc0780e13ee65b51d139865",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, in DL the Switch can completely perform ARINC 615A Information, Uploading and FIND. Bound M2 still does not execute FIND or activate AFDX.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，DL 模式下交换机能够完整执行 ARINC 615A Information、Uploading 与 FIND。绑定 M2 仍不执行 FIND，也不激活 AFDX。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "PROVIDE-DL-MODE-615A-INFORMATION-UPLOAD-AND-FIND",
+        "objects": [
+          "ARINC-615A-INFORMATION",
+          "ARINC-615A-UPLOAD",
+          "ARINC-615A-FIND",
+          "AFDX-SWITCH-DL-MODE"
+        ],
+        "observableEffect": "AFDX-SWITCH-DL-615A-INFORMATION-UPLOAD-FIND-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03047",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DL-615A-INFORMATION-UPLOAD-FIND",
+      "splitRationale": "DL INFORMATION/UPLOAD/FIND capability is this sentence; DL entry prerequisites are separate leaves."
     }
   ],
   "dependencies": [
@@ -111521,30 +112475,40 @@
       ],
       "summaryEn": "ARINC 645-dependent validation remains blocked.",
       "summaryZh": "依赖 ARINC 645 的验证仍受阻。"
+    },
+    {
+      "id": "GAP-UDP-CHECKSUM-USE-POLICY",
+      "status": "NOT-ESTABLISHED",
+      "blockedBy": "DEP-ARINC-664-7",
+      "affectedCapabilityIds": [
+        "UDP-IDENTITY-AND-APPLICABILITY"
+      ],
+      "summaryEn": "AFDX Table 2-2 generate/check RFC MUST, table mark, and unused-in-AFDX comment are recorded separately and remain unresolved for transmit-use verdicts. This gap does not prohibit the generate/check facility.",
+      "summaryZh": "AFDX 表 2-2 的生成／校验 RFC MUST、表格标记与「不使用」评注分开记录，发送使用判定保持未决。该缺口不禁止生成／校验能力。"
     }
   ],
   "reviewControl": {
     "rg0": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "rg1": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "reviewHead": "UNBOUND-DRAFT",
-    "sourceInventoryFingerprint": "9d7f6aef8d63b3d52d876500c48af72426e26d718de73a3a787f40e48ba47dfe",
+    "sourceInventoryFingerprint": "b7c8f23e93befab247567263d4205502eb89f48b3abebd45bfcff551bc144851",
     "sectionSpanManifestPath": "configs/requirements/m1_source_section_spans.json",
     "sectionSpanManifestFingerprint": "2630995a15aa2fe1d789f338d24d416f8ab32e0b028f75ad6928e0297b9b09e0",
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "35c162f8519d2e9c3c7b46858297ec4ab8cff6b36c353f840169f1a3ca12b3fb",
+    "semanticAssertionFingerprint": "f24ca38e8e214f7c218db72d20c3143cb5021a160fbcb54969070b5cd1f37ea6",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
   },
   "inventorySummary": {
-    "coverageCount": 3034,
-    "requirementCount": 744,
+    "coverageCount": 3047,
+    "requirementCount": 757,
     "dependencyCount": 15,
-    "gapCount": 1,
-    "coverageFingerprint": "6c9ea96adaebb1140946897dd740adeacbe45e444baf164b6ab32e6f7ba7d689",
-    "requirementsFingerprint": "ea2ad21d044741f33f19e6fd5d81cea04e8fc6b9529c90c53eaec17b30db58a3"
+    "gapCount": 2,
+    "coverageFingerprint": "841a50870773bc337ae4f146d5da42abc092c0684483a2db24160b21bc12d34e",
+    "requirementsFingerprint": "342c604163178a527cdea7776633fcfbd9b8bea22f4424ca7b5625ef0b9519bd"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

@@ -9642,26 +9642,26 @@
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
-        "id": "OBJ-SUPPORTING-RESTRICT-RFC-OPTIONS-ONLY-FOR-AERONAUTICAL-CONFLICT-OR-AMBIGUITY-CRS-M1-00732",
+        "id": "OBJ-SUPPORTING-RECORD-P3-RFC-OPTION-RESTRICTION-PHILOSOPHY-CRS-M1-00732",
         "m1RequirementId": "CRS-M1-00732",
         "objects": [
           "IETF-RFC-OPTIONS",
           "ARINC-664P3-PROFILE"
         ],
-        "action": "RESTRICT-RFC-OPTIONS-ONLY-FOR-AERONAUTICAL-CONFLICT-OR-AMBIGUITY",
-        "predicateEn": "664P3 changes IETF RFC provisions only for aeronautical or regulatory conflict, or to restrict implementer options and remove ambiguity. That is not a licence to drop ARINC 615A TFTP option rules.",
-        "predicateZh": "664P3 仅在航空或监管冲突时，或为消除歧义而限制实现者选项时，才改动 IETF RFC 规定。这不是取消 ARINC 615A TFTP 选项规则的许可。",
+        "action": "RECORD-P3-RFC-OPTION-RESTRICTION-PHILOSOPHY",
+        "predicateEn": "664P3 document-control philosophy: change IETF RFC provisions only when the aeronautical environment or user/regulatory requirement conflicts with the RFC, or to restrict implementer options and remove ambiguity. This is not an IUT-observable network obligation. CRS-M1-00604 remains the precedence rule.",
+        "predicateZh": "664P3 文档编制哲学：仅当航空环境或用户／监管要求与 IETF RFC 冲突，或为消除歧义而限制实现者选项时，才改动 RFC 规定。这不是网络设备可观察义务。CRS-M1-00604 仍是优先规则。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
-        "id": "OBJ-SUPPORTING-LIMIT-P3-CONTENTS-TO-RFC-CHANGES-AND-OPTION-RESTRICTIONS-CRS-M1-00733",
+        "id": "OBJ-SUPPORTING-RECORD-P3-CONTENTS-LIMITED-TO-RFC-DELTAS-CRS-M1-00733",
         "m1RequirementId": "CRS-M1-00733",
         "objects": [
           "ARINC-664P3-PROFILE"
         ],
-        "action": "LIMIT-P3-CONTENTS-TO-RFC-CHANGES-AND-OPTION-RESTRICTIONS",
-        "predicateEn": "664P3 contents are limited to describing RFC changes and option restrictions. Unlisted RFC behaviour is not rewritten here, and 615A TFTP option rules are not erased.",
-        "predicateZh": "664P3 内容限于描述 RFC 改动与选项限制。未列出的 RFC 行为不在此改写，615A TFTP 选项规则也不被抹去。",
+        "action": "RECORD-P3-CONTENTS-LIMITED-TO-RFC-DELTAS",
+        "predicateEn": "664P3 document-control statement: contents are limited to describing RFC changes and option restrictions. A deployed network cannot limit the contents of the published standard. CRS-M1-00604 remains the precedence rule.",
+        "predicateZh": "664P3 文档编制陈述：内容限于描述 RFC 改动与选项限制。已部署网络不能限制已发布标准的内容。CRS-M1-00604 仍是优先规则。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -9758,15 +9758,15 @@
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
-        "id": "OBJ-SUPPORTING-TREAT-UDP-CHECKSUM-AS-NOT-USED-ON-AFDX-CRS-M1-00742",
+        "id": "OBJ-SUPPORTING-IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY-CRS-M1-00742",
         "m1RequirementId": "CRS-M1-00742",
         "objects": [
           "AFDX-IP-UDP-PROFILE",
-          "UDP-CHECKSUM"
+          "UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY"
         ],
-        "action": "TREAT-UDP-CHECKSUM-AS-NOT-USED-ON-AFDX",
-        "predicateEn": "If AFDX is chosen, Attachment 2 marks UDP checksum generation/checking NOT APPLICABLE because checksum is not used in AFDX. The RFC 1122 MUST is interpreted as MUST NOT under the bound NOT APPLICABLE rule.",
-        "predicateZh": "若选择 AFDX，附件 2 将 UDP 校验和生成/检查标为 NOT APPLICABLE，因为 AFDX 不使用该校验和。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 MUST 解释为 MUST NOT。",
+        "action": "IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY",
+        "predicateEn": "If AFDX is chosen, RFC 1122 requires the host MUST implement the facility to generate and validate UDP checksums. That generate/check capability is retained and is not rewritten as prohibited. The Table 2-2 unused-in-AFDX comment is a separate use statement; silently discarding a bad checksum is a separate row. Interpretation of the table mark versus this RFC MUST remains unresolved and blocks transmit-use verdicts; CRS-M1-00609 is not applied to this capability. This does not activate AFDX.",
+        "predicateZh": "若选择 AFDX，RFC 1122 要求主机 MUST 实现生成并校验 UDP checksum 的能力。该生成／校验能力予以保留，不被改写成禁止。表 2-2「AFDX 不使用 checksum」评注是单独的使用陈述；静默丢弃错误 checksum 是单独一行。表格标记相对该 RFC MUST 的解释保持未决，并阻塞发送使用判定；CRS-M1-00609 不适用于该能力。这不激活 AFDX。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -9803,6 +9803,165 @@
         "action": "SILENTLY-DISCARD-NON-IPV4-DATAGRAMS",
         "predicateEn": "If AFDX is chosen, a datagram whose IP version is not 4 is silently discarded. This does not replace the bound RFC 791 version-field width.",
         "predicateZh": "若选择 AFDX，IP 版本号不是 4 的数据报被静默丢弃。这不取代已绑定的 RFC 791 版本字段宽度。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-RECORD-AFDX-UDP-CHECKSUM-UNUSED-COMMENT-CRS-M1-00746",
+        "m1RequirementId": "CRS-M1-00746",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "UDP-CHECKSUM-USE-COMMENT"
+        ],
+        "action": "RECORD-AFDX-UDP-CHECKSUM-UNUSED-COMMENT",
+        "predicateEn": "If AFDX is chosen, Table 2-2 comments that checksum is not used in AFDX. That use comment does not rewrite the generate/check facility as prohibited.",
+        "predicateZh": "若选择 AFDX，表 2-2 评注称 AFDX 不使用 checksum。该使用评注不能把生成／校验能力改写成禁止。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-TREAT-SILENT-BAD-UDP-CHECKSUM-DISCARD-AS-NOT-APPLICABLE-ON-AFDX-CRS-M1-00747",
+        "m1RequirementId": "CRS-M1-00747",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "UDP-BAD-CHECKSUM-DISCARD"
+        ],
+        "action": "TREAT-SILENT-BAD-UDP-CHECKSUM-DISCARD-AS-NOT-APPLICABLE-ON-AFDX",
+        "predicateEn": "If AFDX is chosen, Table 2-2 marks silently discarding a bad UDP checksum NOT APPLICABLE. That receive-treatment row is independent of the generate/check capability. The RFC 1122 MUST is interpreted as MUST NOT under the bound NOT APPLICABLE rule. This does not activate AFDX.",
+        "predicateZh": "若选择 AFDX，表 2-2 将静默丢弃错误 UDP checksum 标为 NOT APPLICABLE。该接收处理行独立于生成／校验能力。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 MUST 解释为 MUST NOT。这不激活 AFDX。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-PASS-ICMP-MESSAGES-TO-APPLICATION-LIMITED-TO-ECHO-REQUEST-CRS-M1-00748",
+        "m1RequirementId": "CRS-M1-00748",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "ICMP-UPCALL"
+        ],
+        "action": "PASS-ICMP-MESSAGES-TO-APPLICATION-LIMITED-TO-ECHO-REQUEST",
+        "predicateEn": "If AFDX is chosen, Table 2-2 marks passing ICMP messages to the application layer MUST, limited by the comment to ICMP echo request. Port-unreachable handling is a separate row. This does not activate AFDX.",
+        "predicateZh": "若选择 AFDX，表 2-2 将 ICMP 上报应用层标为 MUST，并由评注限定为 ICMP echo request。端口不可达处理是单独一行。这不激活 AFDX。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-TREAT-UDP-PORT-UNREACHABLE-AS-NOT-APPLICABLE-ON-AFDX-CRS-M1-00749",
+        "m1RequirementId": "CRS-M1-00749",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "ICMP-PORT-UNREACHABLE"
+        ],
+        "action": "TREAT-UDP-PORT-UNREACHABLE-AS-NOT-APPLICABLE-ON-AFDX",
+        "predicateEn": "If AFDX is chosen, Table 2-2 marks UDP Port Unreachable NOT APPLICABLE, with the comment that only ICMP echo request and echo reply are allowed. The RFC 1122 SHOULD is interpreted as MUST NOT under the bound NOT APPLICABLE rule. ICMP upcall is a separate row. This does not activate AFDX.",
+        "predicateZh": "若选择 AFDX，表 2-2 将 UDP Port Unreachable 标为 NOT APPLICABLE，评注仅允许 ICMP echo request／reply。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 SHOULD 解释为 MUST NOT。ICMP 上报是单独一行。这不激活 AFDX。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-FORBID-REMOTE-MULTIHOMING-AT-APPLICATION-LAYER-ON-AFDX-CRS-M1-00750",
+        "m1RequirementId": "CRS-M1-00750",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "REMOTE-MULTIHOMING"
+        ],
+        "action": "FORBID-REMOTE-MULTIHOMING-AT-APPLICATION-LAYER-ON-AFDX",
+        "predicateEn": "If AFDX is chosen, Table 2-3 marks handling remote multihoming at the application layer MUST NOT. Local multihoming is a separate MUST row. This does not activate AFDX.",
+        "predicateZh": "若选择 AFDX，表 2-3 将在应用层处理远端多宿主标为 MUST NOT。本端多宿主是单独的 MUST 行。这不激活 AFDX。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-REQUIRE-LOCAL-MULTIHOMING-ON-AFDX-CRS-M1-00751",
+        "m1RequirementId": "CRS-M1-00751",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "LOCAL-MULTIHOMING"
+        ],
+        "action": "REQUIRE-LOCAL-MULTIHOMING-ON-AFDX",
+        "predicateEn": "If AFDX is chosen, Table 2-3 marks support for local multihoming MUST even though the RFC text is MAY. Remote multihoming is a separate MUST NOT row. This does not activate AFDX.",
+        "predicateZh": "若选择 AFDX，表 2-3 将本端多宿主标为 MUST，即使 RFC 文本为 MAY。远端多宿主是单独的 MUST NOT 行。这不激活 AFDX。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-LOG-DISCARDED-DATAGRAMS-ON-AFDX-CRS-M1-00752",
+        "m1RequirementId": "CRS-M1-00752",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "DISCARDED-DATAGRAM-LOG"
+        ],
+        "action": "LOG-DISCARDED-DATAGRAMS-ON-AFDX",
+        "predicateEn": "If AFDX is chosen, Table 2-3 marks the capability to log discarded datagrams MUST, with the comment logged in MIB. The statistics-counter row is separate. This does not activate AFDX.",
+        "predicateZh": "若选择 AFDX，表 2-3 将记录被丢弃数据报的能力标为 MUST，评注为记入 MIB。计数器行是单独的。这不激活 AFDX。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-RECORD-DISCARDED-DATAGRAMS-IN-COUNTER-ON-AFDX-CRS-M1-00753",
+        "m1RequirementId": "CRS-M1-00753",
+        "objects": [
+          "AFDX-IP-UDP-PROFILE",
+          "DISCARDED-DATAGRAM-COUNTER"
+        ],
+        "action": "RECORD-DISCARDED-DATAGRAMS-IN-COUNTER-ON-AFDX",
+        "predicateEn": "If AFDX is chosen, Table 2-3 marks recording discarded-datagram events in a statistics counter MUST, with the comment logged in MIB. The log-capability row is separate. This does not activate AFDX.",
+        "predicateZh": "若选择 AFDX，表 2-3 将被丢弃数据报记入统计计数器标为 MUST，评注为记入 MIB。日志能力行是单独的。这不激活 AFDX。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-ENTER-OPS-AFTER-COMPATIBLE-INIT-WHEN-SHOP-INACTIVE-CRS-M1-00754",
+        "m1RequirementId": "CRS-M1-00754",
+        "objects": [
+          "AFDX-SWITCH-OPS-MODE"
+        ],
+        "action": "ENTER-OPS-AFTER-COMPATIBLE-INIT-WHEN-SHOP-INACTIVE",
+        "predicateEn": "If AFDX is chosen, after initialization the Switch enters OPS when compatibility checks are correct and shop is not active. Bound M2 still does not execute that switch mode machine.",
+        "predicateZh": "若选择 AFDX，初始化后在兼容性检查正确且 SHOP 未激活时进入 OPS。绑定 M2 仍不执行该交换机模式机。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-PROVIDE-OPS-MODE-615A-INFORMATION-AND-FIND-CRS-M1-00755",
+        "m1RequirementId": "CRS-M1-00755",
+        "objects": [
+          "ARINC-615A-INFORMATION",
+          "ARINC-615A-FIND",
+          "AFDX-SWITCH-OPS-MODE"
+        ],
+        "action": "PROVIDE-OPS-MODE-615A-INFORMATION-AND-FIND",
+        "predicateEn": "If AFDX is chosen, in OPS the Switch End System can perform ARINC 615A Information and FIND. Bound M2 still does not execute FIND or activate AFDX.",
+        "predicateZh": "若选择 AFDX，OPS 模式下交换机端系统能够执行 ARINC 615A Information 与 FIND。绑定 M2 仍不执行 FIND，也不激活 AFDX。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-ENTER-DL-FROM-INIT-ONLY-WHEN-GROUND-AND-COMPATIBILITY-FAIL-OR-EMPTY-CRS-M1-00756",
+        "m1RequirementId": "CRS-M1-00756",
+        "objects": [
+          "AFDX-SWITCH-DL-MODE",
+          "SWITCH-GROUND-CONDITION"
+        ],
+        "action": "ENTER-DL-FROM-INIT-ONLY-WHEN-GROUND-AND-COMPATIBILITY-FAIL-OR-EMPTY",
+        "predicateEn": "If AFDX is chosen, from INIT the Switch enters DL only when Switch_Ground_Condition is active and compatibility checks fail or no software is loaded. Bound M2 does not execute that mode machine.",
+        "predicateZh": "若选择 AFDX，从 INIT 进入 DL 仅当接地条件有效且兼容性检查失败或无已加载软件。绑定 M2 不执行该模式机。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-ENTER-DL-FROM-OPS-ONLY-WHEN-GROUND-UPLOAD-INIT-AND-HEADER-ACCEPTED-CRS-M1-00757",
+        "m1RequirementId": "CRS-M1-00757",
+        "objects": [
+          "AFDX-SWITCH-DL-MODE",
+          "TH-UPLOADING-INITIALIZATION",
+          "SWITCH-GROUND-CONDITION"
+        ],
+        "action": "ENTER-DL-FROM-OPS-ONLY-WHEN-GROUND-UPLOAD-INIT-AND-HEADER-ACCEPTED",
+        "predicateEn": "If AFDX is chosen, from OPS the Switch enters DL only when ground is active, a TH_Uploading_Initialization addressed to the Switch End System is received, and the header file is accepted. Bound M2 does not execute that mode machine.",
+        "predicateZh": "若选择 AFDX，从 OPS 进入 DL 仅当接地有效、收到发往本交换机端系统的 TH_Uploading_Initialization，且头文件已被接受。绑定 M2 不执行该模式机。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-PROVIDE-DL-MODE-615A-INFORMATION-UPLOAD-AND-FIND-CRS-M1-00758",
+        "m1RequirementId": "CRS-M1-00758",
+        "objects": [
+          "ARINC-615A-INFORMATION",
+          "ARINC-615A-UPLOAD",
+          "ARINC-615A-FIND",
+          "AFDX-SWITCH-DL-MODE"
+        ],
+        "action": "PROVIDE-DL-MODE-615A-INFORMATION-UPLOAD-AND-FIND",
+        "predicateEn": "If AFDX is chosen, in DL the Switch can completely perform ARINC 615A Information, Uploading and FIND. Bound M2 still does not execute FIND or activate AFDX.",
+        "predicateZh": "若选择 AFDX，DL 模式下交换机能够完整执行 ARINC 615A Information、Uploading 与 FIND。绑定 M2 仍不执行 FIND，也不激活 AFDX。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       }
     ],
@@ -20635,7 +20794,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "OBJ-SUPPORTING-RESTRICT-RFC-OPTIONS-ONLY-FOR-AERONAUTICAL-CONFLICT-OR-AMBIGUITY-CRS-M1-00732"
+        "OBJ-SUPPORTING-RECORD-P3-RFC-OPTION-RESTRICTION-PHILOSOPHY-CRS-M1-00732"
       ]
     },
     {
@@ -20647,7 +20806,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "OBJ-SUPPORTING-LIMIT-P3-CONTENTS-TO-RFC-CHANGES-AND-OPTION-RESTRICTIONS-CRS-M1-00733"
+        "OBJ-SUPPORTING-RECORD-P3-CONTENTS-LIMITED-TO-RFC-DELTAS-CRS-M1-00733"
       ]
     },
     {
@@ -20755,7 +20914,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "OBJ-SUPPORTING-TREAT-UDP-CHECKSUM-AS-NOT-USED-ON-AFDX-CRS-M1-00742"
+        "OBJ-SUPPORTING-IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY-CRS-M1-00742"
       ]
     },
     {
@@ -20792,6 +20951,162 @@
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
         "OBJ-SUPPORTING-SILENTLY-DISCARD-NON-IPV4-DATAGRAMS-CRS-M1-00745"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00746",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-RECORD-AFDX-UDP-CHECKSUM-UNUSED-COMMENT-CRS-M1-00746"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00747",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-TREAT-SILENT-BAD-UDP-CHECKSUM-DISCARD-AS-NOT-APPLICABLE-ON-AFDX-CRS-M1-00747"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00748",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-PASS-ICMP-MESSAGES-TO-APPLICATION-LIMITED-TO-ECHO-REQUEST-CRS-M1-00748"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00749",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-TREAT-UDP-PORT-UNREACHABLE-AS-NOT-APPLICABLE-ON-AFDX-CRS-M1-00749"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00750",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "NEGATIVE",
+      "sourceModality": "MUST",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-FORBID-REMOTE-MULTIHOMING-AT-APPLICATION-LAYER-ON-AFDX-CRS-M1-00750"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00751",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-REQUIRE-LOCAL-MULTIHOMING-ON-AFDX-CRS-M1-00751"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00752",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-LOG-DISCARDED-DATAGRAMS-ON-AFDX-CRS-M1-00752"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00753",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-RECORD-DISCARDED-DATAGRAMS-IN-COUNTER-ON-AFDX-CRS-M1-00753"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00754",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-ENTER-OPS-AFTER-COMPATIBLE-INIT-WHEN-SHOP-INACTIVE-CRS-M1-00754"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00755",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-PROVIDE-OPS-MODE-615A-INFORMATION-AND-FIND-CRS-M1-00755"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00756",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-ENTER-DL-FROM-INIT-ONLY-WHEN-GROUND-AND-COMPATIBILITY-FAIL-OR-EMPTY-CRS-M1-00756"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00757",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-ENTER-DL-FROM-OPS-ONLY-WHEN-GROUND-UPLOAD-INIT-AND-HEADER-ACCEPTED-CRS-M1-00757"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00758",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-PROVIDE-DL-MODE-615A-INFORMATION-UPLOAD-AND-FIND-CRS-M1-00758"
       ]
     }
   ],
@@ -29996,7 +30311,7 @@
       "id": "TR-CRS-M1-00732-0945",
       "requirementId": "CRS-M1-00732",
       "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-RESTRICT-RFC-OPTIONS-ONLY-FOR-AERONAUTICAL-CONFLICT-OR-AMBIGUITY-CRS-M1-00732",
+      "targetId": "OBJ-SUPPORTING-RECORD-P3-RFC-OPTION-RESTRICTION-PHILOSOPHY-CRS-M1-00732",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "FACT",
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
@@ -30007,7 +30322,7 @@
       "id": "TR-CRS-M1-00733-0946",
       "requirementId": "CRS-M1-00733",
       "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-LIMIT-P3-CONTENTS-TO-RFC-CHANGES-AND-OPTION-RESTRICTIONS-CRS-M1-00733",
+      "targetId": "OBJ-SUPPORTING-RECORD-P3-CONTENTS-LIMITED-TO-RFC-DELTAS-CRS-M1-00733",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "FACT",
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
@@ -30106,7 +30421,7 @@
       "id": "TR-CRS-M1-00742-0955",
       "requirementId": "CRS-M1-00742",
       "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-TREAT-UDP-CHECKSUM-AS-NOT-USED-ON-AFDX-CRS-M1-00742",
+      "targetId": "OBJ-SUPPORTING-IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY-CRS-M1-00742",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "MUST",
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
@@ -30142,6 +30457,149 @@
       "targetId": "OBJ-SUPPORTING-SILENTLY-DISCARD-NON-IPV4-DATAGRAMS-CRS-M1-00745",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00746-0959",
+      "requirementId": "CRS-M1-00746",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-RECORD-AFDX-UDP-CHECKSUM-UNUSED-COMMENT-CRS-M1-00746",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00747-0960",
+      "requirementId": "CRS-M1-00747",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-TREAT-SILENT-BAD-UDP-CHECKSUM-DISCARD-AS-NOT-APPLICABLE-ON-AFDX-CRS-M1-00747",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00748-0961",
+      "requirementId": "CRS-M1-00748",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-PASS-ICMP-MESSAGES-TO-APPLICATION-LIMITED-TO-ECHO-REQUEST-CRS-M1-00748",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00749-0962",
+      "requirementId": "CRS-M1-00749",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-TREAT-UDP-PORT-UNREACHABLE-AS-NOT-APPLICABLE-ON-AFDX-CRS-M1-00749",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00750-0963",
+      "requirementId": "CRS-M1-00750",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-FORBID-REMOTE-MULTIHOMING-AT-APPLICATION-LAYER-ON-AFDX-CRS-M1-00750",
+      "polarity": "NEGATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00751-0964",
+      "requirementId": "CRS-M1-00751",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-REQUIRE-LOCAL-MULTIHOMING-ON-AFDX-CRS-M1-00751",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MAY",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00752-0965",
+      "requirementId": "CRS-M1-00752",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-LOG-DISCARDED-DATAGRAMS-ON-AFDX-CRS-M1-00752",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00753-0966",
+      "requirementId": "CRS-M1-00753",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-RECORD-DISCARDED-DATAGRAMS-IN-COUNTER-ON-AFDX-CRS-M1-00753",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00754-0967",
+      "requirementId": "CRS-M1-00754",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENTER-OPS-AFTER-COMPATIBLE-INIT-WHEN-SHOP-INACTIVE-CRS-M1-00754",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00755-0968",
+      "requirementId": "CRS-M1-00755",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-PROVIDE-OPS-MODE-615A-INFORMATION-AND-FIND-CRS-M1-00755",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00756-0969",
+      "requirementId": "CRS-M1-00756",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENTER-DL-FROM-INIT-ONLY-WHEN-GROUND-AND-COMPATIBILITY-FAIL-OR-EMPTY-CRS-M1-00756",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00757-0970",
+      "requirementId": "CRS-M1-00757",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENTER-DL-FROM-OPS-ONLY-WHEN-GROUND-UPLOAD-INIT-AND-HEADER-ACCEPTED-CRS-M1-00757",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00758-0971",
+      "requirementId": "CRS-M1-00758",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-PROVIDE-DL-MODE-615A-INFORMATION-UPLOAD-AND-FIND-CRS-M1-00758",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
       "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
@@ -30831,15 +31289,15 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 744,
-    "dispositionCount": 744,
-    "traceCount": 850,
+    "requirementCount": 757,
+    "dispositionCount": 757,
+    "traceCount": 863,
     "stateCount": 35,
     "transitionCount": 65,
     "timingCount": 30,
     "fieldConstraintCount": 108,
-    "dispositionsFingerprint": "e4bd6a480e61d0ea436c61551c131aa258404f9d367901190671d559d1b3b2f3",
-    "modelFingerprint": "d6cba3b2bb3abbef18567733e67896da99742d8705485a3fc05a8dca2090a6e5",
+    "dispositionsFingerprint": "8ad38734905f3ffd345c48dbbc0d8dde4afd94b9d9ce95b8e8c9d2b29ef78632",
+    "modelFingerprint": "acff38e03a60ad60a744c40643dbb75375d262ddc7423380d7877c8ca6b46466",
     "timingFingerprint": "cd8a13f203f6d2c2f9c82e65646bf9d5b920200a509af92d461096e54f7e6810",
     "inputFingerprint": "50247d30fd94e50b21b722a8e9358da71bbd92cd02021f7b4e7b84ea78c2fc71",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
