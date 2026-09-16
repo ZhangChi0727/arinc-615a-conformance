@@ -82,7 +82,7 @@ estimation target. No sample size or confirmatory number is filled here.
   is INCONCLUSIVE. Example: \(I_r=[3,3]\) with \(I_{\mathrm{obs}}=[2.9,3.1]\)
   is INCONCLUSIVE; \(I_{\mathrm{obs}}=[3.9,4.1]\) is FAIL. A nonzero-width
   measurement interval usually cannot support PASS on a point equality, but it
-  can support FAIL. Do not rewrite the specified 2 s / 3 s clocks.
+  can support FAIL. Do not rewrite the specified 2 s / 3 s clocks. Exact-value checks of AFDX technological latency or max_jitter algebra are source-algebra contracts, not deployed measurement PASS. Deployed verdicts use this T5 interval treatment and a Configuration error budget; for example an observation interval [149,151] us against a strict open RX bound of 150 us is INCONCLUSIVE, not a point-estimate PASS. This PR does not activate a Configuration. Exact-value checks of AFDX technological latency or max_jitter algebra are source-algebra contracts, not deployed measurement PASS. Deployed verdicts use this T5 interval treatment and a Configuration error budget; for example an observation interval [149,151] us against a strict open RX bound of 150 us is INCONCLUSIVE, not a point-estimate PASS. This PR does not activate a Configuration.
 - **Estimation target:** held-out miss rate and refusal rate with an interval
   after a declared pilot; not estimated in this PR.
 
@@ -199,7 +199,7 @@ non-default comparison model.
 - **隔离：** 选择器或判定器变更后，开发实例永不进入确认性留出集。
 - **配对／重置：** 实例允许时在同一留出实例上配对各臂；否则随机化实例顺序。臂间重置 IUT 与会话预算。
 - **指标：** 漏检、误报、INCONCLUSIVE、ERROR、拒答率、尝试覆盖与条件错误率。拒答不进入 PASS／FAIL 分母，但仍报告。
-- **时序：** FIND 中止不豁免 2 秒主机期限与 3 秒登记窗口。等式时序使用与 RR-2026-001（T5）相同的稳健判定：\(I_{\mathrm{obs}}\subseteq I_r\) 为 PASS；不相交 \(I_{\mathrm{obs}}\cap I_r=\varnothing\) 为 FAIL；相交但不包含为 INCONCLUSIVE。例如 \(I_r=[3,3]\) 且 \(I_{\mathrm{obs}}=[2.9,3.1]\) 为 INCONCLUSIVE；\(I_{\mathrm{obs}}=[3.9,4.1]\) 为 FAIL。非零宽度测量区间通常不能对点等式给出稳健 PASS，但仍可给出 FAIL。不改写既定 2 秒／3 秒时钟。
+- **时序：** FIND 中止不豁免 2 秒主机期限与 3 秒登记窗口。等式时序使用与 RR-2026-001（T5）相同的稳健判定：\(I_{\mathrm{obs}}\subseteq I_r\) 为 PASS；不相交 \(I_{\mathrm{obs}}\cap I_r=\varnothing\) 为 FAIL；相交但不包含为 INCONCLUSIVE。例如 \(I_r=[3,3]\) 且 \(I_{\mathrm{obs}}=[2.9,3.1]\) 为 INCONCLUSIVE；\(I_{\mathrm{obs}}=[3.9,4.1]\) 为 FAIL。非零宽度测量区间通常不能对点等式给出稳健 PASS，但仍可给出 FAIL。不改写既定 2 秒／3 秒时钟。AFDX 技术时延或 max_jitter 代数的精确值检查是源代数合同，不是部署测量 PASS。部署判定使用上述 T5 区间处理与 Configuration 误差预算；例如观测区间 [149,151] 微秒对照 150 微秒严格开上界是 INCONCLUSIVE，不是点估计 PASS。本 PR 不激活 Configuration。AFDX 技术时延或 max_jitter 代数的精确值检查是源代数合同，不是部署测量 PASS。部署判定使用上述 T5 区间处理与 Configuration 误差预算；例如观测区间 [149,151] 微秒对照 150 微秒严格开上界是 INCONCLUSIVE，不是点估计 PASS。本 PR 不激活 Configuration。
 - **估计目标：** 声明 pilot 之后的留出漏检率与拒答率区间；本 PR 不估计。
 
 ### EXP-CLTAV-LOCATE——有限域定位／候选缩减

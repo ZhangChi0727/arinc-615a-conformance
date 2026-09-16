@@ -17814,7 +17814,7 @@
         "clockStart": "CORRELATED-TRIGGER-TIMESTAMP",
         "clockResets": [],
         "observationState": "CONFIGURATION-DEPENDENT",
-        "errorBudgetState": "NOT-REQUIRED",
+        "errorBudgetState": "FUTURE-CONFIGURATION-DEPENDENT",
         "ambiguityStatus": "NONE-OBSERVED"
       }
     },
@@ -17869,7 +17869,7 @@
         "clockStart": "CORRELATED-TRIGGER-TIMESTAMP",
         "clockResets": [],
         "observationState": "CONFIGURATION-DEPENDENT",
-        "errorBudgetState": "NOT-REQUIRED",
+        "errorBudgetState": "FUTURE-CONFIGURATION-DEPENDENT",
         "ambiguityStatus": "NONE-OBSERVED"
       }
     },
@@ -17883,16 +17883,17 @@
         "action": "BOUND-MAX-JITTER-BY-40US-PLUS-VL-LOAD-TERM",
         "objects": [
           "AFDX-JITTER",
-          "LMAX",
+          "LMAX-I",
           "NBW",
+          "CONFIGURED-VL-SET",
           "MAX-JITTER-500US-EQUATION"
         ],
         "observableEffect": "AFDX-MAX-JITTER-LOAD-EQUATION-OBSERVABLE",
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, max_jitter in microseconds is at most 40 us plus the sum over VLs of ((20 octets + Lmax_i octets) * 8 bits/octet / Nbw bits/s) converted from seconds to microseconds by multiplying 1000000. Both this formula and the 500 us formula must hold.",
-      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，以微秒计的 max_jitter 至多为 40 微秒加上各 VL 的 ((20 八位组 + Lmax_i 八位组) × 8 位/八位组 / Nbw 比特每秒) 由秒乘 1000000 换成微秒后的和。此式与 500 微秒公式必须同时成立。",
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, max_jitter in microseconds is at most 40 us plus (8 * SUM over the configured VL set of (20 octets + Lmax_i octets) / Nbw bits/s) converted from seconds to microseconds by multiplying 1000000. The 20-octet overhead is incurred for each VL. Lmax_i values may differ. Nbw must be positive. Both this formula and the 500 us formula must hold.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，以微秒计的 max_jitter 至多为 40 微秒加上 （8 × 对已配置 VL 集合求和 (20 八位组 + Lmax_i 八位组) / Nbw 比特每秒）由秒乘 1000000 换成微秒。每个 VL 都计入 20 八位组开销。各 VL 的 Lmax_i 可以不同。Nbw 必须为正。此式与 500 微秒公式必须同时成立。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [
@@ -17902,7 +17903,7 @@
         "timingFamily": "AFDX-MAX-JITTER-LOAD-EQUATION",
         "provenanceKind": "SYMBOLIC-SOURCE-EQUATION",
         "sourceParameter": "MAX-JITTER-LOAD-EQUATION",
-        "sourceRelation": "MAX-JITTER <= 40 + (((20 + LMAX) * 8) / NBW) * 1000000",
+        "sourceRelation": "MAX-JITTER <= 40 + (8 * SUM[I-IN-CONFIGURED-VL-SET](20 + LMAX-I) / NBW) * 1000000",
         "sourceEvidenceUnitIds": [
           "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD",
           "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948",
@@ -18842,14 +18843,15 @@
         "objects": [
           "AFDX-JITTER",
           "NBW",
-          "LMAX"
+          "LMAX-I",
+          "CONFIGURED-VL-SET"
         ],
         "observableEffect": "AFDX-MAX-JITTER-UNIT-OBSERVABLE",
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, max_jitter is in microseconds, Nbw is medium bandwidth in bits/s, and Lmax is in octets. The load term ((20 + Lmax) * 8 / Nbw) is seconds and is converted to microseconds by multiplying 1000000 before adding 40 us.",
-      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，max_jitter 以微秒计，Nbw 是比特每秒的介质带宽，Lmax 以八位组计。负载项 ((20 + Lmax) × 8 / Nbw) 的量纲是秒，须乘 1000000 换成微秒后再与 40 微秒相加。",
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, max_jitter is in microseconds, Nbw is positive medium bandwidth in bits/s, and each Lmax_i is in octets. The load term is 8 * SUM_i(20 + Lmax_i) / Nbw seconds, converted to microseconds by multiplying 1000000 before adding 40 us. Substituting SUM(Lmax_i) and adding the 20-octet overhead only once is not the source equation.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，max_jitter 以微秒计，Nbw 是为正的介质带宽（比特每秒），每个 Lmax_i 以八位组计。负载项是 8 × SUM_i(20 + Lmax_i) / Nbw 秒，须乘 1000000 换成微秒后再与 40 微秒相加。只对 Lmax_i 求和并只加一次 20 八位组开销不是源方程。",
       "expectedSourceModality": "FACT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [

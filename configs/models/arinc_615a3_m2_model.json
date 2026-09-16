@@ -1560,7 +1560,7 @@
         "meaningZh": "664-7 端系统输出公式中的观测 max_jitter。"
       },
       {
-        "id": "LMAX",
+        "id": "LMAX_I",
         "unit": "1",
         "kind": "SYMBOLIC-SOURCE-PARAMETER",
         "value": null,
@@ -1568,20 +1568,20 @@
         "sourceRequirementIds": [
           "CRS-M1-00684"
         ],
-        "meaningEn": "Lmax in octets in the load-dependent max_jitter summand.",
-        "meaningZh": "负载相关 max_jitter 加项中以八位组计的 Lmax。"
+        "meaningEn": "Per-VL maximum frame length Lmax_i in octets. Indexed over the configured VL set; values may differ. The 20-octet overhead is added inside the sum for each VL.",
+        "meaningZh": "各 VL 最大帧长 Lmax_i，以八位组计。在已配置 VL 集合上索引，取值可以不同。每个 VL 的 20 八位组开销加在求和内部。"
       },
       {
         "id": "NBW",
         "unit": "1",
         "kind": "SYMBOLIC-SOURCE-PARAMETER",
         "value": null,
-        "domain": "non-negative",
+        "domain": "positive",
         "sourceRequirementIds": [
           "CRS-M1-00684"
         ],
-        "meaningEn": "Medium bandwidth Nbw in bits/s. The load term is seconds before *1000000 conversion to us.",
-        "meaningZh": "介质带宽 Nbw，单位比特每秒。负载项在乘 1000000 换成微秒前是秒。"
+        "meaningEn": "Positive medium bandwidth Nbw in bits/s. The load term is seconds before *1000000 conversion to us. Division by zero is undefined.",
+        "meaningZh": "为正的介质带宽 Nbw，单位比特每秒。负载项在乘 1000000 换成微秒前是秒。除以零无定义。"
       },
       {
         "id": "FRAME_DELAY",
@@ -9074,13 +9074,14 @@
         "m1RequirementId": "CRS-M1-00684",
         "objects": [
           "AFDX-JITTER",
-          "LMAX",
+          "LMAX-I",
           "NBW",
+          "CONFIGURED-VL-SET",
           "MAX-JITTER-500US-EQUATION"
         ],
         "action": "BOUND-MAX-JITTER-BY-40US-PLUS-VL-LOAD-TERM",
-        "predicateEn": "If AFDX is chosen, max_jitter in microseconds is at most 40 us plus the sum over VLs of ((20 octets + Lmax_i octets) * 8 bits/octet / Nbw bits/s) converted from seconds to microseconds by multiplying 1000000. Both this formula and the 500 us formula must hold.",
-        "predicateZh": "若选择 AFDX，以微秒计的 max_jitter 至多为 40 微秒加上各 VL 的 ((20 八位组 + Lmax_i 八位组) × 8 位/八位组 / Nbw 比特每秒) 由秒乘 1000000 换成微秒后的和。此式与 500 微秒公式必须同时成立。",
+        "predicateEn": "If AFDX is chosen, max_jitter in microseconds is at most 40 us plus (8 * SUM over the configured VL set of (20 octets + Lmax_i octets) / Nbw bits/s) converted from seconds to microseconds by multiplying 1000000. The 20-octet overhead is incurred for each VL. Lmax_i values may differ. Nbw must be positive. Both this formula and the 500 us formula must hold.",
+        "predicateZh": "若选择 AFDX，以微秒计的 max_jitter 至多为 40 微秒加上 （8 × 对已配置 VL 集合求和 (20 八位组 + Lmax_i 八位组) / Nbw 比特每秒）由秒乘 1000000 换成微秒。每个 VL 都计入 20 八位组开销。各 VL 的 Lmax_i 可以不同。Nbw 必须为正。此式与 500 微秒公式必须同时成立。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -9529,11 +9530,12 @@
         "objects": [
           "AFDX-JITTER",
           "NBW",
-          "LMAX"
+          "LMAX-I",
+          "CONFIGURED-VL-SET"
         ],
         "action": "TREAT-MAX-JITTER-AS-MICROSECONDS-NBW-AS-BITS-PER-SECOND-AND-LMAX-AS-OCTETS",
-        "predicateEn": "If AFDX is chosen, max_jitter is in microseconds, Nbw is medium bandwidth in bits/s, and Lmax is in octets. The load term ((20 + Lmax) * 8 / Nbw) is seconds and is converted to microseconds by multiplying 1000000 before adding 40 us.",
-        "predicateZh": "若选择 AFDX，max_jitter 以微秒计，Nbw 是比特每秒的介质带宽，Lmax 以八位组计。负载项 ((20 + Lmax) × 8 / Nbw) 的量纲是秒，须乘 1000000 换成微秒后再与 40 微秒相加。",
+        "predicateEn": "If AFDX is chosen, max_jitter is in microseconds, Nbw is positive medium bandwidth in bits/s, and each Lmax_i is in octets. The load term is 8 * SUM_i(20 + Lmax_i) / Nbw seconds, converted to microseconds by multiplying 1000000 before adding 40 us. Substituting SUM(Lmax_i) and adding the 20-octet overhead only once is not the source equation.",
+        "predicateZh": "若选择 AFDX，max_jitter 以微秒计，Nbw 是为正的介质带宽（比特每秒），每个 Lmax_i 以八位组计。负载项是 8 × SUM_i(20 + Lmax_i) / Nbw 秒，须乘 1000000 换成微秒后再与 40 微秒相加。只对 Lmax_i 求和并只加一次 20 八位组开销不是源方程。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -11370,8 +11372,8 @@
       "observationRoleEn": "Conditional AFDX End-System measurement; bound M2 does not execute AFDX or treat this as a 615A operation timeout.",
       "observationRoleZh": "条件 AFDX 端系统测量；绑定 M2 不执行 AFDX，也不把它当作 615A 操作超时。",
       "errorBudgetClass": "NETWORK-CONSTRAINT-NOT-615A-OPERATION-TIMEOUT",
-      "errorBudgetEn": "This catalog item is a 664-7 network constraint. Missing measurement premises yield INCONCLUSIVE, not FAIL. It is not a 615A FIND/TFTP/DLP timeout.",
-      "errorBudgetZh": "本目录项是 664-7 网络约束。缺少测量前提时结论为 INCONCLUSIVE 而非 FAIL。它不是 615A FIND／TFTP／DLP 超时。",
+      "errorBudgetEn": "Source algebra may test an exact value against the strict 150 us + frame-delay bound. Deployed measurement verdicts require T5 interval treatment and a Configuration error budget; an observation interval [149,151] us against a strict RX/TX open bound at 150 us is INCONCLUSIVE, not PASS. This does not activate a Configuration or rewrite the 150 us source bound.",
+      "errorBudgetZh": "源代数可用精确值对照严格的 150 微秒加帧时延上界。部署测量判定需要 T5 区间处理与 Configuration 误差预算；观测区间 [149,151] 微秒对照 150 微秒开上界是 INCONCLUSIVE，不是 PASS。这不激活 Configuration，也不改写 150 微秒源上界。",
       "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
       "enablementEventIds": []
     },
@@ -11424,8 +11426,8 @@
       "observationRoleEn": "Conditional AFDX End-System measurement; bound M2 does not execute AFDX or treat this as a 615A operation timeout.",
       "observationRoleZh": "条件 AFDX 端系统测量；绑定 M2 不执行 AFDX，也不把它当作 615A 操作超时。",
       "errorBudgetClass": "NETWORK-CONSTRAINT-NOT-615A-OPERATION-TIMEOUT",
-      "errorBudgetEn": "This catalog item is a 664-7 network constraint. Missing measurement premises yield INCONCLUSIVE, not FAIL. It is not a 615A FIND/TFTP/DLP timeout.",
-      "errorBudgetZh": "本目录项是 664-7 网络约束。缺少测量前提时结论为 INCONCLUSIVE 而非 FAIL。它不是 615A FIND／TFTP／DLP 超时。",
+      "errorBudgetEn": "Source algebra may test an exact value against the strict 150 us RX bound. Deployed measurement verdicts require T5 interval treatment and a Configuration error budget; an observation interval [149,151] us against a strict open bound at 150 us is INCONCLUSIVE, not PASS. This does not activate a Configuration or rewrite the 150 us source bound.",
+      "errorBudgetZh": "源代数可用精确值对照严格的 150 微秒接收上界。部署测量判定需要 T5 区间处理与 Configuration 误差预算；观测区间 [149,151] 微秒对照 150 微秒开上界是 INCONCLUSIVE，不是 PASS。这不激活 Configuration，也不改写 150 微秒源上界。",
       "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
       "enablementEventIds": []
     },
@@ -11451,7 +11453,7 @@
       "upperBoundary": "CLOSED",
       "unit": "us",
       "boundKind": "SOURCE-EQUATION",
-      "sourceRelation": "MAX-JITTER <= 40 + (((20 + LMAX) * 8) / NBW) * 1000000",
+      "sourceRelation": "MAX-JITTER <= 40 + (8 * SUM[I-IN-CONFIGURED-VL-SET](20 + LMAX-I) / NBW) * 1000000",
       "sourceParameter": "MAX-JITTER-LOAD-EQUATION",
       "expression": {
         "kind": "COMPARE",
@@ -11479,24 +11481,30 @@
                 "kind": "BINARY",
                 "op": "MUL",
                 "left": {
-                  "kind": "BINARY",
-                  "op": "ADD",
-                  "left": {
-                    "kind": "LITERAL",
-                    "value": 20,
-                    "unit": "1"
-                  },
-                  "right": {
-                    "kind": "SYMBOL",
-                    "name": "LMAX",
-                    "unit": "1"
-                  },
-                  "unit": "1"
-                },
-                "right": {
                   "kind": "LITERAL",
                   "value": 8,
                   "unit": "1"
+                },
+                "right": {
+                  "kind": "SUM",
+                  "index": "I",
+                  "domain": "CONFIGURED-VL-SET",
+                  "unit": "1",
+                  "body": {
+                    "kind": "BINARY",
+                    "op": "ADD",
+                    "left": {
+                      "kind": "LITERAL",
+                      "value": 20,
+                      "unit": "1"
+                    },
+                    "right": {
+                      "kind": "SYMBOL",
+                      "name": "LMAX_I",
+                      "unit": "1"
+                    },
+                    "unit": "1"
+                  }
                 },
                 "unit": "1"
               },
@@ -11528,8 +11536,8 @@
       "observationRoleEn": "Conditional AFDX End-System measurement; bound M2 does not execute AFDX or treat this as a 615A operation timeout.",
       "observationRoleZh": "条件 AFDX 端系统测量；绑定 M2 不执行 AFDX，也不把它当作 615A 操作超时。",
       "errorBudgetClass": "NETWORK-CONSTRAINT-NOT-615A-OPERATION-TIMEOUT",
-      "errorBudgetEn": "This catalog item is a 664-7 network constraint. Missing measurement premises yield INCONCLUSIVE, not FAIL. It is not a 615A FIND/TFTP/DLP timeout.",
-      "errorBudgetZh": "本目录项是 664-7 网络约束。缺少测量前提时结论为 INCONCLUSIVE 而非 FAIL。它不是 615A FIND／TFTP／DLP 超时。",
+      "errorBudgetEn": "Source-algebra exact-value truth for the load-dependent max_jitter equation. NOT-REQUIRED means no Configuration error budget is applied to this algebraic check. Deployed measurement verdicts use T5 interval treatment and a Configuration error budget; they are not established by evaluating this expression at a point estimate.",
+      "errorBudgetZh": "负载相关 max_jitter 方程的源代数精确值真值。NOT-REQUIRED 表示此代数检查不应用 Configuration 误差预算。部署测量判定使用 T5 区间处理与 Configuration 误差预算，不能靠对该表达式做点估计来成立。",
       "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
       "enablementEventIds": []
     },
@@ -11581,8 +11589,8 @@
       "observationRoleEn": "Conditional AFDX End-System measurement; bound M2 does not execute AFDX or treat this as a 615A operation timeout.",
       "observationRoleZh": "条件 AFDX 端系统测量；绑定 M2 不执行 AFDX，也不把它当作 615A 操作超时。",
       "errorBudgetClass": "NETWORK-CONSTRAINT-NOT-615A-OPERATION-TIMEOUT",
-      "errorBudgetEn": "This catalog item is a 664-7 network constraint. Missing measurement premises yield INCONCLUSIVE, not FAIL. It is not a 615A FIND/TFTP/DLP timeout.",
-      "errorBudgetZh": "本目录项是 664-7 网络约束。缺少测量前提时结论为 INCONCLUSIVE 而非 FAIL。它不是 615A FIND／TFTP／DLP 超时。",
+      "errorBudgetEn": "Source-algebra exact-value truth for the 500 us max_jitter equation. NOT-REQUIRED means no Configuration error budget is applied to this algebraic check. Deployed measurement verdicts use T5 interval treatment and a Configuration error budget; they are not established by evaluating this expression at a point estimate.",
+      "errorBudgetZh": "500 微秒 max_jitter 方程的源代数精确值真值。NOT-REQUIRED 表示此代数检查不应用 Configuration 误差预算。部署测量判定使用 T5 区间处理与 Configuration 误差预算，不能靠对该表达式做点估计来成立。",
       "m6Instantiation": "REQUIRED-BEFORE-ORACLE",
       "enablementEventIds": []
     }
@@ -30345,8 +30353,8 @@
     "timingCount": 30,
     "fieldConstraintCount": 108,
     "dispositionsFingerprint": "22f526d8ab59d73f36f2a42fd19116b49d2fe0f2e9319575fe4060845a4f17be",
-    "modelFingerprint": "aea4bd9c9f8392ce1ffacc67efe24e9b9e4fec24d35329ad5110a56e471e4738",
-    "timingFingerprint": "524d7da7e5c9dd52065a3c8a22469a8c9d6b2aed2871660d80fd2bde0b0747bc",
+    "modelFingerprint": "2dfa8ab13e82c1d93c3571480069441937030c1f731d0a83185dc38533a0f907",
+    "timingFingerprint": "a7b960eb5e2e557c78551baa0ac46224ea2efa99c996fd7aeb2a1c5441c6495d",
     "inputFingerprint": "73ffc3f3239d7b3a53b67093ad531eadbf67635b4018e1de988ab1a5f20e4d88",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",

@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0",
   "artifactId": "ARINC615A3-M1-CRS",
-  "artifactVersion": "M1-CANDIDATE-15",
+  "artifactVersion": "M1-CANDIDATE-16",
   "candidateDisposition": "ADOPT",
   "sourceBindings": [
     {
@@ -107995,7 +107995,7 @@
         "clockStart": "CORRELATED-TRIGGER-TIMESTAMP",
         "clockResets": [],
         "observationState": "CONFIGURATION-DEPENDENT",
-        "errorBudgetState": "NOT-REQUIRED",
+        "errorBudgetState": "FUTURE-CONFIGURATION-DEPENDENT",
         "ambiguityStatus": "NONE-OBSERVED"
       }
     },
@@ -108073,7 +108073,7 @@
         "clockStart": "CORRELATED-TRIGGER-TIMESTAMP",
         "clockResets": [],
         "observationState": "CONFIGURATION-DEPENDENT",
-        "errorBudgetState": "NOT-REQUIRED",
+        "errorBudgetState": "FUTURE-CONFIGURATION-DEPENDENT",
         "ambiguityStatus": "NONE-OBSERVED"
       }
     },
@@ -108091,16 +108091,17 @@
       },
       "sourceTextHash": "a9b1a06d3cdd1f54f5aad9a160a566e2b45d066f05ab7d9daec52aadeb63a008",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, max_jitter in microseconds is at most 40 us plus the sum over VLs of ((20 octets + Lmax_i octets) * 8 bits/octet / Nbw bits/s) converted from seconds to microseconds by multiplying 1000000. Both this formula and the 500 us formula must hold.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，以微秒计的 max_jitter 至多为 40 微秒加上各 VL 的 ((20 八位组 + Lmax_i 八位组) × 8 位/八位组 / Nbw 比特每秒) 由秒乘 1000000 换成微秒后的和。此式与 500 微秒公式必须同时成立。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, max_jitter in microseconds is at most 40 us plus (8 * SUM over the configured VL set of (20 octets + Lmax_i octets) / Nbw bits/s) converted from seconds to microseconds by multiplying 1000000. The 20-octet overhead is incurred for each VL. Lmax_i values may differ. Nbw must be positive. Both this formula and the 500 us formula must hold.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，以微秒计的 max_jitter 至多为 40 微秒加上 （8 × 对已配置 VL 集合求和 (20 八位组 + Lmax_i 八位组) / Nbw 比特每秒）由秒乘 1000000 换成微秒。每个 VL 都计入 20 八位组开销。各 VL 的 Lmax_i 可以不同。Nbw 必须为正。此式与 500 微秒公式必须同时成立。",
       "semantic": {
         "actor": "AFDX-END-SYSTEM",
         "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
         "action": "BOUND-MAX-JITTER-BY-40US-PLUS-VL-LOAD-TERM",
         "objects": [
           "AFDX-JITTER",
-          "LMAX",
+          "LMAX-I",
           "NBW",
+          "CONFIGURED-VL-SET",
           "MAX-JITTER-500US-EQUATION"
         ],
         "observableEffect": "AFDX-MAX-JITTER-LOAD-EQUATION-OBSERVABLE",
@@ -108129,7 +108130,7 @@
         "timingFamily": "AFDX-MAX-JITTER-LOAD-EQUATION",
         "provenanceKind": "SYMBOLIC-SOURCE-EQUATION",
         "sourceParameter": "MAX-JITTER-LOAD-EQUATION",
-        "sourceRelation": "MAX-JITTER <= 40 + (((20 + LMAX) * 8) / NBW) * 1000000",
+        "sourceRelation": "MAX-JITTER <= 40 + (8 * SUM[I-IN-CONFIGURED-VL-SET](20 + LMAX-I) / NBW) * 1000000",
         "sourceEvidenceUnitIds": [
           "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD",
           "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948",
@@ -109891,8 +109892,8 @@
       },
       "sourceTextHash": "e8e54c6c08811ee252a5607e57150be5ee5dbada4ab97e8a08c1151b805059ba",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, max_jitter is in microseconds, Nbw is medium bandwidth in bits/s, and Lmax is in octets. The load term ((20 + Lmax) * 8 / Nbw) is seconds and is converted to microseconds by multiplying 1000000 before adding 40 us.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，max_jitter 以微秒计，Nbw 是比特每秒的介质带宽，Lmax 以八位组计。负载项 ((20 + Lmax) × 8 / Nbw) 的量纲是秒，须乘 1000000 换成微秒后再与 40 微秒相加。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, max_jitter is in microseconds, Nbw is positive medium bandwidth in bits/s, and each Lmax_i is in octets. The load term is 8 * SUM_i(20 + Lmax_i) / Nbw seconds, converted to microseconds by multiplying 1000000 before adding 40 us. Substituting SUM(Lmax_i) and adding the 20-octet overhead only once is not the source equation.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，max_jitter 以微秒计，Nbw 是为正的介质带宽（比特每秒），每个 Lmax_i 以八位组计。负载项是 8 × SUM_i(20 + Lmax_i) / Nbw 秒，须乘 1000000 换成微秒后再与 40 微秒相加。只对 Lmax_i 求和并只加一次 20 八位组开销不是源方程。",
       "semantic": {
         "actor": "AFDX-END-SYSTEM",
         "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
@@ -109900,7 +109901,8 @@
         "objects": [
           "AFDX-JITTER",
           "NBW",
-          "LMAX"
+          "LMAX-I",
+          "CONFIGURED-VL-SET"
         ],
         "observableEffect": "AFDX-MAX-JITTER-UNIT-OBSERVABLE",
         "operation": "DATA-OBJECT",
@@ -110513,7 +110515,7 @@
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "3b103f3a82eac9755f6ce27e16b3472aef6f080c4d7c81785d3a40b8c809564b",
+    "semanticAssertionFingerprint": "13145d8a2dcdaf226f4d267afe23068092dd6c68459be33a63a3f282a1d997c7",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
@@ -110524,7 +110526,7 @@
     "dependencyCount": 15,
     "gapCount": 1,
     "coverageFingerprint": "126963de03d6a644a917a0bd3f0bea08e4fd3080666a566c539b73b1abc75ba5",
-    "requirementsFingerprint": "d33d9c45c398c41e3598ef953cfaca80838fcfc7a77825f8043e103f3988b2cd"
+    "requirementsFingerprint": "42e6ac24e5c5d67e3b1587483943e3a92d4226c172542a14a015e2444d452100"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

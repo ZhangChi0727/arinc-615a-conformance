@@ -56,7 +56,7 @@ silently redefine the Core.
 - Adopt CL-TAV as the successor research method (CR-2026-012 / DD-028). First-version algorithm direction was accepted 2026-09-14 in DD-029; that is not independent mathematical or RG approval.
 - Expand protocol CRS so INFORMATION, UPLOAD, Media Defined DOWNLOAD, Operator Defined DOWNLOAD, FIND and source-stated abort/reject/exception/retry obligations are audited. Conditional network variants stay separate from the current Compliant instance. ARINC 645 unique algorithm details remain BLOCKED-SOURCE-645: locally acquired, not bound in this PR.
 - Keep protocol CRS semantically complete in this PR, but write new rows only after source-unit audit. Tool requirements, verification specifications, interface/configuration contracts and development-ready acceptance belong to a later PR after this CRS is independently accepted. Old M2 does not automatically cover the new scope.
-- Correct P7 print vs PDF locators and complete technological-latency, max_jitter and MAC-source contracts on the unique Draft PR. Current inventory is M1-CANDIDATE-15 with 3020 coverage / 730 requirements. The 615A Appendix E alternative remains open: apply Part 4 address rules or integrator-identified requirements. This does not select Part 4 automatically and does not activate AFDX. 665 section 2.3 in-scope leaves are emitted and not independently closed; CRC algorithm identity stays 645-blocked. RFC 1123 §4.2.3.2 IMPLEMENTATION exponential backoff stays informative under the adaptive-timeout MUST. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 still does not execute FIND, DOWNLOAD or AFDX (65 transitions, 30 observational timing rows). ARINC 645 is locally acquired and not bound. This Draft candidate is not independent architecture, mathematical or RG approval.
+- Restore the P7 max_jitter VL summation on the unique Draft PR. Current inventory is M1-CANDIDATE-16 with 3020 coverage / 730 requirements. The 615A Appendix E alternative remains open: apply Part 4 address rules or integrator-identified requirements. This does not select Part 4 automatically and does not activate AFDX. 665 section 2.3 in-scope leaves are emitted and not independently closed; CRC algorithm identity stays 645-blocked. RFC 1123 §4.2.3.2 IMPLEMENTATION exponential backoff stays informative under the adaptive-timeout MUST. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 still does not execute FIND, DOWNLOAD or AFDX (65 transitions, 30 observational timing rows). ARINC 645 is locally acquired and not bound. This Draft candidate is not independent architecture, mathematical or RG approval.
 
 State changes:
 
@@ -73,7 +73,7 @@ Unchanged boundaries:
 
 ## Current stop
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3 implementation. The bounded M2 ordinary merge is recorded; that approval is not transplanted onto expanded CRS. The CL-TAV Draft candidate is M1-CANDIDATE-15 with FIND abort non-waiver, bound RFC 1123/791, 664-7 latency/jitter/MAC contracts, 664P4-1 address-rule leaves for the first 00519 alternative, and combined TFTP end conditions; it is not method/paper/expanded-CRS approval. Independent review must pass, and merge requires explicit authorization. Do not Ready, merge or tag on this increment. The 2026-09-14 DD-029 design-direction acceptance is not independent approval.
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3 implementation. The bounded M2 ordinary merge is recorded; that approval is not transplanted onto expanded CRS. The CL-TAV Draft candidate is M1-CANDIDATE-16 with FIND abort non-waiver, bound RFC 1123/791, 664-7 latency/jitter/MAC contracts including the VL-sum max_jitter equation, 664P4-1 address-rule leaves for the first 00519 alternative, and combined TFTP end conditions; it is not method/paper/expanded-CRS approval. Independent review must pass, and merge requires explicit authorization. Do not Ready, merge or tag on this increment. The 2026-09-14 DD-029 design-direction acceptance is not independent approval.
 
 ## Next development steps
 
@@ -107,7 +107,7 @@ Unchanged boundaries:
 - 以 CL-TAV 为后继研究方法（CR-2026-012／DD-028）。首版算法方向已于 2026-09-14 在 DD-029 接受；那不是独立数学或 RG 批准。
 - 扩大协议 CRS，使 INFORMATION、UPLOAD、Media Defined DOWNLOAD、Operator Defined DOWNLOAD、FIND 及来源已规定的中断／拒绝／异常／重试义务接受审计。条件化网络变体与当前 Compliant 实例分开。ARINC 645 独有算法细节保持 BLOCKED-SOURCE-645：本地已取得，本 PR 不绑定。
 - 本 PR 的协议 CRS 必须语义正确且范围完整，但新行只能在来源单元审计之后撰写。工具需求、验证规格、接口／配置契约和开发就绪验收属于扩大 CRS 被独立接受之后的后继 PR。旧 M2 不会自动覆盖新范围。
-- 已在唯一 Draft PR 核正 P7 印刷页与 PDF 页，并补齐技术时延、max_jitter 与 MAC 源地址合同。当前清单为 M1-CANDIDATE-15，3020 条 coverage／730 条需求。615A 附录 E 替代路径保持开放：适用第 4 部分地址规则，或集成商指明的要求。这不自动选定第 4 部分，也不激活 AFDX。665 §2.3 范围内叶已发出且未经独立闭合；CRC 算法身份仍由 645 阻塞。RFC 1123 §4.2.3.2 IMPLEMENTATION 指数退避仍作为自适应超时 MUST 下的说明性指导。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 仍不执行 FIND、DOWNLOAD 或 AFDX（65 个迁移，30 条观察时序）。ARINC 645 本地已取得但未绑定。本 Draft 候选不是独立架构、数学或 RG 批准。
+- 已在唯一 Draft PR 恢复 P7 max_jitter 对全部 VL 的求和。当前清单为 M1-CANDIDATE-16，3020 条 coverage／730 条需求。615A 附录 E 替代路径保持开放：适用第 4 部分地址规则，或集成商指明的要求。这不自动选定第 4 部分，也不激活 AFDX。665 §2.3 范围内叶已发出且未经独立闭合；CRC 算法身份仍由 645 阻塞。RFC 1123 §4.2.3.2 IMPLEMENTATION 指数退避仍作为自适应超时 MUST 下的说明性指导。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 仍不执行 FIND、DOWNLOAD 或 AFDX（65 个迁移，30 条观察时序）。ARINC 645 本地已取得但未绑定。本 Draft 候选不是独立架构、数学或 RG 批准。
 
 状态变化：
 
@@ -124,7 +124,7 @@ Unchanged boundaries:
 
 ## 当前停点
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3 实现。有界 M2 普通合并已记录；该批准不移植到扩大 CRS。CL-TAV Draft 候选为 M1-CANDIDATE-15，含 FIND 中止不豁免、已绑定的 RFC 1123／791、664-7 时延／抖动／MAC 合同、00519 第一条替代路径的 664P4-1 地址规则叶及组合后的 TFTP 结束条件，不是方法／论文／扩大 CRS 批准。须通过独立评审，合并须明确授权。本增量不转 Ready、不合并、不打标签。2026-09-14 对 DD-029 的设计方向接受不是独立批准。
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3 实现。有界 M2 普通合并已记录；该批准不移植到扩大 CRS。CL-TAV Draft 候选为 M1-CANDIDATE-16，含 FIND 中止不豁免、已绑定的 RFC 1123／791、含 VL 求和 max_jitter 方程的 664-7 时延／抖动／MAC 合同、00519 第一条替代路径的 664P4-1 地址规则叶及组合后的 TFTP 结束条件，不是方法／论文／扩大 CRS 批准。须通过独立评审，合并须明确授权。本增量不转 Ready、不合并、不打标签。2026-09-14 对 DD-029 的设计方向接受不是独立批准。
 
 ## 下一步开发计划
 

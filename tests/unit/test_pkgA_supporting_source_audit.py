@@ -154,7 +154,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-15"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-16"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
@@ -415,18 +415,116 @@ def test_p7_print_pages_are_not_pdf_indexes() -> None:
     assert p4["source"]["pdfPage"] == 25
 
 
-def _latency_verdict(measured: float, bound: float, premises_met: bool, *, strict: bool) -> str:
+def _ideal_value_latency_verdict(value: float, bound: float, premises_met: bool, *, strict: bool) -> str:
+    """Exact-value source-algebra check. Not a deployed measurement PASS."""
     if not premises_met:
         return "INCONCLUSIVE"
     if strict:
-        return "PASS" if measured < bound else "FAIL"
-    return "PASS" if measured <= bound else "FAIL"
+        return "PASS" if value < bound else "FAIL"
+    return "PASS" if value <= bound else "FAIL"
 
 
-def _both_jitter_hold(max_jitter_us: float, lmax_octets: float, nbw_bps: float, vl_count: int = 1) -> bool:
-    load_s = vl_count * ((20 + lmax_octets) * 8) / nbw_bps
-    load_us = load_s * 1_000_000
-    return max_jitter_us <= 40 + load_us and max_jitter_us <= 500
+def _t5_interval_verdict(obs_lo: float, obs_hi: float, req_lo: float, req_hi: float, *, req_upper_open: bool) -> str:
+    """T5 interval treatment for deployed measurements with a Configuration error budget."""
+    req_contains = (
+        lambda x: req_lo <= x < req_hi if req_upper_open else req_lo <= x <= req_hi
+    )
+    if obs_lo > obs_hi:
+        raise ValueError("observation interval is reversed")
+    if req_contains(obs_lo) and req_contains(obs_hi):
+        return "PASS"
+    disjoint = obs_hi < req_lo or (obs_lo >= req_hi if req_upper_open else obs_lo > req_hi)
+    if disjoint:
+        return "FAIL"
+    return "INCONCLUSIVE"
+
+
+def _jitter_env(max_jitter: float, lmax_values: list[float], nbw: float) -> dict:
+    return {
+        "vars": {},
+        "clocks": {},
+        "params": {"MAX_JITTER": max_jitter, "NBW": nbw, "LMAX_I": None},
+        "payload": {},
+        "sum_domains": {"CONFIGURED-VL-SET": list(lmax_values)},
+    }
+
+
+def _eval_both_jitter(m2sync, load_expr, cap_expr, max_jitter: float, lmax_values: list[float], nbw: float) -> bool:
+    env = _jitter_env(max_jitter, lmax_values, nbw)
+    return m2sync.eval_ast(load_expr, env) is True and m2sync.eval_ast(cap_expr, env) is True
+
+
+def _scalar_lmax_expr() -> dict:
+    return {
+        "kind": "COMPARE",
+        "op": "LE",
+        "left": {"kind": "SYMBOL", "name": "MAX_JITTER"},
+        "right": {
+            "kind": "BINARY",
+            "op": "ADD",
+            "left": {"kind": "LITERAL", "value": 40},
+            "right": {
+                "kind": "BINARY",
+                "op": "MUL",
+                "left": {
+                    "kind": "BINARY",
+                    "op": "DIV",
+                    "left": {
+                        "kind": "BINARY",
+                        "op": "MUL",
+                        "left": {
+                            "kind": "BINARY",
+                            "op": "ADD",
+                            "left": {"kind": "LITERAL", "value": 20},
+                            "right": {"kind": "SYMBOL", "name": "LMAX_I"},
+                        },
+                        "right": {"kind": "LITERAL", "value": 8},
+                    },
+                    "right": {"kind": "SYMBOL", "name": "NBW"},
+                },
+                "right": {"kind": "LITERAL", "value": 1000000},
+            },
+        },
+    }
+
+
+def _overhead_once_expr() -> dict:
+    return {
+        "kind": "COMPARE",
+        "op": "LE",
+        "left": {"kind": "SYMBOL", "name": "MAX_JITTER"},
+        "right": {
+            "kind": "BINARY",
+            "op": "ADD",
+            "left": {"kind": "LITERAL", "value": 40},
+            "right": {
+                "kind": "BINARY",
+                "op": "MUL",
+                "left": {
+                    "kind": "BINARY",
+                    "op": "DIV",
+                    "left": {
+                        "kind": "BINARY",
+                        "op": "MUL",
+                        "left": {"kind": "LITERAL", "value": 8},
+                        "right": {
+                            "kind": "BINARY",
+                            "op": "ADD",
+                            "left": {"kind": "LITERAL", "value": 20},
+                            "right": {
+                                "kind": "SUM",
+                                "index": "I",
+                                "domain": "CONFIGURED-VL-SET",
+                                "body": {"kind": "SYMBOL", "name": "LMAX_I"},
+                            },
+                        },
+                    },
+                    "right": {"kind": "SYMBOL", "name": "NBW"},
+                },
+                "right": {"kind": "LITERAL", "value": 1000000},
+            },
+        },
+    }
 
 
 def test_p7_technological_latency_and_jitter_contracts() -> None:
@@ -458,30 +556,92 @@ def test_p7_technological_latency_and_jitter_contracts() -> None:
     assert rx["timing"]["upperBoundary"] == "OPEN"
     assert tx["timing"]["observationState"] == "CONFIGURATION-DEPENDENT"
     assert rx["timing"]["cancellation"] == "MEASUREMENT-PREMISES-NOT-MET"
-    assert tx["timing"]["errorBudgetState"] == "NOT-REQUIRED"
+    assert tx["timing"]["errorBudgetState"] == "FUTURE-CONFIGURATION-DEPENDENT"
+    assert rx["timing"]["errorBudgetState"] == "FUTURE-CONFIGURATION-DEPENDENT"
     assert tx["timing"]["sourceRelation"] == "TECH-LAT-TX < 150 + FRAME-DELAY"
     assert rx["timing"]["sourceRelation"] == "TECH-LAT-RX < 150"
-    assert _latency_verdict(150, 150, True, strict=True) == "FAIL"
-    assert _latency_verdict(149.9, 150, True, strict=True) == "PASS"
-    assert _latency_verdict(200, 150, False, strict=True) == "INCONCLUSIVE"
-    assert _latency_verdict(150, 150, True, strict=False) == "PASS"
-    assert eq1["timing"]["sourceRelation"] == "MAX-JITTER <= 40 + (((20 + LMAX) * 8) / NBW) * 1000000"
+    assert _ideal_value_latency_verdict(150, 150, True, strict=True) == "FAIL"
+    assert _ideal_value_latency_verdict(149.9, 150, True, strict=True) == "PASS"
+    assert _ideal_value_latency_verdict(200, 150, False, strict=True) == "INCONCLUSIVE"
+    assert _ideal_value_latency_verdict(150, 150, True, strict=False) == "PASS"
+    assert _t5_interval_verdict(149, 151, 0, 150, req_upper_open=True) == "INCONCLUSIVE"
+    assert _t5_interval_verdict(148, 149, 0, 150, req_upper_open=True) == "PASS"
+    assert _t5_interval_verdict(150, 151, 0, 150, req_upper_open=True) == "FAIL"
+    assert eq1["timing"]["sourceRelation"] == (
+        "MAX-JITTER <= 40 + (8 * SUM[I-IN-CONFIGURED-VL-SET](20 + LMAX-I) / NBW) * 1000000"
+    )
     assert eq2["timing"]["sourceRelation"] == "MAX-JITTER <= 500"
     assert eq1["timing"]["silenceSemantics"] == "BOTH-MAX-JITTER-EQUATIONS-MUST-HOLD"
-    assert "1000000" in units["generatedSemanticProjectionEn"]
+    assert eq1["timing"]["errorBudgetState"] == "NOT-REQUIRED"
+    assert "SUM" in units["generatedSemanticProjectionEn"]
     assert "bits/s" in units["generatedSemanticProjectionEn"]
     assert "octets" in units["generatedSemanticProjectionEn"]
+    assert "positive" in units["generatedSemanticProjectionEn"]
     assert both["semantic"]["action"] == "SATISFY-BOTH-MAX-JITTER-EQUATIONS-SIMULTANEOUSLY"
-    assert _both_jitter_hold(40, 64, 100_000_000) is True
-    assert _both_jitter_hold(400, 64, 100_000_000) is False
-    assert 400 <= 500
     m2 = json.loads((ROOT / "configs/models/arinc_615a3_m2_model.json").read_text(encoding="utf-8"))
     load_row = next(row for row in m2["timingCatalog"] if row["requirementId"] == "CRS-M1-00684")
+    cap_row = next(row for row in m2["timingCatalog"] if row["requirementId"] == "CRS-M1-00685")
     assert load_row["expression"]["op"] == "LE"
+    assert any(node.get("kind") == "SUM" for node in m2sync.walk_nodes(load_row["expression"]))
     assert m2sync.source_equation_structure_errors(load_row, eq1["timing"]["sourceRelation"], load_row["expression"]) == []
+    assert m2sync.parse_source_equation(eq1["timing"]["sourceRelation"]) is not None
+    nbw = 100_000_000
+    assert _eval_both_jitter(m2sync, load_row["expression"], cap_row["expression"], 45, [64], nbw) is True
+    assert _eval_both_jitter(m2sync, load_row["expression"], cap_row["expression"], 160, [1000, 1000], nbw) is True
+    assert _eval_both_jitter(m2sync, load_row["expression"], cap_row["expression"], 160, [1000], nbw) is False
+    assert _eval_both_jitter(m2sync, load_row["expression"], cap_row["expression"], 202, [1000, 1000], nbw) is True
+    two_unequal = _eval_both_jitter(m2sync, load_row["expression"], cap_row["expression"], 160, [64, 1518], nbw)
+    assert two_unequal is True
+    assert _eval_both_jitter(m2sync, load_row["expression"], cap_row["expression"], 510, [1518, 1518, 1518, 1518], nbw) is False
+    assert _eval_both_jitter(m2sync, load_row["expression"], cap_row["expression"], 490, [1518, 1518, 1518, 1518], nbw) is True
+    zero_bw = _jitter_env(40, [64], 0)
+    assert m2sync.eval_ast(load_row["expression"], zero_bw) is not True
     broken = copy.deepcopy(load_row)
     broken["expression"]["op"] = "GE"
     assert m2sync.source_equation_structure_errors(broken, eq1["timing"]["sourceRelation"], broken["expression"])
+    no_sum = copy.deepcopy(load_row)
+    no_sum["expression"] = _scalar_lmax_expr()
+    assert m2sync.source_equation_structure_errors(no_sum, eq1["timing"]["sourceRelation"], no_sum["expression"])
+    overhead_once = copy.deepcopy(load_row)
+    overhead_once["expression"] = _overhead_once_expr()
+    assert m2sync.source_equation_structure_errors(
+        overhead_once, eq1["timing"]["sourceRelation"], overhead_once["expression"]
+    )
+    dropped_vl_body = copy.deepcopy(load_row)
+    dropped_vl_body["expression"] = {
+        "kind": "COMPARE",
+        "op": "LE",
+        "left": {"kind": "SYMBOL", "name": "MAX_JITTER"},
+        "right": {
+            "kind": "BINARY",
+            "op": "ADD",
+            "left": {"kind": "LITERAL", "value": 40},
+            "right": {
+                "kind": "BINARY",
+                "op": "MUL",
+                "left": {
+                    "kind": "BINARY",
+                    "op": "DIV",
+                    "left": {
+                        "kind": "BINARY",
+                        "op": "MUL",
+                        "left": {"kind": "LITERAL", "value": 8},
+                        "right": {
+                            "kind": "SUM",
+                            "index": "I",
+                            "domain": "CONFIGURED-VL-SET",
+                            "body": {"kind": "LITERAL", "value": 20},
+                        },
+                    },
+                    "right": {"kind": "SYMBOL", "name": "NBW"},
+                },
+                "right": {"kind": "LITERAL", "value": 1000000},
+            },
+        },
+    }
+    assert m2sync.source_equation_structure_errors(
+        dropped_vl_body, eq1["timing"]["sourceRelation"], dropped_vl_body["expression"]
+    )
     one_only = copy.deepcopy(load_row)
     one_only["expression"] = {
         "kind": "COMPARE",
@@ -490,10 +650,42 @@ def test_p7_technological_latency_and_jitter_contracts() -> None:
         "right": {"kind": "LITERAL", "value": 500},
     }
     assert m2sync.source_equation_structure_errors(one_only, eq1["timing"]["sourceRelation"], one_only["expression"])
+    no_units = copy.deepcopy(load_row)
+    no_units["expression"]["right"]["right"] = {
+        "kind": "BINARY",
+        "op": "DIV",
+        "left": {
+            "kind": "BINARY",
+            "op": "MUL",
+            "left": {"kind": "LITERAL", "value": 8},
+            "right": {
+                "kind": "SUM",
+                "index": "I",
+                "domain": "CONFIGURED-VL-SET",
+                "body": {
+                    "kind": "BINARY",
+                    "op": "ADD",
+                    "left": {"kind": "LITERAL", "value": 20},
+                    "right": {"kind": "SYMBOL", "name": "LMAX_I"},
+                },
+            },
+        },
+        "right": {"kind": "SYMBOL", "name": "NBW"},
+    }
+    assert m2sync.source_equation_structure_errors(no_units, eq1["timing"]["sourceRelation"], no_units["expression"])
+    cap_broken = copy.deepcopy(cap_row)
+    cap_broken["expression"]["op"] = "LT"
+    assert m2sync.source_equation_structure_errors(cap_broken, eq2["timing"]["sourceRelation"], cap_broken["expression"])
+    data = copy.deepcopy(m2)
+    dest = next(row for row in data["timingCatalog"] if row["requirementId"] == "CRS-M1-00684")
+    dest["expression"] = _scalar_lmax_expr()
+    data["inventorySummary"]["timingFingerprint"] = m2sync.fingerprint(data["timingCatalog"])
+    assert any("equation structure" in item or "indexed SUM" in item for item in m2sync.package_errors(data))
     assert m2["scope"]["afdxSelected"] is False
     assert list(m2["scope"]["services"]) == ["UPLOAD", "INFORMATION"]
     assert any(row["id"] == "CLK_AFDX_ES" for row in m2["model"]["clocks"])
     assert not any("CLK_AFDX_ES" in (row.get("resets") or []) for row in m2["model"]["transitions"])
+    assert len(m2["model"]["transitions"]) == 65
 
 
 def test_p7_mac_source_is_complete_48_bit_binding() -> None:

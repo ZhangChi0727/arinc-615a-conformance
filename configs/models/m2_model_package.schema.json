@@ -134,7 +134,7 @@
       "properties": {
         "kind": {
           "type": "string",
-          "enum": ["TRUE", "COMPARE", "AND", "VAR", "CLOCK", "SYMBOL", "LITERAL", "ENUM", "ASSIGN", "BINARY", "PAYLOAD"]
+          "enum": ["TRUE", "COMPARE", "AND", "VAR", "CLOCK", "SYMBOL", "LITERAL", "ENUM", "ASSIGN", "BINARY", "PAYLOAD", "SUM"]
         },
         "name": { "type": "string" }
       },

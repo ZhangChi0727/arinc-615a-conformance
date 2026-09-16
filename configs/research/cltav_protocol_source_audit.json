@@ -8,16 +8,16 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-15",
+    "artifactVersion": "M1-CANDIDATE-16",
     "coverageCount": 3020,
     "requirementCount": 730,
     "coverageFingerprint": "126963de03d6a644a917a0bd3f0bea08e4fd3080666a566c539b73b1abc75ba5",
-    "requirementsFingerprint": "d33d9c45c398c41e3598ef953cfaca80838fcfc7a77825f8043e103f3988b2cd",
+    "requirementsFingerprint": "42e6ac24e5c5d67e3b1587483943e3a92d4226c172542a14a015e2444d452100",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "P7 technological-latency endpoints/premises, both max_jitter equations with unit conversion, and MAC source 48-bit composition including the 5-bit tail and remaining Interface_ID encodings are bound as leaf CRS. 665 section 2.3 in-scope leaves stay emitted, not independently closed. Part 4 remains an open alternative. 645 stays acquired-not-bound. This is not independent RG approval."
+    "note": "P7 technological-latency endpoints/premises, both max_jitter equations with indexed VL summation and unit conversion, and MAC source 48-bit composition including the 5-bit tail and remaining Interface_ID encodings are bound as leaf CRS. 665 section 2.3 in-scope leaves stay emitted, not independently closed. Part 4 remains an open alternative. 645 stays acquired-not-bound. This is not independent RG approval."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -15663,8 +15663,8 @@
             ],
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
-            "summaryEn": "If AFDX is chosen, VL/BAG/jitter encoding is bound, including both max_jitter formulas with units and second-to-microsecond conversion, technological-latency endpoints and empty-buffer premises, and MAC source construction (IEEE class, 24-bit constant, 16-bit User_Defined_ID, 3-bit Interface_ID, 5-bit constant tail, and all eight Figure 3-12 encodings). Unused Interface_ID values are coverage dispositions, not prohibitions. No unique MAC-source algorithm is recommended. This is not independent RG approval.",
-            "summaryZh": "若选择 AFDX，已绑定 VL／BAG／抖动编码，包括带单位及秒到微秒换算的两个 max_jitter 公式、技术时延测量端点与空缓冲前提，以及 MAC 源地址构造（IEEE 类别、24 位常数、16 位 User_Defined_ID、3 位 Interface_ID、5 位常数尾字段，以及图 3-12 全部八个编码）。未使用的 Interface_ID 是覆盖处置不是禁止。未推荐唯一 MAC 源构造算法。这不是独立 RG 批准。",
+            "summaryEn": "If AFDX is chosen, VL/BAG/jitter encoding is bound, including both max_jitter formulas with an indexed SUM over the configured VL set, per-VL 20-octet overhead, heterogeneous Lmax_i, positive Nbw, unit conversion, technological-latency endpoints and empty-buffer premises, and MAC source construction (IEEE class, 24-bit constant, 16-bit User_Defined_ID, 3-bit Interface_ID, 5-bit constant tail, and all eight Figure 3-12 encodings). Unused Interface_ID values are coverage dispositions, not prohibitions. No unique MAC-source algorithm is recommended. This is not independent RG approval.",
+            "summaryZh": "若选择 AFDX，已绑定 VL／BAG／抖动编码，包括对已配置 VL 集合的索引求和、逐 VL 的 20 八位组开销、可不同的 Lmax_i、为正的 Nbw、单位换算、技术时延测量端点与空缓冲前提，以及 MAC 源地址构造（IEEE 类别、24 位常数、16 位 User_Defined_ID、3 位 Interface_ID、5 位常数尾字段，以及图 3-12 全部八个编码）。未使用的 Interface_ID 是覆盖处置不是禁止。未推荐唯一 MAC 源构造算法。这不是独立 RG 批准。",
             "leafCoverageIds": [
               "COV-M1-02886",
               "COV-M1-02955",
