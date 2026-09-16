@@ -227,6 +227,7 @@ def test_readme_renders_network_display_groups() -> None:
     assert "`ARINC-665-5`" in readme
     assert "BOUNDED-ACTIVE" in readme
     assert "`ARINC-664-7`" in readme
+    assert "`ARINC-664-4`" in readme
     assert "CONDITIONAL-DEPLOYMENT" in readme
     assert "M2 package" in readme
 
@@ -1046,7 +1047,7 @@ def test_find_required_reread_candidates_have_crs_rows() -> None:
             assert row["requirementIds"] == []
             assert row["applicabilityDecision"] in {"OUT-OF-PROFILE", "APPLICABLE-SUPPORTING", "CONDITIONAL"}
     assert generated == 34
-    assert crs["artifactVersion"] == "M1-CANDIDATE-13"
+    assert crs["artifactVersion"] == "M1-CANDIDATE-14"
 
 
 def test_download_and_afdx_required_reread_candidates_have_crs_rows() -> None:
@@ -1076,7 +1077,7 @@ def test_download_and_afdx_required_reread_candidates_have_crs_rows() -> None:
             assert row["requirementIds"] == []
     assert download == 103
     assert afdx == 3
-    assert crs["artifactVersion"] == "M1-CANDIDATE-13"
+    assert crs["artifactVersion"] == "M1-CANDIDATE-14"
 
 
 def test_protocol_source_audit_allows_declared_future_status_pairs() -> None:
@@ -1292,14 +1293,8 @@ def test_required_timeout_unit_cannot_drop_leaves_by_status_change(leaf_status: 
         assert any("missing leafCoverageIds" in error or "admitted leaf-unit set" in error for error in errors)
 
 
-def test_forged_unbound_disposition_does_not_authorize_timeout_unit() -> None:
-    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
-    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
-    broken = copy.deepcopy(audit)
-    supporting = broken["supportingSourceApplicabilityAudit"]
-    legal = copy.deepcopy(supporting["unboundDispositions"][0])
-    unit = _rfc2349_timeout_unit(broken)
-    forged = {
+def _sample_unbound_disposition(unit: dict) -> dict:
+    return {
         "id": "UD-FORGED-TIMEOUT",
         "auditUnitId": unit["id"],
         "sourceId": "RFC-2349",
@@ -1307,11 +1302,21 @@ def test_forged_unbound_disposition_does_not_authorize_timeout_unit() -> None:
         "affectedRequirementId": unit["leafRequirementIds"][0],
         "affectedCoverageId": unit["leafCoverageIds"][0],
         "rationaleCode": unit["rationaleCode"],
-        "status": legal["status"],
+        "status": "NOT-IN-THIS-PR-SOURCE-SET",
         "notIndependentApproval": True,
-        "unfinishedScopeEn": legal["unfinishedScopeEn"],
-        "unfinishedScopeZh": legal["unfinishedScopeZh"],
+        "unfinishedScopeEn": "Forged unfinished English scope for gate testing.",
+        "unfinishedScopeZh": "用于门禁测试的伪造未完成范围。",
     }
+
+
+def test_forged_unbound_disposition_does_not_authorize_timeout_unit() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    broken = copy.deepcopy(audit)
+    supporting = broken["supportingSourceApplicabilityAudit"]
+    unit = _rfc2349_timeout_unit(broken)
+    forged = _sample_unbound_disposition(unit)
+    supporting["unboundDispositions"] = list(supporting.get("unboundDispositions") or [])
     supporting["unboundDispositions"].append(forged)
     unit["leafCrsStatus"] = next(iter(baseline.SUPPORTING_UNBOUND_LEAF_STATUSES))
     unit["unboundDispositionId"] = forged["id"]
@@ -1325,45 +1330,48 @@ def test_recorded_unbound_disposition_keeps_affected_identity_and_unfinished_sco
     crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
     assert baseline.protocol_source_audit_errors(audit, crs) == []
     supporting = audit["supportingSourceApplicabilityAudit"]
-    legal_unit = next(
-        row
+    assert supporting["unboundDispositions"] == []
+    assert all(
+        row.get("leafCrsStatus") not in baseline.SUPPORTING_UNBOUND_LEAF_STATUSES
         for source in supporting["sources"]
         for row in source["units"]
-        if row.get("leafCrsStatus") in baseline.SUPPORTING_UNBOUND_LEAF_STATUSES
     )
-    disposition = next(
-        row
-        for row in supporting["unboundDispositions"]
-        if row["id"] == legal_unit["unboundDispositionId"]
-    )
-    assert disposition["auditUnitId"] == legal_unit["id"]
-    assert disposition["sourceId"]
-    assert disposition["clause"] == legal_unit["clause"]
-    assert disposition["rationaleCode"] == legal_unit["rationaleCode"]
-    assert disposition["affectedRequirementId"] in {row["id"] for row in crs["requirements"]}
-    assert disposition["affectedCoverageId"] in {row["id"] for row in crs["coverageLedger"]}
-    assert disposition["unfinishedScopeEn"]
-    assert disposition["unfinishedScopeZh"]
     missing_list = copy.deepcopy(audit)
     del missing_list["supportingSourceApplicabilityAudit"]["unboundDispositions"]
     assert any(
         "unboundDispositions is required" in error
         for error in baseline.protocol_source_audit_errors(missing_list, crs)
     )
-    dropped = copy.deepcopy(audit)
-    dropped_unit = next(
-        row
-        for source in dropped["supportingSourceApplicabilityAudit"]["sources"]
-        for row in source["units"]
-        if row.get("leafCrsStatus") in baseline.SUPPORTING_UNBOUND_LEAF_STATUSES
+    unused = copy.deepcopy(audit)
+    unit = _rfc2349_timeout_unit(unused)
+    unused["supportingSourceApplicabilityAudit"]["unboundDispositions"].append(_sample_unbound_disposition(unit))
+    assert any(
+        "is not used by an unbound audit unit" in error
+        for error in baseline.protocol_source_audit_errors(unused, crs)
     )
-    dropped_unit.pop("unboundDispositionId")
+    dropped = copy.deepcopy(audit)
+    unit = _rfc2349_timeout_unit(dropped)
+    forged = _sample_unbound_disposition(unit)
+    dropped["supportingSourceApplicabilityAudit"]["unboundDispositions"].append(forged)
+    unit["leafCrsStatus"] = next(iter(baseline.SUPPORTING_UNBOUND_LEAF_STATUSES))
+    unit["unboundDispositionId"] = forged["id"]
+    unit["conformanceEffect"] = "INFORMATIVE"
+    _strip_leaf_refs(unit)
+    dropped["supportingSourceApplicabilityAudit"]["unboundDispositions"][0].pop("unboundDispositionId", None)
+    unit.pop("unboundDispositionId")
     assert any(
         "missing unboundDispositionId" in error
         for error in baseline.protocol_source_audit_errors(dropped, crs)
     )
     forged_identity = copy.deepcopy(audit)
-    forged_identity["supportingSourceApplicabilityAudit"]["unboundDispositions"][0]["affectedCoverageId"] = "COV-FORGED"
+    unit = _rfc2349_timeout_unit(forged_identity)
+    forged = _sample_unbound_disposition(unit)
+    forged["affectedCoverageId"] = "COV-FORGED"
+    forged_identity["supportingSourceApplicabilityAudit"]["unboundDispositions"].append(forged)
+    unit["leafCrsStatus"] = next(iter(baseline.SUPPORTING_UNBOUND_LEAF_STATUSES))
+    unit["unboundDispositionId"] = forged["id"]
+    unit["conformanceEffect"] = "INFORMATIVE"
+    _strip_leaf_refs(unit)
     assert any(
         "unbound affected coverage" in error
         for error in baseline.protocol_source_audit_errors(forged_identity, crs)

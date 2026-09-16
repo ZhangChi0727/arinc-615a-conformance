@@ -18066,6 +18066,382 @@
       "expectedDependencyIds": [
         "DEP-ARINC-664-7"
       ]
+    },
+    {
+      "requirementId": "CRS-M1-00695",
+      "sourceUnitId": "SU-ARINC-664-4-1.1-P007-PROSE-SENTENCE-001-D8764E8C18A1",
+      "sourceTextHash": "d8764e8c18a1125eb684839bee1c86e0c19542a0fd61782c7df3ed9ca085dcfd",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "PROVIDE-ADN-ADDRESS-DETERMINATION-GUIDANCE",
+        "objects": [
+          "ADN-ADDRESSES"
+        ],
+        "observableEffect": "P4-ADDRESS-GUIDANCE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and the integrator selects 664 Part 4 address rules rather than integrator-identified requirements, Part 4 provides guidance for determining all addresses needed in the aircraft data network. This does not select Part 4 automatically and does not activate AFDX.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且集成商选择 664 第 4 部分地址规则而非集成商指明要求时，第 4 部分为确定航空数据网络所需全部地址提供指导。这不自动选定第 4 部分，也不激活 AFDX。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "INFORMATIVE",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00696",
+      "sourceUnitId": "SU-ARINC-664-4-1.1-P007-PROSE-SENTENCE-002-AB25B59BF8EC",
+      "sourceTextHash": "ab25b59bf8ec9652faa77aae7ac8c0ddac737bfa478e29f52b337a0d4cb425ad",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "KNOW-DESTINATION-ADDRESSES-AT-CONFIGURATION-TIME",
+        "objects": [
+          "DESTINATION-ADDRESSES",
+          "CONFIGURATION-TIME"
+        ],
+        "observableEffect": "P4-CONFIGURATION-TIME-ADDRESS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, sending applications must know destination addresses at configuration-time. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，发送应用必须在配置时已知目的地址。这不自动选定第 4 部分。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00697",
+      "sourceUnitId": "SU-ARINC-664-4-1.2-P007-PROSE-SENTENCE-001-3C74BCDCEC14",
+      "sourceTextHash": "3c74bcdcec142dc239b0666e56a966a410c907bab8b6d3b1f59d2d7ba9ce7f67",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "DEFINE-ADN-ADDRESSING-PLAN-AND-RULES",
+        "objects": [
+          "ADN-ADDRESSING-PLAN"
+        ],
+        "observableEffect": "P4-ADDRESS-PLAN-SCOPE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, Part 4 defines the addressing plan and rules used for that aircraft data network. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，第 4 部分定义该航空数据网络所用寻址计划与规则。这不自动选定第 4 部分。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "INFORMATIVE",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00698",
+      "sourceUnitId": "SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-001-E59AB857EE72",
+      "sourceTextHash": "e59ab857ee72ddfaadfcc55ee24d4e7960fb4eae4ee9fc6f08cd2e933d623d8f",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "USE-IANA-WELL-KNOWN-UDP-PORTS-FOR-STANDARD-SERVICES-INCLUDING-TFTP",
+        "objects": [
+          "UDP-PORT-NUMBERS",
+          "TFTP"
+        ],
+        "observableEffect": "P4-WELL-KNOWN-UDP-SERVICE-PORT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, destination UDP ports for standard services such as TFTP are the ICANN/IANA well-known numbers. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，TFTP 等标准服务的目的 UDP 端口使用 ICANN／IANA 公认端口号。这不自动选定第 4 部分。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00699",
+      "sourceUnitId": "SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-002-AEB0E131BF5D",
+      "sourceTextHash": "aeb0e131bf5d1a3d067d3b887e5e6de77b558592beba7c4631cbbff305f37a30",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "ACCESS-PRIVATE-AERO-APPS-VIA-INTEGRATOR-OR-664P4-UDP-PORTS",
+        "objects": [
+          "UDP-PORT-NUMBERS",
+          "PRIVATE-AERONAUTICAL-APPLICATIONS"
+        ],
+        "observableEffect": "P4-PRIVATE-APP-UDP-PORT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, private aeronautical applications should be accessed through UDP ports assigned by the system integrator or by Part 4, as registered by ICANN/IANA. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，专用航空应用应通过系统集成商或第 4 部分分配、并由 ICANN／IANA 登记的 UDP 端口访问。这不自动选定第 4 部分。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00700",
+      "sourceUnitId": "SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-003-B9D063A58D3C",
+      "sourceTextHash": "b9d063a58d3cb6a9adcb0f2a1d79319e17cca1cc39c8476b8e1524bef96f8e6b",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "DO-NOT-REASSIGN-WELL-KNOWN-COTS-PORTS-0-1023",
+        "objects": [
+          "UDP-PORT-NUMBERS-0-1023"
+        ],
+        "observableEffect": "P4-WELL-KNOWN-PORT-REASSIGNMENT-PROHIBITED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "NEGATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, commonly used well-known COTS ports in 0-1023 should not be reassigned to any avionics networking function. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，0–1023 范围内常用公认 COTS 端口不得改派给任何航电网络功能。这不自动选定第 4 部分。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "PROHIBITED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00701",
+      "sourceUnitId": "SU-ARINC-664-4-3.1.4-P012-PROSE-SENTENCE-001-26ECAA9608B7",
+      "sourceTextHash": "26ecaa9608b74e334fff84da02796c9c1936091adbf20b1e0416fab42b2ec9bb",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "DO-NOT-ROUTE-PRIVATE-ADDRESSES-OUTSIDE-THE-NETWORK",
+        "objects": [
+          "PRIVATE-IP-ADDRESSES"
+        ],
+        "observableEffect": "P4-PRIVATE-ADDRESS-ROUTING-PROHIBITED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "NEGATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, packets carrying private addresses should not be routed outside the connected network, and public Internet hosts should not address a host on that private network. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，携带私有地址的分组不得路由到所连接网络之外，公网主机也不得向该私有网络上的主机寻址。这不自动选定第 4 部分。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "PROHIBITED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00702",
+      "sourceUnitId": "SU-ARINC-664-4-3.2.1-P014-PROSE-SENTENCE-001-FE04D876A17C",
+      "sourceTextHash": "fe04d876a17c8eddbcc4533d154d83f02a16298d8f9275182f215722ca8759f6",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "TREAT-PROFILED-AERO-NETWORK-AS-IETF-PRIVATE-APPLICATION",
+        "objects": [
+          "PROFILED-AERONAUTICAL-NETWORK"
+        ],
+        "observableEffect": "P4-PROFILED-PRIVATE-APPLICATION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, a profiled aeronautical network is a private application in the IETF sense. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，裁剪型航空网络在 IETF 意义上视为专用应用。这不自动选定第 4 部分。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00703",
+      "sourceUnitId": "SU-ARINC-664-4-3.2.1.1-P014-PROSE-SENTENCE-001-C0E53DA16C0B",
+      "sourceTextHash": "c0e53da16c0b49161f4da6d16de4f46971a3c313416ca2a26f529dead1cfe036",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "USE-PRIVATE-NETWORK-ID-FOR-PROFILED-NETWORKS",
+        "objects": [
+          "PRIVATE-NETWORK-ID",
+          "PROFILED-NETWORK"
+        ],
+        "observableEffect": "P4-PRIVATE-NETWORK-ID-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, a profiled network ID must be a Private Class A, B or C address. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，裁剪型网络标识必须是专用 A／B／C 类地址。这不自动选定第 4 部分。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00704",
+      "sourceUnitId": "SU-ARINC-664-4-4.1.2-P017-PROSE-SENTENCE-001-B050E1E70356",
+      "sourceTextHash": "b050e1e70356c82f7ed12dcff9ffc1e0b4e76943950c01eaea4d5eed8b9e91a8",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "ASSIGN-MAC-UNICAST-ADDRESSES-AT-CONFIGURATION-TIME",
+        "objects": [
+          "MAC-UNICAST-ADDRESSES",
+          "CONFIGURATION-TIME"
+        ],
+        "observableEffect": "P4-STATIC-MAC-CONFIGURATION-TIME-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, statically configured networks assign MAC unicast addresses at configuration time. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，静态配置网络在配置时分配 MAC 单播地址。这不自动选定第 4 部分。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00705",
+      "sourceUnitId": "SU-ARINC-664-4-4.1.2-P017-PROSE-SENTENCE-002-7C0C05BFFEDB",
+      "sourceTextHash": "7c0c05bffedb36195cf7e70ab26865a89f429757719699480e91fe9c4f00db23",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "KEEP-MAC-ADDRESSES-UNIQUE-UNDER-INTEGRATOR-SCHEME",
+        "objects": [
+          "MAC-ADDRESSES"
+        ],
+        "observableEffect": "P4-MAC-UNICAST-UNIQUENESS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, the system integrator designs the address scheme and keeps all MAC addresses unique. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，系统集成商设计地址方案并保证全部 MAC 地址唯一。这不自动选定第 4 部分。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00706",
+      "sourceUnitId": "SU-ARINC-664-4-4.1.2-P018-PROSE-SENTENCE-003-FA6C364135E7",
+      "sourceTextHash": "fa6c364135e725ad4dba916d5ebac2cb9780eb7ebfdc9f001a87afc51e11afe0",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "SET-MAC-UL-BIT-WHEN-INTEGRATOR-ASSIGNS-ADDRESSES",
+        "objects": [
+          "MAC-UL-BIT"
+        ],
+        "observableEffect": "P4-MAC-UL-BIT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX, 664 Part 4 address rules are selected, and the integrator assigns MAC addresses, the U/L bit should be set to 1. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX、选定 664 第 4 部分地址规则且由集成商分配 MAC 地址时，U／L 位应置 1。这不自动选定第 4 部分。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00707",
+      "sourceUnitId": "SU-ARINC-664-4-4.2.2-P018-PROSE-SENTENCE-001-EAD3F94C5832",
+      "sourceTextHash": "ead3f94c5832dcd9080609ba934f85047cca72e6e92bc8e17d0a0d03b2ef21f1",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "KEEP-ALL-NETWORK-ADDRESSES-UNIQUE",
+        "objects": [
+          "NETWORK-ADDRESSES"
+        ],
+        "observableEffect": "P4-NETWORK-ADDRESS-UNIQUENESS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, the system integrator keeps all addresses on the network unique, including multicast MAC mapping choices. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，系统集成商保证网络上全部地址唯一，包括组播 MAC 映射选择。这不自动选定第 4 部分。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00708",
+      "sourceUnitId": "SU-ARINC-664-4-ATT-1-P024-TABLE-ROW-001-8726B05F4E93",
+      "sourceTextHash": "8726b05f4e935e6b74a51707775c802388e862107a546889aba3cea29e537908",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "RESERVE-UDP-TCP-PORT-59-FOR-615A-DATA-LOADER-TFTP",
+        "objects": [
+          "TCP-UDP-PORT-59",
+          "615A-DATA-LOADER-TFTP"
+        ],
+        "observableEffect": "P4-PORT-59-615A-TFTP-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, TCP/UDP port 59 is reserved for ARINC 615A Data Loader TFTP as the aeronautical use of that well-known private file service assignment. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，TCP／UDP 端口 59 保留给 ARINC 615A 数据加载器 TFTP，作为该公认专用文件服务分配的航空用途。这不自动选定第 4 部分。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00709",
+      "sourceUnitId": "SU-ARINC-664-4-ATT-1-P024-TABLE-ROW-002-FA27688DFCA4",
+      "sourceTextHash": "fa27688dfca4af95c20a5f4ddf856226f746c93b5b9a40f78af982eb196ed99a",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "ASSIGN-UDP-PORT-24922-TO-FIND-PROTOCOL-CLIENT",
+        "objects": [
+          "UDP-PORT-24922",
+          "FIND-PROTOCOL-CLIENT"
+        ],
+        "observableEffect": "P4-PORT-24922-FIND-CLIENT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, UDP port 24922 is assigned to the FIND protocol client. This does not select Part 4 automatically and does not make FIND an instance-bound operation.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，UDP 端口 24922 分配给 FIND 协议客户端。这不自动选定第 4 部分，也不使 FIND 成为实例绑定操作。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00710",
+      "sourceUnitId": "SU-ARINC-664-4-ATT-2-P025-PROSE-SENTENCE-001-E53889C58CCD",
+      "sourceTextHash": "e53889c58ccdfae2756c4ad902b5ad37a9ce5df325be72975026dce76e2cf1a3",
+      "expectedSemantic": {
+        "actor": "SYSTEM-INTEGRATOR",
+        "condition": "WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED",
+        "action": "ALLOCATE-TABLE-2-1-ADDRESSES-FROM-RFC1918-PRIVATE-RANGES",
+        "objects": [
+          "TABLE-2-1-IPV4-ALLOCATIONS",
+          "RFC1918-PRIVATE-RANGES"
+        ],
+        "observableEffect": "P4-RFC1918-ALLOCATION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When 615A is carried over AFDX and 664 Part 4 address rules are selected, Table 2-1 address allocations are taken from RFC 1918 private ranges. This does not select Part 4 automatically.",
+      "expectedGeneratedSemanticProjectionZh": "在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，表 2-1 地址分配取自 RFC 1918 私有范围。这不自动选定第 4 部分。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-4"
+      ]
     }
   ],
   "networkReferenceReview": {
@@ -18075,6 +18451,7 @@
     "afdxSelected": false,
     "sourceIds": [
       "ARINC-664-3",
+      "ARINC-664-4",
       "ARINC-664-7"
     ],
     "units": [
@@ -18298,6 +18675,58 @@
         "sourceTextHash": "eaa837af6369cc9b870d3a5c94a016e44d5b896a09807c5a0b6fd565b7845a19",
         "summaryEn": "AFDX burst-processing performance uses its own measurement conditions; it does not establish a 615A transfer timeout.",
         "summaryZh": "AFDX 突发处理性能使用自身测量条件；它不建立 615A 传输超时。"
+      },
+      {
+        "id": "NET-P4-UDP",
+        "sourceId": "ARINC-664-4",
+        "edition": "664P4-1",
+        "pdfPage": 10,
+        "documentPage": 4,
+        "clause": "2.1",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "d34ca85d2938f66c2dbb81f3f9f240b748555bf8617f424e0fb3fdaeedba62ff",
+        "summaryEn": "Part 4 UDP port allocation distinguishes IANA well-known services, including TFTP, from integrator- or specification-assigned private aeronautical ports. Recording this region does not select Part 4 or activate AFDX.",
+        "summaryZh": "第 4 部分 UDP 端口分配区分含 TFTP 在内的 IANA 公认服务与集成商或规范分配的专用航空端口。记录该区域不选定第 4 部分，也不激活 AFDX。"
+      },
+      {
+        "id": "NET-P4-IPV4",
+        "sourceId": "ARINC-664-4",
+        "edition": "664P4-1",
+        "pdfPage": 14,
+        "documentPage": 8,
+        "clause": "3.2.1",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "27040a52ca817410cee60108cd07d4af3a66643a3941500c3833e235ff082fc3",
+        "summaryEn": "A profiled aeronautical network is a private IETF application and uses a Private Class A/B/C network ID. This is the first 00519 alternative, not an automatic Part 4 selection.",
+        "summaryZh": "裁剪型航空网络是 IETF 专用应用，并使用专用 A／B／C 类网络标识。这是 00519 的第一条替代路径，不是自动选定第 4 部分。"
+      },
+      {
+        "id": "NET-P4-MAC",
+        "sourceId": "ARINC-664-4",
+        "edition": "664P4-1",
+        "pdfPage": 17,
+        "documentPage": 11,
+        "clause": "4.1.2",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "7e34c09cfe072c5eeb0697060570d17a414f5a71cf1d1c2dd1e0ca0ed9134a0e",
+        "summaryEn": "Statically configured aeronautical networks assign unique MAC unicast addresses at configuration time. Integrator uniqueness remains required if this alternative is chosen.",
+        "summaryZh": "静态配置的航空网络在配置时分配唯一 MAC 单播地址。若选择该替代路径，集成商仍须保证唯一性。"
+      },
+      {
+        "id": "NET-P4-PORTS",
+        "sourceId": "ARINC-664-4",
+        "edition": "664P4-1",
+        "pdfPage": 24,
+        "documentPage": 18,
+        "clause": "ATT-1",
+        "inspectionKind": "INSPECTION-REGION",
+        "hashNormalization": "PYPDF-TEXT-WHITESPACE-COLLAPSED-UTF8",
+        "sourceTextHash": "d70184adb853c8c9597d6bf2792edb5cdc64c93cdb063816d2291c70ac1b50fb",
+        "summaryEn": "Attachment 1 assigns TCP/UDP 59 to 615A Data Loader TFTP and UDP 24922 to the FIND client. Assigned numbers are not AFDX activation and do not close the integrator alternative.",
+        "summaryZh": "附件 1 将 TCP／UDP 59 分配给 615A 数据加载器 TFTP，将 UDP 24922 分配给 FIND 客户端。已分配编号不是 AFDX 激活，也不关闭集成商替代路径。"
       }
     ],
     "relations": [
@@ -18759,7 +19188,11 @@
         },
         "sourceTextHash": "b5690d59edbf39c39ccc42d59e68b5a49679094f70f91349613e93c9b1933914",
         "targetUnitIds": [
-          "NET-P7-ADDRESS"
+          "NET-P7-ADDRESS",
+          "NET-P4-UDP",
+          "NET-P4-IPV4",
+          "NET-P4-MAC",
+          "NET-P4-PORTS"
         ],
         "relation": "CONDITIONAL-DEPLOYMENT-REFERENCE",
         "condition": "IF-AFDX-TRANSPORT-CHOSEN",
@@ -18842,12 +19275,16 @@
       },
       {
         "id": "NET-ISSUE-ADDRESS",
-        "status": "OPEN",
+        "status": "SOURCE-ACQUIRED-REVIEW-PENDING",
         "blocksM1Approval": false,
-        "summaryEn": "Appendix E allows P4 address rules or integrator-defined requirements; record the choice before AFDX activation. P4 is not automatically a procurement mandate.",
-        "summaryZh": "附录 E 允许 P4 寻址规则或集成商规定要求；须在 AFDX 激活前记录选择，不能自动将 P4 变为采购要求。",
+        "summaryEn": "664P4-1 is acquired and address-rule leaves are emitted for the first Appendix E alternative. The integrator-identified path remains open. This does not select Part 4 automatically and does not activate AFDX.",
+        "summaryZh": "已取得 664P4-1，并为附录 E 第一条替代路径发出地址规则叶。集成商指明路径仍开放。这不自动选定第 4 部分，也不激活 AFDX。",
         "sourceUnitIds": [
-          "NET-P7-ADDRESS"
+          "NET-P7-ADDRESS",
+          "NET-P4-UDP",
+          "NET-P4-IPV4",
+          "NET-P4-MAC",
+          "NET-P4-PORTS"
         ]
       }
     ],

@@ -12,13 +12,13 @@
 
 ## Inventory
 
-- Coverage rows: 2983
-- CRS items: 693
-- Dependencies: 14
+- Coverage rows: 2999
+- CRS items: 709
+- Dependencies: 15
 - Gaps: 1
-- Coverage fingerprint: `fb5d22545b5531df5e43d9f0a00243a12b28aee74a3b2d521960ecade1231315`
-- Requirements fingerprint: `4f541cdfa04cce6d5999189fbc3ebcc7705daedb14453c04b79a94c616f740a9`
-- Source-unit fingerprint: `b935a5b95ae34a8c937f712842a0e78438452f117dae26a036b2a70fa612dc88`
+- Coverage fingerprint: `01adfd19d8b3374d5b131de4befd308ec8ace96747bf04e2b67dd30b92bf0524`
+- Requirements fingerprint: `ddc4d4e22d12caf8df09495274c6d9bcf2982586cf1ca1636d9b80063baa0e2f`
+- Source-unit fingerprint: `ac16c710d900abf226b52f17d7a7a03502991d4e61aa22fe6235aefecec0a87d`
 - Automated checks cover structure and cross-record consistency only; proprietary-source completeness and fidelity require external RG0 review.
 - `generatedSemanticProjectionEn/Zh` are assertion-bound drift projections, not independent RG1 evidence.
 - 665 edge policy: `REQUIREMENT-LEVEL-615A-TO-665-EDGES-DEFERRED-TO-M2-ATTACHMENT-RECONCILIATION`
@@ -27,22 +27,23 @@
 
 - `APPLICABLE-BASE`: 89
 - `APPLICABLE-SUPPORTING`: 462
-- `CONDITIONAL`: 142
+- `CONDITIONAL`: 158
 
 ## Source modality
 
-- `FACT`: 109
+- `FACT`: 120
 - `FIGURE-CONSTRAINT`: 63
 - `MAY`: 60
-- `MUST`: 29
-- `SHOULD`: 283
+- `MUST`: 30
+- `SHOULD`: 287
 - `TABLE-CONSTRAINT`: 149
 
 ## Conformance effect
 
-- `CONDITIONAL-REQUIRED`: 131
+- `CONDITIONAL-REQUIRED`: 143
+- `INFORMATIVE`: 2
 - `OPTIONAL`: 60
-- `PROHIBITED`: 1
+- `PROHIBITED`: 3
 - `REQUIRED`: 501
 
 ## Open dependencies and gaps
@@ -50,6 +51,7 @@
 - `DEP-ARINC-645` — OPEN-DEPENDENCY: ARINC 645 algorithms remain unavailable. / ARINC 645 算法来源仍未取得。
 - `DEP-ARINC-664-2` — OPEN-DEPENDENCY: Ethernet physical and link semantics remain open. / 以太网物理层与链路层语义仍开放。
 - `DEP-ARINC-664-3` — OPEN-DEPENDENCY: Received P3-1 identity; edition and network applicability review remain open. / 已接收 P3-1 身份；版次与网络适用性评审仍开放。
+- `DEP-ARINC-664-4` — OPEN-DEPENDENCY: Received 664P4-1; address-rule leaves are emitted for the first 615A Appendix E alternative. The integrator-identified path remains open. This does not select Part 4 or activate AFDX. / 已接收 664P4-1；已为 615A 附录 E 第一条替代路径发出地址规则叶。集成商指明路径仍开放。这不选定第 4 部分，也不激活 AFDX。
 - `DEP-ARINC-664-7` — OPEN-DEPENDENCY: Received P7 base edition; AFDX is deferred and AID future-supplement applicability remains open. / 已接收 P7 初版；AFDX 延期，AID 未来补充版适用性仍开放。
 - `DEP-ARINC-6655` — REGISTERED-SUPPORTING-SOURCE: Bounded data-object source. / 有界数据对象来源。
 - `DEP-RFC-1122` — OPEN-DEPENDENCY: RFC 1122 communication-layer identity retrieved; infrastructure conformance and applicability of subsequent updates remain unestablished. / 已取得 RFC 1122 通信层来源身份；基础设施符合性及后续更新适用性尚未建立。
@@ -88,6 +90,10 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `NET-P7-ADDRESS` | `ARINC-664-7` / `664P7` | 3.4.1.3.1-3.4.1.3.2 / 50 | `INSPECTION-REGION` | Intra/extra AFDX addressing and bidirectional SAP/queuing choices need system integration decisions. |
 | `NET-P7-SWITCH` | `ARINC-664-7` / `664P7` | 4.9.1 / 75 | `INSPECTION-REGION` | Switch software loading refers to 615A/665, without making an AFDX switch the selected target of this Profile. |
 | `NET-P7-PERFORMANCE` | `ARINC-664-7` / `664P7` | 5.1 / 80 | `INSPECTION-REGION` | AFDX burst-processing performance uses its own measurement conditions; it does not establish a 615A transfer timeout. |
+| `NET-P4-UDP` | `ARINC-664-4` / `664P4-1` | 2.1 / 10 | `INSPECTION-REGION` | Part 4 UDP port allocation distinguishes IANA well-known services, including TFTP, from integrator- or specification-assigned private aeronautical ports. Recording this region does not select Part 4 or activate AFDX. |
+| `NET-P4-IPV4` | `ARINC-664-4` / `664P4-1` | 3.2.1 / 14 | `INSPECTION-REGION` | A profiled aeronautical network is a private IETF application and uses a Private Class A/B/C network ID. This is the first 00519 alternative, not an automatic Part 4 selection. |
+| `NET-P4-MAC` | `ARINC-664-4` / `664P4-1` | 4.1.2 / 17 | `INSPECTION-REGION` | Statically configured aeronautical networks assign unique MAC unicast addresses at configuration time. Integrator uniqueness remains required if this alternative is chosen. |
+| `NET-P4-PORTS` | `ARINC-664-4` / `664P4-1` | ATT-1 / 24 | `INSPECTION-REGION` | Attachment 1 assigns TCP/UDP 59 to 615A Data Loader TFTP and UDP 24922 to the FIND client. Assigned numbers are not AFDX activation and do not close the integrator alternative. |
 
 | Relation | Owner | Target regions | Condition / disposition | Rationale / issues |
 |---|---|---|---|---|
@@ -107,7 +113,7 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `NET-REL-014` | `COV-M1-01969` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
 | `NET-REL-015` | `COV-M1-01970` | NET-P7-TFTP, NET-P7-EXAMPLE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
 | `NET-REL-016` | `COV-M1-01971` | NET-P7-IP, NET-P7-PERFORMANCE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
-| `NET-REL-017` | `COV-M1-01972` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-ADDRESS |
+| `NET-REL-017` | `COV-M1-01972` | NET-P7-ADDRESS, NET-P4-UDP, NET-P4-IPV4, NET-P4-MAC, NET-P4-PORTS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-ADDRESS |
 
 | Issue | Blocks M1 approval | Status | Required resolution |
 |---|---|---|---|
@@ -117,7 +123,7 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `NET-ISSUE-OPTION-EDGE` | `False` | `OPEN` | A-2 remains deferred: P3 3.2.2 names RFC 2347 and P7 lists RFC 1785, but this does not prove an exact active 615A atomic trigger edge. |
 | `NET-ISSUE-AFDX-DETAIL` | `False` | `OPEN` | AFDX remains unselected; P7 Attachment 2, IEEE 802.3 (2000), and configuration-dependent latency/MTU need a later admitted deployment audit. |
 | `NET-ISSUE-AID` | `False` | `OPEN` | 615A Appendix E names an AID defined in a future P7 supplement; the supplied base edition cannot close that future supplement reference. |
-| `NET-ISSUE-ADDRESS` | `False` | `OPEN` | Appendix E allows P4 address rules or integrator-defined requirements; record the choice before AFDX activation. P4 is not automatically a procurement mandate. |
+| `NET-ISSUE-ADDRESS` | `False` | `SOURCE-ACQUIRED-REVIEW-PENDING` | 664P4-1 is acquired and address-rule leaves are emitted for the first Appendix E alternative. The integrator-identified path remains open. This does not select Part 4 automatically and does not activate AFDX. |
 
 ### Infrastructure premises and public sources
 
@@ -823,6 +829,22 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `CRS-M1-00692` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-007-97048C062FB8`<br>`ARINC-664-7 3.2.5.2 p.27` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-INTERFACE-ID-TO-IDENTIFY-REDUNDANT-AFDX-NETWORK` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-MAC-SOURCE-INTERFACE-ID-ROLE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Interface_ID identifies the redundant AFDX network to which the Ethernet MAC controller is connected.<br>若选择 AFDX，Interface_ID 标明以太网 MAC 控制器所连接的冗余 AFDX 网络。 | — | DEP-ARINC-664-7 |
 | `CRS-M1-00693` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-001-A9E8CFE75FDC`<br>`ARINC-664-7 3.2.5.2 p.27` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENCODE-INTERFACE-ID-001-AS-NETWORK-A` / `MAC-SOURCE-INTERFACE-ID, AFDX-NETWORK-A` / `AFDX-INTERFACE-ID-NETWORK-A-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Interface_ID 001 means the Ethernet MAC controller is connected to network A.<br>若选择 AFDX，Interface_ID 001 表示以太网 MAC 控制器连接到网络 A。 | — | DEP-ARINC-664-7 |
 | `CRS-M1-00694` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-002-F0CDAB79C8E2`<br>`ARINC-664-7 3.2.5.2 p.27` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENCODE-INTERFACE-ID-010-AS-NETWORK-B` / `MAC-SOURCE-INTERFACE-ID, AFDX-NETWORK-B` / `AFDX-INTERFACE-ID-NETWORK-B-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Interface_ID 010 means the Ethernet MAC controller is connected to network B.<br>若选择 AFDX，Interface_ID 010 表示以太网 MAC 控制器连接到网络 B。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00695` | `SU-ARINC-664-4-1.1-P007-PROSE-SENTENCE-001-D8764E8C18A1`<br>`ARINC-664-4 1.1 p.1` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `PROVIDE-ADN-ADDRESS-DETERMINATION-GUIDANCE` / `ADN-ADDRESSES` / `P4-ADDRESS-GUIDANCE-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | When 615A is carried over AFDX and the integrator selects 664 Part 4 address rules rather than integrator-identified requirements, Part 4 provides guidance for determining all addresses needed in the aircraft data network. This does not select Part 4 automatically and does not activate AFDX.<br>在 615A 承载于 AFDX 且集成商选择 664 第 4 部分地址规则而非集成商指明要求时，第 4 部分为确定航空数据网络所需全部地址提供指导。这不自动选定第 4 部分，也不激活 AFDX。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00696` | `SU-ARINC-664-4-1.1-P007-PROSE-SENTENCE-002-AB25B59BF8EC`<br>`ARINC-664-4 1.1 p.1` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `KNOW-DESTINATION-ADDRESSES-AT-CONFIGURATION-TIME` / `DESTINATION-ADDRESSES, CONFIGURATION-TIME` / `P4-CONFIGURATION-TIME-ADDRESS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, sending applications must know destination addresses at configuration-time. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，发送应用必须在配置时已知目的地址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00697` | `SU-ARINC-664-4-1.2-P007-PROSE-SENTENCE-001-3C74BCDCEC14`<br>`ARINC-664-4 1.2 p.1` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `DEFINE-ADN-ADDRESSING-PLAN-AND-RULES` / `ADN-ADDRESSING-PLAN` / `P4-ADDRESS-PLAN-SCOPE-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, Part 4 defines the addressing plan and rules used for that aircraft data network. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，第 4 部分定义该航空数据网络所用寻址计划与规则。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00698` | `SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-001-E59AB857EE72`<br>`ARINC-664-4 2.1 p.4` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `USE-IANA-WELL-KNOWN-UDP-PORTS-FOR-STANDARD-SERVICES-INCLUDING-TFTP` / `UDP-PORT-NUMBERS, TFTP` / `P4-WELL-KNOWN-UDP-SERVICE-PORT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, destination UDP ports for standard services such as TFTP are the ICANN/IANA well-known numbers. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，TFTP 等标准服务的目的 UDP 端口使用 ICANN／IANA 公认端口号。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00699` | `SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-002-AEB0E131BF5D`<br>`ARINC-664-4 2.1 p.4` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ACCESS-PRIVATE-AERO-APPS-VIA-INTEGRATOR-OR-664P4-UDP-PORTS` / `UDP-PORT-NUMBERS, PRIVATE-AERONAUTICAL-APPLICATIONS` / `P4-PRIVATE-APP-UDP-PORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, private aeronautical applications should be accessed through UDP ports assigned by the system integrator or by Part 4, as registered by ICANN/IANA. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，专用航空应用应通过系统集成商或第 4 部分分配、并由 ICANN／IANA 登记的 UDP 端口访问。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00700` | `SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-003-B9D063A58D3C`<br>`ARINC-664-4 2.1 p.4` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `DO-NOT-REASSIGN-WELL-KNOWN-COTS-PORTS-0-1023` / `UDP-PORT-NUMBERS-0-1023` / `P4-WELL-KNOWN-PORT-REASSIGNMENT-PROHIBITED-OBSERVABLE` | `SHOULD` / `PROHIBITED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, commonly used well-known COTS ports in 0-1023 should not be reassigned to any avionics networking function. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，0–1023 范围内常用公认 COTS 端口不得改派给任何航电网络功能。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00701` | `SU-ARINC-664-4-3.1.4-P012-PROSE-SENTENCE-001-26ECAA9608B7`<br>`ARINC-664-4 3.1.4 p.6` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `DO-NOT-ROUTE-PRIVATE-ADDRESSES-OUTSIDE-THE-NETWORK` / `PRIVATE-IP-ADDRESSES` / `P4-PRIVATE-ADDRESS-ROUTING-PROHIBITED-OBSERVABLE` | `SHOULD` / `PROHIBITED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, packets carrying private addresses should not be routed outside the connected network, and public Internet hosts should not address a host on that private network. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，携带私有地址的分组不得路由到所连接网络之外，公网主机也不得向该私有网络上的主机寻址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00702` | `SU-ARINC-664-4-3.2.1-P014-PROSE-SENTENCE-001-FE04D876A17C`<br>`ARINC-664-4 3.2.1 p.8` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `TREAT-PROFILED-AERO-NETWORK-AS-IETF-PRIVATE-APPLICATION` / `PROFILED-AERONAUTICAL-NETWORK` / `P4-PROFILED-PRIVATE-APPLICATION-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, a profiled aeronautical network is a private application in the IETF sense. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，裁剪型航空网络在 IETF 意义上视为专用应用。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00703` | `SU-ARINC-664-4-3.2.1.1-P014-PROSE-SENTENCE-001-C0E53DA16C0B`<br>`ARINC-664-4 3.2.1.1 p.8` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `USE-PRIVATE-NETWORK-ID-FOR-PROFILED-NETWORKS` / `PRIVATE-NETWORK-ID, PROFILED-NETWORK` / `P4-PRIVATE-NETWORK-ID-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, a profiled network ID must be a Private Class A, B or C address. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，裁剪型网络标识必须是专用 A／B／C 类地址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00704` | `SU-ARINC-664-4-4.1.2-P017-PROSE-SENTENCE-001-B050E1E70356`<br>`ARINC-664-4 4.1.2 p.11` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ASSIGN-MAC-UNICAST-ADDRESSES-AT-CONFIGURATION-TIME` / `MAC-UNICAST-ADDRESSES, CONFIGURATION-TIME` / `P4-STATIC-MAC-CONFIGURATION-TIME-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, statically configured networks assign MAC unicast addresses at configuration time. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，静态配置网络在配置时分配 MAC 单播地址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00705` | `SU-ARINC-664-4-4.1.2-P017-PROSE-SENTENCE-002-7C0C05BFFEDB`<br>`ARINC-664-4 4.1.2 p.11` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `KEEP-MAC-ADDRESSES-UNIQUE-UNDER-INTEGRATOR-SCHEME` / `MAC-ADDRESSES` / `P4-MAC-UNICAST-UNIQUENESS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, the system integrator designs the address scheme and keeps all MAC addresses unique. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，系统集成商设计地址方案并保证全部 MAC 地址唯一。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00706` | `SU-ARINC-664-4-4.1.2-P018-PROSE-SENTENCE-003-FA6C364135E7`<br>`ARINC-664-4 4.1.2 p.12` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `SET-MAC-UL-BIT-WHEN-INTEGRATOR-ASSIGNS-ADDRESSES` / `MAC-UL-BIT` / `P4-MAC-UL-BIT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX, 664 Part 4 address rules are selected, and the integrator assigns MAC addresses, the U/L bit should be set to 1. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX、选定 664 第 4 部分地址规则且由集成商分配 MAC 地址时，U／L 位应置 1。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00707` | `SU-ARINC-664-4-4.2.2-P018-PROSE-SENTENCE-001-EAD3F94C5832`<br>`ARINC-664-4 4.2.2 p.12` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `KEEP-ALL-NETWORK-ADDRESSES-UNIQUE` / `NETWORK-ADDRESSES` / `P4-NETWORK-ADDRESS-UNIQUENESS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, the system integrator keeps all addresses on the network unique, including multicast MAC mapping choices. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，系统集成商保证网络上全部地址唯一，包括组播 MAC 映射选择。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00708` | `SU-ARINC-664-4-ATT-1-P024-TABLE-ROW-001-8726B05F4E93`<br>`ARINC-664-4 ATT-1 p.18` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `RESERVE-UDP-TCP-PORT-59-FOR-615A-DATA-LOADER-TFTP` / `TCP-UDP-PORT-59, 615A-DATA-LOADER-TFTP` / `P4-PORT-59-615A-TFTP-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, TCP/UDP port 59 is reserved for ARINC 615A Data Loader TFTP as the aeronautical use of that well-known private file service assignment. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，TCP／UDP 端口 59 保留给 ARINC 615A 数据加载器 TFTP，作为该公认专用文件服务分配的航空用途。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00709` | `SU-ARINC-664-4-ATT-1-P024-TABLE-ROW-002-FA27688DFCA4`<br>`ARINC-664-4 ATT-1 p.18` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ASSIGN-UDP-PORT-24922-TO-FIND-PROTOCOL-CLIENT` / `UDP-PORT-24922, FIND-PROTOCOL-CLIENT` / `P4-PORT-24922-FIND-CLIENT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, UDP port 24922 is assigned to the FIND protocol client. This does not select Part 4 automatically and does not make FIND an instance-bound operation.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，UDP 端口 24922 分配给 FIND 协议客户端。这不自动选定第 4 部分，也不使 FIND 成为实例绑定操作。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00710` | `SU-ARINC-664-4-ATT-2-P025-PROSE-SENTENCE-001-E53889C58CCD`<br>`ARINC-664-4 ATT-2 p.19` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ALLOCATE-TABLE-2-1-ADDRESSES-FROM-RFC1918-PRIVATE-RANGES` / `TABLE-2-1-IPV4-ALLOCATIONS, RFC1918-PRIVATE-RANGES` / `P4-RFC1918-ALLOCATION-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, Table 2-1 address allocations are taken from RFC 1918 private ranges. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，表 2-1 地址分配取自 RFC 1918 私有范围。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
 
 ## Observable timing semantics
 
@@ -2520,6 +2542,22 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 - `COV-M1-02981` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-ROLE
 - `COV-M1-02982` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-NETWORK-A
 - `COV-M1-02983` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-NETWORK-B
+- `COV-M1-02984` — `CONDITIONAL` — P4-ADDRESS-PLAN-PURPOSE
+- `COV-M1-02985` — `CONDITIONAL` — P4-CONFIGURATION-TIME-ADDRESSES
+- `COV-M1-02986` — `CONDITIONAL` — P4-ADDRESS-PLAN-SCOPE
+- `COV-M1-02987` — `CONDITIONAL` — P4-WELL-KNOWN-UDP-SERVICES
+- `COV-M1-02988` — `CONDITIONAL` — P4-PRIVATE-APP-UDP-PORT-ASSIGNMENT
+- `COV-M1-02989` — `CONDITIONAL` — P4-DO-NOT-REASSIGN-WELL-KNOWN-COTS-PORTS
+- `COV-M1-02990` — `CONDITIONAL` — P4-PRIVATE-ADDRESS-NO-EXTERNAL-ROUTING
+- `COV-M1-02991` — `CONDITIONAL` — P4-PROFILED-NETWORK-IS-PRIVATE
+- `COV-M1-02992` — `CONDITIONAL` — P4-PROFILED-NETWORK-ID-PRIVATE
+- `COV-M1-02993` — `CONDITIONAL` — P4-STATIC-MAC-AT-CONFIGURATION-TIME
+- `COV-M1-02994` — `CONDITIONAL` — P4-MAC-UNICAST-UNIQUENESS
+- `COV-M1-02995` — `CONDITIONAL` — P4-MAC-UL-BIT-LOCALLY-ADMINISTERED
+- `COV-M1-02996` — `CONDITIONAL` — P4-ALL-NETWORK-ADDRESS-UNIQUENESS
+- `COV-M1-02997` — `CONDITIONAL` — P4-PORT-59-615A-TFTP
+- `COV-M1-02998` — `CONDITIONAL` — P4-PORT-24922-FIND-CLIENT
+- `COV-M1-02999` — `CONDITIONAL` — P4-TABLE-2-1-RFC1918-PRIVATE
 
 # 中文版
 
@@ -2535,13 +2573,13 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 
 ## 清单
 
-- 覆盖行：2983
-- CRS 项：693
-- 依赖：14
+- 覆盖行：2999
+- CRS 项：709
+- 依赖：15
 - 缺口：1
-- 覆盖指纹：`fb5d22545b5531df5e43d9f0a00243a12b28aee74a3b2d521960ecade1231315`
-- 需求指纹：`4f541cdfa04cce6d5999189fbc3ebcc7705daedb14453c04b79a94c616f740a9`
-- 来源单元指纹：`b935a5b95ae34a8c937f712842a0e78438452f117dae26a036b2a70fa612dc88`
+- 覆盖指纹：`01adfd19d8b3374d5b131de4befd308ec8ace96747bf04e2b67dd30b92bf0524`
+- 需求指纹：`ddc4d4e22d12caf8df09495274c6d9bcf2982586cf1ca1636d9b80063baa0e2f`
+- 来源单元指纹：`ac16c710d900abf226b52f17d7a7a03502991d4e61aa22fe6235aefecec0a87d`
 - 自动检查只覆盖结构与跨记录一致性；专有来源的完整性与忠实度仍须外部 RG0 评审。
 - `generatedSemanticProjectionEn/Zh` 是受断言约束的漂移投影，不是独立 RG1 证据。
 - 665 边政策：`REQUIREMENT-LEVEL-615A-TO-665-EDGES-DEFERRED-TO-M2-ATTACHMENT-RECONCILIATION`
@@ -2550,22 +2588,23 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 
 - `APPLICABLE-BASE`：89
 - `APPLICABLE-SUPPORTING`：462
-- `CONDITIONAL`：142
+- `CONDITIONAL`：158
 
 ## 来源模态
 
-- `FACT`：109
+- `FACT`：120
 - `FIGURE-CONSTRAINT`：63
 - `MAY`：60
-- `MUST`：29
-- `SHOULD`：283
+- `MUST`：30
+- `SHOULD`：287
 - `TABLE-CONSTRAINT`：149
 
 ## 符合性效果
 
-- `CONDITIONAL-REQUIRED`：131
+- `CONDITIONAL-REQUIRED`：143
+- `INFORMATIVE`：2
 - `OPTIONAL`：60
-- `PROHIBITED`：1
+- `PROHIBITED`：3
 - `REQUIRED`：501
 
 ## 开放依赖与缺口
@@ -2573,6 +2612,7 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 - `DEP-ARINC-645` — OPEN-DEPENDENCY：ARINC 645 算法来源仍未取得。
 - `DEP-ARINC-664-2` — OPEN-DEPENDENCY：以太网物理层与链路层语义仍开放。
 - `DEP-ARINC-664-3` — OPEN-DEPENDENCY：已接收 P3-1 身份；版次与网络适用性评审仍开放。
+- `DEP-ARINC-664-4` — OPEN-DEPENDENCY：已接收 664P4-1；已为 615A 附录 E 第一条替代路径发出地址规则叶。集成商指明路径仍开放。这不选定第 4 部分，也不激活 AFDX。
 - `DEP-ARINC-664-7` — OPEN-DEPENDENCY：已接收 P7 初版；AFDX 延期，AID 未来补充版适用性仍开放。
 - `DEP-ARINC-6655` — REGISTERED-SUPPORTING-SOURCE：有界数据对象来源。
 - `DEP-RFC-1122` — OPEN-DEPENDENCY：已取得 RFC 1122 通信层来源身份；基础设施符合性及后续更新适用性尚未建立。
@@ -2611,6 +2651,10 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `NET-P7-ADDRESS` | `ARINC-664-7` / `664P7` | 3.4.1.3.1-3.4.1.3.2 / 50 | `INSPECTION-REGION` | AFDX 内外寻址及双向 SAP／队列选择需要系统集成决策。 |
 | `NET-P7-SWITCH` | `ARINC-664-7` / `664P7` | 4.9.1 / 75 | `INSPECTION-REGION` | 交换机软件加载引用 615A/665，但不能据此将 AFDX 交换机选为本 Profile 的目标。 |
 | `NET-P7-PERFORMANCE` | `ARINC-664-7` / `664P7` | 5.1 / 80 | `INSPECTION-REGION` | AFDX 突发处理性能使用自身测量条件；它不建立 615A 传输超时。 |
+| `NET-P4-UDP` | `ARINC-664-4` / `664P4-1` | 2.1 / 10 | `INSPECTION-REGION` | 第 4 部分 UDP 端口分配区分含 TFTP 在内的 IANA 公认服务与集成商或规范分配的专用航空端口。记录该区域不选定第 4 部分，也不激活 AFDX。 |
+| `NET-P4-IPV4` | `ARINC-664-4` / `664P4-1` | 3.2.1 / 14 | `INSPECTION-REGION` | 裁剪型航空网络是 IETF 专用应用，并使用专用 A／B／C 类网络标识。这是 00519 的第一条替代路径，不是自动选定第 4 部分。 |
+| `NET-P4-MAC` | `ARINC-664-4` / `664P4-1` | 4.1.2 / 17 | `INSPECTION-REGION` | 静态配置的航空网络在配置时分配唯一 MAC 单播地址。若选择该替代路径，集成商仍须保证唯一性。 |
+| `NET-P4-PORTS` | `ARINC-664-4` / `664P4-1` | ATT-1 / 24 | `INSPECTION-REGION` | 附件 1 将 TCP／UDP 59 分配给 615A 数据加载器 TFTP，将 UDP 24922 分配给 FIND 客户端。已分配编号不是 AFDX 激活，也不关闭集成商替代路径。 |
 
 | Relation | Owner | Target regions | Condition / disposition | Rationale / issues |
 |---|---|---|---|---|
@@ -2630,7 +2674,7 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `NET-REL-014` | `COV-M1-01969` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
 | `NET-REL-015` | `COV-M1-01970` | NET-P7-TFTP, NET-P7-EXAMPLE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
 | `NET-REL-016` | `COV-M1-01971` | NET-P7-IP, NET-P7-PERFORMANCE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
-| `NET-REL-017` | `COV-M1-01972` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-ADDRESS |
+| `NET-REL-017` | `COV-M1-01972` | NET-P7-ADDRESS, NET-P4-UDP, NET-P4-IPV4, NET-P4-MAC, NET-P4-PORTS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-ADDRESS |
 
 | Issue | Blocks M1 approval | Status | Required resolution |
 |---|---|---|---|
@@ -2640,7 +2684,7 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `NET-ISSUE-OPTION-EDGE` | `False` | `OPEN` | A-2 继续延期：P3 3.2.2 列出 RFC 2347 且 P7 列出 RFC 1785，但这不证明精确的活动 615A 原子触发边。 |
 | `NET-ISSUE-AFDX-DETAIL` | `False` | `OPEN` | AFDX 尚未选择；P7 附件 2、IEEE 802.3（2000）及配置相关延迟／MTU 须在后续纳入部署时审计。 |
 | `NET-ISSUE-AID` | `False` | `OPEN` | 615A 附录 E 将 AID 指向未来 P7 补充版；所提供初版不能关闭该未来补充版引用。 |
-| `NET-ISSUE-ADDRESS` | `False` | `OPEN` | 附录 E 允许 P4 寻址规则或集成商规定要求；须在 AFDX 激活前记录选择，不能自动将 P4 变为采购要求。 |
+| `NET-ISSUE-ADDRESS` | `False` | `SOURCE-ACQUIRED-REVIEW-PENDING` | 已取得 664P4-1，并为附录 E 第一条替代路径发出地址规则叶。集成商指明路径仍开放。这不自动选定第 4 部分，也不激活 AFDX。 |
 
 ### 基础设施前提与公共来源
 
@@ -3346,6 +3390,22 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `CRS-M1-00692` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-007-97048C062FB8`<br>`ARINC-664-7 3.2.5.2 p.27` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-INTERFACE-ID-TO-IDENTIFY-REDUNDANT-AFDX-NETWORK` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-MAC-SOURCE-INTERFACE-ID-ROLE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，Interface_ID 标明以太网 MAC 控制器所连接的冗余 AFDX 网络。 | — | DEP-ARINC-664-7 |
 | `CRS-M1-00693` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-001-A9E8CFE75FDC`<br>`ARINC-664-7 3.2.5.2 p.27` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENCODE-INTERFACE-ID-001-AS-NETWORK-A` / `MAC-SOURCE-INTERFACE-ID, AFDX-NETWORK-A` / `AFDX-INTERFACE-ID-NETWORK-A-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，Interface_ID 001 表示以太网 MAC 控制器连接到网络 A。 | — | DEP-ARINC-664-7 |
 | `CRS-M1-00694` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-002-F0CDAB79C8E2`<br>`ARINC-664-7 3.2.5.2 p.27` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENCODE-INTERFACE-ID-010-AS-NETWORK-B` / `MAC-SOURCE-INTERFACE-ID, AFDX-NETWORK-B` / `AFDX-INTERFACE-ID-NETWORK-B-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，Interface_ID 010 表示以太网 MAC 控制器连接到网络 B。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00695` | `SU-ARINC-664-4-1.1-P007-PROSE-SENTENCE-001-D8764E8C18A1`<br>`ARINC-664-4 1.1 p.1` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `PROVIDE-ADN-ADDRESS-DETERMINATION-GUIDANCE` / `ADN-ADDRESSES` / `P4-ADDRESS-GUIDANCE-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 在 615A 承载于 AFDX 且集成商选择 664 第 4 部分地址规则而非集成商指明要求时，第 4 部分为确定航空数据网络所需全部地址提供指导。这不自动选定第 4 部分，也不激活 AFDX。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00696` | `SU-ARINC-664-4-1.1-P007-PROSE-SENTENCE-002-AB25B59BF8EC`<br>`ARINC-664-4 1.1 p.1` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `KNOW-DESTINATION-ADDRESSES-AT-CONFIGURATION-TIME` / `DESTINATION-ADDRESSES, CONFIGURATION-TIME` / `P4-CONFIGURATION-TIME-ADDRESS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，发送应用必须在配置时已知目的地址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00697` | `SU-ARINC-664-4-1.2-P007-PROSE-SENTENCE-001-3C74BCDCEC14`<br>`ARINC-664-4 1.2 p.1` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `DEFINE-ADN-ADDRESSING-PLAN-AND-RULES` / `ADN-ADDRESSING-PLAN` / `P4-ADDRESS-PLAN-SCOPE-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，第 4 部分定义该航空数据网络所用寻址计划与规则。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00698` | `SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-001-E59AB857EE72`<br>`ARINC-664-4 2.1 p.4` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `USE-IANA-WELL-KNOWN-UDP-PORTS-FOR-STANDARD-SERVICES-INCLUDING-TFTP` / `UDP-PORT-NUMBERS, TFTP` / `P4-WELL-KNOWN-UDP-SERVICE-PORT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，TFTP 等标准服务的目的 UDP 端口使用 ICANN／IANA 公认端口号。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00699` | `SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-002-AEB0E131BF5D`<br>`ARINC-664-4 2.1 p.4` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ACCESS-PRIVATE-AERO-APPS-VIA-INTEGRATOR-OR-664P4-UDP-PORTS` / `UDP-PORT-NUMBERS, PRIVATE-AERONAUTICAL-APPLICATIONS` / `P4-PRIVATE-APP-UDP-PORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，专用航空应用应通过系统集成商或第 4 部分分配、并由 ICANN／IANA 登记的 UDP 端口访问。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00700` | `SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-003-B9D063A58D3C`<br>`ARINC-664-4 2.1 p.4` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `DO-NOT-REASSIGN-WELL-KNOWN-COTS-PORTS-0-1023` / `UDP-PORT-NUMBERS-0-1023` / `P4-WELL-KNOWN-PORT-REASSIGNMENT-PROHIBITED-OBSERVABLE` | `SHOULD` / `PROHIBITED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，0–1023 范围内常用公认 COTS 端口不得改派给任何航电网络功能。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00701` | `SU-ARINC-664-4-3.1.4-P012-PROSE-SENTENCE-001-26ECAA9608B7`<br>`ARINC-664-4 3.1.4 p.6` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `DO-NOT-ROUTE-PRIVATE-ADDRESSES-OUTSIDE-THE-NETWORK` / `PRIVATE-IP-ADDRESSES` / `P4-PRIVATE-ADDRESS-ROUTING-PROHIBITED-OBSERVABLE` | `SHOULD` / `PROHIBITED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，携带私有地址的分组不得路由到所连接网络之外，公网主机也不得向该私有网络上的主机寻址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00702` | `SU-ARINC-664-4-3.2.1-P014-PROSE-SENTENCE-001-FE04D876A17C`<br>`ARINC-664-4 3.2.1 p.8` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `TREAT-PROFILED-AERO-NETWORK-AS-IETF-PRIVATE-APPLICATION` / `PROFILED-AERONAUTICAL-NETWORK` / `P4-PROFILED-PRIVATE-APPLICATION-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，裁剪型航空网络在 IETF 意义上视为专用应用。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00703` | `SU-ARINC-664-4-3.2.1.1-P014-PROSE-SENTENCE-001-C0E53DA16C0B`<br>`ARINC-664-4 3.2.1.1 p.8` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `USE-PRIVATE-NETWORK-ID-FOR-PROFILED-NETWORKS` / `PRIVATE-NETWORK-ID, PROFILED-NETWORK` / `P4-PRIVATE-NETWORK-ID-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，裁剪型网络标识必须是专用 A／B／C 类地址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00704` | `SU-ARINC-664-4-4.1.2-P017-PROSE-SENTENCE-001-B050E1E70356`<br>`ARINC-664-4 4.1.2 p.11` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ASSIGN-MAC-UNICAST-ADDRESSES-AT-CONFIGURATION-TIME` / `MAC-UNICAST-ADDRESSES, CONFIGURATION-TIME` / `P4-STATIC-MAC-CONFIGURATION-TIME-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，静态配置网络在配置时分配 MAC 单播地址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00705` | `SU-ARINC-664-4-4.1.2-P017-PROSE-SENTENCE-002-7C0C05BFFEDB`<br>`ARINC-664-4 4.1.2 p.11` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `KEEP-MAC-ADDRESSES-UNIQUE-UNDER-INTEGRATOR-SCHEME` / `MAC-ADDRESSES` / `P4-MAC-UNICAST-UNIQUENESS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，系统集成商设计地址方案并保证全部 MAC 地址唯一。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00706` | `SU-ARINC-664-4-4.1.2-P018-PROSE-SENTENCE-003-FA6C364135E7`<br>`ARINC-664-4 4.1.2 p.12` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `SET-MAC-UL-BIT-WHEN-INTEGRATOR-ASSIGNS-ADDRESSES` / `MAC-UL-BIT` / `P4-MAC-UL-BIT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX、选定 664 第 4 部分地址规则且由集成商分配 MAC 地址时，U／L 位应置 1。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00707` | `SU-ARINC-664-4-4.2.2-P018-PROSE-SENTENCE-001-EAD3F94C5832`<br>`ARINC-664-4 4.2.2 p.12` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `KEEP-ALL-NETWORK-ADDRESSES-UNIQUE` / `NETWORK-ADDRESSES` / `P4-NETWORK-ADDRESS-UNIQUENESS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，系统集成商保证网络上全部地址唯一，包括组播 MAC 映射选择。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00708` | `SU-ARINC-664-4-ATT-1-P024-TABLE-ROW-001-8726B05F4E93`<br>`ARINC-664-4 ATT-1 p.18` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `RESERVE-UDP-TCP-PORT-59-FOR-615A-DATA-LOADER-TFTP` / `TCP-UDP-PORT-59, 615A-DATA-LOADER-TFTP` / `P4-PORT-59-615A-TFTP-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，TCP／UDP 端口 59 保留给 ARINC 615A 数据加载器 TFTP，作为该公认专用文件服务分配的航空用途。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00709` | `SU-ARINC-664-4-ATT-1-P024-TABLE-ROW-002-FA27688DFCA4`<br>`ARINC-664-4 ATT-1 p.18` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ASSIGN-UDP-PORT-24922-TO-FIND-PROTOCOL-CLIENT` / `UDP-PORT-24922, FIND-PROTOCOL-CLIENT` / `P4-PORT-24922-FIND-CLIENT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，UDP 端口 24922 分配给 FIND 协议客户端。这不自动选定第 4 部分，也不使 FIND 成为实例绑定操作。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00710` | `SU-ARINC-664-4-ATT-2-P025-PROSE-SENTENCE-001-E53889C58CCD`<br>`ARINC-664-4 ATT-2 p.19` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ALLOCATE-TABLE-2-1-ADDRESSES-FROM-RFC1918-PRIVATE-RANGES` / `TABLE-2-1-IPV4-ALLOCATIONS, RFC1918-PRIVATE-RANGES` / `P4-RFC1918-ALLOCATION-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，表 2-1 地址分配取自 RFC 1918 私有范围。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
 
 ## 可观察时序语义
 
@@ -5043,3 +5103,19 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 - `COV-M1-02981` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-ROLE
 - `COV-M1-02982` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-NETWORK-A
 - `COV-M1-02983` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-NETWORK-B
+- `COV-M1-02984` — `CONDITIONAL` — P4-ADDRESS-PLAN-PURPOSE
+- `COV-M1-02985` — `CONDITIONAL` — P4-CONFIGURATION-TIME-ADDRESSES
+- `COV-M1-02986` — `CONDITIONAL` — P4-ADDRESS-PLAN-SCOPE
+- `COV-M1-02987` — `CONDITIONAL` — P4-WELL-KNOWN-UDP-SERVICES
+- `COV-M1-02988` — `CONDITIONAL` — P4-PRIVATE-APP-UDP-PORT-ASSIGNMENT
+- `COV-M1-02989` — `CONDITIONAL` — P4-DO-NOT-REASSIGN-WELL-KNOWN-COTS-PORTS
+- `COV-M1-02990` — `CONDITIONAL` — P4-PRIVATE-ADDRESS-NO-EXTERNAL-ROUTING
+- `COV-M1-02991` — `CONDITIONAL` — P4-PROFILED-NETWORK-IS-PRIVATE
+- `COV-M1-02992` — `CONDITIONAL` — P4-PROFILED-NETWORK-ID-PRIVATE
+- `COV-M1-02993` — `CONDITIONAL` — P4-STATIC-MAC-AT-CONFIGURATION-TIME
+- `COV-M1-02994` — `CONDITIONAL` — P4-MAC-UNICAST-UNIQUENESS
+- `COV-M1-02995` — `CONDITIONAL` — P4-MAC-UL-BIT-LOCALLY-ADMINISTERED
+- `COV-M1-02996` — `CONDITIONAL` — P4-ALL-NETWORK-ADDRESS-UNIQUENESS
+- `COV-M1-02997` — `CONDITIONAL` — P4-PORT-59-615A-TFTP
+- `COV-M1-02998` — `CONDITIONAL` — P4-PORT-24922-FIND-CLIENT
+- `COV-M1-02999` — `CONDITIONAL` — P4-TABLE-2-1-RFC1918-PRIVATE

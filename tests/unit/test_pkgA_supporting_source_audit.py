@@ -14,6 +14,7 @@ REQUIRED_SOURCES = (
     "ARINC-665-5",
     "ARINC-664-2",
     "ARINC-664-3",
+    "ARINC-664-4",
     "ARINC-664-7",
     "RFC-768",
     "RFC-791",
@@ -126,21 +127,34 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
     assert abort["code"] == "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS"
     assert abort["crsCancellation"] == "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS"
     part4 = data["supportingSourceApplicabilityAudit"]["arinc664Part4"]
-    assert part4["status"] == "NOT-IN-THIS-PR-SOURCE-SET"
+    assert part4["status"] == "ACQUIRED-IDENTITY-RECORDED"
     assert part4["affectedRequirementId"] == "CRS-M1-00519"
-    assert part4["unboundDispositionId"] == "UD-664-4-NOT-IN-SOURCE-SET"
+    assert not part4.get("unboundDispositionId")
     dispositions = data["supportingSourceApplicabilityAudit"]["unboundDispositions"]
-    assert len(dispositions) == 1
-    unbound = dispositions[0]
-    assert unbound["id"] == part4["unboundDispositionId"]
-    assert unbound["auditUnitId"] == "SAU-P7-P4"
-    assert unbound["affectedRequirementId"] == part4["affectedRequirementId"]
-    assert unbound["notIndependentApproval"] is True
+    assert dispositions == []
+    p4_unit = next(
+        unit
+        for source in data["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "ARINC-664-4"
+        for unit in source["units"]
+        if unit["id"] == "SAU-P4-ATT-1"
+    )
+    assert p4_unit["leafCrsStatus"] == "LEAF-CRS-EMITTED"
+    assert p4_unit["leafCrsStatus"] != "LEAF-CRS-CLOSED"
+    cross = next(
+        unit
+        for source in data["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "ARINC-664-7"
+        for unit in source["units"]
+        if unit["id"] == "SAU-P7-P4"
+    )
+    assert cross["leafCrsStatus"] == "EXISTING-615A-LEAF"
+    assert cross["leafRequirementIds"] == ["CRS-M1-00519"]
 
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-13"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-14"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
@@ -176,34 +190,32 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
     crs = json.loads((ROOT / "configs/requirements/arinc_615a3_m1_crs.json").read_text(encoding="utf-8"))
     rfc_rows = [row for row in crs["requirements"] if str(row["source"]["sourceId"]).startswith("RFC-")]
     p3_rows = [row for row in crs["requirements"] if row["source"]["sourceId"] == "ARINC-664-3"]
+    p4_rows = [row for row in crs["requirements"] if row["source"]["sourceId"] == "ARINC-664-4"]
     p7_rows = [row for row in crs["requirements"] if row["source"]["sourceId"] == "ARINC-664-7"]
     assert rfc_rows
     assert p3_rows
+    assert p4_rows
     assert p7_rows
-    assert all(row["reviewStatus"] == "PENDING-EXTERNAL-INDEPENDENT-REVIEW" for row in rfc_rows + p3_rows + p7_rows)
+    assert all(row["reviewStatus"] == "PENDING-EXTERNAL-INDEPENDENT-REVIEW" for row in rfc_rows + p3_rows + p4_rows + p7_rows)
+    assert all(row["applicabilityDecision"] == "CONDITIONAL" for row in p4_rows)
+    assert all("DEP-ARINC-664-4" in row["dependencyIds"] for row in p4_rows)
     deps = {row["id"]: row for row in crs["dependencies"]}
-    for dep_id in ("DEP-RFC-1350", "DEP-RFC-768", "DEP-ARINC-664-3", "DEP-ARINC-664-7"):
+    for dep_id in ("DEP-RFC-1350", "DEP-RFC-768", "DEP-ARINC-664-3", "DEP-ARINC-664-4", "DEP-ARINC-664-7"):
         assert deps[dep_id]["status"] == "OPEN-DEPENDENCY"
     spans = json.loads(SPANS.read_text(encoding="utf-8"))
     by_id = {row["sourceId"]: row for row in spans["sources"]}
     assert by_id["ARINC-664-2"]["spans"][0]["pdfPages"] == [8, 28]
     assert any(row["pdfPages"] == [8, 36] for row in by_id["ARINC-664-3"]["spans"])
+    assert any(row["pdfPages"] == [7, 18] for row in by_id["ARINC-664-4"]["spans"])
     assert "RFC-1350" in by_id
     assert "RFC-768" in by_id
     remaining = {}
-    unbound = next(
-        row
-        for row in data["supportingSourceApplicabilityAudit"]["unboundDispositions"]
-        if row["id"] == part4["unboundDispositionId"]
-    )
     for source in data["supportingSourceApplicabilityAudit"]["sources"]:
         for unit in source["units"]:
             if unit["leafCrsStatus"] == "LEAF-CRS-EMITTED":
                 assert unit["leafCoverageIds"]
                 assert "leafRequirementIds" in unit
-            if unit["leafCrsStatus"] == "CRS-M1-00519-REMAINS-NOT-YET-BOUND":
-                assert unit["unboundDispositionId"]
-                assert unit["id"] == unbound["auditUnitId"]
+            assert unit["leafCrsStatus"] != "CRS-M1-00519-REMAINS-NOT-YET-BOUND"
             for item in unit.get("remainingSubunits") or []:
                 remaining[item["id"]] = item
     assert "SAU-1123-4-2-REMAINING-HOST-NOTE-ATOMS" not in remaining
@@ -283,6 +295,11 @@ def test_rfc_option_leaves_bind_complete_distinct_sentences() -> None:
     assert version_width["sourceTextHash"] == baseline.leaf_unit_hash("Version: 4 bits")
     bag = next(row for row in crs["requirements"] if row["semantic"]["action"] == "RESTRICT-BAG-TO-POWERS-OF-TWO-MILLISECONDS")
     assert bag["source"]["sourceId"] == "ARINC-664-7"
+    port59 = next(
+        row for row in crs["requirements"] if row["semantic"]["action"] == "RESERVE-UDP-TCP-PORT-59-FOR-615A-DATA-LOADER-TFTP"
+    )
+    assert port59["source"]["sourceId"] == "ARINC-664-4"
+    assert port59["source"]["clause"] == "ATT-1"
     assert "remaining" not in by_id["CRS-M1-00612"]["generatedSemanticProjectionEn"].lower()
     jitter_cap = next(
         row for row in crs["requirements"] if row["semantic"]["action"] == "KEEP-VL-JITTER-AT-OR-BELOW-500-MICROSECONDS"

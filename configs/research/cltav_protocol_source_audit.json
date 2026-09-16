@@ -8,16 +8,16 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-13",
-    "coverageCount": 2983,
-    "requirementCount": 693,
-    "coverageFingerprint": "fb5d22545b5531df5e43d9f0a00243a12b28aee74a3b2d521960ecade1231315",
-    "requirementsFingerprint": "4f541cdfa04cce6d5999189fbc3ebcc7705daedb14453c04b79a94c616f740a9",
+    "artifactVersion": "M1-CANDIDATE-14",
+    "coverageCount": 2999,
+    "requirementCount": 709,
+    "coverageFingerprint": "01adfd19d8b3374d5b131de4befd308ec8ace96747bf04e2b67dd30b92bf0524",
+    "requirementsFingerprint": "ddc4d4e22d12caf8df09495274c6d9bcf2982586cf1ca1636d9b80063baa0e2f",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "664-7 max_jitter equations, 150 us latency and MAC source construction are bound as leaf CRS. 665 section 2.3 in-scope leaves stay emitted, not independently closed. 664-4/CRS-M1-00519 stays unbound because Part 4 is not acquired. 645 stays acquired-not-bound. This is not independent RG approval."
+    "note": "664P4-1 address-rule leaves are emitted for the first CRS-M1-00519 alternative. The integrator-identified path remains open. This does not select Part 4 or activate AFDX. 665 section 2.3 in-scope leaves stay emitted, not independently closed. 645 stays acquired-not-bound. This is not independent RG approval."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -27,13 +27,13 @@
     "Ordinary Ethernet, Compliant, Profiled and AFDX stay separate configuration dimensions."
   ],
   "summary": {
-    "coverageCount": 2983,
-    "requirementCount": 693,
+    "coverageCount": 2999,
+    "requirementCount": 709,
     "applicabilityDecisions": {
       "OUT-OF-PROFILE": 973,
       "APPLICABLE-SUPPORTING": 1309,
       "APPLICABLE-BASE": 286,
-      "CONDITIONAL": 415
+      "CONDITIONAL": 431
     },
     "rationaleCodes": {
       "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE": 902,
@@ -133,7 +133,23 @@
       "AFDX-MAC-SOURCE-USER-DEFINED-ID-UNIQUE-HOST": 1,
       "AFDX-MAC-SOURCE-INTERFACE-ID-ROLE": 1,
       "AFDX-MAC-SOURCE-INTERFACE-ID-NETWORK-A": 1,
-      "AFDX-MAC-SOURCE-INTERFACE-ID-NETWORK-B": 1
+      "AFDX-MAC-SOURCE-INTERFACE-ID-NETWORK-B": 1,
+      "P4-ADDRESS-PLAN-PURPOSE": 1,
+      "P4-CONFIGURATION-TIME-ADDRESSES": 1,
+      "P4-ADDRESS-PLAN-SCOPE": 1,
+      "P4-WELL-KNOWN-UDP-SERVICES": 1,
+      "P4-PRIVATE-APP-UDP-PORT-ASSIGNMENT": 1,
+      "P4-DO-NOT-REASSIGN-WELL-KNOWN-COTS-PORTS": 1,
+      "P4-PRIVATE-ADDRESS-NO-EXTERNAL-ROUTING": 1,
+      "P4-PROFILED-NETWORK-IS-PRIVATE": 1,
+      "P4-PROFILED-NETWORK-ID-PRIVATE": 1,
+      "P4-STATIC-MAC-AT-CONFIGURATION-TIME": 1,
+      "P4-MAC-UNICAST-UNIQUENESS": 1,
+      "P4-MAC-UL-BIT-LOCALLY-ADMINISTERED": 1,
+      "P4-ALL-NETWORK-ADDRESS-UNIQUENESS": 1,
+      "P4-PORT-59-615A-TFTP": 1,
+      "P4-PORT-24922-FIND-CLIENT": 1,
+      "P4-TABLE-2-1-RFC1918-PRIVATE": 1
     },
     "deferredFutureScope": {
       "total": 0,
@@ -9940,21 +9956,12 @@
         "note": "FIND two-byte header plus variable data."
       }
     ],
-    "openRequirementDependencies": [
-      {
-        "requirementId": "CRS-M1-00519",
-        "pendingSourceIds": [
-          "ARINC-664-4"
-        ],
-        "status": "NOT-YET-BOUND",
-        "note": "664 Part 4 is not in this PR source set; the integrator-identified alternative remains available."
-      }
-    ]
+    "openRequirementDependencies": []
   },
   "supportingSourceApplicabilityAudit": {
     "boundHead": "13d4be79377e109a18170a7dcec0e792c54d5f83",
     "changeRequest": "CR-2026-012",
-    "assuranceBoundary": "Clause/section-level bounded applicability for 665-5, 664 P2/P3/P7 and RFC 768/791/1122/1123/1350/1785/2347/2348/2349. Not sentence-leaf CRS, not independent RG approval, not capability establishment, not AFDX instance activation.",
+    "assuranceBoundary": "Clause/section-level bounded applicability for 665-5, 664 P2/P3/P4/P7 and RFC 768/791/1122/1123/1350/1785/2347/2348/2349. Not sentence-leaf CRS completeness, not independent RG approval, not capability establishment, not AFDX instance activation. Part 4 recording does not select that alternative over integrator-identified address requirements.",
     "notIndependentApproval": true,
     "645BindingThisPr": false,
     "findAbortAdjudication": {
@@ -9970,27 +9977,12 @@
       "crsCancellation": "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS"
     },
     "arinc664Part4": {
-      "status": "NOT-IN-THIS-PR-SOURCE-SET",
+      "status": "ACQUIRED-IDENTITY-RECORDED",
       "affectedRequirementId": "CRS-M1-00519",
-      "unboundDispositionId": "UD-664-4-NOT-IN-SOURCE-SET",
-      "summaryEn": "Appendix E allows 664 Part 4 address rules or integrator-identified requirements. Part 4 is not acquired in local-references or Zotero after a directed search. CRS-M1-00519 stays the bound 615A alternative; this is not a forced purchase and does not activate AFDX.",
-      "summaryZh": "附录 E 允许 664 第 4 部分地址规则或集成商指明的要求。定向检索后本地与 Zotero 仍未取得第 4 部分。CRS-M1-00519 仍是已绑定的 615A 替代路径；这不是强制采购，也不激活 AFDX。"
+      "summaryEn": "664P4-1 is acquired. Address-rule leaves are emitted as the first 615A Appendix E alternative. Integrator-identified address requirements remain the other alternative. This does not select Part 4 automatically and does not activate AFDX.",
+      "summaryZh": "已取得 664P4-1。已将地址规则叶作为 615A 附录 E 第一条替代路径发出。集成商指明的地址要求仍是另一条路径。这不自动选定第 4 部分，也不激活 AFDX。"
     },
-    "unboundDispositions": [
-      {
-        "id": "UD-664-4-NOT-IN-SOURCE-SET",
-        "auditUnitId": "SAU-P7-P4",
-        "sourceId": "ARINC-664-7",
-        "clause": "CROSS-664-4",
-        "affectedRequirementId": "CRS-M1-00519",
-        "affectedCoverageId": "COV-M1-01972",
-        "rationaleCode": "P4-OR-INTEGRATOR-ALTERNATIVE-NOT-IN-THIS-PR",
-        "status": "NOT-IN-THIS-PR-SOURCE-SET",
-        "notIndependentApproval": true,
-        "unfinishedScopeEn": "664-4 body remains outside this PR source set after a directed local search. CRS-M1-00519 stays the 615A alternative. 664-7 max_jitter equations, MAC source construction and 665 section 2.3 in-scope leaves are bound this increment; independent RG has not closed 2.3. 645 stays successor.",
-        "unfinishedScopeZh": "定向本地检索后 664-4 正文仍在本 PR 来源集合之外。CRS-M1-00519 仍是 615A 替代路径。664-7 max_jitter 公式、MAC 源地址构造与 665 §2.3 范围内叶已在本增量绑定；独立 RG 尚未闭合 2.3。645 保持后继。"
-      }
-    ],
+    "unboundDispositions": [],
     "sources": [
       {
         "sourceId": "ARINC-665-5",
@@ -15014,6 +15006,519 @@
         }
       },
       {
+        "sourceId": "ARINC-664-4",
+        "role": "CONDITIONAL-ADDRESS-REFERENCE",
+        "edition": "664P4-1",
+        "sha256": "eecfaaf1020d8efd5fb35f138faf4f902c87ab95df8af839116a0b2e263916c0",
+        "pageCount": 53,
+        "pageAccount": {
+          "frontMatterPdfPages": [
+            1,
+            6
+          ],
+          "surveyedPdfPages": [
+            7,
+            18
+          ],
+          "assignedNumberPdfPages": [
+            24,
+            31
+          ],
+          "excludedPdfPages": [
+            19,
+            23
+          ]
+        },
+        "coverageDenominator": {
+          "kind": "TOC-CLAUSE-AND-BACK-MATTER-GROUP",
+          "count": 12,
+          "assuranceBoundary": "CLAUSE-LEVEL-CONDITIONAL-ADDRESS-RULES-NOT-CURRENT-INSTANCE"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "afdxSelected": false,
+        "part4Selected": false,
+        "units": [
+          {
+            "id": "SAU-P4-FRONT",
+            "clause": "FRONT-MATTER",
+            "clauseTitleEn": "Title, disclaimer, foreword, contents",
+            "pdfPages": [
+              1,
+              6
+            ],
+            "unitKind": "BACK-MATTER",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Front matter identifies 664P4-1. It is not an actor obligation.",
+            "summaryZh": "扉页标识 664P4-1，不是参与者义务。"
+          },
+          {
+            "id": "SAU-P4-1",
+            "clause": "1",
+            "clauseTitleEn": "Introduction, purpose and scope of the addressing plan",
+            "pdfPages": [
+              7,
+              9
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "P4-ADDRESS-PLAN-INTRODUCTION",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "LEAF-CRS-EMITTED",
+            "summaryEn": "Purpose and scope of Part 4 address rules. Emitted only for the first 00519 alternative. Not independent RG approval.",
+            "summaryZh": "第 4 部分地址规则的目的与范围。仅作为 00519 第一条替代路径发出。不是独立 RG 批准。",
+            "remainingSubunits": [
+              {
+                "id": "SAU-P4-1-REMAINING-ORGANIZATION-AND-RELATED-DOCS",
+                "disposition": "INFORMATIVE",
+                "summaryEn": "Document organization and related-document lists stay coverage-only.",
+                "summaryZh": "文档组织与相关文件列表保持仅覆盖。"
+              }
+            ],
+            "leafCoverageIds": [
+              "COV-M1-02984",
+              "COV-M1-02985",
+              "COV-M1-02986"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00695",
+              "CRS-M1-00696",
+              "CRS-M1-00697"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02984",
+                "requirementIds": [
+                  "CRS-M1-00695"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-1.1-P007-PROSE-SENTENCE-001-D8764E8C18A1",
+                "clause": "1.1"
+              },
+              {
+                "coverageId": "COV-M1-02985",
+                "requirementIds": [
+                  "CRS-M1-00696"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-1.1-P007-PROSE-SENTENCE-002-AB25B59BF8EC",
+                "clause": "1.1"
+              },
+              {
+                "coverageId": "COV-M1-02986",
+                "requirementIds": [
+                  "CRS-M1-00697"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-1.2-P007-PROSE-SENTENCE-001-3C74BCDCEC14",
+                "clause": "1.2"
+              }
+            ]
+          },
+          {
+            "id": "SAU-P4-2",
+            "clause": "2",
+            "clauseTitleEn": "UDP port numbering and allocation",
+            "pdfPages": [
+              10,
+              10
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "P4-UDP-PORT-RULES-WHEN-SELECTED",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "LEAF-CRS-EMITTED",
+            "summaryEn": "UDP well-known and private-application port rules. Conditional on selecting the Part 4 alternative. Not AFDX activation.",
+            "summaryZh": "UDP 公认端口与专用应用端口规则。以选定第 4 部分替代路径为条件。不是 AFDX 激活。",
+            "remainingSubunits": [],
+            "leafCoverageIds": [
+              "COV-M1-02987",
+              "COV-M1-02988",
+              "COV-M1-02989"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00698",
+              "CRS-M1-00699",
+              "CRS-M1-00700"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02987",
+                "requirementIds": [
+                  "CRS-M1-00698"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-001-E59AB857EE72",
+                "clause": "2.1"
+              },
+              {
+                "coverageId": "COV-M1-02988",
+                "requirementIds": [
+                  "CRS-M1-00699"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-002-AEB0E131BF5D",
+                "clause": "2.1"
+              },
+              {
+                "coverageId": "COV-M1-02989",
+                "requirementIds": [
+                  "CRS-M1-00700"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-003-B9D063A58D3C",
+                "clause": "2.1"
+              }
+            ]
+          },
+          {
+            "id": "SAU-P4-3",
+            "clause": "3",
+            "clauseTitleEn": "IPv4 addressing and aeronautical private plan",
+            "pdfPages": [
+              11,
+              16
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "P4-IPV4-ADDRESS-RULES-WHEN-SELECTED",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "LEAF-CRS-EMITTED",
+            "summaryEn": "Private/profiled IPv4 network-ID and no-external-routing rules. Bit diagrams stay informative remainder.",
+            "summaryZh": "专用／裁剪型 IPv4 网络标识与禁止外发路由规则。位图保持说明性剩余。",
+            "remainingSubunits": [
+              {
+                "id": "SAU-P4-3-REMAINING-CLASS-FIGURES-AND-BIT-LAYOUTS",
+                "disposition": "INFORMATIVE",
+                "summaryEn": "Class bit layouts and Figure 3.2.1.1 drawings stay coverage-only.",
+                "summaryZh": "类别位布局与图 3.2.1.1 保持仅覆盖。"
+              }
+            ],
+            "leafCoverageIds": [
+              "COV-M1-02990",
+              "COV-M1-02991",
+              "COV-M1-02992"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00701",
+              "CRS-M1-00702",
+              "CRS-M1-00703"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02990",
+                "requirementIds": [
+                  "CRS-M1-00701"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-3.1.4-P012-PROSE-SENTENCE-001-26ECAA9608B7",
+                "clause": "3.1.4"
+              },
+              {
+                "coverageId": "COV-M1-02991",
+                "requirementIds": [
+                  "CRS-M1-00702"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-3.2.1-P014-PROSE-SENTENCE-001-FE04D876A17C",
+                "clause": "3.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02992",
+                "requirementIds": [
+                  "CRS-M1-00703"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-3.2.1.1-P014-PROSE-SENTENCE-001-C0E53DA16C0B",
+                "clause": "3.2.1.1"
+              }
+            ]
+          },
+          {
+            "id": "SAU-P4-4",
+            "clause": "4",
+            "clauseTitleEn": "MAC unicast and multicast addressing",
+            "pdfPages": [
+              17,
+              18
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "P4-MAC-ADDRESS-RULES-WHEN-SELECTED",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "LEAF-CRS-EMITTED",
+            "summaryEn": "Configuration-time unique MAC assignment and U/L bit when the integrator assigns addresses.",
+            "summaryZh": "配置时唯一 MAC 分配，以及集成商分配地址时的 U／L 位。",
+            "remainingSubunits": [
+              {
+                "id": "SAU-P4-4-REMAINING-COMMERCIAL-IEEE-BACKGROUND",
+                "disposition": "INFORMATIVE",
+                "summaryEn": "Commercial IEEE 802 background stays coverage-only.",
+                "summaryZh": "商用 IEEE 802 背景保持仅覆盖。"
+              }
+            ],
+            "leafCoverageIds": [
+              "COV-M1-02993",
+              "COV-M1-02994",
+              "COV-M1-02995",
+              "COV-M1-02996"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00704",
+              "CRS-M1-00705",
+              "CRS-M1-00706",
+              "CRS-M1-00707"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02993",
+                "requirementIds": [
+                  "CRS-M1-00704"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-4.1.2-P017-PROSE-SENTENCE-001-B050E1E70356",
+                "clause": "4.1.2"
+              },
+              {
+                "coverageId": "COV-M1-02994",
+                "requirementIds": [
+                  "CRS-M1-00705"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-4.1.2-P017-PROSE-SENTENCE-002-7C0C05BFFEDB",
+                "clause": "4.1.2"
+              },
+              {
+                "coverageId": "COV-M1-02995",
+                "requirementIds": [
+                  "CRS-M1-00706"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-4.1.2-P018-PROSE-SENTENCE-003-FA6C364135E7",
+                "clause": "4.1.2"
+              },
+              {
+                "coverageId": "COV-M1-02996",
+                "requirementIds": [
+                  "CRS-M1-00707"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-4.2.2-P018-PROSE-SENTENCE-001-EAD3F94C5832",
+                "clause": "4.2.2"
+              }
+            ]
+          },
+          {
+            "id": "SAU-P4-5",
+            "clause": "5",
+            "clauseTitleEn": "IPv6 addressing",
+            "pdfPages": [
+              19,
+              22
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "IPV6-NOT-SELECTED-IN-CURRENT-COMPLIANT-PROFILE",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "IPv6 is outside the current Compliant IPv4/UDP 615A profile. Supplement 1 is not an address-rule bind for this PR.",
+            "summaryZh": "IPv6 不在当前 Compliant IPv4／UDP 615A profile 内。补充 1 不是本 PR 的地址规则绑定。"
+          },
+          {
+            "id": "SAU-P4-6",
+            "clause": "6",
+            "clauseTitleEn": "MIB object identifiers",
+            "pdfPages": [
+              23,
+              23
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "SNMP-MIB-NOT-TRIGGERED-BY-615A-TFTP",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "MIB OID assignment is not triggered by 615A TFTP load operations.",
+            "summaryZh": "MIB OID 分配不被 615A TFTP 加载操作触发。"
+          },
+          {
+            "id": "SAU-P4-ATT-1",
+            "clause": "ATT-1",
+            "clauseTitleEn": "Allocated TCP/UDP port numbers",
+            "pdfPages": [
+              24,
+              24
+            ],
+            "unitKind": "ATTACHMENT",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "P4-ASSIGNED-PORTS-WHEN-SELECTED",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "LEAF-CRS-EMITTED",
+            "summaryEn": "Port 59 is 615A Data Loader TFTP; port 24922 is FIND client. Remaining table notes stay informative.",
+            "summaryZh": "端口 59 为 615A 数据加载器 TFTP；端口 24922 为 FIND 客户端。其余表注保持说明性。",
+            "remainingSubunits": [
+              {
+                "id": "SAU-P4-ATT-1-REMAINING-TABLE-NOTES",
+                "disposition": "INFORMATIVE",
+                "summaryEn": "Decimal-notation footnotes stay coverage-only.",
+                "summaryZh": "十进制注记保持仅覆盖。"
+              }
+            ],
+            "leafCoverageIds": [
+              "COV-M1-02997",
+              "COV-M1-02998"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00708",
+              "CRS-M1-00709"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02997",
+                "requirementIds": [
+                  "CRS-M1-00708"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-ATT-1-P024-TABLE-ROW-001-8726B05F4E93",
+                "clause": "ATT-1"
+              },
+              {
+                "coverageId": "COV-M1-02998",
+                "requirementIds": [
+                  "CRS-M1-00709"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-ATT-1-P024-TABLE-ROW-002-FA27688DFCA4",
+                "clause": "ATT-1"
+              }
+            ]
+          },
+          {
+            "id": "SAU-P4-ATT-2",
+            "clause": "ATT-2",
+            "clauseTitleEn": "Allocated IPv4 address ranges",
+            "pdfPages": [
+              25,
+              31
+            ],
+            "unitKind": "ATTACHMENT",
+            "applicabilityDecision": "CONDITIONAL",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "P4-ASSIGNED-IPV4-RANGES-WHEN-SELECTED",
+            "triggeredByOperations": [
+              "AFDX-DEPLOYMENT"
+            ],
+            "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
+            "leafCrsStatus": "LEAF-CRS-EMITTED",
+            "summaryEn": "Table 2-1 allocations are RFC 1918 private. Remaining per-system range rows are not claimed closed.",
+            "summaryZh": "表 2-1 分配来自 RFC 1918 私有范围。其余分系统行不主张已闭合。",
+            "remainingSubunits": [
+              {
+                "id": "SAU-P4-ATT-2-REMAINING-SYSTEM-RANGE-ROWS",
+                "disposition": "INFORMATIVE",
+                "summaryEn": "Per-system unicast/multicast range rows stay a guideline remainder, not additional leaves.",
+                "summaryZh": "分系统单播／组播范围行保持为指南性剩余，不是额外叶。"
+              }
+            ],
+            "leafCoverageIds": [
+              "COV-M1-02999"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00710"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02999",
+                "requirementIds": [
+                  "CRS-M1-00710"
+                ],
+                "sourceUnitId": "SU-ARINC-664-4-ATT-2-P025-PROSE-SENTENCE-001-E53889C58CCD",
+                "clause": "ATT-2"
+              }
+            ]
+          },
+          {
+            "id": "SAU-P4-ATT-3",
+            "clause": "ATT-3",
+            "clauseTitleEn": "Allocated MIB OIDs",
+            "pdfPages": [
+              32,
+              33
+            ],
+            "unitKind": "BACK-MATTER",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "SNMP-MIB-NOT-TRIGGERED-BY-615A-TFTP",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "MIB OID tables are outside the 615A TFTP address-rule bind.",
+            "summaryZh": "MIB OID 表不在 615A TFTP 地址规则绑定内。"
+          },
+          {
+            "id": "SAU-P4-APP",
+            "clause": "APPENDICES",
+            "clauseTitleEn": "Examples and glossary",
+            "pdfPages": [
+              34,
+              45
+            ],
+            "unitKind": "BACK-MATTER",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "EXAMPLES-OUTSIDE-BOUNDED-ADDRESS-RULE-SURVEY",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Appendices A-F are examples and glossary, not the selected address-rule leaves.",
+            "summaryZh": "附录 A–F 为例与词汇，不是选定的地址规则叶。"
+          },
+          {
+            "id": "SAU-P4-BACK",
+            "clause": "BACK-MATTER",
+            "clauseTitleEn": "IPv6 supplement, errata and APIM",
+            "pdfPages": [
+              46,
+              53
+            ],
+            "unitKind": "BACK-MATTER",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "SUPPLEMENT-ERRATA-APIM-OUTSIDE-BOUNDED-SURVEY",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "IPv6 supplement, errata and APIM stay outside this address-rule survey.",
+            "summaryZh": "IPv6 补充、勘误与 APIM 保持在本地址规则调查之外。"
+          }
+        ],
+        "openIssues": [
+          {
+            "id": "SAU-P4-ISSUE-ALTERNATIVE-UNSELECTED",
+            "status": "OPEN-ALTERNATIVE",
+            "noteEn": "Part 4 leaves apply only if that 00519 alternative is chosen. Integrator-identified requirements remain available. AFDX is not activated.",
+            "noteZh": "仅在选定 00519 该替代路径时适用第 4 部分叶。集成商指明要求仍可用。不激活 AFDX。"
+          }
+        ],
+        "dispositionCounts": {
+          "OUT-OF-PROFILE": 6,
+          "CONDITIONAL": 6
+        }
+      },
+      {
         "sourceId": "ARINC-664-7",
         "role": "CONDITIONAL-AFDX-REFERENCE",
         "edition": "664P7",
@@ -15758,15 +16263,38 @@
             "unitKind": "CROSS-REFERENCE",
             "applicabilityDecision": "CONDITIONAL",
             "conformanceEffect": "INFORMATIVE",
-            "rationaleCode": "P4-OR-INTEGRATOR-ALTERNATIVE-NOT-IN-THIS-PR",
+            "rationaleCode": "P4-OR-INTEGRATOR-ALTERNATIVE-RECORDED",
             "triggeredByOperations": [
               "AFDX-DEPLOYMENT"
             ],
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
-            "leafCrsStatus": "CRS-M1-00519-REMAINS-NOT-YET-BOUND",
-            "unboundDispositionId": "UD-664-4-NOT-IN-SOURCE-SET",
-            "summaryEn": "615A already allows 664 Part 4 address rules or integrator-identified requirements. 664-4 is not in this PR source set. The alternative is not a forced purchase and does not auto-activate AFDX.",
-            "summaryZh": "615A 已允许 664 第 4 部分地址规则或集成商指明的要求。664-4 不在本 PR 来源集合。该替代不是强制采购，也不自动激活 AFDX。"
+            "leafCrsStatus": "EXISTING-615A-LEAF",
+            "summaryEn": "615A Appendix E still allows 664 Part 4 address rules or integrator-identified requirements. Part 4 is now acquired and its address-rule leaves are emitted on the ARINC-664-4 source. The alternative remains open; this does not auto-activate AFDX.",
+            "summaryZh": "615A 附录 E 仍允许 664 第 4 部分地址规则或集成商指明的要求。第 4 部分现已取得，其地址规则叶在 ARINC-664-4 来源上发出。替代路径保持开放；这不自动激活 AFDX。",
+            "leafLocator": {
+              "sourceIds": [
+                "ARINC-615A-3"
+              ],
+              "clausePrefixes": [
+                "APPENDIX-E"
+              ]
+            },
+            "leafCoverageIds": [
+              "COV-M1-01972"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00519"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-01972",
+                "requirementIds": [
+                  "CRS-M1-00519"
+                ],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-013-B5690D59EDBF",
+                "clause": "APPENDIX-E"
+              }
+            ]
           },
           {
             "id": "SAU-P7-AID",
