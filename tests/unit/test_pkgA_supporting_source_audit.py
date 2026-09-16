@@ -132,7 +132,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-10"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-11"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
@@ -247,4 +247,59 @@ def test_rfc_option_leaves_bind_complete_distinct_sentences() -> None:
         if row["semantic"]["action"] == "COMPUTE-UDP-CHECKSUM-OVER-PSEUDO-HEADER-HEADER-AND-DATA"
     )
     assert checksum["sourceTextHash"] == baseline.leaf_unit_hash(CHECKSUM_CROSS_PAGE)
+
+
+def test_tftp_end_condition_combines_default_and_negotiated_blksize() -> None:
+    crs = json.loads((ROOT / "configs/requirements/arinc_615a3_m1_crs.json").read_text(encoding="utf-8"))
+    by_id = {row["id"]: row for row in crs["requirements"]}
+    default_end = by_id["CRS-M1-00620"]
+    default_width = by_id["CRS-M1-00635"]
+    assert "BLKSIZE-WAS-NOT-SUCCESSFULLY-NEGOTIATED" in default_end["semantic"]["condition"]
+    assert "BLKSIZE-WAS-NOT-SUCCESSFULLY-NEGOTIATED" in default_width["semantic"]["condition"]
+    negotiated = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "TERMINATE-ON-DATA-SHORTER-THAN-NEGOTIATED-BLKSIZE"
+    )
+    zero = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "SEND-ZERO-LENGTH-FINAL-DATA-WHEN-FILE-IS-INTEGRAL-MULTIPLE-OF-BLKSIZE"
+    )
+    fallback = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "IGNORE-UNACKNOWLEDGED-OPTION-AND-KEEP-DEFAULT-PARAMETERS"
+    )
+    assert negotiated["source"]["sourceId"] == "RFC-2348"
+    assert zero["source"]["sourceId"] == "RFC-2348"
+    assert fallback["source"]["sourceId"] == "RFC-2347"
+    assert any(
+        rel["requirementId"] == "CRS-M1-00620" and rel["relation"] == "REFINES-WHEN-OPTION-NEGOTIATED"
+        for rel in negotiated["supportingRequirementRelations"]
+    )
+    assert any(
+        rel["relation"] == "FALLBACK-WHEN-OPTION-NOT-ACCEPTED"
+        for rel in fallback["supportingRequirementRelations"]
+    )
+
+    def effective_blksize(requested: int | None, accepted: int | None) -> int:
+        if accepted is None:
+            return 512
+        return accepted
+
+    def is_final_data(length: int, blksize: int) -> bool:
+        return length < blksize
+
+    assert is_final_data(700, effective_blksize(1024, 1024)) is True
+    assert is_final_data(256, effective_blksize(256, 256)) is False
+    assert is_final_data(511, effective_blksize(None, None)) is True
+    assert is_final_data(512, effective_blksize(None, None)) is False
+    assert is_final_data(0, effective_blksize(1024, 1024)) is True
+    assert "1024" in negotiated["generatedSemanticProjectionEn"]
+    assert "700" in negotiated["generatedSemanticProjectionEn"]
+    assert "256" in negotiated["generatedSemanticProjectionEn"]
+    assert "integral multiple" in zero["generatedSemanticProjectionEn"]
+    assert "never requested" in fallback["generatedSemanticProjectionEn"]
+
 

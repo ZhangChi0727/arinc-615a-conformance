@@ -8,11 +8,11 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-10",
-    "coverageCount": 2933,
-    "requirementCount": 643,
-    "coverageFingerprint": "48786e0e3328ab90f3cc9b61355dd281a2c633bc7adee64a06c1c18bd70fa25f",
-    "requirementsFingerprint": "9583de498ddd0fdc161448de23701d8d3b62a3af300eb1e6965571351c6cc787",
+    "artifactVersion": "M1-CANDIDATE-11",
+    "coverageCount": 2936,
+    "requirementCount": 646,
+    "coverageFingerprint": "ee23593dda4aac1c07a1fa2bfdf8f744ddd56a1a7138264fe0b7f6861e6b6463",
+    "requirementsFingerprint": "5c17ac8ca2eeabd6e1899cc7ff71bff7a0a56049d59575cea5ca7955af3d3c45",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
@@ -27,11 +27,11 @@
     "Ordinary Ethernet, Compliant, Profiled and AFDX stay separate configuration dimensions."
   ],
   "summary": {
-    "coverageCount": 2933,
-    "requirementCount": 643,
+    "coverageCount": 2936,
+    "requirementCount": 646,
     "applicabilityDecisions": {
       "OUT-OF-PROFILE": 973,
-      "APPLICABLE-SUPPORTING": 1282,
+      "APPLICABLE-SUPPORTING": 1285,
       "APPLICABLE-BASE": 286,
       "CONDITIONAL": 392
     },
@@ -94,9 +94,10 @@
       "TFTP-NORMAL-TERMINATION": 1,
       "TFTP-ERROR-ABORT": 1,
       "TFTP-OPTION-MECHANISM": 3,
-      "TFTP-BLKSIZE-ADOPTED": 4,
+      "TFTP-BLKSIZE-ADOPTED": 6,
       "TFTP-TIMEOUT-OPTION": 2,
-      "TFTP-TSIZE-ADOPTED": 4
+      "TFTP-TSIZE-ADOPTED": 4,
+      "TFTP-OPTION-SEQUENCE": 1
     },
     "deferredFutureScope": {
       "total": 0,
@@ -10008,7 +10009,663 @@
             "relationTo615A": "PROFILE-SCOPE-AND-EXISTING-LEAF",
             "leafCrsStatus": "EXISTING-351-TRIGGERED-ROWS",
             "summaryEn": "Introduction and file-format version facts already surveyed on pdf pages 11-15. Loader tolerance of PN-format variation is 615A-facing.",
-            "summaryZh": "引言与文件格式版本已在 pdf 11-15 页调查。加载器对件号格式偏差的容忍面向 615A。"
+            "summaryZh": "引言与文件格式版本已在 pdf 11-15 页调查。加载器对件号格式偏差的容忍面向 615A。",
+            "leafCoverageIds": [
+              "COV-M1-02174",
+              "COV-M1-02175",
+              "COV-M1-02176",
+              "COV-M1-02177",
+              "COV-M1-02178",
+              "COV-M1-02179",
+              "COV-M1-02180",
+              "COV-M1-02181",
+              "COV-M1-02182",
+              "COV-M1-02183",
+              "COV-M1-02184",
+              "COV-M1-02185",
+              "COV-M1-02186",
+              "COV-M1-02187",
+              "COV-M1-02188",
+              "COV-M1-02189",
+              "COV-M1-02190",
+              "COV-M1-02191",
+              "COV-M1-02192",
+              "COV-M1-02193",
+              "COV-M1-02194",
+              "COV-M1-02195",
+              "COV-M1-02196",
+              "COV-M1-02197",
+              "COV-M1-02198",
+              "COV-M1-02199",
+              "COV-M1-02200",
+              "COV-M1-02201",
+              "COV-M1-02202",
+              "COV-M1-02203",
+              "COV-M1-02204",
+              "COV-M1-02205",
+              "COV-M1-02206",
+              "COV-M1-02207",
+              "COV-M1-02208",
+              "COV-M1-02209",
+              "COV-M1-02210",
+              "COV-M1-02211",
+              "COV-M1-02212",
+              "COV-M1-02213",
+              "COV-M1-02214",
+              "COV-M1-02215",
+              "COV-M1-02216",
+              "COV-M1-02217",
+              "COV-M1-02218",
+              "COV-M1-02219",
+              "COV-M1-02220",
+              "COV-M1-02221",
+              "COV-M1-02222",
+              "COV-M1-02223",
+              "COV-M1-02224",
+              "COV-M1-02225",
+              "COV-M1-02226",
+              "COV-M1-02227",
+              "COV-M1-02228",
+              "COV-M1-02229",
+              "COV-M1-02230",
+              "COV-M1-02231",
+              "COV-M1-02232",
+              "COV-M1-02233",
+              "COV-M1-02234",
+              "COV-M1-02235",
+              "COV-M1-02236",
+              "COV-M1-02237",
+              "COV-M1-02238",
+              "COV-M1-02239",
+              "COV-M1-02240",
+              "COV-M1-02241",
+              "COV-M1-02242",
+              "COV-M1-02243",
+              "COV-M1-02244",
+              "COV-M1-02245",
+              "COV-M1-02246",
+              "COV-M1-02247",
+              "COV-M1-02248",
+              "COV-M1-02249",
+              "COV-M1-02250",
+              "COV-M1-02251",
+              "COV-M1-02252",
+              "COV-M1-02253",
+              "COV-M1-02254",
+              "COV-M1-02255",
+              "COV-M1-02256",
+              "COV-M1-02257",
+              "COV-M1-02258",
+              "COV-M1-02259",
+              "COV-M1-02260",
+              "COV-M1-02261"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00191",
+              "CRS-M1-00192",
+              "CRS-M1-00193",
+              "CRS-M1-00194",
+              "CRS-M1-00195",
+              "CRS-M1-00196",
+              "CRS-M1-00197",
+              "CRS-M1-00198",
+              "CRS-M1-00199",
+              "CRS-M1-00200",
+              "CRS-M1-00201"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02174",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-1-P011-PROSE-SENTENCE-001-160BEB2ED6ED",
+                "clause": "1.1"
+              },
+              {
+                "coverageId": "COV-M1-02175",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-1-P011-PROSE-SENTENCE-002-03FFE9ADF96E",
+                "clause": "1.1"
+              },
+              {
+                "coverageId": "COV-M1-02176",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-1-P011-PROSE-SENTENCE-003-B05635ABA5B0",
+                "clause": "1.1"
+              },
+              {
+                "coverageId": "COV-M1-02177",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-1-P011-PROSE-SENTENCE-004-3FBDB38BE1C6",
+                "clause": "1.1"
+              },
+              {
+                "coverageId": "COV-M1-02178",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-1-P011-PROSE-SENTENCE-005-1422084ECAF5",
+                "clause": "1.1"
+              },
+              {
+                "coverageId": "COV-M1-02179",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-1-P011-PROSE-SENTENCE-006-7816E547EA96",
+                "clause": "1.1"
+              },
+              {
+                "coverageId": "COV-M1-02180",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-1-P011-PROSE-SENTENCE-007-1D92C0CE037F",
+                "clause": "1.1"
+              },
+              {
+                "coverageId": "COV-M1-02181",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-1-P011-COMMENTARY-001-636CAABF7C3E",
+                "clause": "1.1"
+              },
+              {
+                "coverageId": "COV-M1-02182",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-1-P011-COMMENTARY-002-D079A111206C",
+                "clause": "1.1"
+              },
+              {
+                "coverageId": "COV-M1-02183",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-2-P011-PROSE-SENTENCE-001-89A8D5762CA2",
+                "clause": "1.2"
+              },
+              {
+                "coverageId": "COV-M1-02184",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-001-2A1E6359F93B",
+                "clause": "1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02185",
+                "requirementIds": [
+                  "CRS-M1-00191"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-002-93AC8751234E",
+                "clause": "1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02186",
+                "requirementIds": [
+                  "CRS-M1-00192"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-003-F4F4BC419A09",
+                "clause": "1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02187",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-004-1DD5B5D5DB5B",
+                "clause": "1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02188",
+                "requirementIds": [
+                  "CRS-M1-00193"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-005-BC73FE29F0AF",
+                "clause": "1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02189",
+                "requirementIds": [
+                  "CRS-M1-00194"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-006-3F3CB7AE6B26",
+                "clause": "1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02190",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-1-P011-PROSE-SENTENCE-007-9893473019E9",
+                "clause": "1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02191",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-2-P011-PROSE-SENTENCE-001-1F7BA1015441",
+                "clause": "1.3.2"
+              },
+              {
+                "coverageId": "COV-M1-02192",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-2-P011-PROSE-SENTENCE-002-CDAAD46A0982",
+                "clause": "1.3.2"
+              },
+              {
+                "coverageId": "COV-M1-02193",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-2-P011-PROSE-SENTENCE-003-3DA50F1313FB",
+                "clause": "1.3.2"
+              },
+              {
+                "coverageId": "COV-M1-02194",
+                "requirementIds": [
+                  "CRS-M1-00195"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-3-P011-PROSE-SENTENCE-001-E0CA338A51EE",
+                "clause": "1.3.3"
+              },
+              {
+                "coverageId": "COV-M1-02195",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-3-P011-PROSE-SENTENCE-002-1796D0495B34",
+                "clause": "1.3.3"
+              },
+              {
+                "coverageId": "COV-M1-02196",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-3-P011-PROSE-SENTENCE-003-062D07852344",
+                "clause": "1.3.3"
+              },
+              {
+                "coverageId": "COV-M1-02197",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-3-P012-PROSE-SENTENCE-004-91B87F2F1414",
+                "clause": "1.3.3"
+              },
+              {
+                "coverageId": "COV-M1-02198",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-3-P012-PROSE-SENTENCE-005-B1CA6D629704",
+                "clause": "1.3.3"
+              },
+              {
+                "coverageId": "COV-M1-02199",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-3-3-P012-PROSE-SENTENCE-006-6F992F388BC1",
+                "clause": "1.3.3"
+              },
+              {
+                "coverageId": "COV-M1-02200",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-P012-PROSE-SENTENCE-001-B47804D0CF46",
+                "clause": "1.4"
+              },
+              {
+                "coverageId": "COV-M1-02201",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-P012-PROSE-SENTENCE-002-ECACDAD608F7",
+                "clause": "1.4"
+              },
+              {
+                "coverageId": "COV-M1-02202",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-P012-PROSE-SENTENCE-003-81DC638B2E6F",
+                "clause": "1.4"
+              },
+              {
+                "coverageId": "COV-M1-02203",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-P012-PROSE-SENTENCE-004-FA38F2B13942",
+                "clause": "1.4"
+              },
+              {
+                "coverageId": "COV-M1-02204",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-P012-PROSE-SENTENCE-005-0FA6CBD2DFAE",
+                "clause": "1.4"
+              },
+              {
+                "coverageId": "COV-M1-02205",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-P012-PROSE-SENTENCE-006-704B33A25089",
+                "clause": "1.4"
+              },
+              {
+                "coverageId": "COV-M1-02206",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-P012-PROSE-SENTENCE-007-1B74D6E86C30",
+                "clause": "1.4"
+              },
+              {
+                "coverageId": "COV-M1-02207",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-P012-PROSE-SENTENCE-008-5762D9686B35",
+                "clause": "1.4"
+              },
+              {
+                "coverageId": "COV-M1-02208",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-P012-PROSE-SENTENCE-009-2EDCCA8A1CCE",
+                "clause": "1.4"
+              },
+              {
+                "coverageId": "COV-M1-02209",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-1-P012-PROSE-SENTENCE-001-01616C66758C",
+                "clause": "1.4.1"
+              },
+              {
+                "coverageId": "COV-M1-02210",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-1-P012-PROSE-SENTENCE-002-E1B55A4F6862",
+                "clause": "1.4.1"
+              },
+              {
+                "coverageId": "COV-M1-02211",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-1-P012-PROSE-SENTENCE-003-CAEBD9B76999",
+                "clause": "1.4.1"
+              },
+              {
+                "coverageId": "COV-M1-02212",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-1-P012-PROSE-SENTENCE-004-C04F98C7AD61",
+                "clause": "1.4.1"
+              },
+              {
+                "coverageId": "COV-M1-02213",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-1-P012-PROSE-SENTENCE-005-9B51071F74C4",
+                "clause": "1.4.1"
+              },
+              {
+                "coverageId": "COV-M1-02214",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-1-P012-PROSE-SENTENCE-006-68E631AB23F9",
+                "clause": "1.4.1"
+              },
+              {
+                "coverageId": "COV-M1-02215",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-1-P012-PROSE-SENTENCE-007-044B7DED43FF",
+                "clause": "1.4.1"
+              },
+              {
+                "coverageId": "COV-M1-02216",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-1-P012-PROSE-SENTENCE-008-4D39D5F7DA6A",
+                "clause": "1.4.1"
+              },
+              {
+                "coverageId": "COV-M1-02217",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-1-P012-PROSE-SENTENCE-009-B2ABFF83E0F8",
+                "clause": "1.4.1"
+              },
+              {
+                "coverageId": "COV-M1-02218",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-1-P012-PROSE-SENTENCE-010-34CD57B3EA78",
+                "clause": "1.4.1"
+              },
+              {
+                "coverageId": "COV-M1-02219",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-1-P012-PROSE-SENTENCE-011-6C3AE74A29EF",
+                "clause": "1.4.1"
+              },
+              {
+                "coverageId": "COV-M1-02220",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-2-P012-PROSE-SENTENCE-001-9937C3CF3BAD",
+                "clause": "1.4.2"
+              },
+              {
+                "coverageId": "COV-M1-02221",
+                "requirementIds": [
+                  "CRS-M1-00196"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-2-P012-PROSE-SENTENCE-002-D07F6C2D4DAC",
+                "clause": "1.4.2"
+              },
+              {
+                "coverageId": "COV-M1-02222",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-2-P012-PROSE-SENTENCE-003-F6BA97A8DD4C",
+                "clause": "1.4.2"
+              },
+              {
+                "coverageId": "COV-M1-02223",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-2-P013-PROSE-SENTENCE-004-E94843E41C8A",
+                "clause": "1.4.2"
+              },
+              {
+                "coverageId": "COV-M1-02224",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-3-P013-PROSE-SENTENCE-001-9DFAB3BD1195",
+                "clause": "1.4.3"
+              },
+              {
+                "coverageId": "COV-M1-02225",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-3-P013-PROSE-SENTENCE-002-0692C2AAA250",
+                "clause": "1.4.3"
+              },
+              {
+                "coverageId": "COV-M1-02226",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-3-P013-PROSE-SENTENCE-003-F355ED0B2EC9",
+                "clause": "1.4.3"
+              },
+              {
+                "coverageId": "COV-M1-02227",
+                "requirementIds": [
+                  "CRS-M1-00197"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-3-P013-PROSE-SENTENCE-004-C23C95885017",
+                "clause": "1.4.3"
+              },
+              {
+                "coverageId": "COV-M1-02228",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-3-P013-PROSE-SENTENCE-005-C60799A15920",
+                "clause": "1.4.3"
+              },
+              {
+                "coverageId": "COV-M1-02229",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-001-955E1D636A27",
+                "clause": "1.4.4"
+              },
+              {
+                "coverageId": "COV-M1-02230",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-002-E092124FB52D",
+                "clause": "1.4.4"
+              },
+              {
+                "coverageId": "COV-M1-02231",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-003-3F6908E70798",
+                "clause": "1.4.4"
+              },
+              {
+                "coverageId": "COV-M1-02232",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-004-3FE7AC5CD2DD",
+                "clause": "1.4.4"
+              },
+              {
+                "coverageId": "COV-M1-02233",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-005-59213D61E720",
+                "clause": "1.4.4"
+              },
+              {
+                "coverageId": "COV-M1-02234",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-006-C75FE616AAAC",
+                "clause": "1.4.4"
+              },
+              {
+                "coverageId": "COV-M1-02235",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-007-5E8CCA74AF4E",
+                "clause": "1.4.4"
+              },
+              {
+                "coverageId": "COV-M1-02236",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-008-594AC0BB1FC1",
+                "clause": "1.4.4"
+              },
+              {
+                "coverageId": "COV-M1-02237",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-009-2B77E49CC04F",
+                "clause": "1.4.4"
+              },
+              {
+                "coverageId": "COV-M1-02238",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-010-9EB07E21D098",
+                "clause": "1.4.4"
+              },
+              {
+                "coverageId": "COV-M1-02239",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-011-FF340879BD12",
+                "clause": "1.4.4"
+              },
+              {
+                "coverageId": "COV-M1-02240",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-4-P013-PROSE-SENTENCE-012-B2DFF5468C53",
+                "clause": "1.4.4"
+              },
+              {
+                "coverageId": "COV-M1-02241",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-4-4-P014-PROSE-SENTENCE-013-2367E74FDB22",
+                "clause": "1.4.4"
+              },
+              {
+                "coverageId": "COV-M1-02242",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-5-P014-PROSE-SENTENCE-001-4A1F517EA643",
+                "clause": "1.5"
+              },
+              {
+                "coverageId": "COV-M1-02243",
+                "requirementIds": [
+                  "CRS-M1-00198"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-1-5-P014-PROSE-SENTENCE-002-DBF83061338F",
+                "clause": "1.5"
+              },
+              {
+                "coverageId": "COV-M1-02244",
+                "requirementIds": [
+                  "CRS-M1-00199"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-1-5-P014-PROSE-SENTENCE-003-35251417E277",
+                "clause": "1.5"
+              },
+              {
+                "coverageId": "COV-M1-02245",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-5-P014-COMMENTARY-001-4C7B40FE2CCF",
+                "clause": "1.5"
+              },
+              {
+                "coverageId": "COV-M1-02246",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-5-P014-COMMENTARY-002-E95D21E6DAD8",
+                "clause": "1.5"
+              },
+              {
+                "coverageId": "COV-M1-02247",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-5-P014-COMMENTARY-003-63F354DF9731",
+                "clause": "1.5"
+              },
+              {
+                "coverageId": "COV-M1-02248",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-5-P014-COMMENTARY-004-F054C7A0D4CF",
+                "clause": "1.5"
+              },
+              {
+                "coverageId": "COV-M1-02249",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-5-P014-COMMENTARY-005-4C2D341C022D",
+                "clause": "1.5"
+              },
+              {
+                "coverageId": "COV-M1-02250",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-5-P014-COMMENTARY-006-F515041B0BA8",
+                "clause": "1.5"
+              },
+              {
+                "coverageId": "COV-M1-02251",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-5-P015-PROSE-SENTENCE-004-F50BC5AA5304",
+                "clause": "1.5"
+              },
+              {
+                "coverageId": "COV-M1-02252",
+                "requirementIds": [
+                  "CRS-M1-00200"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-1-5-P015-PROSE-SENTENCE-005-8F3C7190D1E7",
+                "clause": "1.5"
+              },
+              {
+                "coverageId": "COV-M1-02253",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-5-P015-PROSE-SENTENCE-006-00C4F605E463",
+                "clause": "1.5"
+              },
+              {
+                "coverageId": "COV-M1-02254",
+                "requirementIds": [
+                  "CRS-M1-00201"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-1-5-P015-PROSE-SENTENCE-007-6D740BC1EA66",
+                "clause": "1.5"
+              },
+              {
+                "coverageId": "COV-M1-02255",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-6-P015-PROSE-SENTENCE-001-F7DF20169229",
+                "clause": "1.6"
+              },
+              {
+                "coverageId": "COV-M1-02256",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-6-P015-PROSE-SENTENCE-002-3EE01FF98826",
+                "clause": "1.6"
+              },
+              {
+                "coverageId": "COV-M1-02257",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-6-P015-PROSE-SENTENCE-003-2B5979A149E6",
+                "clause": "1.6"
+              },
+              {
+                "coverageId": "COV-M1-02258",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-6-P015-PROSE-SENTENCE-004-0317FE187A72",
+                "clause": "1.6"
+              },
+              {
+                "coverageId": "COV-M1-02259",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-6-P015-PROSE-SENTENCE-005-F5574B93FB10",
+                "clause": "1.6"
+              },
+              {
+                "coverageId": "COV-M1-02260",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-6-P015-PROSE-SENTENCE-006-BF6AA7734130",
+                "clause": "1.6"
+              },
+              {
+                "coverageId": "COV-M1-02261",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-1-6-P016-PROSE-SENTENCE-007-37F21937C13F",
+                "clause": "1.6"
+              }
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-665-2-LSP",
@@ -10032,7 +10689,2213 @@
             "relationTo615A": "PROFILE-SCOPE-AND-EXISTING-LEAF",
             "leafCrsStatus": "EXISTING-351-TRIGGERED-ROWS",
             "summaryEn": "Header, data and support file layout is used by INFORMATION, UPLOAD, both DOWNLOAD modes and FIND whenever a 665 part is transferred or listed. Existing leaf rows cover this region. CRC/check-value algorithm identity stays blocked by 645.",
-            "summaryZh": "凡传输或列出 665 件时，INFORMATION/UPLOAD/两种 DOWNLOAD/FIND 都使用头文件、数据文件与支持文件布局。现有叶行覆盖该区域。CRC/校验值算法身份仍由 645 阻塞。"
+            "summaryZh": "凡传输或列出 665 件时，INFORMATION/UPLOAD/两种 DOWNLOAD/FIND 都使用头文件、数据文件与支持文件布局。现有叶行覆盖该区域。CRC/校验值算法身份仍由 645 阻塞。",
+            "leafLocator": {
+              "clausePrefixes": [
+                "2.1",
+                "2.2"
+              ],
+              "excludedClausePrefixes": [
+                "2.2.4"
+              ]
+            },
+            "leafCoverageIds": [
+              "COV-M1-02262",
+              "COV-M1-02263",
+              "COV-M1-02264",
+              "COV-M1-02265",
+              "COV-M1-02266",
+              "COV-M1-02267",
+              "COV-M1-02268",
+              "COV-M1-02269",
+              "COV-M1-02270",
+              "COV-M1-02271",
+              "COV-M1-02272",
+              "COV-M1-02273",
+              "COV-M1-02274",
+              "COV-M1-02275",
+              "COV-M1-02276",
+              "COV-M1-02277",
+              "COV-M1-02278",
+              "COV-M1-02279",
+              "COV-M1-02280",
+              "COV-M1-02281",
+              "COV-M1-02282",
+              "COV-M1-02283",
+              "COV-M1-02284",
+              "COV-M1-02285",
+              "COV-M1-02286",
+              "COV-M1-02287",
+              "COV-M1-02288",
+              "COV-M1-02289",
+              "COV-M1-02290",
+              "COV-M1-02291",
+              "COV-M1-02292",
+              "COV-M1-02293",
+              "COV-M1-02294",
+              "COV-M1-02295",
+              "COV-M1-02296",
+              "COV-M1-02297",
+              "COV-M1-02298",
+              "COV-M1-02299",
+              "COV-M1-02300",
+              "COV-M1-02301",
+              "COV-M1-02302",
+              "COV-M1-02303",
+              "COV-M1-02304",
+              "COV-M1-02305",
+              "COV-M1-02306",
+              "COV-M1-02307",
+              "COV-M1-02308",
+              "COV-M1-02309",
+              "COV-M1-02310",
+              "COV-M1-02311",
+              "COV-M1-02312",
+              "COV-M1-02313",
+              "COV-M1-02314",
+              "COV-M1-02315",
+              "COV-M1-02316",
+              "COV-M1-02317",
+              "COV-M1-02318",
+              "COV-M1-02319",
+              "COV-M1-02320",
+              "COV-M1-02321",
+              "COV-M1-02322",
+              "COV-M1-02323",
+              "COV-M1-02324",
+              "COV-M1-02325",
+              "COV-M1-02326",
+              "COV-M1-02327",
+              "COV-M1-02328",
+              "COV-M1-02329",
+              "COV-M1-02330",
+              "COV-M1-02331",
+              "COV-M1-02332",
+              "COV-M1-02333",
+              "COV-M1-02334",
+              "COV-M1-02335",
+              "COV-M1-02336",
+              "COV-M1-02337",
+              "COV-M1-02338",
+              "COV-M1-02339",
+              "COV-M1-02340",
+              "COV-M1-02341",
+              "COV-M1-02342",
+              "COV-M1-02343",
+              "COV-M1-02344",
+              "COV-M1-02345",
+              "COV-M1-02346",
+              "COV-M1-02347",
+              "COV-M1-02348",
+              "COV-M1-02349",
+              "COV-M1-02350",
+              "COV-M1-02351",
+              "COV-M1-02352",
+              "COV-M1-02353",
+              "COV-M1-02354",
+              "COV-M1-02355",
+              "COV-M1-02356",
+              "COV-M1-02357",
+              "COV-M1-02358",
+              "COV-M1-02359",
+              "COV-M1-02360",
+              "COV-M1-02361",
+              "COV-M1-02362",
+              "COV-M1-02363",
+              "COV-M1-02364",
+              "COV-M1-02365",
+              "COV-M1-02366",
+              "COV-M1-02367",
+              "COV-M1-02368",
+              "COV-M1-02369",
+              "COV-M1-02370",
+              "COV-M1-02371",
+              "COV-M1-02372",
+              "COV-M1-02373",
+              "COV-M1-02374",
+              "COV-M1-02375",
+              "COV-M1-02376",
+              "COV-M1-02377",
+              "COV-M1-02378",
+              "COV-M1-02379",
+              "COV-M1-02380",
+              "COV-M1-02381",
+              "COV-M1-02382",
+              "COV-M1-02383",
+              "COV-M1-02384",
+              "COV-M1-02385",
+              "COV-M1-02386",
+              "COV-M1-02387",
+              "COV-M1-02388",
+              "COV-M1-02389",
+              "COV-M1-02390",
+              "COV-M1-02391",
+              "COV-M1-02392",
+              "COV-M1-02393",
+              "COV-M1-02394",
+              "COV-M1-02395",
+              "COV-M1-02396",
+              "COV-M1-02397",
+              "COV-M1-02398",
+              "COV-M1-02399",
+              "COV-M1-02400",
+              "COV-M1-02401",
+              "COV-M1-02402",
+              "COV-M1-02403",
+              "COV-M1-02404",
+              "COV-M1-02405",
+              "COV-M1-02406",
+              "COV-M1-02407",
+              "COV-M1-02408",
+              "COV-M1-02409",
+              "COV-M1-02410",
+              "COV-M1-02411",
+              "COV-M1-02412",
+              "COV-M1-02413",
+              "COV-M1-02414",
+              "COV-M1-02415",
+              "COV-M1-02416",
+              "COV-M1-02417",
+              "COV-M1-02418",
+              "COV-M1-02419",
+              "COV-M1-02420",
+              "COV-M1-02421",
+              "COV-M1-02422",
+              "COV-M1-02423",
+              "COV-M1-02424",
+              "COV-M1-02425",
+              "COV-M1-02426",
+              "COV-M1-02427",
+              "COV-M1-02428",
+              "COV-M1-02429",
+              "COV-M1-02430",
+              "COV-M1-02431",
+              "COV-M1-02432",
+              "COV-M1-02433",
+              "COV-M1-02434",
+              "COV-M1-02435",
+              "COV-M1-02436",
+              "COV-M1-02437",
+              "COV-M1-02438",
+              "COV-M1-02439",
+              "COV-M1-02440",
+              "COV-M1-02441",
+              "COV-M1-02442",
+              "COV-M1-02443",
+              "COV-M1-02444",
+              "COV-M1-02445",
+              "COV-M1-02446",
+              "COV-M1-02447",
+              "COV-M1-02448",
+              "COV-M1-02449",
+              "COV-M1-02450",
+              "COV-M1-02451",
+              "COV-M1-02452",
+              "COV-M1-02453",
+              "COV-M1-02454",
+              "COV-M1-02455",
+              "COV-M1-02456",
+              "COV-M1-02457",
+              "COV-M1-02458",
+              "COV-M1-02459",
+              "COV-M1-02460",
+              "COV-M1-02461",
+              "COV-M1-02462",
+              "COV-M1-02463",
+              "COV-M1-02464",
+              "COV-M1-02465",
+              "COV-M1-02466",
+              "COV-M1-02467",
+              "COV-M1-02468",
+              "COV-M1-02469",
+              "COV-M1-02470",
+              "COV-M1-02471",
+              "COV-M1-02472",
+              "COV-M1-02473",
+              "COV-M1-02474",
+              "COV-M1-02475",
+              "COV-M1-02476",
+              "COV-M1-02477",
+              "COV-M1-02478",
+              "COV-M1-02479",
+              "COV-M1-02480",
+              "COV-M1-02481",
+              "COV-M1-02482",
+              "COV-M1-02483",
+              "COV-M1-02484",
+              "COV-M1-02485",
+              "COV-M1-02486",
+              "COV-M1-02487",
+              "COV-M1-02488",
+              "COV-M1-02489",
+              "COV-M1-02490",
+              "COV-M1-02491",
+              "COV-M1-02492",
+              "COV-M1-02493",
+              "COV-M1-02494",
+              "COV-M1-02495",
+              "COV-M1-02496",
+              "COV-M1-02497",
+              "COV-M1-02498",
+              "COV-M1-02499",
+              "COV-M1-02500",
+              "COV-M1-02501",
+              "COV-M1-02502",
+              "COV-M1-02503",
+              "COV-M1-02504",
+              "COV-M1-02505",
+              "COV-M1-02506",
+              "COV-M1-02507",
+              "COV-M1-02508",
+              "COV-M1-02509",
+              "COV-M1-02510",
+              "COV-M1-02511",
+              "COV-M1-02512",
+              "COV-M1-02513",
+              "COV-M1-02514",
+              "COV-M1-02515",
+              "COV-M1-02516",
+              "COV-M1-02517",
+              "COV-M1-02518",
+              "COV-M1-02519",
+              "COV-M1-02520",
+              "COV-M1-02521",
+              "COV-M1-02522",
+              "COV-M1-02523",
+              "COV-M1-02524",
+              "COV-M1-02525",
+              "COV-M1-02526",
+              "COV-M1-02527",
+              "COV-M1-02528",
+              "COV-M1-02529",
+              "COV-M1-02530",
+              "COV-M1-02531",
+              "COV-M1-02532",
+              "COV-M1-02533",
+              "COV-M1-02534",
+              "COV-M1-02535",
+              "COV-M1-02536",
+              "COV-M1-02537",
+              "COV-M1-02538",
+              "COV-M1-02539",
+              "COV-M1-02540",
+              "COV-M1-02541",
+              "COV-M1-02542",
+              "COV-M1-02543",
+              "COV-M1-02544",
+              "COV-M1-02545",
+              "COV-M1-02546",
+              "COV-M1-02547",
+              "COV-M1-02548",
+              "COV-M1-02549",
+              "COV-M1-02550",
+              "COV-M1-02551",
+              "COV-M1-02552"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00202",
+              "CRS-M1-00203",
+              "CRS-M1-00204",
+              "CRS-M1-00205",
+              "CRS-M1-00206",
+              "CRS-M1-00207",
+              "CRS-M1-00208",
+              "CRS-M1-00209",
+              "CRS-M1-00210",
+              "CRS-M1-00211",
+              "CRS-M1-00212",
+              "CRS-M1-00213",
+              "CRS-M1-00214",
+              "CRS-M1-00215",
+              "CRS-M1-00216",
+              "CRS-M1-00217",
+              "CRS-M1-00218",
+              "CRS-M1-00219",
+              "CRS-M1-00220",
+              "CRS-M1-00221",
+              "CRS-M1-00222",
+              "CRS-M1-00223",
+              "CRS-M1-00224",
+              "CRS-M1-00225",
+              "CRS-M1-00226",
+              "CRS-M1-00227",
+              "CRS-M1-00228",
+              "CRS-M1-00229",
+              "CRS-M1-00230",
+              "CRS-M1-00231",
+              "CRS-M1-00232",
+              "CRS-M1-00233",
+              "CRS-M1-00234",
+              "CRS-M1-00235",
+              "CRS-M1-00236",
+              "CRS-M1-00237",
+              "CRS-M1-00238",
+              "CRS-M1-00239",
+              "CRS-M1-00240",
+              "CRS-M1-00241",
+              "CRS-M1-00242",
+              "CRS-M1-00243",
+              "CRS-M1-00244",
+              "CRS-M1-00245",
+              "CRS-M1-00246",
+              "CRS-M1-00247",
+              "CRS-M1-00248",
+              "CRS-M1-00249",
+              "CRS-M1-00250",
+              "CRS-M1-00251",
+              "CRS-M1-00252"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02262",
+                "requirementIds": [
+                  "CRS-M1-00202"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-P016-PROSE-SENTENCE-001-A7E185845C31",
+                "clause": "2.1"
+              },
+              {
+                "coverageId": "COV-M1-02263",
+                "requirementIds": [
+                  "CRS-M1-00203"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-P016-PROSE-SENTENCE-002-C9B7C44AE544",
+                "clause": "2.1"
+              },
+              {
+                "coverageId": "COV-M1-02264",
+                "requirementIds": [
+                  "CRS-M1-00204"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-P016-PROSE-SENTENCE-003-D2A78669BC58",
+                "clause": "2.1"
+              },
+              {
+                "coverageId": "COV-M1-02265",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-P016-COMMENTARY-001-80104042B69C",
+                "clause": "2.1"
+              },
+              {
+                "coverageId": "COV-M1-02266",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-P016-COMMENTARY-002-07A507E6365D",
+                "clause": "2.1"
+              },
+              {
+                "coverageId": "COV-M1-02267",
+                "requirementIds": [
+                  "CRS-M1-00205"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-001-79D9D9285B09",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02268",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-002-A1FB148C9E81",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02269",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-003-09DAD8FA7F9A",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02270",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-004-8321D6A714DC",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02271",
+                "requirementIds": [
+                  "CRS-M1-00206"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-005-9401791D8DFE",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02272",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-006-FCFE85DAA7A5",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02273",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-007-8944DAD93BB7",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02274",
+                "requirementIds": [
+                  "CRS-M1-00207"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-008-6FB26843CBD8",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02275",
+                "requirementIds": [
+                  "CRS-M1-00208"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-009-63B5D84BC565",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02276",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-PROSE-SENTENCE-010-6D3D6C4A7EC8",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02277",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-COMMENTARY-001-771F2F077DE6",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02278",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-COMMENTARY-002-694A53EF94C4",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02279",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-COMMENTARY-003-33BC91809D17",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02280",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-COMMENTARY-004-C93839C52769",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02281",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-COMMENTARY-005-3EA3818CD317",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02282",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-COMMENTARY-006-DAB765A85AC1",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02283",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P016-COMMENTARY-007-B4D554650142",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02284",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-011-D6763FE7F301",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02285",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-012-D69C5BD379FC",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02286",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-013-2E2E3D06675A",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02287",
+                "requirementIds": [
+                  "CRS-M1-00209"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-014-4EC0F7886DBA",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02288",
+                "requirementIds": [
+                  "CRS-M1-00210"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-015-3EE2B6181AC8",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02289",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-016-3C7C62FA2817",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02290",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-017-1BE90C32A851",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02291",
+                "requirementIds": [
+                  "CRS-M1-00211"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-018-ED171884907D",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02292",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-019-91B6E39316F1",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02293",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-020-B7113D28B7E9",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02294",
+                "requirementIds": [
+                  "CRS-M1-00212"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-021-CBAD881793E5",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02295",
+                "requirementIds": [
+                  "CRS-M1-00213"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-022-1D9E17675A1C",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02296",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-023-1D6F8B25FD5A",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02297",
+                "requirementIds": [
+                  "CRS-M1-00214"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-1-P017-PROSE-SENTENCE-024-481F25AD55F2",
+                "clause": "2.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02298",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-2-P017-PROSE-SENTENCE-001-39D1CABB3062",
+                "clause": "2.1.2"
+              },
+              {
+                "coverageId": "COV-M1-02299",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-2-P017-PROSE-SENTENCE-002-384C6B5C9D64",
+                "clause": "2.1.2"
+              },
+              {
+                "coverageId": "COV-M1-02300",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-3-P017-PROSE-SENTENCE-001-EF545A99C9CB",
+                "clause": "2.1.3"
+              },
+              {
+                "coverageId": "COV-M1-02301",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-3-P017-PROSE-SENTENCE-002-DCD3394F95B2",
+                "clause": "2.1.3"
+              },
+              {
+                "coverageId": "COV-M1-02302",
+                "requirementIds": [
+                  "CRS-M1-00215"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-3-P017-PROSE-SENTENCE-003-41F8723AEC8B",
+                "clause": "2.1.3"
+              },
+              {
+                "coverageId": "COV-M1-02303",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-4-P017-PROSE-SENTENCE-001-17C063BF3D4D",
+                "clause": "2.1.4"
+              },
+              {
+                "coverageId": "COV-M1-02304",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-4-P017-PROSE-SENTENCE-002-314BE39E69CB",
+                "clause": "2.1.4"
+              },
+              {
+                "coverageId": "COV-M1-02305",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-4-P017-PROSE-SENTENCE-003-C4D800720C42",
+                "clause": "2.1.4"
+              },
+              {
+                "coverageId": "COV-M1-02306",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-4-P017-PROSE-SENTENCE-004-C2A50EAE113D",
+                "clause": "2.1.4"
+              },
+              {
+                "coverageId": "COV-M1-02307",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-4-P018-PROSE-SENTENCE-005-38DE651FDA17",
+                "clause": "2.1.4"
+              },
+              {
+                "coverageId": "COV-M1-02308",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-1-P018-PROSE-SENTENCE-001-F7C2CD79A529",
+                "clause": "2.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02309",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-1-P018-PROSE-SENTENCE-002-FD28EA0EA1F0",
+                "clause": "2.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02310",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-1-P018-PROSE-SENTENCE-003-FC7A62A9DD55",
+                "clause": "2.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02311",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-1-P018-PROSE-SENTENCE-004-5D0AF3D0B950",
+                "clause": "2.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02312",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-1-P018-PROSE-SENTENCE-005-0D719E7BB466",
+                "clause": "2.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02313",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-1-P018-PROSE-SENTENCE-006-3118AE1497A2",
+                "clause": "2.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02314",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-1-P018-COMMENTARY-001-EAC45AE99F22",
+                "clause": "2.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02315",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-1-P018-COMMENTARY-002-6B80FE089D6B",
+                "clause": "2.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02316",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-1-P018-COMMENTARY-003-5CF9C285142E",
+                "clause": "2.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02317",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-1-P018-COMMENTARY-004-7B335319DC88",
+                "clause": "2.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02318",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-1-P018-COMMENTARY-005-25E90D49C5E9",
+                "clause": "2.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02319",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-2-P018-PROSE-SENTENCE-001-B6F0697BFF57",
+                "clause": "2.2.2"
+              },
+              {
+                "coverageId": "COV-M1-02320",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-2-P018-PROSE-SENTENCE-002-CAAC0E244EC0",
+                "clause": "2.2.2"
+              },
+              {
+                "coverageId": "COV-M1-02321",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-2-P018-PROSE-SENTENCE-003-7685938788F2",
+                "clause": "2.2.2"
+              },
+              {
+                "coverageId": "COV-M1-02322",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-2-P018-PROSE-SENTENCE-004-E0EF997755B1",
+                "clause": "2.2.2"
+              },
+              {
+                "coverageId": "COV-M1-02323",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-2-P018-PROSE-SENTENCE-005-FD040B530B8F",
+                "clause": "2.2.2"
+              },
+              {
+                "coverageId": "COV-M1-02324",
+                "requirementIds": [
+                  "CRS-M1-00216"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-2-1-P018-PROSE-SENTENCE-001-84EA4A3113C8",
+                "clause": "2.2.2.1"
+              },
+              {
+                "coverageId": "COV-M1-02325",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-2-2-P018-PROSE-SENTENCE-001-13C8424017C1",
+                "clause": "2.2.2.2"
+              },
+              {
+                "coverageId": "COV-M1-02326",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-2-3-P018-PROSE-SENTENCE-001-14994CFE8A6F",
+                "clause": "2.2.2.3"
+              },
+              {
+                "coverageId": "COV-M1-02327",
+                "requirementIds": [
+                  "CRS-M1-00217"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P018-PROSE-SENTENCE-001-7A7C6DE1A7A7",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02328",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-002-599B58305736",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02329",
+                "requirementIds": [
+                  "CRS-M1-00218"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-003-D19D48006847",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02330",
+                "requirementIds": [
+                  "CRS-M1-00219"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-004-A761BB0130D9",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02331",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-005-7FBA197008F0",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02332",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-006-CC2F77D5BADE",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02333",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-007-BB87C2E615F1",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02334",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-008-088C8F614C7E",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02335",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-009-A9A6424F0692",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02336",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P019-PROSE-SENTENCE-010-A6A3FC33347D",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02337",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P020-PROSE-SENTENCE-011-100971C9B156",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02338",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P020-PROSE-SENTENCE-012-601E15128DD1",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02339",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P020-PROSE-SENTENCE-013-A4650C4A199B",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02340",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P020-PROSE-SENTENCE-014-68C9F1B2AD80",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02341",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P020-PROSE-SENTENCE-015-ECA8E8D499CA",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02342",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P020-PROSE-SENTENCE-016-DE80738793A0",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02343",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P020-PROSE-SENTENCE-017-38038D7464D7",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02344",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P020-PROSE-SENTENCE-018-4D0CE9619492",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02345",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P020-PROSE-SENTENCE-019-833F4720D2C9",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02346",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P020-PROSE-SENTENCE-020-6BC54F13BEA5",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02347",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P020-PROSE-SENTENCE-021-A9AAF97CC9E9",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02348",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P020-PROSE-SENTENCE-022-F664ABA01D60",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02349",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-P020-PROSE-SENTENCE-023-4AB5453D29C6",
+                "clause": "2.2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02350",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-1-P020-PROSE-SENTENCE-001-10489EC19CC0",
+                "clause": "2.2.3.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02351",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-2-P020-PROSE-SENTENCE-001-6CC99901E22A",
+                "clause": "2.2.3.1.2"
+              },
+              {
+                "coverageId": "COV-M1-02352",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-2-P021-PROSE-SENTENCE-002-35FB48FA9AC3",
+                "clause": "2.2.3.1.2"
+              },
+              {
+                "coverageId": "COV-M1-02353",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-3-P021-PROSE-SENTENCE-001-3862DA3FD37E",
+                "clause": "2.2.3.1.3"
+              },
+              {
+                "coverageId": "COV-M1-02354",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-3-P021-PROSE-SENTENCE-002-05FA14BDBE7E",
+                "clause": "2.2.3.1.3"
+              },
+              {
+                "coverageId": "COV-M1-02355",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-3-1-P021-PROSE-SENTENCE-001-B19FECB07354",
+                "clause": "2.2.3.1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02356",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-3-1-P021-PROSE-SENTENCE-002-872718FB3A64",
+                "clause": "2.2.3.1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02357",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-3-1-P021-PROSE-SENTENCE-003-F798447C16B9",
+                "clause": "2.2.3.1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02358",
+                "requirementIds": [
+                  "CRS-M1-00220"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-3-1-P021-PROSE-SENTENCE-004-EF7E6FF4663B",
+                "clause": "2.2.3.1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02359",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-3-1-P021-COMMENTARY-001-7DE14B207474",
+                "clause": "2.2.3.1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02360",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-3-1-P021-COMMENTARY-002-ACB049BEC29B",
+                "clause": "2.2.3.1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02361",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-3-1-P021-COMMENTARY-003-F9B7793D4CE5",
+                "clause": "2.2.3.1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02362",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-3-1-P021-COMMENTARY-004-14E60CF22158",
+                "clause": "2.2.3.1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02363",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-3-1-P021-COMMENTARY-005-2A8095B23EDE",
+                "clause": "2.2.3.1.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02364",
+                "requirementIds": [
+                  "CRS-M1-00221"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-3-2-P021-PROSE-SENTENCE-001-641A8CBC9145",
+                "clause": "2.2.3.1.3.2"
+              },
+              {
+                "coverageId": "COV-M1-02365",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-4-P021-PROSE-SENTENCE-001-203AAFB48D7A",
+                "clause": "2.2.3.1.4"
+              },
+              {
+                "coverageId": "COV-M1-02366",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-5-P021-PROSE-SENTENCE-001-FC9387212DD8",
+                "clause": "2.2.3.1.5"
+              },
+              {
+                "coverageId": "COV-M1-02367",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-6-P021-PROSE-SENTENCE-001-11E4298F57D7",
+                "clause": "2.2.3.1.6"
+              },
+              {
+                "coverageId": "COV-M1-02368",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-7-P021-PROSE-SENTENCE-001-7546488ADD1A",
+                "clause": "2.2.3.1.7"
+              },
+              {
+                "coverageId": "COV-M1-02369",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-7-P021-PROSE-SENTENCE-002-44CD3D03D256",
+                "clause": "2.2.3.1.7"
+              },
+              {
+                "coverageId": "COV-M1-02370",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-7-P022-PROSE-SENTENCE-003-06382A504136",
+                "clause": "2.2.3.1.7"
+              },
+              {
+                "coverageId": "COV-M1-02371",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-8-P022-PROSE-SENTENCE-001-FF1D3388E9F8",
+                "clause": "2.2.3.1.8"
+              },
+              {
+                "coverageId": "COV-M1-02372",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-8-P022-PROSE-SENTENCE-002-7489CA5670FA",
+                "clause": "2.2.3.1.8"
+              },
+              {
+                "coverageId": "COV-M1-02373",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-9-P022-PROSE-SENTENCE-001-25C2F078D78A",
+                "clause": "2.2.3.1.9"
+              },
+              {
+                "coverageId": "COV-M1-02374",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-9-P022-PROSE-SENTENCE-002-97552ED06D26",
+                "clause": "2.2.3.1.9"
+              },
+              {
+                "coverageId": "COV-M1-02375",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-10-P022-PROSE-SENTENCE-001-517E9FCADBB0",
+                "clause": "2.2.3.1.10"
+              },
+              {
+                "coverageId": "COV-M1-02376",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-10-P022-PROSE-SENTENCE-002-C245A9B5B7DE",
+                "clause": "2.2.3.1.10"
+              },
+              {
+                "coverageId": "COV-M1-02377",
+                "requirementIds": [
+                  "CRS-M1-00222"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-10-P022-PROSE-SENTENCE-003-BCEBB784B407",
+                "clause": "2.2.3.1.10"
+              },
+              {
+                "coverageId": "COV-M1-02378",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-10-P022-PROSE-SENTENCE-004-392776DA59D5",
+                "clause": "2.2.3.1.10"
+              },
+              {
+                "coverageId": "COV-M1-02379",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-11-P022-PROSE-SENTENCE-001-96B720BEFBB1",
+                "clause": "2.2.3.1.11"
+              },
+              {
+                "coverageId": "COV-M1-02380",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-11-P022-PROSE-SENTENCE-002-7CB7F5EAF791",
+                "clause": "2.2.3.1.11"
+              },
+              {
+                "coverageId": "COV-M1-02381",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-11-P022-PROSE-SENTENCE-003-254E229369DC",
+                "clause": "2.2.3.1.11"
+              },
+              {
+                "coverageId": "COV-M1-02382",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-11-P022-PROSE-SENTENCE-004-62270E8AC675",
+                "clause": "2.2.3.1.11"
+              },
+              {
+                "coverageId": "COV-M1-02383",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-12-P022-PROSE-SENTENCE-001-0C11E676B696",
+                "clause": "2.2.3.1.12"
+              },
+              {
+                "coverageId": "COV-M1-02384",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-13-P022-PROSE-SENTENCE-001-AEA2E72AC3EC",
+                "clause": "2.2.3.1.13"
+              },
+              {
+                "coverageId": "COV-M1-02385",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-13-P022-PROSE-SENTENCE-002-AE35CDA97957",
+                "clause": "2.2.3.1.13"
+              },
+              {
+                "coverageId": "COV-M1-02386",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-14-P022-PROSE-SENTENCE-001-5AE68C0A326F",
+                "clause": "2.2.3.1.14"
+              },
+              {
+                "coverageId": "COV-M1-02387",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-14-P022-PROSE-SENTENCE-002-14957CC0EE75",
+                "clause": "2.2.3.1.14"
+              },
+              {
+                "coverageId": "COV-M1-02388",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-14-P022-PROSE-SENTENCE-003-A5593E221CEC",
+                "clause": "2.2.3.1.14"
+              },
+              {
+                "coverageId": "COV-M1-02389",
+                "requirementIds": [
+                  "CRS-M1-00223"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-14-P022-PROSE-SENTENCE-004-4114C0816C51",
+                "clause": "2.2.3.1.14"
+              },
+              {
+                "coverageId": "COV-M1-02390",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-15-P022-PROSE-SENTENCE-001-0C11E676B696",
+                "clause": "2.2.3.1.15"
+              },
+              {
+                "coverageId": "COV-M1-02391",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-16-P022-PROSE-SENTENCE-001-4B2A69C99CFC",
+                "clause": "2.2.3.1.16"
+              },
+              {
+                "coverageId": "COV-M1-02392",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-16-P022-PROSE-SENTENCE-002-9962EBFE4A65",
+                "clause": "2.2.3.1.16"
+              },
+              {
+                "coverageId": "COV-M1-02393",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-16-P023-PROSE-SENTENCE-003-9AC4FD0657CA",
+                "clause": "2.2.3.1.16"
+              },
+              {
+                "coverageId": "COV-M1-02394",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-16-P023-PROSE-SENTENCE-004-21AB25F53BE3",
+                "clause": "2.2.3.1.16"
+              },
+              {
+                "coverageId": "COV-M1-02395",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-16-P023-PROSE-SENTENCE-005-5C1AB9612A9D",
+                "clause": "2.2.3.1.16"
+              },
+              {
+                "coverageId": "COV-M1-02396",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-17-P023-PROSE-SENTENCE-001-A3ADE974FC7B",
+                "clause": "2.2.3.1.17"
+              },
+              {
+                "coverageId": "COV-M1-02397",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-17-P023-PROSE-SENTENCE-002-59A1B1EFB706",
+                "clause": "2.2.3.1.17"
+              },
+              {
+                "coverageId": "COV-M1-02398",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-17-P023-PROSE-SENTENCE-003-0B38809C7C24",
+                "clause": "2.2.3.1.17"
+              },
+              {
+                "coverageId": "COV-M1-02399",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-17-P023-PROSE-SENTENCE-004-666CB8470A94",
+                "clause": "2.2.3.1.17"
+              },
+              {
+                "coverageId": "COV-M1-02400",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-17-P023-PROSE-SENTENCE-005-C65B74D788B4",
+                "clause": "2.2.3.1.17"
+              },
+              {
+                "coverageId": "COV-M1-02401",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-18-P023-PROSE-SENTENCE-001-D6984397F9C0",
+                "clause": "2.2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02402",
+                "requirementIds": [
+                  "CRS-M1-00224"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-18-P023-PROSE-SENTENCE-002-E664B245877E",
+                "clause": "2.2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02403",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-18-P023-PROSE-SENTENCE-003-165F040C59AC",
+                "clause": "2.2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02404",
+                "requirementIds": [
+                  "CRS-M1-00225"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-18-P023-PROSE-SENTENCE-004-C2CE75F23520",
+                "clause": "2.2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02405",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-18-P023-COMMENTARY-001-E58C624664A3",
+                "clause": "2.2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02406",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-18-P023-COMMENTARY-002-8FD842C5D057",
+                "clause": "2.2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02407",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-18-P023-COMMENTARY-003-6F33918A392A",
+                "clause": "2.2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02408",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-18-P023-COMMENTARY-004-574C421EE9F7",
+                "clause": "2.2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02409",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-18-P023-COMMENTARY-005-86D565BD9B70",
+                "clause": "2.2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02410",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-18-P023-COMMENTARY-006-B070578563CB",
+                "clause": "2.2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02411",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-18-P023-COMMENTARY-007-0A3FB09619FD",
+                "clause": "2.2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02412",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-18-P023-COMMENTARY-008-8DF64414A8F2",
+                "clause": "2.2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02413",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-18-P023-COMMENTARY-009-BEE15D28B116",
+                "clause": "2.2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02414",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-19-P023-PROSE-SENTENCE-001-0C11E676B696",
+                "clause": "2.2.3.1.19"
+              },
+              {
+                "coverageId": "COV-M1-02415",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-20-P023-PROSE-SENTENCE-001-97B3C6F9B300",
+                "clause": "2.2.3.1.20"
+              },
+              {
+                "coverageId": "COV-M1-02416",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-20-P023-PROSE-SENTENCE-002-F3E0C492977E",
+                "clause": "2.2.3.1.20"
+              },
+              {
+                "coverageId": "COV-M1-02417",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-20-P024-PROSE-SENTENCE-003-8CDFFD457C3F",
+                "clause": "2.2.3.1.20"
+              },
+              {
+                "coverageId": "COV-M1-02418",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-21-P024-PROSE-SENTENCE-001-D96342F5B200",
+                "clause": "2.2.3.1.21"
+              },
+              {
+                "coverageId": "COV-M1-02419",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-21-P024-PROSE-SENTENCE-002-9D218D856AF3",
+                "clause": "2.2.3.1.21"
+              },
+              {
+                "coverageId": "COV-M1-02420",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-22-P024-PROSE-SENTENCE-001-5E05D41D5F31",
+                "clause": "2.2.3.1.22"
+              },
+              {
+                "coverageId": "COV-M1-02421",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-22-P024-PROSE-SENTENCE-002-14957CC0EE75",
+                "clause": "2.2.3.1.22"
+              },
+              {
+                "coverageId": "COV-M1-02422",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-22-P024-PROSE-SENTENCE-003-A5593E221CEC",
+                "clause": "2.2.3.1.22"
+              },
+              {
+                "coverageId": "COV-M1-02423",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-23-P024-PROSE-SENTENCE-001-0C11E676B696",
+                "clause": "2.2.3.1.23"
+              },
+              {
+                "coverageId": "COV-M1-02424",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-24-P024-PROSE-SENTENCE-001-8819FEE792F3",
+                "clause": "2.2.3.1.24"
+              },
+              {
+                "coverageId": "COV-M1-02425",
+                "requirementIds": [
+                  "CRS-M1-00226"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-24-P024-PROSE-SENTENCE-002-C100FC8EE4E9",
+                "clause": "2.2.3.1.24"
+              },
+              {
+                "coverageId": "COV-M1-02426",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-24-P024-COMMENTARY-001-D48A10AC5517",
+                "clause": "2.2.3.1.24"
+              },
+              {
+                "coverageId": "COV-M1-02427",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-24-P024-COMMENTARY-002-7FD76CD67A0B",
+                "clause": "2.2.3.1.24"
+              },
+              {
+                "coverageId": "COV-M1-02428",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-25-P024-PROSE-SENTENCE-001-C5B142777BB2",
+                "clause": "2.2.3.1.25"
+              },
+              {
+                "coverageId": "COV-M1-02429",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-25-P024-PROSE-SENTENCE-002-12E5A55C3C1B",
+                "clause": "2.2.3.1.25"
+              },
+              {
+                "coverageId": "COV-M1-02430",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-26-P024-PROSE-SENTENCE-001-1332865E27B2",
+                "clause": "2.2.3.1.26"
+              },
+              {
+                "coverageId": "COV-M1-02431",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-26-P024-PROSE-SENTENCE-002-14957CC0EE75",
+                "clause": "2.2.3.1.26"
+              },
+              {
+                "coverageId": "COV-M1-02432",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-26-P024-PROSE-SENTENCE-003-A5593E221CEC",
+                "clause": "2.2.3.1.26"
+              },
+              {
+                "coverageId": "COV-M1-02433",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-26-P024-PROSE-SENTENCE-004-905F2CC8C825",
+                "clause": "2.2.3.1.26"
+              },
+              {
+                "coverageId": "COV-M1-02434",
+                "requirementIds": [
+                  "CRS-M1-00227"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-26-P024-PROSE-SENTENCE-005-38372C2FA366",
+                "clause": "2.2.3.1.26"
+              },
+              {
+                "coverageId": "COV-M1-02435",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-27-P024-PROSE-SENTENCE-001-7DCE10F42A58",
+                "clause": "2.2.3.1.27"
+              },
+              {
+                "coverageId": "COV-M1-02436",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-28-P024-PROSE-SENTENCE-001-1EA6195FA357",
+                "clause": "2.2.3.1.28"
+              },
+              {
+                "coverageId": "COV-M1-02437",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-28-P024-PROSE-SENTENCE-002-237B53189986",
+                "clause": "2.2.3.1.28"
+              },
+              {
+                "coverageId": "COV-M1-02438",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-28-P025-PROSE-SENTENCE-003-EAEBB4A94431",
+                "clause": "2.2.3.1.28"
+              },
+              {
+                "coverageId": "COV-M1-02439",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-29-P025-PROSE-SENTENCE-001-FC46E199B47E",
+                "clause": "2.2.3.1.29"
+              },
+              {
+                "coverageId": "COV-M1-02440",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-29-P025-PROSE-SENTENCE-002-14957CC0EE75",
+                "clause": "2.2.3.1.29"
+              },
+              {
+                "coverageId": "COV-M1-02441",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-29-P025-PROSE-SENTENCE-003-A5593E221CEC",
+                "clause": "2.2.3.1.29"
+              },
+              {
+                "coverageId": "COV-M1-02442",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-29-P025-COMMENTARY-001-750CA85320B4",
+                "clause": "2.2.3.1.29"
+              },
+              {
+                "coverageId": "COV-M1-02443",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-29-P025-COMMENTARY-002-9CDBD5D1F1EC",
+                "clause": "2.2.3.1.29"
+              },
+              {
+                "coverageId": "COV-M1-02444",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-30-P025-PROSE-SENTENCE-001-EFC6ED4B3833",
+                "clause": "2.2.3.1.30"
+              },
+              {
+                "coverageId": "COV-M1-02445",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-31-P025-PROSE-SENTENCE-001-2736BE49CDF8",
+                "clause": "2.2.3.1.31"
+              },
+              {
+                "coverageId": "COV-M1-02446",
+                "requirementIds": [
+                  "CRS-M1-00228"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-31-P025-PROSE-SENTENCE-002-0374CB53F0AB",
+                "clause": "2.2.3.1.31"
+              },
+              {
+                "coverageId": "COV-M1-02447",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-31-P025-PROSE-SENTENCE-003-14F7BEFCFF34",
+                "clause": "2.2.3.1.31"
+              },
+              {
+                "coverageId": "COV-M1-02448",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-32-P025-PROSE-SENTENCE-001-B1BE56A30974",
+                "clause": "2.2.3.1.32"
+              },
+              {
+                "coverageId": "COV-M1-02449",
+                "requirementIds": [
+                  "CRS-M1-00229"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-32-P025-PROSE-SENTENCE-002-F6BCEFFF8371",
+                "clause": "2.2.3.1.32"
+              },
+              {
+                "coverageId": "COV-M1-02450",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-33-P025-PROSE-SENTENCE-001-0D36A469DAC3",
+                "clause": "2.2.3.1.33"
+              },
+              {
+                "coverageId": "COV-M1-02451",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-33-P025-PROSE-SENTENCE-002-7ADBA6AC4232",
+                "clause": "2.2.3.1.33"
+              },
+              {
+                "coverageId": "COV-M1-02452",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-34-P025-PROSE-SENTENCE-001-04EFF2958F60",
+                "clause": "2.2.3.1.34"
+              },
+              {
+                "coverageId": "COV-M1-02453",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-34-P025-PROSE-SENTENCE-002-14957CC0EE75",
+                "clause": "2.2.3.1.34"
+              },
+              {
+                "coverageId": "COV-M1-02454",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-34-P025-PROSE-SENTENCE-003-A5593E221CEC",
+                "clause": "2.2.3.1.34"
+              },
+              {
+                "coverageId": "COV-M1-02455",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-35-P025-PROSE-SENTENCE-001-476E07AD13B8",
+                "clause": "2.2.3.1.35"
+              },
+              {
+                "coverageId": "COV-M1-02456",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-35-P025-PROSE-SENTENCE-002-D5F7C6AAE2C8",
+                "clause": "2.2.3.1.35"
+              },
+              {
+                "coverageId": "COV-M1-02457",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-36-P025-PROSE-SENTENCE-001-9CCD9EC4572E",
+                "clause": "2.2.3.1.36"
+              },
+              {
+                "coverageId": "COV-M1-02458",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-36-P025-PROSE-SENTENCE-002-14957CC0EE75",
+                "clause": "2.2.3.1.36"
+              },
+              {
+                "coverageId": "COV-M1-02459",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-36-P025-PROSE-SENTENCE-003-A5593E221CEC",
+                "clause": "2.2.3.1.36"
+              },
+              {
+                "coverageId": "COV-M1-02460",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-36-P026-PROSE-SENTENCE-004-D4782A0642F0",
+                "clause": "2.2.3.1.36"
+              },
+              {
+                "coverageId": "COV-M1-02461",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-36-P026-PROSE-SENTENCE-005-6180E0BE9F7B",
+                "clause": "2.2.3.1.36"
+              },
+              {
+                "coverageId": "COV-M1-02462",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-36-P026-COMMENTARY-001-BB9B31515060",
+                "clause": "2.2.3.1.36"
+              },
+              {
+                "coverageId": "COV-M1-02463",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-36-P026-COMMENTARY-002-A18FD003D9D9",
+                "clause": "2.2.3.1.36"
+              },
+              {
+                "coverageId": "COV-M1-02464",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-36-P026-COMMENTARY-003-0CD83A83207F",
+                "clause": "2.2.3.1.36"
+              },
+              {
+                "coverageId": "COV-M1-02465",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-36-P026-COMMENTARY-004-C1A02DECE5E2",
+                "clause": "2.2.3.1.36"
+              },
+              {
+                "coverageId": "COV-M1-02466",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-36-P026-COMMENTARY-005-F2F077B75FF3",
+                "clause": "2.2.3.1.36"
+              },
+              {
+                "coverageId": "COV-M1-02467",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-37-P026-PROSE-SENTENCE-001-4D2EECF15E83",
+                "clause": "2.2.3.1.37"
+              },
+              {
+                "coverageId": "COV-M1-02468",
+                "requirementIds": [
+                  "CRS-M1-00230"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-37-P026-PROSE-SENTENCE-002-05AC99F08A26",
+                "clause": "2.2.3.1.37"
+              },
+              {
+                "coverageId": "COV-M1-02469",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-38-P026-PROSE-SENTENCE-001-7F66F9961463",
+                "clause": "2.2.3.1.38"
+              },
+              {
+                "coverageId": "COV-M1-02470",
+                "requirementIds": [
+                  "CRS-M1-00231"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-38-P026-PROSE-SENTENCE-002-E3FF88E1EDA0",
+                "clause": "2.2.3.1.38"
+              },
+              {
+                "coverageId": "COV-M1-02471",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-39-P026-PROSE-SENTENCE-001-DFABED9635A6",
+                "clause": "2.2.3.1.39"
+              },
+              {
+                "coverageId": "COV-M1-02472",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-39-P026-COMMENTARY-001-E4D7F0706F64",
+                "clause": "2.2.3.1.39"
+              },
+              {
+                "coverageId": "COV-M1-02473",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-40-P026-PROSE-SENTENCE-001-F42C08B11758",
+                "clause": "2.2.3.1.40"
+              },
+              {
+                "coverageId": "COV-M1-02474",
+                "requirementIds": [
+                  "CRS-M1-00232"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-40-P026-PROSE-SENTENCE-002-FCF47A272C90",
+                "clause": "2.2.3.1.40"
+              },
+              {
+                "coverageId": "COV-M1-02475",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-40-P026-PROSE-SENTENCE-003-C953BE0BFF61",
+                "clause": "2.2.3.1.40"
+              },
+              {
+                "coverageId": "COV-M1-02476",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-41-P026-PROSE-SENTENCE-001-3E1DE66ACB5E",
+                "clause": "2.2.3.1.41"
+              },
+              {
+                "coverageId": "COV-M1-02477",
+                "requirementIds": [
+                  "CRS-M1-00233"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-41-P026-PROSE-SENTENCE-002-3F17CFA7FF3B",
+                "clause": "2.2.3.1.41"
+              },
+              {
+                "coverageId": "COV-M1-02478",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-41-P026-PROSE-SENTENCE-003-892F6E09C02C",
+                "clause": "2.2.3.1.41"
+              },
+              {
+                "coverageId": "COV-M1-02479",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-41-P026-PROSE-SENTENCE-004-BBA90CCD5D94",
+                "clause": "2.2.3.1.41"
+              },
+              {
+                "coverageId": "COV-M1-02480",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-42-P026-PROSE-SENTENCE-001-B6EBE0C5494B",
+                "clause": "2.2.3.1.42"
+              },
+              {
+                "coverageId": "COV-M1-02481",
+                "requirementIds": [
+                  "CRS-M1-00234"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-42-P026-PROSE-SENTENCE-002-5E94CB4814AF",
+                "clause": "2.2.3.1.42"
+              },
+              {
+                "coverageId": "COV-M1-02482",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-42-P026-PROSE-SENTENCE-003-5A66AA053321",
+                "clause": "2.2.3.1.42"
+              },
+              {
+                "coverageId": "COV-M1-02483",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-43-P026-PROSE-SENTENCE-001-4057F95C4990",
+                "clause": "2.2.3.1.43"
+              },
+              {
+                "coverageId": "COV-M1-02484",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-43-P027-PROSE-SENTENCE-002-116DC562BD95",
+                "clause": "2.2.3.1.43"
+              },
+              {
+                "coverageId": "COV-M1-02485",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-44-P027-PROSE-SENTENCE-001-B62D645B9869",
+                "clause": "2.2.3.1.44"
+              },
+              {
+                "coverageId": "COV-M1-02486",
+                "requirementIds": [
+                  "CRS-M1-00235"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-44-P027-PROSE-SENTENCE-002-AF1722AA2C2B",
+                "clause": "2.2.3.1.44"
+              },
+              {
+                "coverageId": "COV-M1-02487",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-45-P027-PROSE-SENTENCE-001-91E1F0561AAC",
+                "clause": "2.2.3.1.45"
+              },
+              {
+                "coverageId": "COV-M1-02488",
+                "requirementIds": [
+                  "CRS-M1-00236"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-45-P027-PROSE-SENTENCE-002-3B48FE46115E",
+                "clause": "2.2.3.1.45"
+              },
+              {
+                "coverageId": "COV-M1-02489",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-46-P027-PROSE-SENTENCE-001-BFB9FD1581D1",
+                "clause": "2.2.3.1.46"
+              },
+              {
+                "coverageId": "COV-M1-02490",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-46-P027-PROSE-SENTENCE-002-9020D99F8A55",
+                "clause": "2.2.3.1.46"
+              },
+              {
+                "coverageId": "COV-M1-02491",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-47-P027-PROSE-SENTENCE-001-B9A1017CF182",
+                "clause": "2.2.3.1.47"
+              },
+              {
+                "coverageId": "COV-M1-02492",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-47-P027-PROSE-SENTENCE-002-14957CC0EE75",
+                "clause": "2.2.3.1.47"
+              },
+              {
+                "coverageId": "COV-M1-02493",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-47-P027-PROSE-SENTENCE-003-A5593E221CEC",
+                "clause": "2.2.3.1.47"
+              },
+              {
+                "coverageId": "COV-M1-02494",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-48-P027-PROSE-SENTENCE-001-2A25A7104E3C",
+                "clause": "2.2.3.1.48"
+              },
+              {
+                "coverageId": "COV-M1-02495",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-48-P027-PROSE-SENTENCE-002-274A3D4EDF66",
+                "clause": "2.2.3.1.48"
+              },
+              {
+                "coverageId": "COV-M1-02496",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-48-P027-PROSE-SENTENCE-003-5F39FBE61159",
+                "clause": "2.2.3.1.48"
+              },
+              {
+                "coverageId": "COV-M1-02497",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-49-P027-PROSE-SENTENCE-001-92FD5E321DF2",
+                "clause": "2.2.3.1.49"
+              },
+              {
+                "coverageId": "COV-M1-02498",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-49-P027-PROSE-SENTENCE-002-14957CC0EE75",
+                "clause": "2.2.3.1.49"
+              },
+              {
+                "coverageId": "COV-M1-02499",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-49-P027-PROSE-SENTENCE-003-A5593E221CEC",
+                "clause": "2.2.3.1.49"
+              },
+              {
+                "coverageId": "COV-M1-02500",
+                "requirementIds": [
+                  "CRS-M1-00237"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-49-P027-PROSE-SENTENCE-004-5EFD86A600D8",
+                "clause": "2.2.3.1.49"
+              },
+              {
+                "coverageId": "COV-M1-02501",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-49-P027-PROSE-SENTENCE-005-4513F49EF150",
+                "clause": "2.2.3.1.49"
+              },
+              {
+                "coverageId": "COV-M1-02502",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-50-P027-PROSE-SENTENCE-001-4E4D6AD47B6A",
+                "clause": "2.2.3.1.50"
+              },
+              {
+                "coverageId": "COV-M1-02503",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-51-P027-PROSE-SENTENCE-001-28F7AB668966",
+                "clause": "2.2.3.1.51"
+              },
+              {
+                "coverageId": "COV-M1-02504",
+                "requirementIds": [
+                  "CRS-M1-00238"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-51-P027-PROSE-SENTENCE-002-E3FF88E1EDA0",
+                "clause": "2.2.3.1.51"
+              },
+              {
+                "coverageId": "COV-M1-02505",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-51-P028-PROSE-SENTENCE-003-0F72961D5C6F",
+                "clause": "2.2.3.1.51"
+              },
+              {
+                "coverageId": "COV-M1-02506",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-52-P028-PROSE-SENTENCE-001-6DEE8997B2AB",
+                "clause": "2.2.3.1.52"
+              },
+              {
+                "coverageId": "COV-M1-02507",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-52-P028-PROSE-SENTENCE-002-41D2C5B809CE",
+                "clause": "2.2.3.1.52"
+              },
+              {
+                "coverageId": "COV-M1-02508",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-52-P028-PROSE-SENTENCE-003-C953BE0BFF61",
+                "clause": "2.2.3.1.52"
+              },
+              {
+                "coverageId": "COV-M1-02509",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-53-P028-PROSE-SENTENCE-001-679D08E728DF",
+                "clause": "2.2.3.1.53"
+              },
+              {
+                "coverageId": "COV-M1-02510",
+                "requirementIds": [
+                  "CRS-M1-00239"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-53-P028-PROSE-SENTENCE-002-EE1E5830AB09",
+                "clause": "2.2.3.1.53"
+              },
+              {
+                "coverageId": "COV-M1-02511",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-53-P028-PROSE-SENTENCE-003-0351CE1B6556",
+                "clause": "2.2.3.1.53"
+              },
+              {
+                "coverageId": "COV-M1-02512",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-54-P028-PROSE-SENTENCE-001-8EBA3A12AE58",
+                "clause": "2.2.3.1.54"
+              },
+              {
+                "coverageId": "COV-M1-02513",
+                "requirementIds": [
+                  "CRS-M1-00240"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-54-P028-PROSE-SENTENCE-002-02BC06547867",
+                "clause": "2.2.3.1.54"
+              },
+              {
+                "coverageId": "COV-M1-02514",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-54-P028-PROSE-SENTENCE-003-C9D717011978",
+                "clause": "2.2.3.1.54"
+              },
+              {
+                "coverageId": "COV-M1-02515",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-55-P028-PROSE-SENTENCE-001-0C11E676B696",
+                "clause": "2.2.3.1.55"
+              },
+              {
+                "coverageId": "COV-M1-02516",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-56-P028-PROSE-SENTENCE-001-0C11E676B696",
+                "clause": "2.2.3.1.56"
+              },
+              {
+                "coverageId": "COV-M1-02517",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-57-P028-PROSE-SENTENCE-001-A2AF5454907C",
+                "clause": "2.2.3.1.57"
+              },
+              {
+                "coverageId": "COV-M1-02518",
+                "requirementIds": [
+                  "CRS-M1-00241"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-57-P028-PROSE-SENTENCE-002-284196C6B3D0",
+                "clause": "2.2.3.1.57"
+              },
+              {
+                "coverageId": "COV-M1-02519",
+                "requirementIds": [
+                  "CRS-M1-00242"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-57-P028-PROSE-SENTENCE-003-E6ACA86FDF43",
+                "clause": "2.2.3.1.57"
+              },
+              {
+                "coverageId": "COV-M1-02520",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-58-P028-PROSE-SENTENCE-001-0C11E676B696",
+                "clause": "2.2.3.1.58"
+              },
+              {
+                "coverageId": "COV-M1-02521",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-59-P028-PROSE-SENTENCE-001-83B2E0F2276A",
+                "clause": "2.2.3.1.59"
+              },
+              {
+                "coverageId": "COV-M1-02522",
+                "requirementIds": [
+                  "CRS-M1-00243"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-59-P028-PROSE-SENTENCE-002-6672CA36E154",
+                "clause": "2.2.3.1.59"
+              },
+              {
+                "coverageId": "COV-M1-02523",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-59-P028-PROSE-SENTENCE-003-228704EF1895",
+                "clause": "2.2.3.1.59"
+              },
+              {
+                "coverageId": "COV-M1-02524",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-59-P028-PROSE-SENTENCE-004-2F15525C1495",
+                "clause": "2.2.3.1.59"
+              },
+              {
+                "coverageId": "COV-M1-02525",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-59-P028-PROSE-SENTENCE-005-9081BFB0A3AB",
+                "clause": "2.2.3.1.59"
+              },
+              {
+                "coverageId": "COV-M1-02526",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-60-P028-PROSE-SENTENCE-001-818097BDA458",
+                "clause": "2.2.3.1.60"
+              },
+              {
+                "coverageId": "COV-M1-02527",
+                "requirementIds": [
+                  "CRS-M1-00244"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-60-P028-PROSE-SENTENCE-002-3F17CFA7FF3B",
+                "clause": "2.2.3.1.60"
+              },
+              {
+                "coverageId": "COV-M1-02528",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-60-P028-PROSE-SENTENCE-003-892F6E09C02C",
+                "clause": "2.2.3.1.60"
+              },
+              {
+                "coverageId": "COV-M1-02529",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-60-P028-PROSE-SENTENCE-004-3519A9470455",
+                "clause": "2.2.3.1.60"
+              },
+              {
+                "coverageId": "COV-M1-02530",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-60-P029-PROSE-SENTENCE-005-E5266F3E021B",
+                "clause": "2.2.3.1.60"
+              },
+              {
+                "coverageId": "COV-M1-02531",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-61-P029-PROSE-SENTENCE-001-74BE7A6AFC37",
+                "clause": "2.2.3.1.61"
+              },
+              {
+                "coverageId": "COV-M1-02532",
+                "requirementIds": [
+                  "CRS-M1-00245"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-61-P029-PROSE-SENTENCE-002-6F1B40878C6B",
+                "clause": "2.2.3.1.61"
+              },
+              {
+                "coverageId": "COV-M1-02533",
+                "requirementIds": [
+                  "CRS-M1-00246"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-61-P029-PROSE-SENTENCE-003-6155DCD79C06",
+                "clause": "2.2.3.1.61"
+              },
+              {
+                "coverageId": "COV-M1-02534",
+                "requirementIds": [
+                  "CRS-M1-00247"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-61-P029-PROSE-SENTENCE-004-9A509D9AE4E2",
+                "clause": "2.2.3.1.61"
+              },
+              {
+                "coverageId": "COV-M1-02535",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-61-P029-PROSE-SENTENCE-005-CA2616903C5E",
+                "clause": "2.2.3.1.61"
+              },
+              {
+                "coverageId": "COV-M1-02536",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-61-P029-PROSE-SENTENCE-006-D0BEDCB497B2",
+                "clause": "2.2.3.1.61"
+              },
+              {
+                "coverageId": "COV-M1-02537",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-61-P029-PROSE-SENTENCE-007-892319B9ACEF",
+                "clause": "2.2.3.1.61"
+              },
+              {
+                "coverageId": "COV-M1-02538",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-62-P029-PROSE-SENTENCE-001-9D7F16444AAA",
+                "clause": "2.2.3.1.62"
+              },
+              {
+                "coverageId": "COV-M1-02539",
+                "requirementIds": [
+                  "CRS-M1-00248"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-62-P029-PROSE-SENTENCE-002-136B2E7764B0",
+                "clause": "2.2.3.1.62"
+              },
+              {
+                "coverageId": "COV-M1-02540",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-63-P029-PROSE-SENTENCE-001-AEDF21AA8060",
+                "clause": "2.2.3.1.63"
+              },
+              {
+                "coverageId": "COV-M1-02541",
+                "requirementIds": [
+                  "CRS-M1-00249"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-63-P029-PROSE-SENTENCE-002-8F49EC0CB8C3",
+                "clause": "2.2.3.1.63"
+              },
+              {
+                "coverageId": "COV-M1-02542",
+                "requirementIds": [
+                  "CRS-M1-00250"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-63-P029-PROSE-SENTENCE-003-5A9C8CDFFDEB",
+                "clause": "2.2.3.1.63"
+              },
+              {
+                "coverageId": "COV-M1-02543",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-63-P029-PROSE-SENTENCE-004-5F3B1345434A",
+                "clause": "2.2.3.1.63"
+              },
+              {
+                "coverageId": "COV-M1-02544",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-63-P029-PROSE-SENTENCE-005-D0BEDCB497B2",
+                "clause": "2.2.3.1.63"
+              },
+              {
+                "coverageId": "COV-M1-02545",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-1-63-P029-PROSE-SENTENCE-006-892319B9ACEF",
+                "clause": "2.2.3.1.63"
+              },
+              {
+                "coverageId": "COV-M1-02546",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-2-P029-PROSE-SENTENCE-001-798EB816B529",
+                "clause": "2.2.3.2"
+              },
+              {
+                "coverageId": "COV-M1-02547",
+                "requirementIds": [
+                  "CRS-M1-00251"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-2-P029-PROSE-SENTENCE-002-25AC959A1D2A",
+                "clause": "2.2.3.2"
+              },
+              {
+                "coverageId": "COV-M1-02548",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-2-P029-PROSE-SENTENCE-003-A413C0DA6912",
+                "clause": "2.2.3.2"
+              },
+              {
+                "coverageId": "COV-M1-02549",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-3-P029-PROSE-SENTENCE-001-5103FE71FB68",
+                "clause": "2.2.3.3"
+              },
+              {
+                "coverageId": "COV-M1-02550",
+                "requirementIds": [
+                  "CRS-M1-00252"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-3-P029-PROSE-SENTENCE-002-BC8C7608516E",
+                "clause": "2.2.3.3"
+              },
+              {
+                "coverageId": "COV-M1-02551",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-3-P029-COMMENTARY-001-2E76E0B83054",
+                "clause": "2.2.3.3"
+              },
+              {
+                "coverageId": "COV-M1-02552",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-2-3-3-P030-PROSE-SENTENCE-003-F93A73837B0E",
+                "clause": "2.2.3.3"
+              }
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-665-2-3",
@@ -10228,7 +13091,717 @@
               "CRS-M1-00566",
               "CRS-M1-00567"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02567",
+                "requirementIds": [
+                  "CRS-M1-00526"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-P030-PROSE-SENTENCE-001-E7511EC8B8BE",
+                "clause": "2.3"
+              },
+              {
+                "coverageId": "COV-M1-02568",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P030-PROSE-SENTENCE-001-04A2B008205D",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02569",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P030-PROSE-SENTENCE-002-340CE2BD66B4",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02570",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-003-16EE8EC4164B",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02571",
+                "requirementIds": [
+                  "CRS-M1-00527"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-004-7082D7150B84",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02572",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-005-83910D3C8053",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02573",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-006-F6987645B26C",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02574",
+                "requirementIds": [
+                  "CRS-M1-00528"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-007-285FD5C05BDE",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02575",
+                "requirementIds": [
+                  "CRS-M1-00529"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-008-81534B10BDAD",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02576",
+                "requirementIds": [
+                  "CRS-M1-00530"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-009-56EDF7937548",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02577",
+                "requirementIds": [
+                  "CRS-M1-00531"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-010-73139160EA3F",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02578",
+                "requirementIds": [
+                  "CRS-M1-00532"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-011-A1C9C9EEAFCF",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02579",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-012-F5AC6D53C4BD",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02580",
+                "requirementIds": [
+                  "CRS-M1-00533"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-013-E373C6E2421A",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02581",
+                "requirementIds": [
+                  "CRS-M1-00534"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-014-14C42482077F",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02582",
+                "requirementIds": [
+                  "CRS-M1-00535"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-015-BCA2BC43A1A3",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02583",
+                "requirementIds": [
+                  "CRS-M1-00536"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-016-BEE78B9E25ED",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02797",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-P032-PROSE-SENTENCE-003-4D0CE9619492",
+                "clause": "2.3"
+              },
+              {
+                "coverageId": "COV-M1-02798",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-P032-PROSE-SENTENCE-004-1614073EC0DA",
+                "clause": "2.3"
+              },
+              {
+                "coverageId": "COV-M1-02799",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-P032-PROSE-SENTENCE-007-200DE263B6F2",
+                "clause": "2.3"
+              },
+              {
+                "coverageId": "COV-M1-02800",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-P032-PROSE-SENTENCE-008-E28E342E6227",
+                "clause": "2.3"
+              },
+              {
+                "coverageId": "COV-M1-02801",
+                "requirementIds": [
+                  "CRS-M1-00568"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-2-P032-PROSE-SENTENCE-001-A4C713095594",
+                "clause": "2.3.1.2"
+              },
+              {
+                "coverageId": "COV-M1-02802",
+                "requirementIds": [
+                  "CRS-M1-00569"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-2-P032-PROSE-SENTENCE-002-79DEDA3F0A7A",
+                "clause": "2.3.1.2"
+              },
+              {
+                "coverageId": "COV-M1-02803",
+                "requirementIds": [
+                  "CRS-M1-00570"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-3-P032-PROSE-SENTENCE-001-07120FC5FECE",
+                "clause": "2.3.1.3"
+              },
+              {
+                "coverageId": "COV-M1-02804",
+                "requirementIds": [
+                  "CRS-M1-00571"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-4-P033-PROSE-SENTENCE-001-950EEAD4BFA9",
+                "clause": "2.3.1.4"
+              },
+              {
+                "coverageId": "COV-M1-02805",
+                "requirementIds": [
+                  "CRS-M1-00572"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-5-P033-PROSE-SENTENCE-001-D39CAFDDE98D",
+                "clause": "2.3.1.5"
+              },
+              {
+                "coverageId": "COV-M1-02806",
+                "requirementIds": [
+                  "CRS-M1-00573"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-6-P033-PROSE-SENTENCE-001-B0745F7F3F78",
+                "clause": "2.3.1.6"
+              },
+              {
+                "coverageId": "COV-M1-02807",
+                "requirementIds": [
+                  "CRS-M1-00574"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-7-P033-PROSE-SENTENCE-001-85A74B75BC3D",
+                "clause": "2.3.1.7"
+              },
+              {
+                "coverageId": "COV-M1-02808",
+                "requirementIds": [
+                  "CRS-M1-00575"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-001-CD2F980ECAAD",
+                "clause": "2.3.1.8"
+              },
+              {
+                "coverageId": "COV-M1-02809",
+                "requirementIds": [
+                  "CRS-M1-00576"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-002-14957CC0EE75",
+                "clause": "2.3.1.8"
+              },
+              {
+                "coverageId": "COV-M1-02810",
+                "requirementIds": [
+                  "CRS-M1-00577"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-003-CA9D6749B1E7",
+                "clause": "2.3.1.8"
+              },
+              {
+                "coverageId": "COV-M1-02811",
+                "requirementIds": [
+                  "CRS-M1-00578"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-9-P033-PROSE-SENTENCE-001-37210AE320F9",
+                "clause": "2.3.1.9"
+              },
+              {
+                "coverageId": "COV-M1-02812",
+                "requirementIds": [
+                  "CRS-M1-00579"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-9-P033-PROSE-SENTENCE-002-DF06B1AE9E4A",
+                "clause": "2.3.1.9"
+              },
+              {
+                "coverageId": "COV-M1-02813",
+                "requirementIds": [
+                  "CRS-M1-00580"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-001-6238B2C14CAF",
+                "clause": "2.3.1.10"
+              },
+              {
+                "coverageId": "COV-M1-02814",
+                "requirementIds": [
+                  "CRS-M1-00581"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-002-14957CC0EE75",
+                "clause": "2.3.1.10"
+              },
+              {
+                "coverageId": "COV-M1-02815",
+                "requirementIds": [
+                  "CRS-M1-00582"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-003-CA9D6749B1E7",
+                "clause": "2.3.1.10"
+              },
+              {
+                "coverageId": "COV-M1-02816",
+                "requirementIds": [
+                  "CRS-M1-00583"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-004-49D5CE38BD4B",
+                "clause": "2.3.1.10"
+              },
+              {
+                "coverageId": "COV-M1-02817",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-10-P033-COMMENTARY-001-EAC318BBCED1",
+                "clause": "2.3.1.10"
+              },
+              {
+                "coverageId": "COV-M1-02818",
+                "requirementIds": [
+                  "CRS-M1-00584"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-11-P033-PROSE-SENTENCE-001-B832BEAD3004",
+                "clause": "2.3.1.11"
+              },
+              {
+                "coverageId": "COV-M1-02819",
+                "requirementIds": [
+                  "CRS-M1-00585"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-12-P033-PROSE-SENTENCE-001-51F8853C49AB",
+                "clause": "2.3.1.12"
+              },
+              {
+                "coverageId": "COV-M1-02820",
+                "requirementIds": [
+                  "CRS-M1-00586"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-13-P034-PROSE-SENTENCE-001-10A78FF7C992",
+                "clause": "2.3.1.13"
+              },
+              {
+                "coverageId": "COV-M1-02821",
+                "requirementIds": [
+                  "CRS-M1-00587"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-001-6C46D8F794E1",
+                "clause": "2.3.1.14"
+              },
+              {
+                "coverageId": "COV-M1-02822",
+                "requirementIds": [
+                  "CRS-M1-00588"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-002-14957CC0EE75",
+                "clause": "2.3.1.14"
+              },
+              {
+                "coverageId": "COV-M1-02823",
+                "requirementIds": [
+                  "CRS-M1-00589"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-003-CA9D6749B1E7",
+                "clause": "2.3.1.14"
+              },
+              {
+                "coverageId": "COV-M1-02824",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-005-0BE3738D451A",
+                "clause": "2.3.1.14"
+              },
+              {
+                "coverageId": "COV-M1-02825",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-006-0BB4C5167464",
+                "clause": "2.3.1.14"
+              },
+              {
+                "coverageId": "COV-M1-02826",
+                "requirementIds": [
+                  "CRS-M1-00590"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-007-F728BBF0BB35",
+                "clause": "2.3.1.14"
+              },
+              {
+                "coverageId": "COV-M1-02827",
+                "requirementIds": [
+                  "CRS-M1-00591"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-15-P034-PROSE-SENTENCE-001-BE0892BD03B3",
+                "clause": "2.3.1.15"
+              },
+              {
+                "coverageId": "COV-M1-02828",
+                "requirementIds": [
+                  "CRS-M1-00592"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-16-P034-PROSE-SENTENCE-001-F71F4DF1A130",
+                "clause": "2.3.1.16"
+              },
+              {
+                "coverageId": "COV-M1-02829",
+                "requirementIds": [
+                  "CRS-M1-00593"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-002-EB03E6E8B2C2",
+                "clause": "2.3.1.17"
+              },
+              {
+                "coverageId": "COV-M1-02830",
+                "requirementIds": [
+                  "CRS-M1-00594"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-003-14957CC0EE75",
+                "clause": "2.3.1.17"
+              },
+              {
+                "coverageId": "COV-M1-02831",
+                "requirementIds": [
+                  "CRS-M1-00595"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-004-CA9D6749B1E7",
+                "clause": "2.3.1.17"
+              },
+              {
+                "coverageId": "COV-M1-02832",
+                "requirementIds": [
+                  "CRS-M1-00596"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-005-7FE318C16891",
+                "clause": "2.3.1.17"
+              },
+              {
+                "coverageId": "COV-M1-02833",
+                "requirementIds": [
+                  "CRS-M1-00597"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-006-36F14C7EFAD7",
+                "clause": "2.3.1.17"
+              },
+              {
+                "coverageId": "COV-M1-02834",
+                "requirementIds": [
+                  "CRS-M1-00598"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-007-3E0BD2C78076",
+                "clause": "2.3.1.17"
+              },
+              {
+                "coverageId": "COV-M1-02835",
+                "requirementIds": [
+                  "CRS-M1-00599"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-18-P034-PROSE-SENTENCE-001-A0FF5B212350",
+                "clause": "2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02836",
+                "requirementIds": [
+                  "CRS-M1-00600"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-18-P034-PROSE-SENTENCE-002-AE35CDA97957",
+                "clause": "2.3.1.18"
+              },
+              {
+                "coverageId": "COV-M1-02837",
+                "requirementIds": [
+                  "CRS-M1-00601"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-002-2B0551BA0908",
+                "clause": "2.3.1.19"
+              },
+              {
+                "coverageId": "COV-M1-02838",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-003-49DF05775CBF",
+                "clause": "2.3.1.19"
+              },
+              {
+                "coverageId": "COV-M1-02839",
+                "requirementIds": [
+                  "CRS-M1-00602"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P035-PROSE-SENTENCE-005-7E047E5900B9",
+                "clause": "2.3.1.19"
+              },
+              {
+                "coverageId": "COV-M1-02840",
+                "requirementIds": [
+                  "CRS-M1-00603"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P035-PROSE-SENTENCE-006-CA9D6749B1E7",
+                "clause": "2.3.1.19"
+              },
+              {
+                "coverageId": "COV-M1-02841",
+                "requirementIds": [
+                  "CRS-M1-00537"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-1-P032-PROSE-SENTENCE-001-8941510B5311",
+                "clause": "2.3.1.1"
+              },
+              {
+                "coverageId": "COV-M1-02842",
+                "requirementIds": [
+                  "CRS-M1-00538"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-004-86427B46E466",
+                "clause": "2.3.1.8"
+              },
+              {
+                "coverageId": "COV-M1-02843",
+                "requirementIds": [
+                  "CRS-M1-00539"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-005-B74330A54136",
+                "clause": "2.3.1.8"
+              },
+              {
+                "coverageId": "COV-M1-02844",
+                "requirementIds": [
+                  "CRS-M1-00540"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-12-P033-PROSE-SENTENCE-002-6F1E1E9893E9",
+                "clause": "2.3.1.12"
+              },
+              {
+                "coverageId": "COV-M1-02845",
+                "requirementIds": [
+                  "CRS-M1-00541"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-004-CA370AEF0845",
+                "clause": "2.3.1.14"
+              },
+              {
+                "coverageId": "COV-M1-02846",
+                "requirementIds": [
+                  "CRS-M1-00542"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-001-F4394EF0EEC6",
+                "clause": "2.3.1.17"
+              },
+              {
+                "coverageId": "COV-M1-02847",
+                "requirementIds": [
+                  "CRS-M1-00543"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-001-4385D6046683",
+                "clause": "2.3.1.19"
+              },
+              {
+                "coverageId": "COV-M1-02848",
+                "requirementIds": [
+                  "CRS-M1-00544"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-001-216B865544A5",
+                "clause": "2.3.1.20"
+              },
+              {
+                "coverageId": "COV-M1-02849",
+                "requirementIds": [
+                  "CRS-M1-00545"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-002-2E8577AE49D2",
+                "clause": "2.3.1.20"
+              },
+              {
+                "coverageId": "COV-M1-02850",
+                "requirementIds": [
+                  "CRS-M1-00546"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R001",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02851",
+                "requirementIds": [
+                  "CRS-M1-00547"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R002",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02852",
+                "requirementIds": [
+                  "CRS-M1-00548"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R003",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02853",
+                "requirementIds": [
+                  "CRS-M1-00549"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R004",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02854",
+                "requirementIds": [
+                  "CRS-M1-00550"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R005",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02855",
+                "requirementIds": [
+                  "CRS-M1-00551"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R006",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02856",
+                "requirementIds": [
+                  "CRS-M1-00552"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R007",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02857",
+                "requirementIds": [
+                  "CRS-M1-00553"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R008",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02858",
+                "requirementIds": [
+                  "CRS-M1-00554"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R009",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02859",
+                "requirementIds": [
+                  "CRS-M1-00555"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R010",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02860",
+                "requirementIds": [
+                  "CRS-M1-00556"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R011",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02861",
+                "requirementIds": [
+                  "CRS-M1-00557"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R012",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02862",
+                "requirementIds": [
+                  "CRS-M1-00558"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R013",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02863",
+                "requirementIds": [
+                  "CRS-M1-00559"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R014",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02864",
+                "requirementIds": [
+                  "CRS-M1-00560"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R015",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02865",
+                "requirementIds": [
+                  "CRS-M1-00561"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R016",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02866",
+                "requirementIds": [
+                  "CRS-M1-00562"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R017",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02867",
+                "requirementIds": [
+                  "CRS-M1-00563"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R018",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02868",
+                "requirementIds": [
+                  "CRS-M1-00564"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R019",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02869",
+                "requirementIds": [
+                  "CRS-M1-00565"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R020",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02870",
+                "requirementIds": [
+                  "CRS-M1-00566"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R021",
+                "clause": "2.3.1"
+              },
+              {
+                "coverageId": "COV-M1-02871",
+                "requirementIds": [
+                  "CRS-M1-00567"
+                ],
+                "sourceUnitId": "SU-ARINC-665-5-TABLE-2-3-1-1-R022",
+                "clause": "2.3.1"
+              }
+            ]
           },
           {
             "id": "SAU-665-2-2-4",
@@ -10338,7 +13911,32 @@
             "relationTo615A": "PROFILE-SCOPE",
             "leafCrsStatus": "EXISTING-LEAF-VIA-2-1-2",
             "summaryEn": "Manufacturer codes support PN format already surveyed in 2.1.2. Not a new 615A protocol action.",
-            "summaryZh": "制造商代码支撑已在 2.1.2 调查的件号格式，不是新的 615A 协议动作。"
+            "summaryZh": "制造商代码支撑已在 2.1.2 调查的件号格式，不是新的 615A 协议动作。",
+            "leafLocator": {
+              "clausePrefixes": [
+                "2.1.2"
+              ]
+            },
+            "leafCoverageIds": [
+              "COV-M1-02298",
+              "COV-M1-02299"
+            ],
+            "leafRequirementIds": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02298",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-2-P017-PROSE-SENTENCE-001-39D1CABB3062",
+                "clause": "2.1.2"
+              },
+              {
+                "coverageId": "COV-M1-02299",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-665-5-2-1-2-P017-PROSE-SENTENCE-002-384C6B5C9D64",
+                "clause": "2.1.2"
+              }
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-665-APP-AC",
@@ -10554,7 +14152,15 @@
               "COV-M1-02872"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02872",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-2-1-P008-PROSE-SENTENCE-001-7108B1B10F6E",
+                "clause": "1"
+              }
+            ]
           },
           {
             "id": "SAU-P2-2",
@@ -10583,7 +14189,15 @@
               "COV-M1-02873"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02873",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-2-2-P012-PROSE-SENTENCE-001-6A92C17CD1EB",
+                "clause": "2"
+              }
+            ]
           },
           {
             "id": "SAU-P2-3-CU",
@@ -10612,7 +14226,15 @@
               "COV-M1-02874"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02874",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-2-3-COPPER-P017-PROSE-SENTENCE-001-D677E9AA7186",
+                "clause": "3-COPPER"
+              }
+            ]
           },
           {
             "id": "SAU-P2-3-FX",
@@ -10659,7 +14281,15 @@
               "COV-M1-02875"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02875",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-2-3-COMPONENTS-P022-PROSE-SENTENCE-001-A0A7609182FE",
+                "clause": "3-COMPONENTS"
+              }
+            ]
           },
           {
             "id": "SAU-P2-APP-C",
@@ -10738,7 +14368,15 @@
               "COV-M1-02876"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02876",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-2-CROSS-P7-P008-PROSE-SENTENCE-001-7108B1B10F6E",
+                "clause": "CROSS-P7"
+              }
+            ]
           },
           {
             "id": "SAU-P2-NOT-TIMEOUT",
@@ -10858,7 +14496,15 @@
               "COV-M1-02877"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02877",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-3-1.2-P008-PROSE-SENTENCE-001-136EBD65F786",
+                "clause": "1.2"
+              }
+            ]
           },
           {
             "id": "SAU-P3-1-5",
@@ -10895,6 +14541,16 @@
                 "disposition": "NOT-YET-BOUND",
                 "summaryEn": "Remaining 1.5 prose beyond the precedence sentence is not claimed as additional leaves.",
                 "summaryZh": "1.5 中优先句以外的其余散文不作为额外叶主张。"
+              }
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02878",
+                "requirementIds": [
+                  "CRS-M1-00604"
+                ],
+                "sourceUnitId": "SU-ARINC-664-3-1.5-P013-PROSE-SENTENCE-001-CF0B59087E60",
+                "clause": "1.5"
               }
             ]
           },
@@ -10943,7 +14599,15 @@
               "COV-M1-02879"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02879",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-3-2.3.15-P020-PROSE-SENTENCE-001-F08F97B0A9D3",
+                "clause": "2.3.15"
+              }
+            ]
           },
           {
             "id": "SAU-P3-3-2-TFTP",
@@ -10972,7 +14636,15 @@
               "COV-M1-02880"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02880",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-3-3.2.2-3.2.3-P021-PROSE-SENTENCE-001-FDBFBB31BFA9",
+                "clause": "3.2.2-3.2.3"
+              }
+            ]
           },
           {
             "id": "SAU-P3-3-2-OTHER",
@@ -11039,7 +14711,17 @@
             "leafRequirementIds": [
               "CRS-M1-00605"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02881",
+                "requirementIds": [
+                  "CRS-M1-00605"
+                ],
+                "sourceUnitId": "SU-ARINC-664-3-3.3.2-P030-TABLE-ROW-001-248ABB819123",
+                "clause": "3.3.2"
+              }
+            ]
           },
           {
             "id": "SAU-P3-3-4-IP",
@@ -11070,7 +14752,17 @@
             "leafRequirementIds": [
               "CRS-M1-00606"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02882",
+                "requirementIds": [
+                  "CRS-M1-00606"
+                ],
+                "sourceUnitId": "SU-ARINC-664-3-3.4.1-P031-PROSE-SENTENCE-001-C8FA1ADDD22F",
+                "clause": "3.4.1"
+              }
+            ]
           },
           {
             "id": "SAU-P3-3-4-V6",
@@ -11135,7 +14827,15 @@
               "COV-M1-02883"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02883",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-3-3.5.1-P058-PROSE-SENTENCE-001-C7D897BED34B",
+                "clause": "3.5.1"
+              }
+            ]
           },
           {
             "id": "SAU-P3-ATT12",
@@ -11312,7 +15012,15 @@
               "COV-M1-02884"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02884",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-7-1.2-P009-PROSE-SENTENCE-001-541FDD326E3C",
+                "clause": "1.2"
+              }
+            ]
           },
           {
             "id": "SAU-P7-2",
@@ -11337,7 +15045,15 @@
               "COV-M1-02885"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02885",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-7-2-P012-PROSE-SENTENCE-001-AB155A44432E",
+                "clause": "2"
+              }
+            ]
           },
           {
             "id": "SAU-P7-3",
@@ -11370,6 +15086,16 @@
                 "disposition": "NOT-YET-BOUND",
                 "summaryEn": "Detailed VL, BAG and jitter encoding in chapter 3 remains outside this leaf.",
                 "summaryZh": "第 3 章中 VL、BAG 与抖动的详细编码仍在本叶之外。"
+              }
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02886",
+                "requirementIds": [
+                  "CRS-M1-00607"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3-P017-PROSE-SENTENCE-001-702F6DFF5983",
+                "clause": "3"
               }
             ]
           },
@@ -11405,6 +15131,16 @@
                 "summaryEn": "Remaining switch functional blocks in chapter 4 are not claimed closed by this leaf.",
                 "summaryZh": "第 4 章其余交换机功能块不由本叶闭合。"
               }
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02887",
+                "requirementIds": [
+                  "CRS-M1-00608"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4-P056-PROSE-SENTENCE-001-16D6958D7359",
+                "clause": "4"
+              }
             ]
           },
           {
@@ -11430,7 +15166,15 @@
               "COV-M1-02888"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02888",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-7-5-P080-PROSE-SENTENCE-001-5C63E07BCA33",
+                "clause": "5"
+              }
+            ]
           },
           {
             "id": "SAU-P7-ATT1",
@@ -11455,7 +15199,15 @@
               "COV-M1-02889"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02889",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-7-ATT-1-P082-PROSE-SENTENCE-001-C9F83BF88347",
+                "clause": "ATT-1"
+              }
+            ]
           },
           {
             "id": "SAU-P7-ATT2",
@@ -11488,6 +15240,16 @@
                 "disposition": "NOT-YET-BOUND",
                 "summaryEn": "Individual Attachment 2 table rows beyond the NOT APPLICABLE rule remain unbound.",
                 "summaryZh": "除 NOT APPLICABLE 规则外，附件 2 各表行仍未绑定。"
+              }
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02890",
+                "requirementIds": [
+                  "CRS-M1-00609"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-ATT-2-P102-PROSE-SENTENCE-001-783B772F160E",
+                "clause": "ATT-2"
               }
             ]
           },
@@ -11552,7 +15314,15 @@
               "COV-M1-02891"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02891",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-664-7-APPENDIX-C-D-P138-PROSE-SENTENCE-001-4C2B18379BD6",
+                "clause": "APPENDIX-C-D"
+              }
+            ]
           },
           {
             "id": "SAU-P7-615A-E",
@@ -11572,7 +15342,122 @@
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "EXISTING-615A-LEAF",
             "summaryEn": "Reading 615A Appendix E is not a substitute for this P7 body audit. Conversely, P7 does not redefine FIND/UPLOAD/DOWNLOAD.",
-            "summaryZh": "阅读 615A 附录 E 不能代替本次 P7 正文审计。反之，P7 也不重定义 FIND/UPLOAD/DOWNLOAD。"
+            "summaryZh": "阅读 615A 附录 E 不能代替本次 P7 正文审计。反之，P7 也不重定义 FIND/UPLOAD/DOWNLOAD。",
+            "leafLocator": {
+              "sourceIds": [
+                "ARINC-615A-3"
+              ],
+              "clausePrefixes": [
+                "APPENDIX-E"
+              ]
+            },
+            "leafCoverageIds": [
+              "COV-M1-01960",
+              "COV-M1-01961",
+              "COV-M1-01962",
+              "COV-M1-01963",
+              "COV-M1-01964",
+              "COV-M1-01965",
+              "COV-M1-01966",
+              "COV-M1-01967",
+              "COV-M1-01968",
+              "COV-M1-01969",
+              "COV-M1-01970",
+              "COV-M1-01971",
+              "COV-M1-01972"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00517",
+              "CRS-M1-00518",
+              "CRS-M1-00519"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-01960",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-001-4F47D3B33062",
+                "clause": "APPENDIX-E"
+              },
+              {
+                "coverageId": "COV-M1-01961",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-002-515B9E955F1D",
+                "clause": "APPENDIX-E"
+              },
+              {
+                "coverageId": "COV-M1-01962",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-003-4F1CD0BD1FCA",
+                "clause": "APPENDIX-E"
+              },
+              {
+                "coverageId": "COV-M1-01963",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-004-8CEC541FF8EE",
+                "clause": "APPENDIX-E"
+              },
+              {
+                "coverageId": "COV-M1-01964",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-005-3747CE56C453",
+                "clause": "APPENDIX-E"
+              },
+              {
+                "coverageId": "COV-M1-01965",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-006-1A3ED90E6DEC",
+                "clause": "APPENDIX-E"
+              },
+              {
+                "coverageId": "COV-M1-01966",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-007-E2E000945641",
+                "clause": "APPENDIX-E"
+              },
+              {
+                "coverageId": "COV-M1-01967",
+                "requirementIds": [
+                  "CRS-M1-00517"
+                ],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-008-123ADFD1F0A0",
+                "clause": "APPENDIX-E"
+              },
+              {
+                "coverageId": "COV-M1-01968",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-009-F63DBE601757",
+                "clause": "APPENDIX-E"
+              },
+              {
+                "coverageId": "COV-M1-01969",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-010-C57B7897F472",
+                "clause": "APPENDIX-E"
+              },
+              {
+                "coverageId": "COV-M1-01970",
+                "requirementIds": [
+                  "CRS-M1-00518"
+                ],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-011-E6FB447853B2",
+                "clause": "APPENDIX-E"
+              },
+              {
+                "coverageId": "COV-M1-01971",
+                "requirementIds": [],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-012-BD359EF6302E",
+                "clause": "APPENDIX-E"
+              },
+              {
+                "coverageId": "COV-M1-01972",
+                "requirementIds": [
+                  "CRS-M1-00519"
+                ],
+                "sourceUnitId": "SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-013-B5690D59EDBF",
+                "clause": "APPENDIX-E"
+              }
+            ],
+            "remainingSubunits": []
           },
           {
             "id": "SAU-P7-P4",
@@ -11665,7 +15550,15 @@
               "COV-M1-02892"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02892",
+                "requirementIds": [],
+                "sourceUnitId": "SU-RFC-768-INTRODUCTION-P001-PROSE-SENTENCE-001-9CD9378A28FB",
+                "clause": "Introduction"
+              }
+            ]
           },
           {
             "id": "SAU-768-FMT",
@@ -11693,7 +15586,17 @@
             "leafRequirementIds": [
               "CRS-M1-00610"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02893",
+                "requirementIds": [
+                  "CRS-M1-00610"
+                ],
+                "sourceUnitId": "SU-RFC-768-FORMAT-P002-PROSE-SENTENCE-001-261706ECA34D",
+                "clause": "Format"
+              }
+            ]
           },
           {
             "id": "SAU-768-FIELDS",
@@ -11723,7 +15626,25 @@
               "CRS-M1-00611",
               "CRS-M1-00628"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02894",
+                "requirementIds": [
+                  "CRS-M1-00611"
+                ],
+                "sourceUnitId": "SU-RFC-768-FIELDS-P002-PROSE-SENTENCE-001-3E02C3A99EE1",
+                "clause": "Fields"
+              },
+              {
+                "coverageId": "COV-M1-02917",
+                "requirementIds": [
+                  "CRS-M1-00628"
+                ],
+                "sourceUnitId": "SU-RFC-768-FIELDS-P002-PROSE-SENTENCE-002-98D131CD707C",
+                "clause": "Fields"
+              }
+            ]
           },
           {
             "id": "SAU-768-USER",
@@ -11764,7 +15685,15 @@
               "COV-M1-02895"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02895",
+                "requirementIds": [],
+                "sourceUnitId": "SU-RFC-768-IP-INTERFACE-P003-PROSE-SENTENCE-001-48E19B3C5CD2",
+                "clause": "IP Interface"
+              }
+            ]
           }
         ],
         "openIssues": [],
@@ -11825,7 +15754,15 @@
               "COV-M1-02896"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02896",
+                "requirementIds": [],
+                "sourceUnitId": "SU-RFC-791-2-P011-PROSE-SENTENCE-001-86EDDA23C611",
+                "clause": "2"
+              }
+            ]
           },
           {
             "id": "SAU-791-3-1",
@@ -11860,6 +15797,16 @@
                 "summaryEn": "Individual IPv4 header field widths remain outside this leaf.",
                 "summaryZh": "各 IPv4 头字段宽度仍在本叶之外。"
               }
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02897",
+                "requirementIds": [
+                  "CRS-M1-00612"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.1-P008-PROSE-SENTENCE-001-443A672321C1",
+                "clause": "3.1"
+              }
             ]
           },
           {
@@ -11888,7 +15835,17 @@
             "leafRequirementIds": [
               "CRS-M1-00613"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02898",
+                "requirementIds": [
+                  "CRS-M1-00613"
+                ],
+                "sourceUnitId": "SU-RFC-791-3.2-FRAGMENT-P008-PROSE-SENTENCE-001-717559CE4530",
+                "clause": "3.2-fragment"
+              }
+            ]
           },
           {
             "id": "SAU-791-GW",
@@ -11959,7 +15916,15 @@
               "COV-M1-02899"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02899",
+                "requirementIds": [],
+                "sourceUnitId": "SU-RFC-791-CAPABILITY-P007-PROSE-SENTENCE-001-D5401AD23DC3",
+                "clause": "CAPABILITY"
+              }
+            ]
           }
         ],
         "openIssues": [],
@@ -12021,7 +15986,15 @@
               "COV-M1-02900"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02900",
+                "requirementIds": [],
+                "sourceUnitId": "SU-RFC-1122-2-P021-PROSE-SENTENCE-001-692BA4CA7EBF",
+                "clause": "2"
+              }
+            ]
           },
           {
             "id": "SAU-1122-3",
@@ -12060,6 +16033,32 @@
                 "summaryEn": "ICMP, routing, source-route and remaining Internet-layer host MUSTs stay outside this admitted path.",
                 "summaryZh": "ICMP、路由、源路由及其余互联网层主机 MUST 仍在本准入路径之外。"
               }
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02901",
+                "requirementIds": [
+                  "CRS-M1-00614"
+                ],
+                "sourceUnitId": "SU-RFC-1122-3-P029-PROSE-SENTENCE-001-44340B4D8C62",
+                "clause": "3"
+              },
+              {
+                "coverageId": "COV-M1-02918",
+                "requirementIds": [
+                  "CRS-M1-00629"
+                ],
+                "sourceUnitId": "SU-RFC-1122-3-P029-PROSE-SENTENCE-002-37EE632E749B",
+                "clause": "3"
+              },
+              {
+                "coverageId": "COV-M1-02919",
+                "requirementIds": [
+                  "CRS-M1-00630"
+                ],
+                "sourceUnitId": "SU-RFC-1122-3-P032-PROSE-SENTENCE-003-3A1E4B86C7F3",
+                "clause": "3"
+              }
             ]
           },
           {
@@ -12096,6 +16095,24 @@
                 "disposition": "CAPABILITY-NOT-ESTABLISHED",
                 "summaryEn": "UDP multicast, multihoming and remaining 4.1 host issues stay outside this admitted path.",
                 "summaryZh": "UDP 组播、多宿及其余 4.1 主机事项仍在本准入路径之外。"
+              }
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02902",
+                "requirementIds": [
+                  "CRS-M1-00615"
+                ],
+                "sourceUnitId": "SU-RFC-1122-4-UDP-P078-PROSE-SENTENCE-001-97CB6EED1414",
+                "clause": "4-UDP"
+              },
+              {
+                "coverageId": "COV-M1-02920",
+                "requirementIds": [
+                  "CRS-M1-00631"
+                ],
+                "sourceUnitId": "SU-RFC-1122-4-UDP-P078-PROSE-SENTENCE-002-EE88901ECA01",
+                "clause": "4-UDP"
               }
             ]
           },
@@ -12242,7 +16259,24 @@
             "leafRequirementIds": [
               "CRS-M1-00616"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [
+              {
+                "id": "SAU-1123-4-2-REMAINING-HOST-NOTE-ATOMS",
+                "disposition": "NOT-YET-BOUND",
+                "summaryEn": "RFC 1123 4.2 host-requirement atoms beyond the 615A octet/option adoption decision remain outside this leaf. Mail/netascii and broadcast-RRQ stay not adopted; they are not closed by this overview row.",
+                "summaryZh": "RFC 1123 §4.2 中超出 615A octet／选项采纳决定的主机要求原子仍在本叶之外。mail／netascii 与广播 RRQ 保持不采用；本概述行不将其闭合。"
+              }
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02903",
+                "requirementIds": [
+                  "CRS-M1-00616"
+                ],
+                "sourceUnitId": "SU-RFC-1123-4.2-P044-PROSE-SENTENCE-001-4EE42D37EF0F",
+                "clause": "4.2"
+              }
+            ]
           },
           {
             "id": "SAU-1123-5",
@@ -12333,7 +16367,15 @@
               "COV-M1-02904"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02904",
+                "requirementIds": [],
+                "sourceUnitId": "SU-RFC-1350-1-P001-PROSE-SENTENCE-001-D2D137F40424",
+                "clause": "1"
+              }
+            ]
           },
           {
             "id": "SAU-1350-2",
@@ -12361,7 +16403,17 @@
             "leafRequirementIds": [
               "CRS-M1-00617"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02905",
+                "requirementIds": [
+                  "CRS-M1-00617"
+                ],
+                "sourceUnitId": "SU-RFC-1350-2-P002-PROSE-SENTENCE-001-915D439C7026",
+                "clause": "2"
+              }
+            ]
           },
           {
             "id": "SAU-1350-3",
@@ -12387,7 +16439,15 @@
               "COV-M1-02906"
             ],
             "leafRequirementIds": [],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02906",
+                "requirementIds": [],
+                "sourceUnitId": "SU-RFC-1350-3-P003-PROSE-SENTENCE-001-447EE848E221",
+                "clause": "3"
+              }
+            ]
           },
           {
             "id": "SAU-1350-4",
@@ -12415,7 +16475,17 @@
             "leafRequirementIds": [
               "CRS-M1-00618"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02907",
+                "requirementIds": [
+                  "CRS-M1-00618"
+                ],
+                "sourceUnitId": "SU-RFC-1350-4-P004-PROSE-SENTENCE-001-D277980D1D8E",
+                "clause": "4"
+              }
+            ]
           },
           {
             "id": "SAU-1350-5",
@@ -12462,6 +16532,64 @@
                 "summaryEn": "Mail-mode recipient syntax is not used by ARINC 615A octet TFTP.",
                 "summaryZh": "ARINC 615A octet TFTP 不使用 mail 模式收件人句法。"
               }
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02908",
+                "requirementIds": [
+                  "CRS-M1-00619"
+                ],
+                "sourceUnitId": "SU-RFC-1350-5-P005-PROSE-SENTENCE-001-437B5A681A97",
+                "clause": "5"
+              },
+              {
+                "coverageId": "COV-M1-02921",
+                "requirementIds": [
+                  "CRS-M1-00632"
+                ],
+                "sourceUnitId": "SU-RFC-1350-5-P006-PROSE-SENTENCE-002-D4D9B426A42C",
+                "clause": "5"
+              },
+              {
+                "coverageId": "COV-M1-02922",
+                "requirementIds": [
+                  "CRS-M1-00633"
+                ],
+                "sourceUnitId": "SU-RFC-1350-5-P006-PROSE-SENTENCE-003-6A26416C0F34",
+                "clause": "5"
+              },
+              {
+                "coverageId": "COV-M1-02923",
+                "requirementIds": [
+                  "CRS-M1-00634"
+                ],
+                "sourceUnitId": "SU-RFC-1350-5-P007-PROSE-SENTENCE-004-FA88F1D2C7FC",
+                "clause": "5"
+              },
+              {
+                "coverageId": "COV-M1-02924",
+                "requirementIds": [
+                  "CRS-M1-00635"
+                ],
+                "sourceUnitId": "SU-RFC-1350-5-P007-PROSE-SENTENCE-005-B18C73BA4DC6",
+                "clause": "5"
+              },
+              {
+                "coverageId": "COV-M1-02925",
+                "requirementIds": [
+                  "CRS-M1-00636"
+                ],
+                "sourceUnitId": "SU-RFC-1350-5-P007-PROSE-SENTENCE-006-EFA658E687D9",
+                "clause": "5"
+              },
+              {
+                "coverageId": "COV-M1-02926",
+                "requirementIds": [
+                  "CRS-M1-00637"
+                ],
+                "sourceUnitId": "SU-RFC-1350-5-P008-PROSE-SENTENCE-007-C1DAC90B8F1C",
+                "clause": "5"
+              }
             ]
           },
           {
@@ -12490,7 +16618,17 @@
             "leafRequirementIds": [
               "CRS-M1-00620"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02909",
+                "requirementIds": [
+                  "CRS-M1-00620"
+                ],
+                "sourceUnitId": "SU-RFC-1350-6-P008-PROSE-SENTENCE-001-A3B31A53EE8A",
+                "clause": "6"
+              }
+            ]
           },
           {
             "id": "SAU-1350-7",
@@ -12518,7 +16656,17 @@
             "leafRequirementIds": [
               "CRS-M1-00621"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02910",
+                "requirementIds": [
+                  "CRS-M1-00621"
+                ],
+                "sourceUnitId": "SU-RFC-1350-7-P008-PROSE-SENTENCE-001-264E58C9BCD0",
+                "clause": "7"
+              }
+            ]
           },
           {
             "id": "SAU-1350-MAIL",
@@ -12649,7 +16797,17 @@
             "leafRequirementIds": [
               "CRS-M1-00622"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02911",
+                "requirementIds": [
+                  "CRS-M1-00622"
+                ],
+                "sourceUnitId": "SU-RFC-2347-INTRODUCTION-P001-PROSE-SENTENCE-001-5C5065F92C6A",
+                "clause": "Introduction"
+              }
+            ]
           },
           {
             "id": "SAU-2347-PKT",
@@ -12677,7 +16835,17 @@
             "leafRequirementIds": [
               "CRS-M1-00623"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02912",
+                "requirementIds": [
+                  "CRS-M1-00623"
+                ],
+                "sourceUnitId": "SU-RFC-2347-PACKET-FORMATS-P001-PROSE-SENTENCE-001-937DF46256B2",
+                "clause": "Packet Formats"
+              }
+            ]
           },
           {
             "id": "SAU-2347-NEG",
@@ -12700,12 +16868,32 @@
             "summaryEn": "Options append to RRQ/WRQ. Only blksize, timeout and tsize are adopted from 2348/2349 plus any 615A-defined integrity option. Other options stay unimplemented and non-fatal. Leaf coverage emitted this Package B increment; this is not independent RG approval.",
             "summaryZh": "选项附于 RRQ/WRQ。仅采纳 2348/2349 的 blksize、timeout、tsize 以及 615A 定义的完整性选项。其他选项保持未实现且非致命。本执行包 B 已发出叶覆盖；这不是独立 RG 批准。",
             "leafCoverageIds": [
-              "COV-M1-02913"
+              "COV-M1-02913",
+              "COV-M1-02936"
             ],
             "leafRequirementIds": [
-              "CRS-M1-00624"
+              "CRS-M1-00624",
+              "CRS-M1-00647"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02913",
+                "requirementIds": [
+                  "CRS-M1-00624"
+                ],
+                "sourceUnitId": "SU-RFC-2347-OPTIONS-P001-PROSE-SENTENCE-001-8E570F666B45",
+                "clause": "Options"
+              },
+              {
+                "coverageId": "COV-M1-02936",
+                "requirementIds": [
+                  "CRS-M1-00647"
+                ],
+                "sourceUnitId": "SU-RFC-2347-OPTIONS-P003-PROSE-SENTENCE-002-618B7593EFF3",
+                "clause": "Options"
+              }
+            ]
           },
           {
             "id": "SAU-2347-SEC",
@@ -12766,13 +16954,17 @@
               "COV-M1-02914",
               "COV-M1-02927",
               "COV-M1-02928",
-              "COV-M1-02929"
+              "COV-M1-02929",
+              "COV-M1-02934",
+              "COV-M1-02935"
             ],
             "leafRequirementIds": [
               "CRS-M1-00625",
               "CRS-M1-00638",
               "CRS-M1-00639",
-              "CRS-M1-00640"
+              "CRS-M1-00640",
+              "CRS-M1-00645",
+              "CRS-M1-00646"
             ],
             "remainingSubunits": [
               {
@@ -12780,6 +16972,56 @@
                 "disposition": "INFORMATIVE",
                 "summaryEn": "Proof-of-concept performance discussion is not a protocol leaf.",
                 "summaryZh": "概念验证性能讨论不是协议叶。"
+              }
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02914",
+                "requirementIds": [
+                  "CRS-M1-00625"
+                ],
+                "sourceUnitId": "SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-001-2E65D6906084",
+                "clause": "Blocksize Option Specification"
+              },
+              {
+                "coverageId": "COV-M1-02927",
+                "requirementIds": [
+                  "CRS-M1-00638"
+                ],
+                "sourceUnitId": "SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-002-D08B24697C4B",
+                "clause": "Blocksize Option Specification"
+              },
+              {
+                "coverageId": "COV-M1-02928",
+                "requirementIds": [
+                  "CRS-M1-00639"
+                ],
+                "sourceUnitId": "SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-003-64CFECEAC810",
+                "clause": "Blocksize Option Specification"
+              },
+              {
+                "coverageId": "COV-M1-02929",
+                "requirementIds": [
+                  "CRS-M1-00640"
+                ],
+                "sourceUnitId": "SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-004-90DA13EFFC7B",
+                "clause": "Blocksize Option Specification"
+              },
+              {
+                "coverageId": "COV-M1-02934",
+                "requirementIds": [
+                  "CRS-M1-00645"
+                ],
+                "sourceUnitId": "SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-005-58E88FD7743A",
+                "clause": "Blocksize Option Specification"
+              },
+              {
+                "coverageId": "COV-M1-02935",
+                "requirementIds": [
+                  "CRS-M1-00646"
+                ],
+                "sourceUnitId": "SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-006-B4C2F18DB477",
+                "clause": "Blocksize Option Specification"
               }
             ]
           },
@@ -12846,7 +17088,25 @@
               "CRS-M1-00626",
               "CRS-M1-00641"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02915",
+                "requirementIds": [
+                  "CRS-M1-00626"
+                ],
+                "sourceUnitId": "SU-RFC-2349-TIMEOUT-INTERVAL-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-001-360611697E14",
+                "clause": "Timeout Interval Option Specification"
+              },
+              {
+                "coverageId": "COV-M1-02930",
+                "requirementIds": [
+                  "CRS-M1-00641"
+                ],
+                "sourceUnitId": "SU-RFC-2349-TIMEOUT-INTERVAL-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-002-E2BFBC18EF44",
+                "clause": "Timeout Interval Option Specification"
+              }
+            ]
           },
           {
             "id": "SAU-2349-TS",
@@ -12880,7 +17140,41 @@
               "CRS-M1-00643",
               "CRS-M1-00644"
             ],
-            "remainingSubunits": []
+            "remainingSubunits": [],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-02916",
+                "requirementIds": [
+                  "CRS-M1-00627"
+                ],
+                "sourceUnitId": "SU-RFC-2349-TRANSFER-SIZE-OPTION-SPECIFICATION-P003-PROSE-SENTENCE-001-3C03E80BD652",
+                "clause": "Transfer Size Option Specification"
+              },
+              {
+                "coverageId": "COV-M1-02931",
+                "requirementIds": [
+                  "CRS-M1-00642"
+                ],
+                "sourceUnitId": "SU-RFC-2349-TRANSFER-SIZE-OPTION-SPECIFICATION-P003-PROSE-SENTENCE-002-1C1E78F3F6AA",
+                "clause": "Transfer Size Option Specification"
+              },
+              {
+                "coverageId": "COV-M1-02932",
+                "requirementIds": [
+                  "CRS-M1-00643"
+                ],
+                "sourceUnitId": "SU-RFC-2349-TRANSFER-SIZE-OPTION-SPECIFICATION-P003-PROSE-SENTENCE-003-10D1D5886DB7",
+                "clause": "Transfer Size Option Specification"
+              },
+              {
+                "coverageId": "COV-M1-02933",
+                "requirementIds": [
+                  "CRS-M1-00644"
+                ],
+                "sourceUnitId": "SU-RFC-2349-TRANSFER-SIZE-OPTION-SPECIFICATION-P003-PROSE-SENTENCE-004-0EDC725A7828",
+                "clause": "Transfer Size Option Specification"
+              }
+            ]
           },
           {
             "id": "SAU-2349-SEC",

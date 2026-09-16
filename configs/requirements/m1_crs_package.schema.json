@@ -1067,6 +1067,35 @@
                             "$ref": "#/$defs/id"
                         }
                     },
+                    "supportingRequirementRelations": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "type": "object",
+                            "additionalProperties": false,
+                            "required": [
+                                "requirementId",
+                                "relation",
+                                "rationaleCode"
+                            ],
+                            "properties": {
+                                "requirementId": {
+                                    "$ref": "#/$defs/id"
+                                },
+                                "relation": {
+                                    "enum": [
+                                        "REFINES-WHEN-OPTION-NEGOTIATED",
+                                        "SCOPES-DEFAULT-512-MODE",
+                                        "FALLBACK-WHEN-OPTION-NOT-ACCEPTED"
+                                    ]
+                                },
+                                "rationaleCode": {
+                                    "type": "string",
+                                    "minLength": 1
+                                }
+                            }
+                        }
+                    },
                     "triggerRelations": {
                         "type": "array",
                         "uniqueItems": true,

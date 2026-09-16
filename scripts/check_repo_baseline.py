@@ -573,6 +573,15 @@ SUPPORTING_LEAF_STATUSES = {
     "EXISTING-615A-LEAF",
     "CRS-M1-00519-REMAINS-NOT-YET-BOUND",
 }
+SUPPORTING_LEAF_BOUND_STATUSES = {
+    "LEAF-CRS-EMITTED",
+    "EXISTING-351-TRIGGERED-ROWS",
+    "EXISTING-LEAF-VIA-2-1-2",
+    "EXISTING-615A-LEAF",
+}
+SUPPORTING_NOT_REQUIRED_APPLICABILITY = {"OUT-OF-PROFILE", "DEPENDENCY-BLOCKED"}
+SUPPORTING_REQUIRED_EFFECTS = {"REQUIRED", "CONDITIONAL-REQUIRED"}
+SUPPORTING_APPLICABLE_DECISIONS = {"APPLICABLE-SUPPORTING", "CONDITIONAL"}
 
 
 def supporting_scope_source_ids(register: dict | None = None) -> set[str]:
@@ -594,6 +603,48 @@ def supporting_scope_source_ids(register: dict | None = None) -> set[str]:
         if isinstance(source_id, str) and source_id.startswith("RFC-"):
             ids.add(source_id)
     return ids
+
+
+def supporting_unit_clause_prefixes(unit: dict) -> list[str]:
+    """Locator prefixes for an audit unit. Composite numeric ranges split; titles stay whole."""
+    locator = unit.get("leafLocator") if isinstance(unit.get("leafLocator"), dict) else {}
+    recorded = locator.get("clausePrefixes")
+    if isinstance(recorded, list) and recorded:
+        return [str(item) for item in recorded if isinstance(item, str) and item]
+    clause = str(unit.get("clause") or "")
+    if re.fullmatch(r"[0-9]+(?:\.[0-9]+)*-[0-9]+(?:\.[0-9]+)*", clause):
+        return clause.split("-")
+    return [clause] if clause else []
+
+
+def supporting_unit_source_ids(source_id: str, unit: dict) -> set[str]:
+    locator = unit.get("leafLocator") if isinstance(unit.get("leafLocator"), dict) else {}
+    recorded = locator.get("sourceIds")
+    if isinstance(recorded, list) and recorded:
+        return {str(item) for item in recorded if isinstance(item, str) and item}
+    return {source_id} if source_id else set()
+
+
+def supporting_unit_excluded_prefixes(unit: dict) -> list[str]:
+    locator = unit.get("leafLocator") if isinstance(unit.get("leafLocator"), dict) else {}
+    recorded = locator.get("excludedClausePrefixes")
+    if isinstance(recorded, list):
+        return [str(item) for item in recorded if isinstance(item, str) and item]
+    return []
+
+
+def clause_in_supporting_unit_scope(clause: str, unit: dict) -> bool:
+    """True when a leaf clause is in the unit scope. Prefix+dot is allowed; exact unit clause also matches composites such as 3.2.2-3.2.3."""
+    text = str(clause or "")
+    excluded = supporting_unit_excluded_prefixes(unit)
+    if any(text == prefix or text.startswith(prefix + ".") for prefix in excluded):
+        return False
+    if not unit.get("leafLocator") and text == str(unit.get("clause") or ""):
+        return True
+    for prefix in supporting_unit_clause_prefixes(unit):
+        if text == prefix or text.startswith(prefix + "."):
+            return True
+    return False
 
 
 def _register_source_digest(register: dict, source_id: str) -> str | None:
@@ -672,6 +723,8 @@ def supporting_source_audit_errors(
         if denom.get("count") != len(units):
             errors.append(f"supporting-source {source_id} coverageDenominator.count does not match units")
         unit_ids: list[str] = []
+        seen_clauses: set[str] = set()
+        allowed_sources_for_unit = lambda unit: supporting_unit_source_ids(source_id, unit)
         for unit_index, unit in enumerate(units):
             if not isinstance(unit, dict):
                 errors.append(f"supporting-source {source_id} units[{unit_index}] must be an object")
@@ -684,19 +737,79 @@ def supporting_source_audit_errors(
                 errors.append(f"supporting-source audit contains duplicate unit id {unit_id}")
             seen_units.add(unit_id)
             unit_ids.append(unit_id)
+            clause = str(unit.get("clause") or "")
+            if clause:
+                if clause in seen_clauses:
+                    errors.append(f"supporting-source {source_id} contains duplicate unit clause {clause}")
+                seen_clauses.add(clause)
+            applicability = unit.get("applicabilityDecision")
+            effect = unit.get("conformanceEffect")
             leaf_status = unit.get("leafCrsStatus")
             if leaf_status not in SUPPORTING_LEAF_STATUSES:
                 errors.append(f"supporting-source unit {unit_id} has undeclared leafCrsStatus")
                 continue
-            if leaf_status != "LEAF-CRS-EMITTED":
+            not_required_allowed = applicability in SUPPORTING_NOT_REQUIRED_APPLICABILITY or (
+                applicability == "CONDITIONAL" and effect == "INFORMATIVE"
+            )
+            if leaf_status == "NOT-REQUIRED":
+                if applicability in SUPPORTING_APPLICABLE_DECISIONS and effect in SUPPORTING_REQUIRED_EFFECTS:
+                    errors.append(
+                        f"supporting-source unit {unit_id} has applicable required obligations and cannot be NOT-REQUIRED"
+                    )
+                elif not not_required_allowed:
+                    errors.append(
+                        f"supporting-source unit {unit_id} NOT-REQUIRED is not supported by its applicability/effect disposition"
+                    )
+                continue
+            if leaf_status == "CRS-M1-00519-REMAINS-NOT-YET-BOUND":
+                continue
+            if leaf_status not in SUPPORTING_LEAF_BOUND_STATUSES:
                 continue
             leaf_cov = unit.get("leafCoverageIds")
             leaf_req = unit.get("leafRequirementIds")
+            admitted = unit.get("admittedLeafUnits")
             if not isinstance(leaf_cov, list) or not leaf_cov:
-                errors.append(f"supporting-source unit {unit_id} LEAF-CRS-EMITTED is missing leafCoverageIds")
+                errors.append(f"supporting-source unit {unit_id} {leaf_status} is missing leafCoverageIds")
+                continue
+            if not isinstance(admitted, list) or not admitted:
+                errors.append(f"supporting-source unit {unit_id} {leaf_status} is missing admittedLeafUnits")
                 continue
             if len(leaf_cov) != len(set(leaf_cov)):
                 errors.append(f"supporting-source unit {unit_id} leafCoverageIds contains duplicates")
+            admitted_cov: list[str] = []
+            admitted_req: list[str] = []
+            for item_index, item in enumerate(admitted):
+                if not isinstance(item, dict):
+                    errors.append(f"supporting-source unit {unit_id} admittedLeafUnits[{item_index}] must be an object")
+                    continue
+                cov_id = item.get("coverageId")
+                source_unit = item.get("sourceUnitId")
+                admitted_clause = item.get("clause")
+                if not isinstance(cov_id, str) or cov_id not in coverage_by_id:
+                    errors.append(f"supporting-source unit {unit_id} admitted coverage {cov_id} is absent from the bound CRS ledger")
+                    continue
+                if cov_id in admitted_cov:
+                    errors.append(f"supporting-source unit {unit_id} admittedLeafUnits contains duplicate coverage {cov_id}")
+                admitted_cov.append(cov_id)
+                coverage = coverage_by_id[cov_id]
+                cov_source = (coverage.get("source") or {}).get("sourceId")
+                allowed_sources = allowed_sources_for_unit(unit)
+                if cov_source not in allowed_sources:
+                    errors.append(f"supporting-source unit {unit_id} admitted coverage {cov_id} is from {cov_source}")
+                if source_unit and coverage.get("sourceUnitId") != source_unit:
+                    errors.append(f"supporting-source unit {unit_id} admitted coverage {cov_id} sourceUnitId does not match the bound CRS ledger")
+                leaf_clause = (coverage.get("source") or {}).get("clause")
+                if admitted_clause and admitted_clause != leaf_clause:
+                    errors.append(f"supporting-source unit {unit_id} admitted coverage {cov_id} clause does not match the bound CRS ledger")
+                if not clause_in_supporting_unit_scope(str(leaf_clause or ""), unit):
+                    errors.append(f"supporting-source unit {unit_id} admitted coverage {cov_id} is outside the unit locator scope")
+                for req_id in item.get("requirementIds") or []:
+                    if isinstance(req_id, str) and req_id not in admitted_req:
+                        admitted_req.append(req_id)
+            if set(leaf_cov) != set(admitted_cov):
+                errors.append(
+                    f"supporting-source unit {unit_id} leafCoverageIds do not match the admitted leaf-unit set"
+                )
             expected_req: list[str] = []
             for cov_id in leaf_cov:
                 if not isinstance(cov_id, str) or cov_id not in coverage_by_id:
@@ -704,13 +817,16 @@ def supporting_source_audit_errors(
                     continue
                 coverage = coverage_by_id[cov_id]
                 cov_source = (coverage.get("source") or {}).get("sourceId")
-                if cov_source != source_id:
+                allowed_sources = allowed_sources_for_unit(unit)
+                if cov_source not in allowed_sources:
                     errors.append(f"supporting-source unit {unit_id} leaf coverage {cov_id} is from {cov_source}")
+                if not clause_in_supporting_unit_scope(str((coverage.get("source") or {}).get("clause") or ""), unit):
+                    errors.append(f"supporting-source unit {unit_id} leaf coverage {cov_id} is outside the unit locator scope")
                 for req_id in coverage.get("requirementIds") or []:
                     if req_id not in expected_req:
                         expected_req.append(req_id)
             if not isinstance(leaf_req, list):
-                errors.append(f"supporting-source unit {unit_id} LEAF-CRS-EMITTED is missing leafRequirementIds")
+                errors.append(f"supporting-source unit {unit_id} {leaf_status} is missing leafRequirementIds")
                 continue
             if len(leaf_req) != len(set(leaf_req)):
                 errors.append(f"supporting-source unit {unit_id} leafRequirementIds contains duplicates")
@@ -718,14 +834,20 @@ def supporting_source_audit_errors(
                 errors.append(
                     f"supporting-source unit {unit_id} leafRequirementIds do not match the bound coverage requirement set"
                 )
+            if admitted_req and set(leaf_req) != set(admitted_req):
+                errors.append(
+                    f"supporting-source unit {unit_id} leafRequirementIds do not match the admitted leaf-unit set"
+                )
             for req_id in leaf_req:
                 if req_id not in req_by_id:
                     errors.append(f"supporting-source unit {unit_id} leaf requirement {req_id} is absent from the bound CRS package")
                     continue
                 req = req_by_id[req_id]
                 req_source = (req.get("source") or {}).get("sourceId")
-                if req_source != source_id:
+                if req_source not in allowed_sources_for_unit(unit):
                     errors.append(f"supporting-source unit {unit_id} leaf requirement {req_id} is from {req_source}")
+                if not clause_in_supporting_unit_scope(str((req.get("source") or {}).get("clause") or ""), unit):
+                    errors.append(f"supporting-source unit {unit_id} leaf requirement {req_id} is outside the unit locator scope")
     extra = set(recorded_ids) - expected_ids
     missing = expected_ids - set(recorded_ids)
     if extra:

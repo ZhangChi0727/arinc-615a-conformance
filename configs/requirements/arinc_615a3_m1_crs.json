@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0",
   "artifactId": "ARINC615A3-M1-CRS",
-  "artifactVersion": "M1-CANDIDATE-10",
+  "artifactVersion": "M1-CANDIDATE-11",
   "candidateDisposition": "ADOPT",
   "sourceBindings": [
     {
@@ -71757,6 +71757,84 @@
       "requirementIds": [
         "CRS-M1-00644"
       ]
+    },
+    {
+      "id": "COV-M1-02934",
+      "sourceUnitId": "SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-005-58E88FD7743A",
+      "source": {
+        "sourceId": "RFC-2348",
+        "clause": "Blocksize Option Specification",
+        "tableOrFigure": null,
+        "documentPage": 2,
+        "pdfPage": 2,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "58e88fd7743a2f17fa1dbebf813cb1c5825417c4a67f078969767a29d1e2114b",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-BLKSIZE-ADOPTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00645"
+      ]
+    },
+    {
+      "id": "COV-M1-02935",
+      "sourceUnitId": "SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-006-B4C2F18DB477",
+      "source": {
+        "sourceId": "RFC-2348",
+        "clause": "Blocksize Option Specification",
+        "tableOrFigure": null,
+        "documentPage": 2,
+        "pdfPage": 2,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "b4c2f18db47797c91e61286dbe55ce1ba2c1cfb6dda1565e4628a67eaa6947a0",
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-BLKSIZE-ADOPTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00646"
+      ]
+    },
+    {
+      "id": "COV-M1-02936",
+      "sourceUnitId": "SU-RFC-2347-OPTIONS-P003-PROSE-SENTENCE-002-618B7593EFF3",
+      "source": {
+        "sourceId": "RFC-2347",
+        "clause": "Options",
+        "tableOrFigure": null,
+        "documentPage": 3,
+        "pdfPage": 3,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "618b7593eff35062a4a9a9baeb8a6b60d7c62de2b70a56195d6e6713c9fd30b4",
+      "sourceModality": "MUST",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-OPTION-SEQUENCE",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00647"
+      ]
     }
   ],
   "requirements": [
@@ -102773,11 +102851,11 @@
       },
       "sourceTextHash": "a3b31a53ee8ad0362fa7188ea0cdad592180a12055a8c0ca3a1e84a258ca4b18",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "A DATA packet containing between 0 and 511 bytes of data marks the end of the transfer.",
-      "generatedSemanticProjectionZh": "包含 0 至 511 字节数据的 DATA 包标志传输结束。",
+      "generatedSemanticProjectionEn": "When blksize was not successfully negotiated, a DATA packet containing between 0 and 511 bytes of data marks the end of the transfer. This default 512-octet rule does not apply after an accepted blksize OACK.",
+      "generatedSemanticProjectionZh": "未成功协商 blksize 时，含 0 至 511 字节数据的 DATA 包标志传输结束。该默认 512 八位组规则在接受 blksize 的 OACK 之后不适用。",
       "semantic": {
         "actor": "TFTP-TRANSFER-PARTICIPANT",
-        "condition": "WHEN-ENDING-A-615A-TFTP-TRANSFER-NORMALLY",
+        "condition": "WHEN-ENDING-A-615A-TFTP-TRANSFER-AND-BLKSIZE-WAS-NOT-SUCCESSFULLY-NEGOTIATED",
         "action": "TERMINATE-ON-DATA-PACKET-OF-0-TO-511-BYTES",
         "objects": [
           "TFTP-FINAL-DATA-BLOCK"
@@ -102801,7 +102879,14 @@
         "relation": "refines-reviewed-source-unit",
         "sourceCoverageId": "COV-M1-02909",
         "status": "CANDIDATE"
-      }
+      },
+      "supportingRequirementRelations": [
+        {
+          "requirementId": "CRS-M1-00635",
+          "relation": "SCOPES-DEFAULT-512-MODE",
+          "rationaleCode": "RFC-1350-DEFAULT-TERMINATION-UNLESS-BLKSIZE-ACCEPTED"
+        }
+      ]
     },
     {
       "id": "CRS-M1-00621",
@@ -103455,11 +103540,11 @@
       },
       "sourceTextHash": "b18c73ba4dc635ac2f762db6c487788ac68e7cafb8f7be1cbb6a7d2038c0cc7d",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "The DATA data field is from zero to 512 bytes long. RFC 2348 may negotiate a different blocksize; that option is a separate leaf.",
-      "generatedSemanticProjectionZh": "DATA 的数据字段长度为 0 至 512 字节。RFC 2348 可协商不同块大小，该选项是单独的叶。",
+      "generatedSemanticProjectionEn": "When blksize was not successfully negotiated, the DATA data field is from zero to 512 bytes long. A 512-byte DATA is not the last block. RFC 2348 replaces this width after an accepted blksize OACK.",
+      "generatedSemanticProjectionZh": "未成功协商 blksize 时，DATA 数据字段为 0 至 512 字节；512 字节 DATA 不是最后块。接受 blksize 的 OACK 后，由 RFC 2348 替换该宽度。",
       "semantic": {
         "actor": "TFTP-TRANSFER-PARTICIPANT",
-        "condition": "WHEN-SENDING-OR-RECEIVING-TFTP-DATA",
+        "condition": "WHEN-SENDING-OR-RECEIVING-TFTP-DATA-AND-BLKSIZE-WAS-NOT-SUCCESSFULLY-NEGOTIATED",
         "action": "LIMIT-TFTP-DATA-FIELD-TO-ZERO-THROUGH-512-BYTES",
         "objects": [
           "TFTP-DATA"
@@ -103485,7 +103570,14 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "TFTP-DATA-WIDTH",
-      "splitRationale": "Default DATA width is this sentence; blksize negotiation is RFC 2348."
+      "splitRationale": "Default DATA width is this sentence; blksize negotiation is RFC 2348.",
+      "supportingRequirementRelations": [
+        {
+          "requirementId": "CRS-M1-00620",
+          "relation": "SCOPES-DEFAULT-512-MODE",
+          "rationaleCode": "RFC-1350-DEFAULT-DATA-WIDTH-UNLESS-BLKSIZE-ACCEPTED"
+        }
+      ]
     },
     {
       "id": "CRS-M1-00636",
@@ -103909,6 +104001,162 @@
       },
       "atomicPartId": "TFTP-TSIZE-WRQ-ABORT",
       "splitRationale": "WRQ oversize abort is this MAY; RRQ oversize abort is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00645",
+      "sourceUnitId": "SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-005-58E88FD7743A",
+      "source": {
+        "sourceId": "RFC-2348",
+        "clause": "Blocksize Option Specification",
+        "tableOrFigure": null,
+        "documentPage": 2,
+        "pdfPage": 2,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "58e88fd7743a2f17fa1dbebf813cb1c5825417c4a67f078969767a29d1e2114b",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "After blksize is accepted in OACK, a DATA packet shorter than that negotiated blocksize is the final block. A 700-octet DATA after blksize=1024 ends the transfer; a 256-octet DATA after blksize=256 does not.",
+      "generatedSemanticProjectionZh": "blksize 经 OACK 接受后，短于该协商块大小的 DATA 是最后块。协商 1024 后的 700 八位组 DATA 结束传输；协商 256 后的满 256 八位组 DATA 不结束。",
+      "semantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-BLKSIZE-WAS-SUCCESSFULLY-NEGOTIATED",
+        "action": "TERMINATE-ON-DATA-SHORTER-THAN-NEGOTIATED-BLKSIZE",
+        "objects": [
+          "TFTP-DATA",
+          "TFTP-NEGOTIATED-BLKSIZE"
+        ],
+        "observableEffect": "TFTP-NEGOTIATED-FINAL-BLOCK-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-BLKSIZE-ADOPTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-2348"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02934",
+        "status": "CANDIDATE"
+      },
+      "supportingRequirementRelations": [
+        {
+          "requirementId": "CRS-M1-00620",
+          "relation": "REFINES-WHEN-OPTION-NEGOTIATED",
+          "rationaleCode": "RFC-2348-OVERRIDES-DEFAULT-512-TERMINATION"
+        }
+      ]
+    },
+    {
+      "id": "CRS-M1-00646",
+      "sourceUnitId": "SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-006-B4C2F18DB477",
+      "source": {
+        "sourceId": "RFC-2348",
+        "clause": "Blocksize Option Specification",
+        "tableOrFigure": null,
+        "documentPage": 2,
+        "pdfPage": 2,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "b4c2f18db47797c91e61286dbe55ce1ba2c1cfb6dda1565e4628a67eaa6947a0",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If the file length is an integral multiple of the effective blocksize, an extra DATA packet containing no data is sent to end the transfer. Effective blocksize is 512 when blksize was not accepted, otherwise the OACK value.",
+      "generatedSemanticProjectionZh": "若文件长度是有效块大小的整数倍，须发送不含数据的额外 DATA 包结束传输。未接受 blksize 时有效块大小为 512，否则为 OACK 值。",
+      "semantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-FILE-LENGTH-IS-AN-INTEGRAL-MULTIPLE-OF-EFFECTIVE-BLKSIZE",
+        "action": "SEND-ZERO-LENGTH-FINAL-DATA-WHEN-FILE-IS-INTEGRAL-MULTIPLE-OF-BLKSIZE",
+        "objects": [
+          "TFTP-DATA",
+          "TFTP-EFFECTIVE-BLKSIZE"
+        ],
+        "observableEffect": "TFTP-ZERO-LENGTH-FINAL-BLOCK-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-BLKSIZE-ADOPTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-2348"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02935",
+        "status": "CANDIDATE"
+      },
+      "supportingRequirementRelations": [
+        {
+          "requirementId": "CRS-M1-00620",
+          "relation": "REFINES-WHEN-OPTION-NEGOTIATED",
+          "rationaleCode": "RFC-2348-ZERO-LENGTH-FINAL-BLOCK"
+        }
+      ]
+    },
+    {
+      "id": "CRS-M1-00647",
+      "sourceUnitId": "SU-RFC-2347-OPTIONS-P003-PROSE-SENTENCE-002-618B7593EFF3",
+      "source": {
+        "sourceId": "RFC-2347",
+        "clause": "Options",
+        "tableOrFigure": null,
+        "documentPage": 3,
+        "pdfPage": 3,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "618b7593eff35062a4a9a9baeb8a6b60d7c62de2b70a56195d6e6713c9fd30b4",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "An option not acknowledged by the server must be ignored by client and server as if it were never requested. Requesting blksize does not change the 512-octet default until that option is accepted in OACK.",
+      "generatedSemanticProjectionZh": "服务器未确认的选项必须被客户和服务器忽略，如同从未请求。仅请求 blksize 不得改变 512 八位组默认值，直至该选项在 OACK 中被接受。",
+      "semantic": {
+        "actor": "TFTP-TRANSFER-PARTICIPANT",
+        "condition": "WHEN-A-REQUESTED-OPTION-IS-NOT-ACKNOWLEDGED",
+        "action": "IGNORE-UNACKNOWLEDGED-OPTION-AND-KEEP-DEFAULT-PARAMETERS",
+        "objects": [
+          "TFTP-OPTION",
+          "TFTP-DEFAULT-512-BLKSIZE"
+        ],
+        "observableEffect": "TFTP-UNACKNOWLEDGED-OPTION-IGNORED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "MUST",
+      "conformanceEffect": "REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "TFTP-OPTION-SEQUENCE",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-RFC-2347"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-02936",
+        "status": "CANDIDATE"
+      },
+      "supportingRequirementRelations": [
+        {
+          "requirementId": "CRS-M1-00620",
+          "relation": "FALLBACK-WHEN-OPTION-NOT-ACCEPTED",
+          "rationaleCode": "RFC-2347-UNACKED-OPTION-KEEPS-DEFAULT-512"
+        }
+      ]
     }
   ],
   "dependencies": [
@@ -104060,24 +104308,24 @@
     "rg0": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "rg1": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "reviewHead": "UNBOUND-DRAFT",
-    "sourceInventoryFingerprint": "629571050d09b5bacc4f24751398a6da4ef57f005f510f31ee8460cab2bedfe3",
+    "sourceInventoryFingerprint": "aaf8d24a7710ad45fad1a257fe1a5f58f262a2a020be380e7d12974d6eecd18b",
     "sectionSpanManifestPath": "configs/requirements/m1_source_section_spans.json",
     "sectionSpanManifestFingerprint": "b528547940c8230e8a9688320e66168208c80d7b9b539342c4c9443facae5e9e",
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "cf500b066413457f7f6b0deff884af1caa12615e3f44e668faadbfea21db100f",
+    "semanticAssertionFingerprint": "34bc20349a42ddf1f1b4b8ecd34068af6d78125b48202cf8e40d6ebbe5f41958",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
   },
   "inventorySummary": {
-    "coverageCount": 2933,
-    "requirementCount": 643,
+    "coverageCount": 2936,
+    "requirementCount": 646,
     "dependencyCount": 14,
     "gapCount": 1,
-    "coverageFingerprint": "48786e0e3328ab90f3cc9b61355dd281a2c633bc7adee64a06c1c18bd70fa25f",
-    "requirementsFingerprint": "9583de498ddd0fdc161448de23701d8d3b62a3af300eb1e6965571351c6cc787"
+    "coverageFingerprint": "ee23593dda4aac1c07a1fa2bfdf8f744ddd56a1a7138264fe0b7f6861e6b6463",
+    "requirementsFingerprint": "5c17ac8ca2eeabd6e1899cc7ff71bff7a0a56049d59575cea5ca7955af3d3c45"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

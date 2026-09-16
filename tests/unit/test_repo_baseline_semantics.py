@@ -1046,7 +1046,7 @@ def test_find_required_reread_candidates_have_crs_rows() -> None:
             assert row["requirementIds"] == []
             assert row["applicabilityDecision"] in {"OUT-OF-PROFILE", "APPLICABLE-SUPPORTING", "CONDITIONAL"}
     assert generated == 34
-    assert crs["artifactVersion"] == "M1-CANDIDATE-10"
+    assert crs["artifactVersion"] == "M1-CANDIDATE-11"
 
 
 def test_download_and_afdx_required_reread_candidates_have_crs_rows() -> None:
@@ -1076,7 +1076,7 @@ def test_download_and_afdx_required_reread_candidates_have_crs_rows() -> None:
             assert row["requirementIds"] == []
     assert download == 103
     assert afdx == 3
-    assert crs["artifactVersion"] == "M1-CANDIDATE-10"
+    assert crs["artifactVersion"] == "M1-CANDIDATE-11"
 
 
 def test_protocol_source_audit_allows_declared_future_status_pairs() -> None:
@@ -1163,6 +1163,7 @@ def test_supporting_source_audit_production_gate_rejects_missing_duplicate_and_e
     first_source = extension["supportingSourceApplicabilityAudit"]["sources"][0]
     extra = copy.deepcopy(first_source["units"][-1])
     extra["id"] = extra["id"] + "-EXTENSION"
+    extra["clause"] = str(extra.get("clause") or "CLAUSE") + "-EXTENSION"
     extra["leafCrsStatus"] = "NOT-REQUIRED"
     extra["applicabilityDecision"] = "OUT-OF-PROFILE"
     extra["conformanceEffect"] = "INFORMATIVE"
@@ -1172,6 +1173,88 @@ def test_supporting_source_audit_production_gate_rejects_missing_duplicate_and_e
     first_source["units"].append(extra)
     first_source["coverageDenominator"]["count"] = len(first_source["units"])
     assert baseline.supporting_source_audit_errors(extension, crs) == []
+    timeout = next(
+        row
+        for source in audit["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2349"
+        for row in source["units"]
+        if row["id"] == "SAU-2349-TO"
+    )
+    tsize = next(
+        row
+        for source in audit["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2349"
+        for row in source["units"]
+        if row["id"] == "SAU-2349-TS"
+    )
+    swapped = copy.deepcopy(audit)
+    swapped_timeout = next(
+        row
+        for source in swapped["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2349"
+        for row in source["units"]
+        if row["id"] == "SAU-2349-TO"
+    )
+    swapped_timeout["leafCoverageIds"] = list(tsize["leafCoverageIds"])
+    swapped_timeout["leafRequirementIds"] = list(tsize["leafRequirementIds"])
+    swapped_errors = baseline.protocol_source_audit_errors(swapped, crs)
+    assert any("admitted leaf-unit set" in error or "outside the unit locator scope" in error for error in swapped_errors)
+    demoted = copy.deepcopy(audit)
+    demoted_timeout = next(
+        row
+        for source in demoted["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2349"
+        for row in source["units"]
+        if row["id"] == "SAU-2349-TO"
+    )
+    demoted_timeout["leafCrsStatus"] = "NOT-REQUIRED"
+    demoted_timeout.pop("leafCoverageIds", None)
+    demoted_timeout.pop("leafRequirementIds", None)
+    demoted_timeout.pop("admittedLeafUnits", None)
+    assert any(
+        "cannot be NOT-REQUIRED" in error
+        for error in baseline.protocol_source_audit_errors(demoted, crs)
+    )
+    trimmed = copy.deepcopy(audit)
+    trimmed_timeout = next(
+        row
+        for source in trimmed["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2349"
+        for row in source["units"]
+        if row["id"] == "SAU-2349-TO"
+    )
+    trimmed_timeout["admittedLeafUnits"] = trimmed_timeout["admittedLeafUnits"][:1]
+    assert any(
+        "admitted leaf-unit set" in error
+        for error in baseline.protocol_source_audit_errors(trimmed, crs)
+    )
+    same_source_wrong_clause = copy.deepcopy(audit)
+    wrong = next(
+        row
+        for source in same_source_wrong_clause["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2349"
+        for row in source["units"]
+        if row["id"] == "SAU-2349-TO"
+    )
+    wrong["admittedLeafUnits"] = copy.deepcopy(tsize["admittedLeafUnits"])
+    wrong["leafCoverageIds"] = list(tsize["leafCoverageIds"])
+    wrong["leafRequirementIds"] = list(tsize["leafRequirementIds"])
+    assert any(
+        "outside the unit locator scope" in error or "admitted coverage" in error
+        for error in baseline.protocol_source_audit_errors(same_source_wrong_clause, crs)
+    )
+    batch = next(
+        row
+        for source in audit["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "ARINC-665-5"
+        for row in source["units"]
+        if row["id"] == "SAU-665-2-3"
+    )
+    assert any(
+        str(item.get("clause") or "").startswith("2.3") and str(item.get("clause") or "") != "2.3"
+        for item in batch["admittedLeafUnits"]
+    )
+    assert timeout["clause"] != tsize["clause"]
 
 
 def test_cltav_outline_rejects_title_only_chapters() -> None:
