@@ -579,6 +579,10 @@ SUPPORTING_LEAF_BOUND_STATUSES = {
     "EXISTING-LEAF-VIA-2-1-2",
     "EXISTING-615A-LEAF",
 }
+# Historical enum retained for migration. Authorization comes from unboundDispositions, not from this name.
+SUPPORTING_UNBOUND_LEAF_STATUSES = {
+    "CRS-M1-00519-REMAINS-NOT-YET-BOUND",
+}
 SUPPORTING_NOT_REQUIRED_APPLICABILITY = {"OUT-OF-PROFILE", "DEPENDENCY-BLOCKED"}
 SUPPORTING_REQUIRED_EFFECTS = {"REQUIRED", "CONDITIONAL-REQUIRED"}
 SUPPORTING_APPLICABLE_DECISIONS = {"APPLICABLE-SUPPORTING", "CONDITIONAL"}
@@ -661,6 +665,101 @@ def _register_source_digest(register: dict, source_id: str) -> str | None:
     return None
 
 
+def supporting_unbound_disposition_map(supporting: dict) -> tuple[dict[str, dict], list[str]]:
+    """Index unbound dispositions by id. Does not authorize by historical status name."""
+    errors: list[str] = []
+    rows = supporting.get("unboundDispositions")
+    if rows is None:
+        return {}, ["supporting-source audit unboundDispositions is required"]
+    if not isinstance(rows, list):
+        return {}, ["supporting-source audit unboundDispositions must be a list"]
+    by_id: dict[str, dict] = {}
+    seen_units: set[str] = set()
+    for index, row in enumerate(rows):
+        if not isinstance(row, dict):
+            errors.append(f"supporting-source unboundDispositions[{index}] must be an object")
+            continue
+        disp_id = row.get("id")
+        if not isinstance(disp_id, str) or not disp_id:
+            errors.append(f"supporting-source unboundDispositions[{index}] is missing id")
+            continue
+        if disp_id in by_id:
+            errors.append(f"supporting-source audit contains duplicate unbound disposition {disp_id}")
+        by_id[disp_id] = row
+        unit_id = row.get("auditUnitId")
+        if not isinstance(unit_id, str) or not unit_id:
+            errors.append(f"supporting-source unbound disposition {disp_id} is missing auditUnitId")
+        elif unit_id in seen_units:
+            errors.append(f"supporting-source unbound disposition repeats audit unit {unit_id}")
+        else:
+            seen_units.add(unit_id)
+        if row.get("notIndependentApproval") is not True:
+            errors.append(f"supporting-source unbound disposition {disp_id} must not claim independent approval")
+        if not row.get("affectedRequirementId"):
+            errors.append(f"supporting-source unbound disposition {disp_id} is missing affectedRequirementId")
+        if not row.get("affectedCoverageId"):
+            errors.append(f"supporting-source unbound disposition {disp_id} is missing affectedCoverageId")
+        if not row.get("unfinishedScopeEn") or not row.get("unfinishedScopeZh"):
+            errors.append(f"supporting-source unbound disposition {disp_id} is missing unfinished scope")
+        if not row.get("sourceId") or not row.get("clause") or not row.get("rationaleCode"):
+            errors.append(f"supporting-source unbound disposition {disp_id} is missing source, locator or rationale")
+    return by_id, errors
+
+
+def _unbound_unit_errors(
+    unit: dict,
+    source_id: str,
+    dispositions: dict[str, dict],
+    req_by_id: dict,
+    coverage_by_id: dict,
+    part4: dict,
+) -> list[str]:
+    """Unbound is a recorded gap. It still has source, effect, and affected-identity checks."""
+    errors: list[str] = []
+    unit_id = unit.get("id")
+    applicability = unit.get("applicabilityDecision")
+    effect = unit.get("conformanceEffect")
+    if applicability in SUPPORTING_APPLICABLE_DECISIONS and effect in SUPPORTING_REQUIRED_EFFECTS:
+        errors.append(
+            f"supporting-source unit {unit_id} has applicable required obligations and cannot use an unbound leaf status"
+        )
+        return errors
+    disp_id = unit.get("unboundDispositionId")
+    if not isinstance(disp_id, str) or not disp_id:
+        errors.append(f"supporting-source unit {unit_id} unbound status is missing unboundDispositionId")
+        return errors
+    disposition = dispositions.get(disp_id)
+    if disposition is None:
+        errors.append(f"supporting-source unit {unit_id} unboundDispositionId is not a recorded unbound disposition")
+        return errors
+    if disposition.get("auditUnitId") != unit_id:
+        errors.append(f"supporting-source unit {unit_id} unbound disposition does not name this audit unit")
+    if disposition.get("sourceId") != source_id:
+        errors.append(f"supporting-source unit {unit_id} unbound disposition sourceId does not match the parent source")
+    if disposition.get("clause") != unit.get("clause"):
+        errors.append(f"supporting-source unit {unit_id} unbound disposition clause does not match the unit locator")
+    if disposition.get("rationaleCode") != unit.get("rationaleCode"):
+        errors.append(f"supporting-source unit {unit_id} unbound disposition rationaleCode does not match the unit")
+    req_id = disposition.get("affectedRequirementId")
+    if not isinstance(req_id, str) or req_id not in req_by_id:
+        errors.append(f"supporting-source unit {unit_id} unbound affected requirement is absent from the bound CRS package")
+        return errors
+    req = req_by_id[req_id]
+    cov_id = disposition.get("affectedCoverageId")
+    expected_cov = (req.get("rhoRA") or {}).get("sourceCoverageId")
+    if not isinstance(cov_id, str) or cov_id not in coverage_by_id:
+        errors.append(f"supporting-source unit {unit_id} unbound affected coverage is absent from the bound CRS ledger")
+    elif expected_cov and cov_id != expected_cov:
+        errors.append(f"supporting-source unit {unit_id} unbound affected coverage does not match the bound requirement")
+    if part4:
+        if part4.get("unboundDispositionId") == disp_id:
+            if part4.get("affectedRequirementId") != req_id:
+                errors.append("supporting-source Part-4 record does not match the unbound affected requirement")
+            if part4.get("status") and part4.get("status") != disposition.get("status"):
+                errors.append("supporting-source Part-4 status does not match the unbound disposition")
+    return errors
+
+
 def supporting_source_audit_errors(
     audit: dict,
     crs: dict,
@@ -682,6 +781,12 @@ def supporting_source_audit_errors(
     if "645BindingThisPr" in supporting and supporting.get("645BindingThisPr") is not False:
         if blocked.get("boundThisPr") is not True:
             errors.append("supporting-source audit must not bind ARINC 645 in this PR")
+    dispositions, disposition_errors = supporting_unbound_disposition_map(supporting)
+    errors.extend(disposition_errors)
+    part4 = supporting.get("arinc664Part4") if isinstance(supporting.get("arinc664Part4"), dict) else {}
+    if part4.get("unboundDispositionId"):
+        if part4["unboundDispositionId"] not in dispositions:
+            errors.append("supporting-source Part-4 record does not name a recorded unbound disposition")
     sources = supporting.get("sources")
     if not isinstance(sources, list):
         errors.append("supporting-source audit sources must be a list")
@@ -693,6 +798,7 @@ def supporting_source_audit_errors(
     recorded_ids: list[str] = []
     seen_source: set[str] = set()
     seen_units: set[str] = set()
+    unbound_refs: dict[str, str] = {}
     coverage_by_id = {row["id"]: row for row in crs.get("coverageLedger") or [] if isinstance(row, dict) and row.get("id")}
     req_by_id = {row["id"]: row for row in crs.get("requirements") or [] if isinstance(row, dict) and row.get("id")}
     for index, source in enumerate(sources):
@@ -761,7 +867,13 @@ def supporting_source_audit_errors(
                         f"supporting-source unit {unit_id} NOT-REQUIRED is not supported by its applicability/effect disposition"
                     )
                 continue
-            if leaf_status == "CRS-M1-00519-REMAINS-NOT-YET-BOUND":
+            if leaf_status in SUPPORTING_UNBOUND_LEAF_STATUSES:
+                errors.extend(
+                    _unbound_unit_errors(unit, source_id, dispositions, req_by_id, coverage_by_id, part4)
+                )
+                disp_id = unit.get("unboundDispositionId")
+                if isinstance(disp_id, str) and disp_id:
+                    unbound_refs[unit_id] = disp_id
                 continue
             if leaf_status not in SUPPORTING_LEAF_BOUND_STATUSES:
                 continue
@@ -854,6 +966,12 @@ def supporting_source_audit_errors(
         errors.append("supporting-source audit contains sources outside the controlled supporting scope")
     if missing:
         errors.append("supporting-source audit is missing sources from the controlled supporting scope")
+    for disp_id, disposition in dispositions.items():
+        unit_id = disposition.get("auditUnitId")
+        if unit_id not in unbound_refs:
+            errors.append(f"supporting-source unbound disposition {disp_id} is not used by an unbound audit unit")
+        elif unbound_refs.get(unit_id) != disp_id:
+            errors.append(f"supporting-source unbound disposition {disp_id} does not match the unit unboundDispositionId")
     return errors
 
 

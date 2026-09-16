@@ -128,6 +128,14 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
     part4 = data["supportingSourceApplicabilityAudit"]["arinc664Part4"]
     assert part4["status"] == "NOT-IN-THIS-PR-SOURCE-SET"
     assert part4["affectedRequirementId"] == "CRS-M1-00519"
+    assert part4["unboundDispositionId"] == "UD-664-4-NOT-IN-SOURCE-SET"
+    dispositions = data["supportingSourceApplicabilityAudit"]["unboundDispositions"]
+    assert len(dispositions) == 1
+    unbound = dispositions[0]
+    assert unbound["id"] == part4["unboundDispositionId"]
+    assert unbound["auditUnitId"] == "SAU-P7-P4"
+    assert unbound["affectedRequirementId"] == part4["affectedRequirementId"]
+    assert unbound["notIndependentApproval"] is True
 
 
 def test_package_a_does_not_self_approve() -> None:
@@ -182,11 +190,28 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
     assert any(row["pdfPages"] == [8, 36] for row in by_id["ARINC-664-3"]["spans"])
     assert "RFC-1350" in by_id
     assert "RFC-768" in by_id
+    remaining = {}
+    unbound = next(
+        row
+        for row in data["supportingSourceApplicabilityAudit"]["unboundDispositions"]
+        if row["id"] == part4["unboundDispositionId"]
+    )
     for source in data["supportingSourceApplicabilityAudit"]["sources"]:
         for unit in source["units"]:
             if unit["leafCrsStatus"] == "LEAF-CRS-EMITTED":
                 assert unit["leafCoverageIds"]
                 assert "leafRequirementIds" in unit
+            if unit["leafCrsStatus"] == "CRS-M1-00519-REMAINS-NOT-YET-BOUND":
+                assert unit["unboundDispositionId"]
+                assert unit["id"] == unbound["auditUnitId"]
+            for item in unit.get("remainingSubunits") or []:
+                remaining[item["id"]] = item
+    for remaining_id in (
+        "SAU-1123-4-2-REMAINING-HOST-NOTE-ATOMS",
+        "SAU-P7-3-REMAINING-VL-BAG-JITTER",
+        "SAU-791-3-1-REMAINING-FIELD-WIDTHS",
+    ):
+        assert remaining[remaining_id]["disposition"] == "NOT-YET-BOUND"
 
 
 TRUNCATED_LEAD_IN = "The TFTP Read Request or Write Request packet is modified to include"

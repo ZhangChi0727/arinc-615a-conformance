@@ -9936,9 +9936,25 @@
     "arinc664Part4": {
       "status": "NOT-IN-THIS-PR-SOURCE-SET",
       "affectedRequirementId": "CRS-M1-00519",
+      "unboundDispositionId": "UD-664-4-NOT-IN-SOURCE-SET",
       "summaryEn": "Appendix E allows 664 Part 4 address rules or integrator-identified requirements. Part 4 is not acquired in this PR. The integrator alternative remains available; this is not a forced purchase and does not activate AFDX.",
       "summaryZh": "附录 E 允许 664 第 4 部分地址规则或集成商指明的要求。本 PR 未取得第 4 部分。集成商替代路径仍可用；这不是强制采购，也不激活 AFDX。"
     },
+    "unboundDispositions": [
+      {
+        "id": "UD-664-4-NOT-IN-SOURCE-SET",
+        "auditUnitId": "SAU-P7-P4",
+        "sourceId": "ARINC-664-7",
+        "clause": "CROSS-664-4",
+        "affectedRequirementId": "CRS-M1-00519",
+        "affectedCoverageId": "COV-M1-01972",
+        "rationaleCode": "P4-OR-INTEGRATOR-ALTERNATIVE-NOT-IN-THIS-PR",
+        "status": "NOT-IN-THIS-PR-SOURCE-SET",
+        "notIndependentApproval": true,
+        "unfinishedScopeEn": "664-4 body remains outside this PR source set. CRS-M1-00519 stays the 615A alternative; this does not transfer remaining RFC 1123, P7 VL/BAG/jitter, or IPv4 header-field subunits to a successor PR.",
+        "unfinishedScopeZh": "664-4 正文仍在本 PR 来源集合之外。CRS-M1-00519 仍是 615A 替代路径；这不把 RFC 1123、P7 VL/BAG/抖动或 IPv4 头字段剩余子单元移交后继 PR。"
+      }
+    ],
     "sources": [
       {
         "sourceId": "ARINC-665-5",
@@ -15476,6 +15492,7 @@
             ],
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "CRS-M1-00519-REMAINS-NOT-YET-BOUND",
+            "unboundDispositionId": "UD-664-4-NOT-IN-SOURCE-SET",
             "summaryEn": "615A already allows 664 Part 4 address rules or integrator-identified requirements. 664-4 is not in this PR source set. The alternative is not a forced purchase and does not auto-activate AFDX.",
             "summaryZh": "615A 已允许 664 第 4 部分地址规则或集成商指明的要求。664-4 不在本 PR 来源集合。该替代不是强制采购，也不自动激活 AFDX。"
           },

@@ -56,7 +56,7 @@ silently redefine the Core.
 - Adopt CL-TAV as the successor research method (CR-2026-012 / DD-028). First-version algorithm direction was accepted 2026-09-14 in DD-029; that is not independent mathematical or RG approval.
 - Expand protocol CRS so INFORMATION, UPLOAD, Media Defined DOWNLOAD, Operator Defined DOWNLOAD, FIND and source-stated abort/reject/exception/retry obligations are audited. Conditional network variants stay separate from the current Compliant instance. ARINC 645 unique algorithm details remain BLOCKED-SOURCE-645: locally acquired, not bound in this PR.
 - Keep protocol CRS semantically complete in this PR, but write new rows only after source-unit audit. Tool requirements, verification specifications, interface/configuration contracts and development-ready acceptance belong to a later PR after this CRS is independently accepted. Old M2 does not automatically cover the new scope.
-- Correct RR-CLTAV-2026-011 TFTP end-condition and supporting-audit gate findings on the unique Draft PR. Current inventory is M1-CANDIDATE-11 with 2936 coverage / 646 requirements, including default-512 and negotiated-blksize termination leaves. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 still does not execute FIND, DOWNLOAD or AFDX (65 transitions, 26 observational timing rows). ARINC 645 is locally acquired and not bound. This Draft candidate is not independent architecture, mathematical or RG approval.
+- Correct RR-CLTAV-2026-012 unbound-status gate on the unique Draft PR. Unbound supporting units are authorized only by recorded dispositions, not by a skip-on-status-name. Current inventory is M1-CANDIDATE-11 with 2936 coverage / 646 requirements. RFC 1123 §4.2, 664-7 VL/BAG/jitter and RFC 791 header-field remaining subunits stay NOT-YET-BOUND in this PR. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 still does not execute FIND, DOWNLOAD or AFDX (65 transitions, 26 observational timing rows). ARINC 645 is locally acquired and not bound. This Draft candidate is not independent architecture, mathematical or RG approval.
 
 State changes:
 
@@ -78,7 +78,7 @@ Unchanged boundaries:
 ## Next development steps
 
 - Request complete-range RG0/RG1 and method/math/architecture/experiment review on the unique Draft PR. Keep independentMathematicalApproval and independentReviewApproval false. Do not Ready, merge, tag or start M3.
-- Keep 665 section 2.3 emitted-not-closed. ARINC 645 stays acquired-not-bound. Bound M2 stays UPLOAD/INFORMATION. FIND clock limited approval stays closed.
+- Keep 665 section 2.3 emitted-not-closed. ARINC 645 stays acquired-not-bound. Bound M2 stays UPLOAD/INFORMATION. FIND clock limited approval stays closed. RFC 1123 §4.2, 664-7 VL/BAG/jitter and RFC 791 header-field remaining subunits stay NOT-YET-BOUND in this PR; closing the unbound-status gate does not transfer them to a successor PR.
 
 ## 当前开发图景
 
@@ -107,7 +107,7 @@ Unchanged boundaries:
 - 以 CL-TAV 为后继研究方法（CR-2026-012／DD-028）。首版算法方向已于 2026-09-14 在 DD-029 接受；那不是独立数学或 RG 批准。
 - 扩大协议 CRS，使 INFORMATION、UPLOAD、Media Defined DOWNLOAD、Operator Defined DOWNLOAD、FIND 及来源已规定的中断／拒绝／异常／重试义务接受审计。条件化网络变体与当前 Compliant 实例分开。ARINC 645 独有算法细节保持 BLOCKED-SOURCE-645：本地已取得，本 PR 不绑定。
 - 本 PR 的协议 CRS 必须语义正确且范围完整，但新行只能在来源单元审计之后撰写。工具需求、验证规格、接口／配置契约和开发就绪验收属于扩大 CRS 被独立接受之后的后继 PR。旧 M2 不会自动覆盖新范围。
-- 已按 RR-CLTAV-2026-011 纠正 TFTP 结束条件与支持来源审计门禁。当前清单为 M1-CANDIDATE-11，2936 条 coverage／646 条需求，含默认 512 与协商 blksize 结束叶。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 仍不执行 FIND、DOWNLOAD 或 AFDX（65 个迁移，26 条观察时序）。ARINC 645 本地已取得但未绑定。本 Draft 候选不是独立架构、数学或 RG 批准。
+- 已按 RR-CLTAV-2026-012 纠正未绑定状态门禁。支持来源未绑定单元只能由已登记处置授权，不能凭状态名跳过。当前清单为 M1-CANDIDATE-11，2936 条 coverage／646 条需求。RFC 1123 §4.2、664-7 VL／BAG／抖动与 RFC 791 头字段剩余子单元仍在本 PR 保持 NOT-YET-BOUND。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 仍不执行 FIND、DOWNLOAD 或 AFDX（65 个迁移，26 条观察时序）。ARINC 645 本地已取得但未绑定。本 Draft 候选不是独立架构、数学或 RG 批准。
 
 状态变化：
 
@@ -129,7 +129,7 @@ Unchanged boundaries:
 ## 下一步开发计划
 
 - 在唯一 Draft PR 上请求完整范围 RG0／RG1 以及方法／数学／架构／实验评审。保持 independentMathematicalApproval 与 independentReviewApproval 为 false。不转 Ready、不合并、不打标签、不启动 M3。
-- 665 §2.3 保持已发出未闭合。ARINC 645 保持已取得未绑定。绑定 M2 仍为 UPLOAD／INFORMATION。FIND 时钟有限批准保持关闭。
+- 665 §2.3 保持已发出未闭合。ARINC 645 保持已取得未绑定。绑定 M2 仍为 UPLOAD／INFORMATION。FIND 时钟有限批准保持关闭。RFC 1123 §4.2、664-7 VL／BAG／抖动与 RFC 791 头字段剩余子单元仍在本 PR 保持 NOT-YET-BOUND；关闭未绑定状态门禁不把它们移交后继 PR。
 <!-- project-status:end -->
 
 ## Read by role / 按角色继续阅读
