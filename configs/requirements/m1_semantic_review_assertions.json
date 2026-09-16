@@ -17592,8 +17592,8 @@
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, VL jitter is bounded at 500 microseconds in all cases. The two-formula max_jitter expression remains a separate hashed-equation gap.",
-      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，VL 抖动在所有情况下以 500 微秒为界。双公式 max_jitter 表达式仍是单独的方程缺口。",
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, VL jitter is bounded at 500 microseconds in all cases.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，VL 抖动在所有情况下以 500 微秒为界。",
       "expectedSourceModality": "FACT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [
@@ -17760,6 +17760,311 @@
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [
         "DEP-RFC-791"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00682",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P023-PROSE-SENTENCE-001-60532CA921FC",
+      "sourceTextHash": "60532ca921fc6c15db9a3c926f89899db454974d4502f81b6596fc8fc4813365",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "KEEP-TX-TECHNOLOGICAL-LATENCY-BELOW-150US-PLUS-FRAME-DELAY",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY",
+          "FRAME-DELAY"
+        ],
+        "observableEffect": "AFDX-TX-TECHNOLOGICAL-LATENCY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, End-System technological latency in transmission is bounded below 150 microseconds plus frame delay.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，端系统发送方向技术时延须低于 150 微秒加帧时延。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00683",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-002-510E7A75E217",
+      "sourceTextHash": "510e7a75e2175c365c99bb872962608373e46276637171a863ba1211876077f3",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "KEEP-RX-TECHNOLOGICAL-LATENCY-BELOW-150-MICROSECONDS",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY"
+        ],
+        "observableEffect": "AFDX-RX-TECHNOLOGICAL-LATENCY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, End-System technological latency in reception is bounded below 150 microseconds.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，端系统接收方向技术时延须低于 150 微秒。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00684",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD",
+      "sourceTextHash": "a9b1a06d3cdd1f54f5aad9a160a566e2b45d066f05ab7d9daec52aadeb63a008",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "BOUND-MAX-JITTER-BY-40US-PLUS-VL-LOAD-TERM",
+        "objects": [
+          "AFDX-JITTER",
+          "LMAX",
+          "NBW"
+        ],
+        "observableEffect": "AFDX-MAX-JITTER-LOAD-EQUATION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, max_jitter is at most 40 microseconds plus the sum over VLs of ((20 bytes + Lmax_i bytes) times 8 bits/byte) divided by medium bandwidth Nbw.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，max_jitter 至多为 40 微秒加上各 VL 的 ((20 字节 + Lmax_i 字节) × 8 位/字节) / 介质带宽 Nbw。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00685",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948",
+      "sourceTextHash": "66170063b94897df43a184607b9d077a62b0aa575d3a5d865aa216c553c97e4f",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "BOUND-MAX-JITTER-BY-500-MICROSECONDS-EQUATION",
+        "objects": [
+          "AFDX-JITTER"
+        ],
+        "observableEffect": "AFDX-MAX-JITTER-500US-EQUATION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the second max_jitter formula is max_jitter at most 500 microseconds.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，第二个 max_jitter 公式为 max_jitter 至多 500 微秒。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00686",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-001-037A0DEA370A",
+      "sourceTextHash": "037a0dea370a7d59bf582a2e30aa4a538cf945c4b3872988407dd43f3bc09302",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "ENCODE-MAC-SOURCE-AS-INDIVIDUAL-AND-LOCALLY-ADMINISTERED",
+        "objects": [
+          "MAC-SOURCE-ADDRESS"
+        ],
+        "observableEffect": "AFDX-MAC-SOURCE-IEEE-CLASS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the MAC source address is an Individual and Locally Administered IEEE 802.3 address. No unique construction algorithm is recommended.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，MAC 源地址是符合 IEEE 802.3 的单播且本地管理地址。未推荐唯一构造算法。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00687",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-002-E377DF716F5B",
+      "sourceTextHash": "e377df716f5bcb43344d80517e3793cffc81e06a5c5f0e6292518f49b48df062",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "SET-MAC-SOURCE-CONSTANT-FIELD-TO-000000100000000000000000",
+        "objects": [
+          "MAC-SOURCE-ADDRESS",
+          "MAC-SOURCE-CONSTANT-FIELD"
+        ],
+        "observableEffect": "AFDX-MAC-SOURCE-CONSTANT-FIELD-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the MAC source constant field is the 24-bit value 0000 0010 0000 0000 0000 0000.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，MAC 源地址常数字段为 24 位值 0000 0010 0000 0000 0000 0000。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00688",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-003-6AE6BC6831C7",
+      "sourceTextHash": "6ae6bc6831c7b7011c13b50c9099b01313c5b6515ccad08f95d6de452beff76a",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "SET-MAC-SOURCE-INDIVIDUAL-ADDRESS-BIT-TO-ZERO",
+        "objects": [
+          "MAC-SOURCE-ADDRESS"
+        ],
+        "observableEffect": "AFDX-MAC-SOURCE-INDIVIDUAL-BIT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the least significant bit of the first MAC-source byte is 0, meaning Individual Address.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，MAC 源地址首字节最低位为 0，表示单播地址。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00689",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-004-9D063237C979",
+      "sourceTextHash": "9d063237c979f7a9f2dbd615228582f521baaf158f8506c7b8df6ef5eb9df0dc",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "SET-MAC-SOURCE-LOCALLY-ADMINISTERED-BIT-TO-ONE",
+        "objects": [
+          "MAC-SOURCE-ADDRESS"
+        ],
+        "observableEffect": "AFDX-MAC-SOURCE-LOCAL-ADMIN-BIT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the second-to-least significant bit of the first MAC-source byte is 1, meaning locally administered.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，MAC 源地址首字节次低位为 1，表示本地管理地址。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00690",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-005-F03FF92CA19C",
+      "sourceTextHash": "f03ff92ca19cc4eb55606704dda99633f9a1537fb7ebf1fbf9f180e0d24154c5",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "ENCODE-MAC-SOURCE-USER-DEFINED-ID-AS-16-BITS",
+        "objects": [
+          "MAC-SOURCE-USER-DEFINED-ID"
+        ],
+        "observableEffect": "AFDX-MAC-SOURCE-USER-DEFINED-ID-WIDTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, User_Defined_ID in the MAC source is a single 16-bit field.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，MAC 源地址中的 User_Defined_ID 是单一 16 位字段。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00691",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-006-899D5A33C49E",
+      "sourceTextHash": "899d5a33c49edc74a3c77ad79e76b1510ca3482d8e09d84342df6d8205bb8f42",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "USE-USER-DEFINED-ID-FOR-UNIQUE-MEANINGFUL-HOST-IDENTITY",
+        "objects": [
+          "MAC-SOURCE-USER-DEFINED-ID"
+        ],
+        "observableEffect": "AFDX-MAC-SOURCE-USER-DEFINED-ID-USE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, User_Defined_ID is used as the integrator deems appropriate so each IP-addressable host has a unique and meaningful identity.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，User_Defined_ID 按系统集成商认为适当的方式使用，使每个可 IP 寻址主机具有唯一且有意义的身份。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00692",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-007-97048C062FB8",
+      "sourceTextHash": "97048c062fb89a623c435c01f6809fb6d0d09691f3102f5f6ded0fc02e33ed7d",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "USE-INTERFACE-ID-TO-IDENTIFY-REDUNDANT-AFDX-NETWORK",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "observableEffect": "AFDX-MAC-SOURCE-INTERFACE-ID-ROLE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, Interface_ID identifies the redundant AFDX network to which the Ethernet MAC controller is connected.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，Interface_ID 标明以太网 MAC 控制器所连接的冗余 AFDX 网络。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00693",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-001-A9E8CFE75FDC",
+      "sourceTextHash": "a9e8cfe75fdc6398f06192c886681061bea013b7b0e3fa8b4f8114f63f1e57f1",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "ENCODE-INTERFACE-ID-001-AS-NETWORK-A",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID",
+          "AFDX-NETWORK-A"
+        ],
+        "observableEffect": "AFDX-INTERFACE-ID-NETWORK-A-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, Interface_ID 001 means the Ethernet MAC controller is connected to network A.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，Interface_ID 001 表示以太网 MAC 控制器连接到网络 A。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00694",
+      "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-002-F0CDAB79C8E2",
+      "sourceTextHash": "f0cdab79c8e26bd99d2d438a8dccd5c4f3ee68504409155b2bdc2171218f714d",
+      "expectedSemantic": {
+        "actor": "AFDX-END-SYSTEM",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "ENCODE-INTERFACE-ID-010-AS-NETWORK-B",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID",
+          "AFDX-NETWORK-B"
+        ],
+        "observableEffect": "AFDX-INTERFACE-ID-NETWORK-B-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, Interface_ID 010 means the Ethernet MAC controller is connected to network B.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，Interface_ID 010 表示以太网 MAC 控制器连接到网络 B。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
       ]
     }
   ],

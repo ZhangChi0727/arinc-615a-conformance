@@ -8842,17 +8842,6 @@
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
-        "id": "OBJ-SUPPORTING-KEEP-VL-JITTER-AT-OR-BELOW-500-MICROSECONDS-CRS-M1-00674",
-        "m1RequirementId": "CRS-M1-00674",
-        "objects": [
-          "AFDX-JITTER"
-        ],
-        "action": "KEEP-VL-JITTER-AT-OR-BELOW-500-MICROSECONDS",
-        "predicateEn": "If AFDX is chosen, VL jitter is bounded at 500 microseconds in all cases. The two-formula max_jitter expression remains a separate hashed-equation gap.",
-        "predicateZh": "若选择 AFDX，VL 抖动在所有情况下以 500 微秒为界。双公式 max_jitter 表达式仍是单独的方程缺口。",
-        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
-      },
-      {
         "id": "OBJ-SUPPORTING-IDENTIFY-VL-ONLY-BY-MAC-DESTINATION-ADDRESS-CRS-M1-00675",
         "m1RequirementId": "CRS-M1-00675",
         "objects": [
@@ -8965,6 +8954,166 @@
         "predicateEn": "RFC 1123 section 4.2 adds host TFTP notes. ARINC 615A uses octet TFTP with its own option set; mail is prohibited by 4.2.2.1, netascii stays out of profile, and broadcast requests are silently ignored rather than used as a transfer method.",
         "predicateZh": "RFC 1123 第 4.2 节补充主机 TFTP 说明。ARINC 615A 使用带自有选项集的 octet TFTP；mail 由 4.2.2.1 禁止，netascii 保持出配置，广播请求被静默忽略而不是用作传输方法。",
         "checkLocation": "RFC-PUBLIC-TEXT-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-KEEP-TX-TECHNOLOGICAL-LATENCY-BELOW-150US-PLUS-FRAME-DELAY-CRS-M1-00682",
+        "m1RequirementId": "CRS-M1-00682",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY",
+          "FRAME-DELAY"
+        ],
+        "action": "KEEP-TX-TECHNOLOGICAL-LATENCY-BELOW-150US-PLUS-FRAME-DELAY",
+        "predicateEn": "If AFDX is chosen, End-System technological latency in transmission is bounded below 150 microseconds plus frame delay.",
+        "predicateZh": "若选择 AFDX，端系统发送方向技术时延须低于 150 微秒加帧时延。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-KEEP-RX-TECHNOLOGICAL-LATENCY-BELOW-150-MICROSECONDS-CRS-M1-00683",
+        "m1RequirementId": "CRS-M1-00683",
+        "objects": [
+          "AFDX-TECHNOLOGICAL-LATENCY"
+        ],
+        "action": "KEEP-RX-TECHNOLOGICAL-LATENCY-BELOW-150-MICROSECONDS",
+        "predicateEn": "If AFDX is chosen, End-System technological latency in reception is bounded below 150 microseconds.",
+        "predicateZh": "若选择 AFDX，端系统接收方向技术时延须低于 150 微秒。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-BOUND-MAX-JITTER-BY-40US-PLUS-VL-LOAD-TERM-CRS-M1-00684",
+        "m1RequirementId": "CRS-M1-00684",
+        "objects": [
+          "AFDX-JITTER",
+          "LMAX",
+          "NBW"
+        ],
+        "action": "BOUND-MAX-JITTER-BY-40US-PLUS-VL-LOAD-TERM",
+        "predicateEn": "If AFDX is chosen, max_jitter is at most 40 microseconds plus the sum over VLs of ((20 bytes + Lmax_i bytes) times 8 bits/byte) divided by medium bandwidth Nbw.",
+        "predicateZh": "若选择 AFDX，max_jitter 至多为 40 微秒加上各 VL 的 ((20 字节 + Lmax_i 字节) × 8 位/字节) / 介质带宽 Nbw。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-BOUND-MAX-JITTER-BY-500-MICROSECONDS-EQUATION-CRS-M1-00685",
+        "m1RequirementId": "CRS-M1-00685",
+        "objects": [
+          "AFDX-JITTER"
+        ],
+        "action": "BOUND-MAX-JITTER-BY-500-MICROSECONDS-EQUATION",
+        "predicateEn": "If AFDX is chosen, the second max_jitter formula is max_jitter at most 500 microseconds.",
+        "predicateZh": "若选择 AFDX，第二个 max_jitter 公式为 max_jitter 至多 500 微秒。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-ENCODE-MAC-SOURCE-AS-INDIVIDUAL-AND-LOCALLY-ADMINISTERED-CRS-M1-00686",
+        "m1RequirementId": "CRS-M1-00686",
+        "objects": [
+          "MAC-SOURCE-ADDRESS"
+        ],
+        "action": "ENCODE-MAC-SOURCE-AS-INDIVIDUAL-AND-LOCALLY-ADMINISTERED",
+        "predicateEn": "If AFDX is chosen, the MAC source address is an Individual and Locally Administered IEEE 802.3 address. No unique construction algorithm is recommended.",
+        "predicateZh": "若选择 AFDX，MAC 源地址是符合 IEEE 802.3 的单播且本地管理地址。未推荐唯一构造算法。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-SET-MAC-SOURCE-CONSTANT-FIELD-TO-000000100000000000000000-CRS-M1-00687",
+        "m1RequirementId": "CRS-M1-00687",
+        "objects": [
+          "MAC-SOURCE-ADDRESS",
+          "MAC-SOURCE-CONSTANT-FIELD"
+        ],
+        "action": "SET-MAC-SOURCE-CONSTANT-FIELD-TO-000000100000000000000000",
+        "predicateEn": "If AFDX is chosen, the MAC source constant field is the 24-bit value 0000 0010 0000 0000 0000 0000.",
+        "predicateZh": "若选择 AFDX，MAC 源地址常数字段为 24 位值 0000 0010 0000 0000 0000 0000。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-SET-MAC-SOURCE-INDIVIDUAL-ADDRESS-BIT-TO-ZERO-CRS-M1-00688",
+        "m1RequirementId": "CRS-M1-00688",
+        "objects": [
+          "MAC-SOURCE-ADDRESS"
+        ],
+        "action": "SET-MAC-SOURCE-INDIVIDUAL-ADDRESS-BIT-TO-ZERO",
+        "predicateEn": "If AFDX is chosen, the least significant bit of the first MAC-source byte is 0, meaning Individual Address.",
+        "predicateZh": "若选择 AFDX，MAC 源地址首字节最低位为 0，表示单播地址。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-SET-MAC-SOURCE-LOCALLY-ADMINISTERED-BIT-TO-ONE-CRS-M1-00689",
+        "m1RequirementId": "CRS-M1-00689",
+        "objects": [
+          "MAC-SOURCE-ADDRESS"
+        ],
+        "action": "SET-MAC-SOURCE-LOCALLY-ADMINISTERED-BIT-TO-ONE",
+        "predicateEn": "If AFDX is chosen, the second-to-least significant bit of the first MAC-source byte is 1, meaning locally administered.",
+        "predicateZh": "若选择 AFDX，MAC 源地址首字节次低位为 1，表示本地管理地址。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-ENCODE-MAC-SOURCE-USER-DEFINED-ID-AS-16-BITS-CRS-M1-00690",
+        "m1RequirementId": "CRS-M1-00690",
+        "objects": [
+          "MAC-SOURCE-USER-DEFINED-ID"
+        ],
+        "action": "ENCODE-MAC-SOURCE-USER-DEFINED-ID-AS-16-BITS",
+        "predicateEn": "If AFDX is chosen, User_Defined_ID in the MAC source is a single 16-bit field.",
+        "predicateZh": "若选择 AFDX，MAC 源地址中的 User_Defined_ID 是单一 16 位字段。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-USE-USER-DEFINED-ID-FOR-UNIQUE-MEANINGFUL-HOST-IDENTITY-CRS-M1-00691",
+        "m1RequirementId": "CRS-M1-00691",
+        "objects": [
+          "MAC-SOURCE-USER-DEFINED-ID"
+        ],
+        "action": "USE-USER-DEFINED-ID-FOR-UNIQUE-MEANINGFUL-HOST-IDENTITY",
+        "predicateEn": "If AFDX is chosen, User_Defined_ID is used as the integrator deems appropriate so each IP-addressable host has a unique and meaningful identity.",
+        "predicateZh": "若选择 AFDX，User_Defined_ID 按系统集成商认为适当的方式使用，使每个可 IP 寻址主机具有唯一且有意义的身份。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-USE-INTERFACE-ID-TO-IDENTIFY-REDUNDANT-AFDX-NETWORK-CRS-M1-00692",
+        "m1RequirementId": "CRS-M1-00692",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID"
+        ],
+        "action": "USE-INTERFACE-ID-TO-IDENTIFY-REDUNDANT-AFDX-NETWORK",
+        "predicateEn": "If AFDX is chosen, Interface_ID identifies the redundant AFDX network to which the Ethernet MAC controller is connected.",
+        "predicateZh": "若选择 AFDX，Interface_ID 标明以太网 MAC 控制器所连接的冗余 AFDX 网络。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-ENCODE-INTERFACE-ID-001-AS-NETWORK-A-CRS-M1-00693",
+        "m1RequirementId": "CRS-M1-00693",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID",
+          "AFDX-NETWORK-A"
+        ],
+        "action": "ENCODE-INTERFACE-ID-001-AS-NETWORK-A",
+        "predicateEn": "If AFDX is chosen, Interface_ID 001 means the Ethernet MAC controller is connected to network A.",
+        "predicateZh": "若选择 AFDX，Interface_ID 001 表示以太网 MAC 控制器连接到网络 A。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-ENCODE-INTERFACE-ID-010-AS-NETWORK-B-CRS-M1-00694",
+        "m1RequirementId": "CRS-M1-00694",
+        "objects": [
+          "MAC-SOURCE-INTERFACE-ID",
+          "AFDX-NETWORK-B"
+        ],
+        "action": "ENCODE-INTERFACE-ID-010-AS-NETWORK-B",
+        "predicateEn": "If AFDX is chosen, Interface_ID 010 means the Ethernet MAC controller is connected to network B.",
+        "predicateZh": "若选择 AFDX，Interface_ID 010 表示以太网 MAC 控制器连接到网络 B。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-KEEP-VL-JITTER-AT-OR-BELOW-500-MICROSECONDS-CRS-M1-00674",
+        "m1RequirementId": "CRS-M1-00674",
+        "objects": [
+          "AFDX-JITTER"
+        ],
+        "action": "KEEP-VL-JITTER-AT-OR-BELOW-500-MICROSECONDS",
+        "predicateEn": "If AFDX is chosen, VL jitter is bounded at 500 microseconds in all cases.",
+        "predicateZh": "若选择 AFDX，VL 抖动在所有情况下以 500 微秒为界。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       }
     ],
     "interfaces": {
@@ -18898,6 +19047,162 @@
       "modelTargetIds": [
         "OBJ-SUPPORTING-PAD-IPV4-HEADER-TO-32-BIT-BOUNDARY-CRS-M1-00681"
       ]
+    },
+    {
+      "requirementId": "CRS-M1-00682",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-KEEP-TX-TECHNOLOGICAL-LATENCY-BELOW-150US-PLUS-FRAME-DELAY-CRS-M1-00682"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00683",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-KEEP-RX-TECHNOLOGICAL-LATENCY-BELOW-150-MICROSECONDS-CRS-M1-00683"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00684",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-BOUND-MAX-JITTER-BY-40US-PLUS-VL-LOAD-TERM-CRS-M1-00684"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00685",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-BOUND-MAX-JITTER-BY-500-MICROSECONDS-EQUATION-CRS-M1-00685"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00686",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-ENCODE-MAC-SOURCE-AS-INDIVIDUAL-AND-LOCALLY-ADMINISTERED-CRS-M1-00686"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00687",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-SET-MAC-SOURCE-CONSTANT-FIELD-TO-000000100000000000000000-CRS-M1-00687"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00688",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-SET-MAC-SOURCE-INDIVIDUAL-ADDRESS-BIT-TO-ZERO-CRS-M1-00688"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00689",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-SET-MAC-SOURCE-LOCALLY-ADMINISTERED-BIT-TO-ONE-CRS-M1-00689"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00690",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-ENCODE-MAC-SOURCE-USER-DEFINED-ID-AS-16-BITS-CRS-M1-00690"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00691",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-USE-USER-DEFINED-ID-FOR-UNIQUE-MEANINGFUL-HOST-IDENTITY-CRS-M1-00691"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00692",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-USE-INTERFACE-ID-TO-IDENTIFY-REDUNDANT-AFDX-NETWORK-CRS-M1-00692"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00693",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-ENCODE-INTERFACE-ID-001-AS-NETWORK-A-CRS-M1-00693"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00694",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-ENCODE-INTERFACE-ID-010-AS-NETWORK-B-CRS-M1-00694"
+      ]
     }
   ],
   "traceRelations": [
@@ -27339,17 +27644,6 @@
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     },
     {
-      "id": "TR-CRS-M1-00674-0875",
-      "requirementId": "CRS-M1-00674",
-      "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-KEEP-VL-JITTER-AT-OR-BELOW-500-MICROSECONDS-CRS-M1-00674",
-      "polarity": "AFFIRMATIVE",
-      "sourceModality": "FACT",
-      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
-      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
-      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
-    },
-    {
       "id": "TR-CRS-M1-00675-0876",
       "requirementId": "CRS-M1-00675",
       "targetKind": "OBJECT-CONSTRAINT",
@@ -27453,6 +27747,160 @@
       "requirementId": "CRS-M1-00616",
       "targetKind": "OBJECT-CONSTRAINT",
       "targetId": "OBJ-SUPPORTING-APPLY-RFC-1123-TFTP-HOST-NOTES-WITHOUT-ADOPTING-MAIL-NETASCII-OR-BROADCAST-RRQ-CRS-M1-00616",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00682-0886",
+      "requirementId": "CRS-M1-00682",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-KEEP-TX-TECHNOLOGICAL-LATENCY-BELOW-150US-PLUS-FRAME-DELAY-CRS-M1-00682",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00683-0887",
+      "requirementId": "CRS-M1-00683",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-KEEP-RX-TECHNOLOGICAL-LATENCY-BELOW-150-MICROSECONDS-CRS-M1-00683",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00684-0888",
+      "requirementId": "CRS-M1-00684",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-BOUND-MAX-JITTER-BY-40US-PLUS-VL-LOAD-TERM-CRS-M1-00684",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00685-0889",
+      "requirementId": "CRS-M1-00685",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-BOUND-MAX-JITTER-BY-500-MICROSECONDS-EQUATION-CRS-M1-00685",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00686-0890",
+      "requirementId": "CRS-M1-00686",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENCODE-MAC-SOURCE-AS-INDIVIDUAL-AND-LOCALLY-ADMINISTERED-CRS-M1-00686",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00687-0891",
+      "requirementId": "CRS-M1-00687",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-SET-MAC-SOURCE-CONSTANT-FIELD-TO-000000100000000000000000-CRS-M1-00687",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00688-0892",
+      "requirementId": "CRS-M1-00688",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-SET-MAC-SOURCE-INDIVIDUAL-ADDRESS-BIT-TO-ZERO-CRS-M1-00688",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00689-0893",
+      "requirementId": "CRS-M1-00689",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-SET-MAC-SOURCE-LOCALLY-ADMINISTERED-BIT-TO-ONE-CRS-M1-00689",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00690-0894",
+      "requirementId": "CRS-M1-00690",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENCODE-MAC-SOURCE-USER-DEFINED-ID-AS-16-BITS-CRS-M1-00690",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00691-0895",
+      "requirementId": "CRS-M1-00691",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-USE-USER-DEFINED-ID-FOR-UNIQUE-MEANINGFUL-HOST-IDENTITY-CRS-M1-00691",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00692-0896",
+      "requirementId": "CRS-M1-00692",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-USE-INTERFACE-ID-TO-IDENTIFY-REDUNDANT-AFDX-NETWORK-CRS-M1-00692",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00693-0897",
+      "requirementId": "CRS-M1-00693",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENCODE-INTERFACE-ID-001-AS-NETWORK-A-CRS-M1-00693",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00694-0898",
+      "requirementId": "CRS-M1-00694",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-ENCODE-INTERFACE-ID-010-AS-NETWORK-B-CRS-M1-00694",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00674-0899",
+      "requirementId": "CRS-M1-00674",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-KEEP-VL-JITTER-AT-OR-BELOW-500-MICROSECONDS-CRS-M1-00674",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "FACT",
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
@@ -28144,15 +28592,15 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 680,
-    "dispositionCount": 680,
-    "traceCount": 778,
+    "requirementCount": 693,
+    "dispositionCount": 693,
+    "traceCount": 791,
     "stateCount": 35,
     "transitionCount": 65,
     "timingCount": 26,
     "fieldConstraintCount": 108,
-    "dispositionsFingerprint": "2834c31429a6dddfcff2d640623004826cfb9586eef911badd5cb6f4e5a8bb69",
-    "modelFingerprint": "a2bddf627c9de2a275c194a503eb9a837ec810bf7beb1ac25ae5950ee4858d3b",
+    "dispositionsFingerprint": "8c923968e0be6f8f99d261f1ce3e56cd02e1b0354005936b971dc32004f87a18",
+    "modelFingerprint": "697ebfa6c6eac7554c4dc18f942fb77b4bc51521ba24ade68c9738b060a3570c",
     "timingFingerprint": "91e71d517ccc388f446a681b7f13007a3de69e687e49fbb299c5df28430d1e92",
     "inputFingerprint": "446a1b5717c62c2eb0a4dce7a0c6c07e5b66ad5e1516d904c46c60c1d8e63089",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",

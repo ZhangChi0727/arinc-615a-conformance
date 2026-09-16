@@ -134,9 +134,9 @@ Editable sources live in [`models/`](models/). They are **SysML 1.6 notation-bas
 
 ## Source audit before CRS generation
 
-FIND, DOWNLOAD and AFDX-appendix bilingual CRS continue in `M1-CANDIDATE-12`
-(currently 2970 coverage / 680 requirements after RFC 1123 §4.2, 664-7 VL/BAG/jitter
-and RFC 791 header-field remaining binds; FIND abort does not waive the 2 s / 3 s clocks). Remaining 645 binding and
+FIND, DOWNLOAD and AFDX-appendix bilingual CRS continue in `M1-CANDIDATE-13`
+(currently 2983 coverage / 693 requirements after 664-7 max_jitter equations, 150 us latency
+and MAC source construction binds; FIND abort does not waive the 2 s / 3 s clocks). Remaining 645 binding and
 CRS-M1-00519/664-4 stay **not** closed in this PR.
 The ledger [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) keeps FIND 78/78, DOWNLOAD 365/365 and AFDX appendix 13/13 reread records. `profileScope.instanceBoundOperations` stay UPLOAD/INFORMATION; `researchExpandedOperations` are DOWNLOAD/FIND. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Batch template fill is forbidden. Tool software requirements stay out of this PR. ARINC 645 is locally acquired and not bound.
 
@@ -284,7 +284,7 @@ CL-TAV 建**两套**机器，不得并成一个协议 EFSM。
 
 ## 来源审计先于 CRS 生成
 
-FIND、DOWNLOAD 与 AFDX 附录双语 CRS 继续在 `M1-CANDIDATE-12`（当前 2970 条 coverage／680 条需求，经 RFC 1123 §4.2、664-7 VL／BAG／抖动与 RFC 791 头字段剩余绑定；FIND 中止不豁免 2 秒／3 秒时钟）。645 绑定与 CRS-M1-00519／664-4 **不**在本 PR 闭合。清单 [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) 仍保存 FIND 78/78、DOWNLOAD 365/365 与 AFDX 附录 13/13 条重读记录。`profileScope.instanceBoundOperations` 仍为 UPLOAD／INFORMATION；`researchExpandedOperations` 为 DOWNLOAD／FIND。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。禁止批量套模板。工具软件需求不属于本 PR。ARINC 645 本地已取得但未绑定。
+FIND、DOWNLOAD 与 AFDX 附录双语 CRS 继续在 `M1-CANDIDATE-13`（当前 2983 条 coverage／693 条需求，经 664-7 max_jitter 公式、150 微秒时延与 MAC 源地址构造绑定；FIND 中止不豁免 2 秒／3 秒时钟）。645 绑定与 CRS-M1-00519／664-4 **不**在本 PR 闭合。清单 [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) 仍保存 FIND 78/78、DOWNLOAD 365/365 与 AFDX 附录 13/13 条重读记录。`profileScope.instanceBoundOperations` 仍为 UPLOAD／INFORMATION；`researchExpandedOperations` 为 DOWNLOAD／FIND。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。禁止批量套模板。工具软件需求不属于本 PR。ARINC 645 本地已取得但未绑定。
 
 ## 历史与后继证据
 

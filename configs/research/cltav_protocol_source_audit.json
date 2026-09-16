@@ -8,16 +8,16 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-12",
-    "coverageCount": 2970,
-    "requirementCount": 680,
-    "coverageFingerprint": "571638b70971e92b694c9ca20b492200f24db872c9e96ad5eb970c595dfde9c2",
-    "requirementsFingerprint": "e2349f0711853f3e53e6b771a3361fec51a6285ea2f1d99ddd02d2c96f4a7e0a",
+    "artifactVersion": "M1-CANDIDATE-13",
+    "coverageCount": 2983,
+    "requirementCount": 693,
+    "coverageFingerprint": "fb5d22545b5531df5e43d9f0a00243a12b28aee74a3b2d521960ecade1231315",
+    "requirementsFingerprint": "4f541cdfa04cce6d5999189fbc3ebcc7705daedb14453c04b79a94c616f740a9",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "Remaining RFC 1123 4.2 host notes, 664-7 VL/BAG/jitter encoding and RFC 791 header-field widths are bound as leaf CRS. 664-4/CRS-M1-00519 stays unbound. 645 stays acquired-not-bound. This is not independent RG approval."
+    "note": "664-7 max_jitter equations, 150 us latency and MAC source construction are bound as leaf CRS. 665 section 2.3 in-scope leaves stay emitted, not independently closed. 664-4/CRS-M1-00519 stays unbound because Part 4 is not acquired. 645 stays acquired-not-bound. This is not independent RG approval."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -27,13 +27,13 @@
     "Ordinary Ethernet, Compliant, Profiled and AFDX stay separate configuration dimensions."
   ],
   "summary": {
-    "coverageCount": 2970,
-    "requirementCount": 680,
+    "coverageCount": 2983,
+    "requirementCount": 693,
     "applicabilityDecisions": {
       "OUT-OF-PROFILE": 973,
       "APPLICABLE-SUPPORTING": 1309,
       "APPLICABLE-BASE": 286,
-      "CONDITIONAL": 402
+      "CONDITIONAL": 415
     },
     "rationaleCodes": {
       "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE": 902,
@@ -120,7 +120,20 @@
       "IPV4-TOTAL-LENGTH-OCTETS": 1,
       "IPV4-FRAGMENT-OFFSET-UNITS": 1,
       "IPV4-OPTIONS-VARIABLE": 1,
-      "IPV4-HEADER-PADDING-32-BIT": 1
+      "IPV4-HEADER-PADDING-32-BIT": 1,
+      "AFDX-TX-TECHNOLOGICAL-LATENCY-150US": 1,
+      "AFDX-RX-TECHNOLOGICAL-LATENCY-150US": 1,
+      "AFDX-MAX-JITTER-LOAD-EQUATION": 1,
+      "AFDX-MAX-JITTER-500US-EQUATION": 1,
+      "AFDX-MAC-SOURCE-INDIVIDUAL-LOCALLY-ADMINISTERED": 1,
+      "AFDX-MAC-SOURCE-CONSTANT-FIELD": 1,
+      "AFDX-MAC-SOURCE-INDIVIDUAL-BIT": 1,
+      "AFDX-MAC-SOURCE-LOCALLY-ADMINISTERED-BIT": 1,
+      "AFDX-MAC-SOURCE-USER-DEFINED-ID-WIDTH": 1,
+      "AFDX-MAC-SOURCE-USER-DEFINED-ID-UNIQUE-HOST": 1,
+      "AFDX-MAC-SOURCE-INTERFACE-ID-ROLE": 1,
+      "AFDX-MAC-SOURCE-INTERFACE-ID-NETWORK-A": 1,
+      "AFDX-MAC-SOURCE-INTERFACE-ID-NETWORK-B": 1
     },
     "deferredFutureScope": {
       "total": 0,
@@ -9960,8 +9973,8 @@
       "status": "NOT-IN-THIS-PR-SOURCE-SET",
       "affectedRequirementId": "CRS-M1-00519",
       "unboundDispositionId": "UD-664-4-NOT-IN-SOURCE-SET",
-      "summaryEn": "Appendix E allows 664 Part 4 address rules or integrator-identified requirements. Part 4 is not acquired in this PR. The integrator alternative remains available; this is not a forced purchase and does not activate AFDX.",
-      "summaryZh": "附录 E 允许 664 第 4 部分地址规则或集成商指明的要求。本 PR 未取得第 4 部分。集成商替代路径仍可用；这不是强制采购，也不激活 AFDX。"
+      "summaryEn": "Appendix E allows 664 Part 4 address rules or integrator-identified requirements. Part 4 is not acquired in local-references or Zotero after a directed search. CRS-M1-00519 stays the bound 615A alternative; this is not a forced purchase and does not activate AFDX.",
+      "summaryZh": "附录 E 允许 664 第 4 部分地址规则或集成商指明的要求。定向检索后本地与 Zotero 仍未取得第 4 部分。CRS-M1-00519 仍是已绑定的 615A 替代路径；这不是强制采购，也不激活 AFDX。"
     },
     "unboundDispositions": [
       {
@@ -9974,8 +9987,8 @@
         "rationaleCode": "P4-OR-INTEGRATOR-ALTERNATIVE-NOT-IN-THIS-PR",
         "status": "NOT-IN-THIS-PR-SOURCE-SET",
         "notIndependentApproval": true,
-        "unfinishedScopeEn": "664-4 body remains outside this PR source set. CRS-M1-00519 stays the 615A alternative; this does not transfer remaining RFC 1123, P7 VL/BAG/jitter, or IPv4 header-field subunits to a successor PR.",
-        "unfinishedScopeZh": "664-4 正文仍在本 PR 来源集合之外。CRS-M1-00519 仍是 615A 替代路径；这不把 RFC 1123、P7 VL/BAG/抖动或 IPv4 头字段剩余子单元移交后继 PR。"
+        "unfinishedScopeEn": "664-4 body remains outside this PR source set after a directed local search. CRS-M1-00519 stays the 615A alternative. 664-7 max_jitter equations, MAC source construction and 665 section 2.3 in-scope leaves are bound this increment; independent RG has not closed 2.3. 645 stays successor.",
+        "unfinishedScopeZh": "定向本地检索后 664-4 正文仍在本 PR 来源集合之外。CRS-M1-00519 仍是 615A 替代路径。664-7 max_jitter 公式、MAC 源地址构造与 665 §2.3 范围内叶已在本增量绑定；独立 RG 尚未闭合 2.3。645 保持后继。"
       }
     ],
     "sources": [
@@ -12954,8 +12967,8 @@
             ],
             "relationTo615A": "SOURCE-EXPLICIT-615A-LOADER-USE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
-            "summaryEn": "Clause 2.3 batch files are distributed to onboard/off-board 615A loaders and are not transferred to target hardware. Sentence-leaf CRS, Table 2.3.1-1 fieldConstraint rows, and remaining field-prose constraints are emitted. Table notes, commentary and locator sentences stay coverage-only informative. CRC algorithm identity remains blocked by 645. This is not independent RG approval.",
-            "summaryZh": "2.3 批处理文件分发给机上/机下 615A 加载器，不传给目标硬件。句级 CRS、表 2.3.1-1 字段约束与其余字段散文约束已发出。表注、评注与定位句保持仅覆盖的说明性行。CRC 算法身份仍由 645 阻塞。这不是独立 RG 批准。",
+            "summaryEn": "Clause 2.3 batch files are distributed to onboard/off-board 615A loaders and are not transferred to target hardware. Sentence-leaf CRS, Table 2.3.1-1 fieldConstraint rows, and field-prose constraints are emitted. Table notes, commentary and locator sentences stay coverage-only informative. CRC algorithm identity remains blocked by 645. Independent RG has not closed these leaves.",
+            "summaryZh": "2.3 批处理文件分发给机上/机下 615A 加载器，不传给目标硬件。句级 CRS、表 2.3.1-1 字段约束与字段散文约束已发出。表注、评注与定位句保持仅覆盖的说明性行。CRC 算法身份仍由 645 阻塞。独立 RG 尚未闭合这些叶。",
             "leafCoverageIds": [
               "COV-M1-02567",
               "COV-M1-02568",
@@ -13130,7 +13143,20 @@
               "CRS-M1-00566",
               "CRS-M1-00567"
             ],
-            "remainingSubunits": [],
+            "remainingSubunits": [
+              {
+                "id": "SAU-665-2-3-REMAINING-INFORMATIVE-NOTES-AND-LOCATORS",
+                "disposition": "INFORMATIVE",
+                "summaryEn": "Table notes, commentary, locator sentences and page-header fragments stay coverage-only.",
+                "summaryZh": "表注、评注、定位句与页眉片段保持仅覆盖。"
+              },
+              {
+                "id": "SAU-665-2-3-REMAINING-CRC-ALGORITHM-IDENTITY",
+                "disposition": "DEPENDENCY-BLOCKED",
+                "summaryEn": "CRC/check-value algorithm identity remains blocked by unbound ARINC 645; field presence stays on the 665 leaves.",
+                "summaryZh": "CRC／校验值算法身份仍由未绑定的 ARINC 645 阻塞；字段存在性仍在 665 叶上。"
+              }
+            ],
             "admittedLeafUnits": [
               {
                 "coverageId": "COV-M1-02567",
@@ -14113,9 +14139,9 @@
         "openIssues": [
           {
             "id": "SAU-665-ISSUE-BATCH-LEAF",
-            "status": "PACKAGE-B-PARTIAL",
-            "noteEn": "Table 2.3.1-1 row-level fieldConstraint CRS is now emitted. Remaining 2.3 field-prose and 645 CRC algorithm identity keep this unit partial, not leaf-CRS-closed.",
-            "noteZh": "表 2.3.1-1 行级字段约束 CRS 现已发出。其余 2.3 字段散文与 645 CRC 算法身份使本单元保持部分完成，不是叶级 CRS 已闭合。"
+            "status": "IN-SCOPE-LEAVES-EMITTED",
+            "noteEn": "In-scope 2.3 table and field-prose CRS are emitted. Independent RG has not closed the leaves. CRC algorithm identity remains the 645 successor bind.",
+            "noteZh": "范围内 2.3 表与字段散文 CRS 已发出。独立 RG 尚未闭合这些叶。CRC 算法身份仍属 645 后继绑定。"
           }
         ],
         "dispositionCounts": {
@@ -15111,8 +15137,8 @@
             ],
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
-            "summaryEn": "If AFDX is chosen, VL/BAG/jitter encoding is bound: one source ES per VL, unidirectional VL, BAG minimum interval and 2^k values 1-128 ms, 1518-byte frames, maximum admissible jitter and 500 us cap, VL identity in the MAC destination. The two max_jitter formulas and MAC source construction remain unfinished.",
-            "summaryZh": "若选择 AFDX，已绑定 VL／BAG／抖动编码：每 VL 单一源端系统、单向 VL、BAG 最小间隔与 1-128 ms 的 2^k 取值、1518 字节帧、最大允许抖动与 500 微秒上限、MAC 目的地址中的 VL 身份。两个 max_jitter 公式与 MAC 源地址构造仍未完成。",
+            "summaryEn": "If AFDX is chosen, VL/BAG/jitter encoding is bound, including the two max_jitter formulas recovered from PDF layout, 150 us technological latency, and MAC source construction (IEEE class, constant field, User_Defined_ID and Interface_ID). No unique MAC-source algorithm is recommended. This is not independent RG approval.",
+            "summaryZh": "若选择 AFDX，已绑定 VL／BAG／抖动编码，包括从 PDF 版面恢复的两个 max_jitter 公式、150 微秒技术时延与 MAC 源地址构造（IEEE 类别、常数字段、User_Defined_ID 与 Interface_ID）。未推荐唯一 MAC 源构造算法。这不是独立 RG 批准。",
             "leafCoverageIds": [
               "COV-M1-02886",
               "COV-M1-02955",
@@ -15124,7 +15150,20 @@
               "COV-M1-02961",
               "COV-M1-02962",
               "COV-M1-02963",
-              "COV-M1-02964"
+              "COV-M1-02964",
+              "COV-M1-02971",
+              "COV-M1-02972",
+              "COV-M1-02973",
+              "COV-M1-02974",
+              "COV-M1-02975",
+              "COV-M1-02976",
+              "COV-M1-02977",
+              "COV-M1-02978",
+              "COV-M1-02979",
+              "COV-M1-02980",
+              "COV-M1-02981",
+              "COV-M1-02982",
+              "COV-M1-02983"
             ],
             "leafRequirementIds": [
               "CRS-M1-00607",
@@ -15137,16 +15176,22 @@
               "CRS-M1-00672",
               "CRS-M1-00673",
               "CRS-M1-00674",
-              "CRS-M1-00675"
+              "CRS-M1-00675",
+              "CRS-M1-00682",
+              "CRS-M1-00683",
+              "CRS-M1-00684",
+              "CRS-M1-00685",
+              "CRS-M1-00686",
+              "CRS-M1-00687",
+              "CRS-M1-00688",
+              "CRS-M1-00689",
+              "CRS-M1-00690",
+              "CRS-M1-00691",
+              "CRS-M1-00692",
+              "CRS-M1-00693",
+              "CRS-M1-00694"
             ],
-            "remainingSubunits": [
-              {
-                "id": "SAU-P7-3-REMAINING-MAX-JITTER-EQUATION-AND-MAC-SOURCE",
-                "disposition": "NOT-YET-BOUND",
-                "summaryEn": "The two max_jitter formulas on 664-7 p17 did not yield a complete hashed equation from PDF text extraction; the 500 us cap is bound separately. End-system 150 us latency and MAC source-address construction stay outside the VL/BAG/jitter encoding leaves.",
-                "summaryZh": "664-7 第 17 页两个 max_jitter 公式未能从 PDF 文本提取得到可散列完整方程；500 微秒上限已单独绑定。端系统 150 微秒时延与 MAC 源地址构造仍在 VL／BAG／抖动编码叶之外。"
-              }
-            ],
+            "remainingSubunits": [],
             "admittedLeafUnits": [
               {
                 "coverageId": "COV-M1-02886",
@@ -15235,6 +15280,110 @@
                 ],
                 "sourceUnitId": "SU-ARINC-664-7-3.2.5.1-P026-PROSE-SENTENCE-001-56B6CFE1A3CD",
                 "clause": "3.2.5.1"
+              },
+              {
+                "coverageId": "COV-M1-02971",
+                "requirementIds": [
+                  "CRS-M1-00682"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P023-PROSE-SENTENCE-001-60532CA921FC",
+                "clause": "3.2.4.1"
+              },
+              {
+                "coverageId": "COV-M1-02972",
+                "requirementIds": [
+                  "CRS-M1-00683"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-002-510E7A75E217",
+                "clause": "3.2.4.1"
+              },
+              {
+                "coverageId": "COV-M1-02973",
+                "requirementIds": [
+                  "CRS-M1-00684"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD",
+                "clause": "3.2.4.3"
+              },
+              {
+                "coverageId": "COV-M1-02974",
+                "requirementIds": [
+                  "CRS-M1-00685"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948",
+                "clause": "3.2.4.3"
+              },
+              {
+                "coverageId": "COV-M1-02975",
+                "requirementIds": [
+                  "CRS-M1-00686"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-001-037A0DEA370A",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-02976",
+                "requirementIds": [
+                  "CRS-M1-00687"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-002-E377DF716F5B",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-02977",
+                "requirementIds": [
+                  "CRS-M1-00688"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-003-6AE6BC6831C7",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-02978",
+                "requirementIds": [
+                  "CRS-M1-00689"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-004-9D063237C979",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-02979",
+                "requirementIds": [
+                  "CRS-M1-00690"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-005-F03FF92CA19C",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-02980",
+                "requirementIds": [
+                  "CRS-M1-00691"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-006-899D5A33C49E",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-02981",
+                "requirementIds": [
+                  "CRS-M1-00692"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-007-97048C062FB8",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-02982",
+                "requirementIds": [
+                  "CRS-M1-00693"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-001-A9E8CFE75FDC",
+                "clause": "3.2.5.2"
+              },
+              {
+                "coverageId": "COV-M1-02983",
+                "requirementIds": [
+                  "CRS-M1-00694"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-002-F0CDAB79C8E2",
+                "clause": "3.2.5.2"
               }
             ]
           },
