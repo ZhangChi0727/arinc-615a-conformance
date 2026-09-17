@@ -154,7 +154,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-20"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-21"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
@@ -233,14 +233,23 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
     assert remaining["SAU-P7-4-REMAINING-MIB-SNMP-AND-PERIODIC-STATUS"]["disposition"] == "OUT-OF-PROFILE"
     assert remaining["SAU-P7-4-REMAINING-MIB-SNMP-AND-PERIODIC-STATUS"]["clause"] == "4.6"
     assert remaining["SAU-P7-4-REMAINING-MIB-SNMP-AND-PERIODIC-STATUS"]["pdfPages"] == [65]
-    assert remaining["SAU-P7-4-REMAINING-CONFIG-AND-PIN-TABLE-FIELDS"]["disposition"] == "NOT-YET-BOUND"
-    assert remaining["SAU-P7-4-REMAINING-CONFIG-AND-PIN-TABLE-FIELDS"]["pdfPages"] == [66, 77]
+    assert "SAU-P7-4-REMAINING-CONFIG-AND-PIN-TABLE-FIELDS" not in remaining
+    assert remaining["SAU-P7-4-REMAINING-INTEGRATOR-DEFINED-INIT-AND-PORT-COUNTS"]["disposition"] == "INFORMATIVE"
     assert remaining["SAU-P7-ATT2-REMAINING-TCP-TABLE-2-1"]["disposition"] == "OUT-OF-PROFILE"
     assert "SAU-P7-4-REMAINING-CONFIG-PIN-AND-INTERNAL-DETAILS" not in remaining
     assert "SAU-P7-ATT2-REMAINING-GATEWAY-AND-UNMARKED-ROWS" not in remaining
     assert "SAU-P7-4-REMAINING-CONFIG-PIN-AND-MIB-DETAILS" not in remaining
     assert "SAU-P7-ATT2-REMAINING-TABLE-MARK-LOCATORS" not in remaining
-    assert any(item["disposition"] == "NOT-YET-BOUND" for item in remaining.values())
+    assert all(
+        item["disposition"]
+        in {
+            "OUT-OF-PROFILE",
+            "INFORMATIVE",
+            "DEPENDENCY-BLOCKED",
+            "CAPABILITY-NOT-ESTABLISHED",
+        }
+        for item in remaining.values()
+    )
     p3 = next(
         unit
         for source in data["supportingSourceApplicabilityAudit"]["sources"]
@@ -325,6 +334,21 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
     )
     assert any(
         row["semantic"]["action"] == "ENTER-DL-FROM-OPS-ONLY-WHEN-GROUND-UPLOAD-INIT-AND-HEADER-ACCEPTED"
+        for row in crs["requirements"]
+    )
+    assert any(
+        row["semantic"]["action"] == "REQUIRE-DEFAULT-RECEPTION-VL-FIELDS-IN-NONVOLATILE-MEMORY"
+        for row in crs["requirements"]
+    )
+    assert any(
+        row["semantic"]["action"] == "CHECK-TWELVE-PROGRAM-PINS-WITH-PARITY-BIT" for row in crs["requirements"]
+    )
+    assert any(
+        row["semantic"]["action"] == "MAKE-SWITCH-CONFIGURATION-ACCESSIBLE-VIA-615A-INFORMATION"
+        for row in crs["requirements"]
+    )
+    assert any(
+        row["semantic"]["action"] == "PROCESS-AT-LEAST-4096-VLS-IN-FILTER-POLICE-FORWARD"
         for row in crs["requirements"]
     )
     philosophy = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00732")
@@ -902,8 +926,12 @@ def test_informative_laundering_of_named_remainders_fails() -> None:
             for item in unit.get("remainingSubunits") or []:
                 remaining[item["id"]] = item
     mib = remaining["SAU-P7-4-REMAINING-MIB-SNMP-AND-PERIODIC-STATUS"]
-    leftover = remaining["SAU-P7-4-REMAINING-CONFIG-AND-PIN-TABLE-FIELDS"]
+    shop = remaining["SAU-P7-4-REMAINING-SHOP-OPTIONAL"]
+    integrator = remaining["SAU-P7-4-REMAINING-INTEGRATOR-DEFINED-INIT-AND-PORT-COUNTS"]
+    assert "SAU-P7-4-REMAINING-CONFIG-AND-PIN-TABLE-FIELDS" not in remaining
     assert mib["disposition"] != "INFORMATIVE"
-    assert leftover["disposition"] != "INFORMATIVE"
-    assert leftover["disposition"] == "NOT-YET-BOUND"
+    assert shop["disposition"] != "INFORMATIVE"
+    assert mib["disposition"] == "OUT-OF-PROFILE"
+    assert shop["disposition"] == "OUT-OF-PROFILE"
+    assert integrator["disposition"] == "INFORMATIVE"
 

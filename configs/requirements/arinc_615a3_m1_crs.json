@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0",
   "artifactId": "ARINC615A3-M1-CRS",
-  "artifactVersion": "M1-CANDIDATE-20",
+  "artifactVersion": "M1-CANDIDATE-21",
   "candidateDisposition": "ADOPT",
   "sourceBindings": [
     {
@@ -75069,6 +75069,682 @@
       "requirementIds": [
         "CRS-M1-00771"
       ]
+    },
+    {
+      "id": "COV-M1-03061",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2-P066-PROSE-SENTENCE-001-AD7818BDA5BE",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2",
+        "tableOrFigure": null,
+        "documentPage": 58,
+        "pdfPage": 66,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "ad7818bda5be1f1a0f9f22964436da5b8f4fa76dae7225cf556d7ccf1de8d9a2",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00772"
+      ]
+    },
+    {
+      "id": "COV-M1-03062",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.1-P067-PROSE-SENTENCE-001-2D3669CB8EC1",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.1",
+        "tableOrFigure": null,
+        "documentPage": 59,
+        "pdfPage": 67,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "2d3669cb8ec10faeaa0ac51eb27b88e0efdfcbcc13bade65e0c5f0a5e8255b22",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00773"
+      ]
+    },
+    {
+      "id": "COV-M1-03063",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-PROSE-SENTENCE-002-601527B614B8",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.2",
+        "tableOrFigure": null,
+        "documentPage": 59,
+        "pdfPage": 67,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "601527b614b823139cdbfd9bdc05409dcd3cd1bcf35336a39d9aae87e1b29ca6",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00774"
+      ]
+    },
+    {
+      "id": "COV-M1-03064",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P067-PROSE-SENTENCE-001-05535F48356A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.3",
+        "tableOrFigure": null,
+        "documentPage": 59,
+        "pdfPage": 67,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "05535f48356a56154a3c1e407a196dc2a2a379151316b0c3ec0d791adc543a6a",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00775"
+      ]
+    },
+    {
+      "id": "COV-M1-03065",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-PROSE-SENTENCE-002-9CD5C7E10E52",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.3",
+        "tableOrFigure": null,
+        "documentPage": 60,
+        "pdfPage": 68,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "9cd5c7e10e5218217c104bad5a15cb141998237635de0b324126aa4a21aac019",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00776"
+      ]
+    },
+    {
+      "id": "COV-M1-03066",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3-P069-PROSE-SENTENCE-001-67F8156E9635",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3",
+        "tableOrFigure": null,
+        "documentPage": 61,
+        "pdfPage": 69,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "67f8156e9635c14b184fa7198cf419627d07524c1814b4980561759ce94d76b0",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00777"
+      ]
+    },
+    {
+      "id": "COV-M1-03067",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P069-PROSE-SENTENCE-001-EFD62301437B",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 61,
+        "pdfPage": 69,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "efd62301437bdce1dae0abd1f425b6bd615a5d54c262572da474096f578e7e59",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00778"
+      ]
+    },
+    {
+      "id": "COV-M1-03068",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-PROSE-SENTENCE-002-F89C710F1173",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "f89c710f1173001b6250a3d5c2cf74b9341f66b1a33827a7acec3ea7806473a8",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00779"
+      ]
+    },
+    {
+      "id": "COV-M1-03069",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-007-FD39BBEA1D03",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 66,
+        "pdfPage": 74,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "fd39bbea1d036b878b5ff961f0a8f5dae6c3a6fa4d152695500c7ecb73d30d6d",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00780"
+      ]
+    },
+    {
+      "id": "COV-M1-03070",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-008-0F43447BE6D0",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 66,
+        "pdfPage": 74,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "0f43447be6d026848e0ef3edad256edbc20d6a852b8109f1083ce6b76925f35b",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00781"
+      ]
+    },
+    {
+      "id": "COV-M1-03071",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-009-CA57944F0539",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 66,
+        "pdfPage": 74,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "ca57944f0539729eafeb70d85aeee371bb0cc70b82b5178f0bc11cdb6cb40cd0",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00782"
+      ]
+    },
+    {
+      "id": "COV-M1-03072",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-010-BB161270D89C",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 66,
+        "pdfPage": 74,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "bb161270d89c0afd7b9e1043d017384cd4619da39f8a4b77121871b3c1debdaa",
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00783"
+      ]
+    },
+    {
+      "id": "COV-M1-03073",
+      "sourceUnitId": "SU-ARINC-664-7-4.9.2.1-P076-PROSE-SENTENCE-001-38F2329E9842",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.9.2.1",
+        "tableOrFigure": null,
+        "documentPage": 68,
+        "pdfPage": 76,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "38f2329e9842797a7f0beef4af381ae95a40135a2ca73826227b398328e73118",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00784"
+      ]
+    },
+    {
+      "id": "COV-M1-03074",
+      "sourceUnitId": "SU-ARINC-664-7-4.9.2.1-P076-PROSE-SENTENCE-002-50F1E2C97FCF",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.9.2.1",
+        "tableOrFigure": null,
+        "documentPage": 68,
+        "pdfPage": 76,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "50f1e2c97fcff541b163278fb41dfbd15742d3b255a491d8f2f038c1a60a668e",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00785"
+      ]
+    },
+    {
+      "id": "COV-M1-03075",
+      "sourceUnitId": "SU-ARINC-664-7-4.9.2.2-P076-PROSE-SENTENCE-001-CF93913C10D2",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.9.2.2",
+        "tableOrFigure": null,
+        "documentPage": 68,
+        "pdfPage": 76,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "cf93913c10d2d25d49f5927e469b064029326d661b0b5f8ce3ac6ae0b909c654",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00786"
+      ]
+    },
+    {
+      "id": "COV-M1-03076",
+      "sourceUnitId": "SU-ARINC-664-7-4.9.3-P076-PROSE-SENTENCE-001-E77131417E7A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.9.3",
+        "tableOrFigure": null,
+        "documentPage": 68,
+        "pdfPage": 76,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "e77131417e7a0ce657955ae812d38ca0e3a925f8abda136844345ad9fac829e5",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00787"
+      ]
+    },
+    {
+      "id": "COV-M1-03077",
+      "sourceUnitId": "SU-ARINC-664-7-4.10-P076-PROSE-SENTENCE-001-A1E523B9B28A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10",
+        "tableOrFigure": null,
+        "documentPage": 68,
+        "pdfPage": 76,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "a1e523b9b28abf573d856541cde80bf196083a8e4daab97bb08e3cded1730060",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00788"
+      ]
+    },
+    {
+      "id": "COV-M1-03078",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.1.1-P077-PROSE-SENTENCE-001-52B9BEED0B27",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.1.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "52b9beed0b27c58f818d7e12220cb9d34cf3bb11cdea8a80e04d467d1de3ca7d",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00789"
+      ]
+    },
+    {
+      "id": "COV-M1-03079",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.1.1-P077-PROSE-SENTENCE-002-75BA57B04BE1",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.1.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "75ba57b04be15bdae930a3e6a6d806b7ffe59e5efb0323d55294dcf9683a9483",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00790"
+      ]
+    },
+    {
+      "id": "COV-M1-03080",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.1.1-P077-PROSE-SENTENCE-003-A823C1A18045",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.1.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "a823c1a18045d7da061b4da60d8dcad25d16038cfffb088c6d3d3711309f656f",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00791"
+      ]
+    },
+    {
+      "id": "COV-M1-03081",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.1.2-P077-PROSE-SENTENCE-001-8BBF59190535",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.1.2",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "8bbf59190535448080b59ffe3963c5378a0bfc8aea9b1906b04b667bacf41557",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00792"
+      ]
+    },
+    {
+      "id": "COV-M1-03082",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.1.2-P077-PROSE-SENTENCE-002-1F0DFAA8E394",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.1.2",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "1f0dfaa8e3944cccba013b01f38408878b0bc2bffeea04a9ccb2ac21ccc82a4e",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00793"
+      ]
+    },
+    {
+      "id": "COV-M1-03083",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.2.1-P077-PROSE-SENTENCE-001-61DD93DD32A4",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.2.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "61dd93dd32a44659fc5183356cb76c614ddbbfcb34e20b586f2983f8e9f1209d",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00794"
+      ]
+    },
+    {
+      "id": "COV-M1-03084",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.2.1-P077-PROSE-SENTENCE-002-7F1544D1A98F",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.2.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "7f1544d1a98faa9aab84839a7abe6b754f6628e841dd389231bde5686528f733",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00795"
+      ]
+    },
+    {
+      "id": "COV-M1-03085",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.2.1-P077-PROSE-SENTENCE-003-61A04736720E",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.2.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "61a04736720e6d3968590b2881628b584aa21816b5da726b08ba957222eb2925",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00796"
+      ]
+    },
+    {
+      "id": "COV-M1-03086",
+      "sourceUnitId": "SU-ARINC-664-7-4.11.1-P077-PROSE-SENTENCE-001-0196A7D3617B",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.11.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "0196a7d3617bcc9d2404c4d2c55340d6c5bb3ab034d9ae3fd39c17cf4ea6cfd8",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00797"
+      ]
     }
   ],
   "requirements": [
@@ -113261,6 +113937,1236 @@
       },
       "atomicPartId": "P7-4-TWELVE-PIN-DEFINITIONS-IF-CHOSEN",
       "splitRationale": "Conditional 12-pin definitions are this sentence; the example disclaimer and remaining field lists are separate."
+    },
+    {
+      "id": "CRS-M1-00772",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2-P066-PROSE-SENTENCE-001-AD7818BDA5BE",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2",
+        "tableOrFigure": null,
+        "documentPage": 58,
+        "pdfPage": 66,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "ad7818bda5be1f1a0f9f22964436da5b8f4fa76dae7225cf556d7ccf1de8d9a2",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the Default_Configuration_Table is resident. Bound M2 does not execute that configuration.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，Default_Configuration_Table 为驻留表。绑定 M2 不执行该配置。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "KEEP-DEFAULT-CONFIGURATION-TABLE-RESIDENT",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-TABLE-RESIDENT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03061",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DEFAULT-TABLE-RESIDENT",
+      "splitRationale": "Resident default table is this sentence; default reception/transmission field lists are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00773",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.1-P067-PROSE-SENTENCE-001-2D3669CB8EC1",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.1",
+        "tableOrFigure": null,
+        "documentPage": 59,
+        "pdfPage": 67,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "2d3669cb8ec10faeaa0ac51eb27b88e0efdfcbcc13bade65e0c5f0a5e8255b22",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, default external port speed is 100 Mbps without auto-negotiation. Bound M2 does not execute that port.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，缺省外部端口速率为 100 Mbps 且无自动协商。绑定 M2 不执行该端口。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "SET-DEFAULT-PHYSICAL-PORT-SPEED-100MBPS-WITHOUT-AUTONEG",
+        "objects": [
+          "DEFAULT-PHYSICAL-PORT",
+          "PORT-SPEED-100MBPS"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-PORT-SPEED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03062",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DEFAULT-PORT-100MBPS-NO-AUTONEG",
+      "splitRationale": "Default port speed is this sentence; default VL field lists are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00774",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-PROSE-SENTENCE-002-601527B614B8",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.2",
+        "tableOrFigure": null,
+        "documentPage": 59,
+        "pdfPage": 67,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "601527b614b823139cdbfd9bdc05409dcd3cd1bcf35336a39d9aae87e1b29ca6",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the default reception VL table in nonvolatile memory contains at least VL identifier, Smax and BAG. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，非易失缺省接收 VL 表至少含 VL 标识、Smax 与 BAG。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "REQUIRE-DEFAULT-RECEPTION-VL-FIELDS-IN-NONVOLATILE-MEMORY",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-RECEPTION-VL",
+          "VL-IDENTIFIER",
+          "SMAX",
+          "BAG"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-RX-VL-FIELDS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03063",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DEFAULT-RX-VL-FIELD-LIST",
+      "splitRationale": "Default reception VL field list is this sentence; default transmission fields and dataloading-VL necessity are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00775",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P067-PROSE-SENTENCE-001-05535F48356A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.3",
+        "tableOrFigure": null,
+        "documentPage": 59,
+        "pdfPage": 67,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "05535f48356a56154a3c1e407a196dc2a2a379151316b0c3ec0d791adc543a6a",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the default transmission VL table in non-volatile memory contains at least VL identifier, BAG and Smax. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，非易失缺省发送 VL 表至少含 VL 标识、BAG 与 Smax。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "REQUIRE-DEFAULT-TRANSMISSION-VL-FIELDS-IN-NONVOLATILE-MEMORY",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-TRANSMISSION-VL",
+          "VL-IDENTIFIER",
+          "BAG",
+          "SMAX"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-TX-VL-FIELDS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03064",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DEFAULT-TX-VL-FIELD-LIST",
+      "splitRationale": "Default transmission VL field list is this sentence; dataloading-acknowledge use is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00776",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-PROSE-SENTENCE-002-9CD5C7E10E52",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.3",
+        "tableOrFigure": null,
+        "documentPage": 60,
+        "pdfPage": 68,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "9cd5c7e10e5218217c104bad5a15cb141998237635de0b324126aa4a21aac019",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the default transmission VL allows communication without OPS_Configuration_File, at least for dataloading acknowledge. Bound M2 does not execute that VL.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，缺省发送 VL 即使无 OPS_Configuration_File 也能通信，至少用于数据加载确认。绑定 M2 不执行该 VL。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "REQUIRE-DEFAULT-TRANSMISSION-VL-FOR-DATALOADING-ACKNOWLEDGE",
+        "objects": [
+          "DEFAULT-TRANSMISSION-VL",
+          "ARINC-615A-DATALOADING"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-TX-VL-DATALOAD-ACK-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03065",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DEFAULT-TX-VL-FOR-DATALOAD-ACK",
+      "splitRationale": "Default TX VL for dataloading acknowledge is this sentence; default TX field list is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00777",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3-P069-PROSE-SENTENCE-001-67F8156E9635",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3",
+        "tableOrFigure": null,
+        "documentPage": 61,
+        "pdfPage": 69,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "67f8156e9635c14b184fa7198cf419627d07524c1814b4980561759ce94d76b0",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, OPS_Configuration_File is field-loadable software compliant with ARINC 615A and 665. Bound M2 does not execute that load.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，OPS_Configuration_File 为符合 ARINC 615A 与 665 的现场可加载软件。绑定 M2 不执行该加载。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "REQUIRE-OPS-CONFIGURATION-FILE-615A-665-FIELD-LOADABLE",
+        "objects": [
+          "OPS-CONFIGURATION-FILE",
+          "ARINC-615A",
+          "ARINC-665"
+        ],
+        "observableEffect": "AFDX-SWITCH-OPS-CONFIG-FILE-615A-665-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03066",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-OPS-CONFIG-FILE-615A-665",
+      "splitRationale": "OPS config file 615A/665 compliance is this sentence; filtering-table parameter list is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00778",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P069-PROSE-SENTENCE-001-EFD62301437B",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 61,
+        "pdfPage": 69,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "efd62301437bdce1dae0abd1f425b6bd615a5d54c262572da474096f578e7e59",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the Filtering_Policing_and_Forwarding_Configuration_Table contains the listed per-VL and per-port parameters. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，Filtering_Policing_and_Forwarding_Configuration_Table 含所列每 VL 与每端口参数。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "REQUIRE-FILTERING-POLICING-FORWARDING-TABLE-PARAMETER-SET",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE"
+        ],
+        "observableEffect": "AFDX-SWITCH-FILTER-TABLE-PARAMETER-SET-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03067",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-SHOULD-CONTAIN-PARAMETERS",
+      "splitRationale": "Filtering-table parameter obligation is this sentence; the required-to-configure statement is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00779",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-PROSE-SENTENCE-002-F89C710F1173",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "f89c710f1173001b6250a3d5c2cf74b9341f66b1a33827a7acec3ea7806473a8",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the listed per-VL and per-port parameters are required to configure filtering, policing and forwarding. Bound M2 does not execute those functions.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，所列每 VL 与每端口参数为配置过滤、监管与转发所必需。绑定 M2 不执行那些功能。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "REQUIRE-LISTED-PARAMETERS-TO-CONFIGURE-FILTER-POLICE-FORWARD",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "VL-PARAMETERS",
+          "PORT-PARAMETERS"
+        ],
+        "observableEffect": "AFDX-SWITCH-FILTER-PARAMETERS-REQUIRED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03068",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-PARAMETERS-REQUIRED",
+      "splitRationale": "Required-to-configure statement is this sentence; the table-should-contain sentence is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00780",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-007-FD39BBEA1D03",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 66,
+        "pdfPage": 74,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "fd39bbea1d036b878b5ff961f0a8f5dae6c3a6fa4d152695500c7ecb73d30d6d",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, in DL the End System uses only the resident Default_Configuration_Table. Bound M2 does not execute that mode.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，DL 下端系统只依据驻留 Default_Configuration_Table。绑定 M2 不执行该模式。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "PERFORM-DL-END-SYSTEM-FROM-DEFAULT-CONFIGURATION-TABLE",
+        "objects": [
+          "AFDX-SWITCH-DL-MODE",
+          "DEFAULT-CONFIGURATION-TABLE"
+        ],
+        "observableEffect": "AFDX-SWITCH-DL-DEFAULT-TABLE-ES-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03069",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DL-ES-FROM-DEFAULT-TABLE",
+      "splitRationale": "DL End System from default table is this sentence; DL Healthy and return-to-INIT are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00781",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-008-0F43447BE6D0",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 66,
+        "pdfPage": 74,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "0f43447be6d026848e0ef3edad256edbc20d6a852b8109f1083ce6b76925f35b",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, in DL the Fault/Healthy indicator is set Healthy. Section 4.6 MIB/SNMP updates remain out of profile.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，DL 下将 Fault/Healthy 指示置于 Healthy。§4.6 MIB／SNMP 更新仍在范围外。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "SET-DL-FAULT-HEALTHY-INDICATOR-TO-HEALTHY",
+        "objects": [
+          "AFDX-SWITCH-DL-MODE",
+          "FAULT-HEALTHY-INDICATOR"
+        ],
+        "observableEffect": "AFDX-SWITCH-DL-HEALTHY-INDICATOR-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03070",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DL-FAULT-HEALTHY-HEALTHY",
+      "splitRationale": "DL Healthy indicator is this sentence; OPS Healthy is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00782",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-009-CA57944F0539",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 66,
+        "pdfPage": 74,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "ca57944f0539729eafeb70d85aeee371bb0cc70b82b5178f0bc11cdb6cb40cd0",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the Switch returns to INIT at the end of DL. The 615A end-of-load correspondence is a separate sentence. Bound M2 does not execute that mode machine.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，DL 结束时回到 INIT。与 615A 加载结束对应是单独句子。绑定 M2 不执行该模式机。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "RETURN-TO-INIT-AT-END-OF-DL-MODE",
+        "objects": [
+          "AFDX-SWITCH-DL-MODE",
+          "AFDX-SWITCH-INIT-MODE"
+        ],
+        "observableEffect": "AFDX-SWITCH-DL-RETURN-TO-INIT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03071",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DL-RETURN-TO-INIT",
+      "splitRationale": "Return to INIT at DL end is this sentence; the 615A end-of-load correspondence is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00783",
+      "sourceUnitId": "SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-010-BB161270D89C",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.8.4",
+        "tableOrFigure": null,
+        "documentPage": 66,
+        "pdfPage": 74,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "bb161270d89c0afd7b9e1043d017384cd4619da39f8a4b77121871b3c1debdaa",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, DL-mode end corresponds to the ARINC 615A data-loading function end. Return-to-INIT is a separate sentence.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，DL 模式结束对应 ARINC 615A 数据加载功能结束。回到 INIT 是单独句子。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "TREAT-DL-MODE-END-AS-615A-DATA-LOADING-FUNCTION-END",
+        "objects": [
+          "AFDX-SWITCH-DL-MODE",
+          "ARINC-615A-DATALOADING"
+        ],
+        "observableEffect": "AFDX-SWITCH-DL-END-615A-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "FACT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03072",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DL-END-IS-615A-LOAD-END",
+      "splitRationale": "615A end-of-load correspondence is this sentence; return-to-INIT is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00784",
+      "sourceUnitId": "SU-ARINC-664-7-4.9.2.1-P076-PROSE-SENTENCE-001-38F2329E9842",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.9.2.1",
+        "tableOrFigure": null,
+        "documentPage": 68,
+        "pdfPage": 76,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "38f2329e9842797a7f0beef4af381ae95a40135a2ca73826227b398328e73118",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the Switch has at most two field-loadable software items: OPS_Configuration_File and OPS_Software. Bound M2 does not execute that inventory.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，交换机最多两个现场可加载软件：OPS_Configuration_File 与 OPS_Software。绑定 M2 不执行该清单。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "LIMIT-SWITCH-FIELD-LOADABLE-SOFTWARE-TO-OPS-CONFIG-AND-OPS-SOFTWARE",
+        "objects": [
+          "OPS-CONFIGURATION-FILE",
+          "OPS-SOFTWARE"
+        ],
+        "observableEffect": "AFDX-SWITCH-TWO-FIELD-LOADABLE-LIMIT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03073",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-TWO-FIELD-LOADABLE-LIMIT",
+      "splitRationale": "Two-FLS limit is this sentence; same-file-for-all-switches is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00785",
+      "sourceUnitId": "SU-ARINC-664-7-4.9.2.1-P076-PROSE-SENTENCE-002-50F1E2C97FCF",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.9.2.1",
+        "tableOrFigure": null,
+        "documentPage": 68,
+        "pdfPage": 76,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "50f1e2c97fcff541b163278fb41dfbd15742d3b255a491d8f2f038c1a60a668e",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, those field-loadable files are the same for all switches on the aircraft. Bound M2 does not execute that identity.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，那些现场可加载文件在飞机全部交换机上相同。绑定 M2 不执行该同一性。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "REQUIRE-FIELD-LOADABLE-FILES-IDENTICAL-ACROSS-AIRCRAFT-SWITCHES",
+        "objects": [
+          "OPS-CONFIGURATION-FILE",
+          "OPS-SOFTWARE"
+        ],
+        "observableEffect": "AFDX-SWITCH-FLS-IDENTICAL-ON-AIRCRAFT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03074",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FLS-SAME-FOR-ALL-SWITCHES",
+      "splitRationale": "Identical FLS across switches is this sentence; the two-FLS limit is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00786",
+      "sourceUnitId": "SU-ARINC-664-7-4.9.2.2-P076-PROSE-SENTENCE-001-CF93913C10D2",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.9.2.2",
+        "tableOrFigure": null,
+        "documentPage": 68,
+        "pdfPage": 76,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "cf93913c10d2d25d49f5927e469b064029326d661b0b5f8ce3ac6ae0b909c654",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, at power-on the Switch configuration is accessible through ARINC 615A Information. Bound M2 still does not execute INFORMATION on AFDX.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，上电时交换机配置可通过 ARINC 615A Information 访问。绑定 M2 仍不在 AFDX 上执行 INFORMATION。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "MAKE-SWITCH-CONFIGURATION-ACCESSIBLE-VIA-615A-INFORMATION",
+        "objects": [
+          "ARINC-615A-INFORMATION",
+          "SWITCH-CONFIGURATION"
+        ],
+        "observableEffect": "AFDX-SWITCH-POWER-ON-615A-INFORMATION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03075",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-POWER-ON-615A-INFORMATION",
+      "splitRationale": "Power-on 615A Information access is this sentence; dataloader IP learning is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00787",
+      "sourceUnitId": "SU-ARINC-664-7-4.9.3-P076-PROSE-SENTENCE-001-E77131417E7A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.9.3",
+        "tableOrFigure": null,
+        "documentPage": 68,
+        "pdfPage": 76,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "e77131417e7a0ce657955ae812d38ca0e3a925f8abda136844345ad9fac829e5",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the Switch learns the data-loader IP address from the data-loader IP source address. Bound M2 does not execute that learning.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，交换机从数据加载器 IP 源地址学习其 IP。绑定 M2 不执行该学习。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "LEARN-DATALOADER-IP-FROM-SOURCE-ADDRESS",
+        "objects": [
+          "DATALOADER-IP-ADDRESS",
+          "IP-SOURCE-ADDRESS"
+        ],
+        "observableEffect": "AFDX-SWITCH-LEARN-DATALOADER-IP-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03076",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-LEARN-DATALOADER-IP",
+      "splitRationale": "Dataloader IP learning is this sentence; power-on Information access is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00788",
+      "sourceUnitId": "SU-ARINC-664-7-4.10-P076-PROSE-SENTENCE-001-A1E523B9B28A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10",
+        "tableOrFigure": null,
+        "documentPage": 68,
+        "pdfPage": 76,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "a1e523b9b28abf573d856541cde80bf196083a8e4daab97bb08e3cded1730060",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, hardware pin programming determines switch position and associates default End System MAC and IP. Bound M2 does not execute pin programming.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，硬件插针编程确定交换机位置并关联缺省端系统 MAC 与 IP。绑定 M2 不执行插针编程。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "USE-PIN-PROGRAMMING-FOR-POSITION-AND-DEFAULT-MAC-IP",
+        "objects": [
+          "PIN-PROGRAMMING",
+          "DEFAULT-MAC-ADDRESS",
+          "DEFAULT-IP-ADDRESS"
+        ],
+        "observableEffect": "AFDX-SWITCH-PIN-POSITION-MAC-IP-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03077",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-PIN-PROGRAMMING-POSITION-MAC-IP",
+      "splitRationale": "Pin programming for position/MAC/IP is this sentence; INIT read conditions and coding are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00789",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.1.1-P077-PROSE-SENTENCE-001-52B9BEED0B27",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.1.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "52b9beed0b27c58f818d7e12220cb9d34cf3bb11cdea8a80e04d467d1de3ca7d",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, program pins are read in INIT only when Switch_Ground_Condition is true and before any Safety Test. Bound M2 does not execute that read.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，仅在 INIT 且接地条件为真、并在任何 Safety Test 之前读取编程插针。绑定 M2 不执行该读取。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "READ-PROGRAM-PINS-IN-INIT-ONLY-WHEN-GROUND-BEFORE-SAFETY-TEST",
+        "objects": [
+          "PIN-PROGRAMMING",
+          "SWITCH-GROUND-CONDITION",
+          "AFDX-SWITCH-INIT-MODE"
+        ],
+        "observableEffect": "AFDX-SWITCH-PIN-READ-INIT-GROUND-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03078",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-PIN-READ-INIT-GROUND-BEFORE-SAFETY",
+      "splitRationale": "INIT pin-read when grounded is this sentence; airborne memorized values are a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00790",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.1.1-P077-PROSE-SENTENCE-002-75BA57B04BE1",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.1.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "75ba57b04be15bdae930a3e6a6d806b7ffe59e5efb0323d55294dcf9683a9483",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, program pins are not read when Switch_Ground_Condition is false. Use of last memorized values is a separate sentence.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，接地条件为假时不读编程插针。使用上次记忆值是单独句子。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "DO-NOT-READ-PROGRAM-PINS-WHEN-GROUND-CONDITION-FALSE",
+        "objects": [
+          "PIN-PROGRAMMING",
+          "SWITCH-GROUND-CONDITION"
+        ],
+        "observableEffect": "AFDX-SWITCH-PIN-NOT-READ-IN-FLIGHT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03079",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-PIN-NOT-READ-WHEN-NOT-GROUND",
+      "splitRationale": "No pin read when not grounded is this sentence; last-memorized-value use is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00791",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.1.1-P077-PROSE-SENTENCE-003-A823C1A18045",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.1.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "a823c1a18045d7da061b4da60d8dcad25d16038cfffb088c6d3d3711309f656f",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, when pins are not read the Switch uses last memorized pin values. Bound M2 does not execute that memory.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，不读取插针时使用上次记忆值。绑定 M2 不执行该记忆。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "USE-LAST-MEMORIZED-PIN-VALUES-WHEN-NOT-GROUND",
+        "objects": [
+          "PIN-PROGRAMMING",
+          "MEMORIZED-PIN-VALUES"
+        ],
+        "observableEffect": "AFDX-SWITCH-LAST-MEMORIZED-PINS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03080",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-USE-LAST-MEMORIZED-PIN-VALUES",
+      "splitRationale": "Last-memorized pin values are this sentence; the no-read-when-not-ground rule is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00792",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.1.2-P077-PROSE-SENTENCE-001-8BBF59190535",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.1.2",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "8bbf59190535448080b59ffe3963c5378a0bfc8aea9b1906b04b667bacf41557",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the 12 program pins P1–P12 are checked by a parity bit. This applies with the bound 12-pin definitions if 12 pins are used. Bound M2 does not execute that check.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，12 个编程插针 P1–P12 由奇偶位检查。若使用 12 插针，则与已绑定的 12 插针定义一同适用。绑定 M2 不执行该检查。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "CHECK-TWELVE-PROGRAM-PINS-WITH-PARITY-BIT",
+        "objects": [
+          "PIN-PROGRAMMING",
+          "PIN-PARITY-BIT"
+        ],
+        "observableEffect": "AFDX-SWITCH-PIN-PARITY-CHECK-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03081",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-TWELVE-PIN-PARITY-CHECK",
+      "splitRationale": "Parity check is this sentence; NVM memorize-after-pass is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00793",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.1.2-P077-PROSE-SENTENCE-002-1F0DFAA8E394",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.1.2",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "1f0dfaa8e3944cccba013b01f38408878b0bc2bffeea04a9ccb2ac21ccc82a4e",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, pins that are read with passing parity are memorized in non-volatile memory for in-flight power cut. Bound M2 does not execute that memory.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，读取且奇偶通过的插针记入非易失记忆，供飞行中断电使用。绑定 M2 不执行该记忆。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "MEMORIZE-PROGRAM-PINS-IN-NVM-AFTER-PARITY-PASS",
+        "objects": [
+          "PIN-PROGRAMMING",
+          "NON-VOLATILE-MEMORY"
+        ],
+        "observableEffect": "AFDX-SWITCH-PIN-NVM-MEMORIZE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03082",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-PIN-MEMORIZE-NVM-AFTER-PARITY",
+      "splitRationale": "NVM memorize after parity pass is this sentence; the parity-check sentence is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00794",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.2.1-P077-PROSE-SENTENCE-001-61DD93DD32A4",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.2.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "61dd93dd32a44659fc5183356cb76c614ddbbfcb34e20b586f2983f8e9f1209d",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, switch position is acquired with 12 pins P1–P12. The 4.7.1 12-pin example disclaimer remains a separate informative leaf. Bound M2 does not execute pin programming.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，用 12 插针 P1–P12 获取交换机位置。4.7.1 的 12 插针示例声明仍是单独说明性叶。绑定 M2 不执行插针编程。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "ACQUIRE-SWITCH-POSITION-WITH-TWELVE-PINS-P1-P12",
+        "objects": [
+          "PIN-PROGRAMMING",
+          "SWITCH-POSITION"
+        ],
+        "observableEffect": "AFDX-SWITCH-POSITION-TWELVE-PINS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03083",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-ACQUIRE-POSITION-P1-P12",
+      "splitRationale": "12-pin position acquisition is this sentence; GROUND/OPEN coding is separate."
+    },
+    {
+      "id": "CRS-M1-00795",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.2.1-P077-PROSE-SENTENCE-002-7F1544D1A98F",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.2.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "7f1544d1a98faa9aab84839a7abe6b754f6628e841dd389231bde5686528f733",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, GROUND pin value is coded as 1. OPEN coding is a separate sentence.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，GROUND 插针值编码为 1。OPEN 编码是单独句子。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "CODE-PIN-GROUND-AS-ONE",
+        "objects": [
+          "PIN-PROGRAMMING",
+          "PIN-GROUND-CODE"
+        ],
+        "observableEffect": "AFDX-SWITCH-PIN-GROUND-CODE-ONE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03084",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-PIN-GROUND-CODE-ONE",
+      "splitRationale": "GROUND=1 is this sentence; OPEN=0 is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00796",
+      "sourceUnitId": "SU-ARINC-664-7-4.10.2.1-P077-PROSE-SENTENCE-003-61A04736720E",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.10.2.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "61a04736720e6d3968590b2881628b584aa21816b5da726b08ba957222eb2925",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, OPEN pin value is coded as 0. GROUND coding is a separate sentence.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，OPEN 插针值编码为 0。GROUND 编码是单独句子。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "CODE-PIN-OPEN-AS-ZERO",
+        "objects": [
+          "PIN-PROGRAMMING",
+          "PIN-OPEN-CODE"
+        ],
+        "observableEffect": "AFDX-SWITCH-PIN-OPEN-CODE-ZERO-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03085",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-PIN-OPEN-CODE-ZERO",
+      "splitRationale": "OPEN=0 is this sentence; GROUND=1 is a separate leaf."
+    },
+    {
+      "id": "CRS-M1-00797",
+      "sourceUnitId": "SU-ARINC-664-7-4.11.1-P077-PROSE-SENTENCE-001-0196A7D3617B",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.11.1",
+        "tableOrFigure": null,
+        "documentPage": 69,
+        "pdfPage": 77,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "0196a7d3617bcc9d2404c4d2c55340d6c5bb3ab034d9ae3fd39c17cf4ea6cfd8",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, filtering/policing/forwarding can process at least 4096 VLs. Bound M2 does not execute that capacity.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤／监管／转发至少能处理 4096 条 VL。绑定 M2 不执行该容量。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "PROCESS-AT-LEAST-4096-VLS-IN-FILTER-POLICE-FORWARD",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING",
+          "VL-CAPACITY-4096"
+        ],
+        "observableEffect": "AFDX-SWITCH-4096-VL-CAPACITY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03086",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-AT-LEAST-4096-VLS",
+      "splitRationale": "4096-VL capacity is this sentence; filtering-table parameter lists are separate leaves."
     }
   ],
   "dependencies": [
@@ -113426,24 +115332,24 @@
     "rg0": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "rg1": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "reviewHead": "UNBOUND-DRAFT",
-    "sourceInventoryFingerprint": "12d9d621cfa0770ed8bb3088ee7b0e5bdb0989f8c61fe59ebf78bbcf504cfe5a",
+    "sourceInventoryFingerprint": "51411b7333803af82c365020dcd1478808520d1fa6f72f089202023594d834b1",
     "sectionSpanManifestPath": "configs/requirements/m1_source_section_spans.json",
     "sectionSpanManifestFingerprint": "2630995a15aa2fe1d789f338d24d416f8ab32e0b028f75ad6928e0297b9b09e0",
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "e462872a93ffbe2df3e6eac3f95fe36a742c1aabd320946199e36c585da00a8c",
+    "semanticAssertionFingerprint": "580942330692d3e63b2a44cc2e4d43ae62ca10ccdd88f737634b63a793172347",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
   },
   "inventorySummary": {
-    "coverageCount": 3060,
-    "requirementCount": 770,
+    "coverageCount": 3086,
+    "requirementCount": 796,
     "dependencyCount": 15,
     "gapCount": 1,
-    "coverageFingerprint": "895b9199b62ac6c84b472608a791ba0eeb5f74f541c42590ff0ce479f13eacae",
-    "requirementsFingerprint": "bd171cbc6a4f8863a17d17bc66f6cd8d3a35e27d218cbcbeb48fae5342fda05d"
+    "coverageFingerprint": "56d9770f3c4f3dbaf0fef6eb9acea7e5646cd9f8c0288a38c5b32b3e7b9689fd",
+    "requirementsFingerprint": "768963b15948cd8fe6705028849a871b9c5ce61042106a9b90693087c737bfbb"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",
