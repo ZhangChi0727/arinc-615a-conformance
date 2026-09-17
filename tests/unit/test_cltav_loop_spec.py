@@ -614,3 +614,105 @@ def test_resource_domain_rejects_non_finite_and_non_integer_inputs() -> None:
             frozenset({"q0"}),
             recover_when_unknown=True,
         )
+
+
+def _one_test_library() -> list:
+    return [
+        loop.Action(
+            "t",
+            loop.ActionKind.TEST,
+            1,
+            frozenset({"q"}),
+            obs_classes=(frozenset({"normal"}), frozenset({"h1"})),
+        )
+    ]
+
+
+def test_outside_singleton_does_not_resurrect_or_localize() -> None:
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("normal", "h1"), q="q",
+        B=5, remaining_B=5,
+    )
+    chosen = loop.step(session, _one_test_library(), observation=_hyps("h2"))
+    assert chosen is not None and chosen.id == "t"
+    assert session.Hk == set()
+    assert session.stop == "Stop-Empty"
+    assert session.charges == [("t", 1)]
+    assert "h2" not in session.Hk
+
+
+def test_removed_hypothesis_cannot_reenter() -> None:
+    library = [
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=2, next_q="q0"),
+        loop.Action("t2", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=2, next_q="q0"),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2", "h3"), q="q0",
+        B=5, remaining_B=5,
+    )
+    loop.step(session, library, observation=_hyps("h1", "h2"))
+    assert session.Hk == _hyps("h1", "h2")
+    assert session.stop is None
+    loop.step(session, library, observation=_hyps("h1", "h2", "h3"))
+    assert session.Hk == _hyps("h1", "h2")
+    assert "h3" not in session.Hk
+
+
+def test_valid_observation_subset_is_intersected() -> None:
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("normal", "h1", "h2"), q="q",
+        B=5, remaining_B=5,
+    )
+    library = [
+        loop.Action("t", loop.ActionKind.TEST, 1, frozenset({"q"}), worst_remaining=2, next_q="q"),
+    ]
+    loop.step(session, library, observation=_hyps("normal", "h1"))
+    assert session.Hk == _hyps("normal", "h1")
+    assert session.stop is None
+    assert session.Hk <= _hyps("normal", "h1", "h2")
+
+
+def test_legitimate_empty_class_is_inconsistency_not_input_error() -> None:
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=2, remaining_B=2,
+    )
+    library = [loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q0")]
+    loop.step(session, library, observation=set())
+    assert session.stop == "Stop-Empty"
+    assert session.Hk == set()
+    assert session.charges == [("t1", 1)]
+
+
+def test_error_leaves_candidate_set_unchanged() -> None:
+    library = [loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q0")]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2"), q="q0",
+        B=4, remaining_B=4, retry_cap=3,
+    )
+    loop.step(session, library, error=loop.ErrorKind.NOT_SENT)
+    assert session.Hk == _hyps("h1", "h2")
+    assert session.stop is None
+
+
+def test_recover_observation_class_is_also_intersected() -> None:
+    library = [
+        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=1, next_q="q1"),
+        loop.Action(
+            "recover",
+            loop.ActionKind.RECOVER,
+            1,
+            frozenset({"unreachable"}),
+            next_q="q_sync",
+            recover_when_unknown=True,
+        ),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("normal", "h1"), q="q0",
+        B=10, remaining_B=10, retry_cap=3,
+    )
+    loop.step(session, library, error=loop.ErrorKind.UNKNOWN_EFFECT)
+    assert session.Hk == _hyps("normal", "h1")
+    loop.step(session, library, observation=_hyps("h2"), confirmed_q="q_sync")
+    assert session.Hk == set()
+    assert session.stop == "Stop-Empty"

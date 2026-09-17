@@ -154,7 +154,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-21"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-22"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
@@ -351,6 +351,28 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
         row["semantic"]["action"] == "PROCESS-AT-LEAST-4096-VLS-IN-FILTER-POLICE-FORWARD"
         for row in crs["requirements"]
     )
+    intro = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00778")
+    closing = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00779")
+    membership = intro["listMembership"]
+    assert membership["listId"] == "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS"
+    assert membership["role"] == "INTRODUCER"
+    assert intro["id"] not in membership["memberRequirementIds"]
+    assert closing["id"] not in membership["memberRequirementIds"]
+    assert closing["listMembership"]["memberRequirementIds"] == membership["memberRequirementIds"]
+    assert "listed per-VL" not in intro["generatedSemanticProjectionEn"]
+    members = [row for row in crs["requirements"] if row["id"] in membership["memberRequirementIds"]]
+    assert len(members) == 14
+    assert {row["source"]["fragmentKind"] for row in members} == {"LIST-ITEM"}
+    assert {row["listMembership"]["scope"] for row in members} == {"PER-VL", "PER-PORT"}
+    assert {row["listMembership"]["priorityClass"] for row in members if row["listMembership"]["priorityClass"] in {"HIGH", "LOW"}} == {"HIGH", "LOW"}
+    assert any(row["semantic"]["action"] == "INCLUDE-FILTER-TABLE-PER-VL-INPUT-PHYSICAL-PORT" for row in members)
+    assert any(row["semantic"]["action"] == "INCLUDE-FILTER-TABLE-PER-PORT-HIGH-PRIORITY-BUFFER" for row in members)
+    rx = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00769")
+    pin = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00771")
+    assert "named open" not in rx["generatedSemanticProjectionEn"]
+    assert "named open" not in pin["generatedSemanticProjectionEn"]
+    assert "具名未决" not in rx["generatedSemanticProjectionZh"]
+    assert "具名未决" not in pin["generatedSemanticProjectionZh"]
     philosophy = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00732")
     contents = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00733")
     precedence = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00604")
@@ -934,4 +956,43 @@ def test_informative_laundering_of_named_remainders_fails() -> None:
     assert mib["disposition"] == "OUT-OF-PROFILE"
     assert shop["disposition"] == "OUT-OF-PROFILE"
     assert integrator["disposition"] == "INFORMATIVE"
+
+
+def test_filter_table_list_membership_mutations_fail_after_fingerprint_refresh() -> None:
+    import copy
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("sync_m1_crs", ROOT / "scripts/sync_m1_crs.py")
+    assert spec and spec.loader
+    m1 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m1)
+    data = json.loads((ROOT / "configs/requirements/arinc_615a3_m1_crs.json").read_text(encoding="utf-8"))
+
+    def refresh(package: dict) -> None:
+        package["inventorySummary"]["coverageFingerprint"] = m1.fingerprint(package["coverageLedger"])
+        package["inventorySummary"]["requirementsFingerprint"] = m1.fingerprint(package["requirements"])
+        package["reviewControl"]["sourceInventoryFingerprint"] = m1.fingerprint(m1.source_inventory_projection(package))
+
+    legal = copy.deepcopy(data)
+    refresh(legal)
+    assert not any("list " in item and "P7-4.7.3.2" in item for item in m1.package_errors(legal))
+
+    dropped = copy.deepcopy(data)
+    intro = next(row for row in dropped["requirements"] if row["id"] == "CRS-M1-00778")
+    intro["listMembership"]["memberRequirementIds"] = intro["listMembership"]["memberRequirementIds"][1:]
+    refresh(dropped)
+    found = m1.package_errors(dropped)
+    assert any("introducer members do not match MEMBER rows" in item or "must own the 14" in item for item in found)
+
+    swapped = copy.deepcopy(data)
+    member = next(
+        row
+        for row in swapped["requirements"]
+        if row.get("listMembership", {}).get("listId") == "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS"
+        and row.get("listMembership", {}).get("scope") == "PER-VL"
+    )
+    member["listMembership"]["scope"] = "PER-PORT"
+    refresh(swapped)
+    found = m1.package_errors(swapped)
+    assert any("nine per-VL and five per-port members" in item for item in found)
 

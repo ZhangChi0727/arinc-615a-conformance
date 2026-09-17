@@ -71,7 +71,8 @@
                         "TABLE-ROW",
                         "TABLE-FOOTNOTE",
                         "SEQUENCE-EVENT",
-                        "EQUATION"
+                        "EQUATION",
+                        "LIST-ITEM"
                     ]
                 },
                 "fragmentOrdinal": {
@@ -676,6 +677,49 @@
                     }
                 }
             }
+        },
+        "listMembership": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "listId",
+                "role",
+                "scope"
+            ],
+            "properties": {
+                "listId": {
+                    "$ref": "#/$defs/id"
+                },
+                "role": {
+                    "enum": [
+                        "INTRODUCER",
+                        "MEMBER",
+                        "CONCLUDING-REQUIRED-STATEMENT"
+                    ]
+                },
+                "scope": {
+                    "enum": [
+                        "LIST",
+                        "PER-VL",
+                        "PER-PORT"
+                    ]
+                },
+                "memberRequirementIds": {
+                    "type": "array",
+                    "minItems": 1,
+                    "uniqueItems": true,
+                    "items": {
+                        "$ref": "#/$defs/id"
+                    }
+                },
+                "priorityClass": {
+                    "enum": [
+                        "HIGH",
+                        "LOW",
+                        "NONE"
+                    ]
+                }
+            }
         }
     },
     "properties": {
@@ -1150,6 +1194,9 @@
                     },
                     "fieldConstraint": {
                         "$ref": "#/$defs/fieldConstraint"
+                    },
+                    "listMembership": {
+                        "$ref": "#/$defs/listMembership"
                     }
                 }
             }

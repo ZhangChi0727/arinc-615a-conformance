@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0",
   "artifactId": "ARINC615A3-M1-CRS",
-  "artifactVersion": "M1-CANDIDATE-21",
+  "artifactVersion": "M1-CANDIDATE-22",
   "candidateDisposition": "ADOPT",
   "sourceBindings": [
     {
@@ -75745,6 +75745,526 @@
       "requirementIds": [
         "CRS-M1-00797"
       ]
+    },
+    {
+      "id": "COV-M1-03087",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-001-FA5570782ED4",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "fa5570782ed47a840750b07ca2d33c002533e8e08a9f6d4ee1d29c2ab604f77f",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00798"
+      ]
+    },
+    {
+      "id": "COV-M1-03088",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-002-EF4F00679C45",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "ef4f00679c4577225bbe879f7fca3e1e6595b9e94b39b40b850a4b34747fd2bc",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00799"
+      ]
+    },
+    {
+      "id": "COV-M1-03089",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-003-0F2206C8D7DF",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "0f2206c8d7df339825fdeae83e66a595a7a8eb2208b08b3445618f6b508bb36c",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00800"
+      ]
+    },
+    {
+      "id": "COV-M1-03090",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-004-2D7B18D170FA",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "2d7b18d170fa0ecc45fc0efbd33df4a0cb46e6fe23d8df82606251be670bfe55",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00801"
+      ]
+    },
+    {
+      "id": "COV-M1-03091",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-005-3212536D30E9",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "3212536d30e9681f1ed38ba683ebb839a206c18bb73e72ad77621c84bd5bfb36",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00802"
+      ]
+    },
+    {
+      "id": "COV-M1-03092",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-006-40614995F98A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "40614995f98ab9c76a40d829764a61a502d8f7f1f4fac0d74d37757f406d3987",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00803"
+      ]
+    },
+    {
+      "id": "COV-M1-03093",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-007-EC72DA785E48",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "ec72da785e48b284bd59b2125c542ea19ceb491002de45baf5a8458dba2942c4",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00804"
+      ]
+    },
+    {
+      "id": "COV-M1-03094",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-008-58782E6B26CD",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "58782e6b26cdcb89e63d801ef645aa42ed50031da916959ed607a0d38c0770f4",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00805"
+      ]
+    },
+    {
+      "id": "COV-M1-03095",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-009-6563BA03ED9E",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "6563ba03ed9ec3dea3a39b4d77d2038f6af6a870fea54592b2cb90b49b7a0cce",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00806"
+      ]
+    },
+    {
+      "id": "COV-M1-03096",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-010-3D4E6918A8F3",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "3d4e6918a8f3627926243b6ba9db42c4ec602322d29acf61a370b95ef94f210a",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00807"
+      ]
+    },
+    {
+      "id": "COV-M1-03097",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-011-AABB4D9914A1",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 11
+      },
+      "sourceTextHash": "aabb4d9914a184501c6713221de58f7e3f03a291942a75c70930a526d83f1b2d",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00808"
+      ]
+    },
+    {
+      "id": "COV-M1-03098",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-012-CDFADE5740E6",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 12
+      },
+      "sourceTextHash": "cdfade5740e6738e40f2f012fd230a231fdf886798dd89ccbc3a91d0b8c1f44c",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00809"
+      ]
+    },
+    {
+      "id": "COV-M1-03099",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-013-0902433EC057",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 13
+      },
+      "sourceTextHash": "0902433ec057c646dd21d653ad84df7dbbb82b7f31940dd842d7aae06ba68357",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00810"
+      ]
+    },
+    {
+      "id": "COV-M1-03100",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-014-EEDB47B32B86",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 14
+      },
+      "sourceTextHash": "eedb47b32b86bf2d111baf12d637f09f7a1b43ed36913b488ac3012b6a326ee9",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00811"
+      ]
+    },
+    {
+      "id": "COV-M1-03101",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-001-5F6A63C333DA",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.2",
+        "tableOrFigure": null,
+        "documentPage": 59,
+        "pdfPage": 67,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "5f6a63c333da1cd1b123e181c180773499445d14cc5c5c6f7e49d97222890c9c",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00812"
+      ]
+    },
+    {
+      "id": "COV-M1-03102",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-002-5CA99BF9BB8B",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.2",
+        "tableOrFigure": null,
+        "documentPage": 59,
+        "pdfPage": 67,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "5ca99bf9bb8b77720992c6ea5cacf1aa3637f71cd162579101cf8444093dd634",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00813"
+      ]
+    },
+    {
+      "id": "COV-M1-03103",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-003-C81EDFF6E974",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.2",
+        "tableOrFigure": null,
+        "documentPage": 59,
+        "pdfPage": 67,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "c81edff6e9742059e520aeb276139a3254d063641653c836ff7c30d4284f9fb9",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00814"
+      ]
+    },
+    {
+      "id": "COV-M1-03104",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-001-B4EEE0548816",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.3",
+        "tableOrFigure": null,
+        "documentPage": 60,
+        "pdfPage": 68,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "b4eee0548816c4b1feff8384ed75bdd3b38eeb11e77b5f3af049efff111a1a30",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00815"
+      ]
+    },
+    {
+      "id": "COV-M1-03105",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-002-CEA54264E86E",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.3",
+        "tableOrFigure": null,
+        "documentPage": 60,
+        "pdfPage": 68,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "cea54264e86e60105585f1a7b33d7e9907a0e2f4c0a68eb4da82669814de6476",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00816"
+      ]
+    },
+    {
+      "id": "COV-M1-03106",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-003-5CA99BF9BB8B",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.3",
+        "tableOrFigure": null,
+        "documentPage": 60,
+        "pdfPage": 68,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "5ca99bf9bb8b77720992c6ea5cacf1aa3637f71cd162579101cf8444093dd634",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "atomicity": {
+        "ownershipKind": "LIST-ITEM",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00817"
+      ]
     }
   ],
   "requirements": [
@@ -113813,8 +114333,8 @@
       },
       "sourceTextHash": "a06c741a7aa6d4772726baa0613de6f8ab3d55b15be4b131c5b41c7d0664de8a",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, default reception VLs are necessary to reach the Switch End System even without OPS_Configuration_File, at least to perform dataloading. Pin-programming field lists stay named open. Bound M2 does not execute that configuration.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，缺省接收 VL 即使无 OPS_Configuration_File 也须能到达交换机端系统，至少用于数据加载。插针编程字段表保持具名未决。绑定 M2 不执行该配置。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, default reception VLs are necessary to reach the Switch End System even without OPS_Configuration_File, at least to perform dataloading. Bound M2 does not execute that configuration.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，缺省接收 VL 即使无 OPS_Configuration_File 也须能到达交换机端系统，至少用于数据加载。绑定 M2 不执行该配置。",
       "semantic": {
         "actor": "AFDX-SWITCH",
         "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
@@ -113844,7 +114364,7 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "P7-4-DEFAULT-RECEPTION-VL-FOR-DATALOADING",
-      "splitRationale": "Default reception VL for dataloading is this sentence; pin-programming tables remain a named remainder."
+      "splitRationale": "Default reception VL for dataloading is this sentence; default RX field-list members and pin-programming sentences are separate leaves."
     },
     {
       "id": "CRS-M1-00770",
@@ -113906,8 +114426,8 @@
       },
       "sourceTextHash": "991619a11e375477ca189201bf936d63f1e446364c22e8774a54d11ab01653e2",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen and the implementer uses 12 pins, the following pin definitions should be used. The 12-pin assumption itself is an example. Remaining pin-programming field lists stay named open. Bound M2 does not execute pin programming.",
-      "generatedSemanticProjectionZh": "若选择 AFDX 且实现者使用 12 插针，则应使用随后的插针定义。12 插针假定本身是示例。其余插针编程字段表保持具名未决。绑定 M2 不执行插针编程。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen and the implementer uses 12 pins, the following pin definitions should be used. The 12-pin assumption itself is an example. Bound M2 does not execute pin programming.",
+      "generatedSemanticProjectionZh": "若选择 AFDX 且实现者使用 12 插针，则应使用随后的插针定义。12 插针假定本身是示例。绑定 M2 不执行插针编程。",
       "semantic": {
         "actor": "AFDX-SWITCH",
         "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
@@ -113936,7 +114456,7 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "P7-4-TWELVE-PIN-DEFINITIONS-IF-CHOSEN",
-      "splitRationale": "Conditional 12-pin definitions are this sentence; the example disclaimer and remaining field lists are separate."
+      "splitRationale": "Conditional 12-pin definitions are this sentence; the example disclaimer and pin-programming sentences are separate leaves."
     },
     {
       "id": "CRS-M1-00772",
@@ -114045,8 +114565,8 @@
       },
       "sourceTextHash": "601527b614b823139cdbfd9bdc05409dcd3cd1bcf35336a39d9aae87e1b29ca6",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, the default reception VL table in nonvolatile memory contains at least VL identifier, Smax and BAG. Bound M2 does not execute that table.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，非易失缺省接收 VL 表至少含 VL 标识、Smax 与 BAG。绑定 M2 不执行该表。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the default reception VL table in nonvolatile memory contains at least the members of P7-4.7.2.2-DEFAULT-RECEPTION-VL-FIELDS. This sentence is the list introducer, not a member. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，非易失缺省接收 VL 表至少含 P7-4.7.2.2-DEFAULT-RECEPTION-VL-FIELDS 的成员。本句是列表引导句，不是成员。绑定 M2 不执行该表。",
       "semantic": {
         "actor": "AFDX-SWITCH",
         "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
@@ -114079,7 +114599,17 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "P7-4-DEFAULT-RX-VL-FIELD-LIST",
-      "splitRationale": "Default reception VL field list is this sentence; default transmission fields and dataloading-VL necessity are separate leaves."
+      "splitRationale": "Default RX introducer is this sentence; VL-identifier / Smax / BAG bullets are the members.",
+      "listMembership": {
+        "listId": "P7-4.7.2.2-DEFAULT-RECEPTION-VL-FIELDS",
+        "role": "INTRODUCER",
+        "scope": "LIST",
+        "memberRequirementIds": [
+          "CRS-M1-00812",
+          "CRS-M1-00813",
+          "CRS-M1-00814"
+        ]
+      }
     },
     {
       "id": "CRS-M1-00775",
@@ -114095,8 +114625,8 @@
       },
       "sourceTextHash": "05535f48356a56154a3c1e407a196dc2a2a379151316b0c3ec0d791adc543a6a",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, the default transmission VL table in non-volatile memory contains at least VL identifier, BAG and Smax. Bound M2 does not execute that table.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，非易失缺省发送 VL 表至少含 VL 标识、BAG 与 Smax。绑定 M2 不执行该表。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the default transmission VL table in non-volatile memory contains at least the members of P7-4.7.2.3-DEFAULT-TRANSMISSION-VL-FIELDS. This sentence is the list introducer, not a member. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，非易失缺省发送 VL 表至少含 P7-4.7.2.3-DEFAULT-TRANSMISSION-VL-FIELDS 的成员。本句是列表引导句，不是成员。绑定 M2 不执行该表。",
       "semantic": {
         "actor": "AFDX-SWITCH",
         "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
@@ -114129,7 +114659,17 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "P7-4-DEFAULT-TX-VL-FIELD-LIST",
-      "splitRationale": "Default transmission VL field list is this sentence; dataloading-acknowledge use is a separate leaf."
+      "splitRationale": "Default TX introducer is this sentence; VL-identifier / BAG / Smax bullets are the members.",
+      "listMembership": {
+        "listId": "P7-4.7.2.3-DEFAULT-TRANSMISSION-VL-FIELDS",
+        "role": "INTRODUCER",
+        "scope": "LIST",
+        "memberRequirementIds": [
+          "CRS-M1-00815",
+          "CRS-M1-00816",
+          "CRS-M1-00817"
+        ]
+      }
     },
     {
       "id": "CRS-M1-00776",
@@ -114240,8 +114780,8 @@
       },
       "sourceTextHash": "efd62301437bdce1dae0abd1f425b6bd615a5d54c262572da474096f578e7e59",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, the Filtering_Policing_and_Forwarding_Configuration_Table contains the listed per-VL and per-port parameters. Bound M2 does not execute that table.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，Filtering_Policing_and_Forwarding_Configuration_Table 含所列每 VL 与每端口参数。绑定 M2 不执行该表。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the Filtering_Policing_and_Forwarding_Configuration_Table should contain the members of P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS (nine per-VL and five per-port parameters, including distinct high/low priority buffers). This sentence is the list introducer, not a member. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，Filtering_Policing_and_Forwarding_Configuration_Table 应含 P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS 的成员（九项每 VL、五项每端口，含高低优先级缓冲区分）。本句是列表引导句，不是成员。绑定 M2 不执行该表。",
       "semantic": {
         "actor": "AFDX-SWITCH",
         "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
@@ -114270,7 +114810,28 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "P7-4-FILTER-TABLE-SHOULD-CONTAIN-PARAMETERS",
-      "splitRationale": "Filtering-table parameter obligation is this sentence; the required-to-configure statement is a separate leaf."
+      "splitRationale": "Filtering-table introducer is this sentence; the 14 list items are the members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "INTRODUCER",
+        "scope": "LIST",
+        "memberRequirementIds": [
+          "CRS-M1-00798",
+          "CRS-M1-00799",
+          "CRS-M1-00800",
+          "CRS-M1-00801",
+          "CRS-M1-00802",
+          "CRS-M1-00803",
+          "CRS-M1-00804",
+          "CRS-M1-00805",
+          "CRS-M1-00806",
+          "CRS-M1-00807",
+          "CRS-M1-00808",
+          "CRS-M1-00809",
+          "CRS-M1-00810",
+          "CRS-M1-00811"
+        ]
+      }
     },
     {
       "id": "CRS-M1-00779",
@@ -114286,8 +114847,8 @@
       },
       "sourceTextHash": "f89c710f1173001b6250a3d5c2cf74b9341f66b1a33827a7acec3ea7806473a8",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "If AFDX is chosen, the listed per-VL and per-port parameters are required to configure filtering, policing and forwarding. Bound M2 does not execute those functions.",
-      "generatedSemanticProjectionZh": "若选择 AFDX，所列每 VL 与每端口参数为配置过滤、监管与转发所必需。绑定 M2 不执行那些功能。",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the members of P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS are required to configure filtering, policing and forwarding. This sentence is the concluding requirement, not a member. Bound M2 does not execute those functions.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS 的成员为配置过滤、监管与转发所必需。本句是收束要求，不是成员。绑定 M2 不执行那些功能。",
       "semantic": {
         "actor": "AFDX-SWITCH",
         "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
@@ -114318,7 +114879,28 @@
         "status": "CANDIDATE"
       },
       "atomicPartId": "P7-4-FILTER-PARAMETERS-REQUIRED",
-      "splitRationale": "Required-to-configure statement is this sentence; the table-should-contain sentence is a separate leaf."
+      "splitRationale": "Required-to-configure statement is this sentence; the 14 list items are the members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "CONCLUDING-REQUIRED-STATEMENT",
+        "scope": "LIST",
+        "memberRequirementIds": [
+          "CRS-M1-00798",
+          "CRS-M1-00799",
+          "CRS-M1-00800",
+          "CRS-M1-00801",
+          "CRS-M1-00802",
+          "CRS-M1-00803",
+          "CRS-M1-00804",
+          "CRS-M1-00805",
+          "CRS-M1-00806",
+          "CRS-M1-00807",
+          "CRS-M1-00808",
+          "CRS-M1-00809",
+          "CRS-M1-00810",
+          "CRS-M1-00811"
+        ]
+      }
     },
     {
       "id": "CRS-M1-00780",
@@ -115167,6 +115749,1072 @@
       },
       "atomicPartId": "P7-4-AT-LEAST-4096-VLS",
       "splitRationale": "4096-VL capacity is this sentence; filtering-table parameter lists are separate leaves."
+    },
+    {
+      "id": "CRS-M1-00798",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-001-FA5570782ED4",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "fa5570782ed47a840750b07ca2d33c002533e8e08a9f6d4ee1d29c2ab604f77f",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL input physical port. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的输入物理端口。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-INPUT-PHYSICAL-PORT",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-INPUT-PHYSICAL-PORT"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-INPUT-PHYSICAL-PORT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03087",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-VL-INPUT-PHYSICAL-PORT",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00799",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-002-EF4F00679C45",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "ef4f00679c4577225bbe879f7fca3e1e6595b9e94b39b40b850a4b34747fd2bc",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL list of output physical ports. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的输出物理端口列表。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-OUTPUT-PHYSICAL-PORTS",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-OUTPUT-PHYSICAL-PORTS"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-OUTPUT-PHYSICAL-PORTS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03088",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-VL-OUTPUT-PHYSICAL-PORTS",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00800",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-003-0F2206C8D7DF",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "0f2206c8d7df339825fdeae83e66a595a7a8eb2208b08b3445618f6b508bb36c",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL MAC destination address (VL identifier VLi). Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的 MAC 目的地址（VL 标识 VLi）。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-MAC-DESTINATION",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-MAC-DESTINATION-VLI"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-MAC-DESTINATION-VLI-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03089",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-VL-MAC-DESTINATION-VLI",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00801",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-004-2D7B18D170FA",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 4
+      },
+      "sourceTextHash": "2d7b18d170fa0ecc45fc0efbd33df4a0cb46e6fe23d8df82606251be670bfe55",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL Bandwidth Allocation Gap (BAGi). Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的带宽分配间隔 BAGi。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-BAG",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-BAGI"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-BAGI-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03090",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-VL-BAGI",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00802",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-005-3212536D30E9",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 5
+      },
+      "sourceTextHash": "3212536d30e9681f1ed38ba683ebb839a206c18bb73e72ad77621c84bd5bfb36",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL maximum allowed jitter. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的最大允许抖动。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-MAX-JITTER",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-MAXIMUM-ALLOWED-JITTER"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-MAXIMUM-ALLOWED-JITTER-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03091",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-VL-MAXIMUM-ALLOWED-JITTER",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00803",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-006-40614995F98A",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 6
+      },
+      "sourceTextHash": "40614995f98ab9c76a40d829764a61a502d8f7f1f4fac0d74d37757f406d3987",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL account ACi and whether it is shared. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的账户 ACi 及其是否共享。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-ACCOUNT",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-ACCOUNT-ACI"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-ACCOUNT-ACI-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03092",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-VL-ACCOUNT-ACI",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00804",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-007-EC72DA785E48",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 7
+      },
+      "sourceTextHash": "ec72da785e48b284bd59b2125c542ea19ceb491002de45baf5a8458dba2942c4",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL maximum Total Ethernet Line size Smax. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的最大以太网行长 Smax。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-SMAX",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-SMAX"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-SMAX-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03093",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-VL-SMAX",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00805",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-008-58782E6B26CD",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 8
+      },
+      "sourceTextHash": "58782e6b26cdcb89e63d801ef645aa42ed50031da916959ed607a0d38c0770f4",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL minimum Total Ethernet Line size Smin. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的最小以太网行长 Smin。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-SMIN",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-SMIN"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-SMIN-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03094",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-VL-SMIN",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00806",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-009-6563BA03ED9E",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 9
+      },
+      "sourceTextHash": "6563ba03ed9ec3dea3a39b4d77d2038f6af6a870fea54592b2cb90b49b7a0cce",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL high-or-low prioritization. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的高／低优先级。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-PRIORITIZATION",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-PRIORITIZATION-HIGH-OR-LOW"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-PRIORITIZATION-HIGH-OR-LOW-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03095",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-VL-PRIORITIZATION-HIGH-OR-LOW",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00807",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-010-3D4E6918A8F3",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 10
+      },
+      "sourceTextHash": "3d4e6918a8f3627926243b6ba9db42c4ec602322d29acf61a370b95ef94f210a",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-port max delay. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每端口最大时延。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-MAX-DELAY",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-MAX-DELAY"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-PORT-MAX-DELAY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03096",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-PORT-MAX-DELAY",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-PORT",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00808",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-011-AABB4D9914A1",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 11
+      },
+      "sourceTextHash": "aabb4d9914a184501c6713221de58f7e3f03a291942a75c70930a526d83f1b2d",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-port ON/OFF state. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每端口 ON／OFF 状态。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-STATE",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-STATE-ON-OFF"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-PORT-STATE-ON-OFF-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03097",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-PORT-STATE-ON-OFF",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-PORT",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00809",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-012-CDFADE5740E6",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 12
+      },
+      "sourceTextHash": "cdfade5740e6738e40f2f012fd230a231fdf886798dd89ccbc3a91d0b8c1f44c",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-port physical speed. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每端口物理速率。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-SPEED",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-PHYSICAL-SPEED"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-PORT-PHYSICAL-SPEED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03098",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-PORT-PHYSICAL-SPEED",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-PORT",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00810",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-013-0902433EC057",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 13
+      },
+      "sourceTextHash": "0902433ec057c646dd21d653ad84df7dbbb82b7f31940dd842d7aae06ba68357",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-port output buffer size for low-priority VLs. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每端口低优先级 VL 输出缓冲大小。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-LOW-PRIORITY-BUFFER",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-LOW-PRIORITY-OUTPUT-BUFFER-SIZE"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-PORT-LOW-PRIORITY-OUTPUT-BUFFER-SIZE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03099",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-PORT-LOW-PRIORITY-OUTPUT-BUFFER-SIZE",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-PORT",
+        "priorityClass": "LOW"
+      }
+    },
+    {
+      "id": "CRS-M1-00811",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-014-EEDB47B32B86",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.3.2",
+        "tableOrFigure": null,
+        "documentPage": 62,
+        "pdfPage": 70,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 14
+      },
+      "sourceTextHash": "eedb47b32b86bf2d111baf12d637f09f7a1b43ed36913b488ac3012b6a326ee9",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-port output buffer size for high-priority VLs. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，过滤表含每端口高优先级 VL 输出缓冲大小。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-HIGH-PRIORITY-BUFFER",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-HIGH-PRIORITY-OUTPUT-BUFFER-SIZE"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-PORT-HIGH-PRIORITY-OUTPUT-BUFFER-SIZE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03100",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-FILTER-TABLE-PER-PORT-HIGH-PRIORITY-OUTPUT-BUFFER-SIZE",
+      "splitRationale": "This list item is one source-owned member; the introducer and concluding sentences are not members.",
+      "listMembership": {
+        "listId": "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS",
+        "role": "MEMBER",
+        "scope": "PER-PORT",
+        "priorityClass": "HIGH"
+      }
+    },
+    {
+      "id": "CRS-M1-00812",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-001-5F6A63C333DA",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.2",
+        "tableOrFigure": null,
+        "documentPage": 59,
+        "pdfPage": 67,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "5f6a63c333da1cd1b123e181c180773499445d14cc5c5c6f7e49d97222890c9c",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, default reception configuration includes VL identifier VL(0,position). Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，缺省接收配置含 VL 标识 VL(0,position)。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-DEFAULT-RX-VL-IDENTIFIER",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-RECEPTION-VL",
+          "DEFAULT-RX-VL-IDENTIFIER"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-RX-VL-IDENTIFIER-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03101",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DEFAULT-RX-VL-IDENTIFIER",
+      "splitRationale": "This default-RX list item is one source-owned member; the introducing sentence is not a member.",
+      "listMembership": {
+        "listId": "P7-4.7.2.2-DEFAULT-RECEPTION-VL-FIELDS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00813",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-002-5CA99BF9BB8B",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.2",
+        "tableOrFigure": null,
+        "documentPage": 59,
+        "pdfPage": 67,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "5ca99bf9bb8b77720992c6ea5cacf1aa3637f71cd162579101cf8444093dd634",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, default reception configuration includes maximum Total Ethernet Line size s max. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，缺省接收配置含最大以太网行长 s max。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-DEFAULT-RX-SMAX",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-RECEPTION-VL",
+          "DEFAULT-RX-SMAX"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-RX-SMAX-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03102",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DEFAULT-RX-SMAX",
+      "splitRationale": "This default-RX list item is one source-owned member; the introducing sentence is not a member.",
+      "listMembership": {
+        "listId": "P7-4.7.2.2-DEFAULT-RECEPTION-VL-FIELDS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00814",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-003-C81EDFF6E974",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.2",
+        "tableOrFigure": null,
+        "documentPage": 59,
+        "pdfPage": 67,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "c81edff6e9742059e520aeb276139a3254d063641653c836ff7c30d4284f9fb9",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, default reception configuration includes Bandwidth Allocation Gap. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，缺省接收配置含带宽分配间隔。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-DEFAULT-RX-BAG",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-RECEPTION-VL",
+          "DEFAULT-RX-BAG"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-RX-BAG-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03103",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DEFAULT-RX-BAG",
+      "splitRationale": "This default-RX list item is one source-owned member; the introducing sentence is not a member.",
+      "listMembership": {
+        "listId": "P7-4.7.2.2-DEFAULT-RECEPTION-VL-FIELDS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00815",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-001-B4EEE0548816",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.3",
+        "tableOrFigure": null,
+        "documentPage": 60,
+        "pdfPage": 68,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "b4eee0548816c4b1feff8384ed75bdd3b38eeb11e77b5f3af049efff111a1a30",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, default transmission configuration includes VL identifier VL(1,position) per Figure 4-7. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，缺省发送配置含符合图 4-7 的 VL 标识 VL(1,position)。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-DEFAULT-TX-VL-IDENTIFIER",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-TRANSMISSION-VL",
+          "DEFAULT-TX-VL-IDENTIFIER"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-TX-VL-IDENTIFIER-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03104",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DEFAULT-TX-VL-IDENTIFIER",
+      "splitRationale": "This default-TX list item is one source-owned member; the introducing sentence is not a member.",
+      "listMembership": {
+        "listId": "P7-4.7.2.3-DEFAULT-TRANSMISSION-VL-FIELDS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00816",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-002-CEA54264E86E",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.3",
+        "tableOrFigure": null,
+        "documentPage": 60,
+        "pdfPage": 68,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "cea54264e86e60105585f1a7b33d7e9907a0e2f4c0a68eb4da82669814de6476",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, default transmission configuration includes Bandwidth Allocation GAP. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，缺省发送配置含带宽分配间隔。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-DEFAULT-TX-BAG",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-TRANSMISSION-VL",
+          "DEFAULT-TX-BAG"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-TX-BAG-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03105",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DEFAULT-TX-BAG",
+      "splitRationale": "This default-TX list item is one source-owned member; the introducing sentence is not a member.",
+      "listMembership": {
+        "listId": "P7-4.7.2.3-DEFAULT-TRANSMISSION-VL-FIELDS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
+    },
+    {
+      "id": "CRS-M1-00817",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-003-5CA99BF9BB8B",
+      "source": {
+        "sourceId": "ARINC-664-7",
+        "clause": "4.7.2.3",
+        "tableOrFigure": null,
+        "documentPage": 60,
+        "pdfPage": 68,
+        "fragmentKind": "LIST-ITEM",
+        "fragmentOrdinal": 3
+      },
+      "sourceTextHash": "5ca99bf9bb8b77720992c6ea5cacf1aa3637f71cd162579101cf8444093dd634",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "If AFDX is chosen, default transmission configuration includes maximum Total Ethernet Line size s max. Bound M2 does not execute that table.",
+      "generatedSemanticProjectionZh": "若选择 AFDX，缺省发送配置含最大以太网行长 s max。绑定 M2 不执行该表。",
+      "semantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-DEFAULT-TX-SMAX",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-TRANSMISSION-VL",
+          "DEFAULT-TX-SMAX"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-TX-SMAX-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "CONDITIONAL",
+      "rationaleCode": "AFDX-SWITCH-WHEN-SELECTED",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-664-7"
+      ],
+      "gapIds": [],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03106",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "P7-4-DEFAULT-TX-SMAX",
+      "splitRationale": "This default-TX list item is one source-owned member; the introducing sentence is not a member.",
+      "listMembership": {
+        "listId": "P7-4.7.2.3-DEFAULT-TRANSMISSION-VL-FIELDS",
+        "role": "MEMBER",
+        "scope": "PER-VL",
+        "priorityClass": "NONE"
+      }
     }
   ],
   "dependencies": [
@@ -115332,24 +116980,24 @@
     "rg0": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "rg1": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "reviewHead": "UNBOUND-DRAFT",
-    "sourceInventoryFingerprint": "51411b7333803af82c365020dcd1478808520d1fa6f72f089202023594d834b1",
+    "sourceInventoryFingerprint": "588023a1d42d0654f8b6dda0f319c83c2a008dc146ae9119d76b534a54d6be12",
     "sectionSpanManifestPath": "configs/requirements/m1_source_section_spans.json",
     "sectionSpanManifestFingerprint": "2630995a15aa2fe1d789f338d24d416f8ab32e0b028f75ad6928e0297b9b09e0",
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "580942330692d3e63b2a44cc2e4d43ae62ca10ccdd88f737634b63a793172347",
+    "semanticAssertionFingerprint": "3b5c0218f635fe4ecc25b8714904be6ff5b9c8cd797afc8e5ceea00d9acff94c",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
   },
   "inventorySummary": {
-    "coverageCount": 3086,
-    "requirementCount": 796,
+    "coverageCount": 3106,
+    "requirementCount": 816,
     "dependencyCount": 15,
     "gapCount": 1,
-    "coverageFingerprint": "56d9770f3c4f3dbaf0fef6eb9acea7e5646cd9f8c0288a38c5b32b3e7b9689fd",
-    "requirementsFingerprint": "768963b15948cd8fe6705028849a871b9c5ce61042106a9b90693087c737bfbb"
+    "coverageFingerprint": "2d492fd8a9711186f6af9a098fc99ee2004782bbed0afde410ae70a64e1c1334",
+    "requirementsFingerprint": "631cea59a0cfbb58f20183da6c384fe861da9a8bfffdee44b3817ee65b8a0f14"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

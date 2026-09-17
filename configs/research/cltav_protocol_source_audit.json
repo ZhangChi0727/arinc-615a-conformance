@@ -8,16 +8,16 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-21",
-    "coverageCount": 3086,
-    "requirementCount": 796,
-    "coverageFingerprint": "56d9770f3c4f3dbaf0fef6eb9acea7e5646cd9f8c0288a38c5b32b3e7b9689fd",
-    "requirementsFingerprint": "768963b15948cd8fe6705028849a871b9c5ce61042106a9b90693087c737bfbb",
+    "artifactVersion": "M1-CANDIDATE-22",
+    "coverageCount": 3106,
+    "requirementCount": 816,
+    "coverageFingerprint": "2d492fd8a9711186f6af9a098fc99ee2004782bbed0afde410ae70a64e1c1334",
+    "requirementsFingerprint": "631cea59a0cfbb58f20183da6c384fe861da9a8bfffdee44b3817ee65b8a0f14",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "P7 chapter-4 configuration-table field lists and pin-programming sentences are bound. SHOP/MIB stay out of profile. 665 section 2.3 stays emitted, CRC 645-blocked. Part 4 remains an open alternative. 645 stays acquired-not-bound. This is not independent RG approval."
+    "note": "P7 4.7.3.2 filtering-table members are source-owned LIST-ITEM leaves bound to 00778/00779. Default RX/TX field bullets are likewise owned. SHOP/MIB stay out of profile. 665 section 2.3 stays emitted, CRC 645-blocked. Part 4 remains an open alternative. 645 stays acquired-not-bound. This is not independent RG approval."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -27,13 +27,13 @@
     "Ordinary Ethernet, Compliant, Profiled and AFDX stay separate configuration dimensions."
   ],
   "summary": {
-    "coverageCount": 3086,
-    "requirementCount": 796,
+    "coverageCount": 3106,
+    "requirementCount": 816,
     "applicabilityDecisions": {
       "OUT-OF-PROFILE": 973,
       "APPLICABLE-SUPPORTING": 1309,
       "APPLICABLE-BASE": 286,
-      "CONDITIONAL": 518
+      "CONDITIONAL": 538
     },
     "rationaleCodes": {
       "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE": 902,
@@ -73,7 +73,7 @@
       "IPV4-AND-FRAGMENT-RECONCILIATION": 2,
       "ARP-DEPLOYMENT-SELECTION": 1,
       "AFDX-END-SYSTEM-WHEN-SELECTED": 1,
-      "AFDX-SWITCH-WHEN-SELECTED": 46,
+      "AFDX-SWITCH-WHEN-SELECTED": 66,
       "AFDX-DATA-FORMAT-WHEN-SELECTED": 1,
       "AFDX-IP-UDP-PROFILE-WHEN-SELECTED": 20,
       "UDP-IDENTITY": 1,
@@ -16154,8 +16154,8 @@
             ],
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
-            "summaryEn": "If AFDX is chosen, chapter 4 binds switch composition, 615A OPS/DL modes, default/OPS configuration-table field lists, pin-programming read/parity/coding, and 4096-VL capacity. SHOP and §4.6 MIB/SNMP stay out of profile; integrator-defined init-time and port-count notes stay informative. This is not independent RG approval and does not activate AFDX.",
-            "summaryZh": "若选择 AFDX，第 4 章已绑定交换机组成、615A OPS／DL 模式、缺省／OPS 配置表字段、插针编程读取／奇偶／编码及 4096 VL 容量。SHOP 与 §4.6 MIB／SNMP 保持范围外；集成商定义的初始化时间与端口数说明保持说明性。这不是独立 RG 批准，也不激活 AFDX。",
+            "summaryEn": "If AFDX is chosen, chapter 4 binds switch composition, 615A OPS/DL modes, default/OPS configuration-table field lists with source-owned members, pin-programming read/parity/coding, and 4096-VL capacity. SHOP and §4.6 MIB/SNMP stay out of profile; integrator-defined init-time and port-count notes stay informative. This is not independent RG approval and does not activate AFDX.",
+            "summaryZh": "若选择 AFDX，第 4 章已绑定交换机组成、615A OPS／DL 模式、带来源成员所有权的缺省／OPS 配置表字段、插针编程读取／奇偶／编码及 4096 VL 容量。SHOP 与 §4.6 MIB／SNMP 保持范围外；集成商定义的初始化时间与端口数说明保持说明性。这不是独立 RG 批准，也不激活 AFDX。",
             "leafCoverageIds": [
               "COV-M1-02887",
               "COV-M1-03023",
@@ -16202,7 +16202,27 @@
               "COV-M1-03083",
               "COV-M1-03084",
               "COV-M1-03085",
-              "COV-M1-03086"
+              "COV-M1-03086",
+              "COV-M1-03087",
+              "COV-M1-03088",
+              "COV-M1-03089",
+              "COV-M1-03090",
+              "COV-M1-03091",
+              "COV-M1-03092",
+              "COV-M1-03093",
+              "COV-M1-03094",
+              "COV-M1-03095",
+              "COV-M1-03096",
+              "COV-M1-03097",
+              "COV-M1-03098",
+              "COV-M1-03099",
+              "COV-M1-03100",
+              "COV-M1-03101",
+              "COV-M1-03102",
+              "COV-M1-03103",
+              "COV-M1-03104",
+              "COV-M1-03105",
+              "COV-M1-03106"
             ],
             "leafRequirementIds": [
               "CRS-M1-00608",
@@ -16250,7 +16270,27 @@
               "CRS-M1-00794",
               "CRS-M1-00795",
               "CRS-M1-00796",
-              "CRS-M1-00797"
+              "CRS-M1-00797",
+              "CRS-M1-00798",
+              "CRS-M1-00799",
+              "CRS-M1-00800",
+              "CRS-M1-00801",
+              "CRS-M1-00802",
+              "CRS-M1-00803",
+              "CRS-M1-00804",
+              "CRS-M1-00805",
+              "CRS-M1-00806",
+              "CRS-M1-00807",
+              "CRS-M1-00808",
+              "CRS-M1-00809",
+              "CRS-M1-00810",
+              "CRS-M1-00811",
+              "CRS-M1-00812",
+              "CRS-M1-00813",
+              "CRS-M1-00814",
+              "CRS-M1-00815",
+              "CRS-M1-00816",
+              "CRS-M1-00817"
             ],
             "remainingSubunits": [
               {
@@ -16668,6 +16708,166 @@
                 ],
                 "sourceUnitId": "SU-ARINC-664-7-4.11.1-P077-PROSE-SENTENCE-001-0196A7D3617B",
                 "clause": "4.11.1"
+              },
+              {
+                "coverageId": "COV-M1-03087",
+                "requirementIds": [
+                  "CRS-M1-00798"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-001-FA5570782ED4",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03088",
+                "requirementIds": [
+                  "CRS-M1-00799"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-002-EF4F00679C45",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03089",
+                "requirementIds": [
+                  "CRS-M1-00800"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-003-0F2206C8D7DF",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03090",
+                "requirementIds": [
+                  "CRS-M1-00801"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-004-2D7B18D170FA",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03091",
+                "requirementIds": [
+                  "CRS-M1-00802"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-005-3212536D30E9",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03092",
+                "requirementIds": [
+                  "CRS-M1-00803"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-006-40614995F98A",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03093",
+                "requirementIds": [
+                  "CRS-M1-00804"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-007-EC72DA785E48",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03094",
+                "requirementIds": [
+                  "CRS-M1-00805"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-008-58782E6B26CD",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03095",
+                "requirementIds": [
+                  "CRS-M1-00806"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-009-6563BA03ED9E",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03096",
+                "requirementIds": [
+                  "CRS-M1-00807"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-010-3D4E6918A8F3",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03097",
+                "requirementIds": [
+                  "CRS-M1-00808"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-011-AABB4D9914A1",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03098",
+                "requirementIds": [
+                  "CRS-M1-00809"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-012-CDFADE5740E6",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03099",
+                "requirementIds": [
+                  "CRS-M1-00810"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-013-0902433EC057",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03100",
+                "requirementIds": [
+                  "CRS-M1-00811"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-014-EEDB47B32B86",
+                "clause": "4.7.3.2"
+              },
+              {
+                "coverageId": "COV-M1-03101",
+                "requirementIds": [
+                  "CRS-M1-00812"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-001-5F6A63C333DA",
+                "clause": "4.7.2.2"
+              },
+              {
+                "coverageId": "COV-M1-03102",
+                "requirementIds": [
+                  "CRS-M1-00813"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-002-5CA99BF9BB8B",
+                "clause": "4.7.2.2"
+              },
+              {
+                "coverageId": "COV-M1-03103",
+                "requirementIds": [
+                  "CRS-M1-00814"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-003-C81EDFF6E974",
+                "clause": "4.7.2.2"
+              },
+              {
+                "coverageId": "COV-M1-03104",
+                "requirementIds": [
+                  "CRS-M1-00815"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-001-B4EEE0548816",
+                "clause": "4.7.2.3"
+              },
+              {
+                "coverageId": "COV-M1-03105",
+                "requirementIds": [
+                  "CRS-M1-00816"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-002-CEA54264E86E",
+                "clause": "4.7.2.3"
+              },
+              {
+                "coverageId": "COV-M1-03106",
+                "requirementIds": [
+                  "CRS-M1-00817"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-003-5CA99BF9BB8B",
+                "clause": "4.7.2.3"
               }
             ]
           },

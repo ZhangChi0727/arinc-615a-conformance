@@ -6,6 +6,19 @@ engine, scheduler or state estimator.
 
 Resource quantities are integer units. Infinite, NaN and non-integer round
 caps are not legal witnesses for the finite-termination argument.
+
+Candidate update contract (DD-029 §3.9 / method update):
+    H_{k+1} = H_k ∩ observation_class
+where ``observation_class`` is the set of declared-domain hypotheses
+compatible with the realized observation (the walkthrough encoding of
+O(h,t,q) ∩ I_z, not a precomputed survivor set). Preconditions: the
+session has not already stopped; this path is a valid (non-ERROR)
+execution; Recover may omit the class and then leave H_k unchanged.
+The intersection is required, so H_{k+1} ⊆ H_k. A class disjoint from
+H_k is a legitimate empty update (Stop-Empty / inconsistency), not
+resurrection of an absent hypothesis. ERROR leaves H_k unchanged and
+is not an observation update. A caller-supplied remaining-set that is
+not a subset of H_k is not accepted as a silent H_{k+1}.
 """
 
 from __future__ import annotations
@@ -365,14 +378,21 @@ def classify_update(
 def apply_valid_observation(
     session: Session,
     action: Action,
-    remaining: set[str] | None,
+    observation_class: set[str] | None,
     *,
     confirmed_q: str | None = None,
     named_645: bool = False,
     equivalent: bool = False,
 ) -> None:
-    if remaining is not None:
-        session.Hk = set(remaining)
+    """Intersect a compatibility class with the current candidate set.
+
+    ``observation_class`` is not an already-computed H_{k+1}. Passing a
+    set that contains identifiers outside H_k cannot reintroduce them.
+    """
+    if observation_class is not None:
+        if not isinstance(observation_class, (set, frozenset)):
+            raise ValueError("observation must be a compatibility class (set of hypothesis ids)")
+        session.Hk = remaining_after(action, session.Hk, frozenset(observation_class))
     if action.kind is ActionKind.RECOVER:
         session.history.append(f"recover:{action.id}")
         if confirmed_q is not None and confirmed_q == action.next_q:
@@ -435,7 +455,7 @@ def step(
                 session.stop = classify_empty(session, library)
         return chosen
     if observation is None:
-        raise ValueError("valid execution requires an observation remaining-set")
+        raise ValueError("valid execution requires an observation compatibility class")
     apply_valid_observation(
         session,
         chosen,

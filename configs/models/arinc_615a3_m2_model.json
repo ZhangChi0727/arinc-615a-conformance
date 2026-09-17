@@ -10092,8 +10092,8 @@
           "ARINC-615A-DATALOADING"
         ],
         "action": "REQUIRE-DEFAULT-RECEPTION-VL-FOR-DATALOADING",
-        "predicateEn": "If AFDX is chosen, default reception VLs are necessary to reach the Switch End System even without OPS_Configuration_File, at least to perform dataloading. Pin-programming field lists stay named open. Bound M2 does not execute that configuration.",
-        "predicateZh": "若选择 AFDX，缺省接收 VL 即使无 OPS_Configuration_File 也须能到达交换机端系统，至少用于数据加载。插针编程字段表保持具名未决。绑定 M2 不执行该配置。",
+        "predicateEn": "If AFDX is chosen, default reception VLs are necessary to reach the Switch End System even without OPS_Configuration_File, at least to perform dataloading. Bound M2 does not execute that configuration.",
+        "predicateZh": "若选择 AFDX，缺省接收 VL 即使无 OPS_Configuration_File 也须能到达交换机端系统，至少用于数据加载。绑定 M2 不执行该配置。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -10114,8 +10114,8 @@
           "AFDX-SWITCH-PIN-PROGRAMMING"
         ],
         "action": "USE-STATED-TWELVE-PIN-DEFINITIONS-IF-TWELVE-PINS-CHOSEN",
-        "predicateEn": "If AFDX is chosen and the implementer uses 12 pins, the following pin definitions should be used. The 12-pin assumption itself is an example. Remaining pin-programming field lists stay named open. Bound M2 does not execute pin programming.",
-        "predicateZh": "若选择 AFDX 且实现者使用 12 插针，则应使用随后的插针定义。12 插针假定本身是示例。其余插针编程字段表保持具名未决。绑定 M2 不执行插针编程。",
+        "predicateEn": "If AFDX is chosen and the implementer uses 12 pins, the following pin definitions should be used. The 12-pin assumption itself is an example. Bound M2 does not execute pin programming.",
+        "predicateZh": "若选择 AFDX 且实现者使用 12 插针，则应使用随后的插针定义。12 插针假定本身是示例。绑定 M2 不执行插针编程。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -10152,8 +10152,8 @@
           "BAG"
         ],
         "action": "REQUIRE-DEFAULT-RECEPTION-VL-FIELDS-IN-NONVOLATILE-MEMORY",
-        "predicateEn": "If AFDX is chosen, the default reception VL table in nonvolatile memory contains at least VL identifier, Smax and BAG. Bound M2 does not execute that table.",
-        "predicateZh": "若选择 AFDX，非易失缺省接收 VL 表至少含 VL 标识、Smax 与 BAG。绑定 M2 不执行该表。",
+        "predicateEn": "If AFDX is chosen, the default reception VL table in nonvolatile memory contains at least the members of P7-4.7.2.2-DEFAULT-RECEPTION-VL-FIELDS. This sentence is the list introducer, not a member. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，非易失缺省接收 VL 表至少含 P7-4.7.2.2-DEFAULT-RECEPTION-VL-FIELDS 的成员。本句是列表引导句，不是成员。绑定 M2 不执行该表。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -10167,8 +10167,8 @@
           "SMAX"
         ],
         "action": "REQUIRE-DEFAULT-TRANSMISSION-VL-FIELDS-IN-NONVOLATILE-MEMORY",
-        "predicateEn": "If AFDX is chosen, the default transmission VL table in non-volatile memory contains at least VL identifier, BAG and Smax. Bound M2 does not execute that table.",
-        "predicateZh": "若选择 AFDX，非易失缺省发送 VL 表至少含 VL 标识、BAG 与 Smax。绑定 M2 不执行该表。",
+        "predicateEn": "If AFDX is chosen, the default transmission VL table in non-volatile memory contains at least the members of P7-4.7.2.3-DEFAULT-TRANSMISSION-VL-FIELDS. This sentence is the list introducer, not a member. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，非易失缺省发送 VL 表至少含 P7-4.7.2.3-DEFAULT-TRANSMISSION-VL-FIELDS 的成员。本句是列表引导句，不是成员。绑定 M2 不执行该表。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -10203,8 +10203,8 @@
           "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE"
         ],
         "action": "REQUIRE-FILTERING-POLICING-FORWARDING-TABLE-PARAMETER-SET",
-        "predicateEn": "If AFDX is chosen, the Filtering_Policing_and_Forwarding_Configuration_Table contains the listed per-VL and per-port parameters. Bound M2 does not execute that table.",
-        "predicateZh": "若选择 AFDX，Filtering_Policing_and_Forwarding_Configuration_Table 含所列每 VL 与每端口参数。绑定 M2 不执行该表。",
+        "predicateEn": "If AFDX is chosen, the Filtering_Policing_and_Forwarding_Configuration_Table should contain the members of P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS (nine per-VL and five per-port parameters, including distinct high/low priority buffers). This sentence is the list introducer, not a member. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，Filtering_Policing_and_Forwarding_Configuration_Table 应含 P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS 的成员（九项每 VL、五项每端口，含高低优先级缓冲区分）。本句是列表引导句，不是成员。绑定 M2 不执行该表。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -10216,8 +10216,8 @@
           "PORT-PARAMETERS"
         ],
         "action": "REQUIRE-LISTED-PARAMETERS-TO-CONFIGURE-FILTER-POLICE-FORWARD",
-        "predicateEn": "If AFDX is chosen, the listed per-VL and per-port parameters are required to configure filtering, policing and forwarding. Bound M2 does not execute those functions.",
-        "predicateZh": "若选择 AFDX，所列每 VL 与每端口参数为配置过滤、监管与转发所必需。绑定 M2 不执行那些功能。",
+        "predicateEn": "If AFDX is chosen, the members of P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS are required to configure filtering, policing and forwarding. This sentence is the concluding requirement, not a member. Bound M2 does not execute those functions.",
+        "predicateZh": "若选择 AFDX，P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS 的成员为配置过滤、监管与转发所必需。本句是收束要求，不是成员。绑定 M2 不执行那些功能。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -10436,6 +10436,252 @@
         "action": "PROCESS-AT-LEAST-4096-VLS-IN-FILTER-POLICE-FORWARD",
         "predicateEn": "If AFDX is chosen, filtering/policing/forwarding can process at least 4096 VLs. Bound M2 does not execute that capacity.",
         "predicateZh": "若选择 AFDX，过滤／监管／转发至少能处理 4096 条 VL。绑定 M2 不执行该容量。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-INPUT-PHYSICAL-PORT-CRS-M1-00798",
+        "m1RequirementId": "CRS-M1-00798",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-INPUT-PHYSICAL-PORT"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-INPUT-PHYSICAL-PORT",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-VL input physical port. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每 VL 的输入物理端口。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-OUTPUT-PHYSICAL-PORTS-CRS-M1-00799",
+        "m1RequirementId": "CRS-M1-00799",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-OUTPUT-PHYSICAL-PORTS"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-OUTPUT-PHYSICAL-PORTS",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-VL list of output physical ports. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每 VL 的输出物理端口列表。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-MAC-DESTINATION-CRS-M1-00800",
+        "m1RequirementId": "CRS-M1-00800",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-MAC-DESTINATION-VLI"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-MAC-DESTINATION",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-VL MAC destination address (VL identifier VLi). Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每 VL 的 MAC 目的地址（VL 标识 VLi）。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-BAG-CRS-M1-00801",
+        "m1RequirementId": "CRS-M1-00801",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-BAGI"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-BAG",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-VL Bandwidth Allocation Gap (BAGi). Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每 VL 的带宽分配间隔 BAGi。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-MAX-JITTER-CRS-M1-00802",
+        "m1RequirementId": "CRS-M1-00802",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-MAXIMUM-ALLOWED-JITTER"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-MAX-JITTER",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-VL maximum allowed jitter. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每 VL 的最大允许抖动。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-ACCOUNT-CRS-M1-00803",
+        "m1RequirementId": "CRS-M1-00803",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-ACCOUNT-ACI"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-ACCOUNT",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-VL account ACi and whether it is shared. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每 VL 的账户 ACi 及其是否共享。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-SMAX-CRS-M1-00804",
+        "m1RequirementId": "CRS-M1-00804",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-SMAX"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-SMAX",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-VL maximum Total Ethernet Line size Smax. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每 VL 的最大以太网行长 Smax。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-SMIN-CRS-M1-00805",
+        "m1RequirementId": "CRS-M1-00805",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-SMIN"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-SMIN",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-VL minimum Total Ethernet Line size Smin. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每 VL 的最小以太网行长 Smin。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-PRIORITIZATION-CRS-M1-00806",
+        "m1RequirementId": "CRS-M1-00806",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-PRIORITIZATION-HIGH-OR-LOW"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-PRIORITIZATION",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-VL high-or-low prioritization. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每 VL 的高／低优先级。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-MAX-DELAY-CRS-M1-00807",
+        "m1RequirementId": "CRS-M1-00807",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-MAX-DELAY"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-MAX-DELAY",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-port max delay. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每端口最大时延。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-STATE-CRS-M1-00808",
+        "m1RequirementId": "CRS-M1-00808",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-STATE-ON-OFF"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-STATE",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-port ON/OFF state. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每端口 ON／OFF 状态。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-SPEED-CRS-M1-00809",
+        "m1RequirementId": "CRS-M1-00809",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-PHYSICAL-SPEED"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-SPEED",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-port physical speed. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每端口物理速率。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-LOW-PRIORITY-BUFFER-CRS-M1-00810",
+        "m1RequirementId": "CRS-M1-00810",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-LOW-PRIORITY-OUTPUT-BUFFER-SIZE"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-LOW-PRIORITY-BUFFER",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-port output buffer size for low-priority VLs. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每端口低优先级 VL 输出缓冲大小。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-HIGH-PRIORITY-BUFFER-CRS-M1-00811",
+        "m1RequirementId": "CRS-M1-00811",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-HIGH-PRIORITY-OUTPUT-BUFFER-SIZE"
+        ],
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-HIGH-PRIORITY-BUFFER",
+        "predicateEn": "If AFDX is chosen, the filtering table includes the per-port output buffer size for high-priority VLs. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，过滤表含每端口高优先级 VL 输出缓冲大小。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-DEFAULT-RX-VL-IDENTIFIER-CRS-M1-00812",
+        "m1RequirementId": "CRS-M1-00812",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-RECEPTION-VL",
+          "DEFAULT-RX-VL-IDENTIFIER"
+        ],
+        "action": "INCLUDE-DEFAULT-RX-VL-IDENTIFIER",
+        "predicateEn": "If AFDX is chosen, default reception configuration includes VL identifier VL(0,position). Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，缺省接收配置含 VL 标识 VL(0,position)。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-DEFAULT-RX-SMAX-CRS-M1-00813",
+        "m1RequirementId": "CRS-M1-00813",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-RECEPTION-VL",
+          "DEFAULT-RX-SMAX"
+        ],
+        "action": "INCLUDE-DEFAULT-RX-SMAX",
+        "predicateEn": "If AFDX is chosen, default reception configuration includes maximum Total Ethernet Line size s max. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，缺省接收配置含最大以太网行长 s max。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-DEFAULT-RX-BAG-CRS-M1-00814",
+        "m1RequirementId": "CRS-M1-00814",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-RECEPTION-VL",
+          "DEFAULT-RX-BAG"
+        ],
+        "action": "INCLUDE-DEFAULT-RX-BAG",
+        "predicateEn": "If AFDX is chosen, default reception configuration includes Bandwidth Allocation Gap. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，缺省接收配置含带宽分配间隔。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-VL-IDENTIFIER-CRS-M1-00815",
+        "m1RequirementId": "CRS-M1-00815",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-TRANSMISSION-VL",
+          "DEFAULT-TX-VL-IDENTIFIER"
+        ],
+        "action": "INCLUDE-DEFAULT-TX-VL-IDENTIFIER",
+        "predicateEn": "If AFDX is chosen, default transmission configuration includes VL identifier VL(1,position) per Figure 4-7. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，缺省发送配置含符合图 4-7 的 VL 标识 VL(1,position)。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-BAG-CRS-M1-00816",
+        "m1RequirementId": "CRS-M1-00816",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-TRANSMISSION-VL",
+          "DEFAULT-TX-BAG"
+        ],
+        "action": "INCLUDE-DEFAULT-TX-BAG",
+        "predicateEn": "If AFDX is chosen, default transmission configuration includes Bandwidth Allocation GAP. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，缺省发送配置含带宽分配间隔。绑定 M2 不执行该表。",
+        "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-SMAX-CRS-M1-00817",
+        "m1RequirementId": "CRS-M1-00817",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-TRANSMISSION-VL",
+          "DEFAULT-TX-SMAX"
+        ],
+        "action": "INCLUDE-DEFAULT-TX-SMAX",
+        "predicateEn": "If AFDX is chosen, default transmission configuration includes maximum Total Ethernet Line size s max. Bound M2 does not execute that table.",
+        "predicateZh": "若选择 AFDX，缺省发送配置含最大以太网行长 s max。绑定 M2 不执行该表。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       }
     ],
@@ -22050,6 +22296,246 @@
       "modelTargetIds": [
         "OBJ-SUPPORTING-PROCESS-AT-LEAST-4096-VLS-IN-FILTER-POLICE-FORWARD-CRS-M1-00797"
       ]
+    },
+    {
+      "requirementId": "CRS-M1-00798",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-INPUT-PHYSICAL-PORT-CRS-M1-00798"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00799",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-OUTPUT-PHYSICAL-PORTS-CRS-M1-00799"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00800",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-MAC-DESTINATION-CRS-M1-00800"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00801",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-BAG-CRS-M1-00801"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00802",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-MAX-JITTER-CRS-M1-00802"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00803",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-ACCOUNT-CRS-M1-00803"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00804",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-SMAX-CRS-M1-00804"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00805",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-SMIN-CRS-M1-00805"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00806",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-PRIORITIZATION-CRS-M1-00806"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00807",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-MAX-DELAY-CRS-M1-00807"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00808",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-STATE-CRS-M1-00808"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00809",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-SPEED-CRS-M1-00809"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00810",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-LOW-PRIORITY-BUFFER-CRS-M1-00810"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00811",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-HIGH-PRIORITY-BUFFER-CRS-M1-00811"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00812",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-DEFAULT-RX-VL-IDENTIFIER-CRS-M1-00812"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00813",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-DEFAULT-RX-SMAX-CRS-M1-00813"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00814",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-DEFAULT-RX-BAG-CRS-M1-00814"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00815",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-VL-IDENTIFIER-CRS-M1-00815"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00816",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-BAG-CRS-M1-00816"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00817",
+      "sourceId": "ARINC-664-7",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "DATA-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-SMAX-CRS-M1-00817"
+      ]
     }
   ],
   "traceRelations": [
@@ -31974,6 +32460,226 @@
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
       "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00798-1011",
+      "requirementId": "CRS-M1-00798",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-INPUT-PHYSICAL-PORT-CRS-M1-00798",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00799-1012",
+      "requirementId": "CRS-M1-00799",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-OUTPUT-PHYSICAL-PORTS-CRS-M1-00799",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00800-1013",
+      "requirementId": "CRS-M1-00800",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-MAC-DESTINATION-CRS-M1-00800",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00801-1014",
+      "requirementId": "CRS-M1-00801",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-BAG-CRS-M1-00801",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00802-1015",
+      "requirementId": "CRS-M1-00802",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-MAX-JITTER-CRS-M1-00802",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00803-1016",
+      "requirementId": "CRS-M1-00803",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-ACCOUNT-CRS-M1-00803",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00804-1017",
+      "requirementId": "CRS-M1-00804",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-SMAX-CRS-M1-00804",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00805-1018",
+      "requirementId": "CRS-M1-00805",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-SMIN-CRS-M1-00805",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00806-1019",
+      "requirementId": "CRS-M1-00806",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-VL-PRIORITIZATION-CRS-M1-00806",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00807-1020",
+      "requirementId": "CRS-M1-00807",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-MAX-DELAY-CRS-M1-00807",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00808-1021",
+      "requirementId": "CRS-M1-00808",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-STATE-CRS-M1-00808",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00809-1022",
+      "requirementId": "CRS-M1-00809",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-SPEED-CRS-M1-00809",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00810-1023",
+      "requirementId": "CRS-M1-00810",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-LOW-PRIORITY-BUFFER-CRS-M1-00810",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00811-1024",
+      "requirementId": "CRS-M1-00811",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-FILTER-TABLE-PER-PORT-HIGH-PRIORITY-BUFFER-CRS-M1-00811",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00812-1025",
+      "requirementId": "CRS-M1-00812",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-DEFAULT-RX-VL-IDENTIFIER-CRS-M1-00812",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00813-1026",
+      "requirementId": "CRS-M1-00813",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-DEFAULT-RX-SMAX-CRS-M1-00813",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00814-1027",
+      "requirementId": "CRS-M1-00814",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-DEFAULT-RX-BAG-CRS-M1-00814",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00815-1028",
+      "requirementId": "CRS-M1-00815",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-VL-IDENTIFIER-CRS-M1-00815",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00816-1029",
+      "requirementId": "CRS-M1-00816",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-BAG-CRS-M1-00816",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00817-1030",
+      "requirementId": "CRS-M1-00817",
+      "targetKind": "OBJECT-CONSTRAINT",
+      "targetId": "OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-SMAX-CRS-M1-00817",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
+      "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
+      "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
     }
   ],
   "infrastructurePremises": [
@@ -32660,15 +33366,15 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 796,
-    "dispositionCount": 796,
-    "traceCount": 902,
+    "requirementCount": 816,
+    "dispositionCount": 816,
+    "traceCount": 922,
     "stateCount": 35,
     "transitionCount": 65,
     "timingCount": 30,
     "fieldConstraintCount": 108,
-    "dispositionsFingerprint": "f103fdff2a65e1966094f2a138ca3fcf34ad146c12cc6aecab1b3a025c1c1f8b",
-    "modelFingerprint": "9f156c7b588abe363ef8d7deca8f8953ba837e11ccacdda4f2e1805df1aee7f4",
+    "dispositionsFingerprint": "88d9e6ff5ea57bad369cf8144a92230f531276566e1d8725732795c441c5fdb4",
+    "modelFingerprint": "e40d9f1239bd1888534f4d35b2944f0ab9d381ac7cdb4364fd31454d7d78c8b6",
     "timingFingerprint": "cd8a13f203f6d2c2f9c82e65646bf9d5b920200a509af92d461096e54f7e6810",
     "inputFingerprint": "9c790bea5959aecbf39453db7fbef0a68c6079c223e5872978c4a99b2c24e9ce",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",

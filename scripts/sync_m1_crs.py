@@ -88,6 +88,87 @@ def field_constraint_projection(data: dict[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
+FILTER_PARAM_LIST_ID = "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS"
+
+
+def list_membership_errors(data: dict[str, Any]) -> list[str]:
+    """Admitted source lists must own located members; introducers are not the members."""
+    errors: list[str] = []
+    grouped: dict[str, dict[str, list[dict[str, Any]]]] = {}
+    for row in data.get("requirements", []):
+        membership = row.get("listMembership")
+        if not isinstance(membership, dict):
+            continue
+        list_id = str(membership.get("listId") or "")
+        role = str(membership.get("role") or "")
+        if not list_id or not role:
+            errors.append(f"requirement {row.get('id')} listMembership lacks listId or role")
+            continue
+        grouped.setdefault(list_id, {"INTRODUCER": [], "CONCLUDING-REQUIRED-STATEMENT": [], "MEMBER": []})
+        if role not in grouped[list_id]:
+            errors.append(f"requirement {row.get('id')} has unsupported listMembership.role {role}")
+            continue
+        grouped[list_id][role].append(row)
+    for list_id, parts in grouped.items():
+        intros = parts["INTRODUCER"]
+        conclusions = parts["CONCLUDING-REQUIRED-STATEMENT"]
+        members = parts["MEMBER"]
+        if len(intros) != 1:
+            errors.append(f"list {list_id} must have exactly one INTRODUCER")
+            continue
+        intro = intros[0]
+        claimed = list(intro.get("listMembership", {}).get("memberRequirementIds") or [])
+        if intro.get("listMembership", {}).get("scope") != "LIST":
+            errors.append(f"list {list_id} introducer {intro.get('id')} scope must be LIST")
+        member_ids = [row["id"] for row in members]
+        if sorted(claimed) != sorted(member_ids):
+            errors.append(f"list {list_id} introducer members do not match MEMBER rows")
+        if not claimed:
+            errors.append(f"list {list_id} introducer {intro.get('id')} has no members")
+        if conclusions:
+            if len(conclusions) != 1:
+                errors.append(f"list {list_id} must have at most one concluding statement")
+            else:
+                closing = conclusions[0]
+                if closing.get("listMembership", {}).get("scope") != "LIST":
+                    errors.append(f"list {list_id} concluding statement scope must be LIST")
+                if list(closing.get("listMembership", {}).get("memberRequirementIds") or []) != claimed:
+                    errors.append(f"list {list_id} concluding statement members disagree with introducer")
+                if closing.get("id") in claimed or intro.get("id") in claimed:
+                    errors.append(f"list {list_id} introducer/concluder must not be counted as a member")
+        seen_scopes: set[str] = set()
+        seen_priority: set[str] = set()
+        for member in members:
+            membership = member.get("listMembership") or {}
+            if member.get("source", {}).get("fragmentKind") != "LIST-ITEM":
+                errors.append(f"list {list_id} member {member.get('id')} is not a LIST-ITEM")
+            if membership.get("listId") != list_id:
+                errors.append(f"list {list_id} member {member.get('id')} listId mismatch")
+            scope = membership.get("scope")
+            if scope not in {"PER-VL", "PER-PORT"}:
+                errors.append(f"list {list_id} member {member.get('id')} must keep per-VL or per-port ownership")
+            seen_scopes.add(str(scope))
+            if member.get("id") not in claimed:
+                errors.append(f"list {list_id} member {member.get('id')} is not owned by the introducer")
+            if membership.get("memberRequirementIds"):
+                errors.append(f"list {list_id} member {member.get('id')} must not carry memberRequirementIds")
+            priority = membership.get("priorityClass")
+            if priority in {"HIGH", "LOW"}:
+                seen_priority.add(priority)
+        if list_id == FILTER_PARAM_LIST_ID:
+            vl = sum(1 for member in members if (member.get("listMembership") or {}).get("scope") == "PER-VL")
+            port = sum(1 for member in members if (member.get("listMembership") or {}).get("scope") == "PER-PORT")
+            if vl != 9 or port != 5:
+                errors.append(f"list {list_id} must preserve nine per-VL and five per-port members")
+            if seen_scopes != {"PER-VL", "PER-PORT"}:
+                errors.append(f"list {list_id} must preserve both per-VL and per-port ownership")
+            if seen_priority != {"HIGH", "LOW"}:
+                errors.append(f"list {list_id} must preserve high and low priority buffer members")
+            if len(claimed) != 14:
+                errors.append(f"list {list_id} must own the 14 source-listed parameters")
+    return errors
+
+
 def bounded_665_policy_errors(data: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     policy = data.get("profileScope", {}).get("bounded665EdgePolicy", {})
@@ -592,6 +673,7 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     accepted_665 = set(edge_policy.get("acceptedDispositions", []))
     prohibited_665 = set(edge_policy.get("prohibitedDispositions", []))
     errors.extend(bounded_665_policy_errors(data))
+    errors.extend(list_membership_errors(data))
     spans_by_source: dict[str, list[dict[str, Any]]] = {}
     for source in section_manifest.get("sources", []):
         source_id = source.get("sourceId")

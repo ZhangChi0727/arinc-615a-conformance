@@ -19972,8 +19972,8 @@
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, default reception VLs are necessary to reach the Switch End System even without OPS_Configuration_File, at least to perform dataloading. Pin-programming field lists stay named open. Bound M2 does not execute that configuration.",
-      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，缺省接收 VL 即使无 OPS_Configuration_File 也须能到达交换机端系统，至少用于数据加载。插针编程字段表保持具名未决。绑定 M2 不执行该配置。",
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, default reception VLs are necessary to reach the Switch End System even without OPS_Configuration_File, at least to perform dataloading. Bound M2 does not execute that configuration.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，缺省接收 VL 即使无 OPS_Configuration_File 也须能到达交换机端系统，至少用于数据加载。绑定 M2 不执行该配置。",
       "expectedSourceModality": "FACT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [
@@ -20018,8 +20018,8 @@
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen and the implementer uses 12 pins, the following pin definitions should be used. The 12-pin assumption itself is an example. Remaining pin-programming field lists stay named open. Bound M2 does not execute pin programming.",
-      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX 且实现者使用 12 插针，则应使用随后的插针定义。12 插针假定本身是示例。其余插针编程字段表保持具名未决。绑定 M2 不执行插针编程。",
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen and the implementer uses 12 pins, the following pin definitions should be used. The 12-pin assumption itself is an example. Bound M2 does not execute pin programming.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX 且实现者使用 12 插针，则应使用随后的插针定义。12 插针假定本身是示例。绑定 M2 不执行插针编程。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [
@@ -20092,8 +20092,8 @@
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the default reception VL table in nonvolatile memory contains at least VL identifier, Smax and BAG. Bound M2 does not execute that table.",
-      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，非易失缺省接收 VL 表至少含 VL 标识、Smax 与 BAG。绑定 M2 不执行该表。",
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the default reception VL table in nonvolatile memory contains at least the members of P7-4.7.2.2-DEFAULT-RECEPTION-VL-FIELDS. This sentence is the list introducer, not a member. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，非易失缺省接收 VL 表至少含 P7-4.7.2.2-DEFAULT-RECEPTION-VL-FIELDS 的成员。本句是列表引导句，不是成员。绑定 M2 不执行该表。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [
@@ -20119,8 +20119,8 @@
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the default transmission VL table in non-volatile memory contains at least VL identifier, BAG and Smax. Bound M2 does not execute that table.",
-      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，非易失缺省发送 VL 表至少含 VL 标识、BAG 与 Smax。绑定 M2 不执行该表。",
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the default transmission VL table in non-volatile memory contains at least the members of P7-4.7.2.3-DEFAULT-TRANSMISSION-VL-FIELDS. This sentence is the list introducer, not a member. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，非易失缺省发送 VL 表至少含 P7-4.7.2.3-DEFAULT-TRANSMISSION-VL-FIELDS 的成员。本句是列表引导句，不是成员。绑定 M2 不执行该表。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [
@@ -20191,8 +20191,8 @@
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the Filtering_Policing_and_Forwarding_Configuration_Table contains the listed per-VL and per-port parameters. Bound M2 does not execute that table.",
-      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，Filtering_Policing_and_Forwarding_Configuration_Table 含所列每 VL 与每端口参数。绑定 M2 不执行该表。",
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the Filtering_Policing_and_Forwarding_Configuration_Table should contain the members of P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS (nine per-VL and five per-port parameters, including distinct high/low priority buffers). This sentence is the list introducer, not a member. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，Filtering_Policing_and_Forwarding_Configuration_Table 应含 P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS 的成员（九项每 VL、五项每端口，含高低优先级缓冲区分）。本句是列表引导句，不是成员。绑定 M2 不执行该表。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [
@@ -20216,8 +20216,8 @@
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the listed per-VL and per-port parameters are required to configure filtering, policing and forwarding. Bound M2 does not execute those functions.",
-      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，所列每 VL 与每端口参数为配置过滤、监管与转发所必需。绑定 M2 不执行那些功能。",
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the members of P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS are required to configure filtering, policing and forwarding. This sentence is the concluding requirement, not a member. Bound M2 does not execute those functions.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS 的成员为配置过滤、监管与转发所必需。本句是收束要求，不是成员。绑定 M2 不执行那些功能。",
       "expectedSourceModality": "FACT",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [
@@ -20652,6 +20652,492 @@
       },
       "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, filtering/policing/forwarding can process at least 4096 VLs. Bound M2 does not execute that capacity.",
       "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤／监管／转发至少能处理 4096 条 VL。绑定 M2 不执行该容量。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00798",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-001-FA5570782ED4",
+      "sourceTextHash": "fa5570782ed47a840750b07ca2d33c002533e8e08a9f6d4ee1d29c2ab604f77f",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-INPUT-PHYSICAL-PORT",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-INPUT-PHYSICAL-PORT"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-INPUT-PHYSICAL-PORT-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL input physical port. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的输入物理端口。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00799",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-002-EF4F00679C45",
+      "sourceTextHash": "ef4f00679c4577225bbe879f7fca3e1e6595b9e94b39b40b850a4b34747fd2bc",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-OUTPUT-PHYSICAL-PORTS",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-OUTPUT-PHYSICAL-PORTS"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-OUTPUT-PHYSICAL-PORTS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL list of output physical ports. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的输出物理端口列表。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00800",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-003-0F2206C8D7DF",
+      "sourceTextHash": "0f2206c8d7df339825fdeae83e66a595a7a8eb2208b08b3445618f6b508bb36c",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-MAC-DESTINATION",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-MAC-DESTINATION-VLI"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-MAC-DESTINATION-VLI-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL MAC destination address (VL identifier VLi). Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的 MAC 目的地址（VL 标识 VLi）。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00801",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-004-2D7B18D170FA",
+      "sourceTextHash": "2d7b18d170fa0ecc45fc0efbd33df4a0cb46e6fe23d8df82606251be670bfe55",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-BAG",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-BAGI"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-BAGI-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL Bandwidth Allocation Gap (BAGi). Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的带宽分配间隔 BAGi。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00802",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-005-3212536D30E9",
+      "sourceTextHash": "3212536d30e9681f1ed38ba683ebb839a206c18bb73e72ad77621c84bd5bfb36",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-MAX-JITTER",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-MAXIMUM-ALLOWED-JITTER"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-MAXIMUM-ALLOWED-JITTER-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL maximum allowed jitter. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的最大允许抖动。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00803",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-006-40614995F98A",
+      "sourceTextHash": "40614995f98ab9c76a40d829764a61a502d8f7f1f4fac0d74d37757f406d3987",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-ACCOUNT",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-ACCOUNT-ACI"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-ACCOUNT-ACI-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL account ACi and whether it is shared. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的账户 ACi 及其是否共享。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00804",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-007-EC72DA785E48",
+      "sourceTextHash": "ec72da785e48b284bd59b2125c542ea19ceb491002de45baf5a8458dba2942c4",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-SMAX",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-SMAX"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-SMAX-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL maximum Total Ethernet Line size Smax. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的最大以太网行长 Smax。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00805",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-008-58782E6B26CD",
+      "sourceTextHash": "58782e6b26cdcb89e63d801ef645aa42ed50031da916959ed607a0d38c0770f4",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-SMIN",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-SMIN"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-SMIN-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL minimum Total Ethernet Line size Smin. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的最小以太网行长 Smin。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00806",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-009-6563BA03ED9E",
+      "sourceTextHash": "6563ba03ed9ec3dea3a39b4d77d2038f6af6a870fea54592b2cb90b49b7a0cce",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-VL-PRIORITIZATION",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-VL-PRIORITIZATION-HIGH-OR-LOW"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-VL-PRIORITIZATION-HIGH-OR-LOW-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-VL high-or-low prioritization. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每 VL 的高／低优先级。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00807",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-010-3D4E6918A8F3",
+      "sourceTextHash": "3d4e6918a8f3627926243b6ba9db42c4ec602322d29acf61a370b95ef94f210a",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-MAX-DELAY",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-MAX-DELAY"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-PORT-MAX-DELAY-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-port max delay. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每端口最大时延。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00808",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-011-AABB4D9914A1",
+      "sourceTextHash": "aabb4d9914a184501c6713221de58f7e3f03a291942a75c70930a526d83f1b2d",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-STATE",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-STATE-ON-OFF"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-PORT-STATE-ON-OFF-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-port ON/OFF state. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每端口 ON／OFF 状态。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00809",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-012-CDFADE5740E6",
+      "sourceTextHash": "cdfade5740e6738e40f2f012fd230a231fdf886798dd89ccbc3a91d0b8c1f44c",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-SPEED",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-PHYSICAL-SPEED"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-PORT-PHYSICAL-SPEED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-port physical speed. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每端口物理速率。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00810",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-013-0902433EC057",
+      "sourceTextHash": "0902433ec057c646dd21d653ad84df7dbbb82b7f31940dd842d7aae06ba68357",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-LOW-PRIORITY-BUFFER",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-LOW-PRIORITY-OUTPUT-BUFFER-SIZE"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-PORT-LOW-PRIORITY-OUTPUT-BUFFER-SIZE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-port output buffer size for low-priority VLs. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每端口低优先级 VL 输出缓冲大小。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00811",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-014-EEDB47B32B86",
+      "sourceTextHash": "eedb47b32b86bf2d111baf12d637f09f7a1b43ed36913b488ac3012b6a326ee9",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-FILTER-TABLE-PER-PORT-HIGH-PRIORITY-BUFFER",
+        "objects": [
+          "FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE",
+          "PER-PORT-HIGH-PRIORITY-OUTPUT-BUFFER-SIZE"
+        ],
+        "observableEffect": "AFDX-SWITCH-PER-PORT-HIGH-PRIORITY-OUTPUT-BUFFER-SIZE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, the filtering table includes the per-port output buffer size for high-priority VLs. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，过滤表含每端口高优先级 VL 输出缓冲大小。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00812",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-001-5F6A63C333DA",
+      "sourceTextHash": "5f6a63c333da1cd1b123e181c180773499445d14cc5c5c6f7e49d97222890c9c",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-DEFAULT-RX-VL-IDENTIFIER",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-RECEPTION-VL",
+          "DEFAULT-RX-VL-IDENTIFIER"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-RX-VL-IDENTIFIER-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, default reception configuration includes VL identifier VL(0,position). Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，缺省接收配置含 VL 标识 VL(0,position)。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00813",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-002-5CA99BF9BB8B",
+      "sourceTextHash": "5ca99bf9bb8b77720992c6ea5cacf1aa3637f71cd162579101cf8444093dd634",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-DEFAULT-RX-SMAX",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-RECEPTION-VL",
+          "DEFAULT-RX-SMAX"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-RX-SMAX-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, default reception configuration includes maximum Total Ethernet Line size s max. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，缺省接收配置含最大以太网行长 s max。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00814",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-003-C81EDFF6E974",
+      "sourceTextHash": "c81edff6e9742059e520aeb276139a3254d063641653c836ff7c30d4284f9fb9",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-DEFAULT-RX-BAG",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-RECEPTION-VL",
+          "DEFAULT-RX-BAG"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-RX-BAG-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, default reception configuration includes Bandwidth Allocation Gap. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，缺省接收配置含带宽分配间隔。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00815",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-001-B4EEE0548816",
+      "sourceTextHash": "b4eee0548816c4b1feff8384ed75bdd3b38eeb11e77b5f3af049efff111a1a30",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-DEFAULT-TX-VL-IDENTIFIER",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-TRANSMISSION-VL",
+          "DEFAULT-TX-VL-IDENTIFIER"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-TX-VL-IDENTIFIER-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, default transmission configuration includes VL identifier VL(1,position) per Figure 4-7. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，缺省发送配置含符合图 4-7 的 VL 标识 VL(1,position)。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00816",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-002-CEA54264E86E",
+      "sourceTextHash": "cea54264e86e60105585f1a7b33d7e9907a0e2f4c0a68eb4da82669814de6476",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-DEFAULT-TX-BAG",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-TRANSMISSION-VL",
+          "DEFAULT-TX-BAG"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-TX-BAG-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, default transmission configuration includes Bandwidth Allocation GAP. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，缺省发送配置含带宽分配间隔。绑定 M2 不执行该表。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-664-7"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00817",
+      "sourceUnitId": "SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-003-5CA99BF9BB8B",
+      "sourceTextHash": "5ca99bf9bb8b77720992c6ea5cacf1aa3637f71cd162579101cf8444093dd634",
+      "expectedSemantic": {
+        "actor": "AFDX-SWITCH",
+        "condition": "WHEN-AFDX-TRANSPORT-IS-SELECTED",
+        "action": "INCLUDE-DEFAULT-TX-SMAX",
+        "objects": [
+          "DEFAULT-CONFIGURATION-TABLE",
+          "DEFAULT-TRANSMISSION-VL",
+          "DEFAULT-TX-SMAX"
+        ],
+        "observableEffect": "AFDX-SWITCH-DEFAULT-TX-SMAX-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If AFDX is chosen, default transmission configuration includes maximum Total Ethernet Line size s max. Bound M2 does not execute that table.",
+      "expectedGeneratedSemanticProjectionZh": "若选择 AFDX，缺省发送配置含最大以太网行长 s max。绑定 M2 不执行该表。",
       "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [
