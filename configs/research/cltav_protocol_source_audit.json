@@ -8,16 +8,16 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-19",
-    "coverageCount": 3047,
-    "requirementCount": 757,
-    "coverageFingerprint": "841a50870773bc337ae4f146d5da42abc092c0684483a2db24160b21bc12d34e",
-    "requirementsFingerprint": "066dda87605882f269975c25b93e6c708ef33d4cf5ace4b6c28b1c77348c9c42",
+    "artifactVersion": "M1-CANDIDATE-20",
+    "coverageCount": 3060,
+    "requirementCount": 770,
+    "coverageFingerprint": "895b9199b62ac6c84b472608a791ba0eeb5f74f541c42590ff0ce479f13eacae",
+    "requirementsFingerprint": "bd171cbc6a4f8863a17d17bc66f6cd8d3a35e27d218cbcbeb48fae5342fda05d",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "RR-018: Table 2-2 UDP checksum generate/check is NOT APPLICABLE under CRS-M1-00609; unused comment and discard stay separate. 665 section 2.3 stays emitted, not independently closed. Part 4 remains an open alternative. 645 stays acquired-not-bound. This is not independent RG approval."
+    "note": "RR-019 follow-on: remaining ATT2 gateway/IP-option rows bound; named P7-4 internals bound; configuration/pin field lists stay named open. 665 section 2.3 stays emitted, not independently closed. Part 4 remains an open alternative. 645 stays acquired-not-bound. This is not independent RG approval."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -27,13 +27,13 @@
     "Ordinary Ethernet, Compliant, Profiled and AFDX stay separate configuration dimensions."
   ],
   "summary": {
-    "coverageCount": 3047,
-    "requirementCount": 757,
+    "coverageCount": 3060,
+    "requirementCount": 770,
     "applicabilityDecisions": {
       "OUT-OF-PROFILE": 973,
       "APPLICABLE-SUPPORTING": 1309,
       "APPLICABLE-BASE": 286,
-      "CONDITIONAL": 479
+      "CONDITIONAL": 492
     },
     "rationaleCodes": {
       "NON-PROTOCOL-PRODUCT-OR-INFORMATIVE": 902,
@@ -73,9 +73,9 @@
       "IPV4-AND-FRAGMENT-RECONCILIATION": 2,
       "ARP-DEPLOYMENT-SELECTION": 1,
       "AFDX-END-SYSTEM-WHEN-SELECTED": 1,
-      "AFDX-SWITCH-WHEN-SELECTED": 13,
+      "AFDX-SWITCH-WHEN-SELECTED": 20,
       "AFDX-DATA-FORMAT-WHEN-SELECTED": 1,
-      "AFDX-IP-UDP-PROFILE-WHEN-SELECTED": 14,
+      "AFDX-IP-UDP-PROFILE-WHEN-SELECTED": 20,
       "UDP-IDENTITY": 1,
       "UDP-HEADER-IDENTITY": 3,
       "UDP-OVER-IPV4-IDENTITY": 1,
@@ -16154,8 +16154,8 @@
             ],
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
-            "summaryEn": "If AFDX is chosen, switch composition, static configuration, Switch ES section 3, OPS/DL 615A mode entry and Information/UPLOAD/FIND capabilities, session non-disruption, 615A/665 upload process and Part 2 physical layer are bound. SHOP and §4.6 MIB/SNMP stay out of profile; remaining chapter-4 internals stay named NOT-YET-BOUND. This is not independent RG approval and does not activate AFDX.",
-            "summaryZh": "若选择 AFDX，已绑定交换机组成、静态配置、交换机端系统第 3 节、OPS／DL 的 615A 模式进入与 Information／UPLOAD／FIND 能力、会话连续性、615A／665 上传过程及第 2 部分物理层。SHOP 与 §4.6 MIB／SNMP 保持范围外；第 4 章其余内部细节保持具名 NOT-YET-BOUND。这不是独立 RG 批准，也不激活 AFDX。",
+            "summaryEn": "If AFDX is chosen, switch composition, static configuration, Switch ES section 3, OPS/DL 615A mode entry and Information/UPLOAD/FIND, OPS filtering/policing, OPS Healthy indicator, DL upload exclusivity, default reception VL for dataloading, and the 12-pin example/conditional definitions are bound. SHOP and §4.6 MIB/SNMP stay out of profile; remaining configuration-table and pin-programming field lists stay named NOT-YET-BOUND. This is not independent RG approval and does not activate AFDX.",
+            "summaryZh": "若选择 AFDX，已绑定交换机组成、静态配置、交换机端系统第 3 节、OPS／DL 的 615A 模式进入与 Information／UPLOAD／FIND、OPS 过滤／监管、OPS Healthy 指示、DL 上传独占、缺省接收 VL，以及 12 插针示例／有条件定义。SHOP 与 §4.6 MIB／SNMP 保持范围外；其余配置表与插针编程字段表保持具名 NOT-YET-BOUND。这不是独立 RG 批准，也不激活 AFDX。",
             "leafCoverageIds": [
               "COV-M1-02887",
               "COV-M1-03023",
@@ -16169,7 +16169,14 @@
               "COV-M1-03044",
               "COV-M1-03045",
               "COV-M1-03046",
-              "COV-M1-03047"
+              "COV-M1-03047",
+              "COV-M1-03054",
+              "COV-M1-03055",
+              "COV-M1-03056",
+              "COV-M1-03057",
+              "COV-M1-03058",
+              "COV-M1-03059",
+              "COV-M1-03060"
             ],
             "leafRequirementIds": [
               "CRS-M1-00608",
@@ -16184,7 +16191,14 @@
               "CRS-M1-00755",
               "CRS-M1-00756",
               "CRS-M1-00757",
-              "CRS-M1-00758"
+              "CRS-M1-00758",
+              "CRS-M1-00765",
+              "CRS-M1-00766",
+              "CRS-M1-00767",
+              "CRS-M1-00768",
+              "CRS-M1-00769",
+              "CRS-M1-00770",
+              "CRS-M1-00771"
             ],
             "remainingSubunits": [
               {
@@ -16218,20 +16232,20 @@
                 "summaryZh": "§4.6 的 MIB／SNMP 代理实现与 100 ms Fault/Healthy 状态更新使用 SHOULD。它们属于有界 615A 研究范围外，不是说明性评注。"
               },
               {
-                "id": "SAU-P7-4-REMAINING-CONFIG-PIN-AND-INTERNAL-DETAILS",
+                "id": "SAU-P7-4-REMAINING-CONFIG-AND-PIN-TABLE-FIELDS",
                 "disposition": "NOT-YET-BOUND",
                 "sourceId": "ARINC-664-7",
-                "clause": "4.7-4.11",
+                "clause": "4.7-4.10",
                 "pdfPages": [
-                  65,
-                  79
+                  66,
+                  77
                 ],
                 "documentPages": [
-                  57,
-                  71
+                  58,
+                  69
                 ],
-                "summaryEn": "Remaining chapter-4 configuration-table field lists, pin-programming tables, OPS internal filtering/policing details, OPS Fault/Healthy indicator, and DL upload-exclusivity statements stay named open. They are not closed by an informative remainder.",
-                "summaryZh": "第 4 章其余配置表字段、插针编程表、OPS 内部过滤／监管细节、OPS Fault/Healthy 指示及 DL 上传独占陈述保持具名未决。它们不能靠说明性剩余关闭。"
+                "summaryEn": "Remaining Default/OPS configuration-table field lists and pin-programming table contents stay named open. The 12-pin example, conditional 12-pin definitions, default reception VL for dataloading, OPS filtering/policing, OPS Healthy indicator and DL upload exclusivity are bound separately.",
+                "summaryZh": "其余 Default／OPS 配置表字段与插针编程表内容保持具名未决。12 插针示例、有条件的 12 插针定义、缺省接收 VL、OPS 过滤／监管、OPS Healthy 指示及 DL 上传独占已分开绑定。"
               }
             ],
             "admittedLeafUnits": [
@@ -16338,6 +16352,62 @@
                 ],
                 "sourceUnitId": "SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-004-81B3C51C4B44",
                 "clause": "4.8.4"
+              },
+              {
+                "coverageId": "COV-M1-03054",
+                "requirementIds": [
+                  "CRS-M1-00765"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-003-6D4F0D03A392",
+                "clause": "4.8.3"
+              },
+              {
+                "coverageId": "COV-M1-03055",
+                "requirementIds": [
+                  "CRS-M1-00766"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-004-96DB71C6B1A7",
+                "clause": "4.8.3"
+              },
+              {
+                "coverageId": "COV-M1-03056",
+                "requirementIds": [
+                  "CRS-M1-00767"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-005-2C6F17E65416",
+                "clause": "4.8.4"
+              },
+              {
+                "coverageId": "COV-M1-03057",
+                "requirementIds": [
+                  "CRS-M1-00768"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-006-EDA9037DC292",
+                "clause": "4.8.4"
+              },
+              {
+                "coverageId": "COV-M1-03058",
+                "requirementIds": [
+                  "CRS-M1-00769"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.2.2-P067-PROSE-SENTENCE-001-A06C741A7AA6",
+                "clause": "4.7.2.2"
+              },
+              {
+                "coverageId": "COV-M1-03059",
+                "requirementIds": [
+                  "CRS-M1-00770"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.1-P066-PROSE-SENTENCE-001-915170424929",
+                "clause": "4.7.1"
+              },
+              {
+                "coverageId": "COV-M1-03060",
+                "requirementIds": [
+                  "CRS-M1-00771"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-4.7.1-P066-PROSE-SENTENCE-002-991619A11E37",
+                "clause": "4.7.1"
               }
             ]
           },
@@ -16424,8 +16494,8 @@
             ],
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
-            "summaryEn": "If AFDX is chosen, Attachment 2 binds IP/ICMP implementation, non-IPv4 discard, local/remote multihoming, discarded-datagram log/counter, ICMP upcall, port unreachable, UDP checksum generate/check as NOT APPLICABLE under CRS-M1-00609, unused-comment, and bad-checksum discard as NOT APPLICABLE. TCP Table 2-1 stays out of profile. Remaining gateway/unmarked rows stay named NOT-YET-BOUND. This is not independent RG approval.",
-            "summaryZh": "若选择 AFDX，附件 2 已绑定 IP／ICMP 实现、非 IPv4 丢弃、本端／远端多宿主、丢弃数据报日志／计数、ICMP 上报、端口不可达、按 CRS-M1-00609 将 UDP checksum 生成／校验标为 NOT APPLICABLE、不使用评注，以及错误 checksum 丢弃为 NOT APPLICABLE。TCP 表 2-1 保持范围外。其余网关／未标记行保持具名 NOT-YET-BOUND。这不是独立 RG 批准。",
+            "summaryEn": "If AFDX is chosen, Attachment 2 binds IP/ICMP implementation, non-IPv4 discard, local/remote multihoming, discarded-datagram log/counter, ICMP upcall, port unreachable, UDP checksum generate/check as NOT APPLICABLE under CRS-M1-00609, unused-comment, bad-checksum discard, IP-option Send/down as NOT APPLICABLE, gateway forwarding/embedded-switch/non-gateway-default as NOT APPLICABLE, and the unmarked autoconfiguration row as an unmarked RFC MUST NOT. TCP Table 2-1 stays out of profile. This is not independent RG approval.",
+            "summaryZh": "若选择 AFDX，附件 2 已绑定 IP／ICMP 实现、非 IPv4 丢弃、本端／远端多宿主、丢弃数据报日志／计数、ICMP 上报、端口不可达、按 CRS-M1-00609 将 UDP checksum 生成／校验标为 NOT APPLICABLE、不使用评注、错误 checksum 丢弃、IP 选项发送／下传 NOT APPLICABLE、网关转发／内嵌开关／非网关缺省 NOT APPLICABLE，以及未标记自动配置行作为未标记的 RFC MUST NOT。TCP 表 2-1 保持范围外。这不是独立 RG 批准。",
             "leafCoverageIds": [
               "COV-M1-02890",
               "COV-M1-03030",
@@ -16440,7 +16510,13 @@
               "COV-M1-03039",
               "COV-M1-03040",
               "COV-M1-03041",
-              "COV-M1-03042"
+              "COV-M1-03042",
+              "COV-M1-03048",
+              "COV-M1-03049",
+              "COV-M1-03050",
+              "COV-M1-03051",
+              "COV-M1-03052",
+              "COV-M1-03053"
             ],
             "leafRequirementIds": [
               "CRS-M1-00609",
@@ -16456,7 +16532,13 @@
               "CRS-M1-00750",
               "CRS-M1-00751",
               "CRS-M1-00752",
-              "CRS-M1-00753"
+              "CRS-M1-00753",
+              "CRS-M1-00759",
+              "CRS-M1-00760",
+              "CRS-M1-00761",
+              "CRS-M1-00762",
+              "CRS-M1-00763",
+              "CRS-M1-00764"
             ],
             "remainingSubunits": [
               {
@@ -16475,23 +16557,6 @@
                 "summaryEn": "Attachment 2 Table 2-1 TCP feature rows stay out of profile; 615A does not use TCP. The bound NOT APPLICABLE = MUST NOT rule still applies if AFDX is chosen.",
                 "summaryZh": "附件 2 表 2-1 的 TCP 特性行保持范围外；615A 不使用 TCP。若选择 AFDX，已绑定的 NOT APPLICABLE = MUST NOT 规则仍适用。",
                 "tableOrFigure": "Table 2-1"
-              },
-              {
-                "id": "SAU-P7-ATT2-REMAINING-GATEWAY-AND-UNMARKED-ROWS",
-                "disposition": "NOT-YET-BOUND",
-                "sourceId": "ARINC-664-7",
-                "clause": "ATT-2",
-                "pdfPages": [
-                  112,
-                  115
-                ],
-                "documentPages": [
-                  104,
-                  107
-                ],
-                "summaryEn": "Remaining Table 2-2 IP-option send/down rows and Table 2-3 gateway-forwarding, embedded-gateway switch, non-gateway default, and unmarked autoconfiguration rows stay named open. They are not informative locators.",
-                "summaryZh": "表 2-2 其余 IP 选项发送／下传行，以及表 2-3 网关转发、内嵌网关开关、非网关缺省与未标记自动配置行保持具名未决。它们不是说明性定位。",
-                "tableOrFigure": "Table 2-2/Table 2-3"
               }
             ],
             "admittedLeafUnits": [
@@ -16605,6 +16670,54 @@
                   "CRS-M1-00753"
                 ],
                 "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-013-DA0C1E503BBE",
+                "clause": "ATT-2"
+              },
+              {
+                "coverageId": "COV-M1-03048",
+                "requirementIds": [
+                  "CRS-M1-00759"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-014-B97760133976",
+                "clause": "ATT-2"
+              },
+              {
+                "coverageId": "COV-M1-03049",
+                "requirementIds": [
+                  "CRS-M1-00760"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-015-464BAC54A238",
+                "clause": "ATT-2"
+              },
+              {
+                "coverageId": "COV-M1-03050",
+                "requirementIds": [
+                  "CRS-M1-00761"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-016-C29A04CC8674",
+                "clause": "ATT-2"
+              },
+              {
+                "coverageId": "COV-M1-03051",
+                "requirementIds": [
+                  "CRS-M1-00762"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-017-B75F02D3CC9F",
+                "clause": "ATT-2"
+              },
+              {
+                "coverageId": "COV-M1-03052",
+                "requirementIds": [
+                  "CRS-M1-00763"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-018-C25AB27DF43E",
+                "clause": "ATT-2"
+              },
+              {
+                "coverageId": "COV-M1-03053",
+                "requirementIds": [
+                  "CRS-M1-00764"
+                ],
+                "sourceUnitId": "SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-019-9D460A176ACE",
                 "clause": "ATT-2"
               }
             ]

@@ -154,7 +154,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-19"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-20"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
@@ -233,11 +233,11 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
     assert remaining["SAU-P7-4-REMAINING-MIB-SNMP-AND-PERIODIC-STATUS"]["disposition"] == "OUT-OF-PROFILE"
     assert remaining["SAU-P7-4-REMAINING-MIB-SNMP-AND-PERIODIC-STATUS"]["clause"] == "4.6"
     assert remaining["SAU-P7-4-REMAINING-MIB-SNMP-AND-PERIODIC-STATUS"]["pdfPages"] == [65]
-    assert remaining["SAU-P7-4-REMAINING-CONFIG-PIN-AND-INTERNAL-DETAILS"]["disposition"] == "NOT-YET-BOUND"
-    assert remaining["SAU-P7-4-REMAINING-CONFIG-PIN-AND-INTERNAL-DETAILS"]["pdfPages"] == [65, 79]
+    assert remaining["SAU-P7-4-REMAINING-CONFIG-AND-PIN-TABLE-FIELDS"]["disposition"] == "NOT-YET-BOUND"
+    assert remaining["SAU-P7-4-REMAINING-CONFIG-AND-PIN-TABLE-FIELDS"]["pdfPages"] == [66, 77]
     assert remaining["SAU-P7-ATT2-REMAINING-TCP-TABLE-2-1"]["disposition"] == "OUT-OF-PROFILE"
-    assert remaining["SAU-P7-ATT2-REMAINING-GATEWAY-AND-UNMARKED-ROWS"]["disposition"] == "NOT-YET-BOUND"
-    assert remaining["SAU-P7-ATT2-REMAINING-GATEWAY-AND-UNMARKED-ROWS"]["pdfPages"] == [112, 115]
+    assert "SAU-P7-4-REMAINING-CONFIG-PIN-AND-INTERNAL-DETAILS" not in remaining
+    assert "SAU-P7-ATT2-REMAINING-GATEWAY-AND-UNMARKED-ROWS" not in remaining
     assert "SAU-P7-4-REMAINING-CONFIG-PIN-AND-MIB-DETAILS" not in remaining
     assert "SAU-P7-ATT2-REMAINING-TABLE-MARK-LOCATORS" not in remaining
     assert any(item["disposition"] == "NOT-YET-BOUND" for item in remaining.values())
@@ -286,6 +286,34 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
     )
     assert "MUST" in icmp["generatedSemanticProjectionEn"]
     assert "NOT APPLICABLE" not in icmp["generatedSemanticProjectionEn"]
+    ip_send = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "TREAT-UDP-IP-OPTIONS-SEND-AS-NOT-APPLICABLE-ON-AFDX"
+    )
+    assert "NOT APPLICABLE" in ip_send["generatedSemanticProjectionEn"]
+    assert "CRS-M1-00609" in ip_send["generatedSemanticProjectionEn"]
+    gateway = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "TREAT-GATEWAY-FORWARDING-SPEC-AS-NOT-APPLICABLE-ON-AFDX"
+    )
+    assert "NOT APPLICABLE" in gateway["generatedSemanticProjectionEn"]
+    unmarked = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "RECORD-AFDX-GATEWAY-AUTOCONFIGURATION-ROW-UNMARKED"
+    )
+    assert unmarked["conformanceEffect"] == "INFORMATIVE"
+    assert "unmarked" in unmarked["generatedSemanticProjectionEn"]
+    assert "CRS-M1-00609 is not applied" in unmarked["generatedSemanticProjectionEn"]
+    assert any(
+        row["semantic"]["action"] == "PERFORM-OPS-FILTERING-POLICING-SWITCHING-FROM-OPS-CONFIG"
+        for row in crs["requirements"]
+    )
+    assert any(
+        row["semantic"]["action"] == "TREAT-DL-UPLOAD-AS-PREFERABLY-EXCLUSIVE" for row in crs["requirements"]
+    )
     init_dl = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00756")
     assert "AND (compatibility checks fail OR no software is loaded)" in init_dl["generatedSemanticProjectionEn"]
     assert "且（兼容性检查失败或无已加载软件）" in init_dl["generatedSemanticProjectionZh"]
@@ -874,7 +902,7 @@ def test_informative_laundering_of_named_remainders_fails() -> None:
             for item in unit.get("remainingSubunits") or []:
                 remaining[item["id"]] = item
     mib = remaining["SAU-P7-4-REMAINING-MIB-SNMP-AND-PERIODIC-STATUS"]
-    leftover = remaining["SAU-P7-ATT2-REMAINING-GATEWAY-AND-UNMARKED-ROWS"]
+    leftover = remaining["SAU-P7-4-REMAINING-CONFIG-AND-PIN-TABLE-FIELDS"]
     assert mib["disposition"] != "INFORMATIVE"
     assert leftover["disposition"] != "INFORMATIVE"
     assert leftover["disposition"] == "NOT-YET-BOUND"
