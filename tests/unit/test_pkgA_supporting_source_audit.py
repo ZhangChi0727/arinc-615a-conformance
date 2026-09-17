@@ -154,7 +154,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-18"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-19"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
@@ -264,13 +264,13 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
     checksum = next(
         row
         for row in crs["requirements"]
-        if row["semantic"]["action"] == "IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY"
+        if row["semantic"]["action"] == "TREAT-UDP-CHECKSUM-GENERATE-AND-CHECK-AS-NOT-APPLICABLE-ON-AFDX"
     )
     assert checksum["id"] == "CRS-M1-00742"
-    assert "NOT APPLICABLE" not in checksum["generatedSemanticProjectionEn"]
-    assert "MUST NOT" not in checksum["generatedSemanticProjectionEn"] or "00609 is not applied" in checksum["generatedSemanticProjectionEn"]
-    assert checksum["ambiguityStatus"] == "SOURCE-AFDX-TABLE-MARK-AND-UNUSED-COMMENT-UNRESOLVED"
-    assert "GAP-UDP-CHECKSUM-USE-POLICY" in checksum["gapIds"]
+    assert "NOT APPLICABLE" in checksum["generatedSemanticProjectionEn"]
+    assert "CRS-M1-00609" in checksum["generatedSemanticProjectionEn"]
+    assert checksum["ambiguityStatus"] == "NONE-OBSERVED"
+    assert checksum["gapIds"] == []
     discard = next(
         row
         for row in crs["requirements"]
@@ -278,6 +278,17 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
     )
     assert discard["id"] != checksum["id"]
     assert discard["source"]["clause"] == "ATT-2"
+    assert "NOT APPLICABLE" in discard["generatedSemanticProjectionEn"]
+    icmp = next(
+        row
+        for row in crs["requirements"]
+        if row["semantic"]["action"] == "PASS-ICMP-MESSAGES-TO-APPLICATION-LIMITED-TO-ECHO-REQUEST"
+    )
+    assert "MUST" in icmp["generatedSemanticProjectionEn"]
+    assert "NOT APPLICABLE" not in icmp["generatedSemanticProjectionEn"]
+    init_dl = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00756")
+    assert "AND (compatibility checks fail OR no software is loaded)" in init_dl["generatedSemanticProjectionEn"]
+    assert "且（兼容性检查失败或无已加载软件）" in init_dl["generatedSemanticProjectionZh"]
     assert any(
         row["semantic"]["action"] == "PROVIDE-OPS-MODE-615A-INFORMATION-AND-FIND" for row in crs["requirements"]
     )
@@ -823,7 +834,7 @@ def test_p7_mac_source_is_complete_48_bit_binding() -> None:
     assert wrong_tail not in tail["generatedSemanticProjectionEn"]
 
 
-def test_udp_checksum_not_applicable_rewrite_fails_after_fingerprint_refresh() -> None:
+def test_udp_checksum_afdx_must_fabrication_fails_after_fingerprint_refresh() -> None:
     import copy
     import importlib.util
 
@@ -835,17 +846,18 @@ def test_udp_checksum_not_applicable_rewrite_fails_after_fingerprint_refresh() -
     row = next(
         item
         for item in data["requirements"]
-        if item["semantic"]["action"] == "IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY"
+        if item["semantic"]["action"] == "TREAT-UDP-CHECKSUM-GENERATE-AND-CHECK-AS-NOT-APPLICABLE-ON-AFDX"
     )
+    assert "NOT APPLICABLE" in row["generatedSemanticProjectionEn"]
     mutated = copy.deepcopy(data)
     target = next(item for item in mutated["requirements"] if item["id"] == row["id"])
-    target["semantic"]["action"] = "TREAT-UDP-CHECKSUM-AS-NOT-USED-ON-AFDX"
+    target["semantic"]["action"] = "IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY"
     target["generatedSemanticProjectionEn"] = (
-        "If AFDX is chosen, Attachment 2 marks UDP checksum generation/checking NOT APPLICABLE "
-        "because checksum is not used in AFDX. The RFC 1122 MUST is interpreted as MUST NOT."
+        "If AFDX is chosen, Table 2-2 marks UDP checksum generation/checking AFDX MUST. "
+        "That generate/check capability is retained and CRS-M1-00609 is not applied."
     )
-    target["ambiguityStatus"] = "NONE-OBSERVED"
-    target["gapIds"] = []
+    target["ambiguityStatus"] = "SOURCE-AFDX-TABLE-MARK-AND-UNUSED-COMMENT-UNRESOLVED"
+    target["gapIds"] = ["GAP-UDP-CHECKSUM-USE-POLICY"]
     summary = mutated["inventorySummary"]
     summary["coverageFingerprint"] = m1.fingerprint(mutated["coverageLedger"])
     summary["requirementsFingerprint"] = m1.fingerprint(mutated["requirements"])

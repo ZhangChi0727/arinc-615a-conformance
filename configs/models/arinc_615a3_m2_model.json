@@ -9758,15 +9758,15 @@
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
-        "id": "OBJ-SUPPORTING-IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY-CRS-M1-00742",
+        "id": "OBJ-SUPPORTING-TREAT-UDP-CHECKSUM-GENERATE-AND-CHECK-AS-NOT-APPLICABLE-ON-AFDX-CRS-M1-00742",
         "m1RequirementId": "CRS-M1-00742",
         "objects": [
           "AFDX-IP-UDP-PROFILE",
-          "UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY"
+          "UDP-CHECKSUM-GENERATE-AND-CHECK"
         ],
-        "action": "IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY",
-        "predicateEn": "If AFDX is chosen, RFC 1122 requires the host MUST implement the facility to generate and validate UDP checksums. That generate/check capability is retained and is not rewritten as prohibited. The Table 2-2 unused-in-AFDX comment is a separate use statement; silently discarding a bad checksum is a separate row. Interpretation of the table mark versus this RFC MUST remains unresolved and blocks transmit-use verdicts; CRS-M1-00609 is not applied to this capability. This does not activate AFDX.",
-        "predicateZh": "若选择 AFDX，RFC 1122 要求主机 MUST 实现生成并校验 UDP checksum 的能力。该生成／校验能力予以保留，不被改写成禁止。表 2-2「AFDX 不使用 checksum」评注是单独的使用陈述；静默丢弃错误 checksum 是单独一行。表格标记相对该 RFC MUST 的解释保持未决，并阻塞发送使用判定；CRS-M1-00609 不适用于该能力。这不激活 AFDX。",
+        "action": "TREAT-UDP-CHECKSUM-GENERATE-AND-CHECK-AS-NOT-APPLICABLE-ON-AFDX",
+        "predicateEn": "If AFDX is chosen, Table 2-2 marks UDP checksum generation/checking NOT APPLICABLE. The embedded RFC 1122 MUST remains the RFC-layer sentence and, under the bound Attachment 2 convention (CRS-M1-00609), is interpreted as MUST NOT for the selected AFDX profile. That profile rule is not a blanket ban on dormant generate/check code outside AFDX. The unused-in-AFDX comment is a separate use statement; silently discarding a bad checksum is a separate NOT APPLICABLE row. This does not activate AFDX.",
+        "predicateZh": "若选择 AFDX，表 2-2 将 UDP checksum 生成／校验标为 NOT APPLICABLE。内嵌 RFC 1122 MUST 仍是 RFC 层句子；按已绑定的附件 2 约定（CRS-M1-00609），在选定的 AFDX profile 下解释为 MUST NOT。该 profile 规则不是对 AFDX 之外休眠生成／校验代码的一律禁止。「AFDX 不使用 checksum」评注是单独的使用陈述；静默丢弃错误 checksum 是单独的 NOT APPLICABLE 行。这不激活 AFDX。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -9813,8 +9813,8 @@
           "UDP-CHECKSUM-USE-COMMENT"
         ],
         "action": "RECORD-AFDX-UDP-CHECKSUM-UNUSED-COMMENT",
-        "predicateEn": "If AFDX is chosen, Table 2-2 comments that checksum is not used in AFDX. That use comment does not rewrite the generate/check facility as prohibited.",
-        "predicateZh": "若选择 AFDX，表 2-2 评注称 AFDX 不使用 checksum。该使用评注不能把生成／校验能力改写成禁止。",
+        "predicateEn": "If AFDX is chosen, Table 2-2 comments that checksum is not used in AFDX. That use comment is recorded separately from the NOT APPLICABLE generate/check mark and from the discard row; CRS-M1-00609 applies to the marked NOT APPLICABLE rows, not to this comment cell.",
+        "predicateZh": "若选择 AFDX，表 2-2 评注称 AFDX 不使用 checksum。该使用评注与生成／校验的 NOT APPLICABLE 标记及丢弃行分开记录；CRS-M1-00609 适用于已标记的 NOT APPLICABLE 行，而不适用于本评注格。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -9825,8 +9825,8 @@
           "UDP-BAD-CHECKSUM-DISCARD"
         ],
         "action": "TREAT-SILENT-BAD-UDP-CHECKSUM-DISCARD-AS-NOT-APPLICABLE-ON-AFDX",
-        "predicateEn": "If AFDX is chosen, Table 2-2 marks silently discarding a bad UDP checksum NOT APPLICABLE. That receive-treatment row is independent of the generate/check capability. The RFC 1122 MUST is interpreted as MUST NOT under the bound NOT APPLICABLE rule. This does not activate AFDX.",
-        "predicateZh": "若选择 AFDX，表 2-2 将静默丢弃错误 UDP checksum 标为 NOT APPLICABLE。该接收处理行独立于生成／校验能力。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 MUST 解释为 MUST NOT。这不激活 AFDX。",
+        "predicateEn": "If AFDX is chosen, Table 2-2 marks silently discarding a bad UDP checksum NOT APPLICABLE. That receive-treatment row is independent of the generate/check NOT APPLICABLE row. The RFC 1122 MUST is interpreted as MUST NOT under the bound NOT APPLICABLE rule. This does not activate AFDX.",
+        "predicateZh": "若选择 AFDX，表 2-2 将静默丢弃错误 UDP checksum 标为 NOT APPLICABLE。该接收处理行独立于生成／校验的 NOT APPLICABLE 行。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 MUST 解释为 MUST NOT。这不激活 AFDX。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -9933,8 +9933,8 @@
           "SWITCH-GROUND-CONDITION"
         ],
         "action": "ENTER-DL-FROM-INIT-ONLY-WHEN-GROUND-AND-COMPATIBILITY-FAIL-OR-EMPTY",
-        "predicateEn": "If AFDX is chosen, from INIT the Switch enters DL only when Switch_Ground_Condition is active and compatibility checks fail or no software is loaded. Bound M2 does not execute that mode machine.",
-        "predicateZh": "若选择 AFDX，从 INIT 进入 DL 仅当接地条件有效且兼容性检查失败或无已加载软件。绑定 M2 不执行该模式机。",
+        "predicateEn": "If AFDX is chosen, from INIT the Switch enters DL only when Switch_Ground_Condition is active AND (compatibility checks fail OR no software is loaded). Bound M2 does not execute that mode machine.",
+        "predicateZh": "若选择 AFDX，从 INIT 进入 DL 仅当接地条件有效且（兼容性检查失败或无已加载软件）。绑定 M2 不执行该模式机。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
       },
       {
@@ -20914,7 +20914,7 @@
       "kind": "DATA-CONSTRAINT",
       "ownerRole": "M2-MODEL",
       "modelTargetIds": [
-        "OBJ-SUPPORTING-IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY-CRS-M1-00742"
+        "OBJ-SUPPORTING-TREAT-UDP-CHECKSUM-GENERATE-AND-CHECK-AS-NOT-APPLICABLE-ON-AFDX-CRS-M1-00742"
       ]
     },
     {
@@ -30421,7 +30421,7 @@
       "id": "TR-CRS-M1-00742-0955",
       "requirementId": "CRS-M1-00742",
       "targetKind": "OBJECT-CONSTRAINT",
-      "targetId": "OBJ-SUPPORTING-IMPLEMENT-UDP-CHECKSUM-GENERATE-AND-CHECK-FACILITY-CRS-M1-00742",
+      "targetId": "OBJ-SUPPORTING-TREAT-UDP-CHECKSUM-GENERATE-AND-CHECK-AS-NOT-APPLICABLE-ON-AFDX-CRS-M1-00742",
       "polarity": "AFFIRMATIVE",
       "sourceModality": "MUST",
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
@@ -31296,8 +31296,8 @@
     "transitionCount": 65,
     "timingCount": 30,
     "fieldConstraintCount": 108,
-    "dispositionsFingerprint": "8ad38734905f3ffd345c48dbbc0d8dde4afd94b9d9ce95b8e8c9d2b29ef78632",
-    "modelFingerprint": "acff38e03a60ad60a744c40643dbb75375d262ddc7423380d7877c8ca6b46466",
+    "dispositionsFingerprint": "8e58b4f1febc361139b3e1c2c3af658b94ce9ec487763e47f78fdbe5cc196f6c",
+    "modelFingerprint": "689a21ed7fab81736ed61d06ead8c8e18871b37ce862890bd03c57c972078071",
     "timingFingerprint": "cd8a13f203f6d2c2f9c82e65646bf9d5b920200a509af92d461096e54f7e6810",
     "inputFingerprint": "a5c7b52cdd7e778e4b858ed52134034559471b18df2b0566ab029b40a139a43b",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",

@@ -8,16 +8,16 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-18",
+    "artifactVersion": "M1-CANDIDATE-19",
     "coverageCount": 3047,
     "requirementCount": 757,
     "coverageFingerprint": "841a50870773bc337ae4f146d5da42abc092c0684483a2db24160b21bc12d34e",
-    "requirementsFingerprint": "342c604163178a527cdea7776633fcfbd9b8bea22f4424ca7b5625ef0b9519bd",
+    "requirementsFingerprint": "066dda87605882f269975c25b93e6c708ef33d4cf5ace4b6c28b1c77348c9c42",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "RR-017: UDP checksum generate/check remains a capability; unused comment and discard are separate. 615A OPS/DL mode-entry and service capabilities plus listed Attachment 2 MUST/MUST NOT rows are bound. Named NOT-YET-BOUND remainders kept. 665 section 2.3 stays emitted, not independently closed. Part 4 remains an open alternative. 645 stays acquired-not-bound. This is not independent RG approval."
+    "note": "RR-018: Table 2-2 UDP checksum generate/check is NOT APPLICABLE under CRS-M1-00609; unused comment and discard stay separate. 665 section 2.3 stays emitted, not independently closed. Part 4 remains an open alternative. 645 stays acquired-not-bound. This is not independent RG approval."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -16424,8 +16424,8 @@
             ],
             "relationTo615A": "CONDITIONAL-DEPLOYMENT-REFERENCE",
             "leafCrsStatus": "LEAF-CRS-EMITTED",
-            "summaryEn": "If AFDX is chosen, Attachment 2 binds IP/ICMP implementation, non-IPv4 discard, local/remote multihoming, discarded-datagram log/counter, ICMP upcall, port unreachable, UDP checksum generate/check capability, unused-comment, and bad-checksum discard. TCP Table 2-1 stays out of profile. Remaining gateway/unmarked rows stay named NOT-YET-BOUND. This is not independent RG approval.",
-            "summaryZh": "若选择 AFDX，附件 2 已绑定 IP／ICMP 实现、非 IPv4 丢弃、本端／远端多宿主、丢弃数据报日志／计数、ICMP 上报、端口不可达、UDP checksum 生成／校验能力、不使用评注及错误 checksum 丢弃。TCP 表 2-1 保持范围外。其余网关／未标记行保持具名 NOT-YET-BOUND。这不是独立 RG 批准。",
+            "summaryEn": "If AFDX is chosen, Attachment 2 binds IP/ICMP implementation, non-IPv4 discard, local/remote multihoming, discarded-datagram log/counter, ICMP upcall, port unreachable, UDP checksum generate/check as NOT APPLICABLE under CRS-M1-00609, unused-comment, and bad-checksum discard as NOT APPLICABLE. TCP Table 2-1 stays out of profile. Remaining gateway/unmarked rows stay named NOT-YET-BOUND. This is not independent RG approval.",
+            "summaryZh": "若选择 AFDX，附件 2 已绑定 IP／ICMP 实现、非 IPv4 丢弃、本端／远端多宿主、丢弃数据报日志／计数、ICMP 上报、端口不可达、按 CRS-M1-00609 将 UDP checksum 生成／校验标为 NOT APPLICABLE、不使用评注，以及错误 checksum 丢弃为 NOT APPLICABLE。TCP 表 2-1 保持范围外。其余网关／未标记行保持具名 NOT-YET-BOUND。这不是独立 RG 批准。",
             "leafCoverageIds": [
               "COV-M1-02890",
               "COV-M1-03030",
