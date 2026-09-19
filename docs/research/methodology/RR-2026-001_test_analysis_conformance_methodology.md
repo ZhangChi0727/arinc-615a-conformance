@@ -386,10 +386,11 @@ j>i
 \]
 
 Equal timestamps are ordered by trace index, so \(j>i\) already permits
-\(t_j=t_i\). \(\mathrm{Pair}_r(i,j)\) is the selected policy; ambiguous or
-invalid pairing is `ERROR`, not an IUT `FAIL`. The bounded-response schematic
-T2 uses this matcher. It is not enough that some later event belongs to
-\(\mathrm{Resp}_r\):
+\(t_j=t_i\). \(\mathrm{Pair}_r(i,j)\) is the selected policy evaluated against
+the live active-instance set of the trace, not a fabricated singleton.
+Ambiguous or invalid pairing is `ERROR`, not an IUT `FAIL`. The bounded-response
+schematic T2 and the no-response marker consume that same ownership result. It
+is not enough that some later event belongs to \(\mathrm{Resp}_r\):
 
 \[
 a_i@t_i\Longrightarrow
@@ -431,7 +432,8 @@ observation of an expired, still-active obligation with no matching response,
 not a synonym for an absent log record. T2 remains the complementary
 bounded-response schematic: a matching \(j\) with \(\Delta t_{ij}\in I_r\)
 discharges the instance in time. A late matching response can fail T2 without
-being silence.
+being silence. Cancellation, supersession and pairing `ERROR` are not T2
+satisfaction.
 
 The clock-augmented observable EFSM is:
 
@@ -1996,7 +1998,7 @@ j>i
 \land \mathrm{Pair}_r(i,j).
 \]
 
-相同时间戳按迹索引排序，因此 \(j>i\) 已允许 \(t_j=t_i\)。\(\mathrm{Pair}_r(i,j)\) 是所选策略；配对歧义或无效属于 `ERROR`，不是 IUT `FAIL`。有界响应图式 T2 使用该匹配器。仅存在某个属于 \(\mathrm{Resp}_r\) 的较后事件并不足够：
+相同时间戳按迹索引排序，因此 \(j>i\) 已允许 \(t_j=t_i\)。\(\mathrm{Pair}_r(i,j)\) 是按迹中当时有效实例集合求值的所选策略，不是伪造的单例集合。配对歧义或无效属于 `ERROR`，不是 IUT `FAIL`。有界响应图式 T2 与无响应标记使用同一份所有权结果。仅存在某个属于 \(\mathrm{Resp}_r\) 的较后事件并不足够：
 
 \[
 a_i@t_i\Longrightarrow
@@ -2016,7 +2018,7 @@ a_i@t_i\Longrightarrow
 \land (t_H-t_i>U_r).
 \]
 
-式中的严格不等式定义闭合上界情形，此时恰在 \(U_r\) 的响应仍合格；开上界的对应到期条件为 \(t_H-t_i\ge U_r\)。因此 \(\bot_r@t_H\) 是“已经到期、仍有效且没有匹配响应”的正式观测，不是缺少日志记录的同义词。T2 仍是互补的有界响应图式：匹配的 \(j\) 且 \(\Delta t_{ij}\in I_r\) 即按时解除该实例。迟到的匹配响应可以使 T2 失败，但不是静默。
+式中的严格不等式定义闭合上界情形，此时恰在 \(U_r\) 的响应仍合格；开上界的对应到期条件为 \(t_H-t_i\ge U_r\)。因此 \(\bot_r@t_H\) 是“已经到期、仍有效且没有匹配响应”的正式观测，不是缺少日志记录的同义词。T2 仍是互补的有界响应图式：匹配的 \(j\) 且 \(\Delta t_{ij}\in I_r\) 即按时解除该实例。迟到的匹配响应可以使 T2 失败，但不是静默。取消、替代和配对 `ERROR` 都不是 T2 满足。
 
 带时钟的可观测 EFSM 定义为：
 

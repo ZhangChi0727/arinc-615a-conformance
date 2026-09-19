@@ -2,6 +2,7 @@
 
 This is not a protocol engine, timeout implementation, or state estimator.
 Witnesses exist so a response for key B cannot hide silence of unmatched A.
+T2 and silence consume the same trace-replay ownership.
 """
 
 from __future__ import annotations
@@ -49,6 +50,14 @@ class TimedObligation:
     concurrent_same_key: bool = False
 
 
+@dataclass(frozen=True)
+class InstanceOutcome:
+    """Disposition plus the event that closed the instance, if any."""
+
+    disposition: Disposition
+    closer: Event | None = None
+
+
 def expired(delta: float, upper_bound: float, upper_closed: bool) -> bool:
     if upper_closed:
         return delta > upper_bound
@@ -64,7 +73,8 @@ def match_r(
     """Instance matcher: response type, correlation key, pairing policy, and j > i.
 
     Equal timestamps are allowed when the candidate index is later. Ambiguous
-    unique-key pairing is ERROR, not IUT FAIL.
+    unique-key pairing is ERROR, not IUT FAIL. ``active_same_key`` must be the
+    live active set from trace replay, not a fabricated singleton.
     """
     if candidate.index <= trigger.index:
         return "NONE"
@@ -74,9 +84,7 @@ def match_r(
         return "NONE"
     same = tuple(ev for ev in active_same_key if ev.key == trigger.key)
     if obligation.pairing is PairingPolicy.UNIQUE_KEY:
-        if len(same) > 1 and not obligation.concurrent_same_key:
-            return "ERROR"
-        if len(same) > 1 and obligation.concurrent_same_key:
+        if len(same) > 1:
             return "ERROR"
         if len(same) == 1 and same[0].index == trigger.index:
             return "MATCH"
@@ -91,26 +99,25 @@ def match_r(
     return "MATCH" if chosen.index == trigger.index else "NONE"
 
 
-def instance_disposition(
+def replay_instances(
     obligation: TimedObligation,
     trace: tuple[Event, ...],
-    t_H: float,
-) -> Disposition:
-    """Active-instance state already includes matching, cancel, and supersede."""
-    trig = obligation.trigger
+    t_H: float | None = None,
+) -> dict[int, InstanceOutcome]:
+    """Shared ownership replay for T2 and silence. Not a protocol engine."""
     events = tuple(sorted(trace, key=lambda ev: ev.index))
     active: dict[str, list[Event]] = {}
-    dispositions: dict[int, Disposition] = {}
+    outcomes: dict[int, InstanceOutcome] = {}
 
-    def close(target: Event, disp: Disposition) -> None:
-        dispositions[target.index] = disp
+    def close(target: Event, disp: Disposition, closer: Event) -> None:
+        outcomes[target.index] = InstanceOutcome(disp, closer)
         bucket = active.get(target.key, [])
         active[target.key] = [item for item in bucket if item.index != target.index]
 
     for ev in events:
-        if ev.time > t_H:
+        if t_H is not None and ev.time > t_H:
             break
-        if ev.req != trig.req:
+        if ev.req != obligation.trigger.req:
             continue
         if ev.kind is EventKind.TRIG:
             same = list(active.get(ev.key, []))
@@ -120,44 +127,69 @@ def instance_disposition(
                 and not obligation.concurrent_same_key
             ):
                 for old in same:
-                    close(old, Disposition.SUPERSEDED)
+                    close(old, Disposition.SUPERSEDED, ev)
             active.setdefault(ev.key, []).append(ev)
-            dispositions[ev.index] = Disposition.ACTIVE
+            outcomes[ev.index] = InstanceOutcome(Disposition.ACTIVE)
             continue
         same = tuple(active.get(ev.key, []))
-        verdict = match_r(obligation, trig if ev.key == trig.key else (same[0] if same else trig), ev, same)
-        if obligation.pairing is PairingPolicy.UNIQUE_KEY and len(same) > 1:
-            for old in same:
-                dispositions[old.index] = Disposition.ERROR
-            active[ev.key] = []
-            continue
-        target = None
+        owner: Event | None = None
+        ambiguous = False
         for item in same:
-            if match_r(obligation, item, ev, same) == "MATCH":
-                target = item
+            verdict = match_r(obligation, item, ev, same)
+            if verdict == "ERROR":
+                ambiguous = True
                 break
-        if verdict == "ERROR" or (
-            obligation.pairing is PairingPolicy.UNIQUE_KEY
-            and obligation.concurrent_same_key
-            and len(same) > 1
-            and ev.key == trig.key
-        ):
+            if verdict == "MATCH":
+                owner = item
+        if ambiguous:
             for old in same:
-                dispositions[old.index] = Disposition.ERROR
+                outcomes[old.index] = InstanceOutcome(Disposition.ERROR, ev)
             active[ev.key] = []
             continue
-        if target is None:
+        if owner is None:
             continue
         if ev.kind is EventKind.RESP:
-            close(target, Disposition.DISCHARGED)
+            close(owner, Disposition.DISCHARGED, ev)
         elif ev.kind is EventKind.CANCEL:
-            close(target, Disposition.CANCELLED)
+            close(owner, Disposition.CANCELLED, ev)
         elif ev.kind is EventKind.SUPERSEDE:
-            close(target, Disposition.SUPERSEDED)
+            close(owner, Disposition.SUPERSEDED, ev)
             successor = Event(ev.index, ev.time, EventKind.TRIG, ev.key, ev.req)
             active.setdefault(ev.key, []).append(successor)
-            dispositions[successor.index] = Disposition.ACTIVE
-    return dispositions.get(trig.index, Disposition.ACTIVE)
+            outcomes[successor.index] = InstanceOutcome(Disposition.ACTIVE)
+    return outcomes
+
+
+def instance_outcome(
+    obligation: TimedObligation,
+    trace: tuple[Event, ...],
+    t_H: float | None = None,
+) -> InstanceOutcome:
+    outcomes = replay_instances(obligation, trace, t_H)
+    return outcomes.get(obligation.trigger.index, InstanceOutcome(Disposition.ACTIVE))
+
+
+def instance_disposition(
+    obligation: TimedObligation,
+    trace: tuple[Event, ...],
+    t_H: float,
+) -> Disposition:
+    """Active-instance state already includes matching, cancel, and supersede."""
+    return instance_outcome(obligation, trace, t_H).disposition
+
+
+def paired_response(
+    obligation: TimedObligation,
+    trace: tuple[Event, ...],
+    t_H: float | None = None,
+) -> Event | None:
+    rec = instance_outcome(obligation, trace, t_H)
+    if rec.disposition is not Disposition.DISCHARGED:
+        return None
+    closer = rec.closer
+    if closer is None or closer.kind is not EventKind.RESP:
+        return None
+    return closer
 
 
 def no_response(
@@ -166,10 +198,10 @@ def no_response(
     t_H: float,
 ) -> bool | Disposition:
     """Successor marker: expired still-active instance. No global Resp_r conjunct."""
-    disp = instance_disposition(obligation, trace, t_H)
-    if disp is Disposition.ERROR:
+    rec = instance_outcome(obligation, trace, t_H)
+    if rec.disposition is Disposition.ERROR:
         return Disposition.ERROR
-    if disp is not Disposition.ACTIVE:
+    if rec.disposition is not Disposition.ACTIVE:
         return False
     trig = obligation.trigger
     return expired(t_H - trig.time, obligation.upper_bound, obligation.upper_closed)
@@ -182,7 +214,8 @@ def displayed_global_resp_no_response(
 ) -> bool:
     """Defective displayed formula: any later Resp_r event suppresses the marker."""
     trig = obligation.trigger
-    active = instance_disposition(obligation, trace, t_H) is Disposition.ACTIVE
+    rec = instance_outcome(obligation, trace, t_H)
+    active = rec.disposition is Disposition.ACTIVE
     late = expired(t_H - trig.time, obligation.upper_bound, obligation.upper_closed)
     has_any_resp = any(
         ev.kind is EventKind.RESP
@@ -195,18 +228,20 @@ def displayed_global_resp_no_response(
 
 
 def t2_holds(obligation: TimedObligation, trace: tuple[Event, ...], lower_bound: float = 0.0) -> bool:
-    """Bounded-response schematic: a Match_r pair whose delay lies in I_r."""
-    trig = obligation.trigger
-    same = (trig,)
-    for ev in sorted(trace, key=lambda item: item.index):
-        if ev.kind is not EventKind.RESP:
-            continue
-        if match_r(obligation, trig, ev, same) != "MATCH":
-            continue
-        delta = ev.time - trig.time
-        if delta < lower_bound:
-            continue
-        if expired(delta, obligation.upper_bound, obligation.upper_closed):
-            continue
-        return True
-    return False
+    """Bounded-response schematic using the same ownership replay as silence.
+
+    Returns a bool only. Ambiguous pairing, cancellation and supersession are
+    not T2 success. A late correctly paired response discharges but is not timely.
+    """
+    rec = instance_outcome(obligation, trace, t_H=None)
+    if rec.disposition is Disposition.ERROR:
+        return False
+    closer = rec.closer
+    if rec.disposition is not Disposition.DISCHARGED or closer is None or closer.kind is not EventKind.RESP:
+        return False
+    delta = closer.time - obligation.trigger.time
+    if delta < lower_bound:
+        return False
+    if expired(delta, obligation.upper_bound, obligation.upper_closed):
+        return False
+    return True
