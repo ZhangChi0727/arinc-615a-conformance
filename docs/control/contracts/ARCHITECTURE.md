@@ -128,7 +128,7 @@ names or the latest Git commit.
 | Automated checks | `tests/` |
 | Experiment evidence | `artifacts/evidence/` or controlled external store |
 | Review/change/risk | `docs/control/` |
-| Publication inputs and reader reports | `docs/research/publication/`, `artifacts/reports/` |
+| Publication inputs and reader reports | `docs/research/publication/`, `docs/research/publication/models/`, `artifacts/publications/cltav/`, `artifacts/reports/` |
 | Common tutorial | `docs/tutorial/sources/COMMON_TUTORIAL_PLAN.md`, `artifacts/tutorials/` |
 | ARINC 615A tutorial | `docs/tutorial/sources/ARINC615A_TUTORIAL_PLAN.md`, `artifacts/tutorials/` |
 
@@ -174,6 +174,39 @@ A0–A4, R0–R5, RG, and G are ARINC/Profile/project candidate states and gates
 not Generic GVS Core or FAA, EASA, CAAC, RTCA, SAE, or EUROCAE authority levels.
 The view is governed by the four-layer
 [`Profile/Binding/Configuration contract`](ARINC615A_PROFILE_BINDING_CONFIGURATION.md).
+
+## CL-TAV two machines and SysML views
+
+CL-TAV adds a verification-session machine \(M_{\mathrm{sess}}\) that must not
+be merged into the IUT protocol-operation machine \(M_{\mathrm{prot}}\).
+\(M_{\mathrm{sess}}\) owns Idle, Admit, Select, Execute, Update, ErrorHandle,
+Recover, Prep and the stop classes Stop-Budget, Stop-NoDistinguisher,
+Stop-Equivalent, Stop-Singleton, Stop-Empty, Stop-Error and Stop-645. It
+declares one resource mode: budget \(B\) with \(c_{\min}>0\), or round cap
+\(K_{\max}\). Actions are admitted into \(A(q_k)\), then selectable \(S\).
+Nonempty \(A\) does not imply Execute. `ERROR` does not exclude candidates;
+unknown-effect marks \(q\) unknown. \(M_{\mathrm{prot}}\)
+is an interface black box: bound M2 covers INFORMATION/UPLOAD only; Media
+Defined DOWNLOAD, Operator Defined DOWNLOAD and FIND are planned CRS scope
+without unaudited behavior edges. Association is only through FIG-CL-TAV-04
+ports. Bound M2 is not \(M_{\mathrm{sess}}\).
+
+Editable SysML 1.6 notation-based views are in
+[`docs/research/publication/models/`](../../research/publication/models/).
+Executable or complete metamodel conformance is not claimed. `satisfy` and
+`verify` are model relations, not executed verification. Each figure is a
+declared subset:
+
+| ID | View | Loop content that must appear |
+|---|---|---|
+| FIG-CL-TAV-01 | Context | IUT, adapter, operator, network/clock, 645 integrity boundary |
+| FIG-CL-TAV-02 | Requirement layers | method goals, protocol CRS, tool requirements stay distinct; representative source→CRS trace |
+| FIG-CL-TAV-03 | BDD | Test, Observation, Analysis, Diagnosis, Selection, Evidence |
+| FIG-CL-TAV-04 | IBD | trace, constraint, candidate-set, test-selection, budget ports |
+| FIG-CL-TAV-05 | Closed-loop activity | \(A\) then \(S\), Admit A1–A5, currently valid strictly-reducing minimax then Prep, XOR, charge once, exclusive P1–P5 stops, `ERROR` split |
+| FIG-CL-TAV-06 | Diagnostic sequence | overlapping observation, preparatory action, later distinguishing test, second \(I_{z_k}\) into Analysis |
+| FIG-CL-TAV-07 | Two state machines | \(M_{\mathrm{sess}}\) versus bound-M2 black box; Admit A1–A5; P1–P5 stops; ports not cross-machine transitions |
+| FIG-CL-TAV-08 | Parametric | \(I\), \(\varepsilon\), \(J\), \(c_{\min}\), \(B\) or \(K_{\max}\), remaining-set score |
 
 ---
 
@@ -281,3 +314,31 @@ L0–L7 是 ARINC 615A Profile 候选视图，不是 Generic 架构。A0–A4、
 都是 ARINC/Profile/项目候选状态与门，不是 Generic GVS Core，也不是 FAA、EASA、CAAC、
 RTCA、SAE 或 EUROCAE 权威层级。该视图受
 [`Profile/Binding/Configuration 契约`](ARINC615A_PROFILE_BINDING_CONFIGURATION.md) 治理。
+
+## CL-TAV 两套状态机与 SysML 视图
+
+CL-TAV 增加验证会话机器 \(M_{\mathrm{sess}}\)，不得并入 IUT 协议操作机器
+\(M_{\mathrm{prot}}\)。\(M_{\mathrm{sess}}\) 拥有 Idle、Admit、Select、Execute、Update、
+ErrorHandle、Recover、Prep 以及停止类 Stop-Budget、Stop-NoDistinguisher、
+Stop-Equivalent、Stop-Singleton、Stop-Empty、Stop-Error 和 Stop-645。它声明一种
+资源模式：带 \(c_{\min}>0\) 的预算 \(B\)，或轮次上限 \(K_{\max}\)。动作先进入
+\(A(q_k)\)，再形成可选 \(S\)。\(A\) 非空不等于 Execute。`ERROR` 不排除候选；效果未知则将 \(q\) 标为未知。
+\(M_{\mathrm{prot}}\) 是接口化黑箱：已绑定 M2 只覆盖 INFORMATION／UPLOAD；Media
+Defined DOWNLOAD、Operator Defined DOWNLOAD 与 FIND 是计划中的 CRS 范围，不画未经
+审计的行为边。关联只通过 FIG-CL-TAV-04 端口。已绑定 M2 不是 \(M_{\mathrm{sess}}\)。
+
+可编辑的 SysML 1.6 记法视图在
+[`docs/research/publication/models/`](../../research/publication/models/)。
+不声称可执行或完整元模型符合性。`satisfy` 与 `verify` 是模型关系，不是已执行验证。
+每图都是声明的子集：
+
+| ID | 视图 | 必须出现的闭环内容 |
+|---|---|---|
+| FIG-CL-TAV-01 | 上下文 | IUT、适配器、操作者、网络／时钟、645 完整性边界 |
+| FIG-CL-TAV-02 | 需求层次 | 方法目标、协议 CRS、工具需求保持分离；带真实 ID 的来源→CRS 代表追踪 |
+| FIG-CL-TAV-03 | BDD | Test、Observation、Analysis、Diagnosis、Selection、Evidence |
+| FIG-CL-TAV-04 | IBD | trace、constraint、候选集、测试选择、预算端口 |
+| FIG-CL-TAV-05 | 闭环活动 | 先 \(A\) 再 \(S\)、Admit A1–A5、当前有效严格缩小再 Prep、XOR、一次计费、互斥 P1–P5 停止、拆分 `ERROR` |
+| FIG-CL-TAV-06 | 诊断序列 | 重叠观测、准备性动作、随后的区分测试、第二次 \(I_{z_k}\) 进入 Analysis |
+| FIG-CL-TAV-07 | 两套状态机 | \(M_{\mathrm{sess}}\) 对已绑定 M2 黑箱；Admit A1–A5；P1–P5 停止；只通过端口连接 |
+| FIG-CL-TAV-08 | 参数 | \(I\)、\(\varepsilon\)、\(J\)、\(c_{\min}\)、\(B\) 或 \(K_{\max}\)、剩余集评分 |

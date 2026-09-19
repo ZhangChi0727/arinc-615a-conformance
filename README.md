@@ -37,11 +37,11 @@ silently redefine the Core.
 | Current release | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/tree/v4.3.1) |
 | Method input | Candidate GVS Core 0.3 at [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
 | Protocol source | `ARINC-615A-3` / edition `615A-3` / wire version `A4` |
-| Bounded source and open dependency | `ARINC-665-5`, `ARINC-664-2`, `ARINC-664-3` (BOUNDED-ACTIVE); `ARINC-664-7` (CONDITIONAL-DEPLOYMENT); ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, ARINC-664-7 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY`, RFC-1122 `OPEN-DEPENDENCY` |
-| Technical direction | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / platform `deferred: TTCN-3` |
+| Bounded source and open dependency | `ARINC-665-5`, `ARINC-664-2`, `ARINC-664-3` (BOUNDED-ACTIVE); `ARINC-664-4`, `ARINC-664-7` (CONDITIONAL-DEPLOYMENT); ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, ARINC-664-4 `OPEN-DEPENDENCY`, ARINC-664-7 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY`, RFC-1122 `OPEN-DEPENDENCY` |
+| Technical direction | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `CL-TAV` / platform `deferred: TTCN-3` |
 | Delivery position | current `M2` / next `M3` / disposition `ADOPT` |
 | Activation boundary | merge evidence `EXTERNAL-VERIFICATION-REQUIRED` / approval `NOT-AUTOMATED` |
-| Technical controls | [`source register`](configs/research/controlled_sources.json), [`activation control`](docs/control/changes/CR-2026-008.md), [`technical decisions`](docs/control/decisions/DESIGN_DECISIONS.md), [`M1 package`](configs/requirements/arinc_615a3_m1_crs.json), [`generated M1 review view`](docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md), [`M2 package`](configs/models/arinc_615a3_m2_model.json), [`generated M2 review view`](docs/control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md) |
+| Technical controls | [`source register`](configs/research/controlled_sources.json), [`activation control`](docs/control/changes/CR-2026-012.md), [`technical decisions`](docs/control/decisions/DESIGN_DECISIONS.md), [`M1 package`](configs/requirements/arinc_615a3_m1_crs.json), [`generated M1 review view`](docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md), [`M2 package`](configs/models/arinc_615a3_m2_model.json), [`generated M2 review view`](docs/control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md) |
 | Third handshake | `COMPLETE` |
 | Compatibility | `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` under Q-01–Q-09 |
 | Project Configuration | `NOT YET ESTABLISHED` |
@@ -50,17 +50,18 @@ silently redefine the Core.
 
 ## Current increment
 
-**M2 observable timed model and bounded source refinement candidate**
+**CL-TAV method, paper plan and expanded protocol CRS candidate**
 
-- Record owner-accepted M1 sign-off and merge facts in M2 inputAcceptance without rewriting merged M1 bytes. CR-2026-011 successor delta rebinds current M1 blobs as a new identity and does not transplant that approval.
-- Deliver an observable timed EFSM for UPLOAD and INFORMATION with payload-enabled accept/reject, session-local list readiness before LUR, visual TFTP-write LUR direction, WAIT not-before retry, obligation-level traces and Attachment 4 equations bound to ordered source structure.
-- Correct Table 6.4.4-1 to LUR and Table 6.4.5-1 to LUS; align the LUR write triad to DATA-LOADER WRQ, TARGET-HARDWARE ACK and DATA-LOADER DATA; bind those CRS actions/objects to TFTP opcode and file role; keep LUI field-table predicates as a named gap. This PR exit is a bounded M2 baseline, not a development-ready CRS. Add source-explicit 615A→665 and TFTP-option refinements used by the model; keep AFDX, FIND, 645 and P3 deviations deferred.
-- Plan IPv4/UDP substantiation for Project Configuration; do not establish network or integrity capabilities.
+- Record the bounded M2 ordinary merge as a preserved fact. That exit covers UPLOAD/INFORMATION only. This increment does not transplant that approval onto new CRS services and does not start M3.
+- Adopt CL-TAV as the successor research method (CR-2026-012 / DD-028). First-version algorithm direction was accepted 2026-09-14 in DD-029; that is not independent mathematical or RG approval.
+- Expand protocol CRS so INFORMATION, UPLOAD, Media Defined DOWNLOAD, Operator Defined DOWNLOAD, FIND and source-stated abort/reject/exception/retry obligations are audited. Conditional network variants stay separate from the current Compliant instance. ARINC 645 unique algorithm details remain BLOCKED-SOURCE-645: locally acquired, not bound in this PR.
+- Keep protocol CRS semantically complete in this PR, but write new rows only after source-unit audit. Tool requirements, verification specifications, interface/configuration contracts and development-ready acceptance belong to a later PR after this CRS is independently accepted. Old M2 does not automatically cover the new scope.
+- Correct admitted Part 7 configuration-list membership and the CL-TAV walkthrough candidate invariant on the unique Draft PR. Current inventory is M1-CANDIDATE-22 with 3106 coverage / 816 requirements. The 615A Appendix E alternative remains open: apply Part 4 address rules or integrator-identified requirements. This does not select Part 4 automatically and does not activate AFDX. 665 section 2.3 in-scope leaves are emitted and not independently closed; CRC algorithm identity stays 645-blocked. RFC 1123 §4.2.3.2 IMPLEMENTATION exponential backoff stays informative under the adaptive-timeout MUST. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 still does not execute FIND, DOWNLOAD or AFDX (65 transitions, 30 observational timing rows). ARINC 645 is locally acquired and not bound. Method report §3.9.1 records author-supplied conditional arguments for monotonicity, true-hypothesis retention, one-step minimax and charged-execution bounds; those arguments are not independent mathematical approval. This Draft candidate is not independent architecture, mathematical or RG approval.
 
 State changes:
 
-- M0 and M1 are COMPLETED-EXTERNALLY-VERIFIED. M2 is a DISPOSITION-ADOPT candidate under CR-2026-008.
-- currentStop is EXECUTABLE-FOUNDATION-GATE, which blocks M3 until M2 is independently approved, ordinarily merged and main CI succeeds.
+- Bounded M2 merge of PR #14 is recorded. M3 remains blocked. CR-2026-012 is the successor method/paper/expanded-protocol-CRS increment.
+- currentStop remains EXECUTABLE-FOUNDATION-GATE for M3 implementation. DD-029 first-version design direction was accepted 2026-09-14 and is not independent mathematical or RG approval.
 
 Unchanged boundaries:
 
@@ -68,16 +69,16 @@ Unchanged boundaries:
 - The 18 source mapping rows, 7 instance-only rows and Q-01 through Q-09 remain unchanged.
 - Project Configuration is NOT YET ESTABLISHED; instance evaluation is NOT-EXERCISED; RQ8 remains OPEN.
 - Protocol conformance, certification readiness and authority acceptance remain false; no baseline or tag is created.
-- This M2 candidate creates no codec, executable EFSM engine, verification case, procedure, execution evidence or Project Configuration.
+- This increment creates no codec, executable EFSM engine, verification case, procedure, execution evidence or Project Configuration.
 
 ## Current stop
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop blocks M3 until joint RG0/RG1/RG2 approval binds the exact reviewed M2 Head, an ordinary merge has that Head as second parent, and main CI succeeds.
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3 implementation. The bounded M2 ordinary merge is recorded; that approval is not transplanted onto expanded CRS. The CL-TAV Draft candidate is M1-CANDIDATE-22 with FIND abort non-waiver, bound RFC 1123/791, 664-7 latency/jitter/MAC and remaining P7 switch/Attachment-2 contracts including the VL-sum max_jitter equation, source-owned 4.7.3.2 filtering-table members, 664P4-1 address-rule leaves for the first 00519 alternative, and combined TFTP end conditions; it is not method/paper/expanded-CRS approval. Independent review must pass, and merge requires explicit authorization. Do not Ready, merge or tag on this increment. The 2026-09-14 DD-029 design-direction acceptance is not independent approval.
 
 ## Next development steps
 
-- Obtain independent RG0, incremental RG1 and RG2 review of the complete M2 range on the unchanged final Head.
-- Do not merge, tag or start M3 until that review, user authorization, ordinary two-parent merge and main CI succeed.
+- Request complete-range RG0/RG1 and method/math/architecture/experiment review on the unique Draft PR. Keep independentMathematicalApproval and independentReviewApproval false. Do not Ready, merge, tag or start M3.
+- Keep 665 section 2.3 emitted-not-closed in this PR. ARINC 645 stays acquired-not-bound. Bound M2 stays UPLOAD/INFORMATION. FIND clock limited approval stays closed. Do not auto-select Part 4 or activate AFDX.
 
 ## 当前开发图景
 
@@ -87,11 +88,11 @@ Unchanged boundaries:
 | 当前发布 | [`RB-2026-001-v4.3.1`](docs/control/baselines/RB-2026-001-v4.3.1.md) / annotated [`v4.3.1`](https://github.com/ZhangChi0727/arinc-615a-conformance/tree/v4.3.1) |
 | 方法输入 | Candidate GVS Core 0.3 @ [`48dd8232b7ef`](https://github.com/ZhangChi0727/complex-system-verification-assurance/commit/48dd8232b7efe6b0dba3fcb75dfc154d034d2b0b) |
 | 协议来源 | `ARINC-615A-3` / 版次 `615A-3` / 线版本 `A4` |
-| 有边界来源与开放依赖 | `ARINC-665-5`, `ARINC-664-2`, `ARINC-664-3` (BOUNDED-ACTIVE); `ARINC-664-7` (CONDITIONAL-DEPLOYMENT)；ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, ARINC-664-7 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY`, RFC-1122 `OPEN-DEPENDENCY` |
-| 技术方向 | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `BOUNDED-TEST-ANALYSIS` / 平台 `deferred: TTCN-3` |
+| 有边界来源与开放依赖 | `ARINC-665-5`, `ARINC-664-2`, `ARINC-664-3` (BOUNDED-ACTIVE); `ARINC-664-4`, `ARINC-664-7` (CONDITIONAL-DEPLOYMENT)；ARINC-645 `OPEN-DEPENDENCY`, ARINC-664-3 `OPEN-DEPENDENCY`, ARINC-664-4 `OPEN-DEPENDENCY`, ARINC-664-7 `OPEN-DEPENDENCY`, RFC-768 `OPEN-DEPENDENCY`, RFC-791 `OPEN-DEPENDENCY`, RFC-1123 `OPEN-DEPENDENCY`, RFC-1350 `OPEN-DEPENDENCY`, RFC-1785 `OPEN-DEPENDENCY`, RFC-2347 `OPEN-DEPENDENCY`, RFC-2348 `OPEN-DEPENDENCY`, RFC-2349 `OPEN-DEPENDENCY`, RFC-1122 `OPEN-DEPENDENCY` |
+| 技术方向 | `LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM` / `CL-TAV` / 平台 `deferred: TTCN-3` |
 | 交付位置 | 当前 `M2` / 下一 `M3` / 处置 `ADOPT` |
 | 激活边界 | 合并证据 `EXTERNAL-VERIFICATION-REQUIRED` / 批准 `NOT-AUTOMATED` |
-| 技术控制入口 | [`source register`](configs/research/controlled_sources.json), [`activation control`](docs/control/changes/CR-2026-008.md), [`technical decisions`](docs/control/decisions/DESIGN_DECISIONS.md), [`M1 package`](configs/requirements/arinc_615a3_m1_crs.json), [`generated M1 review view`](docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md), [`M2 package`](configs/models/arinc_615a3_m2_model.json), [`generated M2 review view`](docs/control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md) |
+| 技术控制入口 | [`source register`](configs/research/controlled_sources.json), [`activation control`](docs/control/changes/CR-2026-012.md), [`technical decisions`](docs/control/decisions/DESIGN_DECISIONS.md), [`M1 package`](configs/requirements/arinc_615a3_m1_crs.json), [`generated M1 review view`](docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md), [`M2 package`](configs/models/arinc_615a3_m2_model.json), [`generated M2 review view`](docs/control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md) |
 | 第三次握手 | `COMPLETE` |
 | 兼容性 | 受 Q-01～Q-09 限定的 `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` |
 | Project Configuration | `NOT YET ESTABLISHED` |
@@ -100,17 +101,18 @@ Unchanged boundaries:
 
 ## 本次集成增量
 
-**M2 可观测时序模型与有边界来源精化候选**
+**CL-TAV 方法、论文计划与扩大协议 CRS 候选**
 
-- 在 M2 inputAcceptance 中记录所有者接受的 M1 签署与合并事实，不改写已合并 M1 字节。CR-2026-011 后继增量把当前 M1 blob 作为新身份重绑定，不移植该批准。
-- 交付 UPLOAD 与 INFORMATION 的可观测 timed EFSM，含 payload 使能的接受／拒绝、LUR 前的会话内列表就绪、目视 TFTP 写的 LUR 方向、WAIT 不得早于重试、义务级追踪，以及按有序来源结构绑定的附件 4 方程。
-- 将表 6.4.4-1 纠正为 LUR、表 6.4.5-1 纠正为 LUS；将 LUR 写三元组对齐为 DATA-LOADER WRQ、TARGET-HARDWARE ACK、DATA-LOADER DATA；将上述 CRS 动作／对象绑定到 TFTP 操作码与文件角色；LUI 字段表谓词作为具名缺口。本 PR 出口是有界 M2 基线，不是开发就绪 CRS。为模型实际使用的对象增加 615A→665 与 TFTP 选项精化；FIND、AFDX、645 与 P3 偏差保持延期。
-- 规划 IPv4/UDP 基础设施验证以备 Project Configuration；不建立网络或完整性能力。
+- 将有界 M2 普通合并作为保留事实记录。该出口只覆盖 UPLOAD／INFORMATION。本增量不把该批准移植到新 CRS 服务，也不启动 M3。
+- 以 CL-TAV 为后继研究方法（CR-2026-012／DD-028）。首版算法方向已于 2026-09-14 在 DD-029 接受；那不是独立数学或 RG 批准。
+- 扩大协议 CRS，使 INFORMATION、UPLOAD、Media Defined DOWNLOAD、Operator Defined DOWNLOAD、FIND 及来源已规定的中断／拒绝／异常／重试义务接受审计。条件化网络变体与当前 Compliant 实例分开。ARINC 645 独有算法细节保持 BLOCKED-SOURCE-645：本地已取得，本 PR 不绑定。
+- 本 PR 的协议 CRS 必须语义正确且范围完整，但新行只能在来源单元审计之后撰写。工具需求、验证规格、接口／配置契约和开发就绪验收属于扩大 CRS 被独立接受之后的后继 PR。旧 M2 不会自动覆盖新范围。
+- 已在唯一 Draft PR 纠正第 7 部分已准入配置列表成员所有权与 CL-TAV 走查候选集不变式。当前清单为 M1-CANDIDATE-22，3106 条 coverage／816 条需求。615A 附录 E 替代路径保持开放：适用第 4 部分地址规则，或集成商指明的要求。这不自动选定第 4 部分，也不激活 AFDX。665 §2.3 范围内叶已发出且未经独立闭合；CRC 算法身份仍由 645 阻塞。RFC 1123 §4.2.3.2 IMPLEMENTATION 指数退避仍作为自适应超时 MUST 下的说明性指导。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 仍不执行 FIND、DOWNLOAD 或 AFDX（65 个迁移，30 条观察时序）。ARINC 645 本地已取得但未绑定。方法报告 §3.9.1 记录候选单调性、真实假设保留、一步 minimax 与计费执行次数界的作者条件性论证；那些论证不是独立数学批准。本 Draft 候选不是独立架构、数学或 RG 批准。
 
 状态变化：
 
-- M0 与 M1 为 COMPLETED-EXTERNALLY-VERIFIED。M2 在 CR-2026-008 下为 DISPOSITION-ADOPT 候选。
-- currentStop 为 EXECUTABLE-FOUNDATION-GATE，在 M2 获独立批准、普通合并且 main CI 成功前阻止 M3。
+- PR #14 的有界 M2 合并已记录。M3 保持阻塞。CR-2026-012 为后继方法／论文／扩大协议 CRS 增量。
+- 对 M3 实现而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。DD-029 首版设计方向已于 2026-09-14 接受，不是独立数学或 RG 批准。
 
 保持不变的边界：
 
@@ -118,16 +120,16 @@ Unchanged boundaries:
 - 18 个来源映射行、7 个实例专用行及 Q-01～Q-09 保持不变。
 - Project Configuration 保持 NOT YET ESTABLISHED；实例评价保持 NOT-EXERCISED；RQ8 保持 OPEN。
 - 协议符合性、认证准备度和权威接受保持 false；不创建 baseline 或 tag。
-- 本 M2 候选不创建 codec、可执行 EFSM 引擎、验证用例、规程、执行证据或 Project Configuration。
+- 本增量不创建 codec、可执行 EFSM 引擎、验证用例、规程、执行证据或 Project Configuration。
 
 ## 当前停点
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点禁止 M3，直至 RG0/RG1/RG2 联合批准绑定精确受审 M2 Head、普通合并的第二父为该 Head，且 main CI 成功。
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3 实现。有界 M2 普通合并已记录；该批准不移植到扩大 CRS。CL-TAV Draft 候选为 M1-CANDIDATE-22，含 FIND 中止不豁免、已绑定的 RFC 1123／791、含 VL 求和 max_jitter 方程的 664-7 时延／抖动／MAC 及剩余交换机／附件 2 合同、4.7.3.2 过滤表来源成员、00519 第一条替代路径的 664P4-1 地址规则叶及组合后的 TFTP 结束条件，不是方法／论文／扩大 CRS 批准。须通过独立评审，合并须明确授权。本增量不转 Ready、不合并、不打标签。2026-09-14 对 DD-029 的设计方向接受不是独立批准。
 
 ## 下一步开发计划
 
-- 在不再变化的最终 Head 上，对完整 M2 范围取得独立 RG0、增量 RG1 与 RG2 评审。
-- 在该评审、用户授权、普通两父合并且 main CI 成功前，不合并、不打标签、不启动 M3。
+- 在唯一 Draft PR 上请求完整范围 RG0／RG1 以及方法／数学／架构／实验评审。保持 independentMathematicalApproval 与 independentReviewApproval 为 false。不转 Ready、不合并、不打标签、不启动 M3。
+- 665 §2.3 在本 PR 保持已发出未闭合。ARINC 645 保持已取得未绑定。绑定 M2 仍为 UPLOAD／INFORMATION。FIND 时钟有限批准保持关闭。不自动选定第 4 部分，也不激活 AFDX。
 <!-- project-status:end -->
 
 ## Read by role / 按角色继续阅读

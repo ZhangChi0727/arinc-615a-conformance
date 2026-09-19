@@ -56,38 +56,110 @@
     {
       "sourceId": "ARINC-665-5",
       "pdfPages": [
-        32,
+        36,
         139
       ],
       "kind": "OUTSIDE-BOUNDED-SURVEY",
-      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-MEDIA-SET-NOT-USED-BY-ETHERNET-UPLOAD"
+      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-MEDIA-SET-CRC-APPENDICES-AFTER-CLAUSE-2-INCLUDING-BATCH-FILE"
     },
     {
       "sourceId": "ARINC-664-2",
       "pdfPages": [
         1,
+        7
+      ],
+      "kind": "FRONT-MATTER",
+      "rationaleCode": "TITLE-AND-FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY"
+    },
+    {
+      "sourceId": "ARINC-664-2",
+      "pdfPages": [
+        29,
         53
       ],
-      "kind": "REGISTRY-ONLY-BINDING",
-      "rationaleCode": "REGISTRY-BOUND-BUT-PAGE-LEVEL-SURVEY-DEFERRED-TO-M2-INFRASTRUCTURE-BINDING"
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "BOUNDED-664P2-SCOPE-EXCLUSION-AFTER-PHYSICAL-SURVEY"
     },
     {
       "sourceId": "ARINC-664-3",
       "pdfPages": [
         1,
+        7
+      ],
+      "kind": "FRONT-MATTER",
+      "rationaleCode": "TITLE-AND-FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY"
+    },
+    {
+      "sourceId": "ARINC-664-3",
+      "pdfPages": [
+        37,
+        57
+      ],
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "BOUNDED-664P3-SCOPE-EXCLUSION-IPV6-IPSEC-UNSELECTED"
+    },
+    {
+      "sourceId": "ARINC-664-3",
+      "pdfPages": [
+        59,
         90
       ],
-      "kind": "REGISTRY-ONLY-BINDING",
-      "rationaleCode": "FULL-LEAF-SURVEY-NOT-CLAIMED-BOUNDED-REGIONS-IN-NETWORK-REVIEW"
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "BOUNDED-664P3-SCOPE-EXCLUSION-AFTER-ARP-SURVEY"
     },
     {
       "sourceId": "ARINC-664-7",
       "pdfPages": [
         1,
+        8
+      ],
+      "kind": "FRONT-MATTER",
+      "rationaleCode": "TITLE-AND-FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY"
+    },
+    {
+      "sourceId": "ARINC-664-7",
+      "pdfPages": [
+        133,
+        137
+      ],
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "BOUNDED-664P7-SCOPE-EXCLUSION-NON-NORMATIVE-EXAMPLES"
+    },
+    {
+      "sourceId": "ARINC-664-7",
+      "pdfPages": [
+        141,
         145
       ],
-      "kind": "REGISTRY-ONLY-BINDING",
-      "rationaleCode": "FULL-LEAF-SURVEY-NOT-CLAIMED-BOUNDED-REGIONS-IN-NETWORK-REVIEW"
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "BOUNDED-664P7-SCOPE-EXCLUSION-AFTER-APPENDIX-C-D"
+    },
+    {
+      "sourceId": "ARINC-664-4",
+      "pdfPages": [
+        1,
+        6
+      ],
+      "kind": "FRONT-MATTER",
+      "rationaleCode": "TITLE-AND-FRONT-MATTER-OUTSIDE-BOUNDED-SURVEY"
+    },
+    {
+      "sourceId": "ARINC-664-4",
+      "pdfPages": [
+        19,
+        23
+      ],
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "BOUNDED-664P4-SCOPE-EXCLUSION-IPV6-AND-MIB-NOT-TRIGGERED"
+    },
+    {
+      "sourceId": "ARINC-664-4",
+      "pdfPages": [
+        32,
+        53
+      ],
+      "kind": "OUTSIDE-BOUNDED-SURVEY",
+      "rationaleCode": "BOUNDED-664P4-SCOPE-EXCLUSION-MIB-EXAMPLES-SUPPLEMENT-AND-BACK-MATTER"
     }
   ],
   "boundedSourceScopeExclusion": [
@@ -96,32 +168,32 @@
       "excludedClausePrefix": "3",
       "clauseTitleEn": "Loadable Media Set Parts",
       "excludedPdfPages": [
-        32,
-        45
+        36,
+        54
       ],
-      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-MEDIA-SET-NOT-USED-BY-ETHERNET-UPLOAD",
-      "conditionForReactivation": "MEDIA-BASED-DELIVERY-ADDED-TO-PROFILE-SCOPE"
+      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-MEDIA-SET-PHYSICAL-MEMBERS-NOT-TRIGGERED-BY-ETHERNET-OR-LSP-ON-MEDIA",
+      "conditionForReactivation": "DEPLOYMENT-USES-ARINC-665-PHYSICAL-MEDIA-SET-MEMBERS-AS-ORGANIZATION"
     },
     {
       "sourceId": "ARINC-665-5",
-      "excludedClausePrefix": "4",
-      "clauseTitleEn": "Loadable Software Distribution Container Format",
+      "excludedClausePrefix": "4-5",
+      "clauseTitleEn": "CRC and integrity-check methods relocated to ARINC 645",
       "excludedPdfPages": [
-        46,
-        60
+        55,
+        56
       ],
-      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-DISTRIBUTION-CONTAINER-NOT-USED-BY-BOUNDED-UPLOAD",
-      "conditionForReactivation": "CONTAINER-BASED-DELIVERY-ADDED-TO-PROFILE-SCOPE"
+      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-RELOCATED-TO-645-NOT-BOUND-THIS-PR",
+      "conditionForReactivation": "SUCCESSOR-PR-BINDS-615A-TRIGGERED-645-CLAUSES"
     },
     {
       "sourceId": "ARINC-665-5",
-      "excludedClausePrefix": "5-onwards",
-      "clauseTitleEn": "Loadable Software Airline Modifiable Information, Legacy Compatibility, Back Matter",
+      "excludedClausePrefix": "ATTACHMENT-APPENDICES-SUPPLEMENTS",
+      "clauseTitleEn": "Attachments, appendices, supplements, errata and APIM",
       "excludedPdfPages": [
-        61,
+        57,
         139
       ],
-      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-BEYOND-CURRENT-M1-PROFILE-SURFACE",
+      "rationaleCode": "BOUNDED-6655-SCOPE-EXCLUSION-BACK-MATTER-OUTSIDE-CURRENT-LEAF-SURVEY",
       "conditionForReactivation": "PROFILE-SCOPE-EXPANSION-VIA-CONTROLLED-CR"
     }
   ],
@@ -260,6 +332,10 @@
     {
       "tableId": "Table 6.4.10-1",
       "constraintKind": "statusTableConstraint"
+    },
+    {
+      "tableId": "Table 2.3.1-1",
+      "constraintKind": "fieldConstraint"
     }
   ],
   "sources": [
@@ -506,11 +582,236 @@
           "namespace": "BOUNDED-SURVEY",
           "documentPages": [
             1,
-            21
+            25
           ],
           "pdfPages": [
             11,
+            35
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "ARINC-664-2",
+      "spans": [
+        {
+          "namespace": "BOUNDED-SURVEY",
+          "documentPages": [
+            8,
+            28
+          ],
+          "pdfPages": [
+            8,
+            28
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "ARINC-664-3",
+      "spans": [
+        {
+          "namespace": "BOUNDED-SURVEY-INTERNET-PROFILE",
+          "documentPages": [
+            8,
+            36
+          ],
+          "pdfPages": [
+            8,
+            36
+          ]
+        },
+        {
+          "namespace": "BOUNDED-SURVEY-ARP",
+          "documentPages": [
+            58,
+            58
+          ],
+          "pdfPages": [
+            58,
+            58
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "ARINC-664-4",
+      "spans": [
+        {
+          "namespace": "BOUNDED-SURVEY-ADDRESS-RULES",
+          "documentPages": [
+            1,
+            12
+          ],
+          "pdfPages": [
+            7,
+            18
+          ]
+        },
+        {
+          "namespace": "BOUNDED-SURVEY-ASSIGNED-NUMBERS",
+          "documentPages": [
+            18,
+            25
+          ],
+          "pdfPages": [
+            24,
             31
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "ARINC-664-7",
+      "spans": [
+        {
+          "namespace": "BOUNDED-SURVEY-AFDX-BODY",
+          "documentPages": [
+            9,
+            132
+          ],
+          "pdfPages": [
+            9,
+            132
+          ]
+        },
+        {
+          "namespace": "BOUNDED-SURVEY-APPENDIX-C-D",
+          "documentPages": [
+            138,
+            140
+          ],
+          "pdfPages": [
+            138,
+            140
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-768",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            4
+          ],
+          "pdfPages": [
+            1,
+            4
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-791",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            52
+          ],
+          "pdfPages": [
+            1,
+            52
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-1122",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            117
+          ],
+          "pdfPages": [
+            1,
+            117
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-1123",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            99
+          ],
+          "pdfPages": [
+            1,
+            99
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-1350",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            12
+          ],
+          "pdfPages": [
+            1,
+            12
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-2347",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            8
+          ],
+          "pdfPages": [
+            1,
+            8
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-2348",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            6
+          ],
+          "pdfPages": [
+            1,
+            6
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "RFC-2349",
+      "spans": [
+        {
+          "namespace": "RFC-BODY",
+          "documentPages": [
+            1,
+            6
+          ],
+          "pdfPages": [
+            1,
+            6
           ]
         }
       ]
@@ -519,6 +820,7 @@
   "networkReviewContract": {
     "sourceIds": [
       "ARINC-664-3",
+      "ARINC-664-4",
       "ARINC-664-7"
     ],
     "expectedUnitIds": [
@@ -538,7 +840,11 @@
       "NET-P7-IP",
       "NET-P7-ADDRESS",
       "NET-P7-SWITCH",
-      "NET-P7-PERFORMANCE"
+      "NET-P7-PERFORMANCE",
+      "NET-P4-UDP",
+      "NET-P4-IPV4",
+      "NET-P4-MAC",
+      "NET-P4-PORTS"
     ],
     "expectedRelationIds": [
       "NET-REL-001",

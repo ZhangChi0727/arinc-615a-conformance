@@ -1,0 +1,21 @@
+@startuml FIG-CL-TAV-01
+skinparam shadowing false
+title FIG-CL-TAV-01 Context\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nsubset of context relations; satisfy/verify are model relations, not executed verification
+
+actor Operator
+node TestAdapter
+node IUT
+node NetworkClock
+cloud Integrity645 as "645 integrity boundary\nBLOCKED-SOURCE-645 unique algorithms"
+
+Operator --> TestAdapter : test request
+TestAdapter --> IUT : stimulus
+IUT --> TestAdapter : observation Izk
+TestAdapter --> NetworkClock : time / error bound
+IUT ..> Integrity645 : call and state only\nnot algorithm evidence
+TestAdapter --> Msess : observation port to verification session
+note bottom of IUT
+  Protocol messages and operation states
+  belong to Mprot, not to Msess.
+end note
+@enduml

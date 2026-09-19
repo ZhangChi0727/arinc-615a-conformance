@@ -134,7 +134,7 @@
       "properties": {
         "kind": {
           "type": "string",
-          "enum": ["TRUE", "COMPARE", "AND", "VAR", "CLOCK", "SYMBOL", "LITERAL", "ENUM", "ASSIGN", "BINARY", "PAYLOAD"]
+          "enum": ["TRUE", "COMPARE", "AND", "VAR", "CLOCK", "SYMBOL", "LITERAL", "ENUM", "ASSIGN", "BINARY", "PAYLOAD", "SUM"]
         },
         "name": { "type": "string" }
       },
@@ -484,7 +484,7 @@
               "instanceBinding": { "$ref": "#/$defs/nonEmptyString" },
               "resetPolicy": { "$ref": "#/$defs/nonEmptyString" },
               "cancelPolicy": { "$ref": "#/$defs/nonEmptyString" },
-              "resetOn": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+              "resetOn": { "type": "array", "items": { "type": "string" } },
               "meaningEn": { "$ref": "#/$defs/nonEmptyString" },
               "meaningZh": { "$ref": "#/$defs/nonEmptyString" }
             }

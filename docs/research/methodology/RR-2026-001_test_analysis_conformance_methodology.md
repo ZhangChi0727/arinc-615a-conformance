@@ -1,15 +1,15 @@
-# A Test-and-Analysis Methodology for ARINC 615A Conformance Verification
+# CL-TAV: Closed-Loop Test–Analysis Verification for Protocol Conformance
 <!-- Bilingual controlled edition: authoritative English followed by Chinese translation. -->
-## Requirements-Based Testing, Bounded Evidence Analysis, and Independent Review Gates
+## Closed-Loop Test–Analysis Verification, Requirements-Based Testing, and Independent Review Gates
 
 **Research Report RR-2026-001**
 
 | Field | Value |
 |---|---|
-| **Version** | 4.2 research baseline |
-| **Date** | 2026-07-30 |
-| **Status** | Effective and frozen through PR #6 under GR-PR6-RB-2026-001-v4.2; empirical claims remain conditional on §10 |
-| **Primary instance** | ARINC 615A DOWNLOAD/UPLOAD services over TFTP |
+| **Version** | 5.0-candidate successor under CR-2026-012 |
+| **Date** | 2026-09-14 |
+| **Status** | First-version CL-TAV design direction accepted 2026-09-14. Historical v4.2 display-math identity remains on merged main `3423583`. This is not independent mathematical approval and not independent RG approval. Empirical claims remain conditional on later registered experiments. |
+| **Primary instance** | ARINC 615A INFORMATION, UPLOAD, Media Defined DOWNLOAD, Operator Defined DOWNLOAD and FIND over TFTP, with conditional network variants |
 | **Classification** | Internal — Academic Research |
 | **Normative language** | The English section is authoritative; a synchronized Chinese translation is appended to this file |
 
@@ -17,15 +17,13 @@
 
 ## Abstract
 
-Protocol conformance verification must convert normative requirements into credible engineering decisions. It therefore needs both dynamic evidence from executing an Implementation Under Test (IUT) and disciplined analysis of coverage, detection capability, uncertainty, and failure causes. This report presents an integrated Test-and-Analysis methodology for ARINC 615A conformance verification.
+Protocol conformance verification must convert normative requirements into credible engineering decisions. It therefore needs both dynamic evidence from executing an Implementation Under Test (IUT) and a closed loop that uses those observations to update fault hypotheses and to choose the next test. This successor report presents **CL-TAV** (Closed-Loop Test–Analysis Verification) for protocol conformance verification and fault localization, using ARINC 615A as the case.
 
-The **Test path** derives an applicable Conformance Requirement Set (CRS), Test Purposes (TPs), and executable Verification Cases (VCs), then executes them against the IUT to produce verdicts, timestamped traces, and measurements. The **Analysis path** evaluates traceability, model-based coverage, deterministic timing conformance, finite-fault-domain adequacy, repeated-run behavior, calibrated evidence, and failure diagnosis. Test and Analysis are complementary: Test creates controlled observations; Analysis determines what those observations support and where further verification effort is needed.
+The **Test path** still derives an applicable Conformance Requirement Set (CRS), Test Purposes (TPs), and Verification Cases (VCs), and executes them to produce verdicts, timestamped traces, and measurements. The **Analysis path** evaluates traceability, model-based coverage, deterministic timing conformance, finite-fault-domain adequacy, and—under first-version CL-TAV—set-valued compatibility diagnosis and one-step minimax next-test selection (DD-029). Combining Test and Analysis is **not** claimed as a first invention.
 
-Independent **Review and Inspection gates** govern the quality of requirements, protocol models, verification cases, oracles, execution readiness, evidence packages, and released claims. These static activities support the two primary paths without being presented as independent research contributions. Demonstration may support stakeholder acceptance, but it is not the principal method for detailed protocol conformance.
+Independent **Review and Inspection gates** govern artifacts and claims. Demonstration may support stakeholder acceptance, but it is not the principal method for detailed protocol conformance. Formulas, proofs and confirmatory experiments in this successor remain candidates until independent review.
 
-The resulting framework aims to create both academic value—clear semantics, bounded claims, and empirically evaluable hypotheses—and engineering value—reviewable artifacts, automation points, release gates, diagnostic outputs, and reproducible decision records.
-
-**Keywords:** protocol conformance verification; Test-and-Analysis; requirements-based testing; engineering assurance; traceability; timed EFSM; robust timing oracle; measurement uncertainty; ARINC 615A; finite fault domain; mutation testing; calibrated evidence; Bayesian inference; review gate; inspection
+**Keywords:** CL-TAV; closed-loop test–analysis verification; protocol conformance verification; fault localization; requirements-based testing; traceability; timed EFSM; robust timing oracle; measurement uncertainty; ARINC 615A; finite fault domain; mutation testing; review gate
 
 ---
 
@@ -37,18 +35,28 @@ ARINC 615A verification is often organized around project-specific Interface Con
 
 The research problem is:
 
-> How can a verification team derive, execute, and evaluate a reusable ARINC 615A conformance test suite so that every claim is traceable to an applicable normative requirement, bounded by an explicit observation and fault model, and supported by reproducible evidence?
+> How can test observations, constraint verdicts, fault hypotheses and next-test selection form a consistent closed loop for protocol conformance verification and fault localization, using ARINC 615A as a bounded case?
 
 ### 1.2 Research questions
 
+Successor CL-TAV questions (first-version design direction, DD-028/DD-029):
+
 | ID | Research question | Required evidence |
 |---|---|---|
-| **RQ1 — Derivation** | How can applicable normative requirements be transformed into auditable test purposes and executable verification cases? | CRS, trace relations, reviewer agreement, case schemas |
-| **RQ2 — Coverage** | Which requirement, model, data, timing, negative, and sequence obligations must be covered for the declared scope? | Coverage obligations and matrices |
-| **RQ3 — Bounded adequacy** | How effectively does the VCS detect non-conformance within a declared finite fault domain? | Valid mutant catalog, held-out faults, mutation results |
-| **RQ4 — Evidence interpretation** | What can repeated PASS/FAIL observations support without conflating execution repeatability with conformance probability? | Observation model, intervals, calibration data |
-| **RQ5 — Diagnosis** | Can failure signatures identify fault classes with useful and reproducible accuracy? | Fault-injection dataset, confusion matrix, Top-k metrics |
-| **RQ6 — Transferability** | Which parts of the method remain valid when applied to a second protocol? | Second-instance study; not answered by the 615A instance alone |
+| **CL-RQ1 — Closed loop** | How does CL-TAV form a consistent loop among test observations, constraint verdicts, fault hypotheses and next-test selection? | Algorithm objects, update/selection/stop rules, SysML views, worked examples |
+| **CL-RQ2 — Comparative effect** | Under the same budget, what is the effect of the closed loop versus fixed Test, appropriately defined Analysis, and non-feedback T+A on detection, localization and cost? | Registered comparison protocol; not filled with unrun results |
+| **CL-RQ3 — Uncertainty and stopping** | How do timing uncertainty, insufficient observation and incomplete model/fault domains affect conclusions and stopping? | Uncertainty partitions aligned with scoring; three-way cannot-shrink returns |
+
+Historical RQ1–RQ6 remain mapped; they are not completed by deletion:
+
+| Historical ID | Disposition under CL-TAV |
+|---|---|
+| **RQ1 — Derivation** | Supporting: still required for auditable CRS→TP/VC |
+| **RQ2 — Coverage** | Supporting: coverage obligations feed Analysis constraints |
+| **RQ3 — Bounded adequacy** | Maps into the detection experiment family |
+| **RQ4 — Evidence interpretation** | Maps into CL-RQ3 |
+| **RQ5 — Diagnosis** | Becomes part of the closed-loop core |
+| **RQ6 — Transferability** | Not answered by this 615A instance; remains future work |
 
 ### 1.3 Integrated-method thesis
 
@@ -57,19 +65,24 @@ The methodology is organized around two primary, mutually reinforcing verificati
 1. **Test:** interact with the IUT under controlled preconditions, stimuli, timing, and oracles; produce verdicts, traces, measurements, and reproducible execution records.
 2. **Analysis:** examine requirements, models, traceability, coverage, mutants, repeated observations, uncertainty, and failure signatures; produce adequacy assessments, evidence bounds, diagnostic rankings, and recommendations for additional tests.
 
-The relationship is a closed engineering loop:
+The relationship is a closed loop:
 
 ```text
-Requirements and protocol model
+observable session q_k and hypothesis set H_k
         |
         v
-Test design -> Test execution -> Observations and verdicts
-     ^                                 |
-     |                                 v
-     +---- Analysis <- Coverage, adequacy, uncertainty, diagnosis
-                 |
-                 v
-        Engineering decision / next verification action
+select t by one-step minimax remaining-candidate count
+        |
+        v
+Test execution -> measurement I_z (same uncertainty as scoring)
+        |
+        v
+constraint verdict / compatibility update -> H_{k+1}, q_{k+1}
+        |
+        v
+stop (budget / no current distinguisher / proved equivalence / singleton / empty / ERROR)
+        |
+        +-- if continue: next test from new q
 ```
 
 Review and Inspection gates control the artifacts entering and leaving this loop.
@@ -85,14 +98,16 @@ The academic contribution supplies defensible reasoning. The engineering contrib
 
 ### 1.5 Contributions claimed by this report
 
-1. **Traceable derivation framework.** A many-to-many requirements-to-tests model that supports applicability, compound requirements, and multiple cases per purpose.
-2. **Complementary Test-and-Analysis workflow.** A closed loop in which dynamic execution produces evidence and analysis evaluates sufficiency, uncertainty, and next actions.
-3. **Deterministic timed-conformance semantics.** Timestamped traces, clock-augmented EFSMs, explicit measurement-error budgets, and robust verdict rules prevent timing measurements from being treated as exact.
-4. **Scoped assurance argument.** A formal separation between coverage, valid execution, and bounded fault-detection evidence.
-5. **Finite fault-domain adequacy method.** A reproducible mutation workflow with explicit equivalent/invalid-mutant handling and held-out evaluation faults, including timing faults.
-6. **Calibrated evidence semantics.** A separation between operational PASS probability, likelihood evidence, and posterior belief in conformance.
-7. **Independent quality gates.** Review and Inspection gates covering scope, requirements, models, cases, oracles, execution readiness, evidence, and claim release.
-8. **Evaluation protocol.** An empirically testable design with baselines, metrics, leakage controls, and decision gates.
+These remain **propositions to evaluate**, not established results:
+
+1. **CL-TAV closed loop.** Set-valued compatibility diagnosis plus one-step minimax next-test selection, with three-way cannot-shrink stopping (DD-029).
+2. **Traceable derivation framework.** Historical RQ1 remains supporting work: many-to-many requirements-to-tests model.
+3. **Deterministic timed-conformance semantics.** Unchanged supporting core: timestamped traces, clock-augmented EFSMs, measurement-error budgets, Robust timing verdict.
+4. **Finite fault-domain adequacy method.** Detection experiments still use held-out faults; localization uses the declared \(H_0\).
+5. **Independent quality gates.** Review and Inspection remain governance, not the claimed scientific contribution.
+6. **Comparative evaluation protocol.** Fixed Test, Analysis, non-feedback T+A, and full CL-TAV under the same budget; results are not filled in this increment.
+
+Calibrated Bayesian posteriors, HMM temporal diagnosis and DTMC path probabilities are **not** first-version defaults. Equation (14) is retained as a non-default comparison model.
 
 ### 1.6 Scientific positioning and novelty boundary
 
@@ -115,7 +130,7 @@ The method is a synthesis, not a claim to have invented requirements-based or mo
   decision rule and must still be validated for the timing instrument.
 - NASA systems-engineering guidance commonly classifies requirement verification methods as Test, Analysis, Inspection, and Demonstration [19]. Review is treated here as a static governance activity aligned with software review practice rather than forced into that four-method taxonomy [20].
 
-The intended novelty is the **auditable integration and empirical evaluation** of these ideas for ARINC 615A: a complementary Test-and-Analysis loop, applicability-controlled requirement extraction, obligation-sensitive traceability, uncertainty-aware timed conformance, explicit finite-fault-domain bounds, held-out fault evaluation, calibrated evidence gates, and independent artifact reviews. Until the artifacts and experiments in §§8–10 are completed, this novelty remains a research hypothesis rather than an established result.
+The intended novelty is the **auditable integration and empirical evaluation** of a closed diagnosis-and-selection loop for ARINC 615A, not the invention of Test, Analysis, requirements-based testing, or model-based testing. Until the artifacts and experiments in §§8–10 are completed, this novelty remains a research hypothesis rather than an established result.
 
 DO-178C is adjacent assurance context [16], not the formal source of the method or of the Test/Analysis/Inspection taxonomy. FMEA/FMECA follows IEC 60812 terminology [14]. HMM concepts, if later used, follow a separately validated temporal diagnostic model rather than being inferred from the protocol graph [15].
 
@@ -352,53 +367,73 @@ Let an observed timed trace be:
 where timestamps use a declared monotonic time basis. For a trigger event
 \(a_i\) and its requirement-defined response \(a_j\), define
 \(\Delta t_{ij}=t_j-t_i\). Each requirement declares an admissible set
-\(I_r\), including the inclusivity of each finite endpoint. A bounded response
-obligation is:
-
-\[
-a_i@t_i\Longrightarrow
-\exists j>i:
-a_j@t_j\land \Delta t_{ij}\in I_r,
-\tag{T2}
-\]
+\(I_r\), including the inclusivity of each finite endpoint.
 
 The timing catalog defines event predicates
 \(\mathrm{Trig}_r\), \(\mathrm{Resp}_r\), \(\mathrm{Cancel}_r\), and
 \(\mathrm{Supersede}_r\), plus a correlation key and an explicit pairing policy
-(for example unique-key, FIFO, or most-recent). A trigger creates a distinct
-active obligation instance. A response discharges only the active instance
-selected by the declared key and pairing policy; an ambiguous or invalid match
-is `ERROR`, not an IUT `FAIL`. A matching cancellation closes the selected
-instance as cancelled at its trace index, so later silence cannot produce a
-no-response `FAIL`. Unless the requirement explicitly permits concurrent
-instances, a superseding trigger closes the old instance as superseded and
-starts a new instance with a new clock origin. Cancellation and supersession
-are obligation dispositions, not timing verdicts, and remain in the trace.
-Equal timestamps are ordered by trace index, so an event can affect an
-obligation only when its index is later than the trigger. A requirement with no
-minimum delay uses \(L_r=0\). Silence through the deadline is a timed
-observation, not missing data.
+(for example unique-key, FIFO, or most-recent). Define the instance-matching
+predicate by response type, correlation key, pairing policy, and later trace
+index:
 
-For an observation horizon \(t_H\), encode an active obligation with no observed
-response by the distinguished trace event \(\bot_r@t_H\):
+\[
+\mathrm{Match}_r(i,j)
+\ \Longleftrightarrow\
+j>i
+\land a_j\in\mathrm{Resp}_r
+\land \mathrm{key}(a_j)=\mathrm{key}(a_i)
+\land \mathrm{Pair}_r(i,j).
+\]
+
+Equal timestamps are ordered by trace index, so \(j>i\) already permits
+\(t_j=t_i\). \(\mathrm{Pair}_r(i,j)\) is the selected policy evaluated against
+the live active-instance set of the trace, not a fabricated singleton.
+Ambiguous or invalid pairing is `ERROR`, not an IUT `FAIL`. The bounded-response
+schematic T2 and the no-response marker consume that same ownership result. It
+is not enough that some later event belongs to \(\mathrm{Resp}_r\):
+
+\[
+a_i@t_i\Longrightarrow
+\exists j:
+\mathrm{Match}_r(i,j)\land \Delta t_{ij}\in I_r,
+\tag{T2}
+\]
+
+A trigger creates a distinct active obligation instance. A response discharges
+only the active instance selected by \(\mathrm{Match}_r\). A matching
+cancellation closes the selected instance as cancelled at its trace index, so
+later silence cannot produce a no-response `FAIL`. Unless the requirement
+explicitly permits concurrent instances, a superseding trigger closes the old
+instance as superseded and starts a new instance with a new clock origin.
+Cancellation and supersession are obligation dispositions, not timing verdicts,
+and remain in the trace. A requirement with no minimum delay uses \(L_r=0\).
+Silence through the deadline is a timed observation, not missing data.
+
+For an observation horizon \(t_H\), encode an active obligation with no matching
+response by the distinguished trace event \(\bot_r@t_H\). Because
+\(\mathrm{active}_r(i,t_H)\) already means that the instance created at index
+\(i\) has not been discharged, cancelled, or superseded under
+\(\mathrm{Match}_r\) through \(t_H\), no-response is the expiry of that
+still-active instance. Do not add a second global “no event of type
+\(\mathrm{Resp}_r\)” conjunct: a response for a different correlation key must
+not suppress this instance.
 
 \[
 \bot_r@t_H
 \ \Longleftrightarrow\
 \mathrm{active}_r(i,t_H)
-\land (t_H-t_i>U_r)
-\land
-\nexists j>i:\bigl(a_j\in\mathrm{Resp}_r\bigr)\land(t_i<t_j\le t_H).
+\land (t_H-t_i>U_r).
 \]
 
-Here \(\mathrm{active}_r(i,t_H)\) means that the instance created at index
-\(i\) has not been discharged, cancelled, or superseded under those matching
-rules through horizon \(t_H\). The displayed strict inequality defines
-\(\bot_r@t_H\) for a closed upper bound, where a response exactly at \(U_r\)
-is admissible. For an open upper bound, the corresponding expiry test is
-\(t_H-t_i\ge U_r\). Thus \(\bot_r@t_H\) is a formal observation of an expired,
-still-active obligation with no matching response, not a synonym for an absent
-log record.
+The displayed strict inequality defines \(\bot_r@t_H\) for a closed upper bound,
+where a response exactly at \(U_r\) is admissible. For an open upper bound, the
+corresponding expiry test is \(t_H-t_i\ge U_r\). Thus \(\bot_r@t_H\) is a formal
+observation of an expired, still-active obligation with no matching response,
+not a synonym for an absent log record. T2 remains the complementary
+bounded-response schematic: a matching \(j\) with \(\Delta t_{ij}\in I_r\)
+discharges the instance in time. A late matching response can fail T2 without
+being silence. Cancellation, supersession and pairing `ERROR` are not T2
+satisfaction.
 
 The clock-augmented observable EFSM is:
 
@@ -552,6 +587,67 @@ w_m\mathbf{1}[\exists v\in V:\mathrm{Kill}(v,m)]}
 \]
 
 Weights, their rationale, and sensitivity analysis must be published. A mutation score is not called FMEDA diagnostic coverage unless the evaluated mutants are a defensible representation of the target failure-mode population.
+
+### 3.9 CL-TAV closed-loop objects
+
+First-version objects follow DD-029. They do not replace Equations (1)–(6) or T1–T5. \(q_k\) is an observable session/history summary, not unknown true internal IUT state. Whole-history compatibility, when state sets \(S_k(h)\) are used, requires a path consistent with the entire history.
+
+\[
+H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}.
+\]
+
+\[
+H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
+\]
+
+\[
+s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
+\]
+
+\(\mathrm{Obs}(t,q_k)\) uses the same uncertainty partitions as \(I_{z_k}\). Project those classes onto current \(H_k\) and score only currently valid nonempty survivor sets. A test is strictly reducing iff some such class satisfies \(0<|\mathrm{survivors}|<|H_k|\). Empty intersections from excluded hypotheses are not extra score classes and are not distinguishing value; a currently enabled test with no currently valid class is rejected as a named prediction-gap spec error before admission, not folded into A3 and not scored as remaining \(|H_k|\). An executed empty \(H_k\) remains Stop-Empty. Form selectable \(S\subseteq A(q_k)\) under one selected resource mode (budget \(c_{\min},B\) or rounds \(K_{\max}\), never a logical OR of both). If \(S\) is empty, classify Admit A2–A5 even when \(A\) is nonempty. If the minimax set is empty, select Prep, else Recover. Uninformative tests in \(A\) are not selected. Prep, Recover and retries use that same pre-admission and one-shot charging rule. `ERROR` does not exclude candidates; confirmed-not-sent does not change \(q\)-status, unknown-effect marks \(q\) unknown until a recovery-eligible Recover is confirmed. Eligible but unaffordable Recover is A5 Stop-Budget and keeps the ERROR/UNKNOWN facts. Retry cap is decided before A4/A5/A1. This is one-step minimax in remaining-candidate count, not global optimality. Out-of-model observations are inconsistency, not extra score classes. Positive-but-vanishing costs are not a termination proof. Algorithm details, three-way cannot-shrink stopping and walk-throughs are in DD-029. Author-supplied checkable arguments for the four C1 properties are in §3.9.1; they are not independent mathematical approval and are not a verification-engine implementation.
+
+### 3.9.1 Conditional first-version arguments
+
+The following uses the objects of §3.9 and DD-029. Whole-history compatibility is an analysis-interface contract: a single state path must be consistent with the entire executed history. Existence of some compatible state in each round separately is not that contract. Finite walk-throughs in `scripts/cltav_loop_spec.py` are witnesses, not a substitute for these arguments and not experimental superiority. `independentMathematicalApproval` remains false.
+
+Write \(U\) for a **valid observation update** (the displayed \(H_{k+1}\) formula). `ERROR` is not a member of \(U\). Prep or Recover that does not supply a valid observation class is an **identity step** on \(H\).
+
+**Proposition M (candidate monotonicity).**
+Assume the session has not already stopped. Then:
+
+1. If the \(k\)-th executed path is in \(U\), then \(H_{k+1}\subseteq H_k\).
+2. An `ERROR` step leaves \(H\) unchanged.
+3. An identity Prep/Recover step leaves \(H\) unchanged.
+
+This does not imply \(|H_{k+1}|<|H_k|\), eventual uniqueness, or that an in-domain singleton is a protocol PASS.
+
+*Argument.* (1) The update set is defined as a subset of \(H_k\). (2)–(3) follow from the update contract: without a valid observation class there is no add or delete. Intersection with a class disjoint from \(H_k\) is the legitimate empty update Stop-Empty, not resurrection of an absent identifier.
+
+**Proposition R (true-hypothesis retention: sufficient conditions).**
+Let \(h^\star\) be the true hypothesis. Assume:
+
+- (R1) \(h^\star\in H_0\).
+- (R2) There exists one state path consistent with the entire executed history.
+- (R3) \(O(h^\star,t_k,q_k)\) is a conservative outer approximation of the observations of that path.
+- (R4) The realized measurement feasible set \(I_{z_k}\) contains the true observation.
+- (R5) Event ownership and pairing are valid in the sense of §3.6.
+
+Then \(h^\star\in H_k\) after every valid observation update and every `ERROR` or identity Prep/Recover step.
+
+*Argument, one step.* (R3) and (R4) give \(O(h^\star,t_k,q_k)\cap I_{z_k}\neq\emptyset\), so a step in \(U\) retains \(h^\star\). An `ERROR` or identity step does not exclude candidates. *Induction.* Base: (R1). Inductive step: the one-step case on \(U\), identity on `ERROR`/Prep/Recover. Set algebra alone does not yield this conclusion: if (R1)–(R5) fail (out-of-domain fault, wrong model, wrong error bound, or wrong correlation), a monotone update can still delete \(h^\star\). An in-domain singleton is not a protocol PASS; an out-of-domain fault need not produce \(H=\emptyset\).
+
+**Proposition S (one-step minimax on the current selectable set).**
+Let \(T_{\mathrm{cur}}\) be the current selectable strictly-reducing tests: nonempty, finite, and computed from currently valid nonempty observation classes under the same uncertainty partitions as \(I_{z_k}\). Order tests by \((s(t),\mathrm{cost}(t),\mathrm{id})\). The selected \(t^\star\) is a least element of that order, hence \(s(t^\star)\le s(t)\) for every \(t\in T_{\mathrm{cur}}\).
+
+This is worst remaining-candidate count under the declared abstraction and common measurement uncertainty. It is not expected cost, a global policy, or a guarantee of finite-step localization. If \(T_{\mathrm{cur}}=\emptyset\), the rule selects Prep else Recover; that branch is not a minimax claim. Overlapping observation classes remain legal: a worst class may leave \(|H_k|\) while another class distinguishes (DD-029 walk-through 4). Scoring is \(O(|T|\cdot|H|\cdot|O_{\mathrm{class}}|)\) plus oracle and correlation cost, not an \(O(1)\) hidden continuous enumeration.
+
+**Proposition T (resource termination).**
+Declare exactly one resource mode. Every charged TEST, Prep, Recover, and `ERROR`/retry spends that mode:
+
+- Budget mode: \(\mathrm{cost}\ge c_{\min}>0\) and finite remaining \(B\) imply at most \(\lfloor B/c_{\min}\rfloor\) charged executions.
+- Round mode: a finite \(K_{\max}\) counts each of those actions as one round, hence at most \(K_{\max}\) charged executions.
+
+This bounds the number of charged executions. It does not by itself bound wall-clock return: each analysis and each action execution/wait still needs its own termination proof or a controlled timeout. This increment does not claim those engineering timeouts are implemented.
 
 ---
 
@@ -713,6 +809,17 @@ Any surviving held-out fault triggers analysis of the requirement, model, purpos
 | **RG6 — Claim release** | Independent review | Assurance argument, limitations, results, deviations | Claim wording matches achieved evidence gates and open risks |
 
 Each gate produces signed findings and one of `APPROVE`, `APPROVE WITH ACTIONS`, or `REWORK`. The reviewer should be independent of the artifact author where interpretation, oracle correctness, or claim release is at stake.
+
+### 4.11 Stage J — CL-TAV closed-loop diagnosis and next-test selection
+
+After an executed observation is recorded:
+
+1. Update \(H_k\) under DD-029. `ERROR` does not exclude candidates. Confirmed-not-sent does not change \(q\)-status; unknown-effect marks \(q\) unknown until a recovery-eligible Recover is confirmed.
+2. Form \(A(q_k)\) then selectable \(S\). Select by one-step minimax among currently valid strictly-reducing tests, else Prep, else Recover. Charge once. If \(S=\emptyset\), classify A2–A5; do not Execute from nonempty \(A\).
+3. Stop under the exclusive update order Empty, Singleton, 645, Equivalent, then Budget; or under no currently usable distinguishing test, selected-mode resource exhausted at Admit, or retry-capped / unrecoverable `ERROR`.
+4. Do not write “no one-step distinguishing test now” as “no later sequence can distinguish.”
+
+**Exit artifact:** session log of \(H_k\), selected tests, costs, stop class, and unresolved obligations. No confirmatory experiment is executed in this increment.
 
 ---
 
@@ -985,7 +1092,7 @@ Let \(F\in\{f_0,f_1,\ldots,f_K\}\) denote no fault or a declared fault class. Le
 - retry counts;
 - integrity-check results.
 
-A Bayesian diagnostic model is:
+A Bayesian diagnostic model is retained only as a **non-default comparison model** (not first-version CL-TAV):
 
 \[
 P(F=f\mid X=x)
@@ -994,7 +1101,7 @@ P(X=x\mid F=f)P(F=f).
 \tag{14}
 \]
 
-The likelihood is estimated from fault-injection data. A naive conditional-independence factorization may be used only as a declared baseline; correlated signatures require a Bayesian network, regularized classifier, or another validated model.
+First-version diagnosis uses set-valued compatibility on \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\) (DD-029 / §3.9). The likelihood in Equation (14) is estimated from fault-injection data only if a later DD adopts a probability model. A naive conditional-independence factorization may be used only as a declared baseline; correlated signatures require a Bayesian network, regularized classifier, or another validated model.
 
 ### 7.2 FMEA/FMECA relationship
 
@@ -1039,7 +1146,7 @@ A fixed implementation fault observed across a sequence of tests does not automa
 
 ### 8.1 Baselines
 
-Compare:
+Compare, under the same budget and without a shared secretly-stronger oracle:
 
 | ID | Method |
 |---|---|
@@ -1048,6 +1155,12 @@ Compare:
 | **B2-U** | Requirement + untimed EFSM obligation coverage |
 | **B2-T** | B2-U + clock-augmented EFSM, timing partitions, and robust timing oracle |
 | **B3** | B2-T refined using development mutants |
+| **CL-T** | Fixed Test + basic oracle (no feedback) |
+| **CL-A** | Analysis on declared objects without selecting further tests |
+| **CL-TA** | Fixed tests then analysis, no feedback into selection |
+| **CL-LOOP** | Full first-version CL-TAV feedback (DD-029) |
+
+CL-T / CL-A / CL-TA / CL-LOOP are the four comparative strategies required by CR-2026-012. They are planned only; this increment fills no detection or localization results.
 
 ### 8.2 Primary metrics
 
@@ -1457,6 +1570,20 @@ The methodology therefore provides a research baseline and an engineering operat
 - [ ] Timing margins, clock metadata, order effects, clustering, and drift
       diagnostics are retained
 - [ ] Claim boundaries remain consistent across scope, results, and conclusion
+- [ ] CL-TAV stop class is one of: budget insufficient, no currently usable distinguisher, proved observational equivalence, singleton, empty, ERROR, or 645-blocked
+
+---
+
+## Appendix C — Successor method disposition (CR-2026-012)
+
+| Historical object | Successor disposition |
+|---|---|
+| RR-2026-001 v4.2 display-math payload (94 blocks) | Preserved on historical freeze commit recorded in `rr_2026_001_revision_identity.json`; current path may add CL-TAV objects |
+| Equations (1)–(13), T1–T5 | Retained as supporting Test/coverage/timing/mutation math |
+| Equation (14) Bayesian diagnosis | Retained as non-default comparison model; not first-version CL-TAV |
+| RQ1–RQ6 | Mapped in §1.2; RQ6 not completed |
+| Test-and-Analysis loop | Specialized to CL-TAV one-step minimax + set-valued compatibility (DD-029) |
+| Independent approval of this successor | Not recorded; design direction only |
 
 ---
 
@@ -1542,17 +1669,17 @@ and Profile/Binding/Configuration contract.
 
 > 本部分是前述英文规范正文的同步中文译本；若解释存在差异，以英文部分为准。
 
-# 面向 ARINC 615A 符合性验证的测试—分析方法论
-## 基于需求的测试、有限证据分析与独立评审门
+# CL-TAV：面向协议符合性验证与故障定位的闭环测试—分析协同方法
+## 闭环测试—分析协同验证、基于需求的测试与独立评审门
 
 **研究报告 RR-2026-001**
 
 | 字段 | 内容 |
 |---|---|
-| **版本** | 4.2 研究基线 |
-| **日期** | 2026-07-30 |
-| **状态** | 已经 PR #6 在 GR-PR6-RB-2026-001-v4.2 下生效并冻结；经验性主张受 §10 证据门约束 |
-| **主要实例** | 基于 TFTP 的 ARINC 615A DOWNLOAD/UPLOAD 服务 |
+| **版本** | CR-2026-012 下的 5.0-candidate 后继 |
+| **日期** | 2026-09-14 |
+| **状态** | 2026-09-14 接受首版 CL-TAV 设计方向。历史 v4.2 显示数学身份保留在已合并 main 的冻结提交上。这不是独立数学批准，也不是独立 RG 批准。经验性主张仍取决于后继登记实验。 |
+| **主要实例** | 基于 TFTP 的 ARINC 615A INFORMATION、UPLOAD、Media Defined DOWNLOAD、Operator Defined DOWNLOAD 与 FIND，以及条件化网络变体 |
 | **密级** | 内部——学术研究 |
 | **规范语言** | 同一文件中的英文部分为权威版本；本部分为同步中文译本 |
 
@@ -1560,15 +1687,13 @@ and Profile/Binding/Configuration contract.
 
 ## 摘要
 
-协议符合性验证必须把规范性需求转化为可信的工程决策。因此，它既需要通过执行受测实现（IUT）获得动态证据，也需要严谨分析覆盖、检测能力、不确定性和故障原因。本报告提出一种面向 ARINC 615A 符合性验证的一体化测试—分析（Test-and-Analysis）方法论。
+协议符合性验证必须把规范性需求转化为可信的工程决策。因此，它既需要通过执行受测实现（IUT）获得动态证据，也需要用这些观测更新故障假设并选择下一测试的闭环。本后继报告提出 **CL-TAV**（闭环测试—分析协同验证方法），用于协议符合性验证与故障定位，并以 ARINC 615A 为案例。
 
-**测试路径**导出适用符合性需求集（CRS）、测试目的（TP）和可执行验证用例（VC），随后针对 IUT 执行这些用例，产生判定、带时间戳的迹和测量结果。**分析路径**评价追踪性、模型覆盖、确定性时序符合性、有限故障域充分性、重复运行行为、校准证据和故障诊断。测试与分析相互补充：测试产生受控观测，分析说明这些观测能够支持什么结论，以及下一步应将验证资源投入何处。
+**测试路径**仍导出适用符合性需求集（CRS）、测试目的（TP）和验证用例（VC），执行后产生判定、带时间戳的迹和测量结果。**分析路径**评价追踪性、模型覆盖、确定性时序符合性、有限故障域充分性，并在首版 CL-TAV 下采用集合式相容诊断与一步 minimax 后续测试选择（DD-029）。测试与分析的组合**不**被声称首次发明。
 
-独立的**评审与检查门**控制需求、协议模型、验证用例、oracle、执行就绪性、证据包和对外主张的质量。这些静态活动支持两条主要路径，但不被包装成独立研究创新。演示可用于利益相关者验收，但不是详细协议符合性验证的主要方法。
+独立的**评审与检查门**控制产物和主张。演示可用于利益相关者验收，但不是详细协议符合性验证的主要方法。本后继中的公式、证明和确认性实验在独立评审前仍为候选。
 
-该框架同时追求学术价值——语义清晰、主张边界明确、假设可经验评价——和工程价值——产物可评审、流程可自动化、发布有门禁、结果可诊断、决策可复现。
-
-**关键词：** 协议符合性验证；测试—分析；基于需求的测试；工程保证；追踪性；带时钟 EFSM；稳健时序 oracle；测量不确定性；ARINC 615A；有限故障域；变异测试；校准证据；贝叶斯推断；评审门；检查
+**关键词：** CL-TAV；闭环测试—分析协同验证；协议符合性验证；故障定位；基于需求的测试；追踪性；带时钟 EFSM；稳健时序 oracle；测量不确定性；ARINC 615A；有限故障域；变异测试；评审门
 
 ---
 
@@ -1580,18 +1705,28 @@ ARINC 615A 验证通常围绕项目 ICD 组织。该做法对系统集成是必�
 
 本研究的问题是：
 
-> 如何导出、执行并评价一套可复用的 ARINC 615A 符合性验证用例集，使所有主张均可追踪至适用规范性需求，受到显式观测模型和故障模型约束，并由可复现证据支持？
+> 测试观测、约束判定、故障假设与后续测试选择如何形成一致闭环，用于协议符合性验证与故障定位，并以 ARINC 615A 作为有界案例？
 
 ### 1.2 研究问题
 
+后继 CL-TAV 问题（首版设计方向，DD-028／DD-029）：
+
 | ID | 研究问题 | 所需证据 |
 |---|---|---|
-| **RQ1——导出** | 如何将适用规范性需求转化为可审计测试目的和可执行验证用例？ | CRS、追踪关系、评审一致性、用例模式 |
-| **RQ2——覆盖** | 声明范围内必须覆盖哪些需求、模型、数据、时序、负向和序列义务？ | 覆盖义务与覆盖矩阵 |
-| **RQ3——有限充分性** | VCS 在声明的有限故障域中检测不符合性的能力如何？ | 有效变异体目录、留出故障、变异结果 |
-| **RQ4——证据解释** | 在不混淆运行重复性和符合性概率的前提下，重复 PASS/FAIL 能支持什么结论？ | 观测模型、区间、校准数据 |
-| **RQ5——诊断** | 失败特征能否以有用且可复现的精度定位故障类别？ | 故障注入数据集、混淆矩阵、Top-k 指标 |
-| **RQ6——可迁移性** | 当方法应用到第二种协议时，哪些步骤保持有效？ | 第二协议实例；仅凭 615A 无法回答 |
+| **CL-RQ1——闭环** | CL-TAV 如何把测试观测、约束判定、故障假设与后续测试选择形成一致闭环？ | 算法对象、更新／选择／停止规则、SysML 视图、走查 |
+| **CL-RQ2——比较效应** | 相同预算下，闭环相较固定 Test、适当定义的 Analysis、非反馈 T+A，对检测／定位和成本有何影响？ | 已登记比较协议；不填写未执行结果 |
+| **CL-RQ3——不确定性与停止** | 时序不确定性、观测不足与模型／故障域不完整如何影响结论及停止？ | 与评分一致的不确定性分区；三分“不能缩小”返回 |
+
+历史 RQ1–RQ6 予以映射，不因删除而视为完成：
+
+| 历史 ID | 在 CL-TAV 下的处置 |
+|---|---|
+| **RQ1——导出** | 支撑：CRS→TP／VC 仍须可审计 |
+| **RQ2——覆盖** | 支撑：覆盖义务进入分析约束 |
+| **RQ3——有限充分性** | 映射到检测实验族 |
+| **RQ4——证据解释** | 映射到 CL-RQ3 |
+| **RQ5——诊断** | 成为闭环核心的一部分 |
+| **RQ6——可迁移性** | 本 615A 实例不能回答；仍为后续工作 |
 
 ### 1.3 一体化方法论命题
 
@@ -1600,19 +1735,24 @@ ARINC 615A 验证通常围绕项目 ICD 组织。该做法对系统集成是必�
 1. **测试（Test）：** 在受控前置条件、刺激、时序和 oracle 下与 IUT 交互，产生判定、迹、测量结果和可复现执行记录。
 2. **分析（Analysis）：** 检查需求、模型、追踪、覆盖、变异体、重复观测、不确定性和失败特征，产生充分性评价、证据边界、诊断排序和新增测试建议。
 
-二者形成闭环工程过程：
+二者形成闭环：
 
 ```text
-需求与协议模型
-      |
-      v
-测试设计 -> 测试执行 -> 观测与判定
-   ^                       |
-   |                       v
-   +---- 分析 <- 覆盖、充分性、不确定性、诊断
-             |
-             v
-       工程决策 / 下一项验证行动
+可观测会话 q_k 与假设集 H_k
+        |
+        v
+按一步 minimax 剩余候选数选择 t
+        |
+        v
+测试执行 -> 测量 I_z（与评分使用同一不确定性）
+        |
+        v
+约束判定／相容更新 -> H_{k+1}, q_{k+1}
+        |
+        v
+停止（预算／当前无区分／已证等价／单例／空集／ERROR）
+        |
+        +-- 若继续：从新的 q 选择下一测试
 ```
 
 评审与检查门控制进入和离开该闭环的产物。
@@ -1628,14 +1768,16 @@ ARINC 615A 验证通常围绕项目 ICD 组织。该做法对系统集成是必�
 
 ### 1.5 本报告主张的贡献
 
-1. **可追踪导出框架。** 支持适用性、复合需求和一对多/多对多映射的需求—测试模型。
-2. **互补测试—分析工作流。** 动态执行产生证据，分析评价充分性、不确定性并决定后续行动。
-3. **确定性时序符合性语义。** 通过带时间戳的迹、带时钟 EFSM、显式测量误差预算和稳健判定规则，避免把时序测量当成精确值。
-4. **范围受限保证论证。** 对覆盖、有效执行和有限故障检测证据作形式化区分。
-5. **有限故障域充分性方法。** 包含等价/无效变异体处理、时序故障和留出故障评价的可复现变异流程。
-6. **校准证据语义。** 区分运行 PASS 概率、似然证据和符合性后验信念。
-7. **独立质量门。** 评审与检查覆盖范围、需求、模型、用例、oracle、执行就绪性、证据和主张发布。
-8. **评价协议。** 包含基线、指标、数据泄漏控制和决策门槛的可经验检验设计。
+这些仍是**待评价命题**，不是既成结果：
+
+1. **CL-TAV 闭环。** 集合式相容诊断加一步 minimax 后续测试选择，以及三分“不能缩小”停止（DD-029）。
+2. **可追踪导出框架。** 历史 RQ1 仍为支撑工作。
+3. **确定性时序符合性语义。** 支撑核心不变：带时间戳的迹、带时钟 EFSM、测量误差预算、稳健时序判定。
+4. **有限故障域充分性方法。** 检测实验仍使用留出故障；定位使用声明的 \(H_0\)。
+5. **独立质量门。** 评审与检查仍是治理，不是声称的科学贡献。
+6. **比较评价协议。** 相同预算下的固定 Test、Analysis、非反馈 T+A 与完整 CL-TAV；本增量不填写结果。
+
+校准贝叶斯后验、HMM 时序诊断和 DTMC 路径概率**不是**首版默认。方程 (14) 仅作为非默认比较模型保留。
 
 ### 1.6 科学定位与创新边界
 
@@ -1653,7 +1795,7 @@ ARINC 615A 验证通常围绕项目 ICD 组织。该做法对系统集成是必�
 - JCGM 100 给出表达测量不确定性的一般规则 [22]，JCGM 106 讨论测量不确定性在符合性评价中的作用 [23]。§3.6 的稳健区间判定是本方法论采用的保守决策规则，仍须针对具体时序仪器验证。
 - NASA 系统工程指南通常将需求验证方法分为测试、分析、检查和演示 [19]。本报告将评审视为与软件工作产品评审实践一致的静态治理活动，而不强行纳入该四方法分类 [20]。
 
-预期创新是将这些思想在 ARINC 615A 场景中进行**可审计集成和经验评价**：互补测试—分析闭环、适用性受控的需求提取、义务敏感的追踪、考虑测量不确定性的时序符合性、显式有限故障域边界、留出故障评价、校准证据门槛，以及独立产物评审。在完成 §§8–10 的产物和实验前，该创新仍是研究假设，不是已被证实的结果。
+预期创新是对面向 ARINC 615A 的闭环诊断与测试选择进行**可审计集成和经验评价**，而不是发明 Test、Analysis、基于需求的测试或基于模型的测试。在完成 §§8–10 的产物和实验前，该创新仍是研究假设，不是已被证实的结果。
 
 DO-178C 仅作为相邻保证背景 [16]，不是本方法或测试/分析/检查分类的形式化来源。FMEA/FMECA 采用 IEC 60812 术语 [14]。未来若使用 HMM，必须建立独立验证的时序诊断模型，不能从协议图直接推导 [15]。
 
@@ -1885,30 +2027,41 @@ G=(Q,q_0,X,\Sigma_I,\Sigma_O,\Delta)
 \]
 
 其中时间戳使用已声明的单调时间基准。对触发事件 \(a_i\) 及需求定义的响应事件 \(a_j\)，令
-\(\Delta t_{ij}=t_j-t_i\)。每条需求声明允许集合 \(I_r\)，包括每个有限端点是否包含。有界响应义务为：
+\(\Delta t_{ij}=t_j-t_i\)。每条需求声明允许集合 \(I_r\)，包括每个有限端点是否包含。
+
+时序目录必须定义事件谓词 \(\mathrm{Trig}_r\)、\(\mathrm{Resp}_r\)、
+\(\mathrm{Cancel}_r\) 和 \(\mathrm{Supersede}_r\)，以及关联键和显式配对策略（例如唯一键、FIFO 或最近触发）。实例匹配谓词由响应类型、关联键、配对策略和较后的迹索引构成：
+
+\[
+\mathrm{Match}_r(i,j)
+\ \Longleftrightarrow\
+j>i
+\land a_j\in\mathrm{Resp}_r
+\land \mathrm{key}(a_j)=\mathrm{key}(a_i)
+\land \mathrm{Pair}_r(i,j).
+\]
+
+相同时间戳按迹索引排序，因此 \(j>i\) 已允许 \(t_j=t_i\)。\(\mathrm{Pair}_r(i,j)\) 是按迹中当时有效实例集合求值的所选策略，不是伪造的单例集合。配对歧义或无效属于 `ERROR`，不是 IUT `FAIL`。有界响应图式 T2 与无响应标记使用同一份所有权结果。仅存在某个属于 \(\mathrm{Resp}_r\) 的较后事件并不足够：
 
 \[
 a_i@t_i\Longrightarrow
-\exists j>i:
-a_j@t_j\land \Delta t_{ij}\in I_r,
+\exists j:
+\mathrm{Match}_r(i,j)\land \Delta t_{ij}\in I_r,
 \tag{T2}
 \]
 
-时序目录必须定义事件谓词 \(\mathrm{Trig}_r\)、\(\mathrm{Resp}_r\)、
-\(\mathrm{Cancel}_r\) 和 \(\mathrm{Supersede}_r\)，以及关联键和显式配对策略（例如唯一键、FIFO 或最近触发）。一次触发创建一个独立有效义务实例。响应只能解除由声明的关联键和配对策略选中的有效实例；配对歧义或无效属于 `ERROR`，不是 IUT `FAIL`。匹配的取消事件在其迹索引处把所选实例终止为“已取消”，之后的静默不得产生无响应 `FAIL`。除非需求明确允许并发实例，替代触发会把旧实例终止为“已替代”，并以新的时钟原点创建新实例。取消和替代是义务处置而不是时序判定，且必须保留在迹中。相同时间戳按迹索引排序；事件只有在索引晚于触发时才能影响该义务。没有最小延迟的需求取 \(L_r=0\)。持续静默直至截止时间本身是时序观测，不是缺失数据。
+一次触发创建一个独立有效义务实例。响应只能解除由 \(\mathrm{Match}_r\) 选中的有效实例。匹配的取消事件在其迹索引处把所选实例终止为“已取消”，之后的静默不得产生无响应 `FAIL`。除非需求明确允许并发实例，替代触发会把旧实例终止为“已替代”，并以新的时钟原点创建新实例。取消和替代是义务处置而不是时序判定，且必须保留在迹中。没有最小延迟的需求取 \(L_r=0\)。持续静默直至截止时间本身是时序观测，不是缺失数据。
 
-对观测终点 \(t_H\)，用特殊迹事件 \(\bot_r@t_H\) 编码义务仍有效但未观测到响应：
+对观测终点 \(t_H\)，用特殊迹事件 \(\bot_r@t_H\) 编码义务仍有效但没有匹配响应。因为 \(\mathrm{active}_r(i,t_H)\) 已经表示索引 \(i\) 创建的实例截至 \(t_H\) 尚未按 \(\mathrm{Match}_r\) 被响应解除、取消或替代，无响应就是该仍有效实例的到期。不要再附加第二条全局“不存在 \(\mathrm{Resp}_r\) 类型事件”的合取：另一关联键的响应不得抑制本实例。
 
 \[
 \bot_r@t_H
 \ \Longleftrightarrow\
 \mathrm{active}_r(i,t_H)
-\land (t_H-t_i>U_r)
-\land
-\nexists j>i:\bigl(a_j\in\mathrm{Resp}_r\bigr)\land(t_i<t_j\le t_H).
+\land (t_H-t_i>U_r).
 \]
 
-其中 \(\mathrm{active}_r(i,t_H)\) 表示索引 \(i\) 创建的实例截至 \(t_H\) 尚未按上述匹配规则被响应解除、取消或替代。式中的严格不等式定义闭合上界情形，此时恰在 \(U_r\) 的响应仍合格；开上界的对应到期条件为 \(t_H-t_i\ge U_r\)。因此 \(\bot_r@t_H\) 是“已经到期、仍有效且没有匹配响应”的正式观测，不是缺少日志记录的同义词。
+式中的严格不等式定义闭合上界情形，此时恰在 \(U_r\) 的响应仍合格；开上界的对应到期条件为 \(t_H-t_i\ge U_r\)。因此 \(\bot_r@t_H\) 是“已经到期、仍有效且没有匹配响应”的正式观测，不是缺少日志记录的同义词。T2 仍是互补的有界响应图式：匹配的 \(j\) 且 \(\Delta t_{ij}\in I_r\) 即按时解除该实例。迟到的匹配响应可以使 T2 失败，但不是静默。取消、替代和配对 `ERROR` 都不是 T2 满足。
 
 带时钟的可观测 EFSM 定义为：
 
@@ -2038,6 +2191,67 @@ w_m\mathbf{1}[\exists v\in V:\mathrm{Kill}(v,m)]}
 \]
 
 必须公开权重、依据和敏感性分析。除非变异体能够合理代表目标失效模式总体，否则不得把变异分数称为 FMEDA 诊断覆盖。
+
+### 3.9 CL-TAV 闭环对象
+
+首版对象遵循 DD-029。它们不取代方程 (1)–(6) 或 T1–T5。\(q_k\) 是可观测会话／历史摘要，不是未知的真实 IUT 内部状态。若使用状态集合 \(S_k(h)\)，整段历史相容要求存在与全部历史一致的路径。
+
+\[
+H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}.
+\]
+
+\[
+H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
+\]
+
+\[
+s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
+\]
+
+\(\mathrm{Obs}(t,q_k)\) 使用与 \(I_{z_k}\) 相同的不确定性分区。把观测类投影到当前 \(H_k\)，只对当前有效的非空幸存集评分。测试严格缩小当且仅当某一此类满足 \(0<|\mathrm{survivors}|<|H_k|\)。已排除假设造成的空交集不是额外评分类，也不构成区分价值；当前可执行却没有当前有效类的测试在准入前作为具名预测缺口规格错误被拒绝，不得静默折成 A3，也不得按剩余 \(|H_k|\) 评分。实际执行得到空 \(H_k\) 仍为 Stop-Empty。在选定资源模式（预算 \(c_{\min},B\) 或轮次 \(K_{\max}\)，禁止二者逻辑或）下由 \(A(q_k)\) 形成可选 \(S\)。\(S\) 为空时即使 \(A\) 非空也按 Admit A2–A5 分类。若 minimax 集合为空，再选 Prep，否则 Recover。\(A\) 中的无信息测试不被选中。Prep、Recover 与重试使用同一执行前准入和一次计费规则。`ERROR` 不排除候选；确认未发送不改变 \(q\) 状态，效果未知则将 \(q\) 标为未知直至具备恢复资格的 Recover 被确认。有资格但不可负担的 Recover 为 A5 Stop-Budget，并保留 ERROR／UNKNOWN 事实。重试上限先于 A4／A5／A1。这是候选数量意义下的一步 minimax，不是全局最优。模型外观测按不一致处置，不是评分中的额外类。仅“每次成本为正”不能证明有限终止。算法细节、三分“不能缩小”停止与走查见 DD-029。C1 四项性质的作者可检查论证见 §3.9.1；它们不是独立数学批准，也不是验证引擎实现。
+
+### 3.9.1 首版条件性论证
+
+以下使用 §3.9 与 DD-029 的对象。整段历史相容是分析接口契约：必须存在与全部已执行历史一致的**一条**状态路径。各轮分别存在某个相容状态并不等于该契约。`scripts/cltav_loop_spec.py` 中的有限走查是见证，不能代替这些论证，也不是实验优越性。`independentMathematicalApproval` 保持为 false。
+
+记 \(U\) 为**有效观测更新**（文中 \(H_{k+1}\) 公式）。`ERROR` 不属于 \(U\)。未提供有效观测类的 Prep／Recover 是对 \(H\) 的**恒等步**。
+
+**命题 M（候选单调性）。**
+设会话尚未停止。则：
+
+1. 若第 \(k\) 次执行属于 \(U\)，则 \(H_{k+1}\subseteq H_k\)。
+2. `ERROR` 步保持 \(H\) 不变。
+3. 恒等 Prep／Recover 步保持 \(H\) 不变。
+
+这并不蕴含 \(|H_{k+1}|<|H_k|\)、最终唯一，也不蕴含域内单元素就是协议 PASS。
+
+*论证。*（1）更新集按定义是 \(H_k\) 的子集。（2）（3）来自更新合同：没有有效观测类则不增删。与 \(H_k\) 不交的类是合法的空更新 Stop-Empty，不是让缺席标识复活。
+
+**命题 R（真实假设保留的充分条件）。**
+设 \(h^\star\) 为真实假设。假定：
+
+- (R1) \(h^\star\in H_0\)。
+- (R2) 存在与全部已执行历史一致的一条状态路径。
+- (R3) \(O(h^\star,t_k,q_k)\) 是该路径观测的保守外包。
+- (R4) 实现的测量可行集 \(I_{z_k}\) 包含真实观测。
+- (R5) 事件归属与配对按 §3.6 有效。
+
+则在每一次有效观测更新以及每一次 `ERROR` 或恒等 Prep／Recover 之后，\(h^\star\in H_k\)。
+
+*一步论证。*（R3）（R4）给出 \(O(h^\star,t_k,q_k)\cap I_{z_k}\neq\emptyset\)，故 \(U\) 中的一步保留 \(h^\star\)。`ERROR` 或恒等步不排除候选。*归纳。* 起点：（R1）。归纳步：对 \(U\) 用一步情形，对 `ERROR`／Prep／Recover 用恒等。单凭集合代数得不到该结论：若 (R1)–(R5) 失败（域外故障、错误模型、错误误差界或错误关联），即使更新单调仍可能删除 \(h^\star\)。域内单元素不是协议 PASS；域外故障不必产生 \(H=\emptyset\)。
+
+**命题 S（当前可选集上的一步 minimax）。**
+设 \(T_{\mathrm{cur}}\) 为当前可选的严格缩小测试：非空、有限，并由与 \(I_{z_k}\) 相同不确定性分区下的当前有效非空观测类计算。按 \((s(t),\mathrm{cost}(t),\mathrm{id})\) 排序。所选 \(t^\star\) 是该序的最小元，故对每个 \(t\in T_{\mathrm{cur}}\) 有 \(s(t^\star)\le s(t)\)。
+
+这是声明抽象与共同测量不确定性下的最坏剩余候选数，不是期望成本、全局策略或有限步必可定位。若 \(T_{\mathrm{cur}}=\emptyset\)，规则改选 Prep 否则 Recover；该分支不是 minimax 主张。观测类重叠仍合法：最坏类可以留下 \(|H_k|\)，而另一类仍能区分（DD-029 走查 4）。评分复杂度为 \(O(|T|\cdot|H|\cdot|O_{\mathrm{class}}|)\) 加上 oracle 与关联成本，不是把不可实现的连续枚举藏进 \(O(1)\)。
+
+**命题 T（资源终止）。**
+只声明一种资源模式。每次计费的 TEST、Prep、Recover 以及 `ERROR`／重试都消耗该模式：
+
+- 预算模式：\(\mathrm{cost}\ge c_{\min}>0\) 且剩余 \(B\) 有限，则计费执行次数至多为 \(\lfloor B/c_{\min}\rfloor\)。
+- 轮次模式：有限 \(K_{\max}\) 把上述每次动作计为一轮，故至多 \(K_{\max}\) 次计费执行。
+
+这界定的是计费执行次数，本身并不界定墙钟返回：每次分析和每次动作执行／等待仍须有各自的终止证明或受控超时。本增量不声称这些工程超时已经实现。
 
 ---
 
@@ -2195,6 +2409,17 @@ w_m\mathbf{1}[\exists v\in V:\mathrm{Kill}(v,m)]}
 | **RG6——主张发布** | 独立评审 | 保证论证、边界、结果、偏差 | 主张措辞与已通过证据门及未决风险一致 |
 
 每个门形成签署的评审发现，并给出 `APPROVE`、`APPROVE WITH ACTIONS` 或 `REWORK` 决定。涉及解释、oracle 正确性或主张发布时，评审者原则上应独立于产物作者。
+
+### 4.11 阶段 J——CL-TAV 闭环诊断与后续测试选择
+
+在记录一次已执行观测之后：
+
+1. 按 DD-029 更新 \(H_k\)。`ERROR` 不排除候选。确认未发送不改变 \(q\) 状态；效果未知则将 \(q\) 标为未知直至具备恢复资格的 Recover 被确认。
+2. 先构造 \(A(q_k)\) 再构造可选 \(S\)。对当前有效的严格缩小测试做一步 minimax，否则 Prep，否则 Recover。只计费一次。\(S=\emptyset\) 时按 A2–A5 分类，不得因 \(A\) 非空而 Execute。
+3. 更新路径按 Empty、Singleton、645、Equivalent、然后 Budget 的互斥顺序停止；或在当前没有可用区分测试、Admit 时所选模式资源耗尽、达重试上限或不可恢复的 `ERROR` 下停止。
+4. 不得把“当前无一步区分测试”写成“任何后续序列都不能区分”。
+
+**出口产物：** \(H_k\)、所选测试、成本、停止类别和未决义务的会话记录。本增量不执行确认性实验。
 
 ---
 
@@ -2453,7 +2678,7 @@ P\left(\bigcap_{j=1}^{J}\{C_j=1\}\mid \mathcal{E}\right)
 - 重试次数；
 - 完整性检查结果。
 
-贝叶斯诊断模型为：
+贝叶斯诊断模型仅作为**非默认比较模型**保留（不是首版 CL-TAV）：
 
 \[
 P(F=f\mid X=x)
@@ -2462,7 +2687,7 @@ P(X=x\mid F=f)P(F=f).
 \tag{14}
 \]
 
-似然由故障注入数据估计。朴素条件独立分解只能作为显式声明的基线；相关特征需要贝叶斯网络、正则化分类器或其他经验证模型。
+首版诊断对 \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\) 使用集合式相容（DD-029／§3.9）。仅当后继 DD 采用概率模型时，才用故障注入数据估计方程 (14) 的似然。朴素条件独立分解只能作为显式声明的基线；相关特征需要贝叶斯网络、正则化分类器或其他经验证模型。
 
 ### 7.2 与 FMEA/FMECA 的关系
 
@@ -2507,6 +2732,8 @@ FMEA/FMECA 记录：
 
 ### 8.1 基线
 
+在相同预算下比较，且不得共用暗中更强的 oracle：
+
 | ID | 方法 |
 |---|---|
 | **B0** | 现有工程/ICD 测试集 |
@@ -2514,6 +2741,12 @@ FMEA/FMECA 记录：
 | **B2-U** | 需求 + 无时钟 EFSM 义务覆盖 |
 | **B2-T** | B2-U + 带时钟 EFSM、时序分区和稳健时序 oracle |
 | **B3** | 使用开发变异体改进的 B2-T |
+| **CL-T** | 固定测试＋基本 oracle（无反馈） |
+| **CL-A** | 在声明对象上做 Analysis，不再选择后续测试 |
+| **CL-TA** | 固定测试后分析，不反馈到选择 |
+| **CL-LOOP** | 完整首版 CL-TAV 反馈（DD-029） |
+
+CL-T／CL-A／CL-TA／CL-LOOP 是 CR-2026-012 要求的四组比较策略。本增量只规划，不填写检测或定位结果。
 
 ### 8.2 主要指标
 
@@ -2906,6 +3139,20 @@ analysis/
 - [ ] 保留负向及不确定结果
 - [ ] 保留时序裕量、时钟元数据、顺序效应、聚类和漂移诊断
 - [ ] 主张边界在范围、结果和结论中保持一致
+- [ ] CL-TAV 停止类别属于：预算不足、当前无可用区分、已证明观测等价、单例、空集、ERROR 或 645 阻塞
+
+---
+
+## 附录 C——后继方法处置（CR-2026-012）
+
+| 历史对象 | 后继处置 |
+|---|---|
+| RR-2026-001 v4.2 显示数学载荷（94 块） | 保留在 `rr_2026_001_revision_identity.json` 记录的冻结提交上；当前路径可增加 CL-TAV 对象 |
+| 方程 (1)–(13)、T1–T5 | 作为支撑的测试／覆盖／时序／变异数学保留 |
+| 方程 (14) 贝叶斯诊断 | 作为非默认比较模型保留；不是首版 CL-TAV |
+| RQ1–RQ6 | 在 §1.2 映射；RQ6 未完成 |
+| 测试—分析闭环 | 专门化为 CL-TAV 一步 minimax 与集合式相容（DD-029） |
+| 本后继的独立批准 | 不登记；仅设计方向 |
 
 ---
 

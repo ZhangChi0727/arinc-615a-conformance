@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import hashlib
+import json
 import subprocess
 from pathlib import Path
 
@@ -226,6 +227,7 @@ def test_readme_renders_network_display_groups() -> None:
     assert "`ARINC-665-5`" in readme
     assert "BOUNDED-ACTIVE" in readme
     assert "`ARINC-664-7`" in readme
+    assert "`ARINC-664-4`" in readme
     assert "CONDITIONAL-DEPLOYMENT" in readme
     assert "M2 package" in readme
 
@@ -837,8 +839,576 @@ def test_status_rejects_method_identity_conflation() -> None:
     assert any("conflated" in error for error in baseline.sync.status_errors(data, ROOT))
 
 
+def test_historical_methodology_math_identity_is_preserved() -> None:
+    identity = baseline.load_method_math_identity()
+    freeze = identity["historicalFreeze"]
+    text = baseline.git_show_file(freeze["commit"], identity["reportPath"])
+    assert text is not None
+    count, digest = baseline.display_math_fingerprint(text)
+    assert count == freeze["displayMathBlocks"]
+    assert digest == freeze["displayMathSha256"]
+    assert identity["successor"]["independentMathematicalApproval"] is False
+    assert identity["successor"]["independentReviewApproval"] is False
+    assert identity["successor"]["historicalMathCheckDoesNotProveSuccessorMath"] is True
+
+
+def test_method_report_frozen_history_must_pin_freeze_commit() -> None:
+    register = controlled_sources()
+    records = register["historicalAssumptions"][0]["frozenRecords"]
+    method = next(row for row in records if row["path"].endswith("RR-2026-001_test_analysis_conformance_methodology.md"))
+    assert method["commit"] == baseline.load_method_math_identity()["historicalFreeze"]["commit"]
+    tracked = set(subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines())
+    assert baseline.frozen_record_errors(records, ROOT, tracked) == []
+    method.pop("commit")
+    errors = baseline.frozen_record_errors(records, ROOT, tracked)
+    assert any("historical freeze commit" in error for error in errors)
+
+
+def test_protocol_source_audit_rejects_batch_rename_and_id_drift() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    assert baseline.protocol_source_audit_errors(audit, crs) == []
+    flipped = copy.deepcopy(audit)
+    flipped["notBatchStatusRename"] = False
+    flipped["status"] = "READY-TO-GENERATE-REQUIREMENTS"
+    flipped["requirementGenerationAllowed"] = True
+    errors = baseline.protocol_source_audit_errors(flipped, crs)
+    assert any("batch status rename" in error for error in errors)
+    assert any("declared audit-phase" in error for error in errors)
+    missing = copy.deepcopy(audit)
+    missing["deferredUnits"]["DEFERRED-DOWNLOAD-M9"] = [
+        {
+            "id": "COV-M1-00001",
+            "sourceUnitId": "UNRELATED-SOURCE",
+            "clause": "UNRELATED",
+            "tableOrFigure": None,
+            "documentPage": 1,
+            "pdfPage": 1,
+            "fragmentKind": "PROSE-SENTENCE",
+            "fragmentOrdinal": 1,
+            "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+            "requirementIds": [],
+        }
+    ]
+    assert any("DEFERRED-DOWNLOAD-M9" in error for error in baseline.protocol_source_audit_errors(missing, crs))
+    implicit = copy.deepcopy(audit)
+    del implicit["requirementGenerationAllowed"]
+    assert any("requirementGenerationAllowed" in error for error in baseline.protocol_source_audit_errors(implicit, crs))
+
+
+def test_protocol_source_audit_rejects_locator_and_duplicate_drift() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    fake_row = {
+        "id": "COV-M1-00001",
+        "sourceUnitId": "UNRELATED-SOURCE",
+        "clause": "UNRELATED",
+        "tableOrFigure": None,
+        "documentPage": 1,
+        "pdfPage": 1,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1,
+        "applicabilityDecision": "DEFERRED-FUTURE-SCOPE",
+        "requirementIds": [],
+    }
+    mutated = copy.deepcopy(audit)
+    mutated["deferredUnits"]["DEFERRED-DOWNLOAD-M9"] = [dict(fake_row)]
+    assert any("IDs" in error for error in baseline.protocol_source_audit_errors(mutated, crs))
+    duplicated = copy.deepcopy(audit)
+    duplicated["deferredUnits"]["DEFERRED-DOWNLOAD-M9"] = [dict(fake_row), dict(fake_row)]
+    assert any("duplicate" in error for error in baseline.protocol_source_audit_errors(duplicated, crs))
+    missing_field = copy.deepcopy(audit)
+    missing_field["deferredUnits"]["DEFERRED-DOWNLOAD-M9"] = [dict(fake_row)]
+    del missing_field["deferredUnits"]["DEFERRED-DOWNLOAD-M9"][0]["clause"]
+    assert any("clause" in error for error in baseline.protocol_source_audit_errors(missing_field, crs))
+    drifted = copy.deepcopy(audit)
+    drifted["summary"]["deferredFutureScope"]["byRationale"]["DEFERRED-DOWNLOAD-M9"] = 99
+    assert any("summary count" in error for error in baseline.protocol_source_audit_errors(drifted, crs))
+    groups = copy.deepcopy(audit)
+    groups["clauseGroups"]["DEFERRED-DOWNLOAD-M9"] = [
+        {"clause": "UNRELATED", "tableOrFigure": None, "count": 1, "coverageIds": ["COV-M1-00001"]}
+    ]
+    assert any("clauseGroups" in error for error in baseline.protocol_source_audit_errors(groups, crs))
+    for field in baseline.AUDIT_UNIT_FIELDS:
+        if field == "id":
+            continue
+        field_mutated = copy.deepcopy(audit)
+        field_mutated["deferredUnits"]["DEFERRED-DOWNLOAD-M9"] = [dict(fake_row)]
+        row = field_mutated["deferredUnits"]["DEFERRED-DOWNLOAD-M9"][0]
+        if field == "requirementIds":
+            row[field] = ["CRS-UNRELATED"]
+        elif isinstance(row.get(field), int):
+            row[field] = int(row[field] or 0) + 99999
+        else:
+            row[field] = f"UNRELATED-{field}"
+        errors = baseline.protocol_source_audit_errors(field_mutated, crs)
+        assert any("IDs" in error or field in error for error in errors), field
+    total = copy.deepcopy(audit)
+    total["summary"]["deferredFutureScope"]["total"] = 99999
+    assert any("deferredFutureScope.total" in error for error in baseline.protocol_source_audit_errors(total, crs))
+    app = copy.deepcopy(audit)
+    app["summary"]["applicabilityDecisions"]["DEFERRED-FUTURE-SCOPE"] = 99999
+    assert any("applicabilityDecisions" in error for error in baseline.protocol_source_audit_errors(app, crs))
+    bound_count = copy.deepcopy(audit)
+    bound_count["boundPackage"]["coverageCount"] = 1
+    assert any("boundPackage.coverageCount" in error for error in baseline.protocol_source_audit_errors(bound_count, crs))
+    missing_reread = copy.deepcopy(audit)
+    missing_reread["status"] = "SOURCE-UNIT-AUDIT-IN-PROGRESS"
+    missing_reread["requirementGenerationAllowed"] = False
+    missing_reread.pop("sourceReread", None)
+    assert any("sourceReread" in error for error in baseline.protocol_source_audit_errors(missing_reread, crs))
+    promoted = copy.deepcopy(audit)
+    commentary = next(
+        row
+        for row in promoted["sourceReread"]["units"]
+        if row["frozenSourceModality"] == "COMMENTARY"
+    )
+    commentary["candidateApplicability"] = "APPLICABLE"
+    assert any("commentary" in error for error in baseline.protocol_source_audit_errors(promoted, crs))
+    dropped = copy.deepcopy(audit)
+    dropped["sourceReread"]["units"] = dropped["sourceReread"]["units"][1:]
+    dropped["sourceReread"]["unitsRead"] = len(dropped["sourceReread"]["units"])
+    assert any(
+        "DEFERRED-FIND-M9" in error and "IDs" in error
+        for error in baseline.protocol_source_audit_errors(dropped, crs)
+    )
+    mixed = copy.deepcopy(audit)
+    media = next(
+        row
+        for row in mixed["sourceReread"]["units"]
+        if row.get("downloadMode") == "MEDIA-DEFINED"
+    )
+    media["downloadMode"] = "OPERATOR-DEFINED"
+    assert any(
+        "Media Defined and Operator Defined" in error
+        for error in baseline.protocol_source_audit_errors(mixed, crs)
+    )
+    dropped_download = copy.deepcopy(audit)
+    download_units = [
+        row
+        for row in dropped_download["sourceReread"]["units"]
+        if row.get("frozenRationaleCode") == "DEFERRED-DOWNLOAD-M9"
+    ]
+    dropped_download["sourceReread"]["units"] = [
+        row
+        for row in dropped_download["sourceReread"]["units"]
+        if row.get("id") != download_units[0]["id"]
+    ]
+    dropped_download["sourceReread"]["unitsRead"] = len(dropped_download["sourceReread"]["units"])
+    assert any(
+        "DEFERRED-DOWNLOAD-M9" in error and "IDs" in error
+        for error in baseline.protocol_source_audit_errors(dropped_download, crs)
+    )
+    activated = copy.deepcopy(audit)
+    afdx = next(
+        row
+        for row in activated["sourceReread"]["units"]
+        if row.get("frozenRationaleCode") == "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING"
+    )
+    afdx["candidateApplicability"] = "APPLICABLE"
+    assert any(
+        "Compliant instance" in error
+        for error in baseline.protocol_source_audit_errors(activated, crs)
+    )
+    dropped_afdx = copy.deepcopy(audit)
+    afdx_units = [
+        row
+        for row in dropped_afdx["sourceReread"]["units"]
+        if row.get("frozenRationaleCode") == "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING"
+    ]
+    dropped_afdx["sourceReread"]["units"] = [
+        row
+        for row in dropped_afdx["sourceReread"]["units"]
+        if row.get("id") != afdx_units[0]["id"]
+    ]
+    dropped_afdx["sourceReread"]["unitsRead"] = len(dropped_afdx["sourceReread"]["units"])
+    assert any(
+        "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING" in error and "IDs" in error
+        for error in baseline.protocol_source_audit_errors(dropped_afdx, crs)
+    )
+
+
+def test_find_required_reread_candidates_have_crs_rows() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    ledger = {row["id"]: row for row in crs["coverageLedger"]}
+    req_ids = {row["id"] for row in crs["requirements"]}
+    generated = 0
+    for unit in audit["sourceReread"]["units"]:
+        if unit.get("frozenRationaleCode") != "DEFERRED-FIND-M9":
+            continue
+        row = ledger[unit["id"]]
+        assert row["rationaleCode"] != "DEFERRED-FIND-M9"
+        if unit["candidateConformanceEffect"] in {"REQUIRED", "OPTIONAL"}:
+            assert row["requirementIds"], unit["id"]
+            assert row["requirementIds"][0] in req_ids
+            generated += 1
+        else:
+            assert row["requirementIds"] == []
+            assert row["applicabilityDecision"] in {"OUT-OF-PROFILE", "APPLICABLE-SUPPORTING", "CONDITIONAL"}
+    assert generated == 34
+    assert crs["artifactVersion"] == "M1-CANDIDATE-22"
+
+
+def test_download_and_afdx_required_reread_candidates_have_crs_rows() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    ledger = {row["id"]: row for row in crs["coverageLedger"]}
+    req_ids = {row["id"] for row in crs["requirements"]}
+    download = 0
+    afdx = 0
+    for unit in audit["sourceReread"]["units"]:
+        code = unit.get("frozenRationaleCode")
+        if code not in {"DEFERRED-DOWNLOAD-M9", "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING"}:
+            continue
+        row = ledger[unit["id"]]
+        assert row["rationaleCode"] != code
+        if code == "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING":
+            assert row["applicabilityDecision"] in {"CONDITIONAL", "OUT-OF-PROFILE"}
+            assert row["applicabilityDecision"] not in {"APPLICABLE-BASE", "APPLICABLE-SUPPORTING"}
+        if unit["candidateConformanceEffect"] in {"REQUIRED", "OPTIONAL"}:
+            assert row["requirementIds"], unit["id"]
+            assert row["requirementIds"][0] in req_ids
+            if code == "DEFERRED-DOWNLOAD-M9":
+                download += 1
+            else:
+                afdx += 1
+        else:
+            assert row["requirementIds"] == []
+    assert download == 103
+    assert afdx == 3
+    assert crs["artifactVersion"] == "M1-CANDIDATE-22"
+
+
+def test_protocol_source_audit_allows_declared_future_status_pairs() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    in_progress = copy.deepcopy(audit)
+    in_progress["status"] = "SOURCE-UNIT-AUDIT-IN-PROGRESS"
+    in_progress["requirementGenerationAllowed"] = False
+    assert baseline.protocol_source_audit_errors(in_progress, crs) == []
+    partial = copy.deepcopy(audit)
+    partial["status"] = "PARTIAL-CRS-GENERATION-IN-PROGRESS"
+    partial["requirementGenerationAllowed"] = True
+    assert not any(
+        "requirementGenerationAllowed" in error or "declared audit-phase" in error
+        for error in baseline.protocol_source_audit_errors(partial, crs)
+    )
+    complete = copy.deepcopy(audit)
+    complete["status"] = "AUDIT-COMPLETE-REQUIREMENT-GENERATION-ALLOWED"
+    complete["requirementGenerationAllowed"] = True
+    errors = baseline.protocol_source_audit_errors(complete, crs)
+    assert not any("requirementGenerationAllowed" in error for error in errors)
+    assert not any("declared audit-phase" in error for error in errors)
+    complete["requirementGenerationAllowed"] = False
+    assert any(
+        "requirementGenerationAllowed" in error
+        for error in baseline.protocol_source_audit_errors(complete, crs)
+    )
+
+
+def test_supporting_source_audit_production_gate_rejects_missing_duplicate_and_empty_leaves() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    assert baseline.protocol_source_audit_errors(audit, crs) == []
+    missing = copy.deepcopy(audit)
+    del missing["supportingSourceApplicabilityAudit"]
+    assert any(
+        "supportingSourceApplicabilityAudit is required" in error
+        for error in baseline.protocol_source_audit_errors(missing, crs)
+    )
+    duplicated = copy.deepcopy(audit)
+    duplicated["supportingSourceApplicabilityAudit"]["sources"].append(
+        copy.deepcopy(duplicated["supportingSourceApplicabilityAudit"]["sources"][0])
+    )
+    errors = baseline.protocol_source_audit_errors(duplicated, crs)
+    assert any("duplicate sourceId" in error for error in errors)
+    empty_leaves = copy.deepcopy(audit)
+    unit = next(
+        row
+        for source in empty_leaves["supportingSourceApplicabilityAudit"]["sources"]
+        for row in source["units"]
+        if row.get("leafCrsStatus") == "LEAF-CRS-EMITTED"
+    )
+    unit["leafCoverageIds"] = []
+    unit["leafRequirementIds"] = []
+    assert any(
+        "missing leafCoverageIds" in error
+        for error in baseline.protocol_source_audit_errors(empty_leaves, crs)
+    )
+    cross = copy.deepcopy(audit)
+    foreign = next(
+        row["id"]
+        for row in crs["requirements"]
+        if row["source"]["sourceId"] == "ARINC-615A-3"
+    )
+    rfc_unit = next(
+        row
+        for source in cross["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2348"
+        for row in source["units"]
+        if row.get("leafCrsStatus") == "LEAF-CRS-EMITTED"
+    )
+    rfc_unit["leafRequirementIds"] = [foreign]
+    assert any(
+        "leafRequirementIds do not match" in error or "is from ARINC-615A-3" in error
+        for error in baseline.protocol_source_audit_errors(cross, crs)
+    )
+    fake_denom = copy.deepcopy(audit)
+    fake_denom["supportingSourceApplicabilityAudit"]["sources"][0]["coverageDenominator"]["count"] = 1
+    assert any(
+        "coverageDenominator.count" in error
+        for error in baseline.protocol_source_audit_errors(fake_denom, crs)
+    )
+    extension = copy.deepcopy(audit)
+    first_source = extension["supportingSourceApplicabilityAudit"]["sources"][0]
+    extra = copy.deepcopy(first_source["units"][-1])
+    extra["id"] = extra["id"] + "-EXTENSION"
+    extra["clause"] = str(extra.get("clause") or "CLAUSE") + "-EXTENSION"
+    extra["leafCrsStatus"] = "NOT-REQUIRED"
+    extra["applicabilityDecision"] = "OUT-OF-PROFILE"
+    extra["conformanceEffect"] = "INFORMATIVE"
+    extra.pop("leafCoverageIds", None)
+    extra.pop("leafRequirementIds", None)
+    extra.pop("remainingSubunits", None)
+    first_source["units"].append(extra)
+    first_source["coverageDenominator"]["count"] = len(first_source["units"])
+    assert baseline.supporting_source_audit_errors(extension, crs) == []
+    timeout = next(
+        row
+        for source in audit["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2349"
+        for row in source["units"]
+        if row["id"] == "SAU-2349-TO"
+    )
+    tsize = next(
+        row
+        for source in audit["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2349"
+        for row in source["units"]
+        if row["id"] == "SAU-2349-TS"
+    )
+    swapped = copy.deepcopy(audit)
+    swapped_timeout = next(
+        row
+        for source in swapped["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2349"
+        for row in source["units"]
+        if row["id"] == "SAU-2349-TO"
+    )
+    swapped_timeout["leafCoverageIds"] = list(tsize["leafCoverageIds"])
+    swapped_timeout["leafRequirementIds"] = list(tsize["leafRequirementIds"])
+    swapped_errors = baseline.protocol_source_audit_errors(swapped, crs)
+    assert any("admitted leaf-unit set" in error or "outside the unit locator scope" in error for error in swapped_errors)
+    demoted = copy.deepcopy(audit)
+    demoted_timeout = next(
+        row
+        for source in demoted["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2349"
+        for row in source["units"]
+        if row["id"] == "SAU-2349-TO"
+    )
+    demoted_timeout["leafCrsStatus"] = "NOT-REQUIRED"
+    demoted_timeout.pop("leafCoverageIds", None)
+    demoted_timeout.pop("leafRequirementIds", None)
+    demoted_timeout.pop("admittedLeafUnits", None)
+    assert any(
+        "cannot be NOT-REQUIRED" in error
+        for error in baseline.protocol_source_audit_errors(demoted, crs)
+    )
+    trimmed = copy.deepcopy(audit)
+    trimmed_timeout = next(
+        row
+        for source in trimmed["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2349"
+        for row in source["units"]
+        if row["id"] == "SAU-2349-TO"
+    )
+    trimmed_timeout["admittedLeafUnits"] = trimmed_timeout["admittedLeafUnits"][:1]
+    assert any(
+        "admitted leaf-unit set" in error
+        for error in baseline.protocol_source_audit_errors(trimmed, crs)
+    )
+    same_source_wrong_clause = copy.deepcopy(audit)
+    wrong = next(
+        row
+        for source in same_source_wrong_clause["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2349"
+        for row in source["units"]
+        if row["id"] == "SAU-2349-TO"
+    )
+    wrong["admittedLeafUnits"] = copy.deepcopy(tsize["admittedLeafUnits"])
+    wrong["leafCoverageIds"] = list(tsize["leafCoverageIds"])
+    wrong["leafRequirementIds"] = list(tsize["leafRequirementIds"])
+    assert any(
+        "outside the unit locator scope" in error or "admitted coverage" in error
+        for error in baseline.protocol_source_audit_errors(same_source_wrong_clause, crs)
+    )
+    batch = next(
+        row
+        for source in audit["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "ARINC-665-5"
+        for row in source["units"]
+        if row["id"] == "SAU-665-2-3"
+    )
+    assert any(
+        str(item.get("clause") or "").startswith("2.3") and str(item.get("clause") or "") != "2.3"
+        for item in batch["admittedLeafUnits"]
+    )
+    assert timeout["clause"] != tsize["clause"]
+
+
+def _rfc2349_timeout_unit(audit: dict) -> dict:
+    return next(
+        row
+        for source in audit["supportingSourceApplicabilityAudit"]["sources"]
+        if source["sourceId"] == "RFC-2349"
+        for row in source["units"]
+        if row["id"] == "SAU-2349-TO"
+    )
+
+
+def _strip_leaf_refs(unit: dict) -> None:
+    for key in ("leafCoverageIds", "leafRequirementIds", "admittedLeafUnits"):
+        unit.pop(key, None)
+
+
+@pytest.mark.parametrize("leaf_status", sorted(baseline.SUPPORTING_LEAF_STATUSES))
+def test_required_timeout_unit_cannot_drop_leaves_by_status_change(leaf_status: str) -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    broken = copy.deepcopy(audit)
+    unit = _rfc2349_timeout_unit(broken)
+    assert unit["applicabilityDecision"] == "APPLICABLE-SUPPORTING"
+    assert unit["conformanceEffect"] == "REQUIRED"
+    unit["leafCrsStatus"] = leaf_status
+    _strip_leaf_refs(unit)
+    errors = baseline.protocol_source_audit_errors(broken, crs)
+    assert errors
+    if leaf_status == "NOT-REQUIRED":
+        assert any("cannot be NOT-REQUIRED" in error for error in errors)
+    elif leaf_status in baseline.SUPPORTING_UNBOUND_LEAF_STATUSES:
+        assert any("cannot use an unbound leaf status" in error for error in errors)
+    else:
+        assert any("missing leafCoverageIds" in error or "admitted leaf-unit set" in error for error in errors)
+
+
+def _sample_unbound_disposition(unit: dict) -> dict:
+    return {
+        "id": "UD-FORGED-TIMEOUT",
+        "auditUnitId": unit["id"],
+        "sourceId": "RFC-2349",
+        "clause": unit["clause"],
+        "affectedRequirementId": unit["leafRequirementIds"][0],
+        "affectedCoverageId": unit["leafCoverageIds"][0],
+        "rationaleCode": unit["rationaleCode"],
+        "status": "NOT-IN-THIS-PR-SOURCE-SET",
+        "notIndependentApproval": True,
+        "unfinishedScopeEn": "Forged unfinished English scope for gate testing.",
+        "unfinishedScopeZh": "用于门禁测试的伪造未完成范围。",
+    }
+
+
+def test_forged_unbound_disposition_does_not_authorize_timeout_unit() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    broken = copy.deepcopy(audit)
+    supporting = broken["supportingSourceApplicabilityAudit"]
+    unit = _rfc2349_timeout_unit(broken)
+    forged = _sample_unbound_disposition(unit)
+    supporting["unboundDispositions"] = list(supporting.get("unboundDispositions") or [])
+    supporting["unboundDispositions"].append(forged)
+    unit["leafCrsStatus"] = next(iter(baseline.SUPPORTING_UNBOUND_LEAF_STATUSES))
+    unit["unboundDispositionId"] = forged["id"]
+    _strip_leaf_refs(unit)
+    errors = baseline.protocol_source_audit_errors(broken, crs)
+    assert any("cannot use an unbound leaf status" in error for error in errors)
+
+
+def test_recorded_unbound_disposition_keeps_affected_identity_and_unfinished_scope() -> None:
+    audit = json.loads(source("configs/research/cltav_protocol_source_audit.json"))
+    crs = json.loads(source("configs/requirements/arinc_615a3_m1_crs.json"))
+    assert baseline.protocol_source_audit_errors(audit, crs) == []
+    supporting = audit["supportingSourceApplicabilityAudit"]
+    assert supporting["unboundDispositions"] == []
+    assert all(
+        row.get("leafCrsStatus") not in baseline.SUPPORTING_UNBOUND_LEAF_STATUSES
+        for source in supporting["sources"]
+        for row in source["units"]
+    )
+    missing_list = copy.deepcopy(audit)
+    del missing_list["supportingSourceApplicabilityAudit"]["unboundDispositions"]
+    assert any(
+        "unboundDispositions is required" in error
+        for error in baseline.protocol_source_audit_errors(missing_list, crs)
+    )
+    unused = copy.deepcopy(audit)
+    unit = _rfc2349_timeout_unit(unused)
+    unused["supportingSourceApplicabilityAudit"]["unboundDispositions"].append(_sample_unbound_disposition(unit))
+    assert any(
+        "is not used by an unbound audit unit" in error
+        for error in baseline.protocol_source_audit_errors(unused, crs)
+    )
+    dropped = copy.deepcopy(audit)
+    unit = _rfc2349_timeout_unit(dropped)
+    forged = _sample_unbound_disposition(unit)
+    dropped["supportingSourceApplicabilityAudit"]["unboundDispositions"].append(forged)
+    unit["leafCrsStatus"] = next(iter(baseline.SUPPORTING_UNBOUND_LEAF_STATUSES))
+    unit["unboundDispositionId"] = forged["id"]
+    unit["conformanceEffect"] = "INFORMATIVE"
+    _strip_leaf_refs(unit)
+    dropped["supportingSourceApplicabilityAudit"]["unboundDispositions"][0].pop("unboundDispositionId", None)
+    unit.pop("unboundDispositionId")
+    assert any(
+        "missing unboundDispositionId" in error
+        for error in baseline.protocol_source_audit_errors(dropped, crs)
+    )
+    forged_identity = copy.deepcopy(audit)
+    unit = _rfc2349_timeout_unit(forged_identity)
+    forged = _sample_unbound_disposition(unit)
+    forged["affectedCoverageId"] = "COV-FORGED"
+    forged_identity["supportingSourceApplicabilityAudit"]["unboundDispositions"].append(forged)
+    unit["leafCrsStatus"] = next(iter(baseline.SUPPORTING_UNBOUND_LEAF_STATUSES))
+    unit["unboundDispositionId"] = forged["id"]
+    unit["conformanceEffect"] = "INFORMATIVE"
+    _strip_leaf_refs(unit)
+    assert any(
+        "unbound affected coverage" in error
+        for error in baseline.protocol_source_audit_errors(forged_identity, crs)
+    )
+
+
+def test_cltav_outline_rejects_title_only_chapters() -> None:
+    text = source("docs/research/publication/RESEARCH_OUTLINE.md")
+    assert baseline.cltav_outline_errors(text) == []
+    stripped = text.replace("- **Claim:**", "- **Title:**", 1)
+    assert any("claim" in error for error in baseline.cltav_outline_errors(stripped))
+
+
+def test_cltav_sysml_rejects_missing_stop_class() -> None:
+    models = {
+        name: source(f"docs/research/publication/models/{name}")
+        for name in baseline.CLTAV_PUML_FILES
+    }
+    assert baseline.cltav_sysml_errors(models) == []
+    models["FIG-CL-TAV-05-closed-loop-activity.puml"] = models[
+        "FIG-CL-TAV-05-closed-loop-activity.puml"
+    ].replace("Stop-Budget", "StopLater")
+    assert any("Stop-Budget" in error for error in baseline.cltav_sysml_errors(models))
+    machines = {
+        name: source(f"docs/research/publication/models/{name}")
+        for name in baseline.CLTAV_PUML_FILES
+    }
+    machines["FIG-CL-TAV-07-two-state-machines.puml"] += "\nInformation --> Upload\n"
+    assert any("Information" in error for error in baseline.cltav_sysml_errors(machines))
+    assert baseline.cltav_figure_errors() == []
+
+
 def test_math_and_mapping_frozen_payloads_are_unchanged() -> None:
-    count, digest = baseline.display_math_fingerprint(source(baseline.REPORT_PATH.relative_to(ROOT)))
-    assert count == baseline.REPORT_DISPLAY_MATH_BLOCKS
-    assert digest == baseline.REPORT_DISPLAY_MATH_SHA256
+    test_historical_methodology_math_identity_is_preserved()
     assert baseline.mapping_reconciliation_errors(source("docs/control/contracts/GVS_INSTANCE_MAPPING.md")) == []
+
+
+def test_local_link_checker_ignores_indexed_sum_in_code() -> None:
+    errors = baseline.local_link_errors()
+    assert not any("20 + LMAX-I" in item or "20 + Lmax_i" in item for item in errors)

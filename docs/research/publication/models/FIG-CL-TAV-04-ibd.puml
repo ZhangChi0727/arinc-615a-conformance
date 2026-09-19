@@ -1,0 +1,33 @@
+@startuml FIG-CL-TAV-04
+skinparam shadowing false
+title FIG-CL-TAV-04 IBD\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\ntrace, constraint, candidate-set, test-selection and budget ports
+
+component "CL-TAV controller" as CTRL {
+  port "trace" as PTRACE
+  port "constraint" as PCON
+  port "candidate-set" as PCAND
+  port "test-selection" as PSEL
+  port "budget" as PBUD
+}
+
+component "Protocol adapter" as ADAPT
+component "Constraint evaluator" as CONS
+component "Candidate store" as CAND
+component "Test library T(qk)" as TLIB
+component "Budget / Kmax clock" as BUD
+
+ADAPT - PTRACE
+CONS - PCON
+CAND - PCAND
+TLIB - PSEL
+BUD - PBUD
+
+note right of PBUD
+  Every test and every ERROR spends
+  at least cmin or one Kmax round.
+end note
+note left of ADAPT
+  Adapter talks to Mprot.
+  Controller is Msess, not a protocol EFSM.
+end note
+@enduml

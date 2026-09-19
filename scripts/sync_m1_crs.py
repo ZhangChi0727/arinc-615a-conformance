@@ -28,6 +28,8 @@ REQUIRED_PROFILE_SCOPE_KEYS = {
     "baseOperation",
     "supportingOperation",
     "deferredOperations",
+    "instanceBoundOperations",
+    "researchExpandedOperations",
     "configurationStatus",
     "bounded665ProfileScopeTriggerIds",
     "bounded665EdgePolicy",
@@ -63,6 +65,7 @@ def timing_provenance_projection(data: dict[str, Any]) -> list[dict[str, Any]]:
             "sourceUnitId": row["sourceUnitId"], "provenanceKind": row["timing"].get("provenanceKind"),
             "sourceParameter": row["timing"].get("sourceParameter"), "lowerBound": row["timing"].get("lowerBound"),
             "upperBound": row["timing"].get("upperBound"), "timingFamily": row["timing"].get("timingFamily"),
+            "intervalRole": row["timing"].get("intervalRole"),
             "trigger": row["timing"].get("trigger"), "response": row["timing"].get("response"),
             "cancellation": row["timing"].get("cancellation"), "supersedingTrigger": row["timing"].get("supersedingTrigger"),
             "correlationKey": row["timing"].get("correlationKey"), "pairingPolicy": row["timing"].get("pairingPolicy"),
@@ -83,6 +86,152 @@ def field_constraint_projection(data: dict[str, Any]) -> list[dict[str, Any]]:
         {"sourceUnitId": row["sourceUnitId"], "constraint": row["fieldConstraint"]}
         for row in data["requirements"] if "fieldConstraint" in row
     ]
+
+
+FILTER_PARAM_LIST_ID = "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS"
+LUB_SPARE_REQUIREMENT_ID = "CRS-M1-00548"
+LUB_ALIGNMENT_REQUIREMENT_ID = "CRS-M1-00570"
+LUB_EXPANSION_REQUIREMENT_IDS = ("CRS-M1-00551", "CRS-M1-00556", "CRS-M1-00566")
+GENUINE_ZERO_REQUIREMENT_IDS = ("CRS-M1-00540", "CRS-M1-00579")
+RESERVED_ZERO_FILL = "RESERVED-ZERO-FILL"
+ALIGNMENT_VALUE_NOT_CONSTRAINED = "ALIGNMENT-FIELD-VALUE-NOT-CONSTRAINED"
+ZERO_WIDTH_NO_EMITTED_BYTES = "ZERO-WIDTH-NO-EMITTED-BYTES"
+
+
+def encoding_rejects_integer_value(encoding_rule: str, value: int) -> bool:
+    """True iff this encoding rule alone rejects the integer field value.
+
+    This evaluates the source contract, not a codec. A nonzero LUB Spare value
+    must not fail solely because of CRS-M1-00548.
+    """
+    return encoding_rule == RESERVED_ZERO_FILL and value != 0
+
+
+def lub_spare_encoding_errors(data: dict[str, Any]) -> list[str]:
+    """Catch unsupported zero-fill on the reviewed LUB Spare / expansion points."""
+    errors: list[str] = []
+    by_id = {row.get("id"): row for row in data.get("requirements", [])}
+    spare = by_id.get(LUB_SPARE_REQUIREMENT_ID)
+    if not isinstance(spare, dict):
+        return [f"{LUB_SPARE_REQUIREMENT_ID} is missing"]
+    constraint = spare.get("fieldConstraint") or {}
+    if constraint.get("protocolFile") != "LUB" or constraint.get("fieldId") != "FIELD-SPARE":
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} must remain the LUB Spare field")
+    if constraint.get("widthBitsExpression") != "16":
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} must retain width 16")
+    if constraint.get("encodingRule") == RESERVED_ZERO_FILL:
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} must not treat LUB Spare as reserved-zero-fill")
+    if constraint.get("encodingRule") != ALIGNMENT_VALUE_NOT_CONSTRAINED:
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} encoding must leave the Spare value unconstrained by this source")
+    en = str(spare.get("generatedSemanticProjectionEn") or "")
+    zh = str(spare.get("generatedSemanticProjectionZh") or "")
+    en_lower = en.lower()
+    if "align" not in en_lower:
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} must retain the alignment purpose")
+    if "对齐" not in zh:
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} Chinese projection must retain the alignment purpose")
+    if "reserved zero" in en_lower or "zero bits" in en_lower or "fill with zero" in en_lower:
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} must not impose a source-derived zero value")
+    if "填零" in zh:
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} Chinese projection must not impose fill-zero")
+    if encoding_rejects_integer_value(str(constraint.get("encodingRule") or ""), 1):
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} must not reject a nonzero value solely under this contract")
+    alignment = by_id.get(LUB_ALIGNMENT_REQUIREMENT_ID) or {}
+    if alignment.get("semantic", {}).get("action") != "USE-SPARE-TO-ALIGN-FOLLOWING-POINTERS-ON-4-BYTE-BOUNDARIES":
+        errors.append(f"{LUB_ALIGNMENT_REQUIREMENT_ID} must retain the Spare alignment action")
+    for req_id in LUB_EXPANSION_REQUIREMENT_IDS:
+        row = by_id.get(req_id) or {}
+        expansion = row.get("fieldConstraint") or {}
+        if expansion.get("widthBitsExpression") != "0":
+            errors.append(f"{req_id} must retain zero-bit tabulated width")
+        if expansion.get("encodingRule") == RESERVED_ZERO_FILL:
+            errors.append(f"{req_id} zero-width expansion must not use reserved-zero-fill")
+        if expansion.get("encodingRule") != ZERO_WIDTH_NO_EMITTED_BYTES:
+            errors.append(f"{req_id} encoding must record that no bytes are emitted")
+    for req_id in GENUINE_ZERO_REQUIREMENT_IDS:
+        row = by_id.get(req_id) or {}
+        action = str((row.get("semantic") or {}).get("action") or "")
+        if "ZERO" not in action:
+            errors.append(f"{req_id} genuine source-stated zero rule is missing")
+    return errors
+
+
+def list_membership_errors(data: dict[str, Any]) -> list[str]:
+    """Admitted source lists must own located members; introducers are not the members."""
+    errors: list[str] = []
+    grouped: dict[str, dict[str, list[dict[str, Any]]]] = {}
+    for row in data.get("requirements", []):
+        membership = row.get("listMembership")
+        if not isinstance(membership, dict):
+            continue
+        list_id = str(membership.get("listId") or "")
+        role = str(membership.get("role") or "")
+        if not list_id or not role:
+            errors.append(f"requirement {row.get('id')} listMembership lacks listId or role")
+            continue
+        grouped.setdefault(list_id, {"INTRODUCER": [], "CONCLUDING-REQUIRED-STATEMENT": [], "MEMBER": []})
+        if role not in grouped[list_id]:
+            errors.append(f"requirement {row.get('id')} has unsupported listMembership.role {role}")
+            continue
+        grouped[list_id][role].append(row)
+    for list_id, parts in grouped.items():
+        intros = parts["INTRODUCER"]
+        conclusions = parts["CONCLUDING-REQUIRED-STATEMENT"]
+        members = parts["MEMBER"]
+        if len(intros) != 1:
+            errors.append(f"list {list_id} must have exactly one INTRODUCER")
+            continue
+        intro = intros[0]
+        claimed = list(intro.get("listMembership", {}).get("memberRequirementIds") or [])
+        if intro.get("listMembership", {}).get("scope") != "LIST":
+            errors.append(f"list {list_id} introducer {intro.get('id')} scope must be LIST")
+        member_ids = [row["id"] for row in members]
+        if sorted(claimed) != sorted(member_ids):
+            errors.append(f"list {list_id} introducer members do not match MEMBER rows")
+        if not claimed:
+            errors.append(f"list {list_id} introducer {intro.get('id')} has no members")
+        if conclusions:
+            if len(conclusions) != 1:
+                errors.append(f"list {list_id} must have at most one concluding statement")
+            else:
+                closing = conclusions[0]
+                if closing.get("listMembership", {}).get("scope") != "LIST":
+                    errors.append(f"list {list_id} concluding statement scope must be LIST")
+                if list(closing.get("listMembership", {}).get("memberRequirementIds") or []) != claimed:
+                    errors.append(f"list {list_id} concluding statement members disagree with introducer")
+                if closing.get("id") in claimed or intro.get("id") in claimed:
+                    errors.append(f"list {list_id} introducer/concluder must not be counted as a member")
+        seen_scopes: set[str] = set()
+        seen_priority: set[str] = set()
+        for member in members:
+            membership = member.get("listMembership") or {}
+            if member.get("source", {}).get("fragmentKind") != "LIST-ITEM":
+                errors.append(f"list {list_id} member {member.get('id')} is not a LIST-ITEM")
+            if membership.get("listId") != list_id:
+                errors.append(f"list {list_id} member {member.get('id')} listId mismatch")
+            scope = membership.get("scope")
+            if scope not in {"PER-VL", "PER-PORT"}:
+                errors.append(f"list {list_id} member {member.get('id')} must keep per-VL or per-port ownership")
+            seen_scopes.add(str(scope))
+            if member.get("id") not in claimed:
+                errors.append(f"list {list_id} member {member.get('id')} is not owned by the introducer")
+            if membership.get("memberRequirementIds"):
+                errors.append(f"list {list_id} member {member.get('id')} must not carry memberRequirementIds")
+            priority = membership.get("priorityClass")
+            if priority in {"HIGH", "LOW"}:
+                seen_priority.add(priority)
+        if list_id == FILTER_PARAM_LIST_ID:
+            vl = sum(1 for member in members if (member.get("listMembership") or {}).get("scope") == "PER-VL")
+            port = sum(1 for member in members if (member.get("listMembership") or {}).get("scope") == "PER-PORT")
+            if vl != 9 or port != 5:
+                errors.append(f"list {list_id} must preserve nine per-VL and five per-port members")
+            if seen_scopes != {"PER-VL", "PER-PORT"}:
+                errors.append(f"list {list_id} must preserve both per-VL and per-port ownership")
+            if seen_priority != {"HIGH", "LOW"}:
+                errors.append(f"list {list_id} must preserve high and low priority buffer members")
+            if len(claimed) != 14:
+                errors.append(f"list {list_id} must own the 14 source-listed parameters")
+    return errors
 
 
 def bounded_665_policy_errors(data: dict[str, Any]) -> list[str]:
@@ -258,8 +407,11 @@ def network_reference_errors(data: dict[str, Any], register: dict[str, Any],
         if any(i not in indices["issues"] for i in relation.get("issueIds", [])):
             errors.append(f"network relation {rid} has a dangling issue")
         if relation.get("relation") == "CONDITIONAL-DEPLOYMENT-REFERENCE":
-            if (relation.get("condition") != "IF-AFDX-TRANSPORT-CHOSEN" or relation.get("disposition") != "DEFERRED-FUTURE-SCOPE"
-                    or owner.get("applicabilityDecision") != "DEFERRED-FUTURE-SCOPE" or owner.get("requirementIds")):
+            if relation.get("condition") != "IF-AFDX-TRANSPORT-CHOSEN":
+                errors.append(f"network relation {rid} cannot activate a deferred deployment")
+            elif owner.get("applicabilityDecision") in {"APPLICABLE-BASE", "APPLICABLE-SUPPORTING"}:
+                errors.append(f"network relation {rid} cannot activate a deferred deployment")
+            elif owner.get("applicabilityDecision") not in {"DEFERRED-FUTURE-SCOPE", "CONDITIONAL", "OUT-OF-PROFILE"}:
                 errors.append(f"network relation {rid} cannot activate a deferred deployment")
     for iid, issue in indices["issues"].items():
         if (issue.get("status") not in {"OPEN", "RESOLVED-BY-SCOPE-DECISION", "SOURCE-ACQUIRED-REVIEW-PENDING"}
@@ -268,6 +420,228 @@ def network_reference_errors(data: dict[str, Any], register: dict[str, Any],
             errors.append(f"network issue {iid} cannot be silently closed or lose its blocking classification")
         if not issue.get("sourceUnitIds") or any(t not in indices["units"] for t in issue.get("sourceUnitIds", [])):
             errors.append(f"network issue {iid} lacks its source pointers")
+    return errors
+
+
+REGISTERED_FIND_ANSWER_HASH = "1e8680ad628738183ea6f984c6d350b07d1e5e6cc3af5318789ad595e0d213eb"
+FIND_ANSWER_WINDOW_HASH = "f178271163dfdce4bbc2ba215f784361471c95524c09bb734051d6e98546142d"
+FIND_INFORMATION_LOCATION_HASH = "e98f49fbfbdf4b9aec7a04abec3db7abe6430722509e23c0ddc1d74b04c3a8b9"
+
+
+def _nested_get(row: Any, path: str) -> Any:
+    current = row
+    for part in path.split("."):
+        if not isinstance(current, dict):
+            return None
+        current = current.get(part)
+    return current
+
+
+def field_note_registry_errors(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    registry_rows = data.get("fieldNoteRegistry") or []
+    registry = {row.get("id"): row for row in registry_rows}
+    if len(registry) != len(registry_rows):
+        errors.append("fieldNoteRegistry ids are not unique")
+    used: set[str] = set()
+    for row in data.get("requirements") or []:
+        for note in ((row.get("fieldConstraint") or {}).get("noteRefs") or []):
+            used.add(note)
+            item = registry.get(note)
+            if item is None:
+                errors.append(f"field note {note} is not in fieldNoteRegistry")
+                continue
+            kind = item.get("kind")
+            if kind not in {"LOCAL-NOTE", "SOURCE-LOCATOR"}:
+                errors.append(f"field note {note} lacks a resolvable kind")
+            if kind == "SOURCE-LOCATOR" and not item.get("sourceUnitIds"):
+                errors.append(f"field note {note} source locator has no sourceUnitIds")
+            if not item.get("definitionEn"):
+                errors.append(f"field note {note} has no local definition")
+    return errors
+
+
+def field_presence_use_errors(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for row in data.get("requirements") or []:
+        fc = row.get("fieldConstraint")
+        if not fc:
+            continue
+        if fc.get("useCondition"):
+            if fc.get("presenceCondition") != "ALWAYS":
+                errors.append(f"{row.get('id')} useCondition cannot omit a physically present field")
+            if not fc.get("inactiveRequiredValue"):
+                errors.append(f"{row.get('id')} useCondition lacks inactiveRequiredValue")
+        meanings = {item.get("meaningCode") for item in fc.get("specialValues") or []}
+        if fc.get("useCondition") and any("UNUSED" in (meaning or "") for meaning in meanings):
+            inactive_only = {
+                item.get("meaningCode")
+                for item in fc.get("specialValues") or []
+                if item.get("appliesWhen") == "USE-CONDITION-INACTIVE"
+            }
+            if any("UNUSED" in (meaning or "") for meaning in meanings - inactive_only):
+                errors.append(f"{row.get('id')} must not treat the inactive filler as an unconditional unused sentinel")
+    return errors
+
+
+def timing_interval_role_errors(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    for row in data.get("requirements") or []:
+        timing = row.get("timing")
+        if not timing:
+            continue
+        rid = row.get("id")
+        role = timing.get("intervalRole")
+        lower, upper = timing.get("lowerBound"), timing.get("upperBound")
+        if role == "EXACT-SOURCE-CONSTANT" and lower != upper:
+            errors.append(f"{rid} exact source constant cannot use an early-close interval")
+        if role == "DEADLINE-FROM-ZERO-TO-SOURCE-CONSTANT":
+            if lower != 0 or not isinstance(upper, (int, float)) or upper <= 0:
+                errors.append(f"{rid} host answer deadline bounds are not a zero-to-constant upper bound")
+            if lower == upper:
+                errors.append(f"{rid} host answer deadline cannot collapse to an exact arrival time")
+        if role in {"EXACT-SOURCE-CONSTANT", "DEADLINE-FROM-ZERO-TO-SOURCE-CONSTANT"} and timing.get("provenanceKind") == "SYMBOLIC-SOURCE-PARAMETER":
+            errors.append(f"{rid} fixed source constant must not be labelled symbolic")
+        roles = timing.get("sourceEvidenceRoles") or []
+        if roles:
+            role_ids = [item.get("sourceUnitId") for item in roles]
+            if role_ids != list(timing.get("sourceEvidenceUnitIds") or []):
+                errors.append(f"{rid} sourceEvidenceRoles must list the same units as sourceEvidenceUnitIds")
+    errors.extend(stacked_exact_constant_origin_errors(data))
+    return errors
+
+
+def stacked_exact_constant_origin_errors(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    timings = [(row.get("id"), row["timing"]) for row in data.get("requirements") or [] if row.get("timing")]
+    by_response = {timing.get("response"): (rid, timing) for rid, timing in timings}
+    for rid, timing in timings:
+        origin = by_response.get(timing.get("trigger"))
+        if origin is None or origin[0] == rid:
+            continue
+        origin_id, origin_timing = origin
+        if (
+            timing.get("intervalRole") == "EXACT-SOURCE-CONSTANT"
+            and origin_timing.get("intervalRole") == "EXACT-SOURCE-CONSTANT"
+            and timing.get("sourceParameter") == origin_timing.get("sourceParameter")
+            and timing.get("upperBound") == origin_timing.get("upperBound")
+            and isinstance(timing.get("upperBound"), (int, float))
+            and timing.get("upperBound") != 0
+        ):
+            errors.append(
+                f"{rid} measures the same source constant from {origin_id}'s response, shifting the time origin"
+            )
+    return errors
+
+
+def reviewed_contract_errors(data: dict[str, Any], assertions: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    req = {row.get("id"): row for row in data.get("requirements") or []}
+    cov = {row.get("id"): row for row in data.get("coverageLedger") or []}
+    for contract in assertions.get("reviewedContracts") or []:
+        cid = contract.get("id")
+        kind = contract.get("kind")
+        if kind == "REQUIREMENT-ABSENT":
+            if contract.get("requirementId") in req:
+                errors.append(f"{cid}: {contract.get('requirementId')} cannot remain a permitted CRS action")
+        elif kind == "COVERAGE-INFORMATIVE-EMPTY":
+            row = cov.get(contract.get("coverageId")) or {}
+            if row.get("requirementIds") or row.get("conformanceEffect") != "INFORMATIVE":
+                errors.append(f"{cid}: {contract.get('coverageId')} must stay informative coverage")
+        elif kind == "REQUIREMENT-BINDING":
+            rid = contract.get("requirementId")
+            row = req.get(rid) or {}
+            for path, expected in (contract.get("expected") or {}).items():
+                if _nested_get(row, path) != expected:
+                    errors.append(f"{cid}: {rid} {path} does not match the reviewed contract")
+        elif kind == "COVERAGE-OWNERSHIP":
+            for cov_id, rid in contract.get("bindings") or []:
+                if rid not in (cov.get(cov_id) or {}).get("requirementIds", []):
+                    errors.append(f"{cid}: {cov_id} lost its CRS owner {rid}")
+        elif kind == "FIELD-ENCODING":
+            expected = contract.get("expected") or {}
+            for rid in contract.get("requirementIds") or []:
+                fc = (req.get(rid) or {}).get("fieldConstraint") or {}
+                for key, value in expected.items():
+                    if fc.get(key) != value:
+                        errors.append(f"{cid}: {rid} field {key} does not match the reviewed contract")
+        elif kind == "FIELD-PRESENCE-AND-USE":
+            rid = contract.get("requirementId")
+            fc = (req.get(rid) or {}).get("fieldConstraint") or {}
+            for path, expected in (contract.get("expected") or {}).items():
+                actual = fc.get("specialValues") if path == "specialValues" else _nested_get(fc, path)
+                if actual != expected:
+                    errors.append(f"{cid}: {rid} field {path} does not match the reviewed contract")
+            for meaning in contract.get("forbiddenSpecialMeanings") or []:
+                meanings = {item.get("meaningCode") for item in fc.get("specialValues") or []}
+                if meaning in meanings:
+                    errors.append(f"{cid}: {rid} still treats {meaning} as an unconditional special value")
+        elif kind == "TIMING-CONTRACT":
+            rid = contract.get("requirementId")
+            timing = (req.get(rid) or {}).get("timing") or {}
+            for path, expected in (contract.get("expected") or {}).items():
+                if _nested_get(timing, path) != expected:
+                    errors.append(f"{cid}: {rid} timing {path} does not match the reviewed contract")
+        elif kind == "TIMING-BOUNDS-MUST-DIFFER":
+            axis = contract.get("axis") or "upperBound"
+            values = [((req.get(rid) or {}).get("timing") or {}).get(axis) for rid in contract.get("requirementIds") or []]
+            if len(values) >= 2 and len(set(values)) < len(values):
+                errors.append(f"{cid}: FIND answer window and host deadline cannot share the same {axis}")
+        elif kind == "SEMANTIC-OBJECT-SET":
+            rid = contract.get("requirementId")
+            row = req.get(rid) or {}
+            objects = set((row.get("semantic") or {}).get("objects") or [])
+            needed = set(contract.get("mustInclude") or [])
+            if not needed <= objects:
+                errors.append(f"{cid}: {rid} lost required alternative objects")
+            expected_effect = contract.get("conformanceEffect")
+            if expected_effect and row.get("conformanceEffect") != expected_effect:
+                errors.append(f"{cid}: {rid} conformanceEffect does not match the reviewed contract")
+        else:
+            errors.append(f"{cid}: unknown reviewed contract kind {kind}")
+    return errors
+
+
+FIND_ABORT_CLOCK_IDS = ("CRS-M1-00391", "CRS-M1-00520", "CRS-M1-00521")
+FIND_ABORT_CANCELLATION = "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS"
+
+
+def find_abort_clock_errors(data: dict[str, Any]) -> list[str]:
+    errors: list[str] = []
+    req = {row.get("id"): row for row in data.get("requirements") or []}
+    for rid in FIND_ABORT_CLOCK_IDS:
+        row = req.get(rid) or {}
+        cancellation = (row.get("timing") or {}).get("cancellation")
+        if cancellation != FIND_ABORT_CANCELLATION:
+            errors.append(f"{rid} FIND clock cancellation must be {FIND_ABORT_CANCELLATION}")
+        en = row.get("generatedSemanticProjectionEn") or ""
+        zh = row.get("generatedSemanticProjectionZh") or ""
+        if "does not waive" not in en.lower():
+            errors.append(f"{rid} English projection must state FIND abort does not waive the clock")
+        if "不豁免" not in zh:
+            errors.append(f"{rid} Chinese projection must state FIND abort does not waive the clock")
+    return errors
+
+
+def reviewed_expanded_source_errors(data: dict[str, Any], assertions: dict[str, Any] | None = None) -> list[str]:
+    """Reviewed FIND/DOWNLOAD contracts live in assertions; this checks their relations."""
+    errors: list[str] = []
+    if assertions is None:
+        try:
+            assertions = json.loads(SEMANTIC_ASSERTION_PATH.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            return [f"reviewed contracts are unavailable: {exc}"]
+    errors.extend(reviewed_contract_errors(data, assertions))
+    errors.extend(find_abort_clock_errors(data))
+    errors.extend(field_note_registry_errors(data))
+    errors.extend(field_presence_use_errors(data))
+    errors.extend(timing_interval_role_errors(data))
+    for row in data.get("requirements") or []:
+        if str(row.get("id") or "") < "CRS-M1-00385":
+            continue
+        zh = row.get("generatedSemanticProjectionZh") or ""
+        if "执行“" in zh or "必须prompt" in zh or zh.startswith("【中文】"):
+            errors.append(f"{row.get('id')} Chinese view dumps an English action")
     return errors
 
 
@@ -289,6 +663,7 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         return [f"M1 controlled review input is unavailable: {exc}"]
     errors.extend(page_account_errors(section_manifest, source_register))
     errors.extend(network_reference_errors(data, source_register, section_manifest, semantic_assertions))
+    errors.extend(reviewed_expanded_source_errors(data, semantic_assertions))
     # STABLE_INVARIANT: compare independent acquisition identity, not a self seal.
     try:
         acquisition_path = (ROOT / source_register["acquisitionRecordPath"]).resolve()
@@ -351,12 +726,19 @@ def package_errors(data: dict[str, Any]) -> list[str]:
         errors.append("profileScope.supportingOperation must remain INFORMATION")
     if scope.get("deferredOperations") != ["DOWNLOAD", "FIND"]:
         errors.append("profileScope.deferredOperations must remain DOWNLOAD and FIND")
+    if scope.get("instanceBoundOperations") != ["UPLOAD", "INFORMATION"]:
+        errors.append("profileScope.instanceBoundOperations must remain UPLOAD and INFORMATION")
+    if scope.get("researchExpandedOperations") != ["DOWNLOAD", "FIND"]:
+        errors.append("profileScope.researchExpandedOperations must remain DOWNLOAD and FIND")
+    if "FIND" in (scope.get("instanceBoundOperations") or []) or "DOWNLOAD" in (scope.get("instanceBoundOperations") or []):
+        errors.append("research-expanded FIND/DOWNLOAD cannot be inferred as the current instance bound operations")
     if scope.get("configurationStatus") != "NOT YET ESTABLISHED":
         errors.append("profileScope.configurationStatus must remain NOT YET ESTABLISHED")
     edge_policy = scope.get("bounded665EdgePolicy", {})
     accepted_665 = set(edge_policy.get("acceptedDispositions", []))
     prohibited_665 = set(edge_policy.get("prohibitedDispositions", []))
     errors.extend(bounded_665_policy_errors(data))
+    errors.extend(list_membership_errors(data))
     spans_by_source: dict[str, list[dict[str, Any]]] = {}
     for source in section_manifest.get("sources", []):
         source_id = source.get("sourceId")
@@ -486,7 +868,12 @@ def package_errors(data: dict[str, Any]) -> list[str]:
                 source_unit_id != row.get("sourceUnitId") for source_unit_id in evidence_ids
             ):
                 errors.append(f"requirement {row.get('id')} symbolic/message timing requires independent source evidence")
-            if provenance == "FIXED-SOURCE-CONSTANT" and evidence_ids == [row.get("sourceUnitId")] and timing.get("lowerBound") != timing.get("upperBound"):
+            if (
+                provenance == "FIXED-SOURCE-CONSTANT"
+                and evidence_ids == [row.get("sourceUnitId")]
+                and timing.get("lowerBound") != timing.get("upperBound")
+                and timing.get("intervalRole") != "DEADLINE-FROM-ZERO-TO-SOURCE-CONSTANT"
+            ):
                 errors.append(f"requirement {row.get('id')} self-evidenced fixed timing must bind one exact source constant")
             for boundary in ("lowerBoundary", "upperBoundary"):
                 if timing.get(boundary) not in {"OPEN", "CLOSED", "UNBOUNDED", "UNRESOLVED"}:
@@ -613,6 +1000,7 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     for row in data["requirements"]:
         if row.get("fieldConstraint", {}).get("encodingRule") == "PROSE-DEFINED" and row.get("sourceUnitId") not in unresolved_units:
             errors.append(f"requirement {row.get('id')} PROSE-DEFINED field is absent from fieldConstraintUnresolved")
+    errors.extend(lub_spare_encoding_errors(data))
     referenced_dependencies = {dep for row in data["requirements"] for dep in row.get("dependencyIds", [])}
     openness = {row.get("dependencyId"): row for row in data.get("dependencyOpenness", [])}
     for dependency in data["dependencies"]:
@@ -769,10 +1157,11 @@ def render(data: dict[str, Any]) -> str:
     for row in (item for item in requirements if item["source"]["sourceId"] == "ARINC-665-5"):
         relations = ", ".join(f"`{item['requirementId']}` ({item['relation']})" for item in row['triggerRelations']) or "—"
         lines.append(f"| `{row['id']}` | {', '.join(f'`{item}`' for item in row['profileScopeTriggerIds'])} | `{row['refinementDisposition']}` — {row['refinementRationaleEn']} | {relations} |")
-    lines += ["", "## Structured protocol-file field constraints", "", "| CRS | File / ordinal | Field | Width | Repetition / presence | Encoding / termination | Notes |", "|---|---|---|---|---|---|---|"]
+    lines += ["", "## Structured protocol-file field constraints", "", "| CRS | File / ordinal | Field | Width | Repetition / presence / use | Encoding / termination | Notes |", "|---|---|---|---|---|---|---|"]
     for row in (item for item in requirements if "fieldConstraint" in item):
         c = row["fieldConstraint"]
-        lines.append(f"| `{row['id']}` | `{c['protocolFile']}` / `{c['ordinal']}` | `{c['fieldId']}` | `{c['widthBitsExpression']}` | `{c['repeatScope']}` / `{c['presenceCondition']}` | `{c['encodingRule']}` / `{c['terminationRule']}` | {', '.join(c['noteRefs']) or '—'} |")
+        use = c.get("useCondition") or "—"
+        lines.append(f"| `{row['id']}` | `{c['protocolFile']}` / `{c['ordinal']}` | `{c['fieldId']}` | `{c['widthBitsExpression']}` | `{c['repeatScope']}` / `{c['presenceCondition']}` / `{use}` | `{c['encodingRule']}` / `{c['terminationRule']}` | {', '.join(c['noteRefs']) or '—'} |")
     lines += ["", "## Structured Table 6.4.10-1 constraints", "", "| CRS | Code / kind | Meaning / substitution | Display | Target text | Files / operations |", "|---|---|---|---|---|---|"]
     for row in (item for item in requirements if "statusTableConstraint" in item):
         constraint = row["statusTableConstraint"]
@@ -823,10 +1212,11 @@ def render(data: dict[str, Any]) -> str:
     for row in (item for item in requirements if item["source"]["sourceId"] == "ARINC-665-5"):
         relations = ", ".join(f"`{item['requirementId']}` ({item['relation']})" for item in row['triggerRelations']) or "—"
         lines.append(f"| `{row['id']}` | {', '.join(f'`{item}`' for item in row['profileScopeTriggerIds'])} | `{row['refinementDisposition']}` — {row['refinementRationaleZh']} | {relations} |")
-    lines += ["", "## 结构化协议文件字段约束", "", "| CRS | 文件／序号 | 字段 | 位宽 | 重复／出现条件 | 编码／终止 | 注释 |", "|---|---|---|---|---|---|---|"]
+    lines += ["", "## 结构化协议文件字段约束", "", "| CRS | 文件／序号 | 字段 | 位宽 | 重复／出现／使用 | 编码／终止 | 注释 |", "|---|---|---|---|---|---|---|"]
     for row in (item for item in requirements if "fieldConstraint" in item):
         c = row["fieldConstraint"]
-        lines.append(f"| `{row['id']}` | `{c['protocolFile']}` / `{c['ordinal']}` | `{c['fieldId']}` | `{c['widthBitsExpression']}` | `{c['repeatScope']}` / `{c['presenceCondition']}` | `{c['encodingRule']}` / `{c['terminationRule']}` | {', '.join(c['noteRefs']) or '—'} |")
+        use = c.get("useCondition") or "—"
+        lines.append(f"| `{row['id']}` | `{c['protocolFile']}` / `{c['ordinal']}` | `{c['fieldId']}` | `{c['widthBitsExpression']}` | `{c['repeatScope']}` / `{c['presenceCondition']}` / `{use}` | `{c['encodingRule']}` / `{c['terminationRule']}` | {', '.join(c['noteRefs']) or '—'} |")
     lines += ["", "## 结构化 Table 6.4.10-1 约束", "", "| CRS | 状态码／类型 | 含义／替换 | 显示 | 目标文本 | 文件／操作 |", "|---|---|---|---|---|---|"]
     for row in (item for item in requirements if "statusTableConstraint" in item):
         constraint = row["statusTableConstraint"]

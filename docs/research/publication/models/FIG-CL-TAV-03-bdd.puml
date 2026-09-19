@@ -1,0 +1,43 @@
+@startuml FIG-CL-TAV-03
+skinparam shadowing false
+title FIG-CL-TAV-03 BDD\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nTest, Observation, Analysis, Diagnosis, Selection, Evidence as separate blocks
+
+class Test {
+  t in T(qk)
+  cost(t) >= cmin
+}
+class Observation {
+  Izk
+  qk observable summary
+  ERROR if instrument invalid
+}
+class Analysis {
+  constraint verdict
+  same partitions as scoring
+}
+class Diagnosis {
+  Hk candidate set
+  compatibility update
+}
+class Selection {
+  one-step minimax s(t)
+  Prep action
+}
+class Evidence {
+  traces
+  stop class
+  budget remainder
+}
+
+Test --> Observation : execute
+Observation --> Analysis : Izk
+Analysis --> Diagnosis : compatible / inconsistent
+Diagnosis --> Selection : remaining Hk
+Selection --> Test : next test or stop
+Evidence ..> Observation
+Evidence ..> Diagnosis
+Evidence ..> Selection
+note bottom
+  Blocks are logical SysML classifiers, not implemented modules.
+end note
+@enduml
