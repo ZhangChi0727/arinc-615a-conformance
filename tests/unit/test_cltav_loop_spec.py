@@ -643,19 +643,39 @@ def test_outside_singleton_does_not_resurrect_or_localize() -> None:
 
 def test_removed_hypothesis_cannot_reenter() -> None:
     library = [
-        loop.Action("t1", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=2, next_q="q0"),
-        loop.Action("t2", loop.ActionKind.TEST, 1, frozenset({"q0"}), worst_remaining=2, next_q="q0"),
+        loop.Action(
+            "t1",
+            loop.ActionKind.TEST,
+            1,
+            frozenset({"q0"}),
+            obs_classes=(frozenset({"h1", "h2"}),),
+            next_q="q1",
+        ),
+        loop.Action(
+            "t2",
+            loop.ActionKind.TEST,
+            1,
+            frozenset({"q1"}),
+            obs_classes=(frozenset({"h1"}), frozenset({"h2"})),
+            next_q="q1",
+        ),
     ]
     session = loop.Session(
         loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h1", "h2", "h3"), q="q0",
         B=5, remaining_B=5,
     )
-    loop.step(session, library, observation=_hyps("h1", "h2"))
+    first = loop.step(session, library, observation=_hyps("h1", "h2"))
+    assert first is not None and first.id == "t1"
     assert session.Hk == _hyps("h1", "h2")
     assert session.stop is None
-    loop.step(session, library, observation=_hyps("h1", "h2", "h3"))
+    assert session.charges == [("t1", 1)]
+    assert session.q == "q1"
+    second = loop.step(session, library, observation=_hyps("h1", "h2", "h3"))
+    assert second is not None and second.id == "t2"
+    assert session.charges == [("t1", 1), ("t2", 1)]
     assert session.Hk == _hyps("h1", "h2")
     assert "h3" not in session.Hk
+    assert session.stop is None
 
 
 def test_valid_observation_subset_is_intersected() -> None:
