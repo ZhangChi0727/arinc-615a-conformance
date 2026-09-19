@@ -26,22 +26,22 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "eebde00b09e9b62cadf6650e43029b140e8e853a",
+        "gitBlobOid": "8188307c57373375bf3f73dc3304dd958b77476b",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_crs_package.schema.json",
-        "gitBlobOid": "be1eb37a485eecd65129c8373e09d247f07a142c",
+        "gitBlobOid": "2a668371125242d1c2c5f744ab4d06e17523e4ae",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "894bfb7660e73d3aa2f74f2ac0d9e3e7488f8da7",
+        "gitBlobOid": "d632144b7539131bd82f56c396614632db110c37",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "455b60d5344153bf48720e67af564c072bba1aca",
+        "gitBlobOid": "39071b4e4eafcc0dae9e56e06d1a983fef70790a",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "b059a7dec2bf9dab2ffc5235cadb1c8afdc51175",
+        "gitBlobOid": "005fa928bf16376ffd78e8561b72241958f72267",
         "role": "SUCCESSOR-M1-DELTA"
       }
     ],
@@ -148,8 +148,8 @@
           "role": "M1-IMMUTABLE-INPUT"
         }
       ],
-      "currentInputArtifactCommit": "47ebcf45eb5d72490a112e38df94fbae42f6fccf",
-      "currentInputArtifactTree": "31f5a4115e22f1567515e3f814b0995e6b2e83a4"
+      "currentInputArtifactCommit": "be2cd876607494df3d1a195abc05a0e04d90e090",
+      "currentInputArtifactTree": "ce555e8238d5f2f700168e35384e982280babe04"
     }
   },
   "sequenceEndpointBindings": [
@@ -6227,13 +6227,13 @@
         "m1RequirementId": "CRS-M1-00548",
         "ordinal": 3,
         "widthBitsExpression": "16",
-        "encodingRule": "RESERVED-ZERO-FILL",
+        "encodingRule": "ALIGNMENT-FIELD-VALUE-NOT-CONSTRAINED",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
         "checkLocation": "LUB-FILE-BYTES",
-        "predicateEn": "Encode the Spare field of LUB as 16 reserved zero bits used to align the following pointers.",
-        "predicateZh": "将 LUB 的 Spare 字段编码为 16 位保留填零，用于对齐随后的指针。",
+        "predicateEn": "Encode the Spare field of LUB as 16 bits used to align the following pointers. This source unit does not constrain the field value to zero.",
+        "predicateZh": "将 LUB 的 Spare 字段编码为 16 位，用于对齐随后的指针。本源单元不把该字段值约束为零。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "",
         "conflictNoteZh": ""
@@ -6281,7 +6281,7 @@
         "m1RequirementId": "CRS-M1-00551",
         "ordinal": 6,
         "widthBitsExpression": "0",
-        "encodingRule": "RESERVED-ZERO-FILL",
+        "encodingRule": "ZERO-WIDTH-NO-EMITTED-BYTES",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
@@ -6371,7 +6371,7 @@
         "m1RequirementId": "CRS-M1-00556",
         "ordinal": 11,
         "widthBitsExpression": "0",
-        "encodingRule": "RESERVED-ZERO-FILL",
+        "encodingRule": "ZERO-WIDTH-NO-EMITTED-BYTES",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
@@ -6551,7 +6551,7 @@
         "m1RequirementId": "CRS-M1-00566",
         "ordinal": 21,
         "widthBitsExpression": "0",
-        "encodingRule": "RESERVED-ZERO-FILL",
+        "encodingRule": "ZERO-WIDTH-NO-EMITTED-BYTES",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
@@ -33374,9 +33374,9 @@
     "timingCount": 30,
     "fieldConstraintCount": 108,
     "dispositionsFingerprint": "88d9e6ff5ea57bad369cf8144a92230f531276566e1d8725732795c441c5fdb4",
-    "modelFingerprint": "e40d9f1239bd1888534f4d35b2944f0ab9d381ac7cdb4364fd31454d7d78c8b6",
+    "modelFingerprint": "a716f9b60f3e507ec7758ca3430de589bd67bbad630ef735a1bc1b38c8c2b2ef",
     "timingFingerprint": "cd8a13f203f6d2c2f9c82e65646bf9d5b920200a509af92d461096e54f7e6810",
-    "inputFingerprint": "2dab79d829167d528679ff40221905090ec10aab1dc8a7555e36e6d26b1999bf",
+    "inputFingerprint": "9d35821ff64e239fac8af21a3c198b56cb61c4f5269b8030e15b98d310dfbac1",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
