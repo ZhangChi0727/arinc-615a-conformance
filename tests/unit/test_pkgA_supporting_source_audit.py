@@ -1056,4 +1056,3 @@ def test_lub_spare_zero_fill_reintroduction_fails_after_fingerprint_refresh() ->
     found = m1.package_errors(restored)
     assert any("must not treat LUB Spare as reserved-zero-fill" in item for item in found)
     assert m1.encoding_rejects_integer_value("RESERVED-ZERO-FILL", 1)
-
