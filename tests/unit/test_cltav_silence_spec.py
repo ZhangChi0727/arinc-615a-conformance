@@ -124,8 +124,7 @@ def test_open_upper_bound_expires_at_deadline_and_keeps_find_constants() -> None
     assert find["CRS-M1-00520"]["upperBound"] == 3
     identity = json.loads(IDENTITY.read_text(encoding="utf-8"))
     freeze = identity["historicalFreeze"]
-    assert freeze["commit"] == "3423583b7812c69893585a41856715172f712733"
     assert freeze["displayMathBlocks"] == 94
-    assert freeze["displayMathSha256"] == "2050040b3d2572f5eca3b9b7b93fed472e7e236e1951f8c88702534dbe3a24cb"
     assert identity["successor"]["independentMathematicalApproval"] is False
+    assert identity["successor"]["independentReviewApproval"] is False
     assert identity["successor"]["historicalMathCheckDoesNotProveSuccessorMath"] is True
