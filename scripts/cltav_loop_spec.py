@@ -18,7 +18,9 @@ The intersection is required, so H_{k+1} ⊆ H_k. A class disjoint from
 H_k is a legitimate empty update (Stop-Empty / inconsistency), not
 resurrection of an absent hypothesis. ERROR leaves H_k unchanged and
 is not an observation update. A caller-supplied remaining-set that is
-not a subset of H_k is not accepted as a silent H_{k+1}.
+not a subset of H_k is not accepted as a silent H_{k+1}. Author-supplied
+conditional arguments are in method report §3.9.1; they are not
+independent mathematical approval.
 """
 
 from __future__ import annotations

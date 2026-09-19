@@ -65,10 +65,10 @@ Each chapter below states the claim it must carry, the CL-RQ it answers, the alg
 
 - **Claim:** First-version objects \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\), observable \(q_k\), compatibility update, one-step minimax \(s(t)\), preparatory actions, and stop classes are specified and internally consistent.
 - **Answers:** CL-RQ1 (definitions) and CL-RQ3 (uncertainty partitions, cannot-shrink, termination).
-- **Uses:** DD-029; method report §3.9 and §4.11. Termination is \(c_{\min}>0\) plus finite \(B\), or finite \(K_{\max}\); `ERROR` spends the same resource.
+- **Uses:** DD-029; method report §3.9–§3.9.1 and §4.11. Termination is \(c_{\min}>0\) plus finite \(B\), or finite \(K_{\max}\); `ERROR` spends the same resource.
 - **Needs:** worked examples (already in DD-029), not confirmatory runs. Independent math review still open.
 - **Figures:** FIG-CL-TAV-05 activity, 06 diagnostic sequence, 08 parametric constraints.
-- **Have / gap:** algorithm text exists. Gap is proof of properties; remaining-set minimax is not claimed globally optimal.
+- **Have / gap:** algorithm text and author-supplied conditional arguments in method §3.9.1 (monotonicity, true-hypothesis retention under R1–R5, one-step minimax on the current selectable set, charged-execution bound). Gap is independent mathematical review and the absence of experimental confirmation; remaining-set minimax is not claimed globally optimal.
 
 ### Chapter 5 Instrument plan and experiment design
 
@@ -212,10 +212,10 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 
 - **论点：** 首版对象 \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\)、可观测 \(q_k\)、相容更新、一步 minimax \(s(t)\)、准备性动作和停止类已规定且内部一致。
 - **回答：** CL-RQ1（定义）与 CL-RQ3（不确定性分区、不能缩小、终止）。
-- **使用：** DD-029；方法报告 §3.9 与 §4.11。终止为 \(c_{\min}>0\) 加有限 \(B\)，或有限 \(K_{\max}\)；`ERROR` 消耗同一资源。
+- **使用：** DD-029；方法报告 §3.9–§3.9.1 与 §4.11。终止为 \(c_{\min}>0\) 加有限 \(B\)，或有限 \(K_{\max}\)；`ERROR` 消耗同一资源。
 - **需要：** DD-029 已有走查，不是确认性运行。独立数学审查仍开放。
 - **图：** FIG-CL-TAV-05 活动、06 诊断序列、08 参数约束。
-- **已有／缺口：** 算法正文已有。缺口是性质证明；剩余集 minimax 不声称全局最优。
+- **已有／缺口：** 算法正文与方法报告 §3.9.1 的作者条件性论证已有（单调性、R1–R5 下真实假设保留、当前可选集上的一步 minimax、计费执行次数界）。缺口是独立数学审查和实验确认；剩余集 minimax 不声称全局最优。
 
 ### 第5章 工具实现计划与实验设计
 

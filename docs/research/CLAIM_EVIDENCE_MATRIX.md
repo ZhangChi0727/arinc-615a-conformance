@@ -29,7 +29,7 @@ Passing tests is not Result, Evidence, or a superiority Claim.
 
 | Claim ID | Permitted claim | Required evidence | Status |
 |---|---|---|---|
-| CL-SPEC | First-version CL-TAV objects, update, one-step minimax, Prep/Recover/ERROR and exclusive stops are specified | method report, DD-029, loop walk-throughs | Specified; independent math review open |
+| CL-SPEC | First-version CL-TAV objects, update, one-step minimax, Prep/Recover/ERROR and exclusive stops are specified | method report §3.9–§3.9.1, DD-029, loop walk-throughs | Specified; author arguments present; independent math review open |
 | CL-ARCH | Verification-session and protocol-operation machines join only by declared interfaces | SysML FIG-CL-TAV-01..08, DD-030 | Specified; notation views, not executable metamodel |
 | CL-DETECT | Detection and error-judgement comparison of CL-T / CL-A / CL-TA / CL-LOOP | EXP-CLTAV-DETECT registration and later held-out runs | To be verified; no numbers in this PR |
 | CL-LOCATE | In-domain localization / candidate reduction under the same budget | EXP-CLTAV-LOCATE | To be verified |
@@ -127,7 +127,7 @@ permitted.
 
 | 主张 ID | 允许主张 | 所需证据 | 状态 |
 |---|---|---|---|
-| CL-SPEC | 首版 CL-TAV 对象、更新、一步 minimax、Prep／Recover／ERROR 与互斥停止已规格化 | 方法报告、DD-029、闭环走查 | Specified；独立数学评审仍开放 |
+| CL-SPEC | 首版 CL-TAV 对象、更新、一步 minimax、Prep／Recover／ERROR 与互斥停止已规格化 | 方法报告 §3.9–§3.9.1、DD-029、闭环走查 | Specified；作者论证已给出；独立数学评审仍开放 |
 | CL-ARCH | 验证会话机与协议操作机仅经声明接口连接 | SysML FIG-CL-TAV-01..08、DD-030 | Specified；记法视图，不是可执行元模型 |
 | CL-DETECT | CL-T／CL-A／CL-TA／CL-LOOP 的检测与错误判定比较 | EXP-CLTAV-DETECT 登记及随后留出运行 | To be verified；本 PR 不填数字 |
 | CL-LOCATE | 同一预算下的域内定位／候选缩减 | EXP-CLTAV-LOCATE | To be verified |

@@ -604,6 +604,12 @@ used, \(S_k(h)\) must be updated. The set formula alone is not a complete
 algorithm. This specification does not require implementing a state estimator
 in this increment.
 
+Author-supplied checkable arguments for candidate monotonicity, true-hypothesis
+retention under (R1)–(R5), one-step minimax on the current selectable set, and
+resource termination are in method report §3.9.1. This DD remains the object,
+stop-table and walk-through source; §3.9.1 does not copy a second theory.
+Those arguments are not independent mathematical approval.
+
 ### Selection rule (candidate) and alternatives
 
 Let \(\mathrm{Obs}(t,q_k)\) cover the valid observation classes that current
@@ -1129,6 +1135,8 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 若实现观测类落在 \(\bigcup_{h\in H_k}O(h,t_k,q_k)\) 之外，按模型／假设／观测不一致处置，
 不得把它当作 minimax 评分里的沉默额外类。必须更新状态、历史、关联键以及（若使用）
 \(S_k(h)\)。仅有该集合公式不算完整算法。本增量不要求实现状态估计器。
+
+候选单调性、（R1）–（R5）下真实假设保留、当前可选集上的一步 minimax 与资源终止的作者可检查论证见方法报告 §3.9.1。本 DD 仍是对象、停止表与走查的来源；§3.9.1 不另写一套理论。那些论证不是独立数学批准。
 
 ### 选择规则（候选）与替代方案
 

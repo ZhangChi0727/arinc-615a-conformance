@@ -735,4 +735,61 @@ def test_recover_observation_class_is_also_intersected() -> None:
     assert session.Hk == _hyps("normal", "h1")
     loop.step(session, library, observation=_hyps("h2"), confirmed_q="q_sync")
     assert session.Hk == set()
-    assert session.stop == "Stop-Empty"
+
+
+def test_true_hypothesis_survives_compatible_updates_and_error() -> None:
+    library = [
+        loop.Action(
+            "t1",
+            loop.ActionKind.TEST,
+            1,
+            frozenset({"q0"}),
+            obs_classes=(frozenset({"h_star", "h2"}),),
+            next_q="q1",
+        ),
+        loop.Action(
+            "t2",
+            loop.ActionKind.TEST,
+            1,
+            frozenset({"q1"}),
+            obs_classes=(frozenset({"h_star"}), frozenset({"h2"})),
+            next_q="q1",
+        ),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h_star", "h2", "h3"), q="q0",
+        B=6, remaining_B=6, retry_cap=3,
+    )
+    first = loop.step(session, library, observation=_hyps("h_star", "h2"))
+    assert first is not None and first.id == "t1"
+    assert session.Hk == _hyps("h_star", "h2")
+    err = loop.step(session, library, error=loop.ErrorKind.NOT_SENT)
+    assert err is not None
+    assert session.Hk == _hyps("h_star", "h2")
+    assert session.stop is None
+    later = loop.step(session, library, observation=_hyps("h_star"))
+    assert later is not None and later.id == "t2"
+    assert session.Hk == _hyps("h_star")
+    assert session.stop == "Stop-Singleton"
+
+
+def test_nonconservative_class_can_drop_true_hypothesis() -> None:
+    library = [
+        loop.Action(
+            "t",
+            loop.ActionKind.TEST,
+            1,
+            frozenset({"q"}),
+            obs_classes=(frozenset({"h_star"}), frozenset({"h2"})),
+            next_q="q",
+        ),
+    ]
+    session = loop.Session(
+        loop.ResourceMode.BUDGET, cmin=1, Hk=_hyps("h_star", "h2"), q="q",
+        B=3, remaining_B=3,
+    )
+    chosen = loop.step(session, library, observation=_hyps("h2"))
+    assert chosen is not None and chosen.id == "t"
+    assert "h_star" not in session.Hk
+    assert session.Hk == _hyps("h2")
+    assert session.stop == "Stop-Singleton"

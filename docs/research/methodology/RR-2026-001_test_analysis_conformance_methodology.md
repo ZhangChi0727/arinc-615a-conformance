@@ -604,7 +604,50 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
-\(\mathrm{Obs}(t,q_k)\) uses the same uncertainty partitions as \(I_{z_k}\). Project those classes onto current \(H_k\) and score only currently valid nonempty survivor sets. A test is strictly reducing iff some such class satisfies \(0<|\mathrm{survivors}|<|H_k|\). Empty intersections from excluded hypotheses are not extra score classes and are not distinguishing value; a currently enabled test with no currently valid class is rejected as a named prediction-gap spec error before admission, not folded into A3 and not scored as remaining \(|H_k|\). An executed empty \(H_k\) remains Stop-Empty. Form selectable \(S\subseteq A(q_k)\) under one selected resource mode (budget \(c_{\min},B\) or rounds \(K_{\max}\), never a logical OR of both). If \(S\) is empty, classify Admit A2–A5 even when \(A\) is nonempty. If the minimax set is empty, select Prep, else Recover. Uninformative tests in \(A\) are not selected. Prep, Recover and retries use that same pre-admission and one-shot charging rule. `ERROR` does not exclude candidates; confirmed-not-sent does not change \(q\)-status, unknown-effect marks \(q\) unknown until a recovery-eligible Recover is confirmed. Eligible but unaffordable Recover is A5 Stop-Budget and keeps the ERROR/UNKNOWN facts. Retry cap is decided before A4/A5/A1. This is one-step minimax in remaining-candidate count, not global optimality. Out-of-model observations are inconsistency, not extra score classes. Positive-but-vanishing costs are not a termination proof. Algorithm details, three-way cannot-shrink stopping and walk-throughs are in DD-029. They are not proved theorems and are not implemented in this increment.
+\(\mathrm{Obs}(t,q_k)\) uses the same uncertainty partitions as \(I_{z_k}\). Project those classes onto current \(H_k\) and score only currently valid nonempty survivor sets. A test is strictly reducing iff some such class satisfies \(0<|\mathrm{survivors}|<|H_k|\). Empty intersections from excluded hypotheses are not extra score classes and are not distinguishing value; a currently enabled test with no currently valid class is rejected as a named prediction-gap spec error before admission, not folded into A3 and not scored as remaining \(|H_k|\). An executed empty \(H_k\) remains Stop-Empty. Form selectable \(S\subseteq A(q_k)\) under one selected resource mode (budget \(c_{\min},B\) or rounds \(K_{\max}\), never a logical OR of both). If \(S\) is empty, classify Admit A2–A5 even when \(A\) is nonempty. If the minimax set is empty, select Prep, else Recover. Uninformative tests in \(A\) are not selected. Prep, Recover and retries use that same pre-admission and one-shot charging rule. `ERROR` does not exclude candidates; confirmed-not-sent does not change \(q\)-status, unknown-effect marks \(q\) unknown until a recovery-eligible Recover is confirmed. Eligible but unaffordable Recover is A5 Stop-Budget and keeps the ERROR/UNKNOWN facts. Retry cap is decided before A4/A5/A1. This is one-step minimax in remaining-candidate count, not global optimality. Out-of-model observations are inconsistency, not extra score classes. Positive-but-vanishing costs are not a termination proof. Algorithm details, three-way cannot-shrink stopping and walk-throughs are in DD-029. Author-supplied checkable arguments for the four C1 properties are in §3.9.1; they are not independent mathematical approval and are not a verification-engine implementation.
+
+### 3.9.1 Conditional first-version arguments
+
+The following uses the objects of §3.9 and DD-029. Whole-history compatibility is an analysis-interface contract: a single state path must be consistent with the entire executed history. Existence of some compatible state in each round separately is not that contract. Finite walk-throughs in `scripts/cltav_loop_spec.py` are witnesses, not a substitute for these arguments and not experimental superiority. `independentMathematicalApproval` remains false.
+
+Write \(U\) for a **valid observation update** (the displayed \(H_{k+1}\) formula). `ERROR` is not a member of \(U\). Prep or Recover that does not supply a valid observation class is an **identity step** on \(H\).
+
+**Proposition M (candidate monotonicity).**
+Assume the session has not already stopped. Then:
+
+1. If the \(k\)-th executed path is in \(U\), then \(H_{k+1}\subseteq H_k\).
+2. An `ERROR` step leaves \(H\) unchanged.
+3. An identity Prep/Recover step leaves \(H\) unchanged.
+
+This does not imply \(|H_{k+1}|<|H_k|\), eventual uniqueness, or that an in-domain singleton is a protocol PASS.
+
+*Argument.* (1) The update set is defined as a subset of \(H_k\). (2)–(3) follow from the update contract: without a valid observation class there is no add or delete. Intersection with a class disjoint from \(H_k\) is the legitimate empty update Stop-Empty, not resurrection of an absent identifier.
+
+**Proposition R (true-hypothesis retention: sufficient conditions).**
+Let \(h^\star\) be the true hypothesis. Assume:
+
+- (R1) \(h^\star\in H_0\).
+- (R2) There exists one state path consistent with the entire executed history.
+- (R3) \(O(h^\star,t_k,q_k)\) is a conservative outer approximation of the observations of that path.
+- (R4) The realized measurement feasible set \(I_{z_k}\) contains the true observation.
+- (R5) Event ownership and pairing are valid in the sense of §3.6.
+
+Then \(h^\star\in H_k\) after every valid observation update and every `ERROR` or identity Prep/Recover step.
+
+*Argument, one step.* (R3) and (R4) give \(O(h^\star,t_k,q_k)\cap I_{z_k}\neq\emptyset\), so a step in \(U\) retains \(h^\star\). An `ERROR` or identity step does not exclude candidates. *Induction.* Base: (R1). Inductive step: the one-step case on \(U\), identity on `ERROR`/Prep/Recover. Set algebra alone does not yield this conclusion: if (R1)–(R5) fail (out-of-domain fault, wrong model, wrong error bound, or wrong correlation), a monotone update can still delete \(h^\star\). An in-domain singleton is not a protocol PASS; an out-of-domain fault need not produce \(H=\emptyset\).
+
+**Proposition S (one-step minimax on the current selectable set).**
+Let \(T_{\mathrm{cur}}\) be the current selectable strictly-reducing tests: nonempty, finite, and computed from currently valid nonempty observation classes under the same uncertainty partitions as \(I_{z_k}\). Order tests by \((s(t),\mathrm{cost}(t),\mathrm{id})\). The selected \(t^\star\) is a least element of that order, hence \(s(t^\star)\le s(t)\) for every \(t\in T_{\mathrm{cur}}\).
+
+This is worst remaining-candidate count under the declared abstraction and common measurement uncertainty. It is not expected cost, a global policy, or a guarantee of finite-step localization. If \(T_{\mathrm{cur}}=\emptyset\), the rule selects Prep else Recover; that branch is not a minimax claim. Overlapping observation classes remain legal: a worst class may leave \(|H_k|\) while another class distinguishes (DD-029 walk-through 4). Scoring is \(O(|T|\cdot|H|\cdot|O_{\mathrm{class}}|)\) plus oracle and correlation cost, not an \(O(1)\) hidden continuous enumeration.
+
+**Proposition T (resource termination).**
+Declare exactly one resource mode. Every charged TEST, Prep, Recover, and `ERROR`/retry spends that mode:
+
+- Budget mode: \(\mathrm{cost}\ge c_{\min}>0\) and finite remaining \(B\) imply at most \(\lfloor B/c_{\min}\rfloor\) charged executions.
+- Round mode: a finite \(K_{\max}\) counts each of those actions as one round, hence at most \(K_{\max}\) charged executions.
+
+This bounds the number of charged executions. It does not by itself bound wall-clock return: each analysis and each action execution/wait still needs its own termination proof or a controlled timeout. This increment does not claim those engineering timeouts are implemented.
 
 ---
 
@@ -2165,7 +2208,50 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
-\(\mathrm{Obs}(t,q_k)\) 使用与 \(I_{z_k}\) 相同的不确定性分区。把观测类投影到当前 \(H_k\)，只对当前有效的非空幸存集评分。测试严格缩小当且仅当某一此类满足 \(0<|\mathrm{survivors}|<|H_k|\)。已排除假设造成的空交集不是额外评分类，也不构成区分价值；当前可执行却没有当前有效类的测试在准入前作为具名预测缺口规格错误被拒绝，不得静默折成 A3，也不得按剩余 \(|H_k|\) 评分。实际执行得到空 \(H_k\) 仍为 Stop-Empty。在选定资源模式（预算 \(c_{\min},B\) 或轮次 \(K_{\max}\)，禁止二者逻辑或）下由 \(A(q_k)\) 形成可选 \(S\)。\(S\) 为空时即使 \(A\) 非空也按 Admit A2–A5 分类。若 minimax 集合为空，再选 Prep，否则 Recover。\(A\) 中的无信息测试不被选中。Prep、Recover 与重试使用同一执行前准入和一次计费规则。`ERROR` 不排除候选；确认未发送不改变 \(q\) 状态，效果未知则将 \(q\) 标为未知直至具备恢复资格的 Recover 被确认。有资格但不可负担的 Recover 为 A5 Stop-Budget，并保留 ERROR／UNKNOWN 事实。重试上限先于 A4／A5／A1。这是候选数量意义下的一步 minimax，不是全局最优。模型外观测按不一致处置，不是评分中的额外类。仅“每次成本为正”不能证明有限终止。算法细节、三分“不能缩小”停止与走查见 DD-029。它们不是已证明定理，本增量也不实现。
+\(\mathrm{Obs}(t,q_k)\) 使用与 \(I_{z_k}\) 相同的不确定性分区。把观测类投影到当前 \(H_k\)，只对当前有效的非空幸存集评分。测试严格缩小当且仅当某一此类满足 \(0<|\mathrm{survivors}|<|H_k|\)。已排除假设造成的空交集不是额外评分类，也不构成区分价值；当前可执行却没有当前有效类的测试在准入前作为具名预测缺口规格错误被拒绝，不得静默折成 A3，也不得按剩余 \(|H_k|\) 评分。实际执行得到空 \(H_k\) 仍为 Stop-Empty。在选定资源模式（预算 \(c_{\min},B\) 或轮次 \(K_{\max}\)，禁止二者逻辑或）下由 \(A(q_k)\) 形成可选 \(S\)。\(S\) 为空时即使 \(A\) 非空也按 Admit A2–A5 分类。若 minimax 集合为空，再选 Prep，否则 Recover。\(A\) 中的无信息测试不被选中。Prep、Recover 与重试使用同一执行前准入和一次计费规则。`ERROR` 不排除候选；确认未发送不改变 \(q\) 状态，效果未知则将 \(q\) 标为未知直至具备恢复资格的 Recover 被确认。有资格但不可负担的 Recover 为 A5 Stop-Budget，并保留 ERROR／UNKNOWN 事实。重试上限先于 A4／A5／A1。这是候选数量意义下的一步 minimax，不是全局最优。模型外观测按不一致处置，不是评分中的额外类。仅“每次成本为正”不能证明有限终止。算法细节、三分“不能缩小”停止与走查见 DD-029。C1 四项性质的作者可检查论证见 §3.9.1；它们不是独立数学批准，也不是验证引擎实现。
+
+### 3.9.1 首版条件性论证
+
+以下使用 §3.9 与 DD-029 的对象。整段历史相容是分析接口契约：必须存在与全部已执行历史一致的**一条**状态路径。各轮分别存在某个相容状态并不等于该契约。`scripts/cltav_loop_spec.py` 中的有限走查是见证，不能代替这些论证，也不是实验优越性。`independentMathematicalApproval` 保持为 false。
+
+记 \(U\) 为**有效观测更新**（文中 \(H_{k+1}\) 公式）。`ERROR` 不属于 \(U\)。未提供有效观测类的 Prep／Recover 是对 \(H\) 的**恒等步**。
+
+**命题 M（候选单调性）。**
+设会话尚未停止。则：
+
+1. 若第 \(k\) 次执行属于 \(U\)，则 \(H_{k+1}\subseteq H_k\)。
+2. `ERROR` 步保持 \(H\) 不变。
+3. 恒等 Prep／Recover 步保持 \(H\) 不变。
+
+这并不蕴含 \(|H_{k+1}|<|H_k|\)、最终唯一，也不蕴含域内单元素就是协议 PASS。
+
+*论证。*（1）更新集按定义是 \(H_k\) 的子集。（2）（3）来自更新合同：没有有效观测类则不增删。与 \(H_k\) 不交的类是合法的空更新 Stop-Empty，不是让缺席标识复活。
+
+**命题 R（真实假设保留的充分条件）。**
+设 \(h^\star\) 为真实假设。假定：
+
+- (R1) \(h^\star\in H_0\)。
+- (R2) 存在与全部已执行历史一致的一条状态路径。
+- (R3) \(O(h^\star,t_k,q_k)\) 是该路径观测的保守外包。
+- (R4) 实现的测量可行集 \(I_{z_k}\) 包含真实观测。
+- (R5) 事件归属与配对按 §3.6 有效。
+
+则在每一次有效观测更新以及每一次 `ERROR` 或恒等 Prep／Recover 之后，\(h^\star\in H_k\)。
+
+*一步论证。*（R3）（R4）给出 \(O(h^\star,t_k,q_k)\cap I_{z_k}\neq\emptyset\)，故 \(U\) 中的一步保留 \(h^\star\)。`ERROR` 或恒等步不排除候选。*归纳。* 起点：（R1）。归纳步：对 \(U\) 用一步情形，对 `ERROR`／Prep／Recover 用恒等。单凭集合代数得不到该结论：若 (R1)–(R5) 失败（域外故障、错误模型、错误误差界或错误关联），即使更新单调仍可能删除 \(h^\star\)。域内单元素不是协议 PASS；域外故障不必产生 \(H=\emptyset\)。
+
+**命题 S（当前可选集上的一步 minimax）。**
+设 \(T_{\mathrm{cur}}\) 为当前可选的严格缩小测试：非空、有限，并由与 \(I_{z_k}\) 相同不确定性分区下的当前有效非空观测类计算。按 \((s(t),\mathrm{cost}(t),\mathrm{id})\) 排序。所选 \(t^\star\) 是该序的最小元，故对每个 \(t\in T_{\mathrm{cur}}\) 有 \(s(t^\star)\le s(t)\)。
+
+这是声明抽象与共同测量不确定性下的最坏剩余候选数，不是期望成本、全局策略或有限步必可定位。若 \(T_{\mathrm{cur}}=\emptyset\)，规则改选 Prep 否则 Recover；该分支不是 minimax 主张。观测类重叠仍合法：最坏类可以留下 \(|H_k|\)，而另一类仍能区分（DD-029 走查 4）。评分复杂度为 \(O(|T|\cdot|H|\cdot|O_{\mathrm{class}}|)\) 加上 oracle 与关联成本，不是把不可实现的连续枚举藏进 \(O(1)\)。
+
+**命题 T（资源终止）。**
+只声明一种资源模式。每次计费的 TEST、Prep、Recover 以及 `ERROR`／重试都消耗该模式：
+
+- 预算模式：\(\mathrm{cost}\ge c_{\min}>0\) 且剩余 \(B\) 有限，则计费执行次数至多为 \(\lfloor B/c_{\min}\rfloor\)。
+- 轮次模式：有限 \(K_{\max}\) 把上述每次动作计为一轮，故至多 \(K_{\max}\) 次计费执行。
+
+这界定的是计费执行次数，本身并不界定墙钟返回：每次分析和每次动作执行／等待仍须有各自的终止证明或受控超时。本增量不声称这些工程超时已经实现。
 
 ---
 
