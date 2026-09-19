@@ -89,6 +89,71 @@ def field_constraint_projection(data: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 FILTER_PARAM_LIST_ID = "P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS"
+LUB_SPARE_REQUIREMENT_ID = "CRS-M1-00548"
+LUB_ALIGNMENT_REQUIREMENT_ID = "CRS-M1-00570"
+LUB_EXPANSION_REQUIREMENT_IDS = ("CRS-M1-00551", "CRS-M1-00556", "CRS-M1-00566")
+GENUINE_ZERO_REQUIREMENT_IDS = ("CRS-M1-00540", "CRS-M1-00579")
+RESERVED_ZERO_FILL = "RESERVED-ZERO-FILL"
+ALIGNMENT_VALUE_NOT_CONSTRAINED = "ALIGNMENT-FIELD-VALUE-NOT-CONSTRAINED"
+ZERO_WIDTH_NO_EMITTED_BYTES = "ZERO-WIDTH-NO-EMITTED-BYTES"
+
+
+def encoding_rejects_integer_value(encoding_rule: str, value: int) -> bool:
+    """True iff this encoding rule alone rejects the integer field value.
+
+    This evaluates the source contract, not a codec. A nonzero LUB Spare value
+    must not fail solely because of CRS-M1-00548.
+    """
+    return encoding_rule == RESERVED_ZERO_FILL and value != 0
+
+
+def lub_spare_encoding_errors(data: dict[str, Any]) -> list[str]:
+    """Catch unsupported zero-fill on the reviewed LUB Spare / expansion points."""
+    errors: list[str] = []
+    by_id = {row.get("id"): row for row in data.get("requirements", [])}
+    spare = by_id.get(LUB_SPARE_REQUIREMENT_ID)
+    if not isinstance(spare, dict):
+        return [f"{LUB_SPARE_REQUIREMENT_ID} is missing"]
+    constraint = spare.get("fieldConstraint") or {}
+    if constraint.get("protocolFile") != "LUB" or constraint.get("fieldId") != "FIELD-SPARE":
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} must remain the LUB Spare field")
+    if constraint.get("widthBitsExpression") != "16":
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} must retain width 16")
+    if constraint.get("encodingRule") == RESERVED_ZERO_FILL:
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} must not treat LUB Spare as reserved-zero-fill")
+    if constraint.get("encodingRule") != ALIGNMENT_VALUE_NOT_CONSTRAINED:
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} encoding must leave the Spare value unconstrained by this source")
+    en = str(spare.get("generatedSemanticProjectionEn") or "")
+    zh = str(spare.get("generatedSemanticProjectionZh") or "")
+    en_lower = en.lower()
+    if "align" not in en_lower:
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} must retain the alignment purpose")
+    if "对齐" not in zh:
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} Chinese projection must retain the alignment purpose")
+    if "reserved zero" in en_lower or "zero bits" in en_lower or "fill with zero" in en_lower:
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} must not impose a source-derived zero value")
+    if "填零" in zh:
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} Chinese projection must not impose fill-zero")
+    if encoding_rejects_integer_value(str(constraint.get("encodingRule") or ""), 1):
+        errors.append(f"{LUB_SPARE_REQUIREMENT_ID} must not reject a nonzero value solely under this contract")
+    alignment = by_id.get(LUB_ALIGNMENT_REQUIREMENT_ID) or {}
+    if alignment.get("semantic", {}).get("action") != "USE-SPARE-TO-ALIGN-FOLLOWING-POINTERS-ON-4-BYTE-BOUNDARIES":
+        errors.append(f"{LUB_ALIGNMENT_REQUIREMENT_ID} must retain the Spare alignment action")
+    for req_id in LUB_EXPANSION_REQUIREMENT_IDS:
+        row = by_id.get(req_id) or {}
+        expansion = row.get("fieldConstraint") or {}
+        if expansion.get("widthBitsExpression") != "0":
+            errors.append(f"{req_id} must retain zero-bit tabulated width")
+        if expansion.get("encodingRule") == RESERVED_ZERO_FILL:
+            errors.append(f"{req_id} zero-width expansion must not use reserved-zero-fill")
+        if expansion.get("encodingRule") != ZERO_WIDTH_NO_EMITTED_BYTES:
+            errors.append(f"{req_id} encoding must record that no bytes are emitted")
+    for req_id in GENUINE_ZERO_REQUIREMENT_IDS:
+        row = by_id.get(req_id) or {}
+        action = str((row.get("semantic") or {}).get("action") or "")
+        if "ZERO" not in action:
+            errors.append(f"{req_id} genuine source-stated zero rule is missing")
+    return errors
 
 
 def list_membership_errors(data: dict[str, Any]) -> list[str]:
@@ -935,6 +1000,7 @@ def package_errors(data: dict[str, Any]) -> list[str]:
     for row in data["requirements"]:
         if row.get("fieldConstraint", {}).get("encodingRule") == "PROSE-DEFINED" and row.get("sourceUnitId") not in unresolved_units:
             errors.append(f"requirement {row.get('id')} PROSE-DEFINED field is absent from fieldConstraintUnresolved")
+    errors.extend(lub_spare_encoding_errors(data))
     referenced_dependencies = {dep for row in data["requirements"] for dep in row.get("dependencyIds", [])}
     openness = {row.get("dependencyId"): row for row in data.get("dependencyOpenness", [])}
     for dependency in data["dependencies"]:

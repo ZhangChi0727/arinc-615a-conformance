@@ -14193,8 +14193,8 @@
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "Encode the Spare field of LUB as 16 reserved zero bits used to align the following pointers.",
-      "expectedGeneratedSemanticProjectionZh": "将 LUB 的 Spare 字段编码为 16 位保留填零，用于对齐随后的指针。",
+      "expectedGeneratedSemanticProjectionEn": "Encode the Spare field of LUB as 16 bits used to align the following pointers. This source unit does not constrain the field value to zero.",
+      "expectedGeneratedSemanticProjectionZh": "将 LUB 的 Spare 字段编码为 16 位，用于对齐随后的指针。本源单元不把该字段值约束为零。",
       "expectedSourceModality": "TABLE-CONSTRAINT",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [
@@ -14211,7 +14211,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "RESERVED-ZERO-FILL",
+        "encodingRule": "ALIGNMENT-FIELD-VALUE-NOT-CONSTRAINED",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -14325,7 +14325,7 @@
         "widthBitsExpression": "0",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "RESERVED-ZERO-FILL",
+        "encodingRule": "ZERO-WIDTH-NO-EMITTED-BYTES",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -14520,7 +14520,7 @@
         "widthBitsExpression": "0",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "RESERVED-ZERO-FILL",
+        "encodingRule": "ZERO-WIDTH-NO-EMITTED-BYTES",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -14919,7 +14919,7 @@
         "widthBitsExpression": "0",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "RESERVED-ZERO-FILL",
+        "encodingRule": "ZERO-WIDTH-NO-EMITTED-BYTES",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }

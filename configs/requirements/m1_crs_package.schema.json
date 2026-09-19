@@ -634,6 +634,8 @@
                         "FIXED-WIDTH-ASCII",
                         "LENGTH-PREFIXED-BINARY",
                         "RESERVED-ZERO-FILL",
+                        "ALIGNMENT-FIELD-VALUE-NOT-CONSTRAINED",
+                        "ZERO-WIDTH-NO-EMITTED-BYTES",
                         "PROSE-DEFINED"
                     ]
                 },

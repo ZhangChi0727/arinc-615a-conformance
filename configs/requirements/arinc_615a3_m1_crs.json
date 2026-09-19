@@ -103067,8 +103067,8 @@
       },
       "sourceTextHash": "ff8ca7d005b4daf99346f3edf06677b28b791e24a07cf64bc6af97c17aec41b2",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "Encode the Spare field of LUB as 16 reserved zero bits used to align the following pointers.",
-      "generatedSemanticProjectionZh": "将 LUB 的 Spare 字段编码为 16 位保留填零，用于对齐随后的指针。",
+      "generatedSemanticProjectionEn": "Encode the Spare field of LUB as 16 bits used to align the following pointers. This source unit does not constrain the field value to zero.",
+      "generatedSemanticProjectionZh": "将 LUB 的 Spare 字段编码为 16 位，用于对齐随后的指针。本源单元不把该字段值约束为零。",
       "semantic": {
         "actor": "SOFTWARE-PACKAGE-PRODUCER",
         "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
@@ -103103,7 +103103,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "RESERVED-ZERO-FILL",
+        "encodingRule": "ALIGNMENT-FIELD-VALUE-NOT-CONSTRAINED",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       },
@@ -103310,7 +103310,7 @@
         "widthBitsExpression": "0",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "RESERVED-ZERO-FILL",
+        "encodingRule": "ZERO-WIDTH-NO-EMITTED-BYTES",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       },
@@ -103660,7 +103660,7 @@
         "widthBitsExpression": "0",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "RESERVED-ZERO-FILL",
+        "encodingRule": "ZERO-WIDTH-NO-EMITTED-BYTES",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       },
@@ -104369,7 +104369,7 @@
         "widthBitsExpression": "0",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "RESERVED-ZERO-FILL",
+        "encodingRule": "ZERO-WIDTH-NO-EMITTED-BYTES",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       },
@@ -116986,7 +116986,7 @@
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "3b5c0218f635fe4ecc25b8714904be6ff5b9c8cd797afc8e5ceea00d9acff94c",
+    "semanticAssertionFingerprint": "fb4ec804e4a5d71f9d0a50f9d2325820d1b796dc0319b86b7584439a7350be5e",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
@@ -116997,7 +116997,7 @@
     "dependencyCount": 15,
     "gapCount": 1,
     "coverageFingerprint": "2d492fd8a9711186f6af9a098fc99ee2004782bbed0afde410ae70a64e1c1334",
-    "requirementsFingerprint": "631cea59a0cfbb58f20183da6c384fe861da9a8bfffdee44b3817ee65b8a0f14"
+    "requirementsFingerprint": "e25019ff35ada475c320e13a3e7f8680eeeabd35ed116dc8a795d54021d50fe1"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

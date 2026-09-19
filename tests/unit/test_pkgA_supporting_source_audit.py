@@ -996,3 +996,64 @@ def test_filter_table_list_membership_mutations_fail_after_fingerprint_refresh()
     found = m1.package_errors(swapped)
     assert any("nine per-VL and five per-port members" in item for item in found)
 
+
+def test_lub_spare_is_not_zero_fill_and_keeps_width_alignment() -> None:
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("sync_m1_crs", ROOT / "scripts/sync_m1_crs.py")
+    assert spec and spec.loader
+    m1 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m1)
+    crs = json.loads((ROOT / "configs/requirements/arinc_615a3_m1_crs.json").read_text(encoding="utf-8"))
+    spare = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00548")
+    constraint = spare["fieldConstraint"]
+    assert constraint["widthBitsExpression"] == "16"
+    assert constraint["encodingRule"] == "ALIGNMENT-FIELD-VALUE-NOT-CONSTRAINED"
+    assert constraint["encodingRule"] != "RESERVED-ZERO-FILL"
+    assert "align" in spare["generatedSemanticProjectionEn"].lower()
+    assert "对齐" in spare["generatedSemanticProjectionZh"]
+    assert "reserved zero" not in spare["generatedSemanticProjectionEn"].lower()
+    assert "填零" not in spare["generatedSemanticProjectionZh"]
+    assert not m1.encoding_rejects_integer_value(constraint["encodingRule"], 0xABCD)
+    alignment = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00570")
+    assert alignment["semantic"]["action"] == "USE-SPARE-TO-ALIGN-FOLLOWING-POINTERS-ON-4-BYTE-BOUNDARIES"
+    last_ptr = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00540")
+    comment = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00579")
+    assert last_ptr["semantic"]["action"] == "SET-LAST-LOAD-LIST-BLOCK-POINTER-TO-ZERO"
+    assert comment["semantic"]["action"] == "SET-COMMENT-LENGTH-ZERO-WHEN-NO-COMMENT"
+    for req_id in ("CRS-M1-00551", "CRS-M1-00556", "CRS-M1-00566"):
+        expansion = next(row for row in crs["requirements"] if row["id"] == req_id)
+        assert expansion["fieldConstraint"]["widthBitsExpression"] == "0"
+        assert expansion["fieldConstraint"]["encodingRule"] == "ZERO-WIDTH-NO-EMITTED-BYTES"
+
+
+def test_lub_spare_zero_fill_reintroduction_fails_after_fingerprint_refresh() -> None:
+    import copy
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("sync_m1_crs", ROOT / "scripts/sync_m1_crs.py")
+    assert spec and spec.loader
+    m1 = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m1)
+    data = json.loads((ROOT / "configs/requirements/arinc_615a3_m1_crs.json").read_text(encoding="utf-8"))
+
+    def refresh(package: dict) -> None:
+        package["inventorySummary"]["coverageFingerprint"] = m1.fingerprint(package["coverageLedger"])
+        package["inventorySummary"]["requirementsFingerprint"] = m1.fingerprint(package["requirements"])
+        package["reviewControl"]["sourceInventoryFingerprint"] = m1.fingerprint(m1.source_inventory_projection(package))
+
+    legal = copy.deepcopy(data)
+    refresh(legal)
+    assert not any("CRS-M1-00548" in item and "zero" in item for item in m1.package_errors(legal))
+
+    restored = copy.deepcopy(data)
+    spare = next(row for row in restored["requirements"] if row["id"] == "CRS-M1-00548")
+    spare["fieldConstraint"]["encodingRule"] = "RESERVED-ZERO-FILL"
+    spare["generatedSemanticProjectionEn"] = (
+        "Encode the Spare field of LUB as 16 reserved zero bits used to align the following pointers."
+    )
+    refresh(restored)
+    found = m1.package_errors(restored)
+    assert any("must not treat LUB Spare as reserved-zero-fill" in item for item in found)
+    assert m1.encoding_rejects_integer_value("RESERVED-ZERO-FILL", 1)
+
