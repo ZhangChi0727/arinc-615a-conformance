@@ -367,53 +367,71 @@ Let an observed timed trace be:
 where timestamps use a declared monotonic time basis. For a trigger event
 \(a_i\) and its requirement-defined response \(a_j\), define
 \(\Delta t_{ij}=t_j-t_i\). Each requirement declares an admissible set
-\(I_r\), including the inclusivity of each finite endpoint. A bounded response
-obligation is:
-
-\[
-a_i@t_i\Longrightarrow
-\exists j>i:
-a_j@t_j\land \Delta t_{ij}\in I_r,
-\tag{T2}
-\]
+\(I_r\), including the inclusivity of each finite endpoint.
 
 The timing catalog defines event predicates
 \(\mathrm{Trig}_r\), \(\mathrm{Resp}_r\), \(\mathrm{Cancel}_r\), and
 \(\mathrm{Supersede}_r\), plus a correlation key and an explicit pairing policy
-(for example unique-key, FIFO, or most-recent). A trigger creates a distinct
-active obligation instance. A response discharges only the active instance
-selected by the declared key and pairing policy; an ambiguous or invalid match
-is `ERROR`, not an IUT `FAIL`. A matching cancellation closes the selected
-instance as cancelled at its trace index, so later silence cannot produce a
-no-response `FAIL`. Unless the requirement explicitly permits concurrent
-instances, a superseding trigger closes the old instance as superseded and
-starts a new instance with a new clock origin. Cancellation and supersession
-are obligation dispositions, not timing verdicts, and remain in the trace.
-Equal timestamps are ordered by trace index, so an event can affect an
-obligation only when its index is later than the trigger. A requirement with no
-minimum delay uses \(L_r=0\). Silence through the deadline is a timed
-observation, not missing data.
+(for example unique-key, FIFO, or most-recent). Define the instance-matching
+predicate by response type, correlation key, pairing policy, and later trace
+index:
 
-For an observation horizon \(t_H\), encode an active obligation with no observed
-response by the distinguished trace event \(\bot_r@t_H\):
+\[
+\mathrm{Match}_r(i,j)
+\ \Longleftrightarrow\
+j>i
+\land a_j\in\mathrm{Resp}_r
+\land \mathrm{key}(a_j)=\mathrm{key}(a_i)
+\land \mathrm{Pair}_r(i,j).
+\]
+
+Equal timestamps are ordered by trace index, so \(j>i\) already permits
+\(t_j=t_i\). \(\mathrm{Pair}_r(i,j)\) is the selected policy; ambiguous or
+invalid pairing is `ERROR`, not an IUT `FAIL`. The bounded-response schematic
+T2 uses this matcher. It is not enough that some later event belongs to
+\(\mathrm{Resp}_r\):
+
+\[
+a_i@t_i\Longrightarrow
+\exists j:
+\mathrm{Match}_r(i,j)\land \Delta t_{ij}\in I_r,
+\tag{T2}
+\]
+
+A trigger creates a distinct active obligation instance. A response discharges
+only the active instance selected by \(\mathrm{Match}_r\). A matching
+cancellation closes the selected instance as cancelled at its trace index, so
+later silence cannot produce a no-response `FAIL`. Unless the requirement
+explicitly permits concurrent instances, a superseding trigger closes the old
+instance as superseded and starts a new instance with a new clock origin.
+Cancellation and supersession are obligation dispositions, not timing verdicts,
+and remain in the trace. A requirement with no minimum delay uses \(L_r=0\).
+Silence through the deadline is a timed observation, not missing data.
+
+For an observation horizon \(t_H\), encode an active obligation with no matching
+response by the distinguished trace event \(\bot_r@t_H\). Because
+\(\mathrm{active}_r(i,t_H)\) already means that the instance created at index
+\(i\) has not been discharged, cancelled, or superseded under
+\(\mathrm{Match}_r\) through \(t_H\), no-response is the expiry of that
+still-active instance. Do not add a second global “no event of type
+\(\mathrm{Resp}_r\)” conjunct: a response for a different correlation key must
+not suppress this instance.
 
 \[
 \bot_r@t_H
 \ \Longleftrightarrow\
 \mathrm{active}_r(i,t_H)
-\land (t_H-t_i>U_r)
-\land
-\nexists j>i:\bigl(a_j\in\mathrm{Resp}_r\bigr)\land(t_i<t_j\le t_H).
+\land (t_H-t_i>U_r).
 \]
 
-Here \(\mathrm{active}_r(i,t_H)\) means that the instance created at index
-\(i\) has not been discharged, cancelled, or superseded under those matching
-rules through horizon \(t_H\). The displayed strict inequality defines
-\(\bot_r@t_H\) for a closed upper bound, where a response exactly at \(U_r\)
-is admissible. For an open upper bound, the corresponding expiry test is
-\(t_H-t_i\ge U_r\). Thus \(\bot_r@t_H\) is a formal observation of an expired,
-still-active obligation with no matching response, not a synonym for an absent
-log record.
+The displayed strict inequality defines \(\bot_r@t_H\) for a closed upper bound,
+where a response exactly at \(U_r\) is admissible. For an open upper bound, the
+corresponding expiry test is \(t_H-t_i\ge U_r\). Thus \(\bot_r@t_H\) is a formal
+observation of an expired, still-active obligation with no matching response,
+not a synonym for an absent log record. T2 remains the complementary
+bounded-response schematic: a matching \(j\) with \(\Delta t_{ij}\in I_r\)
+discharges the instance in time. A late matching response can fail T2 without
+being silence.
 
 The clock-augmented observable EFSM is:
 
@@ -1964,30 +1982,41 @@ G=(Q,q_0,X,\Sigma_I,\Sigma_O,\Delta)
 \]
 
 其中时间戳使用已声明的单调时间基准。对触发事件 \(a_i\) 及需求定义的响应事件 \(a_j\)，令
-\(\Delta t_{ij}=t_j-t_i\)。每条需求声明允许集合 \(I_r\)，包括每个有限端点是否包含。有界响应义务为：
+\(\Delta t_{ij}=t_j-t_i\)。每条需求声明允许集合 \(I_r\)，包括每个有限端点是否包含。
+
+时序目录必须定义事件谓词 \(\mathrm{Trig}_r\)、\(\mathrm{Resp}_r\)、
+\(\mathrm{Cancel}_r\) 和 \(\mathrm{Supersede}_r\)，以及关联键和显式配对策略（例如唯一键、FIFO 或最近触发）。实例匹配谓词由响应类型、关联键、配对策略和较后的迹索引构成：
+
+\[
+\mathrm{Match}_r(i,j)
+\ \Longleftrightarrow\
+j>i
+\land a_j\in\mathrm{Resp}_r
+\land \mathrm{key}(a_j)=\mathrm{key}(a_i)
+\land \mathrm{Pair}_r(i,j).
+\]
+
+相同时间戳按迹索引排序，因此 \(j>i\) 已允许 \(t_j=t_i\)。\(\mathrm{Pair}_r(i,j)\) 是所选策略；配对歧义或无效属于 `ERROR`，不是 IUT `FAIL`。有界响应图式 T2 使用该匹配器。仅存在某个属于 \(\mathrm{Resp}_r\) 的较后事件并不足够：
 
 \[
 a_i@t_i\Longrightarrow
-\exists j>i:
-a_j@t_j\land \Delta t_{ij}\in I_r,
+\exists j:
+\mathrm{Match}_r(i,j)\land \Delta t_{ij}\in I_r,
 \tag{T2}
 \]
 
-时序目录必须定义事件谓词 \(\mathrm{Trig}_r\)、\(\mathrm{Resp}_r\)、
-\(\mathrm{Cancel}_r\) 和 \(\mathrm{Supersede}_r\)，以及关联键和显式配对策略（例如唯一键、FIFO 或最近触发）。一次触发创建一个独立有效义务实例。响应只能解除由声明的关联键和配对策略选中的有效实例；配对歧义或无效属于 `ERROR`，不是 IUT `FAIL`。匹配的取消事件在其迹索引处把所选实例终止为“已取消”，之后的静默不得产生无响应 `FAIL`。除非需求明确允许并发实例，替代触发会把旧实例终止为“已替代”，并以新的时钟原点创建新实例。取消和替代是义务处置而不是时序判定，且必须保留在迹中。相同时间戳按迹索引排序；事件只有在索引晚于触发时才能影响该义务。没有最小延迟的需求取 \(L_r=0\)。持续静默直至截止时间本身是时序观测，不是缺失数据。
+一次触发创建一个独立有效义务实例。响应只能解除由 \(\mathrm{Match}_r\) 选中的有效实例。匹配的取消事件在其迹索引处把所选实例终止为“已取消”，之后的静默不得产生无响应 `FAIL`。除非需求明确允许并发实例，替代触发会把旧实例终止为“已替代”，并以新的时钟原点创建新实例。取消和替代是义务处置而不是时序判定，且必须保留在迹中。没有最小延迟的需求取 \(L_r=0\)。持续静默直至截止时间本身是时序观测，不是缺失数据。
 
-对观测终点 \(t_H\)，用特殊迹事件 \(\bot_r@t_H\) 编码义务仍有效但未观测到响应：
+对观测终点 \(t_H\)，用特殊迹事件 \(\bot_r@t_H\) 编码义务仍有效但没有匹配响应。因为 \(\mathrm{active}_r(i,t_H)\) 已经表示索引 \(i\) 创建的实例截至 \(t_H\) 尚未按 \(\mathrm{Match}_r\) 被响应解除、取消或替代，无响应就是该仍有效实例的到期。不要再附加第二条全局“不存在 \(\mathrm{Resp}_r\) 类型事件”的合取：另一关联键的响应不得抑制本实例。
 
 \[
 \bot_r@t_H
 \ \Longleftrightarrow\
 \mathrm{active}_r(i,t_H)
-\land (t_H-t_i>U_r)
-\land
-\nexists j>i:\bigl(a_j\in\mathrm{Resp}_r\bigr)\land(t_i<t_j\le t_H).
+\land (t_H-t_i>U_r).
 \]
 
-其中 \(\mathrm{active}_r(i,t_H)\) 表示索引 \(i\) 创建的实例截至 \(t_H\) 尚未按上述匹配规则被响应解除、取消或替代。式中的严格不等式定义闭合上界情形，此时恰在 \(U_r\) 的响应仍合格；开上界的对应到期条件为 \(t_H-t_i\ge U_r\)。因此 \(\bot_r@t_H\) 是“已经到期、仍有效且没有匹配响应”的正式观测，不是缺少日志记录的同义词。
+式中的严格不等式定义闭合上界情形，此时恰在 \(U_r\) 的响应仍合格；开上界的对应到期条件为 \(t_H-t_i\ge U_r\)。因此 \(\bot_r@t_H\) 是“已经到期、仍有效且没有匹配响应”的正式观测，不是缺少日志记录的同义词。T2 仍是互补的有界响应图式：匹配的 \(j\) 且 \(\Delta t_{ij}\in I_r\) 即按时解除该实例。迟到的匹配响应可以使 T2 失败，但不是静默。
 
 带时钟的可观测 EFSM 定义为：
 
