@@ -152,6 +152,42 @@ registration and deviations are complete, provenance is reproducible, wording
 matches the earned claim status, and negative or inconclusive results remain
 visible.
 
+## Algorithm interface contracts
+
+The experiment reuses the same session identity and the same abstract interfaces as ALG-CLTAV-01 / method §3.9.2. Implementation may remain pending; missing failure semantics is not allowed.
+
+| Interface | Experiment use | Must not |
+|---|---|---|
+| IF-PRED-OBS | Current observable summary seen by every arm | Evaluator truth as a prediction input |
+| IF-HIST-UPDATE | Compatibility update on answered valid classes | Exclude on ERROR or unknown effect |
+| IF-OBS-INTERPRET | Map the recorded observation to a class | Invent a class from the hidden fault label |
+| IF-SELECT-ADMIT | Form \(A\) then \(S\); empty \(S\) is Admit A2–A5 | Treat nonempty \(A\) as executable |
+| IF-EXECUTE-RECORD | Charge once and record the issued action | Gift later CL-LOOP records to CL-T/CL-A/CL-TA |
+| IF-PREP-RECOVER | Same resource rule as TEST | Confirm a Recover that was only sent |
+| IF-EQUIV | Observational-equivalence stop | Use evaluator labels as equivalence evidence |
+| IF-RESOURCE-STOP | Exclusive P1–P5 / resource stops | Hide Prep/Recover/retry cost |
+
+Evaluator-only truth never enters IF-SELECT-ADMIT, IF-PRED-OBS, IF-HIST-UPDATE or IF-EXECUTE-RECORD (FIG-CL-TAV-09).
+
+## Truth independence and common-error risk
+
+Injection plans and execution confirmation stay in the evaluator record. Arms see only algorithm-visible \(I_{z_k}\), \(q\) and charged cost. Shared clock, adapter or file-parse defects are common-error risks and must be named in registration; they do not become a secretly stronger oracle for CL-LOOP.
+
+## Successor implementation dependencies
+
+These items stay specified, not implemented. Stage names are development-readiness stages; they are not an automatic M3 start.
+
+| Dependency | Owner role | Input | Next stage | Delivery | Close-out evidence | Blocks |
+|---|---|---|---|---|---|---|
+| Core estimators for IF-PRED-OBS / IF-OBS-INTERPRET | later authorized implementer | ALG-CLTAV-01 contracts; measurement-uncertainty declaration | development-ready spec → unit/integration | named estimator with incomputable/unknown returns | review that empty current prediction is a spec error, not score 0 | EXP-CLTAV-DETECT timing cells; IF-PRED-OBS |
+| Compatibility update IF-HIST-UPDATE | later authorized implementer | Admit A1–A5, Update P1–P5 | implementation and walk-through | executable intersection that never excludes on ERROR | loop-spec regression plus independent math review | EXP-CLTAV-LOCATE; IF-HIST-UPDATE |
+| Selection IF-SELECT-ADMIT | later authorized implementer | currently valid nonempty classes | implementation | one-step minimax on \(S\), never on empty \(A\) | negative tests for empty-\(S\) argmin | EXP-CLTAV-LOCATE / ABLATION |
+| Independent truth recorder | later authorized evaluator | injection plan, execution confirmation | pre-experiment | evaluator store isolated from arm inputs | FIG-CL-TAV-09 leakage review | all three experiment groups |
+| Resource / stop IF-RESOURCE-STOP and IF-EQUIV | later authorized implementer | one resource mode, exclusive stops | implementation | charged vector and Stop-645 as named remaining 645-dependent capability | no hidden sampling charge; Stop-645 ≠ file missing | EXP-CLTAV-ABLATION cost cells |
+| Confirmatory parameters | experiment registrar | pilot or external justification | confirmatory registration | frozen sample size, pairing, effect thresholds | registration committed before runs | numeric Chapter 6 claims |
+
+Parameters that affect fairness (budget projection, pairing, invalid/equivalent-fault rules, clock error budget) must be frozen before the confirmatory gate. They cannot be deferred as “choose later.”
+
 ## Historical v4.2 registry (not the active design)
 
 EXP-001–007 (requirement-extraction reproducibility, B0–B3 coverage comparison,
@@ -244,6 +280,42 @@ artifacts/experiments/EXP-YYYY-NNN/
 确认实验前登记。探索性 pilot 与预注册确认实验分开。结果进入论文或发布主张前，登记／偏差、溯源、措辞与否定／不确定结果均须可见。
 
 必需登记字段仍为：ID、责任人、日期、假设、RQ／CL-RQ、基线／CRS／模型／VCS／IUT／工具／环境版本、实验与抽样单位、纳入／排除、开发／留出划分、主结局、停止理由、随机化／重置／隔离／种子、时序观测时的时间源与误差预算、计划统计模型、偏差与门禁。
+
+## 算法接口契约
+
+实验复用 ALG-CLTAV-01／方法报告 §3.9.2 的同一会话身份与抽象接口。实现可以待定，但不能缺少失败语义。
+
+| 接口 | 实验用途 | 禁止 |
+|---|---|---|
+| IF-PRED-OBS | 各臂可见的当前可观察摘要 | 把评价器真值当作预测输入 |
+| IF-HIST-UPDATE | 对已作答有效类做相容更新 | 因 ERROR 或未知效果排除候选 |
+| IF-OBS-INTERPRET | 把记录观测映射为类 | 用隐藏故障标签编造类 |
+| IF-SELECT-ADMIT | 先形成 \(A\) 再形成 \(S\)；空 \(S\) 走 Admit A2–A5 | 把非空 \(A\) 当成可执行 |
+| IF-EXECUTE-RECORD | 一次计费并记录已发出动作 | 把后继 CL-LOOP 记录赠给 CL-T／CL-A／CL-TA |
+| IF-PREP-RECOVER | 与 TEST 同一资源规则 | 把“已发送”当成 Recover 已确认 |
+| IF-EQUIV | 观测等价停止 | 用评价器标签当等价证据 |
+| IF-RESOURCE-STOP | 互斥 P1–P5／资源停止 | 隐藏 Prep／Recover／重试成本 |
+
+评价器真值不得进入 IF-SELECT-ADMIT、IF-PRED-OBS、IF-HIST-UPDATE 或 IF-EXECUTE-RECORD（FIG-CL-TAV-09）。
+
+## 真值独立性与共同错误风险
+
+注入计划与执行确认留在评价器记录。各臂只看见算法可见的 \(I_{z_k}\)、\(q\) 与已计费成本。共享时钟、适配器或文件解析缺陷是共同错误风险，须在登记中具名；不得变成 CL-LOOP 暗中更强的 oracle。
+
+## 后继实施依赖
+
+这些项保持已规格、未实现。阶段名是开发就绪阶段，不是自动启动 M3。
+
+| 依赖 | 责任角色 | 输入 | 后继阶段 | 交付 | 关闭证据 | 阻塞 |
+|---|---|---|---|---|---|---|
+| IF-PRED-OBS／IF-OBS-INTERPRET 核心估计器 | 后继获授权实现者 | ALG-CLTAV-01 契约；测量不确定性声明 | 开发就绪规格 → 单元／集成 | 具名估计器，含不可计算／未知返回 | 审查空当前预测是规格错误而非 score 0 | EXP-CLTAV-DETECT 时序格；IF-PRED-OBS |
+| 相容更新 IF-HIST-UPDATE | 后继获授权实现者 | Admit A1–A5、Update P1–P5 | 实现与走查 | 可执行交集，ERROR 不排除 | 闭环规格回归加独立数学审查 | EXP-CLTAV-LOCATE；IF-HIST-UPDATE |
+| 选择 IF-SELECT-ADMIT | 后继获授权实现者 | 当前有效非空类 | 实现 | 对 \(S\) 做一步 minimax，不对空 \(A\) | 空 \(S\) 上 \(\arg\min\) 的负例 | EXP-CLTAV-LOCATE／ABLATION |
+| 独立真值记录器 | 后继获授权评价者 | 注入计划、执行确认 | 预实验 | 与臂输入隔离的评价器存储 | FIG-CL-TAV-09 泄漏审查 | 三组实验 |
+| 资源／停止 IF-RESOURCE-STOP 与 IF-EQUIV | 后继获授权实现者 | 一种资源模式、互斥停止 | 实现 | 计费向量；Stop-645 为具名剩余 645 依赖能力 | 无隐藏采集费；Stop-645 ≠ 文件缺失 | EXP-CLTAV-ABLATION 成本格 |
+| 确认性参数 | 实验登记人 | pilot 或外部依据 | 确认性登记 | 冻结样本量、配对、效应阈值 | 运行前已提交登记 | 第 6 章数字主张 |
+
+影响公平性的参数（预算投影、配对、无效／等价故障规则、时钟误差预算）必须在确认性门前冻结，不能写成“以后再选”。
 
 ## 历史 v4.2 登记（非活动设计）
 

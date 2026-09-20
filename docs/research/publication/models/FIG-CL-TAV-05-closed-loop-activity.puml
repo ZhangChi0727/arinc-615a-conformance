@@ -39,7 +39,7 @@ repeat
           elseif (P2 |Hk| == 1) then (yes)
             :Stop-Singleton;
             stop
-          elseif (P3 named 645-blocked item?) then (yes)
+          elseif (P3 named remaining 645-dependent obligation?) then (yes)
             :Stop-645;
             stop
           elseif (P4 observational equivalence established?) then (yes)
@@ -65,7 +65,7 @@ repeat
         elseif (P2 |Hk| == 1) then (yes)
           :Stop-Singleton;
           stop
-        elseif (P3 named 645-blocked item?) then (yes)
+        elseif (P3 named remaining 645-dependent obligation?) then (yes)
           :Stop-645;
           stop
         elseif (P4 observational equivalence established?) then (yes)

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520" style="background:#FFFFFF">
+<!-- local-svg-export; intended renderer: PlantUML 1.2026.8. Java crashed here. -->
+<!-- plantuml-source
+@startuml FIG-CL-TAV-09
+skinparam shadowing false
+title FIG-CL-TAV-09 Experiment architecture\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nevaluator-only truth is never an algorithm input
+
+rectangle &quot;Controlled scene / config\n(IUT, fault plan, resource mode)&quot; as Scene
+rectangle &quot;Independent truth record\n(evaluator only)&quot; as Truth
+rectangle &quot;Comparison arms\nCL-T / CL-A / CL-TA / CL-LOOP&quot; as Arms
+rectangle &quot;Observations and resource log\n(algorithm-visible)&quot; as Obs
+rectangle &quot;Validity check\n(invalid, equivalent, missing)&quot; as Valid
+rectangle &quot;Metrics with denominators\nEXP-CLTAV-DETECT / LOCATE / ABLATION&quot; as Metrics
+rectangle &quot;RQ / claims\n(no unrun numbers)&quot; as Claims
+
+Scene --&gt; Arms : same declared pool and action library
+Scene --&gt; Truth : injection plan + execution confirmation
+Truth -[#red,dashed]-&gt; Arms : forbidden leakage
+Arms --&gt; Obs : algorithm-visible Izk, q, cost
+Obs --&gt; Valid
+Truth --&gt; Valid : evaluator-only confirmation
+Valid --&gt; Metrics : attempt and answered-subset denominators
+Metrics --&gt; Claims : comparable projections only
+
+note right of Truth
+  Evaluator truth must not enter
+  IF-SELECT-ADMIT, IF-PRED-OBS,
+  IF-HIST-UPDATE or IF-EXECUTE-RECORD.
+  IF-OBS-INTERPRET, IF-PREP-RECOVER,
+  IF-EQUIV and IF-RESOURCE-STOP stay
+  algorithm-visible only.
+end note
+note bottom of Arms
+  Same pool is not a gift of later CL-LOOP
+  records to other arms, and not a fictional
+  sampling charge to CL-A.
+  Groups: EXP-CLTAV-DETECT, EXP-CLTAV-LOCATE,
+  EXP-CLTAV-ABLATION.
+end note
+@enduml
+
+-->
+<text x="20" y="24" font-size="16" font-family="sans-serif" font-weight="700">FIG-CL-TAV-09-experiment-architecture</text>
+<text x="20" y="44" font-size="12" font-family="sans-serif">SysML 1.6 notation-based views; executable/metamodel conformance is not claimed</text>
+<rect x="40" y="70" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
+<text x="48" y="92" font-size="11" font-family="sans-serif">evaluator-only truth is never an algorithm</text>
+<text x="48" y="108" font-size="11" font-family="sans-serif"> input</text>
+<rect x="40" y="140" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
+<text x="48" y="162" font-size="11" font-family="sans-serif">Controlled scene / config</text>
+<rect x="360" y="140" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
+<text x="368" y="162" font-size="11" font-family="sans-serif">Independent truth record evaluator only</text>
+<rect x="40" y="210" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
+<text x="48" y="232" font-size="11" font-family="sans-serif">Comparison arms CL-T / CL-A / CL-TA / CL-L</text>
+<text x="48" y="248" font-size="11" font-family="sans-serif">OOP</text>
+<rect x="360" y="210" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
+<text x="368" y="232" font-size="11" font-family="sans-serif">forbidden leakage</text>
+<rect x="40" y="280" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
+<text x="48" y="302" font-size="11" font-family="sans-serif">IF-SELECT-ADMIT IF-PRED-OBS IF-HIST-UPDATE</text>
+<text x="48" y="318" font-size="11" font-family="sans-serif"> IF-EXECUTE-RECORD</text>
+<rect x="40" y="330" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
+<text x="48" y="352" font-size="11" font-family="sans-serif">IF-OBS-INTERPRET IF-PREP-RECOVER IF-EQUIV </text>
+<text x="48" y="368" font-size="11" font-family="sans-serif">IF-RESOURCE-STOP</text>
+<rect x="40" y="380" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
+<text x="48" y="402" font-size="11" font-family="sans-serif">EXP-CLTAV-DETECT EXP-CLTAV-LOCATE EXP-CLTA</text>
+<text x="48" y="418" font-size="11" font-family="sans-serif">V-ABLATION</text>
+<rect x="40" y="430" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
+<text x="48" y="452" font-size="11" font-family="sans-serif">Metrics with denominators DETECT / LOCATE </text>
+<text x="48" y="468" font-size="11" font-family="sans-serif">/ ABLATION</text>
+</svg>

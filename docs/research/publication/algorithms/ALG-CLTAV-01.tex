@@ -1,0 +1,44 @@
+% ALG-CLTAV-01 — CL-TAV top-level process (typeset form of DD-029 / DD-033).
+% Not an executable engine. Interface IDs are the only call sites.
+% Compile via ALG-CLTAV-01-wrapper.tex. Do not commit aux/log/out.
+\newcommand{\IFpred}{\texttt{IF-PRED-OBS}}
+\newcommand{\IFhist}{\texttt{IF-HIST-UPDATE}}
+\newcommand{\IFobs}{\texttt{IF-OBS-INTERPRET}}
+\newcommand{\IFsel}{\texttt{IF-SELECT-ADMIT}}
+\newcommand{\IFexec}{\texttt{IF-EXECUTE-RECORD}}
+\newcommand{\IFprep}{\texttt{IF-PREP-RECOVER}}
+\newcommand{\IFeq}{\texttt{IF-EQUIV}}
+\newcommand{\IFres}{\texttt{IF-RESOURCE-STOP}}
+
+\begin{algorithm}[ht]
+\caption{CL-TAV top-level session (ALG-CLTAV-01)}
+\label{alg:cltav-01}
+\SetKwInput{KwIn}{Require}
+\SetKwInput{KwOut}{Ensure}
+\KwIn{declared $H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}$; resource mode BUDGET$(c_{\min},B)$ xor ROUNDS$(K_{\max})$; action library; measurement uncertainty}
+\KwOut{stop class, final $H$, session trace; not a protocol PASS from singleton $h_{\mathrm{normal}}$}
+Initialize session $q$, remaining resource, retry cap, $H\leftarrow H_0$, empty ERROR/UNKNOWN history\;
+\While{true}{
+  \lIf{\IFres\ reports Admit A2--A5 or P1--P5 already decided}{\Return that stop and the trace}
+  $A\leftarrow$ currently enabled actions; $S\leftarrow$ \IFsel$(A,q,H)$ \tcp*{nonempty $A$ is not executable $S$}
+  \If{$S=\emptyset$}{
+    classify empty $S$ as A2--A5; do not $\arg\min$ an empty minimax set\;
+    \lIf{Prep/Recover eligible under \IFprep}{select that action under the same resource rule}
+    \lElse{\Return the Admit stop (A2--A5) and the trace}
+  }
+  $t^\star\leftarrow$ one-step minimax on currently valid nonempty classes in $S$\;
+  charge $t^\star$ once under the selected mode; refuse unadmitted issue\;
+  $(\textit{record},\textit{error})\leftarrow$ \IFexec$(t^\star)$\;
+  \eIf{$\textit{error}$ is ERROR}{
+    do not exclude $H$; do not charge again; keep unknown internal effect\;
+    continue with the same resource remainder after the one charge\;
+  }{
+    $I_z\leftarrow$ \IFobs$(\textit{record})$ \tcp*{invalid/unknown effect does not exclude $H$}
+    \lIf{$I_z$ is a valid observation class}{$H\leftarrow$ \IFhist$(H,t^\star,q,I_z)$}
+    \lIf{$t^\star$ is Recover}{confirmed target is required; sent $\neq$ confirmed}
+  }
+  $q\leftarrow$ \IFpred\ current observable summary\;
+  let $\sigma\leftarrow$ first of Stop-Empty, Stop-Singleton, Stop-645, Stop-Equivalent, Stop-Budget via \IFres\ and \IFeq\;
+  \lIf{$\sigma$ is set}{\Return $\sigma$, $H$, and the trace}
+}
+\end{algorithm}

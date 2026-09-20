@@ -1,6 +1,6 @@
 # CL-TAV Research Plan
 
-Reader entry for CR-2026-012. Authoritative files remain the method report, DD-028/029/030, `RESEARCH_OUTLINE.md`, SysML sources, and the protocol source-audit ledger. This page does not copy the CRS database.
+Reader entry for CR-2026-013. Authoritative files remain the method report, DD-028–034, `RESEARCH_OUTLINE.md`, SysML sources, ALG-CLTAV-01, and the protocol source-audit ledger. This page does not copy the CRS database.
 
 ## Method change summary
 
@@ -24,6 +24,7 @@ SysML 1.6 notation-based PlantUML sources: [`../../../docs/research/publication/
 | FIG-CL-TAV-06 | Diagnostic sequence; Prep over uninformative; second Izk to Analysis | [svg](figures/FIG-CL-TAV-06-diagnostic-sequence.svg) |
 | FIG-CL-TAV-07 | Two machines; Admit A1-A5; exclusive P1–P5 stops | [svg](figures/FIG-CL-TAV-07-two-state-machines.svg) |
 | FIG-CL-TAV-08 | Parametric constraints, not a solved network | [svg](figures/FIG-CL-TAV-08-parametric.svg) |
+| FIG-CL-TAV-09 | Experiment architecture; evaluator-only truth | [svg](figures/FIG-CL-TAV-09-experiment-architecture.svg) |
 
 ![FIG-CL-TAV-02 Requirement layers and CRS-M1-00365 trace](figures/FIG-CL-TAV-02-requirement-layers.svg)
 
@@ -33,11 +34,11 @@ SysML 1.6 notation-based PlantUML sources: [`../../../docs/research/publication/
 
 ## Experiment design
 
-Four arms CL-T, CL-A, CL-TA, CL-LOOP; detection, localization and ablation families in `docs/research/EXPERIMENT_PLAN.md`. Register before confirmatory runs. No Configuration and no live load in this increment. No filled result numbers here.
+Four arms CL-T, CL-A, CL-TA, CL-LOOP; detection, localization and ablation families in `docs/research/EXPERIMENT_PLAN.md`. Top-level algorithm: [`../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex`](../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex). Register before confirmatory runs. No Configuration and no live load in this increment. No filled result numbers here.
 
 ## Expanded CRS index and audit
 
-Current bound package is M1-CANDIDATE-22: 3106 coverage units and 816 requirements, including 664-7 max_jitter equations with VL summation, 150 us technological latency, MAC source construction, and 664P4-1 address-rule leaves for the first CRS-M1-00519 alternative. The integrator-identified address path remains open; this does not select Part 4 or activate AFDX. FIND abort does not waive the 2 s / 3 s clocks. Commentary and examples stay non-normative. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. 665 §2.3 is not leaf-CRS-closed. ARINC 645 is locally acquired and not bound. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename remaining deferred labels. Tool software requirements are out of this PR.
+Current bound package is M1-CANDIDATE-23: 3115 coverage units and 825 requirements, including 664-7 max_jitter equations with VL summation, 150 us technological latency, MAC source construction, 664P4-1 address-rule leaves for the first CRS-M1-00519 alternative, and 615A-triggered 645 semantic leaves. The integrator-identified address path remains open; this does not select Part 4 or activate AFDX. FIND abort does not waive the 2 s / 3 s clocks. Commentary and examples stay non-normative. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. 665 §2.3 is not leaf-CRS-closed. ARINC 645-1 2021 is SOURCE/SEMANTIC bound; four integrity capabilities stay NOT-ESTABLISHED. Ledger: `configs/research/cltav_protocol_source_audit.json`. Do not batch-rename remaining deferred labels. Tool software requirements are out of this PR.
 
 ## Historical versus successor evidence
 
@@ -45,7 +46,7 @@ The freeze-commit 94-block math check proves only that historical objects were n
 
 # 中文版
 
-CR-2026-012 的读者入口。权威文件仍是方法报告、DD-028／029／030、`RESEARCH_OUTLINE.md`、SysML 源和协议来源审计清单。本页不另抄 CRS 数据库。
+CR-2026-013 的读者入口。权威文件仍是方法报告、DD-028～034、`RESEARCH_OUTLINE.md`、SysML 源、ALG-CLTAV-01 和协议来源审计清单。本页不另抄 CRS 数据库。
 
 ## 方法变更摘要
 
@@ -69,6 +70,7 @@ SysML 1.6 记法 PlantUML 源：[`../../../docs/research/publication/models/`](.
 | FIG-CL-TAV-06 | 诊断序列；Prep 优先于无信息测试；第二次 Izk 进入 Analysis | [svg](figures/FIG-CL-TAV-06-diagnostic-sequence.svg) |
 | FIG-CL-TAV-07 | 两套机器；Admit A1-A5；互斥 P1–P5 停止 | [svg](figures/FIG-CL-TAV-07-two-state-machines.svg) |
 | FIG-CL-TAV-08 | 参数约束，不是已求解网络 | [svg](figures/FIG-CL-TAV-08-parametric.svg) |
+| FIG-CL-TAV-09 | 实验架构；评价器真值 | [svg](figures/FIG-CL-TAV-09-experiment-architecture.svg) |
 
 ![FIG-CL-TAV-02 需求层次与 CRS-M1-00365 追踪](figures/FIG-CL-TAV-02-requirement-layers.svg)
 
@@ -78,11 +80,11 @@ SysML 1.6 记法 PlantUML 源：[`../../../docs/research/publication/models/`](.
 
 ## 实验设计
 
-四臂 CL-T、CL-A、CL-TA、CL-LOOP；检测、定位、消融。确认性运行前登记。本增量无 Configuration、无实网加载。此处不填结果数字。
+四臂 CL-T、CL-A、CL-TA、CL-LOOP；检测、定位、消融。总体算法：[`../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex`](../../../docs/research/publication/algorithms/ALG-CLTAV-01.tex)。确认性运行前登记。本增量无 Configuration、无实网加载。此处不填结果数字。
 
 ## 扩大 CRS 索引与审计
 
-当前绑定包为 M1-CANDIDATE-22：3106 条 coverage、816 条需求，含带 VL 求和的 664-7 max_jitter 公式、150 微秒技术时延、MAC 源地址构造，以及 CRS-M1-00519 第一条替代路径的 664P4-1 地址规则叶。集成商指明的地址路径仍开放；这不选定第 4 部分，也不激活 AFDX。FIND 中止不豁免 2 秒／3 秒时钟。评注与示例保持非规范。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。665 §2.3 不是叶级 CRS 已闭合。ARINC 645 本地已取得但未绑定。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名仍延期的标签。工具软件需求不属于本 PR。
+当前绑定包为 M1-CANDIDATE-23：3115 条 coverage、825 条需求，含带 VL 求和的 664-7 max_jitter 公式、150 微秒技术时延、MAC 源地址构造、CRS-M1-00519 第一条替代路径的 664P4-1 地址规则叶，以及 615A 触发的 645 语义叶。集成商指明的地址路径仍开放；这不选定第 4 部分，也不激活 AFDX。FIND 中止不豁免 2 秒／3 秒时钟。评注与示例保持非规范。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。665 §2.3 不是叶级 CRS 已闭合。ARINC 645-1 2021 来源／语义已绑定；四项完整性能力仍为 NOT-ESTABLISHED。清单：`configs/research/cltav_protocol_source_audit.json`。不得批量改名仍延期的标签。工具软件需求不属于本 PR。
 
 ## 历史与后继证据
 
