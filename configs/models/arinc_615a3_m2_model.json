@@ -26,27 +26,27 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "8188307c57373375bf3f73dc3304dd958b77476b",
+        "gitBlobOid": "ea46d7e1079a16a5ac2c90d3fa1f5b2cb52865e8",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_crs_package.schema.json",
-        "gitBlobOid": "2a668371125242d1c2c5f744ab4d06e17523e4ae",
+        "gitBlobOid": "3c1a8e4a2c149eb9ebcd5e8ca652cfd729055a54",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "d632144b7539131bd82f56c396614632db110c37",
+        "gitBlobOid": "4849ca9ee221560aae456e61c1385de31c43bb4d",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "39071b4e4eafcc0dae9e56e06d1a983fef70790a",
+        "gitBlobOid": "f076166baa7fe9e6dffc9903d7a6a043ce981ee7",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_source_section_spans.json",
-        "gitBlobOid": "90a42bf7f0b2e8ed6ccbef4512a1ebcb3e63ecff",
+        "gitBlobOid": "787638eab987c7fff47e140987dc80daf29c5ae3",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "005fa928bf16376ffd78e8561b72241958f72267",
+        "gitBlobOid": "1c9d91b631cd4653338e878384db08a0516a62c9",
         "role": "SUCCESSOR-M1-DELTA"
       }
     ],
@@ -148,8 +148,8 @@
           "role": "M1-IMMUTABLE-INPUT"
         }
       ],
-      "currentInputArtifactCommit": "be2cd876607494df3d1a195abc05a0e04d90e090",
-      "currentInputArtifactTree": "ce555e8238d5f2f700168e35384e982280babe04"
+      "currentInputArtifactCommit": "7a480923ab774bcb680f966d4c031f3007a8a2b8",
+      "currentInputArtifactTree": "aba637c3730155426b913e249ede8b27e9a4e826"
     }
   },
   "sequenceEndpointBindings": [
@@ -33583,7 +33583,7 @@
     "dispositionsFingerprint": "11fc2ab0cd5104432a20edc298fc744cca7a37f086201c070d6b013590e92000",
     "modelFingerprint": "a716f9b60f3e507ec7758ca3430de589bd67bbad630ef735a1bc1b38c8c2b2ef",
     "timingFingerprint": "cd8a13f203f6d2c2f9c82e65646bf9d5b920200a509af92d461096e54f7e6810",
-    "inputFingerprint": "9d35821ff64e239fac8af21a3c198b56cb61c4f5269b8030e15b98d310dfbac1",
+    "inputFingerprint": "96dc9b5648030e314c51b0c5f562d88c37453bac6348bdc10bb4c2f232ab55d7",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
