@@ -82,6 +82,7 @@ CLTAV_PUML_FILES = (
     "FIG-CL-TAV-06-diagnostic-sequence.puml",
     "FIG-CL-TAV-07-two-state-machines.puml",
     "FIG-CL-TAV-08-parametric.puml",
+    "FIG-CL-TAV-09-experiment-architecture.puml",
 )
 CLTAV_SVG_DIR = ROOT / "artifacts/publications/cltav/figures"
 CLTAV_SVG_FILES = tuple(name.replace(".puml", ".svg") for name in CLTAV_PUML_FILES)
@@ -591,6 +592,7 @@ SUPPORTING_LEAF_STATUSES = {
     "EXISTING-351-TRIGGERED-ROWS",
     "EXISTING-LEAF-VIA-2-1-2",
     "EXISTING-615A-LEAF",
+    "EXISTING-LEAF-VIA-645",
     "CRS-M1-00519-REMAINS-NOT-YET-BOUND",
 }
 SUPPORTING_LEAF_BOUND_STATUSES = {
@@ -598,6 +600,7 @@ SUPPORTING_LEAF_BOUND_STATUSES = {
     "EXISTING-351-TRIGGERED-ROWS",
     "EXISTING-LEAF-VIA-2-1-2",
     "EXISTING-615A-LEAF",
+    "EXISTING-LEAF-VIA-645",
 }
 # Historical enum retained for migration. Authorization comes from unboundDispositions, not from this name.
 SUPPORTING_UNBOUND_LEAF_STATUSES = {
@@ -800,7 +803,7 @@ def supporting_source_audit_errors(
     blocked = audit.get("blockedSource") or {}
     if "645BindingThisPr" in supporting and supporting.get("645BindingThisPr") is not False:
         if blocked.get("boundThisPr") is not True:
-            errors.append("supporting-source audit must not bind ARINC 645 in this PR")
+            errors.append("claimed 645 binding must also set blockedSource.boundThisPr")
     dispositions, disposition_errors = supporting_unbound_disposition_map(supporting)
     errors.extend(disposition_errors)
     part4 = supporting.get("arinc664Part4") if isinstance(supporting.get("arinc664Part4"), dict) else {}
@@ -1123,6 +1126,85 @@ def protocol_source_audit_errors(audit: dict, crs: dict, register: dict | None =
     return errors
 
 
+CLTAV_INTERFACE_IDS = (
+    "IF-PRED-OBS",
+    "IF-HIST-UPDATE",
+    "IF-OBS-INTERPRET",
+    "IF-SELECT-ADMIT",
+    "IF-EXECUTE-RECORD",
+    "IF-PREP-RECOVER",
+    "IF-EQUIV",
+    "IF-RESOURCE-STOP",
+)
+CLTAV_EXPERIMENT_IDS = ("EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE", "EXP-CLTAV-ABLATION")
+
+
+def arinc_645_closure_errors(audit: dict, crs: dict, model: dict | None = None) -> list[str]:
+    """SOURCE/SEMANTIC bind is not CAPABILITY establishment. Not a source-faithfulness proof."""
+    errors: list[str] = []
+    supporting = audit.get("supportingSourceApplicabilityAudit") or {}
+    if supporting.get("645BindingThisPr") is not True:
+        return errors
+    remaining = audit.get("remainingSourceWork")
+    if not isinstance(remaining, dict):
+        errors.append("645 remaining work is missing after source bind")
+        return errors
+    if remaining.get("arinc645CapabilityEstablishmentThisPr") is not False:
+        errors.append("645 source bind must not establish capabilities")
+    for key in (
+        "crcValidationEstablishedThisPr",
+        "checkValueValidationEstablishedThisPr",
+        "namingAlgorithmValidationEstablishedThisPr",
+        "completeIntegrityValidationEstablishedThisPr",
+    ):
+        if remaining.get(key) is not False:
+            errors.append(f"645 source bind must not establish {key}")
+    gap = remaining.get("arinc645RemainingWorkAfterThisPr") or {}
+    if gap.get("id") != "GAP-ARINC-645" or gap.get("status") != "NOT-ESTABLISHED":
+        errors.append("GAP-ARINC-645 must remain NOT-ESTABLISHED after source bind")
+    for key in (
+        "crcValidation",
+        "checkValueValidation",
+        "namingAlgorithmValidation",
+        "completeIntegrityValidation",
+    ):
+        item = gap.get(key) or {}
+        if item.get("status") != "CAPABILITY-NOT-ESTABLISHED" or item.get("establishedThisPr") is not False:
+            errors.append(f"645 source bind must not establish {key}")
+    if model is not None:
+        blocked = (((model.get("model") or {}).get("interfaces") or {}).get("IF_INTEGRITY") or {}).get("blockedBy")
+        if not isinstance(blocked, list) or "ARINC-645" not in blocked:
+            errors.append("bound M2 IF_INTEGRITY must remain blocked by ARINC-645")
+    reqs = [row for row in crs.get("requirements") or [] if (row.get("source") or {}).get("sourceId") == "ARINC-645"]
+    if not reqs:
+        errors.append("645 source bind must emit in-scope semantic leaves")
+    return errors
+
+
+def cltav_algorithm_contract_errors(algorithm: str, experiment_puml: str, experiment_plan: str) -> list[str]:
+    """Stable contract IDs across algorithm, experiment figure and plan. Not a fairness proof."""
+    errors: list[str] = []
+    for contract_id in CLTAV_INTERFACE_IDS:
+        if contract_id not in algorithm:
+            errors.append(f"main algorithm is missing {contract_id}")
+        if contract_id not in experiment_puml:
+            errors.append(f"experiment architecture view is missing {contract_id}")
+        if contract_id not in experiment_plan:
+            errors.append(f"experiment plan is missing {contract_id}")
+    for exp_id in CLTAV_EXPERIMENT_IDS:
+        if exp_id not in experiment_puml:
+            errors.append(f"experiment architecture view is missing {exp_id}")
+        if exp_id not in experiment_plan:
+            errors.append(f"experiment plan is missing {exp_id}")
+    if "denominator" not in experiment_plan:
+        errors.append("experiment plan is missing denominator")
+    if "evaluator-only" not in experiment_puml:
+        errors.append("experiment architecture view is missing evaluator-only")
+    if "forbidden leakage" not in experiment_puml:
+        errors.append("experiment architecture view is missing forbidden leakage")
+    return errors
+
+
 def expected_download_mode(clause: str) -> str:
     """Media Defined and Operator Defined DOWNLOAD stay separate after reread."""
     if clause.startswith(("5.4.4.1", "6.2.10", "6.4.6")) or clause == "6.3.3":
@@ -1316,6 +1398,18 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
     sequence = models.get("FIG-CL-TAV-06-diagnostic-sequence.puml", "")
     if "Prep" not in sequence or "overlapping" not in sequence:
         errors.append("diagnostic sequence view must show overlapping observation and Prep")
+    experiment = models.get("FIG-CL-TAV-09-experiment-architecture.puml", "")
+    for token in (
+        "evaluator-only",
+        "forbidden leakage",
+        "IF-SELECT-ADMIT",
+        "CL-T / CL-A / CL-TA / CL-LOOP",
+        "DETECT / LOCATE / ABLATION",
+    ):
+        if token not in experiment:
+            errors.append(f"experiment architecture view is missing {token}")
+    if "Truth --> Arms" in experiment and "forbidden" not in experiment:
+        errors.append("experiment architecture view must not give evaluator truth to comparison arms")
     if "Izk of tb" not in sequence:
         errors.append("diagnostic sequence view must send the second observation to Analysis")
     layers = models.get("FIG-CL-TAV-02-requirement-layers.puml", "")
@@ -2860,6 +2954,15 @@ def main() -> int:
     crs_package = json.loads(read(ROOT / "configs/requirements/arinc_615a3_m1_crs.json"))
     audit_package = json.loads(read(SOURCE_AUDIT_PATH))
     errors.extend(protocol_source_audit_errors(audit_package, crs_package))
+    m2_package = json.loads(read(ROOT / "configs/models/arinc_615a3_m2_model.json"))
+    errors.extend(arinc_645_closure_errors(audit_package, crs_package, m2_package))
+    errors.extend(
+        cltav_algorithm_contract_errors(
+            read(RESEARCH / "publication" / "algorithms" / "ALG-CLTAV-01.tex"),
+            read(CLTAV_PUML_DIR / "FIG-CL-TAV-09-experiment-architecture.puml"),
+            read(RESEARCH / "EXPERIMENT_PLAN.md"),
+        )
+    )
     errors.extend(cltav_outline_errors(read(RESEARCH / "publication" / "RESEARCH_OUTLINE.md")))
     errors.extend(
         cltav_sysml_errors(

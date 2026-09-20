@@ -25,6 +25,7 @@ REQUIRED_SOURCES = (
     "RFC-2347",
     "RFC-2348",
     "RFC-2349",
+    "ARINC-645",
 )
 
 
@@ -37,7 +38,7 @@ def test_package_a_sources_are_first_class_tasks_with_denominators() -> None:
     assert data["applicabilityAuditPending"] == []
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
-    assert supporting["645BindingThisPr"] is False
+    assert supporting["645BindingThisPr"] is True
     head = supporting["boundHead"]
     assert isinstance(head, str) and len(head) == 40
     ancestor = subprocess.run(
@@ -88,7 +89,7 @@ def test_665_batch_file_is_inside_survey_and_media_set_was_readjudicated() -> No
     assert any(row["semantic"]["action"] == "OMIT-COMMENT-FIELD-WHEN-COMMENT-LENGTH-ZERO" for row in batch_reqs)
     assert any(row["semantic"]["action"] == "KEEP-HEADER-FILE-NAME-FREE-OF-BACKSLASH" for row in batch_reqs)
     assert all(row["reviewStatus"] == "PENDING-EXTERNAL-INDEPENDENT-REVIEW" for row in batch_reqs)
-    assert all(row["refinementDisposition"] in {"PROFILE-SCOPE-ONLY", "DEPENDENCY-BLOCKED"} for row in batch_reqs)
+    assert all(row["refinementDisposition"] in {"PROFILE-SCOPE-ONLY", "DEPENDENCY-BLOCKED", "POINTS-TO-BOUND-645-LEAF"} for row in batch_reqs)
     table_rows = [
         row for row in batch_reqs
         if row["source"].get("tableOrFigure") == "Table 2.3.1-1" and row["source"].get("fragmentKind") == "TABLE-ROW"
@@ -114,14 +115,14 @@ def test_665_batch_file_is_inside_survey_and_media_set_was_readjudicated() -> No
     assert outside["pdfPages"] == [36, 139]
 
 
-def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
+def test_rfc_identities_stay_unmerged_and_645_is_bound_without_capability() -> None:
     data = audit()
     source_ids = [row["sourceId"] for row in data["supportingSourceApplicabilityAudit"]["sources"]]
     assert "RFC-1350-RFC-2347" not in source_ids
     blocked = data["blockedSource"]
     assert blocked["status"] == "BLOCKED-SOURCE-645"
     assert blocked["localFileAcquired"] is True
-    assert blocked["boundThisPr"] is False
+    assert blocked["boundThisPr"] is True
     abort = data["supportingSourceApplicabilityAudit"]["findAbortAdjudication"]
     assert abort["status"] == "APPLIED-IN-CRS"
     assert abort["code"] == "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS"
@@ -154,7 +155,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_acquired_not_bound() -> None:
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-22"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-23"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])
@@ -166,6 +167,7 @@ ALLOWED_LEAF_STATUS = {
     "EXISTING-351-TRIGGERED-ROWS",
     "EXISTING-LEAF-VIA-2-1-2",
     "EXISTING-615A-LEAF",
+    "EXISTING-LEAF-VIA-645",
     "CRS-M1-00519-REMAINS-NOT-YET-BOUND",
 }
 
@@ -224,7 +226,7 @@ def test_triggered_664_and_rfc_leaves_are_emitted() -> None:
     assert remaining["SAU-1123-4-2-REMAINING-NETASCII-AND-NONSTANDARD-EXTENSIONS"]["disposition"] == "OUT-OF-PROFILE"
     assert remaining["SAU-1123-4-2-REMAINING-IMPLEMENTATION-EXPONENTIAL-BACKOFF"]["disposition"] == "INFORMATIVE"
     assert "SAU-P7-3-REMAINING-MAX-JITTER-EQUATION-AND-MAC-SOURCE" not in remaining
-    assert remaining["SAU-665-2-3-REMAINING-CRC-ALGORITHM-IDENTITY"]["disposition"] == "DEPENDENCY-BLOCKED"
+    assert remaining["SAU-665-2-3-REMAINING-CRC-ALGORITHM-IDENTITY"]["disposition"] == "CAPABILITY-NOT-ESTABLISHED"
     assert remaining["SAU-665-2-3-REMAINING-INFORMATIVE-NOTES-AND-LOCATORS"]["disposition"] == "INFORMATIVE"
     assert "SAU-P3-1-5-REMAINING-RFC-BODY" not in remaining
     assert "SAU-P7-4-REMAINING-SWITCH-BLOCKS" not in remaining

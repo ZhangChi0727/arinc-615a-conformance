@@ -735,6 +735,7 @@ def test_recover_observation_class_is_also_intersected() -> None:
     assert session.Hk == _hyps("normal", "h1")
     loop.step(session, library, observation=_hyps("h2"), confirmed_q="q_sync")
     assert session.Hk == set()
+    assert session.stop == "Stop-Empty"
 
 
 def test_true_hypothesis_survives_compatible_updates_and_error() -> None:

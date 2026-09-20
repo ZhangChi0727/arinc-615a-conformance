@@ -136,11 +136,15 @@ def test_recorded_input_identity_matches_git() -> None:
     preserved = {item["path"]: item["gitBlobOid"] for item in successor.get("preservedFrozenInputs") or []}
     assert successor.get("doesNotTransplantFrozenApproval") is True
     assert preserved
+    cur_commit = successor.get("currentInputArtifactCommit")
     for item in acc["inputs"]:
         frozen = preserved[item["path"]]
         assert m2.git_blob(acc["mergeCommit"], item["path"]) == frozen
+        pinned = m2.git_blob(cur_commit, item["path"]) if cur_commit else None
+        assert pinned == item["gitBlobOid"]
         work = m2.git_output(ROOT, ["hash-object", str(ROOT / item["path"])])
-        assert work == item["gitBlobOid"]
+        if not successor:
+            assert work == item["gitBlobOid"]
 
 
 @pytest.mark.parametrize("mutation", ["blob", "parent", "tree", "ci", "review"])
