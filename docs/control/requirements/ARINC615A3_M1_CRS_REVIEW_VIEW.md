@@ -12,13 +12,13 @@
 
 ## Inventory
 
-- Coverage rows: 3106
-- CRS items: 816
+- Coverage rows: 3115
+- CRS items: 825
 - Dependencies: 15
 - Gaps: 1
-- Coverage fingerprint: `2d492fd8a9711186f6af9a098fc99ee2004782bbed0afde410ae70a64e1c1334`
-- Requirements fingerprint: `e25019ff35ada475c320e13a3e7f8680eeeabd35ed116dc8a795d54021d50fe1`
-- Source-unit fingerprint: `588023a1d42d0654f8b6dda0f319c83c2a008dc146ae9119d76b534a54d6be12`
+- Coverage fingerprint: `c45eb50bcc8cd704142ffeadf6ba5f932db4f65e17c63add6603a374663ce50b`
+- Requirements fingerprint: `d3982bbe8d6658433cbdd9679babb86ddf635fec37532a92525ff082a25f426f`
+- Source-unit fingerprint: `e5d9c383a51b53092f211731c7dce7eb842bbb15bde31ea8eac05e18cc54c4f9`
 - Automated checks cover structure and cross-record consistency only; proprietary-source completeness and fidelity require external RG0 review.
 - `generatedSemanticProjectionEn/Zh` are assertion-bound drift projections, not independent RG1 evidence.
 - 665 edge policy: `REQUIREMENT-LEVEL-615A-TO-665-EDGES-DEFERRED-TO-M2-ATTACHMENT-RECONCILIATION`
@@ -26,7 +26,7 @@
 ## Applicability
 
 - `APPLICABLE-BASE`: 89
-- `APPLICABLE-SUPPORTING`: 462
+- `APPLICABLE-SUPPORTING`: 471
 - `CONDITIONAL`: 265
 
 ## Source modality
@@ -35,13 +35,13 @@
 - `FACT`: 147
 - `FIGURE-CONSTRAINT`: 63
 - `MAY`: 61
-- `MUST`: 45
-- `SHOULD`: 347
-- `TABLE-CONSTRAINT`: 149
+- `MUST`: 47
+- `SHOULD`: 349
+- `TABLE-CONSTRAINT`: 154
 
 ## Conformance effect
 
-- `CONDITIONAL-REQUIRED`: 235
+- `CONDITIONAL-REQUIRED`: 244
 - `INFORMATIVE`: 17
 - `OPTIONAL`: 60
 - `PROHIBITED`: 3
@@ -49,7 +49,7 @@
 
 ## Open dependencies and gaps
 
-- `DEP-ARINC-645` — OPEN-DEPENDENCY: ARINC 645 algorithms remain unavailable. / ARINC 645 算法来源仍未取得。
+- `DEP-ARINC-645` — OPEN-DEPENDENCY: ARINC 645-1 identity and 615A-triggered semantic leaves are bound. Implementation, configuration and execution evidence are not established. / ARINC 645-1 身份与 615A 触发的语义叶已绑定。实现、配置与执行证据尚未建立。
 - `DEP-ARINC-664-2` — OPEN-DEPENDENCY: Ethernet physical and link semantics remain open. / 以太网物理层与链路层语义仍开放。
 - `DEP-ARINC-664-3` — OPEN-DEPENDENCY: Received P3-1 identity; edition and network applicability review remain open. / 已接收 P3-1 身份；版次与网络适用性评审仍开放。
 - `DEP-ARINC-664-4` — OPEN-DEPENDENCY: Received 664P4-1; address-rule leaves are emitted for the first 615A Appendix E alternative. The integrator-identified path remains open. This does not select Part 4 or activate AFDX. / 已接收 664P4-1；已为 615A 附录 E 第一条替代路径发出地址规则叶。集成商指明路径仍开放。这不选定第 4 部分，也不激活 AFDX。
@@ -64,7 +64,7 @@
 - `DEP-RFC-2349` — OPEN-DEPENDENCY: TFTP timeout and transfer-size option identity remains open. / TFTP 超时与传输大小选项身份仍开放。
 - `DEP-RFC-768` — OPEN-DEPENDENCY: UDP identity and applicability remain open. / UDP 身份与适用性仍开放。
 - `DEP-RFC-791` — OPEN-DEPENDENCY: IP identity and applicability remain open. / IP 身份与适用性仍开放。
-- `GAP-ARINC-645` — NOT-ESTABLISHED: ARINC 645-dependent validation remains blocked. / 依赖 ARINC 645 的验证仍受阻。
+- `GAP-ARINC-645` — NOT-ESTABLISHED: ARINC 645-dependent validation remains not established at capability/execution level after source bind. / 645 来源绑定后，依赖 ARINC 645 的验证在能力／执行层仍未建立。
 
 ## Network reference inspection and approval blockers
 
@@ -680,7 +680,7 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `CRS-M1-00542` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-001-F4394EF0EEC6`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MATCH-HEADER-FILE-NAME-TO-LISTED-LSP` / `HEADER-FILE-NAME, LOAD-PN` / `HEADER-FILE-NAME-MATCH-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The header file name shall match the header file of the LSP identified by the Load PN field.<br>头文件名必须与 Load PN 字段所标识 LSP 的头文件一致。 | — | DEP-ARINC-6655 |
 | `CRS-M1-00543` | `SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-001-4385D6046683`<br>`ARINC-665-5 2.3.1.19 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MATCH-LOAD-PN-TO-LSP-FOR-TARGET-HW-ID-POS` / `LOAD-PN, TARGET-HW-ID-POS` / `LOAD-PN-MATCH-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Load PN shall match the LSP part number to be loaded to that Target HW ID POS.<br>Load PN 必须与要加载到该 Target HW ID POS 的 LSP 件号一致。 | — | DEP-ARINC-6655 |
 | `CRS-M1-00544` | `SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-001-216B865544A5`<br>`ARINC-665-5 2.3.1.20 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PLACE-BATCH-FILE-CRC-COVERING-FILE-EXCLUDING-CRC-FIELD` / `BATCH-FILE-CRC` / `BATCH-FILE-CRC-FIELD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Batch File CRC is a 16-bit CRC covering the batch file with the CRC field excluded. Algorithm identity remains blocked by ARINC 645.<br>批处理文件 CRC 是覆盖该文件且不含 CRC 字段自身的 16 位 CRC。算法身份仍由 ARINC 645 阻塞。 | — | DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-M1-00545` | `SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-002-2E8577AE49D2`<br>`ARINC-665-5 2.3.1.20 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `COMPUTE-BATCH-FILE-CRC-PER-ARINC-645` / `BATCH-FILE-CRC` / `BATCH-FILE-CRC-ALGORITHM-BLOCKED-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Batch File CRC shall be computed as defined in ARINC 645. This PR records the 665 trigger but does not bind 645.<br>批处理文件 CRC 须按 ARINC 645 计算。本 PR 只记录 665 触发点，不绑定 645。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00545` | `SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-002-2E8577AE49D2`<br>`ARINC-665-5 2.3.1.20 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `COMPUTE-BATCH-FILE-CRC-PER-ARINC-645` / `BATCH-FILE-CRC` / `BATCH-FILE-CRC-ALGORITHM-BLOCKED-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Batch File CRC shall be computed as defined in ARINC 645. This PR binds that identity to CRS-M1-00819; it does not establish CRC-VALIDATION.<br>批处理文件 CRC 须按 ARINC 645 计算。本 PR 将该身份绑定到 CRS-M1-00819；并不建立 CRC-VALIDATION。 | — | DEP-ARINC-645, GAP-ARINC-645 |
 | `CRS-M1-00546` | `SU-ARINC-665-5-TABLE-2-3-1-1-R001`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Batch File Length field of LUB as 32 bits counting 16-bit words in the file.<br>将 LUB 的批处理文件长度字段编码为 32 位，并以 16 位字计数整个文件。 | — | DEP-ARINC-6655 |
 | `CRS-M1-00547` | `SU-ARINC-665-5-TABLE-2-3-1-1-R002`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-FORMAT-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Batch File Format Version field of LUB as 16 bits.<br>将 LUB 的批处理文件格式版本字段编码为 16 位。 | — | DEP-ARINC-6655 |
 | `CRS-M1-00548` | `SU-ARINC-665-5-TABLE-2-3-1-1-R003`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-SPARE` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Spare field of LUB as 16 bits used to align the following pointers. This source unit does not constrain the field value to zero.<br>将 LUB 的 Spare 字段编码为 16 位，用于对齐随后的指针。本源单元不把该字段值约束为零。 | — | DEP-ARINC-6655 |
@@ -953,6 +953,15 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `CRS-M1-00815` | `SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-001-B4EEE0548816`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-TX-VL-IDENTIFIER` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, DEFAULT-TX-VL-IDENTIFIER` / `AFDX-SWITCH-DEFAULT-TX-VL-IDENTIFIER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, default transmission configuration includes VL identifier VL(1,position) per Figure 4-7. Bound M2 does not execute that table.<br>若选择 AFDX，缺省发送配置含符合图 4-7 的 VL 标识 VL(1,position)。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
 | `CRS-M1-00816` | `SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-002-CEA54264E86E`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-TX-BAG` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, DEFAULT-TX-BAG` / `AFDX-SWITCH-DEFAULT-TX-BAG-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, default transmission configuration includes Bandwidth Allocation GAP. Bound M2 does not execute that table.<br>若选择 AFDX，缺省发送配置含带宽分配间隔。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
 | `CRS-M1-00817` | `SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-003-5CA99BF9BB8B`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-TX-SMAX` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, DEFAULT-TX-SMAX` / `AFDX-SWITCH-DEFAULT-TX-SMAX-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, default transmission configuration includes maximum Total Ethernet Line size s max. Bound M2 does not execute that table.<br>若选择 AFDX，缺省发送配置含最大以太网行长 s max。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00818` | `SU-ARINC-645-4.3.4-P032-TABLE-ROW-001-945EF33DA084`<br>`ARINC-645 4.3.4 p.26` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `COMPUTE-CRC-8-WITH-GENERATOR-01-INIT-00` / `CRC-8, PART-NUMBER-CHECK-CHARACTERS` / `COMPUTE-CRC-8-WITH-GENERATOR-01-INIT-00-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | When a 665 part-number check character is required, compute CRC-8 with width 8, generator 0x01, init 0x00, RefIn/RefOut false, XorOut 0x00, check 0x00. This CRC-8 is not a general stuck-at-zero detector and is not a complete-file integrity algorithm.<br>当需要 665 件号校验字符时，按宽度 8、生成器 0x01、初值 0x00、RefIn／RefOut 为假、XorOut 0x00、校验 0x00 计算 CRC-8。该 CRC-8 不是通用卡死于零检测器，也不是整文件完整性算法。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00819` | `SU-ARINC-645-4.3.5-P033-TABLE-ROW-001-184AB181958C`<br>`ARINC-645 4.3.5 p.27` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `COMPUTE-CRC-16-WITH-GENERATOR-1021-INIT-FFFF` / `CRC-16, LOADABLE-SOFTWARE-PART` / `COMPUTE-CRC-16-WITH-GENERATOR-1021-INIT-FFFF-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | When a 16-bit CRC is required for a cursory LSP check, compute CRC-16 with width 16, generator 0x1021, init 0xFFFF, RefIn/RefOut false, XorOut 0x0000, check 0x3FBD. This is not NVM-only validation and is not complete-integrity evidence.<br>当需要对 LSP 作粗检的 16 位 CRC 时，按宽度 16、生成器 0x1021、初值 0xFFFF、RefIn／RefOut 为假、XorOut 0x0000、校验 0x3FBD 计算。这不是仅 NVM 验证，也不是完整完整性证据。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00820` | `SU-ARINC-645-4.3.6-P034-TABLE-ROW-001-974432EB0973`<br>`ARINC-645 4.3.6 p.28` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `COMPUTE-CRC-32-WITH-GENERATOR-04C11DB7-INIT-FFFFFFFF` / `CRC-32, FILE-CONTENT` / `COMPUTE-CRC-32-WITH-GENERATOR-04C11DB7-INIT-FFFFFFFF-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | When a 32-bit CRC is the selected check-value, compute CRC-32 with width 32, generator 0x04C11DB7, init 0xFFFFFFFF, RefIn/RefOut false, XorOut 0xFFFFFFFF, check 0xB6B5EE95. The local PDF extract writes the init prefix as OxFFFFFFFF; the bound parameter is hexadecimal 0xFFFFFFFF.<br>当选定 32 位 CRC 为校验值时，按宽度 32、生成器 0x04C11DB7、初值 0xFFFFFFFF、RefIn／RefOut 为假、XorOut 0xFFFFFFFF、校验 0xB6B5EE95 计算。本地 PDF 抽取把初值前缀写成 OxFFFFFFFF；绑定参数为十六进制 0xFFFFFFFF。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00821` | `SU-ARINC-645-4.3.7-P034-TABLE-ROW-001-4F48BE9E9372`<br>`ARINC-645 4.3.7 p.28` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `COMPUTE-CRC-64-WITH-GENERATOR-42F0E1EBA9EA3693-REFLECTED` / `CRC-64, FILE-CONTENT` / `COMPUTE-CRC-64-WITH-GENERATOR-42F0E1EBA9EA3693-REFLECTED-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | When a 64-bit CRC is the selected check-value, compute CRC-64 with width 64, generator 0x42F0E1EBA9EA3693, init 0xFFFFFFFFFFFFFFFF, RefIn true, RefOut true, XorOut 0xFFFFFFFFFFFFFFFF, check 0x59C3325B2927A19A.<br>当选定 64 位 CRC 为校验值时，按宽度 64、生成器 0x42F0E1EBA9EA3693、初值 0xFFFFFFFFFFFFFFFF、RefIn／RefOut 为真、XorOut 0xFFFFFFFFFFFFFFFF、校验 0x59C3325B2927A19A 计算。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00822` | `SU-ARINC-645-4.4-P035-PROSE-SENTENCE-001-70BD2A2243B2`<br>`ARINC-645 4.4 p.29` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `STORE-CHECK-VALUES-BIG-ENDIAN-AND-DEPRECATE-SHORT-FILE-CRCS` / `CHECK-VALUE, FILE-CONTENT` / `STORE-CHECK-VALUES-BIG-ENDIAN-AND-DEPRECATE-SHORT-FILE-CRCS-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | Store check-values big-endian and 16-bit aligned. Do not use 8-bit or 16-bit CRCs as file check-values for large files over 4 kb. Treat MD5 and SHA-1 as legacy-only methods, not current airborne security evidence.<br>校验值按大端且 16 位对齐存储。超过 4 kb 的大文件不得把 8／16 位 CRC 当作文件校验值。MD5 与 SHA-1 仅为遗留方法，不是当前机载安全证据。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00823` | `SU-ARINC-645-4.5-P036-TABLE-ROW-001-EF5985209453`<br>`ARINC-645 4.5 p.30` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `ENCODE-CHECK-VALUE-TYPE-AND-LENGTH` / `CHECK-VALUE-TYPE, CHECK-VALUE-LENGTH` / `ENCODE-CHECK-VALUE-TYPE-AND-LENGTH-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | Encode check-value types 1-8 with lengths 2 (16-bit aligned), 2, 4, 16, 20, 32, 64 and 8 bytes. 8-bit CRC is only for 665 part-number text. 16-bit CRC is acceptable under 32 kb (about 4093 bytes). Selecting a type is not capability evidence that the algorithm was executed.<br>校验值类型 1–8 的长度分别为 2（16 位对齐）、2、4、16、20、32、64 和 8 字节。8 位 CRC 仅用于 665 件号文本。16 位 CRC 可用于约 32 kb（约 4093 字节）以下。选定类型不是算法已执行的能力证据。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00824` | `SU-ARINC-645-7.1-P047-PROSE-SENTENCE-001-E4532032D568`<br>`ARINC-645 7.1 p.41` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `ASSIGN-UNIQUE-PART-NUMBER-PER-BIT-IMAGE` / `SOFTWARE-PART-NUMBER, BIT-IMAGE` / `ASSIGN-UNIQUE-PART-NUMBER-PER-BIT-IMAGE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | Assign a unique part number to each unique bit image in target memory. The same part number may be used across 615 and 615A formats only when the bit image is identical on multi-compatible media. Any bit change requires a new part number.<br>目标内存中每一独特比特映像赋予唯一件号。仅当比特映像相同且位于多兼容媒体时，才可在 615 与 615A 格式间使用同一件号。任何比特变化都需要新件号。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00825` | `SU-ARINC-645-7.2-P047-PROSE-SENTENCE-001-59DA185021EC`<br>`ARINC-645 7.2 p.41` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `RESTRICT-HEADER-DATA-SUPPORT-FILENAMES` / `HEADER-FILE-NAME, DATA-FILE-NAME, SUPPORT-FILE-NAME` / `RESTRICT-HEADER-DATA-SUPPORT-FILENAMES-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | Keep header, data and support filenames at most 255 characters including '.' plus extension, starting with a three-character manufacturer code, excluding the forbidden ASCII subset, and rejecting '.' and '..'.<br>头／数据／支持文件名最长 255 字符（含 “.” 与扩展名），以三字符制造商代码开头，排除禁止 ASCII 子集，并禁止 “.”／“..”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00826` | `SU-ARINC-645-7.2-P048-PROSE-SENTENCE-002-5A3DF105E50B`<br>`ARINC-645 7.2 p.42` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `KEEP-UNIQUE-CASE-SENSITIVE-NAMES-IN-ONE-615A-SESSION` / `DATA-FILE-NAME, SUPPORT-FILE-NAME, LOADABLE-SOFTWARE-PART` / `KEEP-UNIQUE-CASE-SENSITIVE-NAMES-IN-ONE-615A-SESSION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | Keep data and support filenames unique across LSPs loaded to a target in one uninterrupted 615A session. 665 names and internal references are case-sensitive; names that differ only by case denote the same file and are not distinct LSPs.<br>在一次不间断 615A 加载会话中，同一目标上各 LSP 的数据／支持文件名必须唯一。665 名称及内部引用区分大小写；仅大小写不同的名字表示同一文件，不是不同 LSP。 | — | DEP-ARINC-645, GAP-ARINC-645 |
 
 ## Observable timing semantics
 
@@ -1073,8 +1082,8 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `CRS-M1-00541` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
 | `CRS-M1-00542` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
 | `CRS-M1-00543` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
-| `CRS-M1-00544` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `DEPENDENCY-BLOCKED` — ARINC 645 is acquired locally but is not bound in this PR; CRC algorithm identity stays not established. | — |
-| `CRS-M1-00545` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `DEPENDENCY-BLOCKED` — ARINC 645 is acquired locally but is not bound in this PR; CRC algorithm identity stays not established. | — |
+| `CRS-M1-00544` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `POINTS-TO-BOUND-645-LEAF` — 665 records the batch-file CRC trigger. Algorithm parameters are the bound 645 leaf CRS-M1-00819. Capability/execution remains not established. | — |
+| `CRS-M1-00545` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `POINTS-TO-BOUND-645-LEAF` — 665 records the batch-file CRC trigger. Algorithm parameters are the bound 645 leaf CRS-M1-00819. Capability/execution remains not established. | — |
 | `CRS-M1-00546` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
 | `CRS-M1-00547` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
 | `CRS-M1-00548` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
@@ -2792,13 +2801,13 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 
 ## 清单
 
-- 覆盖行：3106
-- CRS 项：816
+- 覆盖行：3115
+- CRS 项：825
 - 依赖：15
 - 缺口：1
-- 覆盖指纹：`2d492fd8a9711186f6af9a098fc99ee2004782bbed0afde410ae70a64e1c1334`
-- 需求指纹：`e25019ff35ada475c320e13a3e7f8680eeeabd35ed116dc8a795d54021d50fe1`
-- 来源单元指纹：`588023a1d42d0654f8b6dda0f319c83c2a008dc146ae9119d76b534a54d6be12`
+- 覆盖指纹：`c45eb50bcc8cd704142ffeadf6ba5f932db4f65e17c63add6603a374663ce50b`
+- 需求指纹：`d3982bbe8d6658433cbdd9679babb86ddf635fec37532a92525ff082a25f426f`
+- 来源单元指纹：`e5d9c383a51b53092f211731c7dce7eb842bbb15bde31ea8eac05e18cc54c4f9`
 - 自动检查只覆盖结构与跨记录一致性；专有来源的完整性与忠实度仍须外部 RG0 评审。
 - `generatedSemanticProjectionEn/Zh` 是受断言约束的漂移投影，不是独立 RG1 证据。
 - 665 边政策：`REQUIREMENT-LEVEL-615A-TO-665-EDGES-DEFERRED-TO-M2-ATTACHMENT-RECONCILIATION`
@@ -2806,7 +2815,7 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 ## 适用性
 
 - `APPLICABLE-BASE`：89
-- `APPLICABLE-SUPPORTING`：462
+- `APPLICABLE-SUPPORTING`：471
 - `CONDITIONAL`：265
 
 ## 来源模态
@@ -2815,13 +2824,13 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 - `FACT`：147
 - `FIGURE-CONSTRAINT`：63
 - `MAY`：61
-- `MUST`：45
-- `SHOULD`：347
-- `TABLE-CONSTRAINT`：149
+- `MUST`：47
+- `SHOULD`：349
+- `TABLE-CONSTRAINT`：154
 
 ## 符合性效果
 
-- `CONDITIONAL-REQUIRED`：235
+- `CONDITIONAL-REQUIRED`：244
 - `INFORMATIVE`：17
 - `OPTIONAL`：60
 - `PROHIBITED`：3
@@ -2829,7 +2838,7 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 
 ## 开放依赖与缺口
 
-- `DEP-ARINC-645` — OPEN-DEPENDENCY：ARINC 645 算法来源仍未取得。
+- `DEP-ARINC-645` — OPEN-DEPENDENCY：ARINC 645-1 身份与 615A 触发的语义叶已绑定。实现、配置与执行证据尚未建立。
 - `DEP-ARINC-664-2` — OPEN-DEPENDENCY：以太网物理层与链路层语义仍开放。
 - `DEP-ARINC-664-3` — OPEN-DEPENDENCY：已接收 P3-1 身份；版次与网络适用性评审仍开放。
 - `DEP-ARINC-664-4` — OPEN-DEPENDENCY：已接收 664P4-1；已为 615A 附录 E 第一条替代路径发出地址规则叶。集成商指明路径仍开放。这不选定第 4 部分，也不激活 AFDX。
@@ -2844,7 +2853,7 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 - `DEP-RFC-2349` — OPEN-DEPENDENCY：TFTP 超时与传输大小选项身份仍开放。
 - `DEP-RFC-768` — OPEN-DEPENDENCY：UDP 身份与适用性仍开放。
 - `DEP-RFC-791` — OPEN-DEPENDENCY：IP 身份与适用性仍开放。
-- `GAP-ARINC-645` — NOT-ESTABLISHED：依赖 ARINC 645 的验证仍受阻。
+- `GAP-ARINC-645` — NOT-ESTABLISHED：645 来源绑定后，依赖 ARINC 645 的验证在能力／执行层仍未建立。
 
 ## 网络引用审计与批准阻塞项
 
@@ -3460,7 +3469,7 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `CRS-M1-00542` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-001-F4394EF0EEC6`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MATCH-HEADER-FILE-NAME-TO-LISTED-LSP` / `HEADER-FILE-NAME, LOAD-PN` / `HEADER-FILE-NAME-MATCH-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 头文件名必须与 Load PN 字段所标识 LSP 的头文件一致。 | — | DEP-ARINC-6655 |
 | `CRS-M1-00543` | `SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-001-4385D6046683`<br>`ARINC-665-5 2.3.1.19 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MATCH-LOAD-PN-TO-LSP-FOR-TARGET-HW-ID-POS` / `LOAD-PN, TARGET-HW-ID-POS` / `LOAD-PN-MATCH-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Load PN 必须与要加载到该 Target HW ID POS 的 LSP 件号一致。 | — | DEP-ARINC-6655 |
 | `CRS-M1-00544` | `SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-001-216B865544A5`<br>`ARINC-665-5 2.3.1.20 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PLACE-BATCH-FILE-CRC-COVERING-FILE-EXCLUDING-CRC-FIELD` / `BATCH-FILE-CRC` / `BATCH-FILE-CRC-FIELD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件 CRC 是覆盖该文件且不含 CRC 字段自身的 16 位 CRC。算法身份仍由 ARINC 645 阻塞。 | — | DEP-ARINC-645, GAP-ARINC-645 |
-| `CRS-M1-00545` | `SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-002-2E8577AE49D2`<br>`ARINC-665-5 2.3.1.20 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `COMPUTE-BATCH-FILE-CRC-PER-ARINC-645` / `BATCH-FILE-CRC` / `BATCH-FILE-CRC-ALGORITHM-BLOCKED-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件 CRC 须按 ARINC 645 计算。本 PR 只记录 665 触发点，不绑定 645。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00545` | `SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-002-2E8577AE49D2`<br>`ARINC-665-5 2.3.1.20 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `COMPUTE-BATCH-FILE-CRC-PER-ARINC-645` / `BATCH-FILE-CRC` / `BATCH-FILE-CRC-ALGORITHM-BLOCKED-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件 CRC 须按 ARINC 645 计算。本 PR 将该身份绑定到 CRS-M1-00819；并不建立 CRC-VALIDATION。 | — | DEP-ARINC-645, GAP-ARINC-645 |
 | `CRS-M1-00546` | `SU-ARINC-665-5-TABLE-2-3-1-1-R001`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的批处理文件长度字段编码为 32 位，并以 16 位字计数整个文件。 | — | DEP-ARINC-6655 |
 | `CRS-M1-00547` | `SU-ARINC-665-5-TABLE-2-3-1-1-R002`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-FORMAT-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的批处理文件格式版本字段编码为 16 位。 | — | DEP-ARINC-6655 |
 | `CRS-M1-00548` | `SU-ARINC-665-5-TABLE-2-3-1-1-R003`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-SPARE` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的 Spare 字段编码为 16 位，用于对齐随后的指针。本源单元不把该字段值约束为零。 | — | DEP-ARINC-6655 |
@@ -3733,6 +3742,15 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `CRS-M1-00815` | `SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-001-B4EEE0548816`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-TX-VL-IDENTIFIER` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, DEFAULT-TX-VL-IDENTIFIER` / `AFDX-SWITCH-DEFAULT-TX-VL-IDENTIFIER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，缺省发送配置含符合图 4-7 的 VL 标识 VL(1,position)。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
 | `CRS-M1-00816` | `SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-002-CEA54264E86E`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-TX-BAG` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, DEFAULT-TX-BAG` / `AFDX-SWITCH-DEFAULT-TX-BAG-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，缺省发送配置含带宽分配间隔。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
 | `CRS-M1-00817` | `SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-003-5CA99BF9BB8B`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-TX-SMAX` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, DEFAULT-TX-SMAX` / `AFDX-SWITCH-DEFAULT-TX-SMAX-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，缺省发送配置含最大以太网行长 s max。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00818` | `SU-ARINC-645-4.3.4-P032-TABLE-ROW-001-945EF33DA084`<br>`ARINC-645 4.3.4 p.26` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `COMPUTE-CRC-8-WITH-GENERATOR-01-INIT-00` / `CRC-8, PART-NUMBER-CHECK-CHARACTERS` / `COMPUTE-CRC-8-WITH-GENERATOR-01-INIT-00-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | 当需要 665 件号校验字符时，按宽度 8、生成器 0x01、初值 0x00、RefIn／RefOut 为假、XorOut 0x00、校验 0x00 计算 CRC-8。该 CRC-8 不是通用卡死于零检测器，也不是整文件完整性算法。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00819` | `SU-ARINC-645-4.3.5-P033-TABLE-ROW-001-184AB181958C`<br>`ARINC-645 4.3.5 p.27` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `COMPUTE-CRC-16-WITH-GENERATOR-1021-INIT-FFFF` / `CRC-16, LOADABLE-SOFTWARE-PART` / `COMPUTE-CRC-16-WITH-GENERATOR-1021-INIT-FFFF-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | 当需要对 LSP 作粗检的 16 位 CRC 时，按宽度 16、生成器 0x1021、初值 0xFFFF、RefIn／RefOut 为假、XorOut 0x0000、校验 0x3FBD 计算。这不是仅 NVM 验证，也不是完整完整性证据。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00820` | `SU-ARINC-645-4.3.6-P034-TABLE-ROW-001-974432EB0973`<br>`ARINC-645 4.3.6 p.28` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `COMPUTE-CRC-32-WITH-GENERATOR-04C11DB7-INIT-FFFFFFFF` / `CRC-32, FILE-CONTENT` / `COMPUTE-CRC-32-WITH-GENERATOR-04C11DB7-INIT-FFFFFFFF-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | 当选定 32 位 CRC 为校验值时，按宽度 32、生成器 0x04C11DB7、初值 0xFFFFFFFF、RefIn／RefOut 为假、XorOut 0xFFFFFFFF、校验 0xB6B5EE95 计算。本地 PDF 抽取把初值前缀写成 OxFFFFFFFF；绑定参数为十六进制 0xFFFFFFFF。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00821` | `SU-ARINC-645-4.3.7-P034-TABLE-ROW-001-4F48BE9E9372`<br>`ARINC-645 4.3.7 p.28` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `COMPUTE-CRC-64-WITH-GENERATOR-42F0E1EBA9EA3693-REFLECTED` / `CRC-64, FILE-CONTENT` / `COMPUTE-CRC-64-WITH-GENERATOR-42F0E1EBA9EA3693-REFLECTED-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | 当选定 64 位 CRC 为校验值时，按宽度 64、生成器 0x42F0E1EBA9EA3693、初值 0xFFFFFFFFFFFFFFFF、RefIn／RefOut 为真、XorOut 0xFFFFFFFFFFFFFFFF、校验 0x59C3325B2927A19A 计算。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00822` | `SU-ARINC-645-4.4-P035-PROSE-SENTENCE-001-70BD2A2243B2`<br>`ARINC-645 4.4 p.29` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `STORE-CHECK-VALUES-BIG-ENDIAN-AND-DEPRECATE-SHORT-FILE-CRCS` / `CHECK-VALUE, FILE-CONTENT` / `STORE-CHECK-VALUES-BIG-ENDIAN-AND-DEPRECATE-SHORT-FILE-CRCS-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | 校验值按大端且 16 位对齐存储。超过 4 kb 的大文件不得把 8／16 位 CRC 当作文件校验值。MD5 与 SHA-1 仅为遗留方法，不是当前机载安全证据。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00823` | `SU-ARINC-645-4.5-P036-TABLE-ROW-001-EF5985209453`<br>`ARINC-645 4.5 p.30` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `ENCODE-CHECK-VALUE-TYPE-AND-LENGTH` / `CHECK-VALUE-TYPE, CHECK-VALUE-LENGTH` / `ENCODE-CHECK-VALUE-TYPE-AND-LENGTH-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | 校验值类型 1–8 的长度分别为 2（16 位对齐）、2、4、16、20、32、64 和 8 字节。8 位 CRC 仅用于 665 件号文本。16 位 CRC 可用于约 32 kb（约 4093 字节）以下。选定类型不是算法已执行的能力证据。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00824` | `SU-ARINC-645-7.1-P047-PROSE-SENTENCE-001-E4532032D568`<br>`ARINC-645 7.1 p.41` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `ASSIGN-UNIQUE-PART-NUMBER-PER-BIT-IMAGE` / `SOFTWARE-PART-NUMBER, BIT-IMAGE` / `ASSIGN-UNIQUE-PART-NUMBER-PER-BIT-IMAGE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | 目标内存中每一独特比特映像赋予唯一件号。仅当比特映像相同且位于多兼容媒体时，才可在 615 与 615A 格式间使用同一件号。任何比特变化都需要新件号。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00825` | `SU-ARINC-645-7.2-P047-PROSE-SENTENCE-001-59DA185021EC`<br>`ARINC-645 7.2 p.41` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `RESTRICT-HEADER-DATA-SUPPORT-FILENAMES` / `HEADER-FILE-NAME, DATA-FILE-NAME, SUPPORT-FILE-NAME` / `RESTRICT-HEADER-DATA-SUPPORT-FILENAMES-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | 头／数据／支持文件名最长 255 字符（含 “.” 与扩展名），以三字符制造商代码开头，排除禁止 ASCII 子集，并禁止 “.”／“..”。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00826` | `SU-ARINC-645-7.2-P048-PROSE-SENTENCE-002-5A3DF105E50B`<br>`ARINC-645 7.2 p.42` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED` / `KEEP-UNIQUE-CASE-SENSITIVE-NAMES-IN-ONE-615A-SESSION` / `DATA-FILE-NAME, SUPPORT-FILE-NAME, LOADABLE-SOFTWARE-PART` / `KEEP-UNIQUE-CASE-SENSITIVE-NAMES-IN-ONE-615A-SESSION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | 在一次不间断 615A 加载会话中，同一目标上各 LSP 的数据／支持文件名必须唯一。665 名称及内部引用区分大小写；仅大小写不同的名字表示同一文件，不是不同 LSP。 | — | DEP-ARINC-645, GAP-ARINC-645 |
 
 ## 可观察时序语义
 
@@ -3853,8 +3871,8 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `CRS-M1-00541` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
 | `CRS-M1-00542` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
 | `CRS-M1-00543` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
-| `CRS-M1-00544` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `DEPENDENCY-BLOCKED` — ARINC 645 本地已取得但本 PR 不绑定；CRC 算法身份仍未建立。 | — |
-| `CRS-M1-00545` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `DEPENDENCY-BLOCKED` — ARINC 645 本地已取得但本 PR 不绑定；CRC 算法身份仍未建立。 | — |
+| `CRS-M1-00544` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `POINTS-TO-BOUND-645-LEAF` — 665 记录批处理文件 CRC 触发点。算法参数见已绑定的 645 叶 CRS-M1-00819。能力／执行仍未建立。 | — |
+| `CRS-M1-00545` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `POINTS-TO-BOUND-645-LEAF` — 665 记录批处理文件 CRC 触发点。算法参数见已绑定的 645 叶 CRS-M1-00819。能力／执行仍未建立。 | — |
 | `CRS-M1-00546` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
 | `CRS-M1-00547` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
 | `CRS-M1-00548` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |

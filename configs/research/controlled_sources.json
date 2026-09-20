@@ -126,6 +126,26 @@
           "AFDX-DETERMINISTIC-ETHERNET-SEMANTICS"
         ]
       }
+    },
+    {
+      "id": "ARINC-645",
+      "edition": "645-1",
+      "publicationDate": "2021-08-11",
+      "pageCount": 83,
+      "byteCount": 945950,
+      "sha256": "5efa07ee1930fe170526be952a7b24f6c4760c516663933e61bbacfb6742f095",
+      "role": "BOUNDED-INTEGRITY-AND-NAMING-REFERENCE",
+      "displayGroup": "BOUNDED-ACTIVE",
+      "acquisitionRecordId": "SAR-2026-001",
+      "sourceHandling": "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY",
+      "equivalentReplacementFor": [],
+      "limitations": [
+        "615A-TRIGGERED-UNITS-ONLY",
+        "SOURCE-AND-SEMANTIC-BIND-DOES-NOT-ESTABLISH-CAPABILITY",
+        "APPLICABILITY-AND-TRACEABILITY-PENDING-INDEPENDENT-REVIEW"
+      ],
+      "adoptedOn": "2021-05-13",
+      "titleEn": "ARINC Report 645-1 Common Terminology and Functions for Software Distribution and Loading"
     }
   ],
   "openDependencies": [
@@ -138,7 +158,12 @@
         "NAMING-ALGORITHM-VALIDATION",
         "COMPLETE-INTEGRITY-VALIDATION"
       ],
-      "closureRule": "Acquire and register an authorized source, complete applicability and CRS tracing, and obtain independent approval before claiming affected capabilities."
+      "closureRule": "Source identity and 615A-triggered semantic leaves are recorded. Do not claim CRC-VALIDATION, CHECK-VALUE-VALIDATION, NAMING-ALGORITHM-VALIDATION or COMPLETE-INTEGRITY-VALIDATION until implementation, configuration and execution evidence exist.",
+      "sourceAvailability": "ACQUIRED-IDENTITY-RECORDED",
+      "pendingObligations": [
+        "IMPLEMENTATION-CONFIGURATION-AND-EXECUTION-EVIDENCE",
+        "INDEPENDENT-APPROVAL"
+      ]
     },
     {
       "id": "ARINC-664-3",

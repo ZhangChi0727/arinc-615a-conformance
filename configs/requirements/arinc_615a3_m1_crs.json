@@ -1,7 +1,7 @@
 {
   "schemaVersion": "2.0",
   "artifactId": "ARINC615A3-M1-CRS",
-  "artifactVersion": "M1-CANDIDATE-22",
+  "artifactVersion": "M1-CANDIDATE-23",
   "candidateDisposition": "ADOPT",
   "sourceBindings": [
     {
@@ -63,6 +63,16 @@
       "pageCount": 145,
       "byteCount": 1838153,
       "acquisitionRecordId": "SAR-2026-001"
+    },
+    {
+      "sourceId": "ARINC-645",
+      "role": "BOUNDED-INTEGRITY-AND-NAMING-REFERENCE",
+      "sha256": "5efa07ee1930fe170526be952a7b24f6c4760c516663933e61bbacfb6742f095",
+      "edition": "645-1",
+      "publicationDate": "2021-08-11",
+      "pageCount": 83,
+      "byteCount": 945950,
+      "acquisitionRecordId": "SAR-2026-001"
     }
   ],
   "profileScope": {
@@ -85,7 +95,8 @@
       "policy": "REQUIREMENT-LEVEL-615A-TO-665-EDGES-DEFERRED-TO-M2-ATTACHMENT-RECONCILIATION",
       "acceptedDispositions": [
         "PROFILE-SCOPE-ONLY",
-        "DEPENDENCY-BLOCKED"
+        "DEPENDENCY-BLOCKED",
+        "POINTS-TO-BOUND-645-LEAF"
       ],
       "prohibitedDispositions": [
         "DIRECT-DATA-FORMAT-REFINEMENT",
@@ -76265,6 +76276,240 @@
       "requirementIds": [
         "CRS-M1-00817"
       ]
+    },
+    {
+      "id": "COV-M1-03107",
+      "sourceUnitId": "SU-ARINC-645-4.3.4-P032-TABLE-ROW-001-945EF33DA084",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.3.4",
+        "tableOrFigure": "Table 4-1",
+        "documentPage": 26,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "945ef33da084871b7f2f69aac719daab32e4e9b2bf844a7bfdf48d9a0cac7b45",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00818"
+      ]
+    },
+    {
+      "id": "COV-M1-03108",
+      "sourceUnitId": "SU-ARINC-645-4.3.5-P033-TABLE-ROW-001-184AB181958C",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.3.5",
+        "tableOrFigure": "Table 4-2",
+        "documentPage": 27,
+        "pdfPage": 33,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "184ab181958cb6ece4d4c9cce8be2e4bc5eac076505c2e16c3fef26842787add",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00819"
+      ]
+    },
+    {
+      "id": "COV-M1-03109",
+      "sourceUnitId": "SU-ARINC-645-4.3.6-P034-TABLE-ROW-001-974432EB0973",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.3.6",
+        "tableOrFigure": "Table 4-3",
+        "documentPage": 28,
+        "pdfPage": 34,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "974432eb09739b57a129bbf2668068010ed92d11fa54422a4c597a97e864483e",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00820"
+      ]
+    },
+    {
+      "id": "COV-M1-03110",
+      "sourceUnitId": "SU-ARINC-645-4.3.7-P034-TABLE-ROW-001-4F48BE9E9372",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.3.7",
+        "tableOrFigure": "Table 4-4",
+        "documentPage": 28,
+        "pdfPage": 34,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "4f48be9e937273a4dd120a4accd2d944a58bf073d588c4abb046bafee137b776",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00821"
+      ]
+    },
+    {
+      "id": "COV-M1-03111",
+      "sourceUnitId": "SU-ARINC-645-4.4-P035-PROSE-SENTENCE-001-70BD2A2243B2",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.4",
+        "tableOrFigure": null,
+        "documentPage": 29,
+        "pdfPage": 35,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "70bd2a2243b272460f8ca1e810474df4e17f96ef3c34051114585540aa88ad68",
+      "sourceModality": "MUST",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00822"
+      ]
+    },
+    {
+      "id": "COV-M1-03112",
+      "sourceUnitId": "SU-ARINC-645-4.5-P036-TABLE-ROW-001-EF5985209453",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.5",
+        "tableOrFigure": "Table 4-5",
+        "documentPage": 30,
+        "pdfPage": 36,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "ef59852094534803c34f08d1cd7f8d3fc90963a6eba42e541845124c7990c5f0",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "atomicity": {
+        "ownershipKind": "TABLE-ROW",
+        "sentenceCount": 0,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00823"
+      ]
+    },
+    {
+      "id": "COV-M1-03113",
+      "sourceUnitId": "SU-ARINC-645-7.1-P047-PROSE-SENTENCE-001-E4532032D568",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "7.1",
+        "tableOrFigure": null,
+        "documentPage": 41,
+        "pdfPage": 47,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "e4532032d56818956ca457c9774b691d540ed0a4463717a40720dd16f5feedd7",
+      "sourceModality": "MUST",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00824"
+      ]
+    },
+    {
+      "id": "COV-M1-03114",
+      "sourceUnitId": "SU-ARINC-645-7.2-P047-PROSE-SENTENCE-001-59DA185021EC",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "7.2",
+        "tableOrFigure": null,
+        "documentPage": 41,
+        "pdfPage": 47,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "59da185021ec4360fdc3a37648677cb31579911d1c5201be41fa2952a5222943",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00825"
+      ]
+    },
+    {
+      "id": "COV-M1-03115",
+      "sourceUnitId": "SU-ARINC-645-7.2-P048-PROSE-SENTENCE-002-5A3DF105E50B",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "7.2",
+        "tableOrFigure": null,
+        "documentPage": 42,
+        "pdfPage": 48,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "5a3df105e50be7408fdf4865931649c8820b429723681094ceb9d08776024725",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00826"
+      ]
     }
   ],
   "requirements": [
@@ -102851,9 +103096,9 @@
         "CRS-M1-00085"
       ],
       "triggerRelations": [],
-      "refinementDisposition": "DEPENDENCY-BLOCKED",
-      "refinementRationaleEn": "ARINC 645 is acquired locally but is not bound in this PR; CRC algorithm identity stays not established.",
-      "refinementRationaleZh": "ARINC 645 本地已取得但本 PR 不绑定；CRC 算法身份仍未建立。"
+      "refinementDisposition": "POINTS-TO-BOUND-645-LEAF",
+      "refinementRationaleEn": "665 records the batch-file CRC trigger. Algorithm parameters are the bound 645 leaf CRS-M1-00819. Capability/execution remains not established.",
+      "refinementRationaleZh": "665 记录批处理文件 CRC 触发点。算法参数见已绑定的 645 叶 CRS-M1-00819。能力／执行仍未建立。"
     },
     {
       "id": "CRS-M1-00545",
@@ -102869,8 +103114,8 @@
       },
       "sourceTextHash": "2e8577ae49d29039787cd45da75095d355cc7b8eb8467ea391d9e8060dc24cbc",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "The Batch File CRC shall be computed as defined in ARINC 645. This PR records the 665 trigger but does not bind 645.",
-      "generatedSemanticProjectionZh": "批处理文件 CRC 须按 ARINC 645 计算。本 PR 只记录 665 触发点，不绑定 645。",
+      "generatedSemanticProjectionEn": "The Batch File CRC shall be computed as defined in ARINC 645. This PR binds that identity to CRS-M1-00819; it does not establish CRC-VALIDATION.",
+      "generatedSemanticProjectionZh": "批处理文件 CRC 须按 ARINC 645 计算。本 PR 将该身份绑定到 CRS-M1-00819；并不建立 CRC-VALIDATION。",
       "semantic": {
         "actor": "SOFTWARE-PACKAGE-PRODUCER",
         "condition": "WHEN-PRODUCING-BATCH-FILE-PART",
@@ -102911,9 +103156,9 @@
         "CRS-M1-00085"
       ],
       "triggerRelations": [],
-      "refinementDisposition": "DEPENDENCY-BLOCKED",
-      "refinementRationaleEn": "ARINC 645 is acquired locally but is not bound in this PR; CRC algorithm identity stays not established.",
-      "refinementRationaleZh": "ARINC 645 本地已取得但本 PR 不绑定；CRC 算法身份仍未建立。"
+      "refinementDisposition": "POINTS-TO-BOUND-645-LEAF",
+      "refinementRationaleEn": "665 records the batch-file CRC trigger. Algorithm parameters are the bound 645 leaf CRS-M1-00819. Capability/execution remains not established.",
+      "refinementRationaleZh": "665 记录批处理文件 CRC 触发点。算法参数见已绑定的 645 叶 CRS-M1-00819。能力／执行仍未建立。"
     },
     {
       "id": "CRS-M1-00546",
@@ -116815,6 +117060,431 @@
         "scope": "PER-VL",
         "priorityClass": "NONE"
       }
+    },
+    {
+      "id": "CRS-M1-00818",
+      "sourceUnitId": "SU-ARINC-645-4.3.4-P032-TABLE-ROW-001-945EF33DA084",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.3.4",
+        "tableOrFigure": "Table 4-1",
+        "documentPage": 26,
+        "pdfPage": 32,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "945ef33da084871b7f2f69aac719daab32e4e9b2bf844a7bfdf48d9a0cac7b45",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "When a 665 part-number check character is required, compute CRC-8 with width 8, generator 0x01, init 0x00, RefIn/RefOut false, XorOut 0x00, check 0x00. This CRC-8 is not a general stuck-at-zero detector and is not a complete-file integrity algorithm.",
+      "generatedSemanticProjectionZh": "当需要 665 件号校验字符时，按宽度 8、生成器 0x01、初值 0x00、RefIn／RefOut 为假、XorOut 0x00、校验 0x00 计算 CRC-8。该 CRC-8 不是通用卡死于零检测器，也不是整文件完整性算法。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED",
+        "action": "COMPUTE-CRC-8-WITH-GENERATOR-01-INIT-00",
+        "objects": [
+          "CRC-8",
+          "PART-NUMBER-CHECK-CHARACTERS"
+        ],
+        "observableEffect": "COMPUTE-CRC-8-WITH-GENERATOR-01-INIT-00-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-645"
+      ],
+      "gapIds": [
+        "GAP-ARINC-645"
+      ],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03107",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00819",
+      "sourceUnitId": "SU-ARINC-645-4.3.5-P033-TABLE-ROW-001-184AB181958C",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.3.5",
+        "tableOrFigure": "Table 4-2",
+        "documentPage": 27,
+        "pdfPage": 33,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "184ab181958cb6ece4d4c9cce8be2e4bc5eac076505c2e16c3fef26842787add",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "When a 16-bit CRC is required for a cursory LSP check, compute CRC-16 with width 16, generator 0x1021, init 0xFFFF, RefIn/RefOut false, XorOut 0x0000, check 0x3FBD. This is not NVM-only validation and is not complete-integrity evidence.",
+      "generatedSemanticProjectionZh": "当需要对 LSP 作粗检的 16 位 CRC 时，按宽度 16、生成器 0x1021、初值 0xFFFF、RefIn／RefOut 为假、XorOut 0x0000、校验 0x3FBD 计算。这不是仅 NVM 验证，也不是完整完整性证据。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED",
+        "action": "COMPUTE-CRC-16-WITH-GENERATOR-1021-INIT-FFFF",
+        "objects": [
+          "CRC-16",
+          "LOADABLE-SOFTWARE-PART"
+        ],
+        "observableEffect": "COMPUTE-CRC-16-WITH-GENERATOR-1021-INIT-FFFF-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-645"
+      ],
+      "gapIds": [
+        "GAP-ARINC-645"
+      ],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03108",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00820",
+      "sourceUnitId": "SU-ARINC-645-4.3.6-P034-TABLE-ROW-001-974432EB0973",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.3.6",
+        "tableOrFigure": "Table 4-3",
+        "documentPage": 28,
+        "pdfPage": 34,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "974432eb09739b57a129bbf2668068010ed92d11fa54422a4c597a97e864483e",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "When a 32-bit CRC is the selected check-value, compute CRC-32 with width 32, generator 0x04C11DB7, init 0xFFFFFFFF, RefIn/RefOut false, XorOut 0xFFFFFFFF, check 0xB6B5EE95. The local PDF extract writes the init prefix as OxFFFFFFFF; the bound parameter is hexadecimal 0xFFFFFFFF.",
+      "generatedSemanticProjectionZh": "当选定 32 位 CRC 为校验值时，按宽度 32、生成器 0x04C11DB7、初值 0xFFFFFFFF、RefIn／RefOut 为假、XorOut 0xFFFFFFFF、校验 0xB6B5EE95 计算。本地 PDF 抽取把初值前缀写成 OxFFFFFFFF；绑定参数为十六进制 0xFFFFFFFF。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED",
+        "action": "COMPUTE-CRC-32-WITH-GENERATOR-04C11DB7-INIT-FFFFFFFF",
+        "objects": [
+          "CRC-32",
+          "FILE-CONTENT"
+        ],
+        "observableEffect": "COMPUTE-CRC-32-WITH-GENERATOR-04C11DB7-INIT-FFFFFFFF-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "SOURCE-OCR-OX-FOR-HEX-PREFIX",
+      "dependencyIds": [
+        "DEP-ARINC-645"
+      ],
+      "gapIds": [
+        "GAP-ARINC-645"
+      ],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03109",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00821",
+      "sourceUnitId": "SU-ARINC-645-4.3.7-P034-TABLE-ROW-001-4F48BE9E9372",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.3.7",
+        "tableOrFigure": "Table 4-4",
+        "documentPage": 28,
+        "pdfPage": 34,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "4f48be9e937273a4dd120a4accd2d944a58bf073d588c4abb046bafee137b776",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "When a 64-bit CRC is the selected check-value, compute CRC-64 with width 64, generator 0x42F0E1EBA9EA3693, init 0xFFFFFFFFFFFFFFFF, RefIn true, RefOut true, XorOut 0xFFFFFFFFFFFFFFFF, check 0x59C3325B2927A19A.",
+      "generatedSemanticProjectionZh": "当选定 64 位 CRC 为校验值时，按宽度 64、生成器 0x42F0E1EBA9EA3693、初值 0xFFFFFFFFFFFFFFFF、RefIn／RefOut 为真、XorOut 0xFFFFFFFFFFFFFFFF、校验 0x59C3325B2927A19A 计算。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED",
+        "action": "COMPUTE-CRC-64-WITH-GENERATOR-42F0E1EBA9EA3693-REFLECTED",
+        "objects": [
+          "CRC-64",
+          "FILE-CONTENT"
+        ],
+        "observableEffect": "COMPUTE-CRC-64-WITH-GENERATOR-42F0E1EBA9EA3693-REFLECTED-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-645"
+      ],
+      "gapIds": [
+        "GAP-ARINC-645"
+      ],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03110",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00822",
+      "sourceUnitId": "SU-ARINC-645-4.4-P035-PROSE-SENTENCE-001-70BD2A2243B2",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.4",
+        "tableOrFigure": null,
+        "documentPage": 29,
+        "pdfPage": 35,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "70bd2a2243b272460f8ca1e810474df4e17f96ef3c34051114585540aa88ad68",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Store check-values big-endian and 16-bit aligned. Do not use 8-bit or 16-bit CRCs as file check-values for large files over 4 kb. Treat MD5 and SHA-1 as legacy-only methods, not current airborne security evidence.",
+      "generatedSemanticProjectionZh": "校验值按大端且 16 位对齐存储。超过 4 kb 的大文件不得把 8／16 位 CRC 当作文件校验值。MD5 与 SHA-1 仅为遗留方法，不是当前机载安全证据。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED",
+        "action": "STORE-CHECK-VALUES-BIG-ENDIAN-AND-DEPRECATE-SHORT-FILE-CRCS",
+        "objects": [
+          "CHECK-VALUE",
+          "FILE-CONTENT"
+        ],
+        "observableEffect": "STORE-CHECK-VALUES-BIG-ENDIAN-AND-DEPRECATE-SHORT-FILE-CRCS-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "MUST",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-645"
+      ],
+      "gapIds": [
+        "GAP-ARINC-645"
+      ],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03111",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00823",
+      "sourceUnitId": "SU-ARINC-645-4.5-P036-TABLE-ROW-001-EF5985209453",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.5",
+        "tableOrFigure": "Table 4-5",
+        "documentPage": 30,
+        "pdfPage": 36,
+        "fragmentKind": "TABLE-ROW",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "ef59852094534803c34f08d1cd7f8d3fc90963a6eba42e541845124c7990c5f0",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Encode check-value types 1-8 with lengths 2 (16-bit aligned), 2, 4, 16, 20, 32, 64 and 8 bytes. 8-bit CRC is only for 665 part-number text. 16-bit CRC is acceptable under 32 kb (about 4093 bytes). Selecting a type is not capability evidence that the algorithm was executed.",
+      "generatedSemanticProjectionZh": "校验值类型 1–8 的长度分别为 2（16 位对齐）、2、4、16、20、32、64 和 8 字节。8 位 CRC 仅用于 665 件号文本。16 位 CRC 可用于约 32 kb（约 4093 字节）以下。选定类型不是算法已执行的能力证据。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED",
+        "action": "ENCODE-CHECK-VALUE-TYPE-AND-LENGTH",
+        "objects": [
+          "CHECK-VALUE-TYPE",
+          "CHECK-VALUE-LENGTH"
+        ],
+        "observableEffect": "ENCODE-CHECK-VALUE-TYPE-AND-LENGTH-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "TABLE-CONSTRAINT",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-645"
+      ],
+      "gapIds": [
+        "GAP-ARINC-645"
+      ],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03112",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00824",
+      "sourceUnitId": "SU-ARINC-645-7.1-P047-PROSE-SENTENCE-001-E4532032D568",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "7.1",
+        "tableOrFigure": null,
+        "documentPage": 41,
+        "pdfPage": 47,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "e4532032d56818956ca457c9774b691d540ed0a4463717a40720dd16f5feedd7",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Assign a unique part number to each unique bit image in target memory. The same part number may be used across 615 and 615A formats only when the bit image is identical on multi-compatible media. Any bit change requires a new part number.",
+      "generatedSemanticProjectionZh": "目标内存中每一独特比特映像赋予唯一件号。仅当比特映像相同且位于多兼容媒体时，才可在 615 与 615A 格式间使用同一件号。任何比特变化都需要新件号。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED",
+        "action": "ASSIGN-UNIQUE-PART-NUMBER-PER-BIT-IMAGE",
+        "objects": [
+          "SOFTWARE-PART-NUMBER",
+          "BIT-IMAGE"
+        ],
+        "observableEffect": "ASSIGN-UNIQUE-PART-NUMBER-PER-BIT-IMAGE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "MUST",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-645"
+      ],
+      "gapIds": [
+        "GAP-ARINC-645"
+      ],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03113",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00825",
+      "sourceUnitId": "SU-ARINC-645-7.2-P047-PROSE-SENTENCE-001-59DA185021EC",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "7.2",
+        "tableOrFigure": null,
+        "documentPage": 41,
+        "pdfPage": 47,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "59da185021ec4360fdc3a37648677cb31579911d1c5201be41fa2952a5222943",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Keep header, data and support filenames at most 255 characters including '.' plus extension, starting with a three-character manufacturer code, excluding the forbidden ASCII subset, and rejecting '.' and '..'.",
+      "generatedSemanticProjectionZh": "头／数据／支持文件名最长 255 字符（含 “.” 与扩展名），以三字符制造商代码开头，排除禁止 ASCII 子集，并禁止 “.”／“..”。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED",
+        "action": "RESTRICT-HEADER-DATA-SUPPORT-FILENAMES",
+        "objects": [
+          "HEADER-FILE-NAME",
+          "DATA-FILE-NAME",
+          "SUPPORT-FILE-NAME"
+        ],
+        "observableEffect": "RESTRICT-HEADER-DATA-SUPPORT-FILENAMES-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-645"
+      ],
+      "gapIds": [
+        "GAP-ARINC-645"
+      ],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03114",
+        "status": "CANDIDATE"
+      }
+    },
+    {
+      "id": "CRS-M1-00826",
+      "sourceUnitId": "SU-ARINC-645-7.2-P048-PROSE-SENTENCE-002-5A3DF105E50B",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "7.2",
+        "tableOrFigure": null,
+        "documentPage": 42,
+        "pdfPage": 48,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 2
+      },
+      "sourceTextHash": "5a3df105e50be7408fdf4865931649c8820b429723681094ceb9d08776024725",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "Keep data and support filenames unique across LSPs loaded to a target in one uninterrupted 615A session. 665 names and internal references are case-sensitive; names that differ only by case denote the same file and are not distinct LSPs.",
+      "generatedSemanticProjectionZh": "在一次不间断 615A 加载会话中，同一目标上各 LSP 的数据／支持文件名必须唯一。665 名称及内部引用区分大小写；仅大小写不同的名字表示同一文件，不是不同 LSP。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-OR-NAMING-IS-REQUIRED",
+        "action": "KEEP-UNIQUE-CASE-SENSITIVE-NAMES-IN-ONE-615A-SESSION",
+        "objects": [
+          "DATA-FILE-NAME",
+          "SUPPORT-FILE-NAME",
+          "LOADABLE-SOFTWARE-PART"
+        ],
+        "observableEffect": "KEEP-UNIQUE-CASE-SENSITIVE-NAMES-IN-ONE-615A-SESSION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "NONE-OBSERVED",
+      "dependencyIds": [
+        "DEP-ARINC-645"
+      ],
+      "gapIds": [
+        "GAP-ARINC-645"
+      ],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03115",
+        "status": "CANDIDATE"
+      }
     }
   ],
   "dependencies": [
@@ -116822,8 +117492,8 @@
       "id": "DEP-ARINC-645",
       "sourceId": "ARINC-645",
       "status": "OPEN-DEPENDENCY",
-      "summaryEn": "ARINC 645 algorithms remain unavailable.",
-      "summaryZh": "ARINC 645 算法来源仍未取得。"
+      "summaryEn": "ARINC 645-1 identity and 615A-triggered semantic leaves are bound. Implementation, configuration and execution evidence are not established.",
+      "summaryZh": "ARINC 645-1 身份与 615A 触发的语义叶已绑定。实现、配置与执行证据尚未建立。"
     },
     {
       "id": "DEP-ARINC-664-2",
@@ -116972,32 +117642,32 @@
         "CRC-VALIDATION",
         "NAMING-ALGORITHM-VALIDATION"
       ],
-      "summaryEn": "ARINC 645-dependent validation remains blocked.",
-      "summaryZh": "依赖 ARINC 645 的验证仍受阻。"
+      "summaryEn": "ARINC 645-dependent validation remains not established at capability/execution level after source bind.",
+      "summaryZh": "645 来源绑定后，依赖 ARINC 645 的验证在能力／执行层仍未建立。"
     }
   ],
   "reviewControl": {
     "rg0": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "rg1": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "reviewHead": "UNBOUND-DRAFT",
-    "sourceInventoryFingerprint": "588023a1d42d0654f8b6dda0f319c83c2a008dc146ae9119d76b534a54d6be12",
+    "sourceInventoryFingerprint": "e5d9c383a51b53092f211731c7dce7eb842bbb15bde31ea8eac05e18cc54c4f9",
     "sectionSpanManifestPath": "configs/requirements/m1_source_section_spans.json",
-    "sectionSpanManifestFingerprint": "2630995a15aa2fe1d789f338d24d416f8ab32e0b028f75ad6928e0297b9b09e0",
+    "sectionSpanManifestFingerprint": "a18d95ffff9c4d9e77cd76fd2f9b9afc500509f80322b6fbc9b836e0def55397",
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "fb4ec804e4a5d71f9d0a50f9d2325820d1b796dc0319b86b7584439a7350be5e",
+    "semanticAssertionFingerprint": "6720a9a62adc73e650a897ead38f235f18ebc52cc96f051b3ee937f197def689",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
   },
   "inventorySummary": {
-    "coverageCount": 3106,
-    "requirementCount": 816,
+    "coverageCount": 3115,
+    "requirementCount": 825,
     "dependencyCount": 15,
     "gapCount": 1,
-    "coverageFingerprint": "2d492fd8a9711186f6af9a098fc99ee2004782bbed0afde410ae70a64e1c1334",
-    "requirementsFingerprint": "e25019ff35ada475c320e13a3e7f8680eeeabd35ed116dc8a795d54021d50fe1"
+    "coverageFingerprint": "c45eb50bcc8cd704142ffeadf6ba5f932db4f65e17c63add6603a374663ce50b",
+    "requirementsFingerprint": "d3982bbe8d6658433cbdd9679babb86ddf635fec37532a92525ff082a25f426f"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

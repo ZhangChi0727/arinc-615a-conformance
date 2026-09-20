@@ -8,16 +8,16 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-22",
-    "coverageCount": 3106,
-    "requirementCount": 816,
-    "coverageFingerprint": "2d492fd8a9711186f6af9a098fc99ee2004782bbed0afde410ae70a64e1c1334",
-    "requirementsFingerprint": "e25019ff35ada475c320e13a3e7f8680eeeabd35ed116dc8a795d54021d50fe1",
+    "artifactVersion": "M1-CANDIDATE-23",
+    "coverageCount": 3115,
+    "requirementCount": 825,
+    "coverageFingerprint": "c45eb50bcc8cd704142ffeadf6ba5f932db4f65e17c63add6603a374663ce50b",
+    "requirementsFingerprint": "d3982bbe8d6658433cbdd9679babb86ddf635fec37532a92525ff082a25f426f",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
     ],
-    "note": "P7 4.7.3.2 filtering-table members are source-owned LIST-ITEM leaves bound to 00778/00779. Default RX/TX field bullets are likewise owned. SHOP/MIB stay out of profile. 665 section 2.3 stays emitted, CRC 645-blocked. Part 4 remains an open alternative. 645 stays acquired-not-bound. This is not independent RG approval."
+    "note": "ARINC 645-1 2021 is identity-bound for 615A-triggered CRC, check-value and naming leaves. Four integrity capabilities stay NOT-ESTABLISHED. Bound M2 stays UPLOAD/INFORMATION. This is not independent RG approval."
   },
   "rules": [
     "New CRS rows must express source-stated actor, condition, action, objects, receiver and polarity in both languages.",
@@ -27,11 +27,11 @@
     "Ordinary Ethernet, Compliant, Profiled and AFDX stay separate configuration dimensions."
   ],
   "summary": {
-    "coverageCount": 3106,
-    "requirementCount": 816,
+    "coverageCount": 3115,
+    "requirementCount": 825,
     "applicabilityDecisions": {
       "OUT-OF-PROFILE": 973,
-      "APPLICABLE-SUPPORTING": 1309,
+      "APPLICABLE-SUPPORTING": 1318,
       "APPLICABLE-BASE": 286,
       "CONDITIONAL": 538
     },
@@ -171,7 +171,8 @@
       "AFDX-MAC-SOURCE-INTERFACE-ID-101-NOT-USED": 1,
       "AFDX-MAC-SOURCE-INTERFACE-ID-110-NOT-USED": 1,
       "AFDX-MAC-SOURCE-INTERFACE-ID-111-NOT-USED": 1,
-      "P3-DOCUMENT-CONTROL-INFORMATIVE": 2
+      "P3-DOCUMENT-CONTROL-INFORMATIVE": 2,
+      "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING": 9
     },
     "deferredFutureScope": {
       "total": 0,
@@ -197,9 +198,9 @@
     "sourceId": "ARINC-645",
     "status": "BLOCKED-SOURCE-645",
     "localFileAcquired": true,
-    "boundThisPr": false,
-    "note": "The ARINC 645-1 2021 file is held locally. This PR does not admit 645 applicability or CRS binding. Unique algorithm, constant and naming details stay blocked. Obligations already explicit in 615A/665 remain in scope and must not be deleted because 645 is unbound in this PR.",
-    "noteZh": "本地已持有 ARINC 645-1 2021 文件。本 PR 不纳入 645 适用性或 CRS 绑定。独有算法、常数与命名细节保持阻塞。615A/665 已明确的义务仍在范围内，不得因本 PR 未绑定 645 而删除。"
+    "boundThisPr": true,
+    "note": "ARINC 645-1 2021 identity and 615A-triggered semantic leaves are bound. CRC-VALIDATION, CHECK-VALUE-VALIDATION, NAMING-ALGORITHM-VALIDATION and COMPLETE-INTEGRITY-VALIDATION remain NOT-ESTABLISHED because implementation, configuration and execution evidence are absent. Binding the file is not a conformance test.",
+    "noteZh": "ARINC 645-1 2021 身份与 615A 触发的语义叶已绑定。四项完整性能力仍为 NOT-ESTABLISHED，因为实现、配置与执行证据缺失。绑定原文不是符合性测试。"
   },
   "sourceReread": {
     "standard": "ARINC-615A-3",
@@ -243,7 +244,7 @@
       "FIND, DOWNLOAD and AFDX-appendix bilingual CRS are corrected in M1-CANDIDATE-7 after RR-CLTAV-2026-008 REWORK. Commentary and examples stay non-normative.",
       "Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance.",
       "Bound M2 does not execute FIND, DOWNLOAD or AFDX. FIND timing is observational catalog only. Protocol Version and Download List Ratio are fixed-width ASCII; LNR user-defined tail fields do not repeat per file.",
-      "665/664/RFC bounded clause-level applicability is recorded in supportingSourceApplicabilityAudit. Empty dependencyIds still do not mean no dependency. 645 is acquired locally but not bound. Software Ethernet experiments do not prove AFDX hardware. This is not independent RG, mathematical or architecture approval."
+      "665/664/RFC bounded clause-level applicability is recorded in supportingSourceApplicabilityAudit. Empty dependencyIds still do not mean no dependency. 645-1 2021 is SOURCE/SEMANTIC bound; four integrity capabilities stay NOT-ESTABLISHED. Software Ethernet experiments do not prove AFDX hardware. This is not independent RG, mathematical or architecture approval."
     ],
     "units": [
       {
@@ -9982,10 +9983,10 @@
   },
   "supportingSourceApplicabilityAudit": {
     "boundHead": "13d4be79377e109a18170a7dcec0e792c54d5f83",
-    "changeRequest": "CR-2026-012",
+    "changeRequest": "CR-2026-013",
     "assuranceBoundary": "Clause/section-level bounded applicability for 665-5, 664 P2/P3/P4/P7 and RFC 768/791/1122/1123/1350/1785/2347/2348/2349. Not sentence-leaf CRS completeness, not independent RG approval, not capability establishment, not AFDX instance activation. Part 4 recording does not select that alternative over integrator-identified address requirements.",
     "notIndependentApproval": true,
-    "645BindingThisPr": false,
+    "645BindingThisPr": true,
     "findAbortAdjudication": {
       "status": "APPLIED-IN-CRS",
       "code": "FIND-ABORT-DOES-NOT-WAIVE-WINDOWS",
@@ -13166,9 +13167,17 @@
               },
               {
                 "id": "SAU-665-2-3-REMAINING-CRC-ALGORITHM-IDENTITY",
-                "disposition": "DEPENDENCY-BLOCKED",
-                "summaryEn": "CRC/check-value algorithm identity remains blocked by unbound ARINC 645; field presence stays on the 665 leaves.",
-                "summaryZh": "CRC／校验值算法身份仍由未绑定的 ARINC 645 阻塞；字段存在性仍在 665 叶上。"
+                "disposition": "CAPABILITY-NOT-ESTABLISHED",
+                "summaryEn": "CRC/check-value algorithm identity now points at bound 645 leaves; implementation and execution evidence remain not established.",
+                "summaryZh": "CRC／校验值算法身份现指向已绑定的 645 叶；实现与执行证据仍未建立。",
+                "bound645RequirementIds": [
+                  "CRS-M1-00818",
+                  "CRS-M1-00819",
+                  "CRS-M1-00820",
+                  "CRS-M1-00821",
+                  "CRS-M1-00822",
+                  "CRS-M1-00823"
+                ]
               }
             ],
             "admittedLeafUnits": [
@@ -13929,9 +13938,9 @@
               55
             ],
             "unitKind": "SECTION",
-            "applicabilityDecision": "DEPENDENCY-BLOCKED",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
             "conformanceEffect": "INFORMATIVE",
-            "rationaleCode": "RELOCATED-TO-645-NOT-BOUND-THIS-PR",
+            "rationaleCode": "RELOCATED-TO-BOUND-645-LEAVES-CAPABILITY-OPEN",
             "triggeredByOperations": [
               "INFORMATION",
               "UPLOAD",
@@ -13939,10 +13948,69 @@
               "DOWNLOAD-OPERATOR-DEFINED",
               "FIND"
             ],
-            "relationTo615A": "BLOCKED-SOURCE-645",
-            "leafCrsStatus": "NOT-REQUIRED",
-            "summaryEn": "The 665-5 body relocates CRC computation to 645. Unique algorithm/constant details stay blocked this PR even though the 645 file is now held locally. Header CRC field presence in clause 2 remains.",
-            "summaryZh": "665-5 正文将 CRC 计算迁至 645。即便本地已持有 645 文件，本 PR 仍不绑定其独有算法/常数。条款 2 中的头 CRC 字段存在性仍保留。"
+            "relationTo615A": "POINTS-TO-BOUND-645-LEAVES",
+            "leafCrsStatus": "EXISTING-LEAF-VIA-645",
+            "summaryEn": "665 relocates this subject to ARINC 645. Pointers now address bound 645 semantic leaves. Capability/execution remains not established.",
+            "summaryZh": "665 将该主题迁至 ARINC 645。指针现指向已绑定的 645 语义叶。能力／执行仍未建立。",
+            "leafLocator": {
+              "sourceIds": [
+                "ARINC-645"
+              ],
+              "clausePrefixes": [
+                "4.3.4",
+                "4.3.5",
+                "4.3.6",
+                "4.3.7"
+              ]
+            },
+            "leafCoverageIds": [
+              "COV-M1-03107",
+              "COV-M1-03108",
+              "COV-M1-03109",
+              "COV-M1-03110"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00818",
+              "CRS-M1-00819",
+              "CRS-M1-00820",
+              "CRS-M1-00821"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-03107",
+                "requirementIds": [
+                  "CRS-M1-00818"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.4-P032-TABLE-ROW-001-945EF33DA084",
+                "clause": "4.3.4"
+              },
+              {
+                "coverageId": "COV-M1-03108",
+                "requirementIds": [
+                  "CRS-M1-00819"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.5-P033-TABLE-ROW-001-184AB181958C",
+                "clause": "4.3.5"
+              },
+              {
+                "coverageId": "COV-M1-03109",
+                "requirementIds": [
+                  "CRS-M1-00820"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.6-P034-TABLE-ROW-001-974432EB0973",
+                "clause": "4.3.6"
+              },
+              {
+                "coverageId": "COV-M1-03110",
+                "requirementIds": [
+                  "CRS-M1-00821"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.7-P034-TABLE-ROW-001-4F48BE9E9372",
+                "clause": "4.3.7"
+              }
+            ],
+            "refinementStatus": "POINTS-TO-BOUND-645-LEAF",
+            "blockedCapability": "IF_INTEGRITY"
           },
           {
             "id": "SAU-665-5",
@@ -13953,9 +14021,9 @@
               56
             ],
             "unitKind": "SECTION",
-            "applicabilityDecision": "DEPENDENCY-BLOCKED",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
             "conformanceEffect": "INFORMATIVE",
-            "rationaleCode": "RELOCATED-TO-645-NOT-BOUND-THIS-PR",
+            "rationaleCode": "RELOCATED-TO-BOUND-645-LEAVES-CAPABILITY-OPEN",
             "triggeredByOperations": [
               "INFORMATION",
               "UPLOAD",
@@ -13963,10 +14031,47 @@
               "DOWNLOAD-OPERATOR-DEFINED",
               "FIND"
             ],
-            "relationTo615A": "BLOCKED-SOURCE-645",
-            "leafCrsStatus": "NOT-REQUIRED",
-            "summaryEn": "Integrity-check methods were relocated to 645. Check-value type/length fields in the header stay as 665 field presence; algorithm identity is not established this PR.",
-            "summaryZh": "完整性检查方法已迁至 645。头中的校验值类型/长度仍作为 665 字段存在性；算法身份本 PR 不建立。"
+            "relationTo615A": "POINTS-TO-BOUND-645-LEAVES",
+            "leafCrsStatus": "EXISTING-LEAF-VIA-645",
+            "summaryEn": "665 relocates this subject to ARINC 645. Pointers now address bound 645 semantic leaves. Capability/execution remains not established.",
+            "summaryZh": "665 将该主题迁至 ARINC 645。指针现指向已绑定的 645 语义叶。能力／执行仍未建立。",
+            "leafLocator": {
+              "sourceIds": [
+                "ARINC-645"
+              ],
+              "clausePrefixes": [
+                "4.4",
+                "4.5"
+              ]
+            },
+            "leafCoverageIds": [
+              "COV-M1-03111",
+              "COV-M1-03112"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00822",
+              "CRS-M1-00823"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-03111",
+                "requirementIds": [
+                  "CRS-M1-00822"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.4-P035-PROSE-SENTENCE-001-70BD2A2243B2",
+                "clause": "4.4"
+              },
+              {
+                "coverageId": "COV-M1-03112",
+                "requirementIds": [
+                  "CRS-M1-00823"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.5-P036-TABLE-ROW-001-EF5985209453",
+                "clause": "4.5"
+              }
+            ],
+            "refinementStatus": "POINTS-TO-BOUND-645-LEAF",
+            "blockedCapability": "IF_INTEGRITY"
           },
           {
             "id": "SAU-665-ATT1",
@@ -14062,9 +14167,9 @@
               79
             ],
             "unitKind": "APPENDIX",
-            "applicabilityDecision": "DEPENDENCY-BLOCKED",
+            "applicabilityDecision": "OUT-OF-PROFILE",
             "conformanceEffect": "INFORMATIVE",
-            "rationaleCode": "RELOCATED-TO-645-NOT-BOUND-THIS-PR",
+            "rationaleCode": "CRC-METHODS-BOUND-ON-645-LEAVES-NOT-665-APPENDIX",
             "triggeredByOperations": [
               "INFORMATION",
               "UPLOAD",
@@ -14072,10 +14177,10 @@
               "DOWNLOAD-OPERATOR-DEFINED",
               "FIND"
             ],
-            "relationTo615A": "BLOCKED-SOURCE-645",
+            "relationTo615A": "BOUNDED-EXCLUSION",
             "leafCrsStatus": "NOT-REQUIRED",
-            "summaryEn": "Calculation methods belong to the 645 successor bind. They cannot be used as algorithm-conformance evidence this PR.",
-            "summaryZh": "计算方法属 645 后继绑定。本 PR 不得将其作为算法符合性证据。"
+            "summaryEn": "665 appendix calculation methods are not re-emitted; 615A uses the bound 645 tables.",
+            "summaryZh": "665 附录计算方法不再发出；615A 使用已绑定的 645 表。"
           },
           {
             "id": "SAU-665-APP-REST",
@@ -19389,7 +19494,356 @@
           "APPLICABLE-SUPPORTING": 2,
           "OUT-OF-PROFILE": 1
         }
+      },
+      {
+        "sourceId": "ARINC-645",
+        "role": "BOUNDED-INTEGRITY-AND-NAMING-REFERENCE",
+        "edition": "645-1",
+        "sha256": "5efa07ee1930fe170526be952a7b24f6c4760c516663933e61bbacfb6742f095",
+        "pageCount": 83,
+        "pageAccount": {
+          "frontMatterPdfPages": [
+            1,
+            31
+          ],
+          "surveyedPdfPages": [
+            32,
+            48
+          ],
+          "excludedPdfPages": [
+            49,
+            83
+          ]
+        },
+        "coverageDenominator": {
+          "kind": "615A-TRIGGERED-CLAUSE-GROUP",
+          "count": 7,
+          "assuranceBoundary": "TRIGGERED-SEMANTIC-LEAVES-NOT-CAPABILITY-ESTABLISHMENT"
+        },
+        "status": "BOUNDED-AUDIT-COMPLETE",
+        "independentApproval": false,
+        "units": [
+          {
+            "id": "SAU-645-FRONT",
+            "clause": "FRONT-MATTER",
+            "clauseTitleEn": "Title, disclaimer, contents",
+            "pdfPages": [
+              1,
+              31
+            ],
+            "unitKind": "FRONT-MATTER",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "FRONT-MATTER-OUTSIDE-TRIGGERED-SURVEY",
+            "triggeredByOperations": [],
+            "relationTo615A": "NONE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Front matter identifies 645-1; it is not a 615A actor obligation.",
+            "summaryZh": "扉页标识 645-1，不是 615A 参与者义务。"
+          },
+          {
+            "id": "SAU-645-4-CRC",
+            "clause": "4.3.4-4.3.7",
+            "clauseTitleEn": "CRC-8/16/32/64 parameters triggered by 615A/665 integrity",
+            "pdfPages": [
+              32,
+              36
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TRIGGERED-CRC-PARAMETERS-FOR-615A-INTEGRITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "SOURCE-EXPLICIT-INTEGRITY-EDGE",
+            "leafCrsStatus": "LEAF-CRS-EMITTED",
+            "leafLocator": {
+              "sourceIds": [
+                "ARINC-645"
+              ],
+              "clausePrefixes": [
+                "4.3.4",
+                "4.3.5",
+                "4.3.6",
+                "4.3.7"
+              ]
+            },
+            "leafCoverageIds": [
+              "COV-M1-03107",
+              "COV-M1-03108",
+              "COV-M1-03109",
+              "COV-M1-03110"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00818",
+              "CRS-M1-00819",
+              "CRS-M1-00820",
+              "CRS-M1-00821"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-03107",
+                "requirementIds": [
+                  "CRS-M1-00818"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.4-P032-TABLE-ROW-001-945EF33DA084",
+                "clause": "4.3.4"
+              },
+              {
+                "coverageId": "COV-M1-03108",
+                "requirementIds": [
+                  "CRS-M1-00819"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.5-P033-TABLE-ROW-001-184AB181958C",
+                "clause": "4.3.5"
+              },
+              {
+                "coverageId": "COV-M1-03109",
+                "requirementIds": [
+                  "CRS-M1-00820"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.6-P034-TABLE-ROW-001-974432EB0973",
+                "clause": "4.3.6"
+              },
+              {
+                "coverageId": "COV-M1-03110",
+                "requirementIds": [
+                  "CRS-M1-00821"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.7-P034-TABLE-ROW-001-4F48BE9E9372",
+                "clause": "4.3.7"
+              }
+            ],
+            "summaryEn": "CRC width, polynomial, init, reflect, xorout and check values required by 615A/665 integrity obligations.",
+            "summaryZh": "615A／665 完整性义务所需的 CRC 宽度、多项式、初值、反射、异或与校验值。"
+          },
+          {
+            "id": "SAU-645-4-CHECK",
+            "clause": "4.4-4.5",
+            "clauseTitleEn": "Check-value storage, deprecation and type enumeration",
+            "pdfPages": [
+              35,
+              36
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TRIGGERED-CHECK-VALUE-ENUMERATION-FOR-615A",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "SOURCE-EXPLICIT-INTEGRITY-EDGE",
+            "leafCrsStatus": "LEAF-CRS-EMITTED",
+            "leafLocator": {
+              "sourceIds": [
+                "ARINC-645"
+              ],
+              "clausePrefixes": [
+                "4.4",
+                "4.5"
+              ]
+            },
+            "leafCoverageIds": [
+              "COV-M1-03111",
+              "COV-M1-03112"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00822",
+              "CRS-M1-00823"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-03111",
+                "requirementIds": [
+                  "CRS-M1-00822"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.4-P035-PROSE-SENTENCE-001-70BD2A2243B2",
+                "clause": "4.4"
+              },
+              {
+                "coverageId": "COV-M1-03112",
+                "requirementIds": [
+                  "CRS-M1-00823"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.5-P036-TABLE-ROW-001-EF5985209453",
+                "clause": "4.5"
+              }
+            ],
+            "summaryEn": "Check-value type codes, lengths, endianness and large-file deprecation of 8/16-bit file check-values.",
+            "summaryZh": "校验值类型码、长度、端序，以及大文件上 8／16 位文件校验值的弃用。"
+          },
+          {
+            "id": "SAU-645-4-6-HASH",
+            "clause": "4.6",
+            "clauseTitleEn": "Cryptographic hash methods not triggered by current 615A CRC path",
+            "pdfPages": [
+              37,
+              37
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "HASH-ALGORITHMS-NOT-TRIGGERED-BY-CURRENT-615A-CRC-OBLIGATIONS",
+            "triggeredByOperations": [],
+            "relationTo615A": "BOUNDED-EXCLUSION",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Section 4.6 MD5/SHA bodies are not 615A-triggered in this increment. Table 4-5 still enumerates type codes 1-8; capability remains not established.",
+            "summaryZh": "本增量不把 4.6 节 MD5／SHA 正文当作 615A 触发义务。表 4-5 仍枚举类型码 1–8；能力仍未建立。"
+          },
+          {
+            "id": "SAU-645-5-SEC",
+            "clause": "5",
+            "clauseTitleEn": "PDL/ADL security functions",
+            "pdfPages": [
+              38,
+              45
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "CHAPTER-5-SECURITY-NOT-TRIGGERED-BY-CURRENT-615A-SCOPE",
+            "triggeredByOperations": [],
+            "relationTo615A": "BOUNDED-EXCLUSION",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Chapter 5 PDL/ADL security is not triggered by the current 615A integrity/naming obligations.",
+            "summaryZh": "第 5 章 PDL／ADL 安全未被当前 615A 完整性／命名义务触发。"
+          },
+          {
+            "id": "SAU-645-6-MFG",
+            "clause": "6",
+            "clauseTitleEn": "Manufacturer codes already covered by 665 Attachment 1",
+            "pdfPages": [
+              46,
+              46
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "MANUFACTURER-CODES-COVERED-BY-665-ATTACHMENT-1",
+            "triggeredByOperations": [],
+            "relationTo615A": "BOUNDED-EXCLUSION",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "Manufacturer-code tables already covered by the 665 Attachment 1 leaf path are not re-emitted from 645.",
+            "summaryZh": "制造商代码表已由 665 附件 1 叶路径覆盖，不从 645 再发出。"
+          },
+          {
+            "id": "SAU-645-7-NAMING",
+            "clause": "7",
+            "clauseTitleEn": "Part-number uniqueness and 615A filename rules",
+            "pdfPages": [
+              47,
+              48
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TRIGGERED-NAMING-FOR-615A-SESSION",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "SOURCE-EXPLICIT-NAMING-EDGE",
+            "leafCrsStatus": "LEAF-CRS-EMITTED",
+            "leafLocator": {
+              "sourceIds": [
+                "ARINC-645"
+              ],
+              "clausePrefixes": [
+                "7",
+                "7.1",
+                "7.2"
+              ]
+            },
+            "leafCoverageIds": [
+              "COV-M1-03113",
+              "COV-M1-03114",
+              "COV-M1-03115"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00824",
+              "CRS-M1-00825",
+              "CRS-M1-00826"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-03113",
+                "requirementIds": [
+                  "CRS-M1-00824"
+                ],
+                "sourceUnitId": "SU-ARINC-645-7.1-P047-PROSE-SENTENCE-001-E4532032D568",
+                "clause": "7.1"
+              },
+              {
+                "coverageId": "COV-M1-03114",
+                "requirementIds": [
+                  "CRS-M1-00825"
+                ],
+                "sourceUnitId": "SU-ARINC-645-7.2-P047-PROSE-SENTENCE-001-59DA185021EC",
+                "clause": "7.2"
+              },
+              {
+                "coverageId": "COV-M1-03115",
+                "requirementIds": [
+                  "CRS-M1-00826"
+                ],
+                "sourceUnitId": "SU-ARINC-645-7.2-P048-PROSE-SENTENCE-002-5A3DF105E50B",
+                "clause": "7.2"
+              }
+            ],
+            "summaryEn": "Unique PN per bit image, filename length/charset, and unique names across LSPs in one 615A session.",
+            "summaryZh": "每一比特映像唯一件号、文件名长度／字符集，以及一次 615A 会话中各 LSP 文件名唯一。"
+          }
+        ],
+        "sourceBindingThisPr": true,
+        "sourceSemanticBindingThisPr": true,
+        "boundThisPr": true,
+        "inScopeForM1": true,
+        "inScopeForM2": false
       }
     ]
+  },
+  "remainingSourceWork": {
+    "arinc645BindingThisPr": true,
+    "arinc645CapabilityEstablishmentThisPr": false,
+    "crcValidationEstablishedThisPr": false,
+    "checkValueValidationEstablishedThisPr": false,
+    "namingAlgorithmValidationEstablishedThisPr": false,
+    "completeIntegrityValidationEstablishedThisPr": false,
+    "arinc645RemainingWorkAfterThisPr": {
+      "id": "GAP-ARINC-645",
+      "status": "NOT-ESTABLISHED",
+      "crcValidation": {
+        "id": "CRC-VALIDATION",
+        "status": "CAPABILITY-NOT-ESTABLISHED",
+        "establishedThisPr": false
+      },
+      "checkValueValidation": {
+        "id": "CHECK-VALUE-VALIDATION",
+        "status": "CAPABILITY-NOT-ESTABLISHED",
+        "establishedThisPr": false
+      },
+      "namingAlgorithmValidation": {
+        "id": "NAMING-ALGORITHM-VALIDATION",
+        "status": "CAPABILITY-NOT-ESTABLISHED",
+        "establishedThisPr": false
+      },
+      "completeIntegrityValidation": {
+        "id": "COMPLETE-INTEGRITY-VALIDATION",
+        "status": "CAPABILITY-NOT-ESTABLISHED",
+        "establishedThisPr": false
+      }
+    }
   }
 }

@@ -1565,6 +1565,15 @@
 | `CRS-M1-00815` | DATA-CONSTRAINT | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-VL-IDENTIFIER-CRS-M1-00815` |
 | `CRS-M1-00816` | DATA-CONSTRAINT | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-BAG-CRS-M1-00816` |
 | `CRS-M1-00817` | DATA-CONSTRAINT | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-SMAX-CRS-M1-00817` |
+| `CRS-M1-00818` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00819` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00820` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00821` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00822` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00823` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00824` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00825` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00826` | SCOPE-CONSTRAINT | `SCOPE` |
 
 ## Trace relations
 
@@ -2492,6 +2501,15 @@
 | `TR-CRS-M1-00815-1028` | `CRS-M1-00815` | OBJECT-CONSTRAINT | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-VL-IDENTIFIER-CRS-M1-00815` | Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution. |
 | `TR-CRS-M1-00816-1029` | `CRS-M1-00816` | OBJECT-CONSTRAINT | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-BAG-CRS-M1-00816` | Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution. |
 | `TR-CRS-M1-00817-1030` | `CRS-M1-00817` | OBJECT-CONSTRAINT | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-SMAX-CRS-M1-00817` | Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution. |
+| `TR-CRS-M1-00818-1031` | `CRS-M1-00818` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00819-1032` | `CRS-M1-00819` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00820-1033` | `CRS-M1-00820` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00821-1034` | `CRS-M1-00821` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00822-1035` | `CRS-M1-00822` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00823-1036` | `CRS-M1-00823` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00824-1037` | `CRS-M1-00824` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00825-1038` | `CRS-M1-00825` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00826-1039` | `CRS-M1-00826` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
 
 ## Infrastructure premises
 
@@ -4161,6 +4179,15 @@
 | `CRS-M1-00815` | DATA-CONSTRAINT | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-VL-IDENTIFIER-CRS-M1-00815` |
 | `CRS-M1-00816` | DATA-CONSTRAINT | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-BAG-CRS-M1-00816` |
 | `CRS-M1-00817` | DATA-CONSTRAINT | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-SMAX-CRS-M1-00817` |
+| `CRS-M1-00818` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00819` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00820` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00821` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00822` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00823` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00824` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00825` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00826` | SCOPE-CONSTRAINT | `SCOPE` |
 
 ## 追踪关系
 
@@ -5088,6 +5115,15 @@
 | `TR-CRS-M1-00815-1028` | `CRS-M1-00815` | OBJECT-CONSTRAINT | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-VL-IDENTIFIER-CRS-M1-00815` | 支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。 |
 | `TR-CRS-M1-00816-1029` | `CRS-M1-00816` | OBJECT-CONSTRAINT | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-BAG-CRS-M1-00816` | 支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。 |
 | `TR-CRS-M1-00817-1030` | `CRS-M1-00817` | OBJECT-CONSTRAINT | `OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-SMAX-CRS-M1-00817` | 支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。 |
+| `TR-CRS-M1-00818-1031` | `CRS-M1-00818` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00819-1032` | `CRS-M1-00819` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00820-1033` | `CRS-M1-00820` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00821-1034` | `CRS-M1-00821` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00822-1035` | `CRS-M1-00822` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00823-1036` | `CRS-M1-00823` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00824-1037` | `CRS-M1-00824` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00825-1038` | `CRS-M1-00825` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00826-1039` | `CRS-M1-00826` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
 
 ## 基础设施前提
 

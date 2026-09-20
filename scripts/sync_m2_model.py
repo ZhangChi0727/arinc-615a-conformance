@@ -1207,7 +1207,7 @@ def input_identity_errors(acc: dict[str, Any], git_root: Path) -> list[str]:
             work_blob = git_output(git_root, ["hash-object", str(worktree_path)])
             if work_blob is None:
                 errors.append(f"worktree blob for {path} cannot be hashed")
-            elif work_blob != item.get("gitBlobOid"):
+            elif work_blob != item.get("gitBlobOid") and not successor:
                 errors.append(f"worktree blob disagrees for {path}")
         merge_blob = git_blob(str(acc.get("mergeCommit") or ""), path, git_root)
         if merge_blob is None:
@@ -1394,6 +1394,9 @@ def successor_input_errors(acc: dict[str, Any], git_root: Path, inputs: list[dic
     current_ancestor = git_output(git_root, ["merge-base", str(cur_commit or ""), "HEAD"])
     if current_ancestor is None or current_ancestor != cur_commit:
         errors.append("current input artifact commit is not an ancestor of HEAD")
+    head = git_output(git_root, ["rev-parse", "HEAD"])
+    if cur_commit and head and cur_commit == head:
+        errors.append("current input artifact commit must not be the current HEAD")
     if cur_commit and cur_commit == pred_commit:
         errors.append("current input artifact commit cannot reuse the predecessor commit")
     for item in inputs:

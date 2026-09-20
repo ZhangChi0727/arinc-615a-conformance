@@ -160,6 +160,33 @@
       ],
       "kind": "OUTSIDE-BOUNDED-SURVEY",
       "rationaleCode": "BOUNDED-664P4-SCOPE-EXCLUSION-MIB-EXAMPLES-SUPPLEMENT-AND-BACK-MATTER"
+    },
+    {
+      "sourceId": "ARINC-645",
+      "pdfPages": [
+        1,
+        31
+      ],
+      "kind": "FRONT-MATTER-AND-UNTRIGGERED-BODY",
+      "rationaleCode": "615A-NOT-TRIGGERED-BEFORE-CRC-UNITS"
+    },
+    {
+      "sourceId": "ARINC-645",
+      "pdfPages": [
+        37,
+        46
+      ],
+      "kind": "UNTRIGGERED-SECURITY-AND-MANUFACTURER-CODES",
+      "rationaleCode": "CHAPTER-5-SECURITY-AND-CHAPTER-6-CODES-NOT-TRIGGERED-BY-615A"
+    },
+    {
+      "sourceId": "ARINC-645",
+      "pdfPages": [
+        49,
+        83
+      ],
+      "kind": "UNTRIGGERED-APPENDICES-AND-BACK-MATTER",
+      "rationaleCode": "APPENDICES-AND-SUPPLEMENTS-NOT-TRIGGERED-BY-615A"
     }
   ],
   "boundedSourceScopeExclusion": [
@@ -812,6 +839,34 @@
           "pdfPages": [
             1,
             6
+          ]
+        }
+      ]
+    },
+    {
+      "sourceId": "ARINC-645",
+      "edition": "645-1",
+      "spans": [
+        {
+          "namespace": "SECTION-4-INTEGRITY-TRIGGERED",
+          "documentPages": [
+            26,
+            30
+          ],
+          "pdfPages": [
+            32,
+            36
+          ]
+        },
+        {
+          "namespace": "SECTION-7-NAMING-TRIGGERED",
+          "documentPages": [
+            41,
+            42
+          ],
+          "pdfPages": [
+            47,
+            48
           ]
         }
       ]
