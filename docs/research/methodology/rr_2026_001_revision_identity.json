@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "1.0",
+  "reportPath": "docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md",
+  "historicalFreeze": {
+    "label": "RR-2026-001-v4.2-display-math",
+    "commit": "3423583b7812c69893585a41856715172f712733",
+    "displayMathBlocks": 94,
+    "displayMathSha256": "2050040b3d2572f5eca3b9b7b93fed472e7e236e1951f8c88702534dbe3a24cb",
+    "note": "Frozen payload of the last merged main that still carried the v4.2.1 display-math identity. Historical git objects keep this digest. The worktree successor is revised under CR-2026-012 and must not be required to equal these bytes."
+  },
+  "successor": {
+    "changeRequest": "CR-2026-012",
+    "decision": "DD-029",
+    "methodName": "CL-TAV",
+    "status": "FIRST-VERSION-DESIGN-DIRECTION",
+    "designDirectionAcceptedOn": "2026-09-14",
+    "independentMathematicalApproval": false,
+    "independentReviewApproval": false,
+    "historicalMathCheckDoesNotProveSuccessorMath": true
+  }
+}

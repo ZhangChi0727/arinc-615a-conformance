@@ -24,7 +24,10 @@ SOURCE_REGISTER_PATH = ROOT / "configs/research/controlled_sources.json"
 M1_PATH = ROOT / "configs/requirements/arinc_615a3_m1_crs.json"
 EXPR_OPS = {"ADD", "SUB", "MUL", "DIV"}
 COMPARE_OPS = {"EQ", "NE", "LT", "LE", "GT", "GE"}
-AST_KINDS = {"TRUE", "COMPARE", "AND", "VAR", "CLOCK", "SYMBOL", "LITERAL", "ENUM", "ASSIGN", "BINARY", "PAYLOAD"}
+AST_KINDS = {"TRUE", "COMPARE", "AND", "VAR", "CLOCK", "SYMBOL", "LITERAL", "ENUM", "ASSIGN", "BINARY", "PAYLOAD", "SUM"}
+AFDX_JITTER_LOAD_SUM_DOMAIN = "CONFIGURED-VL-SET"
+AFDX_JITTER_LOAD_INDEX = "I"
+AFDX_JITTER_LOAD_INDEX_SYMBOL = "LMAX_I"
 SOURCE_COMPARE_OPS = (
     (">=", "GE"),
     ("<=", "LE"),
@@ -47,14 +50,22 @@ FAMILY_CONSTRAINT_KIND = {
     "STATUS-EXCEPTION-SILENCE-DEADLINE": "DEADLINE-UPPER-BOUND",
     "STATUS-BEFORE-EXCEPTION-DELAY-OR-ABORT": "DEADLINE-UPPER-BOUND",
     "TFTP-PACKET-ANSWER-DEADLINE": "DEADLINE-UPPER-BOUND",
+    "FIND-ANSWER-REGISTRATION-WINDOW": "CONSTANT-DEFINITION",
+    "FIND-REGISTRATION-CLOSE-AT-EXPIRY": "CONSTANT-DEFINITION",
+    "FIND-HOST-ANSWER-DEADLINE": "DEADLINE-UPPER-BOUND",
     "TFTP-PACKET-TRANSMISSION-DURATION-BOUND": "DURATION-UPPER-BOUND",
     "TFTP-SUBSCRIBER-PROCESSING-DURATION-BOUND": "DURATION-UPPER-BOUND",
     "DLP-CONSECUTIVE-TFTP-TRANSFER-EQUATION": "SOURCE-EQUATION",
     "LCS-PRODUCTION-PROHIBITION-WINDOW": "PROHIBITION-WINDOW-UPPER-BOUND",
+    "AFDX-ES-TX-TECHNOLOGICAL-LATENCY": "SOURCE-EQUATION",
+    "AFDX-ES-RX-TECHNOLOGICAL-LATENCY": "SOURCE-EQUATION",
+    "AFDX-MAX-JITTER-LOAD-EQUATION": "SOURCE-EQUATION",
+    "AFDX-MAX-JITTER-500US-EQUATION": "SOURCE-EQUATION",
 }
 FIELD_AXES = (
     "protocolFile", "fieldId", "ordinal", "widthBitsExpression",
     "encodingRule", "terminationRule", "presenceCondition", "repeatScope",
+    "useCondition", "inactiveRequiredValue",
 )
 STATUS_AXES = (
     "kind", "code", "meaningCode", "displayMode", "targetTextRule",
@@ -96,7 +107,7 @@ UNPARSED_SOURCE_RELATIONS = {
     "STATUS-RECEIVED-BEFORE-EXCEPTION-DELAY-ELSE-OPERATION-ABORT",
 }
 SOURCE_EQ_TOKEN_RE = re.compile(
-    r"\s*(>=|<=|!=|=>|>|<|=|\(|\)|\+|\*|/|[A-Za-z][A-Za-z0-9-]*|\d+(?:\.\d+)?|-)"
+    r"\s*(>=|<=|!=|=>|>|<|=|\(|\)|\[|\]|\{|\}|\+|\*|/|[A-Za-z][A-Za-z0-9-]*|\d+(?:\.\d+)?|-)"
 )
 SOURCE_COMPARE_TOKEN = {
     ">=": "GE",
@@ -222,7 +233,7 @@ def expr_unit(node: Any) -> str | None:
     if not isinstance(node, dict):
         return None
     kind = node.get("kind")
-    if kind in {"LITERAL", "SYMBOL", "CLOCK", "BINARY"}:
+    if kind in {"LITERAL", "SYMBOL", "CLOCK", "BINARY", "SUM"}:
         return node.get("unit")
     return None
 
@@ -306,6 +317,15 @@ def ast_errors(
             left_unit, right_unit = expr_unit(left), expr_unit(right)
             if left_unit and right_unit and left_unit != right_unit:
                 errors.append(f"{path} adds or subtracts mismatched units {left_unit} and {right_unit}")
+        return errors
+    if kind == "SUM":
+        if node.get("index") != AFDX_JITTER_LOAD_INDEX:
+            errors.append(f"{path} SUM index is not I")
+        if not isinstance(node.get("domain"), str) or not node.get("domain"):
+            errors.append(f"{path} SUM domain is missing")
+        errors.extend(
+            ast_errors(node.get("body"), symbols, variables, clocks, path + ".body", payload_schema=payload_schema)
+        )
         return errors
     if kind == "ASSIGN":
         if not allow_assign:
@@ -403,7 +423,7 @@ def source_relation_compare_op(text: Any) -> str | None:
 def source_relation_symbols(text: Any) -> set[str]:
     names: set[str] = set()
     for token in re.findall(r"[A-Za-z][A-Za-z0-9-]*", text or ""):
-        if token.upper() in {"AND", "OR", "NOT", "IF", "THEN"}:
+        if token.upper() in {"AND", "OR", "NOT", "IF", "THEN", "SUM"}:
             continue
         names.add(SOURCE_SYMBOL_ALIASES.get(token.replace("-", "_"), token.replace("-", "_")))
     return names
@@ -453,6 +473,33 @@ def parse_source_equation(text: Any) -> dict[str, Any] | None:
                 return None
             take()
             return node
+        if token == "SUM":
+            take()
+            opener = peek()
+            if opener not in {"[", "{"}:
+                return None
+            closer = "]" if opener == "[" else "}"
+            take()
+            domain_token = peek()
+            if domain_token is None or not domain_token.startswith("I-IN-"):
+                return None
+            take()
+            if peek() != closer:
+                return None
+            take()
+            if peek() != "(":
+                return None
+            take()
+            body = parse_add()
+            if body is None or peek() != ")":
+                return None
+            take()
+            return {
+                "kind": "SUM",
+                "index": AFDX_JITTER_LOAD_INDEX,
+                "domain": domain_token[len("I-IN-"):],
+                "body": body,
+            }
         if token is None:
             return None
         if token[0].isdigit():
@@ -548,6 +595,13 @@ def canonical_expr(node: Any) -> Any:
         return {"kind": "SYMBOL", "name": name}
     if kind == "CLOCK":
         return {"kind": "CLOCK", "name": node.get("name")}
+    if kind == "SUM":
+        return {
+            "kind": "SUM",
+            "index": node.get("index"),
+            "domain": node.get("domain"),
+            "body": canonical_expr(node.get("body")),
+        }
     return strip_expr_units(node)
 
 
@@ -557,6 +611,62 @@ def source_equation_structure_errors(row: dict[str, Any], source_relation: str, 
         return [f"timing {row.get('id')} source relation is not a parseable equation"]
     if canonical_expr(parsed) != canonical_expr(strip_expr_units(expr)):
         return [f"timing {row.get('id')} equation structure drifted from the source relation"]
+    errors: list[str] = []
+    family = row.get("observationWindow") or ""
+    if family == "AFDX-MAX-JITTER-LOAD-EQUATION" or "SUM{I-IN-CONFIGURED-VL-SET}" in source_relation or "SUM[I-IN-CONFIGURED-VL-SET]" in source_relation:
+        errors.extend(afdx_jitter_load_structure_errors(row, expr))
+    if family == "AFDX-MAX-JITTER-500US-EQUATION":
+        errors.extend(afdx_jitter_cap_structure_errors(row, expr))
+    return errors
+
+
+def _literal_values(node: Any) -> set[Any]:
+    return {
+        _canon_number(item.get("value"))
+        for item in walk_nodes(node)
+        if isinstance(item, dict) and item.get("kind") == "LITERAL"
+    }
+
+
+def afdx_jitter_load_structure_errors(row: dict[str, Any], expr: Any) -> list[str]:
+    errors: list[str] = []
+    sums = [item for item in walk_nodes(expr) if isinstance(item, dict) and item.get("kind") == "SUM"]
+    if len(sums) != 1:
+        errors.append(f"timing {row.get('id')} load-dependent jitter equation must contain exactly one indexed SUM")
+        return errors
+    node = sums[0]
+    if node.get("index") != AFDX_JITTER_LOAD_INDEX or node.get("domain") != AFDX_JITTER_LOAD_SUM_DOMAIN:
+        errors.append(f"timing {row.get('id')} SUM is not over {AFDX_JITTER_LOAD_SUM_DOMAIN}")
+    body = node.get("body")
+    if AFDX_JITTER_LOAD_INDEX_SYMBOL not in ast_symbols(body):
+        errors.append(f"timing {row.get('id')} SUM body dropped per-VL LMAX_I")
+    if 20 not in _literal_values(body):
+        errors.append(f"timing {row.get('id')} 20-octet overhead is not inside the VL SUM")
+    literals = _literal_values(expr)
+    if 8 not in literals:
+        errors.append(f"timing {row.get('id')} dropped the 8 bits/octet factor")
+    if 1000000 not in literals:
+        errors.append(f"timing {row.get('id')} dropped the seconds-to-microseconds conversion")
+    names = ast_symbols(expr)
+    if "NBW" not in names or "MAX_JITTER" not in names:
+        errors.append(f"timing {row.get('id')} dropped MAX_JITTER or NBW")
+    if "LMAX" in names and AFDX_JITTER_LOAD_INDEX_SYMBOL not in ast_symbols(body):
+        errors.append(f"timing {row.get('id')} replaced the VL SUM with a scalar LMAX")
+    if not isinstance(expr, dict) or expr.get("kind") != "COMPARE" or expr.get("op") != "LE":
+        errors.append(f"timing {row.get('id')} load-dependent jitter compare is not <=")
+    return errors
+
+
+def afdx_jitter_cap_structure_errors(row: dict[str, Any], expr: Any) -> list[str]:
+    if (
+        not isinstance(expr, dict)
+        or expr.get("kind") != "COMPARE"
+        or expr.get("op") != "LE"
+        or (expr.get("left") or {}).get("name") != "MAX_JITTER"
+        or (expr.get("right") or {}).get("kind") != "LITERAL"
+        or _canon_number((expr.get("right") or {}).get("value")) != 500
+    ):
+        return [f"timing {row.get('id')} 500 us jitter equation is not MAX_JITTER <= 500"]
     return []
 
 
@@ -572,6 +682,8 @@ def expr_signature(node: Any) -> Counter:
             counts[("LIT", item.get("value"))] += 1
         elif kind == "CLOCK":
             counts[("CLK", item.get("name"))] += 1
+        elif kind == "SUM":
+            counts[("SUM", item.get("domain"))] += 1
     return counts
 
 
@@ -768,6 +880,25 @@ def eval_ast(node: Any, env: dict[str, Any]) -> Any:
         if op == "DIV" and right != 0:
             return left / right
         return None
+    if kind == "SUM":
+        values = (env.get("sum_domains") or {}).get(node.get("domain"))
+        if not isinstance(values, list):
+            return None
+        total = 0
+        for value in values:
+            inner = {
+                "vars": env.get("vars"),
+                "clocks": env.get("clocks"),
+                "params": dict(env.get("params") or {}),
+                "payload": env.get("payload"),
+                "sum_domains": env.get("sum_domains"),
+            }
+            inner["params"][AFDX_JITTER_LOAD_INDEX_SYMBOL] = value
+            part = eval_ast(node.get("body"), inner)
+            if part is None:
+                return None
+            total += part
+        return total
     return None
 
 
@@ -859,7 +990,10 @@ def timing_kind_errors(row: dict[str, Any], timing: dict[str, Any]) -> list[str]
     errors: list[str] = []
     family = timing.get("timingFamily")
     expected_kind = FAMILY_CONSTRAINT_KIND.get(family)
-    if timing.get("provenanceKind") == "FIXED-SOURCE-CONSTANT":
+    if (
+        timing.get("provenanceKind") == "FIXED-SOURCE-CONSTANT"
+        and timing.get("lowerBound") == timing.get("upperBound")
+    ):
         expected_kind = "CONSTANT-DEFINITION"
     if row.get("staticCheck") == "EQUATION-STRUCTURAL":
         expected_kind = "SOURCE-EQUATION"
@@ -880,6 +1014,11 @@ def timing_kind_errors(row: dict[str, Any], timing: dict[str, Any]) -> list[str]
     elif kind in {"DEADLINE-UPPER-BOUND", "DURATION-UPPER-BOUND", "PROHIBITION-WINDOW-UPPER-BOUND"}:
         if isinstance(expr, dict) and expr.get("kind") == "COMPARE" and expr.get("op") not in {"LE", "LT"}:
             errors.append(f"timing {row.get('id')} in-window constraint is not an upper bound")
+        if timing.get("intervalRole") == "EXACT-SOURCE-CONSTANT":
+            errors.append(f"timing {row.get('id')} exact source constant cannot be an early-satisfying upper bound")
+    elif kind == "CONSTANT-DEFINITION":
+        if isinstance(expr, dict) and expr.get("kind") == "COMPARE" and expr.get("op") != "EQ":
+            errors.append(f"timing {row.get('id')} exact-lifetime or close-at-expiry constraint is not an equality")
     elif kind == "SOURCE-EQUATION" or row.get("staticCheck") == "EQUATION-STRUCTURAL":
         source = timing.get("sourceRelation") or row.get("sourceRelation") or ""
         errors.extend(source_equation_structure_errors(row, source, expr))
@@ -1446,6 +1585,14 @@ def package_errors(
         errors.append("scope cannot activate AFDX or P3 profiled deviations")
     if data["scope"].get("networkMode") != "COMPLIANT":
         errors.append("network mode must remain COMPLIANT")
+    if list(data["scope"].get("services") or []) != ["UPLOAD", "INFORMATION"]:
+        errors.append("bound M2 services cannot activate DOWNLOAD, FIND, or AFDX")
+    if list(data["scope"].get("deferredServices") or []) != ["DOWNLOAD", "FIND"]:
+        errors.append("bound M2 deferred services must remain DOWNLOAD and FIND")
+    if any("FIND" in (row.get("id") or "") or "DOWNLOAD" in (row.get("id") or "") for row in model["transitions"]):
+        errors.append("bound M2 transitions cannot execute FIND or DOWNLOAD")
+    if any("CLK_FIND" in (row.get("resets") or []) for row in model["transitions"]):
+        errors.append("bound M2 transitions cannot reset the observational FIND clock")
 
     variables = {row["id"]: row for row in model["variables"]}
     for name, row in variables.items():
@@ -1491,6 +1638,14 @@ def package_errors(
                 errors.append(f"timing {row.get('id')} unit drifted from M1 without conversion")
             if row.get("sourceRelation") != timing.get("sourceRelation"):
                 errors.append(f"timing {row.get('id')} sourceRelation drifted from M1")
+            if row.get("trigger") != timing.get("trigger"):
+                errors.append(f"timing {row.get('id')} trigger drifted from M1")
+            if row.get("response") != timing.get("response"):
+                errors.append(f"timing {row.get('id')} response drifted from M1")
+            if row.get("pairingPolicy") != timing.get("pairingPolicy"):
+                errors.append(f"timing {row.get('id')} pairingPolicy drifted from M1")
+            if row.get("cancel") != timing.get("cancellation"):
+                errors.append(f"timing {row.get('id')} cancel drifted from M1")
             if row.get("m1LowerBoundary") != timing.get("lowerBoundary") or row.get("m1UpperBoundary") != timing.get("upperBoundary"):
                 errors.append(f"timing {row.get('id')} m1 endpoint copy drifted from M1")
             if row.get("constraintKind") == "NOT-BEFORE-LOWER-BOUND" and timing.get("lowerBoundary") == "UNRESOLVED":

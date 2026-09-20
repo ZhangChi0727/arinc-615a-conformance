@@ -60,6 +60,28 @@
       }
     },
     {
+      "id": "ARINC-664-4",
+      "edition": "664P4-1",
+      "publicationDate": "2004-12-15",
+      "pageCount": 53,
+      "byteCount": 281848,
+      "sha256": "eecfaaf1020d8efd5fb35f138faf4f902c87ab95df8af839116a0b2e263916c0",
+      "reception": {
+        "channel": "USER-PROVIDED-LOCAL-COPY",
+        "authorizationEvidence": "NOT-INDEPENDENTLY-CONFIRMED",
+        "identityCheck": "AUTHOR-LOCAL-BINARY-AND-TITLE-PAGE-CHECK",
+        "independentReview": "PENDING",
+        "titlePagePdfPages": [
+          1,
+          3
+        ],
+        "supplementPages": [
+          47,
+          48
+        ]
+      }
+    },
+    {
       "id": "ARINC-664-7",
       "edition": "664P7",
       "publicationDate": "2005-06-27",

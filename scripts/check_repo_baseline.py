@@ -70,6 +70,77 @@ APPENDED_ZH_RE = re.compile(r"^# 中文版$", re.MULTILINE)
 ZH_BOUNDARY_HEADER = "# 中文版"
 
 REPORT_PATH = METHODOLOGY_DIR / "RR-2026-001_test_analysis_conformance_methodology.md"
+METHOD_MATH_IDENTITY_PATH = METHODOLOGY_DIR / "rr_2026_001_revision_identity.json"
+SOURCE_AUDIT_PATH = ROOT / "configs/research/cltav_protocol_source_audit.json"
+CLTAV_PUML_DIR = RESEARCH / "publication" / "models"
+CLTAV_PUML_FILES = (
+    "FIG-CL-TAV-01-context.puml",
+    "FIG-CL-TAV-02-requirement-layers.puml",
+    "FIG-CL-TAV-03-bdd.puml",
+    "FIG-CL-TAV-04-ibd.puml",
+    "FIG-CL-TAV-05-closed-loop-activity.puml",
+    "FIG-CL-TAV-06-diagnostic-sequence.puml",
+    "FIG-CL-TAV-07-two-state-machines.puml",
+    "FIG-CL-TAV-08-parametric.puml",
+)
+CLTAV_SVG_DIR = ROOT / "artifacts/publications/cltav/figures"
+CLTAV_SVG_FILES = tuple(name.replace(".puml", ".svg") for name in CLTAV_PUML_FILES)
+AUDIT_STATUS_GENERATION = {
+    "AUDIT-BEFORE-REQUIREMENT-GENERATION": False,
+    "SOURCE-UNIT-AUDIT-IN-PROGRESS": False,
+    "PARTIAL-CRS-GENERATION-IN-PROGRESS": True,
+    "AUDIT-COMPLETE-REQUIREMENT-GENERATION-ALLOWED": True,
+}
+DEFERRED_AUDIT_CODES = (
+    "DEFERRED-FIND-M9",
+    "DEFERRED-DOWNLOAD-M9",
+    "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING",
+)
+AUDIT_UNIT_FIELDS = (
+    "id",
+    "sourceUnitId",
+    "clause",
+    "tableOrFigure",
+    "documentPage",
+    "pdfPage",
+    "fragmentKind",
+    "fragmentOrdinal",
+    "applicabilityDecision",
+    "requirementIds",
+)
+SOURCE_REREAD_APPLICABILITY = (
+    "APPLICABLE",
+    "CONDITIONALLY-APPLICABLE",
+    "JUSTIFIED-NOT-APPLICABLE",
+    "NON-NORMATIVE",
+    "SOURCE-BLOCKED",
+)
+SOURCE_REREAD_DOWNLOAD_MODES = (
+    "MEDIA-DEFINED",
+    "OPERATOR-DEFINED",
+    "SHARED",
+    "MEDIA-ORGANIZATION",
+)
+AFDX_RATIONALE = "DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING"
+AFDX_UNCONDITIONAL_APPLICABILITY = "APPLICABLE"
+SOURCE_REREAD_UNIT_FIELDS = (
+    "id",
+    "sourceUnitId",
+    "clause",
+    "pdfPage",
+    "frozenSourceModality",
+    "frozenConformanceEffect",
+    "frozenApplicabilityDecision",
+    "frozenRationaleCode",
+    "candidateApplicability",
+    "candidateConformanceEffect",
+    "actor",
+    "condition",
+    "action",
+    "objects",
+    "notes",
+)
+SYSML_NOTATION_MARK = "SysML 1.6 notation-based views; executable/metamodel conformance is not claimed"
 EVIDENCE_MANIFEST_PATH = ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md"
 TRACEABILITY_PATH = CONTRACTS_DIR / "TRACEABILITY_SCHEMA.md"
 CLAIMS_PATH = RESEARCH / "CLAIM_EVIDENCE_MATRIX.md"
@@ -120,6 +191,11 @@ REQUIRED_FIXED_FILES = [
     METHODOLOGY_DIR / "METHODOLOGY_CATALOG.md",
     RESEARCH / "publication" / "RESEARCH_OUTLINE.md",
     RESEARCH / "publication" / "PUBLICATION_GUIDE.md",
+    ROOT / "artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md",
+    ROOT / "configs/research/cltav_protocol_source_audit.json",
+    ROOT / "scripts/cltav_loop_spec.py",
+    *[CLTAV_PUML_DIR / name for name in CLTAV_PUML_FILES],
+    *[CLTAV_SVG_DIR / name for name in CLTAV_SVG_FILES],
     ROOT / "docs/engineering/ENGINEERING_CONTROL.md",
     ROOT / "docs/engineering/design/EVIDENCE_MANIFEST.md",
     ROOT / "docs/engineering/design/DESIGN_GUIDE.md",
@@ -130,6 +206,7 @@ REQUIRED_FIXED_FILES = [
     ROOT / "docs/tutorial/sources/COMMON_TUTORIAL_PLAN.md",
     ROOT / "docs/tutorial/sources/ARINC615A_TUTORIAL_PLAN.md",
     REPORT_PATH,
+    METHODOLOGY_DIR / "rr_2026_001_revision_identity.json",
     ARCHIVED_READER_REPORT_PATH,
 ]
 
@@ -145,6 +222,8 @@ LEGACY_FILENAMES = {
 }
 
 LINK_RE = re.compile(r"!?\[[^\]]*]\(([^)]+)\)")
+CODE_FENCE_BLOCK_RE = re.compile(r"```.*?```", re.DOTALL)
+INLINE_CODE_RE = re.compile(r"`[^`]+`")
 H2_RE = re.compile(r"^## ", re.MULTILINE)
 H3_RE = re.compile(r"^### ", re.MULTILINE)
 MATH_OPEN_RE = re.compile(r"^\\\[$", re.MULTILINE)
@@ -169,6 +248,7 @@ REQUIRED_ARCHITECTURE_TERMS = {
     CONTRACTS_DIR / "ARCHITECTURE.md": {
         "Domain boundaries and traceable dependencies",
         "This controlled feedback is not a direct reverse dependency.",
+        "CL-TAV two machines and SysML views",
     },
     ROOT / "docs/tutorial/TUTORIAL_CONTROL.md": {
         "explains_baseline",
@@ -277,8 +357,7 @@ INSTANCE_ADDITIONAL_EXPECTED = {
 }
 EXTERNAL_ROLE_LOCATORS = {row[0] for row in METHOD_MAPPING_EXPECTED.values()}
 ACCEPTANCE_IDS = {f"AC-{number:02d}" for number in range(1, 13)}
-REPORT_DISPLAY_MATH_BLOCKS = 94
-REPORT_DISPLAY_MATH_SHA256 = "2050040b3d2572f5eca3b9b7b93fed472e7e236e1951f8c88702534dbe3a24cb"
+METHOD_MATH_IDENTITY_PATH = METHODOLOGY_DIR / "rr_2026_001_revision_identity.json"
 
 
 def read(path: Path) -> str:
@@ -314,6 +393,21 @@ def document_shape(text: str) -> tuple[int, int, int, int, list[str], list[str],
     )
 
 
+def _markdown_code_ranges(text: str) -> list[tuple[int, int]]:
+    ranges = [(match.start(), match.end()) for match in CODE_FENCE_BLOCK_RE.finditer(text)]
+    covered = list(ranges)
+    for match in INLINE_CODE_RE.finditer(text):
+        start, end = match.start(), match.end()
+        if any(lo <= start < hi for lo, hi in covered):
+            continue
+        ranges.append((start, end))
+    return ranges
+
+
+def _inside_range(index: int, ranges: list[tuple[int, int]]) -> bool:
+    return any(start <= index < end for start, end in ranges)
+
+
 def local_link_errors() -> list[str]:
     errors: list[str] = []
     for source in ROOT.rglob("*.md"):
@@ -322,7 +416,10 @@ def local_link_errors() -> list[str]:
         if any(part.startswith(".") for part in source.relative_to(ROOT).parts):
             continue
         text = read(source)
+        skip = _markdown_code_ranges(text)
         for match in LINK_RE.finditer(text):
+            if _inside_range(match.start(), skip):
+                continue
             link = match.group(1).strip().strip("<>")
             if link.startswith(("http://", "https://", "mailto:", "#")):
                 continue
@@ -367,6 +464,919 @@ def display_math_fingerprint(text: str) -> tuple[int, str]:
     blocks = re.findall(r"(?ms)^\\\[$.*?^\\\]$", text)
     payload = "\n".join(blocks).encode("utf-8")
     return len(blocks), hashlib.sha256(payload).hexdigest()
+
+
+def git_show_file(commit: str, rel_path: str) -> str | None:
+    result = subprocess.run(
+        ["git", "show", f"{commit}:{rel_path.replace(chr(92), '/')}"],
+        cwd=ROOT,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=False,
+    )
+    if result.returncode != 0:
+        return None
+    return result.stdout.decode("utf-8")
+
+
+def load_method_math_identity() -> dict:
+    return json.loads(METHOD_MATH_IDENTITY_PATH.read_text(encoding="utf-8"))
+
+
+def historical_methodology_math_errors() -> list[str]:
+    """Historical commit objects keep the frozen math identity; the worktree successor does not."""
+    errors: list[str] = []
+    try:
+        identity = load_method_math_identity()
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"cannot load methodology math identity: {exc}"]
+    freeze = identity.get("historicalFreeze") or {}
+    report_path = identity.get("reportPath")
+    commit = freeze.get("commit")
+    if not isinstance(report_path, str) or not isinstance(commit, str):
+        return ["methodology math identity is missing reportPath or historicalFreeze.commit"]
+    text = git_show_file(commit, report_path)
+    if text is None:
+        return [f"cannot read historical methodology object {commit}:{report_path}"]
+    count, digest = display_math_fingerprint(text)
+    if count != freeze.get("displayMathBlocks") or digest != freeze.get("displayMathSha256"):
+        errors.append(
+            "historical methodology display mathematics drifted from the recorded freeze identity: "
+            f"blocks={count}, sha256={digest}"
+        )
+    successor = identity.get("successor") or {}
+    if successor.get("independentMathematicalApproval") is True:
+        errors.append("successor methodology identity must not self-assert independent mathematical approval")
+    if successor.get("independentReviewApproval") is True:
+        errors.append("successor methodology identity must not self-assert independent review approval")
+    if successor.get("historicalMathCheckDoesNotProveSuccessorMath") is not True:
+        errors.append("successor identity must state that the historical math check does not prove successor mathematics")
+    return errors
+
+
+def _audit_locator_from_crs(row: dict) -> dict:
+    source = row.get("source") or {}
+    return {
+        "id": row.get("id"),
+        "sourceUnitId": row.get("sourceUnitId"),
+        "clause": source.get("clause"),
+        "tableOrFigure": source.get("tableOrFigure"),
+        "documentPage": source.get("documentPage"),
+        "pdfPage": source.get("pdfPage"),
+        "fragmentKind": source.get("fragmentKind"),
+        "fragmentOrdinal": source.get("fragmentOrdinal"),
+        "applicabilityDecision": row.get("applicabilityDecision"),
+        "requirementIds": list(row.get("requirementIds") or []),
+    }
+
+
+def _expected_clause_groups(units: list[dict]) -> list[dict]:
+    groups: dict[tuple[object, object], dict] = {}
+    for item in units:
+        key = (item.get("clause"), item.get("tableOrFigure"))
+        group = groups.setdefault(
+            key,
+            {"clause": key[0], "tableOrFigure": key[1], "count": 0, "coverageIds": []},
+        )
+        group["count"] += 1
+        group["coverageIds"].append(item.get("id"))
+    out = []
+    for group in groups.values():
+        out.append(
+            {
+                "clause": group["clause"],
+                "tableOrFigure": group["tableOrFigure"],
+                "count": group["count"],
+                "coverageIds": sorted(group["coverageIds"]),
+            }
+        )
+    return sorted(out, key=lambda row: (-row["count"], str(row["clause"]), str(row["tableOrFigure"] or "")))
+
+
+def _count_field(rows, key: str) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for row in rows:
+        value = row.get(key)
+        if value is None:
+            continue
+        name = str(value)
+        counts[name] = counts.get(name, 0) + 1
+    return counts
+
+
+def leaf_unit_hash(text: str) -> str:
+    """ARINC-LEAF-UNIT-NFC-LF-HWS-v2: NFC, LF, collapse horizontal whitespace, SHA-256."""
+    canon = unicodedata.normalize("NFC", text.replace("\r\n", "\n").replace("\r", "\n"))
+    canon = re.sub(r"[ \t]+", " ", canon).strip()
+    return hashlib.sha256(canon.encode("utf-8")).hexdigest()
+
+
+def is_complete_prose_sentence(text: str) -> bool:
+    """True for a finished prose sentence. Truncated lead-ins and heading fragments fail."""
+    compact = re.sub(r"\s+", " ", str(text or "")).strip()
+    if len(compact) < 40:
+        return False
+    stripped = compact.rstrip('"').rstrip("'")
+    if stripped.endswith("to include") or stripped.endswith("as follows"):
+        return False
+    if stripped.endswith(":"):
+        return False
+    return bool(re.search(r"[.!?]$", stripped))
+
+
+SUPPORTING_SOURCE_STATUSES = {"BOUNDED-AUDIT-COMPLETE"}
+SUPPORTING_LEAF_STATUSES = {
+    "NOT-REQUIRED",
+    "LEAF-CRS-EMITTED",
+    "EXISTING-351-TRIGGERED-ROWS",
+    "EXISTING-LEAF-VIA-2-1-2",
+    "EXISTING-615A-LEAF",
+    "CRS-M1-00519-REMAINS-NOT-YET-BOUND",
+}
+SUPPORTING_LEAF_BOUND_STATUSES = {
+    "LEAF-CRS-EMITTED",
+    "EXISTING-351-TRIGGERED-ROWS",
+    "EXISTING-LEAF-VIA-2-1-2",
+    "EXISTING-615A-LEAF",
+}
+# Historical enum retained for migration. Authorization comes from unboundDispositions, not from this name.
+SUPPORTING_UNBOUND_LEAF_STATUSES = {
+    "CRS-M1-00519-REMAINS-NOT-YET-BOUND",
+}
+SUPPORTING_NOT_REQUIRED_APPLICABILITY = {"OUT-OF-PROFILE", "DEPENDENCY-BLOCKED"}
+SUPPORTING_REQUIRED_EFFECTS = {"REQUIRED", "CONDITIONAL-REQUIRED"}
+SUPPORTING_APPLICABLE_DECISIONS = {"APPLICABLE-SUPPORTING", "CONDITIONAL"}
+
+
+def supporting_scope_source_ids(register: dict | None = None) -> set[str]:
+    """Supporting-source scope from the controlled register, not a counted whitelist."""
+    register = CONTROLLED_SOURCES if register is None else register
+    ids: set[str] = set()
+    for row in register.get("sources") or []:
+        if not isinstance(row, dict):
+            continue
+        if row.get("role") == "CURRENT-PROTOCOL-AUTHORITY":
+            continue
+        source_id = row.get("id")
+        if isinstance(source_id, str) and source_id:
+            ids.add(source_id)
+    for row in register.get("openDependencies") or []:
+        if not isinstance(row, dict):
+            continue
+        source_id = row.get("id")
+        if isinstance(source_id, str) and source_id.startswith("RFC-"):
+            ids.add(source_id)
+    return ids
+
+
+def supporting_unit_clause_prefixes(unit: dict) -> list[str]:
+    """Locator prefixes for an audit unit. Composite numeric ranges split; titles stay whole."""
+    locator = unit.get("leafLocator") if isinstance(unit.get("leafLocator"), dict) else {}
+    recorded = locator.get("clausePrefixes")
+    if isinstance(recorded, list) and recorded:
+        return [str(item) for item in recorded if isinstance(item, str) and item]
+    clause = str(unit.get("clause") or "")
+    if re.fullmatch(r"[0-9]+(?:\.[0-9]+)*-[0-9]+(?:\.[0-9]+)*", clause):
+        return clause.split("-")
+    return [clause] if clause else []
+
+
+def supporting_unit_source_ids(source_id: str, unit: dict) -> set[str]:
+    locator = unit.get("leafLocator") if isinstance(unit.get("leafLocator"), dict) else {}
+    recorded = locator.get("sourceIds")
+    if isinstance(recorded, list) and recorded:
+        return {str(item) for item in recorded if isinstance(item, str) and item}
+    return {source_id} if source_id else set()
+
+
+def supporting_unit_excluded_prefixes(unit: dict) -> list[str]:
+    locator = unit.get("leafLocator") if isinstance(unit.get("leafLocator"), dict) else {}
+    recorded = locator.get("excludedClausePrefixes")
+    if isinstance(recorded, list):
+        return [str(item) for item in recorded if isinstance(item, str) and item]
+    return []
+
+
+def clause_in_supporting_unit_scope(clause: str, unit: dict) -> bool:
+    """True when a leaf clause is in the unit scope. Prefix+dot is allowed; exact unit clause also matches composites such as 3.2.2-3.2.3."""
+    text = str(clause or "")
+    excluded = supporting_unit_excluded_prefixes(unit)
+    if any(text == prefix or text.startswith(prefix + ".") for prefix in excluded):
+        return False
+    if not unit.get("leafLocator") and text == str(unit.get("clause") or ""):
+        return True
+    for prefix in supporting_unit_clause_prefixes(unit):
+        if text == prefix or text.startswith(prefix + "."):
+            return True
+    return False
+
+
+def _register_source_digest(register: dict, source_id: str) -> str | None:
+    for row in register.get("sources") or []:
+        if isinstance(row, dict) and row.get("id") == source_id:
+            digest = row.get("sha256")
+            return str(digest) if digest else None
+    for row in register.get("openDependencies") or []:
+        if not isinstance(row, dict) or row.get("id") != source_id:
+            continue
+        retrieval = row.get("publicRetrieval") or {}
+        digest = retrieval.get("retrievedSha256")
+        return str(digest) if digest else None
+    return None
+
+
+def supporting_unbound_disposition_map(supporting: dict) -> tuple[dict[str, dict], list[str]]:
+    """Index unbound dispositions by id. Does not authorize by historical status name."""
+    errors: list[str] = []
+    rows = supporting.get("unboundDispositions")
+    if rows is None:
+        return {}, ["supporting-source audit unboundDispositions is required"]
+    if not isinstance(rows, list):
+        return {}, ["supporting-source audit unboundDispositions must be a list"]
+    by_id: dict[str, dict] = {}
+    seen_units: set[str] = set()
+    for index, row in enumerate(rows):
+        if not isinstance(row, dict):
+            errors.append(f"supporting-source unboundDispositions[{index}] must be an object")
+            continue
+        disp_id = row.get("id")
+        if not isinstance(disp_id, str) or not disp_id:
+            errors.append(f"supporting-source unboundDispositions[{index}] is missing id")
+            continue
+        if disp_id in by_id:
+            errors.append(f"supporting-source audit contains duplicate unbound disposition {disp_id}")
+        by_id[disp_id] = row
+        unit_id = row.get("auditUnitId")
+        if not isinstance(unit_id, str) or not unit_id:
+            errors.append(f"supporting-source unbound disposition {disp_id} is missing auditUnitId")
+        elif unit_id in seen_units:
+            errors.append(f"supporting-source unbound disposition repeats audit unit {unit_id}")
+        else:
+            seen_units.add(unit_id)
+        if row.get("notIndependentApproval") is not True:
+            errors.append(f"supporting-source unbound disposition {disp_id} must not claim independent approval")
+        if not row.get("affectedRequirementId"):
+            errors.append(f"supporting-source unbound disposition {disp_id} is missing affectedRequirementId")
+        if not row.get("affectedCoverageId"):
+            errors.append(f"supporting-source unbound disposition {disp_id} is missing affectedCoverageId")
+        if not row.get("unfinishedScopeEn") or not row.get("unfinishedScopeZh"):
+            errors.append(f"supporting-source unbound disposition {disp_id} is missing unfinished scope")
+        if not row.get("sourceId") or not row.get("clause") or not row.get("rationaleCode"):
+            errors.append(f"supporting-source unbound disposition {disp_id} is missing source, locator or rationale")
+    return by_id, errors
+
+
+def _unbound_unit_errors(
+    unit: dict,
+    source_id: str,
+    dispositions: dict[str, dict],
+    req_by_id: dict,
+    coverage_by_id: dict,
+    part4: dict,
+) -> list[str]:
+    """Unbound is a recorded gap. It still has source, effect, and affected-identity checks."""
+    errors: list[str] = []
+    unit_id = unit.get("id")
+    applicability = unit.get("applicabilityDecision")
+    effect = unit.get("conformanceEffect")
+    if applicability in SUPPORTING_APPLICABLE_DECISIONS and effect in SUPPORTING_REQUIRED_EFFECTS:
+        errors.append(
+            f"supporting-source unit {unit_id} has applicable required obligations and cannot use an unbound leaf status"
+        )
+        return errors
+    disp_id = unit.get("unboundDispositionId")
+    if not isinstance(disp_id, str) or not disp_id:
+        errors.append(f"supporting-source unit {unit_id} unbound status is missing unboundDispositionId")
+        return errors
+    disposition = dispositions.get(disp_id)
+    if disposition is None:
+        errors.append(f"supporting-source unit {unit_id} unboundDispositionId is not a recorded unbound disposition")
+        return errors
+    if disposition.get("auditUnitId") != unit_id:
+        errors.append(f"supporting-source unit {unit_id} unbound disposition does not name this audit unit")
+    if disposition.get("sourceId") != source_id:
+        errors.append(f"supporting-source unit {unit_id} unbound disposition sourceId does not match the parent source")
+    if disposition.get("clause") != unit.get("clause"):
+        errors.append(f"supporting-source unit {unit_id} unbound disposition clause does not match the unit locator")
+    if disposition.get("rationaleCode") != unit.get("rationaleCode"):
+        errors.append(f"supporting-source unit {unit_id} unbound disposition rationaleCode does not match the unit")
+    req_id = disposition.get("affectedRequirementId")
+    if not isinstance(req_id, str) or req_id not in req_by_id:
+        errors.append(f"supporting-source unit {unit_id} unbound affected requirement is absent from the bound CRS package")
+        return errors
+    req = req_by_id[req_id]
+    cov_id = disposition.get("affectedCoverageId")
+    expected_cov = (req.get("rhoRA") or {}).get("sourceCoverageId")
+    if not isinstance(cov_id, str) or cov_id not in coverage_by_id:
+        errors.append(f"supporting-source unit {unit_id} unbound affected coverage is absent from the bound CRS ledger")
+    elif expected_cov and cov_id != expected_cov:
+        errors.append(f"supporting-source unit {unit_id} unbound affected coverage does not match the bound requirement")
+    if part4:
+        if part4.get("unboundDispositionId") == disp_id:
+            if part4.get("affectedRequirementId") != req_id:
+                errors.append("supporting-source Part-4 record does not match the unbound affected requirement")
+            if part4.get("status") and part4.get("status") != disposition.get("status"):
+                errors.append("supporting-source Part-4 status does not match the unbound disposition")
+    return errors
+
+
+def supporting_source_audit_errors(
+    audit: dict,
+    crs: dict,
+    register: dict | None = None,
+) -> list[str]:
+    """Structural supporting-source audit gate. Does not prove source-text completeness."""
+    errors: list[str] = []
+    register = CONTROLLED_SOURCES if register is None else register
+    supporting = audit.get("supportingSourceApplicabilityAudit")
+    if supporting is None:
+        errors.append("supportingSourceApplicabilityAudit is required")
+        return errors
+    if not isinstance(supporting, dict):
+        errors.append("supportingSourceApplicabilityAudit must be an object")
+        return errors
+    if supporting.get("notIndependentApproval") is not True:
+        errors.append("supporting-source audit must not claim independent approval")
+    blocked = audit.get("blockedSource") or {}
+    if "645BindingThisPr" in supporting and supporting.get("645BindingThisPr") is not False:
+        if blocked.get("boundThisPr") is not True:
+            errors.append("supporting-source audit must not bind ARINC 645 in this PR")
+    dispositions, disposition_errors = supporting_unbound_disposition_map(supporting)
+    errors.extend(disposition_errors)
+    part4 = supporting.get("arinc664Part4") if isinstance(supporting.get("arinc664Part4"), dict) else {}
+    if part4.get("unboundDispositionId"):
+        if part4["unboundDispositionId"] not in dispositions:
+            errors.append("supporting-source Part-4 record does not name a recorded unbound disposition")
+    sources = supporting.get("sources")
+    if not isinstance(sources, list):
+        errors.append("supporting-source audit sources must be a list")
+        return errors
+    if not sources:
+        errors.append("supporting-source audit sources must be non-empty")
+        return errors
+    expected_ids = supporting_scope_source_ids(register)
+    recorded_ids: list[str] = []
+    seen_source: set[str] = set()
+    seen_units: set[str] = set()
+    unbound_refs: dict[str, str] = {}
+    coverage_by_id = {row["id"]: row for row in crs.get("coverageLedger") or [] if isinstance(row, dict) and row.get("id")}
+    req_by_id = {row["id"]: row for row in crs.get("requirements") or [] if isinstance(row, dict) and row.get("id")}
+    for index, source in enumerate(sources):
+        if not isinstance(source, dict):
+            errors.append(f"supporting-source audit sources[{index}] must be an object")
+            continue
+        source_id = source.get("sourceId")
+        if not isinstance(source_id, str) or not source_id:
+            errors.append(f"supporting-source audit sources[{index}] is missing sourceId")
+            continue
+        if source_id in seen_source:
+            errors.append(f"supporting-source audit contains duplicate sourceId {source_id}")
+        seen_source.add(source_id)
+        recorded_ids.append(source_id)
+        if source.get("status") not in SUPPORTING_SOURCE_STATUSES:
+            errors.append(f"supporting-source {source_id} status is not a declared supporting-audit value")
+        if source.get("independentApproval") is not False:
+            errors.append(f"supporting-source {source_id} must not claim independent approval")
+        expected_digest = _register_source_digest(register, source_id)
+        recorded_digest = source.get("sha256")
+        if expected_digest and recorded_digest and recorded_digest != expected_digest:
+            errors.append(f"supporting-source {source_id} sha256 does not match the controlled register")
+        units = source.get("units")
+        if not isinstance(units, list) or not units:
+            errors.append(f"supporting-source {source_id} units must be a non-empty list")
+            continue
+        denom = source.get("coverageDenominator") or {}
+        if denom.get("count") != len(units):
+            errors.append(f"supporting-source {source_id} coverageDenominator.count does not match units")
+        unit_ids: list[str] = []
+        seen_clauses: set[str] = set()
+        allowed_sources_for_unit = lambda unit: supporting_unit_source_ids(source_id, unit)
+        for unit_index, unit in enumerate(units):
+            if not isinstance(unit, dict):
+                errors.append(f"supporting-source {source_id} units[{unit_index}] must be an object")
+                continue
+            unit_id = unit.get("id")
+            if not isinstance(unit_id, str) or not unit_id:
+                errors.append(f"supporting-source {source_id} contains a unit without id")
+                continue
+            if unit_id in seen_units or unit_id in unit_ids:
+                errors.append(f"supporting-source audit contains duplicate unit id {unit_id}")
+            seen_units.add(unit_id)
+            unit_ids.append(unit_id)
+            clause = str(unit.get("clause") or "")
+            if clause:
+                if clause in seen_clauses:
+                    errors.append(f"supporting-source {source_id} contains duplicate unit clause {clause}")
+                seen_clauses.add(clause)
+            applicability = unit.get("applicabilityDecision")
+            effect = unit.get("conformanceEffect")
+            leaf_status = unit.get("leafCrsStatus")
+            if leaf_status not in SUPPORTING_LEAF_STATUSES:
+                errors.append(f"supporting-source unit {unit_id} has undeclared leafCrsStatus")
+                continue
+            not_required_allowed = applicability in SUPPORTING_NOT_REQUIRED_APPLICABILITY or (
+                applicability == "CONDITIONAL" and effect == "INFORMATIVE"
+            )
+            if leaf_status == "NOT-REQUIRED":
+                if applicability in SUPPORTING_APPLICABLE_DECISIONS and effect in SUPPORTING_REQUIRED_EFFECTS:
+                    errors.append(
+                        f"supporting-source unit {unit_id} has applicable required obligations and cannot be NOT-REQUIRED"
+                    )
+                elif not not_required_allowed:
+                    errors.append(
+                        f"supporting-source unit {unit_id} NOT-REQUIRED is not supported by its applicability/effect disposition"
+                    )
+                continue
+            if leaf_status in SUPPORTING_UNBOUND_LEAF_STATUSES:
+                errors.extend(
+                    _unbound_unit_errors(unit, source_id, dispositions, req_by_id, coverage_by_id, part4)
+                )
+                disp_id = unit.get("unboundDispositionId")
+                if isinstance(disp_id, str) and disp_id:
+                    unbound_refs[unit_id] = disp_id
+                continue
+            if leaf_status not in SUPPORTING_LEAF_BOUND_STATUSES:
+                continue
+            leaf_cov = unit.get("leafCoverageIds")
+            leaf_req = unit.get("leafRequirementIds")
+            admitted = unit.get("admittedLeafUnits")
+            if not isinstance(leaf_cov, list) or not leaf_cov:
+                errors.append(f"supporting-source unit {unit_id} {leaf_status} is missing leafCoverageIds")
+                continue
+            if not isinstance(admitted, list) or not admitted:
+                errors.append(f"supporting-source unit {unit_id} {leaf_status} is missing admittedLeafUnits")
+                continue
+            if len(leaf_cov) != len(set(leaf_cov)):
+                errors.append(f"supporting-source unit {unit_id} leafCoverageIds contains duplicates")
+            admitted_cov: list[str] = []
+            admitted_req: list[str] = []
+            for item_index, item in enumerate(admitted):
+                if not isinstance(item, dict):
+                    errors.append(f"supporting-source unit {unit_id} admittedLeafUnits[{item_index}] must be an object")
+                    continue
+                cov_id = item.get("coverageId")
+                source_unit = item.get("sourceUnitId")
+                admitted_clause = item.get("clause")
+                if not isinstance(cov_id, str) or cov_id not in coverage_by_id:
+                    errors.append(f"supporting-source unit {unit_id} admitted coverage {cov_id} is absent from the bound CRS ledger")
+                    continue
+                if cov_id in admitted_cov:
+                    errors.append(f"supporting-source unit {unit_id} admittedLeafUnits contains duplicate coverage {cov_id}")
+                admitted_cov.append(cov_id)
+                coverage = coverage_by_id[cov_id]
+                cov_source = (coverage.get("source") or {}).get("sourceId")
+                allowed_sources = allowed_sources_for_unit(unit)
+                if cov_source not in allowed_sources:
+                    errors.append(f"supporting-source unit {unit_id} admitted coverage {cov_id} is from {cov_source}")
+                if source_unit and coverage.get("sourceUnitId") != source_unit:
+                    errors.append(f"supporting-source unit {unit_id} admitted coverage {cov_id} sourceUnitId does not match the bound CRS ledger")
+                leaf_clause = (coverage.get("source") or {}).get("clause")
+                if admitted_clause and admitted_clause != leaf_clause:
+                    errors.append(f"supporting-source unit {unit_id} admitted coverage {cov_id} clause does not match the bound CRS ledger")
+                if not clause_in_supporting_unit_scope(str(leaf_clause or ""), unit):
+                    errors.append(f"supporting-source unit {unit_id} admitted coverage {cov_id} is outside the unit locator scope")
+                for req_id in item.get("requirementIds") or []:
+                    if isinstance(req_id, str) and req_id not in admitted_req:
+                        admitted_req.append(req_id)
+            if set(leaf_cov) != set(admitted_cov):
+                errors.append(
+                    f"supporting-source unit {unit_id} leafCoverageIds do not match the admitted leaf-unit set"
+                )
+            expected_req: list[str] = []
+            for cov_id in leaf_cov:
+                if not isinstance(cov_id, str) or cov_id not in coverage_by_id:
+                    errors.append(f"supporting-source unit {unit_id} leaf coverage {cov_id} is absent from the bound CRS ledger")
+                    continue
+                coverage = coverage_by_id[cov_id]
+                cov_source = (coverage.get("source") or {}).get("sourceId")
+                allowed_sources = allowed_sources_for_unit(unit)
+                if cov_source not in allowed_sources:
+                    errors.append(f"supporting-source unit {unit_id} leaf coverage {cov_id} is from {cov_source}")
+                if not clause_in_supporting_unit_scope(str((coverage.get("source") or {}).get("clause") or ""), unit):
+                    errors.append(f"supporting-source unit {unit_id} leaf coverage {cov_id} is outside the unit locator scope")
+                for req_id in coverage.get("requirementIds") or []:
+                    if req_id not in expected_req:
+                        expected_req.append(req_id)
+            if not isinstance(leaf_req, list):
+                errors.append(f"supporting-source unit {unit_id} {leaf_status} is missing leafRequirementIds")
+                continue
+            if len(leaf_req) != len(set(leaf_req)):
+                errors.append(f"supporting-source unit {unit_id} leafRequirementIds contains duplicates")
+            if set(leaf_req) != set(expected_req):
+                errors.append(
+                    f"supporting-source unit {unit_id} leafRequirementIds do not match the bound coverage requirement set"
+                )
+            if admitted_req and set(leaf_req) != set(admitted_req):
+                errors.append(
+                    f"supporting-source unit {unit_id} leafRequirementIds do not match the admitted leaf-unit set"
+                )
+            for req_id in leaf_req:
+                if req_id not in req_by_id:
+                    errors.append(f"supporting-source unit {unit_id} leaf requirement {req_id} is absent from the bound CRS package")
+                    continue
+                req = req_by_id[req_id]
+                req_source = (req.get("source") or {}).get("sourceId")
+                if req_source not in allowed_sources_for_unit(unit):
+                    errors.append(f"supporting-source unit {unit_id} leaf requirement {req_id} is from {req_source}")
+                if not clause_in_supporting_unit_scope(str((req.get("source") or {}).get("clause") or ""), unit):
+                    errors.append(f"supporting-source unit {unit_id} leaf requirement {req_id} is outside the unit locator scope")
+    extra = set(recorded_ids) - expected_ids
+    missing = expected_ids - set(recorded_ids)
+    if extra:
+        errors.append("supporting-source audit contains sources outside the controlled supporting scope")
+    if missing:
+        errors.append("supporting-source audit is missing sources from the controlled supporting scope")
+    for disp_id, disposition in dispositions.items():
+        unit_id = disposition.get("auditUnitId")
+        if unit_id not in unbound_refs:
+            errors.append(f"supporting-source unbound disposition {disp_id} is not used by an unbound audit unit")
+        elif unbound_refs.get(unit_id) != disp_id:
+            errors.append(f"supporting-source unbound disposition {disp_id} does not match the unit unboundDispositionId")
+    return errors
+
+
+def protocol_source_audit_errors(audit: dict, crs: dict, register: dict | None = None) -> list[str]:
+    """Row-level navigation identity of the deferred ledger. Not a source-semantics proof."""
+    errors: list[str] = []
+    status = audit.get("status")
+    if status not in AUDIT_STATUS_GENERATION:
+        errors.append("protocol source audit status is not a declared audit-phase value")
+    expected_generation = AUDIT_STATUS_GENERATION.get(status)
+    if audit.get("requirementGenerationAllowed") is not expected_generation:
+        errors.append("protocol source audit requirementGenerationAllowed must match the declared status")
+    if audit.get("notBatchStatusRename") is not True:
+        errors.append("protocol source audit must forbid batch status rename")
+    bound = audit.get("boundPackage") or {}
+    inventory = crs.get("inventorySummary") or {}
+    if bound.get("coverageFingerprint") != inventory.get("coverageFingerprint"):
+        errors.append("protocol source audit coverage fingerprint does not match the bound CRS package")
+    if bound.get("requirementsFingerprint") != inventory.get("requirementsFingerprint"):
+        errors.append("protocol source audit requirements fingerprint does not match the bound CRS package")
+    if bound.get("artifactVersion") != crs.get("artifactVersion"):
+        errors.append("protocol source audit artifactVersion does not match the bound CRS package")
+    if bound.get("coverageCount") != inventory.get("coverageCount"):
+        errors.append("protocol source audit boundPackage.coverageCount does not match the bound CRS package")
+    if bound.get("requirementCount") != inventory.get("requirementCount"):
+        errors.append("protocol source audit boundPackage.requirementCount does not match the bound CRS package")
+    ledger = {row["id"]: row for row in crs.get("coverageLedger") or []}
+    deferred_units = audit.get("deferredUnits") or {}
+    summary = audit.get("summary") or {}
+    rationale_counts = summary.get("rationaleCodes") or {}
+    by_rationale = ((summary.get("deferredFutureScope") or {}).get("byRationale") or {})
+    clause_groups = audit.get("clauseGroups") or {}
+    for code in DEFERRED_AUDIT_CODES:
+        expected_rows = {
+            row_id: _audit_locator_from_crs(row)
+            for row_id, row in ledger.items()
+            if row.get("rationaleCode") == code
+        }
+        recorded = deferred_units.get(code)
+        if not isinstance(recorded, list):
+            errors.append(f"protocol source audit deferredUnits.{code} must be a list")
+            continue
+        recorded_ids = [item.get("id") if isinstance(item, dict) else None for item in recorded]
+        if None in recorded_ids or "" in recorded_ids:
+            errors.append(f"protocol source audit {code} contains a row without id")
+        if len(recorded_ids) != len(set(recorded_ids)):
+            errors.append(f"protocol source audit {code} contains duplicate coverage ids")
+        if set(recorded_ids) - {None, ""} != set(expected_rows):
+            errors.append(f"protocol source audit IDs for {code} do not match the bound CRS ledger")
+        if by_rationale.get(code, 0) != len(expected_rows):
+            errors.append(f"protocol source audit summary count for {code} does not match the bound CRS ledger")
+        if rationale_counts.get(code, 0) != len(expected_rows):
+            errors.append(f"protocol source audit rationaleCodes.{code} does not match the bound CRS ledger")
+        locators: list[dict] = []
+        for item in recorded:
+            if not isinstance(item, dict):
+                errors.append(f"protocol source audit {code} contains a non-object row")
+                continue
+            missing = [field for field in AUDIT_UNIT_FIELDS if field not in item]
+            if missing:
+                errors.append(f"protocol source audit row {item.get('id')} is missing {missing[0]}")
+                continue
+            if item.get("requirementIds") is None:
+                errors.append(f"protocol source audit row {item.get('id')} must make requirementIds explicit")
+                continue
+            row_id = item.get("id")
+            expected = expected_rows.get(row_id)
+            if expected is None:
+                continue
+            for field in AUDIT_UNIT_FIELDS:
+                left = item.get(field)
+                right = expected.get(field)
+                if field == "requirementIds":
+                    left = list(left or [])
+                    right = list(right or [])
+                if left != right:
+                    errors.append(
+                        f"protocol source audit row {row_id} {field} does not match the bound CRS locator"
+                    )
+            locators.append(item)
+        expected_groups = _expected_clause_groups(list(expected_rows.values()))
+        recorded_groups = clause_groups.get(code) or []
+        normalized = []
+        if not isinstance(recorded_groups, list):
+            errors.append(f"protocol source audit clauseGroups.{code} must be a list")
+        else:
+            for group in recorded_groups:
+                if not isinstance(group, dict):
+                    errors.append(f"protocol source audit clauseGroups.{code} contains a non-object group")
+                    continue
+                normalized.append(
+                    {
+                        "clause": group.get("clause"),
+                        "tableOrFigure": group.get("tableOrFigure"),
+                        "count": group.get("count"),
+                        "coverageIds": sorted(group.get("coverageIds") or []),
+                    }
+                )
+            normalized = sorted(
+                normalized,
+                key=lambda row: (-int(row["count"] or 0), str(row["clause"]), str(row["tableOrFigure"] or "")),
+            )
+            if normalized != expected_groups:
+                errors.append(f"protocol source audit clauseGroups.{code} drifted from deferredUnits")
+    if summary.get("coverageCount") != inventory.get("coverageCount"):
+        errors.append("protocol source audit summary.coverageCount does not match the bound CRS package")
+    if summary.get("requirementCount") != inventory.get("requirementCount"):
+        errors.append("protocol source audit summary.requirementCount does not match the bound CRS package")
+    expected_app = _count_field(ledger.values(), "applicabilityDecision")
+    if (summary.get("applicabilityDecisions") or {}) != expected_app:
+        errors.append("protocol source audit summary.applicabilityDecisions drifted from the bound CRS ledger")
+    expected_rat = _count_field(ledger.values(), "rationaleCode")
+    if (summary.get("rationaleCodes") or {}) != expected_rat:
+        errors.append("protocol source audit summary.rationaleCodes drifted from the bound CRS ledger")
+    deferred_total = expected_app.get("DEFERRED-FUTURE-SCOPE", 0)
+    future = summary.get("deferredFutureScope") or {}
+    if future.get("total") != deferred_total:
+        errors.append("protocol source audit summary.deferredFutureScope.total does not match the bound CRS ledger")
+    errors.extend(source_reread_errors(audit))
+    reread = audit.get("sourceReread") or {}
+    generated_ids_by_code = reread.get("generatedUnitIdsByCode") or {}
+    for code in reread.get("generatedCodes") or []:
+        if not isinstance(code, str):
+            continue
+        for row_id in generated_ids_by_code.get(code) or []:
+            if row_id not in ledger:
+                errors.append(f"{code} generated inventory id {row_id} is absent from the bound CRS ledger")
+    errors.extend(supporting_source_audit_errors(audit, crs, register))
+    return errors
+
+
+def expected_download_mode(clause: str) -> str:
+    """Media Defined and Operator Defined DOWNLOAD stay separate after reread."""
+    if clause.startswith(("5.4.4.1", "6.2.10", "6.4.6")) or clause == "6.3.3":
+        return "MEDIA-DEFINED"
+    if clause.startswith(("5.4.4.2", "6.2.14", "6.2.15", "6.2.16", "6.4.8", "6.4.9")) or clause == "6.3.4":
+        return "OPERATOR-DEFINED"
+    if clause.startswith("5.4.4.3"):
+        return "MEDIA-ORGANIZATION"
+    return "SHARED"
+
+
+def source_reread_errors(audit: dict) -> list[str]:
+    """FIND/DOWNLOAD/AFDX reread candidates. Generated codes may rewrite the bound package."""
+    errors: list[str] = []
+    reread = audit.get("sourceReread")
+    status = audit.get("status")
+    if status in {"SOURCE-UNIT-AUDIT-IN-PROGRESS", "PARTIAL-CRS-GENERATION-IN-PROGRESS"} and not isinstance(reread, dict):
+        errors.append("source-unit audit in progress must record sourceReread")
+        return errors
+    if reread is None:
+        return errors
+    if not isinstance(reread, dict):
+        errors.append("sourceReread must be an object")
+        return errors
+    if reread.get("requirementGenerationAllowed") is not False:
+        errors.append("sourceReread must not allow requirement generation")
+    generated_codes = {code for code in (reread.get("generatedCodes") or []) if isinstance(code, str)}
+    unknown_generated = generated_codes - set(DEFERRED_AUDIT_CODES)
+    if unknown_generated:
+        errors.append("sourceReread generatedCodes contains an undeclared deferred rationale")
+    if generated_codes:
+        if reread.get("doesNotRewriteBoundPackage") is not False:
+            errors.append("sourceReread must record bound-package rewrite after generated codes")
+    elif reread.get("doesNotRewriteBoundPackage") is not True:
+        errors.append("sourceReread must not rewrite the bound package")
+    if reread.get("proprietaryTextExcluded") is not True:
+        errors.append("sourceReread must exclude proprietary source text")
+    deferred = audit.get("deferredUnits") or {}
+    generated_ids_by_code = reread.get("generatedUnitIdsByCode") or {}
+    units = reread.get("units")
+    if not isinstance(units, list):
+        errors.append("sourceReread units must be a list")
+        return errors
+    recorded_ids = [item.get("id") if isinstance(item, dict) else None for item in units]
+    if None in recorded_ids or "" in recorded_ids:
+        errors.append("sourceReread contains a row without id")
+    if len(list(filter(None, recorded_ids))) != len(set(filter(None, recorded_ids))):
+        errors.append("sourceReread contains duplicate coverage ids")
+    if reread.get("unitsRead") != len(units):
+        errors.append("sourceReread unitsRead does not match recorded units")
+    completed = [code for code in (reread.get("completedCodes") or []) if isinstance(code, str)]
+    current = reread.get("scopeThisIncrement")
+    active = [
+        code
+        for code in completed + [current]
+        if isinstance(code, str) and code and code in DEFERRED_AUDIT_CODES
+    ]
+    pending = set(reread.get("pendingCodes") or [])
+    recorded_codes = {
+        item.get("frozenRationaleCode")
+        for item in units
+        if isinstance(item, dict) and item.get("frozenRationaleCode")
+    }
+    if set(active) != recorded_codes:
+        errors.append("sourceReread completed/current codes do not match recorded rationale codes")
+    if pending & recorded_codes:
+        errors.append("sourceReread pendingCodes must not include recorded codes")
+    if generated_codes - recorded_codes:
+        errors.append("sourceReread generatedCodes must be a subset of recorded rationale codes")
+    for code in sorted(recorded_codes):
+        got_ids = [
+            item.get("id")
+            for item in units
+            if isinstance(item, dict) and item.get("frozenRationaleCode") == code
+        ]
+        if code in generated_codes:
+            expected_ids = generated_ids_by_code.get(code) or []
+            if not isinstance(expected_ids, list):
+                errors.append(f"{code} generated inventory must be a list")
+                continue
+            if set(filter(None, got_ids)) != set(filter(None, expected_ids)):
+                errors.append(f"{code} sourceReread IDs do not match generated inventory")
+            if len(got_ids) != len(expected_ids):
+                errors.append(f"{code} sourceReread unit count does not match generated inventory")
+            continue
+        expected_ids = [row.get("id") for row in deferred.get(code) or [] if isinstance(row, dict)]
+        if set(filter(None, got_ids)) != set(filter(None, expected_ids)):
+            errors.append(f"{code} sourceReread IDs do not match deferred units")
+        if len(got_ids) != len(expected_ids):
+            errors.append(f"{code} sourceReread unit count does not match deferred units")
+    for item in units:
+        if not isinstance(item, dict):
+            errors.append("sourceReread contains a non-object row")
+            continue
+        missing = [field for field in SOURCE_REREAD_UNIT_FIELDS if field not in item]
+        if missing:
+            errors.append(f"sourceReread row {item.get('id')} is missing {missing[0]}")
+            continue
+        if item.get("frozenApplicabilityDecision") != "DEFERRED-FUTURE-SCOPE":
+            errors.append(f"sourceReread row {item.get('id')} must keep frozen DEFERRED-FUTURE-SCOPE")
+        if item.get("candidateApplicability") not in SOURCE_REREAD_APPLICABILITY:
+            errors.append(f"sourceReread row {item.get('id')} has an undeclared candidateApplicability")
+        if item.get("frozenSourceModality") == "COMMENTARY" and item.get("candidateApplicability") != "NON-NORMATIVE":
+            errors.append(f"sourceReread row {item.get('id')} must not promote commentary")
+        if not isinstance(item.get("objects"), list) or not item.get("objects"):
+            errors.append(f"sourceReread row {item.get('id')} must list objects")
+        if not item.get("actor") or not item.get("action"):
+            errors.append(f"sourceReread row {item.get('id')} must record actor and action")
+        if item.get("frozenRationaleCode") == "DEFERRED-DOWNLOAD-M9":
+            mode = item.get("downloadMode")
+            if mode not in SOURCE_REREAD_DOWNLOAD_MODES:
+                errors.append(f"sourceReread row {item.get('id')} must declare a DOWNLOAD mode")
+            elif mode != expected_download_mode(str(item.get("clause") or "")):
+                errors.append(f"sourceReread row {item.get('id')} must not mix Media Defined and Operator Defined DOWNLOAD")
+        if item.get("frozenRationaleCode") == AFDX_RATIONALE:
+            if item.get("deploymentVariant") != "AFDX":
+                errors.append(f"sourceReread row {item.get('id')} must declare the AFDX deployment variant")
+            if item.get("candidateApplicability") == AFDX_UNCONDITIONAL_APPLICABILITY:
+                errors.append(
+                    f"sourceReread row {item.get('id')} must not treat AFDX appendix as the current Compliant instance"
+                )
+    return errors
+
+
+def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
+    """File and marker completeness for notation-based views.
+
+    Semantic admission, ERROR and stop-class behavior is checked by
+    scripts/cltav_loop_spec.py walk-throughs, not by natural-language regex.
+    """
+    errors: list[str] = []
+    for name in CLTAV_PUML_FILES:
+        text = models.get(name, "")
+        if not text:
+            errors.append(f"missing CL-TAV SysML source: {name}")
+            continue
+        if SYSML_NOTATION_MARK not in text:
+            errors.append(f"{name} must declare SysML 1.6 notation-based views")
+    activity = models.get("FIG-CL-TAV-05-closed-loop-activity.puml", "")
+    for token in (
+        "admissible",
+        "XOR",
+        "Hk",
+        "Prep",
+        "ERROR",
+        "ErrorHandle",
+        "unknown-effect",
+        "confirmed not sent",
+        "Charge cost once",
+        "strictly-reducing",
+        "selectable",
+        "A1",
+        "A5",
+        "unconfirmed",
+        "P1",
+        "P5",
+        "Stop-Budget",
+        "Stop-NoDistinguisher",
+        "Stop-Equivalent",
+        "Stop-Singleton",
+        "Stop-Empty",
+        "Stop-Error",
+        "Stop-645",
+        "cmin",
+        "Kmax",
+    ):
+        if token not in activity:
+            errors.append(f"closed-loop activity view is missing {token}")
+    if "if (A empty?)" in activity and "S empty" not in activity:
+        errors.append("closed-loop activity view must not Execute from nonempty A without selectable S")
+    machines = models.get("FIG-CL-TAV-07-two-state-machines.puml", "")
+    for token in ("Msess", "Mprot", "Admit", "ErrorHandle", "bound M2", "FIG-CL-TAV-04", "FIND", "P1", "P5", "A1", "A5", "unconfirmed", "retry remaining"):
+        if token not in machines:
+            errors.append(f"two-machine view is missing {token}")
+    if "Information -->" in machines:
+        errors.append("two-machine view must not draw unaudited Information to other-operation edges")
+    if re.search(r"Msess\s+-->\s+Mprot", machines):
+        errors.append("two-machine view must not use a cross-machine state transition")
+    if "Execute --> StopError" in machines:
+        errors.append("two-machine view must not stop immediately on every ERROR")
+    if "retry cap or Recover not admissible" in machines:
+        errors.append("two-machine view must not stop on Recover-not-admissible except under unknown-effect")
+    if "ErrorHandle --> Admit : unknown-effect and Recover in S" in machines:
+        errors.append("two-machine view must not Admit unknown-effect Recover without retry remaining")
+    if "RecoverConfirm --> StopBudget : unconfirmed A5" in machines or "RecoverConfirm --> StopError : unconfirmed A4" in machines:
+        errors.append("two-machine view must not overlap unconfirmed Recover stop with return to Admit")
+    parametric = models.get("FIG-CL-TAV-08-parametric.puml", "")
+    for token in ("cmin", "Kmax", "Hk"):
+        if token not in parametric:
+            errors.append(f"parametric view is missing {token}")
+    sequence = models.get("FIG-CL-TAV-06-diagnostic-sequence.puml", "")
+    if "Prep" not in sequence or "overlapping" not in sequence:
+        errors.append("diagnostic sequence view must show overlapping observation and Prep")
+    if "Izk of tb" not in sequence:
+        errors.append("diagnostic sequence view must send the second observation to Analysis")
+    layers = models.get("FIG-CL-TAV-02-requirement-layers.puml", "")
+    if "CRS-M1-00365" not in layers:
+        errors.append("requirement-layer view must include the representative source-to-CRS trace")
+    return errors
+
+
+def cltav_figure_errors() -> list[str]:
+    """Reader SVG completeness. Not a PlantUML renderer and not a semantic engine."""
+    errors: list[str] = []
+    for name in CLTAV_SVG_FILES:
+        path = CLTAV_SVG_DIR / name
+        if not path.is_file():
+            errors.append(f"missing CL-TAV reader figure: {name}")
+            continue
+        text = path.read_text(encoding="utf-8", errors="replace")
+        head = text[:400].lstrip().lower()
+        if "<svg" not in head:
+            errors.append(f"{name} is not an SVG document")
+        if "bad url" in text.lower() or "huffman" in text.lower():
+            errors.append(f"{name} is a renderer error page, not a figure")
+    return errors
+
+
+def cltav_outline_errors(outline_text: str) -> list[str]:
+    """Each thesis chapter must carry claim, question, algorithm/architecture, and evidence."""
+    errors: list[str] = []
+    if ZH_MARKER not in outline_text:
+        return ["research outline is missing the Chinese boundary"]
+    english, chinese = outline_text.split(ZH_MARKER, 1)
+    if english.count("- **Claim:**") != 8 or chinese.count("- **论点：**") != 8:
+        errors.append("research outline must state a claim for each of the eight chapters")
+    if english.count("- **Answers:**") != 8 or chinese.count("- **回答：**") != 8:
+        errors.append("research outline must map each chapter to a research question")
+    if english.count("- **Uses:**") != 8 or chinese.count("- **使用：**") != 8:
+        errors.append("research outline must name the algorithm or architecture each chapter uses")
+    if english.count("- **Needs:**") != 8 or chinese.count("- **需要：**") != 8:
+        errors.append("research outline must name the experiment or evidence each chapter needs")
+    for fig in range(1, 9):
+        fig_id = f"FIG-CL-TAV-0{fig}"
+        if fig_id not in english or fig_id not in chinese:
+            errors.append(f"research outline is missing {fig_id}")
+    if "M_{\\mathrm{sess}}" not in english or "M_{\\mathrm{prot}}" not in english:
+        errors.append("research outline must distinguish the verification-session and protocol-operation machines")
+    if "c_{\\min}" not in english or "K_{\\max}" not in english:
+        errors.append("research outline must state the finite-termination rule")
+    outline_dir = RESEARCH / "publication"
+    for raw in LINK_RE.findall(outline_text):
+        href = raw.split()[0]
+        if href.startswith("#") or "://" in href:
+            continue
+        target = (outline_dir / href).resolve()
+        try:
+            target.relative_to(ROOT.resolve())
+        except ValueError:
+            errors.append(f"research outline link escapes the repository: {href}")
+            continue
+        if not target.exists():
+            errors.append(f"research outline link is missing: {href}")
+    return errors
 
 
 def validate_gvs_binding(errors: list[str]) -> None:
@@ -1265,20 +2275,29 @@ def _unique_rows(rows: object, label: str) -> tuple[dict[str, dict], list[str]]:
     return result, errors
 
 
-def _head_blob_bytes(root: Path, relative: str) -> tuple[bytes | None, str | None]:
+def _git_blob_bytes(root: Path, relative: str, commit: str | None = None) -> tuple[bytes | None, str | None]:
+    locator = f"{commit}:{relative}" if commit else f"HEAD:{relative}"
     result = subprocess.run(
-        ["git", "show", f"HEAD:{relative}"], cwd=root,
+        ["git", "show", locator], cwd=root,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
     )
     if result.returncode != 0:
-        return None, f"cannot read committed Git blob HEAD:{relative}"
+        return None, f"cannot read committed Git blob {locator}"
     return result.stdout, None
+
+
+def _head_blob_bytes(root: Path, relative: str) -> tuple[bytes | None, str | None]:
+    return _git_blob_bytes(root, relative)
 
 
 def frozen_record_errors(
     records: object, root: Path, tracked_paths: set[str], label: str = "frozenRecords",
 ) -> list[str]:
-    """Compare registered identities with committed Git blob bytes, never checkout text."""
+    """Compare registered identities with committed Git blob bytes, never checkout text.
+
+    An optional record-level commit pins historical bytes after the same path
+    later carries a successor revision. HEAD is used only when no commit is named.
+    """
     errors: list[str] = []
     if not isinstance(records, list) or not records:
         return [f"{label} must be a non-empty list"]
@@ -1294,7 +2313,12 @@ def frozen_record_errors(
             errors.append(path_error)
             continue
         assert target is not None
-        payload, blob_error = _head_blob_bytes(root, record["path"])
+        commit = record.get("commit")
+        if commit is not None:
+            if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit):
+                errors.append(f"{item_label}.commit must be a 40-character lowercase SHA")
+                continue
+        payload, blob_error = _git_blob_bytes(root, record["path"], commit)
         if blob_error:
             errors.append(blob_error)
             continue
@@ -1303,6 +2327,13 @@ def frozen_record_errors(
             errors.append(f"{item_label} byteCount differs from committed Git blob")
         if record.get("sha256") != hashlib.sha256(payload).hexdigest():
             errors.append(f"{item_label} sha256 differs from committed Git blob")
+        if record.get("path") == "docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md":
+            freeze_commit = load_method_math_identity().get("historicalFreeze", {}).get("commit")
+            if commit != freeze_commit:
+                errors.append(
+                    f"{item_label} must pin the methodology report to the historical freeze commit, "
+                    "not to successor HEAD bytes"
+                )
     return errors
 
 
@@ -1825,12 +2856,17 @@ def main() -> int:
     for term in REQUIRED_REPORT_TERMS:
         if term not in report_text:
             errors.append(f"methodology report is missing required term: {term}")
-    math_count, math_digest = display_math_fingerprint(report_text)
-    if math_count != REPORT_DISPLAY_MATH_BLOCKS or math_digest != REPORT_DISPLAY_MATH_SHA256:
-        errors.append(
-            "methodology display mathematics changed from the frozen v4.2.1 payload: "
-            f"blocks={math_count}, sha256={math_digest}"
+    errors.extend(historical_methodology_math_errors())
+    crs_package = json.loads(read(ROOT / "configs/requirements/arinc_615a3_m1_crs.json"))
+    audit_package = json.loads(read(SOURCE_AUDIT_PATH))
+    errors.extend(protocol_source_audit_errors(audit_package, crs_package))
+    errors.extend(cltav_outline_errors(read(RESEARCH / "publication" / "RESEARCH_OUTLINE.md")))
+    errors.extend(
+        cltav_sysml_errors(
+            {name: read(CLTAV_PUML_DIR / name) for name in CLTAV_PUML_FILES}
         )
+    )
+    errors.extend(cltav_figure_errors())
 
     for legacy in LEGACY_FILENAMES:
         if (METHODOLOGY_DIR / legacy).exists():

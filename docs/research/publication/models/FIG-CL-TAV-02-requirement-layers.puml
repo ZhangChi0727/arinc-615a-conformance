@@ -1,0 +1,50 @@
+@startuml FIG-CL-TAV-02
+skinparam shadowing false
+title FIG-CL-TAV-02 Requirement layers and representative trace\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nmethod goals, protocol CRS and tool requirements stay distinct
+
+package "Method goals" as MG {
+  [CL-RQ1 loop consistency]
+  [CL-RQ2 comparative effect]
+  [CL-RQ3 uncertainty and stopping]
+}
+
+package "Protocol CRS" as PCRS {
+  [INFORMATION]
+  [UPLOAD]
+  [Media Defined DOWNLOAD]
+  [Operator Defined DOWNLOAD]
+  [FIND]
+  [abort / reject / exception / retry]
+}
+
+package "Tool requirements" as TR {
+  [later development-ready PR]
+  [not this increment]
+}
+
+MG ..> PCRS : method uses protocol obligations
+PCRS ..> TR : tool may later implement
+
+package "Representative trace E1 subset" as TRACE {
+  [SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E007-7726A816FFE7] as SRC
+  [CRS-M1-00365] as CRS365
+  [CRS-M1-00366] as CRS366
+  [CRS-M1-00367] as CRS367
+  [constraint: LUR write order] as CON
+  [Test / Analysis planned VC] as TA
+  [tool module later PR] as TOOL
+  [Evidence not executed] as EV
+}
+
+SRC --> CRS365 : source unit to requirement
+CRS365 --> CRS366
+CRS366 --> CRS367
+CRS367 --> CON
+CON --> TA
+TA ..> TOOL : planned
+TOOL ..> EV : planned; satisfy/verify are model relations,\nnot executed verification
+note bottom of TRACE
+  Real bound-M1 IDs. DOWNLOAD/FIND traces wait for source-unit audit.
+  No executed verify is claimed.
+end note
+@enduml

@@ -79,6 +79,31 @@
       }
     },
     {
+      "id": "ARINC-664-4",
+      "edition": "664P4-1",
+      "publicationDate": "2004-12-15",
+      "pageCount": 53,
+      "byteCount": 281848,
+      "sha256": "eecfaaf1020d8efd5fb35f138faf4f902c87ab95df8af839116a0b2e263916c0",
+      "role": "CONDITIONAL-ADDRESS-REFERENCE",
+      "displayGroup": "CONDITIONAL-DEPLOYMENT",
+      "acquisitionRecordId": "SAR-2026-001",
+      "sourceHandling": "LOCAL-PROPRIETARY-NO-REPOSITORY-COPY",
+      "equivalentReplacementFor": [],
+      "limitations": [
+        "EDITION-SPECIFIC-CANDIDATE-NOT-LATEST-EDITION-CLAIM",
+        "APPLICABILITY-AND-TRACEABILITY-PENDING-INDEPENDENT-REVIEW",
+        "ADDRESS-RULE-ALTERNATIVE-NOT-AFDX-ACTIVATION"
+      ],
+      "dependencyReview": {
+        "dependencyId": "DEP-ARINC-664-4",
+        "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+        "capabilityIds": [
+          "AIRCRAFT-INTERNET-ADDRESS-SEMANTICS"
+        ]
+      }
+    },
+    {
       "id": "ARINC-664-7",
       "edition": "664P7",
       "publicationDate": "2005-06-27",
@@ -122,6 +147,20 @@
         "AIRCRAFT-INTERNET-NETWORK-SEMANTICS"
       ],
       "closureRule": "The local edition is recorded; close remaining applicability and traceability obligations through independent review before claiming the affected capability.",
+      "sourceAvailability": "ACQUIRED-IDENTITY-RECORDED",
+      "pendingObligations": [
+        "EDITION-APPLICABILITY-REVIEW",
+        "REQUIREMENT-LEVEL-TRACEABILITY-REVIEW",
+        "INDEPENDENT-APPROVAL"
+      ]
+    },
+    {
+      "id": "ARINC-664-4",
+      "status": "OPEN-DEPENDENCY",
+      "affectedCapabilityIds": [
+        "AIRCRAFT-INTERNET-ADDRESS-SEMANTICS"
+      ],
+      "closureRule": "The local edition is recorded; close remaining applicability and traceability obligations through independent review before claiming the affected capability. Recording Part 4 does not select it over integrator-identified address requirements and does not activate AFDX.",
       "sourceAvailability": "ACQUIRED-IDENTITY-RECORDED",
       "pendingObligations": [
         "EDITION-APPLICABILITY-REVIEW",
@@ -335,6 +374,13 @@
       ]
     },
     {
+      "id": "AIRCRAFT-INTERNET-ADDRESS-SEMANTICS",
+      "status": "NOT-ESTABLISHED",
+      "blockedBy": [
+        "ARINC-664-4"
+      ]
+    },
+    {
       "id": "AFDX-DETERMINISTIC-ETHERNET-SEMANTICS",
       "status": "NOT-ESTABLISHED",
       "blockedBy": [
@@ -423,8 +469,10 @@
         },
         {
           "path": "docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md",
+          "commit": "3423583b7812c69893585a41856715172f712733",
           "byteCount": 130983,
-          "sha256": "c089a64e5feb80d8816d652bf9a150a89bd3c4b45a3f95887a109fa6e564fd3b"
+          "sha256": "c089a64e5feb80d8816d652bf9a150a89bd3c4b45a3f95887a109fa6e564fd3b",
+          "note": "Pinned to the last merged main that still carried the v4.2 report. Successor path bytes under CR-2026-012 are a different identity and must not update this freeze."
         }
       ]
     }
@@ -454,10 +502,13 @@
       "DD-018",
       "DD-024",
       "DD-025",
-      "DD-026"
+      "DD-026",
+      "DD-028",
+      "DD-029",
+      "DD-030"
     ],
     "behaviorModel": "LIGHTWEIGHT-OBSERVABLE-TIMED-EFSM",
-    "verificationMethod": "BOUNDED-TEST-ANALYSIS",
+    "verificationMethod": "CL-TAV",
     "deferredModels": [
       "DTMC",
       "HMM-ML",
@@ -481,7 +532,7 @@
     "currentStageId": "M2",
     "nextStageId": "M3",
     "candidateDisposition": "ADOPT",
-    "formalActivationControlPath": "docs/control/changes/CR-2026-008.md",
+    "formalActivationControlPath": "docs/control/changes/CR-2026-012.md",
     "repositoryMergeEvidence": "EXTERNAL-VERIFICATION-REQUIRED",
     "independentApproval": "NOT-AUTOMATED",
     "nextStageEntryRule": "PROHIBITED-UNTIL-APPROVAL-AND-ORDINARY-MERGE-VERIFIED"

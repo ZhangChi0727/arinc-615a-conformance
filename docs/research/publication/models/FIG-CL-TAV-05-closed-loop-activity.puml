@@ -1,0 +1,105 @@
+@startuml FIG-CL-TAV-05
+skinparam shadowing false
+title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nadmissible A then selectable S; Admit table A1-A5; charge once
+
+start
+:Idle; declare selected mode BUDGET(cmin,B) XOR ROUNDS(Kmax);
+repeat
+  :Build admissible A(qk);
+  :Form selectable S = currently-valid strictly-reducing TEST, else Prep, else Recover;
+  if (S empty? Admit A2-A5) then (yes)
+    if (q unknown?) then (yes)
+      if (Recover eligible?) then (A5 unaffordable)
+        :Stop-Budget; keep UNKNOWN and ERROR history;
+        stop
+      else (A4 not eligible)
+        :Stop-Error;
+        stop
+      endif
+    else (KNOWN)
+      if (strictly-reducing TEST or Prep exists unaffordable?) then (A2)
+        :Stop-Budget;
+        stop
+      else (A3)
+        :Stop-NoDistinguisher;
+        stop
+      endif
+    endif
+  else (A1 never argmin empty S)
+    :Select from S by one-step minimax on currently valid nonempty classes;
+    :Execute chosen action toward Mprot through FIG-CL-TAV-04 ports;
+    :Charge cost once under the selected mode;
+    if (instrument / correlation / record valid?) then (yes)
+      if (Recover?) then (yes)
+        if (target confirmed?) then (yes)
+          :qk known; Update Hk;
+          if (P1 Hk empty?) then (yes)
+            :Stop-Empty;
+            stop
+          elseif (P2 |Hk| == 1) then (yes)
+            :Stop-Singleton;
+            stop
+          elseif (P3 named 645-blocked item?) then (yes)
+            :Stop-645;
+            stop
+          elseif (P4 observational equivalence established?) then (yes)
+            :Stop-Equivalent;
+            stop
+          elseif (P5 selected-mode resource exhausted?) then (yes)
+            :Stop-Budget;
+            stop
+          else (continue Admit)
+          endif
+        else (unconfirmed)
+          :qk remains UNKNOWN; do not restore old q;
+          note right
+            Next Admit keeps UNKNOWN.
+            Empty S uses A4 or A5.
+          end note
+        endif
+      else (TEST or Prep)
+        :Observe Izk; Update Hk; qk known;
+        if (P1 Hk empty?) then (yes)
+          :Stop-Empty;
+          stop
+        elseif (P2 |Hk| == 1) then (yes)
+          :Stop-Singleton;
+          stop
+        elseif (P3 named 645-blocked item?) then (yes)
+          :Stop-645;
+          stop
+        elseif (P4 observational equivalence established?) then (yes)
+          :Stop-Equivalent;
+          stop
+        elseif (P5 selected-mode resource exhausted?) then (yes)
+          :Stop-Budget;
+          stop
+        else (continue Admit)
+        endif
+      endif
+    else (ERROR)
+      :ErrorHandle; do not exclude Hk candidates;
+      if (confirmed not sent?) then (yes)
+        :qk status unchanged; record ERROR history;
+        if (retry cap reached?) then (yes)
+          :Stop-Error;
+          stop
+        endif
+      else (unknown-effect)
+        :qk unknown; record failed history; do not reuse T(q_old);
+        if (retry cap reached?) then (yes)
+          :Stop-Error;
+          stop
+        elseif (Recover not eligible?) then (A4)
+          :Stop-Error;
+          stop
+        elseif (Recover eligible unaffordable?) then (A5)
+          :Stop-Budget;
+          stop
+        endif
+      endif
+    endif
+  endif
+repeat while (session open?) is (yes)
+stop
+@enduml

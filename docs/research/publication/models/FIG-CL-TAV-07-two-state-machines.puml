@@ -1,0 +1,45 @@
+@startuml FIG-CL-TAV-07
+skinparam shadowing false
+title FIG-CL-TAV-07 Two state machines\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nindependent machines; communication is FIG-CL-TAV-04 ports, not a cross-machine state transition
+
+state Msess as "Msess verification session" {
+  [*] --> Idle
+  Idle --> Admit
+  Admit --> Select : A1 selectable S nonempty
+  Admit --> StopBudget : A2 strictly-reducing TEST or Prep unaffordable
+  Admit --> StopNoDistinguisher : A3 no strictly-reducing TEST and no Prep
+  Admit --> StopError : A4 q unknown and Recover not eligible
+  Admit --> StopBudget : A5 q unknown and Recover eligible unaffordable
+  Select --> Execute : chosen from S
+  Execute --> Update : TEST or Prep valid Izk
+  Execute --> RecoverConfirm : Recover valid record
+  Execute --> ErrorHandle : ERROR
+  RecoverConfirm --> Update : target confirmed
+  RecoverConfirm --> Admit : unconfirmed; q UNKNOWN
+  ErrorHandle --> StopError : retry cap reached
+  ErrorHandle --> StopError : retry remaining and unknown-effect A4 Recover not eligible
+  ErrorHandle --> StopBudget : retry remaining and unknown-effect A5 Recover eligible unaffordable
+  ErrorHandle --> Admit : confirmed not sent and retry remaining
+  ErrorHandle --> Admit : retry remaining and unknown-effect and Recover in S
+  Update --> StopEmpty : P1 Hk empty
+  Update --> StopSingleton : P2 |Hk| == 1
+  Update --> Stop645 : P3 named 645-blocked
+  Update --> StopEquivalent : P4 observational equivalence established
+  Update --> StopBudget : P5 selected-mode resource exhausted
+  Update --> Admit : else |Hk| > 1 and resource remains
+}
+
+state Mprot as "Mprot protocol black box" {
+  state BoundM2 as "bound M2 INFORMATION / UPLOAD\napproved model identity; no new behavior edges"
+  state PlannedScope as "planned CRS scope, no behavior edges\nMedia Defined DOWNLOAD\nOperator Defined DOWNLOAD\nFIND"
+}
+
+note bottom of Msess
+  Admit/Select table A1-A5 equals FIG-CL-TAV-05 and the walker.
+  A nonempty does not imply Execute. S empty uses A2-A5.
+  ErrorHandle: retry cap first, then A4/A5 or Admit A1.
+  Unconfirmed Recover returns to Admit; A1-A5 apply there.
+  Update priority P1-P5 is unchanged.
+  Independent machines use FIG-CL-TAV-04 ports, not a cross-machine transition.
+end note
+@enduml

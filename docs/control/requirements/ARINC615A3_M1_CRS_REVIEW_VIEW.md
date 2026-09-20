@@ -12,13 +12,13 @@
 
 ## Inventory
 
-- Coverage rows: 2796
-- CRS items: 384
-- Dependencies: 14
+- Coverage rows: 3106
+- CRS items: 816
+- Dependencies: 15
 - Gaps: 1
-- Coverage fingerprint: `01470d751abdc20b28ac6b75e79f308f53b458dd3e7beafcbd9e229e598fdde6`
-- Requirements fingerprint: `b9d7ed46e0fb8be95ecd747ad47bf0451b3b81c52ab601397456b14031a099bf`
-- Source-unit fingerprint: `4b9a16c0bc81626a73439cab21368c8f86e0a447000d10d3f8f7980b3f867f2d`
+- Coverage fingerprint: `2d492fd8a9711186f6af9a098fc99ee2004782bbed0afde410ae70a64e1c1334`
+- Requirements fingerprint: `e25019ff35ada475c320e13a3e7f8680eeeabd35ed116dc8a795d54021d50fe1`
+- Source-unit fingerprint: `588023a1d42d0654f8b6dda0f319c83c2a008dc146ae9119d76b534a54d6be12`
 - Automated checks cover structure and cross-record consistency only; proprietary-source completeness and fidelity require external RG0 review.
 - `generatedSemanticProjectionEn/Zh` are assertion-bound drift projections, not independent RG1 evidence.
 - 665 edge policy: `REQUIREMENT-LEVEL-615A-TO-665-EDGES-DEFERRED-TO-M2-ATTACHMENT-RECONCILIATION`
@@ -26,26 +26,33 @@
 ## Applicability
 
 - `APPLICABLE-BASE`: 89
-- `APPLICABLE-SUPPORTING`: 295
+- `APPLICABLE-SUPPORTING`: 462
+- `CONDITIONAL`: 265
 
 ## Source modality
 
-- `FIGURE-CONSTRAINT`: 39
-- `MAY`: 42
-- `MUST`: 13
-- `SHOULD`: 197
-- `TABLE-CONSTRAINT`: 93
+- `COMMENTARY`: 4
+- `FACT`: 147
+- `FIGURE-CONSTRAINT`: 63
+- `MAY`: 61
+- `MUST`: 45
+- `SHOULD`: 347
+- `TABLE-CONSTRAINT`: 149
 
 ## Conformance effect
 
-- `OPTIONAL`: 42
-- `REQUIRED`: 342
+- `CONDITIONAL-REQUIRED`: 235
+- `INFORMATIVE`: 17
+- `OPTIONAL`: 60
+- `PROHIBITED`: 3
+- `REQUIRED`: 501
 
 ## Open dependencies and gaps
 
 - `DEP-ARINC-645` — OPEN-DEPENDENCY: ARINC 645 algorithms remain unavailable. / ARINC 645 算法来源仍未取得。
 - `DEP-ARINC-664-2` — OPEN-DEPENDENCY: Ethernet physical and link semantics remain open. / 以太网物理层与链路层语义仍开放。
 - `DEP-ARINC-664-3` — OPEN-DEPENDENCY: Received P3-1 identity; edition and network applicability review remain open. / 已接收 P3-1 身份；版次与网络适用性评审仍开放。
+- `DEP-ARINC-664-4` — OPEN-DEPENDENCY: Received 664P4-1; address-rule leaves are emitted for the first 615A Appendix E alternative. The integrator-identified path remains open. This does not select Part 4 or activate AFDX. / 已接收 664P4-1；已为 615A 附录 E 第一条替代路径发出地址规则叶。集成商指明路径仍开放。这不选定第 4 部分，也不激活 AFDX。
 - `DEP-ARINC-664-7` — OPEN-DEPENDENCY: Received P7 base edition; AFDX is deferred and AID future-supplement applicability remains open. / 已接收 P7 初版；AFDX 延期，AID 未来补充版适用性仍开放。
 - `DEP-ARINC-6655` — REGISTERED-SUPPORTING-SOURCE: Bounded data-object source. / 有界数据对象来源。
 - `DEP-RFC-1122` — OPEN-DEPENDENCY: RFC 1122 communication-layer identity retrieved; infrastructure conformance and applicability of subsequent updates remain unestablished. / 已取得 RFC 1122 通信层来源身份；基础设施符合性及后续更新适用性尚未建立。
@@ -84,6 +91,10 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `NET-P7-ADDRESS` | `ARINC-664-7` / `664P7` | 3.4.1.3.1-3.4.1.3.2 / 50 | `INSPECTION-REGION` | Intra/extra AFDX addressing and bidirectional SAP/queuing choices need system integration decisions. |
 | `NET-P7-SWITCH` | `ARINC-664-7` / `664P7` | 4.9.1 / 75 | `INSPECTION-REGION` | Switch software loading refers to 615A/665, without making an AFDX switch the selected target of this Profile. |
 | `NET-P7-PERFORMANCE` | `ARINC-664-7` / `664P7` | 5.1 / 80 | `INSPECTION-REGION` | AFDX burst-processing performance uses its own measurement conditions; it does not establish a 615A transfer timeout. |
+| `NET-P4-UDP` | `ARINC-664-4` / `664P4-1` | 2.1 / 10 | `INSPECTION-REGION` | Part 4 UDP port allocation distinguishes IANA well-known services, including TFTP, from integrator- or specification-assigned private aeronautical ports. Recording this region does not select Part 4 or activate AFDX. |
+| `NET-P4-IPV4` | `ARINC-664-4` / `664P4-1` | 3.2.1 / 14 | `INSPECTION-REGION` | A profiled aeronautical network is a private IETF application and uses a Private Class A/B/C network ID. This is the first 00519 alternative, not an automatic Part 4 selection. |
+| `NET-P4-MAC` | `ARINC-664-4` / `664P4-1` | 4.1.2 / 17 | `INSPECTION-REGION` | Statically configured aeronautical networks assign unique MAC unicast addresses at configuration time. Integrator uniqueness remains required if this alternative is chosen. |
+| `NET-P4-PORTS` | `ARINC-664-4` / `664P4-1` | ATT-1 / 24 | `INSPECTION-REGION` | Attachment 1 assigns TCP/UDP 59 to 615A Data Loader TFTP and UDP 24922 to the FIND client. Assigned numbers are not AFDX activation and do not close the integrator alternative. |
 
 | Relation | Owner | Target regions | Condition / disposition | Rationale / issues |
 |---|---|---|---|---|
@@ -103,7 +114,7 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `NET-REL-014` | `COV-M1-01969` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
 | `NET-REL-015` | `COV-M1-01970` | NET-P7-TFTP, NET-P7-EXAMPLE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
 | `NET-REL-016` | `COV-M1-01971` | NET-P7-IP, NET-P7-PERFORMANCE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL |
-| `NET-REL-017` | `COV-M1-01972` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-ADDRESS |
+| `NET-REL-017` | `COV-M1-01972` | NET-P7-ADDRESS, NET-P4-UDP, NET-P4-IPV4, NET-P4-MAC, NET-P4-PORTS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | This Appendix E source unit is inspected only for conditional AFDX context; target regions are review pointers, not proof of an equivalent atomic obligation. / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-ADDRESS |
 
 | Issue | Blocks M1 approval | Status | Required resolution |
 |---|---|---|---|
@@ -113,7 +124,7 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `NET-ISSUE-OPTION-EDGE` | `False` | `OPEN` | A-2 remains deferred: P3 3.2.2 names RFC 2347 and P7 lists RFC 1785, but this does not prove an exact active 615A atomic trigger edge. |
 | `NET-ISSUE-AFDX-DETAIL` | `False` | `OPEN` | AFDX remains unselected; P7 Attachment 2, IEEE 802.3 (2000), and configuration-dependent latency/MTU need a later admitted deployment audit. |
 | `NET-ISSUE-AID` | `False` | `OPEN` | 615A Appendix E names an AID defined in a future P7 supplement; the supplied base edition cannot close that future supplement reference. |
-| `NET-ISSUE-ADDRESS` | `False` | `OPEN` | Appendix E allows P4 address rules or integrator-defined requirements; record the choice before AFDX activation. P4 is not automatically a procurement mandate. |
+| `NET-ISSUE-ADDRESS` | `False` | `SOURCE-ACQUIRED-REVIEW-PENDING` | 664P4-1 is acquired and address-rule leaves are emitted for the first Appendix E alternative. The integrator-identified path remains open. This does not select Part 4 automatically and does not activate AFDX. |
 
 ### Infrastructure premises and public sources
 
@@ -510,6 +521,438 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `CRS-M1-00382` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E006-697ED629B1F1`<br>`ARINC-615A-3 6.3.5 p.63` | `TARGET-HARDWARE` / `ACTIVITIES-STOPPED` / `TRANSFER` / `ABORT-CONFIRMATION-STATUS-FILE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor TARGET-HARDWARE shall perform TRANSFER on ABORT-CONFIRMATION-STATUS-FILE toward DLA under ACTIVITIES-STOPPED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“目标硬件”在“ACTIVITIES-STOPPED”下必须对“ABORT-CONFIRMATION-STATUS-FILE”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
 | `CRS-M1-00383` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E007-0E8514BE5C06`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `ABORT-STATUS-RECEIVED` / `SEND` / `INFORMATION-OR-UPLOAD-OR-DOWNLOAD-STATUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform SEND on INFORMATION-OR-UPLOAD-OR-DOWNLOAD-STATUS toward APPLICATION under ABORT-STATUS-RECEIVED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“ABORT-STATUS-RECEIVED”下必须对“INFORMATION-OR-UPLOAD-OR-DOWNLOAD-STATUS”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
 | `CRS-M1-00384` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E008-F805E5E804BC`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `ABORT-CONFIRMED` / `TERMINATE` / `INTERRUPTION-MODE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Actor DLA shall perform TERMINATE on INTERRUPTION-MODE toward APPLICATION under ABORT-CONFIRMED; evidence is the resulting ORDER-DIRECTION-BRANCH-OBSERVABLE.<br>参与者“数据加载器应用层”在“ABORT-CONFIRMED”下必须对“INTERRUPTION-MODE”执行“TERMINATE”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00385` | `SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-005-36878C1F8E7E`<br>`ARINC-615A-3 5.3.3 p.32` | `FIND-PROTOCOL` / `WHEN-FIND-IMPLEMENTED` / `USE-UDP-PORT-1001` / `UDP-PORT-1001` / `FIND-PORT-1001-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | When a FIND initiator or FIND host is implemented, FIND shall use UDP port 1001 decimal.<br>在实现 FIND 发起方或 FIND 主机时，FIND 必须使用十进制 UDP 端口 1001。 | — | — |
+| `CRS-M1-00386` | `SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-006-B1ED10DE43C7`<br>`ARINC-615A-3 3-1 p.95` | `DATA-LOADER` / `WHEN-FIND-PATH-CARRIES-TRAFFIC-AND-BEFORE-DATA-LOAD` / `RUN-FIND-AT-LEAST-ONCE` / `FIND-REQUEST` / `FIND-PRELOAD-RUN-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When the path can carry FIND traffic, the data loader shall run FIND at least once before data-load operations.<br>在路径能够承载 FIND 业务时，数据加载器必须在数据加载操作前至少运行一次 FIND。 | — | — |
+| `CRS-M1-00387` | `SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-007-9166DCC81508`<br>`ARINC-615A-3 3-1 p.95` | `DATA-LOADER` / `WHEN-FIND-PATH-CARRIES-TRAFFIC-AND-BEFORE-LATER-OPERATION` / `MAY-RERUN-FIND-AND-REGISTER-ANSWERS` / `FIND-REQUEST, FIND-ANSWER` / `FIND-OPTIONAL-RERUN-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | On a FIND-capable path, the data loader may run FIND again and register answers before each later operation.<br>在能够承载 FIND 的路径上，数据加载器可以在后续每次操作前再次运行 FIND 并登记应答。 | — | — |
+| `CRS-M1-00388` | `SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-011-AD843D1C9EDF`<br>`ARINC-615A-3 3-1 p.95` | `FIND-PROTOCOL` / `WHEN-FIND-IMPLEMENTED` / `USE-WELL-KNOWN-UDP-PORT-1001` / `UDP-PORT-1001` / `FIND-ATTACHMENT-PORT-1001-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND request and answer packets shall use the well-known UDP port 1001 decimal.<br>FIND 请求与应答分组必须使用众所周知的十进制 UDP 端口 1001。 | — | — |
+| `CRS-M1-00389` | `SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-012-AEB96A80314F`<br>`ARINC-615A-3 3-1 p.95` | `FIND-PROTOCOL` / `WHEN-FIND-IMPLEMENTED` / `USE-SAME-PORT-FOR-REQUEST-AND-ANSWER` / `FIND-REQUEST, FIND-ANSWER, UDP-PORT-1001` / `FIND-SHARED-PORT-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND request packet and the FIND answer packet shall use the same UDP port number.<br>FIND 请求分组与 FIND 应答分组必须使用同一 UDP 端口号。 | — | — |
+| `CRS-M1-00390` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-003-1E8680AD6287`<br>`ARINC-615A-3 3-2 p.96` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `REGISTER-VALID-FIND-ANSWERS-AS-LOAD-TARGETS` / `VALID-FIND-ANSWERS, LOAD-TARGET-REGISTRATION` / `VALID-FIND-ANSWER-REGISTRATION-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | When FIND is implemented, the data loader shall register all valid FIND answers as possible load targets.<br>在实现 FIND 时，数据加载器必须把所有有效 FIND 应答登记为可能的加载目标。 | — | — |
+| `CRS-M1-00391` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700`<br>`ARINC-615A-3 3-2 p.96` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `ANSWER-FIND-REQUEST-WITHIN-TWO-SECOND-UPPER-BOUND` / `FIND-ANSWER, FIND-HOST-TIMEOUT-UPPER-BOUND-2-S` / `FIND-HOST-ANSWER-WITHIN-TWO-SECOND-UPPER-BOUND-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | When FIND is implemented, a FIND host shall send its FIND answer within a two-second upper bound of receiving a legal request. An earlier answer satisfies the deadline; the three-second registration window does not extend this host bound. Aborting FIND does not waive the two-second host-answer deadline.<br>在实现 FIND 时，FIND 主机必须在收到合法请求后的两秒上界内发出 FIND 应答。更早的应答满足该期限；三秒登记窗口不能延长该主机上界。中止 FIND 不豁免该两秒主机应答期限。 | `FIXED-SOURCE-CONSTANT` / `FIND-HOST-TIMEOUT-2-S` / `SOURCE-DEFINES-DEADLINE-OR-DURATION` / `0..2 s` / evidence: SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700 | — |
+| `CRS-M1-00392` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-006-E98F49FBFBDF`<br>`ARINC-615A-3 3-2 p.96` | `FIND-INITIATOR` / `WHEN-FIND-IMPLEMENTED` / `TAKE-NEEDED-INFORMATION-FROM-MESSAGE-STRUCTURE-OR-FIND-PACKET-DATA` / `MESSAGE-STRUCTURE, FIND-PACKET-DATA` / `FIND-INFORMATION-LOCATION-ALTERNATIVE-OBSERVABLE` | `MAY` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | When FIND is implemented, the initiator shall take needed information from the message structure or from FIND packet data. This records the alternative locations; it does not activate AFDX and does not permit omitting needed information.<br>在实现 FIND 时，发起方必须从报文结构或 FIND 分组数据中取得所需信息。这记录两种承载位置，不激活 AFDX，也不允许省略所需信息。 | — | — |
+| `CRS-M1-00393` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-010-76E6AE59C360`<br>`ARINC-615A-3 3-2 p.96` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `SEND-NO-ANSWER-TO-ILLEGAL-FIND-REQUEST` / `ILLEGAL-FIND-REQUEST` / `FIND-ILLEGAL-REQUEST-SILENCE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | A FIND host shall send no answer to an illegal or invalid FIND request.<br>对于非法或无效的 FIND 请求，FIND 主机不得发出应答。 | — | — |
+| `CRS-M1-00394` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-011-A1CA1EF64C11`<br>`ARINC-615A-3 3-2 p.96` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `IGNORE-INVALID-FIND-ANSWER` / `INVALID-FIND-ANSWER` / `FIND-INVALID-ANSWER-IGNORE-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The data loader shall ignore an invalid FIND answer.<br>数据加载器必须忽略无效的 FIND 应答。 | — | — |
+| `CRS-M1-00395` | `SU-ARINC-615A-3-3-4-P108-PROSE-SENTENCE-001-DB0FEBBE9664`<br>`ARINC-615A-3 3-4 p.96` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `SET-IRQ-SOURCE-MAC-TO-DATA-LOADER` / `IRQ-SOURCE-MAC` / `IRQ-SOURCE-MAC-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | In an Information Request, the data loader shall set the source MAC address to its own MAC address.<br>在信息请求中，数据加载器必须把源 MAC 地址设为自己的 MAC 地址。 | — | — |
+| `CRS-M1-00396` | `SU-ARINC-615A-3-3-4-P108-PROSE-SENTENCE-002-412B0FD7B45D`<br>`ARINC-615A-3 3-4 p.96` | `DATA-LOADER` / `WHEN-FIND-PATH-CARRIES-TRAFFIC` / `SET-IRQ-DESTINATION-MAC-TO-UNICAST-MULTICAST-OR-BROADCAST` / `IRQ-DESTINATION-MAC` / `IRQ-DESTINATION-MAC-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When the path can carry FIND, the data loader shall set the Information Request destination MAC to a unicast, multicast or broadcast MAC.<br>在路径能够承载 FIND 时，数据加载器必须把信息请求的目的 MAC 设为单播、组播或广播 MAC。 | — | — |
+| `CRS-M1-00397` | `SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-003-B443A5630F89`<br>`ARINC-615A-3 ATTACHMENT-3 p.97` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `SET-IRQ-SOURCE-IP-TO-DATA-LOADER` / `IRQ-SOURCE-IP` / `IRQ-SOURCE-IP-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | In an Information Request, the data loader shall set the source IP address to its own IP address.<br>在信息请求中，数据加载器必须把源 IP 地址设为自己的 IP 地址。 | — | — |
+| `CRS-M1-00398` | `SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-004-0BFE8D84B7A9`<br>`ARINC-615A-3 ATTACHMENT-3 p.97` | `DATA-LOADER` / `WHEN-FIND-PATH-CARRIES-TRAFFIC` / `SET-IRQ-DESTINATION-IP-TO-UNICAST-MULTICAST-OR-BROADCAST` / `IRQ-DESTINATION-IP` / `IRQ-DESTINATION-IP-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When the path can carry FIND, the data loader shall set the Information Request destination IP to a unicast, multicast or broadcast IP, including limited or all-ones broadcast.<br>在路径能够承载 FIND 时，数据加载器必须把信息请求的目的 IP 设为单播、组播或广播 IP，包括有限广播或全 1 广播。 | — | — |
+| `CRS-M1-00399` | `SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-005-DC8D7B76A7B9`<br>`ARINC-615A-3 ATTACHMENT-3 p.97` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `SET-IRQ-OPCODE-TO-0001` / `IRQ-OPCODE-0001` / `IRQ-OPCODE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The data loader shall set the Information Request opcode to 0x0001.<br>数据加载器必须把信息请求操作码设为 0x0001。 | — | — |
+| `CRS-M1-00400` | `SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-006-FC8DA6118FFF`<br>`ARINC-615A-3 ATTACHMENT-3 p.97` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `SET-IRQ-DATA-LIST-TO-ASCII-NUL` / `IRQ-DATA-LIST, ASCII-NUL` / `IRQ-DATA-LIST-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The data loader shall set the Information Request data list to a single ASCII NUL terminator.<br>数据加载器必须把信息请求数据表设为单个 ASCII 空字符终止符。 | — | — |
+| `CRS-M1-00401` | `SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-007-99F468D5D311`<br>`ARINC-615A-3 ATTACHMENT-3 p.97` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `TERMINATE-IRQ-PACKET-WITH-DLE` / `IRQ-PACKET-TERMINATOR-DLE` / `IRQ-TERMINATOR-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The data loader shall terminate the Information Request packet with 0x10.<br>数据加载器必须以 0x10 结束信息请求分组。 | — | — |
+| `CRS-M1-00402` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-001-D2A70FEFE065`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `SET-IAN-SOURCE-MAC-TO-FIND-HOST` / `IAN-SOURCE-MAC` / `IAN-SOURCE-MAC-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | In an Information Answer, the FIND host shall set the source MAC address to the target-hardware MAC address.<br>在信息应答中，FIND 主机必须把源 MAC 地址设为目标硬件 MAC 地址。 | — | — |
+| `CRS-M1-00403` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-002-21D8C06816D1`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `SET-IAN-DESTINATION-MAC-TO-ASSOCIATED-IRQ-SOURCE-MAC` / `IAN-DESTINATION-MAC` / `IAN-DESTINATION-MAC-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall set the Information Answer destination MAC to the source MAC of the associated Information Request.<br>FIND 主机必须把信息应答的目的 MAC 设为对应信息请求的源 MAC。 | — | — |
+| `CRS-M1-00404` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-003-E5DBDB9636E9`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `SET-IAN-SOURCE-IP-TO-FIND-HOST` / `IAN-SOURCE-IP` / `IAN-SOURCE-IP-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | In an Information Answer, the FIND host shall set the source IP address to the target-hardware IP address.<br>在信息应答中，FIND 主机必须把源 IP 地址设为目标硬件 IP 地址。 | — | — |
+| `CRS-M1-00405` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-004-98DCC47DCB2B`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `SET-IAN-DESTINATION-IP-TO-ASSOCIATED-IRQ-SOURCE-IP` / `IAN-DESTINATION-IP` / `IAN-DESTINATION-IP-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall set the Information Answer destination IP to the source IP of the associated Information Request.<br>FIND 主机必须把信息应答的目的 IP 设为对应信息请求的源 IP。 | — | — |
+| `CRS-M1-00406` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-005-4D7FB8BC839C`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `SET-IAN-OPCODE-TO-0002` / `IAN-OPCODE-0002` / `IAN-OPCODE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall set the Information Answer opcode to 0x0002.<br>FIND 主机必须把信息应答操作码设为 0x0002。 | — | — |
+| `CRS-M1-00407` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-007-0F2D63CA1D3E`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `ENCODE-EMPTY-IAN-PARAMETER-AS-SINGLE-NUL` / `EMPTY-IAN-PARAMETER, ASCII-NUL` / `IAN-EMPTY-FIELD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall encode an empty Information Answer parameter as a single ASCII NUL byte.<br>FIND 主机必须把空的信息应答参数编码为单个 ASCII 空字节。 | — | — |
+| `CRS-M1-00408` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-008-D8483D058800`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `OMIT-EMBEDDED-NUL-FROM-IAN-STRINGS` / `IAN-PARAMETER-STRING` / `IAN-NO-EMBEDDED-NUL-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall omit embedded NUL bytes from available Information Answer parameter strings.<br>FIND 主机必须从已提供的信息应答参数字符串中省略内嵌空字节。 | — | — |
+| `CRS-M1-00409` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-009-2DD2663EB0A1`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `TERMINATE-IAN-PACKET-WITH-DLE` / `IAN-PACKET-TERMINATOR-DLE` / `IAN-TERMINATOR-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall terminate the Information Answer packet with 0x10.<br>FIND 主机必须以 0x10 结束信息应答分组。 | — | — |
+| `CRS-M1-00410` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-012-DB234DB803F9`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `ENCODE-IAN-PARAMETERS-AS-NUL-TERMINATED-STRINGS-IN-SECTION-3-6-ORDER` / `IAN-PARAMETER-STRINGS` / `IAN-PARAMETER-ORDER-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall encode Information Answer parameter values as NUL-terminated strings in Attachment 3 section 6 order.<br>FIND 主机必须按附件 3 第 6 节顺序，把信息应答参数值编码为空字符终止字符串。 | — | — |
+| `CRS-M1-00411` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-013-48CB9FF4518D`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `LIMIT-TARGET-HARDWARE-IDENTIFIER-TO-15-CHARACTERS-EXCLUDING-TERMINATOR` / `TARGET-HARDWARE-IDENTIFIER, LENGTH-15` / `THW-ID-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall limit Target Hardware Identifier to 15 characters excluding the terminator.<br>FIND 主机必须把目标硬件标识符限制为不含终止符的 15 个字符。 | — | — |
+| `CRS-M1-00412` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-014-913B305AF452`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `LIMIT-TARGET-TYPE-NAME-TO-8-CHARACTERS-EXCLUDING-TERMINATOR` / `TARGET-TYPE-NAME, LENGTH-8` / `TARGET-TYPE-NAME-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall limit Target Type Name to 8 characters excluding the terminator.<br>FIND 主机必须把目标类型名限制为不含终止符的 8 个字符。 | — | — |
+| `CRS-M1-00413` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-015-14EF51A05AEA`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `LIMIT-TARGET-POSITION-TO-8-CHARACTERS-EXCLUDING-TERMINATOR` / `TARGET-POSITION, LENGTH-8` / `TARGET-POSITION-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall limit Target Position to 8 characters excluding the terminator.<br>FIND 主机必须把目标位置限制为不含终止符的 8 个字符。 | — | — |
+| `CRS-M1-00414` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-016-22BA44DB74A6`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `LIMIT-LITERAL-NAME-TO-20-CHARACTERS-EXCLUDING-TERMINATOR` / `LITERAL-NAME, LENGTH-20` / `LITERAL-NAME-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall limit Literal Name to 20 characters excluding the terminator.<br>FIND 主机必须把字面名限制为不含终止符的 20 个字符。 | — | — |
+| `CRS-M1-00415` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-017-4A05E0BB2809`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `ENCODE-MANUFACTURER-CODE-AS-3-CHARACTERS-EXCLUDING-TERMINATOR` / `MANUFACTURER-CODE, LENGTH-3` / `MANUFACTURER-CODE-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The FIND host shall encode Manufacturer Code as 3 characters excluding the terminator.<br>FIND 主机必须把制造商代码编码为不含终止符的 3 个字符。 | — | — |
+| `CRS-M1-00416` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-007-CA89CD0344A9`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IMPLEMENT-BOTH-MEDIA-DEFINED-OPERATOR-DEFINED-DOWNLOAD` / `MEDIA-DEFINED, OPERATOR-DEFINED` / `IMPLEMENT-BOTH-MEDIA-DEFINED-OPERATOR-DEFINED-DOWNLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the data loader shall implement both Media Defined and Operator Defined DOWNLOAD.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须实现 both 媒体定义 and 操作员定义 DOWNLOAD。 | — | — |
+| `CRS-M1-00417` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-008-EB64770DFDD9`<br>`ARINC-615A-3 5.4.4 p.38` | `TARGET-HARDWARE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IMPLEMENT-NONE-ONE-BOTH-DOWNLOAD-MODES` / `MEDIA-DEFINED, OPERATOR-DEFINED` / `IMPLEMENT-NONE-ONE-BOTH-DOWNLOAD-MODES-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the target hardware may implement none, one, or both DOWNLOAD modes.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件可以实现 none, one, or both DOWNLOAD modes。 | — | — |
+| `CRS-M1-00418` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-009-DD0255D27FB0`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SPECIFY-TFTP-OPTIONS-SUPPLY-DATA-INTEGRITY-CHECK-TRANSFER` / `TFTP-OPTIONS` / `SPECIFY-TFTP-OPTIONS-SUPPLY-DATA-INTEGRITY-CHECK-TRANSFER-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the data loader may specify TFTP options that supply a data-integrity check for the transfer.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器可以规定 TFTP options that supply a data-integrity check for the transfer。 | — | DEP-RFC-1350, DEP-RFC-2347 |
+| `CRS-M1-00419` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-010-12B60035E133`<br>`ARINC-615A-3 5.4.4 p.38` | `TARGET-HARDWARE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IMPLEMENT-TFTP-INTEGRITY-OPTION` / `TFTP-OPTION` / `IMPLEMENT-TFTP-INTEGRITY-OPTION-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the target hardware may implement that TFTP integrity option.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件可以实现 that TFTP integrity option。 | — | DEP-RFC-2347 |
+| `CRS-M1-00420` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-011-3CF28DC21423`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IT-SUPPORTS-OFFERED-CHECK-VALUE-VALIDATE-DATA-TRANSFER` / `CHECK-VALUE` / `IT-SUPPORTS-OFFERED-CHECK-VALUE-VALIDATE-DATA-TRANSFER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the data loader shall if it supports the offered check value, validate the data transfer.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须if it supports the offered check value, 校验 the data transfer。 | — | DEP-RFC-1350 |
+| `CRS-M1-00421` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-012-D9C78F1A4E4C`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TREAT-CHECKSUM-VALIDATION-INFORMATION-ONLY-STILL-EXPORT-FILE` / `CHECKSUM, EXPORT` / `TREAT-CHECKSUM-VALIDATION-INFORMATION-ONLY-STILL-EXPORT-FILE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the data loader shall treat checksum validation as information only and still export the file.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须把 校验和 validation as information only and still export the file。 | — | — |
+| `CRS-M1-00422` | `SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-004-E7A9E12EDE22`<br>`ARINC-615A-3 5.4.4.1 p.38` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `USE-LNR-ALREADY-STORED-ARINC-665-PART-MEDIA` / `LNR, ARINC-665-PART` / `USE-LNR-ALREADY-STORED-ARINC-665-PART-MEDIA-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data loader may use an LNR already stored in an ARINC 665 part on the media.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器可以使用 an LNR already stored in an ARINC 665 part on the media。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00423` | `SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-006-F3361F00DCE2`<br>`ARINC-615A-3 5.4.4.1 p.38` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `EXAMINE-EACH-PART-HEADER-OFFER-HEADERS-WHOSE-DOWNLOAD-BIT-SET` / `DOWNLOAD-BIT, HEADER-FILE` / `EXAMINE-EACH-PART-HEADER-OFFER-HEADERS-WHOSE-DOWNLOAD-BIT-SE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data loader shall examine each part header and offer headers whose download bit is set.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须检查 each part header and 提供 headers whose download bit is set。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00424` | `SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-007-A88849FBE53E`<br>`ARINC-615A-3 5.4.4.1 p.38` | `OPERATOR` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `MORE-THAN-ONE-DOWNLOAD-BIT-HEADER-EXISTS-SELECT-ONE` / `HEADER-FILE` / `MORE-THAN-ONE-DOWNLOAD-BIT-HEADER-EXISTS-SELECT-ONE-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the operator may if more than one download-bit header exists, select one.<br>在实现并使用媒体定义 DOWNLOAD 时，操作员可以if more than one download-bit header exists, 选择 one。 | — | — |
+| `CRS-M1-00426` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-002-1036539E638B`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `PROMPT-OPERATOR-REPLACE-SELECT-WRITABLE-MEDIA-BEFORE-STARTING-DOWNLOAD` / `WRITABLE-MEDIA` / `PROMPT-OPERATOR-REPLACE-SELECT-WRITABLE-MEDIA-BEFORE-STARTIN-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When removable media is the LNR source and the destination of downloaded data, the data loader shall prompt the operator to replace or select writable media before starting DOWNLOAD.<br>在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须在开始 DOWNLOAD 前提示操作员更换或选择可写媒体。 | — | — |
+| `CRS-M1-00427` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-003-3B9221D5DF13`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `FAIL-DOWNLOAD-WRITE-STILL-FAILS-AFTER-ASKING-WRITABLE-MEDIA` / `WRITABLE-MEDIA` / `FAIL-DOWNLOAD-WRITE-STILL-FAILS-AFTER-ASKING-WRITABLE-MEDIA-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When removable media is the LNR source and the destination of downloaded data, the data loader shall fail DOWNLOAD if the write still fails after asking for writable media.<br>在可移动媒体既是 LNR 来源又是下载数据目的地时，若在要求可写媒体之后写入仍然失败，数据加载器必须使 DOWNLOAD 失败。 | — | — |
+| `CRS-M1-00428` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-004-C40353394C94`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `CREATE-NEW-DNLD-DATA-THW-ID-POS-NUMBER-DIRECTORY-EACH` / `DNLD-DATA` / `CREATE-NEW-DNLD-DATA-THW-ID-POS-NUMBER-DIRECTORY-EACH-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When removable media is the LNR source and the destination of downloaded data, the data loader shall create a new DNLD_DATA_<THW_ID_POS>_<number> directory for each download.<br>在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须为每次下载新建 DNLD_DATA_<THW_ID_POS>_<number> 目录。 | — | — |
+| `CRS-M1-00429` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-008-4B56712D118C`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `CREATE-DNLD-INFO-THW-ID-POS-NUMBER-MANUFACTURER-SPECIFIC-DOWNLOAD` / `DNLD-INFO` / `CREATE-DNLD-INFO-THW-ID-POS-NUMBER-MANUFACTURER-SPECIFIC-DOW-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When removable media is the LNR source and the destination of downloaded data, the data loader may create DNLD_INFO_<THW_ID_POS>_<number> for manufacturer-specific download information.<br>在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器可以为制造商专用下载信息创建 DNLD_INFO_<THW_ID_POS>_<number> 文件。 | — | — |
+| `CRS-M1-00430` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-033-EC6A3B3AFA4A`<br>`ARINC-615A-3 6.3.3 p.58` | `OPERATOR` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `SELECT-MEDIA-TYPE-MEDIA-DEFINED-DOWNLOAD` / `MEDIA-TYPE` / `SELECT-MEDIA-TYPE-MEDIA-DEFINED-DOWNLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the operator shall select the media type for Media Defined DOWNLOAD.<br>在实现并使用媒体定义 DOWNLOAD 时，操作员必须选择 the media type for 媒体定义 DOWNLOAD。 | — | — |
+| `CRS-M1-00431` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-038-2ED4ABAC4193`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY` / `LNS, ATTACHMENT-4` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall send status files within the Attachment 4 DLP maximum delay.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须发送 状态文件s within the 附件 4 DLP maximum delay。 | — | — |
+| `CRS-M1-00432` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-040-18B50A8E503C`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSIDE-TIMEOUT` / `LNS, STATUS-CODE, STATUS-DESCRIPTION` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSID-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall on fatal error emit a status file with matching code and description inside the timeout.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须on fatal error emit a 状态文件 with matching code and description inside the timeout。 | — | — |
+| `CRS-M1-00433` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-041-7AC0400C9DB1`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT` / `ABORT-5-3-2-3-6, INTERRUPT-6-3-6` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware may send a status file immediately to carry an abort or interrupt.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件可以发送 a 状态文件 immediately to carry an 中止 or interrupt。 | — | — |
+| `CRS-M1-00434` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-050-D8862D88C46E`<br>`ARINC-615A-3 6.3.3 p.58` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHOUT-WAITING-IT` / `EXCEPTION-TIMER` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data loader shall if the target answers before Exception Timer elapses, continue without waiting it out.<br>在实现并使用媒体定义 DOWNLOAD 时，若目标在 Exception Timer 到期前应答，数据加载器必须继续而不把该定时器等待完毕。 | — | — |
+| `CRS-M1-00435` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-051-E812AC346D09`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT` / `EXCEPTION-TIMER` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall minimize Exception Timer so the silent phase stays short.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须尽量缩短 Exception Timer so the silent phase stays short。 | — | — |
+| `CRS-M1-00436` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-052-91F9A68124BD`<br>`ARINC-615A-3 6.3.3 p.58` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-TIMER` / `EXCEPTION-TIMER, LNS` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-T-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data loader shall abort DOWNLOAD if no new status file arrives before Exception Timer expires.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须中止 DOWNLOAD if no new 状态文件 arrives before Exception Timer expires。 | — | — |
+| `CRS-M1-00437` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-007-18AB4BEB6990`<br>`ARINC-615A-3 6.3.4 p.61` | `OPERATOR` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ABLE-SELECT-MEDIA-TYPE-OPERATOR-DEFINED-DOWNLOAD` / `MEDIA-TYPE` / `ABLE-SELECT-MEDIA-TYPE-OPERATOR-DEFINED-DOWNLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the operator shall be able to select the media type for Operator Defined DOWNLOAD.<br>在实现并使用操作员定义 DOWNLOAD 时，操作员必须be able to 选择 the media type for 操作员定义 DOWNLOAD。 | — | — |
+| `CRS-M1-00438` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-012-2ED4ABAC4193`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY--00981` / `LNS, ATTACHMENT-4` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall send status files within the Attachment 4 DLP maximum delay.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须发送 状态文件s within the 附件 4 DLP maximum delay。 | — | — |
+| `CRS-M1-00439` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-014-9F2F8E73FD5D`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSIDE-TIMEOUT--00983` / `LNS, STATUS-CODE, STATUS-DESCRIPTION` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSID-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall on fatal error emit a status file with matching code and description inside the timeout.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须on fatal error emit a 状态文件 with matching code and description inside the timeout。 | — | — |
+| `CRS-M1-00440` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-015-7AC0400C9DB1`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT--00984` / `ABORT-5-3-2-3-6, INTERRUPT-6-3-6` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware may send a status file immediately to carry an abort or interrupt.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件可以发送 a 状态文件 immediately to carry an 中止 or interrupt。 | — | — |
+| `CRS-M1-00441` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-024-D8862D88C46E`<br>`ARINC-615A-3 6.3.4 p.61` | `DATA-LOADER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHOUT-WAITING-IT--00993` / `EXCEPTION-TIMER` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data loader shall if the target answers before Exception Timer elapses, continue without waiting it out.<br>在实现并使用操作员定义 DOWNLOAD 时，若目标在 Exception Timer 到期前应答，数据加载器必须继续而不把该定时器等待完毕。 | — | — |
+| `CRS-M1-00442` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-025-E812AC346D09`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT--00994` / `EXCEPTION-TIMER` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall minimize Exception Timer so the silent phase stays short.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须尽量缩短 Exception Timer so the silent phase stays short。 | — | — |
+| `CRS-M1-00443` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-026-464E9E6694A8`<br>`ARINC-615A-3 6.3.4 p.61` | `DATA-LOADER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-TIMER--00995` / `EXCEPTION-TIMER, LNS` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-T-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data loader shall abort DOWNLOAD if no new status file arrives before Exception Timer expires.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须中止 DOWNLOAD if no new 状态文件 arrives before Exception Timer expires。 | — | — |
+| `CRS-M1-00444` | `SU-ARINC-615A-3-6-4-6-P091-PROSE-SENTENCE-016-1532165AA3AE`<br>`ARINC-615A-3 6.4.6 p.79` | `PROTOCOL-FILE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNR-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNR-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNR File Name with 0x00.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNR File Name 的零终止。 | — | — |
+| `CRS-M1-00445` | `SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-028-83077CACF0DC`<br>`ARINC-615A-3 6.4.7 p.80` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `OTHER-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD-LEFTOVER` / `DOWNLOAD-STATUS-DESCRIPTION` / `OTHER-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer may for other status codes ignore description content, which may hold leftover data.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方对其他状态码可以忽略描述字段内容，其中可能残留数据。 | — | — |
+| `CRS-M1-00446` | `SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-030-B1FB47BD2E90`<br>`ARINC-615A-3 6.4.7 p.80` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `USE-ONLY-PRINTABLE-CHARACTERS-DOWNLOAD-STATUS-DESCRIPTION-NO-CONTROL-CHARACTERS` / `DOWNLOAD-STATUS-DESCRIPTION` / `USE-ONLY-PRINTABLE-CHARACTERS-DOWNLOAD-STATUS-DESCRIPTION-NO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall use only printable characters in Download Status Description, with no control characters, max 255.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in Download Status Description, with no control characters, max 255。 | — | — |
+| `CRS-M1-00447` | `SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-031-1532165AA3AE`<br>`ARINC-615A-3 6.4.7 p.80` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-DOWNLOAD-STATUS-DESCRIPTION-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-DOWNLOAD-STATUS-DESCRIPTION-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate Download Status Description with 0x00.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 Download Status Description 的零终止。 | — | — |
+| `CRS-M1-00448` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-040-BFA9E163247A`<br>`ARINC-615A-3 6.4.7 p.81` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SET-EXCEPTION-TIMER-0X0000-EVERY-OTHER-STATUS-CODE` / `EXCEPTION-TIMER, OBJ-0X0000` / `SET-EXCEPTION-TIMER-0X0000-EVERY-OTHER-STATUS-CODE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall set Exception Timer to 0x0000 for every other status code.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把其他状态码的 Exception Timer 置为 0x0000。 | — | — |
+| `CRS-M1-00449` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-045-16B3A57C8CEC`<br>`ARINC-615A-3 6.4.7 p.81` | `TARGET-HARDWARE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `PROVIDE-ESTIMATED-TIME-SOON-POSSIBLE-DURING-OPERATION` / `ESTIMATED-TIME` / `PROVIDE-ESTIMATED-TIME-SOON-POSSIBLE-DURING-OPERATION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the target hardware shall provide Estimated Time as soon as possible during the operation.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件必须在操作过程中尽快提供 Estimated Time。 | — | — |
+| `CRS-M1-00450` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-048-581419285745`<br>`ARINC-615A-3 6.4.7 p.81` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TARGET-DOES-NOT-GIVE-ESTIMATED-TIME-SET-FIELD-0XFFFF` / `ESTIMATED-TIME, OBJ-0XFFFF` / `TARGET-DOES-NOT-GIVE-ESTIMATED-TIME-SET-FIELD-0XFFFF-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall if the target does not give Estimated Time, set the field to 0xFFFF.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，若目标未给出 Estimated Time，协议文件生成方必须把该字段置为 0xFFFF。 | — | — |
+| `CRS-M1-00451` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-058-1532165AA3AE`<br>`ARINC-615A-3 6.4.7 p.81` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNS-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNS-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNS File Name with 0x00.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNS File Name 的零终止。 | — | — |
+| `CRS-M1-00452` | `SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-077-6BCAB56CC15C`<br>`ARINC-615A-3 6.4.7 p.82` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `OTHER-FILE-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD` / `FILE-STATUS-DESCRIPTION` / `OTHER-FILE-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer may for other file status codes ignore description content, which may hold leftover data.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方对其他文件状态码可以忽略描述字段内容，其中可能残留数据。 | — | — |
+| `CRS-M1-00453` | `SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-079-53AAFA003A8B`<br>`ARINC-615A-3 6.4.7 p.82` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `USE-ONLY-PRINTABLE-CHARACTERS-FILE-STATUS-DESCRIPTION-NO-CONTROL-CHARACTERS` / `FILE-STATUS-DESCRIPTION` / `USE-ONLY-PRINTABLE-CHARACTERS-FILE-STATUS-DESCRIPTION-NO-CON-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall use only printable characters in File Status Description, with no control characters, max 255.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in File Status Description, with no control characters, max 255。 | — | — |
+| `CRS-M1-00454` | `SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-080-1532165AA3AE`<br>`ARINC-615A-3 6.4.7 p.82` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-FILE-STATUS-DESCRIPTION-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-FILE-STATUS-DESCRIPTION-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate File Status Description with 0x00.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 File Status Description 的零终止。 | — | — |
+| `CRS-M1-00455` | `SU-ARINC-615A-3-6-4-8-P095-PROSE-SENTENCE-015-1532165AA3AE`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNL-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNL-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNL File Name with 0x00.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNL File Name 的零终止。 | — | — |
+| `CRS-M1-00456` | `SU-ARINC-615A-3-6-4-8-P096-PROSE-SENTENCE-020-53AAFA003A8B`<br>`ARINC-615A-3 6.4.8 p.84` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `USE-ONLY-PRINTABLE-CHARACTERS-LNL-FILE-DESCRIPTION-NO-CONTROL-CHARACTERS` / `FILE-DESCRIPTION` / `USE-ONLY-PRINTABLE-CHARACTERS-LNL-FILE-DESCRIPTION-NO-CONTRO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall use only printable characters in LNL File Description, with no control characters, max 255.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in LNL File Description, with no control characters, max 255。 | — | — |
+| `CRS-M1-00457` | `SU-ARINC-615A-3-6-4-8-P096-PROSE-SENTENCE-021-1532165AA3AE`<br>`ARINC-615A-3 6.4.8 p.84` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNL-FILE-DESCRIPTION-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNL-FILE-DESCRIPTION-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNL File Description with 0x00.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNL File Description 的零终止。 | — | — |
+| `CRS-M1-00458` | `SU-ARINC-615A-3-6-4-9-P096-PROSE-SENTENCE-016-1532165AA3AE`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNA-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNA-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall zero-terminate LNA File Name with 0x00.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNA File Name 的零终止。 | — | — |
+| `CRS-M1-00459` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R002`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNR at the tabulated width and table ordinal 1.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNR 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00460` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R003`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When the corresponding DOWNLOAD mode is used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNR as two ASCII characters at table ordinal 2.<br>在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNR 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。 | — | — |
+| `CRS-M1-00461` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R004`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNR at the tabulated width and table ordinal 3.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNR 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00462` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R005`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNR at the tabulated width and table ordinal 4.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNR 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00463` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R006`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNR at the tabulated width and table ordinal 5.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNR 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00464` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R007`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-USER-DEFINED-DATA-LENGTH, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-USER-DEFINED-DATA-LENGTH of LNR at the tabulated width and table ordinal 6.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA-LENGTH。 | — | — |
+| `CRS-M1-00465` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R008`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-USER-DEFINED-DATA, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-USER-DEFINED-DATA of LNR at the tabulated width and table ordinal 7.<br>在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA。 | — | — |
+| `CRS-M1-00466` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R002`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNS at the tabulated width and table ordinal 1.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNS 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00467` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R003`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When the corresponding DOWNLOAD mode is used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNS as two ASCII characters at table ordinal 2.<br>在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNS 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。 | — | — |
+| `CRS-M1-00468` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R004`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-OPERATION-STATUS-CODE, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-OPERATION-STATUS-CODE of LNS at the tabulated width and table ordinal 3.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNS 的 FIELD-DOWNLOAD-OPERATION-STATUS-CODE。 | — | — |
+| `CRS-M1-00469` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R005`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH of LNS at the tabulated width and table ordinal 4.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNS 的 FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH。 | — | — |
+| `CRS-M1-00470` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R006`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-STATUS-DESCRIPTION, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-DOWNLOAD-STATUS-DESCRIPTION of LNS at the tabulated width and table ordinal 5.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNS 的 FIELD-DOWNLOAD-STATUS-DESCRIPTION。 | — | — |
+| `CRS-M1-00471` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R007`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-COUNTER, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-COUNTER of LNS at the tabulated width and table ordinal 6.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNS 的 FIELD-COUNTER。 | — | — |
+| `CRS-M1-00472` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R008`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-EXCEPTION-TIMER, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode LNS Exception Timer as a physically present 16-bit field at table ordinal 7. The field is used on status 0x0002 or 0x0004 as remaining seconds in 0..65535; other statuses keep the field and store 0x0000.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Exception Timer 编为表序 7 的固定 16 位字段。该字段在状态 0x0002 或 0x0004 用作 0..65535 的剩余秒数；其他状态仍保留该字段并置 0x0000。 | — | — |
+| `CRS-M1-00473` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R009`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-ESTIMATED-TIME, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is used, the protocol-file producer shall encode LNS Estimated Time as a physically present 16-bit field at table ordinal 8. Status 0x0002 or 0x0004 carry remaining seconds in 0..32767, with 0xFFFF meaning not given; other statuses keep the field and store 0x0000. Inactive 0x0000 is unused filler, not a not-given sentinel.<br>在使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Estimated Time 编为表序 8 的固定 16 位字段。状态 0x0002 或 0x0004 携带 0..32767 的剩余秒数，0xFFFF 表示未给出；其他状态仍保留该字段并置 0x0000。非活动的 0x0000 是未使用填充，不是未给出哨兵。 | — | — |
+| `CRS-M1-00474` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R010`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-LIST-RATIO, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is used, the protocol-file producer shall encode LNS Download List Ratio as three right-adjusted ASCII characters with leading blanks, not as an integer.<br>在使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Download List Ratio 编为三个右对齐、前导空白的 ASCII 字符，而不是整数。 | — | — |
+| `CRS-M1-00475` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R011`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNS at the tabulated width and table ordinal 10.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 10 个字段位置编码 LNS 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00476` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R012`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNS at the tabulated width and table ordinal 11.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 11 个字段位置编码 LNS 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00477` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R013`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNS at the tabulated width and table ordinal 12.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 12 个字段位置编码 LNS 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00478` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R014`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-STATUS, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-STATUS of LNS at the tabulated width and table ordinal 13.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 13 个字段位置编码 LNS 的 FIELD-FILE-STATUS。 | — | — |
+| `CRS-M1-00479` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R015`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-STATUS-DESCRIPTION-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-STATUS-DESCRIPTION-LENGTH of LNS at the tabulated width and table ordinal 14.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 14 个字段位置编码 LNS 的 FIELD-FILE-STATUS-DESCRIPTION-LENGTH。 | — | — |
+| `CRS-M1-00480` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R016`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-STATUS-DESCRIPTION, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined or Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-STATUS-DESCRIPTION of LNS at the tabulated width and table ordinal 15.<br>在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 15 个字段位置编码 LNS 的 FIELD-FILE-STATUS-DESCRIPTION。 | — | — |
+| `CRS-M1-00481` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R002`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNL at the tabulated width and table ordinal 1.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNL 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00482` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R003`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When the corresponding DOWNLOAD mode is used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNL as two ASCII characters at table ordinal 2.<br>在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNL 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。 | — | — |
+| `CRS-M1-00483` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R004`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNL at the tabulated width and table ordinal 3.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNL 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00484` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R005`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNL at the tabulated width and table ordinal 4.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNL 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00485` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R006`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNL at the tabulated width and table ordinal 5.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNL 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00486` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R007`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-DESCRIPTION-LENGTH, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-DESCRIPTION-LENGTH of LNL at the tabulated width and table ordinal 6.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNL 的 FIELD-FILE-DESCRIPTION-LENGTH。 | — | — |
+| `CRS-M1-00487` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R008`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-DESCRIPTION, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-DESCRIPTION of LNL at the tabulated width and table ordinal 7.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNL 的 FIELD-FILE-DESCRIPTION。 | — | — |
+| `CRS-M1-00488` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R002`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-LENGTH of LNA at the tabulated width and table ordinal 1.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNA 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00489` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R003`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When the corresponding DOWNLOAD mode is used, the protocol-file producer shall encode FIELD-PROTOCOL-VERSION of LNA as two ASCII characters at table ordinal 2.<br>在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNA 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。 | — | — |
+| `CRS-M1-00490` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R004`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-NUMBER-OF-FILES of LNA at the tabulated width and table ordinal 3.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNA 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00491` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R005`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME-LENGTH of LNA at the tabulated width and table ordinal 4.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNA 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00492` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R006`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the protocol-file producer shall encode FIELD-FILE-NAME of LNA at the tabulated width and table ordinal 5.<br>在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNA 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00493` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E001-93E2E1579D6F`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-APPLICATION` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-MEDIA-INITIALIZATION-START-MEDIA-MODE-CHART` / `DOWNLOADING-MEDIA-INITIALIZATION` / `ISSUE-DOWNLOADING-MEDIA-INITIALIZATION-START-MEDIA-MODE-CHAR-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data-loader application shall issue Downloading_Media_Initialization to start the media-mode chart.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器应用层必须发出 Downloading_Media_Initialization to start the media-mode chart。 | — | — |
+| `CRS-M1-00494` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E002-56059C7FBCE3`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TFTP-READ-LND-TARGET` / `LND` / `TFTP-READ-LND-TARGET-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall TFTP-read LND from the target.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须用 TFTP 从目标读取 LND。 | — | — |
+| `CRS-M1-00495` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E003-7572FB4A7D49`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TRANSFER-LND-ANSWER-WAIT-RETRY` / `LND, WAIT` / `TRANSFER-LND-ANSWER-WAIT-RETRY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall transfer LND or answer WAIT for retry.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须传送 LND or answer WAIT for retry。 | — | — |
+| `CRS-M1-00496` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E004-F7FB3AED0BF8`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LND-OUTCOME` / `DOWNLOADING-INITIALIZATION-RESPONSE` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LND-OUTCOME-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall emit Downloading_Initialization_Response from the LND outcome.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须根据 LND 结果发出 Downloading_Initialization_Response。 | — | — |
+| `CRS-M1-00497` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E005-DDC22BBE77AD`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `END-MEDIA-DEFINED-DOWNLOAD-DENY` / `DENY` / `END-MEDIA-DEFINED-DOWNLOAD-DENY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data loader shall end Media Defined DOWNLOAD on deny.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须结束 媒体定义 DOWNLOAD on deny。 | — | — |
+| `CRS-M1-00498` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E006-FFDAE5BD327A`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `AFTER-ACCEPT-WRITE-LNR-TO-TARGET-BY-TFTP` / `LNR, TARGET-HARDWARE, TFTP` / `ACCEPT-TFTP-WRITE-LNR-TARGET-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall, after accept, write LNR to the target hardware using TFTP.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须在接受之后用 TFTP 把 LNR 写到目标硬件。 | — | — |
+| `CRS-M1-00499` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E007-465C743F7A74`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `RECEIVE-ANALYZE-LNR` / `LNR` / `RECEIVE-ANALYZE-LNR-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall receive and analyze LNR.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须接收 and analyze LNR。 | — | — |
+| `CRS-M1-00500` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E008-4F5A7B67B142`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TFTP-WRITE-LNS-INCLUDING-ACCEPTED-NOT-STARTED-0X0001` / `LNS, OBJ-0X0001` / `TFTP-WRITE-LNS-INCLUDING-ACCEPTED-NOT-STARTED-0X0001-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall TFTP-write LNS, including accepted-not-started 0x0001.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须用 TFTP 写 LNS，并包含已接受但未开始的 0x0001。 | — | — |
+| `CRS-M1-00501` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E009-0C4A2E52223E`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TFTP-SEND-EACH-LNR-LISTED-DATA-FILE` / `DATA-FILES` / `TFTP-SEND-EACH-LNR-LISTED-DATA-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall TFTP-send each LNR-listed data file.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须TFTP-发送 each LNR-listed data file。 | — | — |
+| `CRS-M1-00502` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E010-C4CF6F527181`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE` / `DOWNLOADING-FILE-RECEIPT` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall issue Downloading_File_Receipt for each received file.<br>在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_Receipt for each 接收d file。 | — | — |
+| `CRS-M1-00503` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E011-86839F050632`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `REPEAT-REMAINING-FILES-LNS-PROGRESS` / `LNS` / `REPEAT-REMAINING-FILES-LNS-PROGRESS-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall repeat remaining files with LNS progress.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须重复 remaining files with LNS progress。 | — | — |
+| `CRS-M1-00504` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E012-9EC73921C558`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRONO` / `LNS, ATTACHMENT-4` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRON-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Media Defined DOWNLOAD is implemented and used, the target hardware shall end after final LNS complete or fatal; honour Attachment 4 chrono timeouts.<br>在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须结束 after final LNS 完成 or fatal; honour 附件 4 chrono timeouts。 | — | — |
+| `CRS-M1-00505` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E001-D20446C4AA87`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-APPLICATION` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-OPERATOR-INITIALIZATION-START-OPERATOR-MODE-CHART` / `DOWNLOADING-OPERATOR-INITIALIZATION` / `ISSUE-DOWNLOADING-OPERATOR-INITIALIZATION-START-OPERATOR-MOD-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data-loader application shall issue Downloading_Operator_Initialization to start the operator-mode chart.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器应用层必须发出 Downloading_Operator_Initialization to start the operator-mode chart。 | — | — |
+| `CRS-M1-00506` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E002-FA62BFEC08D9`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TFTP-READ-LNO-TARGET` / `LNO` / `TFTP-READ-LNO-TARGET-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall TFTP-read LNO from the target.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须用 TFTP 从目标读取 LNO。 | — | — |
+| `CRS-M1-00507` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E003-4E7C61B06179`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TRANSFER-LNO-ANSWER-WAIT-RETRY` / `LNO, WAIT` / `TRANSFER-LNO-ANSWER-WAIT-RETRY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall transfer LNO or answer WAIT for retry.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须传送 LNO or answer WAIT for retry。 | — | — |
+| `CRS-M1-00508` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E004-4DD6ECF8E15C`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LNO-OUTCOME` / `DOWNLOADING-INITIALIZATION-RESPONSE` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LNO-OUTCOME-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall emit Downloading_Initialization_Response from the LNO outcome.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须根据 LNO 结果发出 Downloading_Initialization_Response。 | — | — |
+| `CRS-M1-00509` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E005-22221ABB2116`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `END-OPERATOR-DEFINED-DOWNLOAD-DENY` / `DENY` / `END-OPERATOR-DEFINED-DOWNLOAD-DENY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data loader shall end Operator Defined DOWNLOAD on deny.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须结束 操作员定义 DOWNLOAD on deny。 | — | — |
+| `CRS-M1-00510` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E006-145A7178D4F7`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `AFTER-ACCEPT-WRITE-LNL-TO-LOADER-BY-TFTP` / `LNL, DATA-LOADER, TFTP` / `ACCEPT-TFTP-WRITE-LNL-LOADER-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall, after accept, write LNL to the data loader using TFTP.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须在接受之后用 TFTP 把 LNL 写到加载器。 | — | — |
+| `CRS-M1-00511` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E007-BB90540A19D7`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-FILE-LIST-RECEIPT` / `DOWNLOADING-FILE-LIST-RECEIPT` / `ISSUE-DOWNLOADING-FILE-LIST-RECEIPT-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall issue Downloading_File_List_Receipt.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_List_Receipt。 | — | — |
+| `CRS-M1-00512` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E008-1FFC2020C9F9`<br>`ARINC-615A-3 6.3.4 p.60` | `OPERATOR` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SELECT-FILES-LOADER-TFTP-WRITES-LNA-FILE-SELECTION` / `LNA, FILE-SELECTION` / `SELECT-FILES-LOADER-TFTP-WRITES-LNA-FILE-SELECTION-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the operator shall select files; loader TFTP-writes LNA as File_Selection.<br>在实现并使用操作员定义 DOWNLOAD 时，操作员必须选择 files; loader TFTP-writes LNA as File_Selection。 | — | — |
+| `CRS-M1-00513` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E009-0C4A2E52223E`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TFTP-SEND-EACH-LNA-LISTED-DATA-FILE` / `DATA-FILES` / `TFTP-SEND-EACH-LNA-LISTED-DATA-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall TFTP-send each LNA-listed data file.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须TFTP-发送 each LNA-listed data file。 | — | — |
+| `CRS-M1-00514` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E010-C4CF6F527181`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE--02783` / `DOWNLOADING-FILE-RECEIPT` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the data-loader protocol layer shall issue Downloading_File_Receipt for each received file.<br>在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_Receipt for each 接收d file。 | — | — |
+| `CRS-M1-00515` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E011-86839F050632`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `REPEAT-REMAINING-FILES-LNS-PROGRESS--02784` / `LNS` / `REPEAT-REMAINING-FILES-LNS-PROGRESS-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall repeat remaining files with LNS progress.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须重复 remaining files with LNS progress。 | — | — |
+| `CRS-M1-00516` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E012-9EC73921C558`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRONO--02785` / `LNS, ATTACHMENT-4` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRON-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When Operator Defined DOWNLOAD is implemented and used, the target hardware shall end after final LNS complete or fatal; honour Attachment 4 chrono timeouts.<br>在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须结束 after final LNS 完成 or fatal; honour 附件 4 chrono timeouts。 | — | — |
+| `CRS-M1-00517` | `SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-008-123ADFD1F0A0`<br>`ARINC-615A-3 APPENDIX-E p.122` | `DATA-LOADER` / `WHEN-615A-IS-CARRIED-OVER-AFDX` / `USE-FIND-NETWORK-CONFIGURATION-FILE-IDENTIFY-TARGETS-AFDX-NETWORK` / `FIND, NETWORK-CONFIGURATION-FILE` / `USE-FIND-NETWORK-CONFIGURATION-FILE-IDENTIFY-TARGETS-AFDX-NE-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | When the configured deployment carries 615A over AFDX rather than ordinary Ethernet, the data loader may use FIND or a network configuration file to identify targets on the AFDX network. This does not activate the current Compliant Ethernet instance.<br>在配置的部署把 615A 承载于 AFDX 而非普通以太网时，数据加载器可以使用 FIND or a network configuration file to identify targets on the AFDX network。这不激活当前 Compliant 以太网实例。 | — | — |
+| `CRS-M1-00518` | `SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-011-E6FB447853B2`<br>`ARINC-615A-3 APPENDIX-E p.122` | `DATA-LOADER` / `WHEN-615A-IS-CARRIED-OVER-AFDX` / `USE-TFTP-PROTOCOL-DESCRIBED-615A-3-615A-OPERATIONS-OVER-AFDX` / `TFTP` / `USE-TFTP-PROTOCOL-DESCRIBED-615A-3-615A-OPERATIONS-OVER-AFDX-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When the configured deployment carries 615A over AFDX rather than ordinary Ethernet, the data loader shall use the TFTP protocol described in 615A-3 for 615A operations over AFDX. This does not activate the current Compliant Ethernet instance.<br>在配置的部署把 615A 承载于 AFDX 而非普通以太网时，数据加载器必须使用 the TFTP protocol described in 615A-3 for 615A operations over AFDX。这不激活当前 Compliant 以太网实例。 | — | — |
+| `CRS-M1-00519` | `SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-013-B5690D59EDBF`<br>`ARINC-615A-3 APPENDIX-E p.122` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX` / `APPLY-664P4-ADDRESS-RULES-OR-INTEGRATOR-IDENTIFIED-REQUIREMENTS` / `ARINC-664-4-ADDRESS-RULES, INTEGRATOR-IDENTIFIED-ADDRESS-REQUIREMENTS` / `AFDX-ADDRESS-RULE-ALTERNATIVE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When the configured deployment carries 615A over AFDX rather than ordinary Ethernet, the system integrator shall apply aviation data-network address rules from 664 Part 4, or identify integrator-specified address requirements. The alternative remains open; this does not select Part 4 automatically and does not activate the current Compliant Ethernet instance.<br>在配置的部署把 615A 承载于 AFDX 而非普通以太网时，系统集成商必须适用 664 Part 4 的航空数据网络地址规则，或指出集成商识别的地址要求。这两条路径保持可选择，不自动选定 Part 4，也不激活当前 Compliant 以太网实例。 | — | — |
+| `CRS-M1-00520` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF`<br>`ARINC-615A-3 3-2 p.96` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `KEEP-THREE-SECOND-FIND-ANSWER-WINDOW` / `FIND-ANSWER-WINDOW-3-S` / `FIND-ANSWER-WINDOW-LIFETIME-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | When FIND is implemented, the data loader shall keep a three-second FIND-answer registration window after sending a FIND request. That three-second value is the window lifetime, not a host-answer deadline and not a permission to close registration early. Aborting FIND does not waive the three-second registration-window lifetime.<br>在实现 FIND 时，数据加载器必须在发出 FIND 请求后保持三秒 FIND 应答登记窗口。该三秒是窗口寿命，不是主机应答期限，也不是可以提前关闭登记的许可。中止 FIND 不豁免该三秒登记窗口寿命。 | `FIXED-SOURCE-CONSTANT` / `FIND-ANSWER-WINDOW-3-S` / `SOURCE-DEFINES-DEADLINE-OR-DURATION` / `3..3 s` / evidence: SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF | — |
+| `CRS-M1-00521` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891`<br>`ARINC-615A-3 3-2 p.96` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `CLOSE-FIND-ANSWER-REGISTRATION-WHEN-WINDOW-EXPIRES` / `FIND-ANSWER-REGISTRATION, FIND-ANSWER-WINDOW-3-S` / `FIND-REGISTRATION-CLOSE-AT-WINDOW-END-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | When FIND is implemented, the data loader shall close FIND-answer registration three seconds after the FIND request is sent. That close is the same logical instant as the three-second window lifetime elapsing; it is not a second three-second delay after expiry. Aborting FIND does not waive close-at-expiry of the three-second window.<br>在实现 FIND 时，数据加载器必须在发出 FIND 请求后三秒关闭 FIND 应答登记。该关闭与三秒窗口寿命到期是同一逻辑时刻，而不是到期后再延迟三秒。中止 FIND 不豁免该三秒窗口到期关闭。 | `FIXED-SOURCE-CONSTANT` / `FIND-ANSWER-WINDOW-3-S` / `SOURCE-DEFINES-DEADLINE-OR-DURATION` / `3..3 s` / evidence: SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891 | — |
+| `CRS-M1-00522` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-005-D462FF831585`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `CREATE-DNLD-DATA-DIRECTORY-IN-DOWNLOAD-MEDIA-ROOT` / `DNLD-DATA-DIRECTORY, DOWNLOAD-MEDIA-ROOT` / `DNLD-DATA-DIRECTORY-IN-ROOT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When removable media is the LNR source and the destination of downloaded data, the data loader shall create the DNLD_DATA directory in the root directory of the download media.<br>在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须在下载媒体的根目录下创建 DNLD_DATA 目录。 | — | — |
+| `CRS-M1-00523` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-006-ED9F856333F8`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `INCREMENT-DNLD-DATA-NUMBER-EACH-DOWNLOAD` / `DNLD-DATA-NUMBER, DNLD-DATA-DIRECTORY` / `DNLD-DATA-NUMBER-INCREMENTS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When removable media is the LNR source and the destination of downloaded data, the data loader shall increment <number> on each download so successive DNLD_DATA directory names stay unique.<br>在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须在每次下载时递增 <number>，以使相继 DNLD_DATA 目录名保持唯一。 | — | — |
+| `CRS-M1-00524` | `SU-ARINC-615A-3-3-3-P108-PROSE-SENTENCE-003-9C92144E4252`<br>`ARINC-615A-3 3-3 p.96` | `FIND-PROTOCOL` / `WHEN-FIND-IMPLEMENTED` / `ENCODE-FIND-PACKET-AS-TWO-BYTE-HEADER-PLUS-VARIABLE-DATA` / `FIND-HEADER-2-BYTE, FIND-VARIABLE-LENGTH-DATA, FIND-OPCODE` / `FIND-HEADER-AND-DATA-LAYOUT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | When FIND is implemented, each FIND packet shall contain a header plus a variable-length data portion. The header is two bytes and carries the opcode.<br>在实现 FIND 时，每个 FIND 分组必须包含报头和可变长度数据区。报头为两字节并承载操作码。 | — | — |
+| `CRS-M1-00525` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-007-FF9E1B1FACD7`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `START-DNLD-DATA-NUMBER-AT-ONE` / `DNLD-DATA-NUMBER` / `DNLD-DATA-NUMBER-STARTS-AT-ONE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When removable media is the LNR source and the destination of downloaded data, the data loader shall start <number> at 1.<br>在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须把 <number> 从 1 开始。 | — | — |
+| `CRS-M1-00526` | `SU-ARINC-665-5-2-3-P030-PROSE-SENTENCE-001-E7511EC8B8BE`<br>`ARINC-665-5 2.3 p.20` | `DATA-LOADER` / `WHEN-ARINC-615A-DATA-LOADING-IS-USED` / `MAY-USE-BATCH-FILE-FORMAT` / `BATCH-FILE-PART` / `BATCH-FILE-FORMAT-AVAILABLE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | An ARINC 615A data-loading system may use the batch-file formats defined in 665 §2.3.<br>ARINC 615A 数据加载系统可以使用 665 §2.3 定义的批处理文件格式。 | — | — |
+| `CRS-M1-00527` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-004-7082D7150B84`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `LET-BATCH-FILE-SELECT-LSPS-PER-TARGET-HW-POSITION` / `BATCH-FILE-PART, LOADABLE-SOFTWARE-PART` / `BATCH-FILE-MULTI-LSP-SELECTION-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | A batch file part shall let the maintainer load the selected LSPs for each target hardware position without picking every LSP individually.<br>批处理文件件必须让维护人员按目标硬件位置加载所选 LSP，而不必逐个挑选。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00528` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-007-285FD5C05BDE`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `IDENTIFY-BATCH-FILE-WITH-LUB-EXTENSION` / `BATCH-FILE-PART, LUB-EXTENSION` / `BATCH-FILE-EXTENSION-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | A batch file part shall be identified with the .LUB extension.<br>批处理文件件必须用 .LUB 扩展名标识。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00529` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-008-81534B10BDAD`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MATCH-REFERENCED-HEADER-FILE-NAME-CASE` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-CASE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Header file names referenced in a batch file shall match the case of the actual file names.<br>批处理文件中引用的头文件名必须与实际文件名的大小写一致。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00530` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-009-56EDF7937548`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PREFIX-BATCH-FILE-NAME-WITH-MANUFACTURER-CODE` / `BATCH-FILE-NAME, MANUFACTURER-CODE` / `BATCH-FILE-NAME-PREFIX-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The first three characters of a batch-file name shall be the manufacturer code of the creator.<br>批处理文件名的前三个字符必须是创建方的制造商代码。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00531` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-010-73139160EA3F`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `KEEP-BATCH-FILE-NAME-UNIQUE-PER-MANUFACTURER-CODE` / `BATCH-FILE-NAME` / `BATCH-FILE-NAME-UNIQUE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The remainder of a batch-file name shall be unique for each batch file defined under that manufacturer code.<br>同一制造商代码下每个批处理文件名的其余部分必须唯一。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00532` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-011-A1C9C9EEAFCF`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `KEEP-BATCH-FILE-PART-NUMBER-UNIQUE-AMONG-LSP-AND-BFP` / `BATCH-FILE-PART-NUMBER` / `BATCH-FILE-PN-UNIQUE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | A batch-file part number shall be unique within the set of LSP and batch-file parts under the same manufacturer code.<br>同一制造商代码下，批处理文件件号必须在 LSP 与批处理文件集合中唯一。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00533` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-013-E373C6E2421A`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `REFERENCE-COMPLETE-HEADER-FILE-NAME-WITHOUT-PATH` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-COMPLETE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Header file names referenced in a batch file shall be complete names including extensions and shall omit path references.<br>批处理文件中引用的头文件名必须是含扩展名的完整文件名，且不得包含路径。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00534` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-014-14C42482077F`<br>`ARINC-665-5 2.3.1 p.21` | `DATA-LOADER` / `WHEN-USING-BATCH-FILE-PART` / `USE-BATCH-FILE-ONLY-TO-AUTOMATE-MULTI-LSP-SETUP` / `BATCH-FILE-PART, DATA-LOADER` / `BATCH-FILE-LOADER-USE-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Batch files are distributed to onboard and off-board ARINC 615A loaders and are used only to automate multi-LSP setup.<br>批处理文件分发给机上和机下 ARINC 615A 加载器，仅用于自动完成多 LSP 设置。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00535` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-015-BCA2BC43A1A3`<br>`ARINC-665-5 2.3.1 p.21` | `DATA-LOADER` / `WHEN-USING-BATCH-FILE-PART` / `DO-NOT-TRANSFER-BATCH-FILE-TO-TARGET-HARDWARE` / `BATCH-FILE-PART, TARGET-HARDWARE` / `BATCH-FILE-NOT-TRANSFERRED-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | A batch file part shall not be transferred to target hardware.<br>批处理文件件不得传送到目标硬件。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00536` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-016-BEE78B9E25ED`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `INCLUDE-BATCH-FILE-CONTENT-DEFINED-BY-TABLE-2-3-1-1` / `BATCH-FILE-PART, TABLE-2.3.1-1` / `BATCH-FILE-TABLE-CONTENT-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | A batch file shall contain the information defined in Table 2.3.1-1.<br>批处理文件必须包含表 2.3.1-1 规定的信息。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00537` | `SU-ARINC-665-5-2-3-1-1-P032-PROSE-SENTENCE-001-8941510B5311`<br>`ARINC-665-5 2.3.1.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE-BATCH-FILE-LENGTH-IN-16-BIT-WORDS` / `BATCH-FILE-LENGTH` / `BATCH-FILE-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Batch File Length is the number of 16-bit words in the batch file.<br>批处理文件长度是该文件中 16 位字的数量。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00538` | `SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-004-86427B46E466`<br>`ARINC-665-5 2.3.1.8 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MAKE-BATCH-FILE-PN-COMPLIANT-WITH-SOFTWARE-LOAD-PN-FORMAT` / `BATCH-FILE-PN` / `BATCH-FILE-PN-FORMAT-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | A batch-file part number shall follow the software-load PN format in 665 §2.1.1.<br>批处理文件件号必须符合 665 §2.1.1 的软件加载件号格式。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00539` | `SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-005-B74330A54136`<br>`ARINC-665-5 2.3.1.8 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `KEEP-BATCH-FILE-PN-DISTINCT-FROM-LSP-AND-MSP` / `BATCH-FILE-PN` / `BATCH-FILE-PN-DISTINCT-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | A batch-file part number shall be unique from any LSP part number and any MSP part number.<br>批处理文件件号必须不同于任何 LSP 件号和任何 MSP 件号。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00540` | `SU-ARINC-665-5-2-3-1-12-P033-PROSE-SENTENCE-002-6F1E1E9893E9`<br>`ARINC-665-5 2.3.1.12 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `SET-LAST-LOAD-LIST-BLOCK-POINTER-TO-ZERO` / `LOAD-LIST-BLOCK-POINTER` / `LAST-LOAD-LIST-POINTER-ZERO-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The load-list block pointer of the last load-list block shall be zero.<br>最后一个加载列表块的指针必须为零。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00541` | `SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-004-CA370AEF0845`<br>`ARINC-665-5 2.3.1.14 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MATCH-TARGET-HW-ID-POS-TO-TARGET-HARDWARE` / `TARGET-HW-ID-POS` / `TARGET-HW-ID-POS-MATCH-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Target HW ID POS value shall match the THW_ID_POS of the target hardware loaded by this batch file part.<br>Target HW ID POS 必须与该批处理文件要加载的目标硬件 THW_ID_POS 一致。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00542` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-001-F4394EF0EEC6`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MATCH-HEADER-FILE-NAME-TO-LISTED-LSP` / `HEADER-FILE-NAME, LOAD-PN` / `HEADER-FILE-NAME-MATCH-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The header file name shall match the header file of the LSP identified by the Load PN field.<br>头文件名必须与 Load PN 字段所标识 LSP 的头文件一致。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00543` | `SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-001-4385D6046683`<br>`ARINC-665-5 2.3.1.19 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MATCH-LOAD-PN-TO-LSP-FOR-TARGET-HW-ID-POS` / `LOAD-PN, TARGET-HW-ID-POS` / `LOAD-PN-MATCH-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Load PN shall match the LSP part number to be loaded to that Target HW ID POS.<br>Load PN 必须与要加载到该 Target HW ID POS 的 LSP 件号一致。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00544` | `SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-001-216B865544A5`<br>`ARINC-665-5 2.3.1.20 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PLACE-BATCH-FILE-CRC-COVERING-FILE-EXCLUDING-CRC-FIELD` / `BATCH-FILE-CRC` / `BATCH-FILE-CRC-FIELD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Batch File CRC is a 16-bit CRC covering the batch file with the CRC field excluded. Algorithm identity remains blocked by ARINC 645.<br>批处理文件 CRC 是覆盖该文件且不含 CRC 字段自身的 16 位 CRC。算法身份仍由 ARINC 645 阻塞。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00545` | `SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-002-2E8577AE49D2`<br>`ARINC-665-5 2.3.1.20 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `COMPUTE-BATCH-FILE-CRC-PER-ARINC-645` / `BATCH-FILE-CRC` / `BATCH-FILE-CRC-ALGORITHM-BLOCKED-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Batch File CRC shall be computed as defined in ARINC 645. This PR records the 665 trigger but does not bind 645.<br>批处理文件 CRC 须按 ARINC 645 计算。本 PR 只记录 665 触发点，不绑定 645。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00546` | `SU-ARINC-665-5-TABLE-2-3-1-1-R001`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Batch File Length field of LUB as 32 bits counting 16-bit words in the file.<br>将 LUB 的批处理文件长度字段编码为 32 位，并以 16 位字计数整个文件。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00547` | `SU-ARINC-665-5-TABLE-2-3-1-1-R002`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-FORMAT-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Batch File Format Version field of LUB as 16 bits.<br>将 LUB 的批处理文件格式版本字段编码为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00548` | `SU-ARINC-665-5-TABLE-2-3-1-1-R003`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-SPARE` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Spare field of LUB as 16 bits used to align the following pointers. This source unit does not constrain the field value to zero.<br>将 LUB 的 Spare 字段编码为 16 位，用于对齐随后的指针。本源单元不把该字段值约束为零。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00549` | `SU-ARINC-665-5-TABLE-2-3-1-1-R004`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-POINTER-TO-BATCH-FILE-PN-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Pointer to Batch File PN Length field of LUB as 32 bits.<br>将 LUB 的批处理文件件号长度指针字段编码为 32 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00550` | `SU-ARINC-665-5-TABLE-2-3-1-1-R005`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Pointer to Number of Target HW ID Load-List Blocks field of LUB as 32 bits.<br>将 LUB 的目标硬件标识加载列表块数目指针字段编码为 32 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00551` | `SU-ARINC-665-5-TABLE-2-3-1-1-R006`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-EXPANSION-POINT-1` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Keep Expansion Point 1 of LUB at the tabulated width of 0 bits.<br>将 LUB 扩展点 1 保持为表列的 0 位宽度。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00552` | `SU-ARINC-665-5-TABLE-2-3-1-1-R007`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-PN-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Batch File PN Length field of LUB as 16 bits. The value is the character count excluding NULs used to pad an odd length.<br>将 LUB 的批处理文件件号长度字段编码为 16 位。该值为字符数，不含用于补齐奇数长度的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00553` | `SU-ARINC-665-5-TABLE-2-3-1-1-R008`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-PN` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Batch File PN field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(BATCH-FILE-PN-LENGTH/2) bits, using one or more 16-bit words when present.<br>将 LUB 的批处理文件件号编码为 8 位 ASCII，分配宽度为 16*CEILING(BATCH-FILE-PN-LENGTH/2) 位；出现时使用一个或多个 16 位字。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00554` | `SU-ARINC-665-5-TABLE-2-3-1-1-R009`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-COMMENT-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Comment Length field of LUB as 16 bits.<br>将 LUB 的注释长度字段编码为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00555` | `SU-ARINC-665-5-TABLE-2-3-1-1-R010`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-COMMENT` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Encode the optional Comment field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(COMMENT-LENGTH/2) bits; omit the field when unused.<br>将 LUB 的可选注释字段编码为 8 位 ASCII，分配宽度为 16*CEILING(COMMENT-LENGTH/2) 位；未使用时省略该字段。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00556` | `SU-ARINC-665-5-TABLE-2-3-1-1-R011`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-EXPANSION-POINT-2` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Keep Expansion Point 2 of LUB at the tabulated width of 0 bits.<br>将 LUB 扩展点 2 保持为表列的 0 位宽度。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00557` | `SU-ARINC-665-5-TABLE-2-3-1-1-R012`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Number of Target HW ID Load-List Blocks field of LUB as 16 bits.<br>将 LUB 的目标硬件标识加载列表块数目字段编码为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00558` | `SU-ARINC-665-5-TABLE-2-3-1-1-R013`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Pointer to Next Target HW ID Load-List Block field of LUB as 16 bits per load-list block, holding the relative 16-bit-word offset to the next block.<br>将 LUB 的下一目标硬件标识加载列表块指针按每个加载列表块编码为 16 位，存放到下一块的相对 16 位字偏移。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00559` | `SU-ARINC-665-5-TABLE-2-3-1-1-R014`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-TARGET-HW-ID-POS-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Target HW ID POS Length field of LUB as 16 bits per load-list block. The value is the character count excluding NULs used to pad an odd length.<br>将 LUB 的 Target HW ID POS 长度按每个加载列表块编码为 16 位。该值为字符数，不含用于补齐奇数长度的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00560` | `SU-ARINC-665-5-TABLE-2-3-1-1-R015`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-TARGET-HW-ID-POS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Target HW ID POS field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(TARGET-HW-ID-POS-LENGTH/2) bits, once per load-list block when the length is positive.<br>将 LUB 的 Target HW ID POS 编码为 8 位 ASCII，分配宽度为 16*CEILING(TARGET-HW-ID-POS-LENGTH/2) 位；每个加载列表块在长度为正时出现一次。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00561` | `SU-ARINC-665-5-TABLE-2-3-1-1-R016`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Number of Loads for Target HW ID POS field of LUB as 16 bits per load-list block.<br>将 LUB 的目标硬件位置加载数目按每个加载列表块编码为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00562` | `SU-ARINC-665-5-TABLE-2-3-1-1-R017`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-HEADER-FILE-NAME-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Header File Name Length field of LUB as 16 bits per load of one Target HW ID.<br>将 LUB 的头文件名长度按同一目标硬件标识下的每个加载编码为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00563` | `SU-ARINC-665-5-TABLE-2-3-1-1-R018`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-HEADER-FILE-NAME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Header File Name field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(HEADER-FILE-NAME-LENGTH/2) bits, once per load when the length is positive.<br>将 LUB 的头文件名编码为 8 位 ASCII，分配宽度为 16*CEILING(HEADER-FILE-NAME-LENGTH/2) 位；每个加载在长度为正时出现一次。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00564` | `SU-ARINC-665-5-TABLE-2-3-1-1-R019`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-LOAD-PN-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Load PN Length field of LUB as 16 bits per load of one Target HW ID.<br>将 LUB 的加载件号长度按同一目标硬件标识下的每个加载编码为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00565` | `SU-ARINC-665-5-TABLE-2-3-1-1-R020`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-LOAD-PN` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Load PN field of LUB as 8-bit ASCII whose allocated width is 16*CEILING(LOAD-PN-LENGTH/2) bits, once per load when the length is positive.<br>将 LUB 的加载件号编码为 8 位 ASCII，分配宽度为 16*CEILING(LOAD-PN-LENGTH/2) 位；每个加载在长度为正时出现一次。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00566` | `SU-ARINC-665-5-TABLE-2-3-1-1-R021`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-EXPANSION-POINT-3` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Keep Expansion Point 3 of LUB at the tabulated width of 0 bits.<br>将 LUB 扩展点 3 保持为表列的 0 位宽度。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00567` | `SU-ARINC-665-5-TABLE-2-3-1-1-R022`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-CRC` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Encode the Batch File CRC field of LUB as 16 bits covering the file with the CRC field excluded. Algorithm identity remains blocked by ARINC 645.<br>将 LUB 的批处理文件 CRC 字段编码为 16 位，覆盖该文件且不含 CRC 字段自身。算法身份仍由 ARINC 645 阻塞。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00568` | `SU-ARINC-665-5-2-3-1-2-P032-PROSE-SENTENCE-001-A4C713095594`<br>`ARINC-665-5 2.3.1.2 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `DEFINE-BATCH-FILE-FORMAT-VERSION-IN-16-BITS` / `BATCH-FILE-FORMAT-VERSION` / `BATCH-FILE-FORMAT-VERSION-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Batch File Format Version field is 16 bits.<br>批处理文件格式版本字段为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00569` | `SU-ARINC-665-5-2-3-1-2-P032-PROSE-SENTENCE-002-79DEDA3F0A7A`<br>`ARINC-665-5 2.3.1.2 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `TAKE-BATCH-FILE-FORMAT-VERSION-FROM-CLAUSE-1-4-1` / `BATCH-FILE-FORMAT-VERSION` / `BATCH-FILE-FORMAT-VERSION-IDENTITY-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Batch File Format Version value shall follow the file-format version definition in 665 §1.4.1.<br>批处理文件格式版本取值必须遵循 665 §1.4.1 的文件格式版本定义。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00570` | `SU-ARINC-665-5-2-3-1-3-P032-PROSE-SENTENCE-001-07120FC5FECE`<br>`ARINC-665-5 2.3.1.3 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `USE-SPARE-TO-ALIGN-FOLLOWING-POINTERS-ON-4-BYTE-BOUNDARIES` / `SPARE, POINTER-FIELDS` / `SPARE-ALIGNMENT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The spare field shall align the following pointers, which are defined on 4-byte boundaries.<br>Spare 字段必须对齐随后按 4 字节边界定义的指针。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00571` | `SU-ARINC-665-5-2-3-1-4-P033-PROSE-SENTENCE-001-950EEAD4BFA9`<br>`ARINC-665-5 2.3.1.4 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `POINT-TO-BATCH-FILE-PN-LENGTH-FROM-START-IN-16-BIT-WORDS` / `POINTER-TO-BATCH-FILE-PN-LENGTH` / `PN-LENGTH-POINTER-ORIGIN-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The pointer to Batch File PN Length is an absolute count of 16-bit words from the start of the file.<br>批处理文件件号长度指针是自文件起始计的绝对 16 位字数。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00572` | `SU-ARINC-665-5-2-3-1-5-P033-PROSE-SENTENCE-001-D39CAFDDE98D`<br>`ARINC-665-5 2.3.1.5 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `POINT-TO-LOAD-LIST-BLOCK-COUNT-FROM-START-IN-16-BIT-WORDS` / `POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS` / `LOAD-LIST-COUNT-POINTER-ORIGIN-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The pointer to Number of Target HW ID Load-List Blocks is an absolute count of 16-bit words from the start of the file.<br>目标硬件标识加载列表块数目指针是自文件起始计的绝对 16 位字数。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00573` | `SU-ARINC-665-5-2-3-1-6-P033-PROSE-SENTENCE-001-B0745F7F3F78`<br>`ARINC-665-5 2.3.1.6 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MAY-GROW-FILE-FORMAT-AT-EXPANSION-POINTS` / `EXPANSION-POINTS` / `EXPANSION-POINT-GROWTH-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | Expansion points are where later file-format versions may add new fields.<br>扩展点是后续文件格式版本可以新增字段的位置。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00574` | `SU-ARINC-665-5-2-3-1-7-P033-PROSE-SENTENCE-001-85A74B75BC3D`<br>`ARINC-665-5 2.3.1.7 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `EXCLUDE-NUL-PAD-FROM-BATCH-FILE-PN-LENGTH` / `BATCH-FILE-PN-LENGTH` / `BATCH-FILE-PN-LENGTH-EXCLUDES-NUL-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Batch File PN Length is the character count and shall exclude NULs appended to pad an odd character count.<br>批处理文件件号长度是字符数，不得计入为补齐奇数长度而追加的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00575` | `SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-001-CD2F980ECAAD`<br>`ARINC-665-5 2.3.1.8 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE-BATCH-FILE-PN-AS-8-BIT-ASCII` / `BATCH-FILE-PN` / `BATCH-FILE-PN-ASCII-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Batch File PN shall be 8-bit ASCII whose character count is given by Batch File PN Length.<br>批处理文件件号必须是 8 位 ASCII，字符数由批处理文件件号长度给出。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00576` | `SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-002-14957CC0EE75`<br>`ARINC-665-5 2.3.1.8 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ALLOCATE-BATCH-FILE-PN-EVEN-OCTET-WIDTH` / `BATCH-FILE-PN` / `BATCH-FILE-PN-EVEN-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Batch File PN field shall be allocated an even number of bytes.<br>批处理文件件号字段必须分配偶数个字节。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00577` | `SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-003-CA9D6749B1E7`<br>`ARINC-665-5 2.3.1.8 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PAD-ODD-BATCH-FILE-PN-WITH-NUL` / `BATCH-FILE-PN` / `BATCH-FILE-PN-NUL-PAD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | If the Batch File PN character count is odd, append one NUL.<br>若批处理文件件号字符数为奇数，则追加一个 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00578` | `SU-ARINC-665-5-2-3-1-9-P033-PROSE-SENTENCE-001-37210AE320F9`<br>`ARINC-665-5 2.3.1.9 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `EXCLUDE-NUL-PAD-FROM-COMMENT-LENGTH` / `COMMENT-LENGTH` / `COMMENT-LENGTH-EXCLUDES-NUL-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Comment Length is the character count and shall exclude NULs appended to pad an odd character count.<br>注释长度是字符数，不得计入为补齐奇数长度而追加的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00579` | `SU-ARINC-665-5-2-3-1-9-P033-PROSE-SENTENCE-002-DF06B1AE9E4A`<br>`ARINC-665-5 2.3.1.9 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `SET-COMMENT-LENGTH-ZERO-WHEN-NO-COMMENT` / `COMMENT-LENGTH` / `COMMENT-LENGTH-ZERO-WHEN-ABSENT-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | If the batch has no comment, Comment Length shall be zero.<br>若该批处理没有注释，注释长度必须为零。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00580` | `SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-001-6238B2C14CAF`<br>`ARINC-665-5 2.3.1.10 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE-COMMENT-AS-8-BIT-ASCII` / `COMMENT` / `COMMENT-ASCII-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Comment field shall be 8-bit ASCII whose character count is given by Comment Length.<br>注释字段必须是 8 位 ASCII，字符数由注释长度给出。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00581` | `SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-002-14957CC0EE75`<br>`ARINC-665-5 2.3.1.10 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ALLOCATE-COMMENT-EVEN-OCTET-WIDTH` / `COMMENT` / `COMMENT-EVEN-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Comment field shall be allocated an even number of bytes.<br>注释字段必须分配偶数个字节。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00582` | `SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-003-CA9D6749B1E7`<br>`ARINC-665-5 2.3.1.10 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PAD-ODD-COMMENT-WITH-NUL` / `COMMENT` / `COMMENT-NUL-PAD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | If the Comment character count is odd, append one NUL.<br>若注释字符数为奇数，则追加一个 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00583` | `SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-004-49D5CE38BD4B`<br>`ARINC-665-5 2.3.1.10 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `OMIT-COMMENT-FIELD-WHEN-COMMENT-LENGTH-ZERO` / `COMMENT` / `COMMENT-OMITTED-WHEN-LENGTH-ZERO-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | If Comment Length is zero, the Comment field shall be omitted.<br>若注释长度为零，则必须省略注释字段。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00584` | `SU-ARINC-665-5-2-3-1-11-P033-PROSE-SENTENCE-001-B832BEAD3004`<br>`ARINC-665-5 2.3.1.11 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `COUNT-TARGET-HW-ID-LOAD-LIST-BLOCKS-IN-BATCH-FILE` / `NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS` / `LOAD-LIST-BLOCK-COUNT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Number of Target HW ID Load-List Blocks is the count of load-list blocks in the batch file.<br>目标硬件标识加载列表块数目是该批处理文件中加载列表块的个数。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00585` | `SU-ARINC-665-5-2-3-1-12-P033-PROSE-SENTENCE-001-51F8853C49AB`<br>`ARINC-665-5 2.3.1.12 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `POINT-TO-NEXT-LOAD-LIST-BLOCK-IN-RELATIVE-16-BIT-WORDS` / `POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK` / `NEXT-LOAD-LIST-POINTER-RELATIVE-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The next load-list-block pointer is a relative count of 16-bit words to the next load-list block.<br>下一加载列表块指针是到下一块的相对 16 位字数。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00586` | `SU-ARINC-665-5-2-3-1-13-P034-PROSE-SENTENCE-001-10A78FF7C992`<br>`ARINC-665-5 2.3.1.13 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `EXCLUDE-NUL-PAD-FROM-TARGET-HW-ID-POS-LENGTH` / `TARGET-HW-ID-POS-LENGTH` / `TARGET-HW-ID-POS-LENGTH-EXCLUDES-NUL-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Target HW ID POS Length is the character count and shall exclude NULs appended to pad an odd character count.<br>Target HW ID POS 长度是字符数，不得计入为补齐奇数长度而追加的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00587` | `SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-001-6C46D8F794E1`<br>`ARINC-665-5 2.3.1.14 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE-TARGET-HW-ID-POS-AS-8-BIT-ASCII` / `TARGET-HW-ID-POS` / `TARGET-HW-ID-POS-ASCII-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Target HW ID POS shall be 8-bit ASCII whose character count is given by Target HW ID POS Length.<br>Target HW ID POS 必须是 8 位 ASCII，字符数由 Target HW ID POS 长度给出。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00588` | `SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-002-14957CC0EE75`<br>`ARINC-665-5 2.3.1.14 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ALLOCATE-TARGET-HW-ID-POS-EVEN-OCTET-WIDTH` / `TARGET-HW-ID-POS` / `TARGET-HW-ID-POS-EVEN-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Target HW ID POS field shall be allocated an even number of bytes.<br>Target HW ID POS 字段必须分配偶数个字节。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00589` | `SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-003-CA9D6749B1E7`<br>`ARINC-665-5 2.3.1.14 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PAD-ODD-TARGET-HW-ID-POS-WITH-NUL` / `TARGET-HW-ID-POS` / `TARGET-HW-ID-POS-NUL-PAD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | If the Target HW ID POS character count is odd, append one NUL.<br>若 Target HW ID POS 字符数为奇数，则追加一个 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00590` | `SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-007-F728BBF0BB35`<br>`ARINC-665-5 2.3.1.14 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `KEEP-TARGET-HW-ID-POS-CONSISTENT-WITH-LISTED-LSP-HEADERS` / `TARGET-HW-ID-POS, HEADER-FILE-TARGET-HW-ID` / `TARGET-HW-ID-POS-HEADER-CONSISTENCY-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Target HW ID POS values should stay consistent with the Target HW ID values in the header files of the LSPs listed under that target.<br>Target HW ID POS 应与该目标下列出的 LSP 头文件中的 Target HW ID 保持一致。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00591` | `SU-ARINC-665-5-2-3-1-15-P034-PROSE-SENTENCE-001-BE0892BD03B3`<br>`ARINC-665-5 2.3.1.15 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `COUNT-LOADS-IN-THE-TARGET-HW-ID-LOAD-LIST-BLOCK` / `NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS` / `LOAD-COUNT-IN-BLOCK-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Number of Loads for Target HW ID POS is the count of loads in that target's load-list block.<br>目标硬件标识的加载数目是该目标加载列表块中的加载个数。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00592` | `SU-ARINC-665-5-2-3-1-16-P034-PROSE-SENTENCE-001-F71F4DF1A130`<br>`ARINC-665-5 2.3.1.16 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `EXCLUDE-NUL-PAD-FROM-HEADER-FILE-NAME-LENGTH` / `HEADER-FILE-NAME-LENGTH` / `HEADER-FILE-NAME-LENGTH-EXCLUDES-NUL-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Header File Name Length is the character count and shall exclude NULs appended to pad an odd character count.<br>头文件名长度是字符数，不得计入为补齐奇数长度而追加的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00593` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-002-EB03E6E8B2C2`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE-HEADER-FILE-NAME-AS-8-BIT-ASCII` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-ASCII-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Header File Name shall be 8-bit ASCII whose character count is given by Header File Name Length.<br>头文件名必须是 8 位 ASCII，字符数由头文件名长度给出。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00594` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-003-14957CC0EE75`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ALLOCATE-HEADER-FILE-NAME-EVEN-OCTET-WIDTH` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-EVEN-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Header File Name field shall be allocated an even number of bytes.<br>头文件名字段必须分配偶数个字节。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00595` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-004-CA9D6749B1E7`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PAD-ODD-HEADER-FILE-NAME-WITH-NUL` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-NUL-PAD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | If the Header File Name character count is odd, append one NUL.<br>若头文件名字符数为奇数，则追加一个 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00596` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-005-7FE318C16891`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `USE-HEADER-FILE-NAME-WITHOUT-PATH` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-NO-PATH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Header File Name is the file name only and shall omit path information.<br>头文件名只含文件名，不得包含路径信息。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00597` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-006-36F14C7EFAD7`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `KEEP-HEADER-FILE-NAME-FREE-OF-BACKSLASH` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-NO-BACKSLASH-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | A file name shall not begin with a backslash and shall not contain a backslash.<br>文件名不得以反斜杠开头，也不得包含反斜杠。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00598` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-007-3E0BD2C78076`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `INCLUDE-HEADER-FILE-NAME-EXTENSIONS-AND-DELIMITERS` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-EXTENSIONS-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | File names shall include all extensions and delimiters.<br>文件名必须包含全部扩展名与分隔符。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00599` | `SU-ARINC-665-5-2-3-1-18-P034-PROSE-SENTENCE-001-A0FF5B212350`<br>`ARINC-665-5 2.3.1.18 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `DEFINE-LOAD-PN-LENGTH-AS-CHARACTER-COUNT` / `LOAD-PN-LENGTH` / `LOAD-PN-LENGTH-CHARACTER-COUNT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Load PN Length is the number of characters in the Load PN.<br>Load PN 长度是 Load PN 的字符数。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00600` | `SU-ARINC-665-5-2-3-1-18-P034-PROSE-SENTENCE-002-AE35CDA97957`<br>`ARINC-665-5 2.3.1.18 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `EXCLUDE-NUL-PAD-FROM-LOAD-PN-LENGTH` / `LOAD-PN-LENGTH` / `LOAD-PN-LENGTH-EXCLUDES-NUL-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Load PN Length shall exclude NULs appended to pad an odd character count.<br>Load PN 长度不得计入为补齐奇数长度而追加的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00601` | `SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-002-2B0551BA0908`<br>`ARINC-665-5 2.3.1.19 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE-LOAD-PN-AS-8-BIT-ASCII` / `LOAD-PN` / `LOAD-PN-ASCII-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Load PN shall be 8-bit ASCII whose character count is given by Load PN Length.<br>Load PN 必须是 8 位 ASCII，字符数由 Load PN 长度给出。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00602` | `SU-ARINC-665-5-2-3-1-19-P035-PROSE-SENTENCE-005-7E047E5900B9`<br>`ARINC-665-5 2.3.1.19 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ALLOCATE-LOAD-PN-EVEN-OCTET-WIDTH` / `LOAD-PN` / `LOAD-PN-EVEN-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The Load PN field shall be allocated an even number of bytes.<br>Load PN 字段必须分配偶数个字节。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00603` | `SU-ARINC-665-5-2-3-1-19-P035-PROSE-SENTENCE-006-CA9D6749B1E7`<br>`ARINC-665-5 2.3.1.19 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PAD-ODD-LOAD-PN-WITH-NUL` / `LOAD-PN` / `LOAD-PN-NUL-PAD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | If the Load PN character count is odd, append one NUL.<br>若 Load PN 字符数为奇数，则追加一个 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00604` | `SU-ARINC-664-3-1.5-P013-PROSE-SENTENCE-001-CF0B59087E60`<br>`ARINC-664-3 1.5 p.13` | `ARINC-664P3-COMPLIANT-NETWORK` / `WHEN-P3-AND-RFC-REQUIREMENTS-CONFLICT` / `GIVE-664P3-PRECEDENCE-OVER-CONFLICTING-RFC-OPTIONS` / `IETF-RFC-OPTIONS, ARINC-664P3-PROFILE` / `P3-PRECEDENCE-OVER-RFC-OPTIONS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When this 664P3 specification conflicts with an applicable RFC, ISO or IEEE standard, 664P3 has precedence. That precedence is not a licence to drop ARINC 615A TFTP option rules.<br>当本 664P3 规范与适用 RFC、ISO 或 IEEE 标准冲突时，664P3 优先。该优先不是取消 ARINC 615A TFTP 选项规则的许可。 | — | DEP-ARINC-664-3 |
+| `CRS-M1-00605` | `SU-ARINC-664-3-3.3.2-P030-TABLE-ROW-001-248ABB819123`<br>`ARINC-664-3 3.3.2 p.30` | `ARINC-664P3-COMPLIANT-NETWORK` / `WHEN-OPERATING-ON-664P3-COMPLIANT-NETWORK` / `GENERATE-AND-CHECK-UDP-CHECKSUM` / `UDP-CHECKSUM` / `UDP-CHECKSUM-GENERATE-CHECK-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | On the 664P3 UDP path the End System must be able to generate and check the UDP checksum as tabulated in Table 3.3.2-1.<br>在 664P3 UDP 路径上，端系统必须能按表 3.3.2-1 生成并检查 UDP 校验和。 | — | DEP-ARINC-664-3 |
+| `CRS-M1-00606` | `SU-ARINC-664-3-3.4.1-P031-PROSE-SENTENCE-001-C8FA1ADDD22F`<br>`ARINC-664-3 3.4.1 p.31` | `ARINC-664P3-COMPLIANT-NETWORK` / `WHEN-OPERATING-ON-664P3-PROFILED-OR-COMPLIANT-PATH` / `IMPLEMENT-IPV4-IN-ACCORDANCE-WITH-P3-FIGURE-3-4-1-1` / `IPV4-DATAGRAM` / `IPV4-P3-PROFILE-COMPLIANCE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Implementation of IPv4 in Profiled Networks should comply with Figure 3.4.1-1. ARINC 615A Data Loader fragmentation/reassembly is not erased by that profile.<br>Profiled 网络中的 IPv4 实现应符合图 3.4.1-1。该 profile 不抹去 ARINC 615A 数据加载器的分片/重组义务。 | — | DEP-ARINC-664-3 |
+| `CRS-M1-00607` | `SU-ARINC-664-7-3-P017-PROSE-SENTENCE-001-702F6DFF5983`<br>`ARINC-664-7 3 p.17` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PROVIDE-SECURE-RELIABLE-PARTITION-DATA-EXCHANGE` / `END-SYSTEM-SERVICES, PARTITION-SOFTWARE` / `AFDX-END-SYSTEM-SERVICE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the End System's main function is to provide services that guarantee secure and reliable data exchange to the partition software.<br>若选择 AFDX，端系统的主要功能是向分区软件提供保证安全可靠数据交换的服务。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00608` | `SU-ARINC-664-7-4-P056-PROSE-SENTENCE-001-16D6958D7359`<br>`ARINC-664-7 4 p.56` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `FILTER-AND-POLICE-FRAMES-FOR-INTEGRITY-LENGTH-BUDGET-AND-DESTINATION` / `AFDX-SWITCH-FILTERING-AND-POLICING` / `AFDX-SWITCH-FILTER-POLICE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, frames arriving at the switch are filtered for frame integrity, frame length, traffic budget and acceptable destinations. Ordinary Ethernet tests do not prove that switch behaviour.<br>若选择 AFDX，到达交换机的帧按完整性、长度、流量预算与可接受目的地过滤。普通以太网试验不能证明该交换机行为。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00609` | `SU-ARINC-664-7-ATT-2-P102-PROSE-SENTENCE-001-783B772F160E`<br>`ARINC-664-7 ATT-2 p.102` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-AFDX-NOT-APPLICABLE-PROFILE-ITEMS-AS-MUST-NOT` / `AFDX-IP-UDP-PROFILE, RFC-1122-OPTIONAL-COLUMN` / `AFDX-NOT-APPLICABLE-MUST-NOT-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Attachment 2 profile items marked NOT APPLICABLE are interpreted as MUST NOT. That profile does not replace RFC identity or ARINC 615A TFTP rules.<br>若选择 AFDX，附件 2 中标为 NOT APPLICABLE 的 profile 项解释为 MUST NOT。该 profile 不取代 RFC 身份或 ARINC 615A TFTP 规则。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00610` | `SU-RFC-768-FORMAT-P002-PROSE-SENTENCE-001-261706ECA34D`<br>`RFC-768 Format p.2` | `UDP-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-UDP` / `SET-UDP-LENGTH-TO-HEADER-PLUS-DATA-OCTETS` / `UDP-LENGTH` / `UDP-LENGTH-FIELD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | UDP Length is the length in octets of the user datagram including this header and the data.<br>UDP Length 是包含本头与数据在内的用户数据报八位组长度。 | — | DEP-RFC-768 |
+| `CRS-M1-00611` | `SU-RFC-768-FIELDS-P002-PROSE-SENTENCE-001-3E02C3A99EE1`<br>`RFC-768 Fields p.2` | `UDP-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-UDP` / `COMPUTE-UDP-CHECKSUM-OVER-PSEUDO-HEADER-HEADER-AND-DATA` / `UDP-CHECKSUM` / `UDP-CHECKSUM-FIELD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | UDP Checksum is the 16-bit one's complement of the one's complement sum of the IP pseudo header, UDP header and data, padded to a multiple of two octets.<br>UDP 校验和是 IP 伪头、UDP 头与数据的 16 位反码和的反码，必要时填充到二的倍数八位组。 | — | DEP-RFC-768 |
+| `CRS-M1-00612` | `SU-RFC-791-3.1-P008-PROSE-SENTENCE-001-443A672321C1`<br>`RFC-791 3.1 p.8` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `IMPLEMENT-IPV4-ADDRESSING-AND-FRAGMENTATION` / `IPV4-ADDRESSING, IPV4-FRAGMENTATION` / `IPV4-HEADER-IDENTITY-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 implements addressing and fragmentation as its two basic functions.<br>IPv4 实现寻址与分片两项基本功能。 | — | DEP-RFC-791 |
+| `CRS-M1-00613` | `SU-RFC-791-3.2-FRAGMENT-P008-PROSE-SENTENCE-001-717559CE4530`<br>`RFC-791 3.2-fragment p.8` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `IMPLEMENT-IPV4-FRAGMENTATION-AND-REASSEMBLY` / `IPV4-FRAGMENTATION, IPV4-REASSEMBLY` / `IPV4-FRAGMENT-REASSEMBLY-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 implements fragmentation and reassembly. ARINC 615A Data Loader fragmentation/reassembly is reconciled with this mechanism and is not erased by 664P3 Profiled deviations.<br>IPv4 实现分片与重组。ARINC 615A 数据加载器分片/重组与此机制对账，不被 664P3 Profiled 偏差抹去。 | — | DEP-RFC-791 |
+| `CRS-M1-00614` | `SU-RFC-1122-3-P029-PROSE-SENTENCE-001-44340B4D8C62`<br>`RFC-1122 3 p.29` | `IPV4-HOST` / `WHEN-RECEIVING-AN-IP-DATAGRAM` / `SILENTLY-DISCARD-NON-IPV4-VERSION` / `IPV4-VERSION-FIELD` / `NON-IPV4-VERSION-SILENT-DISCARD-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | A datagram whose IP version number is not 4 MUST be silently discarded. Registering this host rule does not establish IPV4-UDP-HOST-COMMUNICATION-SEMANTICS.<br>版本号不是 4 的数据报必须被静默丢弃。登记该主机规则并不建立 IPV4-UDP-HOST-COMMUNICATION-SEMANTICS。 | — | DEP-RFC-1122 |
+| `CRS-M1-00615` | `SU-RFC-1122-4-UDP-P078-PROSE-SENTENCE-001-97CB6EED1414`<br>`RFC-1122 4-UDP p.78` | `UDP-HOST` / `WHEN-SENDING-OR-RECEIVING-UDP` / `GENERATE-AND-VALIDATE-UDP-CHECKSUMS` / `UDP-CHECKSUM` / `UDP-CHECKSUM-HOST-FACILITY-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | A host MUST implement the facility to generate and validate UDP checksums. Registering this rule does not establish IPV4-UDP-HOST-COMMUNICATION-SEMANTICS.<br>主机必须实现生成并校验 UDP 校验和的能力。登记该规则并不建立 IPV4-UDP-HOST-COMMUNICATION-SEMANTICS。 | — | DEP-RFC-1122 |
+| `CRS-M1-00616` | `SU-RFC-1123-4.2-P044-PROSE-SENTENCE-001-4EE42D37EF0F`<br>`RFC-1123 4.2 p.44` | `TFTP-HOST` / `WHEN-USING-TFTP-AS-615A-FILE-TRANSFER` / `APPLY-RFC-1123-TFTP-HOST-NOTES-WITHOUT-ADOPTING-MAIL-NETASCII-OR-BROADCAST-RRQ` / `TFTP-OCTET-MODE, SORCERERS-APPRENTICE` / `TFTP-HOST-APPLICATION-PREMISE-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | RFC 1123 section 4.2 adds host TFTP notes. ARINC 615A uses octet TFTP with its own option set; mail is prohibited by 4.2.2.1, netascii stays out of profile, and broadcast requests are silently ignored rather than used as a transfer method.<br>RFC 1123 第 4.2 节补充主机 TFTP 说明。ARINC 615A 使用带自有选项集的 octet TFTP；mail 由 4.2.2.1 禁止，netascii 保持出配置，广播请求被静默忽略而不是用作传输方法。 | — | DEP-RFC-1123 |
+| `CRS-M1-00617` | `SU-RFC-1350-2-P002-PROSE-SENTENCE-001-915D439C7026`<br>`RFC-1350 2 p.2` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-TRANSFERRING-615A-FILES-OVER-TFTP` / `USE-FIVE-TFTP-PACKET-TYPES-IDENTIFIED-BY-OPCODE` / `TFTP-OPCODE` / `TFTP-LOCKSTEP-OPCODE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | TFTP has five packet types identified by Opcode. Lock-step RRQ/WRQ, DATA, ACK and ERROR are the exchanges ARINC 615A file transfer uses.<br>TFTP 有五种由 Opcode 标识的包类型。锁步 RRQ/WRQ、DATA、ACK 与 ERROR 是 ARINC 615A 文件传输使用的交换。 | — | DEP-RFC-1350 |
+| `CRS-M1-00618` | `SU-RFC-1350-4-P004-PROSE-SENTENCE-001-D277980D1D8E`<br>`RFC-1350 4 p.4` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-STARTING-A-615A-TFTP-TRANSFER` / `ASSIGN-TID-ON-RRQ-OR-WRQ-WITHOUT-MAIL-MODE` / `TFTP-TID, TFTP-RRQ, TFTP-WRQ` / `TFTP-INITIAL-CONNECTION-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | RRQ/WRQ and TID assignment start the TFTP connection ARINC 615A uses. Mail mode is not used.<br>RRQ/WRQ 与 TID 分配是 ARINC 615A TFTP 的连接起点。不使用 mail 模式。 | — | DEP-RFC-1350 |
+| `CRS-M1-00619` | `SU-RFC-1350-5-P005-PROSE-SENTENCE-001-437B5A681A97`<br>`RFC-1350 5 p.5` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-TRANSFERRING-615A-FILES-OVER-TFTP` / `PLACE-OPCODE-IN-TFTP-HEADER` / `TFTP-OPCODE` / `TFTP-OPCODE-HEADER-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The TFTP header of a packet contains the opcode associated with that packet.<br>TFTP 包头包含与该包关联的操作码。 | — | DEP-RFC-1350 |
+| `CRS-M1-00620` | `SU-RFC-1350-6-P008-PROSE-SENTENCE-001-A3B31A53EE8A`<br>`RFC-1350 6 p.8` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-ENDING-A-615A-TFTP-TRANSFER-AND-BLKSIZE-WAS-NOT-SUCCESSFULLY-NEGOTIATED` / `TERMINATE-ON-DATA-PACKET-OF-0-TO-511-BYTES` / `TFTP-FINAL-DATA-BLOCK` / `TFTP-NORMAL-TERMINATION-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | When blksize was not successfully negotiated, a DATA packet containing between 0 and 511 bytes of data marks the end of the transfer. This default 512-octet rule does not apply after an accepted blksize OACK.<br>未成功协商 blksize 时，含 0 至 511 字节数据的 DATA 包标志传输结束。该默认 512 八位组规则在接受 blksize 的 OACK 之后不适用。 | — | DEP-RFC-1350 |
+| `CRS-M1-00621` | `SU-RFC-1350-7-P008-PROSE-SENTENCE-001-264E58C9BCD0`<br>`RFC-1350 7 p.8` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-A-TFTP-ERROR-OCCURS` / `SEND-ERROR-PACKET-OPCODE-5` / `TFTP-ERROR` / `TFTP-ERROR-ABORT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | If a request cannot be granted or an error occurs during the transfer, an ERROR packet (opcode 5) is sent. This is TFTP-layer abort, not a waiver of ARINC 615A FIND clocks, which remain on the FIND rows.<br>若请求不能批准或传输中出错，则发送 ERROR 包（操作码 5）。这是 TFTP 层中止，不是对 FIND 行上 ARINC 615A 时钟的豁免。 | — | DEP-RFC-1350 |
+| `CRS-M1-00622` | `SU-RFC-2347-INTRODUCTION-P001-PROSE-SENTENCE-001-5C5065F92C6A`<br>`RFC-2347 Introduction p.1` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-TFTP-OPTIONS-ARE-PRESENT` / `ACKNOWLEDGE-OPTION-NEGOTIATION-WITH-OACK` / `TFTP-OACK` / `TFTP-OPTION-MECHANISM-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | OACK acknowledges a client's TFTP option negotiation request. Unimplemented options must not fail the transfer, consistent with this extension.<br>OACK 确认客户的 TFTP 选项协商请求。未实现选项不得使传输失败，与此扩展一致。 | — | DEP-RFC-2347 |
+| `CRS-M1-00623` | `SU-RFC-2347-PACKET-FORMATS-P001-PROSE-SENTENCE-001-937DF46256B2`<br>`RFC-2347 Packet Formats p.1` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-OPTION-NEGOTIATION-FAILS` / `TERMINATE-TRANSFER-WITH-ERROR-CODE-8` / `TFTP-ERROR-CODE-8` / `TFTP-OPTION-ERROR-8-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Error code 8 indicates that a transfer should be terminated due to option negotiation. ARINC 615A does not invent a different option packet type.<br>错误码 8 表示因选项协商应终止传输。ARINC 615A 不另造选项包类型。 | — | DEP-RFC-2347 |
+| `CRS-M1-00624` | `SU-RFC-2347-OPTIONS-P001-PROSE-SENTENCE-001-8E570F666B45`<br>`RFC-2347 Options p.1` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-TFTP-OPTIONS-ARE-PRESENT` / `APPEND-OPTIONS-TO-RRQ-OR-WRQ` / `TFTP-BLKSIZE, TFTP-TIMEOUT, TFTP-TSIZE` / `TFTP-ADOPTED-OPTION-SET-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Options append to RRQ/WRQ. Only blksize, timeout and tsize are adopted from RFC 2348/2349 plus any 615A-defined integrity option. Other options stay unimplemented and non-fatal.<br>选项附于 RRQ/WRQ。仅采纳 RFC 2348/2349 的 blksize、timeout、tsize 以及 615A 定义的完整性选项。其他选项保持未实现且非致命。 | — | DEP-RFC-2347 |
+| `CRS-M1-00625` | `SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-001-2E65D6906084`<br>`RFC-2348 Blocksize Option Specification p.2` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-THE-BLKSIZE-OPTION-IS-USED` / `ENCODE-BLKSIZE-AS-ASCII-OCTETS-FROM-8-THROUGH-65464` / `TFTP-BLKSIZE` / `TFTP-BLKSIZE-RANGE-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | When blksize is used, the block size in data octets is specified in ASCII and must be between 8 and 65464 inclusive. ARINC 615A may further constrain permitted sizes on its own rows.<br>使用 blksize 时，数据八位组块大小以 ASCII 给出，且必须在 8 至 65464（含）之间。ARINC 615A 可在其自有行上进一步约束允许的大小。 | — | DEP-RFC-2348 |
+| `CRS-M1-00626` | `SU-RFC-2349-TIMEOUT-INTERVAL-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-001-360611697E14`<br>`RFC-2349 Timeout Interval Option Specification p.2` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-THE-TIMEOUT-OPTION-IS-USED` / `ENCODE-TIMEOUT-AS-ASCII-SECONDS-FROM-1-THROUGH-255` / `TFTP-TIMEOUT-OPTION` / `TFTP-TIMEOUT-RANGE-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | When the timeout option is used, the retransmission wait is specified in ASCII seconds from 1 to 255 inclusive. That interval is not the ARINC 615A FIND 2 s host deadline or 3 s registration window, which remain on the FIND rows.<br>使用 timeout 选项时，重传等待以 ASCII 秒给出，范围为 1 至 255（含）。该间隔不是 FIND 行上的 ARINC 615A 2 秒主机期限或 3 秒登记窗口。 | — | DEP-RFC-2349 |
+| `CRS-M1-00627` | `SU-RFC-2349-TRANSFER-SIZE-OPTION-SPECIFICATION-P003-PROSE-SENTENCE-001-3C03E80BD652`<br>`RFC-2349 Transfer Size Option Specification p.3` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-THE-TSIZE-OPTION-IS-USED-ON-RRQ` / `REQUEST-TSIZE-ZERO-ON-RRQ-AND-RETURN-SIZE-IN-OACK` / `TFTP-TSIZE, TFTP-RRQ, TFTP-OACK` / `TFTP-TSIZE-RRQ-OACK-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | On RRQ, tsize is requested as 0 and the file size in octets is returned in the OACK. ARINC 615A mismatch handling stays on the 615A rows.<br>在 RRQ 上，tsize 请求为 0，文件八位组大小在 OACK 中返回。ARINC 615A 失配处理留在 615A 行上。 | — | DEP-RFC-2349 |
+| `CRS-M1-00628` | `SU-RFC-768-FIELDS-P002-PROSE-SENTENCE-002-98D131CD707C`<br>`RFC-768 Fields p.2` | `UDP-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-UDP` / `KEEP-UDP-LENGTH-AT-LEAST-EIGHT-OCTETS` / `UDP-LENGTH` / `UDP-MINIMUM-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The minimum UDP Length value is eight octets.<br>UDP Length 的最小值为八个八位组。 | — | DEP-RFC-768 |
+| `CRS-M1-00629` | `SU-RFC-1122-3-P029-PROSE-SENTENCE-002-37EE632E749B`<br>`RFC-1122 3 p.29` | `IPV4-HOST` / `WHEN-RECEIVING-AN-IP-DATAGRAM` / `VERIFY-IP-HEADER-CHECKSUM-AND-SILENTLY-DISCARD-BAD` / `IPV4-HEADER-CHECKSUM` / `IPV4-HEADER-CHECKSUM-DISCARD-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | A host MUST verify the IP header checksum on every received datagram and silently discard every datagram that has a bad checksum.<br>主机必须验证每个收到数据报的 IP 头校验和，并静默丢弃校验和错误的数据报。 | — | DEP-RFC-1122 |
+| `CRS-M1-00630` | `SU-RFC-1122-3-P032-PROSE-SENTENCE-003-3A1E4B86C7F3`<br>`RFC-1122 3 p.32` | `IPV4-HOST` / `WHEN-RECEIVING-FRAGMENTED-IPV4-DATAGRAMS` / `SUPPORT-IPV4-REASSEMBLY` / `IPV4-REASSEMBLY` / `IPV4-HOST-REASSEMBLY-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | Every host must support IPv4 reassembly. This is the RFC 1122 host rule; it does not by itself close the project capability register.<br>每个主机必须支持 IPv4 重组。这是 RFC 1122 主机规则，本身不关闭项目能力登记。 | — | DEP-RFC-1122 |
+| `CRS-M1-00631` | `SU-RFC-1122-4-UDP-P078-PROSE-SENTENCE-002-EE88901ECA01`<br>`RFC-1122 4-UDP p.78` | `UDP-HOST` / `WHEN-RECEIVING-A-UDP-DATAGRAM-WITH-NONZERO-INVALID-CHECKSUM` / `SILENTLY-DISCARD-UDP-DATAGRAM-WITH-INVALID-CHECKSUM` / `UDP-CHECKSUM` / `UDP-INVALID-CHECKSUM-DISCARD-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If a UDP datagram is received with a non-zero invalid checksum, UDP MUST silently discard the datagram.<br>若收到校验和非零且无效的 UDP 数据报，UDP 必须静默丢弃该数据报。 | — | DEP-RFC-1122 |
+| `CRS-M1-00632` | `SU-RFC-1350-5-P006-PROSE-SENTENCE-002-D4D9B426A42C`<br>`RFC-1350 5 p.6` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-SENDING-RRQ-OR-WRQ` / `ENCODE-RRQ-WRQ-AS-OPCODE-FILENAME-AND-MODE` / `TFTP-RRQ, TFTP-WRQ, TFTP-FILENAME, TFTP-MODE` / `TFTP-RRQ-WRQ-LAYOUT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | RRQ and WRQ packets (opcodes 1 and 2) use the Figure 5-1 layout of opcode, filename and mode.<br>RRQ 与 WRQ 包（操作码 1 与 2）使用图 5-1 的操作码、文件名与模式布局。 | — | DEP-RFC-1350 |
+| `CRS-M1-00633` | `SU-RFC-1350-5-P006-PROSE-SENTENCE-003-6A26416C0F34`<br>`RFC-1350 5 p.6` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-SENDING-RRQ-OR-WRQ` / `TERMINATE-TFTP-FILENAME-WITH-NUL` / `TFTP-FILENAME` / `TFTP-FILENAME-NUL-TERMINATION-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The RRQ/WRQ file name is a netascii byte sequence terminated by a zero byte.<br>RRQ/WRQ 文件名是以零字节终止的 netascii 字节序列。 | — | DEP-RFC-1350 |
+| `CRS-M1-00634` | `SU-RFC-1350-5-P007-PROSE-SENTENCE-004-FA88F1D2C7FC`<br>`RFC-1350 5 p.7` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-SENDING-OR-RECEIVING-TFTP-DATA` / `ENCODE-DATA-PACKET-WITH-BLOCK-NUMBER-AND-DATA` / `TFTP-DATA, TFTP-BLOCK-NUMBER` / `TFTP-DATA-LAYOUT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | DATA packets (opcode 3) have a block number and a data field.<br>DATA 包（操作码 3）具有块号与数据字段。 | — | DEP-RFC-1350 |
+| `CRS-M1-00635` | `SU-RFC-1350-5-P007-PROSE-SENTENCE-005-B18C73BA4DC6`<br>`RFC-1350 5 p.7` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-SENDING-OR-RECEIVING-TFTP-DATA-AND-BLKSIZE-WAS-NOT-SUCCESSFULLY-NEGOTIATED` / `LIMIT-TFTP-DATA-FIELD-TO-ZERO-THROUGH-512-BYTES` / `TFTP-DATA` / `TFTP-DATA-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | When blksize was not successfully negotiated, the DATA data field is from zero to 512 bytes long. A 512-byte DATA is not the last block. RFC 2348 replaces this width after an accepted blksize OACK.<br>未成功协商 blksize 时，DATA 数据字段为 0 至 512 字节；512 字节 DATA 不是最后块。接受 blksize 的 OACK 后，由 RFC 2348 替换该宽度。 | — | DEP-RFC-1350 |
+| `CRS-M1-00636` | `SU-RFC-1350-5-P007-PROSE-SENTENCE-006-EFA658E687D9`<br>`RFC-1350 5 p.7` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-SENDING-OR-RECEIVING-TFTP-ACK` / `ENCODE-ACK-PACKET-WITH-OPCODE-4-AND-BLOCK-NUMBER` / `TFTP-ACK, TFTP-BLOCK-NUMBER` / `TFTP-ACK-LAYOUT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | An ACK packet has opcode 4 and a block number as in Figure 5-3.<br>ACK 包的操作码为 4，并带有如图 5-3 的块号。 | — | DEP-RFC-1350 |
+| `CRS-M1-00637` | `SU-RFC-1350-5-P008-PROSE-SENTENCE-007-C1DAC90B8F1C`<br>`RFC-1350 5 p.8` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-SENDING-OR-RECEIVING-TFTP-ERROR` / `ENCODE-ERROR-PACKET-AS-OPCODE-ERROR-CODE-AND-MESSAGE` / `TFTP-ERROR, TFTP-ERROR-CODE` / `TFTP-ERROR-LAYOUT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | An ERROR packet (opcode 5) has the Figure 5-4 form of error code and netascii message.<br>ERROR 包（操作码 5）采用图 5-4 的错误码与 netascii 消息形式。 | — | DEP-RFC-1350 |
+| `CRS-M1-00638` | `SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-002-D08B24697C4B`<br>`RFC-2348 Blocksize Option Specification p.2` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-THE-BLKSIZE-OPTION-IS-USED` / `ENCODE-BLKSIZE-VALUE-IN-ASCII` / `TFTP-BLKSIZE` / `TFTP-BLKSIZE-ASCII-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The blksize value is the number of octets in a block, specified in ASCII.<br>blksize 值是块中的八位组数，以 ASCII 给出。 | — | DEP-RFC-2348 |
+| `CRS-M1-00639` | `SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-003-64CFECEAC810`<br>`RFC-2348 Blocksize Option Specification p.2` | `TFTP-SERVER` / `WHEN-ACCEPTING-THE-BLKSIZE-OPTION` / `NEGOTIATE-BLKSIZE-LESS-OR-EQUAL-TO-CLIENT-VALUE` / `TFTP-BLKSIZE, TFTP-OACK` / `TFTP-BLKSIZE-SERVER-LIMIT-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | If the server accepts blksize, the OACK value must be less than or equal to the client's requested value.<br>若服务器接受 blksize，OACK 中的值必须小于或等于客户请求值。 | — | DEP-RFC-2348 |
+| `CRS-M1-00640` | `SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-004-90DA13EFFC7B`<br>`RFC-2348 Blocksize Option Specification p.2` | `TFTP-CLIENT` / `WHEN-RECEIVING-A-BLKSIZE-OACK` / `USE-OACK-BLKSIZE-OR-TERMINATE-WITH-ERROR-8` / `TFTP-BLKSIZE, TFTP-ERROR-CODE-8` / `TFTP-BLKSIZE-CLIENT-ACCEPT-OR-ABORT-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The client must either use the blksize in the OACK or terminate the transfer with ERROR code 8.<br>客户必须使用 OACK 中的 blksize，或以错误码 8 终止传输。 | — | DEP-RFC-2348 |
+| `CRS-M1-00641` | `SU-RFC-2349-TIMEOUT-INTERVAL-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-002-E2BFBC18EF44`<br>`RFC-2349 Timeout Interval Option Specification p.2` | `TFTP-SERVER` / `WHEN-ACCEPTING-THE-TIMEOUT-OPTION` / `ECHO-CLIENT-TIMEOUT-VALUE-IN-OACK` / `TFTP-TIMEOUT-OPTION, TFTP-OACK` / `TFTP-TIMEOUT-OACK-MATCH-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | If the server accepts the timeout option, the OACK timeout value must match the value specified by the client.<br>若服务器接受 timeout 选项，OACK 中的 timeout 值必须与客户指定值一致。 | — | DEP-RFC-2349 |
+| `CRS-M1-00642` | `SU-RFC-2349-TRANSFER-SIZE-OPTION-SPECIFICATION-P003-PROSE-SENTENCE-002-1C1E78F3F6AA`<br>`RFC-2349 Transfer Size Option Specification p.3` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-THE-TSIZE-OPTION-IS-USED-ON-WRQ` / `SPECIFY-TSIZE-ON-WRQ-AND-ECHO-IN-OACK` / `TFTP-TSIZE, TFTP-WRQ, TFTP-OACK` / `TFTP-TSIZE-WRQ-OACK-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | On WRQ, tsize is the file size in octets in the request and is echoed in the OACK.<br>在 WRQ 上，tsize 在请求中给出文件八位组大小，并在 OACK 中回显。 | — | DEP-RFC-2349 |
+| `CRS-M1-00643` | `SU-RFC-2349-TRANSFER-SIZE-OPTION-SPECIFICATION-P003-PROSE-SENTENCE-003-10D1D5886DB7`<br>`RFC-2349 Transfer Size Option Specification p.3` | `TFTP-CLIENT` / `WHEN-RRQ-TSIZE-EXCEEDS-CLIENT-CAPACITY` / `MAY-ABORT-RRQ-WITH-ERROR-CODE-3` / `TFTP-TSIZE, TFTP-ERROR-CODE-3` / `TFTP-TSIZE-CLIENT-ABORT-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | If the RRQ tsize is too large for the client, it MAY abort with ERROR code 3.<br>若 RRQ tsize 对客户过大，客户可以错误码 3 中止。 | — | DEP-RFC-2349 |
+| `CRS-M1-00644` | `SU-RFC-2349-TRANSFER-SIZE-OPTION-SPECIFICATION-P003-PROSE-SENTENCE-004-0EDC725A7828`<br>`RFC-2349 Transfer Size Option Specification p.3` | `TFTP-SERVER` / `WHEN-WRQ-TSIZE-EXCEEDS-SERVER-CAPACITY` / `MAY-ABORT-WRQ-WITH-ERROR-CODE-3` / `TFTP-TSIZE, TFTP-ERROR-CODE-3` / `TFTP-TSIZE-SERVER-ABORT-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | If the WRQ tsize is too large for the server, it MAY abort with ERROR code 3.<br>若 WRQ tsize 对服务器过大，服务器可以错误码 3 中止。 | — | DEP-RFC-2349 |
+| `CRS-M1-00645` | `SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-005-58E88FD7743A`<br>`RFC-2348 Blocksize Option Specification p.2` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-BLKSIZE-WAS-SUCCESSFULLY-NEGOTIATED` / `TERMINATE-ON-DATA-SHORTER-THAN-NEGOTIATED-BLKSIZE` / `TFTP-DATA, TFTP-NEGOTIATED-BLKSIZE` / `TFTP-NEGOTIATED-FINAL-BLOCK-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | After blksize is accepted in OACK, a DATA packet shorter than that negotiated blocksize is the final block. A 700-octet DATA after blksize=1024 ends the transfer; a 256-octet DATA after blksize=256 does not.<br>blksize 经 OACK 接受后，短于该协商块大小的 DATA 是最后块。协商 1024 后的 700 八位组 DATA 结束传输；协商 256 后的满 256 八位组 DATA 不结束。 | — | DEP-RFC-2348 |
+| `CRS-M1-00646` | `SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-006-B4C2F18DB477`<br>`RFC-2348 Blocksize Option Specification p.2` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-FILE-LENGTH-IS-AN-INTEGRAL-MULTIPLE-OF-EFFECTIVE-BLKSIZE` / `SEND-ZERO-LENGTH-FINAL-DATA-WHEN-FILE-IS-INTEGRAL-MULTIPLE-OF-BLKSIZE` / `TFTP-DATA, TFTP-EFFECTIVE-BLKSIZE` / `TFTP-ZERO-LENGTH-FINAL-BLOCK-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | If the file length is an integral multiple of the effective blocksize, an extra DATA packet containing no data is sent to end the transfer. Effective blocksize is 512 when blksize was not accepted, otherwise the OACK value.<br>若文件长度是有效块大小的整数倍，须发送不含数据的额外 DATA 包结束传输。未接受 blksize 时有效块大小为 512，否则为 OACK 值。 | — | DEP-RFC-2348 |
+| `CRS-M1-00647` | `SU-RFC-2347-OPTIONS-P003-PROSE-SENTENCE-002-618B7593EFF3`<br>`RFC-2347 Options p.3` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-A-REQUESTED-OPTION-IS-NOT-ACKNOWLEDGED` / `IGNORE-UNACKNOWLEDGED-OPTION-AND-KEEP-DEFAULT-PARAMETERS` / `TFTP-OPTION, TFTP-DEFAULT-512-BLKSIZE` / `TFTP-UNACKNOWLEDGED-OPTION-IGNORED-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | An option not acknowledged by the server must be ignored by client and server as if it were never requested. Requesting blksize does not change the 512-octet default until that option is accepted in OACK.<br>服务器未确认的选项必须被客户和服务器忽略，如同从未请求。仅请求 blksize 不得改变 512 八位组默认值，直至该选项在 OACK 中被接受。 | — | DEP-RFC-2347 |
+| `CRS-M1-00648` | `SU-RFC-791-3.1-P017-PROSE-SENTENCE-002-35A7348FF9FA`<br>`RFC-791 3.1 p.17` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-VERSION-AS-4-BITS` / `IPV4-VERSION-FIELD` / `IPV4-VERSION-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The IPv4 Version field is 4 bits wide. 615A TFTP over IPv4 uses this header field.<br>IPv4 Version 字段宽 4 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00649` | `SU-RFC-791-3.1-P017-PROSE-SENTENCE-003-FBA3366ADD9B`<br>`RFC-791 3.1 p.17` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-IHL-AS-4-BITS` / `IPV4-IHL-FIELD` / `IPV4-IHL-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The IPv4 IHL field is 4 bits wide. 615A TFTP over IPv4 uses this header field.<br>IPv4 IHL 字段宽 4 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00650` | `SU-RFC-791-3.1-P018-PROSE-SENTENCE-004-DC1BFA058673`<br>`RFC-791 3.1 p.18` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-TOS-AS-8-BITS` / `IPV4-TOS-FIELD` / `IPV4-TOS-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The IPv4 Type of Service field is 8 bits wide. 615A TFTP over IPv4 uses this header field.<br>IPv4 Type of Service 字段宽 8 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00651` | `SU-RFC-791-3.1-P019-PROSE-SENTENCE-005-D93E00A61632`<br>`RFC-791 3.1 p.19` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-TOTAL-LENGTH-AS-16-BITS` / `IPV4-TOTAL-LENGTH-FIELD` / `IPV4-TOTAL-LENGTH-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The IPv4 Total Length field is 16 bits wide. 615A TFTP over IPv4 uses this header field.<br>IPv4 Total Length 字段宽 16 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00652` | `SU-RFC-791-3.1-P019-PROSE-SENTENCE-006-7E317C05BA7F`<br>`RFC-791 3.1 p.19` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-IDENTIFICATION-AS-16-BITS` / `IPV4-IDENTIFICATION-FIELD` / `IPV4-IDENTIFICATION-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The IPv4 Identification field is 16 bits wide. 615A TFTP over IPv4 uses this header field.<br>IPv4 Identification 字段宽 16 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00653` | `SU-RFC-791-3.1-P019-PROSE-SENTENCE-007-46F185F002B2`<br>`RFC-791 3.1 p.19` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-FLAGS-AS-3-BITS` / `IPV4-FLAGS-FIELD` / `IPV4-FLAGS-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The IPv4 Flags field is 3 bits wide. 615A TFTP over IPv4 uses this header field.<br>IPv4 Flags 字段宽 3 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00654` | `SU-RFC-791-3.1-P019-PROSE-SENTENCE-008-1A3DDA9F5E70`<br>`RFC-791 3.1 p.19` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-FRAGMENT-OFFSET-AS-13-BITS` / `IPV4-FRAGMENT-OFFSET-FIELD` / `IPV4-FRAGMENT-OFFSET-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The IPv4 Fragment Offset field is 13 bits wide. 615A TFTP over IPv4 uses this header field.<br>IPv4 Fragment Offset 字段宽 13 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00655` | `SU-RFC-791-3.1-P020-PROSE-SENTENCE-009-984FD4C7EC7E`<br>`RFC-791 3.1 p.20` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-TTL-AS-8-BITS` / `IPV4-TTL-FIELD` / `IPV4-TTL-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The IPv4 Time to Live field is 8 bits wide. 615A TFTP over IPv4 uses this header field.<br>IPv4 Time to Live 字段宽 8 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00656` | `SU-RFC-791-3.1-P020-PROSE-SENTENCE-010-3425BDE4EE7A`<br>`RFC-791 3.1 p.20` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-PROTOCOL-AS-8-BITS` / `IPV4-PROTOCOL-FIELD` / `IPV4-PROTOCOL-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The IPv4 Protocol field is 8 bits wide. 615A TFTP over IPv4 uses this header field.<br>IPv4 Protocol 字段宽 8 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00657` | `SU-RFC-791-3.1-P020-PROSE-SENTENCE-011-1F408D481D64`<br>`RFC-791 3.1 p.20` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-HEADER-CHECKSUM-AS-16-BITS` / `IPV4-HEADER-CHECKSUM-FIELD` / `IPV4-HEADER-CHECKSUM-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The IPv4 Header Checksum field is 16 bits wide. 615A TFTP over IPv4 uses this header field.<br>IPv4 Header Checksum 字段宽 16 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00658` | `SU-RFC-791-3.1-P020-PROSE-SENTENCE-012-3A288A418AEE`<br>`RFC-791 3.1 p.20` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-SOURCE-ADDRESS-AS-32-BITS` / `IPV4-SOURCE-ADDRESS-FIELD` / `IPV4-SOURCE-ADDRESS-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The IPv4 Source Address field is 32 bits wide. 615A TFTP over IPv4 uses this header field.<br>IPv4 Source Address 字段宽 32 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00659` | `SU-RFC-791-3.1-P020-PROSE-SENTENCE-013-C6D7D7BFD7B6`<br>`RFC-791 3.1 p.20` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-DESTINATION-ADDRESS-AS-32-BITS` / `IPV4-DESTINATION-ADDRESS-FIELD` / `IPV4-DESTINATION-ADDRESS-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The IPv4 Destination Address field is 32 bits wide. 615A TFTP over IPv4 uses this header field.<br>IPv4 Destination Address 字段宽 32 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00660` | `SU-RFC-1123-4.2.2.1-P044-PROSE-SENTENCE-001-C57FFB7284BF`<br>`RFC-1123 4.2.2.1 p.44` | `TFTP-HOST` / `WHEN-USING-TFTP-AS-615A-FILE-TRANSFER` / `DO-NOT-SUPPORT-TFTP-MAIL-TRANSFER-MODE` / `TFTP-MAIL-MODE` / `TFTP-MAIL-MODE-ABSENT-OBSERVABLE` | `SHOULD` / `PROHIBITED` | `APPLICABLE-SUPPORTING` | TFTP mail transfer mode SHOULD NOT be supported. ARINC 615A file transfer does not use mail mode.<br>不应支持 TFTP mail 传输模式。ARINC 615A 文件传输不使用 mail 模式。 | — | DEP-RFC-1123 |
+| `CRS-M1-00661` | `SU-RFC-1123-4.2.2.2-P044-PROSE-SENTENCE-001-D47D6D4362DF`<br>`RFC-1123 4.2.2.2 p.44` | `TFTP-HOST` / `WHEN-USING-TFTP-AS-615A-FILE-TRANSFER` / `COUNT-UDP-LENGTH-INCLUDING-EIGHT-OCTET-HEADER` / `UDP-LENGTH` / `UDP-LENGTH-INCLUDES-HEADER-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The UDP Length field includes the 8-octet UDP header. This is the RFC 1123 correction of the TFTP/UDP header note.<br>UDP Length 字段包含 8 个八位组的 UDP 头。这是 RFC 1123 对 TFTP／UDP 头说明的更正。 | — | DEP-RFC-1123 |
+| `CRS-M1-00662` | `SU-RFC-1123-4.2.3.1-P044-PROSE-SENTENCE-001-D221776D6159`<br>`RFC-1123 4.2.3.1 p.44` | `TFTP-DATA-SENDER` / `WHEN-RECEIVING-A-DUPLICATE-TFTP-ACK` / `NEVER-RESEND-CURRENT-DATA-ON-DUPLICATE-ACK` / `TFTP-DATA, TFTP-ACK, SORCERERS-APPRENTICE` / `TFTP-NO-DATA-RESEND-ON-DUPLICATE-ACK-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | The TFTP DATA sender MUST NOT resend the current DATA packet merely because a duplicate ACK arrived. That is the Sorcerer's Apprentice fix; it is not a FIND-clock rule.<br>TFTP DATA 发送方不得仅因收到重复 ACK 而重发当前 DATA 包。这是术士学徒修正，不是 FIND 时钟规则。 | — | DEP-RFC-1123 |
+| `CRS-M1-00663` | `SU-RFC-1123-4.2.3.2-P046-PROSE-SENTENCE-001-493633EC7445`<br>`RFC-1123 4.2.3.2 p.46` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-USING-TFTP-AS-615A-FILE-TRANSFER` / `USE-ADAPTIVE-TFTP-RETRANSMISSION-TIMEOUT` / `TFTP-ADAPTIVE-TIMEOUT` / `TFTP-ADAPTIVE-TIMEOUT-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | A TFTP implementation MUST use an adaptive retransmission timeout. This is not the RFC 2349 timeout option range and not the ARINC 615A FIND 2 s / 3 s clocks.<br>TFTP 实现必须使用自适应重传超时。这不是 RFC 2349 timeout 选项范围，也不是 ARINC 615A FIND 的 2 秒／3 秒时钟。 | — | DEP-RFC-1123 |
+| `CRS-M1-00664` | `SU-RFC-1123-4.2.3.4-P046-PROSE-SENTENCE-001-8C34A8B506F6`<br>`RFC-1123 4.2.3.4 p.46` | `TFTP-SERVER` / `WHEN-SERVING-TFTP-PATHNAMES` / `PROVIDE-CONFIGURABLE-TFTP-PATHNAME-ACCESS-CONTROL` / `TFTP-PATHNAME-ACCESS-CONTROL` / `TFTP-PATHNAME-ACCESS-CONTROL-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | A TFTP server SHOULD have configurable access control over allowed pathnames.<br>TFTP 服务器应对允许的路径名提供可配置访问控制。 | — | DEP-RFC-1123 |
+| `CRS-M1-00665` | `SU-RFC-1123-4.2.3.5-P046-PROSE-SENTENCE-001-BC97D4CAC682`<br>`RFC-1123 4.2.3.5 p.46` | `TFTP-SERVER` / `WHEN-A-TFTP-REQUEST-IS-DIRECTED-TO-A-BROADCAST-ADDRESS` / `SILENTLY-IGNORE-BROADCAST-TFTP-REQUEST` / `TFTP-BROADCAST-REQUEST` / `TFTP-BROADCAST-REQUEST-IGNORED-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | A TFTP request sent to a broadcast address SHOULD be silently ignored. 615A dataloading does not use broadcast RRQ as a transfer method.<br>发往广播地址的 TFTP 请求应被静默忽略。615A 数据加载不以广播 RRQ 作为传输方法。 | — | DEP-RFC-1123 |
+| `CRS-M1-00666` | `SU-ARINC-664-7-3.2.1-P018-PROSE-SENTENCE-001-B2E9B1E66E16`<br>`ARINC-664-7 3.2.1 p.10` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ALLOW-ONLY-ONE-SOURCE-END-SYSTEM-PER-VL` / `AFDX-VIRTUAL-LINK` / `AFDX-VL-SINGLE-SOURCE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, only one End System should be the source of any one Virtual Link.<br>若选择 AFDX，任一虚拟链路应只有一个端系统作为源。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00667` | `SU-ARINC-664-7-3.2.1-P018-PROSE-SENTENCE-002-3AC3D9B42053`<br>`ARINC-664-7 3.2.1 p.10` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-VL-AS-UNIDIRECTIONAL-ONE-TO-MANY-CONNECTION` / `AFDX-VIRTUAL-LINK` / `AFDX-VL-UNIDIRECTIONAL-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, a Virtual Link is a unidirectional connection from one source End System to one or more destinations.<br>若选择 AFDX，虚拟链路是从一个源端系统到一个或多个目的端系统的单向连接。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00668` | `SU-ARINC-664-7-3.2.2-P019-PROSE-SENTENCE-001-3F32CD4BF748`<br>`ARINC-664-7 3.2.2 p.11` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-BAG-AS-MINIMUM-INTERVAL-BETWEEN-CONSECUTIVE-VL-FRAMES` / `AFDX-BAG` / `AFDX-BAG-INTERVAL-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, BAG is the minimum interval between the first bits of two consecutive frames of the same VL when scheduler jitter is zero.<br>若选择 AFDX，在调度抖动为零时，BAG 是同一 VL 连续两帧首比特之间的最小间隔。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00669` | `SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-001-8AFCAA7FEEA4`<br>`ARINC-664-7 3.2.3 p.13` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `BOUND-VL-FRAME-ARRIVAL-BY-MAXIMUM-ADMISSIBLE-JITTER` / `AFDX-JITTER` / `AFDX-MAX-ADMISSIBLE-JITTER-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the bounded scheduler interval on a VL is the maximum admissible jitter.<br>若选择 AFDX，虚拟链路上该有界调度间隔即为最大允许抖动。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00670` | `SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-002-796A41A0B615`<br>`ARINC-664-7 3.2.3 p.13` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `CHARACTERISE-VL-BANDWIDTH-BY-BAG-AND-LMAX` / `AFDX-BAG, AFDX-LMAX` / `AFDX-VL-BANDWIDTH-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, each VL's maximum usable bandwidth is characterised by BAG and authorised Lmax.<br>若选择 AFDX，每条 VL 的最大可用带宽由 BAG 与授权 Lmax 表征。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00671` | `SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-003-1E381797D200`<br>`ARINC-664-7 3.2.3 p.13` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ACCOMMODATE-VL-FRAMES-UP-TO-1518-BYTES` / `AFDX-VL-FRAME` / `AFDX-VL-FRAME-1518-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the End System should accommodate VL frames up to 1518 bytes in transmission and reception.<br>若选择 AFDX，端系统应在发送与接收中容纳最大 1518 字节的 VL 帧。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00672` | `SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-004-8CA2CDF489CD`<br>`ARINC-664-7 3.2.3 p.13` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `HANDLE-BAG-VALUES-FROM-1-MS-TO-128-MS` / `AFDX-BAG` / `AFDX-BAG-RANGE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, traffic shaping should handle BAG values from 1 ms to 128 ms.<br>若选择 AFDX，流量整形应能处理 1 ms 至 128 ms 的 BAG 值。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00673` | `SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-005-9BC14F6B2E45`<br>`ARINC-664-7 3.2.3 p.13` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RESTRICT-BAG-TO-POWERS-OF-TWO-MILLISECONDS` / `AFDX-BAG` / `AFDX-BAG-POWER-OF-TWO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, BAG values are 2^k milliseconds for integer k from 0 through 7.<br>若选择 AFDX，BAG 值为 2^k 毫秒，k 为 0 至 7 的整数。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00674` | `SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-001-76031BDF6730`<br>`ARINC-664-7 3.2.4.3 p.17` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `KEEP-VL-JITTER-AT-OR-BELOW-500-MICROSECONDS` / `AFDX-JITTER` / `AFDX-JITTER-500US-CAP-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, VL jitter is bounded at 500 microseconds in all cases.<br>若选择 AFDX，VL 抖动在所有情况下以 500 微秒为界。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00675` | `SU-ARINC-664-7-3.2.5.1-P026-PROSE-SENTENCE-001-56B6CFE1A3CD`<br>`ARINC-664-7 3.2.5.1 p.18` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `IDENTIFY-VL-ONLY-BY-MAC-DESTINATION-ADDRESS` / `AFDX-VIRTUAL-LINK, MAC-DESTINATION-ADDRESS` / `AFDX-VL-MAC-DESTINATION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, a Virtual Link is identified only by the MAC destination address; the MAC source is the unicast address of the physical interface.<br>若选择 AFDX，虚拟链路仅由 MAC 目的地址标识；MAC 源地址是物理接口的单播地址。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00676` | `SU-RFC-791-3.1-P017-PROSE-SENTENCE-014-66107CA56FCF`<br>`RFC-791 3.1 p.17` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `MEASURE-IHL-IN-32-BIT-WORDS` / `IPV4-IHL-FIELD` / `IPV4-IHL-32-BIT-WORDS-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 IHL is the internet header length in 32-bit words and points to the beginning of the data.<br>IPv4 IHL 是以 32 位字计的互联网头长度，并指向数据起点。 | — | DEP-RFC-791 |
+| `CRS-M1-00677` | `SU-RFC-791-3.1-P017-PROSE-SENTENCE-015-7DC7AF24BE45`<br>`RFC-791 3.1 p.17` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `KEEP-IHL-AT-LEAST-5` / `IPV4-IHL-FIELD` / `IPV4-IHL-MINIMUM-5-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | A correct IPv4 header has IHL at least 5.<br>正确的 IPv4 头的 IHL 至少为 5。 | — | DEP-RFC-791 |
+| `CRS-M1-00678` | `SU-RFC-791-3.1-P019-PROSE-SENTENCE-016-0740AAFF0150`<br>`RFC-791 3.1 p.19` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `MEASURE-IPV4-TOTAL-LENGTH-IN-OCTETS-INCLUDING-HEADER-AND-DATA` / `IPV4-TOTAL-LENGTH-FIELD` / `IPV4-TOTAL-LENGTH-OCTETS-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Total Length is the datagram length in octets, including internet header and data.<br>IPv4 Total Length 是包含互联网头与数据在内的数据报八位组长度。 | — | DEP-RFC-791 |
+| `CRS-M1-00679` | `SU-RFC-791-3.1-P020-PROSE-SENTENCE-017-2F6A6F63ABEF`<br>`RFC-791 3.1 p.20` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `MEASURE-FRAGMENT-OFFSET-IN-8-OCTET-UNITS` / `IPV4-FRAGMENT-OFFSET-FIELD` / `IPV4-FRAGMENT-OFFSET-UNITS-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Fragment Offset is measured in units of 8 octets (64 bits).<br>IPv4 Fragment Offset 以 8 个八位组（64 位）为单位。 | — | DEP-RFC-791 |
+| `CRS-M1-00680` | `SU-RFC-791-3.1-P021-PROSE-SENTENCE-018-7D9B36E2E6F2`<br>`RFC-791 3.1 p.21` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ALLOW-IPV4-OPTIONS-TO-BE-PRESENT-OR-ABSENT` / `IPV4-OPTIONS` / `IPV4-OPTIONS-PRESENCE-OBSERVABLE` | `FACT` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | IPv4 options may appear or not in a datagram. That presence is variable; it is not a fixed-width header field.<br>IPv4 选项可以在数据报中出现或不出现。该出现是可变的，不是固定宽度头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00681` | `SU-RFC-791-3.1-P029-PROSE-SENTENCE-019-CA2E4BEC637B`<br>`RFC-791 3.1 p.29` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `PAD-IPV4-HEADER-TO-32-BIT-BOUNDARY` / `IPV4-PADDING` / `IPV4-HEADER-PADDING-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 header padding makes the internet header end on a 32-bit boundary. Padding width is therefore variable.<br>IPv4 头填充使互联网头结束于 32 位边界。因此填充宽度是可变的。 | — | DEP-RFC-791 |
+| `CRS-M1-00682` | `SU-ARINC-664-7-3.2.4.1-P023-PROSE-SENTENCE-001-60532CA921FC`<br>`ARINC-664-7 3.2.4.1 p.15` | `AFDX-END-SYSTEM` / `WHEN-AFDX-IS-SELECTED-AND-TX-TECH-LATENCY-IS-MEASURED-WITH-EMPTY-BUFFERS-NO-CONTENTION-AND-NO-IP-FRAGMENTATION` / `KEEP-TX-TECHNOLOGICAL-LATENCY-BELOW-150US-PLUS-FRAME-DELAY` / `AFDX-TECHNOLOGICAL-LATENCY, FRAME-DELAY, EMPTY-BUFFERS, NO-CONFLICTING-RESOURCE-ACCESS, NO-IP-FRAGMENTATION` / `AFDX-TX-TECHNOLOGICAL-LATENCY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen and TX technological latency is measured with empty buffers, no conflicting resource access and no IP fragmentation, that latency is strictly below 150 microseconds plus frame delay. Equality at 150 us plus frame delay fails. This is not a 615A operation timeout.<br>若选择 AFDX，且发送方向技术时延在空缓冲、无冲突资源访问且无 IP 分片下测量，则该时延须严格低于 150 微秒加帧时延。等于 150 微秒加帧时延即失败。这不是 615A 操作超时。 | `SYMBOLIC-SOURCE-EQUATION` / `TECH-LAT-TX` / `TECH-LAT-TX < 150 + FRAME-DELAY` / `0..ONE-HUNDRED-FIFTY-MICROSECONDS-PLUS-FRAME-DELAY us` / evidence: SU-ARINC-664-7-3.2.4.1-P023-PROSE-SENTENCE-001-60532CA921FC, SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-003-44239DB2F60A, SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-006-8D72879FD3A5 | DEP-ARINC-664-7 |
+| `CRS-M1-00683` | `SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-002-510E7A75E217`<br>`ARINC-664-7 3.2.4.1 p.16` | `AFDX-END-SYSTEM` / `WHEN-AFDX-IS-SELECTED-AND-RX-TECH-LATENCY-IS-MEASURED-WITH-EMPTY-BUFFERS-AND-NO-CONTENTION` / `KEEP-RX-TECHNOLOGICAL-LATENCY-BELOW-150-MICROSECONDS` / `AFDX-TECHNOLOGICAL-LATENCY, EMPTY-BUFFERS, NO-CONFLICTING-RESOURCE-ACCESS` / `AFDX-RX-TECHNOLOGICAL-LATENCY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen and RX technological latency is measured with empty buffers and without conflicting resource access, that latency is strictly below 150 microseconds. Equality at 150 us fails. This is not a 615A operation timeout.<br>若选择 AFDX，且接收方向技术时延在空缓冲且无冲突资源访问下测量，则该时延须严格低于 150 微秒。等于 150 微秒即失败。这不是 615A 操作超时。 | `SYMBOLIC-SOURCE-EQUATION` / `TECH-LAT-RX` / `TECH-LAT-RX < 150` / `0..150 us` / evidence: SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-002-510E7A75E217, SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-007-1CDDD6B34C3E, SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-008-824150EBC26E, SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-009-BEE0AC634C0C | DEP-ARINC-664-7 |
+| `CRS-M1-00684` | `SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD`<br>`ARINC-664-7 3.2.4.3 p.17` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `BOUND-MAX-JITTER-BY-40US-PLUS-VL-LOAD-TERM` / `AFDX-JITTER, LMAX-I, NBW, CONFIGURED-VL-SET, MAX-JITTER-500US-EQUATION` / `AFDX-MAX-JITTER-LOAD-EQUATION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, max_jitter in microseconds is at most 40 us plus (8 * SUM over the configured VL set of (20 octets + Lmax_i octets) / Nbw bits/s) converted from seconds to microseconds by multiplying 1000000. The 20-octet overhead is incurred for each VL. Lmax_i values may differ. Nbw must be positive. Both this formula and the 500 us formula must hold.<br>若选择 AFDX，以微秒计的 max_jitter 至多为 40 微秒加上 （8 × 对已配置 VL 集合求和 (20 八位组 + Lmax_i 八位组) / Nbw 比特每秒）由秒乘 1000000 换成微秒。每个 VL 都计入 20 八位组开销。各 VL 的 Lmax_i 可以不同。Nbw 必须为正。此式与 500 微秒公式必须同时成立。 | `SYMBOLIC-SOURCE-EQUATION` / `MAX-JITTER-LOAD-EQUATION` / `MAX-JITTER <= 40 + (8 * SUM{I-IN-CONFIGURED-VL-SET}(20 + LMAX-I) / NBW) * 1000000` / `0..FORTY-MICROSECONDS-PLUS-CONVERTED-VL-LOAD-TERM us` / evidence: SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD, SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948, SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-002-7A1296CF6117, SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-003-E8E54C6C0881 | DEP-ARINC-664-7 |
+| `CRS-M1-00685` | `SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948`<br>`ARINC-664-7 3.2.4.3 p.17` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `BOUND-MAX-JITTER-BY-500-MICROSECONDS-EQUATION` / `AFDX-JITTER, MAX-JITTER-LOAD-EQUATION` / `AFDX-MAX-JITTER-500US-EQUATION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the second recovered formula is max_jitter at most 500 microseconds. It must hold together with the load-dependent formula; satisfying 500 us alone is not enough.<br>若选择 AFDX，第二个已恢复公式为 max_jitter 至多 500 微秒。它必须与负载相关公式同时成立；仅满足 500 微秒不够。 | `SYMBOLIC-SOURCE-EQUATION` / `MAX-JITTER-500US-EQUATION` / `MAX-JITTER <= 500` / `0..500 us` / evidence: SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948, SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD, SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-002-7A1296CF6117 | DEP-ARINC-664-7 |
+| `CRS-M1-00686` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-001-037A0DEA370A`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENCODE-MAC-SOURCE-AS-INDIVIDUAL-AND-LOCALLY-ADMINISTERED` / `MAC-SOURCE-ADDRESS` / `AFDX-MAC-SOURCE-IEEE-CLASS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the MAC source address is an Individual and Locally Administered IEEE 802.3 address.<br>若选择 AFDX，MAC 源地址是符合 IEEE 802.3 的单播且本地管理地址。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00687` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-002-E377DF716F5B`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-MAC-SOURCE-CONSTANT-FIELD-TO-000000100000000000000000` / `MAC-SOURCE-ADDRESS, MAC-SOURCE-CONSTANT-FIELD` / `AFDX-MAC-SOURCE-CONSTANT-FIELD-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the MAC source constant field is the 24-bit value 0000 0010 0000 0000 0000 0000.<br>若选择 AFDX，MAC 源地址常数字段为 24 位值 0000 0010 0000 0000 0000 0000。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00688` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-003-6AE6BC6831C7`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-MAC-SOURCE-INDIVIDUAL-ADDRESS-BIT-TO-ZERO` / `MAC-SOURCE-ADDRESS` / `AFDX-MAC-SOURCE-INDIVIDUAL-BIT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the least significant bit of the first MAC-source byte is 0, meaning Individual Address.<br>若选择 AFDX，MAC 源地址首字节最低位为 0，表示单播地址。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00689` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-004-9D063237C979`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-MAC-SOURCE-LOCALLY-ADMINISTERED-BIT-TO-ONE` / `MAC-SOURCE-ADDRESS` / `AFDX-MAC-SOURCE-LOCAL-ADMIN-BIT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the second-to-least significant bit of the first MAC-source byte is 1, meaning locally administered.<br>若选择 AFDX，MAC 源地址首字节次低位为 1，表示本地管理地址。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00690` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-005-F03FF92CA19C`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENCODE-MAC-SOURCE-USER-DEFINED-ID-AS-16-BITS` / `MAC-SOURCE-USER-DEFINED-ID` / `AFDX-MAC-SOURCE-USER-DEFINED-ID-WIDTH-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, User_Defined_ID in the MAC source is a single 16-bit field.<br>若选择 AFDX，MAC 源地址中的 User_Defined_ID 是单一 16 位字段。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00691` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-006-899D5A33C49E`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-USER-DEFINED-ID-FOR-UNIQUE-MEANINGFUL-HOST-IDENTITY` / `MAC-SOURCE-USER-DEFINED-ID` / `AFDX-MAC-SOURCE-USER-DEFINED-ID-USE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, User_Defined_ID is used as the integrator deems appropriate so each IP-addressable host has a unique and meaningful identity.<br>若选择 AFDX，User_Defined_ID 按系统集成商认为适当的方式使用，使每个可 IP 寻址主机具有唯一且有意义的身份。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00692` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-007-97048C062FB8`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-INTERFACE-ID-TO-IDENTIFY-REDUNDANT-AFDX-NETWORK` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-MAC-SOURCE-INTERFACE-ID-ROLE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Interface_ID identifies the redundant AFDX network to which the Ethernet MAC controller is connected.<br>若选择 AFDX，Interface_ID 标明以太网 MAC 控制器所连接的冗余 AFDX 网络。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00693` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-001-A9E8CFE75FDC`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENCODE-INTERFACE-ID-001-AS-NETWORK-A` / `MAC-SOURCE-INTERFACE-ID, AFDX-NETWORK-A` / `AFDX-INTERFACE-ID-NETWORK-A-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Interface_ID 001 means the Ethernet MAC controller is connected to network A.<br>若选择 AFDX，Interface_ID 001 表示以太网 MAC 控制器连接到网络 A。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00694` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-002-F0CDAB79C8E2`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENCODE-INTERFACE-ID-010-AS-NETWORK-B` / `MAC-SOURCE-INTERFACE-ID, AFDX-NETWORK-B` / `AFDX-INTERFACE-ID-NETWORK-B-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Interface_ID 010 means the Ethernet MAC controller is connected to network B.<br>若选择 AFDX，Interface_ID 010 表示以太网 MAC 控制器连接到网络 B。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00695` | `SU-ARINC-664-4-1.1-P007-PROSE-SENTENCE-001-D8764E8C18A1`<br>`ARINC-664-4 1.1 p.1` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `PROVIDE-ADN-ADDRESS-DETERMINATION-GUIDANCE` / `ADN-ADDRESSES` / `P4-ADDRESS-GUIDANCE-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | When 615A is carried over AFDX and the integrator selects 664 Part 4 address rules rather than integrator-identified requirements, Part 4 provides guidance for determining all addresses needed in the aircraft data network. This does not select Part 4 automatically and does not activate AFDX.<br>在 615A 承载于 AFDX 且集成商选择 664 第 4 部分地址规则而非集成商指明要求时，第 4 部分为确定航空数据网络所需全部地址提供指导。这不自动选定第 4 部分，也不激活 AFDX。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00696` | `SU-ARINC-664-4-1.1-P007-PROSE-SENTENCE-002-AB25B59BF8EC`<br>`ARINC-664-4 1.1 p.1` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `KNOW-DESTINATION-ADDRESSES-AT-CONFIGURATION-TIME` / `DESTINATION-ADDRESSES, CONFIGURATION-TIME` / `P4-CONFIGURATION-TIME-ADDRESS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, sending applications must know destination addresses at configuration-time. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，发送应用必须在配置时已知目的地址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00697` | `SU-ARINC-664-4-1.2-P007-PROSE-SENTENCE-001-3C74BCDCEC14`<br>`ARINC-664-4 1.2 p.1` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `DEFINE-ADN-ADDRESSING-PLAN-AND-RULES` / `ADN-ADDRESSING-PLAN` / `P4-ADDRESS-PLAN-SCOPE-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, Part 4 defines the addressing plan and rules used for that aircraft data network. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，第 4 部分定义该航空数据网络所用寻址计划与规则。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00698` | `SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-001-E59AB857EE72`<br>`ARINC-664-4 2.1 p.4` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `USE-IANA-WELL-KNOWN-UDP-PORTS-FOR-STANDARD-SERVICES-INCLUDING-TFTP` / `UDP-PORT-NUMBERS, TFTP` / `P4-WELL-KNOWN-UDP-SERVICE-PORT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, destination UDP ports for standard services such as TFTP are the ICANN/IANA well-known numbers. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，TFTP 等标准服务的目的 UDP 端口使用 ICANN／IANA 公认端口号。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00699` | `SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-002-AEB0E131BF5D`<br>`ARINC-664-4 2.1 p.4` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ACCESS-PRIVATE-AERO-APPS-VIA-INTEGRATOR-OR-664P4-UDP-PORTS` / `UDP-PORT-NUMBERS, PRIVATE-AERONAUTICAL-APPLICATIONS` / `P4-PRIVATE-APP-UDP-PORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, private aeronautical applications should be accessed through UDP ports assigned by the system integrator or by Part 4, as registered by ICANN/IANA. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，专用航空应用应通过系统集成商或第 4 部分分配、并由 ICANN／IANA 登记的 UDP 端口访问。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00700` | `SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-003-B9D063A58D3C`<br>`ARINC-664-4 2.1 p.4` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `DO-NOT-REASSIGN-WELL-KNOWN-COTS-PORTS-0-1023` / `UDP-PORT-NUMBERS-0-1023` / `P4-WELL-KNOWN-PORT-REASSIGNMENT-PROHIBITED-OBSERVABLE` | `SHOULD` / `PROHIBITED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, commonly used well-known COTS ports in 0-1023 should not be reassigned to any avionics networking function. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，0–1023 范围内常用公认 COTS 端口不得改派给任何航电网络功能。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00701` | `SU-ARINC-664-4-3.1.4-P012-PROSE-SENTENCE-001-26ECAA9608B7`<br>`ARINC-664-4 3.1.4 p.6` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `DO-NOT-ROUTE-PRIVATE-ADDRESSES-OUTSIDE-THE-NETWORK` / `PRIVATE-IP-ADDRESSES` / `P4-PRIVATE-ADDRESS-ROUTING-PROHIBITED-OBSERVABLE` | `SHOULD` / `PROHIBITED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, packets carrying private addresses should not be routed outside the connected network, and public Internet hosts should not address a host on that private network. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，携带私有地址的分组不得路由到所连接网络之外，公网主机也不得向该私有网络上的主机寻址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00702` | `SU-ARINC-664-4-3.2.1-P014-PROSE-SENTENCE-001-FE04D876A17C`<br>`ARINC-664-4 3.2.1 p.8` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `TREAT-PROFILED-AERO-NETWORK-AS-IETF-PRIVATE-APPLICATION` / `PROFILED-AERONAUTICAL-NETWORK` / `P4-PROFILED-PRIVATE-APPLICATION-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, a profiled aeronautical network is a private application in the IETF sense. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，裁剪型航空网络在 IETF 意义上视为专用应用。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00703` | `SU-ARINC-664-4-3.2.1.1-P014-PROSE-SENTENCE-001-C0E53DA16C0B`<br>`ARINC-664-4 3.2.1.1 p.8` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `USE-PRIVATE-NETWORK-ID-FOR-PROFILED-NETWORKS` / `PRIVATE-NETWORK-ID, PROFILED-NETWORK` / `P4-PRIVATE-NETWORK-ID-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, a profiled network ID must be a Private Class A, B or C address. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，裁剪型网络标识必须是专用 A／B／C 类地址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00704` | `SU-ARINC-664-4-4.1.2-P017-PROSE-SENTENCE-001-B050E1E70356`<br>`ARINC-664-4 4.1.2 p.11` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ASSIGN-MAC-UNICAST-ADDRESSES-AT-CONFIGURATION-TIME` / `MAC-UNICAST-ADDRESSES, CONFIGURATION-TIME` / `P4-STATIC-MAC-CONFIGURATION-TIME-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, statically configured networks assign MAC unicast addresses at configuration time. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，静态配置网络在配置时分配 MAC 单播地址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00705` | `SU-ARINC-664-4-4.1.2-P017-PROSE-SENTENCE-002-7C0C05BFFEDB`<br>`ARINC-664-4 4.1.2 p.11` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `KEEP-MAC-ADDRESSES-UNIQUE-UNDER-INTEGRATOR-SCHEME` / `MAC-ADDRESSES` / `P4-MAC-UNICAST-UNIQUENESS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, the system integrator designs the address scheme and keeps all MAC addresses unique. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，系统集成商设计地址方案并保证全部 MAC 地址唯一。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00706` | `SU-ARINC-664-4-4.1.2-P018-PROSE-SENTENCE-003-FA6C364135E7`<br>`ARINC-664-4 4.1.2 p.12` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `SET-MAC-UL-BIT-WHEN-INTEGRATOR-ASSIGNS-ADDRESSES` / `MAC-UL-BIT` / `P4-MAC-UL-BIT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX, 664 Part 4 address rules are selected, and the integrator assigns MAC addresses, the U/L bit should be set to 1. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX、选定 664 第 4 部分地址规则且由集成商分配 MAC 地址时，U／L 位应置 1。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00707` | `SU-ARINC-664-4-4.2.2-P018-PROSE-SENTENCE-001-EAD3F94C5832`<br>`ARINC-664-4 4.2.2 p.12` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `KEEP-ALL-NETWORK-ADDRESSES-UNIQUE` / `NETWORK-ADDRESSES` / `P4-NETWORK-ADDRESS-UNIQUENESS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, the system integrator keeps all addresses on the network unique, including multicast MAC mapping choices. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，系统集成商保证网络上全部地址唯一，包括组播 MAC 映射选择。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00708` | `SU-ARINC-664-4-ATT-1-P024-TABLE-ROW-001-8726B05F4E93`<br>`ARINC-664-4 ATT-1 p.18` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `RESERVE-UDP-TCP-PORT-59-FOR-615A-DATA-LOADER-TFTP` / `TCP-UDP-PORT-59, 615A-DATA-LOADER-TFTP` / `P4-PORT-59-615A-TFTP-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, TCP/UDP port 59 is reserved for ARINC 615A Data Loader TFTP as the aeronautical use of that well-known private file service assignment. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，TCP／UDP 端口 59 保留给 ARINC 615A 数据加载器 TFTP，作为该公认专用文件服务分配的航空用途。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00709` | `SU-ARINC-664-4-ATT-1-P024-TABLE-ROW-002-FA27688DFCA4`<br>`ARINC-664-4 ATT-1 p.18` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ASSIGN-UDP-PORT-24922-TO-FIND-PROTOCOL-CLIENT` / `UDP-PORT-24922, FIND-PROTOCOL-CLIENT` / `P4-PORT-24922-FIND-CLIENT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, UDP port 24922 is assigned to the FIND protocol client. This does not select Part 4 automatically and does not make FIND an instance-bound operation.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，UDP 端口 24922 分配给 FIND 协议客户端。这不自动选定第 4 部分，也不使 FIND 成为实例绑定操作。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00710` | `SU-ARINC-664-4-ATT-2-P025-PROSE-SENTENCE-001-E53889C58CCD`<br>`ARINC-664-4 ATT-2 p.19` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ALLOCATE-TABLE-2-1-ADDRESSES-FROM-RFC1918-PRIVATE-RANGES` / `TABLE-2-1-IPV4-ALLOCATIONS, RFC1918-PRIVATE-RANGES` / `P4-RFC1918-ALLOCATION-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | When 615A is carried over AFDX and 664 Part 4 address rules are selected, Table 2-1 address allocations are taken from RFC 1918 private ranges. This does not select Part 4 automatically.<br>在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，表 2-1 地址分配取自 RFC 1918 私有范围。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00711` | `SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-003-44239DB2F60A`<br>`ARINC-664-7 3.2.4.1 p.14` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `MEASURE-TX-TECHNOLOGICAL-LATENCY-BETWEEN-PARTITION-DATA-AND-PHYSICAL-MEDIA` / `AFDX-TECHNOLOGICAL-LATENCY, TX-MEASUREMENT-START, TX-MEASUREMENT-END` / `AFDX-TX-LATENCY-ENDPOINT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, transmission technological latency is the duration from the last bit of hosted-partition data available to End-System communication services to the last bit of the corresponding Ethernet frame on the physical media.<br>若选择 AFDX，发送方向技术时延是从宿主分区数据最后一比特可供端系统通信服务使用，到相应以太网帧最后一比特出现在物理介质上的持续时间。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00712` | `SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-004-B2F9DADDEDF5`<br>`ARINC-664-7 3.2.4.1 p.14` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `START-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-PARTITION-BIT-IS-AVAILABLE` / `TX-MEASUREMENT-START` / `AFDX-TX-LATENCY-START-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the TX technological-latency start point is the last bit of hosted-partition data becoming available to End-System communication services.<br>若选择 AFDX，发送方向技术时延起点是宿主分区数据最后一比特可供端系统通信服务使用。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00713` | `SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-005-9B58887C088F`<br>`ARINC-664-7 3.2.4.1 p.14` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `END-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-ON-MEDIA` / `TX-MEASUREMENT-END` / `AFDX-TX-LATENCY-END-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the TX technological-latency end point is the last bit of the corresponding Ethernet frame transmitted on the physical media.<br>若选择 AFDX，发送方向技术时延终点是相应以太网帧最后一比特发送到物理介质。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00714` | `SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-006-8D72879FD3A5`<br>`ARINC-664-7 3.2.4.1 p.14` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `MEASURE-TX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-NO-CONTENTION-AND-NO-IP-FRAGMENTATION` / `AFDX-TECHNOLOGICAL-LATENCY, EMPTY-BUFFERS, NO-CONFLICTING-RESOURCE-ACCESS, NO-IP-FRAGMENTATION` / `AFDX-TX-LATENCY-PREMISE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, TX technological latency is measured with empty buffers, no conflicting resource access and no IP fragmentation. Absent those premises the 150 us bound cannot FAIL an IUT.<br>若选择 AFDX，发送方向技术时延在空缓冲、无冲突资源访问且无 IP 分片的前提下测量。缺少这些前提时，不得仅凭 150 微秒上界判定 IUT 违规。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00715` | `SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-001-4B93E0D081F7`<br>`ARINC-664-7 3.2.4.1 p.15` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `DISTINGUISH-TECHNOLOGICAL-LATENCY-FROM-CONFIGURATION-LOAD-LATENCY` / `AFDX-TECHNOLOGICAL-LATENCY, CONFIGURATION-LATENCY` / `AFDX-LATENCY-KIND-DISTINCTION-OBSERVABLE` | `COMMENTARY` / `INFORMATIVE` | `CONDITIONAL` | Commentary: total End-System latency has technological latency independent of traffic load and configuration latency that depends on configuration and traffic load. The 150 us bound is not a load-independent universal timeout.<br>评注：端系统总时延包含与流量负载无关的技术时延，以及取决于配置与流量负载的配置时延。150 微秒上界不是与负载无关的普遍超时。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00716` | `SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-002-F6362C6DA30A`<br>`ARINC-664-7 3.2.4.1 p.15` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `DEFINE-TECHNOLOGICAL-LATENCY-AS-ACCEPT-PROCESS-AND-BEGIN-TX-WITH-NO-OTHER-TASK` / `AFDX-TECHNOLOGICAL-LATENCY` / `AFDX-TECH-LATENCY-DEFINITION-OBSERVABLE` | `COMMENTARY` / `INFORMATIVE` | `CONDITIONAL` | Commentary: technological latency is the time to accept, process and begin transmitting application data when the End System is performing no other task.<br>评注：技术时延是端系统在不执行其他任务时接受、处理并开始发送应用数据所需的时间。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00717` | `SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-003-6E1BCB3D2E11`<br>`ARINC-664-7 3.2.4.1 p.15` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ADD-FRAME-DELAY-FOR-PHYSICAL-LAYER-DELIVERY` / `FRAME-DELAY` / `AFDX-FRAME-DELAY-DEFINITION-OBSERVABLE` | `COMMENTARY` / `INFORMATIVE` | `CONDITIONAL` | Commentary: frame delay covers delivery of the frame to the physical layer and is added to the 150 us technological-latency bound in transmission.<br>评注：帧时延覆盖把帧递送到物理层的时间，并加到发送方向 150 微秒技术时延上界上。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00718` | `SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-007-1CDDD6B34C3E`<br>`ARINC-664-7 3.2.4.1 p.16` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `START-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-RECEIVED` / `RX-MEASUREMENT-START` / `AFDX-RX-LATENCY-START-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the RX technological-latency start point is the last bit of an Ethernet frame received on the physical media attachment.<br>若选择 AFDX，接收方向技术时延起点是以太网帧最后一比特在物理介质连接点被接收。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00719` | `SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-008-824150EBC26E`<br>`ARINC-664-7 3.2.4.1 p.16` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `END-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-DATA-BIT-IS-AVAILABLE-TO-PARTITION` / `RX-MEASUREMENT-END` / `AFDX-RX-LATENCY-END-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the RX technological-latency end point is the last bit of the corresponding data becoming available to the End-System hosted partition.<br>若选择 AFDX，接收方向技术时延终点是相应数据最后一比特可供端系统宿主分区使用。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00720` | `SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-009-BEE0AC634C0C`<br>`ARINC-664-7 3.2.4.1 p.16` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `MEASURE-RX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-AND-NO-CONTENTION` / `AFDX-TECHNOLOGICAL-LATENCY, EMPTY-BUFFERS, NO-CONFLICTING-RESOURCE-ACCESS` / `AFDX-RX-LATENCY-PREMISE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, RX technological latency is measured with empty buffers and without conflicting resource access. Absent those premises the 150 us bound cannot FAIL an IUT.<br>若选择 AFDX，接收方向技术时延在空缓冲且无冲突资源访问的前提下测量。缺少这些前提时，不得仅凭 150 微秒上界判定 IUT 违规。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00721` | `SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-002-7A1296CF6117`<br>`ARINC-664-7 3.2.4.3 p.17` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SATISFY-BOTH-MAX-JITTER-EQUATIONS-SIMULTANEOUSLY` / `AFDX-JITTER, MAX-JITTER-LOAD-EQUATION, MAX-JITTER-500US-EQUATION` / `AFDX-MAX-JITTER-BOTH-EQUATIONS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, max_jitter at the End-System output must satisfy both recovered formulas at once. Meeting only the 500 us cap is not sufficient.<br>若选择 AFDX，端系统输出的 max_jitter 必须同时满足两个已恢复公式。仅满足 500 微秒上限不够。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00722` | `SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-003-E8E54C6C0881`<br>`ARINC-664-7 3.2.4.3 p.17` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-MAX-JITTER-AS-MICROSECONDS-NBW-AS-BITS-PER-SECOND-AND-LMAX-AS-OCTETS` / `AFDX-JITTER, NBW, LMAX-I, CONFIGURED-VL-SET` / `AFDX-MAX-JITTER-UNIT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, max_jitter is in microseconds, Nbw is positive medium bandwidth in bits/s, and each Lmax_i is in octets. The load term is 8 * SUM_i(20 + Lmax_i) / Nbw seconds, converted to microseconds by multiplying 1000000 before adding 40 us. Substituting SUM(Lmax_i) and adding the 20-octet overhead only once is not the source equation.<br>若选择 AFDX，max_jitter 以微秒计，Nbw 是为正的介质带宽（比特每秒），每个 Lmax_i 以八位组计。负载项是 8 × SUM_i(20 + Lmax_i) / Nbw 秒，须乘 1000000 换成微秒后再与 40 微秒相加。只对 Lmax_i 求和并只加一次 20 八位组开销不是源方程。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00723` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-003-F168177B9A90`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `COMPOSE-MAC-SOURCE-AS-24-PLUS-16-PLUS-3-PLUS-5-BIT-FIELDS` / `MAC-SOURCE-ADDRESS, MAC-SOURCE-CONSTANT-FIELD, MAC-SOURCE-USER-DEFINED-ID, MAC-SOURCE-INTERFACE-ID, MAC-SOURCE-CONSTANT-TAIL` / `AFDX-MAC-SOURCE-48-BIT-COMPOSITION-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the MAC source is a 48-bit non-overlapping concatenation of 24-bit constant, 16-bit User_Defined_ID, 3-bit Interface_ID and 5-bit constant tail.<br>若选择 AFDX，MAC 源地址是 48 位不重叠拼接：24 位常数、16 位 User_Defined_ID、3 位 Interface_ID 与 5 位常数尾字段。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00724` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-004-F1E35DF3FF8A`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-MAC-SOURCE-CONSTANT-TAIL-TO-00000` / `MAC-SOURCE-CONSTANT-TAIL` / `AFDX-MAC-SOURCE-CONSTANT-TAIL-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the MAC-source constant tail is the 5-bit field 0 0000 in Figure 3-11.<br>若选择 AFDX，MAC 源地址常数尾字段是图 3-11 中的 5 位值 0 0000。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00725` | `SU-ARINC-664-7-3.2.5.2-P027-COMMENTARY-001-3B49302B2721`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-MAC-SOURCE-CONSTRUCTION-ALGORITHM-AS-NOT-UNIQUELY-RECOMMENDED` / `MAC-SOURCE-ADDRESS` / `AFDX-MAC-SOURCE-ALGORITHM-COMMENTARY-OBSERVABLE` | `COMMENTARY` / `INFORMATIVE` | `CONDITIONAL` | Commentary: no unique MAC-source construction algorithm is recommended. That does not waive the Figure 3-11 field widths, constants or Interface_ID encodings.<br>评注：未推荐唯一 MAC 源地址构造算法。这并不免除图 3-11 的字段宽度、常数或 Interface_ID 编码约束。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00726` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-005-0A0C502A2190`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-INTERFACE-ID-000-AS-NOT-USED` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-INTERFACE-ID-000-NOT-USED-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | If AFDX is chosen, Interface_ID 000 is recorded as Not used. The source does not state that unused encodings are prohibited.<br>若选择 AFDX，Interface_ID 000 登记为未使用。原文未把未使用等同于禁止。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00727` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-006-DFB1D506427E`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-INTERFACE-ID-011-AS-NOT-USED` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-INTERFACE-ID-011-NOT-USED-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | If AFDX is chosen, Interface_ID 011 is recorded as Not used. Unused is not treated as prohibited unless the source says so.<br>若选择 AFDX，Interface_ID 011 登记为未使用。除非原文禁止，未使用不等于禁止。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00728` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-007-F7A240692D0C`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-INTERFACE-ID-100-AS-NOT-USED` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-INTERFACE-ID-100-NOT-USED-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | If AFDX is chosen, Interface_ID 100 is recorded as Not used. Unused is not treated as prohibited unless the source says so.<br>若选择 AFDX，Interface_ID 100 登记为未使用。除非原文禁止，未使用不等于禁止。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00729` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-008-03258840BB7B`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-INTERFACE-ID-101-AS-NOT-USED` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-INTERFACE-ID-101-NOT-USED-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | If AFDX is chosen, Interface_ID 101 is recorded as Not used. Unused is not treated as prohibited unless the source says so.<br>若选择 AFDX，Interface_ID 101 登记为未使用。除非原文禁止，未使用不等于禁止。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00730` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-009-B3132C35E340`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-INTERFACE-ID-110-AS-SOURCE-NOR-USED` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-INTERFACE-ID-110-NOT-USED-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | If AFDX is chosen, Interface_ID 110 is recorded with the source wording Nor used. That is a coverage disposition, not a prohibition.<br>若选择 AFDX，Interface_ID 110 按原文 Nor used 登记。这是覆盖处置，不是禁止。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00731` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-010-9E853859DACB`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-INTERFACE-ID-111-AS-NOT-USED` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-INTERFACE-ID-111-NOT-USED-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | If AFDX is chosen, Interface_ID 111 is recorded as Not used. Unused is not treated as prohibited unless the source says so.<br>若选择 AFDX，Interface_ID 111 登记为未使用。除非原文禁止，未使用不等于禁止。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00732` | `SU-ARINC-664-3-1.5-P013-PROSE-SENTENCE-002-E1E2DE7AAEF9`<br>`ARINC-664-3 1.5 p.6` | `ARINC-664P3-DOCUMENT-CONTROL` / `WHEN-INTERPRETING-664P3-DOCUMENT-SCOPE` / `RECORD-P3-RFC-OPTION-RESTRICTION-PHILOSOPHY` / `IETF-RFC-OPTIONS, ARINC-664P3-PROFILE` / `P3-DOCUMENT-PHILOSOPHY-CONTROL-RECORD` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 664P3 document-control philosophy: change IETF RFC provisions only when the aeronautical environment or user/regulatory requirement conflicts with the RFC, or to restrict implementer options and remove ambiguity. This is not an IUT-observable network obligation. CRS-M1-00604 remains the precedence rule.<br>664P3 文档编制哲学：仅当航空环境或用户／监管要求与 IETF RFC 冲突，或为消除歧义而限制实现者选项时，才改动 RFC 规定。这不是网络设备可观察义务。CRS-M1-00604 仍是优先规则。 | — | DEP-ARINC-664-3 |
+| `CRS-M1-00733` | `SU-ARINC-664-3-1.5-P013-PROSE-SENTENCE-003-3D1EF7D4894C`<br>`ARINC-664-3 1.5 p.6` | `ARINC-664P3-DOCUMENT-CONTROL` / `WHEN-INTERPRETING-664P3-DOCUMENT-SCOPE` / `RECORD-P3-CONTENTS-LIMITED-TO-RFC-DELTAS` / `ARINC-664P3-PROFILE` / `P3-DOCUMENT-CONTENTS-CONTROL-RECORD` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 664P3 document-control statement: contents are limited to describing RFC changes and option restrictions. A deployed network cannot limit the contents of the published standard. CRS-M1-00604 remains the precedence rule.<br>664P3 文档编制陈述：内容限于描述 RFC 改动与选项限制。已部署网络不能限制已发布标准的内容。CRS-M1-00604 仍是优先规则。 | — | DEP-ARINC-664-3 |
+| `CRS-M1-00734` | `SU-ARINC-664-7-4.1-P056-PROSE-SENTENCE-001-A03F45C90169`<br>`ARINC-664-7 4.1 p.48` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `COMPOSE-AFDX-SWITCH-FROM-FIVE-FUNCTIONAL-BLOCKS` / `AFDX-SWITCH-FUNCTIONAL-BLOCKS` / `AFDX-SWITCH-FIVE-BLOCKS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the switch consists of the five interacting functional blocks shown in Figure 4-1. Ordinary Ethernet tests do not prove that composition.<br>若选择 AFDX，交换机由 图 4-1 所示五个相互作用的功能块组成。普通以太网试验不能证明该组成。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00735` | `SU-ARINC-664-7-4.1-P056-PROSE-SENTENCE-002-65C47F79D736`<br>`ARINC-664-7 4.1 p.48` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `CONTROL-AFDX-SWITCH-FUNCTIONS-WITH-STATIC-CONFIGURATION-TABLES` / `AFDX-SWITCH-CONFIGURATION-TABLES` / `AFDX-SWITCH-STATIC-CONFIGURATION-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, switch functions are controlled by static Configuration Tables. Bound M2 does not execute those tables.<br>若选择 AFDX，交换机功能由静态配置表控制。绑定 M2 不执行这些表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00736` | `SU-ARINC-664-7-4.5.1-P064-PROSE-SENTENCE-001-CFAB87A6BA56`<br>`ARINC-664-7 4.5.1 p.56` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-SWITCH-END-SYSTEM-TO-COMPLY-WITH-SECTION-3-EXCEPT-REDUNDANCY` / `AFDX-SWITCH-END-SYSTEM` / `AFDX-SWITCH-ES-SECTION-3-COMPLIANCE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the Switch End System complies with Part 7 section 3 except network redundancy. This does not activate AFDX on the current Compliant instance.<br>若选择 AFDX，交换机端系统符合第 7 部分第 3 节，网络冗余除外。这不在当前 Compliant 实例上激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00737` | `SU-ARINC-664-7-4.5.2-P064-PROSE-SENTENCE-001-944CABF62B3E`<br>`ARINC-664-7 4.5.2 p.56` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-SWITCH-END-SYSTEM-UNICAST-MAC-AS-SOURCE-ADDRESS` / `AFDX-SWITCH-END-SYSTEM, MAC-SOURCE-ADDRESS` / `AFDX-SWITCH-ES-UNICAST-SOURCE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the Switch End System uses its own MAC unicast address as the MAC source when it sends frames.<br>若选择 AFDX，交换机端系统发送帧时使用自身 MAC 单播地址作为源地址。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00738` | `SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-001-76972BD77CA0`<br>`ARINC-664-7 4.8.4 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `KEEP-615A-SESSION-ACROSS-OPS-TO-DL-TRANSITION` / `ARINC-615A-SESSION, AFDX-SWITCH-DL-MODE` / `AFDX-SWITCH-OPS-TO-DL-615A-SESSION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, transition from OPS mode to DL mode must not disrupt the ARINC 615A session. Bound M2 still does not execute that switch mode machine.<br>若选择 AFDX，从 OPS 模式转入 DL 模式不得中断 ARINC 615A 会话。绑定 M2 仍不执行该交换机模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00739` | `SU-ARINC-664-7-4.9.1-P075-PROSE-SENTENCE-001-99914B9848DA`<br>`ARINC-664-7 4.9.1 p.67` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-615A-AND-665-TO-UPLOAD-SWITCH-SOFTWARE-AND-CONFIGURATION` / `ARINC-615A-DATALOADER, ARINC-665-LOAD` / `AFDX-SWITCH-615A-665-UPLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, ARINC 615A and ARINC 665 are the process and protocols used to upload software and configuration tables into the switch. This does not bind ARINC 645.<br>若选择 AFDX，向交换机上传软件与配置表使用 ARINC 615A 与 ARINC 665 过程及协议。这不绑定 ARINC 645。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00740` | `SU-ARINC-664-7-4.11.2-P078-PROSE-SENTENCE-001-E51A58BE02E7`<br>`ARINC-664-7 4.11.2 p.70` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-AFDX-SWITCH-PHYSICAL-LAYER-TO-COMPLY-WITH-664P2` / `AFDX-SWITCH-PHYSICAL-LAYER, ARINC-664-2` / `AFDX-SWITCH-P2-PHY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the switch physical layer complies with ARINC 664 Part 2. This does not auto-select Part 4 or activate AFDX.<br>若选择 AFDX，交换机物理层符合 ARINC 664 第 2 部分。这不自动选定第 4 部分，也不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00741` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-001-9CA770F21732`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-UDP-IP-OPTIONS-AS-NOT-USED-ON-AFDX` / `AFDX-IP-UDP-PROFILE, IP-OPTIONS` / `AFDX-UDP-IP-OPTIONS-NOT-USED-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Attachment 2 marks IP options in UDP NOT APPLICABLE because IP options are not used in AFDX. The RFC 1122 MUST is interpreted as MUST NOT under the bound NOT APPLICABLE rule.<br>若选择 AFDX，附件 2 将 UDP 中的 IP 选项标为 NOT APPLICABLE，因为 AFDX 不使用 IP 选项。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 MUST 解释为 MUST NOT。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00742` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-002-C0554B96D7A3`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-UDP-CHECKSUM-GENERATE-AND-CHECK-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, UDP-CHECKSUM-GENERATE-AND-CHECK` / `AFDX-UDP-CHECKSUM-GENERATE-AND-CHECK-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Table 2-2 marks UDP checksum generation/checking NOT APPLICABLE. The embedded RFC 1122 MUST remains the RFC-layer sentence and, under the bound Attachment 2 convention (CRS-M1-00609), is interpreted as MUST NOT for the selected AFDX profile. That profile rule is not a blanket ban on dormant generate/check code outside AFDX. The unused-in-AFDX comment is a separate use statement; silently discarding a bad checksum is a separate NOT APPLICABLE row. This does not activate AFDX.<br>若选择 AFDX，表 2-2 将 UDP checksum 生成／校验标为 NOT APPLICABLE。内嵌 RFC 1122 MUST 仍是 RFC 层句子；按已绑定的附件 2 约定（CRS-M1-00609），在选定的 AFDX profile 下解释为 MUST NOT。该 profile 规则不是对 AFDX 之外休眠生成／校验代码的一律禁止。「AFDX 不使用 checksum」评注是单独的使用陈述；静默丢弃错误 checksum 是单独的 NOT APPLICABLE 行。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00743` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-003-1EBC5D0D6875`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-AFDX-END-SYSTEM-INTERNET-LAYER-TO-IMPLEMENT-IP` / `AFDX-IP-UDP-PROFILE, IPV4` / `AFDX-IMPLEMENT-IP-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the End System Internet layer implements IP as marked MUST in Attachment 2 Table 2-3. This does not replace RFC 791 identity.<br>若选择 AFDX，端系统互联网层按附件 2 表 2-3 的 MUST 实现 IP。这不取代 RFC 791 身份。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00744` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-004-A0F0599C244F`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-AFDX-END-SYSTEM-INTERNET-LAYER-TO-IMPLEMENT-ICMP` / `AFDX-IP-UDP-PROFILE, ICMP` / `AFDX-IMPLEMENT-ICMP-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the End System Internet layer implements ICMP as marked MUST in Attachment 2 Table 2-3. 615A TFTP still does not use ICMP as a file-transfer protocol.<br>若选择 AFDX，端系统互联网层按附件 2 表 2-3 的 MUST 实现 ICMP。615A TFTP 仍不把 ICMP 当作文件传输协议。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00745` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-005-44340B4D8C62`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SILENTLY-DISCARD-NON-IPV4-DATAGRAMS` / `AFDX-IP-UDP-PROFILE, IPV4-VERSION-FIELD` / `AFDX-DISCARD-NON-IPV4-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, a datagram whose IP version is not 4 is silently discarded. This does not replace the bound RFC 791 version-field width.<br>若选择 AFDX，IP 版本号不是 4 的数据报被静默丢弃。这不取代已绑定的 RFC 791 版本字段宽度。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00746` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-006-4D4480F4B5B6`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-AFDX-UDP-CHECKSUM-UNUSED-COMMENT` / `AFDX-IP-UDP-PROFILE, UDP-CHECKSUM-USE-COMMENT` / `AFDX-UDP-CHECKSUM-UNUSED-COMMENT-RECORD` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | If AFDX is chosen, Table 2-2 comments that checksum is not used in AFDX. That use comment is recorded separately from the NOT APPLICABLE generate/check mark and from the discard row; CRS-M1-00609 applies to the marked NOT APPLICABLE rows, not to this comment cell.<br>若选择 AFDX，表 2-2 评注称 AFDX 不使用 checksum。该使用评注与生成／校验的 NOT APPLICABLE 标记及丢弃行分开记录；CRS-M1-00609 适用于已标记的 NOT APPLICABLE 行，而不适用于本评注格。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00747` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-007-EE88901ECA01`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-SILENT-BAD-UDP-CHECKSUM-DISCARD-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, UDP-BAD-CHECKSUM-DISCARD` / `AFDX-UDP-BAD-CHECKSUM-DISCARD-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Table 2-2 marks silently discarding a bad UDP checksum NOT APPLICABLE. That receive-treatment row is independent of the generate/check NOT APPLICABLE row. The RFC 1122 MUST is interpreted as MUST NOT under the bound NOT APPLICABLE rule. This does not activate AFDX.<br>若选择 AFDX，表 2-2 将静默丢弃错误 UDP checksum 标为 NOT APPLICABLE。该接收处理行独立于生成／校验的 NOT APPLICABLE 行。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 MUST 解释为 MUST NOT。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00748` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-008-7481B3A6C175`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PASS-ICMP-MESSAGES-TO-APPLICATION-LIMITED-TO-ECHO-REQUEST` / `AFDX-IP-UDP-PROFILE, ICMP-UPCALL` / `AFDX-ICMP-UPCALL-ECHO-REQUEST-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Table 2-2 marks passing ICMP messages to the application layer MUST, limited by the comment to ICMP echo request. Port-unreachable handling is a separate row. This does not activate AFDX.<br>若选择 AFDX，表 2-2 将 ICMP 上报应用层标为 MUST，并由评注限定为 ICMP echo request。端口不可达处理是单独一行。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00749` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-009-1D11C723F49C`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-UDP-PORT-UNREACHABLE-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, ICMP-PORT-UNREACHABLE` / `AFDX-UDP-PORT-UNREACHABLE-NOT-APPLICABLE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Table 2-2 marks UDP Port Unreachable NOT APPLICABLE, with the comment that only ICMP echo request and echo reply are allowed. The RFC 1122 SHOULD is interpreted as MUST NOT under the bound NOT APPLICABLE rule. ICMP upcall is a separate row. This does not activate AFDX.<br>若选择 AFDX，表 2-2 将 UDP Port Unreachable 标为 NOT APPLICABLE，评注仅允许 ICMP echo request／reply。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 SHOULD 解释为 MUST NOT。ICMP 上报是单独一行。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00750` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-010-06F426B1CA0A`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `FORBID-REMOTE-MULTIHOMING-AT-APPLICATION-LAYER-ON-AFDX` / `AFDX-IP-UDP-PROFILE, REMOTE-MULTIHOMING` / `AFDX-REMOTE-MULTIHOMING-MUST-NOT-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Table 2-3 marks handling remote multihoming at the application layer MUST NOT. Local multihoming is a separate MUST row. This does not activate AFDX.<br>若选择 AFDX，表 2-3 将在应用层处理远端多宿主标为 MUST NOT。本端多宿主是单独的 MUST 行。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00751` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-011-24F4226862A9`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-LOCAL-MULTIHOMING-ON-AFDX` / `AFDX-IP-UDP-PROFILE, LOCAL-MULTIHOMING` / `AFDX-LOCAL-MULTIHOMING-MUST-OBSERVABLE` | `MAY` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Table 2-3 marks support for local multihoming MUST even though the RFC text is MAY. Remote multihoming is a separate MUST NOT row. This does not activate AFDX.<br>若选择 AFDX，表 2-3 将本端多宿主标为 MUST，即使 RFC 文本为 MAY。远端多宿主是单独的 MUST NOT 行。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00752` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-012-AD290D8425E1`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `LOG-DISCARDED-DATAGRAMS-ON-AFDX` / `AFDX-IP-UDP-PROFILE, DISCARDED-DATAGRAM-LOG` / `AFDX-DISCARDED-DATAGRAM-LOG-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Table 2-3 marks the capability to log discarded datagrams MUST, with the comment logged in MIB. The statistics-counter row is separate. This does not activate AFDX.<br>若选择 AFDX，表 2-3 将记录被丢弃数据报的能力标为 MUST，评注为记入 MIB。计数器行是单独的。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00753` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-013-DA0C1E503BBE`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-DISCARDED-DATAGRAMS-IN-COUNTER-ON-AFDX` / `AFDX-IP-UDP-PROFILE, DISCARDED-DATAGRAM-COUNTER` / `AFDX-DISCARDED-DATAGRAM-COUNTER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Table 2-3 marks recording discarded-datagram events in a statistics counter MUST, with the comment logged in MIB. The log-capability row is separate. This does not activate AFDX.<br>若选择 AFDX，表 2-3 将被丢弃数据报记入统计计数器标为 MUST，评注为记入 MIB。日志能力行是单独的。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00754` | `SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-001-041C80F600BB`<br>`ARINC-664-7 4.8.3 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENTER-OPS-AFTER-COMPATIBLE-INIT-WHEN-SHOP-INACTIVE` / `AFDX-SWITCH-OPS-MODE` / `AFDX-SWITCH-OPS-ENTRY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, after initialization the Switch enters OPS when compatibility checks are correct and shop is not active. Bound M2 still does not execute that switch mode machine.<br>若选择 AFDX，初始化后在兼容性检查正确且 SHOP 未激活时进入 OPS。绑定 M2 仍不执行该交换机模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00755` | `SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-002-B219C792977C`<br>`ARINC-664-7 4.8.3 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PROVIDE-OPS-MODE-615A-INFORMATION-AND-FIND` / `ARINC-615A-INFORMATION, ARINC-615A-FIND, AFDX-SWITCH-OPS-MODE` / `AFDX-SWITCH-OPS-615A-INFORMATION-FIND-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, in OPS the Switch End System can perform ARINC 615A Information and FIND. Bound M2 still does not execute FIND or activate AFDX.<br>若选择 AFDX，OPS 模式下交换机端系统能够执行 ARINC 615A Information 与 FIND。绑定 M2 仍不执行 FIND，也不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00756` | `SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-002-EC7D903BFFB7`<br>`ARINC-664-7 4.8.4 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENTER-DL-FROM-INIT-ONLY-WHEN-GROUND-AND-COMPATIBILITY-FAIL-OR-EMPTY` / `AFDX-SWITCH-DL-MODE, SWITCH-GROUND-CONDITION` / `AFDX-SWITCH-DL-FROM-INIT-ENTRY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, from INIT the Switch enters DL only when Switch_Ground_Condition is active AND (compatibility checks fail OR no software is loaded). Bound M2 does not execute that mode machine.<br>若选择 AFDX，从 INIT 进入 DL 仅当接地条件有效且（兼容性检查失败或无已加载软件）。绑定 M2 不执行该模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00757` | `SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-003-0A7405261FC0`<br>`ARINC-664-7 4.8.4 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENTER-DL-FROM-OPS-ONLY-WHEN-GROUND-UPLOAD-INIT-AND-HEADER-ACCEPTED` / `AFDX-SWITCH-DL-MODE, TH-UPLOADING-INITIALIZATION, SWITCH-GROUND-CONDITION` / `AFDX-SWITCH-DL-FROM-OPS-ENTRY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, from OPS the Switch enters DL only when ground is active, a TH_Uploading_Initialization addressed to the Switch End System is received, and the header file is accepted. Bound M2 does not execute that mode machine.<br>若选择 AFDX，从 OPS 进入 DL 仅当接地有效、收到发往本交换机端系统的 TH_Uploading_Initialization，且头文件已被接受。绑定 M2 不执行该模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00758` | `SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-004-81B3C51C4B44`<br>`ARINC-664-7 4.8.4 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PROVIDE-DL-MODE-615A-INFORMATION-UPLOAD-AND-FIND` / `ARINC-615A-INFORMATION, ARINC-615A-UPLOAD, ARINC-615A-FIND, AFDX-SWITCH-DL-MODE` / `AFDX-SWITCH-DL-615A-INFORMATION-UPLOAD-FIND-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, in DL the Switch can completely perform ARINC 615A Information, Uploading and FIND. Bound M2 still does not execute FIND or activate AFDX.<br>若选择 AFDX，DL 模式下交换机能够完整执行 ARINC 615A Information、Uploading 与 FIND。绑定 M2 仍不执行 FIND，也不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00759` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-014-B97760133976`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-UDP-IP-OPTIONS-SEND-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, UDP-IP-OPTIONS-SEND` / `AFDX-UDP-IP-OPTIONS-SEND-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Table 2-2 marks specifying IP options in UDP Send NOT APPLICABLE. The RFC-layer sentence remains; under CRS-M1-00609 the AFDX NOT APPLICABLE mark is MUST NOT for the selected AFDX profile, not a blanket ban outside AFDX. This does not activate AFDX.<br>若选择 AFDX，表 2-2 将在 UDP Send 中指定 IP 选项标为 NOT APPLICABLE。RFC 层句子保留；按 CRS-M1-00609，AFDX NOT APPLICABLE 在选定 profile 下为 MUST NOT，不是对 AFDX 之外的一律禁止。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00760` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-015-464BAC54A238`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-UDP-IP-OPTIONS-DOWN-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, UDP-IP-OPTIONS-DOWN` / `AFDX-UDP-IP-OPTIONS-DOWN-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Table 2-2 marks passing IP options down to the IP layer NOT APPLICABLE. The RFC-layer sentence remains; under CRS-M1-00609 the AFDX NOT APPLICABLE mark is MUST NOT for the selected AFDX profile, not a blanket ban outside AFDX. This does not activate AFDX.<br>若选择 AFDX，表 2-2 将 IP 选项下传到 IP 层标为 NOT APPLICABLE。RFC 层句子保留；按 CRS-M1-00609，AFDX NOT APPLICABLE 在选定 profile 下为 MUST NOT，不是对 AFDX 之外的一律禁止。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00761` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-016-C29A04CC8674`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-GATEWAY-FORWARDING-SPEC-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, GATEWAY-FORWARDING` / `AFDX-GATEWAY-FORWARDING-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Table 2-3 marks meeting gateway specifications if forwarding datagrams NOT APPLICABLE. The RFC-layer sentence remains; under CRS-M1-00609 the AFDX NOT APPLICABLE mark is MUST NOT for the selected AFDX profile, not a blanket ban outside AFDX. This does not activate AFDX.<br>若选择 AFDX，表 2-3 将转发时满足网关规范标为 NOT APPLICABLE。RFC 层句子保留；按 CRS-M1-00609，AFDX NOT APPLICABLE 在选定 profile 下为 MUST NOT，不是对 AFDX 之外的一律禁止。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00762` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-017-B75F02D3CC9F`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-EMBEDDED-GATEWAY-SWITCH-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, EMBEDDED-GATEWAY-SWITCH` / `AFDX-EMBEDDED-GATEWAY-SWITCH-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Table 2-3 marks an embedded-gateway disable switch NOT APPLICABLE. The RFC-layer sentence remains; under CRS-M1-00609 the AFDX NOT APPLICABLE mark is MUST NOT for the selected AFDX profile, not a blanket ban outside AFDX. This does not activate AFDX.<br>若选择 AFDX，表 2-3 将内嵌网关关闭开关标为 NOT APPLICABLE。RFC 层句子保留；按 CRS-M1-00609，AFDX NOT APPLICABLE 在选定 profile 下为 MUST NOT，不是对 AFDX 之外的一律禁止。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00763` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-018-C25AB27DF43E`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-NON-GATEWAY-DEFAULT-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, NON-GATEWAY-DEFAULT` / `AFDX-NON-GATEWAY-DEFAULT-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, Table 2-3 marks the non-gateway default for the embedded-gateway switch NOT APPLICABLE. The adjacent comment that there is no default configuration but a configuration is not a separate obligation. The RFC-layer sentence remains; under CRS-M1-00609 the AFDX NOT APPLICABLE mark is MUST NOT for the selected AFDX profile, not a blanket ban outside AFDX. This does not activate AFDX.<br>若选择 AFDX，表 2-3 将内嵌网关开关的非网关缺省标为 NOT APPLICABLE。相邻“无缺省配置而有配置”评注不是单独义务。RFC 层句子保留；按 CRS-M1-00609，AFDX NOT APPLICABLE 在选定 profile 下为 MUST NOT，不是对 AFDX 之外的一律禁止。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00764` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-019-9D460A176ACE`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-AFDX-GATEWAY-AUTOCONFIGURATION-ROW-UNMARKED` / `AFDX-IP-UDP-PROFILE, GATEWAY-AUTOCONFIGURATION` / `AFDX-GATEWAY-AUTOCONFIGURATION-UNMARKED-RECORD` | `MUST` / `INFORMATIVE` | `CONDITIONAL` | If AFDX is chosen, Table 2-3 leaves autoconfiguration into gateway mode unmarked. That empty cell is not MUST, NOT APPLICABLE, or MUST NOT, so CRS-M1-00609 is not applied. The embedded RFC MUST NOT remains an RFC-layer sentence and is not adopted as an AFDX table obligation. This does not activate AFDX.<br>若选择 AFDX，表 2-3 将按接口数自动进入网关模式一行留空。空格不是 MUST、NOT APPLICABLE 或 MUST NOT，故不适用 CRS-M1-00609。内嵌 RFC MUST NOT 仍是 RFC 层句子，不作为 AFDX 表义务采用。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00765` | `SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-003-6D4F0D03A392`<br>`ARINC-664-7 4.8.3 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PERFORM-OPS-FILTERING-POLICING-SWITCHING-FROM-OPS-CONFIG` / `AFDX-SWITCH-OPS-MODE, OPS-CONFIGURATION-FILE` / `AFDX-SWITCH-OPS-FILTER-POLICE-SWITCH-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, in OPS the Switch performs filtering, traffic policing, switching and End System functions exclusively from the activated OPS_Configuration_File. Bound M2 does not execute that mode machine.<br>若选择 AFDX，OPS 下交换机仅依据已激活的 OPS_Configuration_File 执行过滤、监管、交换与端系统功能。绑定 M2 不执行该模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00766` | `SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-004-96DB71C6B1A7`<br>`ARINC-664-7 4.8.3 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-OPS-FAULT-HEALTHY-INDICATOR-TO-HEALTHY` / `AFDX-SWITCH-OPS-MODE, FAULT-HEALTHY-INDICATOR` / `AFDX-SWITCH-OPS-HEALTHY-INDICATOR-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, in OPS the Fault/Healthy indicator is set Healthy. Section 4.6 MIB/SNMP 100 ms updates remain out of profile. Bound M2 does not execute that indicator.<br>若选择 AFDX，OPS 下将 Fault/Healthy 指示置于 Healthy。§4.6 的 MIB／SNMP 100 ms 更新仍在范围外。绑定 M2 不执行该指示。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00767` | `SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-005-2C6F17E65416`<br>`ARINC-664-7 4.8.4 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-DL-UPLOAD-AS-PREFERABLY-EXCLUSIVE` / `AFDX-SWITCH-DL-MODE, ARINC-615A-UPLOAD` / `AFDX-SWITCH-DL-UPLOAD-EXCLUSIVE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, uploading is preferably exclusive. Dedication of the Switch during uploading is a separate sentence. Bound M2 does not execute that mode machine.<br>若选择 AFDX，上传宜独占。上传期间交换机专用于该操作是单独句子。绑定 M2 不执行该模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00768` | `SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-006-EDA9037DC292`<br>`ARINC-664-7 4.8.4 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `DEDICATE-SWITCH-TO-UPLOAD-DURING-DL-UPLOAD` / `AFDX-SWITCH-DL-MODE, ARINC-615A-UPLOAD` / `AFDX-SWITCH-DL-UPLOAD-DEDICATED-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, during uploading the Switch is only dedicated to that operation. Preferable exclusivity is a separate sentence. Bound M2 does not execute that mode machine.<br>若选择 AFDX，上传期间交换机只专用于该操作。宜独占是单独句子。绑定 M2 不执行该模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00769` | `SU-ARINC-664-7-4.7.2.2-P067-PROSE-SENTENCE-001-A06C741A7AA6`<br>`ARINC-664-7 4.7.2.2 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-DEFAULT-RECEPTION-VL-FOR-DATALOADING` / `AFDX-SWITCH-DEFAULT-RECEPTION-VL, ARINC-615A-DATALOADING` / `AFDX-SWITCH-DEFAULT-RECEPTION-VL-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, default reception VLs are necessary to reach the Switch End System even without OPS_Configuration_File, at least to perform dataloading. Bound M2 does not execute that configuration.<br>若选择 AFDX，缺省接收 VL 即使无 OPS_Configuration_File 也须能到达交换机端系统，至少用于数据加载。绑定 M2 不执行该配置。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00770` | `SU-ARINC-664-7-4.7.1-P066-PROSE-SENTENCE-001-915170424929`<br>`ARINC-664-7 4.7.1 p.58` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-TWELVE-PIN-POSITION-IDENTIFICATION-AS-EXAMPLE` / `AFDX-SWITCH-PIN-PROGRAMMING` / `AFDX-SWITCH-TWELVE-PIN-EXAMPLE-RECORD` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | If AFDX is chosen, identifying switch position by 12 pins is an example and is not itself normative. The conditional 12-pin definition sentence is a separate leaf. This does not activate AFDX.<br>若选择 AFDX，用 12 插针识别交换机位置是示例，本身不是规范。有条件的 12 插针定义句是单独叶。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00771` | `SU-ARINC-664-7-4.7.1-P066-PROSE-SENTENCE-002-991619A11E37`<br>`ARINC-664-7 4.7.1 p.58` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-STATED-TWELVE-PIN-DEFINITIONS-IF-TWELVE-PINS-CHOSEN` / `AFDX-SWITCH-PIN-PROGRAMMING` / `AFDX-SWITCH-TWELVE-PIN-DEFINITIONS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen and the implementer uses 12 pins, the following pin definitions should be used. The 12-pin assumption itself is an example. Bound M2 does not execute pin programming.<br>若选择 AFDX 且实现者使用 12 插针，则应使用随后的插针定义。12 插针假定本身是示例。绑定 M2 不执行插针编程。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00772` | `SU-ARINC-664-7-4.7.2-P066-PROSE-SENTENCE-001-AD7818BDA5BE`<br>`ARINC-664-7 4.7.2 p.58` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `KEEP-DEFAULT-CONFIGURATION-TABLE-RESIDENT` / `DEFAULT-CONFIGURATION-TABLE` / `AFDX-SWITCH-DEFAULT-TABLE-RESIDENT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the Default_Configuration_Table is resident. Bound M2 does not execute that configuration.<br>若选择 AFDX，Default_Configuration_Table 为驻留表。绑定 M2 不执行该配置。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00773` | `SU-ARINC-664-7-4.7.2.1-P067-PROSE-SENTENCE-001-2D3669CB8EC1`<br>`ARINC-664-7 4.7.2.1 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-DEFAULT-PHYSICAL-PORT-SPEED-100MBPS-WITHOUT-AUTONEG` / `DEFAULT-PHYSICAL-PORT, PORT-SPEED-100MBPS` / `AFDX-SWITCH-DEFAULT-PORT-SPEED-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, default external port speed is 100 Mbps without auto-negotiation. Bound M2 does not execute that port.<br>若选择 AFDX，缺省外部端口速率为 100 Mbps 且无自动协商。绑定 M2 不执行该端口。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00774` | `SU-ARINC-664-7-4.7.2.2-P067-PROSE-SENTENCE-002-601527B614B8`<br>`ARINC-664-7 4.7.2.2 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-DEFAULT-RECEPTION-VL-FIELDS-IN-NONVOLATILE-MEMORY` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-RECEPTION-VL, VL-IDENTIFIER, SMAX, BAG` / `AFDX-SWITCH-DEFAULT-RX-VL-FIELDS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the default reception VL table in nonvolatile memory contains at least the members of P7-4.7.2.2-DEFAULT-RECEPTION-VL-FIELDS. This sentence is the list introducer, not a member. Bound M2 does not execute that table.<br>若选择 AFDX，非易失缺省接收 VL 表至少含 P7-4.7.2.2-DEFAULT-RECEPTION-VL-FIELDS 的成员。本句是列表引导句，不是成员。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00775` | `SU-ARINC-664-7-4.7.2.3-P067-PROSE-SENTENCE-001-05535F48356A`<br>`ARINC-664-7 4.7.2.3 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-DEFAULT-TRANSMISSION-VL-FIELDS-IN-NONVOLATILE-MEMORY` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, VL-IDENTIFIER, BAG, SMAX` / `AFDX-SWITCH-DEFAULT-TX-VL-FIELDS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the default transmission VL table in non-volatile memory contains at least the members of P7-4.7.2.3-DEFAULT-TRANSMISSION-VL-FIELDS. This sentence is the list introducer, not a member. Bound M2 does not execute that table.<br>若选择 AFDX，非易失缺省发送 VL 表至少含 P7-4.7.2.3-DEFAULT-TRANSMISSION-VL-FIELDS 的成员。本句是列表引导句，不是成员。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00776` | `SU-ARINC-664-7-4.7.2.3-P068-PROSE-SENTENCE-002-9CD5C7E10E52`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-DEFAULT-TRANSMISSION-VL-FOR-DATALOADING-ACKNOWLEDGE` / `DEFAULT-TRANSMISSION-VL, ARINC-615A-DATALOADING` / `AFDX-SWITCH-DEFAULT-TX-VL-DATALOAD-ACK-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the default transmission VL allows communication without OPS_Configuration_File, at least for dataloading acknowledge. Bound M2 does not execute that VL.<br>若选择 AFDX，缺省发送 VL 即使无 OPS_Configuration_File 也能通信，至少用于数据加载确认。绑定 M2 不执行该 VL。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00777` | `SU-ARINC-664-7-4.7.3-P069-PROSE-SENTENCE-001-67F8156E9635`<br>`ARINC-664-7 4.7.3 p.61` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-OPS-CONFIGURATION-FILE-615A-665-FIELD-LOADABLE` / `OPS-CONFIGURATION-FILE, ARINC-615A, ARINC-665` / `AFDX-SWITCH-OPS-CONFIG-FILE-615A-665-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, OPS_Configuration_File is field-loadable software compliant with ARINC 615A and 665. Bound M2 does not execute that load.<br>若选择 AFDX，OPS_Configuration_File 为符合 ARINC 615A 与 665 的现场可加载软件。绑定 M2 不执行该加载。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00778` | `SU-ARINC-664-7-4.7.3.2-P069-PROSE-SENTENCE-001-EFD62301437B`<br>`ARINC-664-7 4.7.3.2 p.61` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-FILTERING-POLICING-FORWARDING-TABLE-PARAMETER-SET` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE` / `AFDX-SWITCH-FILTER-TABLE-PARAMETER-SET-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the Filtering_Policing_and_Forwarding_Configuration_Table should contain the members of P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS (nine per-VL and five per-port parameters, including distinct high/low priority buffers). This sentence is the list introducer, not a member. Bound M2 does not execute that table.<br>若选择 AFDX，Filtering_Policing_and_Forwarding_Configuration_Table 应含 P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS 的成员（九项每 VL、五项每端口，含高低优先级缓冲区分）。本句是列表引导句，不是成员。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00779` | `SU-ARINC-664-7-4.7.3.2-P070-PROSE-SENTENCE-002-F89C710F1173`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-LISTED-PARAMETERS-TO-CONFIGURE-FILTER-POLICE-FORWARD` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, VL-PARAMETERS, PORT-PARAMETERS` / `AFDX-SWITCH-FILTER-PARAMETERS-REQUIRED-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the members of P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS are required to configure filtering, policing and forwarding. This sentence is the concluding requirement, not a member. Bound M2 does not execute those functions.<br>若选择 AFDX，P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS 的成员为配置过滤、监管与转发所必需。本句是收束要求，不是成员。绑定 M2 不执行那些功能。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00780` | `SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-007-FD39BBEA1D03`<br>`ARINC-664-7 4.8.4 p.66` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PERFORM-DL-END-SYSTEM-FROM-DEFAULT-CONFIGURATION-TABLE` / `AFDX-SWITCH-DL-MODE, DEFAULT-CONFIGURATION-TABLE` / `AFDX-SWITCH-DL-DEFAULT-TABLE-ES-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, in DL the End System uses only the resident Default_Configuration_Table. Bound M2 does not execute that mode.<br>若选择 AFDX，DL 下端系统只依据驻留 Default_Configuration_Table。绑定 M2 不执行该模式。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00781` | `SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-008-0F43447BE6D0`<br>`ARINC-664-7 4.8.4 p.66` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-DL-FAULT-HEALTHY-INDICATOR-TO-HEALTHY` / `AFDX-SWITCH-DL-MODE, FAULT-HEALTHY-INDICATOR` / `AFDX-SWITCH-DL-HEALTHY-INDICATOR-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, in DL the Fault/Healthy indicator is set Healthy. Section 4.6 MIB/SNMP updates remain out of profile.<br>若选择 AFDX，DL 下将 Fault/Healthy 指示置于 Healthy。§4.6 MIB／SNMP 更新仍在范围外。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00782` | `SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-009-CA57944F0539`<br>`ARINC-664-7 4.8.4 p.66` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RETURN-TO-INIT-AT-END-OF-DL-MODE` / `AFDX-SWITCH-DL-MODE, AFDX-SWITCH-INIT-MODE` / `AFDX-SWITCH-DL-RETURN-TO-INIT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the Switch returns to INIT at the end of DL. The 615A end-of-load correspondence is a separate sentence. Bound M2 does not execute that mode machine.<br>若选择 AFDX，DL 结束时回到 INIT。与 615A 加载结束对应是单独句子。绑定 M2 不执行该模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00783` | `SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-010-BB161270D89C`<br>`ARINC-664-7 4.8.4 p.66` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-DL-MODE-END-AS-615A-DATA-LOADING-FUNCTION-END` / `AFDX-SWITCH-DL-MODE, ARINC-615A-DATALOADING` / `AFDX-SWITCH-DL-END-615A-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, DL-mode end corresponds to the ARINC 615A data-loading function end. Return-to-INIT is a separate sentence.<br>若选择 AFDX，DL 模式结束对应 ARINC 615A 数据加载功能结束。回到 INIT 是单独句子。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00784` | `SU-ARINC-664-7-4.9.2.1-P076-PROSE-SENTENCE-001-38F2329E9842`<br>`ARINC-664-7 4.9.2.1 p.68` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `LIMIT-SWITCH-FIELD-LOADABLE-SOFTWARE-TO-OPS-CONFIG-AND-OPS-SOFTWARE` / `OPS-CONFIGURATION-FILE, OPS-SOFTWARE` / `AFDX-SWITCH-TWO-FIELD-LOADABLE-LIMIT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the Switch has at most two field-loadable software items: OPS_Configuration_File and OPS_Software. Bound M2 does not execute that inventory.<br>若选择 AFDX，交换机最多两个现场可加载软件：OPS_Configuration_File 与 OPS_Software。绑定 M2 不执行该清单。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00785` | `SU-ARINC-664-7-4.9.2.1-P076-PROSE-SENTENCE-002-50F1E2C97FCF`<br>`ARINC-664-7 4.9.2.1 p.68` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-FIELD-LOADABLE-FILES-IDENTICAL-ACROSS-AIRCRAFT-SWITCHES` / `OPS-CONFIGURATION-FILE, OPS-SOFTWARE` / `AFDX-SWITCH-FLS-IDENTICAL-ON-AIRCRAFT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, those field-loadable files are the same for all switches on the aircraft. Bound M2 does not execute that identity.<br>若选择 AFDX，那些现场可加载文件在飞机全部交换机上相同。绑定 M2 不执行该同一性。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00786` | `SU-ARINC-664-7-4.9.2.2-P076-PROSE-SENTENCE-001-CF93913C10D2`<br>`ARINC-664-7 4.9.2.2 p.68` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `MAKE-SWITCH-CONFIGURATION-ACCESSIBLE-VIA-615A-INFORMATION` / `ARINC-615A-INFORMATION, SWITCH-CONFIGURATION` / `AFDX-SWITCH-POWER-ON-615A-INFORMATION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, at power-on the Switch configuration is accessible through ARINC 615A Information. Bound M2 still does not execute INFORMATION on AFDX.<br>若选择 AFDX，上电时交换机配置可通过 ARINC 615A Information 访问。绑定 M2 仍不在 AFDX 上执行 INFORMATION。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00787` | `SU-ARINC-664-7-4.9.3-P076-PROSE-SENTENCE-001-E77131417E7A`<br>`ARINC-664-7 4.9.3 p.68` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `LEARN-DATALOADER-IP-FROM-SOURCE-ADDRESS` / `DATALOADER-IP-ADDRESS, IP-SOURCE-ADDRESS` / `AFDX-SWITCH-LEARN-DATALOADER-IP-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the Switch learns the data-loader IP address from the data-loader IP source address. Bound M2 does not execute that learning.<br>若选择 AFDX，交换机从数据加载器 IP 源地址学习其 IP。绑定 M2 不执行该学习。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00788` | `SU-ARINC-664-7-4.10-P076-PROSE-SENTENCE-001-A1E523B9B28A`<br>`ARINC-664-7 4.10 p.68` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-PIN-PROGRAMMING-FOR-POSITION-AND-DEFAULT-MAC-IP` / `PIN-PROGRAMMING, DEFAULT-MAC-ADDRESS, DEFAULT-IP-ADDRESS` / `AFDX-SWITCH-PIN-POSITION-MAC-IP-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, hardware pin programming determines switch position and associates default End System MAC and IP. Bound M2 does not execute pin programming.<br>若选择 AFDX，硬件插针编程确定交换机位置并关联缺省端系统 MAC 与 IP。绑定 M2 不执行插针编程。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00789` | `SU-ARINC-664-7-4.10.1.1-P077-PROSE-SENTENCE-001-52B9BEED0B27`<br>`ARINC-664-7 4.10.1.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `READ-PROGRAM-PINS-IN-INIT-ONLY-WHEN-GROUND-BEFORE-SAFETY-TEST` / `PIN-PROGRAMMING, SWITCH-GROUND-CONDITION, AFDX-SWITCH-INIT-MODE` / `AFDX-SWITCH-PIN-READ-INIT-GROUND-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, program pins are read in INIT only when Switch_Ground_Condition is true and before any Safety Test. Bound M2 does not execute that read.<br>若选择 AFDX，仅在 INIT 且接地条件为真、并在任何 Safety Test 之前读取编程插针。绑定 M2 不执行该读取。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00790` | `SU-ARINC-664-7-4.10.1.1-P077-PROSE-SENTENCE-002-75BA57B04BE1`<br>`ARINC-664-7 4.10.1.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `DO-NOT-READ-PROGRAM-PINS-WHEN-GROUND-CONDITION-FALSE` / `PIN-PROGRAMMING, SWITCH-GROUND-CONDITION` / `AFDX-SWITCH-PIN-NOT-READ-IN-FLIGHT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, program pins are not read when Switch_Ground_Condition is false. Use of last memorized values is a separate sentence.<br>若选择 AFDX，接地条件为假时不读编程插针。使用上次记忆值是单独句子。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00791` | `SU-ARINC-664-7-4.10.1.1-P077-PROSE-SENTENCE-003-A823C1A18045`<br>`ARINC-664-7 4.10.1.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-LAST-MEMORIZED-PIN-VALUES-WHEN-NOT-GROUND` / `PIN-PROGRAMMING, MEMORIZED-PIN-VALUES` / `AFDX-SWITCH-LAST-MEMORIZED-PINS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, when pins are not read the Switch uses last memorized pin values. Bound M2 does not execute that memory.<br>若选择 AFDX，不读取插针时使用上次记忆值。绑定 M2 不执行该记忆。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00792` | `SU-ARINC-664-7-4.10.1.2-P077-PROSE-SENTENCE-001-8BBF59190535`<br>`ARINC-664-7 4.10.1.2 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `CHECK-TWELVE-PROGRAM-PINS-WITH-PARITY-BIT` / `PIN-PROGRAMMING, PIN-PARITY-BIT` / `AFDX-SWITCH-PIN-PARITY-CHECK-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the 12 program pins P1–P12 are checked by a parity bit. This applies with the bound 12-pin definitions if 12 pins are used. Bound M2 does not execute that check.<br>若选择 AFDX，12 个编程插针 P1–P12 由奇偶位检查。若使用 12 插针，则与已绑定的 12 插针定义一同适用。绑定 M2 不执行该检查。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00793` | `SU-ARINC-664-7-4.10.1.2-P077-PROSE-SENTENCE-002-1F0DFAA8E394`<br>`ARINC-664-7 4.10.1.2 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `MEMORIZE-PROGRAM-PINS-IN-NVM-AFTER-PARITY-PASS` / `PIN-PROGRAMMING, NON-VOLATILE-MEMORY` / `AFDX-SWITCH-PIN-NVM-MEMORIZE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, pins that are read with passing parity are memorized in non-volatile memory for in-flight power cut. Bound M2 does not execute that memory.<br>若选择 AFDX，读取且奇偶通过的插针记入非易失记忆，供飞行中断电使用。绑定 M2 不执行该记忆。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00794` | `SU-ARINC-664-7-4.10.2.1-P077-PROSE-SENTENCE-001-61DD93DD32A4`<br>`ARINC-664-7 4.10.2.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ACQUIRE-SWITCH-POSITION-WITH-TWELVE-PINS-P1-P12` / `PIN-PROGRAMMING, SWITCH-POSITION` / `AFDX-SWITCH-POSITION-TWELVE-PINS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, switch position is acquired with 12 pins P1–P12. The 4.7.1 12-pin example disclaimer remains a separate informative leaf. Bound M2 does not execute pin programming.<br>若选择 AFDX，用 12 插针 P1–P12 获取交换机位置。4.7.1 的 12 插针示例声明仍是单独说明性叶。绑定 M2 不执行插针编程。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00795` | `SU-ARINC-664-7-4.10.2.1-P077-PROSE-SENTENCE-002-7F1544D1A98F`<br>`ARINC-664-7 4.10.2.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `CODE-PIN-GROUND-AS-ONE` / `PIN-PROGRAMMING, PIN-GROUND-CODE` / `AFDX-SWITCH-PIN-GROUND-CODE-ONE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, GROUND pin value is coded as 1. OPEN coding is a separate sentence.<br>若选择 AFDX，GROUND 插针值编码为 1。OPEN 编码是单独句子。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00796` | `SU-ARINC-664-7-4.10.2.1-P077-PROSE-SENTENCE-003-61A04736720E`<br>`ARINC-664-7 4.10.2.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `CODE-PIN-OPEN-AS-ZERO` / `PIN-PROGRAMMING, PIN-OPEN-CODE` / `AFDX-SWITCH-PIN-OPEN-CODE-ZERO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, OPEN pin value is coded as 0. GROUND coding is a separate sentence.<br>若选择 AFDX，OPEN 插针值编码为 0。GROUND 编码是单独句子。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00797` | `SU-ARINC-664-7-4.11.1-P077-PROSE-SENTENCE-001-0196A7D3617B`<br>`ARINC-664-7 4.11.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PROCESS-AT-LEAST-4096-VLS-IN-FILTER-POLICE-FORWARD` / `FILTERING-POLICING-FORWARDING, VL-CAPACITY-4096` / `AFDX-SWITCH-4096-VL-CAPACITY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, filtering/policing/forwarding can process at least 4096 VLs. Bound M2 does not execute that capacity.<br>若选择 AFDX，过滤／监管／转发至少能处理 4096 条 VL。绑定 M2 不执行该容量。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00798` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-001-FA5570782ED4`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-INPUT-PHYSICAL-PORT` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-INPUT-PHYSICAL-PORT` / `AFDX-SWITCH-PER-VL-INPUT-PHYSICAL-PORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-VL input physical port. Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每 VL 的输入物理端口。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00799` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-002-EF4F00679C45`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-OUTPUT-PHYSICAL-PORTS` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-OUTPUT-PHYSICAL-PORTS` / `AFDX-SWITCH-PER-VL-OUTPUT-PHYSICAL-PORTS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-VL list of output physical ports. Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每 VL 的输出物理端口列表。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00800` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-003-0F2206C8D7DF`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-MAC-DESTINATION` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-MAC-DESTINATION-VLI` / `AFDX-SWITCH-PER-VL-MAC-DESTINATION-VLI-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-VL MAC destination address (VL identifier VLi). Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每 VL 的 MAC 目的地址（VL 标识 VLi）。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00801` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-004-2D7B18D170FA`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-BAG` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-BAGI` / `AFDX-SWITCH-PER-VL-BAGI-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-VL Bandwidth Allocation Gap (BAGi). Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每 VL 的带宽分配间隔 BAGi。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00802` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-005-3212536D30E9`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-MAX-JITTER` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-MAXIMUM-ALLOWED-JITTER` / `AFDX-SWITCH-PER-VL-MAXIMUM-ALLOWED-JITTER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-VL maximum allowed jitter. Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每 VL 的最大允许抖动。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00803` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-006-40614995F98A`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-ACCOUNT` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-ACCOUNT-ACI` / `AFDX-SWITCH-PER-VL-ACCOUNT-ACI-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-VL account ACi and whether it is shared. Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每 VL 的账户 ACi 及其是否共享。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00804` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-007-EC72DA785E48`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-SMAX` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-SMAX` / `AFDX-SWITCH-PER-VL-SMAX-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-VL maximum Total Ethernet Line size Smax. Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每 VL 的最大以太网行长 Smax。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00805` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-008-58782E6B26CD`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-SMIN` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-SMIN` / `AFDX-SWITCH-PER-VL-SMIN-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-VL minimum Total Ethernet Line size Smin. Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每 VL 的最小以太网行长 Smin。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00806` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-009-6563BA03ED9E`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-PRIORITIZATION` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-PRIORITIZATION-HIGH-OR-LOW` / `AFDX-SWITCH-PER-VL-PRIORITIZATION-HIGH-OR-LOW-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-VL high-or-low prioritization. Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每 VL 的高／低优先级。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00807` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-010-3D4E6918A8F3`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-PORT-MAX-DELAY` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-PORT-MAX-DELAY` / `AFDX-SWITCH-PER-PORT-MAX-DELAY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-port max delay. Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每端口最大时延。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00808` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-011-AABB4D9914A1`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-PORT-STATE` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-PORT-STATE-ON-OFF` / `AFDX-SWITCH-PER-PORT-STATE-ON-OFF-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-port ON/OFF state. Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每端口 ON／OFF 状态。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00809` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-012-CDFADE5740E6`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-PORT-SPEED` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-PORT-PHYSICAL-SPEED` / `AFDX-SWITCH-PER-PORT-PHYSICAL-SPEED-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-port physical speed. Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每端口物理速率。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00810` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-013-0902433EC057`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-PORT-LOW-PRIORITY-BUFFER` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-PORT-LOW-PRIORITY-OUTPUT-BUFFER-SIZE` / `AFDX-SWITCH-PER-PORT-LOW-PRIORITY-OUTPUT-BUFFER-SIZE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-port output buffer size for low-priority VLs. Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每端口低优先级 VL 输出缓冲大小。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00811` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-014-EEDB47B32B86`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-PORT-HIGH-PRIORITY-BUFFER` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-PORT-HIGH-PRIORITY-OUTPUT-BUFFER-SIZE` / `AFDX-SWITCH-PER-PORT-HIGH-PRIORITY-OUTPUT-BUFFER-SIZE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, the filtering table includes the per-port output buffer size for high-priority VLs. Bound M2 does not execute that table.<br>若选择 AFDX，过滤表含每端口高优先级 VL 输出缓冲大小。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00812` | `SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-001-5F6A63C333DA`<br>`ARINC-664-7 4.7.2.2 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-RX-VL-IDENTIFIER` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-RECEPTION-VL, DEFAULT-RX-VL-IDENTIFIER` / `AFDX-SWITCH-DEFAULT-RX-VL-IDENTIFIER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, default reception configuration includes VL identifier VL(0,position). Bound M2 does not execute that table.<br>若选择 AFDX，缺省接收配置含 VL 标识 VL(0,position)。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00813` | `SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-002-5CA99BF9BB8B`<br>`ARINC-664-7 4.7.2.2 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-RX-SMAX` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-RECEPTION-VL, DEFAULT-RX-SMAX` / `AFDX-SWITCH-DEFAULT-RX-SMAX-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, default reception configuration includes maximum Total Ethernet Line size s max. Bound M2 does not execute that table.<br>若选择 AFDX，缺省接收配置含最大以太网行长 s max。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00814` | `SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-003-C81EDFF6E974`<br>`ARINC-664-7 4.7.2.2 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-RX-BAG` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-RECEPTION-VL, DEFAULT-RX-BAG` / `AFDX-SWITCH-DEFAULT-RX-BAG-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, default reception configuration includes Bandwidth Allocation Gap. Bound M2 does not execute that table.<br>若选择 AFDX，缺省接收配置含带宽分配间隔。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00815` | `SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-001-B4EEE0548816`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-TX-VL-IDENTIFIER` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, DEFAULT-TX-VL-IDENTIFIER` / `AFDX-SWITCH-DEFAULT-TX-VL-IDENTIFIER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, default transmission configuration includes VL identifier VL(1,position) per Figure 4-7. Bound M2 does not execute that table.<br>若选择 AFDX，缺省发送配置含符合图 4-7 的 VL 标识 VL(1,position)。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00816` | `SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-002-CEA54264E86E`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-TX-BAG` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, DEFAULT-TX-BAG` / `AFDX-SWITCH-DEFAULT-TX-BAG-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, default transmission configuration includes Bandwidth Allocation GAP. Bound M2 does not execute that table.<br>若选择 AFDX，缺省发送配置含带宽分配间隔。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00817` | `SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-003-5CA99BF9BB8B`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-TX-SMAX` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, DEFAULT-TX-SMAX` / `AFDX-SWITCH-DEFAULT-TX-SMAX-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | If AFDX is chosen, default transmission configuration includes maximum Total Ethernet Line size s max. Bound M2 does not execute that table.<br>若选择 AFDX，缺省发送配置含最大以太网行长 s max。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
 
 ## Observable timing semantics
 
@@ -538,6 +981,13 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `CRS-M1-00188` | `DLP-CONSECUTIVE-TFTP-TRANSFER-EQUATION` | `LAST-PACKET-OF-PREVIOUS-TFTP-RECEIVED` → `FIRST-PACKET-OF-NEXT-TFTP-EMITTED` | `DLP-OPERATION-TERMINATED` / `NEW-DLP-SEQUENCE-STARTED` | `TARGET-AND-DLP-TRANSFER-SEQUENCE` / `PAIR-PREVIOUS-LAST-RECEPTION-WITH-NEXT-FIRST-EMISSION` |
 | `CRS-M1-00305` | `STATUS-EXCEPTION-SILENCE-DEADLINE` | `STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED` → `FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE` | `OPERATION-ABORTED-OR-FATAL` / `NEWER-STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED` | `TARGET-OPERATION-AND-STATUS-FILE-INSTANCE` / `PAIR-EXCEPTION-TIMER-WITH-TARGET-SILENCE-INTERVAL` |
 | `CRS-M1-00322` | `STATUS-EXCEPTION-SILENCE-DEADLINE` | `STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED` → `FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE` | `OPERATION-ABORTED-OR-FATAL` / `NEWER-STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED` | `TARGET-OPERATION-AND-STATUS-FILE-INSTANCE` / `PAIR-EXCEPTION-TIMER-WITH-TARGET-SILENCE-INTERVAL` |
+| `CRS-M1-00391` | `FIND-HOST-ANSWER-DEADLINE` | `FIND-REQUEST-RECEIVED-BY-HOST` → `FIND-ANSWER-SENT-BY-HOST` | `FIND-ABORT-DOES-NOT-WAIVE-WINDOWS` / `NONE` | `FIND-REQUEST-INSTANCE` / `PAIR-FIND-REQUEST-WITH-HOST-ANSWER` |
+| `CRS-M1-00520` | `FIND-ANSWER-REGISTRATION-WINDOW` | `FIND-REQUEST-SENT` → `FIND-ANSWER-WINDOW-LIFETIME-ELAPSED` | `FIND-ABORT-DOES-NOT-WAIVE-WINDOWS` / `NONE` | `FIND-REQUEST-INSTANCE` / `PAIR-FIND-REQUEST-WITH-REGISTRATION-WINDOW` |
+| `CRS-M1-00521` | `FIND-REGISTRATION-CLOSE-AT-EXPIRY` | `FIND-REQUEST-SENT` → `FIND-ANSWER-REGISTRATION-CLOSED` | `FIND-ABORT-DOES-NOT-WAIVE-WINDOWS` / `NONE` | `FIND-REQUEST-INSTANCE` / `PAIR-FIND-REQUEST-WITH-REGISTRATION-CLOSE` |
+| `CRS-M1-00682` | `AFDX-ES-TX-TECHNOLOGICAL-LATENCY` | `LAST-BIT-OF-HOSTED-PARTITION-DATA-AVAILABLE-TO-ES-COMMUNICATION-SERVICES` → `LAST-BIT-OF-CORRESPONDING-ETHERNET-FRAME-ON-PHYSICAL-MEDIA` | `MEASUREMENT-PREMISES-NOT-MET` / `NONE` | `AFDX-END-SYSTEM-TECHNOLOGICAL-LATENCY-MEASUREMENT` / `PAIR-NAMED-MEASUREMENT-ENDPOINTS` |
+| `CRS-M1-00683` | `AFDX-ES-RX-TECHNOLOGICAL-LATENCY` | `LAST-BIT-OF-ETHERNET-FRAME-RECEIVED-ON-PHYSICAL-MEDIA-ATTACHMENT` → `LAST-BIT-OF-CORRESPONDING-DATA-AVAILABLE-TO-HOSTED-PARTITION` | `MEASUREMENT-PREMISES-NOT-MET` / `NONE` | `AFDX-END-SYSTEM-TECHNOLOGICAL-LATENCY-MEASUREMENT` / `PAIR-NAMED-MEASUREMENT-ENDPOINTS` |
+| `CRS-M1-00684` | `AFDX-MAX-JITTER-LOAD-EQUATION` | `VL-FRAME-AT-END-SYSTEM-OUTPUT` → `MAX-JITTER-OBSERVED-FOR-THAT-VL` | `AFDX-TRANSPORT-NOT-SELECTED` / `NONE` | `AFDX-VL-AT-END-SYSTEM-OUTPUT` / `PAIR-VL-OUTPUT-WITH-MAX-JITTER-BOUND` |
+| `CRS-M1-00685` | `AFDX-MAX-JITTER-500US-EQUATION` | `VL-FRAME-AT-END-SYSTEM-OUTPUT` → `MAX-JITTER-OBSERVED-FOR-THAT-VL` | `AFDX-TRANSPORT-NOT-SELECTED` / `NONE` | `AFDX-VL-AT-END-SYSTEM-OUTPUT` / `PAIR-VL-OUTPUT-WITH-MAX-JITTER-BOUND` |
 
 ## Requirement-level 615A → 665-5 traceability
 
@@ -605,63 +1055,197 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `CRS-M1-00250` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `DEPENDENCY-BLOCKED` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
 | `CRS-M1-00251` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
 | `CRS-M1-00252` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00526` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00527` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00528` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00529` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00530` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00531` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00532` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00533` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00534` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00535` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00536` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00537` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00538` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00539` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00540` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00541` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00542` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00543` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00544` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `DEPENDENCY-BLOCKED` — ARINC 645 is acquired locally but is not bound in this PR; CRC algorithm identity stays not established. | — |
+| `CRS-M1-00545` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `DEPENDENCY-BLOCKED` — ARINC 645 is acquired locally but is not bound in this PR; CRC algorithm identity stays not established. | — |
+| `CRS-M1-00546` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00547` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00548` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00549` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00550` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00551` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00552` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00553` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00554` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00555` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00556` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00557` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00558` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00559` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00560` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00561` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00562` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00563` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00564` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00565` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00566` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00567` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `DEPENDENCY-BLOCKED` — ARINC 645 is acquired locally but is not bound in this PR; CRC algorithm identity stays not established. | — |
+| `CRS-M1-00568` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00569` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00570` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00571` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00572` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00573` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00574` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00575` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00576` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00577` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00578` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00579` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00580` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00581` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00582` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00583` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00584` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00585` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00586` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00587` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00588` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00589` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00590` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00591` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00592` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00593` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00594` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00595` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00596` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00597` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00598` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00599` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00600` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00601` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00602` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
+| `CRS-M1-00603` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 is admitted by the bounded profile scope; this source proposition does not by itself establish a direct implication from a specific ARINC 615A-3 requirement. | — |
 
 ## Structured protocol-file field constraints
 
-| CRS | File / ordinal | Field | Width | Repetition / presence | Encoding / termination | Notes |
+| CRS | File / ordinal | Field | Width | Repetition / presence / use | Encoding / termination | Notes |
 |---|---|---|---|---|---|---|
-| `CRS-M1-00282` | `LCI` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00283` | `LCI` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00284` | `LCI` / `3` | `FIELD-OPERATION-ACCEPTANCE-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00285` | `LCI` / `4` | `FIELD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00286` | `LCI` / `5` | `FIELD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00287` | `LCL` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00288` | `LCL` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00289` | `LCL` / `3` | `FIELD-NUMBER-OF-TARGET-HARDWARE` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00290` | `LCL` / `4` | `FIELD-LITERAL-NAME-LENGTH` | `8` | `PER-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00291` | `LCL` / `5` | `FIELD-LITERAL-NAME` | `8..2040` | `PER-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00292` | `LCL` / `6` | `FIELD-SERIAL-NUMBER-LENGTH` | `8` | `PER-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00293` | `LCL` / `7` | `FIELD-SERIAL-NUMBER` | `8..2040` | `PER-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00294` | `LCL` / `8` | `FIELD-NUMBER-OF-PART-NUMBERS` | `16` | `PER-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00295` | `LCL` / `9` | `FIELD-PART-NUMBER-LENGTH` | `8` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00296` | `LCL` / `10` | `FIELD-PART-NUMBER` | `8..2040` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00297` | `LCL` / `11` | `FIELD-AMENDMENT-LENGTH` | `8` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00298` | `LCL` / `12` | `FIELD-AMENDMENT` | `0..2040` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00299` | `LCL` / `13` | `FIELD-PART-DESIGNATION-LENGTH` | `8` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00300` | `LCL` / `14` | `FIELD-PART-DESIGNATION-TEXT` | `8..2040` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00301` | `LCS` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00302` | `LCS` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00303` | `LCS` / `3` | `FIELD-COUNTER` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00304` | `LCS` / `4` | `FIELD-INFORMATION-OPERATION-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00305` | `LCS` / `5` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `WHEN-STATUS-CODE-0002-OR-0004` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00306` | `LCS` / `6` | `FIELD-ESTIMATED-TIME` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00307` | `LCS` / `7` | `FIELD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00308` | `LCS` / `8` | `FIELD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00309` | `LUR` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00310` | `LUR` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00311` | `LUR` / `3` | `FIELD-NUMBER-OF-HEADER-FILES` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00312` | `LUR` / `4` | `FIELD-HEADER-FILE-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00313` | `LUR` / `5` | `FIELD-HEADER-FILE-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00314` | `LUR` / `6` | `FIELD-LOAD-PART-NUMBER-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00315` | `LUR` / `7` | `FIELD-LOAD-PART-NUMBER-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00316` | `LUS` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00317` | `LUS` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00318` | `LUS` / `3` | `FIELD-UPLOAD-OPERATION-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00319` | `LUS` / `4` | `FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00320` | `LUS` / `5` | `FIELD-UPLOAD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00321` | `LUS` / `6` | `FIELD-COUNTER` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00322` | `LUS` / `7` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `WHEN-STATUS-CODE-0002-OR-0004` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00323` | `LUS` / `8` | `FIELD-ESTIMATED-TIME` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00324` | `LUS` / `9` | `FIELD-LOAD-LIST-RATIO` | `24` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00325` | `LUS` / `10` | `FIELD-NUMBER-OF-HEADER-FILES` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00326` | `LUS` / `11` | `FIELD-HEADER-FILE-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00327` | `LUS` / `12` | `FIELD-HEADER-FILE-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00328` | `LUS` / `13` | `FIELD-LOAD-PART-NUMBER-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00329` | `LUS` / `14` | `FIELD-LOAD-PART-NUMBER-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00330` | `LUS` / `15` | `FIELD-LOAD-RATIO` | `24` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00331` | `LUS` / `16` | `FIELD-LOAD-STATUS` | `16` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00332` | `LUS` / `17` | `FIELD-LOAD-STATUS-DESCRIPTION-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00333` | `LUS` / `18` | `FIELD-LOAD-STATUS-DESCRIPTION` | `0..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00282` | `LCI` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00283` | `LCI` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00284` | `LCI` / `3` | `FIELD-OPERATION-ACCEPTANCE-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00285` | `LCI` / `4` | `FIELD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00286` | `LCI` / `5` | `FIELD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00287` | `LCL` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00288` | `LCL` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00289` | `LCL` / `3` | `FIELD-NUMBER-OF-TARGET-HARDWARE` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00290` | `LCL` / `4` | `FIELD-LITERAL-NAME-LENGTH` | `8` | `PER-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00291` | `LCL` / `5` | `FIELD-LITERAL-NAME` | `8..2040` | `PER-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00292` | `LCL` / `6` | `FIELD-SERIAL-NUMBER-LENGTH` | `8` | `PER-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00293` | `LCL` / `7` | `FIELD-SERIAL-NUMBER` | `8..2040` | `PER-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00294` | `LCL` / `8` | `FIELD-NUMBER-OF-PART-NUMBERS` | `16` | `PER-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00295` | `LCL` / `9` | `FIELD-PART-NUMBER-LENGTH` | `8` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00296` | `LCL` / `10` | `FIELD-PART-NUMBER` | `8..2040` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00297` | `LCL` / `11` | `FIELD-AMENDMENT-LENGTH` | `8` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00298` | `LCL` / `12` | `FIELD-AMENDMENT` | `0..2040` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00299` | `LCL` / `13` | `FIELD-PART-DESIGNATION-LENGTH` | `8` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00300` | `LCL` / `14` | `FIELD-PART-DESIGNATION-TEXT` | `8..2040` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00301` | `LCS` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00302` | `LCS` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00303` | `LCS` / `3` | `FIELD-COUNTER` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00304` | `LCS` / `4` | `FIELD-INFORMATION-OPERATION-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00305` | `LCS` / `5` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `WHEN-STATUS-CODE-0002-OR-0004` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00306` | `LCS` / `6` | `FIELD-ESTIMATED-TIME` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00307` | `LCS` / `7` | `FIELD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00308` | `LCS` / `8` | `FIELD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00309` | `LUR` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00310` | `LUR` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00311` | `LUR` / `3` | `FIELD-NUMBER-OF-HEADER-FILES` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00312` | `LUR` / `4` | `FIELD-HEADER-FILE-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00313` | `LUR` / `5` | `FIELD-HEADER-FILE-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00314` | `LUR` / `6` | `FIELD-LOAD-PART-NUMBER-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00315` | `LUR` / `7` | `FIELD-LOAD-PART-NUMBER-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00316` | `LUS` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00317` | `LUS` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00318` | `LUS` / `3` | `FIELD-UPLOAD-OPERATION-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00319` | `LUS` / `4` | `FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00320` | `LUS` / `5` | `FIELD-UPLOAD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00321` | `LUS` / `6` | `FIELD-COUNTER` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00322` | `LUS` / `7` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `WHEN-STATUS-CODE-0002-OR-0004` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00323` | `LUS` / `8` | `FIELD-ESTIMATED-TIME` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00324` | `LUS` / `9` | `FIELD-LOAD-LIST-RATIO` | `24` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00325` | `LUS` / `10` | `FIELD-NUMBER-OF-HEADER-FILES` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00326` | `LUS` / `11` | `FIELD-HEADER-FILE-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00327` | `LUS` / `12` | `FIELD-HEADER-FILE-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00328` | `LUS` / `13` | `FIELD-LOAD-PART-NUMBER-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00329` | `LUS` / `14` | `FIELD-LOAD-PART-NUMBER-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00330` | `LUS` / `15` | `FIELD-LOAD-RATIO` | `24` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00331` | `LUS` / `16` | `FIELD-LOAD-STATUS` | `16` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00332` | `LUS` / `17` | `FIELD-LOAD-STATUS-DESCRIPTION-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00333` | `LUS` / `18` | `FIELD-LOAD-STATUS-DESCRIPTION` | `0..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00459` | `LNR` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNR-FILE-LENGTH-32 |
+| `CRS-M1-00460` | `LNR` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `FIXED-WIDTH-ASCII` / `FIXED-TWO-ASCII-CHARACTERS` | PROTOCOL-VERSION-TWO-ASCII-CHARACTERS |
+| `CRS-M1-00461` | `LNR` / `3` | `FIELD-NUMBER-OF-FILES` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNR-NUMBER-OF-FILES-16 |
+| `CRS-M1-00462` | `LNR` / `4` | `FIELD-FILE-NAME-LENGTH` | `8` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNR-FILE-NAME-LENGTH-REPEAT |
+| `CRS-M1-00463` | `LNR` / `5` | `FIELD-FILE-NAME` | `8-TO-2040` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNR-FILE-NAME-REPEAT |
+| `CRS-M1-00464` | `LNR` / `6` | `FIELD-USER-DEFINED-DATA-LENGTH` | `8` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNR-USER-DATA-LENGTH-ONCE |
+| `CRS-M1-00465` | `LNR` / `7` | `FIELD-USER-DEFINED-DATA` | `0-TO-2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `LENGTH-PREFIXED-BINARY` / `LENGTH-PREFIXED-PER-TABLE` | LNR-USER-DATA-ONCE-NOT-PER-FILE |
+| `CRS-M1-00466` | `LNS` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-FILE-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00467` | `LNS` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `FIXED-WIDTH-ASCII` / `FIXED-TWO-ASCII-CHARACTERS` | PROTOCOL-VERSION-TWO-ASCII-CHARACTERS |
+| `CRS-M1-00468` | `LNS` / `3` | `FIELD-DOWNLOAD-OPERATION-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-DOWNLOAD-OPERATION-STATUS-CODE-TABLE-WIDTH |
+| `CRS-M1-00469` | `LNS` / `4` | `FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00470` | `LNS` / `5` | `FIELD-DOWNLOAD-STATUS-DESCRIPTION` | `0-TO-2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNS-FIELD-DOWNLOAD-STATUS-DESCRIPTION-TABLE-WIDTH |
+| `CRS-M1-00471` | `LNS` / `6` | `FIELD-COUNTER` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-COUNTER-TABLE-WIDTH |
+| `CRS-M1-00472` | `LNS` / `7` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `ALWAYS` / `WHEN-STATUS-CODE-0002-OR-0004` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-EXCEPTION-TIMER-WHEN-STATUS-0002-OR-0004 |
+| `CRS-M1-00473` | `LNS` / `8` | `FIELD-ESTIMATED-TIME` | `16` | `ONCE` / `ALWAYS` / `WHEN-STATUS-CODE-0002-OR-0004` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-ESTIMATED-TIME-WHEN-STATUS-0002-OR-0004, LNS-ESTIMATED-TIME-UNKNOWN-IS-0xFFFF |
+| `CRS-M1-00474` | `LNS` / `9` | `FIELD-DOWNLOAD-LIST-RATIO` | `24` | `ONCE` / `ALWAYS` / `—` | `FIXED-WIDTH-ASCII` / `RIGHT-ADJUSTED-LEADING-BLANKS` | LNS-DOWNLOAD-LIST-RATIO-THREE-ASCII-PERCENT |
+| `CRS-M1-00475` | `LNS` / `10` | `FIELD-NUMBER-OF-FILES` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-NUMBER-OF-FILES-TABLE-WIDTH |
+| `CRS-M1-00476` | `LNS` / `11` | `FIELD-FILE-NAME-LENGTH` | `8` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-FILE-NAME-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00477` | `LNS` / `12` | `FIELD-FILE-NAME` | `8-TO-2040` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNS-FIELD-FILE-NAME-TABLE-WIDTH |
+| `CRS-M1-00478` | `LNS` / `13` | `FIELD-FILE-STATUS` | `16` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-FILE-STATUS-TABLE-WIDTH |
+| `CRS-M1-00479` | `LNS` / `14` | `FIELD-FILE-STATUS-DESCRIPTION-LENGTH` | `8` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-FILE-STATUS-DESCRIPTION-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00480` | `LNS` / `15` | `FIELD-FILE-STATUS-DESCRIPTION` | `0-TO-2040` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNS-FIELD-FILE-STATUS-DESCRIPTION-TABLE-WIDTH |
+| `CRS-M1-00481` | `LNL` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNL-FIELD-FILE-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00482` | `LNL` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `FIXED-WIDTH-ASCII` / `FIXED-TWO-ASCII-CHARACTERS` | PROTOCOL-VERSION-TWO-ASCII-CHARACTERS |
+| `CRS-M1-00483` | `LNL` / `3` | `FIELD-NUMBER-OF-FILES` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNL-FIELD-NUMBER-OF-FILES-TABLE-WIDTH |
+| `CRS-M1-00484` | `LNL` / `4` | `FIELD-FILE-NAME-LENGTH` | `8` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNL-FIELD-FILE-NAME-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00485` | `LNL` / `5` | `FIELD-FILE-NAME` | `8-TO-2040` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNL-FIELD-FILE-NAME-TABLE-WIDTH |
+| `CRS-M1-00486` | `LNL` / `6` | `FIELD-FILE-DESCRIPTION-LENGTH` | `8` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNL-FIELD-FILE-DESCRIPTION-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00487` | `LNL` / `7` | `FIELD-FILE-DESCRIPTION` | `0-TO-2040` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNL-FIELD-FILE-DESCRIPTION-TABLE-WIDTH |
+| `CRS-M1-00488` | `LNA` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNA-FIELD-FILE-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00489` | `LNA` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `FIXED-WIDTH-ASCII` / `FIXED-TWO-ASCII-CHARACTERS` | PROTOCOL-VERSION-TWO-ASCII-CHARACTERS |
+| `CRS-M1-00490` | `LNA` / `3` | `FIELD-NUMBER-OF-FILES` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNA-FIELD-NUMBER-OF-FILES-TABLE-WIDTH |
+| `CRS-M1-00491` | `LNA` / `4` | `FIELD-FILE-NAME-LENGTH` | `8` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNA-FIELD-FILE-NAME-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00492` | `LNA` / `5` | `FIELD-FILE-NAME` | `8-TO-2040` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNA-FIELD-FILE-NAME-TABLE-WIDTH |
+| `CRS-M1-00546` | `LUB` / `1` | `FIELD-BATCH-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00547` | `LUB` / `2` | `FIELD-BATCH-FILE-FORMAT-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00548` | `LUB` / `3` | `FIELD-SPARE` | `16` | `ONCE` / `ALWAYS` / `—` | `ALIGNMENT-FIELD-VALUE-NOT-CONSTRAINED` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00549` | `LUB` / `4` | `FIELD-POINTER-TO-BATCH-FILE-PN-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00550` | `LUB` / `5` | `FIELD-POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00551` | `LUB` / `6` | `FIELD-EXPANSION-POINT-1` | `0` | `ONCE` / `ALWAYS` / `—` | `ZERO-WIDTH-NO-EMITTED-BYTES` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00552` | `LUB` / `7` | `FIELD-BATCH-FILE-PN-LENGTH` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00553` | `LUB` / `8` | `FIELD-BATCH-FILE-PN` | `16*CEILING(BATCH-FILE-PN-LENGTH/2)` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `FIXED-WIDTH-ASCII` / `NUL-PADDED-TO-EVEN-OCTET` | LUB-NOTE-1-VARIABLE-16BIT-WORDS |
+| `CRS-M1-00554` | `LUB` / `9` | `FIELD-COMMENT-LENGTH` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00555` | `LUB` / `10` | `FIELD-COMMENT` | `16*CEILING(COMMENT-LENGTH/2)` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `FIXED-WIDTH-ASCII` / `NUL-PADDED-TO-EVEN-OCTET` | LUB-NOTE-1-VARIABLE-16BIT-WORDS, LUB-NOTE-2-OPTIONAL-OMITTED |
+| `CRS-M1-00556` | `LUB` / `11` | `FIELD-EXPANSION-POINT-2` | `0` | `ONCE` / `ALWAYS` / `—` | `ZERO-WIDTH-NO-EMITTED-BYTES` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00557` | `LUB` / `12` | `FIELD-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00558` | `LUB` / `13` | `FIELD-POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK` | `16` | `PER-TARGET-HW-ID-LOAD-LIST-BLOCK` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LUB-REPEAT-PER-TARGET-HW-ID-LOAD-LIST-BLOCK |
+| `CRS-M1-00559` | `LUB` / `14` | `FIELD-TARGET-HW-ID-POS-LENGTH` | `16` | `PER-TARGET-HW-ID-LOAD-LIST-BLOCK` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LUB-REPEAT-PER-TARGET-HW-ID-LOAD-LIST-BLOCK |
+| `CRS-M1-00560` | `LUB` / `15` | `FIELD-TARGET-HW-ID-POS` | `16*CEILING(TARGET-HW-ID-POS-LENGTH/2)` | `PER-TARGET-HW-ID-LOAD-LIST-BLOCK` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `FIXED-WIDTH-ASCII` / `NUL-PADDED-TO-EVEN-OCTET` | LUB-NOTE-1-VARIABLE-16BIT-WORDS, LUB-REPEAT-PER-TARGET-HW-ID-LOAD-LIST-BLOCK |
+| `CRS-M1-00561` | `LUB` / `16` | `FIELD-NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS` | `16` | `PER-TARGET-HW-ID-LOAD-LIST-BLOCK` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LUB-REPEAT-PER-TARGET-HW-ID-LOAD-LIST-BLOCK |
+| `CRS-M1-00562` | `LUB` / `17` | `FIELD-HEADER-FILE-NAME-LENGTH` | `16` | `PER-LOAD-OF-ONE-TARGET-HW-ID` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LUB-REPEAT-PER-LOAD-OF-ONE-TARGET-HW-ID |
+| `CRS-M1-00563` | `LUB` / `18` | `FIELD-HEADER-FILE-NAME` | `16*CEILING(HEADER-FILE-NAME-LENGTH/2)` | `PER-LOAD-OF-ONE-TARGET-HW-ID` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `FIXED-WIDTH-ASCII` / `NUL-PADDED-TO-EVEN-OCTET` | LUB-NOTE-1-VARIABLE-16BIT-WORDS, LUB-REPEAT-PER-LOAD-OF-ONE-TARGET-HW-ID |
+| `CRS-M1-00564` | `LUB` / `19` | `FIELD-LOAD-PN-LENGTH` | `16` | `PER-LOAD-OF-ONE-TARGET-HW-ID` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LUB-REPEAT-PER-LOAD-OF-ONE-TARGET-HW-ID |
+| `CRS-M1-00565` | `LUB` / `20` | `FIELD-LOAD-PN` | `16*CEILING(LOAD-PN-LENGTH/2)` | `PER-LOAD-OF-ONE-TARGET-HW-ID` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `FIXED-WIDTH-ASCII` / `NUL-PADDED-TO-EVEN-OCTET` | LUB-NOTE-1-VARIABLE-16BIT-WORDS, LUB-REPEAT-PER-LOAD-OF-ONE-TARGET-HW-ID |
+| `CRS-M1-00566` | `LUB` / `21` | `FIELD-EXPANSION-POINT-3` | `0` | `ONCE` / `ALWAYS` / `—` | `ZERO-WIDTH-NO-EMITTED-BYTES` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00567` | `LUB` / `22` | `FIELD-BATCH-FILE-CRC` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 
 ## Structured Table 6.4.10-1 constraints
 
@@ -1000,314 +1584,306 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 - `COV-M1-00353` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-00354` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-00355` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-M1-00566` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-00567` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-00568` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-00569` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-00570` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-00690` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00691` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00692` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00693` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00694` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00695` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00696` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00697` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00698` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00699` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00700` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00701` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00702` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00703` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00704` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00705` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00706` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00707` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00708` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00709` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00710` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00711` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00712` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00713` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00714` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00715` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00716` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00717` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00718` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00719` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00720` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00721` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00722` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00723` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00724` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00725` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00726` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00727` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00728` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00729` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00730` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00731` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00732` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00733` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00734` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00735` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00736` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00737` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00738` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00739` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00740` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00741` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00742` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00743` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00744` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00745` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00746` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00804` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00805` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00806` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00807` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00808` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00809` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00810` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00811` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00812` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00813` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00814` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00815` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00816` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00817` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00818` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00819` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00820` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00821` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00822` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00823` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00824` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00825` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00826` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00827` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00828` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00829` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00830` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00916` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00917` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00918` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00919` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00920` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00921` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00922` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00923` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00924` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00925` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00926` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00927` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00928` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00929` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00930` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00931` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00932` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00933` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00934` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00935` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00936` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00937` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00938` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00939` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00940` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00941` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00942` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00943` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00944` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00945` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00946` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00947` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00948` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00949` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00950` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00951` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00952` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00953` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00954` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00955` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00956` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00957` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00958` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00959` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00960` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00961` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00962` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00963` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00964` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00965` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00966` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00967` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00968` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00969` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00970` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00971` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00972` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00973` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00974` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00975` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00976` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00977` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00978` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00979` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00980` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00981` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00982` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00983` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00984` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00985` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00986` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00987` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00988` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00989` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00990` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00991` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00992` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00993` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00994` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00995` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00996` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00997` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01273` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01274` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01275` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01276` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01277` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01278` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01279` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01280` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01281` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01282` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01283` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01284` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01285` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01286` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01287` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01288` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01289` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01290` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01291` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01292` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01293` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01294` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01295` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01296` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01297` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01298` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01299` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01300` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01301` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01302` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01303` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01304` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01305` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01306` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01307` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01308` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01309` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01310` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01311` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01312` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01313` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01314` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01315` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01316` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01317` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01318` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01319` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01320` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01321` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01322` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01323` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01324` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01325` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01326` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01327` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01328` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01329` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01330` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01331` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01332` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01333` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01334` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01335` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01336` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01337` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01338` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01339` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01340` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01341` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01342` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01343` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01344` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01345` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01346` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01347` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01348` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01349` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01350` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01351` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01352` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01353` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01354` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01355` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01356` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01357` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01358` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01359` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01360` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01361` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01362` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01363` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01364` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01365` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01366` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01367` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01368` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01369` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01370` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01371` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01372` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01373` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01374` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01375` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01376` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01377` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01378` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01379` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01380` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01381` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01382` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01383` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01384` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01385` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01386` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01387` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01388` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01389` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01390` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01391` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01392` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01393` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01394` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01395` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01396` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01397` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01398` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01399` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01400` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01401` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01402` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01403` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01404` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01405` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01406` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01407` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01408` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01409` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00692` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00693` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00694` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00696` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00697` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00698` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00699` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00700` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00701` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00702` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00703` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00704` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00705` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00706` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00707` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00708` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00709` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00710` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00711` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00712` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00713` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00714` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00715` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00716` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00717` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00718` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00719` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00720` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00721` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00722` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00723` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00724` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00725` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00726` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00727` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00728` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00729` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00730` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00731` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00732` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00733` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00734` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00735` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION
+- `COV-M1-00736` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00737` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00738` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00739` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00740` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00741` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00742` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00743` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION
+- `COV-M1-00744` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-EXAMPLE
+- `COV-M1-00745` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-EXAMPLE
+- `COV-M1-00746` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-EXAMPLE
+- `COV-M1-00804` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00805` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00806` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00807` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00808` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00809` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00810` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00811` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00812` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00813` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00814` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00815` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00816` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00817` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00818` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00819` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00820` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00821` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00822` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00823` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00824` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00825` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00826` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00827` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00828` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00829` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00830` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00916` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00917` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00918` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00919` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00920` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00921` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00922` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00923` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00924` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00925` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00926` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00927` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00928` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00929` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00930` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00931` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00932` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00933` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00934` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00935` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00936` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00937` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00938` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00939` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00940` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00941` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00942` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00943` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00944` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00945` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00946` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00947` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00948` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00949` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00950` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00951` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00952` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00953` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00954` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00955` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00956` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00957` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00958` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00959` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00960` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00961` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00962` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00963` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00964` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00965` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00966` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00967` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00968` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00969` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00970` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00971` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00972` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00973` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00974` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00975` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00976` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00977` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00978` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00979` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00980` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00981` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00982` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00983` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00984` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00985` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00986` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00987` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00988` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00989` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00990` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00991` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00992` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00993` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00994` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00995` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00996` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00997` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01273` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01274` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01275` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01276` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01277` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01278` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01279` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01280` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01281` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01282` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01283` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01284` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01285` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01286` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01287` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01288` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-01289` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01290` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01291` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01292` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01293` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01294` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01295` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01296` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01297` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01298` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01299` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01300` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01301` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01302` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01303` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01304` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01305` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01306` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01307` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01308` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01309` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01310` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01311` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01312` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01313` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01314` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01315` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01316` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01317` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01318` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01319` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01320` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01321` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01322` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01323` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01324` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01325` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01326` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01327` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01328` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01329` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01330` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01331` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01332` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01333` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01334` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01335` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01336` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01337` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01338` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01339` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01340` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01341` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01342` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01343` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01344` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01345` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01346` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01347` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01348` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01349` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01350` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01351` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01352` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01353` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01354` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01355` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01356` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01357` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01358` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01359` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01360` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01361` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01362` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01363` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01364` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01365` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01366` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01367` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01368` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01369` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01370` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01371` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01372` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01373` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01374` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01375` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01376` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01377` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01378` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01379` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01380` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01381` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01382` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01383` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01384` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01385` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01386` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01387` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-01388` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01389` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01390` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01391` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01392` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-01393` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-01394` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01395` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01396` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01397` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01398` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01399` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01400` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01401` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01402` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01403` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01404` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01405` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01406` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01407` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01408` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01409` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
 - `COV-M1-01413` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01414` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01415` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
@@ -1476,79 +2052,27 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 - `COV-M1-01578` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01579` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01580` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-M1-01581` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01582` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01583` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01584` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01585` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01586` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01587` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01588` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01589` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01590` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01591` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01592` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01593` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01594` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01595` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01596` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01597` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01598` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01599` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01600` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01601` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01602` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01603` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01604` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01605` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01606` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01607` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01608` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01609` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01610` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01611` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01612` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01613` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01614` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01615` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01616` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01617` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01618` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01619` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01620` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01621` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01622` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01623` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01624` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01625` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01626` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01627` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01628` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01629` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01630` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01631` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01632` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01633` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01634` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01635` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01636` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01637` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01638` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01639` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01640` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01641` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01642` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01643` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01644` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01645` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01646` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01647` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01648` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01649` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01650` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01651` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01652` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01653` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
+- `COV-M1-01581` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01586` — `CONDITIONAL` — FIND-CONDITIONAL-DESCRIPTION
+- `COV-M1-01587` — `CONDITIONAL` — FIND-CONDITIONAL-NETWORK-OR-PRELOAD
+- `COV-M1-01588` — `CONDITIONAL` — FIND-CONDITIONAL-NETWORK-OR-PRELOAD
+- `COV-M1-01589` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01590` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01591` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01592` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01593` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01596` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01597` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01598` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01599` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01604` — `CONDITIONAL` — FIND-CONDITIONAL-DESCRIPTION
+- `COV-M1-01612` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01622` — `CONDITIONAL` — FIND-CONDITIONAL-NETWORK-OR-PRELOAD
+- `COV-M1-01624` — `CONDITIONAL` — FIND-CONDITIONAL-NETWORK-OR-PRELOAD
+- `COV-M1-01632` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01645` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01652` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-EXAMPLE
+- `COV-M1-01653` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-EXAMPLE
 - `COV-M1-01654` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01684` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01685` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
@@ -1765,19 +2289,19 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 - `COV-M1-01957` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01958` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01959` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-M1-01960` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01961` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01962` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01963` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01964` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01965` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01966` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01967` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01968` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01969` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01970` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01971` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01972` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
+- `COV-M1-01960` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01961` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01962` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01963` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01964` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01965` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01966` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01967` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-01968` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01969` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01970` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-01971` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01972` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
 - `COV-M1-01973` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01974` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01975` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
@@ -2021,85 +2545,238 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 - `COV-M1-02564` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
 - `COV-M1-02565` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
 - `COV-M1-02566` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02567` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02568` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02569` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
 - `COV-M1-02570` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02571` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02572` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02573` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02574` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02575` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02576` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02577` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02578` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02579` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02580` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02581` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02582` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02583` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02681` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02682` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02683` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02684` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02685` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02686` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02687` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02688` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02689` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02690` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02691` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02692` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02693` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02694` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02695` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02696` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02697` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02698` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02699` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02700` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02701` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02702` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02703` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02704` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02705` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02706` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02707` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02708` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02709` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02710` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02711` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02712` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02713` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02714` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02715` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02716` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02717` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02718` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02762` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02763` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02764` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02765` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02766` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02767` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02768` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02769` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02770` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02771` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02772` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02773` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02774` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02775` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02776` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02777` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02778` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02779` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02780` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02781` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02782` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02783` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02784` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02785` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02681` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02682` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02683` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02684` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02685` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02686` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02687` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02688` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02689` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02690` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02691` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02692` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02693` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02694` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02695` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02696` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02697` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02698` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02699` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02700` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02701` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02702` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02703` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02704` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02705` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02706` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02707` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02708` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02709` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02710` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02711` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02712` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02713` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02714` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02715` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02716` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02717` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02718` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02762` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02763` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02764` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02765` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02766` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02767` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02768` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02769` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02770` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02771` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02772` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02773` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02774` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02775` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02776` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02777` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02778` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02779` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02780` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02781` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02782` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02783` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02784` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02785` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02872` — `CONDITIONAL` — ETHERNET-PHYSICAL-PREMISE
+- `COV-M1-02873` — `CONDITIONAL` — ETHERNET-PHYSICAL-PREMISE
+- `COV-M1-02874` — `CONDITIONAL` — ETHERNET-PHYSICAL-PREMISE
+- `COV-M1-02875` — `CONDITIONAL` — ETHERNET-PHYSICAL-PREMISE
+- `COV-M1-02876` — `CONDITIONAL` — AFDX-SPECIFIC-EXTENSIONS-ARE-P7
+- `COV-M1-02877` — `CONDITIONAL` — COMPLIANT-INSTANCE-SELECTED
+- `COV-M1-02878` — `CONDITIONAL` — P3-PRECEDENCE-RESTRICTS-RFC-OPTIONS
+- `COV-M1-02883` — `CONDITIONAL` — ARP-DEPLOYMENT-SELECTION
+- `COV-M1-02884` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-02885` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-02886` — `CONDITIONAL` — AFDX-END-SYSTEM-WHEN-SELECTED
+- `COV-M1-02887` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-02888` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-02889` — `CONDITIONAL` — AFDX-DATA-FORMAT-WHEN-SELECTED
+- `COV-M1-02890` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-02891` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-02899` — `CONDITIONAL` — SOURCE-RECEIPT-DOES-NOT-ESTABLISH-CAPABILITY
+- `COV-M1-02900` — `CONDITIONAL` — LINK-LAYER-HOST-PREMISE
+- `COV-M1-02901` — `CONDITIONAL` — IPV4-HOST-COMMUNICATION-PREMISE
+- `COV-M1-02902` — `CONDITIONAL` — UDP-HOST-COMMUNICATION-PREMISE
+- `COV-M1-02918` — `CONDITIONAL` — IPV4-HOST-COMMUNICATION-PREMISE
+- `COV-M1-02919` — `CONDITIONAL` — IPV4-HOST-COMMUNICATION-PREMISE
+- `COV-M1-02920` — `CONDITIONAL` — UDP-HOST-COMMUNICATION-PREMISE
+- `COV-M1-02955` — `CONDITIONAL` — AFDX-VL-SINGLE-SOURCE
+- `COV-M1-02956` — `CONDITIONAL` — AFDX-VL-UNIDIRECTIONAL
+- `COV-M1-02957` — `CONDITIONAL` — AFDX-BAG-MINIMUM-INTERVAL
+- `COV-M1-02958` — `CONDITIONAL` — AFDX-MAX-ADMISSIBLE-JITTER
+- `COV-M1-02959` — `CONDITIONAL` — AFDX-VL-BANDWIDTH-BAG-LMAX
+- `COV-M1-02960` — `CONDITIONAL` — AFDX-VL-FRAME-1518
+- `COV-M1-02961` — `CONDITIONAL` — AFDX-BAG-RANGE
+- `COV-M1-02962` — `CONDITIONAL` — AFDX-BAG-POWER-OF-TWO
+- `COV-M1-02963` — `CONDITIONAL` — AFDX-JITTER-500US-CAP
+- `COV-M1-02964` — `CONDITIONAL` — AFDX-VL-MAC-DESTINATION-IDENTITY
+- `COV-M1-02971` — `CONDITIONAL` — AFDX-TX-TECHNOLOGICAL-LATENCY-150US
+- `COV-M1-02972` — `CONDITIONAL` — AFDX-RX-TECHNOLOGICAL-LATENCY-150US
+- `COV-M1-02973` — `CONDITIONAL` — AFDX-MAX-JITTER-LOAD-EQUATION
+- `COV-M1-02974` — `CONDITIONAL` — AFDX-MAX-JITTER-500US-EQUATION
+- `COV-M1-02975` — `CONDITIONAL` — AFDX-MAC-SOURCE-INDIVIDUAL-LOCALLY-ADMINISTERED
+- `COV-M1-02976` — `CONDITIONAL` — AFDX-MAC-SOURCE-CONSTANT-FIELD
+- `COV-M1-02977` — `CONDITIONAL` — AFDX-MAC-SOURCE-INDIVIDUAL-BIT
+- `COV-M1-02978` — `CONDITIONAL` — AFDX-MAC-SOURCE-LOCALLY-ADMINISTERED-BIT
+- `COV-M1-02979` — `CONDITIONAL` — AFDX-MAC-SOURCE-USER-DEFINED-ID-WIDTH
+- `COV-M1-02980` — `CONDITIONAL` — AFDX-MAC-SOURCE-USER-DEFINED-ID-UNIQUE-HOST
+- `COV-M1-02981` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-ROLE
+- `COV-M1-02982` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-NETWORK-A
+- `COV-M1-02983` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-NETWORK-B
+- `COV-M1-02984` — `CONDITIONAL` — P4-ADDRESS-PLAN-PURPOSE
+- `COV-M1-02985` — `CONDITIONAL` — P4-CONFIGURATION-TIME-ADDRESSES
+- `COV-M1-02986` — `CONDITIONAL` — P4-ADDRESS-PLAN-SCOPE
+- `COV-M1-02987` — `CONDITIONAL` — P4-WELL-KNOWN-UDP-SERVICES
+- `COV-M1-02988` — `CONDITIONAL` — P4-PRIVATE-APP-UDP-PORT-ASSIGNMENT
+- `COV-M1-02989` — `CONDITIONAL` — P4-DO-NOT-REASSIGN-WELL-KNOWN-COTS-PORTS
+- `COV-M1-02990` — `CONDITIONAL` — P4-PRIVATE-ADDRESS-NO-EXTERNAL-ROUTING
+- `COV-M1-02991` — `CONDITIONAL` — P4-PROFILED-NETWORK-IS-PRIVATE
+- `COV-M1-02992` — `CONDITIONAL` — P4-PROFILED-NETWORK-ID-PRIVATE
+- `COV-M1-02993` — `CONDITIONAL` — P4-STATIC-MAC-AT-CONFIGURATION-TIME
+- `COV-M1-02994` — `CONDITIONAL` — P4-MAC-UNICAST-UNIQUENESS
+- `COV-M1-02995` — `CONDITIONAL` — P4-MAC-UL-BIT-LOCALLY-ADMINISTERED
+- `COV-M1-02996` — `CONDITIONAL` — P4-ALL-NETWORK-ADDRESS-UNIQUENESS
+- `COV-M1-02997` — `CONDITIONAL` — P4-PORT-59-615A-TFTP
+- `COV-M1-02998` — `CONDITIONAL` — P4-PORT-24922-FIND-CLIENT
+- `COV-M1-02999` — `CONDITIONAL` — P4-TABLE-2-1-RFC1918-PRIVATE
+- `COV-M1-03000` — `CONDITIONAL` — AFDX-TX-TECHNOLOGICAL-LATENCY-ENDPOINTS
+- `COV-M1-03001` — `CONDITIONAL` — AFDX-TX-LATENCY-START-ENDPOINT
+- `COV-M1-03002` — `CONDITIONAL` — AFDX-TX-LATENCY-END-ENDPOINT
+- `COV-M1-03003` — `CONDITIONAL` — AFDX-TX-LATENCY-EMPTY-BUFFER-PREMISE
+- `COV-M1-03004` — `CONDITIONAL` — AFDX-TECHNOLOGICAL-VS-CONFIGURATION-LATENCY
+- `COV-M1-03005` — `CONDITIONAL` — AFDX-TECHNOLOGICAL-LATENCY-NO-OTHER-TASK
+- `COV-M1-03006` — `CONDITIONAL` — AFDX-FRAME-DELAY-PHYSICAL-LAYER
+- `COV-M1-03007` — `CONDITIONAL` — AFDX-RX-LATENCY-START-ENDPOINT
+- `COV-M1-03008` — `CONDITIONAL` — AFDX-RX-LATENCY-END-ENDPOINT
+- `COV-M1-03009` — `CONDITIONAL` — AFDX-RX-LATENCY-EMPTY-BUFFER-PREMISE
+- `COV-M1-03010` — `CONDITIONAL` — AFDX-MAX-JITTER-BOTH-EQUATIONS
+- `COV-M1-03011` — `CONDITIONAL` — AFDX-MAX-JITTER-UNITS
+- `COV-M1-03012` — `CONDITIONAL` — AFDX-MAC-SOURCE-48-BIT-FIELD-COMPOSITION
+- `COV-M1-03013` — `CONDITIONAL` — AFDX-MAC-SOURCE-CONSTANT-TAIL
+- `COV-M1-03014` — `CONDITIONAL` — AFDX-MAC-SOURCE-NO-UNIQUE-ALGORITHM
+- `COV-M1-03015` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-000-NOT-USED
+- `COV-M1-03016` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-011-NOT-USED
+- `COV-M1-03017` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-100-NOT-USED
+- `COV-M1-03018` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-101-NOT-USED
+- `COV-M1-03019` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-110-NOT-USED
+- `COV-M1-03020` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-111-NOT-USED
+- `COV-M1-03021` — `CONDITIONAL` — P3-DOCUMENT-CONTROL-INFORMATIVE
+- `COV-M1-03022` — `CONDITIONAL` — P3-DOCUMENT-CONTROL-INFORMATIVE
+- `COV-M1-03023` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03024` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03025` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03026` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03027` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03028` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03029` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03030` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03031` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03032` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03033` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03034` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03035` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03036` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03037` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03038` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03039` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03040` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03041` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03042` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03043` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03044` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03045` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03046` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03047` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03048` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03049` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03050` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03051` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03052` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03053` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03054` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03055` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03056` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03057` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03058` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03059` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03060` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03061` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03062` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03063` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03064` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03065` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03066` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03067` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03068` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03069` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03070` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03071` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03072` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03073` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03074` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03075` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03076` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03077` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03078` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03079` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03080` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03081` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03082` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03083` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03084` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03085` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03086` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03087` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03088` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03089` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03090` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03091` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03092` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03093` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03094` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03095` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03096` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03097` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03098` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03099` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03100` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03101` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03102` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03103` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03104` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03105` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03106` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
 
 # 中文版
 
@@ -2115,13 +2792,13 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 
 ## 清单
 
-- 覆盖行：2796
-- CRS 项：384
-- 依赖：14
+- 覆盖行：3106
+- CRS 项：816
+- 依赖：15
 - 缺口：1
-- 覆盖指纹：`01470d751abdc20b28ac6b75e79f308f53b458dd3e7beafcbd9e229e598fdde6`
-- 需求指纹：`b9d7ed46e0fb8be95ecd747ad47bf0451b3b81c52ab601397456b14031a099bf`
-- 来源单元指纹：`4b9a16c0bc81626a73439cab21368c8f86e0a447000d10d3f8f7980b3f867f2d`
+- 覆盖指纹：`2d492fd8a9711186f6af9a098fc99ee2004782bbed0afde410ae70a64e1c1334`
+- 需求指纹：`e25019ff35ada475c320e13a3e7f8680eeeabd35ed116dc8a795d54021d50fe1`
+- 来源单元指纹：`588023a1d42d0654f8b6dda0f319c83c2a008dc146ae9119d76b534a54d6be12`
 - 自动检查只覆盖结构与跨记录一致性；专有来源的完整性与忠实度仍须外部 RG0 评审。
 - `generatedSemanticProjectionEn/Zh` 是受断言约束的漂移投影，不是独立 RG1 证据。
 - 665 边政策：`REQUIREMENT-LEVEL-615A-TO-665-EDGES-DEFERRED-TO-M2-ATTACHMENT-RECONCILIATION`
@@ -2129,26 +2806,33 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 ## 适用性
 
 - `APPLICABLE-BASE`：89
-- `APPLICABLE-SUPPORTING`：295
+- `APPLICABLE-SUPPORTING`：462
+- `CONDITIONAL`：265
 
 ## 来源模态
 
-- `FIGURE-CONSTRAINT`：39
-- `MAY`：42
-- `MUST`：13
-- `SHOULD`：197
-- `TABLE-CONSTRAINT`：93
+- `COMMENTARY`：4
+- `FACT`：147
+- `FIGURE-CONSTRAINT`：63
+- `MAY`：61
+- `MUST`：45
+- `SHOULD`：347
+- `TABLE-CONSTRAINT`：149
 
 ## 符合性效果
 
-- `OPTIONAL`：42
-- `REQUIRED`：342
+- `CONDITIONAL-REQUIRED`：235
+- `INFORMATIVE`：17
+- `OPTIONAL`：60
+- `PROHIBITED`：3
+- `REQUIRED`：501
 
 ## 开放依赖与缺口
 
 - `DEP-ARINC-645` — OPEN-DEPENDENCY：ARINC 645 算法来源仍未取得。
 - `DEP-ARINC-664-2` — OPEN-DEPENDENCY：以太网物理层与链路层语义仍开放。
 - `DEP-ARINC-664-3` — OPEN-DEPENDENCY：已接收 P3-1 身份；版次与网络适用性评审仍开放。
+- `DEP-ARINC-664-4` — OPEN-DEPENDENCY：已接收 664P4-1；已为 615A 附录 E 第一条替代路径发出地址规则叶。集成商指明路径仍开放。这不选定第 4 部分，也不激活 AFDX。
 - `DEP-ARINC-664-7` — OPEN-DEPENDENCY：已接收 P7 初版；AFDX 延期，AID 未来补充版适用性仍开放。
 - `DEP-ARINC-6655` — REGISTERED-SUPPORTING-SOURCE：有界数据对象来源。
 - `DEP-RFC-1122` — OPEN-DEPENDENCY：已取得 RFC 1122 通信层来源身份；基础设施符合性及后续更新适用性尚未建立。
@@ -2187,6 +2871,10 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `NET-P7-ADDRESS` | `ARINC-664-7` / `664P7` | 3.4.1.3.1-3.4.1.3.2 / 50 | `INSPECTION-REGION` | AFDX 内外寻址及双向 SAP／队列选择需要系统集成决策。 |
 | `NET-P7-SWITCH` | `ARINC-664-7` / `664P7` | 4.9.1 / 75 | `INSPECTION-REGION` | 交换机软件加载引用 615A/665，但不能据此将 AFDX 交换机选为本 Profile 的目标。 |
 | `NET-P7-PERFORMANCE` | `ARINC-664-7` / `664P7` | 5.1 / 80 | `INSPECTION-REGION` | AFDX 突发处理性能使用自身测量条件；它不建立 615A 传输超时。 |
+| `NET-P4-UDP` | `ARINC-664-4` / `664P4-1` | 2.1 / 10 | `INSPECTION-REGION` | 第 4 部分 UDP 端口分配区分含 TFTP 在内的 IANA 公认服务与集成商或规范分配的专用航空端口。记录该区域不选定第 4 部分，也不激活 AFDX。 |
+| `NET-P4-IPV4` | `ARINC-664-4` / `664P4-1` | 3.2.1 / 14 | `INSPECTION-REGION` | 裁剪型航空网络是 IETF 专用应用，并使用专用 A／B／C 类网络标识。这是 00519 的第一条替代路径，不是自动选定第 4 部分。 |
+| `NET-P4-MAC` | `ARINC-664-4` / `664P4-1` | 4.1.2 / 17 | `INSPECTION-REGION` | 静态配置的航空网络在配置时分配唯一 MAC 单播地址。若选择该替代路径，集成商仍须保证唯一性。 |
+| `NET-P4-PORTS` | `ARINC-664-4` / `664P4-1` | ATT-1 / 24 | `INSPECTION-REGION` | 附件 1 将 TCP／UDP 59 分配给 615A 数据加载器 TFTP，将 UDP 24922 分配给 FIND 客户端。已分配编号不是 AFDX 激活，也不关闭集成商替代路径。 |
 
 | Relation | Owner | Target regions | Condition / disposition | Rationale / issues |
 |---|---|---|---|---|
@@ -2206,7 +2894,7 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `NET-REL-014` | `COV-M1-01969` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
 | `NET-REL-015` | `COV-M1-01970` | NET-P7-TFTP, NET-P7-EXAMPLE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
 | `NET-REL-016` | `COV-M1-01971` | NET-P7-IP, NET-P7-PERFORMANCE | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL |
-| `NET-REL-017` | `COV-M1-01972` | NET-P7-ADDRESS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-ADDRESS |
+| `NET-REL-017` | `COV-M1-01972` | NET-P7-ADDRESS, NET-P4-UDP, NET-P4-IPV4, NET-P4-MAC, NET-P4-PORTS | `IF-AFDX-TRANSPORT-CHOSEN` / `DEFERRED-FUTURE-SCOPE` | 此附录 E 来源单元仅按条件 AFDX 语境检查；目标区域是评审定位，不证明存在等价的原子义务。 / NET-ISSUE-AFDX-DETAIL, NET-ISSUE-ADDRESS |
 
 | Issue | Blocks M1 approval | Status | Required resolution |
 |---|---|---|---|
@@ -2216,7 +2904,7 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `NET-ISSUE-OPTION-EDGE` | `False` | `OPEN` | A-2 继续延期：P3 3.2.2 列出 RFC 2347 且 P7 列出 RFC 1785，但这不证明精确的活动 615A 原子触发边。 |
 | `NET-ISSUE-AFDX-DETAIL` | `False` | `OPEN` | AFDX 尚未选择；P7 附件 2、IEEE 802.3（2000）及配置相关延迟／MTU 须在后续纳入部署时审计。 |
 | `NET-ISSUE-AID` | `False` | `OPEN` | 615A 附录 E 将 AID 指向未来 P7 补充版；所提供初版不能关闭该未来补充版引用。 |
-| `NET-ISSUE-ADDRESS` | `False` | `OPEN` | 附录 E 允许 P4 寻址规则或集成商规定要求；须在 AFDX 激活前记录选择，不能自动将 P4 变为采购要求。 |
+| `NET-ISSUE-ADDRESS` | `False` | `SOURCE-ACQUIRED-REVIEW-PENDING` | 已取得 664P4-1，并为附录 E 第一条替代路径发出地址规则叶。集成商指明路径仍开放。这不自动选定第 4 部分，也不激活 AFDX。 |
 
 ### 基础设施前提与公共来源
 
@@ -2613,6 +3301,438 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `CRS-M1-00382` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E006-697ED629B1F1`<br>`ARINC-615A-3 6.3.5 p.63` | `TARGET-HARDWARE` / `ACTIVITIES-STOPPED` / `TRANSFER` / `ABORT-CONFIRMATION-STATUS-FILE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“目标硬件”在“ACTIVITIES-STOPPED”下必须对“ABORT-CONFIRMATION-STATUS-FILE”执行“传输”，接收方为“数据加载器应用层”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
 | `CRS-M1-00383` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E007-0E8514BE5C06`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `ABORT-STATUS-RECEIVED` / `SEND` / `INFORMATION-OR-UPLOAD-OR-DOWNLOAD-STATUS` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“ABORT-STATUS-RECEIVED”下必须对“INFORMATION-OR-UPLOAD-OR-DOWNLOAD-STATUS”执行“发送”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
 | `CRS-M1-00384` | `SU-ARINC-615A-3-SECTION-6-3-5-SEQUENCE-CHART-E008-F805E5E804BC`<br>`ARINC-615A-3 6.3.5 p.63` | `DLA` / `ABORT-CONFIRMED` / `TERMINATE` / `INTERRUPTION-MODE` / `ORDER-DIRECTION-BRANCH-OBSERVABLE` | `FIGURE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 参与者“数据加载器应用层”在“ABORT-CONFIRMED”下必须对“INTERRUPTION-MODE”执行“TERMINATE”，接收方为“APPLICATION”；证据是“ORDER-DIRECTION-BRANCH-OBSERVABLE”。 | — | — |
+| `CRS-M1-00385` | `SU-ARINC-615A-3-5-3-3-P044-PROSE-SENTENCE-005-36878C1F8E7E`<br>`ARINC-615A-3 5.3.3 p.32` | `FIND-PROTOCOL` / `WHEN-FIND-IMPLEMENTED` / `USE-UDP-PORT-1001` / `UDP-PORT-1001` / `FIND-PORT-1001-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 在实现 FIND 发起方或 FIND 主机时，FIND 必须使用十进制 UDP 端口 1001。 | — | — |
+| `CRS-M1-00386` | `SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-006-B1ED10DE43C7`<br>`ARINC-615A-3 3-1 p.95` | `DATA-LOADER` / `WHEN-FIND-PATH-CARRIES-TRAFFIC-AND-BEFORE-DATA-LOAD` / `RUN-FIND-AT-LEAST-ONCE` / `FIND-REQUEST` / `FIND-PRELOAD-RUN-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在路径能够承载 FIND 业务时，数据加载器必须在数据加载操作前至少运行一次 FIND。 | — | — |
+| `CRS-M1-00387` | `SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-007-9166DCC81508`<br>`ARINC-615A-3 3-1 p.95` | `DATA-LOADER` / `WHEN-FIND-PATH-CARRIES-TRAFFIC-AND-BEFORE-LATER-OPERATION` / `MAY-RERUN-FIND-AND-REGISTER-ANSWERS` / `FIND-REQUEST, FIND-ANSWER` / `FIND-OPTIONAL-RERUN-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在能够承载 FIND 的路径上，数据加载器可以在后续每次操作前再次运行 FIND 并登记应答。 | — | — |
+| `CRS-M1-00388` | `SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-011-AD843D1C9EDF`<br>`ARINC-615A-3 3-1 p.95` | `FIND-PROTOCOL` / `WHEN-FIND-IMPLEMENTED` / `USE-WELL-KNOWN-UDP-PORT-1001` / `UDP-PORT-1001` / `FIND-ATTACHMENT-PORT-1001-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 请求与应答分组必须使用众所周知的十进制 UDP 端口 1001。 | — | — |
+| `CRS-M1-00389` | `SU-ARINC-615A-3-3-1-P107-PROSE-SENTENCE-012-AEB96A80314F`<br>`ARINC-615A-3 3-1 p.95` | `FIND-PROTOCOL` / `WHEN-FIND-IMPLEMENTED` / `USE-SAME-PORT-FOR-REQUEST-AND-ANSWER` / `FIND-REQUEST, FIND-ANSWER, UDP-PORT-1001` / `FIND-SHARED-PORT-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 请求分组与 FIND 应答分组必须使用同一 UDP 端口号。 | — | — |
+| `CRS-M1-00390` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-003-1E8680AD6287`<br>`ARINC-615A-3 3-2 p.96` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `REGISTER-VALID-FIND-ANSWERS-AS-LOAD-TARGETS` / `VALID-FIND-ANSWERS, LOAD-TARGET-REGISTRATION` / `VALID-FIND-ANSWER-REGISTRATION-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 在实现 FIND 时，数据加载器必须把所有有效 FIND 应答登记为可能的加载目标。 | — | — |
+| `CRS-M1-00391` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700`<br>`ARINC-615A-3 3-2 p.96` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `ANSWER-FIND-REQUEST-WITHIN-TWO-SECOND-UPPER-BOUND` / `FIND-ANSWER, FIND-HOST-TIMEOUT-UPPER-BOUND-2-S` / `FIND-HOST-ANSWER-WITHIN-TWO-SECOND-UPPER-BOUND-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 在实现 FIND 时，FIND 主机必须在收到合法请求后的两秒上界内发出 FIND 应答。更早的应答满足该期限；三秒登记窗口不能延长该主机上界。中止 FIND 不豁免该两秒主机应答期限。 | `FIXED-SOURCE-CONSTANT` / `FIND-HOST-TIMEOUT-2-S` / `SOURCE-DEFINES-DEADLINE-OR-DURATION` / `0..2 s` / 证据：SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-005-3CE166EDA700 | — |
+| `CRS-M1-00392` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-006-E98F49FBFBDF`<br>`ARINC-615A-3 3-2 p.96` | `FIND-INITIATOR` / `WHEN-FIND-IMPLEMENTED` / `TAKE-NEEDED-INFORMATION-FROM-MESSAGE-STRUCTURE-OR-FIND-PACKET-DATA` / `MESSAGE-STRUCTURE, FIND-PACKET-DATA` / `FIND-INFORMATION-LOCATION-ALTERNATIVE-OBSERVABLE` | `MAY` / `CONDITIONAL-REQUIRED` | `APPLICABLE-SUPPORTING` | 在实现 FIND 时，发起方必须从报文结构或 FIND 分组数据中取得所需信息。这记录两种承载位置，不激活 AFDX，也不允许省略所需信息。 | — | — |
+| `CRS-M1-00393` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-010-76E6AE59C360`<br>`ARINC-615A-3 3-2 p.96` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `SEND-NO-ANSWER-TO-ILLEGAL-FIND-REQUEST` / `ILLEGAL-FIND-REQUEST` / `FIND-ILLEGAL-REQUEST-SILENCE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 对于非法或无效的 FIND 请求，FIND 主机不得发出应答。 | — | — |
+| `CRS-M1-00394` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-011-A1CA1EF64C11`<br>`ARINC-615A-3 3-2 p.96` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `IGNORE-INVALID-FIND-ANSWER` / `INVALID-FIND-ANSWER` / `FIND-INVALID-ANSWER-IGNORE-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 数据加载器必须忽略无效的 FIND 应答。 | — | — |
+| `CRS-M1-00395` | `SU-ARINC-615A-3-3-4-P108-PROSE-SENTENCE-001-DB0FEBBE9664`<br>`ARINC-615A-3 3-4 p.96` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `SET-IRQ-SOURCE-MAC-TO-DATA-LOADER` / `IRQ-SOURCE-MAC` / `IRQ-SOURCE-MAC-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 在信息请求中，数据加载器必须把源 MAC 地址设为自己的 MAC 地址。 | — | — |
+| `CRS-M1-00396` | `SU-ARINC-615A-3-3-4-P108-PROSE-SENTENCE-002-412B0FD7B45D`<br>`ARINC-615A-3 3-4 p.96` | `DATA-LOADER` / `WHEN-FIND-PATH-CARRIES-TRAFFIC` / `SET-IRQ-DESTINATION-MAC-TO-UNICAST-MULTICAST-OR-BROADCAST` / `IRQ-DESTINATION-MAC` / `IRQ-DESTINATION-MAC-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在路径能够承载 FIND 时，数据加载器必须把信息请求的目的 MAC 设为单播、组播或广播 MAC。 | — | — |
+| `CRS-M1-00397` | `SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-003-B443A5630F89`<br>`ARINC-615A-3 ATTACHMENT-3 p.97` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `SET-IRQ-SOURCE-IP-TO-DATA-LOADER` / `IRQ-SOURCE-IP` / `IRQ-SOURCE-IP-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 在信息请求中，数据加载器必须把源 IP 地址设为自己的 IP 地址。 | — | — |
+| `CRS-M1-00398` | `SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-004-0BFE8D84B7A9`<br>`ARINC-615A-3 ATTACHMENT-3 p.97` | `DATA-LOADER` / `WHEN-FIND-PATH-CARRIES-TRAFFIC` / `SET-IRQ-DESTINATION-IP-TO-UNICAST-MULTICAST-OR-BROADCAST` / `IRQ-DESTINATION-IP` / `IRQ-DESTINATION-IP-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在路径能够承载 FIND 时，数据加载器必须把信息请求的目的 IP 设为单播、组播或广播 IP，包括有限广播或全 1 广播。 | — | — |
+| `CRS-M1-00399` | `SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-005-DC8D7B76A7B9`<br>`ARINC-615A-3 ATTACHMENT-3 p.97` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `SET-IRQ-OPCODE-TO-0001` / `IRQ-OPCODE-0001` / `IRQ-OPCODE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 数据加载器必须把信息请求操作码设为 0x0001。 | — | — |
+| `CRS-M1-00400` | `SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-006-FC8DA6118FFF`<br>`ARINC-615A-3 ATTACHMENT-3 p.97` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `SET-IRQ-DATA-LIST-TO-ASCII-NUL` / `IRQ-DATA-LIST, ASCII-NUL` / `IRQ-DATA-LIST-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 数据加载器必须把信息请求数据表设为单个 ASCII 空字符终止符。 | — | — |
+| `CRS-M1-00401` | `SU-ARINC-615A-3-ATTACHMENT-3-P109-PROSE-SENTENCE-007-99F468D5D311`<br>`ARINC-615A-3 ATTACHMENT-3 p.97` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `TERMINATE-IRQ-PACKET-WITH-DLE` / `IRQ-PACKET-TERMINATOR-DLE` / `IRQ-TERMINATOR-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 数据加载器必须以 0x10 结束信息请求分组。 | — | — |
+| `CRS-M1-00402` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-001-D2A70FEFE065`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `SET-IAN-SOURCE-MAC-TO-FIND-HOST` / `IAN-SOURCE-MAC` / `IAN-SOURCE-MAC-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 在信息应答中，FIND 主机必须把源 MAC 地址设为目标硬件 MAC 地址。 | — | — |
+| `CRS-M1-00403` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-002-21D8C06816D1`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `SET-IAN-DESTINATION-MAC-TO-ASSOCIATED-IRQ-SOURCE-MAC` / `IAN-DESTINATION-MAC` / `IAN-DESTINATION-MAC-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须把信息应答的目的 MAC 设为对应信息请求的源 MAC。 | — | — |
+| `CRS-M1-00404` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-003-E5DBDB9636E9`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `SET-IAN-SOURCE-IP-TO-FIND-HOST` / `IAN-SOURCE-IP` / `IAN-SOURCE-IP-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 在信息应答中，FIND 主机必须把源 IP 地址设为目标硬件 IP 地址。 | — | — |
+| `CRS-M1-00405` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-004-98DCC47DCB2B`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `SET-IAN-DESTINATION-IP-TO-ASSOCIATED-IRQ-SOURCE-IP` / `IAN-DESTINATION-IP` / `IAN-DESTINATION-IP-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须把信息应答的目的 IP 设为对应信息请求的源 IP。 | — | — |
+| `CRS-M1-00406` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-005-4D7FB8BC839C`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `SET-IAN-OPCODE-TO-0002` / `IAN-OPCODE-0002` / `IAN-OPCODE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须把信息应答操作码设为 0x0002。 | — | — |
+| `CRS-M1-00407` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-007-0F2D63CA1D3E`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `ENCODE-EMPTY-IAN-PARAMETER-AS-SINGLE-NUL` / `EMPTY-IAN-PARAMETER, ASCII-NUL` / `IAN-EMPTY-FIELD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须把空的信息应答参数编码为单个 ASCII 空字节。 | — | — |
+| `CRS-M1-00408` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-008-D8483D058800`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `OMIT-EMBEDDED-NUL-FROM-IAN-STRINGS` / `IAN-PARAMETER-STRING` / `IAN-NO-EMBEDDED-NUL-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须从已提供的信息应答参数字符串中省略内嵌空字节。 | — | — |
+| `CRS-M1-00409` | `SU-ARINC-615A-3-3-5-P109-PROSE-SENTENCE-009-2DD2663EB0A1`<br>`ARINC-615A-3 3-5 p.97` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `TERMINATE-IAN-PACKET-WITH-DLE` / `IAN-PACKET-TERMINATOR-DLE` / `IAN-TERMINATOR-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须以 0x10 结束信息应答分组。 | — | — |
+| `CRS-M1-00410` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-012-DB234DB803F9`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `ENCODE-IAN-PARAMETERS-AS-NUL-TERMINATED-STRINGS-IN-SECTION-3-6-ORDER` / `IAN-PARAMETER-STRINGS` / `IAN-PARAMETER-ORDER-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须按附件 3 第 6 节顺序，把信息应答参数值编码为空字符终止字符串。 | — | — |
+| `CRS-M1-00411` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-013-48CB9FF4518D`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `LIMIT-TARGET-HARDWARE-IDENTIFIER-TO-15-CHARACTERS-EXCLUDING-TERMINATOR` / `TARGET-HARDWARE-IDENTIFIER, LENGTH-15` / `THW-ID-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须把目标硬件标识符限制为不含终止符的 15 个字符。 | — | — |
+| `CRS-M1-00412` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-014-913B305AF452`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `LIMIT-TARGET-TYPE-NAME-TO-8-CHARACTERS-EXCLUDING-TERMINATOR` / `TARGET-TYPE-NAME, LENGTH-8` / `TARGET-TYPE-NAME-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须把目标类型名限制为不含终止符的 8 个字符。 | — | — |
+| `CRS-M1-00413` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-015-14EF51A05AEA`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `LIMIT-TARGET-POSITION-TO-8-CHARACTERS-EXCLUDING-TERMINATOR` / `TARGET-POSITION, LENGTH-8` / `TARGET-POSITION-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须把目标位置限制为不含终止符的 8 个字符。 | — | — |
+| `CRS-M1-00414` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-016-22BA44DB74A6`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `LIMIT-LITERAL-NAME-TO-20-CHARACTERS-EXCLUDING-TERMINATOR` / `LITERAL-NAME, LENGTH-20` / `LITERAL-NAME-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须把字面名限制为不含终止符的 20 个字符。 | — | — |
+| `CRS-M1-00415` | `SU-ARINC-615A-3-ATTACHMENT-3-P110-PROSE-SENTENCE-017-4A05E0BB2809`<br>`ARINC-615A-3 ATTACHMENT-3 p.98` | `FIND-HOST` / `WHEN-FIND-IMPLEMENTED` / `ENCODE-MANUFACTURER-CODE-AS-3-CHARACTERS-EXCLUDING-TERMINATOR` / `MANUFACTURER-CODE, LENGTH-3` / `MANUFACTURER-CODE-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | FIND 主机必须把制造商代码编码为不含终止符的 3 个字符。 | — | — |
+| `CRS-M1-00416` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-007-CA89CD0344A9`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IMPLEMENT-BOTH-MEDIA-DEFINED-OPERATOR-DEFINED-DOWNLOAD` / `MEDIA-DEFINED, OPERATOR-DEFINED` / `IMPLEMENT-BOTH-MEDIA-DEFINED-OPERATOR-DEFINED-DOWNLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须实现 both 媒体定义 and 操作员定义 DOWNLOAD。 | — | — |
+| `CRS-M1-00417` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-008-EB64770DFDD9`<br>`ARINC-615A-3 5.4.4 p.38` | `TARGET-HARDWARE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IMPLEMENT-NONE-ONE-BOTH-DOWNLOAD-MODES` / `MEDIA-DEFINED, OPERATOR-DEFINED` / `IMPLEMENT-NONE-ONE-BOTH-DOWNLOAD-MODES-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件可以实现 none, one, or both DOWNLOAD modes。 | — | — |
+| `CRS-M1-00418` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-009-DD0255D27FB0`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SPECIFY-TFTP-OPTIONS-SUPPLY-DATA-INTEGRITY-CHECK-TRANSFER` / `TFTP-OPTIONS` / `SPECIFY-TFTP-OPTIONS-SUPPLY-DATA-INTEGRITY-CHECK-TRANSFER-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器可以规定 TFTP options that supply a data-integrity check for the transfer。 | — | DEP-RFC-1350, DEP-RFC-2347 |
+| `CRS-M1-00419` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-010-12B60035E133`<br>`ARINC-615A-3 5.4.4 p.38` | `TARGET-HARDWARE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IMPLEMENT-TFTP-INTEGRITY-OPTION` / `TFTP-OPTION` / `IMPLEMENT-TFTP-INTEGRITY-OPTION-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件可以实现 that TFTP integrity option。 | — | DEP-RFC-2347 |
+| `CRS-M1-00420` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-011-3CF28DC21423`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `IT-SUPPORTS-OFFERED-CHECK-VALUE-VALIDATE-DATA-TRANSFER` / `CHECK-VALUE` / `IT-SUPPORTS-OFFERED-CHECK-VALUE-VALIDATE-DATA-TRANSFER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须if it supports the offered check value, 校验 the data transfer。 | — | DEP-RFC-1350 |
+| `CRS-M1-00421` | `SU-ARINC-615A-3-5-4-4-P050-PROSE-SENTENCE-012-D9C78F1A4E4C`<br>`ARINC-615A-3 5.4.4 p.38` | `DATA-LOADER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TREAT-CHECKSUM-VALIDATION-INFORMATION-ONLY-STILL-EXPORT-FILE` / `CHECKSUM, EXPORT` / `TREAT-CHECKSUM-VALIDATION-INFORMATION-ONLY-STILL-EXPORT-FILE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，数据加载器必须把 校验和 validation as information only and still export the file。 | — | — |
+| `CRS-M1-00422` | `SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-004-E7A9E12EDE22`<br>`ARINC-615A-3 5.4.4.1 p.38` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `USE-LNR-ALREADY-STORED-ARINC-665-PART-MEDIA` / `LNR, ARINC-665-PART` / `USE-LNR-ALREADY-STORED-ARINC-665-PART-MEDIA-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器可以使用 an LNR already stored in an ARINC 665 part on the media。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00423` | `SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-006-F3361F00DCE2`<br>`ARINC-615A-3 5.4.4.1 p.38` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `EXAMINE-EACH-PART-HEADER-OFFER-HEADERS-WHOSE-DOWNLOAD-BIT-SET` / `DOWNLOAD-BIT, HEADER-FILE` / `EXAMINE-EACH-PART-HEADER-OFFER-HEADERS-WHOSE-DOWNLOAD-BIT-SE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须检查 each part header and 提供 headers whose download bit is set。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00424` | `SU-ARINC-615A-3-5-4-4-1-P050-PROSE-SENTENCE-007-A88849FBE53E`<br>`ARINC-615A-3 5.4.4.1 p.38` | `OPERATOR` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `MORE-THAN-ONE-DOWNLOAD-BIT-HEADER-EXISTS-SELECT-ONE` / `HEADER-FILE` / `MORE-THAN-ONE-DOWNLOAD-BIT-HEADER-EXISTS-SELECT-ONE-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，操作员可以if more than one download-bit header exists, 选择 one。 | — | — |
+| `CRS-M1-00426` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-002-1036539E638B`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `PROMPT-OPERATOR-REPLACE-SELECT-WRITABLE-MEDIA-BEFORE-STARTING-DOWNLOAD` / `WRITABLE-MEDIA` / `PROMPT-OPERATOR-REPLACE-SELECT-WRITABLE-MEDIA-BEFORE-STARTIN-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须在开始 DOWNLOAD 前提示操作员更换或选择可写媒体。 | — | — |
+| `CRS-M1-00427` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-003-3B9221D5DF13`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `FAIL-DOWNLOAD-WRITE-STILL-FAILS-AFTER-ASKING-WRITABLE-MEDIA` / `WRITABLE-MEDIA` / `FAIL-DOWNLOAD-WRITE-STILL-FAILS-AFTER-ASKING-WRITABLE-MEDIA-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在可移动媒体既是 LNR 来源又是下载数据目的地时，若在要求可写媒体之后写入仍然失败，数据加载器必须使 DOWNLOAD 失败。 | — | — |
+| `CRS-M1-00428` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-004-C40353394C94`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `CREATE-NEW-DNLD-DATA-THW-ID-POS-NUMBER-DIRECTORY-EACH` / `DNLD-DATA` / `CREATE-NEW-DNLD-DATA-THW-ID-POS-NUMBER-DIRECTORY-EACH-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须为每次下载新建 DNLD_DATA_<THW_ID_POS>_<number> 目录。 | — | — |
+| `CRS-M1-00429` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-008-4B56712D118C`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `CREATE-DNLD-INFO-THW-ID-POS-NUMBER-MANUFACTURER-SPECIFIC-DOWNLOAD` / `DNLD-INFO` / `CREATE-DNLD-INFO-THW-ID-POS-NUMBER-MANUFACTURER-SPECIFIC-DOW-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器可以为制造商专用下载信息创建 DNLD_INFO_<THW_ID_POS>_<number> 文件。 | — | — |
+| `CRS-M1-00430` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-033-EC6A3B3AFA4A`<br>`ARINC-615A-3 6.3.3 p.58` | `OPERATOR` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `SELECT-MEDIA-TYPE-MEDIA-DEFINED-DOWNLOAD` / `MEDIA-TYPE` / `SELECT-MEDIA-TYPE-MEDIA-DEFINED-DOWNLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，操作员必须选择 the media type for 媒体定义 DOWNLOAD。 | — | — |
+| `CRS-M1-00431` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-038-2ED4ABAC4193`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY` / `LNS, ATTACHMENT-4` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须发送 状态文件s within the 附件 4 DLP maximum delay。 | — | — |
+| `CRS-M1-00432` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-040-18B50A8E503C`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSIDE-TIMEOUT` / `LNS, STATUS-CODE, STATUS-DESCRIPTION` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSID-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须on fatal error emit a 状态文件 with matching code and description inside the timeout。 | — | — |
+| `CRS-M1-00433` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-041-7AC0400C9DB1`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT` / `ABORT-5-3-2-3-6, INTERRUPT-6-3-6` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件可以发送 a 状态文件 immediately to carry an 中止 or interrupt。 | — | — |
+| `CRS-M1-00434` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-050-D8862D88C46E`<br>`ARINC-615A-3 6.3.3 p.58` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHOUT-WAITING-IT` / `EXCEPTION-TIMER` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，若目标在 Exception Timer 到期前应答，数据加载器必须继续而不把该定时器等待完毕。 | — | — |
+| `CRS-M1-00435` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-051-E812AC346D09`<br>`ARINC-615A-3 6.3.3 p.58` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT` / `EXCEPTION-TIMER` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须尽量缩短 Exception Timer so the silent phase stays short。 | — | — |
+| `CRS-M1-00436` | `SU-ARINC-615A-3-6-3-3-P070-PROSE-SENTENCE-052-91F9A68124BD`<br>`ARINC-615A-3 6.3.3 p.58` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-TIMER` / `EXCEPTION-TIMER, LNS` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-T-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须中止 DOWNLOAD if no new 状态文件 arrives before Exception Timer expires。 | — | — |
+| `CRS-M1-00437` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-007-18AB4BEB6990`<br>`ARINC-615A-3 6.3.4 p.61` | `OPERATOR` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ABLE-SELECT-MEDIA-TYPE-OPERATOR-DEFINED-DOWNLOAD` / `MEDIA-TYPE` / `ABLE-SELECT-MEDIA-TYPE-OPERATOR-DEFINED-DOWNLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，操作员必须be able to 选择 the media type for 操作员定义 DOWNLOAD。 | — | — |
+| `CRS-M1-00438` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-012-2ED4ABAC4193`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY--00981` / `LNS, ATTACHMENT-4` / `SEND-STATUS-FILES-WITHIN-ATTACHMENT-4-DLP-MAXIMUM-DELAY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须发送 状态文件s within the 附件 4 DLP maximum delay。 | — | — |
+| `CRS-M1-00439` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-014-9F2F8E73FD5D`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSIDE-TIMEOUT--00983` / `LNS, STATUS-CODE, STATUS-DESCRIPTION` / `FATAL-ERROR-EMIT-STATUS-FILE-MATCHING-CODE-DESCRIPTION-INSID-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须on fatal error emit a 状态文件 with matching code and description inside the timeout。 | — | — |
+| `CRS-M1-00440` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-015-7AC0400C9DB1`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT--00984` / `ABORT-5-3-2-3-6, INTERRUPT-6-3-6` / `SEND-STATUS-FILE-IMMEDIATELY-CARRY-ABORT-INTERRUPT-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件可以发送 a 状态文件 immediately to carry an 中止 or interrupt。 | — | — |
+| `CRS-M1-00441` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-024-D8862D88C46E`<br>`ARINC-615A-3 6.3.4 p.61` | `DATA-LOADER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHOUT-WAITING-IT--00993` / `EXCEPTION-TIMER` / `TARGET-ANSWERS-BEFORE-EXCEPTION-TIMER-ELAPSES-CONTINUE-WITHO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，若目标在 Exception Timer 到期前应答，数据加载器必须继续而不把该定时器等待完毕。 | — | — |
+| `CRS-M1-00442` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-025-E812AC346D09`<br>`ARINC-615A-3 6.3.4 p.61` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT--00994` / `EXCEPTION-TIMER` / `MINIMIZE-EXCEPTION-TIMER-SO-SILENT-PHASE-STAYS-SHORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须尽量缩短 Exception Timer so the silent phase stays short。 | — | — |
+| `CRS-M1-00443` | `SU-ARINC-615A-3-6-3-4-P073-PROSE-SENTENCE-026-464E9E6694A8`<br>`ARINC-615A-3 6.3.4 p.61` | `DATA-LOADER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-TIMER--00995` / `EXCEPTION-TIMER, LNS` / `ABORT-DOWNLOAD-NO-NEW-STATUS-FILE-ARRIVES-BEFORE-EXCEPTION-T-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须中止 DOWNLOAD if no new 状态文件 arrives before Exception Timer expires。 | — | — |
+| `CRS-M1-00444` | `SU-ARINC-615A-3-6-4-6-P091-PROSE-SENTENCE-016-1532165AA3AE`<br>`ARINC-615A-3 6.4.6 p.79` | `PROTOCOL-FILE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNR-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNR-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNR File Name 的零终止。 | — | — |
+| `CRS-M1-00445` | `SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-028-83077CACF0DC`<br>`ARINC-615A-3 6.4.7 p.80` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `OTHER-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD-LEFTOVER` / `DOWNLOAD-STATUS-DESCRIPTION` / `OTHER-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方对其他状态码可以忽略描述字段内容，其中可能残留数据。 | — | — |
+| `CRS-M1-00446` | `SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-030-B1FB47BD2E90`<br>`ARINC-615A-3 6.4.7 p.80` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `USE-ONLY-PRINTABLE-CHARACTERS-DOWNLOAD-STATUS-DESCRIPTION-NO-CONTROL-CHARACTERS` / `DOWNLOAD-STATUS-DESCRIPTION` / `USE-ONLY-PRINTABLE-CHARACTERS-DOWNLOAD-STATUS-DESCRIPTION-NO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in Download Status Description, with no control characters, max 255。 | — | — |
+| `CRS-M1-00447` | `SU-ARINC-615A-3-6-4-7-P092-PROSE-SENTENCE-031-1532165AA3AE`<br>`ARINC-615A-3 6.4.7 p.80` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-DOWNLOAD-STATUS-DESCRIPTION-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-DOWNLOAD-STATUS-DESCRIPTION-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 Download Status Description 的零终止。 | — | — |
+| `CRS-M1-00448` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-040-BFA9E163247A`<br>`ARINC-615A-3 6.4.7 p.81` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SET-EXCEPTION-TIMER-0X0000-EVERY-OTHER-STATUS-CODE` / `EXCEPTION-TIMER, OBJ-0X0000` / `SET-EXCEPTION-TIMER-0X0000-EVERY-OTHER-STATUS-CODE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把其他状态码的 Exception Timer 置为 0x0000。 | — | — |
+| `CRS-M1-00449` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-045-16B3A57C8CEC`<br>`ARINC-615A-3 6.4.7 p.81` | `TARGET-HARDWARE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `PROVIDE-ESTIMATED-TIME-SOON-POSSIBLE-DURING-OPERATION` / `ESTIMATED-TIME` / `PROVIDE-ESTIMATED-TIME-SOON-POSSIBLE-DURING-OPERATION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，目标硬件必须在操作过程中尽快提供 Estimated Time。 | — | — |
+| `CRS-M1-00450` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-048-581419285745`<br>`ARINC-615A-3 6.4.7 p.81` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TARGET-DOES-NOT-GIVE-ESTIMATED-TIME-SET-FIELD-0XFFFF` / `ESTIMATED-TIME, OBJ-0XFFFF` / `TARGET-DOES-NOT-GIVE-ESTIMATED-TIME-SET-FIELD-0XFFFF-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，若目标未给出 Estimated Time，协议文件生成方必须把该字段置为 0xFFFF。 | — | — |
+| `CRS-M1-00451` | `SU-ARINC-615A-3-6-4-7-P093-PROSE-SENTENCE-058-1532165AA3AE`<br>`ARINC-615A-3 6.4.7 p.81` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNS-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNS-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNS File Name 的零终止。 | — | — |
+| `CRS-M1-00452` | `SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-077-6BCAB56CC15C`<br>`ARINC-615A-3 6.4.7 p.82` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `OTHER-FILE-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-HOLD` / `FILE-STATUS-DESCRIPTION` / `OTHER-FILE-STATUS-CODES-IGNORE-DESCRIPTION-CONTENT-WHICH-MAY-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方对其他文件状态码可以忽略描述字段内容，其中可能残留数据。 | — | — |
+| `CRS-M1-00453` | `SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-079-53AAFA003A8B`<br>`ARINC-615A-3 6.4.7 p.82` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `USE-ONLY-PRINTABLE-CHARACTERS-FILE-STATUS-DESCRIPTION-NO-CONTROL-CHARACTERS` / `FILE-STATUS-DESCRIPTION` / `USE-ONLY-PRINTABLE-CHARACTERS-FILE-STATUS-DESCRIPTION-NO-CON-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in File Status Description, with no control characters, max 255。 | — | — |
+| `CRS-M1-00454` | `SU-ARINC-615A-3-6-4-7-P094-PROSE-SENTENCE-080-1532165AA3AE`<br>`ARINC-615A-3 6.4.7 p.82` | `PROTOCOL-FILE` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-FILE-STATUS-DESCRIPTION-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-FILE-STATUS-DESCRIPTION-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 File Status Description 的零终止。 | — | — |
+| `CRS-M1-00455` | `SU-ARINC-615A-3-6-4-8-P095-PROSE-SENTENCE-015-1532165AA3AE`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNL-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNL-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNL File Name 的零终止。 | — | — |
+| `CRS-M1-00456` | `SU-ARINC-615A-3-6-4-8-P096-PROSE-SENTENCE-020-53AAFA003A8B`<br>`ARINC-615A-3 6.4.8 p.84` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `USE-ONLY-PRINTABLE-CHARACTERS-LNL-FILE-DESCRIPTION-NO-CONTROL-CHARACTERS` / `FILE-DESCRIPTION` / `USE-ONLY-PRINTABLE-CHARACTERS-LNL-FILE-DESCRIPTION-NO-CONTRO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须使用 only printable characters in LNL File Description, with no control characters, max 255。 | — | — |
+| `CRS-M1-00457` | `SU-ARINC-615A-3-6-4-8-P096-PROSE-SENTENCE-021-1532165AA3AE`<br>`ARINC-615A-3 6.4.8 p.84` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNL-FILE-DESCRIPTION-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNL-FILE-DESCRIPTION-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNL File Description 的零终止。 | — | — |
+| `CRS-M1-00458` | `SU-ARINC-615A-3-6-4-9-P096-PROSE-SENTENCE-016-1532165AA3AE`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ZERO-TERMINATE-LNA-FILE-NAME-0X00` / `OBJ-0X00` / `ZERO-TERMINATE-LNA-FILE-NAME-0X00-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须用 0x00 作为 LNA File Name 的零终止。 | — | — |
+| `CRS-M1-00459` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R002`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNR 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00460` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R003`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNR 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。 | — | — |
+| `CRS-M1-00461` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R004`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNR 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00462` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R005`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNR 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00463` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R006`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNR 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00464` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R007`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-USER-DEFINED-DATA-LENGTH, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA-LENGTH。 | — | — |
+| `CRS-M1-00465` | `SU-ARINC-615A-3-TABLE-6_4_6-1-R008`<br>`ARINC-615A-3 6.4.6 p.78` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-USER-DEFINED-DATA, LNR` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNR 的 FIELD-USER-DEFINED-DATA。 | — | — |
+| `CRS-M1-00466` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R002`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNS 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00467` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R003`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNS 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。 | — | — |
+| `CRS-M1-00468` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R004`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-OPERATION-STATUS-CODE, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNS 的 FIELD-DOWNLOAD-OPERATION-STATUS-CODE。 | — | — |
+| `CRS-M1-00469` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R005`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNS 的 FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH。 | — | — |
+| `CRS-M1-00470` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R006`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-STATUS-DESCRIPTION, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNS 的 FIELD-DOWNLOAD-STATUS-DESCRIPTION。 | — | — |
+| `CRS-M1-00471` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R007`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-COUNTER, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNS 的 FIELD-COUNTER。 | — | — |
+| `CRS-M1-00472` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R008`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-EXCEPTION-TIMER, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Exception Timer 编为表序 7 的固定 16 位字段。该字段在状态 0x0002 或 0x0004 用作 0..65535 的剩余秒数；其他状态仍保留该字段并置 0x0000。 | — | — |
+| `CRS-M1-00473` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R009`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-ESTIMATED-TIME, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Estimated Time 编为表序 8 的固定 16 位字段。状态 0x0002 或 0x0004 携带 0..32767 的剩余秒数，0xFFFF 表示未给出；其他状态仍保留该字段并置 0x0000。非活动的 0x0000 是未使用填充，不是未给出哨兵。 | — | — |
+| `CRS-M1-00474` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R010`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-DOWNLOAD-LIST-RATIO, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须把 LNS Download List Ratio 编为三个右对齐、前导空白的 ASCII 字符，而不是整数。 | — | — |
+| `CRS-M1-00475` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R011`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 10 个字段位置编码 LNS 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00476` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R012`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 11 个字段位置编码 LNS 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00477` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R013`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 12 个字段位置编码 LNS 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00478` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R014`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-STATUS, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 13 个字段位置编码 LNS 的 FIELD-FILE-STATUS。 | — | — |
+| `CRS-M1-00479` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R015`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-STATUS-DESCRIPTION-LENGTH, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 14 个字段位置编码 LNS 的 FIELD-FILE-STATUS-DESCRIPTION-LENGTH。 | — | — |
+| `CRS-M1-00480` | `SU-ARINC-615A-3-TABLE-6_4_7-1-R016`<br>`ARINC-615A-3 6.4.7 p.79` | `PROTOCOL-FILE-PRODUCER` / `WHEN-MEDIA-OR-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-STATUS-DESCRIPTION, LNS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义或操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 15 个字段位置编码 LNS 的 FIELD-FILE-STATUS-DESCRIPTION。 | — | — |
+| `CRS-M1-00481` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R002`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNL 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00482` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R003`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNL 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。 | — | — |
+| `CRS-M1-00483` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R004`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNL 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00484` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R005`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNL 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00485` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R006`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNL 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00486` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R007`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-DESCRIPTION-LENGTH, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 6 个字段位置编码 LNL 的 FIELD-FILE-DESCRIPTION-LENGTH。 | — | — |
+| `CRS-M1-00487` | `SU-ARINC-615A-3-TABLE-6_4_8-1-R008`<br>`ARINC-615A-3 6.4.8 p.83` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-DESCRIPTION, LNL` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 7 个字段位置编码 LNL 的 FIELD-FILE-DESCRIPTION。 | — | — |
+| `CRS-M1-00488` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R002`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-LENGTH, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 1 个字段位置编码 LNA 的 FIELD-FILE-LENGTH。 | — | — |
+| `CRS-M1-00489` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R003`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-PROTOCOL-VERSION, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在使用对应 DOWNLOAD 模式时，协议文件生成方必须把 LNA 的 FIELD-PROTOCOL-VERSION 按表序号 2 编码为两个 ASCII 字符。 | — | — |
+| `CRS-M1-00490` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R004`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-NUMBER-OF-FILES, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 3 个字段位置编码 LNA 的 FIELD-NUMBER-OF-FILES。 | — | — |
+| `CRS-M1-00491` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R005`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME-LENGTH, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 4 个字段位置编码 LNA 的 FIELD-FILE-NAME-LENGTH。 | — | — |
+| `CRS-M1-00492` | `SU-ARINC-615A-3-TABLE-6_4_9-1-R006`<br>`ARINC-615A-3 6.4.9 p.84` | `PROTOCOL-FILE-PRODUCER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ENCODE-TABULATED-FIELD` / `FIELD-FILE-NAME, LNA` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，协议文件生成方必须按表定宽度和第 5 个字段位置编码 LNA 的 FIELD-FILE-NAME。 | — | — |
+| `CRS-M1-00493` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E001-93E2E1579D6F`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-APPLICATION` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-MEDIA-INITIALIZATION-START-MEDIA-MODE-CHART` / `DOWNLOADING-MEDIA-INITIALIZATION` / `ISSUE-DOWNLOADING-MEDIA-INITIALIZATION-START-MEDIA-MODE-CHAR-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器应用层必须发出 Downloading_Media_Initialization to start the media-mode chart。 | — | — |
+| `CRS-M1-00494` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E002-56059C7FBCE3`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TFTP-READ-LND-TARGET` / `LND` / `TFTP-READ-LND-TARGET-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须用 TFTP 从目标读取 LND。 | — | — |
+| `CRS-M1-00495` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E003-7572FB4A7D49`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TRANSFER-LND-ANSWER-WAIT-RETRY` / `LND, WAIT` / `TRANSFER-LND-ANSWER-WAIT-RETRY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须传送 LND or answer WAIT for retry。 | — | — |
+| `CRS-M1-00496` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E004-F7FB3AED0BF8`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LND-OUTCOME` / `DOWNLOADING-INITIALIZATION-RESPONSE` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LND-OUTCOME-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须根据 LND 结果发出 Downloading_Initialization_Response。 | — | — |
+| `CRS-M1-00497` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E005-DDC22BBE77AD`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `END-MEDIA-DEFINED-DOWNLOAD-DENY` / `DENY` / `END-MEDIA-DEFINED-DOWNLOAD-DENY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器必须结束 媒体定义 DOWNLOAD on deny。 | — | — |
+| `CRS-M1-00498` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E006-FFDAE5BD327A`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `AFTER-ACCEPT-WRITE-LNR-TO-TARGET-BY-TFTP` / `LNR, TARGET-HARDWARE, TFTP` / `ACCEPT-TFTP-WRITE-LNR-TARGET-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须在接受之后用 TFTP 把 LNR 写到目标硬件。 | — | — |
+| `CRS-M1-00499` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E007-465C743F7A74`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `RECEIVE-ANALYZE-LNR` / `LNR` / `RECEIVE-ANALYZE-LNR-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须接收 and analyze LNR。 | — | — |
+| `CRS-M1-00500` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E008-4F5A7B67B142`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TFTP-WRITE-LNS-INCLUDING-ACCEPTED-NOT-STARTED-0X0001` / `LNS, OBJ-0X0001` / `TFTP-WRITE-LNS-INCLUDING-ACCEPTED-NOT-STARTED-0X0001-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须用 TFTP 写 LNS，并包含已接受但未开始的 0x0001。 | — | — |
+| `CRS-M1-00501` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E009-0C4A2E52223E`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `TFTP-SEND-EACH-LNR-LISTED-DATA-FILE` / `DATA-FILES` / `TFTP-SEND-EACH-LNR-LISTED-DATA-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须TFTP-发送 each LNR-listed data file。 | — | — |
+| `CRS-M1-00502` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E010-C4CF6F527181`<br>`ARINC-615A-3 6.3.3 p.57` | `DATA-LOADER-PROTOCOL` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE` / `DOWNLOADING-FILE-RECEIPT` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_Receipt for each 接收d file。 | — | — |
+| `CRS-M1-00503` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E011-86839F050632`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `REPEAT-REMAINING-FILES-LNS-PROGRESS` / `LNS` / `REPEAT-REMAINING-FILES-LNS-PROGRESS-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须重复 remaining files with LNS progress。 | — | — |
+| `CRS-M1-00504` | `SU-ARINC-615A-3-SECTION-6-3-3-SEQUENCE-CHART-E012-9EC73921C558`<br>`ARINC-615A-3 6.3.3 p.57` | `TARGET-HARDWARE` / `WHEN-MEDIA-DEFINED-DOWNLOAD-IS-USED` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRONO` / `LNS, ATTACHMENT-4` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRON-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用媒体定义 DOWNLOAD 时，目标硬件必须结束 after final LNS 完成 or fatal; honour 附件 4 chrono timeouts。 | — | — |
+| `CRS-M1-00505` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E001-D20446C4AA87`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-APPLICATION` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-OPERATOR-INITIALIZATION-START-OPERATOR-MODE-CHART` / `DOWNLOADING-OPERATOR-INITIALIZATION` / `ISSUE-DOWNLOADING-OPERATOR-INITIALIZATION-START-OPERATOR-MOD-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器应用层必须发出 Downloading_Operator_Initialization to start the operator-mode chart。 | — | — |
+| `CRS-M1-00506` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E002-FA62BFEC08D9`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TFTP-READ-LNO-TARGET` / `LNO` / `TFTP-READ-LNO-TARGET-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须用 TFTP 从目标读取 LNO。 | — | — |
+| `CRS-M1-00507` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E003-4E7C61B06179`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TRANSFER-LNO-ANSWER-WAIT-RETRY` / `LNO, WAIT` / `TRANSFER-LNO-ANSWER-WAIT-RETRY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须传送 LNO or answer WAIT for retry。 | — | — |
+| `CRS-M1-00508` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E004-4DD6ECF8E15C`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LNO-OUTCOME` / `DOWNLOADING-INITIALIZATION-RESPONSE` / `EMIT-DOWNLOADING-INITIALIZATION-RESPONSE-LNO-OUTCOME-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须根据 LNO 结果发出 Downloading_Initialization_Response。 | — | — |
+| `CRS-M1-00509` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E005-22221ABB2116`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `END-OPERATOR-DEFINED-DOWNLOAD-DENY` / `DENY` / `END-OPERATOR-DEFINED-DOWNLOAD-DENY-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器必须结束 操作员定义 DOWNLOAD on deny。 | — | — |
+| `CRS-M1-00510` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E006-145A7178D4F7`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `AFTER-ACCEPT-WRITE-LNL-TO-LOADER-BY-TFTP` / `LNL, DATA-LOADER, TFTP` / `ACCEPT-TFTP-WRITE-LNL-LOADER-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须在接受之后用 TFTP 把 LNL 写到加载器。 | — | — |
+| `CRS-M1-00511` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E007-BB90540A19D7`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-FILE-LIST-RECEIPT` / `DOWNLOADING-FILE-LIST-RECEIPT` / `ISSUE-DOWNLOADING-FILE-LIST-RECEIPT-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_List_Receipt。 | — | — |
+| `CRS-M1-00512` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E008-1FFC2020C9F9`<br>`ARINC-615A-3 6.3.4 p.60` | `OPERATOR` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `SELECT-FILES-LOADER-TFTP-WRITES-LNA-FILE-SELECTION` / `LNA, FILE-SELECTION` / `SELECT-FILES-LOADER-TFTP-WRITES-LNA-FILE-SELECTION-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，操作员必须选择 files; loader TFTP-writes LNA as File_Selection。 | — | — |
+| `CRS-M1-00513` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E009-0C4A2E52223E`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `TFTP-SEND-EACH-LNA-LISTED-DATA-FILE` / `DATA-FILES` / `TFTP-SEND-EACH-LNA-LISTED-DATA-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须TFTP-发送 each LNA-listed data file。 | — | — |
+| `CRS-M1-00514` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E010-C4CF6F527181`<br>`ARINC-615A-3 6.3.4 p.60` | `DATA-LOADER-PROTOCOL` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE--02783` / `DOWNLOADING-FILE-RECEIPT` / `ISSUE-DOWNLOADING-FILE-RECEIPT-EACH-RECEIVED-FILE-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，数据加载器协议层必须发出 Downloading_File_Receipt for each 接收d file。 | — | — |
+| `CRS-M1-00515` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E011-86839F050632`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `REPEAT-REMAINING-FILES-LNS-PROGRESS--02784` / `LNS` / `REPEAT-REMAINING-FILES-LNS-PROGRESS-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须重复 remaining files with LNS progress。 | — | — |
+| `CRS-M1-00516` | `SU-ARINC-615A-3-SECTION-6-3-4-SEQUENCE-CHART-E012-9EC73921C558`<br>`ARINC-615A-3 6.3.4 p.60` | `TARGET-HARDWARE` / `WHEN-OPERATOR-DEFINED-DOWNLOAD-IS-USED` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRONO--02785` / `LNS, ATTACHMENT-4` / `END-AFTER-FINAL-LNS-COMPLETE-FATAL-HONOUR-ATTACHMENT-4-CHRON-OBSERVABLE` | `FIGURE-CONSTRAINT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在实现并使用操作员定义 DOWNLOAD 时，目标硬件必须结束 after final LNS 完成 or fatal; honour 附件 4 chrono timeouts。 | — | — |
+| `CRS-M1-00517` | `SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-008-123ADFD1F0A0`<br>`ARINC-615A-3 APPENDIX-E p.122` | `DATA-LOADER` / `WHEN-615A-IS-CARRIED-OVER-AFDX` / `USE-FIND-NETWORK-CONFIGURATION-FILE-IDENTIFY-TARGETS-AFDX-NETWORK` / `FIND, NETWORK-CONFIGURATION-FILE` / `USE-FIND-NETWORK-CONFIGURATION-FILE-IDENTIFY-TARGETS-AFDX-NE-OBSERVABLE` | `MAY` / `OPTIONAL` | `CONDITIONAL` | 在配置的部署把 615A 承载于 AFDX 而非普通以太网时，数据加载器可以使用 FIND or a network configuration file to identify targets on the AFDX network。这不激活当前 Compliant 以太网实例。 | — | — |
+| `CRS-M1-00518` | `SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-011-E6FB447853B2`<br>`ARINC-615A-3 APPENDIX-E p.122` | `DATA-LOADER` / `WHEN-615A-IS-CARRIED-OVER-AFDX` / `USE-TFTP-PROTOCOL-DESCRIBED-615A-3-615A-OPERATIONS-OVER-AFDX` / `TFTP` / `USE-TFTP-PROTOCOL-DESCRIBED-615A-3-615A-OPERATIONS-OVER-AFDX-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在配置的部署把 615A 承载于 AFDX 而非普通以太网时，数据加载器必须使用 the TFTP protocol described in 615A-3 for 615A operations over AFDX。这不激活当前 Compliant 以太网实例。 | — | — |
+| `CRS-M1-00519` | `SU-ARINC-615A-3-APPENDIX-E-P134-PROSE-SENTENCE-013-B5690D59EDBF`<br>`ARINC-615A-3 APPENDIX-E p.122` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX` / `APPLY-664P4-ADDRESS-RULES-OR-INTEGRATOR-IDENTIFIED-REQUIREMENTS` / `ARINC-664-4-ADDRESS-RULES, INTEGRATOR-IDENTIFIED-ADDRESS-REQUIREMENTS` / `AFDX-ADDRESS-RULE-ALTERNATIVE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在配置的部署把 615A 承载于 AFDX 而非普通以太网时，系统集成商必须适用 664 Part 4 的航空数据网络地址规则，或指出集成商识别的地址要求。这两条路径保持可选择，不自动选定 Part 4，也不激活当前 Compliant 以太网实例。 | — | — |
+| `CRS-M1-00520` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF`<br>`ARINC-615A-3 3-2 p.96` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `KEEP-THREE-SECOND-FIND-ANSWER-WINDOW` / `FIND-ANSWER-WINDOW-3-S` / `FIND-ANSWER-WINDOW-LIFETIME-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 在实现 FIND 时，数据加载器必须在发出 FIND 请求后保持三秒 FIND 应答登记窗口。该三秒是窗口寿命，不是主机应答期限，也不是可以提前关闭登记的许可。中止 FIND 不豁免该三秒登记窗口寿命。 | `FIXED-SOURCE-CONSTANT` / `FIND-ANSWER-WINDOW-3-S` / `SOURCE-DEFINES-DEADLINE-OR-DURATION` / `3..3 s` / 证据：SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-002-F178271163DF | — |
+| `CRS-M1-00521` | `SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891`<br>`ARINC-615A-3 3-2 p.96` | `DATA-LOADER` / `WHEN-FIND-IMPLEMENTED` / `CLOSE-FIND-ANSWER-REGISTRATION-WHEN-WINDOW-EXPIRES` / `FIND-ANSWER-REGISTRATION, FIND-ANSWER-WINDOW-3-S` / `FIND-REGISTRATION-CLOSE-AT-WINDOW-END-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 在实现 FIND 时，数据加载器必须在发出 FIND 请求后三秒关闭 FIND 应答登记。该关闭与三秒窗口寿命到期是同一逻辑时刻，而不是到期后再延迟三秒。中止 FIND 不豁免该三秒窗口到期关闭。 | `FIXED-SOURCE-CONSTANT` / `FIND-ANSWER-WINDOW-3-S` / `SOURCE-DEFINES-DEADLINE-OR-DURATION` / `3..3 s` / 证据：SU-ARINC-615A-3-3-2-P108-PROSE-SENTENCE-004-30FC1BCEB891 | — |
+| `CRS-M1-00522` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-005-D462FF831585`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `CREATE-DNLD-DATA-DIRECTORY-IN-DOWNLOAD-MEDIA-ROOT` / `DNLD-DATA-DIRECTORY, DOWNLOAD-MEDIA-ROOT` / `DNLD-DATA-DIRECTORY-IN-ROOT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须在下载媒体的根目录下创建 DNLD_DATA 目录。 | — | — |
+| `CRS-M1-00523` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-006-ED9F856333F8`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `INCREMENT-DNLD-DATA-NUMBER-EACH-DOWNLOAD` / `DNLD-DATA-NUMBER, DNLD-DATA-DIRECTORY` / `DNLD-DATA-NUMBER-INCREMENTS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须在每次下载时递增 <number>，以使相继 DNLD_DATA 目录名保持唯一。 | — | — |
+| `CRS-M1-00524` | `SU-ARINC-615A-3-3-3-P108-PROSE-SENTENCE-003-9C92144E4252`<br>`ARINC-615A-3 3-3 p.96` | `FIND-PROTOCOL` / `WHEN-FIND-IMPLEMENTED` / `ENCODE-FIND-PACKET-AS-TWO-BYTE-HEADER-PLUS-VARIABLE-DATA` / `FIND-HEADER-2-BYTE, FIND-VARIABLE-LENGTH-DATA, FIND-OPCODE` / `FIND-HEADER-AND-DATA-LAYOUT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 在实现 FIND 时，每个 FIND 分组必须包含报头和可变长度数据区。报头为两字节并承载操作码。 | — | — |
+| `CRS-M1-00525` | `SU-ARINC-615A-3-5-4-4-3-P052-PROSE-SENTENCE-007-FF9E1B1FACD7`<br>`ARINC-615A-3 5.4.4.3 p.40` | `DATA-LOADER` / `WHEN-REMOVABLE-MEDIA-IS-LNR-SOURCE-AND-DOWNLOAD-DESTINATION` / `START-DNLD-DATA-NUMBER-AT-ONE` / `DNLD-DATA-NUMBER` / `DNLD-DATA-NUMBER-STARTS-AT-ONE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在可移动媒体既是 LNR 来源又是下载数据目的地时，数据加载器必须把 <number> 从 1 开始。 | — | — |
+| `CRS-M1-00526` | `SU-ARINC-665-5-2-3-P030-PROSE-SENTENCE-001-E7511EC8B8BE`<br>`ARINC-665-5 2.3 p.20` | `DATA-LOADER` / `WHEN-ARINC-615A-DATA-LOADING-IS-USED` / `MAY-USE-BATCH-FILE-FORMAT` / `BATCH-FILE-PART` / `BATCH-FILE-FORMAT-AVAILABLE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | ARINC 615A 数据加载系统可以使用 665 §2.3 定义的批处理文件格式。 | — | — |
+| `CRS-M1-00527` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-004-7082D7150B84`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `LET-BATCH-FILE-SELECT-LSPS-PER-TARGET-HW-POSITION` / `BATCH-FILE-PART, LOADABLE-SOFTWARE-PART` / `BATCH-FILE-MULTI-LSP-SELECTION-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件件必须让维护人员按目标硬件位置加载所选 LSP，而不必逐个挑选。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00528` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-007-285FD5C05BDE`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `IDENTIFY-BATCH-FILE-WITH-LUB-EXTENSION` / `BATCH-FILE-PART, LUB-EXTENSION` / `BATCH-FILE-EXTENSION-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件件必须用 .LUB 扩展名标识。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00529` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-008-81534B10BDAD`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MATCH-REFERENCED-HEADER-FILE-NAME-CASE` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-CASE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件中引用的头文件名必须与实际文件名的大小写一致。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00530` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-009-56EDF7937548`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PREFIX-BATCH-FILE-NAME-WITH-MANUFACTURER-CODE` / `BATCH-FILE-NAME, MANUFACTURER-CODE` / `BATCH-FILE-NAME-PREFIX-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件名的前三个字符必须是创建方的制造商代码。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00531` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-010-73139160EA3F`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `KEEP-BATCH-FILE-NAME-UNIQUE-PER-MANUFACTURER-CODE` / `BATCH-FILE-NAME` / `BATCH-FILE-NAME-UNIQUE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 同一制造商代码下每个批处理文件名的其余部分必须唯一。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00532` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-011-A1C9C9EEAFCF`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `KEEP-BATCH-FILE-PART-NUMBER-UNIQUE-AMONG-LSP-AND-BFP` / `BATCH-FILE-PART-NUMBER` / `BATCH-FILE-PN-UNIQUE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 同一制造商代码下，批处理文件件号必须在 LSP 与批处理文件集合中唯一。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00533` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-013-E373C6E2421A`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `REFERENCE-COMPLETE-HEADER-FILE-NAME-WITHOUT-PATH` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-COMPLETE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件中引用的头文件名必须是含扩展名的完整文件名，且不得包含路径。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00534` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-014-14C42482077F`<br>`ARINC-665-5 2.3.1 p.21` | `DATA-LOADER` / `WHEN-USING-BATCH-FILE-PART` / `USE-BATCH-FILE-ONLY-TO-AUTOMATE-MULTI-LSP-SETUP` / `BATCH-FILE-PART, DATA-LOADER` / `BATCH-FILE-LOADER-USE-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件分发给机上和机下 ARINC 615A 加载器，仅用于自动完成多 LSP 设置。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00535` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-015-BCA2BC43A1A3`<br>`ARINC-665-5 2.3.1 p.21` | `DATA-LOADER` / `WHEN-USING-BATCH-FILE-PART` / `DO-NOT-TRANSFER-BATCH-FILE-TO-TARGET-HARDWARE` / `BATCH-FILE-PART, TARGET-HARDWARE` / `BATCH-FILE-NOT-TRANSFERRED-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件件不得传送到目标硬件。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00536` | `SU-ARINC-665-5-2-3-1-P031-PROSE-SENTENCE-016-BEE78B9E25ED`<br>`ARINC-665-5 2.3.1 p.21` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `INCLUDE-BATCH-FILE-CONTENT-DEFINED-BY-TABLE-2-3-1-1` / `BATCH-FILE-PART, TABLE-2.3.1-1` / `BATCH-FILE-TABLE-CONTENT-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件必须包含表 2.3.1-1 规定的信息。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00537` | `SU-ARINC-665-5-2-3-1-1-P032-PROSE-SENTENCE-001-8941510B5311`<br>`ARINC-665-5 2.3.1.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE-BATCH-FILE-LENGTH-IN-16-BIT-WORDS` / `BATCH-FILE-LENGTH` / `BATCH-FILE-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件长度是该文件中 16 位字的数量。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00538` | `SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-004-86427B46E466`<br>`ARINC-665-5 2.3.1.8 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MAKE-BATCH-FILE-PN-COMPLIANT-WITH-SOFTWARE-LOAD-PN-FORMAT` / `BATCH-FILE-PN` / `BATCH-FILE-PN-FORMAT-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件件号必须符合 665 §2.1.1 的软件加载件号格式。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00539` | `SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-005-B74330A54136`<br>`ARINC-665-5 2.3.1.8 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `KEEP-BATCH-FILE-PN-DISTINCT-FROM-LSP-AND-MSP` / `BATCH-FILE-PN` / `BATCH-FILE-PN-DISTINCT-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件件号必须不同于任何 LSP 件号和任何 MSP 件号。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00540` | `SU-ARINC-665-5-2-3-1-12-P033-PROSE-SENTENCE-002-6F1E1E9893E9`<br>`ARINC-665-5 2.3.1.12 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `SET-LAST-LOAD-LIST-BLOCK-POINTER-TO-ZERO` / `LOAD-LIST-BLOCK-POINTER` / `LAST-LOAD-LIST-POINTER-ZERO-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 最后一个加载列表块的指针必须为零。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00541` | `SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-004-CA370AEF0845`<br>`ARINC-665-5 2.3.1.14 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MATCH-TARGET-HW-ID-POS-TO-TARGET-HARDWARE` / `TARGET-HW-ID-POS` / `TARGET-HW-ID-POS-MATCH-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Target HW ID POS 必须与该批处理文件要加载的目标硬件 THW_ID_POS 一致。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00542` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-001-F4394EF0EEC6`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MATCH-HEADER-FILE-NAME-TO-LISTED-LSP` / `HEADER-FILE-NAME, LOAD-PN` / `HEADER-FILE-NAME-MATCH-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 头文件名必须与 Load PN 字段所标识 LSP 的头文件一致。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00543` | `SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-001-4385D6046683`<br>`ARINC-665-5 2.3.1.19 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MATCH-LOAD-PN-TO-LSP-FOR-TARGET-HW-ID-POS` / `LOAD-PN, TARGET-HW-ID-POS` / `LOAD-PN-MATCH-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Load PN 必须与要加载到该 Target HW ID POS 的 LSP 件号一致。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00544` | `SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-001-216B865544A5`<br>`ARINC-665-5 2.3.1.20 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PLACE-BATCH-FILE-CRC-COVERING-FILE-EXCLUDING-CRC-FIELD` / `BATCH-FILE-CRC` / `BATCH-FILE-CRC-FIELD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件 CRC 是覆盖该文件且不含 CRC 字段自身的 16 位 CRC。算法身份仍由 ARINC 645 阻塞。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00545` | `SU-ARINC-665-5-2-3-1-20-P035-PROSE-SENTENCE-002-2E8577AE49D2`<br>`ARINC-665-5 2.3.1.20 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `COMPUTE-BATCH-FILE-CRC-PER-ARINC-645` / `BATCH-FILE-CRC` / `BATCH-FILE-CRC-ALGORITHM-BLOCKED-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件 CRC 须按 ARINC 645 计算。本 PR 只记录 665 触发点，不绑定 645。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00546` | `SU-ARINC-665-5-TABLE-2-3-1-1-R001`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的批处理文件长度字段编码为 32 位，并以 16 位字计数整个文件。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00547` | `SU-ARINC-665-5-TABLE-2-3-1-1-R002`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-FORMAT-VERSION` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的批处理文件格式版本字段编码为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00548` | `SU-ARINC-665-5-TABLE-2-3-1-1-R003`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-SPARE` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的 Spare 字段编码为 16 位，用于对齐随后的指针。本源单元不把该字段值约束为零。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00549` | `SU-ARINC-665-5-TABLE-2-3-1-1-R004`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-POINTER-TO-BATCH-FILE-PN-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的批处理文件件号长度指针字段编码为 32 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00550` | `SU-ARINC-665-5-TABLE-2-3-1-1-R005`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的目标硬件标识加载列表块数目指针字段编码为 32 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00551` | `SU-ARINC-665-5-TABLE-2-3-1-1-R006`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-EXPANSION-POINT-1` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 扩展点 1 保持为表列的 0 位宽度。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00552` | `SU-ARINC-665-5-TABLE-2-3-1-1-R007`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-PN-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的批处理文件件号长度字段编码为 16 位。该值为字符数，不含用于补齐奇数长度的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00553` | `SU-ARINC-665-5-TABLE-2-3-1-1-R008`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-PN` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的批处理文件件号编码为 8 位 ASCII，分配宽度为 16*CEILING(BATCH-FILE-PN-LENGTH/2) 位；出现时使用一个或多个 16 位字。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00554` | `SU-ARINC-665-5-TABLE-2-3-1-1-R009`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-COMMENT-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的注释长度字段编码为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00555` | `SU-ARINC-665-5-TABLE-2-3-1-1-R010`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-COMMENT` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 将 LUB 的可选注释字段编码为 8 位 ASCII，分配宽度为 16*CEILING(COMMENT-LENGTH/2) 位；未使用时省略该字段。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00556` | `SU-ARINC-665-5-TABLE-2-3-1-1-R011`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-EXPANSION-POINT-2` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 扩展点 2 保持为表列的 0 位宽度。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00557` | `SU-ARINC-665-5-TABLE-2-3-1-1-R012`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的目标硬件标识加载列表块数目字段编码为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00558` | `SU-ARINC-665-5-TABLE-2-3-1-1-R013`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的下一目标硬件标识加载列表块指针按每个加载列表块编码为 16 位，存放到下一块的相对 16 位字偏移。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00559` | `SU-ARINC-665-5-TABLE-2-3-1-1-R014`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-TARGET-HW-ID-POS-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的 Target HW ID POS 长度按每个加载列表块编码为 16 位。该值为字符数，不含用于补齐奇数长度的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00560` | `SU-ARINC-665-5-TABLE-2-3-1-1-R015`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-TARGET-HW-ID-POS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的 Target HW ID POS 编码为 8 位 ASCII，分配宽度为 16*CEILING(TARGET-HW-ID-POS-LENGTH/2) 位；每个加载列表块在长度为正时出现一次。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00561` | `SU-ARINC-665-5-TABLE-2-3-1-1-R016`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的目标硬件位置加载数目按每个加载列表块编码为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00562` | `SU-ARINC-665-5-TABLE-2-3-1-1-R017`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-HEADER-FILE-NAME-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的头文件名长度按同一目标硬件标识下的每个加载编码为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00563` | `SU-ARINC-665-5-TABLE-2-3-1-1-R018`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-HEADER-FILE-NAME` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的头文件名编码为 8 位 ASCII，分配宽度为 16*CEILING(HEADER-FILE-NAME-LENGTH/2) 位；每个加载在长度为正时出现一次。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00564` | `SU-ARINC-665-5-TABLE-2-3-1-1-R019`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-LOAD-PN-LENGTH` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的加载件号长度按同一目标硬件标识下的每个加载编码为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00565` | `SU-ARINC-665-5-TABLE-2-3-1-1-R020`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-LOAD-PN` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的加载件号编码为 8 位 ASCII，分配宽度为 16*CEILING(LOAD-PN-LENGTH/2) 位；每个加载在长度为正时出现一次。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00566` | `SU-ARINC-665-5-TABLE-2-3-1-1-R021`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-EXPANSION-POINT-3` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 扩展点 3 保持为表列的 0 位宽度。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00567` | `SU-ARINC-665-5-TABLE-2-3-1-1-R022`<br>`ARINC-665-5 2.3.1 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE` / `FIELD-BATCH-FILE-CRC` / `FIELD-PRESENCE-SIZE-AND-VALUE-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 将 LUB 的批处理文件 CRC 字段编码为 16 位，覆盖该文件且不含 CRC 字段自身。算法身份仍由 ARINC 645 阻塞。 | — | DEP-ARINC-645, GAP-ARINC-645 |
+| `CRS-M1-00568` | `SU-ARINC-665-5-2-3-1-2-P032-PROSE-SENTENCE-001-A4C713095594`<br>`ARINC-665-5 2.3.1.2 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `DEFINE-BATCH-FILE-FORMAT-VERSION-IN-16-BITS` / `BATCH-FILE-FORMAT-VERSION` / `BATCH-FILE-FORMAT-VERSION-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件格式版本字段为 16 位。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00569` | `SU-ARINC-665-5-2-3-1-2-P032-PROSE-SENTENCE-002-79DEDA3F0A7A`<br>`ARINC-665-5 2.3.1.2 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `TAKE-BATCH-FILE-FORMAT-VERSION-FROM-CLAUSE-1-4-1` / `BATCH-FILE-FORMAT-VERSION` / `BATCH-FILE-FORMAT-VERSION-IDENTITY-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件格式版本取值必须遵循 665 §1.4.1 的文件格式版本定义。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00570` | `SU-ARINC-665-5-2-3-1-3-P032-PROSE-SENTENCE-001-07120FC5FECE`<br>`ARINC-665-5 2.3.1.3 p.22` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `USE-SPARE-TO-ALIGN-FOLLOWING-POINTERS-ON-4-BYTE-BOUNDARIES` / `SPARE, POINTER-FIELDS` / `SPARE-ALIGNMENT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Spare 字段必须对齐随后按 4 字节边界定义的指针。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00571` | `SU-ARINC-665-5-2-3-1-4-P033-PROSE-SENTENCE-001-950EEAD4BFA9`<br>`ARINC-665-5 2.3.1.4 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `POINT-TO-BATCH-FILE-PN-LENGTH-FROM-START-IN-16-BIT-WORDS` / `POINTER-TO-BATCH-FILE-PN-LENGTH` / `PN-LENGTH-POINTER-ORIGIN-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件件号长度指针是自文件起始计的绝对 16 位字数。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00572` | `SU-ARINC-665-5-2-3-1-5-P033-PROSE-SENTENCE-001-D39CAFDDE98D`<br>`ARINC-665-5 2.3.1.5 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `POINT-TO-LOAD-LIST-BLOCK-COUNT-FROM-START-IN-16-BIT-WORDS` / `POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS` / `LOAD-LIST-COUNT-POINTER-ORIGIN-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 目标硬件标识加载列表块数目指针是自文件起始计的绝对 16 位字数。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00573` | `SU-ARINC-665-5-2-3-1-6-P033-PROSE-SENTENCE-001-B0745F7F3F78`<br>`ARINC-665-5 2.3.1.6 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `MAY-GROW-FILE-FORMAT-AT-EXPANSION-POINTS` / `EXPANSION-POINTS` / `EXPANSION-POINT-GROWTH-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 扩展点是后续文件格式版本可以新增字段的位置。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00574` | `SU-ARINC-665-5-2-3-1-7-P033-PROSE-SENTENCE-001-85A74B75BC3D`<br>`ARINC-665-5 2.3.1.7 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `EXCLUDE-NUL-PAD-FROM-BATCH-FILE-PN-LENGTH` / `BATCH-FILE-PN-LENGTH` / `BATCH-FILE-PN-LENGTH-EXCLUDES-NUL-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件件号长度是字符数，不得计入为补齐奇数长度而追加的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00575` | `SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-001-CD2F980ECAAD`<br>`ARINC-665-5 2.3.1.8 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE-BATCH-FILE-PN-AS-8-BIT-ASCII` / `BATCH-FILE-PN` / `BATCH-FILE-PN-ASCII-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件件号必须是 8 位 ASCII，字符数由批处理文件件号长度给出。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00576` | `SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-002-14957CC0EE75`<br>`ARINC-665-5 2.3.1.8 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ALLOCATE-BATCH-FILE-PN-EVEN-OCTET-WIDTH` / `BATCH-FILE-PN` / `BATCH-FILE-PN-EVEN-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 批处理文件件号字段必须分配偶数个字节。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00577` | `SU-ARINC-665-5-2-3-1-8-P033-PROSE-SENTENCE-003-CA9D6749B1E7`<br>`ARINC-665-5 2.3.1.8 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PAD-ODD-BATCH-FILE-PN-WITH-NUL` / `BATCH-FILE-PN` / `BATCH-FILE-PN-NUL-PAD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 若批处理文件件号字符数为奇数，则追加一个 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00578` | `SU-ARINC-665-5-2-3-1-9-P033-PROSE-SENTENCE-001-37210AE320F9`<br>`ARINC-665-5 2.3.1.9 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `EXCLUDE-NUL-PAD-FROM-COMMENT-LENGTH` / `COMMENT-LENGTH` / `COMMENT-LENGTH-EXCLUDES-NUL-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 注释长度是字符数，不得计入为补齐奇数长度而追加的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00579` | `SU-ARINC-665-5-2-3-1-9-P033-PROSE-SENTENCE-002-DF06B1AE9E4A`<br>`ARINC-665-5 2.3.1.9 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `SET-COMMENT-LENGTH-ZERO-WHEN-NO-COMMENT` / `COMMENT-LENGTH` / `COMMENT-LENGTH-ZERO-WHEN-ABSENT-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 若该批处理没有注释，注释长度必须为零。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00580` | `SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-001-6238B2C14CAF`<br>`ARINC-665-5 2.3.1.10 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE-COMMENT-AS-8-BIT-ASCII` / `COMMENT` / `COMMENT-ASCII-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 注释字段必须是 8 位 ASCII，字符数由注释长度给出。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00581` | `SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-002-14957CC0EE75`<br>`ARINC-665-5 2.3.1.10 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ALLOCATE-COMMENT-EVEN-OCTET-WIDTH` / `COMMENT` / `COMMENT-EVEN-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 注释字段必须分配偶数个字节。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00582` | `SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-003-CA9D6749B1E7`<br>`ARINC-665-5 2.3.1.10 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PAD-ODD-COMMENT-WITH-NUL` / `COMMENT` / `COMMENT-NUL-PAD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 若注释字符数为奇数，则追加一个 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00583` | `SU-ARINC-665-5-2-3-1-10-P033-PROSE-SENTENCE-004-49D5CE38BD4B`<br>`ARINC-665-5 2.3.1.10 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `OMIT-COMMENT-FIELD-WHEN-COMMENT-LENGTH-ZERO` / `COMMENT` / `COMMENT-OMITTED-WHEN-LENGTH-ZERO-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 若注释长度为零，则必须省略注释字段。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00584` | `SU-ARINC-665-5-2-3-1-11-P033-PROSE-SENTENCE-001-B832BEAD3004`<br>`ARINC-665-5 2.3.1.11 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `COUNT-TARGET-HW-ID-LOAD-LIST-BLOCKS-IN-BATCH-FILE` / `NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS` / `LOAD-LIST-BLOCK-COUNT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 目标硬件标识加载列表块数目是该批处理文件中加载列表块的个数。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00585` | `SU-ARINC-665-5-2-3-1-12-P033-PROSE-SENTENCE-001-51F8853C49AB`<br>`ARINC-665-5 2.3.1.12 p.23` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `POINT-TO-NEXT-LOAD-LIST-BLOCK-IN-RELATIVE-16-BIT-WORDS` / `POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK` / `NEXT-LOAD-LIST-POINTER-RELATIVE-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 下一加载列表块指针是到下一块的相对 16 位字数。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00586` | `SU-ARINC-665-5-2-3-1-13-P034-PROSE-SENTENCE-001-10A78FF7C992`<br>`ARINC-665-5 2.3.1.13 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `EXCLUDE-NUL-PAD-FROM-TARGET-HW-ID-POS-LENGTH` / `TARGET-HW-ID-POS-LENGTH` / `TARGET-HW-ID-POS-LENGTH-EXCLUDES-NUL-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Target HW ID POS 长度是字符数，不得计入为补齐奇数长度而追加的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00587` | `SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-001-6C46D8F794E1`<br>`ARINC-665-5 2.3.1.14 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE-TARGET-HW-ID-POS-AS-8-BIT-ASCII` / `TARGET-HW-ID-POS` / `TARGET-HW-ID-POS-ASCII-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Target HW ID POS 必须是 8 位 ASCII，字符数由 Target HW ID POS 长度给出。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00588` | `SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-002-14957CC0EE75`<br>`ARINC-665-5 2.3.1.14 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ALLOCATE-TARGET-HW-ID-POS-EVEN-OCTET-WIDTH` / `TARGET-HW-ID-POS` / `TARGET-HW-ID-POS-EVEN-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Target HW ID POS 字段必须分配偶数个字节。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00589` | `SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-003-CA9D6749B1E7`<br>`ARINC-665-5 2.3.1.14 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PAD-ODD-TARGET-HW-ID-POS-WITH-NUL` / `TARGET-HW-ID-POS` / `TARGET-HW-ID-POS-NUL-PAD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 若 Target HW ID POS 字符数为奇数，则追加一个 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00590` | `SU-ARINC-665-5-2-3-1-14-P034-PROSE-SENTENCE-007-F728BBF0BB35`<br>`ARINC-665-5 2.3.1.14 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `KEEP-TARGET-HW-ID-POS-CONSISTENT-WITH-LISTED-LSP-HEADERS` / `TARGET-HW-ID-POS, HEADER-FILE-TARGET-HW-ID` / `TARGET-HW-ID-POS-HEADER-CONSISTENCY-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Target HW ID POS 应与该目标下列出的 LSP 头文件中的 Target HW ID 保持一致。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00591` | `SU-ARINC-665-5-2-3-1-15-P034-PROSE-SENTENCE-001-BE0892BD03B3`<br>`ARINC-665-5 2.3.1.15 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `COUNT-LOADS-IN-THE-TARGET-HW-ID-LOAD-LIST-BLOCK` / `NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS` / `LOAD-COUNT-IN-BLOCK-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 目标硬件标识的加载数目是该目标加载列表块中的加载个数。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00592` | `SU-ARINC-665-5-2-3-1-16-P034-PROSE-SENTENCE-001-F71F4DF1A130`<br>`ARINC-665-5 2.3.1.16 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `EXCLUDE-NUL-PAD-FROM-HEADER-FILE-NAME-LENGTH` / `HEADER-FILE-NAME-LENGTH` / `HEADER-FILE-NAME-LENGTH-EXCLUDES-NUL-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 头文件名长度是字符数，不得计入为补齐奇数长度而追加的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00593` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-002-EB03E6E8B2C2`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE-HEADER-FILE-NAME-AS-8-BIT-ASCII` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-ASCII-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 头文件名必须是 8 位 ASCII，字符数由头文件名长度给出。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00594` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-003-14957CC0EE75`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ALLOCATE-HEADER-FILE-NAME-EVEN-OCTET-WIDTH` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-EVEN-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 头文件名字段必须分配偶数个字节。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00595` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-004-CA9D6749B1E7`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PAD-ODD-HEADER-FILE-NAME-WITH-NUL` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-NUL-PAD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 若头文件名字符数为奇数，则追加一个 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00596` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-005-7FE318C16891`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `USE-HEADER-FILE-NAME-WITHOUT-PATH` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-NO-PATH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 头文件名只含文件名，不得包含路径信息。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00597` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-006-36F14C7EFAD7`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `KEEP-HEADER-FILE-NAME-FREE-OF-BACKSLASH` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-NO-BACKSLASH-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 文件名不得以反斜杠开头，也不得包含反斜杠。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00598` | `SU-ARINC-665-5-2-3-1-17-P034-PROSE-SENTENCE-007-3E0BD2C78076`<br>`ARINC-665-5 2.3.1.17 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `INCLUDE-HEADER-FILE-NAME-EXTENSIONS-AND-DELIMITERS` / `HEADER-FILE-NAME` / `HEADER-FILE-NAME-EXTENSIONS-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 文件名必须包含全部扩展名与分隔符。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00599` | `SU-ARINC-665-5-2-3-1-18-P034-PROSE-SENTENCE-001-A0FF5B212350`<br>`ARINC-665-5 2.3.1.18 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `DEFINE-LOAD-PN-LENGTH-AS-CHARACTER-COUNT` / `LOAD-PN-LENGTH` / `LOAD-PN-LENGTH-CHARACTER-COUNT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Load PN 长度是 Load PN 的字符数。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00600` | `SU-ARINC-665-5-2-3-1-18-P034-PROSE-SENTENCE-002-AE35CDA97957`<br>`ARINC-665-5 2.3.1.18 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `EXCLUDE-NUL-PAD-FROM-LOAD-PN-LENGTH` / `LOAD-PN-LENGTH` / `LOAD-PN-LENGTH-EXCLUDES-NUL-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Load PN 长度不得计入为补齐奇数长度而追加的 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00601` | `SU-ARINC-665-5-2-3-1-19-P034-PROSE-SENTENCE-002-2B0551BA0908`<br>`ARINC-665-5 2.3.1.19 p.24` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ENCODE-LOAD-PN-AS-8-BIT-ASCII` / `LOAD-PN` / `LOAD-PN-ASCII-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Load PN 必须是 8 位 ASCII，字符数由 Load PN 长度给出。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00602` | `SU-ARINC-665-5-2-3-1-19-P035-PROSE-SENTENCE-005-7E047E5900B9`<br>`ARINC-665-5 2.3.1.19 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `ALLOCATE-LOAD-PN-EVEN-OCTET-WIDTH` / `LOAD-PN` / `LOAD-PN-EVEN-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Load PN 字段必须分配偶数个字节。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00603` | `SU-ARINC-665-5-2-3-1-19-P035-PROSE-SENTENCE-006-CA9D6749B1E7`<br>`ARINC-665-5 2.3.1.19 p.25` | `SOFTWARE-PACKAGE-PRODUCER` / `WHEN-PRODUCING-BATCH-FILE-PART` / `PAD-ODD-LOAD-PN-WITH-NUL` / `LOAD-PN` / `LOAD-PN-NUL-PAD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 若 Load PN 字符数为奇数，则追加一个 NUL。 | — | DEP-ARINC-6655 |
+| `CRS-M1-00604` | `SU-ARINC-664-3-1.5-P013-PROSE-SENTENCE-001-CF0B59087E60`<br>`ARINC-664-3 1.5 p.13` | `ARINC-664P3-COMPLIANT-NETWORK` / `WHEN-P3-AND-RFC-REQUIREMENTS-CONFLICT` / `GIVE-664P3-PRECEDENCE-OVER-CONFLICTING-RFC-OPTIONS` / `IETF-RFC-OPTIONS, ARINC-664P3-PROFILE` / `P3-PRECEDENCE-OVER-RFC-OPTIONS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 当本 664P3 规范与适用 RFC、ISO 或 IEEE 标准冲突时，664P3 优先。该优先不是取消 ARINC 615A TFTP 选项规则的许可。 | — | DEP-ARINC-664-3 |
+| `CRS-M1-00605` | `SU-ARINC-664-3-3.3.2-P030-TABLE-ROW-001-248ABB819123`<br>`ARINC-664-3 3.3.2 p.30` | `ARINC-664P3-COMPLIANT-NETWORK` / `WHEN-OPERATING-ON-664P3-COMPLIANT-NETWORK` / `GENERATE-AND-CHECK-UDP-CHECKSUM` / `UDP-CHECKSUM` / `UDP-CHECKSUM-GENERATE-CHECK-OBSERVABLE` | `TABLE-CONSTRAINT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 在 664P3 UDP 路径上，端系统必须能按表 3.3.2-1 生成并检查 UDP 校验和。 | — | DEP-ARINC-664-3 |
+| `CRS-M1-00606` | `SU-ARINC-664-3-3.4.1-P031-PROSE-SENTENCE-001-C8FA1ADDD22F`<br>`ARINC-664-3 3.4.1 p.31` | `ARINC-664P3-COMPLIANT-NETWORK` / `WHEN-OPERATING-ON-664P3-PROFILED-OR-COMPLIANT-PATH` / `IMPLEMENT-IPV4-IN-ACCORDANCE-WITH-P3-FIGURE-3-4-1-1` / `IPV4-DATAGRAM` / `IPV4-P3-PROFILE-COMPLIANCE-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | Profiled 网络中的 IPv4 实现应符合图 3.4.1-1。该 profile 不抹去 ARINC 615A 数据加载器的分片/重组义务。 | — | DEP-ARINC-664-3 |
+| `CRS-M1-00607` | `SU-ARINC-664-7-3-P017-PROSE-SENTENCE-001-702F6DFF5983`<br>`ARINC-664-7 3 p.17` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PROVIDE-SECURE-RELIABLE-PARTITION-DATA-EXCHANGE` / `END-SYSTEM-SERVICES, PARTITION-SOFTWARE` / `AFDX-END-SYSTEM-SERVICE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，端系统的主要功能是向分区软件提供保证安全可靠数据交换的服务。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00608` | `SU-ARINC-664-7-4-P056-PROSE-SENTENCE-001-16D6958D7359`<br>`ARINC-664-7 4 p.56` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `FILTER-AND-POLICE-FRAMES-FOR-INTEGRITY-LENGTH-BUDGET-AND-DESTINATION` / `AFDX-SWITCH-FILTERING-AND-POLICING` / `AFDX-SWITCH-FILTER-POLICE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，到达交换机的帧按完整性、长度、流量预算与可接受目的地过滤。普通以太网试验不能证明该交换机行为。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00609` | `SU-ARINC-664-7-ATT-2-P102-PROSE-SENTENCE-001-783B772F160E`<br>`ARINC-664-7 ATT-2 p.102` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-AFDX-NOT-APPLICABLE-PROFILE-ITEMS-AS-MUST-NOT` / `AFDX-IP-UDP-PROFILE, RFC-1122-OPTIONAL-COLUMN` / `AFDX-NOT-APPLICABLE-MUST-NOT-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，附件 2 中标为 NOT APPLICABLE 的 profile 项解释为 MUST NOT。该 profile 不取代 RFC 身份或 ARINC 615A TFTP 规则。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00610` | `SU-RFC-768-FORMAT-P002-PROSE-SENTENCE-001-261706ECA34D`<br>`RFC-768 Format p.2` | `UDP-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-UDP` / `SET-UDP-LENGTH-TO-HEADER-PLUS-DATA-OCTETS` / `UDP-LENGTH` / `UDP-LENGTH-FIELD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | UDP Length 是包含本头与数据在内的用户数据报八位组长度。 | — | DEP-RFC-768 |
+| `CRS-M1-00611` | `SU-RFC-768-FIELDS-P002-PROSE-SENTENCE-001-3E02C3A99EE1`<br>`RFC-768 Fields p.2` | `UDP-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-UDP` / `COMPUTE-UDP-CHECKSUM-OVER-PSEUDO-HEADER-HEADER-AND-DATA` / `UDP-CHECKSUM` / `UDP-CHECKSUM-FIELD-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | UDP 校验和是 IP 伪头、UDP 头与数据的 16 位反码和的反码，必要时填充到二的倍数八位组。 | — | DEP-RFC-768 |
+| `CRS-M1-00612` | `SU-RFC-791-3.1-P008-PROSE-SENTENCE-001-443A672321C1`<br>`RFC-791 3.1 p.8` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `IMPLEMENT-IPV4-ADDRESSING-AND-FRAGMENTATION` / `IPV4-ADDRESSING, IPV4-FRAGMENTATION` / `IPV4-HEADER-IDENTITY-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 实现寻址与分片两项基本功能。 | — | DEP-RFC-791 |
+| `CRS-M1-00613` | `SU-RFC-791-3.2-FRAGMENT-P008-PROSE-SENTENCE-001-717559CE4530`<br>`RFC-791 3.2-fragment p.8` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `IMPLEMENT-IPV4-FRAGMENTATION-AND-REASSEMBLY` / `IPV4-FRAGMENTATION, IPV4-REASSEMBLY` / `IPV4-FRAGMENT-REASSEMBLY-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 实现分片与重组。ARINC 615A 数据加载器分片/重组与此机制对账，不被 664P3 Profiled 偏差抹去。 | — | DEP-RFC-791 |
+| `CRS-M1-00614` | `SU-RFC-1122-3-P029-PROSE-SENTENCE-001-44340B4D8C62`<br>`RFC-1122 3 p.29` | `IPV4-HOST` / `WHEN-RECEIVING-AN-IP-DATAGRAM` / `SILENTLY-DISCARD-NON-IPV4-VERSION` / `IPV4-VERSION-FIELD` / `NON-IPV4-VERSION-SILENT-DISCARD-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 版本号不是 4 的数据报必须被静默丢弃。登记该主机规则并不建立 IPV4-UDP-HOST-COMMUNICATION-SEMANTICS。 | — | DEP-RFC-1122 |
+| `CRS-M1-00615` | `SU-RFC-1122-4-UDP-P078-PROSE-SENTENCE-001-97CB6EED1414`<br>`RFC-1122 4-UDP p.78` | `UDP-HOST` / `WHEN-SENDING-OR-RECEIVING-UDP` / `GENERATE-AND-VALIDATE-UDP-CHECKSUMS` / `UDP-CHECKSUM` / `UDP-CHECKSUM-HOST-FACILITY-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 主机必须实现生成并校验 UDP 校验和的能力。登记该规则并不建立 IPV4-UDP-HOST-COMMUNICATION-SEMANTICS。 | — | DEP-RFC-1122 |
+| `CRS-M1-00616` | `SU-RFC-1123-4.2-P044-PROSE-SENTENCE-001-4EE42D37EF0F`<br>`RFC-1123 4.2 p.44` | `TFTP-HOST` / `WHEN-USING-TFTP-AS-615A-FILE-TRANSFER` / `APPLY-RFC-1123-TFTP-HOST-NOTES-WITHOUT-ADOPTING-MAIL-NETASCII-OR-BROADCAST-RRQ` / `TFTP-OCTET-MODE, SORCERERS-APPRENTICE` / `TFTP-HOST-APPLICATION-PREMISE-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | RFC 1123 第 4.2 节补充主机 TFTP 说明。ARINC 615A 使用带自有选项集的 octet TFTP；mail 由 4.2.2.1 禁止，netascii 保持出配置，广播请求被静默忽略而不是用作传输方法。 | — | DEP-RFC-1123 |
+| `CRS-M1-00617` | `SU-RFC-1350-2-P002-PROSE-SENTENCE-001-915D439C7026`<br>`RFC-1350 2 p.2` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-TRANSFERRING-615A-FILES-OVER-TFTP` / `USE-FIVE-TFTP-PACKET-TYPES-IDENTIFIED-BY-OPCODE` / `TFTP-OPCODE` / `TFTP-LOCKSTEP-OPCODE-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | TFTP 有五种由 Opcode 标识的包类型。锁步 RRQ/WRQ、DATA、ACK 与 ERROR 是 ARINC 615A 文件传输使用的交换。 | — | DEP-RFC-1350 |
+| `CRS-M1-00618` | `SU-RFC-1350-4-P004-PROSE-SENTENCE-001-D277980D1D8E`<br>`RFC-1350 4 p.4` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-STARTING-A-615A-TFTP-TRANSFER` / `ASSIGN-TID-ON-RRQ-OR-WRQ-WITHOUT-MAIL-MODE` / `TFTP-TID, TFTP-RRQ, TFTP-WRQ` / `TFTP-INITIAL-CONNECTION-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | RRQ/WRQ 与 TID 分配是 ARINC 615A TFTP 的连接起点。不使用 mail 模式。 | — | DEP-RFC-1350 |
+| `CRS-M1-00619` | `SU-RFC-1350-5-P005-PROSE-SENTENCE-001-437B5A681A97`<br>`RFC-1350 5 p.5` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-TRANSFERRING-615A-FILES-OVER-TFTP` / `PLACE-OPCODE-IN-TFTP-HEADER` / `TFTP-OPCODE` / `TFTP-OPCODE-HEADER-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | TFTP 包头包含与该包关联的操作码。 | — | DEP-RFC-1350 |
+| `CRS-M1-00620` | `SU-RFC-1350-6-P008-PROSE-SENTENCE-001-A3B31A53EE8A`<br>`RFC-1350 6 p.8` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-ENDING-A-615A-TFTP-TRANSFER-AND-BLKSIZE-WAS-NOT-SUCCESSFULLY-NEGOTIATED` / `TERMINATE-ON-DATA-PACKET-OF-0-TO-511-BYTES` / `TFTP-FINAL-DATA-BLOCK` / `TFTP-NORMAL-TERMINATION-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 未成功协商 blksize 时，含 0 至 511 字节数据的 DATA 包标志传输结束。该默认 512 八位组规则在接受 blksize 的 OACK 之后不适用。 | — | DEP-RFC-1350 |
+| `CRS-M1-00621` | `SU-RFC-1350-7-P008-PROSE-SENTENCE-001-264E58C9BCD0`<br>`RFC-1350 7 p.8` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-A-TFTP-ERROR-OCCURS` / `SEND-ERROR-PACKET-OPCODE-5` / `TFTP-ERROR` / `TFTP-ERROR-ABORT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 若请求不能批准或传输中出错，则发送 ERROR 包（操作码 5）。这是 TFTP 层中止，不是对 FIND 行上 ARINC 615A 时钟的豁免。 | — | DEP-RFC-1350 |
+| `CRS-M1-00622` | `SU-RFC-2347-INTRODUCTION-P001-PROSE-SENTENCE-001-5C5065F92C6A`<br>`RFC-2347 Introduction p.1` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-TFTP-OPTIONS-ARE-PRESENT` / `ACKNOWLEDGE-OPTION-NEGOTIATION-WITH-OACK` / `TFTP-OACK` / `TFTP-OPTION-MECHANISM-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | OACK 确认客户的 TFTP 选项协商请求。未实现选项不得使传输失败，与此扩展一致。 | — | DEP-RFC-2347 |
+| `CRS-M1-00623` | `SU-RFC-2347-PACKET-FORMATS-P001-PROSE-SENTENCE-001-937DF46256B2`<br>`RFC-2347 Packet Formats p.1` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-OPTION-NEGOTIATION-FAILS` / `TERMINATE-TRANSFER-WITH-ERROR-CODE-8` / `TFTP-ERROR-CODE-8` / `TFTP-OPTION-ERROR-8-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 错误码 8 表示因选项协商应终止传输。ARINC 615A 不另造选项包类型。 | — | DEP-RFC-2347 |
+| `CRS-M1-00624` | `SU-RFC-2347-OPTIONS-P001-PROSE-SENTENCE-001-8E570F666B45`<br>`RFC-2347 Options p.1` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-TFTP-OPTIONS-ARE-PRESENT` / `APPEND-OPTIONS-TO-RRQ-OR-WRQ` / `TFTP-BLKSIZE, TFTP-TIMEOUT, TFTP-TSIZE` / `TFTP-ADOPTED-OPTION-SET-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 选项附于 RRQ/WRQ。仅采纳 RFC 2348/2349 的 blksize、timeout、tsize 以及 615A 定义的完整性选项。其他选项保持未实现且非致命。 | — | DEP-RFC-2347 |
+| `CRS-M1-00625` | `SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-001-2E65D6906084`<br>`RFC-2348 Blocksize Option Specification p.2` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-THE-BLKSIZE-OPTION-IS-USED` / `ENCODE-BLKSIZE-AS-ASCII-OCTETS-FROM-8-THROUGH-65464` / `TFTP-BLKSIZE` / `TFTP-BLKSIZE-RANGE-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 使用 blksize 时，数据八位组块大小以 ASCII 给出，且必须在 8 至 65464（含）之间。ARINC 615A 可在其自有行上进一步约束允许的大小。 | — | DEP-RFC-2348 |
+| `CRS-M1-00626` | `SU-RFC-2349-TIMEOUT-INTERVAL-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-001-360611697E14`<br>`RFC-2349 Timeout Interval Option Specification p.2` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-THE-TIMEOUT-OPTION-IS-USED` / `ENCODE-TIMEOUT-AS-ASCII-SECONDS-FROM-1-THROUGH-255` / `TFTP-TIMEOUT-OPTION` / `TFTP-TIMEOUT-RANGE-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 使用 timeout 选项时，重传等待以 ASCII 秒给出，范围为 1 至 255（含）。该间隔不是 FIND 行上的 ARINC 615A 2 秒主机期限或 3 秒登记窗口。 | — | DEP-RFC-2349 |
+| `CRS-M1-00627` | `SU-RFC-2349-TRANSFER-SIZE-OPTION-SPECIFICATION-P003-PROSE-SENTENCE-001-3C03E80BD652`<br>`RFC-2349 Transfer Size Option Specification p.3` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-THE-TSIZE-OPTION-IS-USED-ON-RRQ` / `REQUEST-TSIZE-ZERO-ON-RRQ-AND-RETURN-SIZE-IN-OACK` / `TFTP-TSIZE, TFTP-RRQ, TFTP-OACK` / `TFTP-TSIZE-RRQ-OACK-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 在 RRQ 上，tsize 请求为 0，文件八位组大小在 OACK 中返回。ARINC 615A 失配处理留在 615A 行上。 | — | DEP-RFC-2349 |
+| `CRS-M1-00628` | `SU-RFC-768-FIELDS-P002-PROSE-SENTENCE-002-98D131CD707C`<br>`RFC-768 Fields p.2` | `UDP-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-UDP` / `KEEP-UDP-LENGTH-AT-LEAST-EIGHT-OCTETS` / `UDP-LENGTH` / `UDP-MINIMUM-LENGTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | UDP Length 的最小值为八个八位组。 | — | DEP-RFC-768 |
+| `CRS-M1-00629` | `SU-RFC-1122-3-P029-PROSE-SENTENCE-002-37EE632E749B`<br>`RFC-1122 3 p.29` | `IPV4-HOST` / `WHEN-RECEIVING-AN-IP-DATAGRAM` / `VERIFY-IP-HEADER-CHECKSUM-AND-SILENTLY-DISCARD-BAD` / `IPV4-HEADER-CHECKSUM` / `IPV4-HEADER-CHECKSUM-DISCARD-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 主机必须验证每个收到数据报的 IP 头校验和，并静默丢弃校验和错误的数据报。 | — | DEP-RFC-1122 |
+| `CRS-M1-00630` | `SU-RFC-1122-3-P032-PROSE-SENTENCE-003-3A1E4B86C7F3`<br>`RFC-1122 3 p.32` | `IPV4-HOST` / `WHEN-RECEIVING-FRAGMENTED-IPV4-DATAGRAMS` / `SUPPORT-IPV4-REASSEMBLY` / `IPV4-REASSEMBLY` / `IPV4-HOST-REASSEMBLY-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 每个主机必须支持 IPv4 重组。这是 RFC 1122 主机规则，本身不关闭项目能力登记。 | — | DEP-RFC-1122 |
+| `CRS-M1-00631` | `SU-RFC-1122-4-UDP-P078-PROSE-SENTENCE-002-EE88901ECA01`<br>`RFC-1122 4-UDP p.78` | `UDP-HOST` / `WHEN-RECEIVING-A-UDP-DATAGRAM-WITH-NONZERO-INVALID-CHECKSUM` / `SILENTLY-DISCARD-UDP-DATAGRAM-WITH-INVALID-CHECKSUM` / `UDP-CHECKSUM` / `UDP-INVALID-CHECKSUM-DISCARD-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若收到校验和非零且无效的 UDP 数据报，UDP 必须静默丢弃该数据报。 | — | DEP-RFC-1122 |
+| `CRS-M1-00632` | `SU-RFC-1350-5-P006-PROSE-SENTENCE-002-D4D9B426A42C`<br>`RFC-1350 5 p.6` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-SENDING-RRQ-OR-WRQ` / `ENCODE-RRQ-WRQ-AS-OPCODE-FILENAME-AND-MODE` / `TFTP-RRQ, TFTP-WRQ, TFTP-FILENAME, TFTP-MODE` / `TFTP-RRQ-WRQ-LAYOUT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | RRQ 与 WRQ 包（操作码 1 与 2）使用图 5-1 的操作码、文件名与模式布局。 | — | DEP-RFC-1350 |
+| `CRS-M1-00633` | `SU-RFC-1350-5-P006-PROSE-SENTENCE-003-6A26416C0F34`<br>`RFC-1350 5 p.6` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-SENDING-RRQ-OR-WRQ` / `TERMINATE-TFTP-FILENAME-WITH-NUL` / `TFTP-FILENAME` / `TFTP-FILENAME-NUL-TERMINATION-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | RRQ/WRQ 文件名是以零字节终止的 netascii 字节序列。 | — | DEP-RFC-1350 |
+| `CRS-M1-00634` | `SU-RFC-1350-5-P007-PROSE-SENTENCE-004-FA88F1D2C7FC`<br>`RFC-1350 5 p.7` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-SENDING-OR-RECEIVING-TFTP-DATA` / `ENCODE-DATA-PACKET-WITH-BLOCK-NUMBER-AND-DATA` / `TFTP-DATA, TFTP-BLOCK-NUMBER` / `TFTP-DATA-LAYOUT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | DATA 包（操作码 3）具有块号与数据字段。 | — | DEP-RFC-1350 |
+| `CRS-M1-00635` | `SU-RFC-1350-5-P007-PROSE-SENTENCE-005-B18C73BA4DC6`<br>`RFC-1350 5 p.7` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-SENDING-OR-RECEIVING-TFTP-DATA-AND-BLKSIZE-WAS-NOT-SUCCESSFULLY-NEGOTIATED` / `LIMIT-TFTP-DATA-FIELD-TO-ZERO-THROUGH-512-BYTES` / `TFTP-DATA` / `TFTP-DATA-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 未成功协商 blksize 时，DATA 数据字段为 0 至 512 字节；512 字节 DATA 不是最后块。接受 blksize 的 OACK 后，由 RFC 2348 替换该宽度。 | — | DEP-RFC-1350 |
+| `CRS-M1-00636` | `SU-RFC-1350-5-P007-PROSE-SENTENCE-006-EFA658E687D9`<br>`RFC-1350 5 p.7` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-SENDING-OR-RECEIVING-TFTP-ACK` / `ENCODE-ACK-PACKET-WITH-OPCODE-4-AND-BLOCK-NUMBER` / `TFTP-ACK, TFTP-BLOCK-NUMBER` / `TFTP-ACK-LAYOUT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | ACK 包的操作码为 4，并带有如图 5-3 的块号。 | — | DEP-RFC-1350 |
+| `CRS-M1-00637` | `SU-RFC-1350-5-P008-PROSE-SENTENCE-007-C1DAC90B8F1C`<br>`RFC-1350 5 p.8` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-SENDING-OR-RECEIVING-TFTP-ERROR` / `ENCODE-ERROR-PACKET-AS-OPCODE-ERROR-CODE-AND-MESSAGE` / `TFTP-ERROR, TFTP-ERROR-CODE` / `TFTP-ERROR-LAYOUT-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | ERROR 包（操作码 5）采用图 5-4 的错误码与 netascii 消息形式。 | — | DEP-RFC-1350 |
+| `CRS-M1-00638` | `SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-002-D08B24697C4B`<br>`RFC-2348 Blocksize Option Specification p.2` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-THE-BLKSIZE-OPTION-IS-USED` / `ENCODE-BLKSIZE-VALUE-IN-ASCII` / `TFTP-BLKSIZE` / `TFTP-BLKSIZE-ASCII-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | blksize 值是块中的八位组数，以 ASCII 给出。 | — | DEP-RFC-2348 |
+| `CRS-M1-00639` | `SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-003-64CFECEAC810`<br>`RFC-2348 Blocksize Option Specification p.2` | `TFTP-SERVER` / `WHEN-ACCEPTING-THE-BLKSIZE-OPTION` / `NEGOTIATE-BLKSIZE-LESS-OR-EQUAL-TO-CLIENT-VALUE` / `TFTP-BLKSIZE, TFTP-OACK` / `TFTP-BLKSIZE-SERVER-LIMIT-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 若服务器接受 blksize，OACK 中的值必须小于或等于客户请求值。 | — | DEP-RFC-2348 |
+| `CRS-M1-00640` | `SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-004-90DA13EFFC7B`<br>`RFC-2348 Blocksize Option Specification p.2` | `TFTP-CLIENT` / `WHEN-RECEIVING-A-BLKSIZE-OACK` / `USE-OACK-BLKSIZE-OR-TERMINATE-WITH-ERROR-8` / `TFTP-BLKSIZE, TFTP-ERROR-CODE-8` / `TFTP-BLKSIZE-CLIENT-ACCEPT-OR-ABORT-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 客户必须使用 OACK 中的 blksize，或以错误码 8 终止传输。 | — | DEP-RFC-2348 |
+| `CRS-M1-00641` | `SU-RFC-2349-TIMEOUT-INTERVAL-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-002-E2BFBC18EF44`<br>`RFC-2349 Timeout Interval Option Specification p.2` | `TFTP-SERVER` / `WHEN-ACCEPTING-THE-TIMEOUT-OPTION` / `ECHO-CLIENT-TIMEOUT-VALUE-IN-OACK` / `TFTP-TIMEOUT-OPTION, TFTP-OACK` / `TFTP-TIMEOUT-OACK-MATCH-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 若服务器接受 timeout 选项，OACK 中的 timeout 值必须与客户指定值一致。 | — | DEP-RFC-2349 |
+| `CRS-M1-00642` | `SU-RFC-2349-TRANSFER-SIZE-OPTION-SPECIFICATION-P003-PROSE-SENTENCE-002-1C1E78F3F6AA`<br>`RFC-2349 Transfer Size Option Specification p.3` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-THE-TSIZE-OPTION-IS-USED-ON-WRQ` / `SPECIFY-TSIZE-ON-WRQ-AND-ECHO-IN-OACK` / `TFTP-TSIZE, TFTP-WRQ, TFTP-OACK` / `TFTP-TSIZE-WRQ-OACK-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 在 WRQ 上，tsize 在请求中给出文件八位组大小，并在 OACK 中回显。 | — | DEP-RFC-2349 |
+| `CRS-M1-00643` | `SU-RFC-2349-TRANSFER-SIZE-OPTION-SPECIFICATION-P003-PROSE-SENTENCE-003-10D1D5886DB7`<br>`RFC-2349 Transfer Size Option Specification p.3` | `TFTP-CLIENT` / `WHEN-RRQ-TSIZE-EXCEEDS-CLIENT-CAPACITY` / `MAY-ABORT-RRQ-WITH-ERROR-CODE-3` / `TFTP-TSIZE, TFTP-ERROR-CODE-3` / `TFTP-TSIZE-CLIENT-ABORT-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 若 RRQ tsize 对客户过大，客户可以错误码 3 中止。 | — | DEP-RFC-2349 |
+| `CRS-M1-00644` | `SU-RFC-2349-TRANSFER-SIZE-OPTION-SPECIFICATION-P003-PROSE-SENTENCE-004-0EDC725A7828`<br>`RFC-2349 Transfer Size Option Specification p.3` | `TFTP-SERVER` / `WHEN-WRQ-TSIZE-EXCEEDS-SERVER-CAPACITY` / `MAY-ABORT-WRQ-WITH-ERROR-CODE-3` / `TFTP-TSIZE, TFTP-ERROR-CODE-3` / `TFTP-TSIZE-SERVER-ABORT-OBSERVABLE` | `MAY` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | 若 WRQ tsize 对服务器过大，服务器可以错误码 3 中止。 | — | DEP-RFC-2349 |
+| `CRS-M1-00645` | `SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-005-58E88FD7743A`<br>`RFC-2348 Blocksize Option Specification p.2` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-BLKSIZE-WAS-SUCCESSFULLY-NEGOTIATED` / `TERMINATE-ON-DATA-SHORTER-THAN-NEGOTIATED-BLKSIZE` / `TFTP-DATA, TFTP-NEGOTIATED-BLKSIZE` / `TFTP-NEGOTIATED-FINAL-BLOCK-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | blksize 经 OACK 接受后，短于该协商块大小的 DATA 是最后块。协商 1024 后的 700 八位组 DATA 结束传输；协商 256 后的满 256 八位组 DATA 不结束。 | — | DEP-RFC-2348 |
+| `CRS-M1-00646` | `SU-RFC-2348-BLOCKSIZE-OPTION-SPECIFICATION-P002-PROSE-SENTENCE-006-B4C2F18DB477`<br>`RFC-2348 Blocksize Option Specification p.2` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-FILE-LENGTH-IS-AN-INTEGRAL-MULTIPLE-OF-EFFECTIVE-BLKSIZE` / `SEND-ZERO-LENGTH-FINAL-DATA-WHEN-FILE-IS-INTEGRAL-MULTIPLE-OF-BLKSIZE` / `TFTP-DATA, TFTP-EFFECTIVE-BLKSIZE` / `TFTP-ZERO-LENGTH-FINAL-BLOCK-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 若文件长度是有效块大小的整数倍，须发送不含数据的额外 DATA 包结束传输。未接受 blksize 时有效块大小为 512，否则为 OACK 值。 | — | DEP-RFC-2348 |
+| `CRS-M1-00647` | `SU-RFC-2347-OPTIONS-P003-PROSE-SENTENCE-002-618B7593EFF3`<br>`RFC-2347 Options p.3` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-A-REQUESTED-OPTION-IS-NOT-ACKNOWLEDGED` / `IGNORE-UNACKNOWLEDGED-OPTION-AND-KEEP-DEFAULT-PARAMETERS` / `TFTP-OPTION, TFTP-DEFAULT-512-BLKSIZE` / `TFTP-UNACKNOWLEDGED-OPTION-IGNORED-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 服务器未确认的选项必须被客户和服务器忽略，如同从未请求。仅请求 blksize 不得改变 512 八位组默认值，直至该选项在 OACK 中被接受。 | — | DEP-RFC-2347 |
+| `CRS-M1-00648` | `SU-RFC-791-3.1-P017-PROSE-SENTENCE-002-35A7348FF9FA`<br>`RFC-791 3.1 p.17` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-VERSION-AS-4-BITS` / `IPV4-VERSION-FIELD` / `IPV4-VERSION-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Version 字段宽 4 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00649` | `SU-RFC-791-3.1-P017-PROSE-SENTENCE-003-FBA3366ADD9B`<br>`RFC-791 3.1 p.17` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-IHL-AS-4-BITS` / `IPV4-IHL-FIELD` / `IPV4-IHL-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 IHL 字段宽 4 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00650` | `SU-RFC-791-3.1-P018-PROSE-SENTENCE-004-DC1BFA058673`<br>`RFC-791 3.1 p.18` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-TOS-AS-8-BITS` / `IPV4-TOS-FIELD` / `IPV4-TOS-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Type of Service 字段宽 8 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00651` | `SU-RFC-791-3.1-P019-PROSE-SENTENCE-005-D93E00A61632`<br>`RFC-791 3.1 p.19` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-TOTAL-LENGTH-AS-16-BITS` / `IPV4-TOTAL-LENGTH-FIELD` / `IPV4-TOTAL-LENGTH-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Total Length 字段宽 16 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00652` | `SU-RFC-791-3.1-P019-PROSE-SENTENCE-006-7E317C05BA7F`<br>`RFC-791 3.1 p.19` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-IDENTIFICATION-AS-16-BITS` / `IPV4-IDENTIFICATION-FIELD` / `IPV4-IDENTIFICATION-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Identification 字段宽 16 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00653` | `SU-RFC-791-3.1-P019-PROSE-SENTENCE-007-46F185F002B2`<br>`RFC-791 3.1 p.19` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-FLAGS-AS-3-BITS` / `IPV4-FLAGS-FIELD` / `IPV4-FLAGS-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Flags 字段宽 3 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00654` | `SU-RFC-791-3.1-P019-PROSE-SENTENCE-008-1A3DDA9F5E70`<br>`RFC-791 3.1 p.19` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-FRAGMENT-OFFSET-AS-13-BITS` / `IPV4-FRAGMENT-OFFSET-FIELD` / `IPV4-FRAGMENT-OFFSET-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Fragment Offset 字段宽 13 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00655` | `SU-RFC-791-3.1-P020-PROSE-SENTENCE-009-984FD4C7EC7E`<br>`RFC-791 3.1 p.20` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-TTL-AS-8-BITS` / `IPV4-TTL-FIELD` / `IPV4-TTL-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Time to Live 字段宽 8 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00656` | `SU-RFC-791-3.1-P020-PROSE-SENTENCE-010-3425BDE4EE7A`<br>`RFC-791 3.1 p.20` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-PROTOCOL-AS-8-BITS` / `IPV4-PROTOCOL-FIELD` / `IPV4-PROTOCOL-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Protocol 字段宽 8 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00657` | `SU-RFC-791-3.1-P020-PROSE-SENTENCE-011-1F408D481D64`<br>`RFC-791 3.1 p.20` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-HEADER-CHECKSUM-AS-16-BITS` / `IPV4-HEADER-CHECKSUM-FIELD` / `IPV4-HEADER-CHECKSUM-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Header Checksum 字段宽 16 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00658` | `SU-RFC-791-3.1-P020-PROSE-SENTENCE-012-3A288A418AEE`<br>`RFC-791 3.1 p.20` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-SOURCE-ADDRESS-AS-32-BITS` / `IPV4-SOURCE-ADDRESS-FIELD` / `IPV4-SOURCE-ADDRESS-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Source Address 字段宽 32 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00659` | `SU-RFC-791-3.1-P020-PROSE-SENTENCE-013-C6D7D7BFD7B6`<br>`RFC-791 3.1 p.20` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ENCODE-DESTINATION-ADDRESS-AS-32-BITS` / `IPV4-DESTINATION-ADDRESS-FIELD` / `IPV4-DESTINATION-ADDRESS-FIELD-WIDTH-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Destination Address 字段宽 32 位。615A 在 IPv4 上的 TFTP 使用该头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00660` | `SU-RFC-1123-4.2.2.1-P044-PROSE-SENTENCE-001-C57FFB7284BF`<br>`RFC-1123 4.2.2.1 p.44` | `TFTP-HOST` / `WHEN-USING-TFTP-AS-615A-FILE-TRANSFER` / `DO-NOT-SUPPORT-TFTP-MAIL-TRANSFER-MODE` / `TFTP-MAIL-MODE` / `TFTP-MAIL-MODE-ABSENT-OBSERVABLE` | `SHOULD` / `PROHIBITED` | `APPLICABLE-SUPPORTING` | 不应支持 TFTP mail 传输模式。ARINC 615A 文件传输不使用 mail 模式。 | — | DEP-RFC-1123 |
+| `CRS-M1-00661` | `SU-RFC-1123-4.2.2.2-P044-PROSE-SENTENCE-001-D47D6D4362DF`<br>`RFC-1123 4.2.2.2 p.44` | `TFTP-HOST` / `WHEN-USING-TFTP-AS-615A-FILE-TRANSFER` / `COUNT-UDP-LENGTH-INCLUDING-EIGHT-OCTET-HEADER` / `UDP-LENGTH` / `UDP-LENGTH-INCLUDES-HEADER-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | UDP Length 字段包含 8 个八位组的 UDP 头。这是 RFC 1123 对 TFTP／UDP 头说明的更正。 | — | DEP-RFC-1123 |
+| `CRS-M1-00662` | `SU-RFC-1123-4.2.3.1-P044-PROSE-SENTENCE-001-D221776D6159`<br>`RFC-1123 4.2.3.1 p.44` | `TFTP-DATA-SENDER` / `WHEN-RECEIVING-A-DUPLICATE-TFTP-ACK` / `NEVER-RESEND-CURRENT-DATA-ON-DUPLICATE-ACK` / `TFTP-DATA, TFTP-ACK, SORCERERS-APPRENTICE` / `TFTP-NO-DATA-RESEND-ON-DUPLICATE-ACK-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | TFTP DATA 发送方不得仅因收到重复 ACK 而重发当前 DATA 包。这是术士学徒修正，不是 FIND 时钟规则。 | — | DEP-RFC-1123 |
+| `CRS-M1-00663` | `SU-RFC-1123-4.2.3.2-P046-PROSE-SENTENCE-001-493633EC7445`<br>`RFC-1123 4.2.3.2 p.46` | `TFTP-TRANSFER-PARTICIPANT` / `WHEN-USING-TFTP-AS-615A-FILE-TRANSFER` / `USE-ADAPTIVE-TFTP-RETRANSMISSION-TIMEOUT` / `TFTP-ADAPTIVE-TIMEOUT` / `TFTP-ADAPTIVE-TIMEOUT-OBSERVABLE` | `MUST` / `REQUIRED` | `APPLICABLE-SUPPORTING` | TFTP 实现必须使用自适应重传超时。这不是 RFC 2349 timeout 选项范围，也不是 ARINC 615A FIND 的 2 秒／3 秒时钟。 | — | DEP-RFC-1123 |
+| `CRS-M1-00664` | `SU-RFC-1123-4.2.3.4-P046-PROSE-SENTENCE-001-8C34A8B506F6`<br>`RFC-1123 4.2.3.4 p.46` | `TFTP-SERVER` / `WHEN-SERVING-TFTP-PATHNAMES` / `PROVIDE-CONFIGURABLE-TFTP-PATHNAME-ACCESS-CONTROL` / `TFTP-PATHNAME-ACCESS-CONTROL` / `TFTP-PATHNAME-ACCESS-CONTROL-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | TFTP 服务器应对允许的路径名提供可配置访问控制。 | — | DEP-RFC-1123 |
+| `CRS-M1-00665` | `SU-RFC-1123-4.2.3.5-P046-PROSE-SENTENCE-001-BC97D4CAC682`<br>`RFC-1123 4.2.3.5 p.46` | `TFTP-SERVER` / `WHEN-A-TFTP-REQUEST-IS-DIRECTED-TO-A-BROADCAST-ADDRESS` / `SILENTLY-IGNORE-BROADCAST-TFTP-REQUEST` / `TFTP-BROADCAST-REQUEST` / `TFTP-BROADCAST-REQUEST-IGNORED-OBSERVABLE` | `SHOULD` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 发往广播地址的 TFTP 请求应被静默忽略。615A 数据加载不以广播 RRQ 作为传输方法。 | — | DEP-RFC-1123 |
+| `CRS-M1-00666` | `SU-ARINC-664-7-3.2.1-P018-PROSE-SENTENCE-001-B2E9B1E66E16`<br>`ARINC-664-7 3.2.1 p.10` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ALLOW-ONLY-ONE-SOURCE-END-SYSTEM-PER-VL` / `AFDX-VIRTUAL-LINK` / `AFDX-VL-SINGLE-SOURCE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，任一虚拟链路应只有一个端系统作为源。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00667` | `SU-ARINC-664-7-3.2.1-P018-PROSE-SENTENCE-002-3AC3D9B42053`<br>`ARINC-664-7 3.2.1 p.10` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-VL-AS-UNIDIRECTIONAL-ONE-TO-MANY-CONNECTION` / `AFDX-VIRTUAL-LINK` / `AFDX-VL-UNIDIRECTIONAL-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，虚拟链路是从一个源端系统到一个或多个目的端系统的单向连接。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00668` | `SU-ARINC-664-7-3.2.2-P019-PROSE-SENTENCE-001-3F32CD4BF748`<br>`ARINC-664-7 3.2.2 p.11` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-BAG-AS-MINIMUM-INTERVAL-BETWEEN-CONSECUTIVE-VL-FRAMES` / `AFDX-BAG` / `AFDX-BAG-INTERVAL-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，在调度抖动为零时，BAG 是同一 VL 连续两帧首比特之间的最小间隔。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00669` | `SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-001-8AFCAA7FEEA4`<br>`ARINC-664-7 3.2.3 p.13` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `BOUND-VL-FRAME-ARRIVAL-BY-MAXIMUM-ADMISSIBLE-JITTER` / `AFDX-JITTER` / `AFDX-MAX-ADMISSIBLE-JITTER-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，虚拟链路上该有界调度间隔即为最大允许抖动。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00670` | `SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-002-796A41A0B615`<br>`ARINC-664-7 3.2.3 p.13` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `CHARACTERISE-VL-BANDWIDTH-BY-BAG-AND-LMAX` / `AFDX-BAG, AFDX-LMAX` / `AFDX-VL-BANDWIDTH-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，每条 VL 的最大可用带宽由 BAG 与授权 Lmax 表征。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00671` | `SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-003-1E381797D200`<br>`ARINC-664-7 3.2.3 p.13` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ACCOMMODATE-VL-FRAMES-UP-TO-1518-BYTES` / `AFDX-VL-FRAME` / `AFDX-VL-FRAME-1518-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，端系统应在发送与接收中容纳最大 1518 字节的 VL 帧。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00672` | `SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-004-8CA2CDF489CD`<br>`ARINC-664-7 3.2.3 p.13` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `HANDLE-BAG-VALUES-FROM-1-MS-TO-128-MS` / `AFDX-BAG` / `AFDX-BAG-RANGE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，流量整形应能处理 1 ms 至 128 ms 的 BAG 值。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00673` | `SU-ARINC-664-7-3.2.3-P021-PROSE-SENTENCE-005-9BC14F6B2E45`<br>`ARINC-664-7 3.2.3 p.13` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RESTRICT-BAG-TO-POWERS-OF-TWO-MILLISECONDS` / `AFDX-BAG` / `AFDX-BAG-POWER-OF-TWO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，BAG 值为 2^k 毫秒，k 为 0 至 7 的整数。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00674` | `SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-001-76031BDF6730`<br>`ARINC-664-7 3.2.4.3 p.17` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `KEEP-VL-JITTER-AT-OR-BELOW-500-MICROSECONDS` / `AFDX-JITTER` / `AFDX-JITTER-500US-CAP-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，VL 抖动在所有情况下以 500 微秒为界。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00675` | `SU-ARINC-664-7-3.2.5.1-P026-PROSE-SENTENCE-001-56B6CFE1A3CD`<br>`ARINC-664-7 3.2.5.1 p.18` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `IDENTIFY-VL-ONLY-BY-MAC-DESTINATION-ADDRESS` / `AFDX-VIRTUAL-LINK, MAC-DESTINATION-ADDRESS` / `AFDX-VL-MAC-DESTINATION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，虚拟链路仅由 MAC 目的地址标识；MAC 源地址是物理接口的单播地址。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00676` | `SU-RFC-791-3.1-P017-PROSE-SENTENCE-014-66107CA56FCF`<br>`RFC-791 3.1 p.17` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `MEASURE-IHL-IN-32-BIT-WORDS` / `IPV4-IHL-FIELD` / `IPV4-IHL-32-BIT-WORDS-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 IHL 是以 32 位字计的互联网头长度，并指向数据起点。 | — | DEP-RFC-791 |
+| `CRS-M1-00677` | `SU-RFC-791-3.1-P017-PROSE-SENTENCE-015-7DC7AF24BE45`<br>`RFC-791 3.1 p.17` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `KEEP-IHL-AT-LEAST-5` / `IPV4-IHL-FIELD` / `IPV4-IHL-MINIMUM-5-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | 正确的 IPv4 头的 IHL 至少为 5。 | — | DEP-RFC-791 |
+| `CRS-M1-00678` | `SU-RFC-791-3.1-P019-PROSE-SENTENCE-016-0740AAFF0150`<br>`RFC-791 3.1 p.19` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `MEASURE-IPV4-TOTAL-LENGTH-IN-OCTETS-INCLUDING-HEADER-AND-DATA` / `IPV4-TOTAL-LENGTH-FIELD` / `IPV4-TOTAL-LENGTH-OCTETS-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Total Length 是包含互联网头与数据在内的数据报八位组长度。 | — | DEP-RFC-791 |
+| `CRS-M1-00679` | `SU-RFC-791-3.1-P020-PROSE-SENTENCE-017-2F6A6F63ABEF`<br>`RFC-791 3.1 p.20` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `MEASURE-FRAGMENT-OFFSET-IN-8-OCTET-UNITS` / `IPV4-FRAGMENT-OFFSET-FIELD` / `IPV4-FRAGMENT-OFFSET-UNITS-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 Fragment Offset 以 8 个八位组（64 位）为单位。 | — | DEP-RFC-791 |
+| `CRS-M1-00680` | `SU-RFC-791-3.1-P021-PROSE-SENTENCE-018-7D9B36E2E6F2`<br>`RFC-791 3.1 p.21` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `ALLOW-IPV4-OPTIONS-TO-BE-PRESENT-OR-ABSENT` / `IPV4-OPTIONS` / `IPV4-OPTIONS-PRESENCE-OBSERVABLE` | `FACT` / `OPTIONAL` | `APPLICABLE-SUPPORTING` | IPv4 选项可以在数据报中出现或不出现。该出现是可变的，不是固定宽度头字段。 | — | DEP-RFC-791 |
+| `CRS-M1-00681` | `SU-RFC-791-3.1-P029-PROSE-SENTENCE-019-CA2E4BEC637B`<br>`RFC-791 3.1 p.29` | `IPV4-DATAGRAM-SENDER` / `WHEN-SENDING-OR-RECEIVING-615A-TFTP-OVER-IPV4` / `PAD-IPV4-HEADER-TO-32-BIT-BOUNDARY` / `IPV4-PADDING` / `IPV4-HEADER-PADDING-OBSERVABLE` | `FACT` / `REQUIRED` | `APPLICABLE-SUPPORTING` | IPv4 头填充使互联网头结束于 32 位边界。因此填充宽度是可变的。 | — | DEP-RFC-791 |
+| `CRS-M1-00682` | `SU-ARINC-664-7-3.2.4.1-P023-PROSE-SENTENCE-001-60532CA921FC`<br>`ARINC-664-7 3.2.4.1 p.15` | `AFDX-END-SYSTEM` / `WHEN-AFDX-IS-SELECTED-AND-TX-TECH-LATENCY-IS-MEASURED-WITH-EMPTY-BUFFERS-NO-CONTENTION-AND-NO-IP-FRAGMENTATION` / `KEEP-TX-TECHNOLOGICAL-LATENCY-BELOW-150US-PLUS-FRAME-DELAY` / `AFDX-TECHNOLOGICAL-LATENCY, FRAME-DELAY, EMPTY-BUFFERS, NO-CONFLICTING-RESOURCE-ACCESS, NO-IP-FRAGMENTATION` / `AFDX-TX-TECHNOLOGICAL-LATENCY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，且发送方向技术时延在空缓冲、无冲突资源访问且无 IP 分片下测量，则该时延须严格低于 150 微秒加帧时延。等于 150 微秒加帧时延即失败。这不是 615A 操作超时。 | `SYMBOLIC-SOURCE-EQUATION` / `TECH-LAT-TX` / `TECH-LAT-TX < 150 + FRAME-DELAY` / `0..ONE-HUNDRED-FIFTY-MICROSECONDS-PLUS-FRAME-DELAY us` / 证据：SU-ARINC-664-7-3.2.4.1-P023-PROSE-SENTENCE-001-60532CA921FC, SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-003-44239DB2F60A, SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-006-8D72879FD3A5 | DEP-ARINC-664-7 |
+| `CRS-M1-00683` | `SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-002-510E7A75E217`<br>`ARINC-664-7 3.2.4.1 p.16` | `AFDX-END-SYSTEM` / `WHEN-AFDX-IS-SELECTED-AND-RX-TECH-LATENCY-IS-MEASURED-WITH-EMPTY-BUFFERS-AND-NO-CONTENTION` / `KEEP-RX-TECHNOLOGICAL-LATENCY-BELOW-150-MICROSECONDS` / `AFDX-TECHNOLOGICAL-LATENCY, EMPTY-BUFFERS, NO-CONFLICTING-RESOURCE-ACCESS` / `AFDX-RX-TECHNOLOGICAL-LATENCY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，且接收方向技术时延在空缓冲且无冲突资源访问下测量，则该时延须严格低于 150 微秒。等于 150 微秒即失败。这不是 615A 操作超时。 | `SYMBOLIC-SOURCE-EQUATION` / `TECH-LAT-RX` / `TECH-LAT-RX < 150` / `0..150 us` / 证据：SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-002-510E7A75E217, SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-007-1CDDD6B34C3E, SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-008-824150EBC26E, SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-009-BEE0AC634C0C | DEP-ARINC-664-7 |
+| `CRS-M1-00684` | `SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD`<br>`ARINC-664-7 3.2.4.3 p.17` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `BOUND-MAX-JITTER-BY-40US-PLUS-VL-LOAD-TERM` / `AFDX-JITTER, LMAX-I, NBW, CONFIGURED-VL-SET, MAX-JITTER-500US-EQUATION` / `AFDX-MAX-JITTER-LOAD-EQUATION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，以微秒计的 max_jitter 至多为 40 微秒加上 （8 × 对已配置 VL 集合求和 (20 八位组 + Lmax_i 八位组) / Nbw 比特每秒）由秒乘 1000000 换成微秒。每个 VL 都计入 20 八位组开销。各 VL 的 Lmax_i 可以不同。Nbw 必须为正。此式与 500 微秒公式必须同时成立。 | `SYMBOLIC-SOURCE-EQUATION` / `MAX-JITTER-LOAD-EQUATION` / `MAX-JITTER <= 40 + (8 * SUM{I-IN-CONFIGURED-VL-SET}(20 + LMAX-I) / NBW) * 1000000` / `0..FORTY-MICROSECONDS-PLUS-CONVERTED-VL-LOAD-TERM us` / 证据：SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD, SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948, SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-002-7A1296CF6117, SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-003-E8E54C6C0881 | DEP-ARINC-664-7 |
+| `CRS-M1-00685` | `SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948`<br>`ARINC-664-7 3.2.4.3 p.17` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `BOUND-MAX-JITTER-BY-500-MICROSECONDS-EQUATION` / `AFDX-JITTER, MAX-JITTER-LOAD-EQUATION` / `AFDX-MAX-JITTER-500US-EQUATION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，第二个已恢复公式为 max_jitter 至多 500 微秒。它必须与负载相关公式同时成立；仅满足 500 微秒不够。 | `SYMBOLIC-SOURCE-EQUATION` / `MAX-JITTER-500US-EQUATION` / `MAX-JITTER <= 500` / `0..500 us` / 证据：SU-ARINC-664-7-3.2.4.3-P025-EQUATION-002-66170063B948, SU-ARINC-664-7-3.2.4.3-P025-EQUATION-001-A9B1A06D3CDD, SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-002-7A1296CF6117 | DEP-ARINC-664-7 |
+| `CRS-M1-00686` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-001-037A0DEA370A`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENCODE-MAC-SOURCE-AS-INDIVIDUAL-AND-LOCALLY-ADMINISTERED` / `MAC-SOURCE-ADDRESS` / `AFDX-MAC-SOURCE-IEEE-CLASS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，MAC 源地址是符合 IEEE 802.3 的单播且本地管理地址。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00687` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-002-E377DF716F5B`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-MAC-SOURCE-CONSTANT-FIELD-TO-000000100000000000000000` / `MAC-SOURCE-ADDRESS, MAC-SOURCE-CONSTANT-FIELD` / `AFDX-MAC-SOURCE-CONSTANT-FIELD-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，MAC 源地址常数字段为 24 位值 0000 0010 0000 0000 0000 0000。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00688` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-003-6AE6BC6831C7`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-MAC-SOURCE-INDIVIDUAL-ADDRESS-BIT-TO-ZERO` / `MAC-SOURCE-ADDRESS` / `AFDX-MAC-SOURCE-INDIVIDUAL-BIT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，MAC 源地址首字节最低位为 0，表示单播地址。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00689` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-004-9D063237C979`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-MAC-SOURCE-LOCALLY-ADMINISTERED-BIT-TO-ONE` / `MAC-SOURCE-ADDRESS` / `AFDX-MAC-SOURCE-LOCAL-ADMIN-BIT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，MAC 源地址首字节次低位为 1，表示本地管理地址。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00690` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-005-F03FF92CA19C`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENCODE-MAC-SOURCE-USER-DEFINED-ID-AS-16-BITS` / `MAC-SOURCE-USER-DEFINED-ID` / `AFDX-MAC-SOURCE-USER-DEFINED-ID-WIDTH-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，MAC 源地址中的 User_Defined_ID 是单一 16 位字段。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00691` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-006-899D5A33C49E`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-USER-DEFINED-ID-FOR-UNIQUE-MEANINGFUL-HOST-IDENTITY` / `MAC-SOURCE-USER-DEFINED-ID` / `AFDX-MAC-SOURCE-USER-DEFINED-ID-USE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，User_Defined_ID 按系统集成商认为适当的方式使用，使每个可 IP 寻址主机具有唯一且有意义的身份。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00692` | `SU-ARINC-664-7-3.2.5.2-P027-PROSE-SENTENCE-007-97048C062FB8`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-INTERFACE-ID-TO-IDENTIFY-REDUNDANT-AFDX-NETWORK` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-MAC-SOURCE-INTERFACE-ID-ROLE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，Interface_ID 标明以太网 MAC 控制器所连接的冗余 AFDX 网络。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00693` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-001-A9E8CFE75FDC`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENCODE-INTERFACE-ID-001-AS-NETWORK-A` / `MAC-SOURCE-INTERFACE-ID, AFDX-NETWORK-A` / `AFDX-INTERFACE-ID-NETWORK-A-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，Interface_ID 001 表示以太网 MAC 控制器连接到网络 A。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00694` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-002-F0CDAB79C8E2`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENCODE-INTERFACE-ID-010-AS-NETWORK-B` / `MAC-SOURCE-INTERFACE-ID, AFDX-NETWORK-B` / `AFDX-INTERFACE-ID-NETWORK-B-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，Interface_ID 010 表示以太网 MAC 控制器连接到网络 B。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00695` | `SU-ARINC-664-4-1.1-P007-PROSE-SENTENCE-001-D8764E8C18A1`<br>`ARINC-664-4 1.1 p.1` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `PROVIDE-ADN-ADDRESS-DETERMINATION-GUIDANCE` / `ADN-ADDRESSES` / `P4-ADDRESS-GUIDANCE-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 在 615A 承载于 AFDX 且集成商选择 664 第 4 部分地址规则而非集成商指明要求时，第 4 部分为确定航空数据网络所需全部地址提供指导。这不自动选定第 4 部分，也不激活 AFDX。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00696` | `SU-ARINC-664-4-1.1-P007-PROSE-SENTENCE-002-AB25B59BF8EC`<br>`ARINC-664-4 1.1 p.1` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `KNOW-DESTINATION-ADDRESSES-AT-CONFIGURATION-TIME` / `DESTINATION-ADDRESSES, CONFIGURATION-TIME` / `P4-CONFIGURATION-TIME-ADDRESS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，发送应用必须在配置时已知目的地址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00697` | `SU-ARINC-664-4-1.2-P007-PROSE-SENTENCE-001-3C74BCDCEC14`<br>`ARINC-664-4 1.2 p.1` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `DEFINE-ADN-ADDRESSING-PLAN-AND-RULES` / `ADN-ADDRESSING-PLAN` / `P4-ADDRESS-PLAN-SCOPE-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，第 4 部分定义该航空数据网络所用寻址计划与规则。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00698` | `SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-001-E59AB857EE72`<br>`ARINC-664-4 2.1 p.4` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `USE-IANA-WELL-KNOWN-UDP-PORTS-FOR-STANDARD-SERVICES-INCLUDING-TFTP` / `UDP-PORT-NUMBERS, TFTP` / `P4-WELL-KNOWN-UDP-SERVICE-PORT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，TFTP 等标准服务的目的 UDP 端口使用 ICANN／IANA 公认端口号。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00699` | `SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-002-AEB0E131BF5D`<br>`ARINC-664-4 2.1 p.4` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ACCESS-PRIVATE-AERO-APPS-VIA-INTEGRATOR-OR-664P4-UDP-PORTS` / `UDP-PORT-NUMBERS, PRIVATE-AERONAUTICAL-APPLICATIONS` / `P4-PRIVATE-APP-UDP-PORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，专用航空应用应通过系统集成商或第 4 部分分配、并由 ICANN／IANA 登记的 UDP 端口访问。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00700` | `SU-ARINC-664-4-2.1-P010-PROSE-SENTENCE-003-B9D063A58D3C`<br>`ARINC-664-4 2.1 p.4` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `DO-NOT-REASSIGN-WELL-KNOWN-COTS-PORTS-0-1023` / `UDP-PORT-NUMBERS-0-1023` / `P4-WELL-KNOWN-PORT-REASSIGNMENT-PROHIBITED-OBSERVABLE` | `SHOULD` / `PROHIBITED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，0–1023 范围内常用公认 COTS 端口不得改派给任何航电网络功能。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00701` | `SU-ARINC-664-4-3.1.4-P012-PROSE-SENTENCE-001-26ECAA9608B7`<br>`ARINC-664-4 3.1.4 p.6` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `DO-NOT-ROUTE-PRIVATE-ADDRESSES-OUTSIDE-THE-NETWORK` / `PRIVATE-IP-ADDRESSES` / `P4-PRIVATE-ADDRESS-ROUTING-PROHIBITED-OBSERVABLE` | `SHOULD` / `PROHIBITED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，携带私有地址的分组不得路由到所连接网络之外，公网主机也不得向该私有网络上的主机寻址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00702` | `SU-ARINC-664-4-3.2.1-P014-PROSE-SENTENCE-001-FE04D876A17C`<br>`ARINC-664-4 3.2.1 p.8` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `TREAT-PROFILED-AERO-NETWORK-AS-IETF-PRIVATE-APPLICATION` / `PROFILED-AERONAUTICAL-NETWORK` / `P4-PROFILED-PRIVATE-APPLICATION-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，裁剪型航空网络在 IETF 意义上视为专用应用。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00703` | `SU-ARINC-664-4-3.2.1.1-P014-PROSE-SENTENCE-001-C0E53DA16C0B`<br>`ARINC-664-4 3.2.1.1 p.8` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `USE-PRIVATE-NETWORK-ID-FOR-PROFILED-NETWORKS` / `PRIVATE-NETWORK-ID, PROFILED-NETWORK` / `P4-PRIVATE-NETWORK-ID-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，裁剪型网络标识必须是专用 A／B／C 类地址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00704` | `SU-ARINC-664-4-4.1.2-P017-PROSE-SENTENCE-001-B050E1E70356`<br>`ARINC-664-4 4.1.2 p.11` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ASSIGN-MAC-UNICAST-ADDRESSES-AT-CONFIGURATION-TIME` / `MAC-UNICAST-ADDRESSES, CONFIGURATION-TIME` / `P4-STATIC-MAC-CONFIGURATION-TIME-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，静态配置网络在配置时分配 MAC 单播地址。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00705` | `SU-ARINC-664-4-4.1.2-P017-PROSE-SENTENCE-002-7C0C05BFFEDB`<br>`ARINC-664-4 4.1.2 p.11` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `KEEP-MAC-ADDRESSES-UNIQUE-UNDER-INTEGRATOR-SCHEME` / `MAC-ADDRESSES` / `P4-MAC-UNICAST-UNIQUENESS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，系统集成商设计地址方案并保证全部 MAC 地址唯一。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00706` | `SU-ARINC-664-4-4.1.2-P018-PROSE-SENTENCE-003-FA6C364135E7`<br>`ARINC-664-4 4.1.2 p.12` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `SET-MAC-UL-BIT-WHEN-INTEGRATOR-ASSIGNS-ADDRESSES` / `MAC-UL-BIT` / `P4-MAC-UL-BIT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX、选定 664 第 4 部分地址规则且由集成商分配 MAC 地址时，U／L 位应置 1。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00707` | `SU-ARINC-664-4-4.2.2-P018-PROSE-SENTENCE-001-EAD3F94C5832`<br>`ARINC-664-4 4.2.2 p.12` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `KEEP-ALL-NETWORK-ADDRESSES-UNIQUE` / `NETWORK-ADDRESSES` / `P4-NETWORK-ADDRESS-UNIQUENESS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，系统集成商保证网络上全部地址唯一，包括组播 MAC 映射选择。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00708` | `SU-ARINC-664-4-ATT-1-P024-TABLE-ROW-001-8726B05F4E93`<br>`ARINC-664-4 ATT-1 p.18` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `RESERVE-UDP-TCP-PORT-59-FOR-615A-DATA-LOADER-TFTP` / `TCP-UDP-PORT-59, 615A-DATA-LOADER-TFTP` / `P4-PORT-59-615A-TFTP-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，TCP／UDP 端口 59 保留给 ARINC 615A 数据加载器 TFTP，作为该公认专用文件服务分配的航空用途。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00709` | `SU-ARINC-664-4-ATT-1-P024-TABLE-ROW-002-FA27688DFCA4`<br>`ARINC-664-4 ATT-1 p.18` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ASSIGN-UDP-PORT-24922-TO-FIND-PROTOCOL-CLIENT` / `UDP-PORT-24922, FIND-PROTOCOL-CLIENT` / `P4-PORT-24922-FIND-CLIENT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，UDP 端口 24922 分配给 FIND 协议客户端。这不自动选定第 4 部分，也不使 FIND 成为实例绑定操作。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00710` | `SU-ARINC-664-4-ATT-2-P025-PROSE-SENTENCE-001-E53889C58CCD`<br>`ARINC-664-4 ATT-2 p.19` | `SYSTEM-INTEGRATOR` / `WHEN-615A-IS-CARRIED-OVER-AFDX-AND-664P4-ADDRESS-RULES-ARE-SELECTED` / `ALLOCATE-TABLE-2-1-ADDRESSES-FROM-RFC1918-PRIVATE-RANGES` / `TABLE-2-1-IPV4-ALLOCATIONS, RFC1918-PRIVATE-RANGES` / `P4-RFC1918-ALLOCATION-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 在 615A 承载于 AFDX 且选定 664 第 4 部分地址规则时，表 2-1 地址分配取自 RFC 1918 私有范围。这不自动选定第 4 部分。 | — | DEP-ARINC-664-4 |
+| `CRS-M1-00711` | `SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-003-44239DB2F60A`<br>`ARINC-664-7 3.2.4.1 p.14` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `MEASURE-TX-TECHNOLOGICAL-LATENCY-BETWEEN-PARTITION-DATA-AND-PHYSICAL-MEDIA` / `AFDX-TECHNOLOGICAL-LATENCY, TX-MEASUREMENT-START, TX-MEASUREMENT-END` / `AFDX-TX-LATENCY-ENDPOINT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，发送方向技术时延是从宿主分区数据最后一比特可供端系统通信服务使用，到相应以太网帧最后一比特出现在物理介质上的持续时间。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00712` | `SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-004-B2F9DADDEDF5`<br>`ARINC-664-7 3.2.4.1 p.14` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `START-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-PARTITION-BIT-IS-AVAILABLE` / `TX-MEASUREMENT-START` / `AFDX-TX-LATENCY-START-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，发送方向技术时延起点是宿主分区数据最后一比特可供端系统通信服务使用。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00713` | `SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-005-9B58887C088F`<br>`ARINC-664-7 3.2.4.1 p.14` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `END-TX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-ON-MEDIA` / `TX-MEASUREMENT-END` / `AFDX-TX-LATENCY-END-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，发送方向技术时延终点是相应以太网帧最后一比特发送到物理介质。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00714` | `SU-ARINC-664-7-3.2.4.1-P022-PROSE-SENTENCE-006-8D72879FD3A5`<br>`ARINC-664-7 3.2.4.1 p.14` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `MEASURE-TX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-NO-CONTENTION-AND-NO-IP-FRAGMENTATION` / `AFDX-TECHNOLOGICAL-LATENCY, EMPTY-BUFFERS, NO-CONFLICTING-RESOURCE-ACCESS, NO-IP-FRAGMENTATION` / `AFDX-TX-LATENCY-PREMISE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，发送方向技术时延在空缓冲、无冲突资源访问且无 IP 分片的前提下测量。缺少这些前提时，不得仅凭 150 微秒上界判定 IUT 违规。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00715` | `SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-001-4B93E0D081F7`<br>`ARINC-664-7 3.2.4.1 p.15` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `DISTINGUISH-TECHNOLOGICAL-LATENCY-FROM-CONFIGURATION-LOAD-LATENCY` / `AFDX-TECHNOLOGICAL-LATENCY, CONFIGURATION-LATENCY` / `AFDX-LATENCY-KIND-DISTINCTION-OBSERVABLE` | `COMMENTARY` / `INFORMATIVE` | `CONDITIONAL` | 评注：端系统总时延包含与流量负载无关的技术时延，以及取决于配置与流量负载的配置时延。150 微秒上界不是与负载无关的普遍超时。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00716` | `SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-002-F6362C6DA30A`<br>`ARINC-664-7 3.2.4.1 p.15` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `DEFINE-TECHNOLOGICAL-LATENCY-AS-ACCEPT-PROCESS-AND-BEGIN-TX-WITH-NO-OTHER-TASK` / `AFDX-TECHNOLOGICAL-LATENCY` / `AFDX-TECH-LATENCY-DEFINITION-OBSERVABLE` | `COMMENTARY` / `INFORMATIVE` | `CONDITIONAL` | 评注：技术时延是端系统在不执行其他任务时接受、处理并开始发送应用数据所需的时间。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00717` | `SU-ARINC-664-7-3.2.4.1-P023-COMMENTARY-003-6E1BCB3D2E11`<br>`ARINC-664-7 3.2.4.1 p.15` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ADD-FRAME-DELAY-FOR-PHYSICAL-LAYER-DELIVERY` / `FRAME-DELAY` / `AFDX-FRAME-DELAY-DEFINITION-OBSERVABLE` | `COMMENTARY` / `INFORMATIVE` | `CONDITIONAL` | 评注：帧时延覆盖把帧递送到物理层的时间，并加到发送方向 150 微秒技术时延上界上。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00718` | `SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-007-1CDDD6B34C3E`<br>`ARINC-664-7 3.2.4.1 p.16` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `START-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-FRAME-BIT-IS-RECEIVED` / `RX-MEASUREMENT-START` / `AFDX-RX-LATENCY-START-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，接收方向技术时延起点是以太网帧最后一比特在物理介质连接点被接收。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00719` | `SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-008-824150EBC26E`<br>`ARINC-664-7 3.2.4.1 p.16` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `END-RX-TECHNOLOGICAL-LATENCY-WHEN-LAST-DATA-BIT-IS-AVAILABLE-TO-PARTITION` / `RX-MEASUREMENT-END` / `AFDX-RX-LATENCY-END-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，接收方向技术时延终点是相应数据最后一比特可供端系统宿主分区使用。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00720` | `SU-ARINC-664-7-3.2.4.1-P024-PROSE-SENTENCE-009-BEE0AC634C0C`<br>`ARINC-664-7 3.2.4.1 p.16` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `MEASURE-RX-TECHNOLOGICAL-LATENCY-WITH-EMPTY-BUFFERS-AND-NO-CONTENTION` / `AFDX-TECHNOLOGICAL-LATENCY, EMPTY-BUFFERS, NO-CONFLICTING-RESOURCE-ACCESS` / `AFDX-RX-LATENCY-PREMISE-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，接收方向技术时延在空缓冲且无冲突资源访问的前提下测量。缺少这些前提时，不得仅凭 150 微秒上界判定 IUT 违规。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00721` | `SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-002-7A1296CF6117`<br>`ARINC-664-7 3.2.4.3 p.17` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SATISFY-BOTH-MAX-JITTER-EQUATIONS-SIMULTANEOUSLY` / `AFDX-JITTER, MAX-JITTER-LOAD-EQUATION, MAX-JITTER-500US-EQUATION` / `AFDX-MAX-JITTER-BOTH-EQUATIONS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，端系统输出的 max_jitter 必须同时满足两个已恢复公式。仅满足 500 微秒上限不够。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00722` | `SU-ARINC-664-7-3.2.4.3-P025-PROSE-SENTENCE-003-E8E54C6C0881`<br>`ARINC-664-7 3.2.4.3 p.17` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-MAX-JITTER-AS-MICROSECONDS-NBW-AS-BITS-PER-SECOND-AND-LMAX-AS-OCTETS` / `AFDX-JITTER, NBW, LMAX-I, CONFIGURED-VL-SET` / `AFDX-MAX-JITTER-UNIT-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，max_jitter 以微秒计，Nbw 是为正的介质带宽（比特每秒），每个 Lmax_i 以八位组计。负载项是 8 × SUM_i(20 + Lmax_i) / Nbw 秒，须乘 1000000 换成微秒后再与 40 微秒相加。只对 Lmax_i 求和并只加一次 20 八位组开销不是源方程。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00723` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-003-F168177B9A90`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `COMPOSE-MAC-SOURCE-AS-24-PLUS-16-PLUS-3-PLUS-5-BIT-FIELDS` / `MAC-SOURCE-ADDRESS, MAC-SOURCE-CONSTANT-FIELD, MAC-SOURCE-USER-DEFINED-ID, MAC-SOURCE-INTERFACE-ID, MAC-SOURCE-CONSTANT-TAIL` / `AFDX-MAC-SOURCE-48-BIT-COMPOSITION-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，MAC 源地址是 48 位不重叠拼接：24 位常数、16 位 User_Defined_ID、3 位 Interface_ID 与 5 位常数尾字段。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00724` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-004-F1E35DF3FF8A`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-MAC-SOURCE-CONSTANT-TAIL-TO-00000` / `MAC-SOURCE-CONSTANT-TAIL` / `AFDX-MAC-SOURCE-CONSTANT-TAIL-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，MAC 源地址常数尾字段是图 3-11 中的 5 位值 0 0000。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00725` | `SU-ARINC-664-7-3.2.5.2-P027-COMMENTARY-001-3B49302B2721`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-MAC-SOURCE-CONSTRUCTION-ALGORITHM-AS-NOT-UNIQUELY-RECOMMENDED` / `MAC-SOURCE-ADDRESS` / `AFDX-MAC-SOURCE-ALGORITHM-COMMENTARY-OBSERVABLE` | `COMMENTARY` / `INFORMATIVE` | `CONDITIONAL` | 评注：未推荐唯一 MAC 源地址构造算法。这并不免除图 3-11 的字段宽度、常数或 Interface_ID 编码约束。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00726` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-005-0A0C502A2190`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-INTERFACE-ID-000-AS-NOT-USED` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-INTERFACE-ID-000-NOT-USED-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 若选择 AFDX，Interface_ID 000 登记为未使用。原文未把未使用等同于禁止。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00727` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-006-DFB1D506427E`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-INTERFACE-ID-011-AS-NOT-USED` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-INTERFACE-ID-011-NOT-USED-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 若选择 AFDX，Interface_ID 011 登记为未使用。除非原文禁止，未使用不等于禁止。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00728` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-007-F7A240692D0C`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-INTERFACE-ID-100-AS-NOT-USED` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-INTERFACE-ID-100-NOT-USED-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 若选择 AFDX，Interface_ID 100 登记为未使用。除非原文禁止，未使用不等于禁止。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00729` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-008-03258840BB7B`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-INTERFACE-ID-101-AS-NOT-USED` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-INTERFACE-ID-101-NOT-USED-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 若选择 AFDX，Interface_ID 101 登记为未使用。除非原文禁止，未使用不等于禁止。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00730` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-009-B3132C35E340`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-INTERFACE-ID-110-AS-SOURCE-NOR-USED` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-INTERFACE-ID-110-NOT-USED-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 若选择 AFDX，Interface_ID 110 按原文 Nor used 登记。这是覆盖处置，不是禁止。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00731` | `SU-ARINC-664-7-3.2.5.2-P027-TABLE-ROW-010-9E853859DACB`<br>`ARINC-664-7 3.2.5.2 p.19` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-INTERFACE-ID-111-AS-NOT-USED` / `MAC-SOURCE-INTERFACE-ID` / `AFDX-INTERFACE-ID-111-NOT-USED-OBSERVABLE` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 若选择 AFDX，Interface_ID 111 登记为未使用。除非原文禁止，未使用不等于禁止。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00732` | `SU-ARINC-664-3-1.5-P013-PROSE-SENTENCE-002-E1E2DE7AAEF9`<br>`ARINC-664-3 1.5 p.6` | `ARINC-664P3-DOCUMENT-CONTROL` / `WHEN-INTERPRETING-664P3-DOCUMENT-SCOPE` / `RECORD-P3-RFC-OPTION-RESTRICTION-PHILOSOPHY` / `IETF-RFC-OPTIONS, ARINC-664P3-PROFILE` / `P3-DOCUMENT-PHILOSOPHY-CONTROL-RECORD` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 664P3 文档编制哲学：仅当航空环境或用户／监管要求与 IETF RFC 冲突，或为消除歧义而限制实现者选项时，才改动 RFC 规定。这不是网络设备可观察义务。CRS-M1-00604 仍是优先规则。 | — | DEP-ARINC-664-3 |
+| `CRS-M1-00733` | `SU-ARINC-664-3-1.5-P013-PROSE-SENTENCE-003-3D1EF7D4894C`<br>`ARINC-664-3 1.5 p.6` | `ARINC-664P3-DOCUMENT-CONTROL` / `WHEN-INTERPRETING-664P3-DOCUMENT-SCOPE` / `RECORD-P3-CONTENTS-LIMITED-TO-RFC-DELTAS` / `ARINC-664P3-PROFILE` / `P3-DOCUMENT-CONTENTS-CONTROL-RECORD` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 664P3 文档编制陈述：内容限于描述 RFC 改动与选项限制。已部署网络不能限制已发布标准的内容。CRS-M1-00604 仍是优先规则。 | — | DEP-ARINC-664-3 |
+| `CRS-M1-00734` | `SU-ARINC-664-7-4.1-P056-PROSE-SENTENCE-001-A03F45C90169`<br>`ARINC-664-7 4.1 p.48` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `COMPOSE-AFDX-SWITCH-FROM-FIVE-FUNCTIONAL-BLOCKS` / `AFDX-SWITCH-FUNCTIONAL-BLOCKS` / `AFDX-SWITCH-FIVE-BLOCKS-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，交换机由 图 4-1 所示五个相互作用的功能块组成。普通以太网试验不能证明该组成。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00735` | `SU-ARINC-664-7-4.1-P056-PROSE-SENTENCE-002-65C47F79D736`<br>`ARINC-664-7 4.1 p.48` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `CONTROL-AFDX-SWITCH-FUNCTIONS-WITH-STATIC-CONFIGURATION-TABLES` / `AFDX-SWITCH-CONFIGURATION-TABLES` / `AFDX-SWITCH-STATIC-CONFIGURATION-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，交换机功能由静态配置表控制。绑定 M2 不执行这些表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00736` | `SU-ARINC-664-7-4.5.1-P064-PROSE-SENTENCE-001-CFAB87A6BA56`<br>`ARINC-664-7 4.5.1 p.56` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-SWITCH-END-SYSTEM-TO-COMPLY-WITH-SECTION-3-EXCEPT-REDUNDANCY` / `AFDX-SWITCH-END-SYSTEM` / `AFDX-SWITCH-ES-SECTION-3-COMPLIANCE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，交换机端系统符合第 7 部分第 3 节，网络冗余除外。这不在当前 Compliant 实例上激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00737` | `SU-ARINC-664-7-4.5.2-P064-PROSE-SENTENCE-001-944CABF62B3E`<br>`ARINC-664-7 4.5.2 p.56` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-SWITCH-END-SYSTEM-UNICAST-MAC-AS-SOURCE-ADDRESS` / `AFDX-SWITCH-END-SYSTEM, MAC-SOURCE-ADDRESS` / `AFDX-SWITCH-ES-UNICAST-SOURCE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，交换机端系统发送帧时使用自身 MAC 单播地址作为源地址。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00738` | `SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-001-76972BD77CA0`<br>`ARINC-664-7 4.8.4 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `KEEP-615A-SESSION-ACROSS-OPS-TO-DL-TRANSITION` / `ARINC-615A-SESSION, AFDX-SWITCH-DL-MODE` / `AFDX-SWITCH-OPS-TO-DL-615A-SESSION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，从 OPS 模式转入 DL 模式不得中断 ARINC 615A 会话。绑定 M2 仍不执行该交换机模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00739` | `SU-ARINC-664-7-4.9.1-P075-PROSE-SENTENCE-001-99914B9848DA`<br>`ARINC-664-7 4.9.1 p.67` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-615A-AND-665-TO-UPLOAD-SWITCH-SOFTWARE-AND-CONFIGURATION` / `ARINC-615A-DATALOADER, ARINC-665-LOAD` / `AFDX-SWITCH-615A-665-UPLOAD-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，向交换机上传软件与配置表使用 ARINC 615A 与 ARINC 665 过程及协议。这不绑定 ARINC 645。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00740` | `SU-ARINC-664-7-4.11.2-P078-PROSE-SENTENCE-001-E51A58BE02E7`<br>`ARINC-664-7 4.11.2 p.70` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-AFDX-SWITCH-PHYSICAL-LAYER-TO-COMPLY-WITH-664P2` / `AFDX-SWITCH-PHYSICAL-LAYER, ARINC-664-2` / `AFDX-SWITCH-P2-PHY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，交换机物理层符合 ARINC 664 第 2 部分。这不自动选定第 4 部分，也不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00741` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-001-9CA770F21732`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-UDP-IP-OPTIONS-AS-NOT-USED-ON-AFDX` / `AFDX-IP-UDP-PROFILE, IP-OPTIONS` / `AFDX-UDP-IP-OPTIONS-NOT-USED-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，附件 2 将 UDP 中的 IP 选项标为 NOT APPLICABLE，因为 AFDX 不使用 IP 选项。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 MUST 解释为 MUST NOT。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00742` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-002-C0554B96D7A3`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-UDP-CHECKSUM-GENERATE-AND-CHECK-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, UDP-CHECKSUM-GENERATE-AND-CHECK` / `AFDX-UDP-CHECKSUM-GENERATE-AND-CHECK-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，表 2-2 将 UDP checksum 生成／校验标为 NOT APPLICABLE。内嵌 RFC 1122 MUST 仍是 RFC 层句子；按已绑定的附件 2 约定（CRS-M1-00609），在选定的 AFDX profile 下解释为 MUST NOT。该 profile 规则不是对 AFDX 之外休眠生成／校验代码的一律禁止。「AFDX 不使用 checksum」评注是单独的使用陈述；静默丢弃错误 checksum 是单独的 NOT APPLICABLE 行。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00743` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-003-1EBC5D0D6875`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-AFDX-END-SYSTEM-INTERNET-LAYER-TO-IMPLEMENT-IP` / `AFDX-IP-UDP-PROFILE, IPV4` / `AFDX-IMPLEMENT-IP-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，端系统互联网层按附件 2 表 2-3 的 MUST 实现 IP。这不取代 RFC 791 身份。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00744` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-004-A0F0599C244F`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-AFDX-END-SYSTEM-INTERNET-LAYER-TO-IMPLEMENT-ICMP` / `AFDX-IP-UDP-PROFILE, ICMP` / `AFDX-IMPLEMENT-ICMP-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，端系统互联网层按附件 2 表 2-3 的 MUST 实现 ICMP。615A TFTP 仍不把 ICMP 当作文件传输协议。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00745` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-005-44340B4D8C62`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SILENTLY-DISCARD-NON-IPV4-DATAGRAMS` / `AFDX-IP-UDP-PROFILE, IPV4-VERSION-FIELD` / `AFDX-DISCARD-NON-IPV4-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，IP 版本号不是 4 的数据报被静默丢弃。这不取代已绑定的 RFC 791 版本字段宽度。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00746` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-006-4D4480F4B5B6`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-AFDX-UDP-CHECKSUM-UNUSED-COMMENT` / `AFDX-IP-UDP-PROFILE, UDP-CHECKSUM-USE-COMMENT` / `AFDX-UDP-CHECKSUM-UNUSED-COMMENT-RECORD` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 若选择 AFDX，表 2-2 评注称 AFDX 不使用 checksum。该使用评注与生成／校验的 NOT APPLICABLE 标记及丢弃行分开记录；CRS-M1-00609 适用于已标记的 NOT APPLICABLE 行，而不适用于本评注格。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00747` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-007-EE88901ECA01`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-SILENT-BAD-UDP-CHECKSUM-DISCARD-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, UDP-BAD-CHECKSUM-DISCARD` / `AFDX-UDP-BAD-CHECKSUM-DISCARD-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，表 2-2 将静默丢弃错误 UDP checksum 标为 NOT APPLICABLE。该接收处理行独立于生成／校验的 NOT APPLICABLE 行。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 MUST 解释为 MUST NOT。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00748` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-008-7481B3A6C175`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PASS-ICMP-MESSAGES-TO-APPLICATION-LIMITED-TO-ECHO-REQUEST` / `AFDX-IP-UDP-PROFILE, ICMP-UPCALL` / `AFDX-ICMP-UPCALL-ECHO-REQUEST-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，表 2-2 将 ICMP 上报应用层标为 MUST，并由评注限定为 ICMP echo request。端口不可达处理是单独一行。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00749` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-009-1D11C723F49C`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-UDP-PORT-UNREACHABLE-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, ICMP-PORT-UNREACHABLE` / `AFDX-UDP-PORT-UNREACHABLE-NOT-APPLICABLE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，表 2-2 将 UDP Port Unreachable 标为 NOT APPLICABLE，评注仅允许 ICMP echo request／reply。按已绑定的 NOT APPLICABLE 规则，该 RFC 1122 SHOULD 解释为 MUST NOT。ICMP 上报是单独一行。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00750` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-010-06F426B1CA0A`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `FORBID-REMOTE-MULTIHOMING-AT-APPLICATION-LAYER-ON-AFDX` / `AFDX-IP-UDP-PROFILE, REMOTE-MULTIHOMING` / `AFDX-REMOTE-MULTIHOMING-MUST-NOT-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，表 2-3 将在应用层处理远端多宿主标为 MUST NOT。本端多宿主是单独的 MUST 行。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00751` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-011-24F4226862A9`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-LOCAL-MULTIHOMING-ON-AFDX` / `AFDX-IP-UDP-PROFILE, LOCAL-MULTIHOMING` / `AFDX-LOCAL-MULTIHOMING-MUST-OBSERVABLE` | `MAY` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，表 2-3 将本端多宿主标为 MUST，即使 RFC 文本为 MAY。远端多宿主是单独的 MUST NOT 行。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00752` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-012-AD290D8425E1`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `LOG-DISCARDED-DATAGRAMS-ON-AFDX` / `AFDX-IP-UDP-PROFILE, DISCARDED-DATAGRAM-LOG` / `AFDX-DISCARDED-DATAGRAM-LOG-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，表 2-3 将记录被丢弃数据报的能力标为 MUST，评注为记入 MIB。计数器行是单独的。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00753` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-013-DA0C1E503BBE`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-DISCARDED-DATAGRAMS-IN-COUNTER-ON-AFDX` / `AFDX-IP-UDP-PROFILE, DISCARDED-DATAGRAM-COUNTER` / `AFDX-DISCARDED-DATAGRAM-COUNTER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，表 2-3 将被丢弃数据报记入统计计数器标为 MUST，评注为记入 MIB。日志能力行是单独的。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00754` | `SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-001-041C80F600BB`<br>`ARINC-664-7 4.8.3 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENTER-OPS-AFTER-COMPATIBLE-INIT-WHEN-SHOP-INACTIVE` / `AFDX-SWITCH-OPS-MODE` / `AFDX-SWITCH-OPS-ENTRY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，初始化后在兼容性检查正确且 SHOP 未激活时进入 OPS。绑定 M2 仍不执行该交换机模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00755` | `SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-002-B219C792977C`<br>`ARINC-664-7 4.8.3 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PROVIDE-OPS-MODE-615A-INFORMATION-AND-FIND` / `ARINC-615A-INFORMATION, ARINC-615A-FIND, AFDX-SWITCH-OPS-MODE` / `AFDX-SWITCH-OPS-615A-INFORMATION-FIND-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，OPS 模式下交换机端系统能够执行 ARINC 615A Information 与 FIND。绑定 M2 仍不执行 FIND，也不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00756` | `SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-002-EC7D903BFFB7`<br>`ARINC-664-7 4.8.4 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENTER-DL-FROM-INIT-ONLY-WHEN-GROUND-AND-COMPATIBILITY-FAIL-OR-EMPTY` / `AFDX-SWITCH-DL-MODE, SWITCH-GROUND-CONDITION` / `AFDX-SWITCH-DL-FROM-INIT-ENTRY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，从 INIT 进入 DL 仅当接地条件有效且（兼容性检查失败或无已加载软件）。绑定 M2 不执行该模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00757` | `SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-003-0A7405261FC0`<br>`ARINC-664-7 4.8.4 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ENTER-DL-FROM-OPS-ONLY-WHEN-GROUND-UPLOAD-INIT-AND-HEADER-ACCEPTED` / `AFDX-SWITCH-DL-MODE, TH-UPLOADING-INITIALIZATION, SWITCH-GROUND-CONDITION` / `AFDX-SWITCH-DL-FROM-OPS-ENTRY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，从 OPS 进入 DL 仅当接地有效、收到发往本交换机端系统的 TH_Uploading_Initialization，且头文件已被接受。绑定 M2 不执行该模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00758` | `SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-004-81B3C51C4B44`<br>`ARINC-664-7 4.8.4 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PROVIDE-DL-MODE-615A-INFORMATION-UPLOAD-AND-FIND` / `ARINC-615A-INFORMATION, ARINC-615A-UPLOAD, ARINC-615A-FIND, AFDX-SWITCH-DL-MODE` / `AFDX-SWITCH-DL-615A-INFORMATION-UPLOAD-FIND-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，DL 模式下交换机能够完整执行 ARINC 615A Information、Uploading 与 FIND。绑定 M2 仍不执行 FIND，也不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00759` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-014-B97760133976`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-UDP-IP-OPTIONS-SEND-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, UDP-IP-OPTIONS-SEND` / `AFDX-UDP-IP-OPTIONS-SEND-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，表 2-2 将在 UDP Send 中指定 IP 选项标为 NOT APPLICABLE。RFC 层句子保留；按 CRS-M1-00609，AFDX NOT APPLICABLE 在选定 profile 下为 MUST NOT，不是对 AFDX 之外的一律禁止。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00760` | `SU-ARINC-664-7-ATT-2-P112-TABLE-ROW-015-464BAC54A238`<br>`ARINC-664-7 ATT-2 p.104` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-UDP-IP-OPTIONS-DOWN-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, UDP-IP-OPTIONS-DOWN` / `AFDX-UDP-IP-OPTIONS-DOWN-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，表 2-2 将 IP 选项下传到 IP 层标为 NOT APPLICABLE。RFC 层句子保留；按 CRS-M1-00609，AFDX NOT APPLICABLE 在选定 profile 下为 MUST NOT，不是对 AFDX 之外的一律禁止。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00761` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-016-C29A04CC8674`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-GATEWAY-FORWARDING-SPEC-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, GATEWAY-FORWARDING` / `AFDX-GATEWAY-FORWARDING-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，表 2-3 将转发时满足网关规范标为 NOT APPLICABLE。RFC 层句子保留；按 CRS-M1-00609，AFDX NOT APPLICABLE 在选定 profile 下为 MUST NOT，不是对 AFDX 之外的一律禁止。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00762` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-017-B75F02D3CC9F`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-EMBEDDED-GATEWAY-SWITCH-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, EMBEDDED-GATEWAY-SWITCH` / `AFDX-EMBEDDED-GATEWAY-SWITCH-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，表 2-3 将内嵌网关关闭开关标为 NOT APPLICABLE。RFC 层句子保留；按 CRS-M1-00609，AFDX NOT APPLICABLE 在选定 profile 下为 MUST NOT，不是对 AFDX 之外的一律禁止。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00763` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-018-C25AB27DF43E`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-NON-GATEWAY-DEFAULT-AS-NOT-APPLICABLE-ON-AFDX` / `AFDX-IP-UDP-PROFILE, NON-GATEWAY-DEFAULT` / `AFDX-NON-GATEWAY-DEFAULT-NOT-APPLICABLE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，表 2-3 将内嵌网关开关的非网关缺省标为 NOT APPLICABLE。相邻“无缺省配置而有配置”评注不是单独义务。RFC 层句子保留；按 CRS-M1-00609，AFDX NOT APPLICABLE 在选定 profile 下为 MUST NOT，不是对 AFDX 之外的一律禁止。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00764` | `SU-ARINC-664-7-ATT-2-P115-TABLE-ROW-019-9D460A176ACE`<br>`ARINC-664-7 ATT-2 p.107` | `AFDX-END-SYSTEM` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-AFDX-GATEWAY-AUTOCONFIGURATION-ROW-UNMARKED` / `AFDX-IP-UDP-PROFILE, GATEWAY-AUTOCONFIGURATION` / `AFDX-GATEWAY-AUTOCONFIGURATION-UNMARKED-RECORD` | `MUST` / `INFORMATIVE` | `CONDITIONAL` | 若选择 AFDX，表 2-3 将按接口数自动进入网关模式一行留空。空格不是 MUST、NOT APPLICABLE 或 MUST NOT，故不适用 CRS-M1-00609。内嵌 RFC MUST NOT 仍是 RFC 层句子，不作为 AFDX 表义务采用。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00765` | `SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-003-6D4F0D03A392`<br>`ARINC-664-7 4.8.3 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PERFORM-OPS-FILTERING-POLICING-SWITCHING-FROM-OPS-CONFIG` / `AFDX-SWITCH-OPS-MODE, OPS-CONFIGURATION-FILE` / `AFDX-SWITCH-OPS-FILTER-POLICE-SWITCH-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，OPS 下交换机仅依据已激活的 OPS_Configuration_File 执行过滤、监管、交换与端系统功能。绑定 M2 不执行该模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00766` | `SU-ARINC-664-7-4.8.3-P073-PROSE-SENTENCE-004-96DB71C6B1A7`<br>`ARINC-664-7 4.8.3 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-OPS-FAULT-HEALTHY-INDICATOR-TO-HEALTHY` / `AFDX-SWITCH-OPS-MODE, FAULT-HEALTHY-INDICATOR` / `AFDX-SWITCH-OPS-HEALTHY-INDICATOR-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，OPS 下将 Fault/Healthy 指示置于 Healthy。§4.6 的 MIB／SNMP 100 ms 更新仍在范围外。绑定 M2 不执行该指示。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00767` | `SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-005-2C6F17E65416`<br>`ARINC-664-7 4.8.4 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-DL-UPLOAD-AS-PREFERABLY-EXCLUSIVE` / `AFDX-SWITCH-DL-MODE, ARINC-615A-UPLOAD` / `AFDX-SWITCH-DL-UPLOAD-EXCLUSIVE-OBSERVABLE` | `MUST` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，上传宜独占。上传期间交换机专用于该操作是单独句子。绑定 M2 不执行该模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00768` | `SU-ARINC-664-7-4.8.4-P073-PROSE-SENTENCE-006-EDA9037DC292`<br>`ARINC-664-7 4.8.4 p.65` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `DEDICATE-SWITCH-TO-UPLOAD-DURING-DL-UPLOAD` / `AFDX-SWITCH-DL-MODE, ARINC-615A-UPLOAD` / `AFDX-SWITCH-DL-UPLOAD-DEDICATED-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，上传期间交换机只专用于该操作。宜独占是单独句子。绑定 M2 不执行该模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00769` | `SU-ARINC-664-7-4.7.2.2-P067-PROSE-SENTENCE-001-A06C741A7AA6`<br>`ARINC-664-7 4.7.2.2 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-DEFAULT-RECEPTION-VL-FOR-DATALOADING` / `AFDX-SWITCH-DEFAULT-RECEPTION-VL, ARINC-615A-DATALOADING` / `AFDX-SWITCH-DEFAULT-RECEPTION-VL-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，缺省接收 VL 即使无 OPS_Configuration_File 也须能到达交换机端系统，至少用于数据加载。绑定 M2 不执行该配置。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00770` | `SU-ARINC-664-7-4.7.1-P066-PROSE-SENTENCE-001-915170424929`<br>`ARINC-664-7 4.7.1 p.58` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RECORD-TWELVE-PIN-POSITION-IDENTIFICATION-AS-EXAMPLE` / `AFDX-SWITCH-PIN-PROGRAMMING` / `AFDX-SWITCH-TWELVE-PIN-EXAMPLE-RECORD` | `FACT` / `INFORMATIVE` | `CONDITIONAL` | 若选择 AFDX，用 12 插针识别交换机位置是示例，本身不是规范。有条件的 12 插针定义句是单独叶。这不激活 AFDX。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00771` | `SU-ARINC-664-7-4.7.1-P066-PROSE-SENTENCE-002-991619A11E37`<br>`ARINC-664-7 4.7.1 p.58` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-STATED-TWELVE-PIN-DEFINITIONS-IF-TWELVE-PINS-CHOSEN` / `AFDX-SWITCH-PIN-PROGRAMMING` / `AFDX-SWITCH-TWELVE-PIN-DEFINITIONS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX 且实现者使用 12 插针，则应使用随后的插针定义。12 插针假定本身是示例。绑定 M2 不执行插针编程。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00772` | `SU-ARINC-664-7-4.7.2-P066-PROSE-SENTENCE-001-AD7818BDA5BE`<br>`ARINC-664-7 4.7.2 p.58` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `KEEP-DEFAULT-CONFIGURATION-TABLE-RESIDENT` / `DEFAULT-CONFIGURATION-TABLE` / `AFDX-SWITCH-DEFAULT-TABLE-RESIDENT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，Default_Configuration_Table 为驻留表。绑定 M2 不执行该配置。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00773` | `SU-ARINC-664-7-4.7.2.1-P067-PROSE-SENTENCE-001-2D3669CB8EC1`<br>`ARINC-664-7 4.7.2.1 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-DEFAULT-PHYSICAL-PORT-SPEED-100MBPS-WITHOUT-AUTONEG` / `DEFAULT-PHYSICAL-PORT, PORT-SPEED-100MBPS` / `AFDX-SWITCH-DEFAULT-PORT-SPEED-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，缺省外部端口速率为 100 Mbps 且无自动协商。绑定 M2 不执行该端口。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00774` | `SU-ARINC-664-7-4.7.2.2-P067-PROSE-SENTENCE-002-601527B614B8`<br>`ARINC-664-7 4.7.2.2 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-DEFAULT-RECEPTION-VL-FIELDS-IN-NONVOLATILE-MEMORY` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-RECEPTION-VL, VL-IDENTIFIER, SMAX, BAG` / `AFDX-SWITCH-DEFAULT-RX-VL-FIELDS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，非易失缺省接收 VL 表至少含 P7-4.7.2.2-DEFAULT-RECEPTION-VL-FIELDS 的成员。本句是列表引导句，不是成员。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00775` | `SU-ARINC-664-7-4.7.2.3-P067-PROSE-SENTENCE-001-05535F48356A`<br>`ARINC-664-7 4.7.2.3 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-DEFAULT-TRANSMISSION-VL-FIELDS-IN-NONVOLATILE-MEMORY` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, VL-IDENTIFIER, BAG, SMAX` / `AFDX-SWITCH-DEFAULT-TX-VL-FIELDS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，非易失缺省发送 VL 表至少含 P7-4.7.2.3-DEFAULT-TRANSMISSION-VL-FIELDS 的成员。本句是列表引导句，不是成员。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00776` | `SU-ARINC-664-7-4.7.2.3-P068-PROSE-SENTENCE-002-9CD5C7E10E52`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-DEFAULT-TRANSMISSION-VL-FOR-DATALOADING-ACKNOWLEDGE` / `DEFAULT-TRANSMISSION-VL, ARINC-615A-DATALOADING` / `AFDX-SWITCH-DEFAULT-TX-VL-DATALOAD-ACK-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，缺省发送 VL 即使无 OPS_Configuration_File 也能通信，至少用于数据加载确认。绑定 M2 不执行该 VL。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00777` | `SU-ARINC-664-7-4.7.3-P069-PROSE-SENTENCE-001-67F8156E9635`<br>`ARINC-664-7 4.7.3 p.61` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-OPS-CONFIGURATION-FILE-615A-665-FIELD-LOADABLE` / `OPS-CONFIGURATION-FILE, ARINC-615A, ARINC-665` / `AFDX-SWITCH-OPS-CONFIG-FILE-615A-665-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，OPS_Configuration_File 为符合 ARINC 615A 与 665 的现场可加载软件。绑定 M2 不执行该加载。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00778` | `SU-ARINC-664-7-4.7.3.2-P069-PROSE-SENTENCE-001-EFD62301437B`<br>`ARINC-664-7 4.7.3.2 p.61` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-FILTERING-POLICING-FORWARDING-TABLE-PARAMETER-SET` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE` / `AFDX-SWITCH-FILTER-TABLE-PARAMETER-SET-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，Filtering_Policing_and_Forwarding_Configuration_Table 应含 P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS 的成员（九项每 VL、五项每端口，含高低优先级缓冲区分）。本句是列表引导句，不是成员。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00779` | `SU-ARINC-664-7-4.7.3.2-P070-PROSE-SENTENCE-002-F89C710F1173`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-LISTED-PARAMETERS-TO-CONFIGURE-FILTER-POLICE-FORWARD` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, VL-PARAMETERS, PORT-PARAMETERS` / `AFDX-SWITCH-FILTER-PARAMETERS-REQUIRED-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，P7-4.7.3.2-FILTER-POLICE-FORWARD-PARAMETERS 的成员为配置过滤、监管与转发所必需。本句是收束要求，不是成员。绑定 M2 不执行那些功能。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00780` | `SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-007-FD39BBEA1D03`<br>`ARINC-664-7 4.8.4 p.66` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PERFORM-DL-END-SYSTEM-FROM-DEFAULT-CONFIGURATION-TABLE` / `AFDX-SWITCH-DL-MODE, DEFAULT-CONFIGURATION-TABLE` / `AFDX-SWITCH-DL-DEFAULT-TABLE-ES-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，DL 下端系统只依据驻留 Default_Configuration_Table。绑定 M2 不执行该模式。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00781` | `SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-008-0F43447BE6D0`<br>`ARINC-664-7 4.8.4 p.66` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `SET-DL-FAULT-HEALTHY-INDICATOR-TO-HEALTHY` / `AFDX-SWITCH-DL-MODE, FAULT-HEALTHY-INDICATOR` / `AFDX-SWITCH-DL-HEALTHY-INDICATOR-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，DL 下将 Fault/Healthy 指示置于 Healthy。§4.6 MIB／SNMP 更新仍在范围外。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00782` | `SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-009-CA57944F0539`<br>`ARINC-664-7 4.8.4 p.66` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `RETURN-TO-INIT-AT-END-OF-DL-MODE` / `AFDX-SWITCH-DL-MODE, AFDX-SWITCH-INIT-MODE` / `AFDX-SWITCH-DL-RETURN-TO-INIT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，DL 结束时回到 INIT。与 615A 加载结束对应是单独句子。绑定 M2 不执行该模式机。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00783` | `SU-ARINC-664-7-4.8.4-P074-PROSE-SENTENCE-010-BB161270D89C`<br>`ARINC-664-7 4.8.4 p.66` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `TREAT-DL-MODE-END-AS-615A-DATA-LOADING-FUNCTION-END` / `AFDX-SWITCH-DL-MODE, ARINC-615A-DATALOADING` / `AFDX-SWITCH-DL-END-615A-OBSERVABLE` | `FACT` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，DL 模式结束对应 ARINC 615A 数据加载功能结束。回到 INIT 是单独句子。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00784` | `SU-ARINC-664-7-4.9.2.1-P076-PROSE-SENTENCE-001-38F2329E9842`<br>`ARINC-664-7 4.9.2.1 p.68` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `LIMIT-SWITCH-FIELD-LOADABLE-SOFTWARE-TO-OPS-CONFIG-AND-OPS-SOFTWARE` / `OPS-CONFIGURATION-FILE, OPS-SOFTWARE` / `AFDX-SWITCH-TWO-FIELD-LOADABLE-LIMIT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，交换机最多两个现场可加载软件：OPS_Configuration_File 与 OPS_Software。绑定 M2 不执行该清单。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00785` | `SU-ARINC-664-7-4.9.2.1-P076-PROSE-SENTENCE-002-50F1E2C97FCF`<br>`ARINC-664-7 4.9.2.1 p.68` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `REQUIRE-FIELD-LOADABLE-FILES-IDENTICAL-ACROSS-AIRCRAFT-SWITCHES` / `OPS-CONFIGURATION-FILE, OPS-SOFTWARE` / `AFDX-SWITCH-FLS-IDENTICAL-ON-AIRCRAFT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，那些现场可加载文件在飞机全部交换机上相同。绑定 M2 不执行该同一性。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00786` | `SU-ARINC-664-7-4.9.2.2-P076-PROSE-SENTENCE-001-CF93913C10D2`<br>`ARINC-664-7 4.9.2.2 p.68` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `MAKE-SWITCH-CONFIGURATION-ACCESSIBLE-VIA-615A-INFORMATION` / `ARINC-615A-INFORMATION, SWITCH-CONFIGURATION` / `AFDX-SWITCH-POWER-ON-615A-INFORMATION-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，上电时交换机配置可通过 ARINC 615A Information 访问。绑定 M2 仍不在 AFDX 上执行 INFORMATION。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00787` | `SU-ARINC-664-7-4.9.3-P076-PROSE-SENTENCE-001-E77131417E7A`<br>`ARINC-664-7 4.9.3 p.68` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `LEARN-DATALOADER-IP-FROM-SOURCE-ADDRESS` / `DATALOADER-IP-ADDRESS, IP-SOURCE-ADDRESS` / `AFDX-SWITCH-LEARN-DATALOADER-IP-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，交换机从数据加载器 IP 源地址学习其 IP。绑定 M2 不执行该学习。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00788` | `SU-ARINC-664-7-4.10-P076-PROSE-SENTENCE-001-A1E523B9B28A`<br>`ARINC-664-7 4.10 p.68` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-PIN-PROGRAMMING-FOR-POSITION-AND-DEFAULT-MAC-IP` / `PIN-PROGRAMMING, DEFAULT-MAC-ADDRESS, DEFAULT-IP-ADDRESS` / `AFDX-SWITCH-PIN-POSITION-MAC-IP-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，硬件插针编程确定交换机位置并关联缺省端系统 MAC 与 IP。绑定 M2 不执行插针编程。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00789` | `SU-ARINC-664-7-4.10.1.1-P077-PROSE-SENTENCE-001-52B9BEED0B27`<br>`ARINC-664-7 4.10.1.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `READ-PROGRAM-PINS-IN-INIT-ONLY-WHEN-GROUND-BEFORE-SAFETY-TEST` / `PIN-PROGRAMMING, SWITCH-GROUND-CONDITION, AFDX-SWITCH-INIT-MODE` / `AFDX-SWITCH-PIN-READ-INIT-GROUND-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，仅在 INIT 且接地条件为真、并在任何 Safety Test 之前读取编程插针。绑定 M2 不执行该读取。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00790` | `SU-ARINC-664-7-4.10.1.1-P077-PROSE-SENTENCE-002-75BA57B04BE1`<br>`ARINC-664-7 4.10.1.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `DO-NOT-READ-PROGRAM-PINS-WHEN-GROUND-CONDITION-FALSE` / `PIN-PROGRAMMING, SWITCH-GROUND-CONDITION` / `AFDX-SWITCH-PIN-NOT-READ-IN-FLIGHT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，接地条件为假时不读编程插针。使用上次记忆值是单独句子。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00791` | `SU-ARINC-664-7-4.10.1.1-P077-PROSE-SENTENCE-003-A823C1A18045`<br>`ARINC-664-7 4.10.1.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `USE-LAST-MEMORIZED-PIN-VALUES-WHEN-NOT-GROUND` / `PIN-PROGRAMMING, MEMORIZED-PIN-VALUES` / `AFDX-SWITCH-LAST-MEMORIZED-PINS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，不读取插针时使用上次记忆值。绑定 M2 不执行该记忆。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00792` | `SU-ARINC-664-7-4.10.1.2-P077-PROSE-SENTENCE-001-8BBF59190535`<br>`ARINC-664-7 4.10.1.2 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `CHECK-TWELVE-PROGRAM-PINS-WITH-PARITY-BIT` / `PIN-PROGRAMMING, PIN-PARITY-BIT` / `AFDX-SWITCH-PIN-PARITY-CHECK-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，12 个编程插针 P1–P12 由奇偶位检查。若使用 12 插针，则与已绑定的 12 插针定义一同适用。绑定 M2 不执行该检查。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00793` | `SU-ARINC-664-7-4.10.1.2-P077-PROSE-SENTENCE-002-1F0DFAA8E394`<br>`ARINC-664-7 4.10.1.2 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `MEMORIZE-PROGRAM-PINS-IN-NVM-AFTER-PARITY-PASS` / `PIN-PROGRAMMING, NON-VOLATILE-MEMORY` / `AFDX-SWITCH-PIN-NVM-MEMORIZE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，读取且奇偶通过的插针记入非易失记忆，供飞行中断电使用。绑定 M2 不执行该记忆。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00794` | `SU-ARINC-664-7-4.10.2.1-P077-PROSE-SENTENCE-001-61DD93DD32A4`<br>`ARINC-664-7 4.10.2.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `ACQUIRE-SWITCH-POSITION-WITH-TWELVE-PINS-P1-P12` / `PIN-PROGRAMMING, SWITCH-POSITION` / `AFDX-SWITCH-POSITION-TWELVE-PINS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，用 12 插针 P1–P12 获取交换机位置。4.7.1 的 12 插针示例声明仍是单独说明性叶。绑定 M2 不执行插针编程。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00795` | `SU-ARINC-664-7-4.10.2.1-P077-PROSE-SENTENCE-002-7F1544D1A98F`<br>`ARINC-664-7 4.10.2.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `CODE-PIN-GROUND-AS-ONE` / `PIN-PROGRAMMING, PIN-GROUND-CODE` / `AFDX-SWITCH-PIN-GROUND-CODE-ONE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，GROUND 插针值编码为 1。OPEN 编码是单独句子。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00796` | `SU-ARINC-664-7-4.10.2.1-P077-PROSE-SENTENCE-003-61A04736720E`<br>`ARINC-664-7 4.10.2.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `CODE-PIN-OPEN-AS-ZERO` / `PIN-PROGRAMMING, PIN-OPEN-CODE` / `AFDX-SWITCH-PIN-OPEN-CODE-ZERO-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，OPEN 插针值编码为 0。GROUND 编码是单独句子。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00797` | `SU-ARINC-664-7-4.11.1-P077-PROSE-SENTENCE-001-0196A7D3617B`<br>`ARINC-664-7 4.11.1 p.69` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `PROCESS-AT-LEAST-4096-VLS-IN-FILTER-POLICE-FORWARD` / `FILTERING-POLICING-FORWARDING, VL-CAPACITY-4096` / `AFDX-SWITCH-4096-VL-CAPACITY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤／监管／转发至少能处理 4096 条 VL。绑定 M2 不执行该容量。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00798` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-001-FA5570782ED4`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-INPUT-PHYSICAL-PORT` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-INPUT-PHYSICAL-PORT` / `AFDX-SWITCH-PER-VL-INPUT-PHYSICAL-PORT-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每 VL 的输入物理端口。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00799` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-002-EF4F00679C45`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-OUTPUT-PHYSICAL-PORTS` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-OUTPUT-PHYSICAL-PORTS` / `AFDX-SWITCH-PER-VL-OUTPUT-PHYSICAL-PORTS-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每 VL 的输出物理端口列表。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00800` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-003-0F2206C8D7DF`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-MAC-DESTINATION` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-MAC-DESTINATION-VLI` / `AFDX-SWITCH-PER-VL-MAC-DESTINATION-VLI-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每 VL 的 MAC 目的地址（VL 标识 VLi）。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00801` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-004-2D7B18D170FA`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-BAG` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-BAGI` / `AFDX-SWITCH-PER-VL-BAGI-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每 VL 的带宽分配间隔 BAGi。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00802` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-005-3212536D30E9`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-MAX-JITTER` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-MAXIMUM-ALLOWED-JITTER` / `AFDX-SWITCH-PER-VL-MAXIMUM-ALLOWED-JITTER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每 VL 的最大允许抖动。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00803` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-006-40614995F98A`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-ACCOUNT` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-ACCOUNT-ACI` / `AFDX-SWITCH-PER-VL-ACCOUNT-ACI-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每 VL 的账户 ACi 及其是否共享。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00804` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-007-EC72DA785E48`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-SMAX` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-SMAX` / `AFDX-SWITCH-PER-VL-SMAX-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每 VL 的最大以太网行长 Smax。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00805` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-008-58782E6B26CD`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-SMIN` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-SMIN` / `AFDX-SWITCH-PER-VL-SMIN-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每 VL 的最小以太网行长 Smin。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00806` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-009-6563BA03ED9E`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-VL-PRIORITIZATION` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-VL-PRIORITIZATION-HIGH-OR-LOW` / `AFDX-SWITCH-PER-VL-PRIORITIZATION-HIGH-OR-LOW-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每 VL 的高／低优先级。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00807` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-010-3D4E6918A8F3`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-PORT-MAX-DELAY` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-PORT-MAX-DELAY` / `AFDX-SWITCH-PER-PORT-MAX-DELAY-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每端口最大时延。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00808` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-011-AABB4D9914A1`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-PORT-STATE` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-PORT-STATE-ON-OFF` / `AFDX-SWITCH-PER-PORT-STATE-ON-OFF-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每端口 ON／OFF 状态。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00809` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-012-CDFADE5740E6`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-PORT-SPEED` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-PORT-PHYSICAL-SPEED` / `AFDX-SWITCH-PER-PORT-PHYSICAL-SPEED-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每端口物理速率。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00810` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-013-0902433EC057`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-PORT-LOW-PRIORITY-BUFFER` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-PORT-LOW-PRIORITY-OUTPUT-BUFFER-SIZE` / `AFDX-SWITCH-PER-PORT-LOW-PRIORITY-OUTPUT-BUFFER-SIZE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每端口低优先级 VL 输出缓冲大小。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00811` | `SU-ARINC-664-7-4.7.3.2-P070-LIST-ITEM-014-EEDB47B32B86`<br>`ARINC-664-7 4.7.3.2 p.62` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-FILTER-TABLE-PER-PORT-HIGH-PRIORITY-BUFFER` / `FILTERING-POLICING-FORWARDING-CONFIGURATION-TABLE, PER-PORT-HIGH-PRIORITY-OUTPUT-BUFFER-SIZE` / `AFDX-SWITCH-PER-PORT-HIGH-PRIORITY-OUTPUT-BUFFER-SIZE-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，过滤表含每端口高优先级 VL 输出缓冲大小。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00812` | `SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-001-5F6A63C333DA`<br>`ARINC-664-7 4.7.2.2 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-RX-VL-IDENTIFIER` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-RECEPTION-VL, DEFAULT-RX-VL-IDENTIFIER` / `AFDX-SWITCH-DEFAULT-RX-VL-IDENTIFIER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，缺省接收配置含 VL 标识 VL(0,position)。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00813` | `SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-002-5CA99BF9BB8B`<br>`ARINC-664-7 4.7.2.2 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-RX-SMAX` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-RECEPTION-VL, DEFAULT-RX-SMAX` / `AFDX-SWITCH-DEFAULT-RX-SMAX-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，缺省接收配置含最大以太网行长 s max。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00814` | `SU-ARINC-664-7-4.7.2.2-P067-LIST-ITEM-003-C81EDFF6E974`<br>`ARINC-664-7 4.7.2.2 p.59` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-RX-BAG` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-RECEPTION-VL, DEFAULT-RX-BAG` / `AFDX-SWITCH-DEFAULT-RX-BAG-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，缺省接收配置含带宽分配间隔。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00815` | `SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-001-B4EEE0548816`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-TX-VL-IDENTIFIER` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, DEFAULT-TX-VL-IDENTIFIER` / `AFDX-SWITCH-DEFAULT-TX-VL-IDENTIFIER-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，缺省发送配置含符合图 4-7 的 VL 标识 VL(1,position)。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00816` | `SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-002-CEA54264E86E`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-TX-BAG` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, DEFAULT-TX-BAG` / `AFDX-SWITCH-DEFAULT-TX-BAG-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，缺省发送配置含带宽分配间隔。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
+| `CRS-M1-00817` | `SU-ARINC-664-7-4.7.2.3-P068-LIST-ITEM-003-5CA99BF9BB8B`<br>`ARINC-664-7 4.7.2.3 p.60` | `AFDX-SWITCH` / `WHEN-AFDX-TRANSPORT-IS-SELECTED` / `INCLUDE-DEFAULT-TX-SMAX` / `DEFAULT-CONFIGURATION-TABLE, DEFAULT-TRANSMISSION-VL, DEFAULT-TX-SMAX` / `AFDX-SWITCH-DEFAULT-TX-SMAX-OBSERVABLE` | `SHOULD` / `CONDITIONAL-REQUIRED` | `CONDITIONAL` | 若选择 AFDX，缺省发送配置含最大以太网行长 s max。绑定 M2 不执行该表。 | — | DEP-ARINC-664-7 |
 
 ## 可观察时序语义
 
@@ -2641,6 +3761,13 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `CRS-M1-00188` | `DLP-CONSECUTIVE-TFTP-TRANSFER-EQUATION` | `LAST-PACKET-OF-PREVIOUS-TFTP-RECEIVED` → `FIRST-PACKET-OF-NEXT-TFTP-EMITTED` | `DLP-OPERATION-TERMINATED` / `NEW-DLP-SEQUENCE-STARTED` | `TARGET-AND-DLP-TRANSFER-SEQUENCE` / `PAIR-PREVIOUS-LAST-RECEPTION-WITH-NEXT-FIRST-EMISSION` |
 | `CRS-M1-00305` | `STATUS-EXCEPTION-SILENCE-DEADLINE` | `STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED` → `FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE` | `OPERATION-ABORTED-OR-FATAL` / `NEWER-STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED` | `TARGET-OPERATION-AND-STATUS-FILE-INSTANCE` / `PAIR-EXCEPTION-TIMER-WITH-TARGET-SILENCE-INTERVAL` |
 | `CRS-M1-00322` | `STATUS-EXCEPTION-SILENCE-DEADLINE` | `STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED` → `FIRST-TARGET-STATUS-OR-RESPONSE-AFTER-SILENCE` | `OPERATION-ABORTED-OR-FATAL` / `NEWER-STATUS-FILE-WITH-EXCEPTION-TIMER-RECEIVED` | `TARGET-OPERATION-AND-STATUS-FILE-INSTANCE` / `PAIR-EXCEPTION-TIMER-WITH-TARGET-SILENCE-INTERVAL` |
+| `CRS-M1-00391` | `FIND-HOST-ANSWER-DEADLINE` | `FIND-REQUEST-RECEIVED-BY-HOST` → `FIND-ANSWER-SENT-BY-HOST` | `FIND-ABORT-DOES-NOT-WAIVE-WINDOWS` / `NONE` | `FIND-REQUEST-INSTANCE` / `PAIR-FIND-REQUEST-WITH-HOST-ANSWER` |
+| `CRS-M1-00520` | `FIND-ANSWER-REGISTRATION-WINDOW` | `FIND-REQUEST-SENT` → `FIND-ANSWER-WINDOW-LIFETIME-ELAPSED` | `FIND-ABORT-DOES-NOT-WAIVE-WINDOWS` / `NONE` | `FIND-REQUEST-INSTANCE` / `PAIR-FIND-REQUEST-WITH-REGISTRATION-WINDOW` |
+| `CRS-M1-00521` | `FIND-REGISTRATION-CLOSE-AT-EXPIRY` | `FIND-REQUEST-SENT` → `FIND-ANSWER-REGISTRATION-CLOSED` | `FIND-ABORT-DOES-NOT-WAIVE-WINDOWS` / `NONE` | `FIND-REQUEST-INSTANCE` / `PAIR-FIND-REQUEST-WITH-REGISTRATION-CLOSE` |
+| `CRS-M1-00682` | `AFDX-ES-TX-TECHNOLOGICAL-LATENCY` | `LAST-BIT-OF-HOSTED-PARTITION-DATA-AVAILABLE-TO-ES-COMMUNICATION-SERVICES` → `LAST-BIT-OF-CORRESPONDING-ETHERNET-FRAME-ON-PHYSICAL-MEDIA` | `MEASUREMENT-PREMISES-NOT-MET` / `NONE` | `AFDX-END-SYSTEM-TECHNOLOGICAL-LATENCY-MEASUREMENT` / `PAIR-NAMED-MEASUREMENT-ENDPOINTS` |
+| `CRS-M1-00683` | `AFDX-ES-RX-TECHNOLOGICAL-LATENCY` | `LAST-BIT-OF-ETHERNET-FRAME-RECEIVED-ON-PHYSICAL-MEDIA-ATTACHMENT` → `LAST-BIT-OF-CORRESPONDING-DATA-AVAILABLE-TO-HOSTED-PARTITION` | `MEASUREMENT-PREMISES-NOT-MET` / `NONE` | `AFDX-END-SYSTEM-TECHNOLOGICAL-LATENCY-MEASUREMENT` / `PAIR-NAMED-MEASUREMENT-ENDPOINTS` |
+| `CRS-M1-00684` | `AFDX-MAX-JITTER-LOAD-EQUATION` | `VL-FRAME-AT-END-SYSTEM-OUTPUT` → `MAX-JITTER-OBSERVED-FOR-THAT-VL` | `AFDX-TRANSPORT-NOT-SELECTED` / `NONE` | `AFDX-VL-AT-END-SYSTEM-OUTPUT` / `PAIR-VL-OUTPUT-WITH-MAX-JITTER-BOUND` |
+| `CRS-M1-00685` | `AFDX-MAX-JITTER-500US-EQUATION` | `VL-FRAME-AT-END-SYSTEM-OUTPUT` → `MAX-JITTER-OBSERVED-FOR-THAT-VL` | `AFDX-TRANSPORT-NOT-SELECTED` / `NONE` | `AFDX-VL-AT-END-SYSTEM-OUTPUT` / `PAIR-VL-OUTPUT-WITH-MAX-JITTER-BOUND` |
 
 ## 需求级 615A → 665-5 追溯
 
@@ -2708,63 +3835,197 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `CRS-M1-00250` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `DEPENDENCY-BLOCKED` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
 | `CRS-M1-00251` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
 | `CRS-M1-00252` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00526` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00527` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00528` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00529` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00530` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00531` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00532` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00533` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00534` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00535` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00536` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00537` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00538` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00539` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00540` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00541` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00542` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00543` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00544` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `DEPENDENCY-BLOCKED` — ARINC 645 本地已取得但本 PR 不绑定；CRC 算法身份仍未建立。 | — |
+| `CRS-M1-00545` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `DEPENDENCY-BLOCKED` — ARINC 645 本地已取得但本 PR 不绑定；CRC 算法身份仍未建立。 | — |
+| `CRS-M1-00546` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00547` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00548` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00549` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00550` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00551` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00552` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00553` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00554` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00555` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00556` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00557` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00558` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00559` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00560` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00561` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00562` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00563` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00564` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00565` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00566` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00567` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `DEPENDENCY-BLOCKED` — ARINC 645 本地已取得但本 PR 不绑定；CRC 算法身份仍未建立。 | — |
+| `CRS-M1-00568` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00569` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00570` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00571` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00572` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00573` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00574` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00575` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00576` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00577` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00578` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00579` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00580` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00581` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00582` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00583` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00584` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00585` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00586` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00587` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00588` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00589` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00590` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00591` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00592` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00593` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00594` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00595` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00596` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00597` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00598` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00599` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00600` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00601` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00602` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
+| `CRS-M1-00603` | `CRS-M1-00001`, `CRS-M1-00016`, `CRS-M1-00018`, `CRS-M1-00042`, `CRS-M1-00046`, `CRS-M1-00085` | `PROFILE-SCOPE-ONLY` — ARINC 665-5 由有界 Profile 范围准入；该来源命题本身不建立来自某一特定 ARINC 615A-3 需求的直接蕴含关系。 | — |
 
 ## 结构化协议文件字段约束
 
-| CRS | 文件／序号 | 字段 | 位宽 | 重复／出现条件 | 编码／终止 | 注释 |
+| CRS | 文件／序号 | 字段 | 位宽 | 重复／出现／使用 | 编码／终止 | 注释 |
 |---|---|---|---|---|---|---|
-| `CRS-M1-00282` | `LCI` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00283` | `LCI` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00284` | `LCI` / `3` | `FIELD-OPERATION-ACCEPTANCE-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00285` | `LCI` / `4` | `FIELD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00286` | `LCI` / `5` | `FIELD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00287` | `LCL` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00288` | `LCL` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00289` | `LCL` / `3` | `FIELD-NUMBER-OF-TARGET-HARDWARE` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00290` | `LCL` / `4` | `FIELD-LITERAL-NAME-LENGTH` | `8` | `PER-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00291` | `LCL` / `5` | `FIELD-LITERAL-NAME` | `8..2040` | `PER-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00292` | `LCL` / `6` | `FIELD-SERIAL-NUMBER-LENGTH` | `8` | `PER-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00293` | `LCL` / `7` | `FIELD-SERIAL-NUMBER` | `8..2040` | `PER-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00294` | `LCL` / `8` | `FIELD-NUMBER-OF-PART-NUMBERS` | `16` | `PER-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00295` | `LCL` / `9` | `FIELD-PART-NUMBER-LENGTH` | `8` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00296` | `LCL` / `10` | `FIELD-PART-NUMBER` | `8..2040` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00297` | `LCL` / `11` | `FIELD-AMENDMENT-LENGTH` | `8` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00298` | `LCL` / `12` | `FIELD-AMENDMENT` | `0..2040` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00299` | `LCL` / `13` | `FIELD-PART-DESIGNATION-LENGTH` | `8` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00300` | `LCL` / `14` | `FIELD-PART-DESIGNATION-TEXT` | `8..2040` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00301` | `LCS` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00302` | `LCS` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00303` | `LCS` / `3` | `FIELD-COUNTER` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00304` | `LCS` / `4` | `FIELD-INFORMATION-OPERATION-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00305` | `LCS` / `5` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `WHEN-STATUS-CODE-0002-OR-0004` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00306` | `LCS` / `6` | `FIELD-ESTIMATED-TIME` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00307` | `LCS` / `7` | `FIELD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00308` | `LCS` / `8` | `FIELD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00309` | `LUR` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00310` | `LUR` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00311` | `LUR` / `3` | `FIELD-NUMBER-OF-HEADER-FILES` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00312` | `LUR` / `4` | `FIELD-HEADER-FILE-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00313` | `LUR` / `5` | `FIELD-HEADER-FILE-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00314` | `LUR` / `6` | `FIELD-LOAD-PART-NUMBER-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00315` | `LUR` / `7` | `FIELD-LOAD-PART-NUMBER-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00316` | `LUS` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00317` | `LUS` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00318` | `LUS` / `3` | `FIELD-UPLOAD-OPERATION-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00319` | `LUS` / `4` | `FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00320` | `LUS` / `5` | `FIELD-UPLOAD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00321` | `LUS` / `6` | `FIELD-COUNTER` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00322` | `LUS` / `7` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `WHEN-STATUS-CODE-0002-OR-0004` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00323` | `LUS` / `8` | `FIELD-ESTIMATED-TIME` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00324` | `LUS` / `9` | `FIELD-LOAD-LIST-RATIO` | `24` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00325` | `LUS` / `10` | `FIELD-NUMBER-OF-HEADER-FILES` | `16` | `ONCE` / `ALWAYS` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00326` | `LUS` / `11` | `FIELD-HEADER-FILE-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00327` | `LUS` / `12` | `FIELD-HEADER-FILE-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00328` | `LUS` / `13` | `FIELD-LOAD-PART-NUMBER-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00329` | `LUS` / `14` | `FIELD-LOAD-PART-NUMBER-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
-| `CRS-M1-00330` | `LUS` / `15` | `FIELD-LOAD-RATIO` | `24` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00331` | `LUS` / `16` | `FIELD-LOAD-STATUS` | `16` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00332` | `LUS` / `17` | `FIELD-LOAD-STATUS-DESCRIPTION-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00333` | `LUS` / `18` | `FIELD-LOAD-STATUS-DESCRIPTION` | `0..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00282` | `LCI` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00283` | `LCI` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00284` | `LCI` / `3` | `FIELD-OPERATION-ACCEPTANCE-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00285` | `LCI` / `4` | `FIELD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00286` | `LCI` / `5` | `FIELD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00287` | `LCL` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00288` | `LCL` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00289` | `LCL` / `3` | `FIELD-NUMBER-OF-TARGET-HARDWARE` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00290` | `LCL` / `4` | `FIELD-LITERAL-NAME-LENGTH` | `8` | `PER-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00291` | `LCL` / `5` | `FIELD-LITERAL-NAME` | `8..2040` | `PER-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00292` | `LCL` / `6` | `FIELD-SERIAL-NUMBER-LENGTH` | `8` | `PER-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00293` | `LCL` / `7` | `FIELD-SERIAL-NUMBER` | `8..2040` | `PER-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00294` | `LCL` / `8` | `FIELD-NUMBER-OF-PART-NUMBERS` | `16` | `PER-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00295` | `LCL` / `9` | `FIELD-PART-NUMBER-LENGTH` | `8` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00296` | `LCL` / `10` | `FIELD-PART-NUMBER` | `8..2040` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00297` | `LCL` / `11` | `FIELD-AMENDMENT-LENGTH` | `8` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00298` | `LCL` / `12` | `FIELD-AMENDMENT` | `0..2040` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00299` | `LCL` / `13` | `FIELD-PART-DESIGNATION-LENGTH` | `8` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00300` | `LCL` / `14` | `FIELD-PART-DESIGNATION-TEXT` | `8..2040` | `PER-PART-NUMBER-WITHIN-LITERAL-NAME` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00301` | `LCS` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00302` | `LCS` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00303` | `LCS` / `3` | `FIELD-COUNTER` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00304` | `LCS` / `4` | `FIELD-INFORMATION-OPERATION-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00305` | `LCS` / `5` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `WHEN-STATUS-CODE-0002-OR-0004` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00306` | `LCS` / `6` | `FIELD-ESTIMATED-TIME` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00307` | `LCS` / `7` | `FIELD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00308` | `LCS` / `8` | `FIELD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00309` | `LUR` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00310` | `LUR` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00311` | `LUR` / `3` | `FIELD-NUMBER-OF-HEADER-FILES` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00312` | `LUR` / `4` | `FIELD-HEADER-FILE-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00313` | `LUR` / `5` | `FIELD-HEADER-FILE-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00314` | `LUR` / `6` | `FIELD-LOAD-PART-NUMBER-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00315` | `LUR` / `7` | `FIELD-LOAD-PART-NUMBER-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00316` | `LUS` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00317` | `LUS` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00318` | `LUS` / `3` | `FIELD-UPLOAD-OPERATION-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00319` | `LUS` / `4` | `FIELD-UPLOAD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00320` | `LUS` / `5` | `FIELD-UPLOAD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00321` | `LUS` / `6` | `FIELD-COUNTER` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00322` | `LUS` / `7` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `WHEN-STATUS-CODE-0002-OR-0004` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00323` | `LUS` / `8` | `FIELD-ESTIMATED-TIME` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00324` | `LUS` / `9` | `FIELD-LOAD-LIST-RATIO` | `24` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00325` | `LUS` / `10` | `FIELD-NUMBER-OF-HEADER-FILES` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00326` | `LUS` / `11` | `FIELD-HEADER-FILE-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00327` | `LUS` / `12` | `FIELD-HEADER-FILE-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00328` | `LUS` / `13` | `FIELD-LOAD-PART-NUMBER-NAME-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00329` | `LUS` / `14` | `FIELD-LOAD-PART-NUMBER-NAME` | `8..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00330` | `LUS` / `15` | `FIELD-LOAD-RATIO` | `24` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00331` | `LUS` / `16` | `FIELD-LOAD-STATUS` | `16` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00332` | `LUS` / `17` | `FIELD-LOAD-STATUS-DESCRIPTION-LENGTH` | `8` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00333` | `LUS` / `18` | `FIELD-LOAD-STATUS-DESCRIPTION` | `0..2040` | `PER-PRECEDING-COUNT-FIELD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
+| `CRS-M1-00459` | `LNR` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNR-FILE-LENGTH-32 |
+| `CRS-M1-00460` | `LNR` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `FIXED-WIDTH-ASCII` / `FIXED-TWO-ASCII-CHARACTERS` | PROTOCOL-VERSION-TWO-ASCII-CHARACTERS |
+| `CRS-M1-00461` | `LNR` / `3` | `FIELD-NUMBER-OF-FILES` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNR-NUMBER-OF-FILES-16 |
+| `CRS-M1-00462` | `LNR` / `4` | `FIELD-FILE-NAME-LENGTH` | `8` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNR-FILE-NAME-LENGTH-REPEAT |
+| `CRS-M1-00463` | `LNR` / `5` | `FIELD-FILE-NAME` | `8-TO-2040` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNR-FILE-NAME-REPEAT |
+| `CRS-M1-00464` | `LNR` / `6` | `FIELD-USER-DEFINED-DATA-LENGTH` | `8` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNR-USER-DATA-LENGTH-ONCE |
+| `CRS-M1-00465` | `LNR` / `7` | `FIELD-USER-DEFINED-DATA` | `0-TO-2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `LENGTH-PREFIXED-BINARY` / `LENGTH-PREFIXED-PER-TABLE` | LNR-USER-DATA-ONCE-NOT-PER-FILE |
+| `CRS-M1-00466` | `LNS` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-FILE-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00467` | `LNS` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `FIXED-WIDTH-ASCII` / `FIXED-TWO-ASCII-CHARACTERS` | PROTOCOL-VERSION-TWO-ASCII-CHARACTERS |
+| `CRS-M1-00468` | `LNS` / `3` | `FIELD-DOWNLOAD-OPERATION-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-DOWNLOAD-OPERATION-STATUS-CODE-TABLE-WIDTH |
+| `CRS-M1-00469` | `LNS` / `4` | `FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-DOWNLOAD-STATUS-DESCRIPTION-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00470` | `LNS` / `5` | `FIELD-DOWNLOAD-STATUS-DESCRIPTION` | `0-TO-2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNS-FIELD-DOWNLOAD-STATUS-DESCRIPTION-TABLE-WIDTH |
+| `CRS-M1-00471` | `LNS` / `6` | `FIELD-COUNTER` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-COUNTER-TABLE-WIDTH |
+| `CRS-M1-00472` | `LNS` / `7` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `ALWAYS` / `WHEN-STATUS-CODE-0002-OR-0004` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-EXCEPTION-TIMER-WHEN-STATUS-0002-OR-0004 |
+| `CRS-M1-00473` | `LNS` / `8` | `FIELD-ESTIMATED-TIME` | `16` | `ONCE` / `ALWAYS` / `WHEN-STATUS-CODE-0002-OR-0004` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-ESTIMATED-TIME-WHEN-STATUS-0002-OR-0004, LNS-ESTIMATED-TIME-UNKNOWN-IS-0xFFFF |
+| `CRS-M1-00474` | `LNS` / `9` | `FIELD-DOWNLOAD-LIST-RATIO` | `24` | `ONCE` / `ALWAYS` / `—` | `FIXED-WIDTH-ASCII` / `RIGHT-ADJUSTED-LEADING-BLANKS` | LNS-DOWNLOAD-LIST-RATIO-THREE-ASCII-PERCENT |
+| `CRS-M1-00475` | `LNS` / `10` | `FIELD-NUMBER-OF-FILES` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-NUMBER-OF-FILES-TABLE-WIDTH |
+| `CRS-M1-00476` | `LNS` / `11` | `FIELD-FILE-NAME-LENGTH` | `8` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-FILE-NAME-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00477` | `LNS` / `12` | `FIELD-FILE-NAME` | `8-TO-2040` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNS-FIELD-FILE-NAME-TABLE-WIDTH |
+| `CRS-M1-00478` | `LNS` / `13` | `FIELD-FILE-STATUS` | `16` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-FILE-STATUS-TABLE-WIDTH |
+| `CRS-M1-00479` | `LNS` / `14` | `FIELD-FILE-STATUS-DESCRIPTION-LENGTH` | `8` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNS-FIELD-FILE-STATUS-DESCRIPTION-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00480` | `LNS` / `15` | `FIELD-FILE-STATUS-DESCRIPTION` | `0-TO-2040` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNS-FIELD-FILE-STATUS-DESCRIPTION-TABLE-WIDTH |
+| `CRS-M1-00481` | `LNL` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNL-FIELD-FILE-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00482` | `LNL` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `FIXED-WIDTH-ASCII` / `FIXED-TWO-ASCII-CHARACTERS` | PROTOCOL-VERSION-TWO-ASCII-CHARACTERS |
+| `CRS-M1-00483` | `LNL` / `3` | `FIELD-NUMBER-OF-FILES` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNL-FIELD-NUMBER-OF-FILES-TABLE-WIDTH |
+| `CRS-M1-00484` | `LNL` / `4` | `FIELD-FILE-NAME-LENGTH` | `8` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNL-FIELD-FILE-NAME-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00485` | `LNL` / `5` | `FIELD-FILE-NAME` | `8-TO-2040` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNL-FIELD-FILE-NAME-TABLE-WIDTH |
+| `CRS-M1-00486` | `LNL` / `6` | `FIELD-FILE-DESCRIPTION-LENGTH` | `8` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNL-FIELD-FILE-DESCRIPTION-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00487` | `LNL` / `7` | `FIELD-FILE-DESCRIPTION` | `0-TO-2040` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNL-FIELD-FILE-DESCRIPTION-TABLE-WIDTH |
+| `CRS-M1-00488` | `LNA` / `1` | `FIELD-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNA-FIELD-FILE-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00489` | `LNA` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `FIXED-WIDTH-ASCII` / `FIXED-TWO-ASCII-CHARACTERS` | PROTOCOL-VERSION-TWO-ASCII-CHARACTERS |
+| `CRS-M1-00490` | `LNA` / `3` | `FIELD-NUMBER-OF-FILES` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNA-FIELD-NUMBER-OF-FILES-TABLE-WIDTH |
+| `CRS-M1-00491` | `LNA` / `4` | `FIELD-FILE-NAME-LENGTH` | `8` | `PER-FILE-RECORD` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LNA-FIELD-FILE-NAME-LENGTH-TABLE-WIDTH |
+| `CRS-M1-00492` | `LNA` / `5` | `FIELD-FILE-NAME` | `8-TO-2040` | `PER-FILE-RECORD` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | LNA-FIELD-FILE-NAME-TABLE-WIDTH |
+| `CRS-M1-00546` | `LUB` / `1` | `FIELD-BATCH-FILE-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00547` | `LUB` / `2` | `FIELD-BATCH-FILE-FORMAT-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00548` | `LUB` / `3` | `FIELD-SPARE` | `16` | `ONCE` / `ALWAYS` / `—` | `ALIGNMENT-FIELD-VALUE-NOT-CONSTRAINED` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00549` | `LUB` / `4` | `FIELD-POINTER-TO-BATCH-FILE-PN-LENGTH` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00550` | `LUB` / `5` | `FIELD-POINTER-TO-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS` | `32` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00551` | `LUB` / `6` | `FIELD-EXPANSION-POINT-1` | `0` | `ONCE` / `ALWAYS` / `—` | `ZERO-WIDTH-NO-EMITTED-BYTES` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00552` | `LUB` / `7` | `FIELD-BATCH-FILE-PN-LENGTH` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00553` | `LUB` / `8` | `FIELD-BATCH-FILE-PN` | `16*CEILING(BATCH-FILE-PN-LENGTH/2)` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `FIXED-WIDTH-ASCII` / `NUL-PADDED-TO-EVEN-OCTET` | LUB-NOTE-1-VARIABLE-16BIT-WORDS |
+| `CRS-M1-00554` | `LUB` / `9` | `FIELD-COMMENT-LENGTH` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00555` | `LUB` / `10` | `FIELD-COMMENT` | `16*CEILING(COMMENT-LENGTH/2)` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `FIXED-WIDTH-ASCII` / `NUL-PADDED-TO-EVEN-OCTET` | LUB-NOTE-1-VARIABLE-16BIT-WORDS, LUB-NOTE-2-OPTIONAL-OMITTED |
+| `CRS-M1-00556` | `LUB` / `11` | `FIELD-EXPANSION-POINT-2` | `0` | `ONCE` / `ALWAYS` / `—` | `ZERO-WIDTH-NO-EMITTED-BYTES` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00557` | `LUB` / `12` | `FIELD-NUMBER-OF-TARGET-HW-ID-LOAD-LIST-BLOCKS` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00558` | `LUB` / `13` | `FIELD-POINTER-TO-NEXT-TARGET-HW-ID-LOAD-LIST-BLOCK` | `16` | `PER-TARGET-HW-ID-LOAD-LIST-BLOCK` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LUB-REPEAT-PER-TARGET-HW-ID-LOAD-LIST-BLOCK |
+| `CRS-M1-00559` | `LUB` / `14` | `FIELD-TARGET-HW-ID-POS-LENGTH` | `16` | `PER-TARGET-HW-ID-LOAD-LIST-BLOCK` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LUB-REPEAT-PER-TARGET-HW-ID-LOAD-LIST-BLOCK |
+| `CRS-M1-00560` | `LUB` / `15` | `FIELD-TARGET-HW-ID-POS` | `16*CEILING(TARGET-HW-ID-POS-LENGTH/2)` | `PER-TARGET-HW-ID-LOAD-LIST-BLOCK` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `FIXED-WIDTH-ASCII` / `NUL-PADDED-TO-EVEN-OCTET` | LUB-NOTE-1-VARIABLE-16BIT-WORDS, LUB-REPEAT-PER-TARGET-HW-ID-LOAD-LIST-BLOCK |
+| `CRS-M1-00561` | `LUB` / `16` | `FIELD-NUMBER-OF-LOADS-FOR-TARGET-HW-ID-POS` | `16` | `PER-TARGET-HW-ID-LOAD-LIST-BLOCK` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LUB-REPEAT-PER-TARGET-HW-ID-LOAD-LIST-BLOCK |
+| `CRS-M1-00562` | `LUB` / `17` | `FIELD-HEADER-FILE-NAME-LENGTH` | `16` | `PER-LOAD-OF-ONE-TARGET-HW-ID` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LUB-REPEAT-PER-LOAD-OF-ONE-TARGET-HW-ID |
+| `CRS-M1-00563` | `LUB` / `18` | `FIELD-HEADER-FILE-NAME` | `16*CEILING(HEADER-FILE-NAME-LENGTH/2)` | `PER-LOAD-OF-ONE-TARGET-HW-ID` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `FIXED-WIDTH-ASCII` / `NUL-PADDED-TO-EVEN-OCTET` | LUB-NOTE-1-VARIABLE-16BIT-WORDS, LUB-REPEAT-PER-LOAD-OF-ONE-TARGET-HW-ID |
+| `CRS-M1-00564` | `LUB` / `19` | `FIELD-LOAD-PN-LENGTH` | `16` | `PER-LOAD-OF-ONE-TARGET-HW-ID` / `PER-REPETITION-OF-ENCLOSING-BLOCK` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | LUB-REPEAT-PER-LOAD-OF-ONE-TARGET-HW-ID |
+| `CRS-M1-00565` | `LUB` / `20` | `FIELD-LOAD-PN` | `16*CEILING(LOAD-PN-LENGTH/2)` | `PER-LOAD-OF-ONE-TARGET-HW-ID` / `PER-REPETITION-AND-WHEN-LENGTH-FIELD-POSITIVE` / `—` | `FIXED-WIDTH-ASCII` / `NUL-PADDED-TO-EVEN-OCTET` | LUB-NOTE-1-VARIABLE-16BIT-WORDS, LUB-REPEAT-PER-LOAD-OF-ONE-TARGET-HW-ID |
+| `CRS-M1-00566` | `LUB` / `21` | `FIELD-EXPANSION-POINT-3` | `0` | `ONCE` / `ALWAYS` / `—` | `ZERO-WIDTH-NO-EMITTED-BYTES` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00567` | `LUB` / `22` | `FIELD-BATCH-FILE-CRC` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 
 ## 结构化 Table 6.4.10-1 约束
 
@@ -3103,314 +4364,306 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 - `COV-M1-00353` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-00354` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-00355` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-M1-00566` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-00567` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-00568` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-00569` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-00570` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-00690` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00691` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00692` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00693` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00694` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00695` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00696` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00697` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00698` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00699` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00700` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00701` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00702` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00703` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00704` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00705` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00706` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00707` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00708` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00709` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00710` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00711` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00712` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00713` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00714` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00715` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00716` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00717` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00718` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00719` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00720` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00721` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00722` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00723` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00724` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00725` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00726` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00727` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00728` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00729` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00730` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00731` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00732` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00733` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00734` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00735` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00736` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00737` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00738` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00739` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00740` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00741` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00742` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00743` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00744` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00745` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00746` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00804` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00805` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00806` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00807` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00808` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00809` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00810` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00811` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00812` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00813` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00814` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00815` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00816` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00817` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00818` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00819` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00820` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00821` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00822` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00823` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00824` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00825` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00826` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00827` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00828` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00829` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00830` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00916` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00917` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00918` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00919` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00920` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00921` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00922` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00923` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00924` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00925` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00926` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00927` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00928` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00929` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00930` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00931` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00932` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00933` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00934` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00935` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00936` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00937` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00938` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00939` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00940` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00941` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00942` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00943` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00944` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00945` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00946` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00947` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00948` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00949` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00950` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00951` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00952` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00953` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00954` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00955` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00956` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00957` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00958` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00959` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00960` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00961` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00962` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00963` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00964` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00965` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00966` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00967` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00968` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00969` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00970` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00971` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00972` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00973` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00974` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00975` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00976` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00977` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00978` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00979` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00980` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00981` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00982` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00983` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00984` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00985` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00986` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00987` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00988` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00989` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00990` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00991` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00992` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00993` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00994` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00995` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00996` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-00997` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01273` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01274` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01275` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01276` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01277` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01278` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01279` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01280` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01281` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01282` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01283` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01284` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01285` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01286` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01287` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01288` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01289` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01290` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01291` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01292` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01293` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01294` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01295` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01296` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01297` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01298` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01299` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01300` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01301` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01302` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01303` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01304` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01305` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01306` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01307` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01308` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01309` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01310` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01311` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01312` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01313` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01314` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01315` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01316` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01317` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01318` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01319` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01320` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01321` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01322` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01323` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01324` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01325` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01326` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01327` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01328` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01329` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01330` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01331` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01332` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01333` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01334` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01335` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01336` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01337` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01338` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01339` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01340` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01341` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01342` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01343` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01344` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01345` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01346` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01347` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01348` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01349` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01350` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01351` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01352` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01353` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01354` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01355` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01356` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01357` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01358` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01359` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01360` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01361` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01362` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01363` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01364` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01365` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01366` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01367` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01368` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01369` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01370` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01371` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01372` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01373` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01374` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01375` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01376` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01377` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01378` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01379` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01380` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01381` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01382` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01383` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01384` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01385` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01386` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01387` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01388` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01389` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01390` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01391` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01392` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01393` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01394` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01395` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01396` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01397` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01398` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01399` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01400` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01401` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01402` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01403` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01404` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01405` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01406` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01407` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01408` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-01409` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-00692` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00693` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00694` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00696` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00697` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00698` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00699` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00700` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00701` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-00702` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00703` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00704` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00705` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00706` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00707` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00708` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00709` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00710` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00711` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00712` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00713` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00714` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00715` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00716` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00717` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00718` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00719` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00720` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00721` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00722` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00723` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00724` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00725` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00726` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00727` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00728` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00729` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00730` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00731` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00732` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00733` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00734` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00735` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION
+- `COV-M1-00736` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00737` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00738` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00739` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00740` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00741` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00742` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION
+- `COV-M1-00743` — `CONDITIONAL` — DOWNLOAD-MEDIA-ORGANIZATION-DESCRIPTION
+- `COV-M1-00744` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-EXAMPLE
+- `COV-M1-00745` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-EXAMPLE
+- `COV-M1-00746` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-EXAMPLE
+- `COV-M1-00804` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00805` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00806` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00807` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00808` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00809` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00810` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00811` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00812` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00813` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00814` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00815` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00816` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00817` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00818` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-00819` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00820` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00821` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00822` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00823` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00824` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00825` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00826` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00827` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00828` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00829` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00830` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00916` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00917` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00918` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00919` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00920` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00921` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00922` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00923` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00924` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00925` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00926` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00927` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00928` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00929` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00930` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00931` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00932` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00933` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00934` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00935` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00936` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00937` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00938` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00939` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00940` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00941` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00942` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00943` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00944` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00945` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00946` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00947` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00948` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00949` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00950` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00951` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00952` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00953` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00954` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00955` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00956` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00957` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00958` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00959` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00960` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00961` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00962` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00963` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00964` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00965` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00966` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00967` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-00968` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00969` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-00970` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00971` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00972` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00973` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00974` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00975` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00976` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00977` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00978` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00979` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00980` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00981` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00982` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00983` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00984` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00985` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00986` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00987` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00988` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00989` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00990` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00991` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00992` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00993` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00994` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00995` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-00996` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-00997` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01273` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01274` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01275` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01276` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01277` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01278` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01279` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01280` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01281` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01282` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01283` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01284` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01285` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01286` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01287` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01288` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-01289` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01290` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01291` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01292` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED-DESCRIPTION
+- `COV-M1-01293` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01294` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01295` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01296` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01297` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01298` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01299` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01300` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01301` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01302` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01303` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01304` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01305` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01306` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01307` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01308` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01309` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01310` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01311` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01312` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01313` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01314` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01315` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01316` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01317` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01318` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01319` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01320` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01321` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01322` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01323` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01324` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01325` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01326` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01327` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01328` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01329` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01330` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01331` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01332` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01333` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01334` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01335` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01336` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01337` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01338` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01339` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01340` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01341` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01342` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01343` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01344` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01345` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01346` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01347` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01348` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01349` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01350` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01351` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01352` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01353` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01354` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01355` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01356` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01357` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01358` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01359` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01360` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01361` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01362` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01363` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01364` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01365` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01366` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01367` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01368` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01369` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01370` — `CONDITIONAL` — DOWNLOAD-SHARED-DESCRIPTION
+- `COV-M1-01371` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01372` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-01373` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01374` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01375` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01376` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01377` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01378` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01379` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01380` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01381` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01382` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01383` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01384` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01385` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01386` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01387` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-01388` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01389` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01390` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01391` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01392` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-01393` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-01394` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01395` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01396` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01397` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01398` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01399` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01400` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01401` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01402` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01403` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01404` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01405` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01406` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01407` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01408` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED-DESCRIPTION
+- `COV-M1-01409` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
 - `COV-M1-01413` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01414` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01415` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
@@ -3579,79 +4832,27 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 - `COV-M1-01578` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01579` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01580` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-M1-01581` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01582` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01583` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01584` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01585` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01586` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01587` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01588` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01589` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01590` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01591` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01592` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01593` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01594` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01595` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01596` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01597` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01598` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01599` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01600` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01601` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01602` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01603` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01604` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01605` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01606` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01607` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01608` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01609` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01610` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01611` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01612` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01613` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01614` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01615` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01616` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01617` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01618` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01619` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01620` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01621` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01622` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01623` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01624` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01625` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01626` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01627` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01628` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01629` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01630` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01631` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01632` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01633` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01634` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01635` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01636` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01637` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01638` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01639` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01640` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01641` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01642` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01643` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01644` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01645` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01646` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01647` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01648` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01649` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01650` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01651` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01652` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
-- `COV-M1-01653` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-FIND-M9
+- `COV-M1-01581` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01586` — `CONDITIONAL` — FIND-CONDITIONAL-DESCRIPTION
+- `COV-M1-01587` — `CONDITIONAL` — FIND-CONDITIONAL-NETWORK-OR-PRELOAD
+- `COV-M1-01588` — `CONDITIONAL` — FIND-CONDITIONAL-NETWORK-OR-PRELOAD
+- `COV-M1-01589` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01590` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01591` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01592` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01593` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01596` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01597` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01598` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01599` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01604` — `CONDITIONAL` — FIND-CONDITIONAL-DESCRIPTION
+- `COV-M1-01612` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01622` — `CONDITIONAL` — FIND-CONDITIONAL-NETWORK-OR-PRELOAD
+- `COV-M1-01624` — `CONDITIONAL` — FIND-CONDITIONAL-NETWORK-OR-PRELOAD
+- `COV-M1-01632` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01645` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-COMMENTARY
+- `COV-M1-01652` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-EXAMPLE
+- `COV-M1-01653` — `OUT-OF-PROFILE` — NON-NORMATIVE-FIND-EXAMPLE
 - `COV-M1-01654` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01684` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01685` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
@@ -3868,19 +5069,19 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 - `COV-M1-01957` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01958` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01959` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
-- `COV-M1-01960` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01961` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01962` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01963` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01964` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01965` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01966` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01967` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01968` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01969` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01970` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01971` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
-- `COV-M1-01972` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-AFDX-DEPLOYMENT-M2-INFRASTRUCTURE-BINDING
+- `COV-M1-01960` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01961` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01962` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01963` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01964` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01965` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01966` — `OUT-OF-PROFILE` — NON-NORMATIVE-AFDX-EXAMPLE
+- `COV-M1-01967` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-01968` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01969` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01970` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-01971` — `CONDITIONAL` — AFDX-CONDITIONAL-DESCRIPTION
+- `COV-M1-01972` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
 - `COV-M1-01973` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01974` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
 - `COV-M1-01975` — `OUT-OF-PROFILE` — NON-PROTOCOL-PRODUCT-OR-INFORMATIVE
@@ -4124,82 +5325,235 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 - `COV-M1-02564` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
 - `COV-M1-02565` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
 - `COV-M1-02566` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02567` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02568` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02569` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
 - `COV-M1-02570` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02571` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02572` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02573` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02574` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02575` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02576` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02577` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02578` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02579` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02580` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02581` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02582` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02583` — `OUT-OF-PROFILE` — NOT-TRIGGERED-BY-CURRENT-SERVICE
-- `COV-M1-02681` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02682` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02683` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02684` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02685` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02686` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02687` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02688` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02689` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02690` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02691` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02692` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02693` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02694` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02695` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02696` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02697` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02698` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02699` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02700` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02701` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02702` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02703` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02704` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02705` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02706` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02707` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02708` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02709` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02710` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02711` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02712` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02713` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02714` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02715` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02716` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02717` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02718` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02762` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02763` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02764` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02765` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02766` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02767` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02768` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02769` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02770` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02771` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02772` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02773` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02774` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02775` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02776` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02777` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02778` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02779` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02780` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02781` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02782` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02783` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02784` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
-- `COV-M1-02785` — `DEFERRED-FUTURE-SCOPE` — DEFERRED-DOWNLOAD-M9
+- `COV-M1-02681` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02682` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02683` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02684` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02685` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02686` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02687` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02688` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02689` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02690` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02691` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02692` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02693` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02694` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02695` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02696` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02697` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02698` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02699` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02700` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02701` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02702` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02703` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02704` — `CONDITIONAL` — DOWNLOAD-SHARED
+- `COV-M1-02705` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02706` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02707` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02708` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02709` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02710` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02711` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02712` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02713` — `OUT-OF-PROFILE` — NON-NORMATIVE-DOWNLOAD-COMMENTARY
+- `COV-M1-02714` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02715` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02716` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02717` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02718` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02762` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02763` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02764` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02765` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02766` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02767` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02768` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02769` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02770` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02771` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02772` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02773` — `CONDITIONAL` — DOWNLOAD-MEDIA-DEFINED
+- `COV-M1-02774` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02775` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02776` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02777` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02778` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02779` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02780` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02781` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02782` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02783` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02784` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02785` — `CONDITIONAL` — DOWNLOAD-OPERATOR-DEFINED
+- `COV-M1-02872` — `CONDITIONAL` — ETHERNET-PHYSICAL-PREMISE
+- `COV-M1-02873` — `CONDITIONAL` — ETHERNET-PHYSICAL-PREMISE
+- `COV-M1-02874` — `CONDITIONAL` — ETHERNET-PHYSICAL-PREMISE
+- `COV-M1-02875` — `CONDITIONAL` — ETHERNET-PHYSICAL-PREMISE
+- `COV-M1-02876` — `CONDITIONAL` — AFDX-SPECIFIC-EXTENSIONS-ARE-P7
+- `COV-M1-02877` — `CONDITIONAL` — COMPLIANT-INSTANCE-SELECTED
+- `COV-M1-02878` — `CONDITIONAL` — P3-PRECEDENCE-RESTRICTS-RFC-OPTIONS
+- `COV-M1-02883` — `CONDITIONAL` — ARP-DEPLOYMENT-SELECTION
+- `COV-M1-02884` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-02885` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-02886` — `CONDITIONAL` — AFDX-END-SYSTEM-WHEN-SELECTED
+- `COV-M1-02887` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-02888` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-02889` — `CONDITIONAL` — AFDX-DATA-FORMAT-WHEN-SELECTED
+- `COV-M1-02890` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-02891` — `CONDITIONAL` — AFDX-CONDITIONAL-DEPLOYMENT
+- `COV-M1-02899` — `CONDITIONAL` — SOURCE-RECEIPT-DOES-NOT-ESTABLISH-CAPABILITY
+- `COV-M1-02900` — `CONDITIONAL` — LINK-LAYER-HOST-PREMISE
+- `COV-M1-02901` — `CONDITIONAL` — IPV4-HOST-COMMUNICATION-PREMISE
+- `COV-M1-02902` — `CONDITIONAL` — UDP-HOST-COMMUNICATION-PREMISE
+- `COV-M1-02918` — `CONDITIONAL` — IPV4-HOST-COMMUNICATION-PREMISE
+- `COV-M1-02919` — `CONDITIONAL` — IPV4-HOST-COMMUNICATION-PREMISE
+- `COV-M1-02920` — `CONDITIONAL` — UDP-HOST-COMMUNICATION-PREMISE
+- `COV-M1-02955` — `CONDITIONAL` — AFDX-VL-SINGLE-SOURCE
+- `COV-M1-02956` — `CONDITIONAL` — AFDX-VL-UNIDIRECTIONAL
+- `COV-M1-02957` — `CONDITIONAL` — AFDX-BAG-MINIMUM-INTERVAL
+- `COV-M1-02958` — `CONDITIONAL` — AFDX-MAX-ADMISSIBLE-JITTER
+- `COV-M1-02959` — `CONDITIONAL` — AFDX-VL-BANDWIDTH-BAG-LMAX
+- `COV-M1-02960` — `CONDITIONAL` — AFDX-VL-FRAME-1518
+- `COV-M1-02961` — `CONDITIONAL` — AFDX-BAG-RANGE
+- `COV-M1-02962` — `CONDITIONAL` — AFDX-BAG-POWER-OF-TWO
+- `COV-M1-02963` — `CONDITIONAL` — AFDX-JITTER-500US-CAP
+- `COV-M1-02964` — `CONDITIONAL` — AFDX-VL-MAC-DESTINATION-IDENTITY
+- `COV-M1-02971` — `CONDITIONAL` — AFDX-TX-TECHNOLOGICAL-LATENCY-150US
+- `COV-M1-02972` — `CONDITIONAL` — AFDX-RX-TECHNOLOGICAL-LATENCY-150US
+- `COV-M1-02973` — `CONDITIONAL` — AFDX-MAX-JITTER-LOAD-EQUATION
+- `COV-M1-02974` — `CONDITIONAL` — AFDX-MAX-JITTER-500US-EQUATION
+- `COV-M1-02975` — `CONDITIONAL` — AFDX-MAC-SOURCE-INDIVIDUAL-LOCALLY-ADMINISTERED
+- `COV-M1-02976` — `CONDITIONAL` — AFDX-MAC-SOURCE-CONSTANT-FIELD
+- `COV-M1-02977` — `CONDITIONAL` — AFDX-MAC-SOURCE-INDIVIDUAL-BIT
+- `COV-M1-02978` — `CONDITIONAL` — AFDX-MAC-SOURCE-LOCALLY-ADMINISTERED-BIT
+- `COV-M1-02979` — `CONDITIONAL` — AFDX-MAC-SOURCE-USER-DEFINED-ID-WIDTH
+- `COV-M1-02980` — `CONDITIONAL` — AFDX-MAC-SOURCE-USER-DEFINED-ID-UNIQUE-HOST
+- `COV-M1-02981` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-ROLE
+- `COV-M1-02982` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-NETWORK-A
+- `COV-M1-02983` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-NETWORK-B
+- `COV-M1-02984` — `CONDITIONAL` — P4-ADDRESS-PLAN-PURPOSE
+- `COV-M1-02985` — `CONDITIONAL` — P4-CONFIGURATION-TIME-ADDRESSES
+- `COV-M1-02986` — `CONDITIONAL` — P4-ADDRESS-PLAN-SCOPE
+- `COV-M1-02987` — `CONDITIONAL` — P4-WELL-KNOWN-UDP-SERVICES
+- `COV-M1-02988` — `CONDITIONAL` — P4-PRIVATE-APP-UDP-PORT-ASSIGNMENT
+- `COV-M1-02989` — `CONDITIONAL` — P4-DO-NOT-REASSIGN-WELL-KNOWN-COTS-PORTS
+- `COV-M1-02990` — `CONDITIONAL` — P4-PRIVATE-ADDRESS-NO-EXTERNAL-ROUTING
+- `COV-M1-02991` — `CONDITIONAL` — P4-PROFILED-NETWORK-IS-PRIVATE
+- `COV-M1-02992` — `CONDITIONAL` — P4-PROFILED-NETWORK-ID-PRIVATE
+- `COV-M1-02993` — `CONDITIONAL` — P4-STATIC-MAC-AT-CONFIGURATION-TIME
+- `COV-M1-02994` — `CONDITIONAL` — P4-MAC-UNICAST-UNIQUENESS
+- `COV-M1-02995` — `CONDITIONAL` — P4-MAC-UL-BIT-LOCALLY-ADMINISTERED
+- `COV-M1-02996` — `CONDITIONAL` — P4-ALL-NETWORK-ADDRESS-UNIQUENESS
+- `COV-M1-02997` — `CONDITIONAL` — P4-PORT-59-615A-TFTP
+- `COV-M1-02998` — `CONDITIONAL` — P4-PORT-24922-FIND-CLIENT
+- `COV-M1-02999` — `CONDITIONAL` — P4-TABLE-2-1-RFC1918-PRIVATE
+- `COV-M1-03000` — `CONDITIONAL` — AFDX-TX-TECHNOLOGICAL-LATENCY-ENDPOINTS
+- `COV-M1-03001` — `CONDITIONAL` — AFDX-TX-LATENCY-START-ENDPOINT
+- `COV-M1-03002` — `CONDITIONAL` — AFDX-TX-LATENCY-END-ENDPOINT
+- `COV-M1-03003` — `CONDITIONAL` — AFDX-TX-LATENCY-EMPTY-BUFFER-PREMISE
+- `COV-M1-03004` — `CONDITIONAL` — AFDX-TECHNOLOGICAL-VS-CONFIGURATION-LATENCY
+- `COV-M1-03005` — `CONDITIONAL` — AFDX-TECHNOLOGICAL-LATENCY-NO-OTHER-TASK
+- `COV-M1-03006` — `CONDITIONAL` — AFDX-FRAME-DELAY-PHYSICAL-LAYER
+- `COV-M1-03007` — `CONDITIONAL` — AFDX-RX-LATENCY-START-ENDPOINT
+- `COV-M1-03008` — `CONDITIONAL` — AFDX-RX-LATENCY-END-ENDPOINT
+- `COV-M1-03009` — `CONDITIONAL` — AFDX-RX-LATENCY-EMPTY-BUFFER-PREMISE
+- `COV-M1-03010` — `CONDITIONAL` — AFDX-MAX-JITTER-BOTH-EQUATIONS
+- `COV-M1-03011` — `CONDITIONAL` — AFDX-MAX-JITTER-UNITS
+- `COV-M1-03012` — `CONDITIONAL` — AFDX-MAC-SOURCE-48-BIT-FIELD-COMPOSITION
+- `COV-M1-03013` — `CONDITIONAL` — AFDX-MAC-SOURCE-CONSTANT-TAIL
+- `COV-M1-03014` — `CONDITIONAL` — AFDX-MAC-SOURCE-NO-UNIQUE-ALGORITHM
+- `COV-M1-03015` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-000-NOT-USED
+- `COV-M1-03016` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-011-NOT-USED
+- `COV-M1-03017` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-100-NOT-USED
+- `COV-M1-03018` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-101-NOT-USED
+- `COV-M1-03019` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-110-NOT-USED
+- `COV-M1-03020` — `CONDITIONAL` — AFDX-MAC-SOURCE-INTERFACE-ID-111-NOT-USED
+- `COV-M1-03021` — `CONDITIONAL` — P3-DOCUMENT-CONTROL-INFORMATIVE
+- `COV-M1-03022` — `CONDITIONAL` — P3-DOCUMENT-CONTROL-INFORMATIVE
+- `COV-M1-03023` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03024` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03025` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03026` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03027` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03028` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03029` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03030` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03031` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03032` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03033` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03034` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03035` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03036` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03037` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03038` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03039` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03040` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03041` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03042` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03043` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03044` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03045` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03046` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03047` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03048` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03049` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03050` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03051` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03052` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03053` — `CONDITIONAL` — AFDX-IP-UDP-PROFILE-WHEN-SELECTED
+- `COV-M1-03054` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03055` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03056` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03057` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03058` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03059` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03060` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03061` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03062` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03063` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03064` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03065` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03066` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03067` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03068` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03069` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03070` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03071` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03072` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03073` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03074` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03075` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03076` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03077` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03078` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03079` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03080` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03081` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03082` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03083` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03084` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03085` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03086` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03087` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03088` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03089` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03090` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03091` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03092` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03093` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03094` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03095` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03096` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03097` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03098` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03099` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03100` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03101` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03102` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03103` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03104` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03105` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
+- `COV-M1-03106` — `CONDITIONAL` — AFDX-SWITCH-WHEN-SELECTED
