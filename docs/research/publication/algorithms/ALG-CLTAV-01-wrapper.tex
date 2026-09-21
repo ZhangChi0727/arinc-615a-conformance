@@ -1,3 +1,4 @@
+% Wrapper for ALG-CLTAV-01. Not a second algorithm.
 \documentclass[11pt]{article}
 \usepackage{fontspec}
 \usepackage{xeCJK}
@@ -5,8 +6,11 @@
 \setCJKmainfont{SimSun}
 \usepackage{amsmath,amssymb}
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
-\usepackage[margin=1in]{geometry}
+\usepackage[margin=0.85in]{geometry}
 \SetAlgoNlRelativeSize{0}
+\SetAlFnt{\footnotesize}
+\SetAlgoSkip{smallskip}
+\SetAlgoInsideSkip{smallskip}
 \title{ALG-CLTAV-01 wrapper}
 \author{CL-TAV specification (CR-2026-013 / DD-033)}
 \date{}
@@ -16,17 +20,23 @@
 \texttt{ALG-CLTAV-01.tex}. It is not a second algorithm.
 The procedure is the typeset form of the method-report contract.
 It is not an executable engine and does not select solver technology.
+Step labels \texttt{S0}--\texttt{S10} are the stable bilingual mapping;
+typeset line numbers are not cited.
 
 \input{ALG-CLTAV-01.tex}
 
-\section*{Chinese line groups (same process, not a second program)}
+\section*{Chinese step groups (same process, not a second program)}
 \begin{itemize}
-  \item Lines 1--2: 初始化受控会话、资源模式与 $H_0$。
-  \item Lines 3--8: 资源/停止检查；由准入得到 $A$ 与可选 $S$；$A$ 非空不是必可执行。
-  \item Lines 9--14: $S$ 空时按 A2--A5；不得对空 minimax 集 $\arg\min$；Prep/Recover 按已接受资格。
-  \item Lines 15--18: 一步 minimax 选择，一次计费，禁止未准入发出。
-  \item Lines 19--26: 执行记录；ERROR 不排除 $H$、不二次计费；有效观测才做历史相容更新。
-  \item Lines 27--29: 更新可观察摘要 $q$，按 Empty/Singleton/645/Equivalent/Budget 互斥停止。
+  \item \texttt{S0}: 初始化受控会话 $\Gamma$、历史柄 $\eta$、资源模式、$H_0$ 与 retry 计数。
+  \item \texttt{S1}: 停止／错误优先门；已决定的 A2--A5 或 P1--P5 立即返回。
+  \item \texttt{S2}: 选择前预测；当前有效类 $\mathcal{C}$ 进入 \texttt{IF-SELECT-ADMIT}；预测缺口不得按剩余 $\lvert H\rvert$ 评分。
+  \item \texttt{S3}: 互斥选择 TEST minimax／Prep／Recover／Admit；空 TEST 集不得 $\arg\min$；Prep／Recover 不进入 minimax。
+  \item \texttt{S4}: 一次计费；重试上限不是预算耗尽。
+  \item \texttt{S5}: 发出已准入动作并记录。
+  \item \texttt{S6}--\texttt{S7}: 执行 ERROR 与解释 ERROR 汇入同一通路；不排除 $H$；未知效果不能恢复成已知 $q$；retry 递增，达上限先于 A5 返回 Stop-Error。
+  \item \texttt{S8}: Recover 必须确认；未确认则 $q$ 保持 UNKNOWN，$\eta$ 恒等。
+  \item \texttt{S9}: 有效观测才更新 $\eta$ 与 $H$；更新输出供下一轮 \texttt{S2} 预测。
+  \item \texttt{S10}: 互斥 P1--P5；下一轮预测仍在 \texttt{S2}，不得用执行后 $q$ 冒充预测。
 \end{itemize}
 Stop-645 在本增量之后表示仍未在能力/实现层关闭的具名 645 依赖义务，不是“645 文件缺失”。
 \end{document}

@@ -651,20 +651,36 @@ This bounds the number of charged executions. It does not by itself bound wall-c
 
 ### 3.9.2 Top-level process and abstract interface contracts
 
-The typeset main process is [`ALG-CLTAV-01.tex`](../publication/algorithms/ALG-CLTAV-01.tex) (DD-033). It is the academic form of this section, not an executable engine and not a solver-technology choice. Interface identifiers below are the only legal call sites. Unknown or incomputable returns must not be treated as evidence that excludes the true hypothesis. `belief[h]`, if used as an interface variable, is a whole-history compatible state representation; this PR does not select its data structure.
+The typeset main process is [`ALG-CLTAV-01.tex`](../publication/algorithms/ALG-CLTAV-01.tex) (DD-033). It is the academic form of this section, not an executable engine and not a solver-technology choice. Interface identifiers below are the only legal call sites. Unknown or incomputable returns must not be treated as evidence that excludes the true hypothesis. SessionContext \(\Gamma\) and HistoryHandle \(\eta\) are the session-owned carriers. `compatibleStateByHypothesis` inside \(\eta\) is a whole-history compatible-state handle; this PR does not select its data structure. Two handles may share the same \(H\) while their compatible histories differ; printing only \(H\) does not discard history. There is no hidden global store.
 
 Stop-645 keeps its class name. After the 615A-triggered 645 bind it means a **named remaining 645-dependent obligation still unresolved at capability/implementation level**, not “the 645 file is missing.” Bound CRC/check-value/naming semantics no longer fire it merely because the source was historically blocked. General unresolved obligations are not erased.
 
 | ID | Duty / not duty | Inputs | Outputs | Pre | Post / guarantee | Failure / unknown | Resource / log | Successor close |
 |---|---|---|---|---|---|---|---|---|
-| IF-PRED-OBS | Finite conservative current-observation abstract consistent with measurement uncertainty; prediction gap is a named spec error, not “uninformative” | \(q\), \(H\), measurement uncertainty, action library | current \(q\), currently valid nonempty classes, or named prediction-gap | session declared; \(H\subseteq H_0\) | classes project onto current \(H\); empty current prediction is not scored as remaining \(\lvert H\rvert\) | incomputable/unknown: do not admit the test | record the abstract used | estimator/partition algorithm |
-| IF-HIST-UPDATE | Advance from previous possible states; whole-history path; no resurrection | \(H_k\), \(t^\star\), \(q\), valid \(I_z\) | \(H_{k+1}\subseteq H_k\) or Stop-Empty | valid observation class; not ERROR | Propositions M and (conditionally) R | invalid/unknown effect: identity on \(H\), do not exclude | log the class and resulting \(H\) | state/clock representation and solver |
-| IF-OBS-INTERPRET | Correlation keys, instance ownership, pairing, interval validity, ERROR contract | execution record, clocks, \(\varepsilon\) | \(I_z\) or ERROR/unknown-effect | record belongs to this session | T5 interval treatment; pairing per §3.6 | ERROR does not exclude \(H\); unknown effect \(\neq\) “state unchanged” | keep correlation identifiers | collectors and timestamp handling |
-| IF-SELECT-ADMIT | One-step minimax, tie-break, Prep/Recover eligibility, same resource | \(A\), \(q\), \(H\), remaining resource, retry cap | selectable \(S\); Admit A1–A5 if \(S=\emptyset\); chosen \(t^\star\) | one resource mode declared | nonempty \(A\) is not executable \(S\); never \(\arg\min\) empty minimax | no currently valid class: named prediction-gap, not A3 | do not issue unaffordable actions | scheduler and data structures |
-| IF-EXECUTE-RECORD | Issue admitted action once; record completion/ERROR and whether effect is determined | admitted \(t^\star\), session id | record, error kind, correlation id | action in \(S\); charged once | unadmitted action is not issued; ERROR is not a second charge | ERROR/timeout: keep unknown internal effect | one charge per attempt | protocol adapter, timeout, I/O |
-| IF-PREP-RECOVER | Declare target and confirmation conditions; sent \(\neq\) confirmed | eligibility, remaining resource, UNKNOWN history | Prep/Recover action or ineligible | retry cap and A4/A5 order | confirmation required before \(q\) is known | unconfirmed Recover is not an identity on the plant | same resource rule | protocol/device recovery steps |
-| IF-EQUIV | Return established only with a valid proof | \(H\), remaining tests, optional solver result | established / not-established / unknown | Stop-Equivalent is exclusive with P1–P3, P5 | no proof \(\Rightarrow\) not “proved equivalent” | unsolved/unknown is not equivalence | record the proof object or the unknown | optional proof algorithm; not required this round |
-| IF-RESOURCE-STOP | A1–A5 / P1–P5, charging, return sets, residual obligations | remaining resource, \(H\), named 645 residuals, equivalence status | stop class, final \(H\), trace | exclusive stop order Empty, Singleton, 645, Equivalent, Budget | singleton \(h_{\mathrm{normal}}\) is not protocol PASS | do not drop named residuals to pass a stop | charge ERROR/retry once | program wrapper; no paper result |
+| IF-PRED-OBS | Finite conservative current-observation abstract consistent with measurement uncertainty; prediction gap is a named spec error, not “uninformative” | \(\Gamma\), \(\eta\), \(H\), measurement uncertainty, action library | current \(q\), currently valid nonempty classes, or PredictionGapError | session declared; \(H\subseteq H_0\); \(\eta\) belongs to this session | classes project onto current \(H\) and are the IF-SELECT-ADMIT input; empty current prediction is not scored as remaining \(\lvert H\rvert\) | incomputable/unknown: do not admit the test | record the abstract used | estimator/partition algorithm |
+| IF-HIST-UPDATE | Advance from previous possible states; whole-history path; no resurrection | \(\eta_k\), \(H_k\), \(t^\star\), \(q\) used at select, classes used at select, valid \(I_z\) | \(\eta_{k+1}\), \(H_{k+1}\subseteq H_k\) or Stop-Empty | valid observation class; not ERROR | Propositions M and (conditionally) R; \(\eta_{k+1}\) is the next IF-PRED-OBS input | invalid/unknown effect: identity on \(H\) and \(\eta\), do not exclude | log the class and resulting \(H\) | state/clock representation and solver |
+| IF-OBS-INTERPRET | Correlation keys, instance ownership, pairing, interval validity, ERROR contract | \(\Gamma\), execution record, clocks, \(\varepsilon\) | \(I_z\) or ERROR/unknown-effect | record belongs to this session | T5 interval treatment; pairing per §3.6 | ERROR joins the unified execute/interpret error path; unknown effect \(\neq\) “state unchanged” | keep correlation identifiers | collectors and timestamp handling |
+| IF-SELECT-ADMIT | Exclusive TEST / Prep / Recover / Admit; one-step minimax only on TEST-only nonempty \(S\) | \(A\), \(q\), predicted classes, \(\Gamma\), \(\eta\), \(H\), remaining resource, retry cap | kind; selectable \(S\); Admit A2–A5; chosen \(t^\star\) | one resource mode declared; this-iteration prediction already produced | nonempty \(A\) is not executable \(S\); never \(\arg\min\) empty TEST set; Prep/Recover are not observation-minimax | no currently valid class: named prediction-gap, not A3 | do not issue unaffordable actions | scheduler and data structures |
+| IF-EXECUTE-RECORD | Issue admitted action once; record completion/ERROR and whether effect is determined | \(\Gamma\), admitted \(t^\star\) | record, error kind, correlation id | action admitted this iteration; charged once | unadmitted action is not issued; ERROR is not a second charge | ERROR/timeout: keep unknown internal effect | one charge per attempt | protocol adapter, timeout, I/O |
+| IF-PREP-RECOVER | Declare target and confirmation conditions; sent \(\neq\) confirmed | \(\Gamma\), \(\eta\), eligibility, remaining resource, UNKNOWN history | confirmed / unconfirmed / ineligible | retry cap and A4/A5 order | confirmation required before \(q\) is known; unconfirmed keeps UNKNOWN | unconfirmed Recover is not an identity on the plant | same resource rule | protocol/device recovery steps |
+| IF-EQUIV | Return established only with a valid proof | \(\Gamma\), \(H\), \(\eta\), remaining tests, optional solver result | established / not-established / unknown | Stop-Equivalent is exclusive with P1–P3, P5 | no proof \(\Rightarrow\) not “proved equivalent” | unsolved/unknown is not equivalence | record the proof object or the unknown | optional proof algorithm; not required this round |
+| IF-RESOURCE-STOP | A1–A5 / P1–P5, charging, return sets, residual obligations; retry cap is Stop-Error, not Stop-Budget | \(\Gamma\), remaining resource, \(H\), \(\eta\), named 645 residuals, equivalence status | stop class, final \(H\), trace | exclusive stop order Empty, Singleton, 645, Equivalent, Budget | singleton \(h_{\mathrm{normal}}\) is not protocol PASS | do not drop named residuals; do not convert retry-cap into budget exhaustion | charge ERROR/retry once | program wrapper; no paper result |
+
+Control-flow walkthroughs against ALG-CLTAV-01 steps S1–S10. Each row names the called interfaces, selected action, resource remainder after one charge, retry, \(q\)/UNKNOWN, \(H\), \(\eta\) and stop.
+
+| Case | Calls | Selected | Resource | retry | \(q\) | \(H,\eta\) | Stop |
+|---|---|---|---|---|---|---|---|
+| Information-only tests | S1–S3 TEST minimax, S4–S6, S9–S10 | TEST \(t^\star\in S\) | charged once | 0 | known classes | updated | continue or P-stop |
+| Prep eligible, TEST empty | S3 kind=PREP; no minimax | Prep | charged once | 0 | from S2 | identity unless valid Iz | continue |
+| UNKNOWN, Recover affordable | S3 kind=RECOVER | Recover | charged once | 0 | UNKNOWN until S8 | identity if unconfirmed | continue |
+| UNKNOWN, Recover unaffordable | S3 ADMIT A5 | none | no extra charge | — | UNKNOWN | unchanged | Stop-Budget A5 |
+| Recover unconfirmed | S8 confirmed=false | Recover | already charged | 0 | stays UNKNOWN | identity | continue |
+| Recover confirmed | S8 then S9 | Recover | already charged | 0 | known | updated \(\eta\) | P-stop or continue |
+| Execute ERROR | S5 then S7 | any admitted | one charge | +1 | UNKNOWN if effect unknown | \(H\) kept | continue, or Stop-Error if retry cap |
+| Interpret ERROR | S6 then S7 | same | no second charge | +1 | same as execute ERROR | \(H\) kept | same unified path |
+| Retry cap before A5 | S7 \(\mathrm{retry}\ge R_{\max}\) | last admitted | already charged | cap | UNKNOWN | \(H\) kept | Stop-Error, not A5 |
+| Prediction gap | S2 PredictionGapError | none | not charged | — | gap | unchanged | named prediction-gap |
+| Actual TEST intersect empty | S3 \(S=\emptyset\) | none | not charged | — | classes empty | unchanged | named spec error, not empty minimax |
 
 Experiment interfaces reuse the same session identity, correlation keys, error semantics and resource vector, but evaluator-only truth never enters IF-SELECT-ADMIT, IF-PRED-OBS, IF-HIST-UPDATE or IF-EXECUTE-RECORD (FIG-CL-TAV-09).
 
@@ -2274,20 +2290,36 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 
 ### 3.9.2 总体过程与抽象接口契约
 
-排版主过程为 [`ALG-CLTAV-01.tex`](../publication/algorithms/ALG-CLTAV-01.tex)（DD-033）。它是本节的学术形式，不是可执行引擎，也不是求解器技术选型。下列接口 ID 是唯一合法调用点。不可计算／未确定返回不得当作排除真实假设的证据。若把 `belief[h]` 作为接口变量，它表示整段历史相容的状态表示；本 PR 不选定其数据结构。
+排版主过程为 [`ALG-CLTAV-01.tex`](../publication/algorithms/ALG-CLTAV-01.tex)（DD-033）。它是本节的学术形式，不是可执行引擎，也不是求解器技术选型。下列接口 ID 是唯一合法调用点。不可计算／未确定返回不得当作排除真实假设的证据。SessionContext \(\Gamma\) 与 HistoryHandle \(\eta\) 是会话持有的状态载体。\(\eta\) 内的 `compatibleStateByHypothesis` 是整段历史相容状态柄；本 PR 不选定其数据结构。两个柄可以有相同 \(H\) 而相容历史不同；只打印 \(H\) 并不丢弃历史。没有隐藏全局存储。
 
 `Stop-645` 类名保留。615A 触发的 645 绑定之后，它表示**仍未在能力／实现层关闭的具名 645 依赖义务**，不是“645 文件缺失”。已绑定的 CRC／校验值／命名语义不得仅因历史来源阻塞而被触发。一般未决义务不被抹去。
 
 | ID | 职责／非职责 | 输入 | 输出 | 前置 | 后置／保证 | 失败／未知 | 资源／记录 | 后继关闭 |
 |---|---|---|---|---|---|---|---|---|
-| IF-PRED-OBS | 有限且保守的当前观测抽象，与测量不确定性一致；预测缺口是具名规格错误，不是“无信息” | \(q\)、\(H\)、测量不确定性、动作库 | 当前 \(q\)、当前有效非空类，或具名预测缺口 | 会话已声明；\(H\subseteq H_0\) | 类投影到当前 \(H\)；空的当前预测不得按剩余 \(\lvert H\rvert\) 评分 | 不可计算／未知：不得准入该测试 | 记录所用抽象 | 估计器／划分算法 |
-| IF-HIST-UPDATE | 由前一可能状态推进；整段历史路径；不复活 | \(H_k\)、\(t^\star\)、\(q\)、有效 \(I_z\) | \(H_{k+1}\subseteq H_k\) 或 Stop-Empty | 有效观测类；非 ERROR | 命题 M 及（条件性）R | 无效／未知效果：对 \(H\) 恒等，不排除 | 记录类与结果 \(H\) | 状态／时钟表示与求解器 |
-| IF-OBS-INTERPRET | 关联键、实例归属、配对、区间有效性、ERROR 合同 | 执行记录、时钟、\(\varepsilon\) | \(I_z\) 或 ERROR／未知效果 | 记录属于本会话 | T5 区间处理；配对按 §3.6 | ERROR 不排除 \(H\)；未知效果 \(\neq\) “状态未变” | 保留关联标识 | 采集器与时间戳处理 |
-| IF-SELECT-ADMIT | 一步 minimax、平局、Prep／Recover 资格、同一资源 | \(A\)、\(q\)、\(H\)、剩余资源、重试上限 | 可选 \(S\)；\(S=\emptyset\) 时 Admit A2–A5；选定 \(t^\star\) | 已声明一种资源模式 | \(A\) 非空不是可执行 \(S\)；不得对空 minimax 集 \(\arg\min\) | 无当前有效类：具名预测缺口，不是 A3 | 不得发出不可负担动作 | 调度程序与数据结构 |
-| IF-EXECUTE-RECORD | 一次发出已准入动作；记录完成／ERROR 及效果是否确定 | 已准入 \(t^\star\)、会话身份 | 记录、错误类、关联标识 | 动作属于 \(S\)；一次计费 | 未准入不得发出；ERROR 不二次计费 | ERROR／超时：保持未知内部效果 | 每次尝试一次计费 | 协议适配器、超时、I/O |
-| IF-PREP-RECOVER | 声明目标与确认条件；已发送 \(\neq\) 已确认 | 资格、剩余资源、UNKNOWN 历史 | Prep／Recover 动作或不合格 | 重试上限与 A4／A5 次序 | \(q\) 已知前必须确认 | 未确认 Recover 不是被测对象恒等 | 同一资源规则 | 协议／装置恢复步骤 |
-| IF-EQUIV | 仅在有效证明时返回已成立 | \(H\)、剩余测试、可选求解结果 | 已成立／未成立／未知 | Stop-Equivalent 与 P1–P3、P5 互斥 | 无证明 \(\Rightarrow\) 不是“已证明等价” | 未求解／未知不是等价 | 记录证明对象或未知 | 可选证明算法；本轮不要求 |
-| IF-RESOURCE-STOP | A1–A5／P1–P5、计费、返回集合与残余义务 | 剩余资源、\(H\)、具名 645 残余、等价状态 | 停止类、最终 \(H\)、迹 | 互斥顺序 Empty、Singleton、645、Equivalent、Budget | 单元素 \(h_{\mathrm{normal}}\) 不是协议 PASS | 不得为通过停止而丢掉具名残余 | ERROR／重试一次计费 | 程序封装；不是论文结果 |
+| IF-PRED-OBS | 有限且保守的当前观测抽象，与测量不确定性一致；预测缺口是具名规格错误，不是“无信息” | \(\Gamma\)、\(\eta\)、\(H\)、测量不确定性、动作库 | 当前 \(q\)、当前有效非空类，或 PredictionGapError | 会话已声明；\(H\subseteq H_0\)；\(\eta\) 属于本会话 | 类投影到当前 \(H\) 并作为 IF-SELECT-ADMIT 输入；空的当前预测不得按剩余 \(\lvert H\rvert\) 评分 | 不可计算／未知：不得准入该测试 | 记录所用抽象 | 估计器／划分算法 |
+| IF-HIST-UPDATE | 由前一可能状态推进；整段历史路径；不复活 | \(\eta_k\)、\(H_k\)、\(t^\star\)、选择时所用 \(q\) 与类、有效 \(I_z\) | \(\eta_{k+1}\)、\(H_{k+1}\subseteq H_k\) 或 Stop-Empty | 有效观测类；非 ERROR | 命题 M 及（条件性）R；\(\eta_{k+1}\) 是下一轮 IF-PRED-OBS 输入 | 无效／未知效果：对 \(H\) 与 \(\eta\) 恒等，不排除 | 记录类与结果 \(H\) | 状态／时钟表示与求解器 |
+| IF-OBS-INTERPRET | 关联键、实例归属、配对、区间有效性、ERROR 合同 | \(\Gamma\)、执行记录、时钟、\(\varepsilon\) | \(I_z\) 或 ERROR／未知效果 | 记录属于本会话 | T5 区间处理；配对按 §3.6 | ERROR 汇入与执行 ERROR 同一通路；未知效果 \(\neq\) “状态未变” | 保留关联标识 | 采集器与时间戳处理 |
+| IF-SELECT-ADMIT | 互斥 TEST／Prep／Recover／Admit；仅对非空 TEST 集做一步 minimax | \(A\)、\(q\)、预测类、\(\Gamma\)、\(\eta\)、\(H\)、剩余资源、重试上限 | kind；可选 \(S\)；Admit A2–A5；选定 \(t^\star\) | 已声明一种资源模式；本轮预测已产生 | \(A\) 非空不是可执行 \(S\)；不得对空 TEST 集 \(\arg\min\)；Prep／Recover 不是观测 minimax | 无当前有效类：具名预测缺口，不是 A3 | 不得发出不可负担动作 | 调度程序与数据结构 |
+| IF-EXECUTE-RECORD | 一次发出已准入动作；记录完成／ERROR 及效果是否确定 | \(\Gamma\)、已准入 \(t^\star\) | 记录、错误类、关联标识 | 本轮已准入；一次计费 | 未准入不得发出；ERROR 不二次计费 | ERROR／超时：保持未知内部效果 | 每次尝试一次计费 | 协议适配器、超时、I/O |
+| IF-PREP-RECOVER | 声明目标与确认条件；已发送 \(\neq\) 已确认 | \(\Gamma\)、\(\eta\)、资格、剩余资源、UNKNOWN 历史 | 已确认／未确认／不合格 | 重试上限与 A4／A5 次序 | \(q\) 已知前必须确认；未确认保持 UNKNOWN | 未确认 Recover 不是被测对象恒等 | 同一资源规则 | 协议／装置恢复步骤 |
+| IF-EQUIV | 仅在有效证明时返回已成立 | \(\Gamma\)、\(H\)、\(\eta\)、剩余测试、可选求解结果 | 已成立／未成立／未知 | Stop-Equivalent 与 P1–P3、P5 互斥 | 无证明 \(\Rightarrow\) 不是“已证明等价” | 未求解／未知不是等价 | 记录证明对象或未知 | 可选证明算法；本轮不要求 |
+| IF-RESOURCE-STOP | A1–A5／P1–P5、计费、返回集合与残余义务；重试上限是 Stop-Error，不是 Stop-Budget | \(\Gamma\)、剩余资源、\(H\)、\(\eta\)、具名 645 残余、等价状态 | 停止类、最终 \(H\)、迹 | 互斥顺序 Empty、Singleton、645、Equivalent、Budget | 单元素 \(h_{\mathrm{normal}}\) 不是协议 PASS | 不得丢掉具名残余；不得把重试上限改写成预算耗尽 | ERROR／重试一次计费 | 程序封装；不是论文结果 |
+
+对照 ALG-CLTAV-01 步骤 S1–S10 的控制流走查。每行写出被调用接口、选中动作、一次计费后的资源、retry、\(q\)／UNKNOWN、\(H\)、\(\eta\) 与停止。
+
+| 情形 | 调用 | 选中 | 资源 | retry | \(q\) | \(H,\eta\) | 停止 |
+|---|---|---|---|---|---|---|---|
+| 仅无信息测试 | S1–S3 TEST minimax，S4–S6，S9–S10 | TEST \(t^\star\in S\) | 一次计费 | 0 | 已知类 | 已更新 | 继续或 P 停止 |
+| Prep 可用但测试不可选 | S3 kind=PREP；不进 minimax | Prep | 一次计费 | 0 | 来自 S2 | 除非有效 \(I_z\) 否则恒等 | 继续 |
+| UNKNOWN 且 Recover 可负担 | S3 kind=RECOVER | Recover | 一次计费 | 0 | 至 S8 为 UNKNOWN | 未确认则恒等 | 继续 |
+| UNKNOWN 且 Recover 不可负担 | S3 ADMIT A5 | 无 | 不再计费 | — | UNKNOWN | 不变 | Stop-Budget A5 |
+| Recover 未确认 | S8 confirmed=false | Recover | 已计费 | 0 | 保持 UNKNOWN | 恒等 | 继续 |
+| Recover 已确认 | S8 然后 S9 | Recover | 已计费 | 0 | 已知 | 更新 \(\eta\) | P 停止或继续 |
+| 执行 ERROR | S5 然后 S7 | 任一已准入 | 一次计费 | +1 | 效果未知则为 UNKNOWN | 保留 \(H\) | 继续，或 retry 上限时 Stop-Error |
+| 解释 ERROR | S6 然后 S7 | 同上 | 不二次计费 | +1 | 与执行 ERROR 相同 | 保留 \(H\) | 同一错误通路 |
+| 重试上限先于 A5 | S7 \(\mathrm{retry}\ge R_{\max}\) | 上次已准入 | 已计费 | 上限 | UNKNOWN | 保留 \(H\) | Stop-Error，不是 A5 |
+| 预测缺口 | S2 PredictionGapError | 无 | 不计费 | — | 缺口 | 不变 | 具名预测缺口 |
+| 实际 TEST 相交为空 | S3 \(S=\emptyset\) | 无 | 不计费 | — | 类为空 | 不变 | 具名规格错误，不是空 minimax |
 
 实验接口复用同一会话身份、关联键、错误语义与资源向量，但评价器真值不得进入 IF-SELECT-ADMIT、IF-PRED-OBS、IF-HIST-UPDATE 或 IF-EXECUTE-RECORD（FIG-CL-TAV-09）。
 

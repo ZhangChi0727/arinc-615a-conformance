@@ -1,0 +1,238 @@
+{
+  "schemaVersion": "1.0",
+  "id": "CLTAV-INTERFACE-REGISTRY",
+  "artifactId": "CLTAV-INTERFACE-REGISTRY",
+  "changeRequest": "CR-2026-013",
+  "authority": "This file is the structural interface specification. Method tables, ALG-CLTAV-01 calls and FIG-CL-TAV-09 ports must match it. It is not a solver choice and not a source-faithfulness proof.",
+  "sessionHandles": {
+    "SessionContext": {
+      "id": "SessionContext",
+      "holder": "session",
+      "fields": ["sessionId", "resourceRemainder", "retryCount", "retryCap", "qStatus", "errorHistory", "unknownHistory"],
+      "init": "S0: retryCount=0; qStatus=UNKNOWN unless declared; exclusive resource mode recorded",
+      "notGlobalHiddenState": true
+    },
+    "HistoryHandle": {
+      "id": "HistoryHandle",
+      "holder": "session",
+      "fields": ["H", "compatibleStateByHypothesis", "version"],
+      "init": "S0: empty compatible-state handles; H=H0",
+      "sameHDifferentHistory": "Two handles may share the same H set while compatibleStateByHypothesis differs; HistoryHandle is not discarded when only H is printed",
+      "notGlobalHiddenState": true
+    }
+  },
+  "interfaces": [
+    {
+      "id": "IF-PRED-OBS",
+      "macro": "IFpred",
+      "calledInAlgorithm": true,
+      "inputs": ["SessionContext", "HistoryHandle", "H", "measurementUncertainty", "actionLibrary"],
+      "outputs": ["q", "currentlyValidNonemptyClasses", "PredictionGapError"],
+      "pre": "session declared; Hsubseteq H0; HistoryHandle belongs to this session",
+      "guarantee": "classes project onto current H; empty current prediction is not scored as remaining |H|",
+      "failure": "incomputable/unknown: PredictionGapError; do not admit the test",
+      "stateEffect": "read-only on HistoryHandle; does not charge",
+      "successorClose": "estimator/partition algorithm"
+    },
+    {
+      "id": "IF-SELECT-ADMIT",
+      "macro": "IFsel",
+      "calledInAlgorithm": true,
+      "inputs": ["A", "q", "currentlyValidNonemptyClasses", "SessionContext", "HistoryHandle", "H"],
+      "outputs": ["kind", "tStar", "S", "admitA2A5"],
+      "pre": "one resource mode declared; prediction for this iteration already produced",
+      "guarantee": "kind is exclusive TEST, PREP, RECOVER or ADMIT; nonempty A is not executable S; never argmin empty TEST set; Prep/Recover are not scored as observation minimax",
+      "failure": "no currently valid class: named prediction-gap, not A3",
+      "stateEffect": "does not charge; does not update HistoryHandle",
+      "successorClose": "scheduler and data structures"
+    },
+    {
+      "id": "IF-EXECUTE-RECORD",
+      "macro": "IFexec",
+      "calledInAlgorithm": true,
+      "inputs": ["SessionContext", "admitted tStar"],
+      "outputs": ["record", "errorKind", "correlationId"],
+      "pre": "action admitted this iteration; charged once",
+      "guarantee": "unadmitted action is not issued; ERROR is not a second charge",
+      "failure": "ERROR/timeout: keep unknown internal effect",
+      "stateEffect": "one charge already applied by S4; writes record into session log",
+      "successorClose": "protocol adapter, timeout, I/O"
+    },
+    {
+      "id": "IF-OBS-INTERPRET",
+      "macro": "IFobs",
+      "calledInAlgorithm": true,
+      "inputs": ["SessionContext", "executionRecord", "clocks", "epsilon"],
+      "outputs": ["Iz", "ERROR", "unknownEffect"],
+      "pre": "record belongs to this session",
+      "guarantee": "T5 interval treatment; pairing per method 3.6",
+      "failure": "ERROR joins the same unified error path as execute ERROR; unknown effect is not state-unchanged",
+      "stateEffect": "does not exclude H",
+      "successorClose": "collectors and timestamp handling"
+    },
+    {
+      "id": "IF-PREP-RECOVER",
+      "macro": "IFprep",
+      "calledInAlgorithm": true,
+      "inputs": ["SessionContext", "HistoryHandle", "tStar", "record"],
+      "outputs": ["confirmed", "prepError", "ineligible"],
+      "pre": "selected kind is PREP or RECOVER; retry cap and A4/A5 order",
+      "guarantee": "sent is not confirmed; confirmation required before q is known",
+      "failure": "unconfirmed Recover is not an identity on the plant; q stays UNKNOWN",
+      "stateEffect": "writes confirmation status into SessionContext; does not restore known q on failure",
+      "successorClose": "protocol/device recovery steps"
+    },
+    {
+      "id": "IF-HIST-UPDATE",
+      "macro": "IFhist",
+      "calledInAlgorithm": true,
+      "inputs": ["HistoryHandle", "H", "tStar", "qUsedAtSelect", "classesUsedAtSelect", "valid Iz"],
+      "outputs": ["HistoryHandlePrime", "Hprime", "Stop-Empty"],
+      "pre": "valid observation class; not ERROR",
+      "guarantee": "advance from previous possible states; whole-history path; no resurrection; HistoryHandlePrime is the next IF-PRED-OBS input",
+      "failure": "invalid/unknown effect: identity on H and HistoryHandle",
+      "stateEffect": "updates HistoryHandle version; two same-H different-history handles remain distinct",
+      "successorClose": "state/clock representation and solver"
+    },
+    {
+      "id": "IF-EQUIV",
+      "macro": "IFeq",
+      "calledInAlgorithm": true,
+      "inputs": ["SessionContext", "H", "HistoryHandle", "remainingTests"],
+      "outputs": ["established", "notEstablished", "unknown"],
+      "pre": "Stop-Equivalent exclusive with P1-P3 and P5",
+      "guarantee": "no proof implies not proved equivalent",
+      "failure": "unsolved/unknown is not equivalence",
+      "stateEffect": "read-only",
+      "successorClose": "optional proof algorithm; not required this round"
+    },
+    {
+      "id": "IF-RESOURCE-STOP",
+      "macro": "IFres",
+      "calledInAlgorithm": true,
+      "inputs": ["SessionContext", "H", "HistoryHandle", "named645Residuals", "equivalenceStatus"],
+      "outputs": ["stopClass", "finalH", "trace"],
+      "pre": "exclusive stop order Empty, Singleton, 645, Equivalent, Budget; retry cap is a distinct Stop-Error",
+      "guarantee": "singleton h_normal is not protocol PASS; named residuals are not dropped",
+      "failure": "do not convert retry-cap Stop-Error into Stop-Budget",
+      "stateEffect": "ERROR/retry already charged once in S4",
+      "successorClose": "program wrapper; no paper result"
+    }
+  ],
+  "dataflow": [
+    {"from": "IF-PRED-OBS", "output": "currentlyValidNonemptyClasses", "to": "IF-SELECT-ADMIT", "input": "currentlyValidNonemptyClasses"},
+    {"from": "IF-PRED-OBS", "output": "q", "to": "IF-SELECT-ADMIT", "input": "q"},
+    {"from": "IF-SELECT-ADMIT", "output": "tStar", "to": "IF-EXECUTE-RECORD", "input": "admitted tStar"},
+    {"from": "IF-EXECUTE-RECORD", "output": "record", "to": "IF-OBS-INTERPRET", "input": "executionRecord"},
+    {"from": "IF-OBS-INTERPRET", "output": "Iz", "to": "IF-HIST-UPDATE", "input": "valid Iz"},
+    {"from": "IF-PREP-RECOVER", "output": "confirmed", "to": "SessionContext", "input": "qStatus"},
+    {"from": "IF-HIST-UPDATE", "output": "HistoryHandlePrime", "to": "IF-PRED-OBS", "input": "HistoryHandle", "nextIteration": true}
+  ],
+  "experimentInterfaces": [
+    {
+      "id": "IF-EXP-SCENE",
+      "inputs": ["sceneId", "configId", "IUT", "faultPlan", "resourceMode"],
+      "outputs": ["sceneRecord", "unconfirmed"],
+      "failure": "missing identity is not a runnable scene",
+      "visibility": "evaluator-and-operator",
+      "resourceBasis": "declared mode only"
+    },
+    {
+      "id": "IF-EXP-INJECT",
+      "inputs": ["sceneId", "injectionPlan"],
+      "outputs": ["injectionAttempt", "injectionConfirmed", "injectionUnconfirmed"],
+      "failure": "planned is not confirmed; unconfirmed is not valid truth",
+      "visibility": "evaluator-only confirmation",
+      "resourceBasis": "injection wall-clock is evaluator metadata"
+    },
+    {
+      "id": "IF-EXP-TRUTH",
+      "inputs": ["sceneId", "injectionConfirmed", "independentGeneratorId"],
+      "outputs": ["truthRecord", "sharedComponentRisk"],
+      "failure": "unconfirmed injection cannot default to valid truth; separate store is not independence",
+      "visibility": "evaluator-only; never an algorithm input",
+      "sharedWithMethod": "named parsers/clocks/models must list common-error risk",
+      "resourceBasis": "not charged to arms"
+    },
+    {
+      "id": "IF-EXP-COLLECT",
+      "inputs": ["sceneId", "armId", "algorithmVisibleRecord"],
+      "outputs": ["observationLog", "resourceLog"],
+      "failure": "missing correlation id is invalid observation",
+      "visibility": "algorithm-visible only",
+      "resourceBasis": "same charged vector as ALG-CLTAV-01"
+    },
+    {
+      "id": "IF-EXP-RUN",
+      "inputs": ["sceneId", "armId", "SessionContext"],
+      "outputs": ["runId", "stopClass", "traceRef"],
+      "failure": "arm abort is ERROR, not PASS",
+      "visibility": "algorithm-visible plus evaluator run id",
+      "resourceBasis": "one declared mode; no gifted CL-LOOP records"
+    },
+    {
+      "id": "IF-EXP-FILTER",
+      "inputs": ["runId", "truthRecord", "observationLog"],
+      "outputs": ["validityClass", "filterReason"],
+      "failure": "unconfirmed, invalid, equivalent, or abstain are not detection PASS/FAIL",
+      "visibility": "evaluator-only labels; algorithm does not see the class name as a select input",
+      "resourceBasis": "not a second charge"
+    },
+    {
+      "id": "IF-EXP-EVAL",
+      "inputs": ["runId", "validityClass", "denominators"],
+      "outputs": ["metricCells", "attemptDenominator", "answeredSubsetDenominator"],
+      "failure": "missing denominator definition is not a result",
+      "visibility": "evaluator-only metrics",
+      "resourceBasis": "report charged cost; do not hide Prep/Recover/retry"
+    }
+  ],
+  "denominators": [
+    "attempt",
+    "answered-subset",
+    "abstain",
+    "invalid-observation",
+    "equivalent-fault",
+    "unconfirmed-injection"
+  ],
+  "forbiddenTruthInputs": [
+    "IF-SELECT-ADMIT",
+    "IF-PRED-OBS",
+    "IF-HIST-UPDATE",
+    "IF-EXECUTE-RECORD"
+  ],
+  "experimentIds": ["EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE", "EXP-CLTAV-ABLATION"],
+  "arms": ["CL-T", "CL-A", "CL-TA", "CL-LOOP"],
+  "recordFlowWalkthroughs": [
+    {
+      "id": "WF-NORMAL",
+      "path": ["IF-EXP-SCENE", "IF-EXP-INJECT", "IF-EXP-TRUTH", "IF-EXP-RUN", "IF-EXP-COLLECT", "IF-EXP-FILTER", "IF-EXP-EVAL"],
+      "denominator": "answered-subset",
+      "truthToSelect": false
+    },
+    {
+      "id": "WF-UNCONFIRMED-INJECT",
+      "path": ["IF-EXP-SCENE", "IF-EXP-INJECT", "IF-EXP-FILTER", "IF-EXP-EVAL"],
+      "denominator": "unconfirmed-injection",
+      "truthToSelect": false
+    },
+    {
+      "id": "WF-INVALID-OBS",
+      "path": ["IF-EXP-RUN", "IF-EXP-COLLECT", "IF-EXP-FILTER", "IF-EXP-EVAL"],
+      "denominator": "invalid-observation",
+      "truthToSelect": false
+    },
+    {
+      "id": "WF-ABSTAIN",
+      "path": ["IF-EXP-RUN", "IF-EXP-FILTER", "IF-EXP-EVAL"],
+      "denominator": "abstain",
+      "truthToSelect": false
+    },
+    {
+      "id": "WF-EQUIVALENT",
+      "path": ["IF-EXP-SCENE", "IF-EXP-TRUTH", "IF-EXP-FILTER", "IF-EXP-EVAL"],
+      "denominator": "equivalent-fault",
+      "truthToSelect": false
+    }
+  ]
+}

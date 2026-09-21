@@ -914,11 +914,15 @@ and negative examples are recorded.
    the method-report contract. It is not an executable engine.
 3. **Interfaces.** Stable IDs: `IF-PRED-OBS`, `IF-HIST-UPDATE`,
    `IF-OBS-INTERPRET`, `IF-SELECT-ADMIT`, `IF-EXECUTE-RECORD`,
-   `IF-PREP-RECOVER`, `IF-EQUIV`, `IF-RESOURCE-STOP`. Each has duty, inputs,
-   outputs, pre/post, failure/unknown semantics, resource/log duties and
-   successor completion conditions. Implementation technology is not selected
-   here. Unknown/incomputable returns must not be treated as evidence that
-   excludes the true hypothesis.
+   `IF-PREP-RECOVER`, `IF-EQUIV`, `IF-RESOURCE-STOP`. SessionContext and
+   HistoryHandle are the session-owned carriers; prediction classes are an
+   input of `IF-SELECT-ADMIT`; `IF-HIST-UPDATE` returns the next
+   HistoryHandle. Each interface has duty, inputs, outputs, pre/post,
+   failure/unknown semantics, resource/log duties and successor completion
+   conditions. Implementation technology is not selected here.
+   Unknown/incomputable returns must not be treated as evidence that
+   excludes the true hypothesis. The structural registry is
+   `configs/research/cltav_interface_registry.json`.
 4. **Stop-645 after source bind.** Class name `Stop-645` is retained. After this
    increment it means a *named remaining 645-dependent obligation that is still
    unresolved at capability/implementation level*, not “the 645 file is missing.”
@@ -941,6 +945,11 @@ and negative examples are recorded.
    projections are compared directly.
 3. **Truth.** Evaluator-only truth is never an algorithm input. Shared components
    must name common-mode error risk. Injection planned ≠ injection confirmed.
+   Execution contracts `IF-EXP-SCENE`, `IF-EXP-INJECT`, `IF-EXP-TRUTH`,
+   `IF-EXP-COLLECT`, `IF-EXP-RUN`, `IF-EXP-FILTER` and `IF-EXP-EVAL` record
+   identity, failure/unconfirmed returns, visibility and resource basis.
+   Unconfirmed injection is the `unconfirmed-injection` denominator, not valid
+   truth.
 4. **Metrics.** Wrong PASS, wrong FAIL, definite-verdict rate, INCONCLUSIVE,
    ERROR, true-hypothesis drop, in-domain unique localization, remaining-set
    size, interaction count, compute/prep/retry cost, stop class. Report attempt
@@ -1417,7 +1426,7 @@ ARINC 615A 数据加载是合法操作、观测和实验场景的来源。CL-TAV
 
 ## DD-033——CL-TAV 总体过程与抽象接口
 
-保留 DD-029。主算法排版源为 `ALG-CLTAV-01.tex`，不是可执行引擎。稳定接口：`IF-PRED-OBS`、`IF-HIST-UPDATE`、`IF-OBS-INTERPRET`、`IF-SELECT-ADMIT`、`IF-EXECUTE-RECORD`、`IF-PREP-RECOVER`、`IF-EQUIV`、`IF-RESOURCE-STOP`。不在本 PR 选择实现技术。不可计算／未确定返回不得当作排除真实假设的证据。`Stop-645` 类名保留；本增量之后表示“仍未在能力／实现层关闭的具名 645 依赖义务”，不是“645 文件缺失”。已绑定的 CRC／校验值／命名语义不得仅因历史来源阻塞而被触发。一般未决义务不被抹去。这不是停止家族的编辑性更名。
+保留 DD-029。主算法排版源为 `ALG-CLTAV-01.tex`，不是可执行引擎。稳定接口：`IF-PRED-OBS`、`IF-HIST-UPDATE`、`IF-OBS-INTERPRET`、`IF-SELECT-ADMIT`、`IF-EXECUTE-RECORD`、`IF-PREP-RECOVER`、`IF-EQUIV`、`IF-RESOURCE-STOP`。SessionContext 与 HistoryHandle 为会话持有的状态载体；预测类是 `IF-SELECT-ADMIT` 的输入；`IF-HIST-UPDATE` 返回下一轮 HistoryHandle。结构登记为 `configs/research/cltav_interface_registry.json`。不在本 PR 选择实现技术。不可计算／未确定返回不得当作排除真实假设的证据。`Stop-645` 类名保留；本增量之后表示“仍未在能力／实现层关闭的具名 645 依赖义务”，不是“645 文件缺失”。已绑定的 CRC／校验值／命名语义不得仅因历史来源阻塞而被触发。一般未决义务不被抹去。这不是停止家族的编辑性更名。
 
 **范围：** 总体过程、接口契约、Stop-645 解释。
 
@@ -1425,7 +1434,7 @@ ARINC 615A 数据加载是合法操作、观测和实验场景的来源。CL-TAV
 
 ## DD-034——实验架构、真值、公平性与后继依赖
 
-保留 DETECT／LOCATE／ABLATION 与四臂。相同信息池不是把 CL-LOOP 后采记录免费给其他臂，也不是给 CL-A 虚构采样费用。评价器真值不得进入算法输入。注入计划不等于注入成功。指标须有分母；INCONCLUSIVE 不是 PASS。IUT、求解器、样本量等可延期，但其冻结门和公平性影响不可延期。后继阶段不等于自动进入 M3。
+保留 DETECT／LOCATE／ABLATION 与四臂。相同信息池不是把 CL-LOOP 后采记录免费给其他臂，也不是给 CL-A 虚构采样费用。评价器真值不得进入算法输入。注入计划不等于注入成功。场景／注入／真值／采集／运行／筛选／评价接口为 `IF-EXP-SCENE` 至 `IF-EXP-EVAL`。未确认注入进入 `unconfirmed-injection` 分母，不是有效真值。指标须有分母；INCONCLUSIVE 不是 PASS。IUT、求解器、样本量等可延期，但其冻结门和公平性影响不可延期。后继阶段不等于自动进入 M3。
 
 **范围：** 实验架构与契约，不是确认性数字。
 

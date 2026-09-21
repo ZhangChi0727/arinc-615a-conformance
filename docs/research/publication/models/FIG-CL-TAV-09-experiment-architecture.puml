@@ -26,6 +26,10 @@ note right of Truth
   IF-OBS-INTERPRET, IF-PREP-RECOVER,
   IF-EQUIV and IF-RESOURCE-STOP stay
   algorithm-visible only.
+  Experiment I/O: IF-EXP-SCENE,
+  IF-EXP-INJECT, IF-EXP-TRUTH,
+  IF-EXP-COLLECT, IF-EXP-RUN,
+  IF-EXP-FILTER, IF-EXP-EVAL.
 end note
 note bottom of Arms
   Same pool is not a gift of later CL-LOOP

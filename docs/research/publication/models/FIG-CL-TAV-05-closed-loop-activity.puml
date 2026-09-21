@@ -1,105 +1,66 @@
 @startuml FIG-CL-TAV-05
 skinparam shadowing false
-title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nadmissible A then selectable S; Admit table A1-A5; charge once
+title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\npredict before select; exclusive TEST/Prep/Recover/Admit; charge once; unified ERROR
 
 start
-:Idle; declare selected mode BUDGET(cmin,B) XOR ROUNDS(Kmax);
+:S0 Idle; SessionContext and HistoryHandle; BUDGET xor ROUNDS; retry=0;
 repeat
-  :Build admissible A(qk);
-  :Form selectable S = currently-valid strictly-reducing TEST, else Prep, else Recover;
-  if (S empty? Admit A2-A5) then (yes)
-    if (q unknown?) then (yes)
-      if (Recover eligible?) then (A5 unaffordable)
-        :Stop-Budget; keep UNKNOWN and ERROR history;
+  :S1 IF-RESOURCE-STOP gate;
+  if (already A2-A5 or P1-P5?) then (yes)
+    stop
+  else (no)
+    :S2 IF-PRED-OBS predict classes;
+    if (PredictionGapError?) then (yes)
+      stop
+    else (no)
+      :S3 IF-SELECT-ADMIT exclusive kind;
+      if (kind ADMIT?) then (yes)
         stop
-      else (A4 not eligible)
-        :Stop-Error;
+      elseif (kind TEST and S empty?) then (yes)
+        :named spec error; never argmin empty S;
         stop
+      elseif (kind PREP or RECOVER?) then (yes)
+        :keep named Prep/Recover; do not enter TEST minimax;
+      else (TEST nonempty)
+        :one-step minimax on predicted nonempty classes;
       endif
-    else (KNOWN)
-      if (strictly-reducing TEST or Prep exists unaffordable?) then (A2)
-        :Stop-Budget;
-        stop
-      else (A3)
-        :Stop-NoDistinguisher;
-        stop
-      endif
-    endif
-  else (A1 never argmin empty S)
-    :Select from S by one-step minimax on currently valid nonempty classes;
-    :Execute chosen action toward Mprot through FIG-CL-TAV-04 ports;
-    :Charge cost once under the selected mode;
-    if (instrument / correlation / record valid?) then (yes)
-      if (Recover?) then (yes)
-        if (target confirmed?) then (yes)
-          :qk known; Update Hk;
-          if (P1 Hk empty?) then (yes)
-            :Stop-Empty;
-            stop
-          elseif (P2 |Hk| == 1) then (yes)
-            :Stop-Singleton;
-            stop
-          elseif (P3 named remaining 645-dependent obligation?) then (yes)
-            :Stop-645;
-            stop
-          elseif (P4 observational equivalence established?) then (yes)
-            :Stop-Equivalent;
-            stop
-          elseif (P5 selected-mode resource exhausted?) then (yes)
-            :Stop-Budget;
-            stop
-          else (continue Admit)
+      :S4 charge once;
+      :S5 IF-EXECUTE-RECORD;
+      :S6 IF-OBS-INTERPRET unless exec ERROR;
+      if (exec ERROR or interpret ERROR?) then (yes)
+        :S7 unified ERROR; do not exclude H; unknown effect is not known q;
+        if (retry cap reached?) then (yes)
+          :Stop-Error; not A5/Stop-Budget;
+          stop
+        endif
+      else (record valid)
+        if (Recover?) then (yes)
+          :S8 IF-PREP-RECOVER confirmation;
+          if (confirmed?) then (yes)
+            :S9 IF-HIST-UPDATE HistoryHandle;
+          else (unconfirmed)
+            :q remains UNKNOWN; identity on HistoryHandle;
           endif
-        else (unconfirmed)
-          :qk remains UNKNOWN; do not restore old q;
-          note right
-            Next Admit keeps UNKNOWN.
-            Empty S uses A4 or A5.
-          end note
+        else (TEST or Prep)
+          :S9 IF-HIST-UPDATE HistoryHandle;
         endif
-      else (TEST or Prep)
-        :Observe Izk; Update Hk; qk known;
-        if (P1 Hk empty?) then (yes)
-          :Stop-Empty;
-          stop
-        elseif (P2 |Hk| == 1) then (yes)
-          :Stop-Singleton;
-          stop
-        elseif (P3 named remaining 645-dependent obligation?) then (yes)
-          :Stop-645;
-          stop
-        elseif (P4 observational equivalence established?) then (yes)
-          :Stop-Equivalent;
-          stop
-        elseif (P5 selected-mode resource exhausted?) then (yes)
-          :Stop-Budget;
-          stop
-        else (continue Admit)
-        endif
-      endif
-    else (ERROR)
-      :ErrorHandle; do not exclude Hk candidates;
-      if (confirmed not sent?) then (yes)
-        :qk status unchanged; record ERROR history;
-        if (retry cap reached?) then (yes)
-          :Stop-Error;
-          stop
-        endif
-      else (unknown-effect)
-        :qk unknown; record failed history; do not reuse T(q_old);
-        if (retry cap reached?) then (yes)
-          :Stop-Error;
-          stop
-        elseif (Recover not eligible?) then (A4)
-          :Stop-Error;
-          stop
-        elseif (Recover eligible unaffordable?) then (A5)
-          :Stop-Budget;
+        :S10 P1-P5 via IF-RESOURCE-STOP and IF-EQUIV;
+        if (P-stop?) then (yes)
           stop
         endif
       endif
     endif
   endif
-repeat while (session open?) is (yes)
+repeat while (no stop?) is (continue)
+note right
+  admissible A then selectable S; Admit A1-A5
+  XOR BUDGET(cmin,B) / ROUNDS(Kmax)
+  strictly-reducing TEST else Prep else Recover
+  Charge cost once; Hk update
+  ERROR ErrorHandle unknown-effect
+  confirmed not sent; unconfirmed Recover
+  P1 P5 Stop-Empty Stop-Singleton Stop-645
+  Stop-Equivalent Stop-Budget Stop-Error Stop-NoDistinguisher
+end note
 stop
 @enduml
