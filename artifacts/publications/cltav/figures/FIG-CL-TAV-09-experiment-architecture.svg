@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520" style="background:#FFFFFF">
-<!-- local-svg-export; intended renderer: PlantUML 1.2026.8. Java crashed here. -->
-<!-- plantuml-source
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560" style="background:#FFFFFF"><desc id="plantuml-source"><![CDATA[
 @startuml FIG-CL-TAV-09
 skinparam shadowing false
 title FIG-CL-TAV-09 Experiment architecture\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nevaluator-only truth is never an algorithm input
 
-rectangle &quot;Controlled scene / config\n(IUT, fault plan, resource mode)&quot; as Scene
-rectangle &quot;Independent truth record\n(evaluator only)&quot; as Truth
-rectangle &quot;Comparison arms\nCL-T / CL-A / CL-TA / CL-LOOP&quot; as Arms
-rectangle &quot;Observations and resource log\n(algorithm-visible)&quot; as Obs
-rectangle &quot;Validity check\n(invalid, equivalent, missing)&quot; as Valid
-rectangle &quot;Metrics with denominators\nEXP-CLTAV-DETECT / LOCATE / ABLATION&quot; as Metrics
-rectangle &quot;RQ / claims\n(no unrun numbers)&quot; as Claims
+rectangle "Controlled scene / config\n(IUT, fault plan, resource mode)" as Scene
+rectangle "Independent truth record\n(evaluator only)" as Truth
+rectangle "Comparison arms\nCL-T / CL-A / CL-TA / CL-LOOP" as Arms
+rectangle "Observations and resource log\n(algorithm-visible)" as Obs
+rectangle "Validity check\n(invalid, equivalent, missing)" as Valid
+rectangle "Metrics with denominators\nEXP-CLTAV-DETECT / LOCATE / ABLATION" as Metrics
+rectangle "RQ / claims\n(no unrun numbers)" as Claims
 
-Scene --&gt; Arms : same declared pool and action library
-Scene --&gt; Truth : injection plan + execution confirmation
-Truth -[#red,dashed]-&gt; Arms : forbidden leakage
-Arms --&gt; Obs : algorithm-visible Izk, q, cost
-Obs --&gt; Valid
-Truth --&gt; Valid : evaluator-only confirmation
-Valid --&gt; Metrics : attempt and answered-subset denominators
-Metrics --&gt; Claims : comparable projections only
+Scene --> Arms : same declared pool and action library
+Scene --> Truth : injection plan + execution confirmation
+Truth -[#red,dashed]-> Arms : forbidden leakage
+Arms --> Obs : algorithm-visible Izk, q, cost
+Obs --> Valid
+Truth --> Valid : evaluator-only confirmation
+Valid --> Metrics : attempt and answered-subset denominators
+Metrics --> Claims : comparable projections only
 
 note right of Truth
   Evaluator truth must not enter
@@ -30,6 +28,10 @@ note right of Truth
   IF-OBS-INTERPRET, IF-PREP-RECOVER,
   IF-EQUIV and IF-RESOURCE-STOP stay
   algorithm-visible only.
+  Experiment I/O: IF-EXP-SCENE,
+  IF-EXP-INJECT, IF-EXP-TRUTH,
+  IF-EXP-COLLECT, IF-EXP-RUN,
+  IF-EXP-FILTER, IF-EXP-EVAL.
 end note
 note bottom of Arms
   Same pool is not a gift of later CL-LOOP
@@ -40,31 +42,4 @@ note bottom of Arms
 end note
 @enduml
 
--->
-<text x="20" y="24" font-size="16" font-family="sans-serif" font-weight="700">FIG-CL-TAV-09-experiment-architecture</text>
-<text x="20" y="44" font-size="12" font-family="sans-serif">SysML 1.6 notation-based views; executable/metamodel conformance is not claimed</text>
-<rect x="40" y="70" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="48" y="92" font-size="11" font-family="sans-serif">evaluator-only truth is never an algorithm</text>
-<text x="48" y="108" font-size="11" font-family="sans-serif"> input</text>
-<rect x="40" y="140" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="48" y="162" font-size="11" font-family="sans-serif">Controlled scene / config</text>
-<rect x="360" y="140" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="368" y="162" font-size="11" font-family="sans-serif">Independent truth record evaluator only</text>
-<rect x="40" y="210" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="48" y="232" font-size="11" font-family="sans-serif">Comparison arms CL-T / CL-A / CL-TA / CL-L</text>
-<text x="48" y="248" font-size="11" font-family="sans-serif">OOP</text>
-<rect x="360" y="210" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="368" y="232" font-size="11" font-family="sans-serif">forbidden leakage</text>
-<rect x="40" y="280" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="48" y="302" font-size="11" font-family="sans-serif">IF-SELECT-ADMIT IF-PRED-OBS IF-HIST-UPDATE</text>
-<text x="48" y="318" font-size="11" font-family="sans-serif"> IF-EXECUTE-RECORD</text>
-<rect x="40" y="330" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="48" y="352" font-size="11" font-family="sans-serif">IF-OBS-INTERPRET IF-PREP-RECOVER IF-EQUIV </text>
-<text x="48" y="368" font-size="11" font-family="sans-serif">IF-RESOURCE-STOP</text>
-<rect x="40" y="380" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="48" y="402" font-size="11" font-family="sans-serif">EXP-CLTAV-DETECT EXP-CLTAV-LOCATE EXP-CLTA</text>
-<text x="48" y="418" font-size="11" font-family="sans-serif">V-ABLATION</text>
-<rect x="40" y="430" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="48" y="452" font-size="11" font-family="sans-serif">Metrics with denominators DETECT / LOCATE </text>
-<text x="48" y="468" font-size="11" font-family="sans-serif">/ ABLATION</text>
-</svg>
+]]></desc><defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L10,3.5 L0,7 z" fill="#181818"/></marker></defs><text x="20" y="24" font-size="16" font-family="sans-serif" font-weight="700">FIG-CL-TAV-09-experiment-architecture</text><text x="20" y="44" font-size="12" font-family="sans-serif">SysML 1.6 notation-based views; executable/metamodel conformance is not claimed</text><rect x="40" y="80" width="240" height="70" fill="#F7F7F7" stroke="#181818"/><text x="48" y="102" font-size="12" font-family="sans-serif">Controlled scene / config</text><rect x="360" y="80" width="240" height="70" fill="#F7F7F7" stroke="#181818"/><text x="368" y="102" font-size="12" font-family="sans-serif">Independent truth record evaluator-only</text><rect x="40" y="210" width="240" height="70" fill="#F7F7F7" stroke="#181818"/><text x="48" y="232" font-size="12" font-family="sans-serif">Comparison arms CL-T / CL-A / CL-TA / CL-LOOP</text><rect x="360" y="210" width="240" height="70" fill="#F7F7F7" stroke="#181818"/><text x="368" y="232" font-size="12" font-family="sans-serif">Observations algorithm-visible</text><rect x="680" y="210" width="280" height="70" fill="#F7F7F7" stroke="#181818"/><text x="688" y="232" font-size="12" font-family="sans-serif">Validity filter unconfirmed/invalid/equivalent/abstain</text><rect x="360" y="350" width="360" height="70" fill="#F7F7F7" stroke="#181818"/><text x="368" y="372" font-size="12" font-family="sans-serif">Metrics denominators EXP-CLTAV-DETECT / LOCATE / ABLATION</text><rect x="360" y="470" width="360" height="56" fill="#F7F7F7" stroke="#181818"/><text x="368" y="492" font-size="12" font-family="sans-serif">RQ / claims; no unrun numbers</text><text x="680" y="110" font-size="11" font-family="sans-serif">IF-SELECT-ADMIT IF-PRED-OBS IF-HIST-UPDATE IF-EXECUTE-RECORD never take truth</text><line x1="280" y1="115" x2="360" y2="115" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="160" y1="150" x2="160" y2="210" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="480" y1="150" x2="160" y2="210" stroke="#C0392B" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="6 4"/><text x="250" y="190" font-size="11" font-family="sans-serif" fill="#C0392B">forbidden leakage</text><line x1="280" y1="245" x2="360" y2="245" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="600" y1="245" x2="680" y2="245" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="600" y1="115" x2="820" y2="210" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="540" y1="280" x2="540" y2="350" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="540" y1="420" x2="540" y2="470" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/></svg>

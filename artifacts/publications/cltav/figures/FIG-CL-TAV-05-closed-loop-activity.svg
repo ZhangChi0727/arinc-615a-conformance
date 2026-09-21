@@ -1,129 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520" style="background:#FFFFFF">
-<!-- local-svg-export; intended renderer: PlantUML 1.2026.8. Java crashed here. -->
-<!-- plantuml-source
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="720" viewBox="0 0 1100 720" style="background:#FFFFFF"><desc id="plantuml-source"><![CDATA[
 @startuml FIG-CL-TAV-05
 skinparam shadowing false
-title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nadmissible A then selectable S; Admit table A1-A5; charge once
+title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\npredict before select; exclusive TEST/Prep/Recover/Admit; charge once; unified ERROR
 
 start
-:Idle; declare selected mode BUDGET(cmin,B) XOR ROUNDS(Kmax);
+:S0 Idle; SessionContext and HistoryHandle; BUDGET xor ROUNDS; retry=0;
 repeat
-  :Build admissible A(qk);
-  :Form selectable S = currently-valid strictly-reducing TEST, else Prep, else Recover;
-  if (S empty? Admit A2-A5) then (yes)
-    if (q unknown?) then (yes)
-      if (Recover eligible?) then (A5 unaffordable)
-        :Stop-Budget; keep UNKNOWN and ERROR history;
+  :S1 IF-RESOURCE-STOP gate;
+  if (already A2-A5 or P1-P5?) then (yes)
+    stop
+  else (no)
+    :S2 IF-PRED-OBS predict classes;
+    if (PredictionGapError?) then (yes)
+      stop
+    else (no)
+      :S3 IF-SELECT-ADMIT exclusive kind;
+      if (kind ADMIT?) then (yes)
         stop
-      else (A4 not eligible)
-        :Stop-Error;
+      elseif (kind TEST and S empty?) then (yes)
+        :named spec error; never argmin empty S;
         stop
+      elseif (kind PREP or RECOVER?) then (yes)
+        :keep named Prep/Recover; do not enter TEST minimax;
+      else (TEST nonempty)
+        :one-step minimax on predicted nonempty classes;
       endif
-    else (KNOWN)
-      if (strictly-reducing TEST or Prep exists unaffordable?) then (A2)
-        :Stop-Budget;
-        stop
-      else (A3)
-        :Stop-NoDistinguisher;
-        stop
-      endif
-    endif
-  else (A1 never argmin empty S)
-    :Select from S by one-step minimax on currently valid nonempty classes;
-    :Execute chosen action toward Mprot through FIG-CL-TAV-04 ports;
-    :Charge cost once under the selected mode;
-    if (instrument / correlation / record valid?) then (yes)
-      if (Recover?) then (yes)
-        if (target confirmed?) then (yes)
-          :qk known; Update Hk;
-          if (P1 Hk empty?) then (yes)
-            :Stop-Empty;
-            stop
-          elseif (P2 |Hk| == 1) then (yes)
-            :Stop-Singleton;
-            stop
-          elseif (P3 named remaining 645-dependent obligation?) then (yes)
-            :Stop-645;
-            stop
-          elseif (P4 observational equivalence established?) then (yes)
-            :Stop-Equivalent;
-            stop
-          elseif (P5 selected-mode resource exhausted?) then (yes)
-            :Stop-Budget;
-            stop
-          else (continue Admit)
+      :S4 charge once;
+      :S5 IF-EXECUTE-RECORD;
+      :S6 IF-OBS-INTERPRET unless exec ERROR;
+      if (exec ERROR or interpret ERROR?) then (yes)
+        :S7 unified ERROR; do not exclude H; unknown effect is not known q;
+        if (retry cap reached?) then (yes)
+          :Stop-Error; not A5/Stop-Budget;
+          stop
+        endif
+      else (record valid)
+        if (Recover?) then (yes)
+          :S8 IF-PREP-RECOVER confirmation;
+          if (confirmed?) then (yes)
+            :S9 IF-HIST-UPDATE HistoryHandle;
+          else (unconfirmed)
+            :q remains UNKNOWN; identity on HistoryHandle;
           endif
-        else (unconfirmed)
-          :qk remains UNKNOWN; do not restore old q;
-          note right
-            Next Admit keeps UNKNOWN.
-            Empty S uses A4 or A5.
-          end note
+        else (TEST or Prep)
+          :S9 IF-HIST-UPDATE HistoryHandle;
         endif
-      else (TEST or Prep)
-        :Observe Izk; Update Hk; qk known;
-        if (P1 Hk empty?) then (yes)
-          :Stop-Empty;
-          stop
-        elseif (P2 |Hk| == 1) then (yes)
-          :Stop-Singleton;
-          stop
-        elseif (P3 named remaining 645-dependent obligation?) then (yes)
-          :Stop-645;
-          stop
-        elseif (P4 observational equivalence established?) then (yes)
-          :Stop-Equivalent;
-          stop
-        elseif (P5 selected-mode resource exhausted?) then (yes)
-          :Stop-Budget;
-          stop
-        else (continue Admit)
-        endif
-      endif
-    else (ERROR)
-      :ErrorHandle; do not exclude Hk candidates;
-      if (confirmed not sent?) then (yes)
-        :qk status unchanged; record ERROR history;
-        if (retry cap reached?) then (yes)
-          :Stop-Error;
-          stop
-        endif
-      else (unknown-effect)
-        :qk unknown; record failed history; do not reuse T(q_old);
-        if (retry cap reached?) then (yes)
-          :Stop-Error;
-          stop
-        elseif (Recover not eligible?) then (A4)
-          :Stop-Error;
-          stop
-        elseif (Recover eligible unaffordable?) then (A5)
-          :Stop-Budget;
+        :S10 P1-P5 via IF-RESOURCE-STOP and IF-EQUIV;
+        if (P-stop?) then (yes)
           stop
         endif
       endif
     endif
   endif
-repeat while (session open?) is (yes)
+repeat while (no stop?) is (continue)
+note right
+  admissible A then selectable S; Admit A1-A5
+  XOR BUDGET(cmin,B) / ROUNDS(Kmax)
+  strictly-reducing TEST else Prep else Recover
+  Charge cost once; Hk update
+  ERROR ErrorHandle unknown-effect
+  confirmed not sent; unconfirmed Recover
+  P1 P5 Stop-Empty Stop-Singleton Stop-645
+  Stop-Equivalent Stop-Budget Stop-Error Stop-NoDistinguisher
+end note
 stop
 @enduml
 
--->
-<text x="20" y="24" font-size="16" font-family="sans-serif" font-weight="700">FIG-CL-TAV-05-closed-loop-activity</text>
-<text x="20" y="44" font-size="12" font-family="sans-serif">SysML 1.6 notation-based views; executable/metamodel conformance is not claimed</text>
-<rect x="40" y="70" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="48" y="92" font-size="11" font-family="sans-serif">admissible A then selectable S; Admit A1-A</text>
-<text x="48" y="108" font-size="11" font-family="sans-serif">5; Charge cost once</text>
-<rect x="40" y="140" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="48" y="162" font-size="11" font-family="sans-serif">XOR BUDGET(cmin,B) / ROUNDS(Kmax); strictl</text>
-<text x="48" y="178" font-size="11" font-family="sans-serif">y-reducing TEST else Prep</text>
-<rect x="40" y="210" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="48" y="232" font-size="11" font-family="sans-serif">Hk update; ERROR ErrorHandle unknown-effec</text>
-<text x="48" y="248" font-size="11" font-family="sans-serif">t; confirmed not sent; unconfirmed</text>
-<rect x="40" y="280" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="48" y="302" font-size="11" font-family="sans-serif">Stop-Budget Stop-NoDistinguisher Stop-Equi</text>
-<text x="48" y="318" font-size="11" font-family="sans-serif">valent Stop-Singleton Stop-Empty Stop-Erro</text>
-<rect x="40" y="350" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="48" y="372" font-size="11" font-family="sans-serif">P1 P5 named remaining 645-dependent obliga</text>
-<text x="48" y="388" font-size="11" font-family="sans-serif">tion</text>
-</svg>
+]]></desc><defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L10,3.5 L0,7 z" fill="#181818"/></marker></defs><text x="20" y="24" font-size="16" font-family="sans-serif" font-weight="700">FIG-CL-TAV-05-closed-loop-activity</text><text x="20" y="44" font-size="12" font-family="sans-serif">SysML 1.6 notation-based views; executable/metamodel conformance is not claimed</text><rect x="40" y="70" width="200" height="56" fill="#F7F7F7" stroke="#181818"/><text x="48" y="92" font-size="12" font-family="sans-serif">Idle/S0</text><rect x="280" y="70" width="200" height="56" fill="#F7F7F7" stroke="#181818"/><text x="288" y="92" font-size="12" font-family="sans-serif">S1 stop gate</text><rect x="520" y="70" width="200" height="56" fill="#F7F7F7" stroke="#181818"/><text x="528" y="92" font-size="12" font-family="sans-serif">S2 predict</text><rect x="760" y="70" width="200" height="56" fill="#F8D7DA" stroke="#181818"/><text x="768" y="92" font-size="12" font-family="sans-serif">PredictionGap</text><rect x="520" y="180" width="200" height="56" fill="#F7F7F7" stroke="#181818"/><text x="528" y="202" font-size="12" font-family="sans-serif">S3 select</text><rect x="760" y="180" width="200" height="56" fill="#F7F7F7" stroke="#181818"/><text x="768" y="202" font-size="12" font-family="sans-serif">Admit A2-A5</text><rect x="280" y="290" width="200" height="56" fill="#F7F7F7" stroke="#181818"/><text x="288" y="312" font-size="12" font-family="sans-serif">S4 charge once</text><rect x="520" y="290" width="200" height="56" fill="#F7F7F7" stroke="#181818"/><text x="528" y="312" font-size="12" font-family="sans-serif">S5 execute</text><rect x="760" y="290" width="200" height="56" fill="#F7F7F7" stroke="#181818"/><text x="768" y="312" font-size="12" font-family="sans-serif">S6 interpret</text><rect x="40" y="400" width="200" height="56" fill="#F8D7DA" stroke="#181818"/><text x="48" y="422" font-size="12" font-family="sans-serif">S7 unified ERROR</text><rect x="280" y="400" width="200" height="56" fill="#F7F7F7" stroke="#181818"/><text x="288" y="422" font-size="12" font-family="sans-serif">retry cap / Stop-Error</text><rect x="520" y="400" width="200" height="56" fill="#FFF3CD" stroke="#181818"/><text x="528" y="422" font-size="12" font-family="sans-serif">S8 Recover confirm</text><rect x="760" y="400" width="200" height="56" fill="#FFF3CD" stroke="#181818"/><text x="768" y="422" font-size="12" font-family="sans-serif">unconfirmed UNKNOWN</text><rect x="520" y="520" width="200" height="56" fill="#F7F7F7" stroke="#181818"/><text x="528" y="542" font-size="12" font-family="sans-serif">S9 hist update</text><rect x="760" y="520" width="200" height="56" fill="#F7F7F7" stroke="#181818"/><text x="768" y="542" font-size="12" font-family="sans-serif">S10 P-stops</text><rect x="40" y="520" width="200" height="56" fill="#F7F7F7" stroke="#181818"/><text x="48" y="542" font-size="12" font-family="sans-serif">loop to S1</text><line x1="240" y1="98" x2="280" y2="98" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="480" y1="98" x2="520" y2="98" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="720" y1="98" x2="760" y2="98" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="620" y1="126" x2="620" y2="180" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="720" y1="208" x2="760" y2="208" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="520" y1="236" x2="380" y2="290" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="480" y1="318" x2="520" y2="318" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="720" y1="318" x2="760" y2="318" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="760" y1="346" x2="240" y2="400" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="240" y1="428" x2="280" y2="428" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="720" y1="346" x2="620" y2="400" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="720" y1="428" x2="760" y2="428" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="620" y1="456" x2="620" y2="520" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="720" y1="548" x2="760" y2="548" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="520" y1="548" x2="240" y2="548" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="140" y1="520" x2="140" y2="126" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/></svg>

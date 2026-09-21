@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="980" height="520" viewBox="0 0 980 520" style="background:#FFFFFF">
-<!-- local-svg-export; intended renderer: PlantUML 1.2026.8. Java crashed here. -->
-<!-- plantuml-source
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="420" viewBox="0 0 980 420" style="background:#FFFFFF"><desc id="plantuml-source"><![CDATA[
 @startuml FIG-CL-TAV-01
 skinparam shadowing false
 title FIG-CL-TAV-01 Context\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nsubset of context relations; satisfy/verify are model relations, not executed verification
@@ -10,37 +8,18 @@ actor Operator
 node TestAdapter
 node IUT
 node NetworkClock
-cloud Integrity645 as &quot;645 integrity boundary\nidentity bound; capability NOT-ESTABLISHED&quot;
+cloud Integrity645 as "645 integrity boundary\nidentity bound; capability NOT-ESTABLISHED"
 
-Operator --&gt; TestAdapter : test request
-TestAdapter --&gt; IUT : stimulus
-IUT --&gt; TestAdapter : observation Izk
-TestAdapter --&gt; NetworkClock : time / error bound
-IUT ..&gt; Integrity645 : call and state only\nnot algorithm evidence
-TestAdapter --&gt; Msess : observation port to verification session
+Operator --> TestAdapter : test request
+TestAdapter --> IUT : stimulus
+IUT --> TestAdapter : observation Izk
+TestAdapter --> NetworkClock : time / error bound
+IUT ..> Integrity645 : call and state only\nnot algorithm evidence
+TestAdapter --> Msess : observation port to verification session
 note bottom of IUT
   Protocol messages and operation states
   belong to Mprot, not to Msess.
 end note
 @enduml
 
--->
-<text x="20" y="24" font-size="16" font-family="sans-serif" font-weight="700">FIG-CL-TAV-01-context</text>
-<text x="20" y="44" font-size="12" font-family="sans-serif">SysML 1.6 notation-based views; executable/metamodel conformance is not claimed</text>
-<rect x="80" y="70" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="88" y="92" font-size="11" font-family="sans-serif">Operator</text>
-<rect x="300" y="70" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="308" y="92" font-size="11" font-family="sans-serif">TestAdapter</text>
-<rect x="520" y="70" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="528" y="92" font-size="11" font-family="sans-serif">IUT</text>
-<rect x="740" y="70" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="748" y="92" font-size="11" font-family="sans-serif">NetworkClock</text>
-<rect x="80" y="180" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="88" y="202" font-size="11" font-family="sans-serif">645 integrity boundary identity bound; cap</text>
-<text x="88" y="218" font-size="11" font-family="sans-serif">ability NOT-ESTABLISHED</text>
-<rect x="520" y="180" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="528" y="202" font-size="11" font-family="sans-serif">call and state only not algorithm evidence</text>
-<rect x="300" y="300" width="280" height="56" fill="#F1F1F1" stroke="#181818"/>
-<text x="308" y="322" font-size="11" font-family="sans-serif">Msess observation port to verification ses</text>
-<text x="308" y="338" font-size="11" font-family="sans-serif">sion</text>
-</svg>
+]]></desc><defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L10,3.5 L0,7 z" fill="#181818"/></marker></defs><text x="20" y="24" font-size="16" font-family="sans-serif" font-weight="700">FIG-CL-TAV-01-context</text><text x="20" y="44" font-size="12" font-family="sans-serif">SysML 1.6 notation-based views; executable/metamodel conformance is not claimed</text><rect x="40" y="80" width="160" height="56" fill="#F7F7F7" stroke="#181818"/><text x="48" y="102" font-size="12" font-family="sans-serif">Operator</text><rect x="260" y="80" width="160" height="56" fill="#F7F7F7" stroke="#181818"/><text x="268" y="102" font-size="12" font-family="sans-serif">TestAdapter</text><rect x="480" y="80" width="160" height="56" fill="#F7F7F7" stroke="#181818"/><text x="488" y="102" font-size="12" font-family="sans-serif">IUT</text><rect x="700" y="80" width="200" height="56" fill="#F7F7F7" stroke="#181818"/><text x="708" y="102" font-size="12" font-family="sans-serif">NetworkClock</text><rect x="480" y="200" width="280" height="70" fill="#F7F7F7" stroke="#181818"/><text x="488" y="222" font-size="12" font-family="sans-serif">645 integrity boundary; capability NOT-ESTABLISHED</text><rect x="260" y="320" width="280" height="56" fill="#F7F7F7" stroke="#181818"/><text x="268" y="342" font-size="12" font-family="sans-serif">Msess observation port</text><line x1="200" y1="108" x2="260" y2="108" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="420" y1="108" x2="480" y2="108" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="640" y1="108" x2="700" y2="108" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="560" y1="136" x2="560" y2="200" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="340" y1="136" x2="340" y2="320" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/></svg>

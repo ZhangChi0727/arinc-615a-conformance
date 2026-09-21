@@ -160,9 +160,14 @@ java -jar plantuml-1.2026.8.jar -tsvg -o artifacts/publications/cltav/figures ^
 
 PlantUML 1.2026.8 SHA-256
 `5e1ecfa8ecd32c90b03bbf3b1eb6f020943f98ab0fcf4032be31a0002ee2c462`.
-This environment’s `java` stub crashed (`0xC0000409`); reader SVGs for the
-edited figures were exported locally from the PlantUML sources and are not a
-second architecture authority. Re-render with a working JRE before submission.
+This environment’s `java` stub crashed (`0xC0000409`). Reader SVGs for
+FIG-CL-TAV-01/05/09 are equivalent node/edge exports: XML-valid, PlantUML
+source in a CDATA `desc`, visible `line` edges for control flow and the
+forbidden-truth dashed edge. They are not a second architecture authority.
+A later JRE re-render may replace the export; it is not a deferred delivery
+gate for this increment. Typeset ALG-CLTAV-01 is copied to
+`artifacts/publications/cltav/ALG-CLTAV-01.pdf`. Chinese mapping uses stable
+step labels S0–S10, not volatile typeset line numbers.
 
 ---
 
@@ -253,4 +258,4 @@ java -jar plantuml-1.2026.8.jar -tsvg -o artifacts/publications/cltav/figures ^
 ```
 
 PlantUML 1.2026.8 SHA-256 为 `5e1ecfa8ecd32c90b03bbf3b1eb6f020943f98ab0fcf4032be31a0002ee2c462`。
-本环境 `java` 崩溃（`0xC0000409`）；已编辑图的读者 SVG 由 PlantUML 源本地导出，不是第二套架构权威。投稿前须用可用 JRE 重渲染。
+本环境 `java` 崩溃（`0xC0000409`）。FIG-CL-TAV-01／05／09 的读者 SVG 为等价节点／边导出：XML 有效、PlantUML 源放在 CDATA `desc`、控制流与禁止真值虚线均为可见 `line`。它们不是第二套架构权威。后继可用 JRE 重渲染可以替换该导出，但不是本增量的延期交付门。排版 ALG-CLTAV-01 已复制到 `artifacts/publications/cltav/ALG-CLTAV-01.pdf`。中文对应使用稳定步骤标签 S0–S10，不引用易变排版行号。
