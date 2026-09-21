@@ -1574,6 +1574,36 @@
 | `CRS-M1-00824` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00825` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00826` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00827` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00828` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00829` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00830` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00831` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00832` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00833` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00834` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00835` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00836` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00837` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00838` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00839` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00840` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00841` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00842` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00843` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00844` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00845` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00846` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00847` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00848` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00849` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00850` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00851` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00852` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00853` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00854` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00855` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00856` | SCOPE-CONSTRAINT | `SCOPE` |
 
 ## Trace relations
 
@@ -2510,6 +2540,36 @@
 | `TR-CRS-M1-00824-1037` | `CRS-M1-00824` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
 | `TR-CRS-M1-00825-1038` | `CRS-M1-00825` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
 | `TR-CRS-M1-00826-1039` | `CRS-M1-00826` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00827-1040` | `CRS-M1-00827` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00828-1041` | `CRS-M1-00828` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00829-1042` | `CRS-M1-00829` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00830-1043` | `CRS-M1-00830` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00831-1044` | `CRS-M1-00831` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00832-1045` | `CRS-M1-00832` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00833-1046` | `CRS-M1-00833` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00834-1047` | `CRS-M1-00834` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00835-1048` | `CRS-M1-00835` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00836-1049` | `CRS-M1-00836` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00837-1050` | `CRS-M1-00837` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00838-1051` | `CRS-M1-00838` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00839-1052` | `CRS-M1-00839` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00840-1053` | `CRS-M1-00840` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00841-1054` | `CRS-M1-00841` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00842-1055` | `CRS-M1-00842` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00843-1056` | `CRS-M1-00843` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00844-1057` | `CRS-M1-00844` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00845-1058` | `CRS-M1-00845` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00846-1059` | `CRS-M1-00846` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00847-1060` | `CRS-M1-00847` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00848-1061` | `CRS-M1-00848` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00849-1062` | `CRS-M1-00849` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00850-1063` | `CRS-M1-00850` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00851-1064` | `CRS-M1-00851` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00852-1065` | `CRS-M1-00852` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00853-1066` | `CRS-M1-00853` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00854-1067` | `CRS-M1-00854` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00855-1068` | `CRS-M1-00855` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
+| `TR-CRS-M1-00856-1069` | `CRS-M1-00856` | SCOPE | `SCOPE` | 645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms. |
 
 ## Infrastructure premises
 
@@ -4188,6 +4248,36 @@
 | `CRS-M1-00824` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00825` | SCOPE-CONSTRAINT | `SCOPE` |
 | `CRS-M1-00826` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00827` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00828` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00829` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00830` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00831` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00832` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00833` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00834` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00835` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00836` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00837` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00838` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00839` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00840` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00841` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00842` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00843` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00844` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00845` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00846` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00847` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00848` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00849` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00850` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00851` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00852` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00853` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00854` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00855` | SCOPE-CONSTRAINT | `SCOPE` |
+| `CRS-M1-00856` | SCOPE-CONSTRAINT | `SCOPE` |
 
 ## 追踪关系
 
@@ -5124,6 +5214,36 @@
 | `TR-CRS-M1-00824-1037` | `CRS-M1-00824` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
 | `TR-CRS-M1-00825-1038` | `CRS-M1-00825` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
 | `TR-CRS-M1-00826-1039` | `CRS-M1-00826` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00827-1040` | `CRS-M1-00827` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00828-1041` | `CRS-M1-00828` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00829-1042` | `CRS-M1-00829` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00830-1043` | `CRS-M1-00830` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00831-1044` | `CRS-M1-00831` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00832-1045` | `CRS-M1-00832` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00833-1046` | `CRS-M1-00833` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00834-1047` | `CRS-M1-00834` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00835-1048` | `CRS-M1-00835` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00836-1049` | `CRS-M1-00836` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00837-1050` | `CRS-M1-00837` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00838-1051` | `CRS-M1-00838` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00839-1052` | `CRS-M1-00839` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00840-1053` | `CRS-M1-00840` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00841-1054` | `CRS-M1-00841` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00842-1055` | `CRS-M1-00842` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00843-1056` | `CRS-M1-00843` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00844-1057` | `CRS-M1-00844` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00845-1058` | `CRS-M1-00845` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00846-1059` | `CRS-M1-00846` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00847-1060` | `CRS-M1-00847` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00848-1061` | `CRS-M1-00848` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00849-1062` | `CRS-M1-00849` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00850-1063` | `CRS-M1-00850` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00851-1064` | `CRS-M1-00851` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00852-1065` | `CRS-M1-00852` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00853-1066` | `CRS-M1-00853` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00854-1067` | `CRS-M1-00854` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00855-1068` | `CRS-M1-00855` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
+| `TR-CRS-M1-00856-1069` | `CRS-M1-00856` | SCOPE | `SCOPE` | 已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。 |
 
 ## 基础设施前提
 
