@@ -155,7 +155,7 @@ def test_rfc_identities_stay_unmerged_and_645_is_bound_without_capability() -> N
 
 def test_package_a_does_not_self_approve() -> None:
     data = audit()
-    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-23"
+    assert data["boundPackage"]["artifactVersion"] == "M1-CANDIDATE-24"
     supporting = data["supportingSourceApplicabilityAudit"]
     assert supporting["notIndependentApproval"] is True
     assert all(row["independentApproval"] is False for row in supporting["sources"])

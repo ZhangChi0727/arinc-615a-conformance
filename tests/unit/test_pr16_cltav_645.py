@@ -24,6 +24,7 @@ m2 = _load("sync_m2_model", ROOT / "scripts/sync_m2_model.py")
 
 CRS_PATH = ROOT / "configs/requirements/arinc_615a3_m1_crs.json"
 AUDIT_PATH = ROOT / "configs/research/cltav_protocol_source_audit.json"
+REGISTRY_PATH = ROOT / "configs/research/cltav_interface_registry.json"
 M2_PATH = ROOT / "configs/models/arinc_615a3_m2_model.json"
 LOOP_PATH = ROOT / "scripts/cltav_loop_spec.py"
 ALG_PATH = ROOT / "docs/research/publication/algorithms/ALG-CLTAV-01.tex"
@@ -60,39 +61,39 @@ def test_arinc_645_binding_this_pr_is_true() -> None:
         for source in audit["supportingSourceApplicabilityAudit"]["sources"]
         if source["sourceId"] == "ARINC-645"
     )
-    assert arinc645["sourceBindingThisPr"] is True
-    assert arinc645["sourceSemanticBindingThisPr"] is True
-    assert arinc645["boundThisPr"] is True
-    assert arinc645["inScopeForM1"] is True
-    assert arinc645["inScopeForM2"] is False
+    assert arinc645["status"] == "BOUNDED-AUDIT-COMPLETE"
+    assert arinc645["independentApproval"] is False
     assert audit["blockedSource"]["boundThisPr"] is True
+    assert audit["blockedSource"]["localFileAcquired"] is True
     assert audit["supportingSourceApplicabilityAudit"]["645BindingThisPr"] is True
+    assert audit["remainingSourceWork"]["arinc645BindingThisPr"] is True
+    assert audit["remainingSourceWork"]["arinc645CapabilityEstablishmentThisPr"] is False
 
 
-def test_m1_candidate_23_counts_and_unique_645_leaves() -> None:
+def test_m1_candidate_24_counts_and_unique_645_leaves() -> None:
     crs = _crs()
-    assert crs["artifactVersion"] == "M1-CANDIDATE-23"
-    assert len(crs["coverageLedger"]) == 3115
-    assert len(crs["requirements"]) == 825
+    assert crs["artifactVersion"] == "M1-CANDIDATE-24"
+    assert len(crs["coverageLedger"]) == 3145
+    assert len(crs["requirements"]) == 855
     rows_645 = [row for row in crs["requirements"] if row["source"]["sourceId"] == "ARINC-645"]
     ids = [row["id"] for row in rows_645]
-    assert ids == [
-        "CRS-M1-00818",
-        "CRS-M1-00819",
-        "CRS-M1-00820",
-        "CRS-M1-00821",
-        "CRS-M1-00822",
-        "CRS-M1-00823",
-        "CRS-M1-00824",
-        "CRS-M1-00825",
-        "CRS-M1-00826",
-    ]
+    assert ids == [f"CRS-M1-{n:05d}" for n in range(818, 857)]
+    assert len(ids) == 39
     assert all(row["reviewStatus"] == "PENDING-EXTERNAL-INDEPENDENT-REVIEW" for row in rows_645)
     assert all(row["interpretationStatus"] == "CANDIDATE-SOURCE-UNIT-BOUND" for row in rows_645)
     assert {row["rationaleCode"] for row in rows_645} == {
         "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING"
     }
     assert "GAP-ARINC-645" in {gap for row in rows_645 for gap in row["gapIds"]}
+    prefix = next(
+        row
+        for row in rows_645
+        if (row.get("semantic") or {}).get("action") == "PREFIX-HEADER-FILENAME"
+        or "PREFIX-HEADER" in str((row.get("semantic") or {}).get("action") or "")
+    )
+    objects = list((prefix.get("semantic") or {}).get("objects") or [])
+    assert "DATA-FILE-NAME" not in objects
+    assert "SUPPORT-FILE-NAME" not in objects
 
 
 def test_645_capabilities_remain_not_established() -> None:
@@ -243,11 +244,134 @@ def test_algorithm_missing_interface_id_is_rejected() -> None:
     assert any("IF-PRED-OBS" in item for item in errors)
 
 
+def test_undeclared_interface_call_is_rejected() -> None:
+    text = ALG_PATH.read_text(encoding="utf-8") + "\n% IF-UNDECLARED\n"
+    errors = baseline.cltav_algorithm_contract_errors(
+        text,
+        PUML_PATH.read_text(encoding="utf-8"),
+        EXP_PLAN.read_text(encoding="utf-8"),
+    )
+    assert any("undeclared interface call IF-UNDECLARED" in item for item in errors)
+
+
+def test_removing_pred_call_while_keeping_macro_is_rejected() -> None:
+    text = ALG_PATH.read_text(encoding="utf-8")
+    start = text.find(r"\begin{algorithm}")
+    mutated = text[:start] + text[start:].replace(r"\IFpred", r"\IFsel")
+    errors = baseline.cltav_algorithm_contract_errors(
+        mutated,
+        PUML_PATH.read_text(encoding="utf-8"),
+        EXP_PLAN.read_text(encoding="utf-8"),
+    )
+    assert any("IF-PRED-OBS" in item for item in errors)
+
+
+def test_duplicate_interface_id_is_rejected() -> None:
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    registry["interfaces"].append(copy.deepcopy(registry["interfaces"][0]))
+    errors = baseline.cltav_algorithm_contract_errors(
+        ALG_PATH.read_text(encoding="utf-8"),
+        PUML_PATH.read_text(encoding="utf-8"),
+        EXP_PLAN.read_text(encoding="utf-8"),
+        registry,
+    )
+    assert any("duplicate interface ids" in item for item in errors)
+
+
+def test_missing_history_handle_is_rejected() -> None:
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    hist = next(row for row in registry["interfaces"] if row["id"] == "IF-HIST-UPDATE")
+    hist["inputs"] = ["H"]
+    hist["outputs"] = ["Hprime"]
+    errors = baseline.cltav_algorithm_contract_errors(
+        ALG_PATH.read_text(encoding="utf-8"),
+        PUML_PATH.read_text(encoding="utf-8"),
+        EXP_PLAN.read_text(encoding="utf-8"),
+        registry,
+    )
+    assert any("HistoryHandle" in item for item in errors)
+
+
+def test_missing_prep_confirmation_output_is_rejected() -> None:
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    prep = next(row for row in registry["interfaces"] if row["id"] == "IF-PREP-RECOVER")
+    prep["outputs"] = ["prepError"]
+    errors = baseline.cltav_algorithm_contract_errors(
+        ALG_PATH.read_text(encoding="utf-8"),
+        PUML_PATH.read_text(encoding="utf-8"),
+        EXP_PLAN.read_text(encoding="utf-8"),
+        registry,
+    )
+    assert any("confirmation" in item for item in errors)
+
+
+def test_truth_to_arms_without_forbidden_is_rejected() -> None:
+    puml = PUML_PATH.read_text(encoding="utf-8").replace("forbidden leakage", "visible copy")
+    errors = baseline.cltav_algorithm_contract_errors(
+        ALG_PATH.read_text(encoding="utf-8"),
+        puml,
+        EXP_PLAN.read_text(encoding="utf-8"),
+    )
+    assert any("must not give evaluator truth to comparison arms" in item for item in errors)
+
+
 def test_experiment_missing_denominator_is_rejected() -> None:
-    plan = EXP_PLAN.read_text(encoding="utf-8").replace("denominator", "xxxx")
+    plan = EXP_PLAN.read_text(encoding="utf-8").replace("unconfirmed-injection", "xxxx")
     errors = baseline.cltav_algorithm_contract_errors(
         ALG_PATH.read_text(encoding="utf-8"),
         PUML_PATH.read_text(encoding="utf-8"),
         plan,
     )
-    assert any("denominator" in item for item in errors)
+    assert any("unconfirmed-injection" in item for item in errors)
+
+
+def test_645_prefix_on_data_or_support_fails_after_refresh() -> None:
+    crs = _crs()
+    audit = _audit()
+    row = next(
+        item
+        for item in crs["requirements"]
+        if "PREFIX-HEADER" in str((item.get("semantic") or {}).get("action") or "")
+    )
+    row.setdefault("semantic", {}).setdefault("objects", []).append("DATA-FILE-NAME")
+    _refresh_crs(crs)
+    errors = baseline.arinc_645_closure_errors(audit, crs, _m2())
+    assert any("must not apply to Data or Support" in item for item in errors)
+
+
+def test_645_case_rule_as_lsp_identity_fails() -> None:
+    crs = _crs()
+    row = next(item for item in crs["requirements"] if item["id"] == "CRS-M1-00826")
+    row["generatedSemanticProjectionEn"] = (row.get("generatedSemanticProjectionEn") or "") + " not distinct LSPs"
+    errors = baseline.arinc_645_closure_errors(_audit(), crs, _m2())
+    assert any("different-LSP identity" in item for item in errors)
+
+
+def test_645_crc64_check_on_pdf_34_fails() -> None:
+    crs = _crs()
+    row = next(
+        item
+        for item in crs["requirements"]
+        if str((item.get("semantic") or {}).get("action") or "") in {
+            "BIND-CRC-64-CHECK-TO-256-BYTE-VECTOR",
+            "BIND-CRC-64-CHECK",
+            "BIND-CRC-64-REFIN",
+        }
+        or "BIND-CRC-64-CHECK" in str((item.get("semantic") or {}).get("action") or "")
+        or "BIND-CRC-64-REFIN" in str((item.get("semantic") or {}).get("action") or "")
+    )
+    row.setdefault("source", {})["pdfPage"] = 34
+    errors = baseline.arinc_645_closure_errors(_audit(), crs, _m2())
+    assert any("PDF 34" in item for item in errors)
+
+
+def test_645_front_matter_including_crc_body_fails() -> None:
+    audit = _audit()
+    source_645 = next(
+        item
+        for item in audit["supportingSourceApplicabilityAudit"]["sources"]
+        if item["sourceId"] == "ARINC-645"
+    )
+    source_645["pageAccount"]["frontMatterPdfPages"] = [1, 31]
+    errors = baseline.arinc_645_closure_errors(audit, _crs(), _m2())
+    assert any("front matter" in item for item in errors)
