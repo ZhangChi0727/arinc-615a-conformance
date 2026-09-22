@@ -8,11 +8,11 @@
   "boundPackage": {
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
-    "artifactVersion": "M1-CANDIDATE-24",
-    "coverageCount": 3145,
-    "requirementCount": 855,
-    "coverageFingerprint": "7d722a52712a18f4c29d210ba687ceda64282b457dbea073467050fd3d998214",
-    "requirementsFingerprint": "87598591a83f9f08983c5cb463fdb0c1b1d64fe0cc32baaa9585e97932991cb2",
+    "artifactVersion": "M1-CANDIDATE-25",
+    "coverageCount": 3152,
+    "requirementCount": 862,
+    "coverageFingerprint": "1b9e39f3bfd216880582712363e69e7ffea214b2ec5447e1162767b9eb421327",
+    "requirementsFingerprint": "6ea62f5be93f12da9abf457f7795a2171470c3405c0db1f354e615cd3115490f",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
@@ -27,11 +27,11 @@
     "Ordinary Ethernet, Compliant, Profiled and AFDX stay separate configuration dimensions."
   ],
   "summary": {
-    "coverageCount": 3145,
-    "requirementCount": 855,
+    "coverageCount": 3152,
+    "requirementCount": 862,
     "applicabilityDecisions": {
       "OUT-OF-PROFILE": 973,
-      "APPLICABLE-SUPPORTING": 1348,
+      "APPLICABLE-SUPPORTING": 1355,
       "APPLICABLE-BASE": 286,
       "CONDITIONAL": 538
     },
@@ -172,7 +172,7 @@
       "AFDX-MAC-SOURCE-INTERFACE-ID-110-NOT-USED": 1,
       "AFDX-MAC-SOURCE-INTERFACE-ID-111-NOT-USED": 1,
       "P3-DOCUMENT-CONTROL-INFORMATIVE": 2,
-      "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING": 39
+      "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING": 46
     },
     "deferredFutureScope": {
       "total": 0,
@@ -19752,7 +19752,7 @@
         },
         "coverageDenominator": {
           "kind": "615A-TRIGGERED-CLAUSE-GROUP",
-          "count": 8,
+          "count": 11,
           "assuranceBoundary": "TRIGGERED-SEMANTIC-LEAVES-NOT-CAPABILITY-ESTABLISHMENT"
         },
         "namedSourceTensions": [
@@ -19770,17 +19770,87 @@
         "triggerRelationsThisPr": [
           {
             "fromRequirementIds": [
+              "CRS-M1-00043",
+              "CRS-M1-00050",
+              "CRS-M1-00051",
+              "CRS-M1-00052",
               "CRS-M1-00544",
               "CRS-M1-00545"
             ],
-            "controlledObject": "BATCH-FILE-CRC",
+            "controlledObject": "CRC-ALGORITHM",
             "to645Actions": [
+              "BIND-CRC-16-CHECK-TO-256-BYTE-VECTOR",
+              "BIND-CRC-32-CHECK-TO-256-BYTE-VECTOR",
+              "BIND-CRC-64-CHECK-TO-256-BYTE-VECTOR",
+              "BIND-CRC-64-REFIN-REFOUT-XOROUT",
+              "BIND-CRC-64-WIDTH-GENERATOR-AND-INIT",
+              "BIND-CRC-8-CHECK-TO-256-BYTE-VECTOR",
+              "BIND-CRC-FINAL-ONES-COMPLEMENT-AGAINST-STUCK-ON-ZERO",
+              "BIND-CRC-INITIALIZE-TO-ONES",
+              "BIND-CRC-POST-PROCESS-BIT-REFLECTION",
+              "BIND-CRC-PROCESS-BIT-REFLECTION",
+              "BIND-CRC-TRANSMISSION-BIT-REFLECTION",
               "COMPUTE-CRC-16-WITH-GENERATOR-1021-INIT-FFFF",
-              "BIND-CRC-16-CHECK-TO-256-BYTE-VECTOR"
+              "COMPUTE-CRC-32-WITH-GENERATOR-04C11DB7-INIT-FFFFFFFF",
+              "COMPUTE-CRC-8-WITH-GENERATOR-01-INIT-00",
+              "PAD-SHORT-INPUT-TO-CRC-REGISTER-SIZE"
             ],
-            "rationaleCode": "665-BATCH-CRC-POINTS-TO-BOUND-645-CRC16-LEAVES",
-            "rationaleEn": "665 §2.3.1.20 records the 16-bit batch-file CRC trigger. Algorithm identity and check vector are the bound 645 CRC-16 leaves, not a generic integrity slogan.",
-            "rationaleZh": "665 §2.3.1.20 记录 16 位批处理文件 CRC 触发点。算法身份与校验向量是已绑定的 645 CRC-16 叶，不是泛化的完整性口号。"
+            "rationaleCode": "615A-AND-665-CRC-POINTS-TO-BOUND-645-CRC-LEAVES",
+            "rationaleEn": "665 batch-file CRC and 615A checksum/locate-with-CRC objects trigger the bound 645 CRC parameter, check-vector and PDF31 calculation-rule leaves. Capability remains not established.",
+            "rationaleZh": "665 批处理文件 CRC 与 615A 校验和／带 CRC 定位对象触发已绑定的 645 CRC 参数、校验向量与 PDF31 计算规则叶。能力仍未建立。"
+          },
+          {
+            "fromRequirementIds": [
+              "CRS-M1-00420"
+            ],
+            "controlledObject": "CHECK-VALUE",
+            "to645Actions": [
+              "ENCODE-CHECK-VALUE-AS-LENGTH-TYPE-AND-RESULT",
+              "ENCODE-CHECK-VALUE-TYPE-1-8-BIT-CRC-LENGTH-2-ALIGNED",
+              "ENCODE-CHECK-VALUE-TYPE-2-16-BIT-CRC-LENGTH-2",
+              "ENCODE-CHECK-VALUE-TYPE-3-32-BIT-CRC-LENGTH-4",
+              "ENCODE-CHECK-VALUE-TYPE-4-MD5-LENGTH-16",
+              "ENCODE-CHECK-VALUE-TYPE-5-SHA1-LENGTH-20",
+              "ENCODE-CHECK-VALUE-TYPE-6-SHA-256-LENGTH-32",
+              "ENCODE-CHECK-VALUE-TYPE-7-SHA-512-LENGTH-64",
+              "ENCODE-CHECK-VALUE-TYPE-8-64-BIT-CRC-LENGTH-8",
+              "RECORD-MD5-SHA1-AS-LEGACY-EQUIPMENT-ONLY",
+              "RECORD-SHORT-CRC-FILE-CHECK-DEPRECATION-OVER-4-KB",
+              "RECORD-TYPE-2-16-BIT-CRC-ACCEPTABLE-UNDER-32-KB-ABOUT-4093-BYTES",
+              "RESTRICT-TYPE-1-8-BIT-CRC-TO-PART-NUMBER-TEXT",
+              "STORE-CHECK-VALUES-BIG-ENDIAN-16-BIT-ALIGNED",
+              "USE-CHECK-VALUE-LENGTH-TO-SKIP-UNKNOWN-TYPE"
+            ],
+            "rationaleCode": "615A-CHECK-VALUE-POINTS-TO-BOUND-645-TABLE-4-5-LEAVES",
+            "rationaleEn": "615A offered check-value objects trigger the bound 645 Table 4-5 type/method/length and §4.4-4.5 leaves.",
+            "rationaleZh": "615A 提供的校验值对象触发已绑定的 645 表 4-5 类型／方法／长度及 §4.4–4.5 叶。"
+          },
+          {
+            "fromRequirementIds": [
+              "CRS-M1-00312",
+              "CRS-M1-00313",
+              "CRS-M1-00326",
+              "CRS-M1-00327"
+            ],
+            "controlledObject": "FILENAME-AND-PART-NUMBER",
+            "to645Actions": [
+              "ASSIGN-NEW-PART-NUMBER-ON-ANY-BIT-CHANGE",
+              "ASSIGN-UNIQUE-PART-NUMBER-PER-BIT-IMAGE",
+              "EXCLUDE-RESTRICTED-ASCII-SUBSET-FROM-HEADER-DATA-SUPPORT-FILENAMES",
+              "FORBID-CASE-ONLY-FILENAME-PAIRS-INSIDE-ONE-LSP",
+              "FORBID-DISTINCT-PART-NUMBERS-FOR-INTERFACE-ONLY-DIFFERENCE",
+              "FORBID-DOT-AND-DOTDOT-FILENAMES",
+              "INCLUDE-NECESSARY-DATA-FOR-EACH-LOADING-INTERFACE",
+              "KEEP-DATA-SUPPORT-FILENAMES-UNIQUE-ACROSS-LSPS-IN-ONE-615A-SESSION",
+              "LIMIT-HEADER-DATA-SUPPORT-FILENAME-LENGTH-TO-255",
+              "MAKE-REMAINDER-OF-HEADER-FILENAME-UNIQUE-PER-MANUFACTURER-CODE",
+              "MATCH-665-FILE-REFERENCE-CASE-TO-REFERENCED-FILE",
+              "PREFIX-HEADER-FILENAME-WITH-THREE-CHARACTER-MANUFACTURER-CODE",
+              "RECORD-665-MEDIA-NAMES-AS-CASE-SENSITIVE-COMMENTARY"
+            ],
+            "rationaleCode": "615A-FILENAME-POINTS-TO-BOUND-645-NAMING-LEAVES",
+            "rationaleEn": "615A header filename objects trigger the bound 645 §7 uniqueness, multi-interface delivery and filename-charset leaves.",
+            "rationaleZh": "615A 头文件名对象触发已绑定的 645 §7 唯一性、多接口交付与文件名字符集叶。"
           }
         ],
         "status": "BOUNDED-AUDIT-COMPLETE",
@@ -19806,7 +19876,7 @@
           },
           {
             "id": "SAU-645-BODY-PRE",
-            "clause": "1-4.3.2",
+            "clause": "1-4.3.2.2",
             "clauseTitleEn": "Introduction through CRC calculation rules, untriggered body",
             "pdfPages": [
               7,
@@ -19819,8 +19889,146 @@
             "triggeredByOperations": [],
             "relationTo615A": "BOUNDED-EXCLUSION",
             "leafCrsStatus": "NOT-REQUIRED",
-            "summaryEn": "Chapters 1-3 and CRC introductory body through 4.3.2 are untriggered by the current 615A integrity/naming edges. They are body text, not front matter, and received an applicability judgment.",
-            "summaryZh": "第 1–3 章及至 4.3.2 的 CRC 引言正文未被当前 615A 完整性／命名边触发。它们是正文而非扉页，并已作适用性判断。"
+            "summaryEn": "Chapters 1-3 and CRC introductory body through 4.3.2.2 (PDF 7-30) are untriggered by the current 615A integrity/naming edges. PDF 31 4.3.2.3-4.3.2.9 are not in this unit.",
+            "summaryZh": "第 1–3 章及至 4.3.2.2 的 CRC 引言正文（PDF 7–30）未被当前 615A 完整性／命名边触发。PDF 31 的 4.3.2.3–4.3.2.9 不属于本单元。"
+          },
+          {
+            "id": "SAU-645-4-3-2-RULES",
+            "clause": "4.3.2.3-4.3.2.7",
+            "clauseTitleEn": "CRC reflection, initialization, short-input pad and stuck-on-zero",
+            "pdfPages": [
+              31,
+              31
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TRIGGERED-CRC-CALCULATION-RULES-FOR-615A-INTEGRITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "SOURCE-EXPLICIT-INTEGRITY-EDGE",
+            "leafCrsStatus": "LEAF-CRS-EMITTED",
+            "leafLocator": {
+              "sourceIds": [
+                "ARINC-645"
+              ],
+              "clausePrefixes": [
+                "4.3.2.3",
+                "4.3.2.4",
+                "4.3.2.5",
+                "4.3.2.6",
+                "4.3.2.7"
+              ]
+            },
+            "leafCoverageIds": [
+              "COV-M1-03146",
+              "COV-M1-03147",
+              "COV-M1-03148",
+              "COV-M1-03149",
+              "COV-M1-03150",
+              "COV-M1-03151"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00857",
+              "CRS-M1-00858",
+              "CRS-M1-00859",
+              "CRS-M1-00860",
+              "CRS-M1-00861",
+              "CRS-M1-00862"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-03146",
+                "requirementIds": [
+                  "CRS-M1-00857"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.2.3-P031-PROSE-SENTENCE-001-CA882E2B5603",
+                "clause": "4.3.2.3"
+              },
+              {
+                "coverageId": "COV-M1-03147",
+                "requirementIds": [
+                  "CRS-M1-00858"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.2.4-P031-PROSE-SENTENCE-001-C4B335CB29CC",
+                "clause": "4.3.2.4"
+              },
+              {
+                "coverageId": "COV-M1-03148",
+                "requirementIds": [
+                  "CRS-M1-00859"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.2.5-P031-PROSE-SENTENCE-001-9C31D4759F4B",
+                "clause": "4.3.2.5"
+              },
+              {
+                "coverageId": "COV-M1-03149",
+                "requirementIds": [
+                  "CRS-M1-00860"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.2.6-P031-PROSE-SENTENCE-001-0B5374BC9871",
+                "clause": "4.3.2.6"
+              },
+              {
+                "coverageId": "COV-M1-03150",
+                "requirementIds": [
+                  "CRS-M1-00861"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.2.6-P031-PROSE-SENTENCE-002-2E0791BE6D11",
+                "clause": "4.3.2.6"
+              },
+              {
+                "coverageId": "COV-M1-03151",
+                "requirementIds": [
+                  "CRS-M1-00862"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.2.7-P031-PROSE-SENTENCE-001-17D0048CE94F",
+                "clause": "4.3.2.7"
+              }
+            ],
+            "summaryEn": "PDF 31 clauses 4.3.2.3-4.3.2.7 are CRC calculation-rule body triggered by 615A/665 integrity. Parameter-table identity does not replace these interpretation sentences.",
+            "summaryZh": "PDF 31 的 4.3.2.3–4.3.2.7 是被 615A／665 完整性触发的 CRC 计算规则正文。参数表身份不能替代这些解释句。"
+          },
+          {
+            "id": "SAU-645-4-3-2-EFF",
+            "clause": "4.3.2.8",
+            "clauseTitleEn": "CRC process-efficiency commentary",
+            "pdfPages": [
+              31,
+              31
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "CRC-EFFICIENCY-NOT-A-615A-ACTOR-OBLIGATION",
+            "triggeredByOperations": [],
+            "relationTo615A": "BOUNDED-EXCLUSION",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "4.3.2.8 process efficiency and look-ahead commentary is not a current 615A integrity actor obligation. Reopen if a bound object requires a particular CRC implementation speed.",
+            "summaryZh": "4.3.2.8 过程效率与 look-ahead 评注不是当前 615A 完整性参与者义务。若绑定对象要求特定 CRC 实现速度则重开。"
+          },
+          {
+            "id": "SAU-645-4-3-2-EX",
+            "clause": "4.3.2.9",
+            "clauseTitleEn": "CRC examples pointing at Appendix B",
+            "pdfPages": [
+              31,
+              31
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "CRC-EXAMPLES-NOT-A-615A-ACTOR-OBLIGATION",
+            "triggeredByOperations": [],
+            "relationTo615A": "BOUNDED-EXCLUSION",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "4.3.2.9 CRC examples point at Appendix B guidance and are not a 615A-triggered leaf in this increment.",
+            "summaryZh": "4.3.2.9 CRC 示例指向附录 B 指导，本增量不作为 615A 触发叶。"
           },
           {
             "id": "SAU-645-4-CRC",
@@ -20181,7 +20389,7 @@
             "clause": "4.6",
             "clauseTitleEn": "Cryptographic hash methods not triggered by current 615A CRC path",
             "pdfPages": [
-              37,
+              36,
               37
             ],
             "unitKind": "SECTION",
@@ -20191,8 +20399,8 @@
             "triggeredByOperations": [],
             "relationTo615A": "BOUNDED-EXCLUSION",
             "leafCrsStatus": "NOT-REQUIRED",
-            "summaryEn": "Section 4.6 MD5/SHA bodies are not 615A-triggered in this increment. Table 4-5 still enumerates type codes 1-8; capability remains not established.",
-            "summaryZh": "本增量不把 4.6 节 MD5／SHA 正文当作 615A 触发义务。表 4-5 仍枚举类型码 1–8；能力仍未建立。"
+            "summaryEn": "Section 4.6 and MD5/SHA bodies start on PDF 36 (same page as Table 4-5) and continue on PDF 37. They are not 615A-triggered CRC obligations in this increment. Table 4-5 type rows stay in SAU-645-4-CHECK.",
+            "summaryZh": "§4.6 及 MD5／SHA 正文从 PDF 36 开始（与表 4-5 同页）并延续到 PDF 37。本增量不把它们当作 615A 触发的 CRC 义务。表 4-5 类型行仍在 SAU-645-4-CHECK。"
           },
           {
             "id": "SAU-645-5-SEC",
@@ -20273,7 +20481,8 @@
               "COV-M1-03142",
               "COV-M1-03143",
               "COV-M1-03144",
-              "COV-M1-03145"
+              "COV-M1-03145",
+              "COV-M1-03152"
             ],
             "leafRequirementIds": [
               "CRS-M1-00824",
@@ -20287,7 +20496,8 @@
               "CRS-M1-00853",
               "CRS-M1-00854",
               "CRS-M1-00855",
-              "CRS-M1-00856"
+              "CRS-M1-00856",
+              "CRS-M1-00863"
             ],
             "admittedLeafUnits": [
               {
@@ -20385,10 +20595,18 @@
                 ],
                 "sourceUnitId": "SU-ARINC-645-7.2-P048-COMMENTARY-001-30BE471FFB60",
                 "clause": "7.2"
+              },
+              {
+                "coverageId": "COV-M1-03152",
+                "requirementIds": [
+                  "CRS-M1-00863"
+                ],
+                "sourceUnitId": "SU-ARINC-645-7.1-P047-PROSE-SENTENCE-004-620500B65FF3",
+                "clause": "7.1"
               }
             ],
-            "summaryEn": "Unique PN per bit image, filename length/charset, and unique names across LSPs in one 615A session.",
-            "summaryZh": "每一比特映像唯一件号、文件名长度／字符集，以及一次 615A 会话中各 LSP 文件名唯一。"
+            "summaryEn": "Unique PN per bit image, multi-interface delivery data when the target supports multiple loading interfaces, filename length/charset, and unique names across LSPs in one 615A session.",
+            "summaryZh": "每一比特映像唯一件号、目标支持多加载接口时的交付数据、文件名长度／字符集，以及一次 615A 会话中各 LSP 文件名唯一。"
           }
         ]
       }
@@ -20485,7 +20703,43 @@
         "requirementId": "CRS-M1-00850",
         "atomicPartId": "FN-HEADER-PREFIX",
         "splitRationale": "Manufacturer prefix applies to the Header filename only. Data and Support length/charset leaves do not inherit this prefix."
+      },
+      {
+        "requirementId": "CRS-M1-00857",
+        "atomicPartId": "CRC-TX-BIT-REFLECT",
+        "splitRationale": "PDF31/§7.1 residual source unit emitted as an atomic leaf."
+      },
+      {
+        "requirementId": "CRS-M1-00858",
+        "atomicPartId": "CRC-PROCESS-BIT-REFLECT",
+        "splitRationale": "PDF31/§7.1 residual source unit emitted as an atomic leaf."
+      },
+      {
+        "requirementId": "CRS-M1-00859",
+        "atomicPartId": "CRC-POST-BIT-REFLECT",
+        "splitRationale": "PDF31/§7.1 residual source unit emitted as an atomic leaf."
+      },
+      {
+        "requirementId": "CRS-M1-00860",
+        "atomicPartId": "CRC-INIT-ONES",
+        "splitRationale": "PDF31/§7.1 residual source unit emitted as an atomic leaf."
+      },
+      {
+        "requirementId": "CRS-M1-00861",
+        "atomicPartId": "CRC-SHORT-INPUT-PAD",
+        "splitRationale": "PDF31/§7.1 residual source unit emitted as an atomic leaf."
+      },
+      {
+        "requirementId": "CRS-M1-00862",
+        "atomicPartId": "CRC-STUCK-ON-ZERO",
+        "splitRationale": "PDF31/§7.1 residual source unit emitted as an atomic leaf."
+      },
+      {
+        "requirementId": "CRS-M1-00863",
+        "atomicPartId": "PN-MULTI-INTERFACE-DATA",
+        "splitRationale": "PDF31/§7.1 residual source unit emitted as an atomic leaf."
       }
     ]
-  }
+  },
+  "artifactVersion": "M1-CANDIDATE-25"
 }

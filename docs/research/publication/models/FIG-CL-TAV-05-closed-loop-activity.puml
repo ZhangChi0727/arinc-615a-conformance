@@ -3,14 +3,15 @@ skinparam shadowing false
 title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\npredict before select; exclusive TEST/Prep/Recover/Admit; charge once; unified ERROR
 
 start
-:S0 Idle; SessionContext and HistoryHandle; BUDGET xor ROUNDS; retry=0;
+:S0 Idle; SessionContext unique; HistoryHandle; BUDGET xor ROUNDS; retry=0;
 repeat
   :S1 IF-RESOURCE-STOP gate;
   if (already A2-A5 or P1-P5?) then (yes)
     stop
   else (no)
     :S2 IF-PRED-OBS predict classes;
-    if (PredictionGapError?) then (yes)
+    if (PredictionGapError and Recover/Prep not eligible?) then (yes)
+      :TEST-scoped named prediction-gap; UNKNOWN Recover remains legal when eligible;
       stop
     else (no)
       :S3 IF-SELECT-ADMIT exclusive kind;
@@ -24,23 +25,21 @@ repeat
       else (TEST nonempty)
         :one-step minimax on predicted nonempty classes;
       endif
-      :S4 charge once;
+      :S4 Charge cost once;
       :S5 IF-EXECUTE-RECORD;
       :S6 IF-OBS-INTERPRET unless exec ERROR;
-      if (exec ERROR or interpret ERROR?) then (yes)
-        :S7 unified ERROR; do not exclude H; unknown effect is not known q;
+      if (exec ERROR or interpret ERROR or prepErr or unconfirmed Recover?) then (yes)
+        :S7 unified ERROR ErrorHandle; do not exclude H; unknown-effect is not known q;
         if (retry cap reached?) then (yes)
           :Stop-Error; not A5/Stop-Budget;
           stop
+        else (retry remaining)
+          :unconfirmed Recover and ERROR share the retry back-edge to S1;
         endif
       else (record valid)
-        if (Recover?) then (yes)
-          :S8 IF-PREP-RECOVER confirmation;
-          if (confirmed?) then (yes)
-            :S9 IF-HIST-UPDATE HistoryHandle;
-          else (unconfirmed)
-            :q remains UNKNOWN; identity on HistoryHandle;
-          endif
+        if (Recover confirmed?) then (yes)
+          :S8 writes Γ.qStatus KNOWN(declaredTarget,evidence); confirmed not sent stays UNKNOWN;
+          :S9 IF-HIST-UPDATE HistoryHandle;
         else (TEST or Prep)
           :S9 IF-HIST-UPDATE HistoryHandle;
         endif
@@ -58,7 +57,7 @@ note right
   strictly-reducing TEST else Prep else Recover
   Charge cost once; Hk update
   ERROR ErrorHandle unknown-effect
-  confirmed not sent; unconfirmed Recover
+  confirmed not sent; unconfirmed Recover joins S7
   P1 P5 Stop-Empty Stop-Singleton Stop-645
   Stop-Equivalent Stop-Budget Stop-Error Stop-NoDistinguisher
 end note

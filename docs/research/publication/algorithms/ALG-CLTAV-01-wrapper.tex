@@ -6,9 +6,9 @@
 \setCJKmainfont{SimSun}
 \usepackage{amsmath,amssymb}
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
-\usepackage[margin=0.85in]{geometry}
+\usepackage[margin=0.75in]{geometry}
 \SetAlgoNlRelativeSize{0}
-\SetAlFnt{\footnotesize}
+\SetAlFnt{\scriptsize}
 \SetAlgoSkip{smallskip}
 \SetAlgoInsideSkip{smallskip}
 \title{ALG-CLTAV-01 wrapper}
@@ -27,16 +27,16 @@ typeset line numbers are not cited.
 
 \section*{Chinese step groups (same process, not a second program)}
 \begin{itemize}
-  \item \texttt{S0}: 初始化受控会话 $\Gamma$、历史柄 $\eta$、资源模式、$H_0$ 与 retry 计数。
+  \item \texttt{S0}: $\Gamma$ 为唯一状态源；$q$／retry／$R_{\max}$ 是 $\Gamma.\mathrm{qStatus}$／$\mathrm{retryCount}$／$\mathrm{retryCap}$ 的别名；初始化 $\eta$、$H_0$ 与 retry。
   \item \texttt{S1}: 停止／错误优先门；已决定的 A2--A5 或 P1--P5 立即返回。
-  \item \texttt{S2}: 选择前预测；当前有效类 $\mathcal{C}$ 进入 \texttt{IF-SELECT-ADMIT}；预测缺口不得按剩余 $\lvert H\rvert$ 评分。
-  \item \texttt{S3}: 互斥选择 TEST minimax／Prep／Recover／Admit；空 TEST 集不得 $\arg\min$；Prep／Recover 不进入 minimax。
+  \item \texttt{S2}: 选择前预测；PredictionGapError 只关掉 TEST 评分；UNKNOWN 且 Recover 仍合格时不得挡合法恢复。
+  \item \texttt{S3}: 互斥选择 TEST minimax／Prep／Recover／Admit；空 TEST 集不得 $\arg\min$；空 $\mathcal{C}$ 不阻止合格 Recover。
   \item \texttt{S4}: 一次计费；重试上限不是预算耗尽。
   \item \texttt{S5}: 发出已准入动作并记录。
-  \item \texttt{S6}--\texttt{S7}: 执行 ERROR 与解释 ERROR 汇入同一通路；不排除 $H$；未知效果不能恢复成已知 $q$；retry 递增，达上限先于 A5 返回 Stop-Error。
-  \item \texttt{S8}: Recover 必须确认；未确认则 $q$ 保持 UNKNOWN，$\eta$ 恒等。
-  \item \texttt{S9}: 有效观测才更新 $\eta$ 与 $H$；更新输出供下一轮 \texttt{S2} 预测。
-  \item \texttt{S10}: 互斥 P1--P5；下一轮预测仍在 \texttt{S2}，不得用执行后 $q$ 冒充预测。
+  \item \texttt{S6}--\texttt{S7}: 执行 ERROR、解释 ERROR、prepErr 与未确认 Recover 汇入同一计数通路；不排除 $H$；$\eta$ 标为保守未知；达 $R_{\max}$ 返回 Stop-Error。
+  \item \texttt{S8}: 仅 $\textit{confirmed}=\mathrm{true}$ 把 $\Gamma.\mathrm{qStatus}$ 写成 KNOWN（声明目标与依据）；未确认不经 S10。
+  \item \texttt{S9}: 有效观测或已确认 Recover 才更新 $\eta$ 与 $H$；下一轮 \texttt{S2} 只读 $\Gamma$ 与 $\eta$。
+  \item \texttt{S10}: 互斥 P1--P5；未确认恢复回边在 S7，不在此停止家族。
 \end{itemize}
 Stop-645 在本增量之后表示仍未在能力/实现层关闭的具名 645 依赖义务，不是“645 文件缺失”。
 \end{document}

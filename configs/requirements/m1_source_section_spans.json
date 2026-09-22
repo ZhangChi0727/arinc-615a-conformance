@@ -177,12 +177,12 @@
         30
       ],
       "kind": "UNTRIGGERED-BODY",
-      "rationaleCode": "CHAPTERS-1-3-AND-CRC-INTRO-ARE-BODY-NOT-FRONT-MATTER"
+      "rationaleCode": "CHAPTERS-1-3-AND-CRC-INTRO-THROUGH-4-3-2-2-ARE-BODY-NOT-FRONT-MATTER"
     },
     {
       "sourceId": "ARINC-645",
       "pdfPages": [
-        37,
+        38,
         46
       ],
       "kind": "UNTRIGGERED-SECURITY-AND-MANUFACTURER-CODES",
@@ -196,6 +196,15 @@
       ],
       "kind": "UNTRIGGERED-APPENDICES-AND-BACK-MATTER",
       "rationaleCode": "APPENDICES-AND-SUPPLEMENTS-NOT-TRIGGERED-BY-615A"
+    },
+    {
+      "sourceId": "ARINC-645",
+      "pdfPages": [
+        37,
+        37
+      ],
+      "kind": "UNTRIGGERED-HASH-BODY",
+      "rationaleCode": "SECTION-4-6-HASH-CONTINUATION-PDF-37-TABLE-4-5-KEEPS-PDF-36-IN-TRIGGERED-SPAN"
     }
   ],
   "boundedSourceScopeExclusion": [

@@ -8,16 +8,24 @@
     "SessionContext": {
       "id": "SessionContext",
       "holder": "session",
-      "fields": ["sessionId", "resourceRemainder", "retryCount", "retryCap", "qStatus", "errorHistory", "unknownHistory"],
-      "init": "S0: retryCount=0; qStatus=UNKNOWN unless declared; exclusive resource mode recorded",
+      "fields": ["sessionId", "resourceRemainder", "retryCount", "retryCap", "qStatus", "knownTarget", "knownEvidence", "errorHistory", "unknownHistory"],
+      "aliases": {
+        "q": "qStatus",
+        "retry": "retryCount",
+        "Rmax": "retryCap"
+      },
+      "uniqueState": true,
+      "init": "S0: retryCount=0; qStatus=UNKNOWN unless declared; exclusive resource mode recorded; q/retry/Rmax are aliases of Γ fields",
       "notGlobalHiddenState": true
     },
     "HistoryHandle": {
       "id": "HistoryHandle",
       "holder": "session",
-      "fields": ["H", "compatibleStateByHypothesis", "version"],
-      "init": "S0: empty compatible-state handles; H=H0",
+      "fields": ["H", "compatibleStateByHypothesis", "statusByHypothesis", "version"],
+      "statusByHypothesisValues": ["KNOWN", "CONSERVATIVE-UNKNOWN"],
+      "init": "S0: empty compatible-state handles; H=H0; statusByHypothesis unset",
       "sameHDifferentHistory": "Two handles may share the same H set while compatibleStateByHypothesis differs; HistoryHandle is not discarded when only H is printed",
+      "unknownEffect": "Do not exclude H; mark statusByHypothesis CONSERVATIVE-UNKNOWN so a prior KNOWN snapshot is not treated as confirmed present",
       "notGlobalHiddenState": true
     }
   },
@@ -27,10 +35,10 @@
       "macro": "IFpred",
       "calledInAlgorithm": true,
       "inputs": ["SessionContext", "HistoryHandle", "H", "measurementUncertainty", "actionLibrary"],
-      "outputs": ["q", "currentlyValidNonemptyClasses", "PredictionGapError"],
+      "outputs": ["currentlyValidNonemptyClasses", "PredictionGapError"],
       "pre": "session declared; Hsubseteq H0; HistoryHandle belongs to this session",
-      "guarantee": "classes project onto current H; empty current prediction is not scored as remaining |H|",
-      "failure": "incomputable/unknown: PredictionGapError; do not admit the test",
+      "guarantee": "classes project onto current H; empty current prediction is not scored as remaining |H|; q is read from Γ.qStatus",
+      "failure": "PredictionGapError is TEST-scoped: it withholds TEST scoring and does not by itself block eligible Recover or Prep",
       "stateEffect": "read-only on HistoryHandle; does not charge",
       "successorClose": "estimator/partition algorithm"
     },
@@ -41,8 +49,8 @@
       "inputs": ["A", "q", "currentlyValidNonemptyClasses", "SessionContext", "HistoryHandle", "H"],
       "outputs": ["kind", "tStar", "S", "admitA2A5"],
       "pre": "one resource mode declared; prediction for this iteration already produced",
-      "guarantee": "kind is exclusive TEST, PREP, RECOVER or ADMIT; nonempty A is not executable S; never argmin empty TEST set; Prep/Recover are not scored as observation minimax",
-      "failure": "no currently valid class: named prediction-gap, not A3",
+      "guarantee": "kind is exclusive TEST, PREP, RECOVER or ADMIT; nonempty A is not executable S; never argmin empty TEST set; Prep/Recover are not scored as observation minimax; empty C does not force A3 when Recover or Prep is eligible",
+      "failure": "no currently valid class: named prediction-gap for TEST only, not A3 when Recover/Prep remains eligible",
       "stateEffect": "does not charge; does not update HistoryHandle",
       "successorClose": "scheduler and data structures"
     },
@@ -66,7 +74,7 @@
       "outputs": ["Iz", "ERROR", "unknownEffect"],
       "pre": "record belongs to this session",
       "guarantee": "T5 interval treatment; pairing per method 3.6",
-      "failure": "ERROR joins the same unified error path as execute ERROR; unknown effect is not state-unchanged",
+      "failure": "ERROR joins the same unified error path as execute ERROR, prepErr and unconfirmed Recover; unknown effect is not state-unchanged",
       "stateEffect": "does not exclude H",
       "successorClose": "collectors and timestamp handling"
     },
@@ -75,11 +83,11 @@
       "macro": "IFprep",
       "calledInAlgorithm": true,
       "inputs": ["SessionContext", "HistoryHandle", "tStar", "record"],
-      "outputs": ["confirmed", "prepError", "ineligible"],
+      "outputs": ["confirmed", "prepError", "ineligible", "declaredTarget", "evidence"],
       "pre": "selected kind is PREP or RECOVER; retry cap and A4/A5 order",
-      "guarantee": "sent is not confirmed; confirmation required before q is known",
-      "failure": "unconfirmed Recover is not an identity on the plant; q stays UNKNOWN",
-      "stateEffect": "writes confirmation status into SessionContext; does not restore known q on failure",
+      "guarantee": "sent is not confirmed; only confirmed=true carries declaredTarget and evidence and is allowed to write Γ.qStatus=KNOWN",
+      "failure": "unconfirmed Recover or prepErr joins S7 retry; q stays UNKNOWN; confirmation not sent does not fabricate KNOWN",
+      "stateEffect": "confirmed path writes knownTarget/knownEvidence and qStatus=KNOWN; failure does not restore a prior KNOWN snapshot",
       "successorClose": "protocol/device recovery steps"
     },
     {
@@ -88,9 +96,9 @@
       "calledInAlgorithm": true,
       "inputs": ["HistoryHandle", "H", "tStar", "qUsedAtSelect", "classesUsedAtSelect", "valid Iz"],
       "outputs": ["HistoryHandlePrime", "Hprime", "Stop-Empty"],
-      "pre": "valid observation class; not ERROR",
-      "guarantee": "advance from previous possible states; whole-history path; no resurrection; HistoryHandlePrime is the next IF-PRED-OBS input",
-      "failure": "invalid/unknown effect: identity on H and HistoryHandle",
+      "pre": "valid observation class or confirmed Recover; not ERROR",
+      "guarantee": "advance from previous possible states; whole-history path; no resurrection; HistoryHandlePrime is the next IF-PRED-OBS input; qUsedAtSelect is Γ.qStatus",
+      "failure": "invalid/unknown effect: do not exclude H; mark statusByHypothesis CONSERVATIVE-UNKNOWN",
       "stateEffect": "updates HistoryHandle version; two same-H different-history handles remain distinct",
       "successorClose": "state/clock representation and solver"
     },
@@ -121,11 +129,13 @@
   ],
   "dataflow": [
     {"from": "IF-PRED-OBS", "output": "currentlyValidNonemptyClasses", "to": "IF-SELECT-ADMIT", "input": "currentlyValidNonemptyClasses"},
-    {"from": "IF-PRED-OBS", "output": "q", "to": "IF-SELECT-ADMIT", "input": "q"},
+    {"from": "SessionContext", "output": "qStatus", "to": "IF-SELECT-ADMIT", "input": "q"},
     {"from": "IF-SELECT-ADMIT", "output": "tStar", "to": "IF-EXECUTE-RECORD", "input": "admitted tStar"},
     {"from": "IF-EXECUTE-RECORD", "output": "record", "to": "IF-OBS-INTERPRET", "input": "executionRecord"},
     {"from": "IF-OBS-INTERPRET", "output": "Iz", "to": "IF-HIST-UPDATE", "input": "valid Iz"},
-    {"from": "IF-PREP-RECOVER", "output": "confirmed", "to": "SessionContext", "input": "qStatus"},
+    {"from": "IF-PREP-RECOVER", "output": "declaredTarget", "to": "SessionContext", "input": "knownTarget"},
+    {"from": "IF-PREP-RECOVER", "output": "evidence", "to": "SessionContext", "input": "knownEvidence"},
+    {"from": "SessionContext", "output": "qStatus", "to": "IF-HIST-UPDATE", "input": "qUsedAtSelect"},
     {"from": "IF-HIST-UPDATE", "output": "HistoryHandlePrime", "to": "IF-PRED-OBS", "input": "HistoryHandle", "nextIteration": true}
   ],
   "experimentInterfaces": [
@@ -172,7 +182,12 @@
     },
     {
       "id": "IF-EXP-FILTER",
-      "inputs": ["runId", "truthRecord", "observationLog"],
+      "inputs": ["runId", "truthRecord", "observationLog", "sceneId", "attemptId", "injectionUnconfirmed"],
+      "inputVariants": [
+        {"when": "run-completed", "inputs": ["runId", "truthRecord", "observationLog"]},
+        {"when": "pre-run-exclusion", "inputs": ["sceneId", "attemptId", "injectionUnconfirmed"]},
+        {"when": "pre-run-equivalent", "inputs": ["sceneId", "attemptId", "truthRecord"]}
+      ],
       "outputs": ["validityClass", "filterReason"],
       "failure": "unconfirmed, invalid, equivalent, or abstain are not detection PASS/FAIL",
       "visibility": "evaluator-only labels; algorithm does not see the class name as a select input",
@@ -180,9 +195,14 @@
     },
     {
       "id": "IF-EXP-EVAL",
-      "inputs": ["runId", "validityClass", "denominators"],
+      "inputs": ["runId", "validityClass", "denominators", "truthRecord", "algorithmResultRef", "chargedCost", "sceneId", "attemptId"],
+      "inputVariants": [
+        {"when": "run-completed", "inputs": ["runId", "validityClass", "denominators", "truthRecord", "algorithmResultRef", "chargedCost"]},
+        {"when": "pre-run-exclusion", "inputs": ["sceneId", "attemptId", "validityClass", "denominators"]}
+      ],
+      "recordAuthority": "evaluator store keyed by runId/sceneId/attemptId; missing ref is EVAL failure, not a hidden global",
       "outputs": ["metricCells", "attemptDenominator", "answeredSubsetDenominator"],
-      "failure": "missing denominator definition is not a result",
+      "failure": "missing denominator definition or missing declared record/ref is not a result",
       "visibility": "evaluator-only metrics",
       "resourceBasis": "report charged cost; do not hide Prep/Recover/retry"
     }
@@ -207,32 +227,84 @@
     {
       "id": "WF-NORMAL",
       "path": ["IF-EXP-SCENE", "IF-EXP-INJECT", "IF-EXP-TRUTH", "IF-EXP-RUN", "IF-EXP-COLLECT", "IF-EXP-FILTER", "IF-EXP-EVAL"],
-      "denominator": "answered-subset",
-      "truthToSelect": false
+      "filterVariant": "run-completed",
+      "evalVariant": "run-completed",
+      "denominators": ["attempt", "answered-subset"],
+      "truthToSelect": false,
+      "records": {
+        "sceneRecord": {"sceneId": "S-N1", "configId": "C1", "IUT": "IUT-SYN", "faultPlan": "FP-N", "resourceMode": "BUDGET", "producer": "IF-EXP-SCENE"},
+        "injectionAttempt": {"sceneId": "S-N1", "attemptId": "A-N1", "injectionConfirmed": true, "injectionUnconfirmed": false, "producer": "IF-EXP-INJECT"},
+        "truthRecord": {"sceneId": "S-N1", "attemptId": "A-N1", "injectionConfirmed": true, "equivalentFault": false, "producer": "IF-EXP-TRUTH"},
+        "runRecord": {"runId": "R-N1", "sceneId": "S-N1", "armId": "CL-T", "stopClass": "Stop-Singleton", "producer": "IF-EXP-RUN"},
+        "observationLog": {"runId": "R-N1", "correlationId": "X-N1", "producer": "IF-EXP-COLLECT"},
+        "filterInput": {"variant": "run-completed", "runId": "R-N1", "truthRecord": true, "observationLog": true},
+        "evalInput": {"variant": "run-completed", "runId": "R-N1", "validityClass": "valid", "denominators": ["attempt", "answered-subset"], "truthRecord": true, "algorithmResultRef": "R-N1/trace", "chargedCost": 1}
+      }
     },
     {
       "id": "WF-UNCONFIRMED-INJECT",
       "path": ["IF-EXP-SCENE", "IF-EXP-INJECT", "IF-EXP-FILTER", "IF-EXP-EVAL"],
-      "denominator": "unconfirmed-injection",
-      "truthToSelect": false
+      "filterVariant": "pre-run-exclusion",
+      "evalVariant": "pre-run-exclusion",
+      "preRunExclusion": true,
+      "denominators": ["attempt", "unconfirmed-injection"],
+      "truthToSelect": false,
+      "records": {
+        "sceneRecord": {"sceneId": "S-U1", "configId": "C1", "IUT": "IUT-SYN", "faultPlan": "FP-U", "resourceMode": "BUDGET", "producer": "IF-EXP-SCENE"},
+        "injectionAttempt": {"sceneId": "S-U1", "attemptId": "A-U1", "injectionConfirmed": false, "injectionUnconfirmed": true, "producer": "IF-EXP-INJECT"},
+        "filterInput": {"variant": "pre-run-exclusion", "sceneId": "S-U1", "attemptId": "A-U1", "injectionUnconfirmed": true},
+        "evalInput": {"variant": "pre-run-exclusion", "sceneId": "S-U1", "attemptId": "A-U1", "validityClass": "unconfirmed-injection", "denominators": ["attempt", "unconfirmed-injection"]}
+      }
     },
     {
       "id": "WF-INVALID-OBS",
-      "path": ["IF-EXP-RUN", "IF-EXP-COLLECT", "IF-EXP-FILTER", "IF-EXP-EVAL"],
-      "denominator": "invalid-observation",
-      "truthToSelect": false
+      "path": ["IF-EXP-SCENE", "IF-EXP-INJECT", "IF-EXP-TRUTH", "IF-EXP-RUN", "IF-EXP-COLLECT", "IF-EXP-FILTER", "IF-EXP-EVAL"],
+      "filterVariant": "run-completed",
+      "evalVariant": "run-completed",
+      "denominators": ["attempt", "invalid-observation"],
+      "truthToSelect": false,
+      "records": {
+        "sceneRecord": {"sceneId": "S-I1", "configId": "C1", "IUT": "IUT-SYN", "faultPlan": "FP-I", "resourceMode": "BUDGET", "producer": "IF-EXP-SCENE"},
+        "injectionAttempt": {"sceneId": "S-I1", "attemptId": "A-I1", "injectionConfirmed": true, "injectionUnconfirmed": false, "producer": "IF-EXP-INJECT"},
+        "truthRecord": {"sceneId": "S-I1", "attemptId": "A-I1", "injectionConfirmed": true, "equivalentFault": false, "producer": "IF-EXP-TRUTH"},
+        "runRecord": {"runId": "R-I1", "sceneId": "S-I1", "armId": "CL-T", "stopClass": "Stop-Error", "producer": "IF-EXP-RUN"},
+        "observationLog": {"runId": "R-I1", "correlationId": null, "producer": "IF-EXP-COLLECT"},
+        "filterInput": {"variant": "run-completed", "runId": "R-I1", "truthRecord": true, "observationLog": true},
+        "evalInput": {"variant": "run-completed", "runId": "R-I1", "validityClass": "invalid-observation", "denominators": ["attempt", "invalid-observation"], "truthRecord": true, "algorithmResultRef": "R-I1/trace", "chargedCost": 1}
+      }
     },
     {
       "id": "WF-ABSTAIN",
-      "path": ["IF-EXP-RUN", "IF-EXP-FILTER", "IF-EXP-EVAL"],
-      "denominator": "abstain",
-      "truthToSelect": false
+      "path": ["IF-EXP-SCENE", "IF-EXP-INJECT", "IF-EXP-TRUTH", "IF-EXP-RUN", "IF-EXP-COLLECT", "IF-EXP-FILTER", "IF-EXP-EVAL"],
+      "filterVariant": "run-completed",
+      "evalVariant": "run-completed",
+      "denominators": ["attempt", "abstain"],
+      "truthToSelect": false,
+      "records": {
+        "sceneRecord": {"sceneId": "S-A1", "configId": "C1", "IUT": "IUT-SYN", "faultPlan": "FP-A", "resourceMode": "BUDGET", "producer": "IF-EXP-SCENE"},
+        "injectionAttempt": {"sceneId": "S-A1", "attemptId": "A-A1", "injectionConfirmed": true, "injectionUnconfirmed": false, "producer": "IF-EXP-INJECT"},
+        "truthRecord": {"sceneId": "S-A1", "attemptId": "A-A1", "injectionConfirmed": true, "equivalentFault": false, "producer": "IF-EXP-TRUTH"},
+        "runRecord": {"runId": "R-A1", "sceneId": "S-A1", "armId": "CL-T", "stopClass": "Stop-645", "producer": "IF-EXP-RUN"},
+        "observationLog": {"runId": "R-A1", "correlationId": "X-A1", "producer": "IF-EXP-COLLECT"},
+        "filterInput": {"variant": "run-completed", "runId": "R-A1", "truthRecord": true, "observationLog": true},
+        "evalInput": {"variant": "run-completed", "runId": "R-A1", "validityClass": "abstain", "denominators": ["attempt", "abstain"], "truthRecord": true, "algorithmResultRef": "R-A1/trace", "chargedCost": 1}
+      }
     },
     {
       "id": "WF-EQUIVALENT",
-      "path": ["IF-EXP-SCENE", "IF-EXP-TRUTH", "IF-EXP-FILTER", "IF-EXP-EVAL"],
-      "denominator": "equivalent-fault",
-      "truthToSelect": false
+      "path": ["IF-EXP-SCENE", "IF-EXP-INJECT", "IF-EXP-TRUTH", "IF-EXP-FILTER", "IF-EXP-EVAL"],
+      "filterVariant": "pre-run-equivalent",
+      "evalVariant": "pre-run-exclusion",
+      "preRunExclusion": true,
+      "denominators": ["attempt", "equivalent-fault"],
+      "truthToSelect": false,
+      "records": {
+        "sceneRecord": {"sceneId": "S-E1", "configId": "C1", "IUT": "IUT-SYN", "faultPlan": "FP-E", "resourceMode": "BUDGET", "producer": "IF-EXP-SCENE"},
+        "injectionAttempt": {"sceneId": "S-E1", "attemptId": "A-E1", "injectionConfirmed": true, "injectionUnconfirmed": false, "producer": "IF-EXP-INJECT"},
+        "truthRecord": {"sceneId": "S-E1", "attemptId": "A-E1", "injectionConfirmed": true, "equivalentFault": true, "producer": "IF-EXP-TRUTH"},
+        "filterInput": {"variant": "pre-run-equivalent", "sceneId": "S-E1", "attemptId": "A-E1", "truthRecord": true},
+        "evalInput": {"variant": "pre-run-exclusion", "sceneId": "S-E1", "attemptId": "A-E1", "validityClass": "equivalent-fault", "denominators": ["attempt", "equivalent-fault"]}
+      }
     }
   ]
 }

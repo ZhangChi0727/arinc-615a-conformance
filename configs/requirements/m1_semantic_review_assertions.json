@@ -14063,8 +14063,8 @@
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "The Batch File CRC is a 16-bit CRC covering the batch file with the CRC field excluded. Algorithm identity remains blocked by ARINC 645.",
-      "expectedGeneratedSemanticProjectionZh": "批处理文件 CRC 是覆盖该文件且不含 CRC 字段自身的 16 位 CRC。算法身份仍由 ARINC 645 阻塞。",
+      "expectedGeneratedSemanticProjectionEn": "The Batch File CRC is a 16-bit CRC covering the batch file with the CRC field excluded. This PR binds that identity to CRS-M1-00819; it does not establish CRC-VALIDATION.",
+      "expectedGeneratedSemanticProjectionZh": "批处理文件 CRC 是覆盖该文件且不含 CRC 字段自身的 16 位 CRC。本 PR 将该身份绑定到 CRS-M1-00819；并不建立 CRC-VALIDATION。",
       "expectedSourceModality": "FACT",
       "expectedConformanceEffect": "REQUIRED",
       "expectedDependencyIds": [
@@ -22082,6 +22082,174 @@
       "expectedGeneratedSemanticProjectionZh": "评注：665 媒体上的文件名及其内部引用区分大小写；若文件系统支持，ABC 与 abc 完全不同。该评注不改写为不同 LSP 身份规则，也不用来抹去 LSP 内“同一文件”示例。",
       "expectedSourceModality": "COMMENTARY",
       "expectedConformanceEffect": "INFORMATIVE",
+      "expectedDependencyIds": [
+        "DEP-ARINC-645"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00857",
+      "sourceUnitId": "SU-ARINC-645-4.3.2.3-P031-PROSE-SENTENCE-001-CA882E2B5603",
+      "sourceTextHash": "ca882e2b5603f2514d942d6deefae70f821c4782a7eb5698f024a0ab96756162",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC",
+        "action": "BIND-CRC-TRANSMISSION-BIT-REFLECTION",
+        "objects": [
+          "CRC",
+          "TRANSMISSION-BIT-ORDER"
+        ],
+        "observableEffect": "BIND-CRC-TRANSMISSION-BIT-REFLECTION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When a 615A-triggered 645 CRC is computed, transmission bit reflection is the byte-center mirror of LSB-first versus MSB-first hardware order. Parameter tables do not replace this interpretation source.",
+      "expectedGeneratedSemanticProjectionZh": "当 615A 触发的 645 CRC 被计算时，传输位反射是 LSB 先发与 MSB 先发硬件顺序关于字节中心的镜像。参数表不能替代该解释来源。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-645"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00858",
+      "sourceUnitId": "SU-ARINC-645-4.3.2.4-P031-PROSE-SENTENCE-001-C4B335CB29CC",
+      "sourceTextHash": "c4b335cb29cc6aa907268608d8a6f014a750c380addc71ee9da5c81ac1ba8dca",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC",
+        "action": "BIND-CRC-PROCESS-BIT-REFLECTION",
+        "objects": [
+          "CRC",
+          "GENERATOR-POLYNOMIAL"
+        ],
+        "observableEffect": "BIND-CRC-PROCESS-BIT-REFLECTION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When a 615A-triggered 645 CRC is computed, process bit reflection of the generator (MSB retained) is a distinct interpretation leaf from the tabulated RefIn flag.",
+      "expectedGeneratedSemanticProjectionZh": "当 615A 触发的 645 CRC 被计算时，生成器（保留最高位）的过程位反射是不同于表列 RefIn 标志的解释叶。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-645"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00859",
+      "sourceUnitId": "SU-ARINC-645-4.3.2.5-P031-PROSE-SENTENCE-001-9C31D4759F4B",
+      "sourceTextHash": "9c31d4759f4b26c6b80d170170cdc438934f1afa250f114c95569ca48a5fc776",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC",
+        "action": "BIND-CRC-POST-PROCESS-BIT-REFLECTION",
+        "objects": [
+          "CRC",
+          "FINAL-CRC-VALUE"
+        ],
+        "observableEffect": "BIND-CRC-POST-PROCESS-BIT-REFLECTION-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When a 615A-triggered 645 CRC is computed, post-process reflection of the final CRC is a distinct interpretation leaf from the tabulated RefOut flag.",
+      "expectedGeneratedSemanticProjectionZh": "当 615A 触发的 645 CRC 被计算时，最终 CRC 的后处理反射是不同于表列 RefOut 标志的解释叶。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-645"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00860",
+      "sourceUnitId": "SU-ARINC-645-4.3.2.6-P031-PROSE-SENTENCE-001-0B5374BC9871",
+      "sourceTextHash": "0b5374bc9871b7825a6acd1789194793245cc596aea57744e68a3d50eaf6b884",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC",
+        "action": "BIND-CRC-INITIALIZE-TO-ONES",
+        "objects": [
+          "CRC",
+          "CRC-INITIAL-VALUE"
+        ],
+        "observableEffect": "BIND-CRC-INITIALIZE-TO-ONES-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When a 615A-triggered 645 CRC is computed, initialization to all-1 bits (versus all-0) is recorded as an interpretation leaf. Tabulated init does not silently drop this source sentence.",
+      "expectedGeneratedSemanticProjectionZh": "当 615A 触发的 645 CRC 被计算时，全 1 初值（相对全 0）作为解释叶记录。表列 init 不得无声丢掉该来源句。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-645"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00861",
+      "sourceUnitId": "SU-ARINC-645-4.3.2.6-P031-PROSE-SENTENCE-002-2E0791BE6D11",
+      "sourceTextHash": "2e0791be6d1110ccd1e95fdca3914e6cd6efb63281c775eb27418e64661d87ee",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-INPUT-SHORTER-THAN-CRC-REGISTER",
+        "action": "PAD-SHORT-INPUT-TO-CRC-REGISTER-SIZE",
+        "objects": [
+          "CRC",
+          "SHORT-INPUT"
+        ],
+        "observableEffect": "PAD-SHORT-INPUT-TO-CRC-REGISTER-SIZE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When a 615A-triggered 645 CRC input is shorter than the CRC register, the implementer should pad to at least register size. The leaf is conditional on that short-input configuration; reopen if a 615A object uses a shorter block without padding evidence.",
+      "expectedGeneratedSemanticProjectionZh": "当 615A 触发的 645 CRC 输入短于 CRC 寄存器时，实现者应将数据填充到至少寄存器长度。该叶以短输入配置为条件；若某 615A 对象使用更短块且无填充证据则重开。",
+      "expectedSourceModality": "SHOULD",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-645"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00862",
+      "sourceUnitId": "SU-ARINC-645-4.3.2.7-P031-PROSE-SENTENCE-001-17D0048CE94F",
+      "sourceTextHash": "17d0048ce94f94cba10c9c400bba05fcb74ea58d5f1b62dd70acfcdf00237377",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC",
+        "action": "BIND-CRC-FINAL-ONES-COMPLEMENT-AGAINST-STUCK-ON-ZERO",
+        "objects": [
+          "CRC",
+          "STUCK-ON-ZERO"
+        ],
+        "observableEffect": "BIND-CRC-FINAL-ONES-COMPLEMENT-AGAINST-STUCK-ON-ZERO-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When a 615A-triggered 645 CRC is computed, one’s-complement of the final CRC prior to transmission is the source treatment of stuck-on-zero. Capability/execution remains not established.",
+      "expectedGeneratedSemanticProjectionZh": "当 615A 触发的 645 CRC 被计算时，发送前对最终 CRC 作一补是 stuck-on-zero 的来源处置。能力／执行仍未建立。",
+      "expectedSourceModality": "FACT",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-645"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00863",
+      "sourceUnitId": "SU-ARINC-645-7.1-P047-PROSE-SENTENCE-004-620500B65FF3",
+      "sourceTextHash": "620500b65ff315135b9643602a41ba5249edf56733969c14bd1d64fe9b6728bb",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-TARGET-SUPPORTS-MULTIPLE-LOADING-INTERFACES",
+        "action": "INCLUDE-NECESSARY-DATA-FOR-EACH-LOADING-INTERFACE",
+        "objects": [
+          "SOFTWARE-PART",
+          "LOADING-INTERFACE"
+        ],
+        "observableEffect": "INCLUDE-NECESSARY-DATA-FOR-EACH-LOADING-INTERFACE-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "If a software part is intended for a target that supports multiple loading interfaces, the delivered part shall include the data needed for each interface. Conditional on that 615A target configuration; reopen if a bound UPLOAD/INFORMATION object uses a multi-interface target without this leaf.",
+      "expectedGeneratedSemanticProjectionZh": "若软件件拟装入支持多加载接口的目标，交付件须包含支持每一接口所需数据。以该 615A 目标配置为条件；若绑定 UPLOAD／INFORMATION 对象使用多接口目标却无此叶则重开。",
+      "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [
         "DEP-ARINC-645"
       ]

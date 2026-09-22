@@ -16,18 +16,21 @@
 \label{alg:cltav-01}
 \SetKwInput{KwIn}{Require}
 \SetKwInput{KwOut}{Ensure}
-\KwIn{declared $H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}$; SessionContext $\Gamma$; HistoryHandle $\eta$; resource mode BUDGET$(c_{\min},B)$ xor ROUNDS$(K_{\max})$; retry cap $R_{\max}$; action library; measurement uncertainty}
+\KwIn{declared $H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}$; SessionContext $\Gamma$ (unique state); HistoryHandle $\eta$; resource mode BUDGET$(c_{\min},B)$ xor ROUNDS$(K_{\max})$; action library; measurement uncertainty}
 \KwOut{stop class, final $H$, $\eta$, session trace; singleton $h_{\mathrm{normal}}$ is not protocol PASS}
-\tcp{\textbf{S0} init $H\leftarrow H_0$, $\Gamma.\mathrm{retry}\leftarrow 0$, $q$ UNKNOWN unless declared, $\eta$ empty handles}
+\tcp{\textbf{S0} $H\leftarrow H_0$; aliases $q{:=}\Gamma.\mathrm{qStatus}$, $\mathrm{retry}{:=}\Gamma.\mathrm{retryCount}$, $R_{\max}{:=}\Gamma.\mathrm{retryCap}$; $\Gamma.\mathrm{retryCount}{\leftarrow}0$; $q$ UNKNOWN unless declared; $\eta$ empty handles}
 \While{true}{
   \tcp{\textbf{S1} stop/error gate before prediction}
   \lIf{\IFres$(\Gamma,H,\eta)$ already decided Admit A2--A5 or P1--P5}{\Return that stop, $H$, $\eta$, trace}
-  \tcp{\textbf{S2} predict before select; $\mathcal{C}$ feeds the select interface}
-  $(\textit{pred},q,\mathcal{C})\leftarrow$ \IFpred$(\Gamma,\eta,H,\text{uncertainty},\text{library})$\;
-  \lIf{$\textit{pred}$ is PredictionGapError}{\Return named prediction-gap; do not score empty $\mathcal{C}$ as remaining $\lvert H\rvert$}
+  \tcp{\textbf{S2} predict before select; PredictionGapError is TEST-scoped}
+  $(\textit{pred},\mathcal{C})\leftarrow$ \IFpred$(\Gamma,\eta,H,\text{uncertainty},\text{library})$\;
+  \uIf{$\textit{pred}$ is PredictionGapError}{
+    TEST scoring unavailable; $\mathcal{C}\leftarrow\emptyset$\;
+    \lIf{Recover/Prep not eligible from $\Gamma$}{\Return named prediction-gap; do not score empty $\mathcal{C}$ as remaining $\lvert H\rvert$}
+  }
   $A\leftarrow$ currently enabled actions\;
-  \tcp{\textbf{S3} exclusive kind; TEST minimax never applied to Prep/Recover or empty $S$}
-  $(\textit{kind},t^\star,S,\textit{admit})\leftarrow$ \IFsel$(A,q,\mathcal{C},\Gamma,\eta,H)$\;
+  \tcp{\textbf{S3} exclusive kind; empty $\mathcal{C}$ does not block eligible Recover}
+  $(\textit{kind},t^\star,S,\textit{admit})\leftarrow$ \IFsel$(A,\Gamma.\mathrm{qStatus},\mathcal{C},\Gamma,\eta,H)$\;
   \uIf{$\textit{kind}=\mathrm{ADMIT}$}{
     \Return $\textit{admit}\in\{A2,A3,A4,A5\}$, $H$, $\eta$, trace\;
   }
@@ -46,33 +49,34 @@
   \tcp{\textbf{S5} execute}
   $(\textit{record},\textit{execErr})\leftarrow$ \IFexec$(\Gamma,t^\star)$\;
   \tcp{\textbf{S6} interpret, or skip to unified ERROR}
+  $\textit{obsErr}\leftarrow$ nil; $I_z\leftarrow$ nil\;
   \eIf{$\textit{execErr}$ is ERROR}{
     $\textit{fail}\leftarrow$ true\;
   }{
     $(I_z,\textit{obsErr})\leftarrow$ \IFobs$(\Gamma,\textit{record})$\;
     $\textit{fail}\leftarrow(\textit{obsErr}$ is ERROR$)$\;
   }
-  \uIf{$\textit{fail}$}{
-    \tcp{\textbf{S7} unified ERROR: keep $H$; unknown effect is not a known $q$}
-    do not exclude $H$; keep $\eta$; if effect unknown then $q\leftarrow$ UNKNOWN\;
-    $\Gamma.\mathrm{retry}\leftarrow\Gamma.\mathrm{retry}+1$\;
-    \lIf{$\Gamma.\mathrm{retry}\ge R_{\max}$}{\Return Stop-Error; this is not A5/Stop-Budget}
+  $\textit{confirmed}\leftarrow$ false; $\textit{prepErr}\leftarrow$ nil\;
+  \If{$\textit{kind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$ and not $\textit{fail}$}{
+    $(\textit{confirmed},\textit{prepErr},\textit{declaredTarget},\textit{evidence})\leftarrow$ \IFprep$(\Gamma,\eta,t^\star,\textit{record})$\;
+  }
+  \uIf{$\textit{fail}$ or $\textit{prepErr}$ or ($t^\star$ is Recover and $\textit{confirmed}$ is false)}{
+    \tcp{\textbf{S7} unified ERROR: exec, interpret, prepErr, unconfirmed Recover}
+    do not exclude $H$; mark $\eta$ conservative-unknown (old KNOWN is not confirmed present)\;
+    $\Gamma.\mathrm{qStatus}\leftarrow$ UNKNOWN\;
+    $\Gamma.\mathrm{retryCount}\leftarrow\Gamma.\mathrm{retryCount}+1$\;
+    \lIf{$\Gamma.\mathrm{retryCount}\ge\Gamma.\mathrm{retryCap}$}{\Return Stop-Error; this is not A5/Stop-Budget}
     continue after the one charge\;
   }
   \uElseIf{$t^\star$ is Recover}{
-    \tcp{\textbf{S8} confirmation required; sent $\neq$ confirmed}
-    $(\textit{confirmed},\textit{prepErr})\leftarrow$ \IFprep$(\Gamma,\eta,t^\star,\textit{record})$\;
-    \eIf{$\textit{confirmed}$ is false}{
-      $q\leftarrow$ UNKNOWN; identity on $\eta$ and $H$; continue\;
-    }{
-      proceed to S9\;
-    }
+    \tcp{\textbf{S8} confirmed writes KNOWN$(declaredTarget,evidence)$ only}
+    $\Gamma.\mathrm{qStatus}\leftarrow$ KNOWN$(\textit{declaredTarget},\textit{evidence})$\;
   }
-  \If{$I_z$ is a valid observation class}{
-    \tcp{\textbf{S9} history update; $\eta'$ is the next \IFpred input}
-    $(\eta,H)\leftarrow$ \IFhist$(\eta,H,t^\star,q,\mathcal{C},I_z)$\;
+  \If{$I_z$ is a valid observation class or Recover is confirmed}{
+    \tcp{\textbf{S9} history update; next \IFpred reads $\Gamma$ and $\eta$}
+    $(\eta,H)\leftarrow$ \IFhist$(\eta,H,t^\star,\Gamma.\mathrm{qStatus},\mathcal{C},I_z)$\;
   }
-  \tcp{\textbf{S10} exclusive P-stops; next prediction is S2, not a post-exec $q$ fake}
+  \tcp{\textbf{S10} exclusive P-stops; unconfirmed Recover does not arrive here}
   let $\sigma\leftarrow$ first of Stop-Empty, Stop-Singleton, Stop-645, Stop-Equivalent, Stop-Budget via \IFres$(\Gamma,H,\eta)$ and \IFeq$(\Gamma,H,\eta)$\;
   \lIf{$\sigma$ is set}{\Return $\sigma$, $H$, $\eta$, and the trace}
 }

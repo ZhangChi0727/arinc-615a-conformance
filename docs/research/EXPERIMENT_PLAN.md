@@ -180,22 +180,22 @@ Bounded experiment interfaces. Implementation may remain pending; missing failur
 | IF-EXP-TRUTH | sceneId, injectionConfirmed, independentGeneratorId | truthRecord, sharedComponentRisk | unconfirmed injection cannot default to valid truth | evaluator-only; never an algorithm input | not charged to arms |
 | IF-EXP-COLLECT | sceneId, armId, algorithmVisibleRecord | observationLog, resourceLog | missing correlation id is invalid-observation | algorithm-visible only | same charged vector as ALG-CLTAV-01 |
 | IF-EXP-RUN | sceneId, armId, SessionContext | runId, stopClass, traceRef | arm abort is ERROR, not PASS | algorithm-visible plus evaluator run id | one declared mode |
-| IF-EXP-FILTER | runId, truthRecord, observationLog | validityClass, filterReason | unconfirmed, invalid, equivalent, or abstain are not detection PASS/FAIL | evaluator labels; not a select input | not a second charge |
-| IF-EXP-EVAL | runId, validityClass, denominators | metricCells, attemptDenominator, answeredSubsetDenominator | missing denominator is not a result | evaluator-only metrics | report Prep/Recover/retry cost |
+| IF-EXP-FILTER | run-completed: runId, truthRecord, observationLog; pre-run-exclusion: sceneId, attemptId, injectionUnconfirmed; pre-run-equivalent: sceneId, attemptId, truthRecord | validityClass, filterReason | unconfirmed, invalid, equivalent, or abstain are not detection PASS/FAIL | evaluator labels; not a select input | not a second charge |
+| IF-EXP-EVAL | run-completed: runId, validityClass, denominators, truthRecord, algorithmResultRef, chargedCost; pre-run-exclusion: sceneId, attemptId, validityClass, denominators. Evaluator store keyed by runId/sceneId/attemptId; missing ref is EVAL failure | metricCells, attemptDenominator, answeredSubsetDenominator | missing denominator or missing declared record/ref is not a result | evaluator-only metrics | report Prep/Recover/retry cost |
 
 Denominators: attempt, answered-subset, abstain, invalid-observation, equivalent-fault, unconfirmed-injection.
 
 Shared parsers, clocks or models used by both truth and the method must be named as common-error risk at registration. Numeric sample size, seeds and thresholds freeze at confirmatory registration; this PR does not choose them.
 
-Record-flow walkthroughs (truth never enters IF-SELECT-ADMIT / IF-PRED-OBS / IF-HIST-UPDATE / IF-EXECUTE-RECORD):
+Record-flow walkthroughs (truth never enters IF-SELECT-ADMIT / IF-PRED-OBS / IF-HIST-UPDATE / IF-EXECUTE-RECORD). Each walk is a synthetic record instance in `cltav_interface_registry.json`; they do not report performance.
 
-| Walk | Path | Denominator |
-|---|---|---|
-| WF-NORMAL | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-TRUTH → IF-EXP-RUN → IF-EXP-COLLECT → IF-EXP-FILTER → IF-EXP-EVAL | answered-subset |
-| WF-UNCONFIRMED-INJECT | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-FILTER → IF-EXP-EVAL | unconfirmed-injection |
-| WF-INVALID-OBS | IF-EXP-RUN → IF-EXP-COLLECT → IF-EXP-FILTER → IF-EXP-EVAL | invalid-observation |
-| WF-ABSTAIN | IF-EXP-RUN → IF-EXP-FILTER → IF-EXP-EVAL | abstain |
-| WF-EQUIVALENT | IF-EXP-SCENE → IF-EXP-TRUTH → IF-EXP-FILTER → IF-EXP-EVAL | equivalent-fault |
+| Walk | Path | Filter / eval variant | Denominators | Records produced |
+|---|---|---|---|---|
+| WF-NORMAL | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-TRUTH → IF-EXP-RUN → IF-EXP-COLLECT → IF-EXP-FILTER → IF-EXP-EVAL | run-completed / run-completed | attempt, answered-subset | S-N1 / A-N1 / R-N1; confirmed injection; valid observation |
+| WF-UNCONFIRMED-INJECT | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-FILTER → IF-EXP-EVAL | pre-run-exclusion / pre-run-exclusion | attempt, unconfirmed-injection | S-U1 / A-U1; injectionUnconfirmed; no runId |
+| WF-INVALID-OBS | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-TRUTH → IF-EXP-RUN → IF-EXP-COLLECT → IF-EXP-FILTER → IF-EXP-EVAL | run-completed / run-completed | attempt, invalid-observation | R-I1 missing correlation id |
+| WF-ABSTAIN | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-TRUTH → IF-EXP-RUN → IF-EXP-COLLECT → IF-EXP-FILTER → IF-EXP-EVAL | run-completed / run-completed | attempt, abstain | R-A1 Stop-645 abstain with charged cost |
+| WF-EQUIVALENT | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-TRUTH → IF-EXP-FILTER → IF-EXP-EVAL | pre-run-equivalent / pre-run-exclusion | attempt, equivalent-fault | confirmed injection; truth.equivalentFault; no run |
 
 ## Truth independence and common-error risk
 
@@ -337,22 +337,22 @@ artifacts/experiments/EXP-YYYY-NNN/
 | IF-EXP-TRUTH | sceneId、injectionConfirmed、independentGeneratorId | truthRecord、sharedComponentRisk | 未确认注入不得默认为有效真值 | 仅评价器；永不作为算法输入 | 不对各臂计费 |
 | IF-EXP-COLLECT | sceneId、armId、algorithmVisibleRecord | observationLog、resourceLog | 缺关联标识为 invalid-observation | 仅算法可见 | 与 ALG-CLTAV-01 同一计费向量 |
 | IF-EXP-RUN | sceneId、armId、SessionContext | runId、stopClass、traceRef | 臂中止是 ERROR，不是 PASS | 算法可见加评价器 run id | 一种已声明模式 |
-| IF-EXP-FILTER | runId、truthRecord、observationLog | validityClass、filterReason | 未确认、无效、等价或弃权不是检测 PASS／FAIL | 评价器标签；不是选择输入 | 不二次计费 |
-| IF-EXP-EVAL | runId、validityClass、denominators | metricCells、attemptDenominator、answeredSubsetDenominator | 缺分母不是结果 | 仅评价器指标 | 报告 Prep／Recover／重试成本 |
+| IF-EXP-FILTER | 已运行：runId、truthRecord、observationLog；运行前排除：sceneId、attemptId、injectionUnconfirmed；运行前等价：sceneId、attemptId、truthRecord | validityClass、filterReason | 未确认、无效、等价或弃权不是检测 PASS／FAIL | 评价器标签；不是选择输入 | 不二次计费 |
+| IF-EXP-EVAL | 已运行：runId、validityClass、denominators、truthRecord、algorithmResultRef、chargedCost；运行前排除：sceneId、attemptId、validityClass、denominators。评价器库以 runId／sceneId／attemptId 为键；缺引用是 EVAL 失败 | metricCells、attemptDenominator、answeredSubsetDenominator | 缺分母或缺声明记录／引用不是结果 | 仅评价器指标 | 报告 Prep／Recover／重试成本 |
 
 分母：attempt、answered-subset、abstain、invalid-observation、equivalent-fault、unconfirmed-injection。
 
 真值与方法共用的解析器、时钟或模型须在登记中具名为共同错误风险。样本量、种子与阈值在确认性登记时冻结；本 PR 不定这些数。
 
-记录流走查（真值不进入 IF-SELECT-ADMIT／IF-PRED-OBS／IF-HIST-UPDATE／IF-EXECUTE-RECORD）：
+记录流走查（真值不进入 IF-SELECT-ADMIT／IF-PRED-OBS／IF-HIST-UPDATE／IF-EXECUTE-RECORD）。每条走查是 `cltav_interface_registry.json` 中的合成记录实例，不报告性能。
 
-| 走查 | 路径 | 分母 |
-|---|---|---|
-| WF-NORMAL | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-TRUTH → IF-EXP-RUN → IF-EXP-COLLECT → IF-EXP-FILTER → IF-EXP-EVAL | answered-subset |
-| WF-UNCONFIRMED-INJECT | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-FILTER → IF-EXP-EVAL | unconfirmed-injection |
-| WF-INVALID-OBS | IF-EXP-RUN → IF-EXP-COLLECT → IF-EXP-FILTER → IF-EXP-EVAL | invalid-observation |
-| WF-ABSTAIN | IF-EXP-RUN → IF-EXP-FILTER → IF-EXP-EVAL | abstain |
-| WF-EQUIVALENT | IF-EXP-SCENE → IF-EXP-TRUTH → IF-EXP-FILTER → IF-EXP-EVAL | equivalent-fault |
+| 走查 | 路径 | 过滤／评价变体 | 分母 | 记录 |
+|---|---|---|---|---|
+| WF-NORMAL | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-TRUTH → IF-EXP-RUN → IF-EXP-COLLECT → IF-EXP-FILTER → IF-EXP-EVAL | 已运行／已运行 | attempt、answered-subset | S-N1／A-N1／R-N1；注入已确认；有效观测 |
+| WF-UNCONFIRMED-INJECT | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-FILTER → IF-EXP-EVAL | 运行前排除／运行前排除 | attempt、unconfirmed-injection | S-U1／A-U1；injectionUnconfirmed；无 runId |
+| WF-INVALID-OBS | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-TRUTH → IF-EXP-RUN → IF-EXP-COLLECT → IF-EXP-FILTER → IF-EXP-EVAL | 已运行／已运行 | attempt、invalid-observation | R-I1 缺关联标识 |
+| WF-ABSTAIN | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-TRUTH → IF-EXP-RUN → IF-EXP-COLLECT → IF-EXP-FILTER → IF-EXP-EVAL | 已运行／已运行 | attempt、abstain | R-A1 Stop-645 弃权并带计费成本 |
+| WF-EQUIVALENT | IF-EXP-SCENE → IF-EXP-INJECT → IF-EXP-TRUTH → IF-EXP-FILTER → IF-EXP-EVAL | 运行前等价／运行前排除 | attempt、equivalent-fault | 注入已确认；truth.equivalentFault；无运行 |
 
 ## 真值独立性与共同错误风险
 
