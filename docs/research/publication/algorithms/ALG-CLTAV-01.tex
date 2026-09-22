@@ -51,7 +51,7 @@
   \tcp{\textbf{S5} execute; the effect class is returned}
   $(\textit{record},\textit{effect})\leftarrow$ \IFexec$(\Gamma,t^\star)$\;
   \tcp{\textbf{S6} interpret unless execute already returned an effect class}
-  $\textit{Iz}\leftarrow$ nil; $\textit{confirmed}\leftarrow$ false; $\textit{prepErr}\leftarrow$ nil\;
+  $\textit{Iz}\leftarrow$ nil; $\textit{targetConfirmed}\leftarrow$ false; $\textit{summaryConfirmed}\leftarrow$ false; $\textit{prepErr}\leftarrow$ nil\;
   $\textit{postSummary}\leftarrow$ nil; $\textit{declaredTarget}\leftarrow$ nil; $\textit{evidence}\leftarrow$ nil\;
   \eIf{$\textit{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{
     skip interpret\;
@@ -59,20 +59,20 @@
     $(I_z,\textit{effect},\textit{postSummary})\leftarrow$ \IFobs$(\Gamma,\textit{record})$\;
   }
   \If{$\textit{kind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$ and $\textit{effect}\notin\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{
-    $(\textit{confirmed},\textit{prepErr},\textit{declaredTarget},\textit{evidence},\textit{postSummary})\leftarrow$ \IFprep$(\Gamma,\eta,t^\star,\textit{record})$\;
+    $(\textit{targetConfirmed},\textit{summaryConfirmed},\textit{prepErr},\textit{declaredTarget},\textit{evidence},\textit{postSummary})\leftarrow$ \IFprep$(\Gamma,\eta,t^\star,\textit{record})$\;
     \tcp{\IFprep returns values; it does not write $\Gamma$ or $\eta$}
   }
-  \uIf{$\textit{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$ or $\textit{prepErr}$ or ($t^\star$ is Recover and $\textit{confirmed}$ is false)}{
+  \uIf{$\textit{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$ or $\textit{prepErr}$ or ($\textit{kind}$ is Prep and $\textit{summaryConfirmed}$ is false) or ($t^\star$ is Recover and $\textit{targetConfirmed}$ is false)}{
     \tcp{\textbf{S7} classify the effect; do not fold \texttt{CONFIRMED-NOT-SENT} into UNKNOWN}
     do not exclude $H$\;
-    \uIf{$\textit{prepErr}$ or $\textit{effect}=\texttt{UNKNOWN-EFFECT}$}{
+    \uIf{$\textit{prepErr}$ or $\textit{effect}=\texttt{UNKNOWN-EFFECT}$ or ($\textit{kind}$ is Prep and $\textit{summaryConfirmed}$ is false)}{
       mark $\eta$ conservative-unknown; $\Gamma.\mathrm{qStatus}\leftarrow$ UNKNOWN; clear $\Gamma.\mathrm{currentSummary}$\;
     }
     \uElseIf{$\textit{effect}=\texttt{CONFIRMED-NOT-SENT}$}{
       leave $\Gamma.\mathrm{qStatus}$ and compatible history unchanged\;
     }
     \Else{
-      \tcp{unconfirmed Recover}
+      \tcp{unconfirmed Recover target}
       $\Gamma.\mathrm{qStatus}$ stays UNKNOWN; clear $\Gamma.\mathrm{currentSummary}$; mark $\eta$ conservative-unknown\;
     }
     $\Gamma.\mathrm{retryCount}\leftarrow\Gamma.\mathrm{retryCount}+1$\;
@@ -84,10 +84,10 @@
     $\Gamma.\mathrm{qStatus}\leftarrow$ KNOWN$(\textit{declaredTarget},\textit{evidence})$\;
     $\textit{postSummary}\leftarrow(\textit{declaredTarget},\textit{evidence})$\;
   }
-  \If{$I_z$ is a valid observation class or $\textit{postSummary}$ is confirmed}{
+  \If{$I_z$ is a valid observation class or $\textit{summaryConfirmed}$ is true}{
     \tcp{\textbf{S9} history reads the select snapshot; this is the sole commit of a confirmed successor summary}
     $(\eta,H)\leftarrow$ \IFhist$(\eta,H,t^\star,\textit{qUsedAtSelect},\textit{classesUsedAtSelect},I_z,\textit{postSummary})$\;
-    \If{$\Gamma.\mathrm{qStatus}$ is KNOWN and $\textit{postSummary}$ is confirmed}{
+    \If{$\Gamma.\mathrm{qStatus}$ is KNOWN and $\textit{summaryConfirmed}$ is true and $\textit{postSummary}$ is confirmed}{
       $\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}$\;
     }
   }

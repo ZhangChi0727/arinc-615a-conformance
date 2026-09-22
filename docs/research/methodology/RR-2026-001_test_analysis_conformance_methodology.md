@@ -666,7 +666,7 @@ Stop-645 keeps its class name. After the 615A-triggered 645 bind it means a **na
 | S4 | charge once | — | snapshot | billed count | retry cap is not budget exhaustion |
 | S5 | execute | IF-EXECUTE-RECORD | \(\Gamma,t^\star\) | record, effect class | CONFIRMED-NOT-SENT or UNKNOWN-EFFECT |
 | S6 | interpret | IF-OBS-INTERPRET | record | \(I_z\) or effect class | same two effect classes |
-| S7 | classify effect and count retry | — | effect class, prepErr, confirmation | UNKNOWN only for UNKNOWN-EFFECT, prepErr, or unconfirmed Recover | Stop-Error at \(R_{\max}\) |
+| S7 | classify effect and count retry | — | effect class, prepErr, target/summary confirmation | UNKNOWN only for UNKNOWN-EFFECT, prepErr, unconfirmed Prep successor summary, or unconfirmed Recover target | Stop-Error at \(R_{\max}\) |
 | S8 | confirmed Recover | — | declared target, evidence | sole writer of KNOWN | unconfirmed does not enter S8 |
 | S9 | history and successor-summary commit | IF-HIST-UPDATE | `qUsedAtSelect`, classes, \(I_z\), `postSummary` | \(\eta,H,\Gamma.\mathrm{currentSummary}\) | does not read the post-effect summary |
 | S10 | P-stops | IF-RESOURCE-STOP, IF-EQUIV | \(\Gamma,H,\eta\) | — | P-stop returns; otherwise the next iteration is S1 |
@@ -678,7 +678,7 @@ Stop-645 keeps its class name. After the 615A-triggered 645 bind it means a **na
 | IF-OBS-INTERPRET | Correlation keys, instance ownership, pairing, interval validity, effect class | \(\Gamma\), execution record, clocks, \(\varepsilon\) | \(I_z\), effect class, confirmed successor `postSummary` | record belongs to this session | T5 interval treatment; pairing per §3.6; a normal confirmed observation returns a successor summary, possibly unchanged | if that summary cannot be confirmed, return UNKNOWN-EFFECT; CONFIRMED-NOT-SENT is not UNKNOWN | keep correlation identifiers | collectors and timestamp handling |
 | IF-SELECT-ADMIT | Exclusive TEST / Prep / Recover / Admit; chooses the final TEST minimax action on TEST-only nonempty \(S\) | \(A\), \(q=\Gamma.\mathrm{currentSummary}\), predicted classes, \(\Gamma\), \(\eta\), \(H\), remaining resource, retry cap | kind; selectable \(S\); Admit A2–A5; final \(t^\star\) | one resource mode declared; this-iteration prediction already produced | nonempty \(A\) is not executable \(S\); never \(\arg\min\) empty TEST set; Prep/Recover are not observation-minimax; no later selection may replace final \(t^\star\); empty \(\mathcal{C}\) does not force A3 when Recover/Prep is eligible | no currently valid class: named prediction-gap for TEST, not A3 when Recover remains legal | do not issue unaffordable actions | scheduler and data structures |
 | IF-EXECUTE-RECORD | Issue admitted action once; return the effect class | \(\Gamma\), admitted \(t^\star\) | record, effect class, correlation id | action admitted this iteration; charged once | unadmitted action is not issued; an effect class is not a second charge | CONFIRMED-NOT-SENT leaves \(q\) unchanged; UNKNOWN-EFFECT does not | one charge per attempt | protocol adapter, timeout, I/O |
-| IF-PREP-RECOVER | Declare target and confirmation conditions; sent \(\neq\) confirmed; returns values only | \(\Gamma\), \(\eta\), eligibility, remaining resource, UNKNOWN history | confirmed / prepErr / ineligible / declaredTarget / evidence / confirmed successor postSummary | retry cap and A4/A5 order | does not write \(\Gamma\); S8 is the sole KNOWN writer when confirmed=true and S9 is the sole successor-summary commit | unconfirmed Recover stays UNKNOWN; prepErr marks conservative-unknown; CONFIRMED-NOT-SENT does not assign UNKNOWN | same resource rule | protocol/device recovery steps |
+| IF-PREP-RECOVER | Declare target and successor-summary confirmation separately; sent \(\neq\) confirmed; returns values only | \(\Gamma\), \(\eta\), eligibility, remaining resource, UNKNOWN history | targetConfirmed / summaryConfirmed / prepErr / ineligible / declaredTarget / evidence / postSummary | retry cap and A4/A5 order | target not reached may still have a confirmed actual Prep successor; confirmed Recover requires both confirmations; S8 is the sole KNOWN writer and S9 the sole successor-summary commit | Prep summary unconfirmed or Recover target unconfirmed enters S7, clears the summary and is conservative-unknown; CONFIRMED-NOT-SENT does not assign UNKNOWN | same resource rule | protocol/device recovery steps |
 | IF-EQUIV | Return established only with a valid proof | \(\Gamma\), \(H\), \(\eta\), remaining tests, optional solver result | established / not-established / unknown | Stop-Equivalent is exclusive with P1–P3, P5 | no proof \(\Rightarrow\) not “proved equivalent” | unsolved/unknown is not equivalence | record the proof object or the unknown | optional proof algorithm; not required this round |
 | IF-RESOURCE-STOP | A1–A5 / P1–P5, charging, return sets, residual obligations; retry cap is Stop-Error, not Stop-Budget | \(\Gamma\), remaining resource, \(H\), \(\eta\), named 645 residuals, equivalence status | stop class, final \(H\), trace | exclusive stop order Empty, Singleton, 645, Equivalent, Budget | singleton \(h_{\mathrm{normal}}\) is not protocol PASS | do not drop named residuals; do not convert retry-cap into budget exhaustion | charge ERROR/retry once | program wrapper; no paper result |
 
@@ -686,7 +686,7 @@ Control-flow walkthroughs against ALG-CLTAV-01 steps S1–S10. Each row names th
 
 | Case | Calls | Selected | Resource | retry | \(q\) | \(H,\eta\) | Stop |
 |---|---|---|---|---|---|---|---|
-| Information-only tests | S1–S3 TEST minimax, final-action snapshot, S4–S6, S9–S10 | TEST \(t^\star\in S\) | charged once | 0 | confirmed successor summary committed at S9; next prediction reads it | updated from pre-effect snapshot | continue or P-stop |
+| Selectable discriminatory TEST | S1–S3 TEST minimax, final-action snapshot, S4–S6, S9–S10 | TEST \(t^\star\in S\) | charged once | 0 | confirmed successor summary committed at S9; next prediction reads it | updated from pre-effect snapshot | continue or P-stop |
 | Prep eligible, TEST empty | S3 final-action snapshot, then PREP; no minimax | Prep | charged once | 0 | `qUsedAtSelect` kept; confirmed `postSummary` committed at S9 | operation history advances; \(H\) stays unchanged without valid \(I_z\) | continue |
 | UNKNOWN, Recover affordable | S3 kind=RECOVER | Recover | charged once | 0 | UNKNOWN until S8 | identity if unconfirmed | continue |
 | UNKNOWN, Recover unaffordable | S3 ADMIT A5 | none | no extra charge | — | UNKNOWN | unchanged | Stop-Budget A5 |
@@ -2324,7 +2324,7 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 | S4 | 一次计费 | — | 快照 | 计费次数 | 重试上限不是预算耗尽 |
 | S5 | 执行 | IF-EXECUTE-RECORD | \(\Gamma,t^\star\) | 记录、效果类 | CONFIRMED-NOT-SENT 或 UNKNOWN-EFFECT |
 | S6 | 解释 | IF-OBS-INTERPRET | 记录 | \(I_z\) 或效果类 | 同上两种效果类 |
-| S7 | 区分效果并计重试 | — | 效果类、prepErr、确认 | 仅 UNKNOWN-EFFECT、prepErr 或未确认 Recover 写 UNKNOWN | \(R_{\max}\) 时 Stop-Error |
+| S7 | 区分效果并计重试 | — | 效果类、prepErr、目标／摘要确认 | 仅 UNKNOWN-EFFECT、prepErr、后继摘要未确认的 Prep 或目标未确认的 Recover 写 UNKNOWN | \(R_{\max}\) 时 Stop-Error |
 | S8 | 已确认 Recover | — | 声明目标、依据 | KNOWN 的唯一写入者 | 未确认不进入 S8 |
 | S9 | 历史与后继摘要提交 | IF-HIST-UPDATE | `qUsedAtSelect`、类、\(I_z\)、`postSummary` | \(\eta,H,\Gamma.\mathrm{currentSummary}\) | 不读效果后的摘要 |
 | S10 | P 停止 | IF-RESOURCE-STOP、IF-EQUIV | \(\Gamma,H,\eta\) | — | P 停止则返回；否则下一轮从 S1 开始 |
@@ -2336,7 +2336,7 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 | IF-OBS-INTERPRET | 关联键、实例归属、配对、区间有效性、效果类 | \(\Gamma\)、执行记录、时钟、\(\varepsilon\) | \(I_z\)、效果类、已确认后继 `postSummary` | 记录属于本会话 | T5 区间处理；配对按 §3.6；正常已确认观测返回后继摘要，可保持不变 | 若不能确认该摘要，返回 UNKNOWN-EFFECT；CONFIRMED-NOT-SENT 不是 UNKNOWN | 保留关联标识 | 采集器与时间戳处理 |
 | IF-SELECT-ADMIT | 互斥 TEST／Prep／Recover／Admit；对非空 TEST 集选择最终一步 minimax 动作 | \(A\)、\(q=\Gamma.\mathrm{currentSummary}\)、预测类、\(\Gamma\)、\(\eta\)、\(H\)、剩余资源、重试上限 | kind；可选 \(S\)；Admit A2–A5；最终 \(t^\star\) | 已声明一种资源模式；本轮预测已产生 | \(A\) 非空不是可执行 \(S\)；不得对空 TEST 集 \(\arg\min\)；Prep／Recover 不是观测 minimax；不得在接口返回后再替换最终 \(t^\star\)；空 \(\mathcal{C}\) 在 Recover／Prep 合格时不强制 A3 | 无当前有效类：TEST 具名预测缺口，Recover 仍合法时不是 A3 | 不得发出不可负担动作 | 调度程序与数据结构 |
 | IF-EXECUTE-RECORD | 一次发出已准入动作；返回效果类 | \(\Gamma\)、已准入 \(t^\star\) | 记录、效果类、关联标识 | 本轮已准入；一次计费 | 未准入不得发出；效果类不二次计费 | CONFIRMED-NOT-SENT 不改变 \(q\)；UNKNOWN-EFFECT 不是状态未变 | 每次尝试一次计费 | 协议适配器、超时、I/O |
-| IF-PREP-RECOVER | 声明目标与确认条件；已发送 \(\neq\) 已确认；只返回值 | \(\Gamma\)、\(\eta\)、资格、剩余资源、UNKNOWN 历史 | 已确认／prepErr／不合格／声明目标／依据／已确认后继 postSummary | 重试上限与 A4／A5 次序 | 不写 \(\Gamma\)；confirmed=true 时 S8 是 KNOWN 的唯一写入者，S9 是后继摘要的唯一提交点 | 未确认 Recover 保持 UNKNOWN；prepErr 标为保守未知；CONFIRMED-NOT-SENT 不写成 UNKNOWN | 同一资源规则 | 协议／装置恢复步骤 |
+| IF-PREP-RECOVER | 分别声明目标与后继摘要确认；已发送 \(\neq\) 已确认；只返回值 | \(\Gamma\)、\(\eta\)、资格、剩余资源、UNKNOWN 历史 | targetConfirmed／summaryConfirmed／prepErr／不合格／声明目标／依据／postSummary | 重试上限与 A4／A5 次序 | 未达目标的 Prep 仍可能有已确认的实际后继；已确认 Recover 须两项确认；S8 是 KNOWN 的唯一写入者，S9 是后继摘要的唯一提交点 | 摘要未确认的 Prep 或目标未确认的 Recover 进入 S7，清除摘要并标为保守未知；CONFIRMED-NOT-SENT 不写成 UNKNOWN | 同一资源规则 | 协议／装置恢复步骤 |
 | IF-EQUIV | 仅在有效证明时返回已成立 | \(\Gamma\)、\(H\)、\(\eta\)、剩余测试、可选求解结果 | 已成立／未成立／未知 | Stop-Equivalent 与 P1–P3、P5 互斥 | 无证明 \(\Rightarrow\) 不是“已证明等价” | 未求解／未知不是等价 | 记录证明对象或未知 | 可选证明算法；本轮不要求 |
 | IF-RESOURCE-STOP | A1–A5／P1–P5、计费、返回集合与残余义务；重试上限是 Stop-Error，不是 Stop-Budget | \(\Gamma\)、剩余资源、\(H\)、\(\eta\)、具名 645 残余、等价状态 | 停止类、最终 \(H\)、迹 | 互斥顺序 Empty、Singleton、645、Equivalent、Budget | 单元素 \(h_{\mathrm{normal}}\) 不是协议 PASS | 不得丢掉具名残余；不得把重试上限改写成预算耗尽 | ERROR／重试一次计费 | 程序封装；不是论文结果 |
 
@@ -2344,7 +2344,7 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 
 | 情形 | 调用 | 选中 | 资源 | retry | \(q\) | \(H,\eta\) | 停止 |
 |---|---|---|---|---|---|---|---|
-| 仅无信息测试 | S1–S3 TEST minimax、最终动作快照，S4–S6，S9–S10 | TEST \(t^\star\in S\) | 一次计费 | 0 | S9 提交已确认后继摘要；下一轮预测读取它 | 由效果前快照更新 | 继续或 P 停止 |
+| 可选且有区分价值的 TEST | S1–S3 TEST minimax、最终动作快照，S4–S6，S9–S10 | TEST \(t^\star\in S\) | 一次计费 | 0 | S9 提交已确认后继摘要；下一轮预测读取它 | 由效果前快照更新 | 继续或 P 停止 |
 | Prep 可用但测试不可选 | S3 最终动作快照后 PREP；不进 minimax | Prep | 一次计费 | 0 | 保留 `qUsedAtSelect`；S9 提交已确认 `postSummary` | 无有效 \(I_z\) 时操作历史推进、\(H\) 不变 | 继续 |
 | UNKNOWN 且 Recover 可负担 | S3 kind=RECOVER | Recover | 一次计费 | 0 | 至 S8 为 UNKNOWN | 未确认则恒等 | 继续 |
 | UNKNOWN 且 Recover 不可负担 | S3 ADMIT A5 | 无 | 不再计费 | — | UNKNOWN | 不变 | Stop-Budget A5 |

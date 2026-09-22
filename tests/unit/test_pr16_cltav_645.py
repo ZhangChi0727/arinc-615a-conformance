@@ -510,6 +510,17 @@ def test_successor_summary_and_final_action_contracts_are_enforced() -> None:
     assert "confirmed Prep with no valid Iz advances operation history and preserves H" in json.dumps(registry)
     assert "return UNKNOWN-EFFECT rather than retaining a stale known summary" in json.dumps(registry)
 
+    deleted_commit = tex.replace(r"\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}", "", 1)
+    errors = _contract(alg=deleted_commit)
+    assert any("S9 must commit currentSummary" in item for item in errors)
+    inverted_guard = tex.replace(
+        r"\Gamma.\mathrm{qStatus}$ is KNOWN and $\textit{summaryConfirmed}$ is true",
+        r"\Gamma.\mathrm{qStatus}$ is UNKNOWN and $\textit{summaryConfirmed}$ is true",
+        1,
+    )
+    errors = _contract(alg=inverted_guard)
+    assert any("S9 must commit currentSummary" in item for item in errors)
+
     stale = copy.deepcopy(registry)
     stale["dataflow"] = [
         edge for edge in stale["dataflow"]
@@ -523,6 +534,26 @@ def test_successor_summary_and_final_action_contracts_are_enforced() -> None:
         early_snapshot, registry["dataflow"], registry["interfaces"], registry["sessionHandles"]["SessionContext"]
     )
     assert any("actionId" in item for item in errors)
+
+
+def test_unconfirmed_prep_successor_is_not_allowed_to_retain_known_summary() -> None:
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    tex = ALG_PATH.read_text(encoding="utf-8")
+    assert "($\\textit{kind}$ is Prep and $\\textit{summaryConfirmed}$ is false)" in tex
+    assert "clear $\\Gamma.\\mathrm{currentSummary}$" in tex
+    prep = next(row for row in registry["interfaces"] if row["id"] == "IF-PREP-RECOVER")
+    assert {"targetConfirmed", "summaryConfirmed", "postSummary"}.issubset(prep["outputs"])
+    assert "targetConfirmed=false may coexist with summaryConfirmed=true for Prep" in prep["guarantee"]
+
+    escaping = tex.replace("($\\textit{kind}$ is Prep and $\\textit{summaryConfirmed}$ is false) or ", "", 1)
+    errors = _contract(alg=escaping)
+    assert any("unconfirmed Prep successor summary" in item for item in errors)
+
+    ambiguous = copy.deepcopy(registry)
+    prep = next(row for row in ambiguous["interfaces"] if row["id"] == "IF-PREP-RECOVER")
+    prep["outputs"].remove("summaryConfirmed")
+    errors = _contract(ambiguous)
+    assert any("targetConfirmed" in item and "summaryConfirmed" in item for item in errors)
 
 
 def _fig05():

@@ -16,7 +16,7 @@
       },
       "uniqueState": true,
       "init": "S0: retryCount=0; qStatus=UNKNOWN and currentSummary absent unless declared; exclusive resource mode recorded; q/currentSummary and retry/Rmax are aliases of Γ fields",
-      "writers": "qStatus records knownness, while currentSummary is the observable successor summary read by prediction and selection. S7 assigns UNKNOWN and clears currentSummary only for UNKNOWN-EFFECT, prepErr, or unconfirmed Recover. CONFIRMED-NOT-SENT changes neither. S8 is the sole writer of KNOWN on confirmed Recover. S9 is the sole writer of currentSummary after a confirmed successor summary from IF-OBS-INTERPRET or IF-PREP-RECOVER. IF-PREP-RECOVER does not write Γ",
+      "writers": "qStatus records knownness, while currentSummary is the observable successor summary read by prediction and selection. S7 assigns UNKNOWN and clears currentSummary only for UNKNOWN-EFFECT, prepErr, an unconfirmed Prep successor summary, or unconfirmed Recover target. CONFIRMED-NOT-SENT changes neither. S8 is the sole writer of KNOWN on confirmed Recover. S9 is the sole writer of currentSummary after a confirmed successor summary from IF-OBS-INTERPRET or IF-PREP-RECOVER. IF-PREP-RECOVER does not write Γ",
       "notGlobalHiddenState": true
     },
     "HistoryHandle": {
@@ -95,10 +95,10 @@
       "macro": "IFprep",
       "calledInAlgorithm": true,
       "inputs": ["SessionContext", "HistoryHandle", "tStar", "record"],
-      "outputs": ["confirmed", "prepError", "ineligible", "declaredTarget", "evidence", "postSummary"],
+      "outputs": ["targetConfirmed", "summaryConfirmed", "prepError", "ineligible", "declaredTarget", "evidence", "postSummary"],
       "pre": "selected kind is PREP or RECOVER; retry cap and A4/A5 order",
-      "guarantee": "sent is not confirmed; confirmed=true returns declaredTarget, evidence, and a confirmed successor postSummary; this interface does not write Γ",
-      "failure": "unconfirmed Recover stays UNKNOWN and joins S7; prepErr marks conservative-unknown; CONFIRMED-NOT-SENT does not fabricate KNOWN and does not assign UNKNOWN",
+      "guarantee": "targetConfirmed records whether the requested Prep/Recover target was reached; summaryConfirmed records whether the actual successor observable summary is confirmed. targetConfirmed=false may coexist with summaryConfirmed=true for Prep when the actual successor is known. A confirmed Recover requires both true and returns declaredTarget, evidence, and a confirmed successor postSummary; this interface does not write Γ",
+      "failure": "Prep with summaryConfirmed=false, and Recover with targetConfirmed=false, join S7 as UNKNOWN-EFFECT-equivalent outcome; prepErr marks conservative-unknown. CONFIRMED-NOT-SENT does not fabricate KNOWN and does not assign UNKNOWN",
       "stateEffect": "returns values only and does not write Γ or η; S8 is the sole writer of qStatus=KNOWN on confirmed Recover; S9 is the sole writer of currentSummary after a confirmed postSummary; postSummary is not qUsedAtSelect",
       "successorClose": "protocol/device recovery steps"
     },
@@ -108,7 +108,7 @@
       "calledInAlgorithm": true,
       "inputs": ["HistoryHandle", "H", "tStar", "qUsedAtSelect", "classesUsedAtSelect", "valid Iz", "postSummary"],
       "outputs": ["HistoryHandlePrime", "Hprime", "Stop-Empty"],
-      "pre": "valid observation class or confirmed successor postSummary; not an effect-class retry",
+      "pre": "valid observation class or summaryConfirmed=true successor postSummary; not an effect-class retry",
       "guarantee": "advance from the select-time snapshot; whole-history path; no resurrection; HistoryHandlePrime is the next IF-PRED-OBS input; qUsedAtSelect is SelectSnapshot, not the post-effect currentSummary; postSummary is a different field. A confirmed Prep with no valid Iz advances operation history and preserves H",
       "failure": "invalid/unknown effect: do not exclude H; mark statusByHypothesis CONSERVATIVE-UNKNOWN",
       "stateEffect": "updates HistoryHandle version; two same-H different-history handles remain distinct",
