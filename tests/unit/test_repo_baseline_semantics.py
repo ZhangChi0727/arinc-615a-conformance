@@ -1047,7 +1047,8 @@ def test_find_required_reread_candidates_have_crs_rows() -> None:
             assert row["requirementIds"] == []
             assert row["applicabilityDecision"] in {"OUT-OF-PROFILE", "APPLICABLE-SUPPORTING", "CONDITIONAL"}
     assert generated == 34
-    assert crs["artifactVersion"] == "M1-CANDIDATE-24"
+    assert crs["artifactVersion"].startswith("M1-CANDIDATE-")
+    assert crs["artifactVersion"] == audit["boundPackage"]["artifactVersion"]
 
 
 def test_download_and_afdx_required_reread_candidates_have_crs_rows() -> None:
@@ -1077,7 +1078,8 @@ def test_download_and_afdx_required_reread_candidates_have_crs_rows() -> None:
             assert row["requirementIds"] == []
     assert download == 103
     assert afdx == 3
-    assert crs["artifactVersion"] == "M1-CANDIDATE-24"
+    assert crs["artifactVersion"].startswith("M1-CANDIDATE-")
+    assert crs["artifactVersion"] == audit["boundPackage"]["artifactVersion"]
 
 
 def test_protocol_source_audit_allows_declared_future_status_pairs() -> None:

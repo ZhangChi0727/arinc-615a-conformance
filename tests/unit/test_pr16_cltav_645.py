@@ -70,15 +70,25 @@ def test_arinc_645_binding_this_pr_is_true() -> None:
     assert audit["remainingSourceWork"]["arinc645CapabilityEstablishmentThisPr"] is False
 
 
-def test_m1_candidate_24_counts_and_unique_645_leaves() -> None:
+def test_645_leaves_are_atomic_and_capability_open() -> None:
     crs = _crs()
-    assert crs["artifactVersion"] == "M1-CANDIDATE-24"
-    assert len(crs["coverageLedger"]) == 3145
-    assert len(crs["requirements"]) == 855
+    audit = _audit()
+    bound = audit["boundPackage"]
+    assert crs["artifactVersion"] == bound["artifactVersion"]
+    assert crs["artifactVersion"].startswith("M1-CANDIDATE-")
+    assert len(crs["coverageLedger"]) == bound["coverageCount"]
+    assert len(crs["requirements"]) == bound["requirementCount"]
     rows_645 = [row for row in crs["requirements"] if row["source"]["sourceId"] == "ARINC-645"]
     ids = [row["id"] for row in rows_645]
-    assert ids == [f"CRS-M1-{n:05d}" for n in range(818, 857)]
-    assert len(ids) == 39
+    assert ids == sorted(set(ids))
+    assert len(ids) >= 39
+    actions = {str((row.get("semantic") or {}).get("action") or "") for row in rows_645}
+    for action in (
+        "BIND-CRC-TRANSMISSION-BIT-REFLECTION",
+        "PAD-SHORT-INPUT-TO-CRC-REGISTER-SIZE",
+        "INCLUDE-NECESSARY-DATA-FOR-EACH-LOADING-INTERFACE",
+    ):
+        assert action in actions
     assert all(row["reviewStatus"] == "PENDING-EXTERNAL-INDEPENDENT-REVIEW" for row in rows_645)
     assert all(row["interpretationStatus"] == "CANDIDATE-SOURCE-UNIT-BOUND" for row in rows_645)
     assert {row["rationaleCode"] for row in rows_645} == {
@@ -94,6 +104,9 @@ def test_m1_candidate_24_counts_and_unique_645_leaves() -> None:
     objects = list((prefix.get("semantic") or {}).get("objects") or [])
     assert "DATA-FILE-NAME" not in objects
     assert "SUPPORT-FILE-NAME" not in objects
+    row_544 = next(row for row in crs["requirements"] if row["id"] == "CRS-M1-00544")
+    assert "blocked by ARINC 645" not in row_544["generatedSemanticProjectionEn"]
+    assert "CRS-M1-00819" in row_544["generatedSemanticProjectionEn"]
 
 
 def test_645_capabilities_remain_not_established() -> None:
@@ -375,3 +388,65 @@ def test_645_front_matter_including_crc_body_fails() -> None:
     source_645["pageAccount"]["frontMatterPdfPages"] = [1, 31]
     errors = baseline.arinc_645_closure_errors(audit, _crs(), _m2())
     assert any("front matter" in item for item in errors)
+
+
+def _contract(registry=None, puml=None, plan=None, alg=None):
+    return baseline.cltav_algorithm_contract_errors(
+        alg if alg is not None else ALG_PATH.read_text(encoding="utf-8"),
+        puml if puml is not None else PUML_PATH.read_text(encoding="utf-8"),
+        plan if plan is not None else EXP_PLAN.read_text(encoding="utf-8"),
+        registry,
+    )
+
+
+def test_nonexistent_dataflow_port_is_rejected() -> None:
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    registry["dataflow"][0]["output"] = "NONEXISTENT"
+    errors = _contract(registry)
+    assert any("NONEXISTENT" in item and "port" in item for item in errors)
+
+
+def test_truth_to_select_is_rejected() -> None:
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    registry["recordFlowWalkthroughs"][0]["truthToSelect"] = True
+    errors = _contract(registry)
+    assert any("truthToSelect" in item for item in errors)
+
+
+def test_duplicate_experiment_interface_id_is_rejected() -> None:
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    registry["experimentInterfaces"].append(copy.deepcopy(registry["experimentInterfaces"][0]))
+    errors = _contract(registry)
+    assert any("duplicate interface ids" in item for item in errors)
+
+
+def test_undeclared_walk_path_is_rejected() -> None:
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    registry["recordFlowWalkthroughs"][0]["path"] = ["IF-UNDECLARED"]
+    errors = _contract(registry)
+    assert any("IF-UNDECLARED" in item for item in errors)
+
+
+def test_missing_walk_records_are_rejected() -> None:
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    registry["recordFlowWalkthroughs"][0].pop("records", None)
+    errors = _contract(registry)
+    assert any("typed records" in item for item in errors)
+
+
+def test_owned_algorithm_pdf_is_allowed_on_pr_changed_set() -> None:
+    changed = baseline.changed_files_for_event({"artifacts/publications/cltav/ALG-CLTAV-01.pdf"})
+    errors = baseline.prohibited_source_artifact_errors(changed)
+    assert errors == []
+
+
+def test_unregistered_and_source_pdfs_are_rejected_on_pr_changed_set() -> None:
+    changed = baseline.changed_files_for_event({
+        "artifacts/publications/cltav/UNREGISTERED.pdf",
+        "local-references/ARINC 645-1 2021.pdf",
+        "tmp/out-of-tree.pdf",
+    })
+    errors = baseline.prohibited_source_artifact_errors(changed)
+    assert any("UNREGISTERED.pdf" in item for item in errors)
+    assert any("local-references" in item for item in errors)
+    assert any("tmp/out-of-tree.pdf" in item for item in errors)

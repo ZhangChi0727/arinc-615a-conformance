@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "1.0",
+  "id": "CLTAV-OWNED-GENERATED-ARTIFACTS",
+  "authority": "Allowlist of owned generated publication artifacts. Proprietary source PDFs, extracts, patches and undeclared PDFs remain prohibited.",
+  "artifacts": [
+    {
+      "path": "artifacts/publications/cltav/ALG-CLTAV-01.pdf",
+      "kind": "OWNED-GENERATED-PUBLICATION",
+      "trackedSources": [
+        "docs/research/publication/algorithms/ALG-CLTAV-01.tex",
+        "docs/research/publication/algorithms/ALG-CLTAV-01-wrapper.tex"
+      ],
+      "generator": "XeLaTeX via ALG-CLTAV-01-wrapper.tex",
+      "notProprietarySource": true,
+      "safetyCheck": "typeset algorithm form; no ARINC source-text payload"
+    }
+  ]
+}
