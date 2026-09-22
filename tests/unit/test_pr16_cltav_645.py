@@ -466,7 +466,9 @@ def _effect_q(q: str, effect: str, *, prep_err: bool = False, unconfirmed: bool 
 def test_delivered_s_steps_keep_snapshot_and_effect_classes() -> None:
     tex = ALG_PATH.read_text(encoding="utf-8")
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
-    assert baseline._algorithm_effect_errors(tex, registry["dataflow"], registry["interfaces"]) == []
+    assert baseline._algorithm_effect_errors(
+        tex, registry["dataflow"], registry["interfaces"], registry["sessionHandles"]["SessionContext"]
+    ) == []
     body = tex.split("\\begin{algorithm}", 1)[1]
     invalidate = body.find(r"\textit{effect}=\texttt{UNKNOWN-EFFECT}")
     keep = body.find(r"\texttt{CONFIRMED-NOT-SENT}$}")
@@ -475,7 +477,9 @@ def test_delivered_s_steps_keep_snapshot_and_effect_classes() -> None:
     assert _effect_q("KNOWN", "CONFIRMED-NOT-SENT") == "KNOWN"
     assert _effect_q("UNKNOWN", "NONE", unconfirmed=True) == "UNKNOWN"
     assert _effect_q("KNOWN", "UNKNOWN-EFFECT") == "UNKNOWN"
-    hist = body.split(r"\IFhist", 1)[1][:240]
+    import re
+    hist_match = re.search(r"\\IFhist\$\((.*?)\)\$", body, re.S)
+    hist = hist_match.group(1) if hist_match else ""
     assert "qUsedAtSelect" in hist and "postSummary" in hist and "qStatus" not in hist
     assert "sole writer" in body
     method = METHOD_REPORT.read_text(encoding="utf-8")
@@ -491,6 +495,34 @@ def test_delivered_s_steps_keep_snapshot_and_effect_classes() -> None:
         "执行后观测使",
     ):
         assert token in method
+
+
+def test_successor_summary_and_final_action_contracts_are_enforced() -> None:
+    """R29: next iteration consumes confirmed q1; snapshot names the executed final action."""
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    tex = ALG_PATH.read_text(encoding="utf-8")
+    assert baseline._algorithm_effect_errors(
+        tex, registry["dataflow"], registry["interfaces"], registry["sessionHandles"]["SessionContext"]
+    ) == []
+    body = tex.split(r"\begin{algorithm}", 1)[1]
+    assert body.find("one-step minimax") < body.find("actionId") < body.find(r"\IFexec")
+    assert r"\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}" in body
+    assert "confirmed Prep with no valid Iz advances operation history and preserves H" in json.dumps(registry)
+    assert "return UNKNOWN-EFFECT rather than retaining a stale known summary" in json.dumps(registry)
+
+    stale = copy.deepcopy(registry)
+    stale["dataflow"] = [
+        edge for edge in stale["dataflow"]
+        if not (edge.get("from") == "IF-OBS-INTERPRET" and edge.get("to") == "SessionContext")
+    ]
+    errors = _contract(stale)
+    assert any("IF-OBS-INTERPRET postSummary" in item for item in errors)
+
+    early_snapshot = tex.replace("one-step minimax", "actionId early one-step minimax", 1)
+    errors = baseline._algorithm_effect_errors(
+        early_snapshot, registry["dataflow"], registry["interfaces"], registry["sessionHandles"]["SessionContext"]
+    )
+    assert any("actionId" in item for item in errors)
 
 
 def _fig05():

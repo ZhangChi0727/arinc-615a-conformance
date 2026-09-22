@@ -34,7 +34,7 @@
         "StopGate": {"x": 300, "y": 160, "w": 240, "h": 64, "label": "S1 already decided stop"},
         "S2": {"x": 580, "y": 70, "w": 200, "h": 64, "label": "S2 predict"},
         "PredictionGap": {"x": 820, "y": 70, "w": 340, "h": 64, "label": "TEST gap; Recover and Prep ineligible"},
-        "S3": {"x": 580, "y": 170, "w": 260, "h": 64, "label": "S3 exclusive kind; freeze snapshot"},
+        "S3": {"x": 580, "y": 170, "w": 260, "h": 64, "label": "S3 final action; freeze snapshot"},
         "Admit": {"x": 880, "y": 170, "w": 200, "h": 64, "label": "Admit A2-A5"},
         "S4": {"x": 300, "y": 290, "w": 200, "h": 58, "label": "S4 charge once"},
         "S5": {"x": 540, "y": 290, "w": 230, "h": 58, "label": "S5 execute effect class"},
@@ -43,7 +43,7 @@
         "StopError": {"x": 720, "y": 430, "w": 220, "h": 58, "label": "retry cap Stop-Error"},
         "S8": {"x": 980, "y": 420, "w": 230, "h": 64, "label": "S8 sole KNOWN writer"},
         "Unconfirmed": {"x": 1240, "y": 420, "w": 280, "h": 64, "label": "unconfirmed Recover to S7"},
-        "S9": {"x": 720, "y": 580, "w": 400, "h": 70, "label": "S9 hist reads qUsedAtSelect and postSummary"}
+        "S9": {"x": 720, "y": 580, "w": 400, "h": 70, "label": "S9 hist and commits postSummary"}
       },
       "edges": [
         {"id": "E-S0-S1", "from": "S0", "to": "S1"},

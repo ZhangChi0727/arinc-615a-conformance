@@ -1482,12 +1482,14 @@ def cltav_algorithm_contract_errors(
         dens = walk.get("denominators")
         if not isinstance(dens, list) or "attempt" not in dens:
             errors.append(f"{walk_id} must record attempt plus membership denominators")
-    errors.extend(_algorithm_effect_errors(algorithm, dataflow, interfaces))
+    errors.extend(_algorithm_effect_errors(algorithm, dataflow, interfaces, handles.get("SessionContext") or {}))
     return errors
 
 
-def _algorithm_effect_errors(algorithm: str, dataflow: list, interfaces: list) -> list[str]:
-    """Select-time snapshot and effect classes must match the delivered S steps."""
+def _algorithm_effect_errors(
+    algorithm: str, dataflow: list, interfaces: list, session_context: dict | None = None
+) -> list[str]:
+    """Select-time snapshot, successor summaries, and effect classes match the delivered S steps."""
     errors: list[str] = []
     body = algorithm.split("\\begin{algorithm}", 1)[-1]
     if "CONFIRMED-NOT-SENT" not in body or "UNKNOWN-EFFECT" not in body:
@@ -1498,8 +1500,14 @@ def _algorithm_effect_errors(algorithm: str, dataflow: list, interfaces: list) -
     exec_at = body.find("\\IFexec")
     if snap_at < 0 or exec_at < 0 or snap_at > exec_at:
         errors.append("select snapshot must be frozen before IF-EXECUTE-RECORD")
-    parts = body.split("\\IFhist", 1)
-    hist_call = parts[1][:240] if len(parts) == 2 else ""
+    minimax_at = body.find("one-step minimax")
+    action_at = body.find("actionId")
+    if minimax_at < 0 or action_at < 0 or minimax_at > action_at:
+        errors.append("SelectSnapshot.actionId must be frozen only after final TEST minimax selection")
+    if "t^\\star\\leftarrow" in body:
+        errors.append("main algorithm must not replace tStar after IF-SELECT-ADMIT")
+    match = re.search(r"\\IFhist\$\((.*?)\)\$", body, re.S)
+    hist_call = match.group(1) if match else ""
     if "qUsedAtSelect" not in hist_call or "postSummary" not in hist_call:
         errors.append("IF-HIST-UPDATE must receive qUsedAtSelect and postSummary")
     if "qStatus" in hist_call:
@@ -1522,6 +1530,51 @@ def _algorithm_effect_errors(algorithm: str, dataflow: list, interfaces: list) -
         for row in dataflow
     ):
         errors.append("registry must pass SelectSnapshot.qUsedAtSelect into IF-HIST-UPDATE")
+    if not any(
+        isinstance(row, dict)
+        and row.get("from") == "IF-SELECT-ADMIT"
+        and row.get("output") == "tStar"
+        and row.get("to") == "SelectSnapshot"
+        and row.get("input") == "actionId"
+        for row in dataflow
+    ):
+        errors.append("registry must freeze IF-SELECT-ADMIT final tStar as SelectSnapshot.actionId")
+    if not any(
+        isinstance(row, dict)
+        and row.get("from") == "SelectSnapshot"
+        and row.get("output") == "actionId"
+        and row.get("to") == "IF-EXECUTE-RECORD"
+        for row in dataflow
+    ):
+        errors.append("registry must execute SelectSnapshot.actionId")
+    fields = set((session_context or {}).get("fields") or [])
+    if not {"qStatus", "currentSummary"}.issubset(fields):
+        errors.append("SessionContext must distinguish qStatus from currentSummary")
+    if "\\Gamma.\\mathrm{currentSummary}" not in body:
+        errors.append("main algorithm must read and commit currentSummary")
+    if not any(
+        isinstance(row, dict)
+        and row.get("from") == "SessionContext"
+        and row.get("output") == "currentSummary"
+        and row.get("to") == "IF-SELECT-ADMIT"
+        and row.get("input") == "q"
+        for row in dataflow
+    ):
+        errors.append("registry must feed currentSummary to IF-SELECT-ADMIT")
+    for producer in ("IF-OBS-INTERPRET", "IF-PREP-RECOVER"):
+        if not any(
+            isinstance(row, dict)
+            and row.get("from") == producer
+            and row.get("output") == "postSummary"
+            and row.get("to") == "SessionContext"
+            and row.get("input") == "currentSummary"
+            and row.get("appliedBy") == "S9-sole-commit"
+            for row in dataflow
+        ):
+            errors.append(f"registry must commit {producer} postSummary through S9")
+    obs = next((row for row in interfaces if isinstance(row, dict) and row.get("id") == "IF-OBS-INTERPRET"), {})
+    if "postSummary" not in (obs.get("outputs") or []):
+        errors.append("IF-OBS-INTERPRET must return postSummary")
     prep = next((row for row in interfaces if isinstance(row, dict) and row.get("id") == "IF-PREP-RECOVER"), {})
     if "does not write" not in str(prep.get("stateEffect") or ""):
         errors.append("IF-PREP-RECOVER must not write session state")

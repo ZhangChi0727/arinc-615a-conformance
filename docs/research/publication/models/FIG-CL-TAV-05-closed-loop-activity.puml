@@ -21,7 +21,7 @@ repeat
       :E-S2-GAP TEST-scoped named prediction-gap; Recover and Prep ineligible;
       stop
     else (no)
-      :S3 IF-SELECT-ADMIT exclusive kind; freeze qUsedAtSelect;
+      :S3 IF-SELECT-ADMIT final action, then freeze qUsedAtSelect/actionId;
       if (kind ADMIT?) then (yes)
         stop
       elseif (kind TEST and S empty?) then (yes)
@@ -30,7 +30,7 @@ repeat
       elseif (kind PREP or RECOVER?) then (yes)
         :keep named Prep/Recover; do not enter TEST minimax;
       else (TEST nonempty)
-        :one-step minimax on predicted nonempty classes;
+        :IF-SELECT-ADMIT returns final one-step minimax on predicted nonempty classes;
       endif
       :S4 Charge cost once;
       :S5 IF-EXECUTE-RECORD effect class;
@@ -46,9 +46,9 @@ repeat
       else (record valid)
         if (Recover confirmed?) then (yes)
           :S8 sole writer of KNOWN(declaredTarget,evidence); IF-PREP-RECOVER does not write Gamma;
-          :E-S9-S10 S9 IF-HIST-UPDATE reads qUsedAtSelect and postSummary;
+          :E-S9-S10 S9 IF-HIST-UPDATE reads qUsedAtSelect and commits confirmed postSummary;
         else (TEST or Prep)
-          :E-S9-S10 S9 IF-HIST-UPDATE reads qUsedAtSelect and postSummary;
+          :E-S9-S10 S9 IF-HIST-UPDATE reads qUsedAtSelect and commits confirmed postSummary;
         endif
         :S10 P1-P5 via IF-RESOURCE-STOP and IF-EQUIV;
         if (P-stop?) then (yes)

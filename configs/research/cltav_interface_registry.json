@@ -8,15 +8,15 @@
     "SessionContext": {
       "id": "SessionContext",
       "holder": "session",
-      "fields": ["sessionId", "resourceRemainder", "retryCount", "retryCap", "qStatus", "knownTarget", "knownEvidence", "errorHistory", "unknownHistory"],
+      "fields": ["sessionId", "resourceRemainder", "retryCount", "retryCap", "qStatus", "currentSummary", "knownTarget", "knownEvidence", "errorHistory", "unknownHistory"],
       "aliases": {
-        "q": "qStatus",
+        "q": "currentSummary",
         "retry": "retryCount",
         "Rmax": "retryCap"
       },
       "uniqueState": true,
-      "init": "S0: retryCount=0; qStatus=UNKNOWN unless declared; exclusive resource mode recorded; q/retry/Rmax are aliases of Γ fields",
-      "writers": "S7 assigns UNKNOWN only for UNKNOWN-EFFECT, prepErr, or unconfirmed Recover. CONFIRMED-NOT-SENT does not assign qStatus. S8 is the sole writer of KNOWN on confirmed Recover. IF-PREP-RECOVER does not write Γ",
+      "init": "S0: retryCount=0; qStatus=UNKNOWN and currentSummary absent unless declared; exclusive resource mode recorded; q/currentSummary and retry/Rmax are aliases of Γ fields",
+      "writers": "qStatus records knownness, while currentSummary is the observable successor summary read by prediction and selection. S7 assigns UNKNOWN and clears currentSummary only for UNKNOWN-EFFECT, prepErr, or unconfirmed Recover. CONFIRMED-NOT-SENT changes neither. S8 is the sole writer of KNOWN on confirmed Recover. S9 is the sole writer of currentSummary after a confirmed successor summary from IF-OBS-INTERPRET or IF-PREP-RECOVER. IF-PREP-RECOVER does not write Γ",
       "notGlobalHiddenState": true
     },
     "HistoryHandle": {
@@ -34,7 +34,7 @@
       "holder": "iteration",
       "fields": ["qUsedAtSelect", "historyVersionUsedAtSelect", "classesUsedAtSelect", "actionId"],
       "immutableForIteration": true,
-      "writtenBy": "S3-SNAP before charge, execute, interpret, or IF-PREP-RECOVER",
+      "writtenBy": "S3-SNAP after IF-SELECT-ADMIT has determined the final non-ADMIT action and before charge, execute, interpret, or IF-PREP-RECOVER",
       "notPostEffectState": true,
       "notGlobalHiddenState": true
     }
@@ -47,7 +47,7 @@
       "inputs": ["SessionContext", "HistoryHandle", "H", "measurementUncertainty", "actionLibrary"],
       "outputs": ["currentlyValidNonemptyClasses", "PredictionGapError"],
       "pre": "session declared; Hsubseteq H0; HistoryHandle belongs to this session",
-      "guarantee": "classes project onto current H; empty current prediction is not scored as remaining |H|; q is read from Γ.qStatus",
+      "guarantee": "classes project onto current H; empty current prediction is not scored as remaining |H|; q is read from Γ.currentSummary only while qStatus is KNOWN",
       "failure": "PredictionGapError is TEST-scoped: it withholds TEST scoring and does not by itself block eligible Recover or Prep",
       "stateEffect": "read-only on HistoryHandle; does not charge",
       "successorClose": "estimator/partition algorithm"
@@ -59,7 +59,7 @@
       "inputs": ["A", "q", "currentlyValidNonemptyClasses", "SessionContext", "HistoryHandle", "H"],
       "outputs": ["kind", "tStar", "S", "admitA2A5"],
       "pre": "one resource mode declared; prediction for this iteration already produced",
-      "guarantee": "kind is exclusive TEST, PREP, RECOVER or ADMIT; nonempty A is not executable S; never argmin empty TEST set; Prep/Recover are not scored as observation minimax; empty C does not force A3 when Recover or Prep is eligible",
+      "guarantee": "kind is exclusive TEST, PREP, RECOVER or ADMIT; tStar is the final action, including the one-step TEST minimax and tie rule; nonempty A is not executable S; never argmin empty TEST set; Prep/Recover are not scored as observation minimax; empty C does not force A3 when Recover or Prep is eligible",
       "failure": "no currently valid class: named prediction-gap for TEST only, not A3 when Recover/Prep remains eligible",
       "stateEffect": "does not charge; does not update HistoryHandle",
       "successorClose": "scheduler and data structures"
@@ -82,11 +82,11 @@
       "macro": "IFobs",
       "calledInAlgorithm": true,
       "inputs": ["SessionContext", "executionRecord", "clocks", "epsilon"],
-      "outputs": ["Iz", "effectClass"],
+      "outputs": ["Iz", "effectClass", "postSummary"],
       "effectClassValues": ["NONE", "CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"],
       "pre": "record belongs to this session",
-      "guarantee": "T5 interval treatment; pairing per method 3.6",
-      "failure": "CONFIRMED-NOT-SENT, UNKNOWN-EFFECT, prepErr and unconfirmed Recover share the S7 retry counter; UNKNOWN-EFFECT is not state-unchanged; CONFIRMED-NOT-SENT is not UNKNOWN",
+      "guarantee": "T5 interval treatment; pairing per method 3.6; every normal confirmed observation returns a confirmed successor postSummary, possibly unchanged",
+      "failure": "If a successor summary cannot be confirmed, return UNKNOWN-EFFECT rather than retaining a stale known summary. CONFIRMED-NOT-SENT, UNKNOWN-EFFECT, prepErr and unconfirmed Recover share the S7 retry counter; UNKNOWN-EFFECT is not state-unchanged; CONFIRMED-NOT-SENT is not UNKNOWN",
       "stateEffect": "does not exclude H",
       "successorClose": "collectors and timestamp handling"
     },
@@ -97,9 +97,9 @@
       "inputs": ["SessionContext", "HistoryHandle", "tStar", "record"],
       "outputs": ["confirmed", "prepError", "ineligible", "declaredTarget", "evidence", "postSummary"],
       "pre": "selected kind is PREP or RECOVER; retry cap and A4/A5 order",
-      "guarantee": "sent is not confirmed; confirmed=true returns declaredTarget and evidence; this interface does not write Γ",
+      "guarantee": "sent is not confirmed; confirmed=true returns declaredTarget, evidence, and a confirmed successor postSummary; this interface does not write Γ",
       "failure": "unconfirmed Recover stays UNKNOWN and joins S7; prepErr marks conservative-unknown; CONFIRMED-NOT-SENT does not fabricate KNOWN and does not assign UNKNOWN",
-      "stateEffect": "returns values only and does not write Γ or η; S8 is the sole writer of qStatus=KNOWN on confirmed Recover; postSummary is not qUsedAtSelect",
+      "stateEffect": "returns values only and does not write Γ or η; S8 is the sole writer of qStatus=KNOWN on confirmed Recover; S9 is the sole writer of currentSummary after a confirmed postSummary; postSummary is not qUsedAtSelect",
       "successorClose": "protocol/device recovery steps"
     },
     {
@@ -108,8 +108,8 @@
       "calledInAlgorithm": true,
       "inputs": ["HistoryHandle", "H", "tStar", "qUsedAtSelect", "classesUsedAtSelect", "valid Iz", "postSummary"],
       "outputs": ["HistoryHandlePrime", "Hprime", "Stop-Empty"],
-      "pre": "valid observation class or confirmed Recover; not an effect-class retry",
-      "guarantee": "advance from the select-time snapshot; whole-history path; no resurrection; HistoryHandlePrime is the next IF-PRED-OBS input; qUsedAtSelect is SelectSnapshot, not the post-S8 qStatus; postSummary is a different field",
+      "pre": "valid observation class or confirmed successor postSummary; not an effect-class retry",
+      "guarantee": "advance from the select-time snapshot; whole-history path; no resurrection; HistoryHandlePrime is the next IF-PRED-OBS input; qUsedAtSelect is SelectSnapshot, not the post-effect currentSummary; postSummary is a different field. A confirmed Prep with no valid Iz advances operation history and preserves H",
       "failure": "invalid/unknown effect: do not exclude H; mark statusByHypothesis CONSERVATIVE-UNKNOWN",
       "stateEffect": "updates HistoryHandle version; two same-H different-history handles remain distinct",
       "successorClose": "state/clock representation and solver"
@@ -141,13 +141,16 @@
   ],
   "dataflow": [
     {"from": "IF-PRED-OBS", "output": "currentlyValidNonemptyClasses", "to": "IF-SELECT-ADMIT", "input": "currentlyValidNonemptyClasses"},
-    {"from": "SessionContext", "output": "qStatus", "to": "IF-SELECT-ADMIT", "input": "q"},
-    {"from": "IF-SELECT-ADMIT", "output": "tStar", "to": "IF-EXECUTE-RECORD", "input": "admitted tStar"},
+    {"from": "SessionContext", "output": "currentSummary", "to": "IF-SELECT-ADMIT", "input": "q"},
+    {"from": "IF-SELECT-ADMIT", "output": "tStar", "to": "SelectSnapshot", "input": "actionId", "appliedBy": "S3-SNAP-final-freeze"},
+    {"from": "SelectSnapshot", "output": "actionId", "to": "IF-EXECUTE-RECORD", "input": "admitted tStar"},
     {"from": "IF-EXECUTE-RECORD", "output": "record", "to": "IF-OBS-INTERPRET", "input": "executionRecord"},
     {"from": "IF-OBS-INTERPRET", "output": "Iz", "to": "IF-HIST-UPDATE", "input": "valid Iz"},
+    {"from": "IF-OBS-INTERPRET", "output": "postSummary", "to": "SessionContext", "input": "currentSummary", "appliedBy": "S9-sole-commit"},
     {"from": "IF-PREP-RECOVER", "output": "declaredTarget", "to": "SessionContext", "input": "knownTarget", "appliedBy": "S8-sole-writer"},
     {"from": "IF-PREP-RECOVER", "output": "evidence", "to": "SessionContext", "input": "knownEvidence", "appliedBy": "S8-sole-writer"},
     {"from": "IF-PREP-RECOVER", "output": "postSummary", "to": "IF-HIST-UPDATE", "input": "postSummary"},
+    {"from": "IF-PREP-RECOVER", "output": "postSummary", "to": "SessionContext", "input": "currentSummary", "appliedBy": "S9-sole-commit"},
     {"from": "SelectSnapshot", "output": "qUsedAtSelect", "to": "IF-HIST-UPDATE", "input": "qUsedAtSelect"},
     {"from": "SelectSnapshot", "output": "classesUsedAtSelect", "to": "IF-HIST-UPDATE", "input": "classesUsedAtSelect"},
     {"from": "IF-HIST-UPDATE", "output": "HistoryHandlePrime", "to": "IF-PRED-OBS", "input": "HistoryHandle", "nextIteration": true}
