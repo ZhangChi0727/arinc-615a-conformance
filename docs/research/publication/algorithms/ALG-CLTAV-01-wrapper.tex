@@ -30,13 +30,13 @@ typeset line numbers are not cited.
   \item \texttt{S0}: $\Gamma$ 为唯一状态源；$q$／retry／$R_{\max}$ 是 $\Gamma.\mathrm{qStatus}$／$\mathrm{retryCount}$／$\mathrm{retryCap}$ 的别名；初始化 $\eta$、$H_0$ 与 retry。
   \item \texttt{S1}: 停止／错误优先门；已决定的 A2--A5 或 P1--P5 立即返回。
   \item \texttt{S2}: 选择前预测；PredictionGapError 只关掉 TEST 评分；UNKNOWN 且 Recover 仍合格时不得挡合法恢复。
-  \item \texttt{S3}: 互斥选择 TEST minimax／Prep／Recover／Admit；空 TEST 集不得 $\arg\min$；空 $\mathcal{C}$ 不阻止合格 Recover。
-  \item \texttt{S4}: 一次计费；重试上限不是预算耗尽。
-  \item \texttt{S5}: 发出已准入动作并记录。
-  \item \texttt{S6}--\texttt{S7}: 执行 ERROR、解释 ERROR、prepErr 与未确认 Recover 汇入同一计数通路；不排除 $H$；$\eta$ 标为保守未知；达 $R_{\max}$ 返回 Stop-Error。
-  \item \texttt{S8}: 仅 $\textit{confirmed}=\mathrm{true}$ 把 $\Gamma.\mathrm{qStatus}$ 写成 KNOWN（声明目标与依据）；未确认不经 S10。
-  \item \texttt{S9}: 有效观测或已确认 Recover 才更新 $\eta$ 与 $H$；下一轮 \texttt{S2} 只读 $\Gamma$ 与 $\eta$。
-  \item \texttt{S10}: 互斥 P1--P5；未确认恢复回边在 S7，不在此停止家族。
+  \item \texttt{S3}: 互斥选择 TEST minimax／Prep／Recover／Admit；空 TEST 集不得 $\arg\min$；空 $\mathcal{C}$ 不阻止合格 Recover。选择后、任何写接口之前冻结 $\textit{qUsedAtSelect}$、历史版本、预测类与动作身份。
+  \item \texttt{S4}: 一次计费；重试上限不是预算耗尽。决策索引 $k$、计费次数与 retry 彼此不同。
+  \item \texttt{S5}--\texttt{S6}: 执行与解释返回效果类 \texttt{CONFIRMED-NOT-SENT} 或 \texttt{UNKNOWN-EFFECT}，不把二者合成同一种未知。
+  \item \texttt{S7}: prepErr 与 \texttt{UNKNOWN-EFFECT} 将 $\eta$ 标为保守未知并把 $q$ 写成 UNKNOWN；\texttt{CONFIRMED-NOT-SENT} 保持 $q$ 与相容历史并仍计重试；未确认 Recover 保持 UNKNOWN。达 $R_{\max}$ 返回 Stop-Error。
+  \item \texttt{S8}: 仅主过程把已确认 Recover 写成 KNOWN（声明目标与依据）。\texttt{IF-PREP-RECOVER} 只返回值，不写 $\Gamma$。
+  \item \texttt{S9}: 历史更新读选择时快照 $\textit{qUsedAtSelect}$ 与单独的 $\textit{postSummary}$，不读 S8 写后的 $q$。
+  \item \texttt{S10}: 互斥 P1--P5；未停止则下一轮从 S1 继续。未确认恢复回边在 S7，不代替这条正常循环。
 \end{itemize}
 Stop-645 在本增量之后表示仍未在能力/实现层关闭的具名 645 依赖义务，不是“645 文件缺失”。
 \end{document}

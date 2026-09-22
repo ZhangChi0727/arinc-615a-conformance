@@ -16,6 +16,7 @@
       },
       "uniqueState": true,
       "init": "S0: retryCount=0; qStatus=UNKNOWN unless declared; exclusive resource mode recorded; q/retry/Rmax are aliases of Γ fields",
+      "writers": "S7 assigns UNKNOWN only for UNKNOWN-EFFECT, prepErr, or unconfirmed Recover. CONFIRMED-NOT-SENT does not assign qStatus. S8 is the sole writer of KNOWN on confirmed Recover. IF-PREP-RECOVER does not write Γ",
       "notGlobalHiddenState": true
     },
     "HistoryHandle": {
@@ -25,7 +26,16 @@
       "statusByHypothesisValues": ["KNOWN", "CONSERVATIVE-UNKNOWN"],
       "init": "S0: empty compatible-state handles; H=H0; statusByHypothesis unset",
       "sameHDifferentHistory": "Two handles may share the same H set while compatibleStateByHypothesis differs; HistoryHandle is not discarded when only H is printed",
-      "unknownEffect": "Do not exclude H; mark statusByHypothesis CONSERVATIVE-UNKNOWN so a prior KNOWN snapshot is not treated as confirmed present",
+      "unknownEffect": "UNKNOWN-EFFECT and unconfirmed Recover: do not exclude H; mark statusByHypothesis CONSERVATIVE-UNKNOWN. CONFIRMED-NOT-SENT leaves compatible history unchanged",
+      "notGlobalHiddenState": true
+    },
+    "SelectSnapshot": {
+      "id": "SelectSnapshot",
+      "holder": "iteration",
+      "fields": ["qUsedAtSelect", "historyVersionUsedAtSelect", "classesUsedAtSelect", "actionId"],
+      "immutableForIteration": true,
+      "writtenBy": "S3-SNAP before charge, execute, interpret, or IF-PREP-RECOVER",
+      "notPostEffectState": true,
       "notGlobalHiddenState": true
     }
   },
@@ -59,10 +69,11 @@
       "macro": "IFexec",
       "calledInAlgorithm": true,
       "inputs": ["SessionContext", "admitted tStar"],
-      "outputs": ["record", "errorKind", "correlationId"],
+      "outputs": ["record", "effectClass", "correlationId"],
+      "effectClassValues": ["NONE", "CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"],
       "pre": "action admitted this iteration; charged once",
-      "guarantee": "unadmitted action is not issued; ERROR is not a second charge",
-      "failure": "ERROR/timeout: keep unknown internal effect",
+      "guarantee": "unadmitted action is not issued; an effect class is not a second charge",
+      "failure": "CONFIRMED-NOT-SENT leaves q unchanged; UNKNOWN-EFFECT does not mean state-unchanged",
       "stateEffect": "one charge already applied by S4; writes record into session log",
       "successorClose": "protocol adapter, timeout, I/O"
     },
@@ -71,10 +82,11 @@
       "macro": "IFobs",
       "calledInAlgorithm": true,
       "inputs": ["SessionContext", "executionRecord", "clocks", "epsilon"],
-      "outputs": ["Iz", "ERROR", "unknownEffect"],
+      "outputs": ["Iz", "effectClass"],
+      "effectClassValues": ["NONE", "CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"],
       "pre": "record belongs to this session",
       "guarantee": "T5 interval treatment; pairing per method 3.6",
-      "failure": "ERROR joins the same unified error path as execute ERROR, prepErr and unconfirmed Recover; unknown effect is not state-unchanged",
+      "failure": "CONFIRMED-NOT-SENT, UNKNOWN-EFFECT, prepErr and unconfirmed Recover share the S7 retry counter; UNKNOWN-EFFECT is not state-unchanged; CONFIRMED-NOT-SENT is not UNKNOWN",
       "stateEffect": "does not exclude H",
       "successorClose": "collectors and timestamp handling"
     },
@@ -83,21 +95,21 @@
       "macro": "IFprep",
       "calledInAlgorithm": true,
       "inputs": ["SessionContext", "HistoryHandle", "tStar", "record"],
-      "outputs": ["confirmed", "prepError", "ineligible", "declaredTarget", "evidence"],
+      "outputs": ["confirmed", "prepError", "ineligible", "declaredTarget", "evidence", "postSummary"],
       "pre": "selected kind is PREP or RECOVER; retry cap and A4/A5 order",
-      "guarantee": "sent is not confirmed; only confirmed=true carries declaredTarget and evidence and is allowed to write Γ.qStatus=KNOWN",
-      "failure": "unconfirmed Recover or prepErr joins S7 retry; q stays UNKNOWN; confirmation not sent does not fabricate KNOWN",
-      "stateEffect": "confirmed path writes knownTarget/knownEvidence and qStatus=KNOWN; failure does not restore a prior KNOWN snapshot",
+      "guarantee": "sent is not confirmed; confirmed=true returns declaredTarget and evidence; this interface does not write Γ",
+      "failure": "unconfirmed Recover stays UNKNOWN and joins S7; prepErr marks conservative-unknown; CONFIRMED-NOT-SENT does not fabricate KNOWN and does not assign UNKNOWN",
+      "stateEffect": "returns values only and does not write Γ or η; S8 is the sole writer of qStatus=KNOWN on confirmed Recover; postSummary is not qUsedAtSelect",
       "successorClose": "protocol/device recovery steps"
     },
     {
       "id": "IF-HIST-UPDATE",
       "macro": "IFhist",
       "calledInAlgorithm": true,
-      "inputs": ["HistoryHandle", "H", "tStar", "qUsedAtSelect", "classesUsedAtSelect", "valid Iz"],
+      "inputs": ["HistoryHandle", "H", "tStar", "qUsedAtSelect", "classesUsedAtSelect", "valid Iz", "postSummary"],
       "outputs": ["HistoryHandlePrime", "Hprime", "Stop-Empty"],
-      "pre": "valid observation class or confirmed Recover; not ERROR",
-      "guarantee": "advance from previous possible states; whole-history path; no resurrection; HistoryHandlePrime is the next IF-PRED-OBS input; qUsedAtSelect is Γ.qStatus",
+      "pre": "valid observation class or confirmed Recover; not an effect-class retry",
+      "guarantee": "advance from the select-time snapshot; whole-history path; no resurrection; HistoryHandlePrime is the next IF-PRED-OBS input; qUsedAtSelect is SelectSnapshot, not the post-S8 qStatus; postSummary is a different field",
       "failure": "invalid/unknown effect: do not exclude H; mark statusByHypothesis CONSERVATIVE-UNKNOWN",
       "stateEffect": "updates HistoryHandle version; two same-H different-history handles remain distinct",
       "successorClose": "state/clock representation and solver"
@@ -133,9 +145,11 @@
     {"from": "IF-SELECT-ADMIT", "output": "tStar", "to": "IF-EXECUTE-RECORD", "input": "admitted tStar"},
     {"from": "IF-EXECUTE-RECORD", "output": "record", "to": "IF-OBS-INTERPRET", "input": "executionRecord"},
     {"from": "IF-OBS-INTERPRET", "output": "Iz", "to": "IF-HIST-UPDATE", "input": "valid Iz"},
-    {"from": "IF-PREP-RECOVER", "output": "declaredTarget", "to": "SessionContext", "input": "knownTarget"},
-    {"from": "IF-PREP-RECOVER", "output": "evidence", "to": "SessionContext", "input": "knownEvidence"},
-    {"from": "SessionContext", "output": "qStatus", "to": "IF-HIST-UPDATE", "input": "qUsedAtSelect"},
+    {"from": "IF-PREP-RECOVER", "output": "declaredTarget", "to": "SessionContext", "input": "knownTarget", "appliedBy": "S8-sole-writer"},
+    {"from": "IF-PREP-RECOVER", "output": "evidence", "to": "SessionContext", "input": "knownEvidence", "appliedBy": "S8-sole-writer"},
+    {"from": "IF-PREP-RECOVER", "output": "postSummary", "to": "IF-HIST-UPDATE", "input": "postSummary"},
+    {"from": "SelectSnapshot", "output": "qUsedAtSelect", "to": "IF-HIST-UPDATE", "input": "qUsedAtSelect"},
+    {"from": "SelectSnapshot", "output": "classesUsedAtSelect", "to": "IF-HIST-UPDATE", "input": "classesUsedAtSelect"},
     {"from": "IF-HIST-UPDATE", "output": "HistoryHandlePrime", "to": "IF-PRED-OBS", "input": "HistoryHandle", "nextIteration": true}
   ],
   "experimentInterfaces": [
