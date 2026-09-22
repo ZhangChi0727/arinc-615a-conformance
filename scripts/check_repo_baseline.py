@@ -1482,6 +1482,49 @@ def cltav_algorithm_contract_errors(
         dens = walk.get("denominators")
         if not isinstance(dens, list) or "attempt" not in dens:
             errors.append(f"{walk_id} must record attempt plus membership denominators")
+    errors.extend(_algorithm_effect_errors(algorithm, dataflow, interfaces))
+    return errors
+
+
+def _algorithm_effect_errors(algorithm: str, dataflow: list, interfaces: list) -> list[str]:
+    """Select-time snapshot and effect classes must match the delivered S steps."""
+    errors: list[str] = []
+    body = algorithm.split("\\begin{algorithm}", 1)[-1]
+    if "CONFIRMED-NOT-SENT" not in body or "UNKNOWN-EFFECT" not in body:
+        errors.append("main algorithm must distinguish CONFIRMED-NOT-SENT from UNKNOWN-EFFECT")
+    if "sole writer" not in body:
+        errors.append("main algorithm must name the sole writer of KNOWN")
+    snap_at = body.find("qUsedAtSelect")
+    exec_at = body.find("\\IFexec")
+    if snap_at < 0 or exec_at < 0 or snap_at > exec_at:
+        errors.append("select snapshot must be frozen before IF-EXECUTE-RECORD")
+    parts = body.split("\\IFhist", 1)
+    hist_call = parts[1][:240] if len(parts) == 2 else ""
+    if "qUsedAtSelect" not in hist_call or "postSummary" not in hist_call:
+        errors.append("IF-HIST-UPDATE must receive qUsedAtSelect and postSummary")
+    if "qStatus" in hist_call:
+        errors.append("IF-HIST-UPDATE must not receive live qStatus")
+    marker = "\\texttt{CONFIRMED-NOT-SENT}$}"
+    at = body.find(marker)
+    window = body[at:at + 220] if at >= 0 else ""
+    if "unchanged" not in window:
+        errors.append("CONFIRMED-NOT-SENT must leave q unchanged")
+    if any(
+        isinstance(row, dict) and row.get("from") == "SessionContext" and row.get("input") == "qUsedAtSelect"
+        for row in dataflow
+    ):
+        errors.append("qUsedAtSelect must not be wired from live SessionContext")
+    if not any(
+        isinstance(row, dict)
+        and row.get("from") == "SelectSnapshot"
+        and row.get("output") == "qUsedAtSelect"
+        and row.get("to") == "IF-HIST-UPDATE"
+        for row in dataflow
+    ):
+        errors.append("registry must pass SelectSnapshot.qUsedAtSelect into IF-HIST-UPDATE")
+    prep = next((row for row in interfaces if isinstance(row, dict) and row.get("id") == "IF-PREP-RECOVER"), {})
+    if "does not write" not in str(prep.get("stateEffect") or ""):
+        errors.append("IF-PREP-RECOVER must not write session state")
     return errors
 
 
@@ -1782,10 +1825,84 @@ def _figure_graph_errors(name: str, root: ET.Element) -> list[str]:
         for src, dst, x1, y1, _x2, _y2 in found:
             if dst == "Metrics" and valid and not _point_in_node(x1, y1, valid):
                 errors.append(f"{name} Metrics inbound edge does not start in the Valid box")
+        visible = _svg_visible_text(root)
+        for key, node in nodes.items():
+            label = str((node or {}).get("label") or "")
+            if label and label not in visible:
+                errors.append(f"{name} node {key} label is truncated or missing")
     if name == "FIG-CL-TAV-05-closed-loop-activity.svg":
         for pair in (("Unconfirmed", "S7"), ("S7", "LoopS1"), ("LoopS1", "S1")):
             if pair not in found_pairs:
                 errors.append(f"{name} is missing retry/unconfirmed back-edge {pair[0]}->{pair[1]}")
+        errors.extend(_figure05_control_errors(graphs, found_pairs, root))
+    return errors
+
+
+FIG05_CONTROL_EDGES = (
+    {"id": "E-S10-S1", "from": "S10", "to": "S1", "polarity": "continue", "guard": "no stop"},
+    {"id": "E-S9-S10", "from": "S9", "to": "S10", "polarity": "advance"},
+    {"id": "E-S1-STOP", "from": "S1", "to": "StopGate", "polarity": "stop", "guard": "already decided"},
+    {"id": "E-S2-GAP", "from": "S2", "to": "PredictionGap", "polarity": "stop", "guard": "Recover and Prep ineligible"},
+    {"id": "E-S7-S1", "from": "S7", "to": "S1", "polarity": "retry", "via": ("LoopS1",)},
+)
+
+
+def _svg_visible_text(root: ET.Element) -> str:
+    chunks: list[str] = []
+    for elem in root.iter():
+        if elem.tag.split("}")[-1] != "text":
+            continue
+        parts = [elem.text or ""]
+        parts.extend((child.text or "") for child in list(elem))
+        chunks.append(" ".join(part.strip() for part in parts if part and part.strip()))
+    return "\n".join(chunks)
+
+
+def _figure05_control_errors(graphs: dict, found_pairs: set[tuple[str, str]], root: ET.Element) -> list[str]:
+    """Bounded decision table. JSON/SVG agreement alone is not the control authority."""
+    errors: list[str] = []
+    edges = [row for row in (graphs.get("edges") or []) if isinstance(row, dict)]
+    by_id = {row.get("id"): row for row in edges}
+    by_pair = {(row.get("from"), row.get("to")): row for row in edges}
+    puml_path = RESEARCH / "publication" / "models" / "FIG-CL-TAV-05-closed-loop-activity.puml"
+    puml = puml_path.read_text(encoding="utf-8") if puml_path.is_file() else ""
+    visible = _svg_visible_text(root)
+    for spec in FIG05_CONTROL_EDGES:
+        edge_id = spec["id"]
+        if edge_id not in puml:
+            errors.append(f"FIG-05 PlantUML is missing control id {edge_id}")
+        row = by_id.get(edge_id)
+        via = spec.get("via") or ()
+        if via:
+            hops = [spec["from"], *via, spec["to"]]
+            for src, dst in zip(hops, hops[1:]):
+                if (src, dst) not in by_pair:
+                    errors.append(f"FIG-05 is missing retry hop {src}->{dst}")
+                if (src, dst) not in found_pairs:
+                    errors.append(f"FIG-05 SVG is missing retry hop {src}->{dst}")
+            if row is None:
+                errors.append(f"FIG-05 control table is missing {edge_id}")
+            elif row.get("polarity") != spec["polarity"]:
+                errors.append(f"{edge_id} polarity inverted")
+        else:
+            pair = (spec["from"], spec["to"])
+            if row is None or (row.get("from"), row.get("to")) != pair:
+                errors.append(f"FIG-05 control edge {edge_id} must be {pair[0]}->{pair[1]}")
+            elif row.get("polarity") != spec["polarity"]:
+                errors.append(f"{edge_id} polarity inverted")
+            if pair not in found_pairs:
+                errors.append(f"FIG-05 SVG is missing {pair[0]}->{pair[1]}")
+        guard = spec.get("guard")
+        if guard and guard not in visible:
+            errors.append(f"FIG-05 visible text is missing guard {guard}")
+    if ("S10", "S1") not in by_pair:
+        errors.append("FIG-05 is missing the normal S10->S1 continue edge")
+    if ("S9", "S10") not in by_pair or ("S10", "S1") not in by_pair:
+        errors.append("FIG-05 S9 without a stop must be able to reach the next S1")
+    for key, node in (graphs.get("nodes") or {}).items():
+        label = str(node.get("label") or "")
+        if label and label not in visible:
+            errors.append(f"FIG-05 node {key} label is truncated or missing")
     return errors
 
 
@@ -3215,33 +3332,123 @@ def governed_status_errors(
     return errors
 
 
-def _owned_generated_paths() -> set[str]:
-    if not CLTAV_OWNED_ARTIFACTS_PATH.is_file():
-        return set()
+OWNED_PUBLICATION_PREFIX = "artifacts/publications/"
+OWNED_ARTIFACT_KIND = "OWNED-GENERATED-PUBLICATION"
+OWNED_SOURCE_SUFFIXES = {".tex", ".md", ".puml", ".svg", ".json"}
+OWNED_FORBIDDEN_PARTS = {"local-references", "tmp"}
+OWNED_DANGEROUS_SUFFIXES = {".pdf", ".patch", ".diff", ".exe", ".dll", ".bin", ".zip"}
+
+
+def _tracked_repo_paths(root: Path) -> set[str] | None:
     try:
-        data = json.loads(CLTAV_OWNED_ARTIFACTS_PATH.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError):
-        return set()
-    allowed: set[str] = set()
-    for row in data.get("artifacts") or []:
-        if not isinstance(row, dict) or row.get("notProprietarySource") is not True:
-            continue
-        raw = str(row.get("path") or "").replace("\\", "/")
-        path = PurePosixPath(raw)
-        if not raw or path.is_absolute() or ".." in path.parts:
-            continue
-        if path.parts and path.parts[0] in {"local-references", "tmp"}:
-            continue
-        allowed.add(str(path))
-    return allowed
+        result = subprocess.run(
+            ["git", "ls-files", "-z"], cwd=root, check=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    return {item.decode("utf-8").replace("\\", "/") for item in result.stdout.split(b"\0") if item}
 
 
-def prohibited_source_artifact_errors(changed: set[str]) -> list[str]:
-    """Reject new protected-source payloads while allowing registered owned generated PDFs."""
+def _owned_registration_errors(
+    registry: dict,
+    root: Path,
+    tracked_paths: set[str],
+) -> tuple[list[str], set[str]]:
+    """Validate owned-artifact rows. A self-reported boolean is not an exemption."""
     errors: list[str] = []
-    owned = _owned_generated_paths()
+    allowed: set[str] = set()
+    rows = registry.get("artifacts") if isinstance(registry, dict) else None
+    if not isinstance(rows, list):
+        return ["owned generated artifact registry is missing artifacts"], set()
+    seen: set[str] = set()
+    for index, row in enumerate(rows):
+        label = f"ownedArtifacts[{index}]"
+        if not isinstance(row, dict):
+            errors.append(f"{label} must be an object")
+            continue
+        raw = row.get("path")
+        target, path_error = _controlled_tracked_path_error(raw, root, tracked_paths, label)
+        normalized = str(raw or "").replace("\\", "/")
+        if path_error:
+            errors.append(path_error)
+        if normalized in seen:
+            errors.append(f"{label} duplicates target {normalized}")
+        elif normalized:
+            seen.add(normalized)
+        publication_pdf = normalized.startswith(OWNED_PUBLICATION_PREFIX) and normalized.lower().endswith(".pdf")
+        if not publication_pdf:
+            errors.append(f"{label} must be a PDF under {OWNED_PUBLICATION_PREFIX}")
+        kind_ok = row.get("kind") == OWNED_ARTIFACT_KIND
+        if not kind_ok:
+            errors.append(f"{label} is missing kind {OWNED_ARTIFACT_KIND}")
+        generator_ok = isinstance(row.get("generator"), str) and bool(row.get("generator").strip())
+        if not generator_ok:
+            errors.append(f"{label} is missing generator")
+        if not isinstance(row.get("safetyCheck"), str) or not row.get("safetyCheck").strip():
+            errors.append(f"{label} is missing safetyCheck")
+        declared = row.get("notProprietarySource") is True
+        if not declared:
+            errors.append(f"{label} must declare notProprietarySource")
+        sources = row.get("trackedSources")
+        if not isinstance(sources, list) or not sources:
+            errors.append(f"{label} is missing trackedSources")
+            sources = []
+        source_ok = bool(sources)
+        for source in sources:
+            source_label = f"{label}.trackedSources"
+            _source_path, source_error = _controlled_tracked_path_error(
+                source, root, tracked_paths, source_label,
+            )
+            if source_error:
+                errors.append(source_error)
+                source_ok = False
+                continue
+            source_posix = PurePosixPath(str(source).replace("\\", "/"))
+            if OWNED_FORBIDDEN_PARTS.intersection(source_posix.parts):
+                errors.append(f"{source_label} points at a prohibited directory")
+                source_ok = False
+            suffix = source_posix.suffix.lower()
+            if suffix not in OWNED_SOURCE_SUFFIXES or suffix in OWNED_DANGEROUS_SUFFIXES:
+                errors.append(f"{source_label} must be an owned text or figure source")
+                source_ok = False
+        if target is not None and target.is_symlink():
+            errors.append(f"{label} must not be a symbolic link")
+            source_ok = False
+        if path_error or not source_ok or not kind_ok or not generator_ok or not declared or not publication_pdf:
+            continue
+        allowed.add(normalized)
+    return errors, allowed
+
+
+def prohibited_source_artifact_errors(
+    changed: set[str],
+    registry: dict | None = None,
+    root: Path | None = None,
+    tracked_paths: set[str] | None = None,
+) -> list[str]:
+    """Reject protected-source payloads. Owned PDFs are exempt only when the registration proves its sources."""
+    errors: list[str] = []
+    root = ROOT if root is None else root
+    if registry is None:
+        if not CLTAV_OWNED_ARTIFACTS_PATH.is_file():
+            registry = {}
+            errors.append("owned generated artifact registry is missing")
+        else:
+            try:
+                registry = json.loads(CLTAV_OWNED_ARTIFACTS_PATH.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                registry = {}
+                errors.append("owned generated artifact registry is unreadable")
+    if tracked_paths is None:
+        tracked_paths = _tracked_repo_paths(root)
+        if tracked_paths is None:
+            errors.append("cannot enumerate tracked files for owned artifacts")
+            tracked_paths = set()
+    structural, owned = _owned_registration_errors(registry, root, tracked_paths)
+    errors.extend(structural)
     for raw in changed:
-        path = PurePosixPath(raw.replace("\\", "/"))
+        path = PurePosixPath(str(raw).replace("\\", "/"))
         lowered = path.name.lower()
         if "local-references" in path.parts:
             errors.append(f"private source directory cannot be tracked: {path}")

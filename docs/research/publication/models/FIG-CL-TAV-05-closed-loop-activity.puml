@@ -1,20 +1,27 @@
 @startuml FIG-CL-TAV-05
 skinparam shadowing false
-title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\npredict before select; exclusive TEST/Prep/Recover/Admit; charge once; unified ERROR
+title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\npredict before select; exclusive TEST/Prep/Recover/Admit; charge once; effect classes
+
+' E-S1-STOP from=S1 to=StopGate polarity=stop guard=already decided
+' E-S2-GAP from=S2 to=PredictionGap polarity=stop guard=Recover and Prep ineligible
+' E-S7-S1 from=S7 to=S1 polarity=retry via=LoopS1
+' E-S9-S10 from=S9 to=S10 polarity=advance
+' E-S10-S1 from=S10 to=S1 polarity=continue guard=no stop
 
 start
 :S0 Idle; SessionContext unique; HistoryHandle; BUDGET xor ROUNDS; retry=0;
 repeat
   :S1 IF-RESOURCE-STOP gate;
   if (already A2-A5 or P1-P5?) then (yes)
+    :E-S1-STOP already decided stop;
     stop
   else (no)
     :S2 IF-PRED-OBS predict classes;
-    if (PredictionGapError and Recover/Prep not eligible?) then (yes)
-      :TEST-scoped named prediction-gap; UNKNOWN Recover remains legal when eligible;
+    if (PredictionGapError and Recover and Prep not eligible?) then (yes)
+      :E-S2-GAP TEST-scoped named prediction-gap; Recover and Prep ineligible;
       stop
     else (no)
-      :S3 IF-SELECT-ADMIT exclusive kind;
+      :S3 IF-SELECT-ADMIT exclusive kind; freeze qUsedAtSelect;
       if (kind ADMIT?) then (yes)
         stop
       elseif (kind TEST and S empty?) then (yes)
@@ -26,26 +33,28 @@ repeat
         :one-step minimax on predicted nonempty classes;
       endif
       :S4 Charge cost once;
-      :S5 IF-EXECUTE-RECORD;
-      :S6 IF-OBS-INTERPRET unless exec ERROR;
-      if (exec ERROR or interpret ERROR or prepErr or unconfirmed Recover?) then (yes)
-        :S7 unified ERROR ErrorHandle; do not exclude H; unknown-effect is not known q;
+      :S5 IF-EXECUTE-RECORD effect class;
+      :S6 IF-OBS-INTERPRET unless effect class already returned;
+      if (CONFIRMED-NOT-SENT or UNKNOWN-EFFECT or prepErr or unconfirmed Recover?) then (yes)
+        :S7 classify effect; CONFIRMED-NOT-SENT keeps q; UNKNOWN-EFFECT invalidates q;
         if (retry cap reached?) then (yes)
           :Stop-Error; not A5/Stop-Budget;
           stop
         else (retry remaining)
-          :unconfirmed Recover and ERROR share the retry back-edge to S1;
+          :E-S7-S1 unconfirmed Recover and effect classes share the retry back-edge to S1;
         endif
       else (record valid)
         if (Recover confirmed?) then (yes)
-          :S8 writes Γ.qStatus KNOWN(declaredTarget,evidence); confirmed not sent stays UNKNOWN;
-          :S9 IF-HIST-UPDATE HistoryHandle;
+          :S8 sole writer of KNOWN(declaredTarget,evidence); IF-PREP-RECOVER does not write Gamma;
+          :E-S9-S10 S9 IF-HIST-UPDATE reads qUsedAtSelect and postSummary;
         else (TEST or Prep)
-          :S9 IF-HIST-UPDATE HistoryHandle;
+          :E-S9-S10 S9 IF-HIST-UPDATE reads qUsedAtSelect and postSummary;
         endif
         :S10 P1-P5 via IF-RESOURCE-STOP and IF-EQUIV;
         if (P-stop?) then (yes)
           stop
+        else (no stop)
+          :E-S10-S1 continue to next S1;
         endif
       endif
     endif
@@ -57,7 +66,9 @@ note right
   strictly-reducing TEST else Prep else Recover
   Charge cost once; Hk update
   ERROR ErrorHandle unknown-effect
-  confirmed not sent; unconfirmed Recover joins S7
+  confirmed not sent keeps q; CONFIRMED-NOT-SENT is not UNKNOWN
+  unconfirmed Recover joins S7
+  no stop returns S10 to S1
   P1 P5 Stop-Empty Stop-Singleton Stop-645
   Stop-Equivalent Stop-Budget Stop-Error Stop-NoDistinguisher
 end note

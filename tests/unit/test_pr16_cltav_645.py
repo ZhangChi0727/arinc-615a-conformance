@@ -450,3 +450,184 @@ def test_unregistered_and_source_pdfs_are_rejected_on_pr_changed_set() -> None:
     assert any("UNREGISTERED.pdf" in item for item in errors)
     assert any("local-references" in item for item in errors)
     assert any("tmp/out-of-tree.pdf" in item for item in errors)
+
+
+def _effect_q(q: str, effect: str, *, prep_err: bool = False, unconfirmed: bool = False) -> str:
+    """Branch order of the delivered S7 text: invalidate, then not-sent, then unconfirmed."""
+    if prep_err or effect == "UNKNOWN-EFFECT":
+        return "UNKNOWN"
+    if effect == "CONFIRMED-NOT-SENT":
+        return q
+    if unconfirmed:
+        return "UNKNOWN"
+    return q
+
+
+def test_delivered_s_steps_keep_snapshot_and_effect_classes() -> None:
+    tex = ALG_PATH.read_text(encoding="utf-8")
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    assert baseline._algorithm_effect_errors(tex, registry["dataflow"], registry["interfaces"]) == []
+    body = tex.split("\\begin{algorithm}", 1)[1]
+    invalidate = body.find(r"\textit{effect}=\texttt{UNKNOWN-EFFECT}")
+    keep = body.find(r"\texttt{CONFIRMED-NOT-SENT}$}")
+    stay = body.find("stays UNKNOWN")
+    assert 0 <= invalidate < keep < stay
+    assert _effect_q("KNOWN", "CONFIRMED-NOT-SENT") == "KNOWN"
+    assert _effect_q("UNKNOWN", "NONE", unconfirmed=True) == "UNKNOWN"
+    assert _effect_q("KNOWN", "UNKNOWN-EFFECT") == "UNKNOWN"
+    hist = body.split(r"\IFhist", 1)[1][:240]
+    assert "qUsedAtSelect" in hist and "postSummary" in hist and "qStatus" not in hist
+    assert "sole writer" in body
+    method = METHOD_REPORT.read_text(encoding="utf-8")
+    for token in (
+        "KNOWN, confirmed not sent, retry remains",
+        "snapshot UNKNOWN and new target both visible",
+        "qUsedAtSelect` kept",
+        "next read is not the old KNOWN",
+        "S7, not S8",
+        "Executed observation leaves",
+        "KNOWN 且确认未发送",
+        "快照 UNKNOWN 与新目标同时可见",
+        "执行后观测使",
+    ):
+        assert token in method
+
+
+def _fig05():
+    graphs = json.loads((ROOT / "configs/research/cltav_figure_graphs.json").read_text(encoding="utf-8"))
+    figure = graphs["figures"]["FIG-CL-TAV-05-closed-loop-activity.svg"]
+    svg = (ROOT / "artifacts/publications/cltav/figures/FIG-CL-TAV-05-closed-loop-activity.svg").read_text(encoding="utf-8")
+    import xml.etree.ElementTree as ET
+    root = ET.fromstring(svg)
+    pairs = {(src, dst) for src, dst, *_ in baseline._svg_labeled_edges(root)}
+    return figure, pairs, root
+
+
+def test_fig05_normal_continue_reaches_next_s1() -> None:
+    figure, pairs, root = _fig05()
+    assert baseline._figure05_control_errors(figure, pairs, root) == []
+    assert ("S9", "S10") in pairs and ("S10", "S1") in pairs
+    assert ("S7", "LoopS1") in pairs
+
+
+def test_fig05_rejects_missing_continue_changed_endpoint_and_inverted_guard() -> None:
+    figure, pairs, root = _fig05()
+    missing = copy.deepcopy(figure)
+    missing["edges"] = [row for row in missing["edges"] if row.get("id") != "E-S10-S1"]
+    missing_pairs = pairs - {("S10", "S1")}
+    errors = baseline._figure05_control_errors(missing, missing_pairs, root)
+    assert any("S10->S1" in item or "S10" in item and "S1" in item for item in errors)
+    moved = copy.deepcopy(figure)
+    for row in moved["edges"]:
+        if row.get("id") == "E-S10-S1":
+            row["to"] = "S2"
+    moved_pairs = (pairs - {("S10", "S1")}) | {("S10", "S2")}
+    errors = baseline._figure05_control_errors(moved, moved_pairs, root)
+    assert any("S10->S1" in item for item in errors)
+    inverted = copy.deepcopy(figure)
+    for row in inverted["edges"]:
+        if row.get("id") == "E-S10-S1":
+            row["polarity"] = "stop"
+    errors = baseline._figure05_control_errors(inverted, pairs, root)
+    assert any("polarity inverted" in item for item in errors)
+
+
+def _owned_row(path: str, sources: list[str]) -> dict:
+    return {
+        "path": path,
+        "kind": "OWNED-GENERATED-PUBLICATION",
+        "trackedSources": sources,
+        "generator": "XeLaTeX via ALG-CLTAV-01-wrapper.tex",
+        "notProprietarySource": True,
+        "safetyCheck": "typeset algorithm form",
+    }
+
+
+def test_owned_pdf_registration_fail_closed(tmp_path: Path) -> None:
+    owned = json.loads((ROOT / "configs/research/cltav_owned_generated_artifacts.json").read_text(encoding="utf-8"))
+    dropped = copy.deepcopy(owned)
+    dropped["artifacts"][0].pop("trackedSources")
+    dropped["artifacts"][0].pop("generator")
+    errors = baseline.prohibited_source_artifact_errors(
+        {"artifacts/publications/cltav/ALG-CLTAV-01.pdf"},
+        registry=dropped,
+    )
+    assert any("trackedSources" in item or "generator" in item for item in errors)
+    errors = baseline.prohibited_source_artifact_errors(
+        {"docs/source-copy.pdf"},
+        registry={"artifacts": [{"path": "docs/source-copy.pdf", "notProprietarySource": True}]},
+    )
+    assert errors
+    pub = tmp_path / "artifacts/publications/cltav"
+    src = tmp_path / "docs/research/publication/algorithms"
+    pub.mkdir(parents=True)
+    src.mkdir(parents=True)
+    pdf = pub / "owned.pdf"
+    tex = src / "ALG.tex"
+    pdf.write_bytes(b"%PDF-1.4\n")
+    tex.write_text("algorithm\n", encoding="utf-8")
+    rel_pdf = "artifacts/publications/cltav/owned.pdf"
+    rel_tex = "docs/research/publication/algorithms/ALG.tex"
+    good = {"artifacts": [_owned_row(rel_pdf, [rel_tex])]}
+    assert baseline.prohibited_source_artifact_errors(
+        {rel_pdf}, registry=good, root=tmp_path, tracked_paths={rel_pdf, rel_tex},
+    ) == []
+    assert baseline.prohibited_source_artifact_errors(
+        {rel_pdf}, registry=good, root=tmp_path, tracked_paths={rel_pdf},
+    )
+    fake = {"artifacts": [_owned_row(rel_pdf, ["docs/missing.tex"])]}
+    assert any("ordinary file" in item or "tracked" in item for item in baseline.prohibited_source_artifact_errors(
+        {rel_pdf}, registry=fake, root=tmp_path, tracked_paths={rel_pdf, "docs/missing.tex"},
+    ))
+    outside = {"artifacts": [_owned_row("docs/source-copy.pdf", [rel_tex])]}
+    (tmp_path / "docs").mkdir(exist_ok=True)
+    (tmp_path / "docs/source-copy.pdf").write_bytes(b"%PDF-1.4\n")
+    assert any("PDF under" in item for item in baseline.prohibited_source_artifact_errors(
+        {"docs/source-copy.pdf"},
+        registry=outside,
+        root=tmp_path,
+        tracked_paths={"docs/source-copy.pdf", rel_tex},
+    ))
+    escaped = {"artifacts": [_owned_row("artifacts/publications/../owned.pdf", [rel_tex])]}
+    assert any("traversal" in item or "PDF under" in item for item in baseline.prohibited_source_artifact_errors(
+        set(), registry=escaped, root=tmp_path, tracked_paths={rel_tex},
+    ))
+    absolute = {"artifacts": [_owned_row(str(pdf), [rel_tex])]}
+    assert any("repository-relative" in item for item in baseline.prohibited_source_artifact_errors(
+        set(), registry=absolute, root=tmp_path, tracked_paths={rel_tex},
+    ))
+    secret = tmp_path / "local-references"
+    secret.mkdir()
+    (secret / "note.tex").write_text("source\n", encoding="utf-8")
+    proprietary = {"artifacts": [_owned_row(rel_pdf, ["local-references/note.tex"])]}
+    assert any("prohibited" in item or "traversal" in item or "ordinary file" in item for item in baseline.prohibited_source_artifact_errors(
+        {rel_pdf},
+        registry=proprietary,
+        root=tmp_path,
+        tracked_paths={rel_pdf, "local-references/note.tex"},
+    ))
+
+
+def test_owned_pdf_registration_rejects_symlink_escape(tmp_path: Path) -> None:
+    pub = tmp_path / "artifacts/publications/cltav"
+    src = tmp_path / "docs/research/publication/algorithms"
+    pub.mkdir(parents=True)
+    src.mkdir(parents=True)
+    pdf = pub / "owned.pdf"
+    tex = src / "ALG.tex"
+    pdf.write_bytes(b"%PDF-1.4\n")
+    tex.write_text("algorithm\n", encoding="utf-8")
+    rel_tex = "docs/research/publication/algorithms/ALG.tex"
+    link_rel = "artifacts/publications/cltav/escape.pdf"
+    link = tmp_path / link_rel
+    try:
+        link.symlink_to(pdf)
+    except OSError:
+        pytest.skip("symbolic-link creation is unavailable on this host")
+    linked = {"artifacts": [_owned_row(link_rel, [rel_tex])]}
+    assert any("symbolic link" in item for item in baseline.prohibited_source_artifact_errors(
+        {link_rel},
+        registry=linked,
+        root=tmp_path,
+        tracked_paths={link_rel, rel_tex},
+    ))
