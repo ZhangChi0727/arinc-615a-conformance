@@ -32,7 +32,7 @@ typeset line numbers are not cited.
   \item \texttt{S2}: 选择前预测；PredictionGapError 只关掉 TEST 评分；UNKNOWN 且 Recover 仍合格时不得挡合法恢复。
   \item \texttt{S3}: 互斥选择 TEST minimax／Prep／Recover／Admit；空 TEST 集不得 $\arg\min$；空 $\mathcal{C}$ 不阻止合格 Recover。选择后、任何写接口之前冻结 $\textit{qUsedAtSelect}$、历史版本、预测类与动作身份。
   \item \texttt{S4}: 一次计费；重试上限不是预算耗尽。决策索引 $k$、计费次数与 retry 彼此不同。
-  \item \texttt{S5}--\texttt{S6}: 执行与解释返回效果类 \texttt{CONFIRMED-NOT-SENT} 或 \texttt{UNKNOWN-EFFECT}，不把二者合成同一种未知。
+  \item \texttt{S5}--\texttt{S6}: 执行与解释返回效果类；正常解释还显式返回后继摘要是否确认。\texttt{CONFIRMED-NOT-SENT} 绕过解释与 Prep 确认，不把它和 \texttt{UNKNOWN-EFFECT} 合成同一种未知。
   \item \texttt{S7}: prepErr、\texttt{UNKNOWN-EFFECT}、后继摘要未确认的 Prep，以及目标未确认的 Recover，均将 $\eta$ 标为保守未知并清除 $q$；\texttt{CONFIRMED-NOT-SENT} 保持 $q$ 与相容历史并仍计重试。达 $R_{\max}$ 返回 Stop-Error。
   \item \texttt{S8}: 仅主过程把已确认 Recover 写成 KNOWN（声明目标与依据）。\texttt{IF-PREP-RECOVER} 只返回值，不写 $\Gamma$。
   \item \texttt{S9}: 历史更新读选择时快照 $\textit{qUsedAtSelect}$ 与单独的已确认 $\textit{postSummary}$，不读效果后的摘要；仅在 `qStatus` 为 KNOWN 且后继摘要确认时提交 $\Gamma.\mathrm{currentSummary}$。

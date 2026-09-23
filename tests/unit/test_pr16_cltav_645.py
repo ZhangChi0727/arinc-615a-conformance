@@ -508,7 +508,7 @@ def test_successor_summary_and_final_action_contracts_are_enforced() -> None:
     assert body.find("one-step minimax") < body.find("actionId") < body.find(r"\IFexec")
     assert r"\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}" in body
     assert "confirmed Prep with no valid Iz advances operation history and preserves H" in json.dumps(registry)
-    assert "return UNKNOWN-EFFECT rather than retaining a stale known summary" in json.dumps(registry)
+    assert "summaryConfirmed=false with UNKNOWN-EFFECT rather than retaining a stale known summary" in json.dumps(registry)
 
     deleted_commit = tex.replace(r"\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}", "", 1)
     errors = _contract(alg=deleted_commit)
@@ -539,13 +539,13 @@ def test_successor_summary_and_final_action_contracts_are_enforced() -> None:
 def test_unconfirmed_prep_successor_is_not_allowed_to_retain_known_summary() -> None:
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
     tex = ALG_PATH.read_text(encoding="utf-8")
-    assert "($\\textit{kind}$ is Prep and $\\textit{summaryConfirmed}$ is false)" in tex
+    assert "($\\textit{kind}$ is Prep and $\\textit{prepResultEvaluated}$ and $\\textit{summaryConfirmed}$ is false)" in tex
     assert "clear $\\Gamma.\\mathrm{currentSummary}$" in tex
     prep = next(row for row in registry["interfaces"] if row["id"] == "IF-PREP-RECOVER")
     assert {"targetConfirmed", "summaryConfirmed", "postSummary"}.issubset(prep["outputs"])
     assert "targetConfirmed=false may coexist with summaryConfirmed=true for Prep" in prep["guarantee"]
 
-    escaping = tex.replace("($\\textit{kind}$ is Prep and $\\textit{summaryConfirmed}$ is false) or ", "", 1)
+    escaping = tex.replace("($\\textit{kind}$ is Prep and $\\textit{prepResultEvaluated}$ and $\\textit{summaryConfirmed}$ is false) or ", "", 1)
     errors = _contract(alg=escaping)
     assert any("unconfirmed Prep successor summary" in item for item in errors)
 
@@ -554,6 +554,59 @@ def test_unconfirmed_prep_successor_is_not_allowed_to_retain_known_summary() -> 
     prep["outputs"].remove("summaryConfirmed")
     errors = _contract(ambiguous)
     assert any("targetConfirmed" in item and "summaryConfirmed" in item for item in errors)
+
+
+def test_test_summary_and_confirmed_not_sent_prep_control_paths_are_enforced() -> None:
+    """R31: TEST binds q1; not-sent Prep cannot turn default false into UNKNOWN."""
+    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    tex = ALG_PATH.read_text(encoding="utf-8")
+    assert baseline._algorithm_effect_errors(
+        tex, registry["dataflow"], registry["interfaces"], registry["sessionHandles"]["SessionContext"]
+    ) == []
+    assert r"$(I_z,\textit{effect},\textit{summaryConfirmed},\textit{postSummary})\leftarrow$ \IFobs" in tex
+    assert "CONFIRMED-NOT-SENT" in tex and "prepResultEvaluated" in tex
+
+    unbound_test = tex.replace(r"\textit{summaryConfirmed},", "", 1)
+    errors = _contract(alg=unbound_test)
+    assert any("IF-OBS-INTERPRET summaryConfirmed" in item for item in errors)
+
+    not_sent_invalidated = tex.replace(
+        r"$\textit{prepResultEvaluated}$ and $\textit{summaryConfirmed}$ is false",
+        r"$\textit{summaryConfirmed}$ is false",
+        2,
+    )
+    errors = _contract(alg=not_sent_invalidated)
+    assert any("unconfirmed Prep successor summary" in item for item in errors)
+
+
+def _summary_path(
+    kind: str, effect: str, current: str, *, obs_summary: str | None = None,
+    prep_evaluated: bool = False, prep_summary: str | None = None, target_confirmed: bool = False,
+) -> tuple[str, str | None, int, str]:
+    """Bounded R31 decision table for the delivered S6--S9 control contract."""
+    if effect == "CONFIRMED-NOT-SENT":
+        return "KNOWN", current, 1, "unchanged"
+    if effect == "UNKNOWN-EFFECT":
+        return "UNKNOWN", None, 1, "conservative-unknown"
+    summary = prep_summary if prep_evaluated else obs_summary
+    if kind == "PREP" and prep_evaluated and summary is None:
+        return "UNKNOWN", None, 1, "conservative-unknown"
+    if kind == "RECOVER" and prep_evaluated and not target_confirmed:
+        return "UNKNOWN", None, 1, "conservative-unknown"
+    if kind == "RECOVER":
+        return "KNOWN", summary, 0, "snapshot-history"
+    return "KNOWN", summary, 0, "snapshot-history"
+
+
+def test_r31_cross_path_acceptance_matrix() -> None:
+    """Normal TEST commits q1; Prep not-sent preserves q0; failed confirmation cannot leak q0."""
+    assert _summary_path("TEST", "NONE", "q0", obs_summary="q1") == ("KNOWN", "q1", 0, "snapshot-history")
+    assert _summary_path("TEST", "UNKNOWN-EFFECT", "q0") == ("UNKNOWN", None, 1, "conservative-unknown")
+    assert _summary_path("PREP", "CONFIRMED-NOT-SENT", "q0") == ("KNOWN", "q0", 1, "unchanged")
+    assert _summary_path("PREP", "NONE", "q0", prep_evaluated=True) == ("UNKNOWN", None, 1, "conservative-unknown")
+    assert _summary_path("PREP", "NONE", "q0", prep_evaluated=True, prep_summary="q0") == ("KNOWN", "q0", 0, "snapshot-history")
+    assert _summary_path("RECOVER", "NONE", "q0", prep_evaluated=True, prep_summary="q1") == ("UNKNOWN", None, 1, "conservative-unknown")
+    assert _summary_path("RECOVER", "NONE", "q0", prep_evaluated=True, prep_summary="q1", target_confirmed=True) == ("KNOWN", "q1", 0, "snapshot-history")
 
 
 def _fig05():

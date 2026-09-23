@@ -82,11 +82,11 @@
       "macro": "IFobs",
       "calledInAlgorithm": true,
       "inputs": ["SessionContext", "executionRecord", "clocks", "epsilon"],
-      "outputs": ["Iz", "effectClass", "postSummary"],
+      "outputs": ["Iz", "effectClass", "summaryConfirmed", "postSummary"],
       "effectClassValues": ["NONE", "CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"],
       "pre": "record belongs to this session",
-      "guarantee": "T5 interval treatment; pairing per method 3.6; every normal confirmed observation returns a confirmed successor postSummary, possibly unchanged",
-      "failure": "If a successor summary cannot be confirmed, return UNKNOWN-EFFECT rather than retaining a stale known summary. CONFIRMED-NOT-SENT, UNKNOWN-EFFECT, prepErr and unconfirmed Recover share the S7 retry counter; UNKNOWN-EFFECT is not state-unchanged; CONFIRMED-NOT-SENT is not UNKNOWN",
+      "guarantee": "T5 interval treatment; pairing per method 3.6; every normal observation returns explicit summaryConfirmed with its postSummary. A normal confirmed observation returns summaryConfirmed=true and a confirmed successor postSummary, possibly unchanged",
+      "failure": "If a successor summary cannot be confirmed, return summaryConfirmed=false with UNKNOWN-EFFECT rather than retaining a stale known summary. CONFIRMED-NOT-SENT bypasses this interface and is not UNKNOWN. UNKNOWN-EFFECT, prepErr and unconfirmed Recover share the S7 retry counter",
       "stateEffect": "does not exclude H",
       "successorClose": "collectors and timestamp handling"
     },
@@ -98,7 +98,7 @@
       "outputs": ["targetConfirmed", "summaryConfirmed", "prepError", "ineligible", "declaredTarget", "evidence", "postSummary"],
       "pre": "selected kind is PREP or RECOVER; retry cap and A4/A5 order",
       "guarantee": "targetConfirmed records whether the requested Prep/Recover target was reached; summaryConfirmed records whether the actual successor observable summary is confirmed. targetConfirmed=false may coexist with summaryConfirmed=true for Prep when the actual successor is known. A confirmed Recover requires both true and returns declaredTarget, evidence, and a confirmed successor postSummary; this interface does not write Γ",
-      "failure": "Prep with summaryConfirmed=false, and Recover with targetConfirmed=false, join S7 as UNKNOWN-EFFECT-equivalent outcome; prepErr marks conservative-unknown. CONFIRMED-NOT-SENT does not fabricate KNOWN and does not assign UNKNOWN",
+      "failure": "Prep with summaryConfirmed=false, and Recover with targetConfirmed=false, join S7 as UNKNOWN-EFFECT-equivalent outcome only after this interface was evaluated; prepErr marks conservative-unknown. CONFIRMED-NOT-SENT bypasses this interface, preserves known state and does not assign UNKNOWN",
       "stateEffect": "returns values only and does not write Γ or η; S8 is the sole writer of qStatus=KNOWN on confirmed Recover; S9 is the sole writer of currentSummary after a confirmed postSummary; postSummary is not qUsedAtSelect",
       "successorClose": "protocol/device recovery steps"
     },

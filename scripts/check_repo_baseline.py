@@ -1573,17 +1573,22 @@ def _algorithm_effect_errors(
         ):
             errors.append(f"registry must commit {producer} postSummary through S9")
     obs = next((row for row in interfaces if isinstance(row, dict) and row.get("id") == "IF-OBS-INTERPRET"), {})
-    if "postSummary" not in (obs.get("outputs") or []):
-        errors.append("IF-OBS-INTERPRET must return postSummary")
+    if not {"summaryConfirmed", "postSummary"}.issubset(set(obs.get("outputs") or [])):
+        errors.append("IF-OBS-INTERPRET must return summaryConfirmed and postSummary")
+    obs_call = r"$(I_z,\textit{effect},\textit{summaryConfirmed},\textit{postSummary})\leftarrow$ \IFobs"
+    if obs_call not in body:
+        errors.append("main algorithm must bind IF-OBS-INTERPRET summaryConfirmed for normal TEST")
     prep = next((row for row in interfaces if isinstance(row, dict) and row.get("id") == "IF-PREP-RECOVER"), {})
     prep_outputs = set(prep.get("outputs") or [])
     if not {"targetConfirmed", "summaryConfirmed", "postSummary"}.issubset(prep_outputs):
         errors.append("IF-PREP-RECOVER must distinguish targetConfirmed from summaryConfirmed")
     if "summaryConfirmed=false" not in str(prep.get("failure") or ""):
         errors.append("IF-PREP-RECOVER must classify an unconfirmed Prep successor summary")
-    prep_escape = "($\\textit{kind}$ is Prep and $\\textit{summaryConfirmed}$ is false)"
+    prep_escape = "($\\textit{kind}$ is Prep and $\\textit{prepResultEvaluated}$ and $\\textit{summaryConfirmed}$ is false)"
     if body.count(prep_escape) < 2:
         errors.append("unconfirmed Prep successor summary must enter S7")
+    if "CONFIRMED-NOT-SENT" not in body or "prepResultEvaluated" not in body:
+        errors.append("CONFIRMED-NOT-SENT must bypass unevaluated Prep confirmation")
     commit_guard = (
         r"\If{$\Gamma.\mathrm{qStatus}$ is KNOWN and $\textit{summaryConfirmed}$ is true "
         r"and $\textit{postSummary}$ is confirmed}{"

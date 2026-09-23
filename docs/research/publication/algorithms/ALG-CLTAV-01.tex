@@ -51,21 +51,21 @@
   \tcp{\textbf{S5} execute; the effect class is returned}
   $(\textit{record},\textit{effect})\leftarrow$ \IFexec$(\Gamma,t^\star)$\;
   \tcp{\textbf{S6} interpret unless execute already returned an effect class}
-  $\textit{Iz}\leftarrow$ nil; $\textit{targetConfirmed}\leftarrow$ false; $\textit{summaryConfirmed}\leftarrow$ false; $\textit{prepErr}\leftarrow$ nil\;
+  $\textit{Iz}\leftarrow$ nil; $\textit{targetConfirmed}\leftarrow$ false; $\textit{summaryConfirmed}\leftarrow$ false; $\textit{prepResultEvaluated}\leftarrow$ false; $\textit{prepErr}\leftarrow$ nil\;
   $\textit{postSummary}\leftarrow$ nil; $\textit{declaredTarget}\leftarrow$ nil; $\textit{evidence}\leftarrow$ nil\;
   \eIf{$\textit{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{
     skip interpret\;
   }{
-    $(I_z,\textit{effect},\textit{postSummary})\leftarrow$ \IFobs$(\Gamma,\textit{record})$\;
+    $(I_z,\textit{effect},\textit{summaryConfirmed},\textit{postSummary})\leftarrow$ \IFobs$(\Gamma,\textit{record})$\;
   }
   \If{$\textit{kind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$ and $\textit{effect}\notin\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{
-    $(\textit{targetConfirmed},\textit{summaryConfirmed},\textit{prepErr},\textit{declaredTarget},\textit{evidence},\textit{postSummary})\leftarrow$ \IFprep$(\Gamma,\eta,t^\star,\textit{record})$\;
+    $(\textit{targetConfirmed},\textit{summaryConfirmed},\textit{prepErr},\textit{declaredTarget},\textit{evidence},\textit{postSummary})\leftarrow$ \IFprep$(\Gamma,\eta,t^\star,\textit{record})$; $\textit{prepResultEvaluated}\leftarrow$ true\;
     \tcp{\IFprep returns values; it does not write $\Gamma$ or $\eta$}
   }
-  \uIf{$\textit{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$ or $\textit{prepErr}$ or ($\textit{kind}$ is Prep and $\textit{summaryConfirmed}$ is false) or ($t^\star$ is Recover and $\textit{targetConfirmed}$ is false)}{
+  \uIf{$\textit{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$ or $\textit{prepErr}$ or ($\textit{kind}$ is Prep and $\textit{prepResultEvaluated}$ and $\textit{summaryConfirmed}$ is false) or ($t^\star$ is Recover and $\textit{prepResultEvaluated}$ and $\textit{targetConfirmed}$ is false)}{
     \tcp{\textbf{S7} classify the effect; do not fold \texttt{CONFIRMED-NOT-SENT} into UNKNOWN}
     do not exclude $H$\;
-    \uIf{$\textit{prepErr}$ or $\textit{effect}=\texttt{UNKNOWN-EFFECT}$ or ($\textit{kind}$ is Prep and $\textit{summaryConfirmed}$ is false)}{
+    \uIf{$\textit{prepErr}$ or $\textit{effect}=\texttt{UNKNOWN-EFFECT}$ or ($\textit{kind}$ is Prep and $\textit{prepResultEvaluated}$ and $\textit{summaryConfirmed}$ is false)}{
       mark $\eta$ conservative-unknown; $\Gamma.\mathrm{qStatus}\leftarrow$ UNKNOWN; clear $\Gamma.\mathrm{currentSummary}$\;
     }
     \uElseIf{$\textit{effect}=\texttt{CONFIRMED-NOT-SENT}$}{
