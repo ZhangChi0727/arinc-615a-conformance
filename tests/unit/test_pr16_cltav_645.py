@@ -431,6 +431,42 @@ def test_645_check_value_commentary_zh_continues_after_the_check_value() -> None
     assert "校验值后面的数据字段" not in zh
 
 
+def test_645_pdf30_adjacent_crc_clauses_have_explicit_non_obligation_dispositions() -> None:
+    audit = _audit()
+    source_645 = next(
+        item for item in audit["supportingSourceApplicabilityAudit"]["sources"]
+        if item["sourceId"] == "ARINC-645"
+    )
+    units = {item["id"]: item for item in source_645["units"]}
+    assert units["SAU-645-BODY-PRE"]["clause"] == "1-4.2"
+    assert units["SAU-645-BODY-PRE"]["pdfPages"] == [7, 29]
+    for unit_id, clause in (
+        ("SAU-645-4-3-1-CRC-DEFINITION", "4.3.1"),
+        ("SAU-645-4-3-2-1-BIT-ORDERING", "4.3.2.1"),
+        ("SAU-645-4-3-2-2-BIT-SHIFTING", "4.3.2.2"),
+    ):
+        unit = units[unit_id]
+        assert unit["clause"] == clause
+        assert unit["pdfPages"] == [30, 30]
+        assert unit["applicabilityDecision"] == "OUT-OF-PROFILE"
+        assert unit["conformanceEffect"] == "INFORMATIVE"
+        assert unit["leafCrsStatus"] == "NOT-REQUIRED"
+
+
+def test_645_pdf30_clause_dispositions_are_fail_closed() -> None:
+    audit = _audit()
+    crs = _crs()
+    source_645 = next(
+        item for item in audit["supportingSourceApplicabilityAudit"]["sources"]
+        if item["sourceId"] == "ARINC-645"
+    )
+    source_645["units"] = [
+        item for item in source_645["units"]
+        if item["id"] != "SAU-645-4-3-2-1-BIT-ORDERING"
+    ]
+    assert any("4.3.2.1" in item for item in baseline.arinc_645_closure_errors(audit, crs, _m2()))
+
+
 def _contract(registry=None, puml=None, plan=None, alg=None):
     return baseline.cltav_algorithm_contract_errors(
         alg if alg is not None else ALG_PATH.read_text(encoding="utf-8"),

@@ -19752,7 +19752,7 @@
         },
         "coverageDenominator": {
           "kind": "615A-TRIGGERED-CLAUSE-GROUP",
-          "count": 12,
+          "count": 15,
           "assuranceBoundary": "TRIGGERED-SEMANTIC-LEAVES-NOT-CAPABILITY-ESTABLISHMENT"
         },
         "namedSourceTensions": [
@@ -19877,8 +19877,8 @@
           },
           {
             "id": "SAU-645-BODY-PRE",
-            "clause": "1-4.3.1",
-            "clauseTitleEn": "Introduction through CRC definition, untriggered body",
+            "clause": "1-4.2",
+            "clauseTitleEn": "Introduction through preceding integrity material, untriggered body",
             "pdfPages": [
               7,
               29
@@ -19890,8 +19890,62 @@
             "triggeredByOperations": [],
             "relationTo615A": "BOUNDED-EXCLUSION",
             "leafCrsStatus": "NOT-REQUIRED",
-            "summaryEn": "Chapters 1-3 and the CRC definition through 4.3.1 (PDF 7-29) are untriggered by the current 615A integrity/naming edges. The separately classified PDF 30 byte-order rule is not in this unit.",
-            "summaryZh": "第 1–3 章及至 4.3.1 的 CRC 定义正文（PDF 7–29）未被当前 615A 完整性／命名边触发。另行分类的 PDF 30 字节顺序规则不属于本单元。"
+            "summaryEn": "Chapters 1-3 and the preceding integrity material through 4.2 (PDF 7-29) are untriggered by the current 615A integrity/naming edges. All of §4.3.1 and §4.3.2 are separately classified on PDF 30 or PDF 31.",
+            "summaryZh": "第 1–3 章及至 4.2 的前序完整性正文（PDF 7–29）未被当前 615A 完整性／命名边触发。§4.3.1 与 §4.3.2 全部在 PDF 30 或 PDF 31 另行分类。"
+          },
+          {
+            "id": "SAU-645-4-3-1-CRC-DEFINITION",
+            "clause": "4.3.1",
+            "clauseTitleEn": "Formal CRC definition",
+            "pdfPages": [
+              30,
+              30
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "CRC-FORMAL-DEFINITION-INTERPRETED-BY-SELECTED-PARAMETERS",
+            "triggeredByOperations": [],
+            "relationTo615A": "PARAMETER-INTERPRETATION-ONLY",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "§4.3.1 is the algebraic definition of a CRC, not an additional 615A actor obligation. Its generator, width and remainder concepts are interpreted by the selected CRC parameter leaves; reopen only if a bound object requires a formal-polynomial conformance claim beyond those parameters.",
+            "summaryZh": "§4.3.1 是 CRC 的代数定义，而非额外的 615A 参与者义务。其生成多项式、宽度和余数概念由所选 CRC 参数叶解释；只有当绑定对象要求超出这些参数的形式多项式符合性主张时才重开。"
+          },
+          {
+            "id": "SAU-645-4-3-2-1-BIT-ORDERING",
+            "clause": "4.3.2.1",
+            "clauseTitleEn": "CRC bit ordering",
+            "pdfPages": [
+              30,
+              30
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "CRC-BIT-ORDER-INTERPRETED-BY-SELECTED-REFLECTION-PARAMETERS",
+            "triggeredByOperations": [],
+            "relationTo615A": "PARAMETER-INTERPRETATION-ONLY",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "§4.3.2.1 fixes the conceptual most-significant-bit correspondence to the polynomial power. It is an interpretation source for the selected algorithm's RefIn/RefOut and generator representation, not a universal rule that every 615A CRC is unreflected. Reopen if a bound object selects a CRC whose reflection parameters cannot be reconciled with this source.",
+            "summaryZh": "§4.3.2.1 规定概念上的最高有效位与多项式幂的对应关系。它是所选算法 RefIn／RefOut 及生成器表示的解释来源，不是“所有 615A CRC 均不反射”的通用规则。若绑定对象所选 CRC 的反射参数无法与该来源协调，则重开。"
+          },
+          {
+            "id": "SAU-645-4-3-2-2-BIT-SHIFTING",
+            "clause": "4.3.2.2",
+            "clauseTitleEn": "CRC bit shifting",
+            "pdfPages": [
+              30,
+              30
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "OUT-OF-PROFILE",
+            "conformanceEffect": "INFORMATIVE",
+            "rationaleCode": "CRC-IMPLEMENTATION-RESOURCE-NOT-PROTOCOL-FRAMING-OBLIGATION",
+            "triggeredByOperations": [],
+            "relationTo615A": "IMPLEMENTATION-RESOURCE-GUIDANCE",
+            "leafCrsStatus": "NOT-REQUIRED",
+            "summaryEn": "§4.3.2.2 concerns interval shifting to fit processor shift-register limits. It does not impose 615A message/file segmentation, an on-wire framing rule, or a distinct actor obligation. Reopen only if a bound execution platform establishes a processor resource limit that needs configuration evidence.",
+            "summaryZh": "§4.3.2.2 涉及为适应处理器移位寄存器限制而进行的区间移位。它不规定 615A 报文／文件分段、线上成帧规则或独立参与者义务。只有当绑定执行平台确立需要 Configuration 证据的处理器资源限制时才重开。"
           },
           {
             "id": "SAU-645-4-3-2-FILE-BYTE-ORDER",

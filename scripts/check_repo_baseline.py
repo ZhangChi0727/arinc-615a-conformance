@@ -1248,13 +1248,41 @@ def arinc_645_closure_errors(audit: dict, crs: dict, model: dict | None = None) 
         if "SAU-645-BODY-PRE" not in units:
             errors.append("645 untriggered body before CRC must be classified, not absorbed into front matter")
         pre = units.get("SAU-645-BODY-PRE") or {}
-        if str(pre.get("clause") or "") in {"1-4.3.2", "1-4.3", "1-4.3.2.2"}:
-            errors.append("645 §4.3.2 file-byte order must not be absorbed into the untriggered pre-CRC body")
+        if pre.get("clause") != "1-4.2" or pre.get("pdfPages") != [7, 29]:
+            errors.append("645 untriggered pre-body must end at §4.2 / PDF 29; §4.3.1 is on PDF 30")
         byte_order_unit = units.get("SAU-645-4-3-2-FILE-BYTE-ORDER") or {}
         if byte_order_unit.get("applicabilityDecision") != "APPLICABLE-SUPPORTING":
             errors.append("645 §4.3.2 file-byte order must be classified as applicable supporting source")
         if byte_order_unit.get("leafRequirementIds") != ["CRS-M1-00864"]:
             errors.append("645 §4.3.2 file-byte order must map to its dedicated CRS leaf")
+        expected_pdf30_dispositions = {
+            "SAU-645-4-3-1-CRC-DEFINITION": (
+                "4.3.1", "CRC-FORMAL-DEFINITION-INTERPRETED-BY-SELECTED-PARAMETERS"
+            ),
+            "SAU-645-4-3-2-1-BIT-ORDERING": (
+                "4.3.2.1", "CRC-BIT-ORDER-INTERPRETED-BY-SELECTED-REFLECTION-PARAMETERS"
+            ),
+            "SAU-645-4-3-2-2-BIT-SHIFTING": (
+                "4.3.2.2", "CRC-IMPLEMENTATION-RESOURCE-NOT-PROTOCOL-FRAMING-OBLIGATION"
+            ),
+        }
+        for unit_id, (clause, rationale) in expected_pdf30_dispositions.items():
+            unit = units.get(unit_id) or {}
+            if (
+                unit.get("clause") != clause
+                or unit.get("pdfPages") != [30, 30]
+                or unit.get("applicabilityDecision") != "OUT-OF-PROFILE"
+                or unit.get("conformanceEffect") != "INFORMATIVE"
+                or unit.get("leafCrsStatus") != "NOT-REQUIRED"
+                or unit.get("rationaleCode") != rationale
+            ):
+                errors.append(f"645 {clause} on PDF 30 must retain its explicit non-obligation disposition")
+        bit_order = units.get("SAU-645-4-3-2-1-BIT-ORDERING") or {}
+        if "unreflected" not in str(bit_order.get("summaryEn") or "").lower() or "不反射" not in str(bit_order.get("summaryZh") or ""):
+            errors.append("645 §4.3.2.1 disposition must not imply all CRC algorithms are unreflected")
+        bit_shift = units.get("SAU-645-4-3-2-2-BIT-SHIFTING") or {}
+        if "segmentation" not in str(bit_shift.get("summaryEn") or "").lower() or "分段" not in str(bit_shift.get("summaryZh") or ""):
+            errors.append("645 §4.3.2.2 disposition must reject a protocol-segmentation interpretation")
         hash_unit = units.get("SAU-645-4-6-HASH") or {}
         hash_pages = [int(item) for item in (hash_unit.get("pdfPages") or []) if str(item).isdigit()]
         if 36 not in hash_pages:
