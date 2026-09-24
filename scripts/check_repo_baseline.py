@@ -1821,9 +1821,10 @@ def _algorithm_effect_errors(
         errors.append("unconfirmed Prep successor summary must enter S7")
     if "CONFIRMED-NOT-SENT" not in body or "prepResultEvaluated" not in body:
         errors.append("CONFIRMED-NOT-SENT must bypass unevaluated Prep confirmation")
-    commit_guard = r"$z.\mathrm{summaryConfirmed}$ is true"
-    commit_assign = r"\Gamma'.\mathrm{currentSummary}\leftarrow z.\mathrm{postSummary}"
-    if commit_guard not in body or commit_assign not in body:
+    compact = re.sub(r"\s+", "", body)
+    commit_guard = r"$z.\mathrm{summaryConfirmed}$istrue"
+    commit_assign = r"\Gamma'.\mathrm{currentSummary}\leftarrowz.\mathrm{postSummary}"
+    if commit_guard not in compact or commit_assign not in compact:
         errors.append("S9 must commit currentSummary only under the confirmed KNOWN successor guard")
     if "does not write" not in str(prep.get("stateEffect") or ""):
         errors.append("IF-PREP-RECOVER must not write session state")
