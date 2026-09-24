@@ -1,8 +1,7 @@
-% ALG-CLTAV-01 — CL-TAV top-level session (presentation of DD-029 / DD-033 / DD-036).
-% Not an executable engine. Procedure calls and the interface macros below are the
-% only control-flow sites; ALG-CLTAV-02/03/04 and the appendix carry the S2/S6/S7-S8
-% detail and the interface contracts. S0--S10 are stable logical duties, not line
-% numbers, protocol states or time indices.
+% ALG-CLTAV-01 — CL-TAV top-level session (presentation; DD-029 / DD-033 / DD-036).
+% Typed records and the responsibility map are in the appendix (Appendix A/C).
+% Not an executable engine; selects no solver technology.
+% S0--S10 are stable logical duties, not line numbers, protocol states or time indices.
 % Compile via ALG-CLTAV-01-wrapper.tex. Do not commit aux/log/out.
 \newcommand{\IFpred}{\texttt{IF-PRED-OBS}}
 \newcommand{\IFhist}{\texttt{IF-HIST-UPDATE}}
@@ -13,46 +12,41 @@
 \newcommand{\IFeq}{\texttt{IF-EQUIV}}
 \newcommand{\IFres}{\texttt{IF-RESOURCE-STOP}}
 
-\begin{algorithm}[ht]
+\begin{algorithm}[H]
 \caption{CL-TAV top-level session (ALG-CLTAV-01)}
 \label{alg:cltav-01}
 \SetKwInput{KwIn}{Require}
 \SetKwInput{KwOut}{Ensure}
-\KwIn{declared $H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}$; SessionContext $\Gamma$ (unique state); HistoryHandle $\eta$; exactly one resource mode BUDGET$(c_{\min},B)$ xor ROUNDS$(K_{\max})$; action library; measurement uncertainty}
+\KwIn{$H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}$; SessionContext $\Gamma$ (unique state); HistoryHandle $\eta$; exactly one resource mode BUDGET$(c_{\min},B)$ xor ROUNDS$(K_{\max})$; action library $L$; uncertainty reference $U$}
 \KwOut{stop class, final $H$, $\eta$, session trace; singleton $h_{\mathrm{normal}}$ is not protocol PASS}
-\tcp{\textbf{S0} initialize the session carriers; $q$ is $\Gamma.\mathrm{currentSummary}$ and retry is $\Gamma.\mathrm{retryCount}$; decision index $k$, billed charges and retry are distinct}
-$(\Gamma,\eta,H)\leftarrow\textsc{Initialize}(H_0,\text{library},\text{uncertainty},\text{resourcePolicy})$\;
+\tcp{\textbf{S0} initialize state, candidates, history, resource, retry and the uncertainty reference}
+$(\Gamma,\eta,H)\leftarrow\textsc{Initialize}(H_0,L,U,\text{resourcePolicy})$\;
 \While{true}{
-  \tcp{\textbf{S1} entry stop gate before prediction; an already decided Admit A2--A5 or P1--P5 returns here}
-  $\textit{stop}\leftarrow\textsc{EntryStop}(\Gamma,\eta,H)$\;
-  \lIf{$\textit{stop}$ is decided}{\Return $\textsc{Finish}(\textit{stop},\Gamma,\eta,H)$}
-  \tcp{\textbf{S2} predict before select; a PredictionGapError is TEST-scoped and does not by itself block eligible Recover or Prep}
-  $\textit{prediction}\leftarrow\textsc{PredictCurrent}(\Gamma,\eta,H,\text{library},\text{uncertainty})$\;
-  \lIf{$\textit{prediction}$ is PredictionGapError and Recover and Prep are ineligible}{\Return $\textsc{Finish}(\textsc{prediction-gap},\Gamma,\eta,H)$}
-  \tcp{\textbf{S3} select the final non-ADMIT action, then freeze the immutable snapshot}
-  $\textit{decision}\leftarrow\textsc{SelectAndAdmit}(\Gamma,\eta,H,\text{library},\textit{prediction})$\;
-  \lIf{$\textit{decision}$ is an exit}{\Return $\textsc{Finish}(\textit{decision},\Gamma,\eta,H)$}
-  \tcp{\textsc{FreezeFinalSelection}: freeze the final non-ADMIT action only after all selection rules}
-  $\textit{qUsedAtSelect}\leftarrow\Gamma.\mathrm{currentSummary}$; $\textit{histVer}\leftarrow\eta.\mathrm{version}$; $\textit{classesUsedAtSelect}\leftarrow\mathcal{C}$; $\textit{actionId}\leftarrow t^\star$\;
+  \tcp{\textbf{S1} \textsc{EntryStop}: maps to the existing A2--A5 / P1--P5 decision table (Appendix C)}
+  $\textit{stop}\leftarrow$ \IFres$(\Gamma,H,\eta)$ with \IFeq$(\Gamma,H,\eta)$\;
+  \lIf{$\textit{stop}\neq\texttt{undecided}$}{\Return $\textsc{Finish}(\textit{stop},\Gamma,\eta,H)$}
+  \tcp{\textbf{S2} typed prediction; the gap tag is handled before any projection (ALG-CLTAV-02)}
+  $\textit{pred}\leftarrow\textsc{PredictCurrent}(\Gamma,\eta,H,U,L)$\;
+  \lIf{$\textit{pred}.\mathrm{status}=\texttt{GAP}$ and not (\textsc{RecoverEligible}$(\Gamma,L)$ or \textsc{PrepEligible}$(\Gamma,L)$)}{\Return $\textsc{Finish}(\textit{pred}.\mathrm{reason},\Gamma,\eta,H)$}
+  \tcp{\textbf{S3} selection and admission; a tagged exit or spec error returns with its reason}
+  $\textit{dec}\leftarrow\textsc{SelectAndAdmit}(\Gamma,\eta,H,L,\textit{pred})$\;
+  \lIf{$\textit{dec}.\mathrm{kind}\in\{\texttt{EXIT},\texttt{SPEC-ERROR}\}$}{\Return $\textsc{Finish}(\textit{dec}.\mathrm{reason},\Gamma,\eta,H)$}
+  \tcp{freeze the immutable select snapshot $\xi$ (actionId, kind, qUsedAtSelect, historyVersion, classesUsedAtSelect, uncertaintyRef) after the final action choice (ALG-CLTAV-05)}
+  $\xi\leftarrow\textsc{SelectSnapshot}(\textit{dec}.\mathrm{actionId},\textit{dec}.\mathrm{kind},\Gamma.\mathrm{currentSummary},\eta.\mathrm{version},\textit{dec}.\mathrm{classesUsed},U)$\;
   \tcp{\textbf{S4} charge once; retry cap $\neq$ budget exhaustion}
-  $\Gamma\leftarrow\textsc{ChargeOnce}(\Gamma,\textit{actionId})$\;
-  \tcp{\textbf{S5} execute the admitted action exactly once}
-  $\textit{record}\leftarrow\textsc{ExecuteAndRecord}(\Gamma,\textit{actionId})$\;
-  \tcp{\textbf{S6} interpret the execution record}
-  $\textit{outcome}\leftarrow\textsc{InterpretOutcome}(\textit{record},\textit{actionId},\Gamma,\eta)$\;
-  \tcp{\textbf{S7--S8} classify the effect and resolve retry or confirmed recovery}
-  $(\Gamma,\eta,\textit{disposition})\leftarrow\textsc{ResolveOutcome}(\textit{outcome},\textit{actionId},\Gamma,\eta)$\;
-  \lIf{$\textit{disposition}$ is STOP}{\Return $\textsc{Finish}(\textit{reason},\Gamma,\eta,H)$}
-  \lIf{$\textit{disposition}$ is RETRY}{\textbf{continue}}
-  \tcp{\textbf{S9} history reads the select snapshot; this is the sole commit of a confirmed successor summary}
-  \If{$I_z$ is a valid observation class or $\textit{summaryConfirmed}$ is true}{
-    $(\eta,H)\leftarrow$ \IFhist$(\eta,H,\textit{actionId},\textit{qUsedAtSelect},\textit{classesUsedAtSelect},I_z,\textit{postSummary})$\;
-    \If{$\Gamma.\mathrm{qStatus}$ is KNOWN and $\textit{summaryConfirmed}$ is true and $\textit{postSummary}$ is confirmed}{
-      $\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}$\;
-    }
-  }
-  \tcp{\textbf{S10} post-update exclusive P-stops; if none, the next iteration starts at S1}
-  $\textit{stop}\leftarrow\textsc{PostUpdateStop}(\Gamma,\eta,H)$\;
-  \lIf{$\textit{stop}$ is decided}{\Return $\textsc{Finish}(\textit{stop},\Gamma,\eta,H)$}
+  $\Gamma\leftarrow\textsc{ChargeOnce}(\Gamma,\xi)$\;
+  \tcp{\textbf{S5} \textsc{ExecuteAndRecord}: execute the snapshot action exactly once}
+  $\textit{er}\leftarrow$ \IFexec$(\Gamma,\xi)$\;
+  \tcp{\textbf{S6} \textsc{InterpretOutcome}: ALG-CLTAV-03 coordinates; ALG-CLTAV-06 interprets timing}
+  $z\leftarrow\textsc{InterpretOutcome}(\textit{er},\xi,\Gamma,\eta,U)$\;
+  \tcp{\textbf{S7--S8} \textsc{ResolveOutcome}: only COMMIT reaches S9}
+  $(\Gamma,\eta,\delta)\leftarrow\textsc{ResolveOutcome}(z,\xi,\Gamma,\eta)$\;
+  \lIf{$\delta.\mathrm{control}=\texttt{STOP}$}{\Return $\textsc{Finish}(\delta.\mathrm{reason},\Gamma,\eta,H)$}
+  \lIf{$\delta.\mathrm{control}=\texttt{RETRY}$}{\textbf{continue}}
+  \tcp{\textbf{S9} \textsc{CommitCompatibleUpdate}: guarded history-compatible update and successor-summary commit}
+  $(\eta,H,\Gamma)\leftarrow\textsc{CommitCompatibleUpdate}(\xi,\delta.\mathrm{outcome},\Gamma,\eta,H)$\;
+  \tcp{\textbf{S10} \textsc{PostUpdateStop}: existing post-update stop priority; otherwise the next iteration is S1}
+  $\textit{stop}\leftarrow$ \IFres$(\Gamma,H,\eta)$ with \IFeq$(\Gamma,H,\eta)$\;
+  \lIf{$\textit{stop}\neq\texttt{undecided}$}{\Return $\textsc{Finish}(\textit{stop},\Gamma,\eta,H)$}
 }
 \end{algorithm}

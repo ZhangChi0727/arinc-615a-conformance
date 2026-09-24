@@ -1,0 +1,27 @@
+% ALG-CLTAV-05 — test selection and resource admission (S3 of ALG-CLTAV-01).
+% Presentation of DD-029 / DD-033 / DD-036. Implements IF-SELECT-ADMIT; not a
+% solver choice. Finite classes, costs and eligibility are inputs.
+\begin{algorithm}[H]
+\caption{\textsc{SelectAndAdmit}: test selection and resource admission (ALG-CLTAV-05, S3)}
+\label{alg:cltav-05}
+\SetKwInput{KwIn}{Require}
+\SetKwInput{KwOut}{Ensure}
+\KwIn{$\Gamma$; $\eta$; current $H$; action library $L$; typed $\textit{pred}$ (PredictionResult)}
+\KwOut{a Decision record: kind ACTION / EXIT / SPEC-ERROR with actionId, actionKind, classesUsed and reason; no fabricated action on an exit}
+$A\leftarrow\{t\in L:\textsc{Enabled}(t,\Gamma)\}\cap\{t:\textsc{Affordable}(t,\Gamma)\}$\;
+$\mathcal C_t\leftarrow\{H\cap C:C\in\textit{pred}.\mathrm{classesByTest}[t],\ H\cap C\neq\varnothing\}$ for each TEST $t$\;
+\tcp{a backend gap is a tagged error, not an empty class collection and not a score of zero}
+\lIf{$\textit{pred}.\mathrm{status}=\texttt{GAP}$ for an enabled TEST $t$ and $\mathcal C_t=\varnothing$}{\Return SPEC-ERROR with $\textit{pred}.\mathrm{reason}$\;}
+$(k,S,\textit{admit})\leftarrow$ \IFsel$(A,\Gamma.\mathrm{currentSummary},\{\mathcal C_t\},\Gamma,\eta,H)$\;
+\tcp{the IF-SELECT-ADMIT contract returns the exclusive kind TEST / PREP / RECOVER / ADMIT; the rules below make the final action deterministic}
+\uIf{$k=\mathrm{ADMIT}$}{\Return EXIT with the existing Admit A2--A5 reason\;}
+\uElseIf{$k=\mathrm{RECOVER}$}{\Return ACTION$(\text{eligible Recover},\mathrm{RECOVER},\cdot,\cdot)$ granting the session's UNKNOWN-recovery eligibility\;}
+\uElseIf{$k=\mathrm{PREP}$}{$p^\star\leftarrow\arg\min_{p\in S}(\mathrm{cost}(p),\mathrm{id}(p))$; \Return ACTION$(p^\star,\mathrm{PREP},S,\cdot)$\;}
+\tcp{TEST branch: distinguishing value, then one-step minimax, then the existing cost/id tie-break}
+$\mathrm{distinguishing}\leftarrow\{t\in S:\exists C\in\mathcal C_t,\ 0<|C|<|H|\}$\;
+\lIf{$\mathrm{distinguishing}=\varnothing$}{\Return EXIT with the admission reason; never $\arg\min\varnothing$\;}
+$s(t)\leftarrow\max_{C\in\mathcal C_t}|C|$ for each $t\in\mathrm{distinguishing}$\;
+$t^\star\leftarrow\arg\min_{t}(s(t),\mathrm{cost}(t),\mathrm{id}(t))$ over $\mathrm{distinguishing}$\;
+\tcp{overlapping classes remain legal; worst value $=|H|$ is admissible but not distinguishing value}
+\Return ACTION$(t^\star,\mathrm{TEST},\mathcal C_{t^\star},\cdot)$\;
+\end{algorithm}

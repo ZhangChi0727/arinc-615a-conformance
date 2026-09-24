@@ -36,6 +36,9 @@ baseline = _load("check_repo_baseline", ROOT / "scripts/check_repo_baseline.py")
 ALG_DIR = ROOT / "docs/research/publication/algorithms"
 ALG_MODULE_FILES = {
     "ALG-CLTAV-01": "ALG-CLTAV-01.tex",
+    "ALG-CLTAV-05": "ALG-CLTAV-05-selection.tex",
+    "ALG-CLTAV-06": "ALG-CLTAV-06-timing.tex",
+    "ALG-CLTAV-07": "ALG-CLTAV-07-history.tex",
     "ALG-CLTAV-02": "ALG-CLTAV-02.tex",
     "ALG-CLTAV-03": "ALG-CLTAV-03.tex",
     "ALG-CLTAV-04": "ALG-CLTAV-04.tex",
@@ -226,8 +229,8 @@ def test_reordering_actionid_before_select_is_rejected() -> None:
 
 def test_deleting_s9_commit_is_rejected() -> None:
     errors = _contract(_mutate(
-        "ALG-CLTAV-01",
-        r"\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}",
+        "ALG-CLTAV-07",
+        r"\Gamma'.\mathrm{currentSummary}\leftarrow z.\mathrm{postSummary}",
         "",
     ))
     assert any("S9 must commit currentSummary" in item for item in errors)
@@ -244,7 +247,11 @@ def test_deleting_known_sole_writer_is_rejected() -> None:
 
 
 def test_deleting_history_call_is_rejected() -> None:
-    errors = _contract(_mutate("ALG-CLTAV-01", r"\IFhist$(\eta,H,\textit{actionId},\textit{qUsedAtSelect},\textit{classesUsedAtSelect},I_z,\textit{postSummary})$", "noop"))
+    errors = _contract(_mutate(
+        "ALG-CLTAV-07",
+        r"\IFhist$(\eta,H,\xi.\mathrm{actionId},\xi.\mathrm{qUsedAtSelect},\xi.\mathrm{classesUsedAtSelect},z.I_z,z.\mathrm{postSummary})$",
+        "noop",
+    ))
     assert any("IF-HIST-UPDATE" in item for item in errors)
 
 
@@ -258,7 +265,7 @@ def test_missing_submodule_is_rejected() -> None:
 
 
 def test_deleting_one_step_minimax_is_rejected() -> None:
-    errors = _contract(_mutate("ALG-CLTAV-APPENDIX", "one-step minimax", "some selection"))
+    errors = _contract(_mutate("ALG-CLTAV-05", "one-step minimax", "some selection"))
     assert any("minimax" in item for item in errors)
 
 

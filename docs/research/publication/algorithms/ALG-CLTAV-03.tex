@@ -1,24 +1,26 @@
-% ALG-CLTAV-03 â€” execution and observation interpretation (S6 of ALG-CLTAV-01).
-% Presentation of DD-029 / DD-033 / DD-036. Returns values only; writing stays in
-% ALG-CLTAV-04 and the S9 step of ALG-CLTAV-01.
-\begin{algorithm}[ht]
-\caption{\textsc{InterpretOutcome}: execution and observation interpretation (ALG-CLTAV-03, S6)}
+% ALG-CLTAV-03 — execution/observation coordination (S6 of ALG-CLTAV-01).
+% Presentation of DD-029 / DD-033 / DD-036. Coordinates the timed-observation
+% kernel (ALG-CLTAV-06) and the existing confirmation interface; writes nothing.
+\begin{algorithm}[H]
+\caption{\textsc{InterpretOutcome}: execution and observation coordination (ALG-CLTAV-03, S6)}
 \label{alg:cltav-03}
 \SetKwInput{KwIn}{Require}
 \SetKwInput{KwOut}{Ensure}
-\KwIn{execution result; immutable select snapshot $\xi$ (see the symbol table); session and history context; declared measurement uncertainty}
-\KwOut{structured outcome: execution effect class, observation validity and feasible classes, whether the successor summary is confirmed, the confirmed successor $\textit{postSummary}$, whether a Prep/Recover confirmation actually ran, $\textit{targetConfirmed}$, $\textit{prepErr}$, and evidence references}
-\tcp{CONFIRMED-NOT-SENT and UNKNOWN-EFFECT do not call an observation or confirmation interface that was not executed; an unset confirmation field is not an evaluated failure}
-\eIf{$\textit{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{
-  skip interpretation; keep the successor summary unconfirmed\;
-}{
-  $(I_z,\textit{effect},\textit{summaryConfirmed},\textit{postSummary})\leftarrow$ \IFobs$(\Gamma,\textit{record})$\;
+\KwIn{ExecutionResult $\textit{er}$; SelectSnapshot $\xi$; $\Gamma$; $\eta$; uncertainty reference $U$}
+\KwOut{a total Outcome $z$: every field initialized; skipped confirmation is NOT-EVALUATED, not an evaluated failure}
+\tcp{total record constructor (fields in Appendix A); nothing is left uninitialized}
+$z\leftarrow\textsc{NewOutcome}()$; \tcp{all Outcome fields (Appendix A) initialized to NONE/false, never left uninitialized}\;
+\tcp{CONFIRMED-NOT-SENT and UNKNOWN-EFFECT do not call an observation or confirmation interface that did not run}
+\uIf{$\textit{er}.\mathrm{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{
+  $z.\mathrm{validity}\leftarrow\texttt{NONE}$; \tcp{an unset confirmation field is not an evaluated false}
 }
-\tcp{a normal TEST explicitly receives summaryConfirmed and postSummary; event ownership, pairing and interval treatment follow the method contract}
-\If{$\textit{kind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$ and $\textit{effect}\notin\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{
-  $(\textit{targetConfirmed},\textit{summaryConfirmed},\textit{prepErr},\textit{declaredTarget},\textit{evidence},\textit{postSummary})\leftarrow$ \IFprep$(\Gamma,\eta,\textit{actionId},\textit{record})$; $\textit{prepResultEvaluated}\leftarrow$ true\;
-  \tcp{\IFprep returns values; it does not write $\Gamma$ or $\eta$. A Prep whose target is not reached may still have a confirmed actual successor}
-  \lIf{$\textit{kind}$ is Prep and $\textit{prepResultEvaluated}$ and $\textit{summaryConfirmed}$ is false}{record an unconfirmed Prep successor summary for S7\;}
+\uElse{
+  $z.\mathrm{timing}\leftarrow\textsc{InterpretTimedObservation}(\textit{er},\xi,\Gamma,\eta,U)$\;
+  $z.I_z\leftarrow\textsc{CompatibleInterpretation}(\textit{er},\xi,\Gamma)$; $z.\mathrm{summaryConfirmed}\leftarrow\textbf{true}$; $z.\mathrm{postSummary}\leftarrow$ confirmed successor summary; \tcp{a normal TEST binds summaryConfirmed and postSummary explicitly}
+  \If{$\textit{er}.\mathrm{kind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$}{
+    $z.\mathrm{prepResultEvaluated}\leftarrow\textbf{true}$; $(z.\mathrm{targetConfirmed},z.\mathrm{summaryConfirmed},z.\mathrm{prepErr},z.\mathrm{declaredTarget},z.\mathrm{evidence},z.\mathrm{postSummary})\leftarrow$ \IFprep$(\Gamma,\eta,\xi.\mathrm{actionId},\textit{er}.\mathrm{record})$\;
+    \tcp{\IFprep returns values only; it does not write $\Gamma$ or $\eta$; a Prep whose target is unmet may still have a confirmed successor}
+  }
 }
-\Return the structured outcome, including whether the unconfirmed Prep successor condition ($\textit{kind}$ is Prep and $\textit{prepResultEvaluated}$ and $\textit{summaryConfirmed}$ is false) holds\;
+\Return $z$; \tcp{values only; all $\Gamma$/$\eta$ writes stay in ALG-CLTAV-04 and S9}
 \end{algorithm}

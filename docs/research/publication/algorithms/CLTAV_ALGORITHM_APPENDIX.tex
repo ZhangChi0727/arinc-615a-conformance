@@ -1,138 +1,138 @@
-% CLTAV_ALGORITHM_APPENDIX.tex — contracts, decision tables and the short wrapper
-% procedures called by ALG-CLTAV-01. Presentation of DD-029 / DD-033 / DD-036.
-% This is the single algorithm-contract appendix for the CL-TAV specification
-% package. It is not a second method and selects no solver technology.
+% CLTAV_ALGORITHM_APPENDIX.tex — types, contracts, decision tables and the
+% unresolved-kernel register for the CL-TAV algorithm package.
+% Presentation of DD-029 / DD-033 / DD-036. Not a second method; selects no solver.
 
-\section*{Appendix A. Interface contracts}
-\label{app:cltav-contracts}
+\section*{Appendix A. Typed records and symbols}
+\label{app:cltav-types}
 
-The interface registry \texttt{configs/research/cltav\_interface\_registry.json}
-is the structural authority. The table below is the typeset view of the same
-contracts; the procedure column names the wrapper that carries the call in this
-package.
+Records are explicit. An optional field is a tagged alternative, never an
+uninitialized variable; \texttt{NONE} (absent) differs from a tagged \emph{false}
+and from an empty set.
 
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \small
-\begin{tabular}{@{}p{3.4cm}p{4.2cm}p{4.2cm}p{3.2cm}@{}}
+\begin{tabular}{@{}p{3.0cm}p{12.4cm}@{}}
 \hline
-Interface & Duty (read-only) & Outputs & Carried by \\
+Record & Required fields \\
 \hline
-\texttt{IF-PRED-OBS} & finite conservative current-observation abstract & currently valid nonempty classes, or \texttt{PredictionGapError} & \textsc{PredictCurrent} (ALG-CLTAV-02) \\
-\texttt{IF-SELECT-ADMIT} & exclusive TEST / Prep / Recover / Admit, final one-step minimax action & kind, selectable $S$, Admit A2--A5, final $t^\star$ & \textsc{SelectAndAdmit} (this appendix) \\
-\texttt{IF-EXECUTE-RECORD} & issue the admitted action once & record, effect class, correlation id & \textsc{ExecuteAndRecord} (this appendix) \\
-\texttt{IF-OBS-INTERPRET} & correlation, pairing, interval validity, effect class & $I_z$, effect class, \texttt{summaryConfirmed}, \texttt{postSummary} & \textsc{InterpretOutcome} (ALG-CLTAV-03) \\
-\texttt{IF-PREP-RECOVER} & declare target and successor confirmation separately & \texttt{targetConfirmed}, \texttt{summaryConfirmed}, \texttt{prepErr}, \texttt{declaredTarget}, \texttt{evidence}, \texttt{postSummary} & \textsc{InterpretOutcome} (ALG-CLTAV-03) \\
-\texttt{IF-HIST-UPDATE} & advance from the select-time snapshot; whole-history path & next $\eta$, $H'\subseteq H$ or Stop-Empty & S9 of ALG-CLTAV-01 \\
-\texttt{IF-EQUIV} & return established only with a valid proof & established / not-established / unknown & \textsc{StopGate} (this appendix) \\
-\texttt{IF-RESOURCE-STOP} & A1--A5 / P1--P5, charging, return sets, residual obligations & stop class, final $H$, trace & \textsc{StopGate} (this appendix) \\
+PredictionResult & status OK$\vert$GAP; reason (GAP); classesByTest (OK); historyVersionUsed; uncertaintyRef. An error tag is not a class collection. \\
+Decision & kind ACTION$\vert$EXIT$\vert$SPEC-ERROR; actionId, actionKind, classesUsed (ACTION); reason (EXIT/SPEC-ERROR). No fabricated action on an exit. \\
+SelectSnapshot $\xi$ & actionId; kind; qUsedAtSelect; historyVersionUsedAtSelect; classesUsedAtSelect; uncertaintyRef. Frozen after the final action choice. \\
+ExecutionResult & attemptId; record; effect $\in$ \{NONE, CONFIRMED-NOT-SENT, UNKNOWN-EFFECT\}; correlationId. The three effects are mutually exclusive. \\
+Outcome $z$ & validity; $I_z$ (valid) or NONE; summaryConfirmed; postSummary or NONE; prepResultEvaluated; targetConfirmed; prepErr or NONE; declaredTarget or NONE; evidence or NONE; timing. Total: every field initialized. \\
+Resolution $\delta$ & control COMMIT$\vert$RETRY$\vert$STOP; $\Gamma$; $\eta$; normalized Outcome; reason (STOP). Only the matching variant consumes its fields. \\
 \hline
 \end{tabular}
 \end{table}
 
-The short wrapper procedures below are the only places the interface macros are
-invoked. They add no semantics beyond DD-029 / DD-033.
+\tnoindent Distinct concepts that must not be conflated: an unevaluated
+confirmation (NOT-EVALUATED) is not an evaluated \emph{false}; no observation is
+not a legitimate-but-empty compatibility class; \texttt{ERROR} is not an IUT
+\texttt{FAIL}; an unknown summary is not the old summary. $H$ and $\eta.H$ are one
+logical candidate object; \texttt{qUsedAtSelect} is not the post-effect
+\texttt{currentSummary}.
 
-\begin{algorithm}[ht]
-\caption{Select and admit (contract for ALG-CLTAV-01 S3)}
-\label{alg:cltav-select}
-\SetKwInput{KwIn}{Require}
-\SetKwInput{KwOut}{Ensure}
-\KwIn{$\Gamma$; $\eta$; current $H$; action library; predicted classes $\mathcal{C}$}
-\KwOut{kind; final $t^\star$; selectable $S$; an Admit A2--A5 exit}
-$A\leftarrow$ currently enabled actions\;
-$(\textit{kind},t^\star,S,\textit{admit})\leftarrow$ \IFsel$(A,\Gamma.\mathrm{currentSummary},\mathcal{C},\Gamma,\eta,H)$\;
-\uIf{$\textit{kind}=\mathrm{ADMIT}$}{\Return the Admit A2--A5 exit\;}
-\uElseIf{$\textit{kind}=\mathrm{TEST}$}{
-  \lIf{$S=\emptyset$}{\Return a named spec error; never $\arg\min$ an empty $S$\;}
-  \tcp{$t^\star$ is the final one-step minimax action on currently valid nonempty classes inside TEST-only $S$}
-}
-\uElseIf{$\textit{kind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$}{keep the Prep or Recover $t^\star$ named by \IFsel; do not enter TEST minimax\;}
-\Return $\textit{kind},t^\star$\;
-\end{algorithm}
+\section*{Appendix B. Coordination wrappers (S2, S6, S7--S8)}
+\label{app:cltav-coordination}
 
-\begin{algorithm}[ht]
-\caption{Execute and record (contract for ALG-CLTAV-01 S5)}
-\label{alg:cltav-execute}
-$(\textit{record},\textit{effect})\leftarrow$ \IFexec$(\Gamma,\textit{actionId})$; only the admitted action is issued once\;
-\Return $\textit{record},\textit{effect}$\;
-\end{algorithm}
+\textsc{PredictCurrent} (ALG-CLTAV-02, S2) branches on the backend tag before any
+projection, so a \texttt{PredictionGapError} never becomes an empty class
+collection; the gap stays TEST-scoped and does not by itself block eligible
+Prep/Recover. \textsc{InterpretOutcome} (ALG-CLTAV-03, S6) initializes a total
+Outcome, calls the timed-observation kernel (ALG-CLTAV-06) and the existing
+confirmation interface, and writes nothing. \textsc{ResolveOutcome} (ALG-CLTAV-04,
+S7--S8) returns a total Resolution: an ERROR/unknown outcome returns
+\texttt{RETRY}, only a confirmed Recover returns \texttt{COMMIT}, and the retry cap
+returns \texttt{STOP} (Stop-Error, not Stop-Budget). S8 is the sole writer of
+KNOWN; S9 is the sole commit of the confirmed successor summary. No module path
+starts the next prediction after a return; only S9 does.
 
-\begin{algorithm}[ht]
-\caption{Stop gate (contract for ALG-CLTAV-01 S1 and S10)}
-\label{alg:cltav-stop}
-\SetKwInput{KwIn}{Require}
-\SetKwInput{KwOut}{Ensure}
-\KwIn{$\Gamma$; $H$; $\eta$; named 645 residuals; equivalence status}
-\KwOut{an exclusive stop class, or \emph{undecided}}
-$\sigma\leftarrow$ first of Stop-Empty, Stop-Singleton, Stop-645, Stop-Equivalent, Stop-Budget via \IFres$(\Gamma,H,\eta)$ and \IFeq$(\Gamma,H,\eta)$\;
-\lIf{$\sigma$ is set}{\Return $\sigma$}
-\Return \emph{undecided}; a currently non-distinguishing $H$ is not proved equivalent\;
-\end{algorithm}
-
-\section*{Appendix B. Admit and stop tables}
+\section*{Appendix C. Responsibility map and decision tables}
 \label{app:cltav-tables}
 
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \small
+\begin{tabular}{@{}p{3.0cm}p{3.2cm}p{4.2cm}p{5.0cm}@{}}
+\hline
+Procedure & S duty & Interface / rule & Write responsibility / exit \\
+\hline
+Initialize & S0 & sets $\Gamma,\eta,H$, resource mode, retry, $U$ & writes $\Gamma,\eta,H$ \\
+EntryStop / PostUpdateStop & S1, S10 & \texttt{IF-RESOURCE-STOP}, \texttt{IF-EQUIV} & read-only; exclusive A2--A5 / P1--P5 \\
+PredictCurrent & S2 & \texttt{IF-PRED-OBS} & read-only; GAP tag \\
+SelectAndAdmit & S3 & \texttt{IF-SELECT-ADMIT} & read-only; ACTION / EXIT / SPEC-ERROR \\
+SelectSnapshot & S3 & freezes $\xi$ & writes the iteration snapshot only \\
+ChargeOnce & S4 & one charge under the mode & billed count only \\
+ExecuteAndRecord & S5 & \texttt{IF-EXECUTE-RECORD} & writes the execution record \\
+InterpretOutcome & S6 & \texttt{IF-OBS-INTERPRET}, \texttt{IF-PREP-RECOVER}, ALG-06 & returns values only \\
+ResolveOutcome & S7--S8 & classification, retry, KNOWN & writes $\Gamma,\eta$; S8 KNOWN \\
+CommitCompatibleUpdate & S9 & \texttt{IF-HIST-UPDATE} & writes $\eta,H$, commits summary \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\begin{minipage}[t]{0.48\textwidth}
 \begin{tabular}{@{}ll@{}}
 \hline
 Admit & Meaning \\
 \hline
-A1 & $S$ nonempty: execute the chosen action \\
-A2 & KNOWN: a strictly-reducing TEST or Prep exists but is unaffordable: Stop-Budget \\
-A3 & KNOWN: no strictly-reducing TEST and no Prep: Stop-NoDistinguisher \\
+A1 & $S$ nonempty: execute \\
+A2 & KNOWN: reducing action unaffordable: Stop-Budget \\
+A3 & KNOWN: none reducing, no Prep: Stop-NoDistinguisher \\
 A4 & UNKNOWN: Recover not eligible: Stop-Error \\
-A5 & UNKNOWN: Recover eligible but unaffordable: Stop-Budget \\
+A5 & UNKNOWN: Recover eligible, unaffordable: Stop-Budget \\
 \hline
 \end{tabular}
-\end{table}
-
-\begin{table}[ht]
-\centering
-\small
-\begin{tabular}{@{}p{2.2cm}p{11.6cm}@{}}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\begin{tabular}{@{}ll@{}}
 \hline
-Symbol & Meaning \\
+Stop & Priority \\
 \hline
-$H$ & candidate set; $H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}$ \\
-$\Gamma$ & SessionContext, the unique state holder; $q=\Gamma.\mathrm{currentSummary}$ \\
-$\eta$ & HistoryHandle; $\eta.H$ and $H$ are one logical object, not two drifting sets \\
-$\xi$ & immutable select snapshot: \texttt{actionId}, \texttt{qUsedAtSelect}, \texttt{historyVersionUsedAtSelect}, \texttt{classesUsedAtSelect} \\
-$z$ & structured outcome (effect class, $I_z$, \texttt{summaryConfirmed}, \texttt{postSummary}, confirmation flags, \texttt{prepErr}) \\
-$\delta$ & ResolveOutcome control class COMMIT / RETRY / STOP \\
+P1 & Stop-Empty \\
+P2 & Stop-Singleton \\
+P3 & Stop-645 \\
+P4 & Stop-Equivalent \\
+P5 & Stop-Budget \\
 \hline
 \end{tabular}
+\end{minipage}
 \end{table}
 
-\section*{Appendix C. Unresolved computation kernels}
+\section*{Appendix D. Unresolved computation kernels and successor gates}
 \label{app:cltav-kernels}
 
 Control logic, call order, state reads/writes, budget, return values and error
-branches are fully specified above. The internal solution techniques remain open
-and are abstracted by named contracts; no probability default, HMM/DTMC/Bayesian
-kernel or continuous-time discrete grid is introduced here.
+branches are fully specified. The internal solution techniques remain open and
+are abstracted by named contracts; no probability default, HMM/DTMC/Bayesian
+kernel or continuous-time discrete grid is introduced.
 
-\begin{table}[ht]
+\begin{table}[H]
 \centering
 \small
-\begin{tabular}{@{}p{3.6cm}p{5.2cm}p{4.8cm}@{}}
+\begin{tabular}{@{}p{3.4cm}p{4.6cm}p{3.4cm}p{3.6cm}@{}}
 \hline
-Module & Abstract kernel & Later implementation gate \\
+Module & Abstract kernel & Input / output / failure & Successor gate \\
 \hline
-\textsc{PredictCurrent} & finite conservative observation abstract and partition & estimator/partition algorithm \\
-\texttt{IF-HIST-UPDATE} & whole-history compatible-state representation and solver & state/clock representation and solver \\
-\texttt{IF-OBS-INTERPRET} & event collection and clock error budget & collectors and timestamp handling \\
-\textsc{InterpretOutcome} & successor-summary confirmation & protocol confirmation contract \\
-\texttt{IF-PREP-RECOVER} & device recovery & protocol/device recovery steps \\
-\texttt{IF-EQUIV} & provable equivalence decision & optional proof algorithm; not required this round \\
-\texttt{IF-EXECUTE-RECORD} & protocol execution adapter, timeout, I/O & protocol adapter and I/O \\
+PredictCurrent & finite conservative observation abstract and partition & classesByTest or GAP & estimator/partition algorithm \\
+IF-HIST-UPDATE & whole-history compatible-state representation and solver & snapshot + $I_z$ $\to$ next history; version conflict is a spec error & state/clock representation and solver \\
+InterpretTimedObservation & event collection and clock error budget & record $\to$ TimingResult; invalid measurement is ERROR & collectors and timestamp handling \\
+InterpretOutcome & successor-summary confirmation & record + $\xi$ $\to$ Outcome & protocol confirmation contract \\
+IF-PREP-RECOVER & device recovery & returns values only & protocol/device recovery steps \\
+IF-EQUIV & provable equivalence decision & established or unknown & optional proof algorithm; not required this round \\
+ExecuteAndRecord & protocol execution adapter, timeout, I/O & admitted action $\to$ ExecutionResult & protocol adapter and I/O \\
 \hline
 \end{tabular}
 \end{table}
 
-Specification logic is reviewable from this package. A stub walk-through is
-reproducible from the bounded session-loop spec script. The real tool and any
-confirmatory experiment are not implemented. Wrapper code and finite
-walk-throughs are not performance evidence for the algorithm.
+Successor order: development-ready requirements/interface acceptance $\to$ core
+algorithm selection/implementation $\to$ component verification $\to$
+configuration and experiment gates $\to$ confirmatory experiment. None of these
+backends is implemented here. Specification logic is reviewable from this
+package; a stub walk-through is reproducible from the bounded session-loop spec;
+the real tool and confirmatory experiment are not implemented. Wrapper code and
+finite witnesses are not performance evidence for the algorithm.

@@ -1,0 +1,23 @@
+% ALG-CLTAV-07 — history-compatible update and successor-summary commit (S9).
+% Presentation of DD-029 / DD-033 / DD-036. Short by design; the whole-history
+% solver is an abstract contract, not selected here.
+\begin{algorithm}[H]
+\caption{\textsc{CommitCompatibleUpdate}: history-compatible update and summary commit (ALG-CLTAV-07, S9)}
+\label{alg:cltav-07}
+\SetKwInput{KwIn}{Require}
+\SetKwInput{KwOut}{Ensure}
+\KwIn{SelectSnapshot $\xi$; normalized Outcome $z$ from the resolving module; $\Gamma$; $\eta$; $H$}
+\KwOut{successor $\eta'$, $H'$ and, under the guard, the committed $\Gamma'.\mathrm{currentSummary}$; or a named spec error}
+\tcp{only reached under the existing S9 guard (a valid observation class or a confirmed successor summary); ERROR is not fed here as an empty observation}
+\If{$z.I_z$ is a valid observation class}{
+  $H'\leftarrow H\cap z.I_z$; \tcp{intersection, never $H\leftarrow z.I_z$; no resurrection of a removed hypothesis}
+} \Else {
+  $H'\leftarrow H$; \tcp{a confirmed Prep with no valid $I_z$ advances history but preserves $H$}
+}
+$(\eta',H')\leftarrow$ \IFhist$(\eta,H,\xi.\mathrm{actionId},\xi.\mathrm{qUsedAtSelect},\xi.\mathrm{classesUsedAtSelect},z.I_z,z.\mathrm{postSummary})$\;
+\tcp{IF-HIST-UPDATE reads the select-time snapshot, not the post-effect summary; whole-history compatibility, not per-round feasibility}
+\If{$\Gamma.\mathrm{qStatus}$ is KNOWN and $z.\mathrm{summaryConfirmed}$ is true and $z.\mathrm{postSummary}$ is confirmed}{
+  $\Gamma'.\mathrm{currentSummary}\leftarrow z.\mathrm{postSummary}$; \tcp{this is the sole commit of the confirmed successor summary}
+}
+\Return $\eta',H',\Gamma'$\;
+\end{algorithm}

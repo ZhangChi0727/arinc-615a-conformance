@@ -988,15 +988,22 @@ number once.
 ## DD-036 — Algorithm presentation layers, contracts and equivalence acceptance
 
 **Decision:** Present the approved CL-TAV process as one readable top-level
-algorithm (ALG-CLTAV-01) plus named sub-algorithms ALG-CLTAV-02 (current
-observation prediction wrapper), ALG-CLTAV-03 (execution/observation
-interpretation) and ALG-CLTAV-04 (ERROR, retry, unknown and confirmed-recovery
-disposition), with one contract appendix. The interface registry remains the
-single structural authority; the top level, sub-algorithms, appendix, method
-tables, registry and notation figures must stay mutually traceable. Acceptance
+algorithm (ALG-CLTAV-01) plus the three core mechanisms in the main text —
+test selection and admission (ALG-CLTAV-05), timed observation interpretation
+(ALG-CLTAV-06) and history-compatible update (ALG-CLTAV-07) — with the S2/S6/S7–S8
+coordination wrappers (ALG-CLTAV-02/03/04), the typed records, the responsibility
+map and the unresolved-kernel register in one contract appendix. The interface
+registry remains the single structural authority; the main text, wrappers,
+appendix, method tables, registry and notation figures must stay mutually
+traceable. Interfaces use explicit typed records with tagged alternatives and
+field access or destructuring: a backend prediction gap is branched on before any
+projection; the frozen select snapshot is constructed and passed to interpretation
+and resolution; the normalized resolution outcome and stop reason return to the
+caller; and a bounded executable-call production model (comment-stripping,
+signature and return-branch checks) rejects the reviewed TeX mutations. Acceptance
 uses a split-versus-merged equivalence witness matrix over the frozen abstract
-backends plus production negatives, not a TeX string match on one file. DD-029
-semantics, return sets, error types and stop priority are unchanged.
+backends plus these production negatives, not a TeX string match on one file.
+DD-029 semantics, return sets, error types and stop priority are unchanged.
 
 **Why:** The approved algorithm is an abstract interface specification whose
 readability matters; a single dense body hid the loop. Presentation layers
@@ -1494,7 +1501,7 @@ ARINC 615A 数据加载是合法操作、观测和实验场景的来源。CL-TAV
 
 ## DD-036——算法呈现层、契约与等价性验收
 
-**决定：** 把已批准的 CL-TAV 过程呈现为一个可读的总体算法（ALG-CLTAV-01）加具名子算法 ALG-CLTAV-02（当前观测预测包装）、ALG-CLTAV-03（执行／观测解释）与 ALG-CLTAV-04（ERROR、重试、未知与确认恢复处置），并配一个契约附录。接口登记仍是唯一结构权威；总体、子算法、附录、方法表、登记与记法图必须相互可追溯。验收采用在冻结抽象后端上的拆分／合并等价性见证矩阵加生产负例，而不是对单一文件的 TeX 字符串匹配。DD-029 语义、返回集合、错误类型与停止优先级不变。
+**决定：** 把已批准的 CL-TAV 过程呈现为一个可读的总体算法（ALG-CLTAV-01）加正文中的三个核心机制——测试选择与准入（ALG-CLTAV-05）、时序观测解释（ALG-CLTAV-06）与历史相容更新（ALG-CLTAV-07），并把 S2／S6／S7–S8 协调包装（ALG-CLTAV-02/03/04）、类型记录、责任表与未实现内核登记放入单一契约附录。接口登记仍是唯一结构权威；正文、包装、附录、方法表、登记与记法图必须相互可追溯。接口采用显式类型记录、带标记的可选字段与字段访问／解构：后端预测缺口先分支再投影；冻结的选择快照被构造并传给解释与处置；规范化的处置结果与停止原因返回调用者；受限可执行调用生产模型（去注释、签名与返回分支检查）拒绝已评审的 TeX 变异。验收采用在冻结抽象后端上的拆分／合并等价性见证矩阵加这些生产负例，而不是对单一文件的 TeX 字符串匹配。DD-029 语义、返回集合、错误类型与停止优先级不变。
 
 **理由：** 已批准算法是抽象接口规格，可读性重要；单块正文把循环藏了起来。呈现分层提升可评审性，但不授予新方法或求解器选择。
 

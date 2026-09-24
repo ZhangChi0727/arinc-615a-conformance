@@ -6,6 +6,9 @@
   "authority": "This file is the structural interface specification. Method tables, the CL-TAV algorithm presentation package and FIG-CL-TAV-09 ports must match it. It is not a solver choice and not a source-faithfulness proof.",
   "presentationModules": [
     "ALG-CLTAV-01",
+    "ALG-CLTAV-05",
+    "ALG-CLTAV-06",
+    "ALG-CLTAV-07",
     "ALG-CLTAV-02",
     "ALG-CLTAV-03",
     "ALG-CLTAV-04",

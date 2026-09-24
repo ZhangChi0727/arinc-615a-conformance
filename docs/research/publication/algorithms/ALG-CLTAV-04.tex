@@ -1,34 +1,28 @@
-% ALG-CLTAV-04 â€” outcome resolution, ERROR, retry and confirmed recovery (S7-S8).
-% Presentation of DD-029 / DD-033 / DD-036. COMMIT/RETRY/STOP are internal module
-% results, not new paper stop families.
-\begin{algorithm}[ht]
-\caption{\textsc{ResolveOutcome}: outcome resolution and confirmed recovery (ALG-CLTAV-04, S7--S8)}
+% ALG-CLTAV-04 — ERROR, retry and confirmed recovery (S7-S8 of ALG-CLTAV-01).
+% Presentation of DD-029 / DD-033 / DD-036. Returns a total Resolution record;
+% COMMIT/RETRY/STOP are internal control classes, not new paper stop families.
+\begin{algorithm}[H]
+\caption{\textsc{ResolveOutcome}: ERROR, retry and confirmed recovery (ALG-CLTAV-04, S7--S8)}
 \label{alg:cltav-04}
 \SetKwInput{KwIn}{Require}
 \SetKwInput{KwOut}{Ensure}
-\KwIn{structured outcome $z$; immutable select snapshot $\xi$; SessionContext $\Gamma$; HistoryHandle $\eta$}
-\KwOut{control class COMMIT / RETRY / STOP; updated $\Gamma,\eta$}
-\uIf{$\textit{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$ or $\textit{prepErr}$ or ($\textit{kind}$ is Prep and $\textit{prepResultEvaluated}$ and $\textit{summaryConfirmed}$ is false) or ($\textit{actionId}$ is Recover and $\textit{prepResultEvaluated}$ and $\textit{targetConfirmed}$ is false)}{
+\KwIn{Outcome $z$; SelectSnapshot $\xi$; $\Gamma$; $\eta$}
+\KwOut{Resolution $\delta$: control COMMIT / RETRY / STOP with updated $\Gamma,\eta$, the normalized Outcome, and a stop reason when STOP}
+\uIf{$z.\mathrm{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$ or $z.\mathrm{prepErr}$ or ($z.\mathrm{kind}$ is Prep and $z.\mathrm{prepResultEvaluated}$ and $z.\mathrm{summaryConfirmed}$ is false) or ($\xi.\mathrm{actionId}$ is Recover and $z.\mathrm{prepResultEvaluated}$ and $z.\mathrm{targetConfirmed}$ is false)}{
   \tcp{\textbf{S7} classify the effect; do not fold \texttt{CONFIRMED-NOT-SENT} into UNKNOWN}
   do not exclude $H$\;
-  \uIf{$\textit{prepErr}$ or $\textit{effect}=\texttt{UNKNOWN-EFFECT}$ or ($\textit{kind}$ is Prep and $\textit{prepResultEvaluated}$ and $\textit{summaryConfirmed}$ is false)}{
-    mark $\eta$ conservative-unknown; $\Gamma.\mathrm{qStatus}\leftarrow$ UNKNOWN; clear $\Gamma.\mathrm{currentSummary}$\;
+  \uIf{$z.\mathrm{prepErr}$ or $z.\mathrm{effect}=\texttt{UNKNOWN-EFFECT}$ or ($z.\mathrm{kind}$ is Prep and $z.\mathrm{prepResultEvaluated}$ and $z.\mathrm{summaryConfirmed}$ is false)}{
+    mark $\eta$ conservative-unknown; $\Gamma.\mathrm{qStatus}\leftarrow\texttt{UNKNOWN}$; clear $\Gamma.\mathrm{currentSummary}$\;
   }
-  \uElseIf{$\textit{effect}=\texttt{CONFIRMED-NOT-SENT}$}{
-    leave $\Gamma.\mathrm{qStatus}$ and compatible history unchanged\;
-  }
-  \Else{
-    \tcp{unconfirmed Recover target}
-    $\Gamma.\mathrm{qStatus}$ stays UNKNOWN; clear $\Gamma.\mathrm{currentSummary}$; mark $\eta$ conservative-unknown\;
-  }
+  \uElseIf{$z.\mathrm{effect}=\texttt{CONFIRMED-NOT-SENT}$}{leave $\Gamma.\mathrm{qStatus}$ and compatible history unchanged\;}
+  \Else{$\Gamma.\mathrm{qStatus}$ stays UNKNOWN; clear $\Gamma.\mathrm{currentSummary}$; mark $\eta$ conservative-unknown\; \tcp{unconfirmed Recover target}}
   $\Gamma.\mathrm{retryCount}\leftarrow\Gamma.\mathrm{retryCount}+1$\;
-  \lIf{$\Gamma.\mathrm{retryCount}\ge\Gamma.\mathrm{retryCap}$}{\Return STOP(Stop-Error); this is decided before A4/A5 and is not Stop-Budget}
-  \Return RETRY\;
+  \lIf{$\Gamma.\mathrm{retryCount}\ge\Gamma.\mathrm{retryCap}$}{\Return Resolution$(\mathrm{control}=\texttt{STOP},\mathrm{reason}=\text{Stop-Error},\Gamma,\eta,z)$; not Stop-Budget\;}
+  \Return Resolution$(\mathrm{control}=\texttt{RETRY},\Gamma,\eta,z)$; \tcp{an ERROR/unknown outcome reaches retry, never commit}
 }
-\uElseIf{$\textit{actionId}$ is Recover}{
-  \tcp{\textbf{S8} sole writer of KNOWN$(\textit{declaredTarget},\textit{evidence})$}
-  $\Gamma.\mathrm{qStatus}\leftarrow$ KNOWN$(\textit{declaredTarget},\textit{evidence})$\;
-  $\textit{postSummary}\leftarrow(\textit{declaredTarget},\textit{evidence})$\;
+\uElseIf{$\xi.\mathrm{actionId}$ is Recover}{
+  \tcp{\textbf{S8} sole writer of KNOWN; the normalized successor summary is returned to S9}
+  $\Gamma.\mathrm{qStatus}\leftarrow\texttt{KNOWN}$; $z.\mathrm{postSummary}\leftarrow(z.\mathrm{declaredTarget},z.\mathrm{evidence})$\;
 }
-\Return COMMIT; no path here starts prediction directly, S9 remains the successor-summary commit\;
+\Return Resolution$(\mathrm{control}=\texttt{COMMIT},\Gamma,\eta,z)$; \tcp{the normalized Outcome carries the confirmed postSummary to S9}
 \end{algorithm}

@@ -1,6 +1,8 @@
 % Wrapper for the CL-TAV algorithm specification package.
-% Combines the top-level algorithm (ALG-CLTAV-01) with the presentation
-% sub-algorithms ALG-CLTAV-02/03/04 and the contract appendix. Not a second method.
+% Main text: ALG-CLTAV-01 (top level) and the three core procedures
+% ALG-CLTAV-05 (selection), ALG-CLTAV-06 (timed observation), ALG-CLTAV-07 (update).
+% Appendix: the S2/S6/S7--S8 coordination wrappers ALG-CLTAV-02/03/04 and the
+% contract tables. Not a second method; selects no solver technology.
 \documentclass[11pt]{article}
 \usepackage{fontspec}
 \usepackage{xeCJK}
@@ -8,6 +10,7 @@
 \setCJKmainfont{SimSun}
 \usepackage{amsmath,amssymb}
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage{float}
 \usepackage[margin=0.75in]{geometry}
 \SetAlgoNlRelativeSize{0}
 \SetAlFnt{\scriptsize}
@@ -18,31 +21,31 @@
 \date{}
 \begin{document}
 \maketitle
-\noindent This package exists only to typeset the CL-TAV algorithm
-specification. It is not a second program and selects no solver technology.
-\texttt{ALG-CLTAV-01} is the top-level session; \texttt{ALG-CLTAV-02/03/04}
-carry the S2, S6 and S7--S8 detail; Appendix~A--C carry the interface
-contracts, decision tables and unresolved kernels. Step labels
-\texttt{S0}--\texttt{S10} are the stable bilingual mapping; typeset line
-numbers are not cited.
+\noindent This package typesets the CL-TAV algorithm specification. The main
+text gives the top-level session and the three core mechanisms (test selection,
+timed observation interpretation, history-compatible update). The appendix gives
+the S2/S6/S7--S8 coordination wrappers, the typed records, the responsibility map
+and the unresolved-kernel register. It is not a second program and selects no
+solver technology. Step labels \texttt{S0}--\texttt{S10} are the stable bilingual
+mapping; typeset line numbers are not cited.
 
 \input{ALG-CLTAV-01.tex}
+\input{ALG-CLTAV-05-selection.tex}
+\input{ALG-CLTAV-06-timing.tex}
+\input{ALG-CLTAV-07-history.tex}
 \input{ALG-CLTAV-02.tex}
 \input{ALG-CLTAV-03.tex}
 \input{ALG-CLTAV-04.tex}
 \input{CLTAV_ALGORITHM_APPENDIX.tex}
 
 \section*{Chinese step groups (same process, not a second program)}
-\begin{itemize}
-  \item \texttt{S0}: $\Gamma$ 为唯一状态源；$q$ 是 $\Gamma.\mathrm{currentSummary}$ 的别名，$qStatus$ 只记录该摘要是否已知；retry／$R_{\max}$ 分别是 $\mathrm{retryCount}$／$\mathrm{retryCap}$ 的别名；初始化 $\eta$、$H_0$ 与 retry。
-  \item \texttt{S1}: 停止／错误优先门；已决定的 A2--A5 或 P1--P5 立即返回。
-  \item \texttt{S2}: 选择前预测（\texttt{ALG-CLTAV-02}）；PredictionGapError 只关掉 TEST 评分；UNKNOWN 且 Recover 仍合格时不得挡合法恢复。
-  \item \texttt{S3}: 互斥选择 TEST minimax／Prep／Recover／Admit；空 TEST 集不得 $\arg\min$；空 $\mathcal{C}$ 不阻止合格 Recover。选择后、任何写接口之前冻结 $\textit{qUsedAtSelect}$、历史版本、预测类与动作身份。
-  \item \texttt{S4}: 一次计费；重试上限不是预算耗尽。决策索引 $k$、计费次数与 retry 彼此不同。
-  \item \texttt{S5}--\texttt{S6}: 执行与解释返回效果类（\texttt{ALG-CLTAV-03}）；正常解释还显式返回后继摘要是否确认。\texttt{CONFIRMED-NOT-SENT} 绕过解释与 Prep 确认，不把它和 \texttt{UNKNOWN-EFFECT} 合成同一种未知。
-  \item \texttt{S7}--\texttt{S8}: 结果处置（\texttt{ALG-CLTAV-04}）；prepErr、\texttt{UNKNOWN-EFFECT}、后继摘要未确认的 Prep，以及目标未确认的 Recover，均将 $\eta$ 标为保守未知并清除 $q$；\texttt{CONFIRMED-NOT-SENT} 保持 $q$ 与相容历史并仍计重试。达 $R_{\max}$ 返回 Stop-Error。
-  \item \texttt{S9}: 历史更新读选择时快照 $\textit{qUsedAtSelect}$ 与单独的已确认 $\textit{postSummary}$，不读效果后的摘要；仅在 `qStatus` 为 KNOWN 且后继摘要确认时提交 $\Gamma.\mathrm{currentSummary}$。
-  \item \texttt{S10}: 互斥 P1--P5；未停止则下一轮从 S1 继续。未确认恢复回边在 S7，不代替这条正常循环。
-\end{itemize}
-Stop-645 在本增量之后表示仍未在能力/实现层关闭的具名 645 依赖义务，不是“645 文件缺失”。
+S0 初始化：$\Gamma$ 为唯一状态源；$q$ 是 $\Gamma.\mathrm{currentSummary}$ 的别名，$qStatus$ 只记录该摘要是否已知；retry／$R_{\max}$ 分别是 $\mathrm{retryCount}$／$\mathrm{retryCap}$ 的别名；初始化 $\eta$、$H_0$、资源模式与不确定性引用。
+S1／S10 停止门：EntryStop 与 PostUpdateStop 映射既有 A2--A5／P1--P5 决定表，不新建停止政策。
+S2：ALG-CLTAV-02 先按返回标签分支再投影；PredictionGapError 只关掉 TEST 评分，不阻止合格 Prep／Recover。
+S3：ALG-CLTAV-05 给出选择与准入规则；空 TEST 集不得 $\arg\min$；空类不阻止合格 Recover；选定后冻结不可变快照 $\xi$。
+S4 一次计费：重试上限不是预算耗尽。S5：只执行快照动作一次。
+S6：ALG-CLTAV-03 协调，ALG-CLTAV-06 完成时序解释；$M$、判定与候选集合 $I_z$ 是三种不同类型，不得 $H\cap$ 判定。
+S7--S8：ALG-CLTAV-04 返回完整 Resolution；ERROR／未知走 RETRY，只有确认 Recover 走 COMMIT；S8 唯一写 KNOWN。
+S9：ALG-CLTAV-07 在既有守卫下做整段历史相容更新并提交已确认摘要；不得旁路 S9 开始下一轮预测。
+Stop-645 表示仍未在能力/实现层关闭的具名 645 依赖义务，不是“645 文件缺失”。
 \end{document}

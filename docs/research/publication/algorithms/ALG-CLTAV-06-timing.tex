@@ -1,0 +1,26 @@
+% ALG-CLTAV-06 — timed observation interpretation (S6 kernel).
+% Presentation of DD-029 / DD-033 / DD-036. Uses Match_r, T2 and T5 as defined;
+% it invents no new pairing policy and no error-estimation algorithm.
+\begin{algorithm}[H]
+\caption{\textsc{InterpretTimedObservation}: timed observation interpretation (ALG-CLTAV-06, S6 kernel)}
+\label{alg:cltav-06}
+\SetKwInput{KwIn}{Require}
+\SetKwInput{KwOut}{Ensure}
+\KwIn{ExecutionResult $\textit{er}$; SelectSnapshot $\xi$; $\Gamma$; $\eta$; declared match policy $\mathrm{Match}_r$; uncertainty contract $U$}
+\KwOut{a TimingResult: verdict in \{PASS, FAIL, INCONCLUSIVE, ERROR\}; matching evidence; validity/error; the data needed for a conservative compatible interpretation}
+\tcp{event validity and one instance-ownership result; T2 and the no-response rule consume this same result, not two independent matches}
+$\mathrm{owns}\leftarrow$ \IFobs$(\Gamma,\textit{er}.\mathrm{record})$\;
+\uIf{$\mathrm{owns}$ is not valid}{\Return TimingResult$(\mathrm{verdict}=\mathrm{ERROR})$; the candidate set is unchanged\;}
+\tcp{match by $\mathrm{Match}_r$ type, correlation key, pairing policy and order; a cancellation or superseded instance does not claim a later response}
+$\mathrm{pair}\leftarrow\textsc{Match}_r(\mathrm{owns},\xi)$\;
+\lIf{$\mathrm{pair}$ is ambiguous}{\Return TimingResult$(\mathrm{verdict}=\mathrm{ERROR})$; no silent pick\;}
+\uIf{$\mathrm{pair}$ is a legitimate trigger/response pair}{
+  $M\leftarrow[\hat{\Delta t}-\varepsilon,\hat{\Delta t}+\varepsilon]\cap D_r$; \tcp{measurement interval $M$, distinct from the verdict and from the candidate set}
+  \uIf{$M\subseteq N_r$}{\Return TimingResult$(\mathrm{verdict}=\mathrm{PASS},\mathrm{evidence}=\mathrm{pair},M)$\;}
+  \uElseIf{$M\cap N_r=\varnothing$}{\Return TimingResult$(\mathrm{verdict}=\mathrm{FAIL},\mathrm{evidence}=\mathrm{pair},M)$\;}
+  \Return TimingResult$(\mathrm{verdict}=\mathrm{INCONCLUSIVE},\mathrm{evidence}=\mathrm{pair},M)$; open/closed endpoints preserved\;
+}
+\tcp{a missing response forms a no-response only after a still-active instance reaches its deadline; this round not seeing it is not a timeout}
+\uIf{the obligation is still active and expired}{let $M$ be the earliest admissible horizon; \Return the FAIL/INCONCLUSIVE/ERROR verdict by the same $M$ vs $N_r$ rule\;}
+\Return TimingResult$(\mathrm{verdict}=\mathrm{ERROR})$; a missing pair is not a point observation\;
+\end{algorithm}

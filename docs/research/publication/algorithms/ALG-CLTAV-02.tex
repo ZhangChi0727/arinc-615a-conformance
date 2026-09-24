@@ -1,21 +1,18 @@
-% ALG-CLTAV-02 â€” current-observation prediction wrapper (S2 of ALG-CLTAV-01).
-% Presentation of DD-029 / DD-033 / DD-036. Not a solver choice.
-% The finite conservative prediction backend is neither implemented nor selected
-% here; its return contract is recorded in the appendix and in the registry.
-\begin{algorithm}[ht]
+% ALG-CLTAV-02 — current-observation prediction wrapper (S2 of ALG-CLTAV-01).
+% Presentation of DD-029 / DD-033 / DD-036. The finite conservative prediction
+% backend is neither selected nor implemented; its return tag is handled first.
+\begin{algorithm}[H]
 \caption{\textsc{PredictCurrent}: current-observation prediction wrapper (ALG-CLTAV-02, S2)}
 \label{alg:cltav-02}
 \SetKwInput{KwIn}{Require}
 \SetKwInput{KwOut}{Ensure}
-\KwIn{SessionContext $\Gamma$; HistoryHandle $\eta$; current $H$; action library; common measurement uncertainty}
-\KwOut{currently valid nonempty observation classes $\mathcal{C}$, or a named PredictionGapError; the session's own $\eta$ is read, not rebuilt}
-\tcp{read the current session summary only while it is known; do not rebuild $H_0$}
-$\textit{classes}\leftarrow$ \IFpred$(\Gamma,\eta,H,\text{uncertainty},\text{library})$\;
-\tcp{project declared classes onto current $H$; an empty class from an excluded hypothesis is not a surviving $score=0$ class}
-$\mathcal{C}\leftarrow\textsc{ProjectOntoCurrentH}(\textit{classes},H)$\;
-\uIf{$\mathcal{C}$ has no nonempty member}{
-  \tcp{no currently valid class: a named prediction-gap; this is TEST-scoped and does not by itself block eligible Recover or Prep}
-  \Return PredictionGapError\;
+\KwIn{SessionContext $\Gamma$; HistoryHandle $\eta$; current $H$; uncertainty reference $U$; action library $L$}
+\KwOut{PredictionResult: status OK with classesByTest and metadata, or status GAP with a reason; the session's own $\eta$ is read, not rebuilt}
+$\textit{raw}\leftarrow$ \IFpred$(\Gamma,\eta,H,U,L)$\;
+\tcp{branch on the backend result tag BEFORE projection; an error sentinel is not a set of observation classes}
+\uIf{$\textit{raw}.\mathrm{tag}=\texttt{GAP}$}{
+  \Return PredictionResult$(\mathrm{status}=\texttt{GAP},\mathrm{reason}=\textit{raw}.\mathrm{reason})$; \tcp{the gap stays TEST-scoped and does not forbid eligible Prep/Recover}
 }
-\Return $\mathcal{C}$, carrying the explicit gap status rather than defaulting the backend result to the empty set\;
+$\textit{classes}\leftarrow\textsc{ProjectOntoCurrentH}(\textit{raw}.\mathrm{classes},H)$; \tcp{an empty projection from an excluded hypothesis is not a surviving $score=0$ class}
+\Return PredictionResult$(\mathrm{status}=\texttt{OK},\mathrm{classesByTest}=\textit{classes},\mathrm{historyVersionUsed}=\eta.\mathrm{version},\mathrm{uncertaintyRef}=U)$\;
 \end{algorithm}

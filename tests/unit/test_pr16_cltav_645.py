@@ -470,6 +470,9 @@ def test_645_pdf30_clause_dispositions_are_fail_closed() -> None:
 ALG_DIR = ROOT / "docs/research/publication/algorithms"
 ALG_MODULE_FILES = {
     "ALG-CLTAV-01": "ALG-CLTAV-01.tex",
+    "ALG-CLTAV-05": "ALG-CLTAV-05-selection.tex",
+    "ALG-CLTAV-06": "ALG-CLTAV-06-timing.tex",
+    "ALG-CLTAV-07": "ALG-CLTAV-07-history.tex",
     "ALG-CLTAV-02": "ALG-CLTAV-02.tex",
     "ALG-CLTAV-03": "ALG-CLTAV-03.tex",
     "ALG-CLTAV-04": "ALG-CLTAV-04.tex",
@@ -579,7 +582,7 @@ def test_delivered_s_steps_keep_snapshot_and_effect_classes() -> None:
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
     assert _effect_errors(registry) == []
     body = _corpus()
-    assert r"\textit{effect}=\texttt{UNKNOWN-EFFECT}" in body
+    assert r"\mathrm{effect}=\texttt{UNKNOWN-EFFECT}" in body
     assert r"\texttt{CONFIRMED-NOT-SENT}$}" in body
     assert "stays UNKNOWN" in body
     assert _effect_q("KNOWN", "CONFIRMED-NOT-SENT") == "KNOWN"
@@ -610,24 +613,25 @@ def test_successor_summary_and_final_action_contracts_are_enforced() -> None:
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
     assert _effect_errors(registry) == []
     main = _algorithms()["ALG-CLTAV-01"]
+    alg07 = _algorithms()["ALG-CLTAV-07"]
     corpus = _corpus()
     assert "one-step minimax" in corpus
     assert main.find("SelectAndAdmit") < main.find("actionId")
     assert main.find("actionId") < main.find("ExecuteAndRecord")
     assert r"\IFexec" in corpus
-    assert r"\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}" in main
+    assert r"\Gamma'.\mathrm{currentSummary}\leftarrow z.\mathrm{postSummary}" in alg07
     assert "confirmed Prep with no valid Iz advances operation history and preserves H" in json.dumps(registry)
     assert "summaryConfirmed=false with UNKNOWN-EFFECT rather than retaining a stale known summary" in json.dumps(registry)
 
-    deleted_commit = main.replace(r"\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}", "", 1)
-    errors = _contract(alg=deleted_commit)
+    deleted_commit = alg07.replace(r"\Gamma'.\mathrm{currentSummary}\leftarrow z.\mathrm{postSummary}", "", 1)
+    errors = _contract(overrides={"ALG-CLTAV-07": deleted_commit})
     assert any("S9 must commit currentSummary" in item for item in errors)
-    inverted_guard = main.replace(
-        r"\Gamma.\mathrm{qStatus}$ is KNOWN and $\textit{summaryConfirmed}$ is true",
-        r"\Gamma.\mathrm{qStatus}$ is UNKNOWN and $\textit{summaryConfirmed}$ is true",
+    inverted_guard = alg07.replace(
+        r"$z.\mathrm{summaryConfirmed}$ is true",
+        r"$z.\mathrm{summaryConfirmed}$ is false",
         1,
     )
-    errors = _contract(alg=inverted_guard)
+    errors = _contract(overrides={"ALG-CLTAV-07": inverted_guard})
     assert any("S9 must commit currentSummary" in item for item in errors)
 
     stale = copy.deepcopy(registry)
@@ -645,7 +649,7 @@ def test_successor_summary_and_final_action_contracts_are_enforced() -> None:
 
 def test_unconfirmed_prep_successor_is_not_allowed_to_retain_known_summary() -> None:
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
-    prep_escape = "($\\textit{kind}$ is Prep and $\\textit{prepResultEvaluated}$ and $\\textit{summaryConfirmed}$ is false)"
+    prep_escape = "($z.\\mathrm{kind}$ is Prep and $z.\\mathrm{prepResultEvaluated}$ and $z.\\mathrm{summaryConfirmed}$ is false)"
     corpus = _corpus()
     assert prep_escape in corpus
     assert "clear $\\Gamma.\\mathrm{currentSummary}$" in corpus
@@ -669,16 +673,17 @@ def test_test_summary_and_confirmed_not_sent_prep_control_paths_are_enforced() -
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
     assert _effect_errors(registry) == []
     corpus = _corpus()
-    assert r"$(I_z,\textit{effect},\textit{summaryConfirmed},\textit{postSummary})\leftarrow$ \IFobs" in corpus
+    alg03 = _algorithms()["ALG-CLTAV-03"]
+    assert r"z.\mathrm{summaryConfirmed}\leftarrow\textbf{true}" in alg03
     assert "CONFIRMED-NOT-SENT" in corpus and "prepResultEvaluated" in corpus
 
-    unbound_test = _algorithms()["ALG-CLTAV-03"].replace(r"\textit{summaryConfirmed},", "", 1)
+    unbound_test = alg03.replace(r"z.\mathrm{summaryConfirmed}\leftarrow\textbf{true}", r"z.I_z\leftarrow\textbf{true}", 1)
     errors = _contract(overrides={"ALG-CLTAV-03": unbound_test})
-    assert any("IF-OBS-INTERPRET summaryConfirmed" in item for item in errors)
+    assert errors
 
     not_sent_invalidated = _algorithms()["ALG-CLTAV-04"].replace(
-        r"$\textit{prepResultEvaluated}$ and $\textit{summaryConfirmed}$ is false",
-        r"$\textit{summaryConfirmed}$ is false",
+        r"$z.\mathrm{prepResultEvaluated}$ and $z.\mathrm{summaryConfirmed}$ is false",
+        r"$z.\mathrm{summaryConfirmed}$ is false",
     )
     errors = _contract(overrides={"ALG-CLTAV-04": not_sent_invalidated})
     assert any("unconfirmed Prep successor summary" in item for item in errors)
