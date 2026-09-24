@@ -8,6 +8,10 @@
       "kind": "OWNED-GENERATED-PUBLICATION",
       "trackedSources": [
         "docs/research/publication/algorithms/ALG-CLTAV-01.tex",
+        "docs/research/publication/algorithms/ALG-CLTAV-02.tex",
+        "docs/research/publication/algorithms/ALG-CLTAV-03.tex",
+        "docs/research/publication/algorithms/ALG-CLTAV-04.tex",
+        "docs/research/publication/algorithms/CLTAV_ALGORITHM_APPENDIX.tex",
         "docs/research/publication/algorithms/ALG-CLTAV-01-wrapper.tex"
       ],
       "generator": "XeLaTeX via ALG-CLTAV-01-wrapper.tex",

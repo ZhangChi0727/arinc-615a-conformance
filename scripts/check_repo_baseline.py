@@ -74,6 +74,14 @@ REPORT_PATH = METHODOLOGY_DIR / "RR-2026-001_test_analysis_conformance_methodolo
 METHOD_MATH_IDENTITY_PATH = METHODOLOGY_DIR / "rr_2026_001_revision_identity.json"
 SOURCE_AUDIT_PATH = ROOT / "configs/research/cltav_protocol_source_audit.json"
 CLTAV_PUML_DIR = RESEARCH / "publication" / "models"
+CLTAV_ALGORITHM_DIR = RESEARCH / "publication" / "algorithms"
+CLTAV_ALGORITHM_FILES = {
+    "ALG-CLTAV-01": "ALG-CLTAV-01.tex",
+    "ALG-CLTAV-02": "ALG-CLTAV-02.tex",
+    "ALG-CLTAV-03": "ALG-CLTAV-03.tex",
+    "ALG-CLTAV-04": "ALG-CLTAV-04.tex",
+    "ALG-CLTAV-APPENDIX": "CLTAV_ALGORITHM_APPENDIX.tex",
+}
 CLTAV_PUML_FILES = (
     "FIG-CL-TAV-01-context.puml",
     "FIG-CL-TAV-02-requirement-layers.puml",
@@ -1386,15 +1394,88 @@ def _puml_edges(text: str) -> list[tuple[str, str, str]]:
     return edges
 
 
+# STABLE_INVARIANT: presentation layers and top-level control-flow relations of
+# the CL-TAV algorithm package (DD-036). These are structural, not lifecycle data.
+CLTAV_MODULE_IDS = (
+    "ALG-CLTAV-01",
+    "ALG-CLTAV-02",
+    "ALG-CLTAV-03",
+    "ALG-CLTAV-04",
+    "ALG-CLTAV-APPENDIX",
+)
+CLTAV_MAIN_PROCEDURES = (
+    "Initialize",
+    "EntryStop",
+    "PredictCurrent",
+    "SelectAndAdmit",
+    "FreezeFinalSelection",
+    "ChargeOnce",
+    "ExecuteAndRecord",
+    "InterpretOutcome",
+    "ResolveOutcome",
+    "PostUpdateStop",
+)
+CLTAV_MODULE_PROCEDURES = {
+    "ALG-CLTAV-02": ("PredictCurrent",),
+    "ALG-CLTAV-03": ("InterpretOutcome",),
+    "ALG-CLTAV-04": ("ResolveOutcome",),
+}
+
+
+def _algorithm_bodies(algorithm: str) -> str:
+    """Return every algorithm environment, so a decomposed package is checked as a whole."""
+    return "\n".join(
+        re.findall(r"\\begin\{algorithm\}.*?\\end\{algorithm\}", algorithm, re.S)
+    )
+
+
+def _cltav_presentation_errors(
+    algorithms: dict[str, str], main_body: str,
+) -> list[str]:
+    """Cross-file control-flow relations for the decomposed CL-TAV algorithm package."""
+    errors: list[str] = []
+    positions: list[tuple[int, str]] = []
+    for name in CLTAV_MAIN_PROCEDURES:
+        at = main_body.find(name)
+        if at < 0:
+            errors.append(f"top-level algorithm is missing procedure {name}")
+        else:
+            positions.append((at, name))
+    ordered = [name for _, name in sorted(positions)]
+    if ordered != [name for name in CLTAV_MAIN_PROCEDURES if name in ordered]:
+        errors.append("top-level procedure order differs from the specified control flow")
+    if "Finish" not in main_body:
+        errors.append("top-level algorithm is missing its Finish return")
+    predict = main_body.find("PredictCurrent")
+    select = main_body.find("SelectAndAdmit")
+    if predict < 0 or select < 0 or predict > select:
+        errors.append("PredictCurrent (IF-PRED-OBS) must be called before SelectAndAdmit (IF-SELECT-ADMIT)")
+    for module, procedures in CLTAV_MODULE_PROCEDURES.items():
+        text = algorithms.get(module, "")
+        for procedure in procedures:
+            if procedure not in text:
+                errors.append(f"{module} does not define {procedure}")
+    return errors
+
+
 def cltav_algorithm_contract_errors(
-    algorithm: str,
+    algorithms: "dict[str, str] | str",
     experiment_puml: str,
     experiment_plan: str,
     registry: dict | None = None,
 ) -> list[str]:
-    """Unique interface registry, actual calls, and experiment record edges. Not a fairness proof."""
+    """Registry, cross-file interface calls, top-level control flow and experiment record edges."""
     errors: list[str] = []
+    if isinstance(algorithms, str):
+        algorithms = {"ALG-CLTAV-01": algorithms}
+    corpus = "\n".join(algorithms.values())
+    main_text = algorithms.get("ALG-CLTAV-01", "")
+    main_body = _algorithm_bodies(main_text)
+    corpus_bodies = _algorithm_bodies(corpus)
     spec = _load_cltav_registry(registry)
+    declared_modules = spec.get("presentationModules")
+    if declared_modules and set(algorithms) != set(declared_modules):
+        errors.append("algorithm package modules differ from the registry presentationModules")
     interfaces = spec.get("interfaces") or []
     experiment_ifs = spec.get("experimentInterfaces") or []
     if not isinstance(interfaces, list) or not interfaces:
@@ -1426,18 +1507,17 @@ def cltav_algorithm_contract_errors(
     handles = spec.get("sessionHandles") or {}
     if "HistoryHandle" not in handles or "SessionContext" not in handles:
         errors.append("CL-TAV registry is missing SessionContext or HistoryHandle")
-    body = _algorithm_body(algorithm)
     macros = {row.get("macro"): row.get("id") for row in interfaces if isinstance(row, dict) and row.get("macro")}
-    called = set(re.findall(r"\\(IF[a-z]+)", body))
+    called = set(re.findall(r"\\(IF[a-z]+)", corpus_bodies))
     for row in interfaces:
         if not isinstance(row, dict) or row.get("calledInAlgorithm") is not True:
             continue
         contract_id = row.get("id")
         macro = row.get("macro")
         if macro and macro not in called:
-            errors.append(f"main algorithm does not call {contract_id}")
-        if contract_id and contract_id not in algorithm:
-            errors.append(f"main algorithm is missing {contract_id}")
+            errors.append(f"presentation algorithms do not call {contract_id}")
+        if contract_id and contract_id not in corpus:
+            errors.append(f"algorithm package is missing {contract_id}")
         if contract_id and contract_id not in experiment_puml:
             errors.append(f"experiment architecture view is missing {contract_id}")
         if contract_id and contract_id not in experiment_plan:
@@ -1445,18 +1525,15 @@ def cltav_algorithm_contract_errors(
     declared = {row.get("id") for row in interfaces if isinstance(row, dict)} | {
         row.get("id") for row in experiment_ifs if isinstance(row, dict)
     }
-    for token in sorted(set(re.findall(r"IF-[A-Z0-9-]+", algorithm + "\n" + experiment_puml + "\n" + experiment_plan))):
+    for token in sorted(set(re.findall(r"IF-[A-Z0-9-]+", corpus + "\n" + experiment_puml + "\n" + experiment_plan))):
         if token not in declared:
             errors.append(f"undeclared interface call {token}")
-    for token in sorted(set(re.findall(r"IF-[A-Z0-9-]+", body))):
+    for token in sorted(set(re.findall(r"IF-[A-Z0-9-]+", corpus_bodies))):
         if token not in declared:
             errors.append(f"undeclared interface call {token}")
-    pred_pos = body.find("\\IFpred")
-    sel_pos = body.find("\\IFsel")
-    if pred_pos < 0 or sel_pos < 0 or pred_pos > sel_pos:
-        errors.append("IF-PRED-OBS must be called before IF-SELECT-ADMIT")
-    if "HistoryHandle" not in algorithm and r"\eta" not in algorithm:
-        errors.append("main algorithm is missing HistoryHandle")
+    if "HistoryHandle" not in corpus and r"\eta" not in corpus:
+        errors.append("algorithm package is missing HistoryHandle")
+    errors.extend(_cltav_presentation_errors(algorithms, main_body))
     dataflow = spec.get("dataflow") or []
     if not any(row.get("from") == "IF-PRED-OBS" and row.get("to") == "IF-SELECT-ADMIT" for row in dataflow):
         errors.append("registry is missing predict-to-select dataflow")
@@ -1545,27 +1622,42 @@ def cltav_algorithm_contract_errors(
         dens = walk.get("denominators")
         if not isinstance(dens, list) or "attempt" not in dens:
             errors.append(f"{walk_id} must record attempt plus membership denominators")
-    errors.extend(_algorithm_effect_errors(algorithm, dataflow, interfaces, handles.get("SessionContext") or {}))
+    errors.extend(_algorithm_effect_errors(
+        corpus, dataflow, interfaces, handles.get("SessionContext") or {},
+        main_algorithm=main_text,
+    ))
     return errors
 
 
 def _algorithm_effect_errors(
-    algorithm: str, dataflow: list, interfaces: list, session_context: dict | None = None
+    algorithm: str, dataflow: list, interfaces: list, session_context: dict | None = None,
+    main_algorithm: str | None = None,
 ) -> list[str]:
-    """Select-time snapshot, successor summaries, and effect classes match the delivered S steps."""
+    """Select-time snapshot, successor summaries, and effect classes match the delivered S steps.
+
+    ``algorithm`` is the whole decomposed package; ``main_algorithm`` is the
+    top-level file whose body carries the loop order.
+    """
     errors: list[str] = []
-    body = algorithm.split("\\begin{algorithm}", 1)[-1]
+    body = _algorithm_bodies(algorithm)
+    main_body = _algorithm_bodies(main_algorithm) if main_algorithm is not None else body
     if "CONFIRMED-NOT-SENT" not in body or "UNKNOWN-EFFECT" not in body:
         errors.append("main algorithm must distinguish CONFIRMED-NOT-SENT from UNKNOWN-EFFECT")
     if "sole writer" not in body:
         errors.append("main algorithm must name the sole writer of KNOWN")
-    snap_at = body.find("qUsedAtSelect")
-    exec_at = body.find("\\IFexec")
-    if snap_at < 0 or exec_at < 0 or snap_at > exec_at:
+    if "qUsedAtSelect" not in main_body:
+        errors.append("top-level algorithm must freeze qUsedAtSelect in the select snapshot")
+    if "\\IFexec" not in body:
+        errors.append("algorithm package must call IF-EXECUTE-RECORD")
+    freeze_at = main_body.find("FreezeFinalSelection")
+    exec_at = main_body.find("ExecuteAndRecord")
+    if freeze_at < 0 or exec_at < 0 or freeze_at > exec_at:
         errors.append("select snapshot must be frozen before IF-EXECUTE-RECORD")
-    minimax_at = body.find("one-step minimax")
-    action_at = body.find("actionId")
-    if minimax_at < 0 or action_at < 0 or minimax_at > action_at:
+    if "one-step minimax" not in body:
+        errors.append("the selection contract must name the one-step minimax rule")
+    select_at = main_body.find("SelectAndAdmit")
+    action_at = main_body.find("actionId")
+    if select_at < 0 or action_at < 0 or select_at > action_at:
         errors.append("SelectSnapshot.actionId must be frozen only after final TEST minimax selection")
     if "t^\\star\\leftarrow" in body:
         errors.append("main algorithm must not replace tStar after IF-SELECT-ADMIT")
@@ -3732,7 +3824,7 @@ def main() -> int:
     errors.extend(governed_source_errors(audit_package, crs_package, m2_package))
     errors.extend(
         cltav_algorithm_contract_errors(
-            read(RESEARCH / "publication" / "algorithms" / "ALG-CLTAV-01.tex"),
+            {module: read(CLTAV_ALGORITHM_DIR / name) for module, name in CLTAV_ALGORITHM_FILES.items()},
             read(CLTAV_PUML_DIR / "FIG-CL-TAV-09-experiment-architecture.puml"),
             read(RESEARCH / "EXPERIMENT_PLAN.md"),
         )

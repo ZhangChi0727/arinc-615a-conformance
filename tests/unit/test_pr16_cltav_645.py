@@ -467,12 +467,47 @@ def test_645_pdf30_clause_dispositions_are_fail_closed() -> None:
     assert any("4.3.2.1" in item for item in baseline.arinc_645_closure_errors(audit, crs, _m2()))
 
 
-def _contract(registry=None, puml=None, plan=None, alg=None):
+ALG_DIR = ROOT / "docs/research/publication/algorithms"
+ALG_MODULE_FILES = {
+    "ALG-CLTAV-01": "ALG-CLTAV-01.tex",
+    "ALG-CLTAV-02": "ALG-CLTAV-02.tex",
+    "ALG-CLTAV-03": "ALG-CLTAV-03.tex",
+    "ALG-CLTAV-04": "ALG-CLTAV-04.tex",
+    "ALG-CLTAV-APPENDIX": "CLTAV_ALGORITHM_APPENDIX.tex",
+}
+
+
+def _algorithms(overrides: dict[str, str] | None = None) -> dict[str, str]:
+    overrides = overrides or {}
+    return {
+        module: overrides.get(module, (ALG_DIR / name).read_text(encoding="utf-8"))
+        for module, name in ALG_MODULE_FILES.items()
+    }
+
+
+def _corpus(overrides: dict[str, str] | None = None) -> str:
+    return "\n".join(_algorithms(overrides).values())
+
+
+def _contract(registry=None, puml=None, plan=None, alg=None, overrides=None):
+    merged = dict(overrides or {})
+    if alg is not None:
+        merged["ALG-CLTAV-01"] = alg
     return baseline.cltav_algorithm_contract_errors(
-        alg if alg is not None else ALG_PATH.read_text(encoding="utf-8"),
+        _algorithms(merged),
         puml if puml is not None else PUML_PATH.read_text(encoding="utf-8"),
         plan if plan is not None else EXP_PLAN.read_text(encoding="utf-8"),
         registry,
+    )
+
+
+def _effect_errors(registry: dict, overrides: dict[str, str] | None = None, main_override=None) -> list[str]:
+    algorithms = _algorithms(overrides)
+    corpus = "\n".join(algorithms.values())
+    main_text = main_override if main_override is not None else algorithms["ALG-CLTAV-01"]
+    return baseline._algorithm_effect_errors(
+        corpus, registry["dataflow"], registry["interfaces"],
+        registry["sessionHandles"]["SessionContext"], main_algorithm=main_text,
     )
 
 
@@ -541,16 +576,12 @@ def _effect_q(q: str, effect: str, *, prep_err: bool = False, unconfirmed: bool 
 
 
 def test_delivered_s_steps_keep_snapshot_and_effect_classes() -> None:
-    tex = ALG_PATH.read_text(encoding="utf-8")
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
-    assert baseline._algorithm_effect_errors(
-        tex, registry["dataflow"], registry["interfaces"], registry["sessionHandles"]["SessionContext"]
-    ) == []
-    body = tex.split("\\begin{algorithm}", 1)[1]
-    invalidate = body.find(r"\textit{effect}=\texttt{UNKNOWN-EFFECT}")
-    keep = body.find(r"\texttt{CONFIRMED-NOT-SENT}$}")
-    stay = body.find("stays UNKNOWN")
-    assert 0 <= invalidate < keep < stay
+    assert _effect_errors(registry) == []
+    body = _corpus()
+    assert r"\textit{effect}=\texttt{UNKNOWN-EFFECT}" in body
+    assert r"\texttt{CONFIRMED-NOT-SENT}$}" in body
+    assert "stays UNKNOWN" in body
     assert _effect_q("KNOWN", "CONFIRMED-NOT-SENT") == "KNOWN"
     assert _effect_q("UNKNOWN", "NONE", unconfirmed=True) == "UNKNOWN"
     assert _effect_q("KNOWN", "UNKNOWN-EFFECT") == "UNKNOWN"
@@ -577,20 +608,21 @@ def test_delivered_s_steps_keep_snapshot_and_effect_classes() -> None:
 def test_successor_summary_and_final_action_contracts_are_enforced() -> None:
     """R29: next iteration consumes confirmed q1; snapshot names the executed final action."""
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
-    tex = ALG_PATH.read_text(encoding="utf-8")
-    assert baseline._algorithm_effect_errors(
-        tex, registry["dataflow"], registry["interfaces"], registry["sessionHandles"]["SessionContext"]
-    ) == []
-    body = tex.split(r"\begin{algorithm}", 1)[1]
-    assert body.find("one-step minimax") < body.find("actionId") < body.find(r"\IFexec")
-    assert r"\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}" in body
+    assert _effect_errors(registry) == []
+    main = _algorithms()["ALG-CLTAV-01"]
+    corpus = _corpus()
+    assert "one-step minimax" in corpus
+    assert main.find("SelectAndAdmit") < main.find("actionId")
+    assert main.find("actionId") < main.find("ExecuteAndRecord")
+    assert r"\IFexec" in corpus
+    assert r"\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}" in main
     assert "confirmed Prep with no valid Iz advances operation history and preserves H" in json.dumps(registry)
     assert "summaryConfirmed=false with UNKNOWN-EFFECT rather than retaining a stale known summary" in json.dumps(registry)
 
-    deleted_commit = tex.replace(r"\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}", "", 1)
+    deleted_commit = main.replace(r"\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}", "", 1)
     errors = _contract(alg=deleted_commit)
     assert any("S9 must commit currentSummary" in item for item in errors)
-    inverted_guard = tex.replace(
+    inverted_guard = main.replace(
         r"\Gamma.\mathrm{qStatus}$ is KNOWN and $\textit{summaryConfirmed}$ is true",
         r"\Gamma.\mathrm{qStatus}$ is UNKNOWN and $\textit{summaryConfirmed}$ is true",
         1,
@@ -606,24 +638,23 @@ def test_successor_summary_and_final_action_contracts_are_enforced() -> None:
     errors = _contract(stale)
     assert any("IF-OBS-INTERPRET postSummary" in item for item in errors)
 
-    early_snapshot = tex.replace("one-step minimax", "actionId early one-step minimax", 1)
-    errors = baseline._algorithm_effect_errors(
-        early_snapshot, registry["dataflow"], registry["interfaces"], registry["sessionHandles"]["SessionContext"]
-    )
+    early_snapshot = main.replace("SelectAndAdmit", "actionId SelectAndAdmit", 1)
+    errors = _effect_errors(registry, main_override=early_snapshot)
     assert any("actionId" in item for item in errors)
 
 
 def test_unconfirmed_prep_successor_is_not_allowed_to_retain_known_summary() -> None:
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
-    tex = ALG_PATH.read_text(encoding="utf-8")
-    assert "($\\textit{kind}$ is Prep and $\\textit{prepResultEvaluated}$ and $\\textit{summaryConfirmed}$ is false)" in tex
-    assert "clear $\\Gamma.\\mathrm{currentSummary}$" in tex
+    prep_escape = "($\\textit{kind}$ is Prep and $\\textit{prepResultEvaluated}$ and $\\textit{summaryConfirmed}$ is false)"
+    corpus = _corpus()
+    assert prep_escape in corpus
+    assert "clear $\\Gamma.\\mathrm{currentSummary}$" in corpus
     prep = next(row for row in registry["interfaces"] if row["id"] == "IF-PREP-RECOVER")
     assert {"targetConfirmed", "summaryConfirmed", "postSummary"}.issubset(prep["outputs"])
     assert "targetConfirmed=false may coexist with summaryConfirmed=true for Prep" in prep["guarantee"]
 
-    escaping = tex.replace("($\\textit{kind}$ is Prep and $\\textit{prepResultEvaluated}$ and $\\textit{summaryConfirmed}$ is false) or ", "", 1)
-    errors = _contract(alg=escaping)
+    escaping = _algorithms()["ALG-CLTAV-04"].replace(prep_escape, r"\textit{false}")
+    errors = _contract(overrides={"ALG-CLTAV-04": escaping})
     assert any("unconfirmed Prep successor summary" in item for item in errors)
 
     ambiguous = copy.deepcopy(registry)
@@ -636,23 +667,20 @@ def test_unconfirmed_prep_successor_is_not_allowed_to_retain_known_summary() -> 
 def test_test_summary_and_confirmed_not_sent_prep_control_paths_are_enforced() -> None:
     """R31: TEST binds q1; not-sent Prep cannot turn default false into UNKNOWN."""
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
-    tex = ALG_PATH.read_text(encoding="utf-8")
-    assert baseline._algorithm_effect_errors(
-        tex, registry["dataflow"], registry["interfaces"], registry["sessionHandles"]["SessionContext"]
-    ) == []
-    assert r"$(I_z,\textit{effect},\textit{summaryConfirmed},\textit{postSummary})\leftarrow$ \IFobs" in tex
-    assert "CONFIRMED-NOT-SENT" in tex and "prepResultEvaluated" in tex
+    assert _effect_errors(registry) == []
+    corpus = _corpus()
+    assert r"$(I_z,\textit{effect},\textit{summaryConfirmed},\textit{postSummary})\leftarrow$ \IFobs" in corpus
+    assert "CONFIRMED-NOT-SENT" in corpus and "prepResultEvaluated" in corpus
 
-    unbound_test = tex.replace(r"\textit{summaryConfirmed},", "", 1)
-    errors = _contract(alg=unbound_test)
+    unbound_test = _algorithms()["ALG-CLTAV-03"].replace(r"\textit{summaryConfirmed},", "", 1)
+    errors = _contract(overrides={"ALG-CLTAV-03": unbound_test})
     assert any("IF-OBS-INTERPRET summaryConfirmed" in item for item in errors)
 
-    not_sent_invalidated = tex.replace(
+    not_sent_invalidated = _algorithms()["ALG-CLTAV-04"].replace(
         r"$\textit{prepResultEvaluated}$ and $\textit{summaryConfirmed}$ is false",
         r"$\textit{summaryConfirmed}$ is false",
-        2,
     )
-    errors = _contract(alg=not_sent_invalidated)
+    errors = _contract(overrides={"ALG-CLTAV-04": not_sent_invalidated})
     assert any("unconfirmed Prep successor summary" in item for item in errors)
 
 

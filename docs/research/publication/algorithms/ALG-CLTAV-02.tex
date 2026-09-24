@@ -1,0 +1,21 @@
+% ALG-CLTAV-02 â€” current-observation prediction wrapper (S2 of ALG-CLTAV-01).
+% Presentation of DD-029 / DD-033 / DD-036. Not a solver choice.
+% The finite conservative prediction backend is neither implemented nor selected
+% here; its return contract is recorded in the appendix and in the registry.
+\begin{algorithm}[ht]
+\caption{\textsc{PredictCurrent}: current-observation prediction wrapper (ALG-CLTAV-02, S2)}
+\label{alg:cltav-02}
+\SetKwInput{KwIn}{Require}
+\SetKwInput{KwOut}{Ensure}
+\KwIn{SessionContext $\Gamma$; HistoryHandle $\eta$; current $H$; action library; common measurement uncertainty}
+\KwOut{currently valid nonempty observation classes $\mathcal{C}$, or a named PredictionGapError; the session's own $\eta$ is read, not rebuilt}
+\tcp{read the current session summary only while it is known; do not rebuild $H_0$}
+$\textit{classes}\leftarrow$ \IFpred$(\Gamma,\eta,H,\text{uncertainty},\text{library})$\;
+\tcp{project declared classes onto current $H$; an empty class from an excluded hypothesis is not a surviving $score=0$ class}
+$\mathcal{C}\leftarrow\textsc{ProjectOntoCurrentH}(\textit{classes},H)$\;
+\uIf{$\mathcal{C}$ has no nonempty member}{
+  \tcp{no currently valid class: a named prediction-gap; this is TEST-scoped and does not by itself block eligible Recover or Prep}
+  \Return PredictionGapError\;
+}
+\Return $\mathcal{C}$, carrying the explicit gap status rather than defaulting the backend result to the empty set\;
+\end{algorithm}
