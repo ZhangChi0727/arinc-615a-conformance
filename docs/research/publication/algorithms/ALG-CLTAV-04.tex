@@ -1,28 +1,29 @@
 % ALG-CLTAV-04 — ERROR, retry and confirmed recovery (S7-S8 of ALG-CLTAV-01).
-% Presentation of DD-029 / DD-033 / DD-036. Returns a total Resolution record;
+% Presentation of DD-029 / DD-033 / DD-036. Returns a total Resolution record.
 % COMMIT/RETRY/STOP are internal control classes, not new paper stop families.
 \begin{algorithm}[H]
 \caption{\textsc{ResolveOutcome}: ERROR, retry and confirmed recovery (ALG-CLTAV-04, S7--S8)}
 \label{alg:cltav-04}
 \SetKwInput{KwIn}{Require}
 \SetKwInput{KwOut}{Ensure}
-\KwIn{Outcome $z$; SelectSnapshot $\xi$; $\Gamma$; $\eta$}
-\KwOut{Resolution $\delta$: control COMMIT / RETRY / STOP with updated $\Gamma,\eta$, the normalized Outcome, and a stop reason when STOP}
-\uIf{$z.\mathrm{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$ or $z.\mathrm{prepErr}$ or ($z.\mathrm{kind}$ is Prep and $z.\mathrm{prepResultEvaluated}$ and $z.\mathrm{summaryConfirmed}$ is false) or ($\xi.\mathrm{actionId}$ is Recover and $z.\mathrm{prepResultEvaluated}$ and $z.\mathrm{targetConfirmed}$ is false)}{
-  \tcp{\textbf{S7} classify the effect; do not fold \texttt{CONFIRMED-NOT-SENT} into UNKNOWN}
+\KwIn{Outcome $z$ (effect, kind, validity, confirmation); SelectSnapshot $\xi$; $\Gamma$; $\eta$}
+\KwOut{Resolution $\delta=(\mathrm{control},\Gamma',\eta',\mathrm{outcome},\mathrm{reason})$: $\Gamma'$ initialized from $\Gamma$}
+$\Gamma'\leftarrow\Gamma$; $\eta'\leftarrow\eta$; \tcp{copy/persist semantics: the returned contexts are total, never undefined}\;
+\uIf{$z.\mathrm{validity}=\mathrm{ERROR}$ or $z.\mathrm{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$ or $z.\mathrm{prepErr}$ or ($z.\mathrm{kind}$ is Prep and $z.\mathrm{prepResultEvaluated}$ and $z.\mathrm{summaryConfirmed}$ is false) or ($z.\mathrm{kind}$ is Recover and $z.\mathrm{prepResultEvaluated}$ and $z.\mathrm{targetConfirmed}$ is false)}{
+  \tcp{\textbf{S7} classify by kind and evaluated confirmation; do not fold \texttt{CONFIRMED-NOT-SENT} into UNKNOWN}
   do not exclude $H$\;
-  \uIf{$z.\mathrm{prepErr}$ or $z.\mathrm{effect}=\texttt{UNKNOWN-EFFECT}$ or ($z.\mathrm{kind}$ is Prep and $z.\mathrm{prepResultEvaluated}$ and $z.\mathrm{summaryConfirmed}$ is false)}{
-    mark $\eta$ conservative-unknown; $\Gamma.\mathrm{qStatus}\leftarrow\texttt{UNKNOWN}$; clear $\Gamma.\mathrm{currentSummary}$\;
+  \uIf{$z.\mathrm{validity}=\mathrm{ERROR}$ or $z.\mathrm{prepErr}$ or $z.\mathrm{effect}=\texttt{UNKNOWN-EFFECT}$ or ($z.\mathrm{kind}$ is Prep and $z.\mathrm{prepResultEvaluated}$ and $z.\mathrm{summaryConfirmed}$ is false)}{
+    mark $\eta'$ conservative-unknown; $\Gamma'.\mathrm{qStatus}\leftarrow\texttt{UNKNOWN}$; clear $\Gamma'.\mathrm{currentSummary}$\;
   }
-  \uElseIf{$z.\mathrm{effect}=\texttt{CONFIRMED-NOT-SENT}$}{leave $\Gamma.\mathrm{qStatus}$ and compatible history unchanged\;}
-  \Else{$\Gamma.\mathrm{qStatus}$ stays UNKNOWN; clear $\Gamma.\mathrm{currentSummary}$; mark $\eta$ conservative-unknown\; \tcp{unconfirmed Recover target}}
-  $\Gamma.\mathrm{retryCount}\leftarrow\Gamma.\mathrm{retryCount}+1$\;
-  \lIf{$\Gamma.\mathrm{retryCount}\ge\Gamma.\mathrm{retryCap}$}{\Return Resolution$(\mathrm{control}=\texttt{STOP},\mathrm{reason}=\text{Stop-Error},\Gamma,\eta,z)$; not Stop-Budget\;}
-  \Return Resolution$(\mathrm{control}=\texttt{RETRY},\Gamma,\eta,z)$; \tcp{an ERROR/unknown outcome reaches retry, never commit}
+  \uElseIf{$z.\mathrm{effect}=\texttt{CONFIRMED-NOT-SENT}$}{leave $\Gamma'.\mathrm{qStatus}$ and compatible history unchanged\;}
+  \Else{$\Gamma'.\mathrm{qStatus}$ stays UNKNOWN; clear $\Gamma'.\mathrm{currentSummary}$; mark $\eta'$ conservative-unknown\; \tcp{unconfirmed Recover target}}
+  $\Gamma'.\mathrm{retryCount}\leftarrow\Gamma.\mathrm{retryCount}+1$\;
+  \lIf{$\Gamma'.\mathrm{retryCount}\ge\Gamma'.\mathrm{retryCap}$}{\Return Resolution$(\mathrm{control}=\texttt{STOP},\Gamma',\eta',z,\mathrm{reason}=\text{Stop-Error})$; not Stop-Budget\;}
+  \Return Resolution$(\mathrm{control}=\texttt{RETRY},\Gamma',\eta',z)$; \tcp{an ERROR/unknown outcome reaches retry, never commit}
 }
-\uElseIf{$\xi.\mathrm{actionId}$ is Recover}{
-  \tcp{\textbf{S8} sole writer of KNOWN; the normalized successor summary is returned to S9}
-  $\Gamma.\mathrm{qStatus}\leftarrow\texttt{KNOWN}$; $z.\mathrm{postSummary}\leftarrow(z.\mathrm{declaredTarget},z.\mathrm{evidence})$\;
+\uElseIf{$z.\mathrm{kind}$ is Recover}{
+  \tcp{\textbf{S8} a confirmed Recover is a necessary condition for this branch; sole writer of KNOWN; the normalized summary returns to S9}
+  $\Gamma'.\mathrm{qStatus}\leftarrow\texttt{KNOWN}$; $z.\mathrm{postSummary}\leftarrow(z.\mathrm{declaredTarget},z.\mathrm{evidence})$\;
 }
-\Return Resolution$(\mathrm{control}=\texttt{COMMIT},\Gamma,\eta,z)$; \tcp{the normalized Outcome carries the confirmed postSummary to S9}
+\Return Resolution$(\mathrm{control}=\texttt{COMMIT},\Gamma',\eta',z)$; \tcp{a normal TEST/Prep with a valid observation commits; the normalized Outcome carries the confirmed postSummary to S9}
 \end{algorithm}

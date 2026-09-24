@@ -92,7 +92,7 @@
       "macro": "IFobs",
       "calledInAlgorithm": true,
       "inputs": ["SessionContext", "executionRecord", "clocks", "epsilon"],
-      "outputs": ["Iz", "effectClass", "summaryConfirmed", "postSummary"],
+      "outputs": ["Iz", "effectClass", "summaryConfirmed", "postSummary", "ownershipResult", "measurementInterval"],
       "effectClassValues": ["NONE", "CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"],
       "pre": "record belongs to this session",
       "guarantee": "T5 interval treatment; pairing per method 3.6; every normal observation returns explicit summaryConfirmed with its postSummary. A normal confirmed observation returns summaryConfirmed=true and a confirmed successor postSummary, possibly unchanged",

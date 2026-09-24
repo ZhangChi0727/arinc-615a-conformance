@@ -7,46 +7,52 @@
 
 Records are explicit. An optional field is a tagged alternative, never an
 uninitialized variable; \texttt{NONE} (absent) differs from a tagged \emph{false}
-and from an empty set.
+and from an empty set. Every producer, consumer and sole writer is fixed here.
 
 \begin{table}[H]
 \centering
 \small
 \begin{tabular}{@{}p{3.0cm}p{12.4cm}@{}}
 \hline
-Record & Required fields \\
+Record & Fields (producer $\to$ consumer) \\
 \hline
-PredictionResult & status OK$\vert$GAP; reason (GAP); classesByTest (OK); historyVersionUsed; uncertaintyRef. An error tag is not a class collection. \\
-Decision & kind ACTION$\vert$EXIT$\vert$SPEC-ERROR; actionId, actionKind, classesUsed (ACTION); reason (EXIT/SPEC-ERROR). No fabricated action on an exit. \\
-SelectSnapshot $\xi$ & actionId; kind; qUsedAtSelect; historyVersionUsedAtSelect; classesUsedAtSelect; uncertaintyRef. Frozen after the final action choice. \\
-ExecutionResult & attemptId; record; effect $\in$ \{NONE, CONFIRMED-NOT-SENT, UNKNOWN-EFFECT\}; correlationId. The three effects are mutually exclusive. \\
-Outcome $z$ & validity; $I_z$ (valid) or NONE; summaryConfirmed; postSummary or NONE; prepResultEvaluated; targetConfirmed; prepErr or NONE; declaredTarget or NONE; evidence or NONE; timing. Total: every field initialized. \\
-Resolution $\delta$ & control COMMIT$\vert$RETRY$\vert$STOP; $\Gamma$; $\eta$; normalized Outcome; reason (STOP). Only the matching variant consumes its fields. \\
+PredictionResult & status OK$\vert$GAP; reason (GAP); classesByTest (OK only); historyVersionUsed; uncertaintyRef. A GAP result carries no classesByTest. Producer ALG-02 $\to$ consumer ALG-05. \\
+Decision & kind ACTION$\vert$EXIT$\vert$SPEC-ERROR; actionKind TEST$\vert$PREP$\vert$RECOVER (ACTION only); actionId, classesUsed (ACTION only); reason (EXIT/SPEC-ERROR). Producer ALG-05 $\to$ consumer ALG-01. \\
+SelectSnapshot $\xi$ & actionId; actionKind (from the Decision actionKind, never the ACTION/EXIT discriminant); qUsedAtSelect; historyVersion; classesUsedAtSelect; uncertaintyRef. Frozen by ALG-01 after the final action. \\
+ExecutionResult & attemptId; record; effect $\in$ \{NONE, CONFIRMED-NOT-SENT, UNKNOWN-EFFECT\}; correlationId. Producer ALG-01 $\to$ consumer ALG-03. \\
+Outcome $z$ & validity; effect (copied from ExecutionResult); kind (copied from $\xi.\mathrm{actionKind}$); actionId; $I_z$ (valid) or NONE; summaryConfirmed; postSummary or NONE; prepResultEvaluated; targetConfirmed; prepErr or NONE; declaredTarget or NONE; evidence or NONE; timing. Total. Producer ALG-03 $\to$ consumer ALG-04/ALG-07. \\
+Resolution $\delta$ & control COMMIT$\vert$RETRY$\vert$STOP; $\Gamma'$; $\eta'$; outcome (normalized); reason (STOP). $\Gamma'$ is initialized from $\Gamma$. Producer ALG-04 $\to$ consumer ALG-01. \\
 \hline
 \end{tabular}
 \end{table}
 
-\tnoindent Distinct concepts that must not be conflated: an unevaluated
+\noindent Distinct concepts that must not be conflated: an unevaluated
 confirmation (NOT-EVALUATED) is not an evaluated \emph{false}; no observation is
 not a legitimate-but-empty compatibility class; \texttt{ERROR} is not an IUT
 \texttt{FAIL}; an unknown summary is not the old summary. $H$ and $\eta.H$ are one
 logical candidate object; \texttt{qUsedAtSelect} is not the post-effect
-\texttt{currentSummary}.
+\texttt{currentSummary}. The action \emph{kind} (TEST/PREP/RECOVER) is separate
+from the action \emph{id}; recovery is never recognized by requiring a particular
+id string.
 
 \section*{Appendix B. Coordination wrappers (S2, S6, S7--S8)}
 \label{app:cltav-coordination}
 
-\textsc{PredictCurrent} (ALG-CLTAV-02, S2) branches on the backend tag before any
-projection, so a \texttt{PredictionGapError} never becomes an empty class
-collection; the gap stays TEST-scoped and does not by itself block eligible
-Prep/Recover. \textsc{InterpretOutcome} (ALG-CLTAV-03, S6) initializes a total
-Outcome, calls the timed-observation kernel (ALG-CLTAV-06) and the existing
-confirmation interface, and writes nothing. \textsc{ResolveOutcome} (ALG-CLTAV-04,
-S7--S8) returns a total Resolution: an ERROR/unknown outcome returns
-\texttt{RETRY}, only a confirmed Recover returns \texttt{COMMIT}, and the retry cap
-returns \texttt{STOP} (Stop-Error, not Stop-Budget). S8 is the sole writer of
-KNOWN; S9 is the sole commit of the confirmed successor summary. No module path
-starts the next prediction after a return; only S9 does.
+\textsc{PredictCurrent} (ALG-CLTAV-02, S2) branches on the backend tag before
+reading or projecting classes and re-tags a projection that yields no nonempty
+class as the same named gap, so a gap never becomes an empty class collection or
+a score of zero; the gap stays TEST-scoped and does not by itself block eligible
+Prep/Recover. \textsc{InterpretOutcome} (ALG-CLTAV-03, S6) copies the executed
+effect and the snapshot kind into a total Outcome, calls IF-OBS-INTERPRET and the
+timed kernel ALG-CLTAV-06, and propagates an interpretation ERROR to S7 instead
+of a confirmed summary; it writes nothing. \textsc{ResolveOutcome} (ALG-CLTAV-04,
+S7--S8) returns a total Resolution initialized from $\Gamma$: an ERROR/unknown or
+unconfirmed outcome returns \texttt{RETRY}, a confirmed Recover returns
+\texttt{COMMIT} and is the sole writer of KNOWN, a normal TEST/Prep with a valid
+observation also commits, and the retry cap returns \texttt{STOP} (Stop-Error, not
+Stop-Budget). S9 is the sole commit of the confirmed successor summary, under the
+guard enforced by ALG-CLTAV-01. No module path starts the next prediction after a
+return; only S9 does.
 
 \section*{Appendix C. Responsibility map and decision tables}
 \label{app:cltav-tables}
@@ -54,20 +60,20 @@ starts the next prediction after a return; only S9 does.
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{@{}p{3.0cm}p{3.2cm}p{4.2cm}p{5.0cm}@{}}
+\begin{tabular}{@{}p{4.4cm}p{2.6cm}p{4.0cm}p{4.4cm}@{}}
 \hline
 Procedure & S duty & Interface / rule & Write responsibility / exit \\
 \hline
 Initialize & S0 & sets $\Gamma,\eta,H$, resource mode, retry, $U$ & writes $\Gamma,\eta,H$ \\
 EntryStop / PostUpdateStop & S1, S10 & \texttt{IF-RESOURCE-STOP}, \texttt{IF-EQUIV} & read-only; exclusive A2--A5 / P1--P5 \\
-PredictCurrent & S2 & \texttt{IF-PRED-OBS} & read-only; GAP tag \\
+PredictCurrent & S2 & \texttt{IF-PRED-OBS} & read-only; tagged OK/GAP \\
 SelectAndAdmit & S3 & \texttt{IF-SELECT-ADMIT} & read-only; ACTION / EXIT / SPEC-ERROR \\
 SelectSnapshot & S3 & freezes $\xi$ & writes the iteration snapshot only \\
 ChargeOnce & S4 & one charge under the mode & billed count only \\
 ExecuteAndRecord & S5 & \texttt{IF-EXECUTE-RECORD} & writes the execution record \\
 InterpretOutcome & S6 & \texttt{IF-OBS-INTERPRET}, \texttt{IF-PREP-RECOVER}, ALG-06 & returns values only \\
-ResolveOutcome & S7--S8 & classification, retry, KNOWN & writes $\Gamma,\eta$; S8 KNOWN \\
-CommitCompatibleUpdate & S9 & \texttt{IF-HIST-UPDATE} & writes $\eta,H$, commits summary \\
+ResolveOutcome & S7--S8 & classification, retry, KNOWN & writes $\Gamma',\eta'$; S8 KNOWN \\
+CommitCompatibleUpdate & S9 & \texttt{IF-HIST-UPDATE} & writes $\eta',H'$, commits summary \\
 \hline
 \end{tabular}
 \end{table}
@@ -76,7 +82,7 @@ CommitCompatibleUpdate & S9 & \texttt{IF-HIST-UPDATE} & writes $\eta,H$, commits
 \centering
 \small
 \begin{minipage}[t]{0.48\textwidth}
-\begin{tabular}{@{}ll@{}}
+\begin{tabular}{@{}l p{0.34\textwidth}@{}}
 \hline
 Admit & Meaning \\
 \hline
@@ -89,7 +95,7 @@ A5 & UNKNOWN: Recover eligible, unaffordable: Stop-Budget \\
 \end{tabular}
 \end{minipage}\hfill
 \begin{minipage}[t]{0.48\textwidth}
-\begin{tabular}{@{}ll@{}}
+\begin{tabular}{@{}l p{0.34\textwidth}@{}}
 \hline
 Stop & Priority \\
 \hline
@@ -114,24 +120,25 @@ kernel or continuous-time discrete grid is introduced.
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{@{}p{3.4cm}p{4.6cm}p{3.4cm}p{3.6cm}@{}}
+\begin{tabular}{@{}p{4.4cm}p{3.9cm}p{3.6cm}p{3.4cm}@{}}
 \hline
 Module & Abstract kernel & Input / output / failure & Successor gate \\
 \hline
-PredictCurrent & finite conservative observation abstract and partition & classesByTest or GAP & estimator/partition algorithm \\
-IF-HIST-UPDATE & whole-history compatible-state representation and solver & snapshot + $I_z$ $\to$ next history; version conflict is a spec error & state/clock representation and solver \\
-InterpretTimedObservation & event collection and clock error budget & record $\to$ TimingResult; invalid measurement is ERROR & collectors and timestamp handling \\
-InterpretOutcome & successor-summary confirmation & record + $\xi$ $\to$ Outcome & protocol confirmation contract \\
-IF-PREP-RECOVER & device recovery & returns values only & protocol/device recovery steps \\
+PredictCurrent & finite conservative observation abstract and partition & classes or tagged GAP & estimator/partition algorithm \\
+IF-HIST-UPDATE & whole-history compatible-state representation and solver & snapshot + $I_z$ $\to$ $H_c,\eta_c$; version/intersection mismatch is a spec error & state/clock representation and solver \\
+InterpretTimedObservation & event collection, clock error budget, pairing & ownership + interval $\to$ TimingResult; empty domain is ERROR & collectors and timestamp handling \\
+IF-OBS-INTERPRET & correlation, ownership, interval validity, compatible $I_z$ & record $\to$ $I_z$, effect, summary, ownership, interval & collectors and interval solver \\
+IF-PREP-RECOVER & device recovery and confirmation & returns values only & protocol/device recovery steps \\
 IF-EQUIV & provable equivalence decision & established or unknown & optional proof algorithm; not required this round \\
 ExecuteAndRecord & protocol execution adapter, timeout, I/O & admitted action $\to$ ExecutionResult & protocol adapter and I/O \\
 \hline
 \end{tabular}
 \end{table}
 
-Successor order: development-ready requirements/interface acceptance $\to$ core
-algorithm selection/implementation $\to$ component verification $\to$
-configuration and experiment gates $\to$ confirmatory experiment. None of these
+{\sloppy Successor order: development-ready requirements and interface
+acceptance; then core algorithm selection and implementation; then component
+verification; then configuration and experiment gates; then confirmatory
+experiment.} None of these
 backends is implemented here. Specification logic is reviewable from this
 package; a stub walk-through is reproducible from the bounded session-loop spec;
 the real tool and confirmatory experiment are not implemented. Wrapper code and

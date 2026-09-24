@@ -6,17 +6,20 @@
 \label{alg:cltav-07}
 \SetKwInput{KwIn}{Require}
 \SetKwInput{KwOut}{Ensure}
-\KwIn{SelectSnapshot $\xi$; normalized Outcome $z$ from the resolving module; $\Gamma$; $\eta$; $H$}
-\KwOut{successor $\eta'$, $H'$ and, under the guard, the committed $\Gamma'.\mathrm{currentSummary}$; or a named spec error}
-\tcp{only reached under the existing S9 guard (a valid observation class or a confirmed successor summary); ERROR is not fed here as an empty observation}
-\If{$z.I_z$ is a valid observation class}{
-  $H'\leftarrow H\cap z.I_z$; \tcp{intersection, never $H\leftarrow z.I_z$; no resurrection of a removed hypothesis}
-} \Else {
-  $H'\leftarrow H$; \tcp{a confirmed Prep with no valid $I_z$ advances history but preserves $H$}
+\KwIn{SelectSnapshot $\xi$; normalized Outcome $z$ from the resolving module; $\Gamma$; $\eta$; $H$; precondition enforced by the caller ALG-CLTAV-01: the S9 guard holds (a valid observation class or a confirmed successor summary)}
+\KwOut{successor $\eta'$, $H'$ and the committed $\Gamma'.\mathrm{currentSummary}$; or a named spec error}
+$\Gamma'\leftarrow\Gamma$; \tcp{$\Gamma'$ is a copy of $\Gamma$; no field is left undefined}\;
+\uIf{$z.I_z$ is a valid observation class}{
+  $(\eta_c,H_c)\leftarrow$ \IFhist$(\eta,H,\xi.\mathrm{actionId},\xi.\mathrm{qUsedAtSelect},\xi.\mathrm{classesUsedAtSelect},\xi.\mathrm{historyVersion},z.I_z,z.\mathrm{postSummary})$\;
+  \tcp{IF-HIST-UPDATE is the sole history writer; it must agree with the intersection and the snapshot version}
+  \lIf{$H_c\neq H\cap z.I_z$}{\Return SPEC-ERROR; version or intersection mismatch; never overwrite $H$ with the compatible set\;}
+  $\eta'\leftarrow\eta_c$; $H'\leftarrow H_c$\;
 }
-$(\eta',H')\leftarrow$ \IFhist$(\eta,H,\xi.\mathrm{actionId},\xi.\mathrm{qUsedAtSelect},\xi.\mathrm{classesUsedAtSelect},z.I_z,z.\mathrm{postSummary})$\;
-\tcp{IF-HIST-UPDATE reads the select-time snapshot, not the post-effect summary; whole-history compatibility, not per-round feasibility}
-\If{$\Gamma.\mathrm{qStatus}$ is KNOWN and $z.\mathrm{summaryConfirmed}$ is true and $z.\mathrm{postSummary}$ is confirmed}{
+\Else{
+  $(\eta',H')\leftarrow$ \IFhist$(\eta,H,\xi.\mathrm{actionId},\xi.\mathrm{qUsedAtSelect},\xi.\mathrm{classesUsedAtSelect},\xi.\mathrm{historyVersion},\texttt{NONE},z.\mathrm{postSummary})$; $H'\leftarrow H$\;
+  \tcp{a confirmed successor summary with no valid observation advances history but preserves $H$}
+}
+\If{$\Gamma'.\mathrm{qStatus}$ is KNOWN and $z.\mathrm{summaryConfirmed}$ is true and $z.\mathrm{postSummary}$ is confirmed}{
   $\Gamma'.\mathrm{currentSummary}\leftarrow z.\mathrm{postSummary}$; \tcp{this is the sole commit of the confirmed successor summary}
 }
 \Return $\eta',H',\Gamma'$\;

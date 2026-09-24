@@ -1,26 +1,28 @@
 % ALG-CLTAV-03 — execution/observation coordination (S6 of ALG-CLTAV-01).
-% Presentation of DD-029 / DD-033 / DD-036. Coordinates the timed-observation
-% kernel (ALG-CLTAV-06) and the existing confirmation interface; writes nothing.
+% Presentation of DD-029 / DD-033 / DD-036. Coordinates IF-OBS-INTERPRET, the
+% timed kernel ALG-CLTAV-06 and IF-PREP-RECOVER; writes nothing.
 \begin{algorithm}[H]
 \caption{\textsc{InterpretOutcome}: execution and observation coordination (ALG-CLTAV-03, S6)}
 \label{alg:cltav-03}
 \SetKwInput{KwIn}{Require}
 \SetKwInput{KwOut}{Ensure}
 \KwIn{ExecutionResult $\textit{er}$; SelectSnapshot $\xi$; $\Gamma$; $\eta$; uncertainty reference $U$}
-\KwOut{a total Outcome $z$: every field initialized; skipped confirmation is NOT-EVALUATED, not an evaluated failure}
-\tcp{total record constructor (fields in Appendix A); nothing is left uninitialized}
-$z\leftarrow\textsc{NewOutcome}()$; \tcp{all Outcome fields (Appendix A) initialized to NONE/false, never left uninitialized}\;
+\KwOut{a total Outcome $z$: effect and kind copied explicitly; skipped confirmation is NOT-EVALUATED, not an evaluated false}
+\tcp{total constructor; the executed effect and the snapshot kind are copied, never left to an implicit global}
+$z\leftarrow\textsc{NewOutcome}()$; $z.\mathrm{effect}\leftarrow\textit{er}.\mathrm{effect}$; $z.\mathrm{kind}\leftarrow\xi.\mathrm{actionKind}$; $z.\mathrm{actionId}\leftarrow\xi.\mathrm{actionId}$\;
 \tcp{CONFIRMED-NOT-SENT and UNKNOWN-EFFECT do not call an observation or confirmation interface that did not run}
-\uIf{$\textit{er}.\mathrm{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{
-  $z.\mathrm{validity}\leftarrow\texttt{NONE}$; \tcp{an unset confirmation field is not an evaluated false}
-}
-\uElse{
-  $z.\mathrm{timing}\leftarrow\textsc{InterpretTimedObservation}(\textit{er},\xi,\Gamma,\eta,U)$\;
-  $z.I_z\leftarrow\textsc{CompatibleInterpretation}(\textit{er},\xi,\Gamma)$; $z.\mathrm{summaryConfirmed}\leftarrow\textbf{true}$; $z.\mathrm{postSummary}\leftarrow$ confirmed successor summary; \tcp{a normal TEST binds summaryConfirmed and postSummary explicitly}
-  \If{$\textit{er}.\mathrm{kind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$}{
-    $z.\mathrm{prepResultEvaluated}\leftarrow\textbf{true}$; $(z.\mathrm{targetConfirmed},z.\mathrm{summaryConfirmed},z.\mathrm{prepErr},z.\mathrm{declaredTarget},z.\mathrm{evidence},z.\mathrm{postSummary})\leftarrow$ \IFprep$(\Gamma,\eta,\xi.\mathrm{actionId},\textit{er}.\mathrm{record})$\;
-    \tcp{\IFprep returns values only; it does not write $\Gamma$ or $\eta$; a Prep whose target is unmet may still have a confirmed successor}
-  }
+\uIf{$\textit{er}.\mathrm{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{\Return $z$\;}
+$(I_z,\textit{effectClass},\textit{summaryConfirmed},\textit{postSummary},\mathrm{ownership},\mathrm{measurementInterval})\leftarrow$ \IFobs$(\Gamma,\textit{er}.\mathrm{record},\text{clocks},\varepsilon)$\;
+\tcp{an invalid measurement or an interpretation ERROR is propagated to S7, not turned into a confirmed summary}
+\uIf{$\mathrm{ownership}$ is invalid}{$z.\mathrm{validity}\leftarrow\mathrm{ERROR}$; $z.\mathrm{effect}\leftarrow\texttt{UNKNOWN-EFFECT}$; \Return $z$\;}
+$\mathrm{timing}\leftarrow\textsc{InterpretTimedObservation}(\mathrm{ownership},\mathrm{measurementInterval},\xi,N_r,D_r,\mathrm{Match}_r)$\;
+\uIf{$\mathrm{timing}.\mathrm{verdict}=\mathrm{ERROR}$}{$z.\mathrm{validity}\leftarrow\mathrm{ERROR}$; $z.\mathrm{effect}\leftarrow\texttt{UNKNOWN-EFFECT}$; \Return $z$\;}
+\tcp{consume the interface outputs; a normal TEST binds summaryConfirmed and postSummary explicitly, never by default}
+$z.I_z\leftarrow I_z$; $z.\mathrm{summaryConfirmed}\leftarrow\textit{summaryConfirmed}$; $z.\mathrm{postSummary}\leftarrow\textit{postSummary}$\;
+\lIf{$\textit{effectClass}=\texttt{NONE}$ and not $\textit{summaryConfirmed}$}{$z.\mathrm{effect}\leftarrow\texttt{UNKNOWN-EFFECT}$; the successor summary could not be confirmed\;}
+\If{$\xi.\mathrm{actionKind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$}{
+  $z.\mathrm{prepResultEvaluated}\leftarrow\textbf{true}$; $(z.\mathrm{targetConfirmed},z.\mathrm{summaryConfirmed},z.\mathrm{prepErr},z.\mathrm{declaredTarget},z.\mathrm{evidence},z.\mathrm{postSummary})\leftarrow$ \IFprep$(\Gamma,\eta,\xi.\mathrm{actionId},\textit{er}.\mathrm{record})$\;
+  \tcp{\IFprep returns values only; it does not write $\Gamma$ or $\eta$; a Prep whose target is unmet may still have a confirmed successor}
 }
 \Return $z$; \tcp{values only; all $\Gamma$/$\eta$ writes stay in ALG-CLTAV-04 and S9}
 \end{algorithm}

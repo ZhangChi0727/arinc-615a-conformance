@@ -1469,14 +1469,40 @@ def _cltav_presentation_errors(
 
 
 def _strip_tex_comments(text: str) -> str:
-    """Remove TeX comments so a name kept only in a comment is not an executable call."""
-    return re.sub(r"(?<!\\)%.*", "", text)
+    """Remove TeX and algorithm2e comments so a name kept only in a comment is not a call."""
+    text = re.sub(r"(?<!\\)%.*", "", text)
+    pattern = re.compile(r"\\tcp\*?|\\tcc\*?")
+    out: list[str] = []
+    index = 0
+    while index < len(text):
+        match = pattern.search(text, index)
+        if not match:
+            out.append(text[index:])
+            break
+        out.append(text[index:match.start()])
+        cursor = match.end()
+        while cursor < len(text) and text[cursor] in " \t":
+            cursor += 1
+        if cursor < len(text) and text[cursor] == "{":
+            depth = 0
+            while cursor < len(text):
+                if text[cursor] == "{":
+                    depth += 1
+                elif text[cursor] == "}":
+                    depth -= 1
+                cursor += 1
+                if depth == 0:
+                    break
+        index = cursor
+    return "".join(out)
 
 
 def _cltav_executable_errors(algorithms: dict[str, str]) -> list[str]:
-    """Bounded executable-call model: statements, signatures and return branches.
+    """Bounded executable-call model: statements, signatures, data flow and return branches.
 
-    Comment-only names, macro definitions and captions do not satisfy these checks.
+    Comment-only names (TeX percent comments and algorithm2e tcp/tcc), macro
+    definitions and captions do not satisfy these checks. Relations are checked,
+    not just keywords.
     """
     errors: list[str] = []
     bodies = {
@@ -1494,9 +1520,17 @@ def _cltav_executable_errors(algorithms: dict[str, str]) -> list[str]:
         errors.append("InterpretOutcome must receive ExecutionResult, snapshot xi, Gamma and eta")
     if r"\textit{dec}.\mathrm{actionId}" not in main:
         errors.append("top-level must project the selected actionId from the Decision record")
+    if r"\textit{dec}.\mathrm{actionKind}" not in main:
+        errors.append("the snapshot action kind must come from the Decision actionKind")
+    if re.search(r"SelectSnapshot\}\(\s*\\textit\{dec\}\.\\mathrm\{kind\}", main):
+        errors.append("the snapshot must not use the ACTION/EXIT discriminant as the action kind")
+    if "is a valid observation class or $z.\\mathrm{summaryConfirmed}$ is true" not in main:
+        errors.append("the S9 guard must be an executable condition, not a comment")
 
     alg02 = bodies.get("ALG-CLTAV-02", "")
-    gap_at = alg02.find(r"\texttt{GAP}")
+    if r"\textit{raw}.\mathrm{status}=\texttt{GAP}" not in alg02:
+        errors.append("PredictCurrent must branch on the backend tag before projection")
+    gap_at = alg02.find(r"\mathrm{status}=\texttt{GAP}")
     proj_at = alg02.find("ProjectOntoCurrentH")
     if gap_at < 0 or proj_at < 0 or gap_at > proj_at:
         errors.append("PredictCurrent must branch on the gap tag before class projection")
@@ -1504,34 +1538,50 @@ def _cltav_executable_errors(algorithms: dict[str, str]) -> list[str]:
         errors.append("PredictCurrent must return a tagged gap result instead of projecting an error")
 
     alg03 = bodies.get("ALG-CLTAV-03", "")
-    if r"z.\mathrm{summaryConfirmed}\leftarrow\textbf{true}" not in alg03:
-        errors.append("InterpretOutcome must bind summaryConfirmed for a normal TEST")
+    if r"z.\mathrm{effect}\leftarrow\textit{er}.\mathrm{effect}" not in alg03:
+        errors.append("InterpretOutcome must copy the executed effect into the Outcome")
+    if r"z.\mathrm{kind}\leftarrow\xi.\mathrm{actionKind}" not in alg03:
+        errors.append("InterpretOutcome must copy the snapshot action kind into the Outcome")
+    if r"z.\mathrm{summaryConfirmed}\leftarrow\textit{summaryConfirmed}" not in alg03:
+        errors.append("InterpretOutcome must take summaryConfirmed from the interpretation interface")
+    if re.search(r"\\mathrm\{summaryConfirmed\}\s*\\leftarrow\s*\\textbf\{true\}", alg03):
+        errors.append("InterpretOutcome must not default summaryConfirmed to true")
+    if r"\IFobs" not in alg03:
+        errors.append("InterpretOutcome must call IF-OBS-INTERPRET")
     if r"\IFprep" not in alg03:
         errors.append("InterpretOutcome must call IF-PREP-RECOVER for Prep and Recover")
 
     alg04 = bodies.get("ALG-CLTAV-04", "")
     if r"\mathrm{control}=\texttt{RETRY}" not in alg04:
         errors.append("ResolveOutcome must return RETRY on the ERROR or unknown path")
-    if r"\textbf{S7}" not in alg04:
-        errors.append("ResolveOutcome must label the S7 classification branch")
+    if r"\Gamma'\leftarrow\Gamma" not in alg04:
+        errors.append("ResolveOutcome must initialize the returned context from Gamma")
+
+    alg05 = bodies.get("ALG-CLTAV-05", "")
+    if r"\IFsel" not in alg05:
+        errors.append("SelectAndAdmit must call IF-SELECT-ADMIT")
 
     alg06 = bodies.get("ALG-CLTAV-06", "")
-    if alg06.count(r"\IFobs") != 1:
-        errors.append("timed observation must consume exactly one instance-ownership result")
+    if r"M\subseteq N_r" not in alg06 or r"\not\subseteq" in alg06:
+        errors.append("timed observation must apply the T5 containment relation")
+    if r"M=\varnothing" not in alg06:
+        errors.append("timed observation must reject an empty measurement domain as ERROR")
+    if r"\mathrm{lowerHorizon}>U_r" not in alg06 or r"\mathrm{lowerHorizon}\ge U_r" not in alg06:
+        errors.append("no-response must distinguish the closed and open upper bound")
     if re.search(r"I_z\s*\\leftarrow", alg06):
         errors.append("timed observation must not emit the candidate set as a timing verdict")
-    if r"\mathrm{verdict}=\mathrm{INCONCLUSIVE}" not in alg06:
-        errors.append("timed observation must apply the T5 interval verdict")
 
     alg07 = bodies.get("ALG-CLTAV-07", "")
-    if r"H'\leftarrow H\cap z.I_z" not in alg07:
+    if r"H\cap z.I_z" not in alg07:
         errors.append("history update must intersect H with the compatible set")
-    if re.search(r"H'\s*\\leftarrow\s*z\.I_z", alg07):
+    if re.search(r"H'?\s*\\leftarrow\s*z\.I_z", alg07):
         errors.append("history update must not assign H = I_z")
-    if r"z.\mathrm{postSummary}" not in alg07 or r"z.I_z" not in alg07:
-        errors.append("history update must consume the normalized Outcome fields")
-    if r"$z.\mathrm{summaryConfirmed}$ is true" not in alg07:
-        errors.append("history update must commit the successor summary only under the confirmed guard")
+    if r"\Gamma'\leftarrow\Gamma" not in alg07:
+        errors.append("history update must initialize the returned context from Gamma")
+    if "precondition" not in alg07.lower():
+        errors.append("history update must declare the S9 guard as a precondition")
+    if "$z.\\mathrm{summaryConfirmed}$ is true" not in alg07:
+        errors.append("S9 must commit currentSummary only under the confirmed successor guard")
     return errors
 
 
