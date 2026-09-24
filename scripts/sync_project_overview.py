@@ -124,6 +124,77 @@ def _controlled_file_error(
     return target, None
 
 
+def _safe_repo_file(raw: Any, root: Path, label: str) -> Path:
+    """Resolve a repository-relative controlled path, rejecting unsafe targets."""
+    if not isinstance(raw, str) or not raw.strip():
+        raise StatusError(f"{label} must be a non-empty repository-relative path")
+    normalized = raw.replace("\\", "/")
+    posix = PurePosixPath(normalized)
+    windows = PureWindowsPath(raw)
+    if posix.is_absolute() or windows.is_absolute() or windows.drive or ".." in posix.parts:
+        raise StatusError(f"{label} must be a repository-relative path without traversal")
+    resolved_root = root.resolve()
+    candidate = resolved_root / Path(*posix.parts)
+    if candidate.is_symlink():
+        raise StatusError(f"{label} must not be a symbolic link")
+    target = candidate.resolve()
+    try:
+        target.relative_to(resolved_root)
+    except ValueError:
+        raise StatusError(f"{label} resolves outside the repository")
+    if not target.is_file():
+        raise StatusError(f"{label} must resolve to an ordinary file")
+    return target
+
+
+def crs_inventory(sources: dict[str, Any], root: Path = ROOT) -> dict[str, Any]:
+    """Derive the current authoritative CRS inventory from the controlled package.
+
+    The displayed count is never a second hand-filled copy: the package path is
+    read from the source register, the actual ``coverageLedger`` and
+    ``requirements`` collections are counted, and the package ``inventorySummary``
+    is required to agree. Any missing, unsafe or inconsistent package fails closed.
+    """
+    control = sources.get("requirementsControl")
+    if not isinstance(control, dict):
+        raise StatusError("source register is missing requirementsControl")
+    raw_path = control.get("packagePath")
+    package_path = _safe_repo_file(raw_path, root, "requirementsControl.packagePath")
+    try:
+        package = json.loads(package_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise StatusError(f"cannot load authoritative CRS package {raw_path}: {exc}") from exc
+    if not isinstance(package, dict):
+        raise StatusError("authoritative CRS package must be a JSON object")
+    coverage = package.get("coverageLedger")
+    requirements = package.get("requirements")
+    if not isinstance(coverage, list) or not isinstance(requirements, list):
+        raise StatusError(
+            "authoritative CRS package must declare coverageLedger and requirements lists"
+        )
+    summary = package.get("inventorySummary")
+    if not isinstance(summary, dict):
+        raise StatusError("authoritative CRS package is missing inventorySummary")
+    if summary.get("coverageCount") != len(coverage) or summary.get("requirementCount") != len(requirements):
+        raise StatusError(
+            "authoritative CRS inventorySummary disagrees with its collections: "
+            f"declared {summary.get('coverageCount')}/{summary.get('requirementCount')}, "
+            f"actual {len(coverage)}/{len(requirements)}"
+        )
+    artifact_id = package.get("artifactId")
+    artifact_version = package.get("artifactVersion")
+    if not isinstance(artifact_id, str) or not artifact_id.strip():
+        raise StatusError("authoritative CRS package is missing artifactId")
+    if not isinstance(artifact_version, str) or not artifact_version.strip():
+        raise StatusError("authoritative CRS package is missing artifactVersion")
+    return {
+        "artifactId": artifact_id,
+        "artifactVersion": artifact_version,
+        "coverage": len(coverage),
+        "requirements": len(requirements),
+    }
+
+
 def activation_record_errors(
     data: dict[str, Any],
     root: Path = ROOT,
@@ -385,8 +456,10 @@ def _bullets(items: list[str]) -> str:
 
 def render_status_block(
     data: dict[str, Any], sources: dict[str, Any] | None = None,
+    root: Path = ROOT,
 ) -> str:
     sources = load_source_register() if sources is None else sources
+    inventory = crs_inventory(sources, root=root)
     release = data["release"]
     method = data["methodInputs"]
     compatibility = method["compatibilityDisposition"]
@@ -451,6 +524,7 @@ def render_status_block(
 | Delivery position | current `{lifecycle['currentStageId']}` / next `{lifecycle['nextStageId']}` / disposition `{lifecycle['candidateDisposition']}` |
 | Activation boundary | merge evidence `{lifecycle['repositoryMergeEvidence']}` / approval `{lifecycle['independentApproval']}` |
 | Technical controls | {deep_links} |
+| Current CRS inventory | `{inventory['artifactId']}` / `{inventory['artifactVersion']}` / coverage {inventory['coverage']} / requirements {inventory['requirements']} |
 | Third handshake | `{release['thirdHandshake']}` |
 | Compatibility | `{compatibility['status']}` under {qualifications_en} |
 | Project Configuration | `{boundary['projectConfigurationStatus']}` |
@@ -492,6 +566,7 @@ Unchanged boundaries:
 | 交付位置 | 当前 `{lifecycle['currentStageId']}` / 下一 `{lifecycle['nextStageId']}` / 处置 `{lifecycle['candidateDisposition']}` |
 | 激活边界 | 合并证据 `{lifecycle['repositoryMergeEvidence']}` / 批准 `{lifecycle['independentApproval']}` |
 | 技术控制入口 | {deep_links} |
+| 当前 CRS 清单 | `{inventory['artifactId']}` / `{inventory['artifactVersion']}` / coverage {inventory['coverage']} / requirements {inventory['requirements']} |
 | 第三次握手 | `{release['thirdHandshake']}` |
 | 兼容性 | 受 {qualifications_zh} 限定的 `{compatibility['status']}` |
 | Project Configuration | `{boundary['projectConfigurationStatus']}` |
