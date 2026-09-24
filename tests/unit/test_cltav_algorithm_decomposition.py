@@ -247,11 +247,14 @@ def test_deleting_known_sole_writer_is_rejected() -> None:
 
 
 def test_deleting_history_call_is_rejected() -> None:
-    errors = _contract(_mutate(
-        "ALG-CLTAV-07",
-        r"\IFhist$(\eta,H,\xi.\mathrm{actionId},\xi.\mathrm{qUsedAtSelect},\xi.\mathrm{classesUsedAtSelect},z.I_z,z.\mathrm{postSummary})$",
-        "noop",
-    ))
+    text = _algorithms()["ALG-CLTAV-07"]
+    mutated = text.replace(
+        r"\xi.\mathrm{historyVersion},z.I_z,z.\mathrm{postSummary})$",
+        r"\xi.\mathrm{historyVersion},z.I_z)$",
+        1,
+    )
+    assert mutated != text
+    errors = _contract({"ALG-CLTAV-07": mutated})
     assert any("IF-HIST-UPDATE" in item for item in errors)
 
 

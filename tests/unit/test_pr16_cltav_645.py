@@ -652,7 +652,7 @@ def test_unconfirmed_prep_successor_is_not_allowed_to_retain_known_summary() -> 
     prep_escape = "($z.\\mathrm{kind}$ is Prep and $z.\\mathrm{prepResultEvaluated}$ and $z.\\mathrm{summaryConfirmed}$ is false)"
     corpus = _corpus()
     assert prep_escape in corpus
-    assert "clear $\\Gamma.\\mathrm{currentSummary}$" in corpus
+    assert "clear $\\Gamma'.\\mathrm{currentSummary}$" in corpus
     prep = next(row for row in registry["interfaces"] if row["id"] == "IF-PREP-RECOVER")
     assert {"targetConfirmed", "summaryConfirmed", "postSummary"}.issubset(prep["outputs"])
     assert "targetConfirmed=false may coexist with summaryConfirmed=true for Prep" in prep["guarantee"]
@@ -674,12 +674,16 @@ def test_test_summary_and_confirmed_not_sent_prep_control_paths_are_enforced() -
     assert _effect_errors(registry) == []
     corpus = _corpus()
     alg03 = _algorithms()["ALG-CLTAV-03"]
-    assert r"z.\mathrm{summaryConfirmed}\leftarrow\textbf{true}" in alg03
+    assert r"z.\mathrm{summaryConfirmed}\leftarrow\textit{summaryConfirmed}" in alg03
     assert "CONFIRMED-NOT-SENT" in corpus and "prepResultEvaluated" in corpus
 
-    unbound_test = alg03.replace(r"z.\mathrm{summaryConfirmed}\leftarrow\textbf{true}", r"z.I_z\leftarrow\textbf{true}", 1)
+    unbound_test = alg03.replace(
+        r"z.\mathrm{summaryConfirmed}\leftarrow\textit{summaryConfirmed}",
+        r"z.\mathrm{summaryConfirmed}\leftarrow\textbf{true}",
+        1,
+    )
     errors = _contract(overrides={"ALG-CLTAV-03": unbound_test})
-    assert errors
+    assert any("summaryConfirmed" in item for item in errors)
 
     not_sent_invalidated = _algorithms()["ALG-CLTAV-04"].replace(
         r"$z.\mathrm{prepResultEvaluated}$ and $z.\mathrm{summaryConfirmed}$ is false",
