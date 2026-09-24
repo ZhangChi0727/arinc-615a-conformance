@@ -908,7 +908,7 @@ def package_errors(data: dict[str, Any]) -> list[str]:
                 "DEFERRED-VERSION-GAP", "BLOCKED-BY-ARINC-645", "UNSUPPORTED-BY-CURRENT-SOURCE",
             }:
                 errors.append(f"665-5 requirement {row.get('id')} has invalid bounded decision")
-            if row.get("refinementDisposition") not in {"PROFILE-SCOPE-ONLY", "DIRECT-DATA-FORMAT-REFINEMENT", "PRODUCER-CONSTRAINT", "CONSUMER-TOLERANCE", "DEPENDENCY-BLOCKED"}:
+            if row.get("refinementDisposition") not in {"PROFILE-SCOPE-ONLY", "DIRECT-DATA-FORMAT-REFINEMENT", "PRODUCER-CONSTRAINT", "CONSUMER-TOLERANCE", "DEPENDENCY-BLOCKED", "POINTS-TO-BOUND-645-LEAF"}:
                 errors.append(f"665-5 requirement {row.get('id')} lacks a controlled refinement disposition")
             if not row.get("refinementRationaleEn") or not row.get("refinementRationaleZh"):
                 errors.append(f"665-5 requirement {row.get('id')} lacks bilingual refinement rationale")

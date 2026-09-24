@@ -2,20 +2,22 @@
 
 | Field | Value |
 |---|---|
-| **Version** | 3.0-candidate under CR-2026-012 |
-| **Status** | CL-TAV thesis plan; design direction accepted 2026-09-14; not independent mathematical or RG approval |
-| **Method** | [`../methodology/RR-2026-001_test_analysis_conformance_methodology.md`](../methodology/RR-2026-001_test_analysis_conformance_methodology.md), DD-028, DD-029, DD-030 |
+| **Version** | 3.1-candidate under CR-2026-013 |
+| **Status** | CL-TAV thesis plan; design direction accepted 2026-09-14; 645 SOURCE/SEMANTIC bind is a candidate, not capability establishment; not independent mathematical or RG approval |
+| **Method** | [`../methodology/RR-2026-001_test_analysis_conformance_methodology.md`](../methodology/RR-2026-001_test_analysis_conformance_methodology.md), DD-028, DD-029, DD-030, DD-031–034 |
 | **Reader entry** | [`../../../artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md`](../../../artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md) |
+
+Tentative writing target is IEEE TAES Regular Paper, with Aerospace Science and Technology as the alternate. Institutional CAS ranking remains `PENDING-INSTITUTIONAL-RANKING-CHECK`.
 
 ## Working title
 
-**English:** CL-TAV: Closed-Loop Test–Analysis Verification for Protocol Conformance and Fault Localization—An ARINC 615A Case Study
+**English:** CL-TAV: Closed-Loop Test–Analysis Verification for ARINC 615A Data Loading under Timing Uncertainty
 
-**Chinese:** CL-TAV：面向协议符合性验证与故障定位的闭环测试—分析协同方法——以 ARINC 615A 为例
+**Chinese:** CL-TAV：时序不确定条件下面向 ARINC 615A 数据加载的闭环测试—分析协同验证
 
 ## Central question
 
-> How can test observations, constraint verdicts, fault hypotheses and next-test selection form a consistent closed loop for protocol conformance verification and fault localization, using ARINC 615A as a bounded case?
+> Under declared protocol, fault-domain, measurement and resource conditions, does test–analysis feedback improve verdict reliability and fault isolation for ARINC 615A data loading, at an interpretable cost?
 
 CL-RQ1 (loop consistency), CL-RQ2 (comparative effect under the same budget), and CL-RQ3 (uncertainty and stopping) are the primary questions. Historical RQ1–RQ6 remain mapped in the method report and are not completed by deletion.
 
@@ -23,10 +25,10 @@ CL-RQ1 (loop consistency), CL-RQ2 (comparative effect under the same budget), an
 
 These are propositions, not established results, and not a claim to have invented Test or Analysis:
 
-1. a first-version CL-TAV loop with set-valued compatibility, one-step minimax selection, preparatory actions, and three-way cannot-shrink stopping (DD-029);
-2. a system-engineering architecture that separates the **verification-session** machine from the **protocol-operation** machine and joins them only by interfaces and observations;
-3. a comparative experiment protocol (fixed Test, Analysis, non-feedback T+A, full CL-TAV) with no unrun results filled here;
-4. an expanded protocol CRS, generated only after source-unit audit, covering INFORMATION, UPLOAD, both DOWNLOAD modes, FIND, and conditional network variants.
+1. uncertainty-aware mutually consistent observation interpretation, timing verdicts and compatibility update (C1; DD-031);
+2. feeding residual ambiguity into next-action selection with explicit resource, recovery, ERROR and stop rules (C2; DD-031);
+3. a comparative experiment protocol (CL-T, CL-A, CL-TA, CL-LOOP) with no unrun results filled here;
+4. an expanded protocol CRS, generated only after source-unit audit, covering INFORMATION, UPLOAD, both DOWNLOAD modes, FIND, bounded 665/664/RFC support, and 615A-triggered 645 semantic leaves. CRS, SysML, evidence layout and platform are supporting, not extra major innovations.
 
 Review gates, timed EFSM supporting math, and held-out mutation remain supporting material. Equation (14) stays a non-default comparison model.
 
@@ -36,7 +38,7 @@ Each chapter below states the claim it must carry, the CL-RQ it answers, the alg
 
 ### Chapter 1 Introduction
 
-- **Claim:** Protocol conformance work that only executes a fixed suite, or only analyses a model without feeding the next test, leaves detection and localization under a finite budget incomplete.
+- **Claim:** ARINC 615A data-loading judgement under timing uncertainty leaves detection and isolation incomplete if a fixed suite never feeds the next action, or if analysis never issues a legal operation.
 - **Answers:** motivates CL-RQ1–CL-RQ3; does not answer them.
 - **Uses:** problem framing only; no algorithm yet.
 - **Needs:** no confirmatory data; cites engineering ICD practice and the bounded M2 UPLOAD/INFORMATION merge as the case starting point.
@@ -65,10 +67,10 @@ Each chapter below states the claim it must carry, the CL-RQ it answers, the alg
 
 - **Claim:** First-version objects \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\), observable \(q_k\), compatibility update, one-step minimax \(s(t)\), preparatory actions, and stop classes are specified and internally consistent.
 - **Answers:** CL-RQ1 (definitions) and CL-RQ3 (uncertainty partitions, cannot-shrink, termination).
-- **Uses:** DD-029; method report §3.9–§3.9.1 and §4.11. Termination is \(c_{\min}>0\) plus finite \(B\), or finite \(K_{\max}\); `ERROR` spends the same resource.
+- **Uses:** DD-029; method report §3.9–§3.9.2 and §4.11; ALG-CLTAV-01. Termination is \(c_{\min}>0\) plus finite \(B\), or finite \(K_{\max}\); `ERROR` spends the same resource.
 - **Needs:** worked examples (already in DD-029), not confirmatory runs. Independent math review still open.
-- **Figures:** FIG-CL-TAV-05 activity, 06 diagnostic sequence, 08 parametric constraints.
-- **Have / gap:** algorithm text and author-supplied conditional arguments in method §3.9.1 (monotonicity, true-hypothesis retention under R1–R5, one-step minimax on the current selectable set, charged-execution bound). Gap is independent mathematical review and the absence of experimental confirmation; remaining-set minimax is not claimed globally optimal.
+- **Figures:** FIG-CL-TAV-05 activity, 06 diagnostic sequence, 08 parametric constraints; typeset ALG-CLTAV-01.
+- **Have / gap:** algorithm text, interface contracts IF-PRED-OBS…IF-RESOURCE-STOP, and author-supplied conditional arguments in method §3.9.1. Gap is independent mathematical review, core sub-algorithm implementation, and the absence of experimental confirmation; remaining-set minimax is not claimed globally optimal.
 
 ### Chapter 5 Instrument plan and experiment design
 
@@ -76,8 +78,8 @@ Each chapter below states the claim it must carry, the CL-RQ it answers, the alg
 - **Answers:** CL-RQ2 (what will be compared) and the engineering half of CL-RQ1.
 - **Uses:** four arms CL-T / CL-A / CL-TA / CL-LOOP in `EXPERIMENT_PLAN.md` (EXP-CLTAV-DETECT / LOCATE / ABLATION); no shared secretly-stronger oracle.
 - **Needs:** registered experiment protocol before any confirmatory run. No Configuration, no live load.
-- **Figures:** reuse FIG-CL-TAV-04 ports as the future tool boundary.
-- **Have / gap:** method report §8.1 lists arms. Gap is executable experiment configuration, which belongs to a later PR.
+- **Figures:** FIG-CL-TAV-09 experiment architecture; reuse FIG-CL-TAV-04 ports as the future tool boundary.
+- **Have / gap:** method report §8.1 and EXPERIMENT_PLAN contracts. Gap is executable experiment configuration, independent truth tooling and confirmatory registration, which belong to a later authorized PR.
 
 ### Chapter 6 Results
 
@@ -90,12 +92,12 @@ Each chapter below states the claim it must carry, the CL-RQ it answers, the alg
 
 ### Chapter 7 Discussion, limitations and further work
 
-- **Claim:** first-version CL-TAV is bounded by single-fault \(H_0\), one-step selection, unbound ARINC 645 algorithms, and notation-only SysML.
+- **Claim:** first-version CL-TAV is bounded by single-fault \(H_0\), one-step selection, 645 capabilities still NOT-ESTABLISHED, and notation-only SysML.
 - **Answers:** interprets CL-RQ3 limitations; does not close RQ6.
-- **Uses:** threats already in method report §11; 645 locally acquired and `BLOCKED-SOURCE-645` unbound; out-of-domain faults may mimic in-domain hypotheses.
+- **Uses:** threats already in method report §11; 645 identity and 615A-triggered semantics are bound, capabilities remain not established; out-of-domain faults may mimic in-domain hypotheses.
 - **Needs:** no new experiment.
 - **Figures:** none.
-- **Have / gap:** limitation list exists in DD-029. Discussion prose waits for results.
+- **Have / gap:** limitation list exists in DD-029/DD-032. Discussion prose waits for results. Do not write “645 cannot be obtained.”
 
 ### Chapter 8 Conclusion
 
@@ -131,11 +133,12 @@ Editable sources live in [`models/`](models/). They are **SysML 1.6 notation-bas
 | FIG-CL-TAV-06 | Diagnostic sequence | overlapping observation, preparatory action, later distinguishing test, second \(I_{z_k}\) into Analysis |
 | FIG-CL-TAV-07 | Two state machines | \(M_{\mathrm{sess}}\) vs bound-M2 black box; Admit A1–A5; P1–P5 stops; ports not cross-machine transitions |
 | FIG-CL-TAV-08 | Parametric | \(I\), \(\varepsilon\), \(J\), \(c_{\min}\), \(B\) or \(K_{\max}\), remaining-set score |
+| FIG-CL-TAV-09 | Experiment architecture | evaluator-only truth; four arms; DETECT/LOCATE/ABLATION denominators; forbidden leakage |
 
 ## Source audit before CRS generation
 
-FIND, DOWNLOAD and AFDX-appendix bilingual CRS continue in `M1-CANDIDATE-22` (currently 3106 coverage / 816 requirements after 664-7 max_jitter equations, 150 us latency and MAC source construction binds; FIND abort does not waive the 2 s / 3 s clocks). Live counts follow `boundPackage` in `configs/research/cltav_protocol_source_audit.json`. Remaining 645 binding stays **not** closed in this PR. CRS-M1-00519 keeps the integrator alternative open; 664P4-1 address-rule leaves are emitted and not independently closed.
-The ledger [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) keeps FIND 78/78, DOWNLOAD 365/365 and AFDX appendix 13/13 reread records. `profileScope.instanceBoundOperations` stay UPLOAD/INFORMATION; `researchExpandedOperations` are DOWNLOAD/FIND. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Batch template fill is forbidden. Tool software requirements stay out of this PR. ARINC 645 is locally acquired and not bound.
+FIND, DOWNLOAD and AFDX-appendix bilingual CRS continue in `M1-CANDIDATE-25` (live counts follow `boundPackage` in `configs/research/cltav_protocol_source_audit.json`; FIND abort does not waive the 2 s / 3 s clocks). CRS-M1-00519 keeps the integrator alternative open; 664P4-1 address-rule leaves are emitted and not independently closed.
+The ledger [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) keeps FIND 78/78, DOWNLOAD 365/365 and AFDX appendix 13/13 reread records. `profileScope.instanceBoundOperations` stay UPLOAD/INFORMATION; `researchExpandedOperations` are DOWNLOAD/FIND. Media Defined and Operator Defined DOWNLOAD stay separate. AFDX stays a conditional deployment and does not activate the current Compliant instance. Bound M2 does not execute FIND, DOWNLOAD or AFDX; FIND timing is observational catalog only. Batch template fill is forbidden. Tool software requirements stay out of this PR. ARINC 645-1 2021 is identity-bound for 615A-triggered CRC, check-value and naming leaves. Four integrity capabilities stay NOT-ESTABLISHED.
 
 ## Historical versus successor evidence
 
@@ -153,27 +156,29 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 
 | 字段 | 值 |
 |---|---|
-| **版本** | CR-2026-012 下的 3.0-candidate |
-| **状态** | CL-TAV 论文计划；2026-09-14 接受设计方向；不是独立数学或 RG 批准 |
-| **方法** | [`../methodology/RR-2026-001_test_analysis_conformance_methodology.md`](../methodology/RR-2026-001_test_analysis_conformance_methodology.md)，DD-028、DD-029、DD-030 |
+| **版本** | CR-2026-013 下的 3.1-candidate |
+| **状态** | CL-TAV 论文计划；2026-09-14 接受设计方向；645 来源／语义绑定为候选，不是能力成立；不是独立数学或 RG 批准 |
+| **方法** | [`../methodology/RR-2026-001_test_analysis_conformance_methodology.md`](../methodology/RR-2026-001_test_analysis_conformance_methodology.md)，DD-028、DD-029、DD-030、DD-031～034 |
 | **读者入口** | [`../../../artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md`](../../../artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md) |
+
+暂定写作靶标为 IEEE TAES Regular Paper，AST 为另一候选。学校中科院分区保持 `PENDING-INSTITUTIONAL-RANKING-CHECK`。
 
 ## 工作题目
 
-英文题目为 *CL-TAV: Closed-Loop Test–Analysis Verification for Protocol Conformance and Fault Localization—An ARINC 615A Case Study*；中文题目为《CL-TAV：面向协议符合性验证与故障定位的闭环测试—分析协同方法——以 ARINC 615A 为例》。
+英文题目为 *CL-TAV: Closed-Loop Test–Analysis Verification for ARINC 615A Data Loading under Timing Uncertainty*；中文题目为《CL-TAV：时序不确定条件下面向 ARINC 615A 数据加载的闭环测试—分析协同验证》。
 
 ## 核心问题
 
-测试观测、约束判定、故障假设与后续测试选择如何形成一致闭环，用于协议符合性验证与故障定位，并以 ARINC 615A 作为有界案例？主问题为 CL-RQ1、CL-RQ2、CL-RQ3。历史 RQ1–RQ6 在方法报告中映射，不因删除而完成。
+在声明的协议、故障域、测量与资源条件下，测试—分析反馈是否改善 ARINC 615A 数据加载的判定可靠性与故障隔离，并具有可解释代价？主问题为 CL-RQ1、CL-RQ2、CL-RQ3。历史 RQ1–RQ6 在方法报告中映射，不因删除而完成。
 
 ## 待评价贡献
 
 这些是命题，不是既成结果，也不声称发明了 Test 或 Analysis：
 
-1. 首版 CL-TAV 闭环：集合式相容、一步 minimax、准备性动作、三分“不能缩小”停止（DD-029）；
-2. 把**验证会话**状态机与**协议操作**状态机分开、只通过接口和观测关联的系统工程架构；
+1. 不确定感知且相互一致的观测解释、时序判定与相容更新（C1；DD-031）；
+2. 把剩余歧义反馈到后续选择，并明确资源、恢复、ERROR 与停止（C2；DD-031）；
 3. 固定 Test、Analysis、非反馈 T+A 与完整 CL-TAV 的比较实验协议（此处不填未跑结果）；
-4. 仅在来源单元审计之后生成的扩大协议 CRS（INFORMATION、UPLOAD、两种 DOWNLOAD、FIND 及条件化网络变体）。
+4. 仅在来源单元审计之后生成的扩大协议 CRS（INFORMATION、UPLOAD、两种 DOWNLOAD、FIND、有界 665／664／RFC 支持，以及 615A 触发的 645 语义叶）。CRS、SysML、证据组织和平台是支撑，不是额外重大创新。
 
 评审门、时序 EFSM 支撑数学和留出变异仍是支撑材料。方程 (14) 仍为非默认比较模型。
 
@@ -183,7 +188,7 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 
 ### 第1章 引言
 
-- **论点：** 只执行固定套件、或只分析模型而不把结果送入下一测试，会在有限预算下把检测与定位做不完整。
+- **论点：** 在时序不确定条件下，若固定套件从不反馈下一动作，或分析从不发出合法操作，ARINC 615A 数据加载判定会把检测与隔离做不完整。
 - **回答：** 提出 CL-RQ1–CL-RQ3，并不回答它们。
 - **使用：** 只做问题界定，尚无算法。
 - **需要：** 无确认性数据；以工程 ICD 实践和已合并的有界 M2 UPLOAD／INFORMATION 为案例起点。
@@ -212,10 +217,10 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 
 - **论点：** 首版对象 \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\)、可观测 \(q_k\)、相容更新、一步 minimax \(s(t)\)、准备性动作和停止类已规定且内部一致。
 - **回答：** CL-RQ1（定义）与 CL-RQ3（不确定性分区、不能缩小、终止）。
-- **使用：** DD-029；方法报告 §3.9–§3.9.1 与 §4.11。终止为 \(c_{\min}>0\) 加有限 \(B\)，或有限 \(K_{\max}\)；`ERROR` 消耗同一资源。
+- **使用：** DD-029；方法报告 §3.9–§3.9.2 与 §4.11；ALG-CLTAV-01。终止为 \(c_{\min}>0\) 加有限 \(B\)，或有限 \(K_{\max}\)；`ERROR` 消耗同一资源。
 - **需要：** DD-029 已有走查，不是确认性运行。独立数学审查仍开放。
-- **图：** FIG-CL-TAV-05 活动、06 诊断序列、08 参数约束。
-- **已有／缺口：** 算法正文与方法报告 §3.9.1 的作者条件性论证已有（单调性、R1–R5 下真实假设保留、当前可选集上的一步 minimax、计费执行次数界）。缺口是独立数学审查和实验确认；剩余集 minimax 不声称全局最优。
+- **图：** FIG-CL-TAV-05 活动、06 诊断序列、08 参数约束；排版 ALG-CLTAV-01。
+- **已有／缺口：** 算法正文、接口契约 IF-PRED-OBS…IF-RESOURCE-STOP 与方法报告 §3.9.1 的作者条件性论证已有。缺口是独立数学审查、核心子算法实现和实验确认；剩余集 minimax 不声称全局最优。
 
 ### 第5章 工具实现计划与实验设计
 
@@ -223,8 +228,8 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 - **回答：** CL-RQ2（将比较什么）以及 CL-RQ1 的工程一半。
 - **使用：** `EXPERIMENT_PLAN.md` 中的四臂 CL-T／CL-A／CL-TA／CL-LOOP（EXP-CLTAV-DETECT／LOCATE／ABLATION）；不得共用暗中更强的 oracle。
 - **需要：** 确认性运行前先登记实验协议。无 Configuration，无实网加载。
-- **图：** 复用 FIG-CL-TAV-04 端口作为未来工具边界。
-- **已有／缺口：** 方法报告 §8.1 已列比较臂。缺口是可执行实验配置，属于后继 PR。
+- **图：** FIG-CL-TAV-09 实验架构；复用 FIG-CL-TAV-04 端口作为未来工具边界。
+- **已有／缺口：** 方法报告 §8.1 与 EXPERIMENT_PLAN 契约已有。缺口是可执行实验配置、独立真值工具与确认性登记，属于后继授权 PR。
 
 ### 第6章 结果
 
@@ -237,12 +242,12 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 
 ### 第7章 讨论、局限与后续工作
 
-- **论点：** 首版 CL-TAV 受单故障 \(H_0\)、一步选择、未绑定的 645 算法和仅记法 SysML 约束。
+- **论点：** 首版 CL-TAV 受单故障 \(H_0\)、一步选择、645 能力仍为 NOT-ESTABLISHED 和仅记法 SysML 约束。
 - **回答：** 解释 CL-RQ3 的局限；不关闭 RQ6。
-- **使用：** 方法报告 §11 的威胁；645 本地已取得且 `BLOCKED-SOURCE-645` 未绑定；域外故障可能与域内假设相同。
+- **使用：** 方法报告 §11 的威胁；645 身份与 615A 触发语义已绑定，能力仍未建立；域外故障可能与域内假设相同。
 - **需要：** 无新实验。
 - **图：** 无。
-- **已有／缺口：** DD-029 已有局限清单。讨论正文等结果。
+- **已有／缺口：** DD-029／DD-032 已有局限清单。讨论正文等待结果。不得再写“无法获取 645”。
 
 ### 第8章 结论
 
@@ -278,10 +283,11 @@ CL-TAV 建**两套**机器，不得并成一个协议 EFSM。
 | FIG-CL-TAV-06 | 诊断序列 | 重叠观测、准备性动作、随后的区分测试、第二次 \(I_{z_k}\) 进入 Analysis |
 | FIG-CL-TAV-07 | 两套状态机 | \(M_{\mathrm{sess}}\) 对已绑定 M2 黑箱；Admit A1–A5；P1–P5 停止；端口而非跨机状态迁移 |
 | FIG-CL-TAV-08 | 参数 | \(I\)、\(\varepsilon\)、\(J\)、\(c_{\min}\)、\(B\) 或 \(K_{\max}\)、剩余集评分 |
+| FIG-CL-TAV-09 | 实验架构 | 评价器真值；四臂；DETECT／LOCATE／ABLATION 分母；禁止泄漏 |
 
 ## 来源审计先于 CRS 生成
 
-FIND、DOWNLOAD 与 AFDX 附录双语 CRS 继续在 `M1-CANDIDATE-22`（当前 3106 条 coverage／816 条需求，经含 VL 求和的 664-7 max_jitter 公式、150 微秒时延与 MAC 源地址构造绑定；FIND 中止不豁免 2 秒／3 秒时钟）。645 绑定仍**不**在本 PR 闭合。CRS-M1-00519 保持集成商替代路径开放；664P4-1 地址规则叶已发出且未经独立闭合。清单 [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) 仍保存 FIND 78/78、DOWNLOAD 365/365 与 AFDX 附录 13/13 条重读记录。`profileScope.instanceBoundOperations` 仍为 UPLOAD／INFORMATION；`researchExpandedOperations` 为 DOWNLOAD／FIND。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。禁止批量套模板。工具软件需求不属于本 PR。ARINC 645 本地已取得但未绑定。
+FIND、DOWNLOAD 与 AFDX 附录双语 CRS 继续在 `M1-CANDIDATE-25`（现场计数以 `configs/research/cltav_protocol_source_audit.json` 的 `boundPackage` 为准；FIND 中止不豁免 2 秒／3 秒时钟）。CRS-M1-00519 保持集成商替代路径开放；664P4-1 地址规则叶已发出且未经独立闭合。清单 [`../../../configs/research/cltav_protocol_source_audit.json`](../../../configs/research/cltav_protocol_source_audit.json) 仍保存 FIND 78/78、DOWNLOAD 365/365 与 AFDX 附录 13/13 条重读记录。`profileScope.instanceBoundOperations` 仍为 UPLOAD／INFORMATION；`researchExpandedOperations` 为 DOWNLOAD／FIND。Media Defined 与 Operator Defined DOWNLOAD 保持分开。AFDX 仍为条件化部署，不激活当前 Compliant 实例。绑定 M2 不执行 FIND、DOWNLOAD 或 AFDX；FIND 时序只进入观察目录。禁止批量套模板。工具软件需求不属于本 PR。ARINC 645-1 2021 已按 615A 触发的 CRC、校验值与命名叶完成身份绑定。四项完整性能力仍为 NOT-ESTABLISHED。
 
 ## 历史与后继证据
 

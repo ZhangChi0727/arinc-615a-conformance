@@ -9,14 +9,15 @@ named constants so baseline evolution does not require editing this file.
 
 from __future__ import annotations
 
-import json
 import hashlib
 import importlib.util
+import json
 import os
 import re
 import subprocess
 import sys
 import unicodedata
+import xml.etree.ElementTree as ET
 from pathlib import Path, PurePosixPath, PureWindowsPath
 
 
@@ -82,6 +83,7 @@ CLTAV_PUML_FILES = (
     "FIG-CL-TAV-06-diagnostic-sequence.puml",
     "FIG-CL-TAV-07-two-state-machines.puml",
     "FIG-CL-TAV-08-parametric.puml",
+    "FIG-CL-TAV-09-experiment-architecture.puml",
 )
 CLTAV_SVG_DIR = ROOT / "artifacts/publications/cltav/figures"
 CLTAV_SVG_FILES = tuple(name.replace(".puml", ".svg") for name in CLTAV_PUML_FILES)
@@ -193,6 +195,10 @@ REQUIRED_FIXED_FILES = [
     RESEARCH / "publication" / "PUBLICATION_GUIDE.md",
     ROOT / "artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md",
     ROOT / "configs/research/cltav_protocol_source_audit.json",
+    ROOT / "configs/research/cltav_interface_registry.json",
+    ROOT / "configs/research/cltav_figure_graphs.json",
+    ROOT / "configs/research/cltav_owned_generated_artifacts.json",
+    ROOT / "artifacts/publications/cltav/ALG-CLTAV-01.pdf",
     ROOT / "scripts/cltav_loop_spec.py",
     *[CLTAV_PUML_DIR / name for name in CLTAV_PUML_FILES],
     *[CLTAV_SVG_DIR / name for name in CLTAV_SVG_FILES],
@@ -591,6 +597,7 @@ SUPPORTING_LEAF_STATUSES = {
     "EXISTING-351-TRIGGERED-ROWS",
     "EXISTING-LEAF-VIA-2-1-2",
     "EXISTING-615A-LEAF",
+    "EXISTING-LEAF-VIA-645",
     "CRS-M1-00519-REMAINS-NOT-YET-BOUND",
 }
 SUPPORTING_LEAF_BOUND_STATUSES = {
@@ -598,6 +605,7 @@ SUPPORTING_LEAF_BOUND_STATUSES = {
     "EXISTING-351-TRIGGERED-ROWS",
     "EXISTING-LEAF-VIA-2-1-2",
     "EXISTING-615A-LEAF",
+    "EXISTING-LEAF-VIA-645",
 }
 # Historical enum retained for migration. Authorization comes from unboundDispositions, not from this name.
 SUPPORTING_UNBOUND_LEAF_STATUSES = {
@@ -800,7 +808,7 @@ def supporting_source_audit_errors(
     blocked = audit.get("blockedSource") or {}
     if "645BindingThisPr" in supporting and supporting.get("645BindingThisPr") is not False:
         if blocked.get("boundThisPr") is not True:
-            errors.append("supporting-source audit must not bind ARINC 645 in this PR")
+            errors.append("claimed 645 binding must also set blockedSource.boundThisPr")
     dispositions, disposition_errors = supporting_unbound_disposition_map(supporting)
     errors.extend(disposition_errors)
     part4 = supporting.get("arinc664Part4") if isinstance(supporting.get("arinc664Part4"), dict) else {}
@@ -1123,6 +1131,553 @@ def protocol_source_audit_errors(audit: dict, crs: dict, register: dict | None =
     return errors
 
 
+CLTAV_INTERFACE_REGISTRY_PATH = ROOT / "configs/research/cltav_interface_registry.json"
+CLTAV_FIGURE_GRAPHS_PATH = ROOT / "configs/research/cltav_figure_graphs.json"
+CLTAV_OWNED_ARTIFACTS_PATH = ROOT / "configs/research/cltav_owned_generated_artifacts.json"
+CLTAV_INTERFACE_IDS = (
+    "IF-PRED-OBS",
+    "IF-HIST-UPDATE",
+    "IF-OBS-INTERPRET",
+    "IF-SELECT-ADMIT",
+    "IF-EXECUTE-RECORD",
+    "IF-PREP-RECOVER",
+    "IF-EQUIV",
+    "IF-RESOURCE-STOP",
+)
+CLTAV_EXPERIMENT_IDS = ("EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE", "EXP-CLTAV-ABLATION")
+READER_ALG_PDF = ROOT / "artifacts/publications/cltav/ALG-CLTAV-01.pdf"
+
+
+def arinc_645_closure_errors(audit: dict, crs: dict, model: dict | None = None) -> list[str]:
+    """SOURCE/SEMANTIC bind is not CAPABILITY establishment. Not a source-faithfulness proof."""
+    errors: list[str] = []
+    supporting = audit.get("supportingSourceApplicabilityAudit") or {}
+    if supporting.get("645BindingThisPr") is not True:
+        return errors
+    remaining = audit.get("remainingSourceWork")
+    if not isinstance(remaining, dict):
+        errors.append("645 remaining work is missing after source bind")
+        return errors
+    if remaining.get("arinc645CapabilityEstablishmentThisPr") is not False:
+        errors.append("645 source bind must not establish capabilities")
+    for key in (
+        "crcValidationEstablishedThisPr",
+        "checkValueValidationEstablishedThisPr",
+        "namingAlgorithmValidationEstablishedThisPr",
+        "completeIntegrityValidationEstablishedThisPr",
+    ):
+        if remaining.get(key) is not False:
+            errors.append(f"645 source bind must not establish {key}")
+    gap = remaining.get("arinc645RemainingWorkAfterThisPr") or {}
+    if gap.get("id") != "GAP-ARINC-645" or gap.get("status") != "NOT-ESTABLISHED":
+        errors.append("GAP-ARINC-645 must remain NOT-ESTABLISHED after source bind")
+    for key in (
+        "crcValidation",
+        "checkValueValidation",
+        "namingAlgorithmValidation",
+        "completeIntegrityValidation",
+    ):
+        item = gap.get(key) or {}
+        if item.get("status") != "CAPABILITY-NOT-ESTABLISHED" or item.get("establishedThisPr") is not False:
+            errors.append(f"645 source bind must not establish {key}")
+    if model is not None:
+        blocked = (((model.get("model") or {}).get("interfaces") or {}).get("IF_INTEGRITY") or {}).get("blockedBy")
+        if not isinstance(blocked, list) or "ARINC-645" not in blocked:
+            errors.append("bound M2 IF_INTEGRITY must remain blocked by ARINC-645")
+    reqs = [row for row in crs.get("requirements") or [] if (row.get("source") or {}).get("sourceId") == "ARINC-645"]
+    if not reqs:
+        errors.append("645 source bind must emit in-scope semantic leaves")
+        return errors
+    for row in reqs:
+        action = str((row.get("semantic") or {}).get("action") or "")
+        objects = list((row.get("semantic") or {}).get("objects") or [])
+        en = str(row.get("generatedSemanticProjectionEn") or "")
+        zh = str(row.get("generatedSemanticProjectionZh") or "")
+        page = (row.get("source") or {}).get("pdfPage")
+        if "PREFIX-HEADER-FILENAME" in action and (
+            "DATA-FILE-NAME" in objects or "SUPPORT-FILE-NAME" in objects
+        ):
+            errors.append("645 manufacturer prefix must not apply to Data or Support filenames")
+        if "not distinct LSPs" in en or "不是不同 LSP" in zh:
+            errors.append("645 case rule must not be rewritten as a different-LSP identity rule")
+        if "BIND-CRC-64-CHECK" in action and page == 34:
+            errors.append("645 CRC-64 Check is not located on PDF 34")
+        if "BIND-CRC-64-REFIN" in action and page == 34:
+            errors.append("645 CRC-64 RefIn/RefOut/XorOut are not located on PDF 34")
+    type_rows = [
+        row
+        for row in reqs
+        if (row.get("source") or {}).get("tableOrFigure") == "Table 4-5"
+        and (row.get("source") or {}).get("fragmentKind") == "TABLE-ROW"
+    ]
+    if len(type_rows) < 8:
+        errors.append("645 Table 4-5 type/method/length rows must be split per type")
+    footnotes = [
+        row
+        for row in reqs
+        if (row.get("source") or {}).get("tableOrFigure") == "Table 4-5"
+        and (row.get("source") or {}).get("fragmentKind") == "TABLE-FOOTNOTE"
+    ]
+    if len(footnotes) < 2:
+        errors.append("645 Table 4-5 footnotes must be separate leaves")
+    for action in (
+        "BIND-CRC-8-CHECK-TO-256-BYTE-VECTOR",
+        "BIND-CRC-16-CHECK-TO-256-BYTE-VECTOR",
+        "BIND-CRC-32-CHECK-TO-256-BYTE-VECTOR",
+        "BIND-CRC-64-CHECK-TO-256-BYTE-VECTOR",
+    ):
+        if not any((row.get("semantic") or {}).get("action") == action for row in reqs):
+            errors.append(f"645 missing check-vector association {action}")
+    source_645 = next(
+        (
+            row
+            for row in (supporting.get("sources") or [])
+            if isinstance(row, dict) and row.get("sourceId") == "ARINC-645"
+        ),
+        None,
+    )
+    if isinstance(source_645, dict):
+        front = ((source_645.get("pageAccount") or {}).get("frontMatterPdfPages") or [0, 0])
+        if len(front) >= 2 and int(front[1]) >= 31:
+            errors.append("645 PDF 31 CRC body must not be classified as front matter")
+        units = {row.get("id"): row for row in (source_645.get("units") or []) if isinstance(row, dict)}
+        front_unit = units.get("SAU-645-FRONT") or {}
+        front_pages = front_unit.get("pdfPages") or []
+        if front_pages and int(front_pages[-1]) >= 31:
+            errors.append("645 front-matter unit must not include CRC body page 31")
+        if "SAU-645-BODY-PRE" not in units:
+            errors.append("645 untriggered body before CRC must be classified, not absorbed into front matter")
+        pre = units.get("SAU-645-BODY-PRE") or {}
+        if pre.get("clause") != "1-4.2" or pre.get("pdfPages") != [7, 29]:
+            errors.append("645 untriggered pre-body must end at §4.2 / PDF 29; §4.3.1 is on PDF 30")
+        byte_order_unit = units.get("SAU-645-4-3-2-FILE-BYTE-ORDER") or {}
+        if byte_order_unit.get("applicabilityDecision") != "APPLICABLE-SUPPORTING":
+            errors.append("645 §4.3.2 file-byte order must be classified as applicable supporting source")
+        if byte_order_unit.get("leafRequirementIds") != ["CRS-M1-00864"]:
+            errors.append("645 §4.3.2 file-byte order must map to its dedicated CRS leaf")
+        expected_pdf30_dispositions = {
+            "SAU-645-4-3-1-CRC-DEFINITION": (
+                "4.3.1", "CRC-FORMAL-DEFINITION-INTERPRETED-BY-SELECTED-PARAMETERS"
+            ),
+            "SAU-645-4-3-2-1-BIT-ORDERING": (
+                "4.3.2.1", "CRC-BIT-ORDER-INTERPRETED-BY-SELECTED-REFLECTION-PARAMETERS"
+            ),
+            "SAU-645-4-3-2-2-BIT-SHIFTING": (
+                "4.3.2.2", "CRC-IMPLEMENTATION-RESOURCE-NOT-PROTOCOL-FRAMING-OBLIGATION"
+            ),
+        }
+        for unit_id, (clause, rationale) in expected_pdf30_dispositions.items():
+            unit = units.get(unit_id) or {}
+            if (
+                unit.get("clause") != clause
+                or unit.get("pdfPages") != [30, 30]
+                or unit.get("applicabilityDecision") != "OUT-OF-PROFILE"
+                or unit.get("conformanceEffect") != "INFORMATIVE"
+                or unit.get("leafCrsStatus") != "NOT-REQUIRED"
+                or unit.get("rationaleCode") != rationale
+            ):
+                errors.append(f"645 {clause} on PDF 30 must retain its explicit non-obligation disposition")
+        bit_order = units.get("SAU-645-4-3-2-1-BIT-ORDERING") or {}
+        if "unreflected" not in str(bit_order.get("summaryEn") or "").lower() or "不反射" not in str(bit_order.get("summaryZh") or ""):
+            errors.append("645 §4.3.2.1 disposition must not imply all CRC algorithms are unreflected")
+        bit_shift = units.get("SAU-645-4-3-2-2-BIT-SHIFTING") or {}
+        if "segmentation" not in str(bit_shift.get("summaryEn") or "").lower() or "分段" not in str(bit_shift.get("summaryZh") or ""):
+            errors.append("645 §4.3.2.2 disposition must reject a protocol-segmentation interpretation")
+        hash_unit = units.get("SAU-645-4-6-HASH") or {}
+        hash_pages = [int(item) for item in (hash_unit.get("pdfPages") or []) if str(item).isdigit()]
+        if 36 not in hash_pages:
+            errors.append("645 §4.6 exclusion must include PDF 36 where the hash body starts")
+        if units.get("SAU-645-4-3-2-EFF", {}).get("applicabilityDecision") != "OUT-OF-PROFILE":
+            errors.append("645 4.3.2.8 process efficiency must receive an applicability disposition")
+        if units.get("SAU-645-4-3-2-EX", {}).get("applicabilityDecision") != "OUT-OF-PROFILE":
+            errors.append("645 4.3.2.9 CRC examples must receive an applicability disposition")
+        relations = source_645.get("triggerRelationsThisPr") or []
+        req_by_id = {row.get("id"): row for row in crs.get("requirements") or [] if isinstance(row, dict)}
+        actions_645 = {
+            str((row.get("semantic") or {}).get("action") or "")
+            for row in reqs
+        }
+        if len(relations) < 3:
+            errors.append("645 trigger relations must cover CRC, check-value and naming groups")
+        for relation in relations:
+            if not isinstance(relation, dict):
+                errors.append("645 trigger relation must be an object")
+                continue
+            for req_id in relation.get("fromRequirementIds") or []:
+                if req_id not in req_by_id:
+                    errors.append(f"645 trigger relation cites missing requirement {req_id}")
+            for action in relation.get("to645Actions") or []:
+                if action not in actions_645:
+                    errors.append(f"645 trigger relation cites missing leaf action {action}")
+    actions = {str((row.get("semantic") or {}).get("action") or "") for row in reqs}
+    for action in (
+        "BIND-CRC-TRANSMISSION-BIT-REFLECTION",
+        "BIND-CRC-PROCESS-BIT-REFLECTION",
+        "BIND-CRC-POST-PROCESS-BIT-REFLECTION",
+        "RECORD-CRC-ALL-ONES-INITIALIZATION-VARIANT",
+        "PAD-SHORT-INPUT-TO-CRC-REGISTER-SIZE",
+        "RECORD-CRC-FINAL-ONES-COMPLEMENT-VARIANT",
+        "PROCESS-CRC-FILE-BYTES-IN-OCCURRENCE-ORDER",
+        "INCLUDE-NECESSARY-DATA-FOR-EACH-LOADING-INTERFACE",
+    ):
+        if action not in actions:
+            errors.append(f"645 missing PDF31 or §7.1 residual leaf {action}")
+    crc_by_action = {
+        str((row.get("semantic") or {}).get("action") or ""): row
+        for row in reqs
+    }
+    file_order = crc_by_action.get("PROCESS-CRC-FILE-BYTES-IN-OCCURRENCE-ORDER") or {}
+    if file_order.get("source", {}).get("pdfPage") != 30 or file_order.get("source", {}).get("clause") != "4.3.2":
+        errors.append("645 CRC file-byte-order leaf must be anchored at §4.3.2 PDF 30")
+    if set((file_order.get("semantic") or {}).get("objects") or []) != {"CRC", "FILE-BYTE-SEQUENCE"}:
+        errors.append("645 CRC file-byte-order leaf must not conflate input order with check-value storage")
+    for action in (
+        "RECORD-CRC-ALL-ONES-INITIALIZATION-VARIANT",
+        "RECORD-CRC-FINAL-ONES-COMPLEMENT-VARIANT",
+    ):
+        variant = crc_by_action.get(action) or {}
+        if variant.get("conformanceEffect") != "INFORMATIVE":
+            errors.append(f"645 {action} must remain a variant explanation, not a universal requirement")
+        if (variant.get("semantic") or {}).get("condition") == "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC":
+            errors.append(f"645 {action} must not be universal across 615A CRC algorithms")
+    row_544 = next((row for row in crs.get("requirements") or [] if row.get("id") == "CRS-M1-00544"), None)
+    row_545 = next((row for row in crs.get("requirements") or [] if row.get("id") == "CRS-M1-00545"), None)
+    if row_544 and row_545:
+        en_544 = str(row_544.get("generatedSemanticProjectionEn") or "")
+        if "blocked by ARINC 645" in en_544.lower():
+            errors.append("CRS-M1-00544 must not call algorithm identity blocked after the 645 source bind")
+        if "CRS-M1-00819" not in en_544:
+            errors.append("CRS-M1-00544 must bind algorithm identity to the 645 CRC-16 leaf")
+    remaining_reason = str(remaining.get("remainingReasonEn") or "") + str(audit.get("blockedSource") or {})
+    if "file is missing" in remaining_reason.lower() or "未取得文件" in remaining_reason:
+        errors.append("645 remaining work must not be explained as a missing file")
+    return errors
+
+
+def _load_cltav_registry(registry: dict | None = None) -> dict:
+    if registry is not None:
+        return registry
+    return json.loads(CLTAV_INTERFACE_REGISTRY_PATH.read_text(encoding="utf-8"))
+
+
+def _algorithm_body(algorithm: str) -> str:
+    match = re.search(r"\\begin\{algorithm\}.*?\\end\{algorithm\}", algorithm, re.S)
+    return match.group(0) if match else ""
+
+
+def _puml_edges(text: str) -> list[tuple[str, str, str]]:
+    edges: list[tuple[str, str, str]] = []
+    for raw in text.splitlines():
+        line = raw.strip()
+        match = re.match(r"^(\w+)\s+(-+\S*->)\s+(\w+)(.*)$", line)
+        if match:
+            edges.append((match.group(1), match.group(3), line))
+    return edges
+
+
+def cltav_algorithm_contract_errors(
+    algorithm: str,
+    experiment_puml: str,
+    experiment_plan: str,
+    registry: dict | None = None,
+) -> list[str]:
+    """Unique interface registry, actual calls, and experiment record edges. Not a fairness proof."""
+    errors: list[str] = []
+    spec = _load_cltav_registry(registry)
+    interfaces = spec.get("interfaces") or []
+    experiment_ifs = spec.get("experimentInterfaces") or []
+    if not isinstance(interfaces, list) or not interfaces:
+        errors.append("CL-TAV interface registry is missing interfaces")
+        return errors
+    ids = [row.get("id") for row in interfaces if isinstance(row, dict)]
+    if None in ids or "" in ids:
+        errors.append("CL-TAV interface registry contains an interface without id")
+    if len(list(filter(None, ids))) != len(set(filter(None, ids))):
+        errors.append("CL-TAV interface registry contains duplicate interface ids")
+    required_fields = ("id", "inputs", "outputs", "pre", "guarantee", "failure", "stateEffect")
+    for row in interfaces:
+        if not isinstance(row, dict):
+            errors.append("CL-TAV interface registry contains a non-object interface")
+            continue
+        missing = [field for field in required_fields if not row.get(field)]
+        if missing:
+            errors.append(f"{row.get('id')} is missing {missing[0]}")
+        if row.get("id") == "IF-HIST-UPDATE":
+            joined = " ".join(str(item) for item in (row.get("inputs") or []) + (row.get("outputs") or []))
+            if "HistoryHandle" not in joined:
+                errors.append("IF-HIST-UPDATE is missing a HistoryHandle carrier")
+        if row.get("id") == "IF-PREP-RECOVER" and not {"targetConfirmed", "summaryConfirmed"}.issubset(set(row.get("outputs") or [])):
+            errors.append("IF-PREP-RECOVER is missing target or successor confirmation output")
+        if row.get("id") == "IF-PRED-OBS" and "currentlyValidNonemptyClasses" not in " ".join(str(item) for item in (row.get("outputs") or [])):
+            errors.append("IF-PRED-OBS is missing currently valid classes")
+        if row.get("id") == "IF-SELECT-ADMIT" and "currentlyValidNonemptyClasses" not in " ".join(str(item) for item in (row.get("inputs") or [])):
+            errors.append("IF-SELECT-ADMIT is missing predicted classes as input")
+    handles = spec.get("sessionHandles") or {}
+    if "HistoryHandle" not in handles or "SessionContext" not in handles:
+        errors.append("CL-TAV registry is missing SessionContext or HistoryHandle")
+    body = _algorithm_body(algorithm)
+    macros = {row.get("macro"): row.get("id") for row in interfaces if isinstance(row, dict) and row.get("macro")}
+    called = set(re.findall(r"\\(IF[a-z]+)", body))
+    for row in interfaces:
+        if not isinstance(row, dict) or row.get("calledInAlgorithm") is not True:
+            continue
+        contract_id = row.get("id")
+        macro = row.get("macro")
+        if macro and macro not in called:
+            errors.append(f"main algorithm does not call {contract_id}")
+        if contract_id and contract_id not in algorithm:
+            errors.append(f"main algorithm is missing {contract_id}")
+        if contract_id and contract_id not in experiment_puml:
+            errors.append(f"experiment architecture view is missing {contract_id}")
+        if contract_id and contract_id not in experiment_plan:
+            errors.append(f"experiment plan is missing {contract_id}")
+    declared = {row.get("id") for row in interfaces if isinstance(row, dict)} | {
+        row.get("id") for row in experiment_ifs if isinstance(row, dict)
+    }
+    for token in sorted(set(re.findall(r"IF-[A-Z0-9-]+", algorithm + "\n" + experiment_puml + "\n" + experiment_plan))):
+        if token not in declared:
+            errors.append(f"undeclared interface call {token}")
+    for token in sorted(set(re.findall(r"IF-[A-Z0-9-]+", body))):
+        if token not in declared:
+            errors.append(f"undeclared interface call {token}")
+    pred_pos = body.find("\\IFpred")
+    sel_pos = body.find("\\IFsel")
+    if pred_pos < 0 or sel_pos < 0 or pred_pos > sel_pos:
+        errors.append("IF-PRED-OBS must be called before IF-SELECT-ADMIT")
+    if "HistoryHandle" not in algorithm and r"\eta" not in algorithm:
+        errors.append("main algorithm is missing HistoryHandle")
+    dataflow = spec.get("dataflow") or []
+    if not any(row.get("from") == "IF-PRED-OBS" and row.get("to") == "IF-SELECT-ADMIT" for row in dataflow):
+        errors.append("registry is missing predict-to-select dataflow")
+    if not any(row.get("from") == "IF-HIST-UPDATE" and row.get("nextIteration") for row in dataflow):
+        errors.append("registry is missing history-to-next-prediction dataflow")
+    for exp_id in spec.get("experimentIds") or CLTAV_EXPERIMENT_IDS:
+        if exp_id not in experiment_puml:
+            errors.append(f"experiment architecture view is missing {exp_id}")
+        if exp_id not in experiment_plan:
+            errors.append(f"experiment plan is missing {exp_id}")
+    for exp_if in experiment_ifs:
+        if not isinstance(exp_if, dict):
+            continue
+        exp_id = exp_if.get("id")
+        missing = [field for field in ("id", "inputs", "outputs", "failure") if not exp_if.get(field)]
+        if missing:
+            errors.append(f"{exp_id} is missing {missing[0]}")
+        if exp_id and exp_id not in experiment_plan:
+            errors.append(f"experiment plan is missing {exp_id}")
+    denominators = spec.get("denominators") or []
+    if not denominators:
+        errors.append("registry is missing denominator definitions")
+    for name in denominators:
+        if name not in experiment_plan:
+            errors.append(f"experiment plan is missing denominator {name}")
+    if "evaluator-only" not in experiment_puml:
+        errors.append("experiment architecture view is missing evaluator-only")
+    if "forbidden leakage" not in experiment_puml:
+        errors.append("experiment architecture view is missing forbidden leakage")
+    for source, target, line in _puml_edges(experiment_puml):
+        if source == "Truth" and target == "Arms" and "forbidden" not in line:
+            errors.append("experiment architecture view must not give evaluator truth to comparison arms")
+        if source == "Truth" and any(item in line for item in (spec.get("forbiddenTruthInputs") or [])):
+            if "forbidden" not in line and "never" not in line:
+                errors.append("evaluator truth must not enter a select/predict/history/execute input")
+    if "Truth --> Arms" in experiment_puml and "forbidden" not in experiment_puml:
+        errors.append("experiment architecture view must not give evaluator truth to comparison arms")
+    walks = spec.get("recordFlowWalkthroughs") or []
+    if len(walks) < 5:
+        errors.append("registry is missing experiment record-flow walkthroughs")
+    all_ids = [row.get("id") for row in list(interfaces) + list(experiment_ifs) if isinstance(row, dict)]
+    if None in all_ids or "" in all_ids:
+        errors.append("CL-TAV interface registry contains an interface without id")
+    if len(list(filter(None, all_ids))) != len(set(filter(None, all_ids))):
+        errors.append("CL-TAV interface registry contains duplicate interface ids")
+    endpoints = _registry_endpoints(spec)
+    for edge in dataflow:
+        if not isinstance(edge, dict):
+            continue
+        src, dst = edge.get("from"), edge.get("to")
+        output, incoming = edge.get("output"), edge.get("input")
+        if src not in endpoints:
+            errors.append(f"dataflow source {src} is not a declared interface or session handle")
+            continue
+        if dst not in endpoints:
+            errors.append(f"dataflow destination {dst} is not a declared interface or session handle")
+            continue
+        if output not in endpoints[src]["outputs"]:
+            errors.append(f"dataflow output {output} is not a port of {src}")
+        if incoming not in endpoints[dst]["inputs"]:
+            errors.append(f"dataflow input {incoming} is not a port of {dst}")
+    exp_by_id = {row.get("id"): row for row in experiment_ifs if isinstance(row, dict)}
+    for walk in walks:
+        if not isinstance(walk, dict):
+            continue
+        walk_id = walk.get("id")
+        if walk.get("truthToSelect") is True:
+            errors.append(f"{walk_id} must not mark truthToSelect")
+        for token in walk.get("path") or []:
+            if token not in declared:
+                errors.append(f"{walk_id} walk path cites undeclared interface {token}")
+        records = walk.get("records")
+        if not isinstance(records, dict) or not records:
+            errors.append(f"{walk_id} is missing required typed records")
+            continue
+        filter_needed = _variant_inputs(exp_by_id.get("IF-EXP-FILTER") or {}, walk.get("filterVariant") or "run-completed")
+        eval_needed = _variant_inputs(exp_by_id.get("IF-EXP-EVAL") or {}, walk.get("evalVariant") or "run-completed")
+        filter_rec = records.get("filterInput") or {}
+        eval_rec = records.get("evalInput") or {}
+        for field in filter_needed:
+            if field not in filter_rec:
+                errors.append(f"{walk_id} filter record is missing {field}")
+        for field in eval_needed:
+            if field not in eval_rec:
+                errors.append(f"{walk_id} eval record is missing {field}")
+        dens = walk.get("denominators")
+        if not isinstance(dens, list) or "attempt" not in dens:
+            errors.append(f"{walk_id} must record attempt plus membership denominators")
+    errors.extend(_algorithm_effect_errors(algorithm, dataflow, interfaces, handles.get("SessionContext") or {}))
+    return errors
+
+
+def _algorithm_effect_errors(
+    algorithm: str, dataflow: list, interfaces: list, session_context: dict | None = None
+) -> list[str]:
+    """Select-time snapshot, successor summaries, and effect classes match the delivered S steps."""
+    errors: list[str] = []
+    body = algorithm.split("\\begin{algorithm}", 1)[-1]
+    if "CONFIRMED-NOT-SENT" not in body or "UNKNOWN-EFFECT" not in body:
+        errors.append("main algorithm must distinguish CONFIRMED-NOT-SENT from UNKNOWN-EFFECT")
+    if "sole writer" not in body:
+        errors.append("main algorithm must name the sole writer of KNOWN")
+    snap_at = body.find("qUsedAtSelect")
+    exec_at = body.find("\\IFexec")
+    if snap_at < 0 or exec_at < 0 or snap_at > exec_at:
+        errors.append("select snapshot must be frozen before IF-EXECUTE-RECORD")
+    minimax_at = body.find("one-step minimax")
+    action_at = body.find("actionId")
+    if minimax_at < 0 or action_at < 0 or minimax_at > action_at:
+        errors.append("SelectSnapshot.actionId must be frozen only after final TEST minimax selection")
+    if "t^\\star\\leftarrow" in body:
+        errors.append("main algorithm must not replace tStar after IF-SELECT-ADMIT")
+    match = re.search(r"\\IFhist\$\((.*?)\)\$", body, re.S)
+    hist_call = match.group(1) if match else ""
+    if "qUsedAtSelect" not in hist_call or "postSummary" not in hist_call:
+        errors.append("IF-HIST-UPDATE must receive qUsedAtSelect and postSummary")
+    if "qStatus" in hist_call:
+        errors.append("IF-HIST-UPDATE must not receive live qStatus")
+    marker = "\\texttt{CONFIRMED-NOT-SENT}$}"
+    at = body.find(marker)
+    window = body[at:at + 220] if at >= 0 else ""
+    if "unchanged" not in window:
+        errors.append("CONFIRMED-NOT-SENT must leave q unchanged")
+    if any(
+        isinstance(row, dict) and row.get("from") == "SessionContext" and row.get("input") == "qUsedAtSelect"
+        for row in dataflow
+    ):
+        errors.append("qUsedAtSelect must not be wired from live SessionContext")
+    if not any(
+        isinstance(row, dict)
+        and row.get("from") == "SelectSnapshot"
+        and row.get("output") == "qUsedAtSelect"
+        and row.get("to") == "IF-HIST-UPDATE"
+        for row in dataflow
+    ):
+        errors.append("registry must pass SelectSnapshot.qUsedAtSelect into IF-HIST-UPDATE")
+    if not any(
+        isinstance(row, dict)
+        and row.get("from") == "IF-SELECT-ADMIT"
+        and row.get("output") == "tStar"
+        and row.get("to") == "SelectSnapshot"
+        and row.get("input") == "actionId"
+        for row in dataflow
+    ):
+        errors.append("registry must freeze IF-SELECT-ADMIT final tStar as SelectSnapshot.actionId")
+    if not any(
+        isinstance(row, dict)
+        and row.get("from") == "SelectSnapshot"
+        and row.get("output") == "actionId"
+        and row.get("to") == "IF-EXECUTE-RECORD"
+        for row in dataflow
+    ):
+        errors.append("registry must execute SelectSnapshot.actionId")
+    fields = set((session_context or {}).get("fields") or [])
+    if not {"qStatus", "currentSummary"}.issubset(fields):
+        errors.append("SessionContext must distinguish qStatus from currentSummary")
+    if "\\Gamma.\\mathrm{currentSummary}" not in body:
+        errors.append("main algorithm must read and commit currentSummary")
+    if not any(
+        isinstance(row, dict)
+        and row.get("from") == "SessionContext"
+        and row.get("output") == "currentSummary"
+        and row.get("to") == "IF-SELECT-ADMIT"
+        and row.get("input") == "q"
+        for row in dataflow
+    ):
+        errors.append("registry must feed currentSummary to IF-SELECT-ADMIT")
+    for producer in ("IF-OBS-INTERPRET", "IF-PREP-RECOVER"):
+        if not any(
+            isinstance(row, dict)
+            and row.get("from") == producer
+            and row.get("output") == "postSummary"
+            and row.get("to") == "SessionContext"
+            and row.get("input") == "currentSummary"
+            and row.get("appliedBy") == "S9-sole-commit"
+            for row in dataflow
+        ):
+            errors.append(f"registry must commit {producer} postSummary through S9")
+    obs = next((row for row in interfaces if isinstance(row, dict) and row.get("id") == "IF-OBS-INTERPRET"), {})
+    if not {"summaryConfirmed", "postSummary"}.issubset(set(obs.get("outputs") or [])):
+        errors.append("IF-OBS-INTERPRET must return summaryConfirmed and postSummary")
+    obs_call = r"$(I_z,\textit{effect},\textit{summaryConfirmed},\textit{postSummary})\leftarrow$ \IFobs"
+    if obs_call not in body:
+        errors.append("main algorithm must bind IF-OBS-INTERPRET summaryConfirmed for normal TEST")
+    prep = next((row for row in interfaces if isinstance(row, dict) and row.get("id") == "IF-PREP-RECOVER"), {})
+    prep_outputs = set(prep.get("outputs") or [])
+    if not {"targetConfirmed", "summaryConfirmed", "postSummary"}.issubset(prep_outputs):
+        errors.append("IF-PREP-RECOVER must distinguish targetConfirmed from summaryConfirmed")
+    if "summaryConfirmed=false" not in str(prep.get("failure") or ""):
+        errors.append("IF-PREP-RECOVER must classify an unconfirmed Prep successor summary")
+    prep_escape = "($\\textit{kind}$ is Prep and $\\textit{prepResultEvaluated}$ and $\\textit{summaryConfirmed}$ is false)"
+    if body.count(prep_escape) < 2:
+        errors.append("unconfirmed Prep successor summary must enter S7")
+    if "CONFIRMED-NOT-SENT" not in body or "prepResultEvaluated" not in body:
+        errors.append("CONFIRMED-NOT-SENT must bypass unevaluated Prep confirmation")
+    commit_guard = (
+        r"\If{$\Gamma.\mathrm{qStatus}$ is KNOWN and $\textit{summaryConfirmed}$ is true "
+        r"and $\textit{postSummary}$ is confirmed}{"
+    )
+    commit_at = body.find(commit_guard)
+    commit_window = body[commit_at:commit_at + 220] if commit_at >= 0 else ""
+    if commit_at < 0 or r"\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}" not in commit_window:
+        errors.append("S9 must commit currentSummary only under the confirmed KNOWN successor guard")
+    if "does not write" not in str(prep.get("stateEffect") or ""):
+        errors.append("IF-PREP-RECOVER must not write session state")
+    return errors
+
+
+def _registry_endpoints(spec: dict) -> dict[str, dict[str, list[str]]]:
+    endpoints: dict[str, dict[str, list[str]]] = {}
+    for key, row in (spec.get("sessionHandles") or {}).items():
+        if not isinstance(row, dict):
+            continue
+        fields = [str(item) for item in (row.get("fields") or [])]
+        endpoints[str(row.get("id") or key)] = {"inputs": fields, "outputs": fields}
+    for row in list(spec.get("interfaces") or []) + list(spec.get("experimentInterfaces") or []):
+        if not isinstance(row, dict) or not row.get("id"):
+            continue
+        endpoints[str(row["id"])] = {
+            "inputs": [str(item) for item in (row.get("inputs") or [])],
+            "outputs": [str(item) for item in (row.get("outputs") or [])],
+        }
+    return endpoints
+
+
+def _variant_inputs(iface: dict, when: str) -> list[str]:
+    for variant in iface.get("inputVariants") or []:
+        if isinstance(variant, dict) and variant.get("when") == when:
+            return [str(item) for item in (variant.get("inputs") or [])]
+    return [str(item) for item in (iface.get("inputs") or [])]
+
+
 def expected_download_mode(clause: str) -> str:
     """Media Defined and Operator Defined DOWNLOAD stay separate after reread."""
     if clause.startswith(("5.4.4.1", "6.2.10", "6.4.6")) or clause == "6.3.3":
@@ -1316,6 +1871,18 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
     sequence = models.get("FIG-CL-TAV-06-diagnostic-sequence.puml", "")
     if "Prep" not in sequence or "overlapping" not in sequence:
         errors.append("diagnostic sequence view must show overlapping observation and Prep")
+    experiment = models.get("FIG-CL-TAV-09-experiment-architecture.puml", "")
+    for token in (
+        "evaluator-only",
+        "forbidden leakage",
+        "IF-SELECT-ADMIT",
+        "CL-T / CL-A / CL-TA / CL-LOOP",
+        "DETECT / LOCATE / ABLATION",
+    ):
+        if token not in experiment:
+            errors.append(f"experiment architecture view is missing {token}")
+    if "Truth --> Arms" in experiment and "forbidden" not in experiment:
+        errors.append("experiment architecture view must not give evaluator truth to comparison arms")
     if "Izk of tb" not in sequence:
         errors.append("diagnostic sequence view must send the second observation to Analysis")
     layers = models.get("FIG-CL-TAV-02-requirement-layers.puml", "")
@@ -1324,9 +1891,155 @@ def cltav_sysml_errors(models: dict[str, str]) -> list[str]:
     return errors
 
 
-def cltav_figure_errors() -> list[str]:
-    """Reader SVG completeness. Not a PlantUML renderer and not a semantic engine."""
+def _load_figure_graphs() -> dict:
+    if not CLTAV_FIGURE_GRAPHS_PATH.is_file():
+        return {}
+    try:
+        return json.loads(CLTAV_FIGURE_GRAPHS_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def _svg_labeled_edges(root: ET.Element) -> list[tuple[str, str, float, float, float, float]]:
+    edges: list[tuple[str, str, float, float, float, float]] = []
+    for elem in root.iter():
+        if elem.tag.split("}")[-1] != "line":
+            continue
+        src, dst = elem.get("data-from"), elem.get("data-to")
+        if not src or not dst:
+            continue
+        try:
+            edges.append((
+                src,
+                dst,
+                float(elem.get("x1") or 0),
+                float(elem.get("y1") or 0),
+                float(elem.get("x2") or 0),
+                float(elem.get("y2") or 0),
+            ))
+        except ValueError:
+            continue
+    return edges
+
+
+def _point_in_node(x: float, y: float, node: dict, pad: float = 8) -> bool:
+    left = float(node.get("x") or 0) - pad
+    top = float(node.get("y") or 0) - pad
+    right = float(node.get("x") or 0) + float(node.get("w") or 0) + pad
+    bottom = float(node.get("y") or 0) + float(node.get("h") or 0) + pad
+    return left <= x <= right and top <= y <= bottom
+
+
+def _figure_graph_errors(name: str, root: ET.Element) -> list[str]:
+    graphs = (_load_figure_graphs().get("figures") or {}).get(name)
+    if not isinstance(graphs, dict):
+        return []
     errors: list[str] = []
+    nodes = graphs.get("nodes") or {}
+    required = {(row.get("from"), row.get("to")) for row in (graphs.get("edges") or []) if isinstance(row, dict)}
+    found = _svg_labeled_edges(root)
+    found_pairs = {(src, dst) for src, dst, *_ in found}
+    for pair in sorted(required):
+        if pair not in found_pairs:
+            errors.append(f"{name} is missing structural edge {pair[0]}->{pair[1]}")
+    if name == "FIG-CL-TAV-09-experiment-architecture.svg":
+        if ("Valid", "Metrics") not in found_pairs:
+            errors.append(f"{name} must connect Valid to Metrics")
+        if ("Obs", "Metrics") in found_pairs:
+            errors.append(f"{name} must not bypass validity: Obs must not connect directly to Metrics")
+        valid = nodes.get("Valid") or {}
+        for src, dst, x1, y1, _x2, _y2 in found:
+            if dst == "Metrics" and valid and not _point_in_node(x1, y1, valid):
+                errors.append(f"{name} Metrics inbound edge does not start in the Valid box")
+        visible = _svg_visible_text(root)
+        for key, node in nodes.items():
+            label = str((node or {}).get("label") or "")
+            if label and label not in visible:
+                errors.append(f"{name} node {key} label is truncated or missing")
+    if name == "FIG-CL-TAV-05-closed-loop-activity.svg":
+        for pair in (("Unconfirmed", "S7"), ("S7", "LoopS1"), ("LoopS1", "S1")):
+            if pair not in found_pairs:
+                errors.append(f"{name} is missing retry/unconfirmed back-edge {pair[0]}->{pair[1]}")
+        errors.extend(_figure05_control_errors(graphs, found_pairs, root))
+    return errors
+
+
+FIG05_CONTROL_EDGES = (
+    {"id": "E-S10-S1", "from": "S10", "to": "S1", "polarity": "continue", "guard": "no stop"},
+    {"id": "E-S9-S10", "from": "S9", "to": "S10", "polarity": "advance"},
+    {"id": "E-S1-STOP", "from": "S1", "to": "StopGate", "polarity": "stop", "guard": "already decided"},
+    {"id": "E-S2-GAP", "from": "S2", "to": "PredictionGap", "polarity": "stop", "guard": "Recover and Prep ineligible"},
+    {"id": "E-S7-S1", "from": "S7", "to": "S1", "polarity": "retry", "via": ("LoopS1",)},
+)
+
+
+def _svg_visible_text(root: ET.Element) -> str:
+    chunks: list[str] = []
+    for elem in root.iter():
+        if elem.tag.split("}")[-1] != "text":
+            continue
+        parts = [elem.text or ""]
+        parts.extend((child.text or "") for child in list(elem))
+        chunks.append(" ".join(part.strip() for part in parts if part and part.strip()))
+    return "\n".join(chunks)
+
+
+def _figure05_control_errors(graphs: dict, found_pairs: set[tuple[str, str]], root: ET.Element) -> list[str]:
+    """Bounded decision table. JSON/SVG agreement alone is not the control authority."""
+    errors: list[str] = []
+    edges = [row for row in (graphs.get("edges") or []) if isinstance(row, dict)]
+    by_id = {row.get("id"): row for row in edges}
+    by_pair = {(row.get("from"), row.get("to")): row for row in edges}
+    puml_path = RESEARCH / "publication" / "models" / "FIG-CL-TAV-05-closed-loop-activity.puml"
+    puml = puml_path.read_text(encoding="utf-8") if puml_path.is_file() else ""
+    visible = _svg_visible_text(root)
+    for spec in FIG05_CONTROL_EDGES:
+        edge_id = spec["id"]
+        if edge_id not in puml:
+            errors.append(f"FIG-05 PlantUML is missing control id {edge_id}")
+        row = by_id.get(edge_id)
+        via = spec.get("via") or ()
+        if via:
+            hops = [spec["from"], *via, spec["to"]]
+            for src, dst in zip(hops, hops[1:]):
+                if (src, dst) not in by_pair:
+                    errors.append(f"FIG-05 is missing retry hop {src}->{dst}")
+                if (src, dst) not in found_pairs:
+                    errors.append(f"FIG-05 SVG is missing retry hop {src}->{dst}")
+            if row is None:
+                errors.append(f"FIG-05 control table is missing {edge_id}")
+            elif row.get("polarity") != spec["polarity"]:
+                errors.append(f"{edge_id} polarity inverted")
+        else:
+            pair = (spec["from"], spec["to"])
+            if row is None or (row.get("from"), row.get("to")) != pair:
+                errors.append(f"FIG-05 control edge {edge_id} must be {pair[0]}->{pair[1]}")
+            elif row.get("polarity") != spec["polarity"]:
+                errors.append(f"{edge_id} polarity inverted")
+            if pair not in found_pairs:
+                errors.append(f"FIG-05 SVG is missing {pair[0]}->{pair[1]}")
+        guard = spec.get("guard")
+        if guard and guard not in visible:
+            errors.append(f"FIG-05 visible text is missing guard {guard}")
+    if ("S10", "S1") not in by_pair:
+        errors.append("FIG-05 is missing the normal S10->S1 continue edge")
+    if ("S9", "S10") not in by_pair or ("S10", "S1") not in by_pair:
+        errors.append("FIG-05 S9 without a stop must be able to reach the next S1")
+    for key, node in (graphs.get("nodes") or {}).items():
+        label = str(node.get("label") or "")
+        if label and label not in visible:
+            errors.append(f"FIG-05 node {key} label is truncated or missing")
+    return errors
+
+
+def cltav_figure_errors() -> list[str]:
+    """Reader SVG completeness, labeled structural edges, and XML-valid edges."""
+    errors: list[str] = []
+    critical = {
+        "FIG-CL-TAV-01-context.svg",
+        "FIG-CL-TAV-05-closed-loop-activity.svg",
+        "FIG-CL-TAV-09-experiment-architecture.svg",
+    }
     for name in CLTAV_SVG_FILES:
         path = CLTAV_SVG_DIR / name
         if not path.is_file():
@@ -1338,6 +2051,33 @@ def cltav_figure_errors() -> list[str]:
             errors.append(f"{name} is not an SVG document")
         if "bad url" in text.lower() or "huffman" in text.lower():
             errors.append(f"{name} is a renderer error page, not a figure")
+        for comment in re.findall(r"<!--(.*?)-->", text, re.S):
+            if "--" in comment:
+                errors.append(f"{name} XML comment contains '--'")
+                break
+        if name not in critical:
+            continue
+        try:
+            root = ET.fromstring(text)
+        except ET.ParseError as exc:
+            errors.append(f"{name} is not well-formed XML: {exc}")
+            continue
+        tags = {elem.tag.split("}")[-1] for elem in root.iter()}
+        if not (tags & {"line", "polyline", "path", "polygon"}):
+            errors.append(f"{name} has no visible connecting edges")
+        if name == "FIG-CL-TAV-05-closed-loop-activity.svg":
+            blob = ET.tostring(root, encoding="unicode").lower()
+            for token in ("error", "recover", "predict", "select"):
+                if token not in blob:
+                    errors.append(f"{name} is missing visible {token} control-flow")
+        errors.extend(_figure_graph_errors(name, root))
+    if not READER_ALG_PDF.is_file():
+        errors.append("missing reader typeset algorithm PDF")
+    wrapper = (RESEARCH / "publication" / "algorithms" / "ALG-CLTAV-01-wrapper.tex").read_text(encoding="utf-8")
+    if "Lines 27--29" in wrapper or "Lines 15--18" in wrapper:
+        errors.append("algorithm Chinese mapping still cites stale typeset line numbers")
+    if "S0" not in wrapper or "S10" not in wrapper:
+        errors.append("algorithm Chinese mapping must use stable step labels")
     return errors
 
 
@@ -2155,7 +2895,9 @@ def _git(*args: str) -> str:
     return result.stdout.strip() if result.returncode == 0 else ""
 
 
-def changed_files_for_event() -> set[str]:
+def changed_files_for_event(changed: set[str] | None = None) -> set[str]:
+    if changed is not None:
+        return {item.replace("\\", "/") for item in changed}
     if os.getenv("GITHUB_EVENT_NAME") != "pull_request":
         return set()
     base = os.getenv("GITHUB_BASE_REF")
@@ -2716,15 +3458,131 @@ def governed_status_errors(
     return errors
 
 
-def prohibited_source_artifact_errors(changed: set[str]) -> list[str]:
-    """Reject new protected-source payloads while preserving frozen history."""
+OWNED_PUBLICATION_PREFIX = "artifacts/publications/"
+OWNED_ARTIFACT_KIND = "OWNED-GENERATED-PUBLICATION"
+OWNED_SOURCE_SUFFIXES = {".tex", ".md", ".puml", ".svg", ".json"}
+OWNED_FORBIDDEN_PARTS = {"local-references", "tmp"}
+OWNED_DANGEROUS_SUFFIXES = {".pdf", ".patch", ".diff", ".exe", ".dll", ".bin", ".zip"}
+
+
+def _tracked_repo_paths(root: Path) -> set[str] | None:
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "-z"], cwd=root, check=True,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    return {item.decode("utf-8").replace("\\", "/") for item in result.stdout.split(b"\0") if item}
+
+
+def _owned_registration_errors(
+    registry: dict,
+    root: Path,
+    tracked_paths: set[str],
+) -> tuple[list[str], set[str]]:
+    """Validate owned-artifact rows. A self-reported boolean is not an exemption."""
     errors: list[str] = []
+    allowed: set[str] = set()
+    rows = registry.get("artifacts") if isinstance(registry, dict) else None
+    if not isinstance(rows, list):
+        return ["owned generated artifact registry is missing artifacts"], set()
+    seen: set[str] = set()
+    for index, row in enumerate(rows):
+        label = f"ownedArtifacts[{index}]"
+        if not isinstance(row, dict):
+            errors.append(f"{label} must be an object")
+            continue
+        raw = row.get("path")
+        target, path_error = _controlled_tracked_path_error(raw, root, tracked_paths, label)
+        normalized = str(raw or "").replace("\\", "/")
+        if path_error:
+            errors.append(path_error)
+        if normalized in seen:
+            errors.append(f"{label} duplicates target {normalized}")
+        elif normalized:
+            seen.add(normalized)
+        publication_pdf = normalized.startswith(OWNED_PUBLICATION_PREFIX) and normalized.lower().endswith(".pdf")
+        if not publication_pdf:
+            errors.append(f"{label} must be a PDF under {OWNED_PUBLICATION_PREFIX}")
+        kind_ok = row.get("kind") == OWNED_ARTIFACT_KIND
+        if not kind_ok:
+            errors.append(f"{label} is missing kind {OWNED_ARTIFACT_KIND}")
+        generator_ok = isinstance(row.get("generator"), str) and bool(row.get("generator").strip())
+        if not generator_ok:
+            errors.append(f"{label} is missing generator")
+        if not isinstance(row.get("safetyCheck"), str) or not row.get("safetyCheck").strip():
+            errors.append(f"{label} is missing safetyCheck")
+        declared = row.get("notProprietarySource") is True
+        if not declared:
+            errors.append(f"{label} must declare notProprietarySource")
+        sources = row.get("trackedSources")
+        if not isinstance(sources, list) or not sources:
+            errors.append(f"{label} is missing trackedSources")
+            sources = []
+        source_ok = bool(sources)
+        for source in sources:
+            source_label = f"{label}.trackedSources"
+            _source_path, source_error = _controlled_tracked_path_error(
+                source, root, tracked_paths, source_label,
+            )
+            if source_error:
+                errors.append(source_error)
+                source_ok = False
+                continue
+            source_posix = PurePosixPath(str(source).replace("\\", "/"))
+            if OWNED_FORBIDDEN_PARTS.intersection(source_posix.parts):
+                errors.append(f"{source_label} points at a prohibited directory")
+                source_ok = False
+            suffix = source_posix.suffix.lower()
+            if suffix not in OWNED_SOURCE_SUFFIXES or suffix in OWNED_DANGEROUS_SUFFIXES:
+                errors.append(f"{source_label} must be an owned text or figure source")
+                source_ok = False
+        if target is not None and target.is_symlink():
+            errors.append(f"{label} must not be a symbolic link")
+            source_ok = False
+        if path_error or not source_ok or not kind_ok or not generator_ok or not declared or not publication_pdf:
+            continue
+        allowed.add(normalized)
+    return errors, allowed
+
+
+def prohibited_source_artifact_errors(
+    changed: set[str],
+    registry: dict | None = None,
+    root: Path | None = None,
+    tracked_paths: set[str] | None = None,
+) -> list[str]:
+    """Reject protected-source payloads. Owned PDFs are exempt only when the registration proves its sources."""
+    errors: list[str] = []
+    root = ROOT if root is None else root
+    if registry is None:
+        if not CLTAV_OWNED_ARTIFACTS_PATH.is_file():
+            registry = {}
+            errors.append("owned generated artifact registry is missing")
+        else:
+            try:
+                registry = json.loads(CLTAV_OWNED_ARTIFACTS_PATH.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                registry = {}
+                errors.append("owned generated artifact registry is unreadable")
+    if tracked_paths is None:
+        tracked_paths = _tracked_repo_paths(root)
+        if tracked_paths is None:
+            errors.append("cannot enumerate tracked files for owned artifacts")
+            tracked_paths = set()
+    structural, owned = _owned_registration_errors(registry, root, tracked_paths)
+    errors.extend(structural)
     for raw in changed:
-        path = PurePosixPath(raw.replace("\\", "/"))
+        path = PurePosixPath(str(raw).replace("\\", "/"))
         lowered = path.name.lower()
         if "local-references" in path.parts:
             errors.append(f"private source directory cannot be tracked: {path}")
-        if path.suffix.lower() in {".pdf", ".patch", ".diff"}:
+        suffix = path.suffix.lower()
+        if suffix == ".pdf":
+            if str(path) not in owned:
+                errors.append(f"protected or transient source artifact cannot be added: {path}")
+        elif suffix in {".patch", ".diff"}:
             errors.append(f"protected or transient source artifact cannot be added: {path}")
         if any(token in lowered for token in ("standard_extract", "standard-extract", "clause_extract", "clause-extract")):
             errors.append(f"standard extraction cannot be added: {path}")
@@ -2860,6 +3718,15 @@ def main() -> int:
     crs_package = json.loads(read(ROOT / "configs/requirements/arinc_615a3_m1_crs.json"))
     audit_package = json.loads(read(SOURCE_AUDIT_PATH))
     errors.extend(protocol_source_audit_errors(audit_package, crs_package))
+    m2_package = json.loads(read(ROOT / "configs/models/arinc_615a3_m2_model.json"))
+    errors.extend(arinc_645_closure_errors(audit_package, crs_package, m2_package))
+    errors.extend(
+        cltav_algorithm_contract_errors(
+            read(RESEARCH / "publication" / "algorithms" / "ALG-CLTAV-01.tex"),
+            read(CLTAV_PUML_DIR / "FIG-CL-TAV-09-experiment-architecture.puml"),
+            read(RESEARCH / "EXPERIMENT_PLAN.md"),
+        )
+    )
     errors.extend(cltav_outline_errors(read(RESEARCH / "publication" / "RESEARCH_OUTLINE.md")))
     errors.extend(
         cltav_sysml_errors(

@@ -834,6 +834,7 @@
                                 "enum": [
                                     "PROFILE-SCOPE-ONLY",
                                     "DEPENDENCY-BLOCKED",
+                                    "POINTS-TO-BOUND-645-LEAF",
                                     "DIRECT-DATA-FORMAT-REFINEMENT",
                                     "PRODUCER-CONSTRAINT",
                                     "CONSUMER-TOLERANCE"
@@ -1172,7 +1173,8 @@
                             "DIRECT-DATA-FORMAT-REFINEMENT",
                             "PRODUCER-CONSTRAINT",
                             "CONSUMER-TOLERANCE",
-                            "DEPENDENCY-BLOCKED"
+                            "DEPENDENCY-BLOCKED",
+                            "POINTS-TO-BOUND-645-LEAF"
                         ]
                     },
                     "refinementRationaleEn": {

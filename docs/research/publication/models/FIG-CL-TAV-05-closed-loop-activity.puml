@@ -1,105 +1,76 @@
 @startuml FIG-CL-TAV-05
 skinparam shadowing false
-title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nadmissible A then selectable S; Admit table A1-A5; charge once
+title FIG-CL-TAV-05 Closed-loop activity\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\npredict before select; exclusive TEST/Prep/Recover/Admit; charge once; effect classes
+
+' E-S1-STOP from=S1 to=StopGate polarity=stop guard=already decided
+' E-S2-GAP from=S2 to=PredictionGap polarity=stop guard=Recover and Prep ineligible
+' E-S7-S1 from=S7 to=S1 polarity=retry via=LoopS1
+' E-S9-S10 from=S9 to=S10 polarity=advance
+' E-S10-S1 from=S10 to=S1 polarity=continue guard=no stop
 
 start
-:Idle; declare selected mode BUDGET(cmin,B) XOR ROUNDS(Kmax);
+:S0 Idle; SessionContext unique; HistoryHandle; BUDGET xor ROUNDS; retry=0;
 repeat
-  :Build admissible A(qk);
-  :Form selectable S = currently-valid strictly-reducing TEST, else Prep, else Recover;
-  if (S empty? Admit A2-A5) then (yes)
-    if (q unknown?) then (yes)
-      if (Recover eligible?) then (A5 unaffordable)
-        :Stop-Budget; keep UNKNOWN and ERROR history;
+  :S1 IF-RESOURCE-STOP gate;
+  if (already A2-A5 or P1-P5?) then (yes)
+    :E-S1-STOP already decided stop;
+    stop
+  else (no)
+    :S2 IF-PRED-OBS predict classes;
+    if (PredictionGapError and Recover and Prep not eligible?) then (yes)
+      :E-S2-GAP TEST-scoped named prediction-gap; Recover and Prep ineligible;
+      stop
+    else (no)
+      :S3 IF-SELECT-ADMIT final action, then freeze qUsedAtSelect/actionId;
+      if (kind ADMIT?) then (yes)
         stop
-      else (A4 not eligible)
-        :Stop-Error;
+      elseif (kind TEST and S empty?) then (yes)
+        :named spec error; never argmin empty S;
         stop
+      elseif (kind PREP or RECOVER?) then (yes)
+        :keep named Prep/Recover; do not enter TEST minimax;
+      else (TEST nonempty)
+        :IF-SELECT-ADMIT returns final one-step minimax on predicted nonempty classes;
       endif
-    else (KNOWN)
-      if (strictly-reducing TEST or Prep exists unaffordable?) then (A2)
-        :Stop-Budget;
-        stop
-      else (A3)
-        :Stop-NoDistinguisher;
-        stop
-      endif
-    endif
-  else (A1 never argmin empty S)
-    :Select from S by one-step minimax on currently valid nonempty classes;
-    :Execute chosen action toward Mprot through FIG-CL-TAV-04 ports;
-    :Charge cost once under the selected mode;
-    if (instrument / correlation / record valid?) then (yes)
-      if (Recover?) then (yes)
-        if (target confirmed?) then (yes)
-          :qk known; Update Hk;
-          if (P1 Hk empty?) then (yes)
-            :Stop-Empty;
-            stop
-          elseif (P2 |Hk| == 1) then (yes)
-            :Stop-Singleton;
-            stop
-          elseif (P3 named 645-blocked item?) then (yes)
-            :Stop-645;
-            stop
-          elseif (P4 observational equivalence established?) then (yes)
-            :Stop-Equivalent;
-            stop
-          elseif (P5 selected-mode resource exhausted?) then (yes)
-            :Stop-Budget;
-            stop
-          else (continue Admit)
-          endif
-        else (unconfirmed)
-          :qk remains UNKNOWN; do not restore old q;
-          note right
-            Next Admit keeps UNKNOWN.
-            Empty S uses A4 or A5.
-          end note
-        endif
-      else (TEST or Prep)
-        :Observe Izk; Update Hk; qk known;
-        if (P1 Hk empty?) then (yes)
-          :Stop-Empty;
-          stop
-        elseif (P2 |Hk| == 1) then (yes)
-          :Stop-Singleton;
-          stop
-        elseif (P3 named 645-blocked item?) then (yes)
-          :Stop-645;
-          stop
-        elseif (P4 observational equivalence established?) then (yes)
-          :Stop-Equivalent;
-          stop
-        elseif (P5 selected-mode resource exhausted?) then (yes)
-          :Stop-Budget;
-          stop
-        else (continue Admit)
-        endif
-      endif
-    else (ERROR)
-      :ErrorHandle; do not exclude Hk candidates;
-      if (confirmed not sent?) then (yes)
-        :qk status unchanged; record ERROR history;
+      :S4 Charge cost once;
+      :S5 IF-EXECUTE-RECORD effect class;
+      :S6 IF-OBS-INTERPRET unless effect class already returned;
+      if (CONFIRMED-NOT-SENT or UNKNOWN-EFFECT or prepErr or unconfirmed Recover?) then (yes)
+        :S7 classify effect; CONFIRMED-NOT-SENT keeps q; UNKNOWN-EFFECT invalidates q;
         if (retry cap reached?) then (yes)
-          :Stop-Error;
+          :Stop-Error; not A5/Stop-Budget;
           stop
+        else (retry remaining)
+          :E-S7-S1 unconfirmed Recover and effect classes share the retry back-edge to S1;
         endif
-      else (unknown-effect)
-        :qk unknown; record failed history; do not reuse T(q_old);
-        if (retry cap reached?) then (yes)
-          :Stop-Error;
+      else (record valid)
+        if (Recover confirmed?) then (yes)
+          :S8 sole writer of KNOWN(declaredTarget,evidence); IF-PREP-RECOVER does not write Gamma;
+          :E-S9-S10 S9 IF-HIST-UPDATE reads qUsedAtSelect and commits confirmed postSummary;
+        else (TEST or Prep)
+          :E-S9-S10 S9 IF-HIST-UPDATE reads qUsedAtSelect and commits confirmed postSummary;
+        endif
+        :S10 P1-P5 via IF-RESOURCE-STOP and IF-EQUIV;
+        if (P-stop?) then (yes)
           stop
-        elseif (Recover not eligible?) then (A4)
-          :Stop-Error;
-          stop
-        elseif (Recover eligible unaffordable?) then (A5)
-          :Stop-Budget;
-          stop
+        else (no stop)
+          :E-S10-S1 continue to next S1;
         endif
       endif
     endif
   endif
-repeat while (session open?) is (yes)
+repeat while (no stop?) is (continue)
+note right
+  admissible A then selectable S; Admit A1-A5
+  XOR BUDGET(cmin,B) / ROUNDS(Kmax)
+  strictly-reducing TEST else Prep else Recover
+  Charge cost once; Hk update
+  ERROR ErrorHandle unknown-effect
+  confirmed not sent keeps q; CONFIRMED-NOT-SENT is not UNKNOWN
+  unconfirmed Recover joins S7
+  no stop returns S10 to S1
+  P1 P5 Stop-Empty Stop-Singleton Stop-645
+  Stop-Equivalent Stop-Budget Stop-Error Stop-NoDistinguisher
+end note
 stop
 @enduml

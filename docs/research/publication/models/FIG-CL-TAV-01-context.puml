@@ -6,7 +6,7 @@ actor Operator
 node TestAdapter
 node IUT
 node NetworkClock
-cloud Integrity645 as "645 integrity boundary\nBLOCKED-SOURCE-645 unique algorithms"
+cloud Integrity645 as "645 integrity boundary\nidentity bound; capability NOT-ESTABLISHED"
 
 Operator --> TestAdapter : test request
 TestAdapter --> IUT : stimulus

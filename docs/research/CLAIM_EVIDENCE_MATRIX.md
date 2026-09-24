@@ -34,11 +34,13 @@ Passing tests is not Result, Evidence, or a superiority Claim.
 | CL-DETECT | Detection and error-judgement comparison of CL-T / CL-A / CL-TA / CL-LOOP | EXP-CLTAV-DETECT registration and later held-out runs | To be verified; no numbers in this PR |
 | CL-LOCATE | In-domain localization / candidate reduction under the same budget | EXP-CLTAV-LOCATE | To be verified |
 | CL-ABLATION | Feedback, FIND-clock non-waiver and Prep/Recover cost change outcomes | EXP-CLTAV-ABLATION, including the forbidden abort-waiver negative control | To be verified |
-| CL-CRS | Expanded protocol CRS is reviewable for INFORMATION, UPLOAD, both DOWNLOAD modes, FIND and bounded 665/664/RFC support | M1 package, source audit, bilingual review view | Specified as candidate; not independently approved |
+| CL-CRS | Expanded protocol CRS is reviewable for INFORMATION, UPLOAD, both DOWNLOAD modes, FIND, bounded 665/664/RFC support and 615A-triggered 645 semantic leaves | M1 package, source audit, bilingual review view | Specified as candidate; 645 SOURCE/SEMANTIC bound; capabilities NOT-ESTABLISHED; not independently approved |
+| CL-ALG | Top-level CL-TAV process and abstract interfaces are specified | ALG-CLTAV-01, method §3.9.2, DD-033 | Specified; not implemented; independent math review open |
 
 Observation → Result → Evidence → Argument/Decision → Claim stays the control
-boundary. ARINC 645 is locally acquired and not bound; CRC/check-value/naming
-capabilities stay not established.
+boundary. ARINC 645-1 2021 is identity-bound for 615A-triggered CRC, check-value
+and naming leaves; CRC/check-value/naming/complete-integrity capabilities stay
+not established.
 
 ## Engineering claims
 
@@ -132,9 +134,10 @@ permitted.
 | CL-DETECT | CL-T／CL-A／CL-TA／CL-LOOP 的检测与错误判定比较 | EXP-CLTAV-DETECT 登记及随后留出运行 | To be verified；本 PR 不填数字 |
 | CL-LOCATE | 同一预算下的域内定位／候选缩减 | EXP-CLTAV-LOCATE | To be verified |
 | CL-ABLATION | 反馈、FIND 时钟不豁免与 Prep／Recover 成本改变结局 | EXP-CLTAV-ABLATION，含禁止的中止豁免反例对照 | To be verified |
-| CL-CRS | 扩大协议 CRS 对 INFORMATION、UPLOAD、两种 DOWNLOAD、FIND 及有界 665／664／RFC 支持可评审 | M1 包、来源审计、双语评审视图 | Specified 为候选；未经独立批准 |
+| CL-CRS | 扩大协议 CRS 对 INFORMATION、UPLOAD、两种 DOWNLOAD、FIND、有界 665／664／RFC 支持及 615A 触发的 645 语义叶可评审 | M1 包、来源审计、双语评审视图 | Specified 为候选；645 来源／语义已绑定；能力未建立；未经独立批准 |
+| CL-ALG | CL-TAV 总体过程与抽象接口已规格化 | ALG-CLTAV-01、方法报告 §3.9.2、DD-033 | Specified；未实现；独立数学评审仍开放 |
 
-观察→结果→证据→论证／决策→主张边界保持。ARINC 645 本地已取得但未绑定。CRC／校验值／命名能力仍未建立。
+观察→结果→证据→论证／决策→主张边界保持。ARINC 645-1 2021 已按 615A 触发的 CRC、校验值与命名叶完成身份绑定；CRC／校验值／命名／完整完整性能力仍未建立。
 
 ## ARINC/Profile 面向认证候选主张
 

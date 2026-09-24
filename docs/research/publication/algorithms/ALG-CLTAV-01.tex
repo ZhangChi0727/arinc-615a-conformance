@@ -1,0 +1,98 @@
+% ALG-CLTAV-01 — CL-TAV top-level process (typeset form of DD-029 / DD-033).
+% Not an executable engine. Interface IDs are the only call sites.
+% S0--S10 are stable logical duties, not line numbers, protocol states, or time indices.
+% Compile via ALG-CLTAV-01-wrapper.tex. Do not commit aux/log/out.
+\newcommand{\IFpred}{\texttt{IF-PRED-OBS}}
+\newcommand{\IFhist}{\texttt{IF-HIST-UPDATE}}
+\newcommand{\IFobs}{\texttt{IF-OBS-INTERPRET}}
+\newcommand{\IFsel}{\texttt{IF-SELECT-ADMIT}}
+\newcommand{\IFexec}{\texttt{IF-EXECUTE-RECORD}}
+\newcommand{\IFprep}{\texttt{IF-PREP-RECOVER}}
+\newcommand{\IFeq}{\texttt{IF-EQUIV}}
+\newcommand{\IFres}{\texttt{IF-RESOURCE-STOP}}
+
+\begin{algorithm}[ht]
+\caption{CL-TAV top-level session (ALG-CLTAV-01)}
+\label{alg:cltav-01}
+\SetKwInput{KwIn}{Require}
+\SetKwInput{KwOut}{Ensure}
+\KwIn{declared $H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}$; SessionContext $\Gamma$ (unique state); HistoryHandle $\eta$; resource mode BUDGET$(c_{\min},B)$ xor ROUNDS$(K_{\max})$; action library; measurement uncertainty}
+\KwOut{stop class, final $H$, $\eta$, session trace; singleton $h_{\mathrm{normal}}$ is not protocol PASS}
+\tcp{\textbf{S0} $H\leftarrow H_0$; $q{:=}\Gamma.\mathrm{currentSummary}$, $\mathrm{retry}{:=}\Gamma.\mathrm{retryCount}$, $R_{\max}{:=}\Gamma.\mathrm{retryCap}$; $\Gamma.\mathrm{retryCount}{\leftarrow}0$; $\Gamma.\mathrm{qStatus}$ and $q$ UNKNOWN unless declared; $\eta$ empty. Decision index $k$, billed charges, and retry are distinct}
+\While{true}{
+  \tcp{\textbf{S1} stop gate before prediction; an already decided stop returns here}
+  \lIf{\IFres$(\Gamma,H,\eta)$ already decided Admit A2--A5 or P1--P5}{\Return that stop, $H$, $\eta$, trace}
+  \tcp{\textbf{S2} predict before select; PredictionGapError is TEST-scoped}
+  $(\textit{pred},\mathcal{C})\leftarrow$ \IFpred$(\Gamma,\eta,H,\text{uncertainty},\text{library})$\;
+  \uIf{$\textit{pred}$ is PredictionGapError}{
+    TEST scoring unavailable; $\mathcal{C}\leftarrow\emptyset$\;
+    \lIf{Recover and Prep are not eligible from $\Gamma$}{\Return named prediction-gap; do not score empty $\mathcal{C}$ as remaining $\lvert H\rvert$}
+  }
+  $A\leftarrow$ currently enabled actions\;
+  \tcp{\textbf{S3} exclusive kind; empty $\mathcal{C}$ does not block eligible Recover or Prep}
+  $(\textit{kind},t^\star,S,\textit{admit})\leftarrow$ \IFsel$(A,\Gamma.\mathrm{currentSummary},\mathcal{C},\Gamma,\eta,H)$\;
+  \uIf{$\textit{kind}=\mathrm{ADMIT}$}{
+    \Return $\textit{admit}\in\{A2,A3,A4,A5\}$, $H$, $\eta$, trace\;
+  }
+  \uElseIf{$\textit{kind}=\mathrm{TEST}$}{
+    \lIf{$S=\emptyset$}{\Return named spec error; do not $\arg\min$ empty $S$}
+    $t^\star$ is the final one-step minimax action selected by \IFsel on currently valid nonempty classes $\mathcal{C}$ inside TEST-only $S$\;
+  }
+  \uElseIf{$\textit{kind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$}{
+    keep the Prep or Recover $t^\star$ named by \IFsel; do not enter TEST minimax\;
+  }
+  \Else{
+    \Return named spec error\;
+  }
+  \tcp{S3-SNAP freezes the final non-ADMIT action only after all selection rules}
+  $\textit{qUsedAtSelect}\leftarrow\Gamma.\mathrm{currentSummary}$; $\textit{histVer}\leftarrow\eta.\mathrm{version}$; $\textit{classesUsedAtSelect}\leftarrow\mathcal{C}$; $\textit{actionId}\leftarrow t^\star$\;
+  \tcp{\textbf{S4} charge once; retry cap $\neq$ budget exhaustion}
+  charge $t^\star$ once under the selected mode; refuse unadmitted issue\;
+  \tcp{\textbf{S5} execute; the effect class is returned}
+  $(\textit{record},\textit{effect})\leftarrow$ \IFexec$(\Gamma,t^\star)$\;
+  \tcp{\textbf{S6} interpret unless execute already returned an effect class}
+  $\textit{Iz}\leftarrow$ nil; $\textit{targetConfirmed}\leftarrow$ false; $\textit{summaryConfirmed}\leftarrow$ false; $\textit{prepResultEvaluated}\leftarrow$ false; $\textit{prepErr}\leftarrow$ nil\;
+  $\textit{postSummary}\leftarrow$ nil; $\textit{declaredTarget}\leftarrow$ nil; $\textit{evidence}\leftarrow$ nil\;
+  \eIf{$\textit{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{
+    skip interpret\;
+  }{
+    $(I_z,\textit{effect},\textit{summaryConfirmed},\textit{postSummary})\leftarrow$ \IFobs$(\Gamma,\textit{record})$\;
+  }
+  \If{$\textit{kind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$ and $\textit{effect}\notin\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{
+    $(\textit{targetConfirmed},\textit{summaryConfirmed},\textit{prepErr},\textit{declaredTarget},\textit{evidence},\textit{postSummary})\leftarrow$ \IFprep$(\Gamma,\eta,t^\star,\textit{record})$; $\textit{prepResultEvaluated}\leftarrow$ true\;
+    \tcp{\IFprep returns values; it does not write $\Gamma$ or $\eta$}
+  }
+  \uIf{$\textit{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$ or $\textit{prepErr}$ or ($\textit{kind}$ is Prep and $\textit{prepResultEvaluated}$ and $\textit{summaryConfirmed}$ is false) or ($t^\star$ is Recover and $\textit{prepResultEvaluated}$ and $\textit{targetConfirmed}$ is false)}{
+    \tcp{\textbf{S7} classify the effect; do not fold \texttt{CONFIRMED-NOT-SENT} into UNKNOWN}
+    do not exclude $H$\;
+    \uIf{$\textit{prepErr}$ or $\textit{effect}=\texttt{UNKNOWN-EFFECT}$ or ($\textit{kind}$ is Prep and $\textit{prepResultEvaluated}$ and $\textit{summaryConfirmed}$ is false)}{
+      mark $\eta$ conservative-unknown; $\Gamma.\mathrm{qStatus}\leftarrow$ UNKNOWN; clear $\Gamma.\mathrm{currentSummary}$\;
+    }
+    \uElseIf{$\textit{effect}=\texttt{CONFIRMED-NOT-SENT}$}{
+      leave $\Gamma.\mathrm{qStatus}$ and compatible history unchanged\;
+    }
+    \Else{
+      \tcp{unconfirmed Recover target}
+      $\Gamma.\mathrm{qStatus}$ stays UNKNOWN; clear $\Gamma.\mathrm{currentSummary}$; mark $\eta$ conservative-unknown\;
+    }
+    $\Gamma.\mathrm{retryCount}\leftarrow\Gamma.\mathrm{retryCount}+1$\;
+    \lIf{$\Gamma.\mathrm{retryCount}\ge\Gamma.\mathrm{retryCap}$}{\Return Stop-Error; this is not A5/Stop-Budget}
+    continue after the one charge\;
+  }
+  \uElseIf{$t^\star$ is Recover}{
+    \tcp{\textbf{S8} sole writer of KNOWN$(declaredTarget,evidence)$}
+    $\Gamma.\mathrm{qStatus}\leftarrow$ KNOWN$(\textit{declaredTarget},\textit{evidence})$\;
+    $\textit{postSummary}\leftarrow(\textit{declaredTarget},\textit{evidence})$\;
+  }
+  \If{$I_z$ is a valid observation class or $\textit{summaryConfirmed}$ is true}{
+    \tcp{\textbf{S9} history reads the select snapshot; this is the sole commit of a confirmed successor summary}
+    $(\eta,H)\leftarrow$ \IFhist$(\eta,H,t^\star,\textit{qUsedAtSelect},\textit{classesUsedAtSelect},I_z,\textit{postSummary})$\;
+    \If{$\Gamma.\mathrm{qStatus}$ is KNOWN and $\textit{summaryConfirmed}$ is true and $\textit{postSummary}$ is confirmed}{
+      $\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}$\;
+    }
+  }
+  \tcp{\textbf{S10} exclusive P-stops; if none, the next iteration starts at S1}
+  let $\sigma\leftarrow$ first of Stop-Empty, Stop-Singleton, Stop-645, Stop-Equivalent, Stop-Budget via \IFres$(\Gamma,H,\eta)$ and \IFeq$(\Gamma,H,\eta)$\;
+  \lIf{$\sigma$ is set}{\Return $\sigma$, $H$, $\eta$, and the trace}
+}
+\end{algorithm}

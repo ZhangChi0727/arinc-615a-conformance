@@ -26,27 +26,27 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "8188307c57373375bf3f73dc3304dd958b77476b",
+        "gitBlobOid": "204b4967a5dd7b3bebe1751f382ab96e9c9dc495",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_crs_package.schema.json",
-        "gitBlobOid": "2a668371125242d1c2c5f744ab4d06e17523e4ae",
+        "gitBlobOid": "3c1a8e4a2c149eb9ebcd5e8ca652cfd729055a54",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "d632144b7539131bd82f56c396614632db110c37",
+        "gitBlobOid": "b510d9e49c8cd2792acd62509ebedf473b37b0cc",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "39071b4e4eafcc0dae9e56e06d1a983fef70790a",
+        "gitBlobOid": "68e250004bad65860b25e21ad2732ccc72d07ee4",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_source_section_spans.json",
-        "gitBlobOid": "90a42bf7f0b2e8ed6ccbef4512a1ebcb3e63ecff",
+        "gitBlobOid": "78a50ec1debf07e6f9c50806015a4f772b35effc",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "005fa928bf16376ffd78e8561b72241958f72267",
+        "gitBlobOid": "16823bafd5e8ce958f437046ce27d6d4d271abea",
         "role": "SUCCESSOR-M1-DELTA"
       }
     ],
@@ -148,8 +148,8 @@
           "role": "M1-IMMUTABLE-INPUT"
         }
       ],
-      "currentInputArtifactCommit": "be2cd876607494df3d1a195abc05a0e04d90e090",
-      "currentInputArtifactTree": "ce555e8238d5f2f700168e35384e982280babe04"
+      "currentInputArtifactCommit": "c32008e32bc4701df27e2f25f74b01465c9e2bf2",
+      "currentInputArtifactTree": "041b7211e3e4222c21a20e224fa4349c5ea3a4c6"
     }
   },
   "sequenceEndpointBindings": [
@@ -22536,6 +22536,570 @@
       "modelTargetIds": [
         "OBJ-SUPPORTING-INCLUDE-DEFAULT-TX-SMAX-CRS-M1-00817"
       ]
+    },
+    {
+      "requirementId": "CRS-M1-00818",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00819",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00820",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00821",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00822",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00823",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00824",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00825",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00826",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00827",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00828",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00829",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "NEGATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00830",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "NEGATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00831",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00832",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00833",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00834",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00835",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00836",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00837",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00838",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00839",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00840",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00841",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00842",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00843",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00844",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00845",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00846",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00847",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00848",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "NEGATIVE",
+      "sourceModality": "MUST",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00849",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00850",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00851",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00852",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "NEGATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00853",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "NEGATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00854",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "NEGATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00855",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00856",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00857",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00858",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00859",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00860",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00861",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00862",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00863",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00864",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
     }
   ],
   "traceRelations": [
@@ -32680,6 +33244,523 @@
       "rationaleCode": "SUPPORTING-SOURCE-DATA-OBJECT",
       "rationaleEn": "Supporting-source predicate recorded as a data-object constraint; bound M2 does not widen UPLOAD/INFORMATION execution.",
       "rationaleZh": "支持来源谓词记为数据对象约束；绑定 M2 不扩大 UPLOAD/INFORMATION 执行。"
+    },
+    {
+      "id": "TR-CRS-M1-00818-1031",
+      "requirementId": "CRS-M1-00818",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00819-1032",
+      "requirementId": "CRS-M1-00819",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00820-1033",
+      "requirementId": "CRS-M1-00820",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00821-1034",
+      "requirementId": "CRS-M1-00821",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00822-1035",
+      "requirementId": "CRS-M1-00822",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00823-1036",
+      "requirementId": "CRS-M1-00823",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00824-1037",
+      "requirementId": "CRS-M1-00824",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00825-1038",
+      "requirementId": "CRS-M1-00825",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00826-1039",
+      "requirementId": "CRS-M1-00826",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00827-1040",
+      "requirementId": "CRS-M1-00827",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00828-1041",
+      "requirementId": "CRS-M1-00828",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00829-1042",
+      "requirementId": "CRS-M1-00829",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "NEGATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00830-1043",
+      "requirementId": "CRS-M1-00830",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "NEGATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00831-1044",
+      "requirementId": "CRS-M1-00831",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00832-1045",
+      "requirementId": "CRS-M1-00832",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00833-1046",
+      "requirementId": "CRS-M1-00833",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00834-1047",
+      "requirementId": "CRS-M1-00834",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00835-1048",
+      "requirementId": "CRS-M1-00835",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00836-1049",
+      "requirementId": "CRS-M1-00836",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00837-1050",
+      "requirementId": "CRS-M1-00837",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00838-1051",
+      "requirementId": "CRS-M1-00838",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00839-1052",
+      "requirementId": "CRS-M1-00839",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00840-1053",
+      "requirementId": "CRS-M1-00840",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00841-1054",
+      "requirementId": "CRS-M1-00841",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00842-1055",
+      "requirementId": "CRS-M1-00842",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00843-1056",
+      "requirementId": "CRS-M1-00843",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00844-1057",
+      "requirementId": "CRS-M1-00844",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00845-1058",
+      "requirementId": "CRS-M1-00845",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "TABLE-CONSTRAINT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00846-1059",
+      "requirementId": "CRS-M1-00846",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00847-1060",
+      "requirementId": "CRS-M1-00847",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00848-1061",
+      "requirementId": "CRS-M1-00848",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "NEGATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00849-1062",
+      "requirementId": "CRS-M1-00849",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00850-1063",
+      "requirementId": "CRS-M1-00850",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00851-1064",
+      "requirementId": "CRS-M1-00851",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00852-1065",
+      "requirementId": "CRS-M1-00852",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "NEGATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00853-1066",
+      "requirementId": "CRS-M1-00853",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "NEGATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00854-1067",
+      "requirementId": "CRS-M1-00854",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "NEGATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00855-1068",
+      "requirementId": "CRS-M1-00855",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00856-1069",
+      "requirementId": "CRS-M1-00856",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "COMMENTARY",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00857-1070",
+      "requirementId": "CRS-M1-00857",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00858-1071",
+      "requirementId": "CRS-M1-00858",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00859-1072",
+      "requirementId": "CRS-M1-00859",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00860-1073",
+      "requirementId": "CRS-M1-00860",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00861-1074",
+      "requirementId": "CRS-M1-00861",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00862-1075",
+      "requirementId": "CRS-M1-00862",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "FACT",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00863-1076",
+      "requirementId": "CRS-M1-00863",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "MUST",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00864-1077",
+      "requirementId": "CRS-M1-00864",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 file-byte input order is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 文件字节输入顺序；绑定 M2 不执行 CRC、校验值或命名算法。"
     }
   ],
   "infrastructurePremises": [
@@ -33366,17 +34447,17 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 816,
-    "dispositionCount": 816,
-    "traceCount": 922,
+    "requirementCount": 863,
+    "dispositionCount": 863,
+    "traceCount": 969,
     "stateCount": 35,
     "transitionCount": 65,
     "timingCount": 30,
     "fieldConstraintCount": 108,
-    "dispositionsFingerprint": "88d9e6ff5ea57bad369cf8144a92230f531276566e1d8725732795c441c5fdb4",
+    "dispositionsFingerprint": "9c07be25fc8aa42ff08cc647d1135179cc6a6e03f07f9202c21a3128bcc5b7e8",
     "modelFingerprint": "a716f9b60f3e507ec7758ca3430de589bd67bbad630ef735a1bc1b38c8c2b2ef",
     "timingFingerprint": "cd8a13f203f6d2c2f9c82e65646bf9d5b920200a509af92d461096e54f7e6810",
-    "inputFingerprint": "9d35821ff64e239fac8af21a3c198b56cb61c4f5269b8030e15b98d310dfbac1",
+    "inputFingerprint": "4893f239ac6752a110e4f5ab832288245c5679d984eba0d790321667fc55d5e4",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",

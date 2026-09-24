@@ -604,7 +604,7 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
-\(\mathrm{Obs}(t,q_k)\) uses the same uncertainty partitions as \(I_{z_k}\). Project those classes onto current \(H_k\) and score only currently valid nonempty survivor sets. A test is strictly reducing iff some such class satisfies \(0<|\mathrm{survivors}|<|H_k|\). Empty intersections from excluded hypotheses are not extra score classes and are not distinguishing value; a currently enabled test with no currently valid class is rejected as a named prediction-gap spec error before admission, not folded into A3 and not scored as remaining \(|H_k|\). An executed empty \(H_k\) remains Stop-Empty. Form selectable \(S\subseteq A(q_k)\) under one selected resource mode (budget \(c_{\min},B\) or rounds \(K_{\max}\), never a logical OR of both). If \(S\) is empty, classify Admit A2–A5 even when \(A\) is nonempty. If the minimax set is empty, select Prep, else Recover. Uninformative tests in \(A\) are not selected. Prep, Recover and retries use that same pre-admission and one-shot charging rule. `ERROR` does not exclude candidates; confirmed-not-sent does not change \(q\)-status, unknown-effect marks \(q\) unknown until a recovery-eligible Recover is confirmed. Eligible but unaffordable Recover is A5 Stop-Budget and keeps the ERROR/UNKNOWN facts. Retry cap is decided before A4/A5/A1. This is one-step minimax in remaining-candidate count, not global optimality. Out-of-model observations are inconsistency, not extra score classes. Positive-but-vanishing costs are not a termination proof. Algorithm details, three-way cannot-shrink stopping and walk-throughs are in DD-029. Author-supplied checkable arguments for the four C1 properties are in §3.9.1; they are not independent mathematical approval and are not a verification-engine implementation.
+\(\mathrm{Obs}(t,q_k)\) uses the same uncertainty partitions as \(I_{z_k}\). Project those classes onto current \(H_k\) and score only currently valid nonempty survivor sets. A test is strictly reducing iff some such class satisfies \(0<|\mathrm{survivors}|<|H_k|\). Empty intersections from excluded hypotheses are not extra score classes and are not distinguishing value; a currently enabled test with no currently valid class is rejected as a named prediction-gap spec error before TEST admission, not folded into A3 and not scored as remaining \(|H_k|\). PredictionGapError is TEST-scoped: it does not by itself block a recovery-eligible Recover while \(q\) is UNKNOWN. An executed empty \(H_k\) remains Stop-Empty. Form selectable \(S\subseteq A(q_k)\) under one selected resource mode (budget \(c_{\min},B\) or rounds \(K_{\max}\), never a logical OR of both). If \(S\) is empty, classify Admit A2–A5 even when \(A\) is nonempty. If the minimax set is empty, select Prep, else Recover. Uninformative tests in \(A\) are not selected. Prep, Recover and retries use that same pre-admission and one-shot charging rule. `ERROR` does not exclude candidates. CONFIRMED-NOT-SENT leaves \(q\) and compatible history unchanged and still counts the retry. UNKNOWN-EFFECT marks \(\eta\) conservative-unknown and \(q\) unknown until a recovery-eligible Recover is confirmed. Unconfirmed Recover stays UNKNOWN and shares that retry counter with prepErr and execute/interpret effect classes. IF-HIST-UPDATE reads the select-time snapshot, not the post-effect \(\Gamma.\mathrm{qStatus}\). Eligible but unaffordable Recover is A5 Stop-Budget and keeps the ERROR/UNKNOWN facts. Retry cap is decided before A4/A5/A1 and is not Stop-Budget. This is one-step minimax in remaining-candidate count, not global optimality. Out-of-model observations are inconsistency, not extra score classes. Positive-but-vanishing costs are not a termination proof. Algorithm details, three-way cannot-shrink stopping and walk-throughs are in DD-029. Author-supplied checkable arguments for the four C1 properties are in §3.9.1; they are not independent mathematical approval and are not a verification-engine implementation.
 
 ### 3.9.1 Conditional first-version arguments
 
@@ -648,6 +648,60 @@ Declare exactly one resource mode. Every charged TEST, Prep, Recover, and `ERROR
 - Round mode: a finite \(K_{\max}\) counts each of those actions as one round, hence at most \(K_{\max}\) charged executions.
 
 This bounds the number of charged executions. It does not by itself bound wall-clock return: each analysis and each action execution/wait still needs its own termination proof or a controlled timeout. This increment does not claim those engineering timeouts are implemented.
+
+### 3.9.2 Top-level process and abstract interface contracts
+
+The typeset main process is [`ALG-CLTAV-01.tex`](../publication/algorithms/ALG-CLTAV-01.tex) (DD-033). It is the academic form of this section, not an executable engine and not a solver-technology choice. Interface identifiers below are the only legal call sites. Unknown or incomputable returns must not be treated as evidence that excludes the true hypothesis. SessionContext \(\Gamma\) and HistoryHandle \(\eta\) are the session-owned carriers. `compatibleStateByHypothesis` inside \(\eta\) is a whole-history compatible-state handle; this PR does not select its data structure. Two handles may share the same \(H\) while their compatible histories differ; printing only \(H\) does not discard history. There is no hidden global store.
+
+Stop-645 keeps its class name. After the 615A-triggered 645 bind it means a **named remaining 645-dependent obligation still unresolved at capability/implementation level**, not “the 645 file is missing.” Bound CRC/check-value/naming semantics no longer fire it merely because the source was historically blocked. General unresolved obligations are not erased.
+
+**Notation.** S0–S10 are stable logical duties. They are not typeset line numbers, protocol states, or time indices, and one iteration need not visit every label. The decision index \(k\), the billed execution count (S4 charges), and \(\Gamma.\mathrm{retryCount}\) are three different counters. Assignment is \(\leftarrow\); equality is \(=\); \(H\) is the candidate set; interface names are the procedure names. Effect results are `CONFIRMED-NOT-SENT`, `UNKNOWN-EFFECT`, prepErr, and unconfirmed Recover. The paper Algorithm caption number is not the repository id ALG-CLTAV-01. This section keeps the top-level process. A future core sub-algorithm is registered by interface, dependency, and supported proposition; this increment does not implement one. \(q_{\mathrm{used}}\) (`qUsedAtSelect`) is the immutable pre-effect snapshot. `qStatus` records whether an observable summary is known; \(\Gamma.\mathrm{currentSummary}\) is the post-effect observable summary read by prediction and selection. `postSummary` is a confirmed successor summary (possibly unchanged), not a substitute for \(q_{\mathrm{used}}\): S9 is its sole commit point. If it cannot be confirmed, the result is UNKNOWN-EFFECT rather than a stale known summary.
+
+| Step | Duty | Interface | Reads | Writes | Exception exit |
+|---|---|---|---|---|---|
+| S0 | initialize | — | declared \(H_0\) | \(\Gamma\), empty \(\eta\), \(H\leftarrow H_0\) | — |
+| S1 | stop gate | IF-RESOURCE-STOP | \(\Gamma,H,\eta\) | — | already decided Admit or P-stop |
+| S2 | predict | IF-PRED-OBS | \(\Gamma,\eta,H\) | — | PredictionGapError only if Recover and Prep are ineligible |
+| S3 | select final action, then freeze snapshot | IF-SELECT-ADMIT | \(\Gamma.\mathrm{currentSummary},\mathcal{C}\) | `qUsedAtSelect`, history version, classes, final action id | ADMIT, or empty TEST set |
+| S4 | charge once | — | snapshot | billed count | retry cap is not budget exhaustion |
+| S5 | execute | IF-EXECUTE-RECORD | \(\Gamma,t^\star\) | record, effect class | CONFIRMED-NOT-SENT or UNKNOWN-EFFECT |
+| S6 | interpret | IF-OBS-INTERPRET | record | \(I_z\), effect class, summary confirmation, post-summary | same two effect classes |
+| S7 | classify effect and count retry | — | effect class, prepErr, evaluated target/summary confirmation | UNKNOWN only for UNKNOWN-EFFECT, prepErr, evaluated unconfirmed Prep successor summary, or evaluated unconfirmed Recover target; CONFIRMED-NOT-SENT bypasses confirmation evaluation | Stop-Error at \(R_{\max}\) |
+| S8 | confirmed Recover | — | declared target, evidence | sole writer of KNOWN | unconfirmed does not enter S8 |
+| S9 | history and successor-summary commit | IF-HIST-UPDATE | `qUsedAtSelect`, classes, \(I_z\), `postSummary` | \(\eta,H,\Gamma.\mathrm{currentSummary}\) | does not read the post-effect summary |
+| S10 | P-stops | IF-RESOURCE-STOP, IF-EQUIV | \(\Gamma,H,\eta\) | — | P-stop returns; otherwise the next iteration is S1 |
+
+| ID | Duty / not duty | Inputs | Outputs | Pre | Post / guarantee | Failure / unknown | Resource / log | Successor close |
+|---|---|---|---|---|---|---|---|---|
+| IF-PRED-OBS | Finite conservative current-observation abstract consistent with measurement uncertainty; prediction gap is TEST-scoped | \(\Gamma\), \(\eta\), \(H\), measurement uncertainty, action library | currently valid nonempty classes, or PredictionGapError; \(q\) is \(\Gamma.\mathrm{currentSummary}\) when `qStatus` is KNOWN | session declared; \(H\subseteq H_0\); \(\eta\) belongs to this session | classes project onto current \(H\) and are the IF-SELECT-ADMIT input; empty current prediction is not scored as remaining \(\lvert H\rvert\) | TEST-only: do not admit the test; eligible Recover/Prep is not blocked | record the abstract used | estimator/partition algorithm |
+| IF-HIST-UPDATE | Advance from the select-time snapshot; whole-history path; no resurrection | \(\eta_k\), \(H_k\), \(t^\star\), `qUsedAtSelect`, classes used at select, valid \(I_z\), confirmed `postSummary` | \(\eta_{k+1}\), \(H_{k+1}\subseteq H_k\) or Stop-Empty | valid observation class or confirmed successor summary; not an effect-class retry | Propositions M and (conditionally) R; \(\eta_{k+1}\) is the next IF-PRED-OBS input; `qUsedAtSelect` is not the post-effect summary; confirmed Prep without valid \(I_z\) advances operation history while preserving \(H\) | invalid/unknown effect: do not exclude \(H\); mark \(\eta\) conservative-unknown | log the class, snapshot, summary, and resulting \(H\) | state/clock representation and solver |
+| IF-OBS-INTERPRET | Correlation keys, instance ownership, pairing, interval validity, effect class | \(\Gamma\), execution record, clocks, \(\varepsilon\) | \(I_z\), effect class, explicit `summaryConfirmed`, successor `postSummary` | record belongs to this session | T5 interval treatment; pairing per §3.6; a normal confirmed observation returns `summaryConfirmed=true` and a successor summary, possibly unchanged | an unconfirmed summary returns `summaryConfirmed=false` with UNKNOWN-EFFECT; CONFIRMED-NOT-SENT bypasses this interface and preserves state | keep correlation identifiers | collectors and timestamp handling |
+| IF-SELECT-ADMIT | Exclusive TEST / Prep / Recover / Admit; chooses the final TEST minimax action on TEST-only nonempty \(S\) | \(A\), \(q=\Gamma.\mathrm{currentSummary}\), predicted classes, \(\Gamma\), \(\eta\), \(H\), remaining resource, retry cap | kind; selectable \(S\); Admit A2–A5; final \(t^\star\) | one resource mode declared; this-iteration prediction already produced | nonempty \(A\) is not executable \(S\); never \(\arg\min\) empty TEST set; Prep/Recover are not observation-minimax; no later selection may replace final \(t^\star\); empty \(\mathcal{C}\) does not force A3 when Recover/Prep is eligible | no currently valid class: named prediction-gap for TEST, not A3 when Recover remains legal | do not issue unaffordable actions | scheduler and data structures |
+| IF-EXECUTE-RECORD | Issue admitted action once; return the effect class | \(\Gamma\), admitted \(t^\star\) | record, effect class, correlation id | action admitted this iteration; charged once | unadmitted action is not issued; an effect class is not a second charge | CONFIRMED-NOT-SENT leaves \(q\) unchanged; UNKNOWN-EFFECT does not | one charge per attempt | protocol adapter, timeout, I/O |
+| IF-PREP-RECOVER | Declare target and successor-summary confirmation separately; sent \(\neq\) confirmed; returns values only | \(\Gamma\), \(\eta\), eligibility, remaining resource, UNKNOWN history | targetConfirmed / summaryConfirmed / prepErr / ineligible / declaredTarget / evidence / postSummary | retry cap and A4/A5 order | target not reached may still have a confirmed actual Prep successor; confirmed Recover requires both confirmations; S8 is the sole KNOWN writer and S9 the sole successor-summary commit | Prep summary unconfirmed or Recover target unconfirmed enters S7, clears the summary and is conservative-unknown; CONFIRMED-NOT-SENT does not assign UNKNOWN | same resource rule | protocol/device recovery steps |
+| IF-EQUIV | Return established only with a valid proof | \(\Gamma\), \(H\), \(\eta\), remaining tests, optional solver result | established / not-established / unknown | Stop-Equivalent is exclusive with P1–P3, P5 | no proof \(\Rightarrow\) not “proved equivalent” | unsolved/unknown is not equivalence | record the proof object or the unknown | optional proof algorithm; not required this round |
+| IF-RESOURCE-STOP | A1–A5 / P1–P5, charging, return sets, residual obligations; retry cap is Stop-Error, not Stop-Budget | \(\Gamma\), remaining resource, \(H\), \(\eta\), named 645 residuals, equivalence status | stop class, final \(H\), trace | exclusive stop order Empty, Singleton, 645, Equivalent, Budget | singleton \(h_{\mathrm{normal}}\) is not protocol PASS | do not drop named residuals; do not convert retry-cap into budget exhaustion | charge ERROR/retry once | program wrapper; no paper result |
+
+Control-flow walkthroughs against ALG-CLTAV-01 steps S1–S10. Each row names the called interfaces, selected action, resource remainder after one charge, retry, \(q\)/UNKNOWN, \(H\), \(\eta\) and stop.
+
+| Case | Calls | Selected | Resource | retry | \(q\) | \(H,\eta\) | Stop |
+|---|---|---|---|---|---|---|---|
+| Selectable discriminatory TEST | S1–S3 TEST minimax, final-action snapshot, S4–S6, S9–S10 | TEST \(t^\star\in S\) | charged once | 0 | IF-OBS-INTERPRET returns confirmed q1; S9 commits q1; next prediction reads q1 | updated from qUsedAtSelect=q0 | continue or P-stop |
+| Prep eligible, TEST empty | S3 final-action snapshot, then PREP; no minimax | Prep | charged once | 0 | `qUsedAtSelect` kept; confirmed `postSummary` committed at S9 | operation history advances; \(H\) stays unchanged without valid \(I_z\) | continue |
+| UNKNOWN, Recover affordable | S3 kind=RECOVER | Recover | charged once | 0 | UNKNOWN until S8 | identity if unconfirmed | continue |
+| UNKNOWN, Recover unaffordable | S3 ADMIT A5 | none | no extra charge | — | UNKNOWN | unchanged | Stop-Budget A5 |
+| Recover unconfirmed, \(R_{\max}=1\), budget remains | S7, not S8 | Recover | already charged | +1 to cap | stays UNKNOWN | \(H\) kept; \(\eta\) conservative-unknown | Stop-Error, not budget |
+| Recover confirmed | S3 snapshot UNKNOWN; S8 sole KNOWN write; S9 | Recover | already charged | 0 | snapshot UNKNOWN and new target both visible | updated from the snapshot | P-stop or continue |
+| KNOWN, confirmed not sent, retry remains | S5/S6 CONFIRMED-NOT-SENT, then S7 | TEST | charged once | +1 | stays KNOWN | \(H\) and compatible history unchanged | continue |
+| Execute UNKNOWN-EFFECT | S5 then S7 | any admitted | one charge | +1 | UNKNOWN; next read is not the old KNOWN | \(H\) kept; \(\eta\) conservative-unknown | continue, or Stop-Error if retry cap |
+| Interpret UNKNOWN-EFFECT | S6 then S7 | same | no second charge | +1 | same as execute UNKNOWN-EFFECT | \(H\) kept | same retry path |
+| Executed observation leaves \(H\) empty | S9 then S10 | TEST | charged once | 0 | prior snapshot | \(H=\emptyset\) | Stop-Empty |
+| Retry cap before A5 | S7 \(\mathrm{retry}\ge R_{\max}\) | last admitted | already charged | cap | UNKNOWN only if the effect invalidated \(q\) | \(H\) kept | Stop-Error, not A5 |
+| Prediction gap, Recover eligible | S2 gap; S3 RECOVER | Recover | charged once | 0 | UNKNOWN | Recover remains legal | continue to S8 |
+| Prediction gap, Recover ineligible | S2 PredictionGapError | none | not charged | — | gap | unchanged | named prediction-gap |
+| Actual TEST intersect empty | S3 \(S=\emptyset\) | none | not charged | — | classes empty | unchanged | named spec error, not empty minimax |
+
+Experiment interfaces reuse the same session identity, correlation keys, error semantics and resource vector, but evaluator-only truth never enters IF-SELECT-ADMIT, IF-PRED-OBS, IF-HIST-UPDATE or IF-EXECUTE-RECORD (FIG-CL-TAV-09).
 
 ---
 
@@ -814,7 +868,7 @@ Each gate produces signed findings and one of `APPROVE`, `APPROVE WITH ACTIONS`,
 
 After an executed observation is recorded:
 
-1. Update \(H_k\) under DD-029. `ERROR` does not exclude candidates. Confirmed-not-sent does not change \(q\)-status; unknown-effect marks \(q\) unknown until a recovery-eligible Recover is confirmed.
+1. Update \(H_k\) under DD-029. `ERROR` does not exclude candidates. Confirmed-not-sent does not change \(q\)-status and still counts the retry; unknown-effect marks \(q\) unknown until a recovery-eligible Recover is confirmed. History update reads the select-time snapshot together with any later summary.
 2. Form \(A(q_k)\) then selectable \(S\). Select by one-step minimax among currently valid strictly-reducing tests, else Prep, else Recover. Charge once. If \(S=\emptyset\), classify A2–A5; do not Execute from nonempty \(A\).
 3. Stop under the exclusive update order Empty, Singleton, 645, Equivalent, then Budget; or under no currently usable distinguishing test, selected-mode resource exhausted at Admit, or retry-capped / unrecoverable `ERROR`.
 4. Do not write “no one-step distinguishing test now” as “no later sequence can distinguish.”
@@ -1570,7 +1624,7 @@ The methodology therefore provides a research baseline and an engineering operat
 - [ ] Timing margins, clock metadata, order effects, clustering, and drift
       diagnostics are retained
 - [ ] Claim boundaries remain consistent across scope, results, and conclusion
-- [ ] CL-TAV stop class is one of: budget insufficient, no currently usable distinguisher, proved observational equivalence, singleton, empty, ERROR, or 645-blocked
+- [ ] CL-TAV stop class is one of: budget insufficient, no currently usable distinguisher, proved observational equivalence, singleton, empty, ERROR, or named remaining 645-dependent obligation (Stop-645; not “file missing”)
 
 ---
 
@@ -2208,7 +2262,7 @@ H_{k+1} = \{ h \in H_k \mid O(h,t_k,q_k) \cap I_{z_k} \neq \emptyset \}.
 s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap o \neq \emptyset \}\bigr|.
 \]
 
-\(\mathrm{Obs}(t,q_k)\) 使用与 \(I_{z_k}\) 相同的不确定性分区。把观测类投影到当前 \(H_k\)，只对当前有效的非空幸存集评分。测试严格缩小当且仅当某一此类满足 \(0<|\mathrm{survivors}|<|H_k|\)。已排除假设造成的空交集不是额外评分类，也不构成区分价值；当前可执行却没有当前有效类的测试在准入前作为具名预测缺口规格错误被拒绝，不得静默折成 A3，也不得按剩余 \(|H_k|\) 评分。实际执行得到空 \(H_k\) 仍为 Stop-Empty。在选定资源模式（预算 \(c_{\min},B\) 或轮次 \(K_{\max}\)，禁止二者逻辑或）下由 \(A(q_k)\) 形成可选 \(S\)。\(S\) 为空时即使 \(A\) 非空也按 Admit A2–A5 分类。若 minimax 集合为空，再选 Prep，否则 Recover。\(A\) 中的无信息测试不被选中。Prep、Recover 与重试使用同一执行前准入和一次计费规则。`ERROR` 不排除候选；确认未发送不改变 \(q\) 状态，效果未知则将 \(q\) 标为未知直至具备恢复资格的 Recover 被确认。有资格但不可负担的 Recover 为 A5 Stop-Budget，并保留 ERROR／UNKNOWN 事实。重试上限先于 A4／A5／A1。这是候选数量意义下的一步 minimax，不是全局最优。模型外观测按不一致处置，不是评分中的额外类。仅“每次成本为正”不能证明有限终止。算法细节、三分“不能缩小”停止与走查见 DD-029。C1 四项性质的作者可检查论证见 §3.9.1；它们不是独立数学批准，也不是验证引擎实现。
+\(\mathrm{Obs}(t,q_k)\) 使用与 \(I_{z_k}\) 相同的不确定性分区。把观测类投影到当前 \(H_k\)，只对当前有效的非空幸存集评分。测试严格缩小当且仅当某一此类满足 \(0<|\mathrm{survivors}|<|H_k|\)。已排除假设造成的空交集不是额外评分类，也不构成区分价值；当前可执行却没有当前有效类的测试在 TEST 准入前作为具名预测缺口规格错误被拒绝，不得静默折成 A3，也不得按剩余 \(|H_k|\) 评分。PredictionGapError 只作用于 TEST：在 \(q\) 为 UNKNOWN 且 Recover 仍合格时，不得挡合法恢复。实际执行得到空 \(H_k\) 仍为 Stop-Empty。在选定资源模式（预算 \(c_{\min},B\) 或轮次 \(K_{\max}\)，禁止二者逻辑或）下由 \(A(q_k)\) 形成可选 \(S\)。\(S\) 为空时即使 \(A\) 非空也按 Admit A2–A5 分类。若 minimax 集合为空，再选 Prep，否则 Recover。\(A\) 中的无信息测试不被选中。Prep、Recover 与重试使用同一执行前准入和一次计费规则。`ERROR` 不排除候选。CONFIRMED-NOT-SENT 保持 \(q\) 与相容历史不变，并仍累计重试。UNKNOWN-EFFECT 将 \(\eta\) 标为保守未知并将 \(q\) 标为未知，直至具备恢复资格的 Recover 被确认。未确认 Recover 保持 UNKNOWN，并与 prepErr 及执行／解释效果类共用同一重试计数。IF-HIST-UPDATE 读选择时快照，不读效果发生后的 \(\Gamma.\mathrm{qStatus}\)。有资格但不可负担的 Recover 为 A5 Stop-Budget，并保留 ERROR／UNKNOWN 事实。重试上限先于 A4／A5／A1，且不是 Stop-Budget。这是候选数量意义下的一步 minimax，不是全局最优。模型外观测按不一致处置，不是评分中的额外类。仅“每次成本为正”不能证明有限终止。算法细节、三分“不能缩小”停止与走查见 DD-029。C1 四项性质的作者可检查论证见 §3.9.1；它们不是独立数学批准，也不是验证引擎实现。
 
 ### 3.9.1 首版条件性论证
 
@@ -2252,6 +2306,60 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 - 轮次模式：有限 \(K_{\max}\) 把上述每次动作计为一轮，故至多 \(K_{\max}\) 次计费执行。
 
 这界定的是计费执行次数，本身并不界定墙钟返回：每次分析和每次动作执行／等待仍须有各自的终止证明或受控超时。本增量不声称这些工程超时已经实现。
+
+### 3.9.2 总体过程与抽象接口契约
+
+排版主过程为 [`ALG-CLTAV-01.tex`](../publication/algorithms/ALG-CLTAV-01.tex)（DD-033）。它是本节的学术形式，不是可执行引擎，也不是求解器技术选型。下列接口 ID 是唯一合法调用点。不可计算／未确定返回不得当作排除真实假设的证据。SessionContext \(\Gamma\) 与 HistoryHandle \(\eta\) 是会话持有的状态载体。\(\eta\) 内的 `compatibleStateByHypothesis` 是整段历史相容状态柄；本 PR 不选定其数据结构。两个柄可以有相同 \(H\) 而相容历史不同；只打印 \(H\) 并不丢弃历史。没有隐藏全局存储。
+
+`Stop-645` 类名保留。615A 触发的 645 绑定之后，它表示**仍未在能力／实现层关闭的具名 645 依赖义务**，不是“645 文件缺失”。已绑定的 CRC／校验值／命名语义不得仅因历史来源阻塞而被触发。一般未决义务不被抹去。
+
+**符号。** S0–S10 是稳定逻辑职责，不是排版行号、协议状态或时间索引；一轮不必依次经过全部标签。决策索引 \(k\)、计费执行次数（S4）与 \(\Gamma.\mathrm{retryCount}\) 是三个不同计数。赋值用 \(\leftarrow\)，相等用 \(=\)，\(H\) 是候选集，过程名是接口 ID。效果结果为 `CONFIRMED-NOT-SENT`、`UNKNOWN-EFFECT`、prepErr 与未确认 Recover。论文 Algorithm 编号不是仓库稳定 ID ALG-CLTAV-01。本节保留总体过程。未来核心子算法只登记接口、依赖和所支撑命题；本增量不实现子算法。\(q_{\mathrm{used}}\)（`qUsedAtSelect`）是效果发生前的不可变快照。`qStatus` 记录可观测摘要是否已知；\(\Gamma.\mathrm{currentSummary}\) 是预测和选择读取的效果后可观测摘要。`postSummary` 是已确认的后继摘要（可以不变），不能代替 \(q_{\mathrm{used}}\)：S9 是其唯一提交点。若不能确认，则返回 UNKNOWN-EFFECT，不得保留过时的已知摘要。
+
+| 步骤 | 职责 | 接口 | 读 | 写 | 异常出口 |
+|---|---|---|---|---|---|
+| S0 | 初始化 | — | 已声明 \(H_0\) | \(\Gamma\)、空 \(\eta\)、\(H\leftarrow H_0\) | — |
+| S1 | 停止门 | IF-RESOURCE-STOP | \(\Gamma,H,\eta\) | — | 已决定的 Admit 或 P 停止 |
+| S2 | 预测 | IF-PRED-OBS | \(\Gamma,\eta,H\) | — | 仅当 Recover 与 Prep 都不合格时 PredictionGapError |
+| S3 | 选择最终动作后冻结快照 | IF-SELECT-ADMIT | \(\Gamma.\mathrm{currentSummary},\mathcal{C}\) | `qUsedAtSelect`、历史版本、类、最终动作身份 | ADMIT，或空 TEST 集 |
+| S4 | 一次计费 | — | 快照 | 计费次数 | 重试上限不是预算耗尽 |
+| S5 | 执行 | IF-EXECUTE-RECORD | \(\Gamma,t^\star\) | 记录、效果类 | CONFIRMED-NOT-SENT 或 UNKNOWN-EFFECT |
+| S6 | 解释 | IF-OBS-INTERPRET | 记录 | \(I_z\)、效果类、摘要确认、后继摘要 | 同上两种效果类 |
+| S7 | 区分效果并计重试 | — | 效果类、prepErr、已评估目标／摘要确认 | 仅 UNKNOWN-EFFECT、prepErr、已评估后继摘要未确认的 Prep 或已评估目标未确认的 Recover 写 UNKNOWN；CONFIRMED-NOT-SENT 不评估确认 | \(R_{\max}\) 时 Stop-Error |
+| S8 | 已确认 Recover | — | 声明目标、依据 | KNOWN 的唯一写入者 | 未确认不进入 S8 |
+| S9 | 历史与后继摘要提交 | IF-HIST-UPDATE | `qUsedAtSelect`、类、\(I_z\)、`postSummary` | \(\eta,H,\Gamma.\mathrm{currentSummary}\) | 不读效果后的摘要 |
+| S10 | P 停止 | IF-RESOURCE-STOP、IF-EQUIV | \(\Gamma,H,\eta\) | — | P 停止则返回；否则下一轮从 S1 开始 |
+
+| ID | 职责／非职责 | 输入 | 输出 | 前置 | 后置／保证 | 失败／未知 | 资源／记录 | 后继关闭 |
+|---|---|---|---|---|---|---|---|---|
+| IF-PRED-OBS | 有限且保守的当前观测抽象，与测量不确定性一致；预测缺口只作用于 TEST | \(\Gamma\)、\(\eta\)、\(H\)、测量不确定性、动作库 | 当前有效非空类，或 PredictionGapError；`qStatus` 为 KNOWN 时 \(q\) 为 \(\Gamma.\mathrm{currentSummary}\) | 会话已声明；\(H\subseteq H_0\)；\(\eta\) 属于本会话 | 类投影到当前 \(H\) 并作为 IF-SELECT-ADMIT 输入；空的当前预测不得按剩余 \(\lvert H\rvert\) 评分 | 仅 TEST：不得准入该测试；合格 Recover／Prep 不被挡住 | 记录所用抽象 | 估计器／划分算法 |
+| IF-HIST-UPDATE | 由选择时快照推进；整段历史路径；不复活 | \(\eta_k\)、\(H_k\)、\(t^\star\)、`qUsedAtSelect`、选择时所用类、有效 \(I_z\)、已确认 `postSummary` | \(\eta_{k+1}\)、\(H_{k+1}\subseteq H_k\) 或 Stop-Empty | 有效观测类或已确认的后继摘要；非效果类重试 | 命题 M 及（条件性）R；\(\eta_{k+1}\) 是下一轮 IF-PRED-OBS 输入；`qUsedAtSelect` 不是效果后的摘要；无有效 \(I_z\) 的已确认 Prep 推进操作历史但保持 \(H\) | 无效／未知效果：不排除 \(H\)；将 \(\eta\) 标为保守未知 | 记录类、快照、摘要与结果 \(H\) | 状态／时钟表示与求解器 |
+| IF-OBS-INTERPRET | 关联键、实例归属、配对、区间有效性、效果类 | \(\Gamma\)、执行记录、时钟、\(\varepsilon\) | \(I_z\)、效果类、显式 `summaryConfirmed`、后继 `postSummary` | 记录属于本会话 | T5 区间处理；配对按 §3.6；正常已确认观测返回 `summaryConfirmed=true` 与后继摘要，可保持不变 | 不能确认摘要时返回 `summaryConfirmed=false` 与 UNKNOWN-EFFECT；CONFIRMED-NOT-SENT 绕过本接口并保持状态 | 保留关联标识 | 采集器与时间戳处理 |
+| IF-SELECT-ADMIT | 互斥 TEST／Prep／Recover／Admit；对非空 TEST 集选择最终一步 minimax 动作 | \(A\)、\(q=\Gamma.\mathrm{currentSummary}\)、预测类、\(\Gamma\)、\(\eta\)、\(H\)、剩余资源、重试上限 | kind；可选 \(S\)；Admit A2–A5；最终 \(t^\star\) | 已声明一种资源模式；本轮预测已产生 | \(A\) 非空不是可执行 \(S\)；不得对空 TEST 集 \(\arg\min\)；Prep／Recover 不是观测 minimax；不得在接口返回后再替换最终 \(t^\star\)；空 \(\mathcal{C}\) 在 Recover／Prep 合格时不强制 A3 | 无当前有效类：TEST 具名预测缺口，Recover 仍合法时不是 A3 | 不得发出不可负担动作 | 调度程序与数据结构 |
+| IF-EXECUTE-RECORD | 一次发出已准入动作；返回效果类 | \(\Gamma\)、已准入 \(t^\star\) | 记录、效果类、关联标识 | 本轮已准入；一次计费 | 未准入不得发出；效果类不二次计费 | CONFIRMED-NOT-SENT 不改变 \(q\)；UNKNOWN-EFFECT 不是状态未变 | 每次尝试一次计费 | 协议适配器、超时、I/O |
+| IF-PREP-RECOVER | 分别声明目标与后继摘要确认；已发送 \(\neq\) 已确认；只返回值 | \(\Gamma\)、\(\eta\)、资格、剩余资源、UNKNOWN 历史 | targetConfirmed／summaryConfirmed／prepErr／不合格／声明目标／依据／postSummary | 重试上限与 A4／A5 次序 | 未达目标的 Prep 仍可能有已确认的实际后继；已确认 Recover 须两项确认；S8 是 KNOWN 的唯一写入者，S9 是后继摘要的唯一提交点 | 摘要未确认的 Prep 或目标未确认的 Recover 进入 S7，清除摘要并标为保守未知；CONFIRMED-NOT-SENT 不写成 UNKNOWN | 同一资源规则 | 协议／装置恢复步骤 |
+| IF-EQUIV | 仅在有效证明时返回已成立 | \(\Gamma\)、\(H\)、\(\eta\)、剩余测试、可选求解结果 | 已成立／未成立／未知 | Stop-Equivalent 与 P1–P3、P5 互斥 | 无证明 \(\Rightarrow\) 不是“已证明等价” | 未求解／未知不是等价 | 记录证明对象或未知 | 可选证明算法；本轮不要求 |
+| IF-RESOURCE-STOP | A1–A5／P1–P5、计费、返回集合与残余义务；重试上限是 Stop-Error，不是 Stop-Budget | \(\Gamma\)、剩余资源、\(H\)、\(\eta\)、具名 645 残余、等价状态 | 停止类、最终 \(H\)、迹 | 互斥顺序 Empty、Singleton、645、Equivalent、Budget | 单元素 \(h_{\mathrm{normal}}\) 不是协议 PASS | 不得丢掉具名残余；不得把重试上限改写成预算耗尽 | ERROR／重试一次计费 | 程序封装；不是论文结果 |
+
+对照 ALG-CLTAV-01 步骤 S1–S10 的控制流走查。每行写出被调用接口、选中动作、一次计费后的资源、retry、\(q\)／UNKNOWN、\(H\)、\(\eta\) 与停止。
+
+| 情形 | 调用 | 选中 | 资源 | retry | \(q\) | \(H,\eta\) | 停止 |
+|---|---|---|---|---|---|---|---|
+| 可选且有区分价值的 TEST | S1–S3 TEST minimax、最终动作快照，S4–S6，S9–S10 | TEST \(t^\star\in S\) | 一次计费 | 0 | IF-OBS-INTERPRET 返回已确认 q1；S9 提交 q1；下一轮预测读取 q1 | 由 qUsedAtSelect=q0 更新 | 继续或 P 停止 |
+| Prep 可用但测试不可选 | S3 最终动作快照后 PREP；不进 minimax | Prep | 一次计费 | 0 | 保留 `qUsedAtSelect`；S9 提交已确认 `postSummary` | 无有效 \(I_z\) 时操作历史推进、\(H\) 不变 | 继续 |
+| UNKNOWN 且 Recover 可负担 | S3 kind=RECOVER | Recover | 一次计费 | 0 | 至 S8 为 UNKNOWN | 未确认则恒等 | 继续 |
+| UNKNOWN 且 Recover 不可负担 | S3 ADMIT A5 | 无 | 不再计费 | — | UNKNOWN | 不变 | Stop-Budget A5 |
+| Recover 未确认，\(R_{\max}=1\)，预算仍余 | S7，不经 S8 | Recover | 已计费 | +1 至上限 | 保持 UNKNOWN | 保留 \(H\)；\(\eta\) 保守未知 | Stop-Error，不是预算 |
+| Recover 已确认 | S3 快照为 UNKNOWN；S8 唯一写入 KNOWN；然后 S9 | Recover | 已计费 | 0 | 快照 UNKNOWN 与新目标同时可见 | 由快照更新 | P 停止或继续 |
+| KNOWN 且确认未发送，仍可重试 | S5／S6 CONFIRMED-NOT-SENT，然后 S7 | TEST | 一次计费 | +1 | 保持 KNOWN | \(H\) 与相容历史不变 | 继续 |
+| 执行 UNKNOWN-EFFECT | S5 然后 S7 | 任一已准入 | 一次计费 | +1 | UNKNOWN；下一轮读不到旧 KNOWN | 保留 \(H\)；\(\eta\) 保守未知 | 继续，或 retry 上限时 Stop-Error |
+| 解释 UNKNOWN-EFFECT | S6 然后 S7 | 同上 | 不二次计费 | +1 | 与执行 UNKNOWN-EFFECT 相同 | 保留 \(H\) | 同一重试通路 |
+| 执行后观测使 \(H\) 为空 | S9 然后 S10 | TEST | 一次计费 | 0 | 先前快照 | \(H=\emptyset\) | Stop-Empty |
+| 重试上限先于 A5 | S7 \(\mathrm{retry}\ge R_{\max}\) | 上次已准入 | 已计费 | 上限 | 仅当效果使 \(q\) 失效时为 UNKNOWN | 保留 \(H\) | Stop-Error，不是 A5 |
+| 预测缺口且 Recover 合格 | S2 缺口；S3 RECOVER | Recover | 一次计费 | 0 | UNKNOWN | Recover 仍合法 | 继续至 S8 |
+| 预测缺口且 Recover 不合格 | S2 PredictionGapError | 无 | 不计费 | — | 缺口 | 不变 | 具名预测缺口 |
+| 实际 TEST 相交为空 | S3 \(S=\emptyset\) | 无 | 不计费 | — | 类为空 | 不变 | 具名规格错误，不是空 minimax |
+
+实验接口复用同一会话身份、关联键、错误语义与资源向量，但评价器真值不得进入 IF-SELECT-ADMIT、IF-PRED-OBS、IF-HIST-UPDATE 或 IF-EXECUTE-RECORD（FIG-CL-TAV-09）。
 
 ---
 
@@ -2414,7 +2522,7 @@ s(t) = \max_{o \in \mathrm{Obs}(t,q_k)} \bigl|\{ h \in H_k \mid O(h,t,q_k) \cap 
 
 在记录一次已执行观测之后：
 
-1. 按 DD-029 更新 \(H_k\)。`ERROR` 不排除候选。确认未发送不改变 \(q\) 状态；效果未知则将 \(q\) 标为未知直至具备恢复资格的 Recover 被确认。
+1. 按 DD-029 更新 \(H_k\)。`ERROR` 不排除候选。确认未发送不改变 \(q\) 状态并仍计重试；效果未知则将 \(q\) 标为未知直至具备恢复资格的 Recover 被确认。历史更新同时读选择时快照与其后的摘要。
 2. 先构造 \(A(q_k)\) 再构造可选 \(S\)。对当前有效的严格缩小测试做一步 minimax，否则 Prep，否则 Recover。只计费一次。\(S=\emptyset\) 时按 A2–A5 分类，不得因 \(A\) 非空而 Execute。
 3. 更新路径按 Empty、Singleton、645、Equivalent、然后 Budget 的互斥顺序停止；或在当前没有可用区分测试、Admit 时所选模式资源耗尽、达重试上限或不可恢复的 `ERROR` 下停止。
 4. 不得把“当前无一步区分测试”写成“任何后续序列都不能区分”。
@@ -3139,7 +3247,7 @@ analysis/
 - [ ] 保留负向及不确定结果
 - [ ] 保留时序裕量、时钟元数据、顺序效应、聚类和漂移诊断
 - [ ] 主张边界在范围、结果和结论中保持一致
-- [ ] CL-TAV 停止类别属于：预算不足、当前无可用区分、已证明观测等价、单例、空集、ERROR 或 645 阻塞
+- [ ] CL-TAV 停止类别属于：预算不足、当前无可用区分、已证明观测等价、单例、空集、ERROR，或具名仍未关闭的 645 依赖义务（Stop-645；不是“文件缺失”）
 
 ---
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="640" viewBox="0 0 1400 640" style="background:#FFFFFF"><desc id="plantuml-source"><![CDATA[
+@startuml FIG-CL-TAV-09
+skinparam shadowing false
+title FIG-CL-TAV-09 Experiment architecture\nSysML 1.6 notation-based views; executable/metamodel conformance is not claimed\nevaluator-only truth is never an algorithm input
+
+rectangle "Controlled scene / config\n(IUT, fault plan, resource mode)" as Scene
+rectangle "Independent truth record\n(evaluator only)" as Truth
+rectangle "Comparison arms\nCL-T / CL-A / CL-TA / CL-LOOP" as Arms
+rectangle "Observations and resource log\n(algorithm-visible)" as Obs
+rectangle "Validity check\n(invalid, equivalent, missing)" as Valid
+rectangle "Metrics with denominators\nEXP-CLTAV-DETECT / LOCATE / ABLATION" as Metrics
+rectangle "RQ / claims\n(no unrun numbers)" as Claims
+
+Scene --> Arms : same declared pool and action library
+Scene --> Truth : injection plan + execution confirmation
+Truth -[#red,dashed]-> Arms : forbidden leakage
+Arms --> Obs : algorithm-visible Izk, q, cost
+Obs --> Valid
+Truth --> Valid : evaluator-only confirmation
+Valid --> Metrics : attempt and answered-subset denominators
+Metrics --> Claims : comparable projections only
+
+note right of Truth
+  Evaluator truth must not enter
+  IF-SELECT-ADMIT, IF-PRED-OBS,
+  IF-HIST-UPDATE or IF-EXECUTE-RECORD.
+  IF-OBS-INTERPRET, IF-PREP-RECOVER,
+  IF-EQUIV and IF-RESOURCE-STOP stay
+  algorithm-visible only.
+  Experiment I/O: IF-EXP-SCENE,
+  IF-EXP-INJECT, IF-EXP-TRUTH,
+  IF-EXP-COLLECT, IF-EXP-RUN,
+  IF-EXP-FILTER, IF-EXP-EVAL.
+end note
+note bottom of Arms
+  Same pool is not a gift of later CL-LOOP
+  records to other arms, and not a fictional
+  sampling charge to CL-A.
+  Groups: EXP-CLTAV-DETECT, EXP-CLTAV-LOCATE,
+  EXP-CLTAV-ABLATION.
+end note
+@enduml
+
+]]></desc><defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><path d="M0,0 L10,3.5 L0,7 z" fill="#181818"/></marker></defs><text x="20" y="24" font-size="16" font-family="sans-serif" font-weight="700">FIG-CL-TAV-09-experiment-architecture</text><text x="20" y="44" font-size="12" font-family="sans-serif">SysML 1.6 notation-based views; executable/metamodel conformance is not claimed</text><rect x="40" y="80" width="280" height="80" data-node="Scene" fill="#F7F7F7" stroke="#181818"/><text x="48" y="98" font-size="12" font-family="sans-serif"><tspan x="48" dy="0">Controlled scene / config</tspan></text><rect x="400" y="80" width="300" height="80" data-node="Truth" fill="#F7F7F7" stroke="#181818"/><text x="408" y="98" font-size="12" font-family="sans-serif"><tspan x="408" dy="0">Independent truth record evaluator-only</tspan></text><rect x="40" y="220" width="320" height="80" data-node="Arms" fill="#F7F7F7" stroke="#181818"/><text x="48" y="238" font-size="12" font-family="sans-serif"><tspan x="48" dy="0">Comparison arms CL-T / CL-A / CL-TA /</tspan><tspan x="48" dy="15">CL-LOOP</tspan></text><rect x="400" y="220" width="280" height="80" data-node="Obs" fill="#F7F7F7" stroke="#181818"/><text x="408" y="238" font-size="12" font-family="sans-serif"><tspan x="408" dy="0">Observations algorithm-visible</tspan></text><rect x="760" y="200" width="420" height="110" data-node="Valid" fill="#F8D7DA" stroke="#181818"/><text x="768" y="218" font-size="12" font-family="sans-serif"><tspan x="768" dy="0">Validity filter unconfirmed/invalid/equivalent/abstain</tspan></text><rect x="360" y="380" width="520" height="100" data-node="Metrics" fill="#F7F7F7" stroke="#181818"/><text x="368" y="398" font-size="12" font-family="sans-serif"><tspan x="368" dy="0">Metrics denominators EXP-CLTAV-DETECT / LOCATE / ABLATION</tspan></text><rect x="400" y="520" width="400" height="70" data-node="Claims" fill="#F7F7F7" stroke="#181818"/><text x="408" y="538" font-size="12" font-family="sans-serif"><tspan x="408" dy="0">RQ / claims; no unrun numbers</tspan></text><line x1="180" y1="160" x2="200" y2="220" data-from="Scene" data-to="Arms" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="320" y1="120" x2="400" y2="120" data-from="Scene" data-to="Truth" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="400" y1="120" x2="360" y2="260" data-from="Truth" data-to="Arms" stroke="#C0392B" stroke-width="2" marker-end="url(#arrow)" stroke-dasharray="6 4"/><line x1="360" y1="260" x2="400" y2="260" data-from="Arms" data-to="Obs" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="680" y1="260" x2="760" y2="255" data-from="Obs" data-to="Valid" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="700" y1="120" x2="760" y2="255" data-from="Truth" data-to="Valid" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="970" y1="310" x2="880" y2="430" data-from="Valid" data-to="Metrics" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><line x1="620" y1="480" x2="600" y2="520" data-from="Metrics" data-to="Claims" stroke="#181818" stroke-width="2" marker-end="url(#arrow)"/><text x="1100" y="100" font-size="12" font-family="sans-serif">IF-SELECT-ADMIT IF-PRED-OBS IF-HIST-UPDATE</text><text x="1100" y="118" font-size="12" font-family="sans-serif">IF-EXECUTE-RECORD never take truth</text><text x="250" y="200" font-size="11" font-family="sans-serif" fill="#C0392B">forbidden leakage</text></svg>

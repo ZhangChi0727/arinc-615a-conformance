@@ -841,6 +841,130 @@ isolation, SysML organization.
 source interpretation. Schema details may be minimized if alternatives, reasons
 and negative examples are recorded.
 
+## DD-031 — Publication targeting and two core contributions
+
+**Decision:**
+
+1. **Engineering problem.** ARINC 615A data loading is the source of legal
+   operations, observations and experiment scenes. CL-TAV remains the method
+   name.
+2. **Question.** Under declared protocol, fault domain, measurement conditions
+   and resource limits, does test–analysis feedback improve verdict reliability
+   and fault isolation, at an interpretable cost?
+3. **Two propositions (not results).** (C1) Uncertainty-aware mutually consistent
+   observation interpretation, timing verdicts and compatibility update.
+   (C2) Feeding residual ambiguity into next-action selection with explicit
+   resource, recovery, ERROR and stop rules. CRS, SysML, evidence layout and
+   platform are supporting, not extra major innovations. Set intersection,
+   interval containment and minimax are not claimed as first inventions.
+   Localization is candidate isolation inside the declared domain, not
+   unconditional root-cause proof.
+4. **Working title.** “CL-TAV: Closed-Loop Test–Analysis Verification for
+   ARINC 615A Data Loading under Timing Uncertainty” and the equivalent Chinese
+   title.
+5. **Tentative venue.** Write toward IEEE TAES Regular Paper; Aerospace Science
+   and Technology is an alternate. This is not institutional CAS-Q confirmation
+   and not an acceptance. Keep `PENDING-INSTITUTIONAL-RANKING-CHECK` until the
+   user supplies the SJTU-authorized ranking screenshot. JCR Q1 is not a CAS
+   substitute.
+
+**Scope:** manuscript targeting and contribution wording.
+
+**Status:** Candidate under CR-2026-013. Not independent publication approval.
+
+## DD-032 — 615A-triggered ARINC 645 binding with three-way closure
+
+**Decision:**
+
+1. **Identity.** Bind ARINC Report 645-1, published 2021-08-11, local file
+   SHA-256 `5efa07ee1930fe170526be952a7b24f6c4760c516663933e61bbacfb6742f095`,
+   945950 bytes, 83 PDF pages. Title-page check is required; filename is not
+   identity.
+2. **Trigger, not whole book.** Admit only units that 615A/665 integrity,
+   check-value or naming obligations actually invoke (CRC parameters, check-value
+   enumeration, integrity-versus-security distinction, 615A-relevant part-number
+   and file-name rules). Chapter 5 PDL/ADL security, unused appendices and
+   manufacturer-code tables already covered by 665 Attachment 1 stay
+   out-of-trigger with named exclusion reasons.
+3. **Three closures.** SOURCE = identity verified and locators bound.
+   SEMANTIC = triggered rules extracted as candidate CRS. CAPABILITY/EXECUTION
+   stays `NOT-ESTABLISHED`. Binding the file does not run a conformance test.
+4. **Keep the gap object.** `GAP-ARINC-645` remains `NOT-ESTABLISHED` for the
+   four capabilities. Open dependency `ARINC-645` remains. Bound M2
+   `IF_INTEGRITY.blockedBy` remains `["ARINC-645"]`. Reason text changes from
+   “file not acquired / not bound” to “implementation, configuration and
+   execution evidence not established.”
+5. **No silent capability promotion.** Do not delete `blockedBy` to pass CI.
+
+**Scope:** 645 identity, trigger audit, SOURCE/SEMANTIC/CAPABILITY split.
+
+**Status:** Candidate under CR-2026-013. Independent RG0/RG1 still required.
+
+## DD-033 — Top-level CL-TAV process and abstract interfaces
+
+**Decision:**
+
+1. **Preserve DD-029.** \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\);
+   set-valued compatibility; one-step minimax on the current selectable
+   informative set; Admit A1–A5; Update P1–P5; one resource mode; ERROR does not
+   exclude candidates; whole-history path; §3.9.1 arguments remain author
+   arguments, not independent mathematical approval.
+2. **Main process.** The academic algorithm in
+   `docs/research/publication/algorithms/ALG-CLTAV-01.tex` is the typeset form of
+   the method-report contract. It is not an executable engine.
+3. **Interfaces.** Stable IDs: `IF-PRED-OBS`, `IF-HIST-UPDATE`,
+   `IF-OBS-INTERPRET`, `IF-SELECT-ADMIT`, `IF-EXECUTE-RECORD`,
+   `IF-PREP-RECOVER`, `IF-EQUIV`, `IF-RESOURCE-STOP`. SessionContext and
+   HistoryHandle are the session-owned carriers; prediction classes are an
+   input of `IF-SELECT-ADMIT`; `IF-HIST-UPDATE` returns the next
+   HistoryHandle. Each interface has duty, inputs, outputs, pre/post,
+   failure/unknown semantics, resource/log duties and successor completion
+   conditions. Implementation technology is not selected here.
+   Unknown/incomputable returns must not be treated as evidence that
+   excludes the true hypothesis. The structural registry is
+   `configs/research/cltav_interface_registry.json`.
+4. **Stop-645 after source bind.** Class name `Stop-645` is retained. After this
+   increment it means a *named remaining 645-dependent obligation that is still
+   unresolved at capability/implementation level*, not “the 645 file is missing.”
+   Bound CRC/check-value/naming semantics no longer fire it merely because the
+   source was historically blocked. General unresolved obligations are not
+   erased. This is not an editorial rename of the stop family.
+
+**Scope:** top-level process, interface contracts, Stop-645 interpretation.
+
+**Status:** Candidate under CR-2026-013. Independent method review still required.
+
+## DD-034 — Experiment architecture, truth, fairness and successor dependencies
+
+**Decision:**
+
+1. **Keep identities.** EXP-CLTAV-DETECT / LOCATE / ABLATION and arms CL-T,
+   CL-A, CL-TA, CL-LOOP remain. Do not invent a second experiment system.
+2. **Information rights.** “Same pool” is not a gift of CL-LOOP later records to
+   other arms, and not a fictional sampling charge to CL-A. Only comparable
+   projections are compared directly.
+3. **Truth.** Evaluator-only truth is never an algorithm input. Shared components
+   must name common-mode error risk. Injection planned ≠ injection confirmed.
+   Execution contracts `IF-EXP-SCENE`, `IF-EXP-INJECT`, `IF-EXP-TRUTH`,
+   `IF-EXP-COLLECT`, `IF-EXP-RUN`, `IF-EXP-FILTER` and `IF-EXP-EVAL` record
+   identity, failure/unconfirmed returns, visibility and resource basis.
+   Unconfirmed injection is the `unconfirmed-injection` denominator, not valid
+   truth.
+4. **Metrics.** Wrong PASS, wrong FAIL, definite-verdict rate, INCONCLUSIVE,
+   ERROR, true-hypothesis drop, in-domain unique localization, remaining-set
+   size, interaction count, compute/prep/retry cost, stop class. Report attempt
+   and answered-subset denominators. INCONCLUSIVE is not PASS.
+5. **Successor table.** IUT, solver, device, sample size, seeds and error budget
+   may be deferred. The *rule* for when those parameters freeze, and their
+   fairness effect, cannot be deferred. Stages are
+   development-ready spec → implementation/unit-integration → pilot →
+   confirmatory registration → confirmatory execution. They are not silently
+   equal to M3.
+
+**Scope:** experiment architecture and contracts, not confirmatory numbers.
+
+**Status:** Candidate under CR-2026-013.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -1283,3 +1407,35 @@ FIND 及来源已规定的中断／拒绝／异常／重试逐项重审，禁止
 **范围：** CRS 扩大政策、变体谓词、645 局限、M2 输入隔离、SysML 组织。
 
 **状态：** 在 CR-2026-012 下为候选。来源解释仍须独立 RG0／RG1。
+
+## DD-031——论文定位与两个核心贡献
+
+ARINC 615A 数据加载是合法操作、观测和实验场景的来源。CL-TAV 不改名。主问题是：在声明的协议、故障域、测量条件和资源约束下，测试—分析反馈是否改善判定可靠性与故障隔离，并具有可解释代价。两个待证实命题：（C1）不确定感知且相互一致的观测解释、时序判定与相容更新；（C2）把剩余歧义反馈到后续选择，并明确资源／恢复／ERROR／停止。CRS、SysML、证据组织和平台是支撑，不是额外重大创新。集合交集、区间判定和 minimax 不称为首次发明。定位是声明域内的候选隔离，不是无条件根因证明。工作题目采用英文 “CL-TAV: Closed-Loop Test–Analysis Verification for ARINC 615A Data Loading under Timing Uncertainty” 及等价中文。暂以 TAES Regular Paper 为写作靶标，AST 为另一候选。学校中科院分区保持 `PENDING-INSTITUTIONAL-RANKING-CHECK`。JCR Q1 不能代替中科院分区。
+
+**范围：** 稿件定位与贡献措辞。
+
+**状态：** 在 CR-2026-013 下为候选。不是独立投稿批准。
+
+## DD-032——615A 触发的 645 绑定与三种闭合
+
+绑定 ARINC Report 645-1（2021-08-11），本地 SHA-256 `5efa07ee1930fe170526be952a7b24f6c4760c516663933e61bbacfb6742f095`，945950 字节，83 PDF 页。只纳入 615A／665 完整性、校验值或命名义务实际触发的单元。第 5 章 PDL／ADL 安全等未触发部分具名排除。SOURCE、SEMANTIC、CAPABILITY 严格分开；取得并绑定原文不使能力成立。`GAP-ARINC-645` 对四项能力保持 `NOT-ESTABLISHED`；开放依赖与 `IF_INTEGRITY.blockedBy` 保留。理由从“未取得／未绑定”改为“实现、配置与执行证据未建立”。不得靠删除 `blockedBy` 通过检查。
+
+**范围：** 645 身份、触发审计、三种闭合。
+
+**状态：** 在 CR-2026-013 下为候选。仍须独立 RG0／RG1。
+
+## DD-033——CL-TAV 总体过程与抽象接口
+
+保留 DD-029。主算法排版源为 `ALG-CLTAV-01.tex`，不是可执行引擎。稳定接口：`IF-PRED-OBS`、`IF-HIST-UPDATE`、`IF-OBS-INTERPRET`、`IF-SELECT-ADMIT`、`IF-EXECUTE-RECORD`、`IF-PREP-RECOVER`、`IF-EQUIV`、`IF-RESOURCE-STOP`。SessionContext 与 HistoryHandle 为会话持有的状态载体；预测类是 `IF-SELECT-ADMIT` 的输入；`IF-HIST-UPDATE` 返回下一轮 HistoryHandle。结构登记为 `configs/research/cltav_interface_registry.json`。不在本 PR 选择实现技术。不可计算／未确定返回不得当作排除真实假设的证据。`Stop-645` 类名保留；本增量之后表示“仍未在能力／实现层关闭的具名 645 依赖义务”，不是“645 文件缺失”。已绑定的 CRC／校验值／命名语义不得仅因历史来源阻塞而被触发。一般未决义务不被抹去。这不是停止家族的编辑性更名。
+
+**范围：** 总体过程、接口契约、Stop-645 解释。
+
+**状态：** 在 CR-2026-013 下为候选。仍须独立方法审查。
+
+## DD-034——实验架构、真值、公平性与后继依赖
+
+保留 DETECT／LOCATE／ABLATION 与四臂。相同信息池不是把 CL-LOOP 后采记录免费给其他臂，也不是给 CL-A 虚构采样费用。评价器真值不得进入算法输入。注入计划不等于注入成功。场景／注入／真值／采集／运行／筛选／评价接口为 `IF-EXP-SCENE` 至 `IF-EXP-EVAL`。未确认注入进入 `unconfirmed-injection` 分母，不是有效真值。指标须有分母；INCONCLUSIVE 不是 PASS。IUT、求解器、样本量等可延期，但其冻结门和公平性影响不可延期。后继阶段不等于自动进入 M3。
+
+**范围：** 实验架构与契约，不是确认性数字。
+
+**状态：** 在 CR-2026-013 下为候选。
