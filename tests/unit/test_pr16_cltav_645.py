@@ -824,3 +824,80 @@ def test_owned_pdf_registration_rejects_symlink_escape(tmp_path: Path) -> None:
         root=tmp_path,
         tracked_paths={link_rel, rel_tex},
     ))
+
+
+# ---------------------------------------------------------------------------
+# F-B: persisted source-disposition regression matrix for the PDF-30 adjacent
+# CRC clauses. Every negative exercises the production governance entry
+# (baseline.governed_source_errors) that check_repo_baseline.main() invokes.
+# ---------------------------------------------------------------------------
+PDF30_ADJACENT_UNITS = (
+    "SAU-645-4-3-1-CRC-DEFINITION",
+    "SAU-645-4-3-2-1-BIT-ORDERING",
+    "SAU-645-4-3-2-2-BIT-SHIFTING",
+)
+
+
+def _arinc645_source(audit: dict) -> dict:
+    return next(
+        item
+        for item in audit["supportingSourceApplicabilityAudit"]["sources"]
+        if item["sourceId"] == "ARINC-645"
+    )
+
+
+def test_645_pdf30_adjacent_units_pass_at_head() -> None:
+    assert baseline.governed_source_errors(_audit(), _crs(), _m2()) == []
+
+
+def test_645_pdf30_units_remain_informative_not_universal_must() -> None:
+    source_645 = _arinc645_source(_audit())
+    for unit_id in PDF30_ADJACENT_UNITS:
+        unit = next(item for item in source_645["units"] if item["id"] == unit_id)
+        assert unit["applicabilityDecision"] == "OUT-OF-PROFILE"
+        assert unit["conformanceEffect"] == "INFORMATIVE"
+        assert unit["leafCrsStatus"] == "NOT-REQUIRED"
+    assert baseline.governed_source_errors(_audit(), _crs(), _m2()) == []
+
+
+@pytest.mark.parametrize("unit_id", PDF30_ADJACENT_UNITS)
+def test_645_pdf30_unit_deletion_is_rejected(unit_id: str) -> None:
+    audit = _audit()
+    source_645 = _arinc645_source(audit)
+    source_645["units"] = [item for item in source_645["units"] if item["id"] != unit_id]
+    errors = baseline.governed_source_errors(audit, _crs(), _m2())
+    assert any("explicit non-obligation disposition" in item for item in errors)
+
+
+@pytest.mark.parametrize("unit_id", PDF30_ADJACENT_UNITS)
+def test_645_pdf30_unit_page_mislocation_is_rejected(unit_id: str) -> None:
+    audit = _audit()
+    source_645 = _arinc645_source(audit)
+    unit = next(item for item in source_645["units"] if item["id"] == unit_id)
+    unit["pdfPages"] = [29, 29]
+    errors = baseline.governed_source_errors(audit, _crs(), _m2())
+    assert any("explicit non-obligation disposition" in item for item in errors)
+
+
+def test_645_prebody_absorbing_crc_definition_is_rejected() -> None:
+    for mutate in (
+        lambda unit: unit.update(pdfPages=[7, 30]),
+        lambda unit: unit.update(clause="1-4.3.1"),
+    ):
+        audit = _audit()
+        source_645 = _arinc645_source(audit)
+        pre = next(item for item in source_645["units"] if item["id"] == "SAU-645-BODY-PRE")
+        mutate(pre)
+        errors = baseline.governed_source_errors(audit, _crs(), _m2())
+        assert any("untriggered pre-body must end" in item for item in errors)
+
+
+def test_645_surveyed_page_without_clause_disposition_is_rejected() -> None:
+    audit = _audit()
+    source_645 = _arinc645_source(audit)
+    assert 30 in source_645["pageAccount"]["surveyedPdfPages"]
+    source_645["units"] = [
+        item for item in source_645["units"] if item["id"] not in PDF30_ADJACENT_UNITS
+    ]
+    errors = baseline.governed_source_errors(audit, _crs(), _m2())
+    assert any("explicit non-obligation disposition" in item for item in errors)

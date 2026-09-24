@@ -1354,6 +1354,17 @@ def arinc_645_closure_errors(audit: dict, crs: dict, model: dict | None = None) 
     return errors
 
 
+def governed_source_errors(audit: dict, crs: dict, model: dict | None = None) -> list[str]:
+    """Governance aggregation for the controlled source package.
+
+    This is the single entry the baseline validator uses for the source audit and
+    the 615A-triggered 645 closure, so a persistence test can prove that a mutated
+    controlled input is collected by the normal governance path rather than by an
+    isolated helper.
+    """
+    return protocol_source_audit_errors(audit, crs) + arinc_645_closure_errors(audit, crs, model)
+
+
 def _load_cltav_registry(registry: dict | None = None) -> dict:
     if registry is not None:
         return registry
@@ -3717,9 +3728,8 @@ def main() -> int:
     errors.extend(historical_methodology_math_errors())
     crs_package = json.loads(read(ROOT / "configs/requirements/arinc_615a3_m1_crs.json"))
     audit_package = json.loads(read(SOURCE_AUDIT_PATH))
-    errors.extend(protocol_source_audit_errors(audit_package, crs_package))
     m2_package = json.loads(read(ROOT / "configs/models/arinc_615a3_m2_model.json"))
-    errors.extend(arinc_645_closure_errors(audit_package, crs_package, m2_package))
+    errors.extend(governed_source_errors(audit_package, crs_package, m2_package))
     errors.extend(
         cltav_algorithm_contract_errors(
             read(RESEARCH / "publication" / "algorithms" / "ALG-CLTAV-01.tex"),
