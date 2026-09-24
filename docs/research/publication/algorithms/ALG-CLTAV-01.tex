@@ -39,15 +39,16 @@ $(\Gamma,\eta,H)\leftarrow\textsc{Initialize}(H_0,L,U,\text{resourcePolicy})$\;
   $\textit{er}\leftarrow$ \IFexec$(\Gamma,\xi)$\;
   \tcp{\textbf{S6} \textsc{InterpretOutcome}: ALG-CLTAV-03 coordinates; ALG-CLTAV-06 interprets timing}
   $z\leftarrow\textsc{InterpretOutcome}(\textit{er},\xi,\Gamma,\eta,U)$\;
-  \tcp{\textbf{S7--S8} \textsc{ResolveOutcome}: a total Resolution; only COMMIT reaches S9}
+  \tcp{\textbf{S7--S8} \textsc{ResolveOutcome}: a total Resolution; every variant consumes the same returned contexts}
   $\delta\leftarrow\textsc{ResolveOutcome}(z,\xi,\Gamma,\eta)$\;
-  \lIf{$\delta.\mathrm{control}=\texttt{STOP}$}{\Return $\textsc{Finish}(\delta.\mathrm{reason},\delta.\Gamma,\delta.\eta,H)$}
-  \lIf{$\delta.\mathrm{control}=\texttt{RETRY}$}{\textbf{continue}}
-  \tcp{adopt the returned contexts, then commit}
-  $\Gamma\leftarrow\delta.\Gamma$; $\eta\leftarrow\delta.\eta$\;
-  \tcp{\textbf{S9} the S9 guard is an executable condition, not a comment: a valid observation or a confirmed successor summary}
+  \tcp{adopt the returned context and the normalized outcome before branching; a RETRY must keep the incremented retry and UNKNOWN state}
+  $\Gamma\leftarrow\delta.\Gamma$; $\eta\leftarrow\delta.\eta$; $z\leftarrow\delta.\mathrm{outcome}$\;
+  \lIf{$\delta.\mathrm{control}=\texttt{STOP}$}{\Return $\textsc{Finish}(\delta.\mathrm{reason},\Gamma,\eta,H)$}
+  \lIf{$\delta.\mathrm{control}=\texttt{RETRY}$}{\textbf{continue} to S1 with the adopted context}
+  \tcp{\textbf{S9} the S9 guard is an executable condition: a valid observation or a confirmed successor summary}
   \If{$z.I_z$ is a valid observation class or $z.\mathrm{summaryConfirmed}$ is true}{
-    $(\eta,H,\Gamma)\leftarrow\textsc{CommitCompatibleUpdate}(\xi,\delta.\mathrm{outcome},\Gamma,\eta,H)$\;
+    $(\textit{status},\eta,H,\Gamma)\leftarrow\textsc{CommitCompatibleUpdate}(\xi,z,\Gamma,\eta,H)$\;
+    \lIf{$\textit{status}=\texttt{SPEC-ERROR}$}{\Return $\textsc{Finish}(\text{history version or intersection mismatch},\Gamma,\eta,H)$\;}
   }
   \tcp{\textbf{S10} \textsc{PostUpdateStop}: existing post-update stop priority; otherwise the next iteration is S1}
   $\textit{stop}\leftarrow$ \IFres$(\Gamma,H,\eta)$ with \IFeq$(\Gamma,H,\eta)$\;

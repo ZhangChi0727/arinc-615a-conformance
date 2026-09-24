@@ -1526,6 +1526,14 @@ def _cltav_executable_errors(algorithms: dict[str, str]) -> list[str]:
         errors.append("the snapshot must not use the ACTION/EXIT discriminant as the action kind")
     if "is a valid observation class or $z.\\mathrm{summaryConfirmed}$ is true" not in main:
         errors.append("the S9 guard must be an executable condition, not a comment")
+    if r"\Gamma\leftarrow\delta.\Gamma" not in main or r"\eta\leftarrow\delta.\eta" not in main:
+        errors.append("the top level must adopt the Resolution context before branching")
+    adopt_at = main.find(r"\Gamma\leftarrow\delta.\Gamma")
+    retry_at = main.find(r"\textbf{continue}")
+    if adopt_at < 0 or retry_at < 0 or adopt_at > retry_at:
+        errors.append("the Resolution context must be adopted before the RETRY continue")
+    if r"z\leftarrow\delta.\mathrm{outcome}" not in main:
+        errors.append("the top level must consume the normalized Resolution outcome")
 
     alg02 = bodies.get("ALG-CLTAV-02", "")
     if r"\textit{raw}.\mathrm{status}=\texttt{GAP}" not in alg02:
@@ -1546,6 +1554,8 @@ def _cltav_executable_errors(algorithms: dict[str, str]) -> list[str]:
         errors.append("InterpretOutcome must take summaryConfirmed from the interpretation interface")
     if re.search(r"\\mathrm\{summaryConfirmed\}\s*\\leftarrow\s*\\textbf\{true\}", alg03):
         errors.append("InterpretOutcome must not default summaryConfirmed to true")
+    if r"z.\mathrm{effect}\leftarrow\textit{effectClass}" not in alg03:
+        errors.append("InterpretOutcome must propagate the interpretation effect class")
     if r"\IFobs" not in alg03:
         errors.append("InterpretOutcome must call IF-OBS-INTERPRET")
     if r"\IFprep" not in alg03:
@@ -1560,6 +1570,12 @@ def _cltav_executable_errors(algorithms: dict[str, str]) -> list[str]:
     alg05 = bodies.get("ALG-CLTAV-05", "")
     if r"\IFsel" not in alg05:
         errors.append("SelectAndAdmit must call IF-SELECT-ADMIT")
+    ifsel_at = alg05.find(r"\IFsel")
+    prep_return = alg05.find(r"\mathrm{actionKind}=\texttt{PREP}")
+    if prep_return >= 0 and ifsel_at >= 0 and prep_return < ifsel_at:
+        errors.append("SelectAndAdmit must not select Prep/Recover before IF-SELECT-ADMIT admission")
+    if "eligibleUnknown" not in alg05:
+        errors.append("SelectAndAdmit must state the UNKNOWN recovery eligibility")
 
     alg06 = bodies.get("ALG-CLTAV-06", "")
     if r"M\subseteq N_r" not in alg06 or r"\not\subseteq" in alg06:
@@ -1582,6 +1598,10 @@ def _cltav_executable_errors(algorithms: dict[str, str]) -> list[str]:
         errors.append("history update must declare the S9 guard as a precondition")
     if "$z.\\mathrm{summaryConfirmed}$ is true" not in alg07:
         errors.append("S9 must commit currentSummary only under the confirmed successor guard")
+    if r"\xi.\mathrm{historyVersion}\neq\eta.\mathrm{version}" not in alg07:
+        errors.append("history update must fail closed on a stale snapshot version")
+    if r"\mathrm{status}=\texttt{SPEC-ERROR}" not in alg07:
+        errors.append("history update must return a tagged SPEC-ERROR variant")
     return errors
 
 

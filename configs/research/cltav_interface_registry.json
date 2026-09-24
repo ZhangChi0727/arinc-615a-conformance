@@ -116,7 +116,7 @@
       "id": "IF-HIST-UPDATE",
       "macro": "IFhist",
       "calledInAlgorithm": true,
-      "inputs": ["HistoryHandle", "H", "tStar", "qUsedAtSelect", "classesUsedAtSelect", "valid Iz", "postSummary"],
+      "inputs": ["HistoryHandle", "H", "tStar", "qUsedAtSelect", "classesUsedAtSelect", "historyVersion", "valid Iz", "postSummary"],
       "outputs": ["HistoryHandlePrime", "Hprime", "Stop-Empty"],
       "pre": "valid observation class or summaryConfirmed=true successor postSummary; not an effect-class retry",
       "guarantee": "advance from the select-time snapshot; whole-history path; no resurrection; HistoryHandlePrime is the next IF-PRED-OBS input; qUsedAtSelect is SelectSnapshot, not the post-effect currentSummary; postSummary is a different field. A confirmed Prep with no valid Iz advances operation history and preserves H",

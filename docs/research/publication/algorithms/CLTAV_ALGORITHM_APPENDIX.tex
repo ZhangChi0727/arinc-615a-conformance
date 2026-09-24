@@ -51,8 +51,10 @@ unconfirmed outcome returns \texttt{RETRY}, a confirmed Recover returns
 \texttt{COMMIT} and is the sole writer of KNOWN, a normal TEST/Prep with a valid
 observation also commits, and the retry cap returns \texttt{STOP} (Stop-Error, not
 Stop-Budget). S9 is the sole commit of the confirmed successor summary, under the
-guard enforced by ALG-CLTAV-01. No module path starts the next prediction after a
-return; only S9 does.
+guard enforced by ALG-CLTAV-01. Two return paths are distinguished: a RETRY
+adopts the returned context and returns to S1, while a COMMIT proceeds through
+the guarded S9 update to S10 and then S1; the confirmation condition constrains
+only the Recover recovery branch, not a normal TEST or Prep commit.
 
 \section*{Appendix C. Responsibility map and decision tables}
 \label{app:cltav-tables}

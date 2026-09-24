@@ -45,7 +45,7 @@ S2：ALG-CLTAV-02 先按返回标签分支再投影；PredictionGapError 只关�
 S3：ALG-CLTAV-05 给出选择与准入规则；空 TEST 集不得 $\arg\min$；空类不阻止合格 Recover；选定后冻结不可变快照 $\xi$。
 S4 一次计费：重试上限不是预算耗尽。S5：只执行快照动作一次。
 S6：ALG-CLTAV-03 协调，ALG-CLTAV-06 完成时序解释；$M$、判定与候选集合 $I_z$ 是三种不同类型，不得 $H\cap$ 判定。
-S7--S8：ALG-CLTAV-04 返回完整 Resolution；ERROR／未知走 RETRY，只有确认 Recover 走 COMMIT；S8 唯一写 KNOWN。
-S9：ALG-CLTAV-07 在既有守卫下做整段历史相容更新并提交已确认摘要；不得旁路 S9 开始下一轮预测。
+S7--S8：ALG-CLTAV-04 返回完整 Resolution，主算法先接收返回的 $\Gamma,\eta$ 与规范化 outcome 再分支；ERROR／未知走 RETRY 回 S1，正常 TEST／Prep 与确认 Recover 走 COMMIT，确认条件只约束 Recover 恢复分支；S8 唯一写 KNOWN。
+S9：COMMIT 经可执行守卫决定是否调用 ALG-CLTAV-07 做整段历史相容更新并提交已确认摘要；随后 S10 检查停止并回 S1。
 Stop-645 表示仍未在能力/实现层关闭的具名 645 依赖义务，不是“645 文件缺失”。
 \end{document}
