@@ -26,7 +26,7 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "511b82ec3e42c323c6b86f128123388ebcdb6983",
+        "gitBlobOid": "204b4967a5dd7b3bebe1751f382ab96e9c9dc495",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -36,17 +36,17 @@
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "7fe6ef17750901816cf1ab659ec74844a69f98ec",
+        "gitBlobOid": "b510d9e49c8cd2792acd62509ebedf473b37b0cc",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "d9d944726bd378c4ba4afa778304103883dfacb3",
+        "gitBlobOid": "68e250004bad65860b25e21ad2732ccc72d07ee4",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_source_section_spans.json",
-        "gitBlobOid": "9efaaa786f0d791dad913dfc853d482e99265fa5",
+        "gitBlobOid": "78a50ec1debf07e6f9c50806015a4f772b35effc",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "129ad1b4e1153e686b8afc7a67299330606525f1",
+        "gitBlobOid": "16823bafd5e8ce958f437046ce27d6d4d271abea",
         "role": "SUCCESSOR-M1-DELTA"
       }
     ],
@@ -148,8 +148,8 @@
           "role": "M1-IMMUTABLE-INPUT"
         }
       ],
-      "currentInputArtifactCommit": "f5ba787f741d26f034e3c3fca4d286069311080f",
-      "currentInputArtifactTree": "1e5484ab3c08c948ba92882ab7d0efe37e7768f0"
+      "currentInputArtifactCommit": "c32008e32bc4701df27e2f25f74b01465c9e2bf2",
+      "currentInputArtifactTree": "041b7211e3e4222c21a20e224fa4349c5ea3a4c6"
     }
   },
   "sequenceEndpointBindings": [
@@ -34457,7 +34457,7 @@
     "dispositionsFingerprint": "9c07be25fc8aa42ff08cc647d1135179cc6a6e03f07f9202c21a3128bcc5b7e8",
     "modelFingerprint": "a716f9b60f3e507ec7758ca3430de589bd67bbad630ef735a1bc1b38c8c2b2ef",
     "timingFingerprint": "cd8a13f203f6d2c2f9c82e65646bf9d5b920200a509af92d461096e54f7e6810",
-    "inputFingerprint": "7b85e64d7713096731c8609e55dee7c77d342f33e3fd2717f03a1b6b94fa5e31",
+    "inputFingerprint": "4893f239ac6752a110e4f5ab832288245c5679d984eba0d790321667fc55d5e4",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
