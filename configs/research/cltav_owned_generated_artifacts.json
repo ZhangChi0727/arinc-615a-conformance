@@ -8,6 +8,9 @@
       "kind": "OWNED-GENERATED-PUBLICATION",
       "trackedSources": [
         "docs/research/publication/algorithms/ALG-CLTAV-01.tex",
+        "docs/research/publication/algorithms/ALG-CLTAV-05-selection.tex",
+        "docs/research/publication/algorithms/ALG-CLTAV-06-timing.tex",
+        "docs/research/publication/algorithms/ALG-CLTAV-07-history.tex",
         "docs/research/publication/algorithms/ALG-CLTAV-02.tex",
         "docs/research/publication/algorithms/ALG-CLTAV-03.tex",
         "docs/research/publication/algorithms/ALG-CLTAV-04.tex",

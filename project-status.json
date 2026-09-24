@@ -11,12 +11,12 @@
     "titleZh": "CL-TAV 算法分解、权威派生状态清单与来源处置回归持久化",
     "summary": [
       "Execute the two closure actions registered at the PR #16 acceptance. F-A derives the current CRS inventory in the status surface from the authoritative controlled package instead of a second hand-filled copy. F-B persists the PDF-30 adjacent-CRC source-disposition negatives and positive cases through the production checker.",
-      "Decompose the approved CL-TAV process into a readable top-level algorithm (ALG-CLTAV-01) plus ALG-CLTAV-02/03/04 and one contract appendix (F-C), with a split-versus-merged equivalence witness matrix over the frozen abstract backends. No candidate-update, stop, resource, retry or successor-summary semantics change.",
+      "Correct the CL-TAV presentation (F-C, review round R36): the main text carries the top-level algorithm (ALG-CLTAV-01) and the three core mechanisms (selection ALG-CLTAV-05, timed observation ALG-CLTAV-06, history update ALG-CLTAV-07); the appendix carries the S2/S6/S7-S8 coordination wrappers (ALG-CLTAV-02/03/04), typed records and the unresolved-kernel register. Interfaces use explicit typed returns; a bounded executable-call production model and an executable composition witness check the new orchestration. No candidate-update, stop, resource, retry or successor-summary semantics change.",
       "Keep protocol CRS and M2 semantics unchanged: the CRS stays M1-CANDIDATE-25 with its declared inventory, the bound M2 stays UPLOAD/INFORMATION with 65 transitions and 30 observational timing rows, and the M2 input pin stays its recorded ancestor. No M3, no capability establishment, no Project Configuration, no baseline or tag."
     ],
     "summaryZh": [
       "执行 PR #16 接受时登记的两项收尾动作。F-A 从权威受控包派生状态面的当前 CRS 清单，而不是第二份手填副本。F-B 经生产检查路径持久化 PDF 30 邻接 CRC 的来源处置负例与正例。",
-      "把已批准的 CL-TAV 过程分解为可读的总体算法（ALG-CLTAV-01）加 ALG-CLTAV-02/03/04 与一个契约附录（F-C），并在冻结抽象后端上给出拆分／合并等价性见证矩阵。候选更新、停止、资源、重试与后继摘要语义均不变。",
+      "修正 CL-TAV 呈现（F-C，评审轮 R36）：正文承载总体算法（ALG-CLTAV-01）与三个核心机制（选择 ALG-CLTAV-05、时序观测 ALG-CLTAV-06、历史更新 ALG-CLTAV-07）；附录承载 S2／S6／S7-S8 协调包装（ALG-CLTAV-02/03/04）、类型记录与未实现内核登记。接口使用显式类型返回；受限可执行调用生产模型与可执行组合见证检查新编排。候选更新、停止、资源、重试与后继摘要语义均不变。",
       "协议 CRS 与 M2 语义不变：CRS 保持 M1-CANDIDATE-25 及其声明清单，绑定 M2 保持 UPLOAD／INFORMATION、65 迁移与 30 条观察时序，M2 输入钉保持既有祖先。不启动 M3，不建立能力，不建立 Project Configuration，不创建 baseline 或 tag。"
     ],
     "stateChanges": [
