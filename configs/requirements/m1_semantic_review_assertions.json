@@ -21646,7 +21646,7 @@
         "polarity": "AFFIRMATIVE"
       },
       "expectedGeneratedSemanticProjectionEn": "Commentary: the length field lets software that does not recognize an enumerated type skip to the data fields that follow the check-value. Additional check methods may be defined.",
-      "expectedGeneratedSemanticProjectionZh": "评注：长度字段让无法识别枚举类型的软件跳过校验值后面的数据字段。可以定义更多校验方法。",
+      "expectedGeneratedSemanticProjectionZh": "评注：无法识别该枚举类型时，软件可借助长度越过该校验值，继续处理其后的数据字段。可以定义更多校验方法。",
       "expectedSourceModality": "COMMENTARY",
       "expectedConformanceEffect": "INFORMATIVE",
       "expectedDependencyIds": [
@@ -22164,20 +22164,20 @@
       "sourceTextHash": "0b5374bc9871b7825a6acd1789194793245cc596aea57744e68a3d50eaf6b884",
       "expectedSemantic": {
         "actor": "SOFTWARE-PACKAGE-PRODUCER",
-        "condition": "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC",
-        "action": "BIND-CRC-INITIALIZE-TO-ONES",
+        "condition": "WHEN-CRC-VARIANT-USES-ALL-ONES-INITIALIZATION",
+        "action": "RECORD-CRC-ALL-ONES-INITIALIZATION-VARIANT",
         "objects": [
           "CRC",
           "CRC-INITIAL-VALUE"
         ],
-        "observableEffect": "BIND-CRC-INITIALIZE-TO-ONES-OBSERVABLE",
+        "observableEffect": "CRC-ALL-ONES-INITIALIZATION-VARIANT-RECORDED",
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When a 615A-triggered 645 CRC is computed, initialization to all-1 bits (versus all-0) is recorded as an interpretation leaf. Tabulated init does not silently drop this source sentence.",
-      "expectedGeneratedSemanticProjectionZh": "当 615A 触发的 645 CRC 被计算时，全 1 初值（相对全 0）作为解释叶记录。表列 init 不得无声丢掉该来源句。",
+      "expectedGeneratedSemanticProjectionEn": "Initialization to all-1 bits is one CRC variant described to prevent undetected leading-zero insertion; it is not a universal 615A CRC obligation. The selected algorithm's tabulated Init parameter controls the actual initialization.",
+      "expectedGeneratedSemanticProjectionZh": "全 1 初始化是为防止未检测到的前导零插入而说明的一种 CRC 变体；它不是适用于所有 615A CRC 的义务。实际初始化由所选算法表列的 Init 参数控制。",
       "expectedSourceModality": "FACT",
-      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedConformanceEffect": "INFORMATIVE",
       "expectedDependencyIds": [
         "DEP-ARINC-645"
       ]
@@ -22212,20 +22212,20 @@
       "sourceTextHash": "17d0048ce94f94cba10c9c400bba05fcb74ea58d5f1b62dd70acfcdf00237377",
       "expectedSemantic": {
         "actor": "SOFTWARE-PACKAGE-PRODUCER",
-        "condition": "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC",
-        "action": "BIND-CRC-FINAL-ONES-COMPLEMENT-AGAINST-STUCK-ON-ZERO",
+        "condition": "WHEN-CRC-VARIANT-USES-FINAL-ONES-COMPLEMENT",
+        "action": "RECORD-CRC-FINAL-ONES-COMPLEMENT-VARIANT",
         "objects": [
           "CRC",
           "STUCK-ON-ZERO"
         ],
-        "observableEffect": "BIND-CRC-FINAL-ONES-COMPLEMENT-AGAINST-STUCK-ON-ZERO-OBSERVABLE",
+        "observableEffect": "CRC-FINAL-ONES-COMPLEMENT-VARIANT-RECORDED",
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
-      "expectedGeneratedSemanticProjectionEn": "When a 615A-triggered 645 CRC is computed, one’s-complement of the final CRC prior to transmission is the source treatment of stuck-on-zero. Capability/execution remains not established.",
-      "expectedGeneratedSemanticProjectionZh": "当 615A 触发的 645 CRC 被计算时，发送前对最终 CRC 作一补是 stuck-on-zero 的来源处置。能力／执行仍未建立。",
+      "expectedGeneratedSemanticProjectionEn": "One’s-complementing the final CRC before transmission is a CRC variant described to address stuck-on-zero; it is not a universal 615A CRC obligation. The selected algorithm's tabulated XorOut or final-processing parameter controls the actual result treatment.",
+      "expectedGeneratedSemanticProjectionZh": "发送前对最终 CRC 作一补是为处理 stuck-on-zero 而说明的一种 CRC 变体；它不是适用于所有 615A CRC 的义务。实际结果处理由所选算法表列的 XorOut 或最终处理参数控制。",
       "expectedSourceModality": "FACT",
-      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedConformanceEffect": "INFORMATIVE",
       "expectedDependencyIds": [
         "DEP-ARINC-645"
       ]
@@ -22249,6 +22249,30 @@
       "expectedGeneratedSemanticProjectionEn": "If a software part is intended for a target that supports multiple loading interfaces, the delivered part shall include the data needed for each interface. Conditional on that 615A target configuration; reopen if a bound UPLOAD/INFORMATION object uses a multi-interface target without this leaf.",
       "expectedGeneratedSemanticProjectionZh": "若软件件拟装入支持多加载接口的目标，交付件须包含支持每一接口所需数据。以该 615A 目标配置为条件；若绑定 UPLOAD／INFORMATION 对象使用多接口目标却无此叶则重开。",
       "expectedSourceModality": "MUST",
+      "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
+      "expectedDependencyIds": [
+        "DEP-ARINC-645"
+      ]
+    },
+    {
+      "requirementId": "CRS-M1-00864",
+      "sourceUnitId": "SU-ARINC-645-4.3.2-P030-PROSE-SENTENCE-001-3075B80B48E5",
+      "sourceTextHash": "3075b80b48e594a545413c0dc976d598e3ab005d4496da76aa55796162612f18",
+      "expectedSemantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC",
+        "action": "PROCESS-CRC-FILE-BYTES-IN-OCCURRENCE-ORDER",
+        "objects": [
+          "CRC",
+          "FILE-BYTE-SEQUENCE"
+        ],
+        "observableEffect": "CRC-FILE-BYTE-OCCURRENCE-ORDER-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "expectedGeneratedSemanticProjectionEn": "When a 615A-triggered 645 CRC is computed, process the input bytes within each file in their file occurrence order: first byte first and last byte last. This does not specify the stored check-value byte order or RefIn/RefOut bit reflection.",
+      "expectedGeneratedSemanticProjectionZh": "当计算由 615A 触发的 645 CRC 时，应按文件内字节的出现顺序处理输入：首字节在前、末字节在后。这并不规定已存储校验值的字节序，也不规定 RefIn／RefOut 位反射。",
+      "expectedSourceModality": "SHOULD",
       "expectedConformanceEffect": "CONDITIONAL-REQUIRED",
       "expectedDependencyIds": [
         "DEP-ARINC-645"

@@ -9,10 +9,10 @@
     "path": "configs/requirements/arinc_615a3_m1_crs.json",
     "artifactId": "ARINC615A3-M1-CRS",
     "artifactVersion": "M1-CANDIDATE-25",
-    "coverageCount": 3152,
-    "requirementCount": 862,
-    "coverageFingerprint": "1b9e39f3bfd216880582712363e69e7ffea214b2ec5447e1162767b9eb421327",
-    "requirementsFingerprint": "6ea62f5be93f12da9abf457f7795a2171470c3405c0db1f354e615cd3115490f",
+    "coverageCount": 3153,
+    "requirementCount": 863,
+    "coverageFingerprint": "db1c91a23d53f4edc2a0136fb2ccda5f27dfad09750e27f65b6361301f217883",
+    "requirementsFingerprint": "c77fc41d494f9390ce2cab600047a6e8da9077e97111f429f26f8599854a4a1e",
     "deferredOperations": [
       "DOWNLOAD",
       "FIND"
@@ -27,11 +27,11 @@
     "Ordinary Ethernet, Compliant, Profiled and AFDX stay separate configuration dimensions."
   ],
   "summary": {
-    "coverageCount": 3152,
-    "requirementCount": 862,
+    "coverageCount": 3153,
+    "requirementCount": 863,
     "applicabilityDecisions": {
       "OUT-OF-PROFILE": 973,
-      "APPLICABLE-SUPPORTING": 1355,
+      "APPLICABLE-SUPPORTING": 1356,
       "APPLICABLE-BASE": 286,
       "CONDITIONAL": 538
     },
@@ -172,7 +172,7 @@
       "AFDX-MAC-SOURCE-INTERFACE-ID-110-NOT-USED": 1,
       "AFDX-MAC-SOURCE-INTERFACE-ID-111-NOT-USED": 1,
       "P3-DOCUMENT-CONTROL-INFORMATIVE": 2,
-      "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING": 46
+      "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING": 47
     },
     "deferredFutureScope": {
       "total": 0,
@@ -19739,10 +19739,10 @@
           ],
           "untriggeredBodyPdfPages": [
             7,
-            30
+            29
           ],
           "surveyedPdfPages": [
-            31,
+            30,
             48
           ],
           "excludedPdfPages": [
@@ -19752,7 +19752,7 @@
         },
         "coverageDenominator": {
           "kind": "615A-TRIGGERED-CLAUSE-GROUP",
-          "count": 11,
+          "count": 12,
           "assuranceBoundary": "TRIGGERED-SEMANTIC-LEAVES-NOT-CAPABILITY-ESTABLISHMENT"
         },
         "namedSourceTensions": [
@@ -19785,8 +19785,9 @@
               "BIND-CRC-64-REFIN-REFOUT-XOROUT",
               "BIND-CRC-64-WIDTH-GENERATOR-AND-INIT",
               "BIND-CRC-8-CHECK-TO-256-BYTE-VECTOR",
-              "BIND-CRC-FINAL-ONES-COMPLEMENT-AGAINST-STUCK-ON-ZERO",
-              "BIND-CRC-INITIALIZE-TO-ONES",
+              "PROCESS-CRC-FILE-BYTES-IN-OCCURRENCE-ORDER",
+              "RECORD-CRC-ALL-ONES-INITIALIZATION-VARIANT",
+              "RECORD-CRC-FINAL-ONES-COMPLEMENT-VARIANT",
               "BIND-CRC-POST-PROCESS-BIT-REFLECTION",
               "BIND-CRC-PROCESS-BIT-REFLECTION",
               "BIND-CRC-TRANSMISSION-BIT-REFLECTION",
@@ -19796,8 +19797,8 @@
               "PAD-SHORT-INPUT-TO-CRC-REGISTER-SIZE"
             ],
             "rationaleCode": "615A-AND-665-CRC-POINTS-TO-BOUND-645-CRC-LEAVES",
-            "rationaleEn": "665 batch-file CRC and 615A checksum/locate-with-CRC objects trigger the bound 645 CRC parameter, check-vector and PDF31 calculation-rule leaves. Capability remains not established.",
-            "rationaleZh": "665 批处理文件 CRC 与 615A 校验和／带 CRC 定位对象触发已绑定的 645 CRC 参数、校验向量与 PDF31 计算规则叶。能力仍未建立。"
+            "rationaleEn": "665 batch-file CRC and 615A checksum/locate-with-CRC objects trigger the bound 645 CRC input-order, parameter, check-vector and calculation-rule leaves. Capability remains not established.",
+            "rationaleZh": "665 批处理文件 CRC 与 615A 校验和／带 CRC 定位对象触发已绑定的 645 CRC 输入顺序、参数、校验向量与计算规则叶。能力仍未建立。"
           },
           {
             "fromRequirementIds": [
@@ -19876,11 +19877,11 @@
           },
           {
             "id": "SAU-645-BODY-PRE",
-            "clause": "1-4.3.2.2",
-            "clauseTitleEn": "Introduction through CRC calculation rules, untriggered body",
+            "clause": "1-4.3.1",
+            "clauseTitleEn": "Introduction through CRC definition, untriggered body",
             "pdfPages": [
               7,
-              30
+              29
             ],
             "unitKind": "SECTION",
             "applicabilityDecision": "OUT-OF-PROFILE",
@@ -19889,8 +19890,56 @@
             "triggeredByOperations": [],
             "relationTo615A": "BOUNDED-EXCLUSION",
             "leafCrsStatus": "NOT-REQUIRED",
-            "summaryEn": "Chapters 1-3 and CRC introductory body through 4.3.2.2 (PDF 7-30) are untriggered by the current 615A integrity/naming edges. PDF 31 4.3.2.3-4.3.2.9 are not in this unit.",
-            "summaryZh": "第 1–3 章及至 4.3.2.2 的 CRC 引言正文（PDF 7–30）未被当前 615A 完整性／命名边触发。PDF 31 的 4.3.2.3–4.3.2.9 不属于本单元。"
+            "summaryEn": "Chapters 1-3 and the CRC definition through 4.3.1 (PDF 7-29) are untriggered by the current 615A integrity/naming edges. The separately classified PDF 30 byte-order rule is not in this unit.",
+            "summaryZh": "第 1–3 章及至 4.3.1 的 CRC 定义正文（PDF 7–29）未被当前 615A 完整性／命名边触发。另行分类的 PDF 30 字节顺序规则不属于本单元。"
+          },
+          {
+            "id": "SAU-645-4-3-2-FILE-BYTE-ORDER",
+            "clause": "4.3.2",
+            "clauseTitleEn": "CRC file-byte processing order",
+            "pdfPages": [
+              30,
+              30
+            ],
+            "unitKind": "SECTION",
+            "applicabilityDecision": "APPLICABLE-SUPPORTING",
+            "conformanceEffect": "REQUIRED",
+            "rationaleCode": "TRIGGERED-CRC-FILE-BYTE-ORDER-FOR-615A-INTEGRITY",
+            "triggeredByOperations": [
+              "INFORMATION",
+              "UPLOAD",
+              "DOWNLOAD-MEDIA-DEFINED",
+              "DOWNLOAD-OPERATOR-DEFINED",
+              "FIND"
+            ],
+            "relationTo615A": "SOURCE-EXPLICIT-INTEGRITY-EDGE",
+            "leafCrsStatus": "LEAF-CRS-EMITTED",
+            "leafLocator": {
+              "sourceIds": [
+                "ARINC-645"
+              ],
+              "clausePrefixes": [
+                "4.3.2"
+              ]
+            },
+            "leafCoverageIds": [
+              "COV-M1-03153"
+            ],
+            "leafRequirementIds": [
+              "CRS-M1-00864"
+            ],
+            "admittedLeafUnits": [
+              {
+                "coverageId": "COV-M1-03153",
+                "requirementIds": [
+                  "CRS-M1-00864"
+                ],
+                "sourceUnitId": "SU-ARINC-645-4.3.2-P030-PROSE-SENTENCE-001-3075B80B48E5",
+                "clause": "4.3.2"
+              }
+            ],
+            "summaryEn": "PDF 30 §4.3.2 requires CRC input bytes within a file to be processed in file occurrence order. This input-sequence rule is distinct from check-value storage byte order and from RefIn/RefOut parameters.",
+            "summaryZh": "PDF 30 的 §4.3.2 要求在文件内按字节出现顺序处理 CRC 输入。该输入序列规则不同于校验值存储字节序，也不同于 RefIn／RefOut 参数。"
           },
           {
             "id": "SAU-645-4-3-2-RULES",
@@ -20738,6 +20787,11 @@
         "requirementId": "CRS-M1-00863",
         "atomicPartId": "PN-MULTI-INTERFACE-DATA",
         "splitRationale": "PDF31/§7.1 residual source unit emitted as an atomic leaf."
+      },
+      {
+        "requirementId": "CRS-M1-00864",
+        "atomicPartId": "CRC-FILE-BYTE-ORDER",
+        "splitRationale": "PDF30/§4.3.2 file-byte input order is separate from check-value storage byte order and bit-reflection parameters."
       }
     ]
   },

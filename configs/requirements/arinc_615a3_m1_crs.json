@@ -77383,7 +77383,7 @@
       },
       "sourceTextHash": "0b5374bc9871b7825a6acd1789194793245cc596aea57744e68a3d50eaf6b884",
       "sourceModality": "FACT",
-      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "conformanceEffect": "INFORMATIVE",
       "applicabilityDecision": "APPLICABLE-SUPPORTING",
       "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
       "atomicity": {
@@ -77435,7 +77435,7 @@
       },
       "sourceTextHash": "17d0048ce94f94cba10c9c400bba05fcb74ea58d5f1b62dd70acfcdf00237377",
       "sourceModality": "FACT",
-      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "conformanceEffect": "INFORMATIVE",
       "applicabilityDecision": "APPLICABLE-SUPPORTING",
       "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
       "atomicity": {
@@ -77471,6 +77471,32 @@
       },
       "requirementIds": [
         "CRS-M1-00863"
+      ]
+    },
+    {
+      "id": "COV-M1-03153",
+      "sourceUnitId": "SU-ARINC-645-4.3.2-P030-PROSE-SENTENCE-001-3075B80B48E5",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.3.2",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 30,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "3075b80b48e594a545413c0dc976d598e3ab005d4496da76aa55796162612f18",
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "atomicity": {
+        "ownershipKind": "PROSE-SENTENCE",
+        "sentenceCount": 1,
+        "singleOwner": true
+      },
+      "requirementIds": [
+        "CRS-M1-00864"
       ]
     }
   ],
@@ -119020,7 +119046,7 @@
       "sourceTextHash": "9b13e6877fcfa69c86045210eb6968cf522b1ddb8fc57c911f0ce322845149bb",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
       "generatedSemanticProjectionEn": "Commentary: the length field lets software that does not recognize an enumerated type skip to the data fields that follow the check-value. Additional check methods may be defined.",
-      "generatedSemanticProjectionZh": "评注：长度字段让无法识别枚举类型的软件跳过校验值后面的数据字段。可以定义更多校验方法。",
+      "generatedSemanticProjectionZh": "评注：无法识别该枚举类型时，软件可借助长度越过该校验值，继续处理其后的数据字段。可以定义更多校验方法。",
       "semantic": {
         "actor": "SOFTWARE-PACKAGE-PRODUCER",
         "condition": "WHEN-CHECK-VALUE-TYPE-IS-UNRECOGNIZED",
@@ -120077,22 +120103,22 @@
       },
       "sourceTextHash": "0b5374bc9871b7825a6acd1789194793245cc596aea57744e68a3d50eaf6b884",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "When a 615A-triggered 645 CRC is computed, initialization to all-1 bits (versus all-0) is recorded as an interpretation leaf. Tabulated init does not silently drop this source sentence.",
-      "generatedSemanticProjectionZh": "当 615A 触发的 645 CRC 被计算时，全 1 初值（相对全 0）作为解释叶记录。表列 init 不得无声丢掉该来源句。",
+      "generatedSemanticProjectionEn": "Initialization to all-1 bits is one CRC variant described to prevent undetected leading-zero insertion; it is not a universal 615A CRC obligation. The selected algorithm's tabulated Init parameter controls the actual initialization.",
+      "generatedSemanticProjectionZh": "全 1 初始化是为防止未检测到的前导零插入而说明的一种 CRC 变体；它不是适用于所有 615A CRC 的义务。实际初始化由所选算法表列的 Init 参数控制。",
       "semantic": {
         "actor": "SOFTWARE-PACKAGE-PRODUCER",
-        "condition": "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC",
-        "action": "BIND-CRC-INITIALIZE-TO-ONES",
+        "condition": "WHEN-CRC-VARIANT-USES-ALL-ONES-INITIALIZATION",
+        "action": "RECORD-CRC-ALL-ONES-INITIALIZATION-VARIANT",
         "objects": [
           "CRC",
           "CRC-INITIAL-VALUE"
         ],
-        "observableEffect": "BIND-CRC-INITIALIZE-TO-ONES-OBSERVABLE",
+        "observableEffect": "CRC-ALL-ONES-INITIALIZATION-VARIANT-RECORDED",
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
       "sourceModality": "FACT",
-      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "conformanceEffect": "INFORMATIVE",
       "applicabilityDecision": "APPLICABLE-SUPPORTING",
       "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
       "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
@@ -120173,22 +120199,22 @@
       },
       "sourceTextHash": "17d0048ce94f94cba10c9c400bba05fcb74ea58d5f1b62dd70acfcdf00237377",
       "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
-      "generatedSemanticProjectionEn": "When a 615A-triggered 645 CRC is computed, one’s-complement of the final CRC prior to transmission is the source treatment of stuck-on-zero. Capability/execution remains not established.",
-      "generatedSemanticProjectionZh": "当 615A 触发的 645 CRC 被计算时，发送前对最终 CRC 作一补是 stuck-on-zero 的来源处置。能力／执行仍未建立。",
+      "generatedSemanticProjectionEn": "One’s-complementing the final CRC before transmission is a CRC variant described to address stuck-on-zero; it is not a universal 615A CRC obligation. The selected algorithm's tabulated XorOut or final-processing parameter controls the actual result treatment.",
+      "generatedSemanticProjectionZh": "发送前对最终 CRC 作一补是为处理 stuck-on-zero 而说明的一种 CRC 变体；它不是适用于所有 615A CRC 的义务。实际结果处理由所选算法表列的 XorOut 或最终处理参数控制。",
       "semantic": {
         "actor": "SOFTWARE-PACKAGE-PRODUCER",
-        "condition": "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC",
-        "action": "BIND-CRC-FINAL-ONES-COMPLEMENT-AGAINST-STUCK-ON-ZERO",
+        "condition": "WHEN-CRC-VARIANT-USES-FINAL-ONES-COMPLEMENT",
+        "action": "RECORD-CRC-FINAL-ONES-COMPLEMENT-VARIANT",
         "objects": [
           "CRC",
           "STUCK-ON-ZERO"
         ],
-        "observableEffect": "BIND-CRC-FINAL-ONES-COMPLEMENT-AGAINST-STUCK-ON-ZERO-OBSERVABLE",
+        "observableEffect": "CRC-FINAL-ONES-COMPLEMENT-VARIANT-RECORDED",
         "operation": "DATA-OBJECT",
         "polarity": "AFFIRMATIVE"
       },
       "sourceModality": "FACT",
-      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "conformanceEffect": "INFORMATIVE",
       "applicabilityDecision": "APPLICABLE-SUPPORTING",
       "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
       "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
@@ -120260,6 +120286,54 @@
         "CRS-M1-00326",
         "CRS-M1-00327"
       ]
+    },
+    {
+      "id": "CRS-M1-00864",
+      "sourceUnitId": "SU-ARINC-645-4.3.2-P030-PROSE-SENTENCE-001-3075B80B48E5",
+      "source": {
+        "sourceId": "ARINC-645",
+        "clause": "4.3.2",
+        "tableOrFigure": null,
+        "documentPage": 24,
+        "pdfPage": 30,
+        "fragmentKind": "PROSE-SENTENCE",
+        "fragmentOrdinal": 1
+      },
+      "sourceTextHash": "3075b80b48e594a545413c0dc976d598e3ab005d4496da76aa55796162612f18",
+      "hashCanonicalizationId": "ARINC-LEAF-UNIT-NFC-LF-HWS-v2",
+      "generatedSemanticProjectionEn": "When a 615A-triggered 645 CRC is computed, process the input bytes within each file in their file occurrence order: first byte first and last byte last. This does not specify the stored check-value byte order or RefIn/RefOut bit reflection.",
+      "generatedSemanticProjectionZh": "当计算由 615A 触发的 645 CRC 时，应按文件内字节的出现顺序处理输入：首字节在前、末字节在后。这并不规定已存储校验值的字节序，也不规定 RefIn／RefOut 位反射。",
+      "semantic": {
+        "actor": "SOFTWARE-PACKAGE-PRODUCER",
+        "condition": "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC",
+        "action": "PROCESS-CRC-FILE-BYTES-IN-OCCURRENCE-ORDER",
+        "objects": [
+          "CRC",
+          "FILE-BYTE-SEQUENCE"
+        ],
+        "observableEffect": "CRC-FILE-BYTE-OCCURRENCE-ORDER-OBSERVABLE",
+        "operation": "DATA-OBJECT",
+        "polarity": "AFFIRMATIVE"
+      },
+      "sourceModality": "SHOULD",
+      "conformanceEffect": "CONDITIONAL-REQUIRED",
+      "applicabilityDecision": "APPLICABLE-SUPPORTING",
+      "rationaleCode": "615A-TRIGGERED-645-SEMANTIC-MODEL-REFINEMENT-PENDING",
+      "interpretationStatus": "CANDIDATE-SOURCE-UNIT-BOUND",
+      "ambiguityStatus": "DISTINCT-FROM-CHECK-VALUE-STORAGE-BYTE-ORDER-AND-REFLECTION",
+      "dependencyIds": [
+        "DEP-ARINC-645"
+      ],
+      "gapIds": [
+        "GAP-ARINC-645"
+      ],
+      "reviewStatus": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
+      "rhoRA": {
+        "relation": "refines-reviewed-source-unit",
+        "sourceCoverageId": "COV-M1-03153",
+        "status": "CANDIDATE"
+      },
+      "atomicPartId": "CRC-FILE-BYTE-ORDER"
     }
   ],
   "dependencies": [
@@ -120425,24 +120499,24 @@
     "rg0": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "rg1": "PENDING-EXTERNAL-INDEPENDENT-REVIEW",
     "reviewHead": "UNBOUND-DRAFT",
-    "sourceInventoryFingerprint": "b82cf918bafd261cfa109ffd374dc3c932887b0a13afcc36e833cded2a58012b",
+    "sourceInventoryFingerprint": "dabccee92617e8161b128d53c1cc151f3e5952419a8012c84c50d0f53646620d",
     "sectionSpanManifestPath": "configs/requirements/m1_source_section_spans.json",
-    "sectionSpanManifestFingerprint": "af5ab260685926329078e018ecf889261a23c5335dd36f49944d469ea08e2f6c",
+    "sectionSpanManifestFingerprint": "2abeadd1d47aa8ad05d48f3d55dfbf852d6e369ddd2851cd9a488a3c521097b5",
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "a1f5939e455942f23c7956e16e99f8319838d3d57db29b54bf0dc4773de327da",
+    "semanticAssertionFingerprint": "7c05988c91bc32a5d728a65dd2a67c29e26d64a85ad0c0ee7b96d8a7664a075a",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
   },
   "inventorySummary": {
-    "coverageCount": 3152,
-    "requirementCount": 862,
+    "coverageCount": 3153,
+    "requirementCount": 863,
     "dependencyCount": 15,
     "gapCount": 1,
-    "coverageFingerprint": "1b9e39f3bfd216880582712363e69e7ffea214b2ec5447e1162767b9eb421327",
-    "requirementsFingerprint": "6ea62f5be93f12da9abf457f7795a2171470c3405c0db1f354e615cd3115490f"
+    "coverageFingerprint": "db1c91a23d53f4edc2a0136fb2ccda5f27dfad09750e27f65b6361301f217883",
+    "requirementsFingerprint": "c77fc41d494f9390ce2cab600047a6e8da9077e97111f429f26f8599854a4a1e"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

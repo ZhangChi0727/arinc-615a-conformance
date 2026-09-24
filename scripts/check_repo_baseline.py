@@ -1248,8 +1248,13 @@ def arinc_645_closure_errors(audit: dict, crs: dict, model: dict | None = None) 
         if "SAU-645-BODY-PRE" not in units:
             errors.append("645 untriggered body before CRC must be classified, not absorbed into front matter")
         pre = units.get("SAU-645-BODY-PRE") or {}
-        if str(pre.get("clause") or "") in {"1-4.3.2", "1-4.3"}:
-            errors.append("645 PDF 31 clauses 4.3.2.3-4.3.2.9 must not be absorbed into the untriggered pre-CRC body")
+        if str(pre.get("clause") or "") in {"1-4.3.2", "1-4.3", "1-4.3.2.2"}:
+            errors.append("645 §4.3.2 file-byte order must not be absorbed into the untriggered pre-CRC body")
+        byte_order_unit = units.get("SAU-645-4-3-2-FILE-BYTE-ORDER") or {}
+        if byte_order_unit.get("applicabilityDecision") != "APPLICABLE-SUPPORTING":
+            errors.append("645 §4.3.2 file-byte order must be classified as applicable supporting source")
+        if byte_order_unit.get("leafRequirementIds") != ["CRS-M1-00864"]:
+            errors.append("645 §4.3.2 file-byte order must map to its dedicated CRS leaf")
         hash_unit = units.get("SAU-645-4-6-HASH") or {}
         hash_pages = [int(item) for item in (hash_unit.get("pdfPages") or []) if str(item).isdigit()]
         if 36 not in hash_pages:
@@ -1281,13 +1286,32 @@ def arinc_645_closure_errors(audit: dict, crs: dict, model: dict | None = None) 
         "BIND-CRC-TRANSMISSION-BIT-REFLECTION",
         "BIND-CRC-PROCESS-BIT-REFLECTION",
         "BIND-CRC-POST-PROCESS-BIT-REFLECTION",
-        "BIND-CRC-INITIALIZE-TO-ONES",
+        "RECORD-CRC-ALL-ONES-INITIALIZATION-VARIANT",
         "PAD-SHORT-INPUT-TO-CRC-REGISTER-SIZE",
-        "BIND-CRC-FINAL-ONES-COMPLEMENT-AGAINST-STUCK-ON-ZERO",
+        "RECORD-CRC-FINAL-ONES-COMPLEMENT-VARIANT",
+        "PROCESS-CRC-FILE-BYTES-IN-OCCURRENCE-ORDER",
         "INCLUDE-NECESSARY-DATA-FOR-EACH-LOADING-INTERFACE",
     ):
         if action not in actions:
             errors.append(f"645 missing PDF31 or §7.1 residual leaf {action}")
+    crc_by_action = {
+        str((row.get("semantic") or {}).get("action") or ""): row
+        for row in reqs
+    }
+    file_order = crc_by_action.get("PROCESS-CRC-FILE-BYTES-IN-OCCURRENCE-ORDER") or {}
+    if file_order.get("source", {}).get("pdfPage") != 30 or file_order.get("source", {}).get("clause") != "4.3.2":
+        errors.append("645 CRC file-byte-order leaf must be anchored at §4.3.2 PDF 30")
+    if set((file_order.get("semantic") or {}).get("objects") or []) != {"CRC", "FILE-BYTE-SEQUENCE"}:
+        errors.append("645 CRC file-byte-order leaf must not conflate input order with check-value storage")
+    for action in (
+        "RECORD-CRC-ALL-ONES-INITIALIZATION-VARIANT",
+        "RECORD-CRC-FINAL-ONES-COMPLEMENT-VARIANT",
+    ):
+        variant = crc_by_action.get(action) or {}
+        if variant.get("conformanceEffect") != "INFORMATIVE":
+            errors.append(f"645 {action} must remain a variant explanation, not a universal requirement")
+        if (variant.get("semantic") or {}).get("condition") == "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC":
+            errors.append(f"645 {action} must not be universal across 615A CRC algorithms")
     row_544 = next((row for row in crs.get("requirements") or [] if row.get("id") == "CRS-M1-00544"), None)
     row_545 = next((row for row in crs.get("requirements") or [] if row.get("id") == "CRS-M1-00545"), None)
     if row_544 and row_545:

@@ -390,6 +390,47 @@ def test_645_front_matter_including_crc_body_fails() -> None:
     assert any("front matter" in item for item in errors)
 
 
+def test_645_crc_file_byte_order_is_a_dedicated_triggered_leaf() -> None:
+    crs = _crs()
+    audit = _audit()
+    row = next(item for item in crs["requirements"] if item["id"] == "CRS-M1-00864")
+    assert row["source"]["clause"] == "4.3.2"
+    assert row["source"]["pdfPage"] == 30
+    assert row["semantic"]["action"] == "PROCESS-CRC-FILE-BYTES-IN-OCCURRENCE-ORDER"
+    assert row["semantic"]["objects"] == ["CRC", "FILE-BYTE-SEQUENCE"]
+    assert "check-value byte order" in row["generatedSemanticProjectionEn"]
+    assert "校验值的字节序" in row["generatedSemanticProjectionZh"]
+    source_645 = next(
+        item for item in audit["supportingSourceApplicabilityAudit"]["sources"]
+        if item["sourceId"] == "ARINC-645"
+    )
+    unit = next(item for item in source_645["units"] if item["id"] == "SAU-645-4-3-2-FILE-BYTE-ORDER")
+    assert unit["leafRequirementIds"] == ["CRS-M1-00864"]
+
+
+def test_645_crc_variants_cannot_be_reintroduced_as_universal_obligations() -> None:
+    crs = _crs()
+    audit = _audit()
+    for req_id in ("CRS-M1-00860", "CRS-M1-00862"):
+        row = next(item for item in crs["requirements"] if item["id"] == req_id)
+        assert row["conformanceEffect"] == "INFORMATIVE"
+        assert row["semantic"]["condition"] != "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC"
+    changed = copy.deepcopy(crs)
+    row = next(item for item in changed["requirements"] if item["id"] == "CRS-M1-00860")
+    row["conformanceEffect"] = "CONDITIONAL-REQUIRED"
+    row["semantic"]["condition"] = "WHEN-615A-INTEGRITY-REQUIRES-A-645-CRC"
+    _refresh_crs(changed)
+    assert any("universal" in item for item in baseline.arinc_645_closure_errors(audit, changed, _m2()))
+
+
+def test_645_check_value_commentary_zh_continues_after_the_check_value() -> None:
+    row = next(item for item in _crs()["requirements"] if item["id"] == "CRS-M1-00838")
+    zh = row["generatedSemanticProjectionZh"]
+    assert "越过该校验值" in zh
+    assert "继续处理其后的数据字段" in zh
+    assert "校验值后面的数据字段" not in zh
+
+
 def _contract(registry=None, puml=None, plan=None, alg=None):
     return baseline.cltav_algorithm_contract_errors(
         alg if alg is not None else ALG_PATH.read_text(encoding="utf-8"),

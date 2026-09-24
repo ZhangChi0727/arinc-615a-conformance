@@ -23088,6 +23088,18 @@
       "modelTargetIds": [
         "SCOPE"
       ]
+    },
+    {
+      "requirementId": "CRS-M1-00864",
+      "sourceId": "ARINC-645",
+      "operation": "DATA-OBJECT",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "kind": "SCOPE-CONSTRAINT",
+      "ownerRole": "M2-MODEL",
+      "modelTargetIds": [
+        "SCOPE"
+      ]
     }
   ],
   "traceRelations": [
@@ -33738,6 +33750,17 @@
       "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
       "rationaleEn": "645 semantic leaf is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
       "rationaleZh": "已记录 645 语义叶；绑定 M2 不执行 CRC、校验值或命名算法。"
+    },
+    {
+      "id": "TR-CRS-M1-00864-1077",
+      "requirementId": "CRS-M1-00864",
+      "targetKind": "SCOPE",
+      "targetId": "SCOPE",
+      "polarity": "AFFIRMATIVE",
+      "sourceModality": "SHOULD",
+      "rationaleCode": "645-CRS-MODEL-REFINEMENT-PENDING",
+      "rationaleEn": "645 file-byte input order is recorded; bound M2 does not execute CRC, check-value or naming algorithms.",
+      "rationaleZh": "已记录 645 文件字节输入顺序；绑定 M2 不执行 CRC、校验值或命名算法。"
     }
   ],
   "infrastructurePremises": [
@@ -34424,14 +34447,14 @@
     "blocksFinalApproval": true
   },
   "inventorySummary": {
-    "requirementCount": 862,
-    "dispositionCount": 862,
-    "traceCount": 968,
+    "requirementCount": 863,
+    "dispositionCount": 863,
+    "traceCount": 969,
     "stateCount": 35,
     "transitionCount": 65,
     "timingCount": 30,
     "fieldConstraintCount": 108,
-    "dispositionsFingerprint": "26b26578632a37733a25e1ecc058336673cf81052d7f6982e74e7911fa8444d9",
+    "dispositionsFingerprint": "9c07be25fc8aa42ff08cc647d1135179cc6a6e03f07f9202c21a3128bcc5b7e8",
     "modelFingerprint": "a716f9b60f3e507ec7758ca3430de589bd67bbad630ef735a1bc1b38c8c2b2ef",
     "timingFingerprint": "cd8a13f203f6d2c2f9c82e65646bf9d5b920200a509af92d461096e54f7e6810",
     "inputFingerprint": "7b85e64d7713096731c8609e55dee7c77d342f33e3fd2717f03a1b6b94fa5e31",
