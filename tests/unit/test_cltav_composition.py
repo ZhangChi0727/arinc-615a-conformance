@@ -1,4 +1,4 @@
-"""Executable composition witness for the decomposed CL-TAV algorithm (R37/R38).
+"""Executable composition witness for the decomposed CL-TAV algorithm (R37--R40).
 
 This coordinator mirrors ALG-CLTAV-01 S0--S10 and calls one adapter per module
 with the typed records of Appendix A. Only the truly unimplemented kernels
@@ -80,6 +80,7 @@ class PredictionResult:
     classes_by_test: dict[str, tuple[set[str], ...]] = field(default_factory=dict)
     history_version_used: int = 0
     uncertainty_ref: str | None = None
+    uncertainty_consumed: str | None = None
 
 
 @dataclass
@@ -122,6 +123,7 @@ class Outcome:
     prep_err: bool = False
     declared_target: str | None = None
     evidence: str | None = None
+    uncertainty_ref: str | None = None
 
 
 @dataclass
@@ -151,6 +153,19 @@ class Resolution:
     eta: History
     outcome: Outcome
     reason: str | None = None
+
+
+@dataclass(frozen=True)
+class SyntheticUncertainty:
+    """Finite-fixture uncertainty input, not a physical clock/error model."""
+
+    identity: str
+    version: str
+    half_width: int
+
+    @property
+    def ref(self) -> str:
+        return f"{self.identity}-{self.version}"
 
 
 @dataclass
@@ -204,18 +219,34 @@ def eligible(t: dict, gamma: Gamma) -> bool:
 
 
 def predict_current(backends: Backends, gamma: Gamma, eta: History, H: set[str],
-                    uncertainty_ref: str | None = None) -> PredictionResult:
+                    uncertainty_ref: str | None = None,
+                    uncertainty: SyntheticUncertainty | None = None) -> PredictionResult:
     raw = backends.current().get("raw")
     uref = uncertainty_ref if uncertainty_ref is not None else gamma.uncertainty_ref
     if raw is None or raw.get("status") == "GAP":
         return PredictionResult("GAP", reason=(raw or {}).get("reason", "backend-gap"), uncertainty_ref=uref)
-    classes = {}
-    for test_id, declared in raw["classes"].items():
-        projected = tuple(H & c for c in declared if H & c)
-        classes[test_id] = projected
+    if uncertainty is not None and "synthetic_prediction" in raw:
+        fixture = raw["synthetic_prediction"]
+        reference = fixture["reference"]
+        candidates = fixture["candidates"]
+        classes = {}
+        for test_id in fixture["tests"]:
+            projected = H & {
+                h for h, predicted in candidates.items()
+                if abs(predicted - reference) <= uncertainty.half_width
+            }
+            classes[test_id] = (projected,) if projected else ()
+    else:
+        classes = {}
+        for test_id, declared in raw["classes"].items():
+            projected = tuple(H & c for c in declared if H & c)
+            classes[test_id] = projected
     if not any(classes.values()):
         return PredictionResult("GAP", reason="no currently valid class", uncertainty_ref=uref)
-    return PredictionResult("OK", classes_by_test=classes, history_version_used=eta.version, uncertainty_ref=uref)
+    return PredictionResult(
+        "OK", classes_by_test=classes, history_version_used=eta.version,
+        uncertainty_ref=uref, uncertainty_consumed=None if uncertainty is None else uncertainty.ref,
+    )
 
 
 def _is_distinguishing(classes: tuple[set[str], ...], H: set[str]) -> bool:
@@ -322,19 +353,30 @@ def interpret_timed_observation(ownership, measurement_interval, xi, N_r, D_r, m
 
 
 def interpret_outcome(backends: Backends, er: ExecutionResult, xi: SelectSnapshot,
-                      gamma: Gamma, eta: History) -> Outcome:
+                      gamma: Gamma, eta: History,
+                      uncertainty: SyntheticUncertainty | None = None) -> Outcome:
     """ALG-CLTAV-03: propagate execution and interpretation effects; decide after confirmation."""
-    z = Outcome(effect=er.effect, kind=xi.action_kind, action_id=xi.action_id)
+    z = Outcome(effect=er.effect, kind=xi.action_kind, action_id=xi.action_id,
+                uncertainty_ref=None if uncertainty is None else uncertainty.ref)
     if er.effect in {"CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"}:
         return z
     script = backends.current().get("obs", {})
+    if uncertainty is not None and xi.uncertainty_ref != uncertainty.ref:
+        z.validity = "ERROR"
+        z.effect = "UNKNOWN-EFFECT"
+        return z
     ownership = script.get("ownership", "valid")
     if ownership != "valid":
         z.validity = "ERROR"
         z.effect = "UNKNOWN-EFFECT"
         return z
+    measurement_interval = script.get("measurement_interval", (0, 0))
+    if uncertainty is not None and "synthetic_observation" in script:
+        fixture = script["synthetic_observation"]
+        observed = fixture["observed"]
+        measurement_interval = (observed - uncertainty.half_width, observed + uncertainty.half_width)
     verdict = interpret_timed_observation(
-        ownership, script.get("measurement_interval", (0, 0)), xi,
+        ownership, measurement_interval, xi,
         script.get("N_r", (0, 10, True, True)), script.get("D_r", (0, 10 ** 9)),
         script.get("match", lambda o, x: "legit"),
     )
@@ -343,7 +385,15 @@ def interpret_outcome(backends: Backends, er: ExecutionResult, xi: SelectSnapsho
         z.effect = "UNKNOWN-EFFECT"
         return z
     effect_class = script.get("effect_class", "NONE")
-    z.iz = script.get("iz")
+    if uncertainty is not None and "synthetic_observation" in script:
+        fixture = script["synthetic_observation"]
+        observed = fixture["observed"]
+        z.iz = {
+            hypothesis for hypothesis, predicted in fixture["candidates"].items()
+            if abs(predicted - observed) <= uncertainty.half_width
+        }
+    else:
+        z.iz = script.get("iz")
     summary_confirmed = script.get("summary_confirmed", False)
     post_summary = script.get("post_summary")
     if xi.action_kind in {"PREP", "RECOVER"}:
@@ -412,6 +462,8 @@ def commit_compatible_update(xi: SelectSnapshot, z: Outcome, gamma: Gamma,
         and xi.uncertainty_ref != gamma.uncertainty_ref
     ):
         return UpdateResult("SPEC-ERROR", eta, set(H), g, reason="uncertainty reference mismatch")
+    if z.uncertainty_ref is not None and xi.uncertainty_ref != z.uncertainty_ref:
+        return UpdateResult("SPEC-ERROR", eta, set(H), g, reason="interpretation uncertainty mismatch")
     if z.iz is not None:
         expected = H & z.iz
         e = replace(eta, log=list(eta.log) + [f"hist:{xi.action_id}@{xi.history_version}"])
@@ -429,15 +481,21 @@ def commit_compatible_update(xi: SelectSnapshot, z: Outcome, gamma: Gamma,
 # Composition: mirrors ALG-CLTAV-01 S0--S10.
 # ---------------------------------------------------------------------------
 class Composition:
-    def __init__(self, H: set[str], gamma: Gamma, uncertainty_ref: str | None = None):
+    def __init__(self, H: set[str], gamma: Gamma, uncertainty_ref: str | None = None,
+                 uncertainty: SyntheticUncertainty | None = None,
+                 interpretation_uncertainty: SyntheticUncertainty | None = None):
         self.H = set(H)
         self.gamma = gamma
         self.eta = History()
         self.stop: str | None = None
         self.trace: list[str] = []
         self.uncertainty_ref = uncertainty_ref if uncertainty_ref is not None else gamma.uncertainty_ref
+        self.uncertainty = uncertainty
+        self.interpretation_uncertainty = interpretation_uncertainty or uncertainty
         self.last_xi: SelectSnapshot | None = None
         self.last_pred: PredictionResult | None = None
+        self.last_interpret_uncertainty_ref: str | None = None
+        self.last_commit_uncertainty_ref: str | None = None
 
     def _entry_stop(self) -> str | None:
         if not self.H:
@@ -454,7 +512,7 @@ class Composition:
         if stop:
             self.stop = stop
             return
-        pred = predict_current(backends, self.gamma, self.eta, self.H, self.uncertainty_ref)
+        pred = predict_current(backends, self.gamma, self.eta, self.H, self.uncertainty_ref, self.uncertainty)
         self.last_pred = pred
         self.trace.append(f"S2:predict:{pred.status}")
         dec = select_and_admit(self.gamma, self.H, L, pred)
@@ -473,7 +531,8 @@ class Composition:
         script = backends.current()
         er = ExecutionResult(attempt_id=f"A{self.gamma.rounds or 1}", record="rec", effect=script.get("effect", "NONE"))
         self.trace.append("S5:execute")
-        z = interpret_outcome(backends, er, xi, self.gamma, self.eta)
+        z = interpret_outcome(backends, er, xi, self.gamma, self.eta, self.interpretation_uncertainty)
+        self.last_interpret_uncertainty_ref = z.uncertainty_ref
         self.trace.append(f"S6:interpret:{z.effect}:{z.validity}")
         delta = resolve_outcome(z, xi, self.gamma, self.eta)
         # adopt the returned context and normalized outcome before branching
@@ -493,6 +552,7 @@ class Composition:
                 self.stop = result.reason
                 return
             self.eta, self.H, self.gamma = result.eta, result.H, result.Gamma
+            self.last_commit_uncertainty_ref = z.uncertainty_ref
             self.trace.append("S9:commit")
         else:
             self.trace.append("S9:skip")
@@ -517,6 +577,9 @@ class Composition:
             "uncertaintyRef": self.uncertainty_ref,
             "xiUncertaintyRef": None if self.last_xi is None else self.last_xi.uncertainty_ref,
             "predUncertaintyRef": None if self.last_pred is None else self.last_pred.uncertainty_ref,
+            "predUncertaintyConsumed": None if self.last_pred is None else self.last_pred.uncertainty_consumed,
+            "interpretUncertaintyRef": self.last_interpret_uncertainty_ref,
+            "commitUncertaintyRef": self.last_commit_uncertainty_ref,
             "xiHistoryVersion": None if self.last_xi is None else self.last_xi.history_version,
         }
 
@@ -881,8 +944,12 @@ def test_module_timing_helper_interval_intersection_only() -> None:
 # Admission matrix C01--C26 (work order WO-PR17-CLTAV-CLOSURE-2026-003).
 # ---------------------------------------------------------------------------
 U_FIXTURE = "U-fixture-1"
+U_SYNTHETIC = SyntheticUncertainty("U-fixture", "1", half_width=1)
+U_SYNTHETIC_NARROW = SyntheticUncertainty("U-fixture", "narrow", half_width=0)
+U_SYNTHETIC_OTHER = SyntheticUncertainty("U-other", "1", half_width=1)
 U_EPS = 1
 U_N = (100, 120, True, False)
+SYNTHETIC_U_CANDIDATES = {"h1": 117, "h2": 119, "h3": 122}
 
 
 def test_c01_two_affordable_tests_minimax_and_tie() -> None:
@@ -1173,38 +1240,57 @@ def test_c24_half_open_interval_topology() -> None:
 
 
 def test_c25_shared_uncertainty_through_prediction_snapshot_interpret_update() -> None:
+    """Finite fixture proves U propagation only, not a physical error model."""
     H = {"h1", "h2", "h3"}
-    gamma = _budget(5, uncertainty_ref=U_FIXTURE)
+    gamma = _budget(5, uncertainty_ref=U_SYNTHETIC.ref)
     L = _library(t=_t("TEST"))
-    measurement = 118
     compatible = {"h1", "h2"}
     backends = Backends([{
-        "raw": {"status": "OK", "classes": {"t": (set(compatible),)}},
+        "raw": {"status": "OK", "synthetic_prediction": {
+            "reference": 118, "candidates": SYNTHETIC_U_CANDIDATES, "tests": ("t",),
+        }},
         "obs": {
-            "measurement_interval": (measurement - U_EPS, measurement + U_EPS),
+            "synthetic_observation": {"observed": 118, "candidates": SYNTHETIC_U_CANDIDATES},
             "N_r": U_N,
             "D_r": (0, 10 ** 9),
-            "iz": set(compatible),
             "summary_confirmed": True,
             "post_summary": "q1",
         },
     }])
-    comp = Composition(H, gamma, uncertainty_ref=U_FIXTURE)
+    comp = Composition(H, gamma, uncertainty_ref=U_SYNTHETIC.ref, uncertainty=U_SYNTHETIC)
     comp.run_round(backends, L)
     obs = comp.observe()
-    assert obs["predUncertaintyRef"] == obs["xiUncertaintyRef"] == obs["uncertaintyRef"] == U_FIXTURE
+    assert (obs["predUncertaintyConsumed"] == obs["predUncertaintyRef"]
+            == obs["xiUncertaintyRef"] == obs["interpretUncertaintyRef"]
+            == obs["commitUncertaintyRef"] == obs["uncertaintyRef"] == U_SYNTHETIC.ref)
     assert obs["xiHistoryVersion"] == 0
     assert obs["H"] == compatible and "h3" not in obs["H"]
     assert obs["etaVersion"] == 1
-    mismatched = commit_compatible_update(
-        SelectSnapshot("t", "TEST", "q0", 0, (set(compatible),), uncertainty_ref="U-other"),
-        Outcome(iz=set(compatible), summary_confirmed=True, post_summary="q1"),
-        Gamma("q0", "KNOWN", uncertainty_ref=U_FIXTURE),
-        History(version=0),
-        set(H),
+    narrow = predict_current(
+        Backends([{"raw": {"status": "OK", "synthetic_prediction": {
+            "reference": 118, "candidates": SYNTHETIC_U_CANDIDATES, "tests": ("t",),
+        }}}]),
+        gamma, History(), H, U_SYNTHETIC_NARROW.ref, U_SYNTHETIC_NARROW,
     )
-    assert mismatched.status == "SPEC-ERROR" and mismatched.reason == "uncertainty reference mismatch"
-    assert mismatched.H == H and mismatched.eta.version == 0
+    assert narrow.status == "GAP" and narrow.reason == "no currently valid class"
+    mismatched = Composition(
+        H, _budget(5, uncertainty_ref=U_SYNTHETIC.ref), uncertainty_ref=U_SYNTHETIC.ref,
+        uncertainty=U_SYNTHETIC, interpretation_uncertainty=U_SYNTHETIC_OTHER,
+    )
+    mismatched.run_round(Backends([{
+        "raw": {"status": "OK", "synthetic_prediction": {
+            "reference": 118, "candidates": SYNTHETIC_U_CANDIDATES, "tests": ("t",),
+        }},
+        "obs": {
+            "synthetic_observation": {"observed": 118, "candidates": SYNTHETIC_U_CANDIDATES},
+            "N_r": U_N, "D_r": (0, 10 ** 9), "summary_confirmed": True, "post_summary": "q1",
+        },
+    }]), L)
+    mismatch_obs = mismatched.observe()
+    assert mismatch_obs["interpretUncertaintyRef"] == U_SYNTHETIC_OTHER.ref
+    assert mismatch_obs["H"] == H and mismatch_obs["etaVersion"] == 0
+    assert mismatch_obs["remaining_B"] == 4 and mismatch_obs["retry"] == 1
+    assert "S9:commit" not in mismatch_obs["trace"]
 
 
 def test_c26_empty_compatible_class_vs_absent_observation() -> None:
