@@ -50,6 +50,9 @@
       "trackedSources": [
         "docs/research/publication/drafts/taes-cltav/supplementary.tex",
         "docs/research/publication/drafts/taes-cltav/macros.tex",
+        "docs/research/publication/algorithms/ALG-CLTAV-02.tex",
+        "docs/research/publication/algorithms/ALG-CLTAV-03.tex",
+        "docs/research/publication/algorithms/ALG-CLTAV-04.tex",
         "docs/research/publication/algorithms/ALG-CLTAV-05-selection.tex",
         "docs/research/publication/algorithms/ALG-CLTAV-06-timing.tex",
         "docs/research/publication/algorithms/ALG-CLTAV-07-history.tex"
