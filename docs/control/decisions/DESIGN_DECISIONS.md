@@ -1014,6 +1014,29 @@ stop, resource, retry or successor-summary change.
 
 **Status:** Candidate under CR-2026-014.
 
+## DD-037 — TAES first-draft structure, page budget and evidence placeholders
+
+**Decision:** The next publication increment is an IEEE TAES Regular Paper first
+draft. Keep the research main line (C1/C2, CL-RQ1–CL-RQ3). Journalize the eight
+outline chapters as sections I–VIII. The project page budget is a main-manuscript
+PDF of at most 10 pages including references, with reserved layout for unrun
+results; do not shrink fonts or margins to hide overrun. Put the compact overall
+loop and the core mechanisms (selection, timing interpretation, compatible update)
+in the main text; put coordination wrappers, full typed records, S0–S10 duties and
+extended derivations in a separately compiled supplement. Every evidence gap uses
+a visible placeholder with a unique ID, category, dependency and completion
+condition; unrun experiments must not be written as results. Author, affiliation,
+funding, ranking and fee data remain pending institutional inputs and are not
+fabricated. DD-029 algorithm semantics and the EXP-PLAN comparison contracts are
+unchanged.
+
+**Why:** A compilable journal draft is the next reviewable artefact. Mixing
+submission, implementation and unrun numbers would reverse the evidence order.
+
+**Scope:** manuscript structure, page budget, placeholders and writing gates only.
+
+**Status:** Candidate under CR-2026-015.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -1498,6 +1521,16 @@ ARINC 615A 数据加载是合法操作、观测和实验场景的来源。CL-TAV
 **范围：** 仅项目状态面及其生成器；不改 CRS 内容。
 
 **状态：** 在 CR-2026-014 下为候选。
+
+## DD-037——TAES 初稿结构、页预算与证据占位
+
+**决定：** 下一出版增量是 IEEE TAES Regular Paper 初稿。保留研究主线（C1／C2、CL-RQ1–CL-RQ3）。把八节大纲期刊化为第 I–VIII 节。项目页预算为主稿 PDF（含参考文献）不超过 10 页，并为未跑结果预留版面；不得缩字体或改边距掩盖超页。正文保留紧凑总体循环与核心机制（选择、时序解释、相容更新）；协调包装、完整类型记录、S0–S10 职责与扩展推导放入单独编译的补充材料。每个证据缺口使用可见占位，具唯一 ID、类别、依赖与完成条件；未执行实验不得写成结果。作者、单位、基金、分区与费用保持待单位确认，不得虚构。DD-029 算法语义与 EXP-PLAN 比较合同不变。
+
+**理由：** 可编译期刊初稿是下一可评审产物。把投稿、实现与未跑数字混在一起会颠倒证据顺序。
+
+**范围：** 仅稿件结构、页预算、占位与写作门禁。
+
+**状态：** 在 CR-2026-015 下为候选。
 
 ## DD-036——算法呈现层、契约与等价性验收
 
