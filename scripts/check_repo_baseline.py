@@ -3756,7 +3756,7 @@ def governed_status_errors(
 
 OWNED_PUBLICATION_PREFIX = "artifacts/publications/"
 OWNED_ARTIFACT_KIND = "OWNED-GENERATED-PUBLICATION"
-OWNED_SOURCE_SUFFIXES = {".tex", ".md", ".puml", ".svg", ".json"}
+OWNED_SOURCE_SUFFIXES = {".tex", ".md", ".puml", ".svg", ".json", ".bib"}
 OWNED_FORBIDDEN_PARTS = {"local-references", "tmp"}
 OWNED_DANGEROUS_SUFFIXES = {".pdf", ".patch", ".diff", ".exe", ".dll", ".bin", ".zip"}
 
@@ -4029,6 +4029,13 @@ def main() -> int:
         )
     )
     errors.extend(cltav_figure_errors())
+    taes_spec = importlib.util.spec_from_file_location(
+        "check_taes_manuscript", ROOT / "scripts/check_taes_manuscript.py"
+    )
+    assert taes_spec and taes_spec.loader
+    taes_mod = importlib.util.module_from_spec(taes_spec)
+    taes_spec.loader.exec_module(taes_mod)
+    errors.extend(taes_mod.manuscript_errors())
 
     for legacy in LEGACY_FILENAMES:
         if (METHODOLOGY_DIR / legacy).exists():
