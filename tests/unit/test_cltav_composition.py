@@ -79,6 +79,7 @@ class PredictionResult:
     reason: str | None = None
     classes_by_test: dict[str, tuple[set[str], ...]] = field(default_factory=dict)
     history_version_used: int = 0
+    uncertainty_ref: str | None = None
 
 
 @dataclass
@@ -97,6 +98,7 @@ class SelectSnapshot:
     q_used_at_select: str | None
     history_version: int
     classes_used: tuple[set[str], ...]
+    uncertainty_ref: str | None = None
 
 
 @dataclass
@@ -133,6 +135,7 @@ class Gamma:
     remaining_B: int | None = None
     K_max: int = 10
     rounds: int = 0
+    uncertainty_ref: str | None = None
 
 
 @dataclass
@@ -200,68 +203,80 @@ def eligible(t: dict, gamma: Gamma) -> bool:
     return t["kind"] != "RECOVER" and t["enabled_at"] == gamma.current_summary
 
 
-def predict_current(backends: Backends, gamma: Gamma, eta: History, H: set[str]) -> PredictionResult:
+def predict_current(backends: Backends, gamma: Gamma, eta: History, H: set[str],
+                    uncertainty_ref: str | None = None) -> PredictionResult:
     raw = backends.current().get("raw")
+    uref = uncertainty_ref if uncertainty_ref is not None else gamma.uncertainty_ref
     if raw is None or raw.get("status") == "GAP":
-        return PredictionResult("GAP", reason=(raw or {}).get("reason", "backend-gap"))
+        return PredictionResult("GAP", reason=(raw or {}).get("reason", "backend-gap"), uncertainty_ref=uref)
     classes = {}
     for test_id, declared in raw["classes"].items():
         projected = tuple(H & c for c in declared if H & c)
         classes[test_id] = projected
     if not any(classes.values()):
-        return PredictionResult("GAP", reason="no currently valid class")
-    return PredictionResult("OK", classes_by_test=classes, history_version_used=eta.version)
+        return PredictionResult("GAP", reason="no currently valid class", uncertainty_ref=uref)
+    return PredictionResult("OK", classes_by_test=classes, history_version_used=eta.version, uncertainty_ref=uref)
+
+
+def _is_distinguishing(classes: tuple[set[str], ...], H: set[str]) -> bool:
+    return any(0 < len(c) < len(H) for c in classes)
 
 
 def select_and_admit(gamma: Gamma, H: set[str], L: dict, pred: PredictionResult) -> Decision:
     """ALG-CLTAV-05: shared eligibility and admission for GAP and OK."""
     A = {tid: t for tid, t in L.items() if eligible(t, gamma)}
-    affordable_set = {tid: t for tid, t in A.items() if affordable(gamma, t["cost"])}
+    F = {tid: t for tid, t in A.items() if affordable(gamma, t["cost"])}
 
-    def admission_exit() -> Decision:
-        if gamma.q_status == "UNKNOWN":
-            if any(t["kind"] == "RECOVER" for t in A.values()):
-                return Decision("EXIT", reason="A5")
-            return Decision("EXIT", reason="A4")
-        if any(t["kind"] == "TEST" or t["kind"] == "PREP" for t in A.values()):
-            return Decision("EXIT", reason="A2")
-        return Decision("EXIT", reason="A3")
-
-    if not affordable_set:
-        return admission_exit()
-
-    if pred.status == "GAP":
-        C = {}
-    else:
-        C = {}
+    projected: dict[str, tuple[set[str], ...]] = {}
+    local_gap = False
+    if pred.status != "GAP":
         for tid, t in A.items():
             if t["kind"] != "TEST":
                 continue
             classes = pred.classes_by_test.get(tid, ())
             if tid in pred.classes_by_test and not classes:
-                return Decision("SPEC-ERROR", reason=f"per-test prediction gap for {tid}")
-            C[tid] = classes
-    # IF-SELECT-ADMIT: exclusive kind; one-step minimax; cost/id tie-break
-    if pred.status == "OK":
-        distinguishing = [
-            (tid, classes) for tid, classes in C.items()
-            if any(0 < len(c) < len(H) for c in classes)
+                local_gap = True
+            else:
+                projected[tid] = classes
+    test_gap = pred.status == "GAP" or local_gap
+
+    if not test_gap:
+        scored = [
+            (tid, classes)
+            for tid, classes in projected.items()
+            if tid in F and _is_distinguishing(classes, H)
         ]
-        if distinguishing:
-            tid, classes = min(distinguishing, key=lambda item: (max(len(c) for c in item[1]), affordable_set[item[0]]["cost"], item[0]))
+        if scored:
+            tid, classes = min(
+                scored,
+                key=lambda item: (max(len(c) for c in item[1]), F[item[0]]["cost"], item[0]),
+            )
             return Decision("ACTION", "TEST", tid, tuple(classes))
-    preps = [t for t in affordable_set.values() if t["kind"] == "PREP"]
+
+    preps = [t for t in F.values() if t["kind"] == "PREP"]
     if preps:
         p = sorted(preps, key=lambda t: (t["cost"], t["id"]))[0]
         return Decision("ACTION", "PREP", p["id"])
+
     if gamma.q_status == "UNKNOWN":
-        recovers = [t for t in affordable_set.values() if t["kind"] == "RECOVER" and t.get("eligible_unknown")]
+        recovers = [t for t in F.values() if t["kind"] == "RECOVER" and t.get("eligible_unknown")]
         if recovers:
             r = sorted(recovers, key=lambda t: (t["cost"], t["id"]))[0]
             return Decision("ACTION", "RECOVER", r["id"])
-    if pred.status == "GAP":
-        return Decision("SPEC-ERROR", reason=pred.reason)
-    return admission_exit()
+        if any(t["kind"] == "RECOVER" for t in A.values()):
+            return Decision("EXIT", reason="A5")
+        return Decision("EXIT", reason="A4")
+
+    if test_gap:
+        if any(t["kind"] == "PREP" for t in A.values()):
+            return Decision("EXIT", reason="A2")
+        return Decision("SPEC-ERROR", reason=pred.reason or "per-test prediction gap")
+
+    has_distinguisher = any(_is_distinguishing(classes, H) for classes in projected.values())
+    has_prep = any(t["kind"] == "PREP" for t in A.values())
+    if has_distinguisher or has_prep:
+        return Decision("EXIT", reason="A2")
+    return Decision("EXIT", reason="A3")
 
 
 def _contains(m, n) -> bool:
@@ -391,6 +406,12 @@ def commit_compatible_update(xi: SelectSnapshot, z: Outcome, gamma: Gamma,
     g = replace(gamma)
     if xi.history_version != eta.version:
         return UpdateResult("SPEC-ERROR", eta, set(H), g, reason="history version mismatch")
+    if (
+        xi.uncertainty_ref is not None
+        and gamma.uncertainty_ref is not None
+        and xi.uncertainty_ref != gamma.uncertainty_ref
+    ):
+        return UpdateResult("SPEC-ERROR", eta, set(H), g, reason="uncertainty reference mismatch")
     if z.iz is not None:
         expected = H & z.iz
         e = replace(eta, log=list(eta.log) + [f"hist:{xi.action_id}@{xi.history_version}"])
@@ -408,12 +429,15 @@ def commit_compatible_update(xi: SelectSnapshot, z: Outcome, gamma: Gamma,
 # Composition: mirrors ALG-CLTAV-01 S0--S10.
 # ---------------------------------------------------------------------------
 class Composition:
-    def __init__(self, H: set[str], gamma: Gamma):
+    def __init__(self, H: set[str], gamma: Gamma, uncertainty_ref: str | None = None):
         self.H = set(H)
         self.gamma = gamma
         self.eta = History()
         self.stop: str | None = None
         self.trace: list[str] = []
+        self.uncertainty_ref = uncertainty_ref if uncertainty_ref is not None else gamma.uncertainty_ref
+        self.last_xi: SelectSnapshot | None = None
+        self.last_pred: PredictionResult | None = None
 
     def _entry_stop(self) -> str | None:
         if not self.H:
@@ -430,14 +454,19 @@ class Composition:
         if stop:
             self.stop = stop
             return
-        pred = predict_current(backends, self.gamma, self.eta, self.H)
+        pred = predict_current(backends, self.gamma, self.eta, self.H, self.uncertainty_ref)
+        self.last_pred = pred
         self.trace.append(f"S2:predict:{pred.status}")
         dec = select_and_admit(self.gamma, self.H, L, pred)
         self.trace.append(f"S3:select:{dec.kind}:{dec.action_kind}")
         if dec.kind in {"EXIT", "SPEC-ERROR"}:
             self.stop = dec.reason
             return
-        xi = SelectSnapshot(dec.action_id, dec.action_kind, self.gamma.current_summary, self.eta.version, dec.classes_used)
+        xi = SelectSnapshot(
+            dec.action_id, dec.action_kind, self.gamma.current_summary, self.eta.version,
+            dec.classes_used, uncertainty_ref=pred.uncertainty_ref or self.uncertainty_ref,
+        )
+        self.last_xi = xi
         self.trace.append(f"S3-SNAP:{xi.action_id}:{xi.action_kind}")
         charge_once(self.gamma, L[xi.action_id]["cost"])
         self.trace.append("S4:charge")
@@ -485,6 +514,10 @@ class Composition:
             "rounds": self.gamma.rounds,
             "stop": self.stop,
             "trace": list(self.trace),
+            "uncertaintyRef": self.uncertainty_ref,
+            "xiUncertaintyRef": None if self.last_xi is None else self.last_xi.uncertainty_ref,
+            "predUncertaintyRef": None if self.last_pred is None else self.last_pred.uncertainty_ref,
+            "xiHistoryVersion": None if self.last_xi is None else self.last_xi.history_version,
         }
 
 
@@ -832,16 +865,404 @@ def test_module_single_ownership_and_ambiguity() -> None:
     assert interpret_timed_observation("valid", (0, 0), None, N, (0, 10 ** 9), lambda o, x: None) == "ERROR"
 
 
-def test_module_shared_uncertainty_through_prediction_and_update() -> None:
+def test_module_timing_helper_interval_intersection_only() -> None:
+    """Timing helper plus a manual set intersection; not a module-chain witness."""
     eps = 1
     observed = 118
     m = (observed - eps, observed + eps)
     N = (100, 120, True, False)
     assert interpret_timed_observation("valid", m, None, N, (0, 10 ** 9), lambda o, x: "legit") == "PASS"
-    # the same interval restricts the surviving hypotheses used by the update
     H = {"h1", "h2", "h3"}
     compatible = {"h1", "h2"}
     assert H & compatible == {"h1", "h2"}
+
+
+# ---------------------------------------------------------------------------
+# Admission matrix C01--C26 (work order WO-PR17-CLTAV-CLOSURE-2026-003).
+# ---------------------------------------------------------------------------
+U_FIXTURE = "U-fixture-1"
+U_EPS = 1
+U_N = (100, 120, True, False)
+
+
+def test_c01_two_affordable_tests_minimax_and_tie() -> None:
+    H = {"h1", "h2", "h3"}
+    L = _library(
+        t_wide=_t("TEST", cost=1),
+        t_tight=_t("TEST", cost=1),
+    )
+    pred = PredictionResult("OK", classes_by_test={
+        "t_wide": ({"h1", "h2"},),
+        "t_tight": ({"h1"},),
+    })
+    dec = select_and_admit(_budget(5), H, L, pred)
+    assert dec.kind == "ACTION" and dec.action_kind == "TEST" and dec.action_id == "t_tight"
+    L_tie = _library(tb=_t("TEST", cost=2), ta=_t("TEST", cost=1))
+    pred_tie = PredictionResult("OK", classes_by_test={"tb": ({"h1"},), "ta": ({"h1"},)})
+    dec_tie = select_and_admit(_budget(5), H, L_tie, pred_tie)
+    assert dec_tie.action_id == "ta"
+    L_id = _library(zb=_t("TEST", cost=1), za=_t("TEST", cost=1))
+    pred_id = PredictionResult("OK", classes_by_test={"zb": ({"h1"},), "za": ({"h1"},)})
+    dec_id = select_and_admit(_budget(5), H, L_id, pred_id)
+    assert dec_id.action_id == "za"
+
+
+def test_c02_expensive_better_test_loses_to_cheap_distinguisher() -> None:
+    H = {"h1", "h2", "h3"}
+    L = _library(costly=_t("TEST", cost=5), cheap=_t("TEST", cost=1))
+    pred = PredictionResult("OK", classes_by_test={
+        "costly": ({"h1"},),
+        "cheap": ({"h1", "h2"},),
+    })
+    dec = select_and_admit(_budget(1), H, L, pred)
+    assert dec.kind == "ACTION" and dec.action_id == "cheap"
+
+
+def test_c03_expensive_distinguisher_falls_back_to_affordable_prep() -> None:
+    H = {"h1", "h2"}
+    L = _library(costly=_t("TEST", cost=5), prep=_t("PREP", cost=1))
+    pred = PredictionResult("OK", classes_by_test={"costly": ({"h1"},)})
+    dec = select_and_admit(_budget(1), H, L, pred)
+    assert dec.kind == "ACTION" and dec.action_kind == "PREP" and dec.action_id == "prep"
+
+
+def test_c04_unaffordable_distinguisher_without_prep_is_a2() -> None:
+    H = {"h1", "h2"}
+    L = _library(costly=_t("TEST", cost=5))
+    pred = PredictionResult("OK", classes_by_test={"costly": ({"h1"},)})
+    gamma = _budget(1)
+    dec = select_and_admit(gamma, H, L, pred)
+    assert dec.kind == "EXIT" and dec.reason == "A2"
+    assert gamma.remaining_B == 1
+
+
+def test_c05_affordable_uninformative_test_is_a3_not_a2() -> None:
+    H = {"h1", "h2"}
+    L = _library(t=_t("TEST", cost=1))
+    pred = PredictionResult("OK", classes_by_test={"t": (set(H),)})
+    dec = select_and_admit(_budget(5), H, L, pred)
+    assert dec.kind == "EXIT" and dec.reason == "A3"
+
+
+def test_c06_unaffordable_uninformative_test_is_still_a3() -> None:
+    H = {"h1", "h2"}
+    L = _library(t=_t("TEST", cost=5))
+    pred = PredictionResult("OK", classes_by_test={"t": (set(H),)})
+    dec = select_and_admit(_budget(1), H, L, pred)
+    assert dec.kind == "EXIT" and dec.reason == "A3"
+
+
+def test_c07_uninformative_test_with_affordable_prep_selects_prep() -> None:
+    H = {"h1", "h2"}
+    L = _library(t=_t("TEST", cost=1), prep=_t("PREP", cost=1))
+    pred = PredictionResult("OK", classes_by_test={"t": (set(H),)})
+    dec = select_and_admit(_budget(5), H, L, pred)
+    assert dec.kind == "ACTION" and dec.action_kind == "PREP"
+
+
+def test_c08_uninformative_test_with_unaffordable_prep_is_a2() -> None:
+    H = {"h1", "h2"}
+    L = _library(t=_t("TEST", cost=1), prep=_t("PREP", cost=5))
+    pred = PredictionResult("OK", classes_by_test={"t": (set(H),)})
+    dec = select_and_admit(_budget(1), H, L, pred)
+    assert dec.kind == "EXIT" and dec.reason == "A2"
+
+
+def test_c09_overlapping_class_containing_h_is_still_distinguishing() -> None:
+    H = {"h1", "h2"}
+    L = _library(t=_t("TEST"))
+    pred = PredictionResult("OK", classes_by_test={"t": (set(H), {"h1"})})
+    dec = select_and_admit(_budget(5), H, L, pred)
+    assert dec.kind == "ACTION" and dec.action_id == "t"
+    assert max(len(c) for c in dec.classes_used) == len(H)
+
+
+def test_c10_unknown_gap_selects_only_affordable_recover() -> None:
+    H = {"h1", "h2"}
+    L = _library(prep=_t("PREP", enabled_at=None), rec=_t("RECOVER", enabled_at=None, eligible_unknown=True))
+    pred = PredictionResult("GAP", reason="backend-gap")
+    dec = select_and_admit(Gamma(None, "UNKNOWN"), H, L, pred)
+    assert dec.kind == "ACTION" and dec.action_kind == "RECOVER"
+
+
+def test_c11_unknown_gap_without_recover_is_a4_not_backend_gap() -> None:
+    H = {"h1", "h2"}
+    L = _library(t=_t("TEST"))
+    pred = PredictionResult("GAP", reason="backend-gap")
+    dec = select_and_admit(Gamma(None, "UNKNOWN"), H, L, pred)
+    assert dec.kind == "EXIT" and dec.reason == "A4"
+    comp = Composition(H, Gamma(None, "UNKNOWN"))
+    comp.run_round(Backends([{"raw": {"status": "GAP", "reason": "backend-gap"}}]), L)
+    obs = comp.observe()
+    assert obs["stop"] == "A4"
+    assert "S3:select:EXIT" in "".join(obs["trace"])
+    assert obs["stop"] != "backend-gap"
+    assert "S4:charge" not in obs["trace"]
+
+
+def test_c12_unknown_gap_unaffordable_recover_is_a5() -> None:
+    H = {"h1", "h2"}
+    L = _library(rec=_t("RECOVER", cost=5, enabled_at=None, eligible_unknown=True))
+    pred = PredictionResult("GAP", reason="backend-gap")
+    gamma = _budget(1, q_status="UNKNOWN", current_summary=None)
+    dec = select_and_admit(gamma, H, L, pred)
+    assert dec.kind == "EXIT" and dec.reason == "A5"
+    assert gamma.remaining_B == 1
+
+
+def test_c13_known_global_gap_with_affordable_prep_selects_prep() -> None:
+    H = {"h1", "h2"}
+    L = _library(t=_t("TEST"), prep=_t("PREP"))
+    pred = PredictionResult("GAP", reason="backend-gap")
+    dec = select_and_admit(_budget(5), H, L, pred)
+    assert dec.kind == "ACTION" and dec.action_kind == "PREP"
+
+
+def test_c14_known_global_gap_unaffordable_prep_is_a2() -> None:
+    H = {"h1", "h2"}
+    L = _library(t=_t("TEST"), prep=_t("PREP", cost=5))
+    pred = PredictionResult("GAP", reason="backend-gap")
+    dec = select_and_admit(_budget(1), H, L, pred)
+    assert dec.kind == "EXIT" and dec.reason == "A2"
+
+
+def test_c15_known_global_gap_without_fallback_is_named_gap() -> None:
+    H = {"h1", "h2"}
+    L = _library(t=_t("TEST"))
+    pred = PredictionResult("GAP", reason="backend-gap")
+    dec = select_and_admit(_budget(5), H, L, pred)
+    assert dec.kind == "SPEC-ERROR" and dec.reason == "backend-gap"
+
+
+def test_c16_local_empty_projection_allows_prep() -> None:
+    H = {"h1", "h2"}
+    L = _library(bad=_t("TEST"), good=_t("TEST"), prep=_t("PREP"))
+    pred = PredictionResult("OK", classes_by_test={"bad": (), "good": (set(H),)})
+    dec = select_and_admit(_budget(5), H, L, pred)
+    assert dec.kind == "ACTION" and dec.action_kind == "PREP"
+
+
+def test_c17_excluded_only_projection_is_named_gap() -> None:
+    H = {"h1", "h2"}
+    L = _library(t=_t("TEST"))
+    gamma = _budget(5)
+    pred = predict_current(
+        Backends([{"raw": {"status": "OK", "classes": {"t": ({"h3"},)}}}]),
+        gamma, History(), H,
+    )
+    assert pred.status == "GAP"
+    dec = select_and_admit(gamma, H, L, pred)
+    assert dec.kind == "SPEC-ERROR" and dec.reason == "no currently valid class"
+    assert gamma.remaining_B == 5
+
+
+def test_c18_budget_non_unit_cost_charges_once_per_execute() -> None:
+    H = {"h1", "h2", "h3"}
+    L = _library(t=_t("TEST", cost=2, enabled_at="q0"))
+    comp = Composition(H, _budget(5))
+    backends = Backends([
+        {"raw": {"status": "OK", "classes": {"t": ({"h1", "h2"},)}},
+         "obs": {"iz": {"h1", "h2"}, "summary_confirmed": True, "post_summary": "q0"}},
+        {"raw": {"status": "OK", "classes": {"t": ({"h1"},)}},
+         "obs": {"iz": {"h1"}, "summary_confirmed": True, "post_summary": "q0"}},
+    ])
+    comp.run_round(backends, L)
+    assert comp.observe()["remaining_B"] == 3
+    assert comp.observe()["trace"].count("S4:charge") == 1
+    comp.run_round(backends, L)
+    assert comp.observe()["remaining_B"] == 1
+    assert comp.observe()["stop"] == "Stop-Singleton"
+    blocked = Composition({"h1", "h2"}, _budget(1))
+    blocked.run_round(Backends([{"raw": {"status": "OK", "classes": {"t": ({"h1"},)}}}]), L)
+    assert blocked.observe()["stop"] == "A2" and blocked.observe()["remaining_B"] == 1
+    assert "S4:charge" not in blocked.observe()["trace"]
+
+
+def test_c19_rounds_mode_increments_once_and_stops_at_kmax() -> None:
+    H = {"h1", "h2", "h3", "h4"}
+    L = _library(t=_t("TEST", enabled_at="q0"))
+    gamma = Gamma("q0", "KNOWN", mode="ROUNDS", K_max=2, rounds=0)
+    assert gamma.remaining_B is None
+    backends = Backends([
+        {"raw": {"status": "OK", "classes": {"t": ({"h1", "h2", "h3"},)}},
+         "obs": {"iz": {"h1", "h2", "h3"}, "summary_confirmed": True, "post_summary": "q0"}},
+        {"raw": {"status": "OK", "classes": {"t": ({"h1", "h2"},)}},
+         "obs": {"iz": {"h1", "h2"}, "summary_confirmed": True, "post_summary": "q0"}},
+        {"raw": {"status": "OK", "classes": {"t": ({"h1"},)}}},
+    ])
+    comp = Composition(H, gamma)
+    comp.run_round(backends, L)
+    assert comp.observe()["rounds"] == 1 and comp.observe()["remaining_B"] is None
+    comp.run_round(backends, L)
+    assert comp.observe()["rounds"] == 2
+    assert len(comp.observe()["H"]) > 1
+    comp.run_round(backends, L)
+    assert comp.observe()["stop"] == "Stop-Budget" and comp.observe()["rounds"] == 2
+    assert comp.observe()["trace"].count("S4:charge") == 2
+
+
+def test_c20_not_sent_then_unknown_accumulates_retry() -> None:
+    H = {"h1", "h2"}
+    L = _library(t=_t("TEST"), rec=_t("RECOVER", enabled_at=None, eligible_unknown=True))
+    backends = Backends([
+        {"raw": {"status": "OK", "classes": {"t": ({"h1"},)}}, "effect": "CONFIRMED-NOT-SENT"},
+        {"raw": {"status": "OK", "classes": {"t": ({"h1"},)}}, "effect": "UNKNOWN-EFFECT"},
+        {"raw": {"status": "OK", "classes": {"rec": ({"h1"},)}},
+         "obs": {"iz": {"h1", "h2"}, "target_confirmed": True, "prep_summary_confirmed": True,
+                 "declared_target": "q_sync", "summary_confirmed": True}},
+    ])
+    comp = Composition(H, Gamma("q0", "KNOWN", retry_cap=3))
+    comp.run_round(backends, L)
+    assert comp.observe()["qStatus"] == "KNOWN" and comp.observe()["retry"] == 1
+    assert comp.observe()["H"] == H
+    comp.run_round(backends, L)
+    assert comp.observe()["qStatus"] == "UNKNOWN" and comp.observe()["retry"] == 2
+    assert comp.observe()["H"] == H
+    comp.run_round(backends, L)
+    assert comp.observe()["q"] == "q_sync" and comp.observe()["qStatus"] == "KNOWN"
+
+
+def test_c21_interpret_unknown_is_not_overwritten_by_ordinary_confirmation() -> None:
+    H = {"h1", "h2"}
+    L = _library(t=_t("TEST"))
+    backends = Backends([{
+        "raw": {"status": "OK", "classes": {"t": ({"h1"},)}},
+        "obs": {"effect_class": "UNKNOWN-EFFECT", "summary_confirmed": True, "post_summary": "q1", "iz": {"h1"}},
+    }])
+    comp = Composition(H, _budget(5))
+    original_q = comp.gamma.current_summary
+    comp.run_round(backends, L)
+    obs = comp.observe()
+    assert obs["qStatus"] == "UNKNOWN" and obs["q"] is None
+    assert "S9:commit" not in obs["trace"]
+    assert obs["H"] == H and obs["retry"] == 1
+    assert original_q == "q0"
+
+
+def test_c22_prep_unmet_target_with_confirmed_successor_commits() -> None:
+    H = {"h1", "h2", "h3"}
+    L = _library(prep=_t("PREP"))
+    backends = Backends([{
+        "raw": {"status": "OK", "classes": {"prep": ({"h1", "h2"},)}},
+        "obs": {"iz": {"h1", "h2"}, "target_confirmed": False,
+                "prep_summary_confirmed": True, "post_summary": "q1"},
+    }])
+    comp = Composition(H, _budget(5))
+    comp.run_round(backends, L)
+    obs = comp.observe()
+    assert obs["q"] == "q1" and "S9:commit" in obs["trace"] and obs["retry"] == 0
+
+
+def test_c23_stale_history_version_is_rejected() -> None:
+    gamma = Gamma("q0", "KNOWN", uncertainty_ref=U_FIXTURE)
+    eta = History(version=0)
+    xi = SelectSnapshot("t", "TEST", "q0", 99, ({"h1"},), uncertainty_ref=U_FIXTURE)
+    z = Outcome(iz={"h1"}, summary_confirmed=True, post_summary="q1")
+    result = commit_compatible_update(xi, z, gamma, eta, {"h1", "h2"})
+    assert result.status == "SPEC-ERROR"
+    assert result.eta.version == 0
+    assert result.H == {"h1", "h2"}
+
+
+def test_c24_half_open_interval_topology() -> None:
+    match = lambda o, x: "legit"
+    N = (100, 120, True, False)
+    assert interpret_timed_observation("valid", (119.9995, 119.9995), None, N, (0, 10 ** 9), match) == "PASS"
+    assert interpret_timed_observation("valid", (120, 120), None, N, (0, 10 ** 9), match) == "FAIL"
+    assert interpret_timed_observation("valid", (119.9, 120.1), None, N, (0, 10 ** 9), match) == "INCONCLUSIVE"
+
+
+def test_c25_shared_uncertainty_through_prediction_snapshot_interpret_update() -> None:
+    H = {"h1", "h2", "h3"}
+    gamma = _budget(5, uncertainty_ref=U_FIXTURE)
+    L = _library(t=_t("TEST"))
+    measurement = 118
+    compatible = {"h1", "h2"}
+    backends = Backends([{
+        "raw": {"status": "OK", "classes": {"t": (set(compatible),)}},
+        "obs": {
+            "measurement_interval": (measurement - U_EPS, measurement + U_EPS),
+            "N_r": U_N,
+            "D_r": (0, 10 ** 9),
+            "iz": set(compatible),
+            "summary_confirmed": True,
+            "post_summary": "q1",
+        },
+    }])
+    comp = Composition(H, gamma, uncertainty_ref=U_FIXTURE)
+    comp.run_round(backends, L)
+    obs = comp.observe()
+    assert obs["predUncertaintyRef"] == obs["xiUncertaintyRef"] == obs["uncertaintyRef"] == U_FIXTURE
+    assert obs["xiHistoryVersion"] == 0
+    assert obs["H"] == compatible and "h3" not in obs["H"]
+    assert obs["etaVersion"] == 1
+    mismatched = commit_compatible_update(
+        SelectSnapshot("t", "TEST", "q0", 0, (set(compatible),), uncertainty_ref="U-other"),
+        Outcome(iz=set(compatible), summary_confirmed=True, post_summary="q1"),
+        Gamma("q0", "KNOWN", uncertainty_ref=U_FIXTURE),
+        History(version=0),
+        set(H),
+    )
+    assert mismatched.status == "SPEC-ERROR" and mismatched.reason == "uncertainty reference mismatch"
+    assert mismatched.H == H and mismatched.eta.version == 0
+
+
+def test_c26_empty_compatible_class_vs_absent_observation() -> None:
+    H = {"h1", "h2"}
+    empty = Composition(H, _budget(5))
+    empty.run_round(
+        Backends([{"raw": {"status": "OK", "classes": {"t": ({"h1"},)}},
+                   "obs": {"iz": set(), "summary_confirmed": True, "post_summary": "q0"}}]),
+        _library(t=_t("TEST")),
+    )
+    assert empty.observe()["H"] == set()
+    assert empty.observe()["stop"] == "Stop-Empty"
+    absent = Composition(H, _budget(5))
+    absent.run_round(
+        Backends([{"raw": {"status": "OK", "classes": {"prep": ({"h1", "h2"},)}},
+                   "obs": {"iz": None, "target_confirmed": False,
+                           "prep_summary_confirmed": True, "post_summary": "q1"}}]),
+        _library(prep=_t("PREP")),
+    )
+    assert absent.observe()["H"] == H
+    assert absent.observe()["etaVersion"] == 1
+
+
+CLTAV_ADMISSION_MATRIX = {
+    "C01": ("test_c01_two_affordable_tests_minimax_and_tie", "minimax then cost/id tie-break"),
+    "C02": ("test_c02_expensive_better_test_loses_to_cheap_distinguisher", "only affordable distinguisher"),
+    "C03": ("test_c03_expensive_distinguisher_falls_back_to_affordable_prep", "Prep not KeyError"),
+    "C04": ("test_c04_unaffordable_distinguisher_without_prep_is_a2", "A2 zero charge"),
+    "C05": ("test_c05_affordable_uninformative_test_is_a3_not_a2", "A3 not A2"),
+    "C06": ("test_c06_unaffordable_uninformative_test_is_still_a3", "still A3"),
+    "C07": ("test_c07_uninformative_test_with_affordable_prep_selects_prep", "Prep"),
+    "C08": ("test_c08_uninformative_test_with_unaffordable_prep_is_a2", "A2"),
+    "C09": ("test_c09_overlapping_class_containing_h_is_still_distinguishing", "value with worst |H|"),
+    "C10": ("test_c10_unknown_gap_selects_only_affordable_recover", "Recover only"),
+    "C11": ("test_c11_unknown_gap_without_recover_is_a4_not_backend_gap", "A4 via S3"),
+    "C12": ("test_c12_unknown_gap_unaffordable_recover_is_a5", "A5"),
+    "C13": ("test_c13_known_global_gap_with_affordable_prep_selects_prep", "Prep under GAP"),
+    "C14": ("test_c14_known_global_gap_unaffordable_prep_is_a2", "A2 under GAP"),
+    "C15": ("test_c15_known_global_gap_without_fallback_is_named_gap", "named SPEC-ERROR"),
+    "C16": ("test_c16_local_empty_projection_allows_prep", "local GAP then Prep"),
+    "C17": ("test_c17_excluded_only_projection_is_named_gap", "named GAP no score 0"),
+    "C18": ("test_c18_budget_non_unit_cost_charges_once_per_execute", "per-execute charge"),
+    "C19": ("test_c19_rounds_mode_increments_once_and_stops_at_kmax", "rounds not remaining_B"),
+    "C20": ("test_c20_not_sent_then_unknown_accumulates_retry", "retry and H preserved"),
+    "C21": ("test_c21_interpret_unknown_is_not_overwritten_by_ordinary_confirmation", "UNKNOWN not overwritten"),
+    "C22": ("test_c22_prep_unmet_target_with_confirmed_successor_commits", "actual successor"),
+    "C23": ("test_c23_stale_history_version_is_rejected", "version fail-closed"),
+    "C24": ("test_c24_half_open_interval_topology", "119.9995/120/cross"),
+    "C25": ("test_c25_shared_uncertainty_through_prediction_snapshot_interpret_update", "U/version chain"),
+    "C26": ("test_c26_empty_compatible_class_vs_absent_observation", "empty vs NONE"),
+}
+
+
+def test_admission_matrix_maps_each_row_to_a_function() -> None:
+    names = {name for name, _ in CLTAV_ADMISSION_MATRIX.values()}
+    assert set(CLTAV_ADMISSION_MATRIX) == {f"C{i:02d}" for i in range(1, 27)}
+    for cid, (name, _claim) in CLTAV_ADMISSION_MATRIX.items():
+        assert callable(globals()[name]), cid
 
 
 # ---------------------------------------------------------------------------
@@ -876,6 +1297,25 @@ def test_negative_gap_bypasses_admission_is_rejected() -> None:
         r"\uIf{$\textit{pred}.\mathrm{status}=\texttt{GAP}$}{\Return Decision$(\mathrm{kind}=\texttt{ACTION},\mathrm{actionKind}=\texttt{PREP},\mathrm{actionId}=\text{first},\cdot,\cdot)$; $C\leftarrow\{\}$;",
     ))
     assert any("before IF-SELECT-ADMIT admission" in item for item in errors)
+
+
+def test_negative_gap_finish_before_admit_is_rejected() -> None:
+    errors = _contract(_mutate(
+        "ALG-CLTAV-01",
+        r"$\textit{pred}\leftarrow\textsc{PredictCurrent}(\Gamma,\eta,H,U,L)$\;",
+        r"$\textit{pred}\leftarrow\textsc{PredictCurrent}(\Gamma,\eta,H,U,L)$\;"
+        r"\lIf{$\textit{pred}.\mathrm{status}=\texttt{GAP}$}{\Return $\textsc{Finish}(\textit{pred}.\mathrm{reason},\Gamma,\eta,H)$}",
+    ))
+    assert any("Finish a prediction gap before SelectAndAdmit admission" in item for item in errors)
+
+
+def test_negative_per_test_gap_return_before_admit_is_rejected() -> None:
+    errors = _contract(_mutate(
+        "ALG-CLTAV-05",
+        r"$C\leftarrow\{\mathcal C_t\}$",
+        r"\Return Decision$(\mathrm{kind}=\texttt{SPEC-ERROR},\mathrm{reason}=\text{per-test prediction gap})$ $C\leftarrow\{\mathcal C_t\}$",
+    ))
+    assert any("per-test gap before IF-SELECT-ADMIT admission" in item for item in errors)
 
 
 def test_negative_stale_version_accepted_is_rejected() -> None:
