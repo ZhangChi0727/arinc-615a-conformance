@@ -65,7 +65,11 @@ def _hash_relative_files(root: Path, files: list[Path]) -> str:
     for path in sorted(files, key=lambda item: _rel(item, root)):
         digest.update(_rel(path, root).encode("utf-8"))
         digest.update(b"\0")
-        digest.update(path.read_bytes())
+        # Git may check these text inputs out with CRLF on Windows and LF on
+        # Linux.  The closure identity is the source text, not the checkout
+        # line-ending policy; normalizing here keeps a committed build record
+        # verifiable by both local and CI builders.
+        digest.update(path.read_bytes().replace(b"\r\n", b"\n"))
     return digest.hexdigest()
 
 

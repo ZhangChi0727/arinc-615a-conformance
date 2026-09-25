@@ -105,3 +105,11 @@ def test_source_hash_is_relative_and_stable() -> None:
     second = taes.source_hash()
     assert first == second
     assert len(first) == 64
+
+
+def test_source_hash_normalizes_checkout_line_endings(tmp_path: Path) -> None:
+    source = tmp_path / "source.tex"
+    source.write_bytes(b"alpha\nbeta\n")
+    lf_hash = taes._hash_relative_files(tmp_path, [source])
+    source.write_bytes(b"alpha\r\nbeta\r\n")
+    assert taes._hash_relative_files(tmp_path, [source]) == lf_hash
