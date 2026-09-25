@@ -42,7 +42,7 @@
     "SelectSnapshot": {
       "id": "SelectSnapshot",
       "holder": "iteration",
-      "fields": ["qUsedAtSelect", "historyVersionUsedAtSelect", "classesUsedAtSelect", "actionId"],
+      "fields": ["qUsedAtSelect", "historyVersionUsedAtSelect", "classesUsedAtSelect", "actionId", "actionKind", "uncertaintyRef"],
       "immutableForIteration": true,
       "writtenBy": "S3-SNAP after IF-SELECT-ADMIT has determined the final non-ADMIT action and before charge, execute, interpret, or IF-PREP-RECOVER",
       "notPostEffectState": true,
@@ -69,8 +69,8 @@
       "inputs": ["A", "q", "currentlyValidNonemptyClasses", "SessionContext", "HistoryHandle", "H"],
       "outputs": ["kind", "tStar", "S", "admitA2A5"],
       "pre": "one resource mode declared; prediction for this iteration already produced",
-      "guarantee": "kind is exclusive TEST, PREP, RECOVER or ADMIT; tStar is the final action, including the one-step TEST minimax and tie rule; nonempty A is not executable S; never argmin empty TEST set; Prep/Recover are not scored as observation minimax; empty C does not force A3 when Recover or Prep is eligible",
-      "failure": "no currently valid class: named prediction-gap for TEST only, not A3 when Recover/Prep remains eligible",
+      "guarantee": "kind is exclusive TEST, PREP, RECOVER or ADMIT; tStar is the final action, including the one-step TEST minimax and tie rule over affordable distinguishing TESTs only; uninformative TESTs are not A2; nonempty A is not executable S; never argmin empty TEST set; Prep/Recover are not scored as observation minimax; a global or per-TEST projection gap withholds TEST scoring and then applies the same Prep/Recover/A2-A5 table; empty C does not force A3 when Recover or Prep is eligible",
+      "failure": "no currently valid class or a per-TEST empty current projection: named prediction-gap that withholds TEST scoring; not A3 when Recover/Prep remains eligible; KNOWN with no fallback is SPEC-ERROR, not A3; UNKNOWN A4/A5/Recover are independent of a TEST prediction gap",
       "stateEffect": "does not charge; does not update HistoryHandle",
       "successorClose": "scheduler and data structures"
     },

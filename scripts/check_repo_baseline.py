@@ -1576,6 +1576,13 @@ def _cltav_executable_errors(algorithms: dict[str, str]) -> list[str]:
         errors.append("SelectAndAdmit must not select Prep/Recover before IF-SELECT-ADMIT admission")
     if "eligibleUnknown" not in alg05:
         errors.append("SelectAndAdmit must state the UNKNOWN recovery eligibility")
+    return_at = alg05.find(r"\Return")
+    if return_at >= 0 and ifsel_at >= 0 and return_at < ifsel_at:
+        errors.append("SelectAndAdmit must not return a per-test gap before IF-SELECT-ADMIT admission")
+    pred_at = main.find("PredictCurrent")
+    select_at = main.find("SelectAndAdmit")
+    if pred_at >= 0 and select_at > pred_at and "Finish" in main[pred_at:select_at]:
+        errors.append("must not Finish a prediction gap before SelectAndAdmit admission")
 
     alg06 = bodies.get("ALG-CLTAV-06", "")
     if r"M\subseteq N_r" not in alg06 or r"\not\subseteq" in alg06:

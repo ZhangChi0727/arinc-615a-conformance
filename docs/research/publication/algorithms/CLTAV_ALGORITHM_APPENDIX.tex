@@ -42,7 +42,11 @@ id string.
 reading or projecting classes and re-tags a projection that yields no nonempty
 class as the same named gap, so a gap never becomes an empty class collection or
 a score of zero; the gap stays TEST-scoped and does not by itself block eligible
-Prep/Recover. \textsc{InterpretOutcome} (ALG-CLTAV-03, S6) copies the executed
+Prep/Recover. ALG-CLTAV-01 does not Finish a GAP before SelectAndAdmit: global
+and per-TEST empty current projections withhold TEST scoring, keep the gap
+identity, and then apply the same Prep/Recover/A2--A5 table. A KNOWN gap with no
+eligible Prep is a named prediction-gap SPEC-ERROR, not A3 and not a zero score.
+UNKNOWN A4/A5/Recover are independent of a TEST prediction gap. \textsc{InterpretOutcome} (ALG-CLTAV-03, S6) copies the executed
 effect and the snapshot kind into a total Outcome, calls IF-OBS-INTERPRET and the
 timed kernel ALG-CLTAV-06, and propagates an interpretation ERROR to S7 instead
 of a confirmed summary; it writes nothing. \textsc{ResolveOutcome} (ALG-CLTAV-04,
@@ -89,8 +93,8 @@ CommitCompatibleUpdate & S9 & \texttt{IF-HIST-UPDATE} & writes $\eta',H'$, commi
 Admit & Meaning \\
 \hline
 A1 & $S$ nonempty: execute \\
-A2 & KNOWN: reducing action unaffordable: Stop-Budget \\
-A3 & KNOWN: none reducing, no Prep: Stop-NoDistinguisher \\
+A2 & KNOWN: a distinguishing TEST or eligible Prep exists but is unaffordable: Stop-Budget \\
+A3 & KNOWN: no distinguishing TEST and no Prep: Stop-NoDistinguisher; uninformative TESTs are not A2 \\
 A4 & UNKNOWN: Recover not eligible: Stop-Error \\
 A5 & UNKNOWN: Recover eligible, unaffordable: Stop-Budget \\
 \hline

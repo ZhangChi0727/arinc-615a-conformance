@@ -27,8 +27,7 @@ $(\Gamma,\eta,H)\leftarrow\textsc{Initialize}(H_0,L,U,\text{resourcePolicy})$\;
   \lIf{$\textit{stop}\neq\texttt{undecided}$}{\Return $\textsc{Finish}(\textit{stop},\Gamma,\eta,H)$}
   \tcp{\textbf{S2} \textsc{PredictCurrent}: typed prediction; the gap tag is handled before any projection}
   $\textit{pred}\leftarrow\textsc{PredictCurrent}(\Gamma,\eta,H,U,L)$\;
-  \lIf{$\textit{pred}.\mathrm{status}=\texttt{GAP}$ and not (\textsc{RecoverEligible}$(\Gamma,L)$ or \textsc{PrepEligible}$(\Gamma,L)$)}{\Return $\textsc{Finish}(\textit{pred}.\mathrm{reason},\Gamma,\eta,H)$}
-  \tcp{\textbf{S3} \textsc{SelectAndAdmit}: tagged exit or spec error returns with its reason}
+  \tcp{\textbf{S3} \textsc{SelectAndAdmit}: GAP and OK share this admission; tagged exit or spec error returns with its reason}
   $\textit{dec}\leftarrow\textsc{SelectAndAdmit}(\Gamma,\eta,H,L,\textit{pred})$\;
   \lIf{$\textit{dec}.\mathrm{kind}\in\{\texttt{EXIT},\texttt{SPEC-ERROR}\}$}{\Return $\textsc{Finish}(\textit{dec}.\mathrm{reason},\Gamma,\eta,H)$}
   \tcp{\textbf{S3-SNAP} \textsc{SelectSnapshot} freezes $\xi$ (actionId, actionKind, qUsedAtSelect, historyVersion, classesUsedAtSelect, uncertaintyRef); the action kind is $\textit{dec}.\mathrm{actionKind}$, never the exit/action discriminant}

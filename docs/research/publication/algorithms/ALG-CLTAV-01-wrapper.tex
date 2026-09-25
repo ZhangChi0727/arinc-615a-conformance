@@ -25,9 +25,10 @@
 text gives the top-level session and the three core mechanisms (test selection,
 timed observation interpretation, history-compatible update). The appendix gives
 the S2/S6/S7--S8 coordination wrappers, the typed records, the responsibility map
-and the unresolved-kernel register. It is not a second program and selects no
-solver technology. Step labels \texttt{S0}--\texttt{S10} are the stable bilingual
-mapping; typeset line numbers are not cited.
+and the unresolved-kernel register. A prediction gap and a normal prediction share
+SelectAndAdmit; TEST minimax is restricted to affordable distinguishers. It is not
+a second program and selects no solver technology. Step labels \texttt{S0}--\texttt{S10}
+are the stable bilingual mapping; typeset line numbers are not cited.
 
 \input{ALG-CLTAV-01.tex}
 \input{ALG-CLTAV-05-selection.tex}
@@ -41,8 +42,8 @@ mapping; typeset line numbers are not cited.
 \section*{Chinese step groups (same process, not a second program)}
 S0 初始化：$\Gamma$ 为唯一状态源；$q$ 是 $\Gamma.\mathrm{currentSummary}$ 的别名，$qStatus$ 只记录该摘要是否已知；retry／$R_{\max}$ 分别是 $\mathrm{retryCount}$／$\mathrm{retryCap}$ 的别名；初始化 $\eta$、$H_0$、资源模式与不确定性引用。
 S1／S10 停止门：EntryStop 与 PostUpdateStop 映射既有 A2--A5／P1--P5 决定表，不新建停止政策。
-S2：ALG-CLTAV-02 先按返回标签分支再投影；PredictionGapError 只关掉 TEST 评分，不阻止合格 Prep／Recover。
-S3：ALG-CLTAV-05 给出选择与准入规则；空 TEST 集不得 $\arg\min$；空类不阻止合格 Recover；选定后冻结不可变快照 $\xi$。
+S2：ALG-CLTAV-02 先按返回标签分支再投影；主循环不在 S3 前对 GAP 提前 Finish；PredictionGapError 只关掉 TEST 评分，不阻止合格 Prep／Recover。
+S3：ALG-CLTAV-05 给出唯一准入；minimax 只遍历合格可负担有区分 TEST；无信息 TEST 不得改成 A2；局部空投影本轮暂停 TEST 评分并检查 Prep／Recover 回退；空 TEST 集不得 $\arg\min$；空类不阻止合格 Recover；选定后冻结不可变快照 $\xi$。
 S4 一次计费：重试上限不是预算耗尽。S5：只执行快照动作一次。
 S6：ALG-CLTAV-03 协调，ALG-CLTAV-06 完成时序解释；$M$、判定与候选集合 $I_z$ 是三种不同类型，不得 $H\cap$ 判定。
 S7--S8：ALG-CLTAV-04 返回完整 Resolution，主算法先接收返回的 $\Gamma,\eta$ 与规范化 outcome 再分支；ERROR／未知走 RETRY 回 S1，正常 TEST／Prep 与确认 Recover 走 COMMIT，确认条件只约束 Recover 恢复分支；S8 唯一写 KNOWN。
