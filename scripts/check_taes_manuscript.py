@@ -124,7 +124,14 @@ def _pdf_pages(path: Path) -> int:
         if result.returncode == 0 and match:
             return int(match.group(1))
     data = path.read_bytes()
-    return len(re.findall(rb"/Type\s*/Page(?!s)", data))
+    direct_pages = len(re.findall(rb"/Type\s*/Page(?!s)", data))
+    if direct_pages:
+        return direct_pages
+    # Some pdfTeX versions use object streams, which hide individual Page
+    # dictionaries from the byte-level fallback.  The page-tree count remains
+    # an uncompressed catalog value in those files.
+    counts = [int(value) for value in re.findall(rb"/Count\s+(\d+)", data)]
+    return max(counts, default=0)
 
 
 def _collect_inputs(start: Path, draft: Path, errors: list[str]) -> list[Path]:
