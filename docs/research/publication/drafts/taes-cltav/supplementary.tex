@@ -1,0 +1,72 @@
+\documentclass[journal,10pt,onecolumn]{IEEEtaes}
+% Supplementary material. Compiled separately. Not a second method authority.
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage[T1]{fontenc}
+
+\SetKwRepeat{Do}{do}{while}
+\input{macros}
+
+\title{Supplementary Material: CL-TAV Contracts and Core Mechanisms}
+\author{Author~Name (affiliation pending)}
+\begin{document}
+\makeatletter
+\@twocolumnfalse
+\makeatother
+\onecolumn
+\maketitle
+
+\begin{abstract}
+This supplement records the accepted core mechanisms and the S0--S10 duty map
+for the TAES first draft. It does not change ALG-CLTAV-01 semantics and does
+not report experiments.
+\end{abstract}
+
+\section{Scope}
+Paper Algorithm~1 is ALG-CLTAV-01. Paper-facing Algorithms~2--4 below are
+ALG-CLTAV-05, ALG-CLTAV-06 and ALG-CLTAV-07. Wrappers ALG-CLTAV-02/03/04 and
+typed records remain in the repository algorithm package; they are not a
+second contribution. Chinese S0--S10 glosses stay in the repository wrapper
+and are not copied here.
+
+\section{S0--S10 duty map}
+\begin{center}
+\small
+\begin{tabular}{@{}llp{0.46\linewidth}@{}}
+\hline
+Step & Interface & Duty / exception \\
+\hline
+S0 & --- & initialize \(\Gamma,\eta,H\); distinct \(k\), charges, retry \\
+S1 & IF-RESOURCE-STOP & already decided Admit or P-stop \\
+S2 & IF-PRED-OBS & TEST-scoped prediction gap \\
+S3 & IF-SELECT-ADMIT & exclusive kind; freeze snapshot \\
+S4 & --- & charge once \\
+S5 & IF-EXECUTE-RECORD & effect class \\
+S6 & IF-OBS-INTERPRET & timing kernel ALG-CLTAV-06 \\
+S7--S8 & --- & classify effect; sole KNOWN writer \\
+S9 & IF-HIST-UPDATE & snapshot + postSummary \\
+S10 & IF-RESOURCE-STOP, IF-EQUIV & P-stop or continue to S1 \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Core mechanisms}
+The following modules are included by path from the accepted algorithm
+directory. Display captions keep the stable ALG-IDs.
+
+\makeatletter
+\@twocolumnfalse
+\makeatother
+{\small
+\input{ALG-CLTAV-05-selection}
+\input{ALG-CLTAV-06-timing}
+\input{ALG-CLTAV-07-history}
+}
+
+\section{AI and third-party boundary}
+Drafting assistance was used for English wording and LaTeX layout. No standard
+figure is reprinted. No CRS row listing is published as supplementary data.
+Open-artefact licence and repository DOI remain AUTH-OPEN.
+
+\end{document}

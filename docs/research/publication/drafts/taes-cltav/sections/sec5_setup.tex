@@ -1,0 +1,52 @@
+\section{Experimental Setup and Evaluation Protocol}
+\label{sec:setup}
+
+The comparison contract is the existing experiment plan. It is not altered
+here. Four arms share the same action pool, fault domain and charged resource
+mode:
+
+\begin{itemize}
+\item CL-T: predetermined tests; no analysis feedback into the next test.
+\item CL-A: analysis on a fixed observation set; no further legal operations.
+\item CL-TA: collect with a frozen policy, then analyse; the loop does not close.
+\item CL-LOOP: the CL-TAV session; the update chooses the next action.
+\end{itemize}
+
+Independent truth is evaluator-only. It never enters \IFsel, \IFpred, \IFhist{}
+or \IFexec. Injection planned is not injection confirmed. Unconfirmed,
+invalid, equivalent and abstain records are not detection PASS or FAIL.
+Denominators always include the attempt set and the answered subset.
+
+\begin{figure}[!t]
+\centering
+\begin{tikzpicture}[font=\scriptsize,box/.style={draw,align=center,inner sep=2.5pt},arr/.style={->}]
+\node[box] (scene) {scene / config};
+\node[box,right=4mm of scene] (truth) {truth record};
+\node[box,below=3mm of scene] (arms) {CL-T / CL-A / CL-TA / CL-LOOP};
+\node[box,below=3mm of truth] (obs) {algorithm-visible \(I_z\)};
+\node[box,below=8mm of arms] (valid) {validity: unconfirmed / invalid / equivalent / abstain};
+\node[box,below=3mm of valid] (met) {DETECT / LOCATE / ABLATION metrics};
+\draw[arr] (scene) -- (arms);
+\draw[arr] (scene) -- (truth);
+\draw[arr] (arms) -- (obs);
+\draw[arr] (obs) -- (valid);
+\draw[arr] (truth) -- (valid);
+\draw[arr] (valid) -- (met);
+\end{tikzpicture}
+\caption{Experiment architecture derived from FIG-CL-TAV-09. Truth reaches
+metrics only after the validity filter.}
+\label{fig:exp}
+\end{figure}
+
+DETECT asks whether CL-LOOP increases missed detections or converts
+equality-timing into false FAIL relative to CL-T under the same budget. LOCATE
+asks whether the surviving set shrinks without excluding the confirmed true
+fault. ABLATION disables feedback, timing partitions or cost accounting
+separately. Sample size, seeds and effect thresholds remain a named decision
+gap; they are not chosen for writing convenience.
+
+\phbox{PH-STAT-N}{PUBLICATION-DECISION}{Numeric \(n\), repeats and interval
+method freeze at confirmatory registration, not in this draft.}
+
+Platforms, devices and live loaders are planned. Software Ethernet experiments,
+when later run, will not prove AFDX hardware determinism or certification.
