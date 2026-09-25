@@ -1,0 +1,76 @@
+\section{CL-TAV Method}
+\label{sec:method}
+
+\subsection{Notation and assumptions}
+S0--S10 are logical duties, not line numbers or protocol states. The decision
+index \(k\), the billed charge count and the retry counter are distinct.
+Assignment is \(\leftarrow\). SessionContext \(\Gamma\) is the unique session
+state; HistoryHandle \(\eta\) carries whole-history compatibility.
+\(q_{\mathrm{used}}\) (\texttt{qUsedAtSelect}) is frozen after the final action
+and before charge or execute. A later confirmed summary is a different field.
+Effect classes are \texttt{CONFIRMED-NOT-SENT} and \texttt{UNKNOWN-EFFECT}.
+The former leaves \(q\) and compatible history unchanged and still counts the
+retry. The latter marks \(\eta\) conservative-unknown and assigns UNKNOWN.
+Unconfirmed Recover stays UNKNOWN and joins the same retry policy.
+PredictionGapError is TEST-scoped: empty current classes do not block an
+eligible Recover or Prep.
+
+\subsection{Overall closed loop}
+Algorithm~\ref{alg:cltav-01} is the compact top-level session (stable ID
+ALG-CLTAV-01). It is not an executable engine and selects no solver. The
+supplement typesets ALG-CLTAV-05/06/07; wrappers ALG-CLTAV-02/03/04 stay there.
+TEST, Prep, Recover and Admit are exclusive. Charge occurs once. History
+advances from the select-time snapshot. If no P-stop fires, the next iteration
+returns to the entry stop gate.
+
+\input{alg_compact_01}
+
+\subsection{Interpretation, compatibility and selection}
+Prediction and interpretation share one uncertainty reference \(U\). Classes
+project onto current \(H\). A prediction gap is not scored as remaining
+\(|H|\). Compatible update intersects \(H\) with a currently valid class;
+\texttt{ERROR} and identity Prep/Recover do not exclude \(H\). Instance
+ownership and pairing are single results: an ambiguous pair is
+\texttt{ERROR}, not IUT FAIL. Timing uses the accepted three-valued treatment
+with distinct closed and open horizons (ALG-CLTAV-06).
+
+Selection scores only affordable distinguishing TESTs. The one-step score is
+the worst remaining-candidate count on currently valid nonempty classes. Empty
+selectable \(S\) is never \(\arg\min\). If no distinguishing TEST remains,
+Prep is preferred to Recover when eligible. Confirmed Recover is the sole
+writer of KNOWN. S9 is the sole commit of a confirmed successor summary.
+
+\subsection{Conditional properties}
+The following are the accepted short arguments, not global optimality or
+physical correctness.
+
+\noindent\textbf{Monotonicity.} A valid update satisfies \(H_{k+1}\subseteq H_k\).
+\texttt{ERROR} and identity Prep/Recover leave \(H\) unchanged. An in-domain
+singleton is not protocol PASS.
+
+\noindent\textbf{Retention.} If the true hypothesis is in \(H_0\), a
+whole-history path exists, the observation outer set is conservative, the
+realized \(I_z\) contains the true observation, and ownership/pairing are
+valid, then a valid update retains the true hypothesis. Out-of-domain faults
+may still mimic an in-domain survivor.
+
+\noindent\textbf{One-step minimax.} On a nonempty finite selectable set the
+chosen TEST is a least element of
+\((s(t),\mathrm{cost}(t),\mathrm{id})\). This is not a global policy.
+
+\noindent\textbf{Termination.} Every charged TEST, Prep, Recover and
+\texttt{ERROR} spends the selected mode, so the number of billed executions is
+at most \(\lfloor B/c_{\min}\rfloor\) or \(K_{\max}\). Wall-clock return of
+each wait still needs its own timeout argument; this draft does not claim
+those timeouts are implemented.
+
+Named stops remain exclusive: Empty, Singleton, 645, Equivalent, Budget, and
+retry-cap Stop-Error. Stop-Error is not Stop-Budget. A confirmed-not-sent
+adapter outcome does not rewrite \(q\) to UNKNOWN. An unknown effect must not
+be read back as the previous KNOWN summary. Unconfirmed Recover with
+\(R_{\max}=1\) and remaining budget is Stop-Error. An executed empty candidate
+set is Stop-Empty.
+
+The compact display is a duty-preserving view of ALG-CLTAV-01. Reviewers
+compare it with the accepted module; this paper does not introduce a second
+loop. Core kernels remain interface-bound and unimplemented.

@@ -1,0 +1,51 @@
+\section{Related Work and Problem Formulation}
+\label{sec:related}
+
+\subsection{Selective comparison}
+Table~\ref{tab:related} compares nearby methods on five attributes required by
+CL-RQ1--CL-RQ3. ``Not the stated object'' means the cited paper does not
+develop that contract; it is not a proof of impossibility. Full-text access
+gaps are listed as PH-LIT-ACCESS rather than turned into negative capability
+claims.
+
+\begin{table}[!t]
+\caption{Selective comparison. Entries are about the cited paper's stated object.}
+\label{tab:related}
+\centering
+\begin{tabular}{@{}p{0.20\columnwidth}p{0.70\columnwidth}@{}}
+\hline
+Work & Stated object relative to this paper \\
+\hline
+Tretmans~\cite{tretmans1996} & Implementation relation and test generation from LTS; not residual isolation under a charged verification budget. \\
+Chow~\cite{chow1978}, Fujiwara~\textit{et al.}~\cite{fujiwara1991} & FSM covering sequences; no measurement-uncertainty partition shared by prediction and interpretation. \\
+Petrenko~\textit{et al.}~\cite{petrenko2016} & Constraint solving and mutant killing for FSMs. \\
+Jia and Harman~\cite{jia2011} & Mutation adequacy, not session-level Prep/Recover or \texttt{ERROR} versus IUT FAIL. \\
+Yang~\textit{et al.}~\cite{yang2025} & Requirements-based generation survey; obligation coverage is not a closed diagnostic loop. \\
+Li~\textit{et al.}~\cite{li2021} & Model-based testing of networked applications; not ARINC 615A integrity residuals. \\
+Alur and Dill~\cite{alur1994} & Timed automata theory used as a timing vocabulary, not as an implemented solver. \\
+\hline
+\end{tabular}
+\end{table}
+
+\phbox{PH-LIT-ACCESS}{LITERATURE-ACCESS}{If a later negative comparison needs a
+paywalled method detail that cannot be obtained through the institution, that
+citation stays unused for the specific denial.}
+
+\subsection{Verification objects}
+The implementation under test (IUT) is a 615A data-loading endpoint. The bound
+protocol model remains UPLOAD and INFORMATION~\cite{arinc615a3}. Research
+coverage of FIND, DOWNLOAD and conditional AFDX is a CRS fact; it is not
+implemented behaviour and not an experimental arm.
+
+The first-version candidate set is
+\(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\).
+An observable summary \(q\) is known or unknown. Observation classes are
+projected onto the current \(H\). Measurement uncertainty follows the GUM
+vocabulary~\cite{jcgm100,jcgm106}: a declared conservative outer set \(U\), not
+an estimated physical error model. Resource is exactly one mode:
+BUDGET\((c_{\min},B)\) or ROUNDS\((K_{\max})\), never a logical OR of both.
+
+A 615A-triggered 645 identity and semantic bind exists for CRC, check-value and
+naming leaves~\cite{arinc6451}. Four integrity capabilities remain
+not established. Stop-645 therefore names a remaining 645-dependent obligation,
+not a missing file.

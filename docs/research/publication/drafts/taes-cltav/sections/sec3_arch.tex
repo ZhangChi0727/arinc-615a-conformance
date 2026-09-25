@@ -1,0 +1,42 @@
+\section{System Engineering and Verification Architecture}
+\label{sec:arch}
+
+Protocol conformance requirements, tool requirements and experiment
+requirements stay in separate layers. The protocol CRS constrains legal
+stimuli, observable events and timing contracts. It does not, by row count,
+prove that a verification method works. A representative chain is source clause
+\(\to\) obligation \(\to\) observation/verdict contract \(\to\) method
+interface. SysML views in the repository are notation-based; executable or
+complete metamodel conformance is not claimed.
+
+Two machines must not be merged. The session machine \(M_{\mathrm{sess}}\)
+selects from \(S\subseteq A(q)\), charges once, updates \(H\) and returns a
+named stop. The protocol machine \(M_{\mathrm{prot}}\) is the bound UPLOAD and
+INFORMATION black box. An Execute step of \(M_{\mathrm{sess}}\) applies a
+stimulus to \(M_{\mathrm{prot}}\) through declared ports and reads \(I_z\).
+That association is not a cross-machine state transition.
+
+\begin{figure}[!t]
+\centering
+\begin{tikzpicture}[
+  font=\scriptsize,
+  box/.style={draw,align=center,inner sep=3pt,minimum height=8.5mm},
+  arr/.style={->,thick}]
+\node[box,minimum width=0.95\columnwidth] (iut) {IUT / bound \(M_{\mathrm{prot}}\)\\UPLOAD + INFORMATION};
+\node[box,minimum width=0.95\columnwidth,below=2.4mm of iut] (adp) {adapter, clocks, 645 integrity boundary};
+\node[box,minimum width=0.95\columnwidth,below=2.4mm of adp] (sess) {\(M_{\mathrm{sess}}\): predict, select, charge, execute, update};
+\node[box,minimum width=0.95\columnwidth,below=2.4mm of sess] (eval) {evaluator truth (never an arm input)};
+\draw[arr] (sess.north) -- (adp.south);
+\draw[arr] (adp.north) -- (iut.south);
+\draw[arr] (eval.east) to[bend left=18] node[right,xshift=1pt] {\tiny eval only} (sess.east);
+\end{tikzpicture}
+\caption{Paper context derived from FIG-CL-TAV-01 and FIG-CL-TAV-07. Ports, not
+shared states, couple the machines. Evaluator truth is isolated.}
+\label{fig:arch}
+\end{figure}
+
+The current bound model is the accepted UPLOAD/INFORMATION merge. Expanded CRS
+leaves do not silently add FIND or DOWNLOAD transitions to \(M_{\mathrm{prot}}\).
+\phbox{PH-IMPL-KERNEL}{IMPLEMENTATION-DETAIL}{Core estimators, pairing solvers
+and the history representation remain interface contracts. This draft does not
+claim they are deployed.}
