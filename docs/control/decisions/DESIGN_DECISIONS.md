@@ -965,6 +965,55 @@ and negative examples are recorded.
 
 **Status:** Candidate under CR-2026-013.
 
+## DD-035 — Derive the current CRS inventory in the status surface
+
+**Decision:** The README status block must display the current authoritative CRS
+inventory (package identity, coverage count, requirement count) derived from the
+controlled CRS package declared in the source register, not from a second
+hand-filled copy. The generator reads the package path from the register, counts
+the actual `coverageLedger` and `requirements` collections, cross-checks the
+package `inventorySummary`, and fails closed on a missing, unsafe or inconsistent
+package. Free-text counts and the drifting package version are removed from the
+increment narrative.
+
+**Why:** Two synchronized status surfaces can still disagree with the
+authoritative package, so the earlier increment shipped 3152/862 while the CRS
+was 3153/863. A single derived source removes the drift instead of correcting a
+number once.
+
+**Scope:** the project status surface and its generator only; no CRS content change.
+
+**Status:** Candidate under CR-2026-014.
+
+## DD-036 — Algorithm presentation layers, contracts and equivalence acceptance
+
+**Decision:** Present the approved CL-TAV process as one readable top-level
+algorithm (ALG-CLTAV-01) plus the three core mechanisms in the main text —
+test selection and admission (ALG-CLTAV-05), timed observation interpretation
+(ALG-CLTAV-06) and history-compatible update (ALG-CLTAV-07) — with the S2/S6/S7–S8
+coordination wrappers (ALG-CLTAV-02/03/04), the typed records, the responsibility
+map and the unresolved-kernel register in one contract appendix. The interface
+registry remains the single structural authority; the main text, wrappers,
+appendix, method tables, registry and notation figures must stay mutually
+traceable. Interfaces use explicit typed records with tagged alternatives and
+field access or destructuring: a backend prediction gap is branched on before any
+projection; the frozen select snapshot is constructed and passed to interpretation
+and resolution; the normalized resolution outcome and stop reason return to the
+caller; and a bounded executable-call production model (comment-stripping,
+signature and return-branch checks) rejects the reviewed TeX mutations. Acceptance
+uses a split-versus-merged equivalence witness matrix over the frozen abstract
+backends plus these production negatives, not a TeX string match on one file.
+DD-029 semantics, return sets, error types and stop priority are unchanged.
+
+**Why:** The approved algorithm is an abstract interface specification whose
+readability matters; a single dense body hid the loop. Presentation layers
+improve reviewability without granting a new method or solver choice.
+
+**Scope:** presentation, contracts and regression only; no candidate-update,
+stop, resource, retry or successor-summary change.
+
+**Status:** Candidate under CR-2026-014.
+
 # 中文版
 
 本决策日志只追加、不重写历史。有效决策包括：以可审计验证点/用例为主单位；把“置信”解释为有条件的认识性证据；用有限故障域和变异评价检测能力；分离基础与扩展 VCS；把双角色模拟器定位为仪器而非学术创新；以测试和分析为互补主路径；以评审和检查作为横向门禁；停用 DTMC 边概率、最弱链路、路径乘积和默认 HMM 定位；所有主张由证据门晋级。
@@ -1439,3 +1488,23 @@ ARINC 615A 数据加载是合法操作、观测和实验场景的来源。CL-TAV
 **范围：** 实验架构与契约，不是确认性数字。
 
 **状态：** 在 CR-2026-013 下为候选。
+
+## DD-035——在状态面派生当前 CRS 清单
+
+**决定：** README 状态块必须展示当前权威 CRS 清单（包身份、coverage 数、requirement 数），由来源登记声明的受控 CRS 包派生，而不是第二份手填副本。生成器从登记读取包路径，统计实际 `coverageLedger` 与 `requirements` 集合，核对包的 `inventorySummary`，并在包缺失、路径不安全或不一致时 fail-closed。增量叙述中的自由文本计数与易漂移的包版本被移除。
+
+**理由：** 两个同步的状态面仍可能与权威包不符，因此上一增量发布 3152/862 而 CRS 为 3153/863。单一派生来源消除漂移，而不是一次性改正数字。
+
+**范围：** 仅项目状态面及其生成器；不改 CRS 内容。
+
+**状态：** 在 CR-2026-014 下为候选。
+
+## DD-036——算法呈现层、契约与等价性验收
+
+**决定：** 把已批准的 CL-TAV 过程呈现为一个可读的总体算法（ALG-CLTAV-01）加正文中的三个核心机制——测试选择与准入（ALG-CLTAV-05）、时序观测解释（ALG-CLTAV-06）与历史相容更新（ALG-CLTAV-07），并把 S2／S6／S7–S8 协调包装（ALG-CLTAV-02/03/04）、类型记录、责任表与未实现内核登记放入单一契约附录。接口登记仍是唯一结构权威；正文、包装、附录、方法表、登记与记法图必须相互可追溯。接口采用显式类型记录、带标记的可选字段与字段访问／解构：后端预测缺口先分支再投影；冻结的选择快照被构造并传给解释与处置；规范化的处置结果与停止原因返回调用者；受限可执行调用生产模型（去注释、签名与返回分支检查）拒绝已评审的 TeX 变异。验收采用在冻结抽象后端上的拆分／合并等价性见证矩阵加这些生产负例，而不是对单一文件的 TeX 字符串匹配。DD-029 语义、返回集合、错误类型与停止优先级不变。
+
+**理由：** 已批准算法是抽象接口规格，可读性重要；单块正文把循环藏了起来。呈现分层提升可评审性，但不授予新方法或求解器选择。
+
+**范围：** 仅呈现、契约与回归；不改候选更新、停止、资源、重试或后继摘要。
+
+**状态：** 在 CR-2026-014 下为候选。

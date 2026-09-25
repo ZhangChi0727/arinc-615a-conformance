@@ -1,0 +1,28 @@
+% ALG-CLTAV-07 — history-compatible update and successor-summary commit (S9).
+% Presentation of DD-029 / DD-033 / DD-036. Short by design; the whole-history
+% solver is an abstract contract, not selected here.
+\begin{algorithm}[H]
+\caption{\textsc{CommitCompatibleUpdate}: history-compatible update and summary commit (ALG-CLTAV-07, S9)}
+\label{alg:cltav-07}
+\SetKwInput{KwIn}{Require}
+\SetKwInput{KwOut}{Ensure}
+\KwIn{SelectSnapshot $\xi$; normalized Outcome $z$ from the resolving module; $\Gamma$; $\eta$; $H$; precondition enforced by the caller ALG-CLTAV-01: the S9 guard holds (a valid observation class or a confirmed successor summary)}
+\KwOut{a tagged UpdateResult $(status,\eta',H',\Gamma')$ with status OK or SPEC-ERROR; $\Gamma'$ initialized from $\Gamma$}
+$\Gamma'\leftarrow\Gamma$\;\tcp{$\Gamma'$ is a copy of $\Gamma$; no field is left undefined}
+\tcp{a stale or inconsistent history version fails closed before any update}
+\lIf{$\xi.\mathrm{historyVersion}\neq\eta.\mathrm{version}$}{\Return UpdateResult$(\mathrm{status}=\texttt{SPEC-ERROR},\eta,H,\Gamma',\mathrm{reason}=\text{history version mismatch})$}
+\uIf{$z.I_z$ is a valid observation class}{
+  $(\eta_c,H_c)\leftarrow$ \IFhist$(\eta,H,\xi.\mathrm{actionId},\xi.\mathrm{qUsedAtSelect},\xi.\mathrm{classesUsedAtSelect},\xi.\mathrm{historyVersion},z.I_z,z.\mathrm{postSummary})$\;
+  \tcp{IF-HIST-UPDATE is the sole history writer; it must agree with the intersection and the snapshot version}
+  \lIf{$H_c\neq H\cap z.I_z$}{\Return UpdateResult$(\mathrm{status}=\texttt{SPEC-ERROR},\eta,H,\Gamma',\mathrm{reason}=\text{intersection mismatch})$}
+  $\eta'\leftarrow\eta_c$; $H'\leftarrow H_c$\;
+}
+\Else{
+  $(\eta',H')\leftarrow$ \IFhist$(\eta,H,\xi.\mathrm{actionId},\xi.\mathrm{qUsedAtSelect},\xi.\mathrm{classesUsedAtSelect},\xi.\mathrm{historyVersion},\texttt{NONE},z.\mathrm{postSummary})$; $H'\leftarrow H$\;
+  \tcp{a confirmed successor summary with no valid observation advances history but preserves $H$}
+}
+\If{$\Gamma'.\mathrm{qStatus}$ is KNOWN and $z.\mathrm{summaryConfirmed}$ is true and $z.\mathrm{postSummary}$ is confirmed}{
+  $\Gamma'.\mathrm{currentSummary}\leftarrow z.\mathrm{postSummary}$\;\tcp{this is the sole commit of the confirmed successor summary}
+}
+\Return UpdateResult$(\mathrm{status}=\texttt{OK},\eta',H',\Gamma')$\;
+\end{algorithm}

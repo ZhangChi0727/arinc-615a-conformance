@@ -1,0 +1,35 @@
+% ALG-CLTAV-05 — test selection and resource admission (S3 of ALG-CLTAV-01).
+% Presentation of DD-029 / DD-033 / DD-036. Wraps the single IF-SELECT-ADMIT
+% authority; it does not run a second selection and does not bypass admission.
+\begin{algorithm}[H]
+\caption{\textsc{SelectAndAdmit}: test selection and resource admission (ALG-CLTAV-05, S3)}
+\label{alg:cltav-05}
+\SetKwInput{KwIn}{Require}
+\SetKwInput{KwOut}{Ensure}
+\KwIn{$\Gamma$; $\eta$; current $H$; action library $L$; typed $\textit{pred}$ (PredictionResult)}
+\KwOut{a Decision: kind ACTION / EXIT / SPEC-ERROR with actionKind, actionId, classesUsed and reason}
+\tcp{state eligibility is independent of affordability; under UNKNOWN only an eligible Recover qualifies, never a Prep}
+$\mathrm{eligible}(t)\leftarrow(\Gamma.\mathrm{qStatus}=\texttt{UNKNOWN}\ ?\ (t.\mathrm{kind}=\mathrm{RECOVER}\wedge t.\mathrm{eligibleUnknown})\ :\ (t.\mathrm{kind}\neq\mathrm{RECOVER}\wedge t.\mathrm{enabledAt}=\Gamma.\mathrm{currentSummary}))$\;
+$A\leftarrow\{t\in L:\mathrm{eligible}(t)\}$\;
+\tcp{affordability is decided by IF-SELECT-ADMIT, not assumed from eligibility}
+\tcp{a global or per-TEST projection gap withholds TEST scoring and keeps the gap identity; it does not itself block eligible Prep/Recover}
+$\textit{testGap}\leftarrow\textbf{false}$\;
+\uIf{$\textit{pred}.\mathrm{status}=\texttt{GAP}$}{$C\leftarrow\{\}$; $\textit{testGap}\leftarrow\textbf{true}$\;}
+\uElse{
+  $C\leftarrow\{\mathcal C_t\}$ with $\mathcal C_t\leftarrow\{H\cap C:C\in\textit{pred}.\mathrm{classesByTest}[t],\ H\cap C\neq\varnothing\}$ for each TEST $t\in A$\;
+  \If{a TEST $t\in A$ has declared classes but $\mathcal C_t=\varnothing$}{
+    $C\leftarrow\{\}$\;
+    $\textit{testGap}\leftarrow\textbf{true}$\;
+  }
+}
+\tcp{IF-SELECT-ADMIT is the single admission authority: affordability and A1--A5; exclusive kind; one-step minimax $s(t)=\max_{C\in\mathcal C_t}|C|$ over currently valid nonempty classes of affordable distinguishing TESTs $D\cap F$ only; cost/id tie-break; never $\arg\min\varnothing$; Prep/Recover are not observation minimax; uninformative TESTs are not A2}
+$(k,S,t^\star,\textit{admit})\leftarrow$ \IFsel$(A,\Gamma.\mathrm{currentSummary},C,\Gamma,\eta,H)$\;
+\uIf{$k=\mathrm{ADMIT}$}{
+  \lIf{$\textit{testGap}$ and $\textit{admit}=\mathrm{A3}$}{\Return Decision$(\mathrm{kind}=\texttt{SPEC-ERROR},\mathrm{reason}=\textit{pred}.\mathrm{reason}$ or per-test prediction gap)}
+  \Return Decision$(\mathrm{kind}=\texttt{EXIT},\mathrm{reason}=\text{the A2--A5 admission reason})$\;
+}
+\uElseIf{$k=\mathrm{PREP}$}{\Return Decision$(\mathrm{kind}=\texttt{ACTION},\mathrm{actionKind}=\texttt{PREP},\mathrm{actionId}=t^\star,\mathrm{classesUsed}=S)$\;}
+\uElseIf{$k=\mathrm{RECOVER}$}{\Return Decision$(\mathrm{kind}=\texttt{ACTION},\mathrm{actionKind}=\texttt{RECOVER},\mathrm{actionId}=t^\star,\cdot)$\;}
+\uElseIf{$\textit{testGap}$}{\Return Decision$(\mathrm{kind}=\texttt{SPEC-ERROR},\mathrm{reason}=\textit{pred}.\mathrm{reason})$\;}
+\Return Decision$(\mathrm{kind}=\texttt{ACTION},\mathrm{actionKind}=\texttt{TEST},\mathrm{actionId}=t^\star,\mathrm{classesUsed}=\mathcal C_{t^\star})$\;
+\end{algorithm}

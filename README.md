@@ -42,6 +42,7 @@ silently redefine the Core.
 | Delivery position | current `M2` / next `M3` / disposition `ADOPT` |
 | Activation boundary | merge evidence `EXTERNAL-VERIFICATION-REQUIRED` / approval `NOT-AUTOMATED` |
 | Technical controls | [`source register`](configs/research/controlled_sources.json), [`activation control`](docs/control/changes/CR-2026-012.md), [`technical decisions`](docs/control/decisions/DESIGN_DECISIONS.md), [`M1 package`](configs/requirements/arinc_615a3_m1_crs.json), [`generated M1 review view`](docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md), [`M2 package`](configs/models/arinc_615a3_m2_model.json), [`generated M2 review view`](docs/control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md) |
+| Current CRS inventory | `ARINC615A3-M1-CRS` / `M1-CANDIDATE-25` / coverage 3153 / requirements 863 |
 | Third handshake | `COMPLETE` |
 | Compatibility | `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` under Q-01–Q-09 |
 | Project Configuration | `NOT YET ESTABLISHED` |
@@ -50,18 +51,16 @@ silently redefine the Core.
 
 ## Current increment
 
-**CL-TAV 645 bind, publication targeting and top-level algorithm/experiment specification**
+**CL-TAV algorithm decomposition, authority-derived status inventory and persisted source-disposition regression**
 
-- Record the bounded M2 ordinary merge as a preserved fact. That exit covers UPLOAD/INFORMATION only. This increment does not transplant that approval onto new CRS services and does not start M3.
-- Adopt CL-TAV as the successor research method (CR-2026-012 / DD-028). First-version algorithm direction was accepted 2026-09-14 in DD-029; that is not independent mathematical or RG approval.
-- Expand protocol CRS so INFORMATION, UPLOAD, Media Defined DOWNLOAD, Operator Defined DOWNLOAD, FIND and source-stated abort/reject/exception/retry obligations are audited. Conditional network variants stay separate from the current Compliant instance. ARINC 645-1 2021 is source- and semantically bound for 615A-triggered CRC, check-value and naming leaves. CRC-VALIDATION, CHECK-VALUE-VALIDATION, NAMING-ALGORITHM-VALIDATION and COMPLETE-INTEGRITY-VALIDATION remain NOT-ESTABLISHED.
-- Keep protocol CRS semantically complete in this PR, but write new rows only after source-unit audit. Tool requirements, verification specifications, interface/configuration contracts and development-ready acceptance belong to a later PR after this CRS is independently accepted. Old M2 does not automatically cover the new scope.
-- Specify publication targeting, 615A-triggered 645 SOURCE/SEMANTIC bind, top-level ALG-CLTAV-01 contracts and matching experiment architecture on the unique Draft PR (CR-2026-013 / DD-031–034). Current inventory is M1-CANDIDATE-25 with 3152 coverage / 862 requirements. The 615A Appendix E alternative remains open: apply Part 4 address rules or integrator-identified requirements. This does not select Part 4 automatically and does not activate AFDX. 665 section 2.3 in-scope leaves are emitted and not independently closed; CRC algorithm identity is source-bound and capability-open. RFC 1123 §4.2.3.2 IMPLEMENTATION exponential backoff stays informative under the adaptive-timeout MUST. instanceBoundOperations stay UPLOAD/INFORMATION; researchExpandedOperations are DOWNLOAD/FIND. Bound M2 still does not execute FIND, DOWNLOAD or AFDX (65 transitions, 30 observational timing rows). Method report §3.9.1–§3.9.2 records author-supplied conditional arguments and abstract interfaces; those arguments are not independent mathematical approval. This Draft candidate is not independent architecture, mathematical or RG approval.
+- Execute the two closure actions registered at the PR #16 acceptance. F-A derives the current CRS inventory in the status surface from the authoritative controlled package instead of a second hand-filled copy. F-B persists the PDF-30 adjacent-CRC source-disposition negatives and positive cases through the production checker.
+- Correct the CL-TAV presentation (F-C, review rounds R36/R37/R38/R39): the main text carries the top-level algorithm (ALG-CLTAV-01) and the three core mechanisms (selection ALG-CLTAV-05, timed observation ALG-CLTAV-06, history update ALG-CLTAV-07); the appendix carries the S2/S6/S7-S8 coordination wrappers (ALG-CLTAV-02/03/04), complete typed records, the responsibility map and the unresolved-kernel register. Admission scores only affordable distinguishing TESTs; global and local prediction gaps use the same Prep/Recover/A2-A5 admission table; the typeset package has no empty semicolon statements. Interfaces use explicit typed records and field access; the backend gap is branched on before projection; the timing kernel checks a nonempty measurement domain and distinct closed/open horizons; the S9 guard is an executable condition with total successor state; every Resolution variant adopts the returned context before branching and the history version is checked fail-closed. A bounded executable-call production model and an executable composition witness check the orchestration. The R40 finite fixture checks shared uncertainty input propagation through prediction, snapshot, interpretation and commit, including an interpretation-side mismatch rejection; it is not an implemented solver or physical uncertainty model. No candidate-update, stop, resource, retry or successor-summary semantics change.
+- Keep protocol CRS and M2 semantics unchanged: the CRS stays M1-CANDIDATE-25 with its declared inventory, the bound M2 stays UPLOAD/INFORMATION with 65 transitions and 30 observational timing rows, and the M2 input pin stays its recorded ancestor. No M3, no capability establishment, no Project Configuration, no baseline or tag.
 
 State changes:
 
-- Bounded M2 merge of PR #14 is recorded. M3 remains blocked. CR-2026-013 is the successor 645-bind / publication / algorithm-experiment-specification increment.
-- currentStop remains EXECUTABLE-FOUNDATION-GATE for M3 implementation. DD-029 first-version design direction was accepted 2026-09-14 and is not independent mathematical or RG approval.
+- F-A, F-B and F-C are delivered on one Draft PR under CR-2026-014 / DD-035 and DD-036; M3 remains blocked.
+- currentStop remains EXECUTABLE-FOUNDATION-GATE for M3 implementation.
 
 Unchanged boundaries:
 
@@ -93,6 +92,7 @@ Unchanged boundaries:
 | 交付位置 | 当前 `M2` / 下一 `M3` / 处置 `ADOPT` |
 | 激活边界 | 合并证据 `EXTERNAL-VERIFICATION-REQUIRED` / 批准 `NOT-AUTOMATED` |
 | 技术控制入口 | [`source register`](configs/research/controlled_sources.json), [`activation control`](docs/control/changes/CR-2026-012.md), [`technical decisions`](docs/control/decisions/DESIGN_DECISIONS.md), [`M1 package`](configs/requirements/arinc_615a3_m1_crs.json), [`generated M1 review view`](docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md), [`M2 package`](configs/models/arinc_615a3_m2_model.json), [`generated M2 review view`](docs/control/models/ARINC615A3_M2_MODEL_REVIEW_VIEW.md) |
+| 当前 CRS 清单 | `ARINC615A3-M1-CRS` / `M1-CANDIDATE-25` / coverage 3153 / requirements 863 |
 | 第三次握手 | `COMPLETE` |
 | 兼容性 | 受 Q-01～Q-09 限定的 `REVIEWED-COMPATIBLE-WITH-QUALIFICATION` |
 | Project Configuration | `NOT YET ESTABLISHED` |
@@ -101,18 +101,16 @@ Unchanged boundaries:
 
 ## 本次集成增量
 
-**CL-TAV 645 绑定、投稿定位与总体算法／实验规格**
+**CL-TAV 算法分解、权威派生状态清单与来源处置回归持久化**
 
-- 将有界 M2 普通合并作为保留事实记录。该出口只覆盖 UPLOAD／INFORMATION。本增量不把该批准移植到新 CRS 服务，也不启动 M3。
-- 以 CL-TAV 为后继研究方法（CR-2026-012／DD-028）。首版算法方向已于 2026-09-14 在 DD-029 接受；那不是独立数学或 RG 批准。
-- 扩大协议 CRS，使 INFORMATION、UPLOAD、Media Defined DOWNLOAD、Operator Defined DOWNLOAD、FIND 及来源已规定的中断／拒绝／异常／重试义务接受审计。条件化网络变体与当前 Compliant 实例分开。ARINC 645-1 2021 已按 615A 触发的 CRC、校验值与命名叶完成来源／语义绑定。CRC-VALIDATION、CHECK-VALUE-VALIDATION、NAMING-ALGORITHM-VALIDATION 与 COMPLETE-INTEGRITY-VALIDATION 仍为 NOT-ESTABLISHED。
-- 本 PR 的协议 CRS 必须语义正确且范围完整，但新行只能在来源单元审计之后撰写。工具需求、验证规格、接口／配置契约和开发就绪验收属于扩大 CRS 被独立接受之后的后继 PR。旧 M2 不会自动覆盖新范围。
-- 已在唯一 Draft PR 规格化投稿定位、615A 触发的 645 来源／语义绑定、ALG-CLTAV-01 总体契约与匹配实验架构（CR-2026-013／DD-031～034）。当前清单为 M1-CANDIDATE-25，3152 条 coverage／862 条需求。615A 附录 E 替代路径保持开放：适用第 4 部分地址规则，或集成商指明的要求。这不自动选定第 4 部分，也不激活 AFDX。665 §2.3 范围内叶已发出且未经独立闭合；CRC 算法身份已绑定来源且能力未建立。RFC 1123 §4.2.3.2 IMPLEMENTATION 指数退避仍作为自适应超时 MUST 下的说明性指导。instanceBoundOperations 仍为 UPLOAD／INFORMATION；researchExpandedOperations 为 DOWNLOAD／FIND。绑定 M2 仍不执行 FIND、DOWNLOAD 或 AFDX（65 个迁移，30 条观察时序）。方法报告 §3.9.1～§3.9.2 记录作者条件性论证与抽象接口；那些论证不是独立数学批准。本 Draft 候选不是独立架构、数学或 RG 批准。
+- 执行 PR #16 接受时登记的两项收尾动作。F-A 从权威受控包派生状态面的当前 CRS 清单，而不是第二份手填副本。F-B 经生产检查路径持久化 PDF 30 邻接 CRC 的来源处置负例与正例。
+- 修正 CL-TAV 呈现（F-C，评审轮 R36／R37／R38／R39）：正文承载总体算法（ALG-CLTAV-01）与三个核心机制（选择 ALG-CLTAV-05、时序观测 ALG-CLTAV-06、历史更新 ALG-CLTAV-07）；附录承载 S2／S6／S7-S8 协调包装（ALG-CLTAV-02/03/04）、完整类型记录、责任表与未实现内核登记。准入只为可负担且有区分的 TEST 评分；全局和局部预测缺口走同一 Prep／Recover／A2-A5 准入表；排版包不含空分号语句。接口使用显式类型记录与字段访问；后端缺口先分支再投影；时序内核检查非空测量域与区分开／闭上界；S9 守卫是可执行条件且后继状态总定义；所有 Resolution 变体在分支前采用返回上下文，历史版本 fail-closed 校验。受限可执行调用生产模型与可执行组合见证检查编排。R40 有限 fixture 检查共同不确定性输入经预测、快照、解释与提交的传递，以及解释端错配拒绝；它不是已实现求解器或物理不确定性模型。候选更新、停止、资源、重试与后继摘要语义均不变。
+- 协议 CRS 与 M2 语义不变：CRS 保持 M1-CANDIDATE-25 及其声明清单，绑定 M2 保持 UPLOAD／INFORMATION、65 迁移与 30 条观察时序，M2 输入钉保持既有祖先。不启动 M3，不建立能力，不建立 Project Configuration，不创建 baseline 或 tag。
 
 状态变化：
 
-- PR #14 的有界 M2 合并已记录。M3 保持阻塞。CR-2026-013 为后继 645 绑定／投稿／算法—实验规格增量。
-- 对 M3 实现而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。DD-029 首版设计方向已于 2026-09-14 接受，不是独立数学或 RG 批准。
+- F-A、F-B、F-C 在唯一 Draft PR 上以 CR-2026-014／DD-035、DD-036 交付；M3 保持阻塞。
+- 对 M3 实现而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。
 
 保持不变的边界：
 

@@ -1,0 +1,18 @@
+% ALG-CLTAV-02 — current-observation prediction wrapper (S2 of ALG-CLTAV-01).
+% Presentation of DD-029 / DD-033 / DD-036. The finite conservative prediction
+% backend is neither selected nor implemented; its tagged return is handled first.
+\begin{algorithm}[H]
+\caption{\textsc{PredictCurrent}: current-observation prediction wrapper (ALG-CLTAV-02, S2)}
+\label{alg:cltav-02}
+\SetKwInput{KwIn}{Require}
+\SetKwInput{KwOut}{Ensure}
+\KwIn{SessionContext $\Gamma$; HistoryHandle $\eta$; current $H$; uncertainty reference $U$; action library $L$}
+\KwOut{PredictionResult: status OK with nonempty classesByTest, or status GAP with a reason; the session's own $\eta$ is read, not rebuilt}
+$\textit{raw}\leftarrow$ \IFpred$(\Gamma,\eta,H,U,L)$\;
+\tcp{branch on the backend tag BEFORE reading or projecting classes; a GAP result carries no classesByTest}
+\uIf{$\textit{raw}.\mathrm{status}=\texttt{GAP}$}{\Return PredictionResult$(\mathrm{status}=\texttt{GAP},\mathrm{reason}=\textit{raw}.\mathrm{reason})$\;\tcp{the gap stays TEST-scoped}}
+$\textit{classes}\leftarrow\textsc{ProjectOntoCurrentH}(\textit{raw}.\mathrm{classes},H)$\;
+\tcp{a declared class set that projects to no nonempty class is the same named gap, not OK and not $score=0$}
+\uIf{$\textit{classes}$ has no nonempty member}{\Return PredictionResult$(\mathrm{status}=\texttt{GAP},\mathrm{reason}=\text{no currently valid class})$\;}
+\Return PredictionResult$(\mathrm{status}=\texttt{OK},\mathrm{classesByTest}=\textit{classes},\mathrm{historyVersionUsed}=\eta.\mathrm{version},\mathrm{uncertaintyRef}=U)$\;
+\end{algorithm}

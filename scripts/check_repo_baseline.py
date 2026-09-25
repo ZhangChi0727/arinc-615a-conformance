@@ -74,6 +74,17 @@ REPORT_PATH = METHODOLOGY_DIR / "RR-2026-001_test_analysis_conformance_methodolo
 METHOD_MATH_IDENTITY_PATH = METHODOLOGY_DIR / "rr_2026_001_revision_identity.json"
 SOURCE_AUDIT_PATH = ROOT / "configs/research/cltav_protocol_source_audit.json"
 CLTAV_PUML_DIR = RESEARCH / "publication" / "models"
+CLTAV_ALGORITHM_DIR = RESEARCH / "publication" / "algorithms"
+CLTAV_ALGORITHM_FILES = {
+    "ALG-CLTAV-01": "ALG-CLTAV-01.tex",
+    "ALG-CLTAV-05": "ALG-CLTAV-05-selection.tex",
+    "ALG-CLTAV-06": "ALG-CLTAV-06-timing.tex",
+    "ALG-CLTAV-07": "ALG-CLTAV-07-history.tex",
+    "ALG-CLTAV-02": "ALG-CLTAV-02.tex",
+    "ALG-CLTAV-03": "ALG-CLTAV-03.tex",
+    "ALG-CLTAV-04": "ALG-CLTAV-04.tex",
+    "ALG-CLTAV-APPENDIX": "CLTAV_ALGORITHM_APPENDIX.tex",
+}
 CLTAV_PUML_FILES = (
     "FIG-CL-TAV-01-context.puml",
     "FIG-CL-TAV-02-requirement-layers.puml",
@@ -1354,6 +1365,17 @@ def arinc_645_closure_errors(audit: dict, crs: dict, model: dict | None = None) 
     return errors
 
 
+def governed_source_errors(audit: dict, crs: dict, model: dict | None = None) -> list[str]:
+    """Governance aggregation for the controlled source package.
+
+    This is the single entry the baseline validator uses for the source audit and
+    the 615A-triggered 645 closure, so a persistence test can prove that a mutated
+    controlled input is collected by the normal governance path rather than by an
+    isolated helper.
+    """
+    return protocol_source_audit_errors(audit, crs) + arinc_645_closure_errors(audit, crs, model)
+
+
 def _load_cltav_registry(registry: dict | None = None) -> dict:
     if registry is not None:
         return registry
@@ -1375,15 +1397,281 @@ def _puml_edges(text: str) -> list[tuple[str, str, str]]:
     return edges
 
 
+# STABLE_INVARIANT: presentation layers and top-level control-flow relations of
+# the CL-TAV algorithm package (DD-036). These are structural, not lifecycle data.
+CLTAV_MODULE_IDS = (
+    "ALG-CLTAV-01",
+    "ALG-CLTAV-05",
+    "ALG-CLTAV-06",
+    "ALG-CLTAV-07",
+    "ALG-CLTAV-02",
+    "ALG-CLTAV-03",
+    "ALG-CLTAV-04",
+    "ALG-CLTAV-APPENDIX",
+)
+CLTAV_MAIN_PROCEDURES = (
+    "Initialize",
+    "EntryStop",
+    "PredictCurrent",
+    "SelectAndAdmit",
+    "SelectSnapshot",
+    "ChargeOnce",
+    "ExecuteAndRecord",
+    "InterpretOutcome",
+    "ResolveOutcome",
+    "CommitCompatibleUpdate",
+    "PostUpdateStop",
+)
+CLTAV_MODULE_PROCEDURES = {
+    "ALG-CLTAV-02": ("PredictCurrent",),
+    "ALG-CLTAV-03": ("InterpretOutcome",),
+    "ALG-CLTAV-04": ("ResolveOutcome",),
+    "ALG-CLTAV-05": ("SelectAndAdmit",),
+    "ALG-CLTAV-06": ("InterpretTimedObservation",),
+    "ALG-CLTAV-07": ("CommitCompatibleUpdate",),
+}
+
+
+def _algorithm_bodies(algorithm: str) -> str:
+    """Return every algorithm environment, so a decomposed package is checked as a whole."""
+    return "\n".join(
+        re.findall(r"\\begin\{algorithm\}.*?\\end\{algorithm\}", algorithm, re.S)
+    )
+
+
+def _cltav_presentation_errors(
+    algorithms: dict[str, str], main_body: str,
+) -> list[str]:
+    """Cross-file control-flow relations for the decomposed CL-TAV algorithm package."""
+    errors: list[str] = []
+    positions: list[tuple[int, str]] = []
+    for name in CLTAV_MAIN_PROCEDURES:
+        at = main_body.find(name)
+        if at < 0:
+            errors.append(f"top-level algorithm is missing procedure {name}")
+        else:
+            positions.append((at, name))
+    ordered = [name for _, name in sorted(positions)]
+    if ordered != [name for name in CLTAV_MAIN_PROCEDURES if name in ordered]:
+        errors.append("top-level procedure order differs from the specified control flow")
+    if "Finish" not in main_body:
+        errors.append("top-level algorithm is missing its Finish return")
+    predict = main_body.find("PredictCurrent")
+    select = main_body.find("SelectAndAdmit")
+    if predict < 0 or select < 0 or predict > select:
+        errors.append("PredictCurrent (IF-PRED-OBS) must be called before SelectAndAdmit (IF-SELECT-ADMIT)")
+    for module, procedures in CLTAV_MODULE_PROCEDURES.items():
+        text = algorithms.get(module, "")
+        for procedure in procedures:
+            if procedure not in text:
+                errors.append(f"{module} does not define {procedure}")
+    return errors
+
+
+def _strip_tex_comments(text: str) -> str:
+    """Remove TeX and algorithm2e comments so a name kept only in a comment is not a call."""
+    text = re.sub(r"(?<!\\)%.*", "", text)
+    pattern = re.compile(r"\\tcp\*?|\\tcc\*?")
+    out: list[str] = []
+    index = 0
+    while index < len(text):
+        match = pattern.search(text, index)
+        if not match:
+            out.append(text[index:])
+            break
+        out.append(text[index:match.start()])
+        cursor = match.end()
+        while cursor < len(text) and text[cursor] in " \t":
+            cursor += 1
+        if cursor < len(text) and text[cursor] == "{":
+            depth = 0
+            while cursor < len(text):
+                if text[cursor] == "{":
+                    depth += 1
+                elif text[cursor] == "}":
+                    depth -= 1
+                cursor += 1
+                if depth == 0:
+                    break
+        index = cursor
+    return "".join(out)
+
+
+def _cltav_executable_errors(algorithms: dict[str, str]) -> list[str]:
+    """Bounded executable-call model: statements, signatures, data flow and return branches.
+
+    Comment-only names (TeX percent comments and algorithm2e tcp/tcc), macro
+    definitions and captions do not satisfy these checks. Relations are checked,
+    not just keywords.
+    """
+    errors: list[str] = []
+    bodies = {
+        module: _strip_tex_comments(_algorithm_bodies(text))
+        for module, text in algorithms.items()
+    }
+    main = bodies.get("ALG-CLTAV-01", "")
+
+    if r"\textsc{ChargeOnce}(" not in main:
+        errors.append("top-level must charge once as an executable statement, not only a name in a comment")
+    obs_call = re.search(r"\\textsc\{InterpretOutcome\}\(([^)]*)\)", main)
+    if not obs_call or not all(
+        token in obs_call.group(1) for token in (r"\textit{er}", r"\xi", r"\Gamma", r"\eta")
+    ):
+        errors.append("InterpretOutcome must receive ExecutionResult, snapshot xi, Gamma and eta")
+    if r"\textit{dec}.\mathrm{actionId}" not in main:
+        errors.append("top-level must project the selected actionId from the Decision record")
+    if r"\textit{dec}.\mathrm{actionKind}" not in main:
+        errors.append("the snapshot action kind must come from the Decision actionKind")
+    if re.search(r"SelectSnapshot\}\(\s*\\textit\{dec\}\.\\mathrm\{kind\}", main):
+        errors.append("the snapshot must not use the ACTION/EXIT discriminant as the action kind")
+    if "is a valid observation class or $z.\\mathrm{summaryConfirmed}$ is true" not in main:
+        errors.append("the S9 guard must be an executable condition, not a comment")
+    if r"\Gamma\leftarrow\delta.\Gamma" not in main or r"\eta\leftarrow\delta.\eta" not in main:
+        errors.append("the top level must adopt the Resolution context before branching")
+    adopt_at = main.find(r"\Gamma\leftarrow\delta.\Gamma")
+    retry_at = main.find(r"\textbf{continue}")
+    if adopt_at < 0 or retry_at < 0 or adopt_at > retry_at:
+        errors.append("the Resolution context must be adopted before the RETRY continue")
+    if r"z\leftarrow\delta.\mathrm{outcome}" not in main:
+        errors.append("the top level must consume the normalized Resolution outcome")
+
+    alg02 = bodies.get("ALG-CLTAV-02", "")
+    if r"\textit{raw}.\mathrm{status}=\texttt{GAP}" not in alg02:
+        errors.append("PredictCurrent must branch on the backend tag before projection")
+    gap_at = alg02.find(r"\mathrm{status}=\texttt{GAP}")
+    proj_at = alg02.find("ProjectOntoCurrentH")
+    if gap_at < 0 or proj_at < 0 or gap_at > proj_at:
+        errors.append("PredictCurrent must branch on the gap tag before class projection")
+    if r"\Return PredictionResult$(\mathrm{status}=\texttt{GAP}" not in alg02:
+        errors.append("PredictCurrent must return a tagged gap result instead of projecting an error")
+
+    alg03 = bodies.get("ALG-CLTAV-03", "")
+    if r"z.\mathrm{effect}\leftarrow\textit{er}.\mathrm{effect}" not in alg03:
+        errors.append("InterpretOutcome must copy the executed effect into the Outcome")
+    if r"z.\mathrm{kind}\leftarrow\xi.\mathrm{actionKind}" not in alg03:
+        errors.append("InterpretOutcome must copy the snapshot action kind into the Outcome")
+    if r"z.\mathrm{summaryConfirmed}\leftarrow\textit{summaryConfirmed}" not in alg03:
+        errors.append("InterpretOutcome must take summaryConfirmed from the interpretation interface")
+    if re.search(r"\\mathrm\{summaryConfirmed\}\s*\\leftarrow\s*\\textbf\{true\}", alg03):
+        errors.append("InterpretOutcome must not default summaryConfirmed to true")
+    if r"z.\mathrm{effect}\leftarrow\textit{effectClass}" not in alg03:
+        errors.append("InterpretOutcome must propagate the interpretation effect class")
+    if r"\IFobs" not in alg03:
+        errors.append("InterpretOutcome must call IF-OBS-INTERPRET")
+    if r"\IFprep" not in alg03:
+        errors.append("InterpretOutcome must call IF-PREP-RECOVER for Prep and Recover")
+
+    alg04 = bodies.get("ALG-CLTAV-04", "")
+    if r"\mathrm{control}=\texttt{RETRY}" not in alg04:
+        errors.append("ResolveOutcome must return RETRY on the ERROR or unknown path")
+    if r"\Gamma'\leftarrow\Gamma" not in alg04:
+        errors.append("ResolveOutcome must initialize the returned context from Gamma")
+
+    alg05 = bodies.get("ALG-CLTAV-05", "")
+    if r"\IFsel" not in alg05:
+        errors.append("SelectAndAdmit must call IF-SELECT-ADMIT")
+    ifsel_at = alg05.find(r"\IFsel")
+    prep_return = alg05.find(r"\mathrm{actionKind}=\texttt{PREP}")
+    if prep_return >= 0 and ifsel_at >= 0 and prep_return < ifsel_at:
+        errors.append("SelectAndAdmit must not select Prep/Recover before IF-SELECT-ADMIT admission")
+    if "eligibleUnknown" not in alg05:
+        errors.append("SelectAndAdmit must state the UNKNOWN recovery eligibility")
+    return_at = alg05.find(r"\Return")
+    if return_at >= 0 and ifsel_at >= 0 and return_at < ifsel_at:
+        errors.append("SelectAndAdmit must not return a per-test gap before IF-SELECT-ADMIT admission")
+    pred_at = main.find("PredictCurrent")
+    select_at = main.find("SelectAndAdmit")
+    if pred_at >= 0 and select_at > pred_at and "Finish" in main[pred_at:select_at]:
+        errors.append("must not Finish a prediction gap before SelectAndAdmit admission")
+
+    alg06 = bodies.get("ALG-CLTAV-06", "")
+    if r"M\subseteq N_r" not in alg06 or r"\not\subseteq" in alg06:
+        errors.append("timed observation must apply the T5 containment relation")
+    if r"M=\varnothing" not in alg06:
+        errors.append("timed observation must reject an empty measurement domain as ERROR")
+    if r"\mathrm{lowerHorizon}>U_r" not in alg06 or r"\mathrm{lowerHorizon}\ge U_r" not in alg06:
+        errors.append("no-response must distinguish the closed and open upper bound")
+    if re.search(r"I_z\s*\\leftarrow", alg06):
+        errors.append("timed observation must not emit the candidate set as a timing verdict")
+
+    alg07 = bodies.get("ALG-CLTAV-07", "")
+    if r"H\cap z.I_z" not in alg07:
+        errors.append("history update must intersect H with the compatible set")
+    if re.search(r"H'?\s*\\leftarrow\s*z\.I_z", alg07):
+        errors.append("history update must not assign H = I_z")
+    if r"\Gamma'\leftarrow\Gamma" not in alg07:
+        errors.append("history update must initialize the returned context from Gamma")
+    if "precondition" not in alg07.lower():
+        errors.append("history update must declare the S9 guard as a precondition")
+    if "$z.\\mathrm{summaryConfirmed}$ is true" not in alg07:
+        errors.append("S9 must commit currentSummary only under the confirmed successor guard")
+    if r"\xi.\mathrm{historyVersion}\neq\eta.\mathrm{version}" not in alg07:
+        errors.append("history update must fail closed on a stale snapshot version")
+    if r"\mathrm{status}=\texttt{SPEC-ERROR}" not in alg07:
+        errors.append("history update must return a tagged SPEC-ERROR variant")
+    errors.extend(_cltav_typesetting_errors(algorithms))
+    return errors
+
+
+def _tcp_followed_by_semicolon(text: str) -> bool:
+    """True iff a line-ending \\tcp{...} is followed by an extra empty \\; statement."""
+    index = 0
+    while True:
+        match = re.search(r"\\tcp\{", text[index:])
+        if not match:
+            return False
+        brace = index + match.end() - 1
+        depth = 0
+        cursor = brace
+        while cursor < len(text):
+            if text[cursor] == "{":
+                depth += 1
+            elif text[cursor] == "}":
+                depth -= 1
+                if depth == 0:
+                    if re.match(r"\s*\\;", text[cursor + 1:]):
+                        return True
+                    break
+            cursor += 1
+        index = index + match.end()
+    return False
+
+
+def _cltav_typesetting_errors(algorithms: dict[str, str]) -> list[str]:
+    """Source-level publication gate: comment-then-empty-statement and empty numbered lines.
+
+    This does not require XeLaTeX. Isolated PDF semicolons are a local build check.
+    """
+    errors: list[str] = []
+    for module, text in algorithms.items():
+        if module == "ALG-CLTAV-APPENDIX":
+            continue
+        body = _algorithm_bodies(text)
+        if _tcp_followed_by_semicolon(body):
+            errors.append(f"{module} must not follow a tcp comment with an extra empty statement")
+        if re.search(r"\\lIf\{[^{}]*\}\{(?:[^{}]|\{[^{}]*\})*\\;\s*\}", body):
+            errors.append(f"{module} must not put an extra empty statement inside a one-line lIf")
+    return errors
+
+
 def cltav_algorithm_contract_errors(
-    algorithm: str,
+    algorithms: "dict[str, str] | str",
     experiment_puml: str,
     experiment_plan: str,
     registry: dict | None = None,
 ) -> list[str]:
-    """Unique interface registry, actual calls, and experiment record edges. Not a fairness proof."""
+    """Registry, cross-file interface calls, top-level control flow and experiment record edges."""
     errors: list[str] = []
+    if isinstance(algorithms, str):
+        algorithms = {"ALG-CLTAV-01": algorithms}
+    corpus = "\n".join(algorithms.values())
+    main_text = algorithms.get("ALG-CLTAV-01", "")
+    main_body = _algorithm_bodies(main_text)
+    corpus_bodies = _algorithm_bodies(corpus)
     spec = _load_cltav_registry(registry)
+    declared_modules = spec.get("presentationModules")
+    if declared_modules and set(algorithms) != set(declared_modules):
+        errors.append("algorithm package modules differ from the registry presentationModules")
     interfaces = spec.get("interfaces") or []
     experiment_ifs = spec.get("experimentInterfaces") or []
     if not isinstance(interfaces, list) or not interfaces:
@@ -1415,18 +1703,17 @@ def cltav_algorithm_contract_errors(
     handles = spec.get("sessionHandles") or {}
     if "HistoryHandle" not in handles or "SessionContext" not in handles:
         errors.append("CL-TAV registry is missing SessionContext or HistoryHandle")
-    body = _algorithm_body(algorithm)
     macros = {row.get("macro"): row.get("id") for row in interfaces if isinstance(row, dict) and row.get("macro")}
-    called = set(re.findall(r"\\(IF[a-z]+)", body))
+    called = set(re.findall(r"\\(IF[a-z]+)", corpus_bodies))
     for row in interfaces:
         if not isinstance(row, dict) or row.get("calledInAlgorithm") is not True:
             continue
         contract_id = row.get("id")
         macro = row.get("macro")
         if macro and macro not in called:
-            errors.append(f"main algorithm does not call {contract_id}")
-        if contract_id and contract_id not in algorithm:
-            errors.append(f"main algorithm is missing {contract_id}")
+            errors.append(f"presentation algorithms do not call {contract_id}")
+        if contract_id and contract_id not in corpus:
+            errors.append(f"algorithm package is missing {contract_id}")
         if contract_id and contract_id not in experiment_puml:
             errors.append(f"experiment architecture view is missing {contract_id}")
         if contract_id and contract_id not in experiment_plan:
@@ -1434,18 +1721,16 @@ def cltav_algorithm_contract_errors(
     declared = {row.get("id") for row in interfaces if isinstance(row, dict)} | {
         row.get("id") for row in experiment_ifs if isinstance(row, dict)
     }
-    for token in sorted(set(re.findall(r"IF-[A-Z0-9-]+", algorithm + "\n" + experiment_puml + "\n" + experiment_plan))):
+    for token in sorted(set(re.findall(r"IF-[A-Z0-9-]+", corpus + "\n" + experiment_puml + "\n" + experiment_plan))):
         if token not in declared:
             errors.append(f"undeclared interface call {token}")
-    for token in sorted(set(re.findall(r"IF-[A-Z0-9-]+", body))):
+    for token in sorted(set(re.findall(r"IF-[A-Z0-9-]+", corpus_bodies))):
         if token not in declared:
             errors.append(f"undeclared interface call {token}")
-    pred_pos = body.find("\\IFpred")
-    sel_pos = body.find("\\IFsel")
-    if pred_pos < 0 or sel_pos < 0 or pred_pos > sel_pos:
-        errors.append("IF-PRED-OBS must be called before IF-SELECT-ADMIT")
-    if "HistoryHandle" not in algorithm and r"\eta" not in algorithm:
-        errors.append("main algorithm is missing HistoryHandle")
+    if "HistoryHandle" not in corpus and r"\eta" not in corpus:
+        errors.append("algorithm package is missing HistoryHandle")
+    errors.extend(_cltav_presentation_errors(algorithms, main_body))
+    errors.extend(_cltav_executable_errors(algorithms))
     dataflow = spec.get("dataflow") or []
     if not any(row.get("from") == "IF-PRED-OBS" and row.get("to") == "IF-SELECT-ADMIT" for row in dataflow):
         errors.append("registry is missing predict-to-select dataflow")
@@ -1534,29 +1819,44 @@ def cltav_algorithm_contract_errors(
         dens = walk.get("denominators")
         if not isinstance(dens, list) or "attempt" not in dens:
             errors.append(f"{walk_id} must record attempt plus membership denominators")
-    errors.extend(_algorithm_effect_errors(algorithm, dataflow, interfaces, handles.get("SessionContext") or {}))
+    errors.extend(_algorithm_effect_errors(
+        corpus, dataflow, interfaces, handles.get("SessionContext") or {},
+        main_algorithm=main_text,
+    ))
     return errors
 
 
 def _algorithm_effect_errors(
-    algorithm: str, dataflow: list, interfaces: list, session_context: dict | None = None
+    algorithm: str, dataflow: list, interfaces: list, session_context: dict | None = None,
+    main_algorithm: str | None = None,
 ) -> list[str]:
-    """Select-time snapshot, successor summaries, and effect classes match the delivered S steps."""
+    """Select-time snapshot, successor summaries, and effect classes match the delivered S steps.
+
+    ``algorithm`` is the whole decomposed package; ``main_algorithm`` is the
+    top-level file whose body carries the loop order.
+    """
     errors: list[str] = []
-    body = algorithm.split("\\begin{algorithm}", 1)[-1]
+    body = _algorithm_bodies(algorithm)
+    main_body = _algorithm_bodies(main_algorithm) if main_algorithm is not None else body
     if "CONFIRMED-NOT-SENT" not in body or "UNKNOWN-EFFECT" not in body:
         errors.append("main algorithm must distinguish CONFIRMED-NOT-SENT from UNKNOWN-EFFECT")
     if "sole writer" not in body:
         errors.append("main algorithm must name the sole writer of KNOWN")
-    snap_at = body.find("qUsedAtSelect")
-    exec_at = body.find("\\IFexec")
-    if snap_at < 0 or exec_at < 0 or snap_at > exec_at:
+    if "qUsedAtSelect" not in main_body:
+        errors.append("top-level algorithm must freeze qUsedAtSelect in the select snapshot")
+    if "\\IFexec" not in body:
+        errors.append("algorithm package must call IF-EXECUTE-RECORD")
+    freeze_at = main_body.find("SelectSnapshot")
+    exec_at = main_body.find("ExecuteAndRecord")
+    if freeze_at < 0 or exec_at < 0 or freeze_at > exec_at:
         errors.append("select snapshot must be frozen before IF-EXECUTE-RECORD")
-    minimax_at = body.find("one-step minimax")
-    action_at = body.find("actionId")
-    if minimax_at < 0 or action_at < 0 or minimax_at > action_at:
+    if "one-step minimax" not in body:
+        errors.append("the selection contract must name the one-step minimax rule")
+    select_at = main_body.find("SelectAndAdmit")
+    action_at = main_body.find("actionId")
+    if select_at < 0 or action_at < 0 or select_at > action_at:
         errors.append("SelectSnapshot.actionId must be frozen only after final TEST minimax selection")
-    if "t^\\star\\leftarrow" in body:
+    if "t^\\star\\leftarrow" in main_body:
         errors.append("main algorithm must not replace tStar after IF-SELECT-ADMIT")
     match = re.search(r"\\IFhist\$\((.*?)\)\$", body, re.S)
     hist_call = match.group(1) if match else ""
@@ -1627,27 +1927,23 @@ def _algorithm_effect_errors(
     obs = next((row for row in interfaces if isinstance(row, dict) and row.get("id") == "IF-OBS-INTERPRET"), {})
     if not {"summaryConfirmed", "postSummary"}.issubset(set(obs.get("outputs") or [])):
         errors.append("IF-OBS-INTERPRET must return summaryConfirmed and postSummary")
-    obs_call = r"$(I_z,\textit{effect},\textit{summaryConfirmed},\textit{postSummary})\leftarrow$ \IFobs"
-    if obs_call not in body:
-        errors.append("main algorithm must bind IF-OBS-INTERPRET summaryConfirmed for normal TEST")
+    if "\\IFobs" not in body or "\\mathrm{verdict}=\\mathrm{INCONCLUSIVE}" not in body:
+        errors.append("the timed-observation contract must call IF-OBS-INTERPRET and apply the T5 interval verdict")
     prep = next((row for row in interfaces if isinstance(row, dict) and row.get("id") == "IF-PREP-RECOVER"), {})
     prep_outputs = set(prep.get("outputs") or [])
     if not {"targetConfirmed", "summaryConfirmed", "postSummary"}.issubset(prep_outputs):
         errors.append("IF-PREP-RECOVER must distinguish targetConfirmed from summaryConfirmed")
     if "summaryConfirmed=false" not in str(prep.get("failure") or ""):
         errors.append("IF-PREP-RECOVER must classify an unconfirmed Prep successor summary")
-    prep_escape = "($\\textit{kind}$ is Prep and $\\textit{prepResultEvaluated}$ and $\\textit{summaryConfirmed}$ is false)"
+    prep_escape = "($z.\\mathrm{kind}$ is Prep and $z.\\mathrm{prepResultEvaluated}$ and $z.\\mathrm{summaryConfirmed}$ is false)"
     if body.count(prep_escape) < 2:
         errors.append("unconfirmed Prep successor summary must enter S7")
     if "CONFIRMED-NOT-SENT" not in body or "prepResultEvaluated" not in body:
         errors.append("CONFIRMED-NOT-SENT must bypass unevaluated Prep confirmation")
-    commit_guard = (
-        r"\If{$\Gamma.\mathrm{qStatus}$ is KNOWN and $\textit{summaryConfirmed}$ is true "
-        r"and $\textit{postSummary}$ is confirmed}{"
-    )
-    commit_at = body.find(commit_guard)
-    commit_window = body[commit_at:commit_at + 220] if commit_at >= 0 else ""
-    if commit_at < 0 or r"\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}" not in commit_window:
+    compact = re.sub(r"\s+", "", body)
+    commit_guard = r"$z.\mathrm{summaryConfirmed}$istrue"
+    commit_assign = r"\Gamma'.\mathrm{currentSummary}\leftarrowz.\mathrm{postSummary}"
+    if commit_guard not in compact or commit_assign not in compact:
         errors.append("S9 must commit currentSummary only under the confirmed KNOWN successor guard")
     if "does not write" not in str(prep.get("stateEffect") or ""):
         errors.append("IF-PREP-RECOVER must not write session state")
@@ -3717,12 +4013,11 @@ def main() -> int:
     errors.extend(historical_methodology_math_errors())
     crs_package = json.loads(read(ROOT / "configs/requirements/arinc_615a3_m1_crs.json"))
     audit_package = json.loads(read(SOURCE_AUDIT_PATH))
-    errors.extend(protocol_source_audit_errors(audit_package, crs_package))
     m2_package = json.loads(read(ROOT / "configs/models/arinc_615a3_m2_model.json"))
-    errors.extend(arinc_645_closure_errors(audit_package, crs_package, m2_package))
+    errors.extend(governed_source_errors(audit_package, crs_package, m2_package))
     errors.extend(
         cltav_algorithm_contract_errors(
-            read(RESEARCH / "publication" / "algorithms" / "ALG-CLTAV-01.tex"),
+            {module: read(CLTAV_ALGORITHM_DIR / name) for module, name in CLTAV_ALGORITHM_FILES.items()},
             read(CLTAV_PUML_DIR / "FIG-CL-TAV-09-experiment-architecture.puml"),
             read(RESEARCH / "EXPERIMENT_PLAN.md"),
         )

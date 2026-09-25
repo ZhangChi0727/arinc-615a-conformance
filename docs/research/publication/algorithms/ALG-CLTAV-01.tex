@@ -1,6 +1,7 @@
-% ALG-CLTAV-01 — CL-TAV top-level process (typeset form of DD-029 / DD-033).
-% Not an executable engine. Interface IDs are the only call sites.
-% S0--S10 are stable logical duties, not line numbers, protocol states, or time indices.
+% ALG-CLTAV-01 — CL-TAV top-level session (presentation; DD-029 / DD-033 / DD-036).
+% Typed records and the responsibility map are in the appendix (Appendix A/C).
+% Not an executable engine; selects no solver technology.
+% S0--S10 are stable logical duties, not line numbers, protocol states or time indices.
 % Compile via ALG-CLTAV-01-wrapper.tex. Do not commit aux/log/out.
 \newcommand{\IFpred}{\texttt{IF-PRED-OBS}}
 \newcommand{\IFhist}{\texttt{IF-HIST-UPDATE}}
@@ -11,88 +12,45 @@
 \newcommand{\IFeq}{\texttt{IF-EQUIV}}
 \newcommand{\IFres}{\texttt{IF-RESOURCE-STOP}}
 
-\begin{algorithm}[ht]
+\begin{algorithm}[H]
 \caption{CL-TAV top-level session (ALG-CLTAV-01)}
 \label{alg:cltav-01}
 \SetKwInput{KwIn}{Require}
 \SetKwInput{KwOut}{Ensure}
-\KwIn{declared $H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}$; SessionContext $\Gamma$ (unique state); HistoryHandle $\eta$; resource mode BUDGET$(c_{\min},B)$ xor ROUNDS$(K_{\max})$; action library; measurement uncertainty}
+\KwIn{$H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}$; SessionContext $\Gamma$ (unique state); HistoryHandle $\eta$; exactly one resource mode BUDGET$(c_{\min},B)$ xor ROUNDS$(K_{\max})$; action library $L$; uncertainty reference $U$}
 \KwOut{stop class, final $H$, $\eta$, session trace; singleton $h_{\mathrm{normal}}$ is not protocol PASS}
-\tcp{\textbf{S0} $H\leftarrow H_0$; $q{:=}\Gamma.\mathrm{currentSummary}$, $\mathrm{retry}{:=}\Gamma.\mathrm{retryCount}$, $R_{\max}{:=}\Gamma.\mathrm{retryCap}$; $\Gamma.\mathrm{retryCount}{\leftarrow}0$; $\Gamma.\mathrm{qStatus}$ and $q$ UNKNOWN unless declared; $\eta$ empty. Decision index $k$, billed charges, and retry are distinct}
+\tcp{\textbf{S0} \textsc{Initialize}: state, candidates, history, resource, retry, uncertainty reference}
+$(\Gamma,\eta,H)\leftarrow\textsc{Initialize}(H_0,L,U,\text{resourcePolicy})$\;
 \While{true}{
-  \tcp{\textbf{S1} stop gate before prediction; an already decided stop returns here}
-  \lIf{\IFres$(\Gamma,H,\eta)$ already decided Admit A2--A5 or P1--P5}{\Return that stop, $H$, $\eta$, trace}
-  \tcp{\textbf{S2} predict before select; PredictionGapError is TEST-scoped}
-  $(\textit{pred},\mathcal{C})\leftarrow$ \IFpred$(\Gamma,\eta,H,\text{uncertainty},\text{library})$\;
-  \uIf{$\textit{pred}$ is PredictionGapError}{
-    TEST scoring unavailable; $\mathcal{C}\leftarrow\emptyset$\;
-    \lIf{Recover and Prep are not eligible from $\Gamma$}{\Return named prediction-gap; do not score empty $\mathcal{C}$ as remaining $\lvert H\rvert$}
+  \tcp{\textbf{S1} \textsc{EntryStop}: maps to the existing A2--A5 / P1--P5 decision table (Appendix C)}
+  $\textit{stop}\leftarrow$ \IFres$(\Gamma,H,\eta)$ with \IFeq$(\Gamma,H,\eta)$\;
+  \lIf{$\textit{stop}\neq\texttt{undecided}$}{\Return $\textsc{Finish}(\textit{stop},\Gamma,\eta,H)$}
+  \tcp{\textbf{S2} \textsc{PredictCurrent}: typed prediction; the gap tag is handled before any projection}
+  $\textit{pred}\leftarrow\textsc{PredictCurrent}(\Gamma,\eta,H,U,L)$\;
+  \tcp{\textbf{S3} \textsc{SelectAndAdmit}: GAP and OK share this admission; tagged exit or spec error returns with its reason}
+  $\textit{dec}\leftarrow\textsc{SelectAndAdmit}(\Gamma,\eta,H,L,\textit{pred})$\;
+  \lIf{$\textit{dec}.\mathrm{kind}\in\{\texttt{EXIT},\texttt{SPEC-ERROR}\}$}{\Return $\textsc{Finish}(\textit{dec}.\mathrm{reason},\Gamma,\eta,H)$}
+  \tcp{\textbf{S3-SNAP} \textsc{SelectSnapshot} freezes $\xi$ (actionId, actionKind, qUsedAtSelect, historyVersion, classesUsedAtSelect, uncertaintyRef); the action kind is $\textit{dec}.\mathrm{actionKind}$, never the exit/action discriminant}
+  $\xi\leftarrow\textsc{SelectSnapshot}(\textit{dec}.\mathrm{actionId},\ \textit{dec}.\mathrm{actionKind},\ \Gamma.\mathrm{currentSummary},\ \eta.\mathrm{version},\ \textit{dec}.\mathrm{classesUsed},\ U)$\;
+  \tcp{\textbf{S4} \textsc{ChargeOnce}: one charge under the selected mode; retry cap $\neq$ budget exhaustion}
+  $\Gamma\leftarrow\textsc{ChargeOnce}(\Gamma,\xi)$\;
+  \tcp{\textbf{S5} \textsc{ExecuteAndRecord}: execute the snapshot action exactly once}
+  $\textit{er}\leftarrow$ \IFexec$(\Gamma,\xi)$\;
+  \tcp{\textbf{S6} \textsc{InterpretOutcome}: ALG-CLTAV-03 coordinates; ALG-CLTAV-06 interprets timing}
+  $z\leftarrow\textsc{InterpretOutcome}(\textit{er},\xi,\Gamma,\eta,U)$\;
+  \tcp{\textbf{S7--S8} \textsc{ResolveOutcome}: a total Resolution; every variant consumes the same returned contexts}
+  $\delta\leftarrow\textsc{ResolveOutcome}(z,\xi,\Gamma,\eta)$\;
+  \tcp{adopt the returned context and the normalized outcome before branching; a RETRY must keep the incremented retry and UNKNOWN state}
+  $\Gamma\leftarrow\delta.\Gamma$; $\eta\leftarrow\delta.\eta$; $z\leftarrow\delta.\mathrm{outcome}$\;
+  \lIf{$\delta.\mathrm{control}=\texttt{STOP}$}{\Return $\textsc{Finish}(\delta.\mathrm{reason},\Gamma,\eta,H)$}
+  \lIf{$\delta.\mathrm{control}=\texttt{RETRY}$}{\textbf{continue} to S1 with the adopted context}
+  \tcp{\textbf{S9} the S9 guard is an executable condition: a valid observation or a confirmed successor summary}
+  \If{$z.I_z$ is a valid observation class or $z.\mathrm{summaryConfirmed}$ is true}{
+    $(\textit{status},\eta,H,\Gamma)\leftarrow\textsc{CommitCompatibleUpdate}(\xi,z,\Gamma,\eta,H)$\;
+    \lIf{$\textit{status}=\texttt{SPEC-ERROR}$}{\Return $\textsc{Finish}(\text{history version or intersection mismatch},\Gamma,\eta,H)$}
   }
-  $A\leftarrow$ currently enabled actions\;
-  \tcp{\textbf{S3} exclusive kind; empty $\mathcal{C}$ does not block eligible Recover or Prep}
-  $(\textit{kind},t^\star,S,\textit{admit})\leftarrow$ \IFsel$(A,\Gamma.\mathrm{currentSummary},\mathcal{C},\Gamma,\eta,H)$\;
-  \uIf{$\textit{kind}=\mathrm{ADMIT}$}{
-    \Return $\textit{admit}\in\{A2,A3,A4,A5\}$, $H$, $\eta$, trace\;
-  }
-  \uElseIf{$\textit{kind}=\mathrm{TEST}$}{
-    \lIf{$S=\emptyset$}{\Return named spec error; do not $\arg\min$ empty $S$}
-    $t^\star$ is the final one-step minimax action selected by \IFsel on currently valid nonempty classes $\mathcal{C}$ inside TEST-only $S$\;
-  }
-  \uElseIf{$\textit{kind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$}{
-    keep the Prep or Recover $t^\star$ named by \IFsel; do not enter TEST minimax\;
-  }
-  \Else{
-    \Return named spec error\;
-  }
-  \tcp{S3-SNAP freezes the final non-ADMIT action only after all selection rules}
-  $\textit{qUsedAtSelect}\leftarrow\Gamma.\mathrm{currentSummary}$; $\textit{histVer}\leftarrow\eta.\mathrm{version}$; $\textit{classesUsedAtSelect}\leftarrow\mathcal{C}$; $\textit{actionId}\leftarrow t^\star$\;
-  \tcp{\textbf{S4} charge once; retry cap $\neq$ budget exhaustion}
-  charge $t^\star$ once under the selected mode; refuse unadmitted issue\;
-  \tcp{\textbf{S5} execute; the effect class is returned}
-  $(\textit{record},\textit{effect})\leftarrow$ \IFexec$(\Gamma,t^\star)$\;
-  \tcp{\textbf{S6} interpret unless execute already returned an effect class}
-  $\textit{Iz}\leftarrow$ nil; $\textit{targetConfirmed}\leftarrow$ false; $\textit{summaryConfirmed}\leftarrow$ false; $\textit{prepResultEvaluated}\leftarrow$ false; $\textit{prepErr}\leftarrow$ nil\;
-  $\textit{postSummary}\leftarrow$ nil; $\textit{declaredTarget}\leftarrow$ nil; $\textit{evidence}\leftarrow$ nil\;
-  \eIf{$\textit{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{
-    skip interpret\;
-  }{
-    $(I_z,\textit{effect},\textit{summaryConfirmed},\textit{postSummary})\leftarrow$ \IFobs$(\Gamma,\textit{record})$\;
-  }
-  \If{$\textit{kind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$ and $\textit{effect}\notin\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{
-    $(\textit{targetConfirmed},\textit{summaryConfirmed},\textit{prepErr},\textit{declaredTarget},\textit{evidence},\textit{postSummary})\leftarrow$ \IFprep$(\Gamma,\eta,t^\star,\textit{record})$; $\textit{prepResultEvaluated}\leftarrow$ true\;
-    \tcp{\IFprep returns values; it does not write $\Gamma$ or $\eta$}
-  }
-  \uIf{$\textit{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$ or $\textit{prepErr}$ or ($\textit{kind}$ is Prep and $\textit{prepResultEvaluated}$ and $\textit{summaryConfirmed}$ is false) or ($t^\star$ is Recover and $\textit{prepResultEvaluated}$ and $\textit{targetConfirmed}$ is false)}{
-    \tcp{\textbf{S7} classify the effect; do not fold \texttt{CONFIRMED-NOT-SENT} into UNKNOWN}
-    do not exclude $H$\;
-    \uIf{$\textit{prepErr}$ or $\textit{effect}=\texttt{UNKNOWN-EFFECT}$ or ($\textit{kind}$ is Prep and $\textit{prepResultEvaluated}$ and $\textit{summaryConfirmed}$ is false)}{
-      mark $\eta$ conservative-unknown; $\Gamma.\mathrm{qStatus}\leftarrow$ UNKNOWN; clear $\Gamma.\mathrm{currentSummary}$\;
-    }
-    \uElseIf{$\textit{effect}=\texttt{CONFIRMED-NOT-SENT}$}{
-      leave $\Gamma.\mathrm{qStatus}$ and compatible history unchanged\;
-    }
-    \Else{
-      \tcp{unconfirmed Recover target}
-      $\Gamma.\mathrm{qStatus}$ stays UNKNOWN; clear $\Gamma.\mathrm{currentSummary}$; mark $\eta$ conservative-unknown\;
-    }
-    $\Gamma.\mathrm{retryCount}\leftarrow\Gamma.\mathrm{retryCount}+1$\;
-    \lIf{$\Gamma.\mathrm{retryCount}\ge\Gamma.\mathrm{retryCap}$}{\Return Stop-Error; this is not A5/Stop-Budget}
-    continue after the one charge\;
-  }
-  \uElseIf{$t^\star$ is Recover}{
-    \tcp{\textbf{S8} sole writer of KNOWN$(declaredTarget,evidence)$}
-    $\Gamma.\mathrm{qStatus}\leftarrow$ KNOWN$(\textit{declaredTarget},\textit{evidence})$\;
-    $\textit{postSummary}\leftarrow(\textit{declaredTarget},\textit{evidence})$\;
-  }
-  \If{$I_z$ is a valid observation class or $\textit{summaryConfirmed}$ is true}{
-    \tcp{\textbf{S9} history reads the select snapshot; this is the sole commit of a confirmed successor summary}
-    $(\eta,H)\leftarrow$ \IFhist$(\eta,H,t^\star,\textit{qUsedAtSelect},\textit{classesUsedAtSelect},I_z,\textit{postSummary})$\;
-    \If{$\Gamma.\mathrm{qStatus}$ is KNOWN and $\textit{summaryConfirmed}$ is true and $\textit{postSummary}$ is confirmed}{
-      $\Gamma.\mathrm{currentSummary}\leftarrow\textit{postSummary}$\;
-    }
-  }
-  \tcp{\textbf{S10} exclusive P-stops; if none, the next iteration starts at S1}
-  let $\sigma\leftarrow$ first of Stop-Empty, Stop-Singleton, Stop-645, Stop-Equivalent, Stop-Budget via \IFres$(\Gamma,H,\eta)$ and \IFeq$(\Gamma,H,\eta)$\;
-  \lIf{$\sigma$ is set}{\Return $\sigma$, $H$, $\eta$, and the trace}
+  \tcp{\textbf{S10} \textsc{PostUpdateStop}: existing post-update stop priority; otherwise the next iteration is S1}
+  $\textit{stop}\leftarrow$ \IFres$(\Gamma,H,\eta)$ with \IFeq$(\Gamma,H,\eta)$\;
+  \lIf{$\textit{stop}\neq\texttt{undecided}$}{\Return $\textsc{Finish}(\textit{stop},\Gamma,\eta,H)$}
 }
 \end{algorithm}

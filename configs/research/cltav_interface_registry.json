@@ -3,7 +3,17 @@
   "id": "CLTAV-INTERFACE-REGISTRY",
   "artifactId": "CLTAV-INTERFACE-REGISTRY",
   "changeRequest": "CR-2026-013",
-  "authority": "This file is the structural interface specification. Method tables, ALG-CLTAV-01 calls and FIG-CL-TAV-09 ports must match it. It is not a solver choice and not a source-faithfulness proof.",
+  "authority": "This file is the structural interface specification. Method tables, the CL-TAV algorithm presentation package and FIG-CL-TAV-09 ports must match it. It is not a solver choice and not a source-faithfulness proof.",
+  "presentationModules": [
+    "ALG-CLTAV-01",
+    "ALG-CLTAV-05",
+    "ALG-CLTAV-06",
+    "ALG-CLTAV-07",
+    "ALG-CLTAV-02",
+    "ALG-CLTAV-03",
+    "ALG-CLTAV-04",
+    "ALG-CLTAV-APPENDIX"
+  ],
   "sessionHandles": {
     "SessionContext": {
       "id": "SessionContext",
@@ -32,7 +42,7 @@
     "SelectSnapshot": {
       "id": "SelectSnapshot",
       "holder": "iteration",
-      "fields": ["qUsedAtSelect", "historyVersionUsedAtSelect", "classesUsedAtSelect", "actionId"],
+      "fields": ["qUsedAtSelect", "historyVersionUsedAtSelect", "classesUsedAtSelect", "actionId", "actionKind", "uncertaintyRef"],
       "immutableForIteration": true,
       "writtenBy": "S3-SNAP after IF-SELECT-ADMIT has determined the final non-ADMIT action and before charge, execute, interpret, or IF-PREP-RECOVER",
       "notPostEffectState": true,
@@ -59,8 +69,8 @@
       "inputs": ["A", "q", "currentlyValidNonemptyClasses", "SessionContext", "HistoryHandle", "H"],
       "outputs": ["kind", "tStar", "S", "admitA2A5"],
       "pre": "one resource mode declared; prediction for this iteration already produced",
-      "guarantee": "kind is exclusive TEST, PREP, RECOVER or ADMIT; tStar is the final action, including the one-step TEST minimax and tie rule; nonempty A is not executable S; never argmin empty TEST set; Prep/Recover are not scored as observation minimax; empty C does not force A3 when Recover or Prep is eligible",
-      "failure": "no currently valid class: named prediction-gap for TEST only, not A3 when Recover/Prep remains eligible",
+      "guarantee": "kind is exclusive TEST, PREP, RECOVER or ADMIT; tStar is the final action, including the one-step TEST minimax and tie rule over affordable distinguishing TESTs only; uninformative TESTs are not A2; nonempty A is not executable S; never argmin empty TEST set; Prep/Recover are not scored as observation minimax; a global or per-TEST projection gap withholds TEST scoring and then applies the same Prep/Recover/A2-A5 table; empty C does not force A3 when Recover or Prep is eligible",
+      "failure": "no currently valid class or a per-TEST empty current projection: named prediction-gap that withholds TEST scoring; not A3 when Recover/Prep remains eligible; KNOWN with no fallback is SPEC-ERROR, not A3; UNKNOWN A4/A5/Recover are independent of a TEST prediction gap",
       "stateEffect": "does not charge; does not update HistoryHandle",
       "successorClose": "scheduler and data structures"
     },
@@ -82,7 +92,7 @@
       "macro": "IFobs",
       "calledInAlgorithm": true,
       "inputs": ["SessionContext", "executionRecord", "clocks", "epsilon"],
-      "outputs": ["Iz", "effectClass", "summaryConfirmed", "postSummary"],
+      "outputs": ["Iz", "effectClass", "summaryConfirmed", "postSummary", "ownershipResult", "measurementInterval"],
       "effectClassValues": ["NONE", "CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"],
       "pre": "record belongs to this session",
       "guarantee": "T5 interval treatment; pairing per method 3.6; every normal observation returns explicit summaryConfirmed with its postSummary. A normal confirmed observation returns summaryConfirmed=true and a confirmed successor postSummary, possibly unchanged",
@@ -106,7 +116,7 @@
       "id": "IF-HIST-UPDATE",
       "macro": "IFhist",
       "calledInAlgorithm": true,
-      "inputs": ["HistoryHandle", "H", "tStar", "qUsedAtSelect", "classesUsedAtSelect", "valid Iz", "postSummary"],
+      "inputs": ["HistoryHandle", "H", "tStar", "qUsedAtSelect", "classesUsedAtSelect", "historyVersion", "valid Iz", "postSummary"],
       "outputs": ["HistoryHandlePrime", "Hprime", "Stop-Empty"],
       "pre": "valid observation class or summaryConfirmed=true successor postSummary; not an effect-class retry",
       "guarantee": "advance from the select-time snapshot; whole-history path; no resurrection; HistoryHandlePrime is the next IF-PRED-OBS input; qUsedAtSelect is SelectSnapshot, not the post-effect currentSummary; postSummary is a different field. A confirmed Prep with no valid Iz advances operation history and preserves H",
