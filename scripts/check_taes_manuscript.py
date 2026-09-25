@@ -5,6 +5,8 @@ import hashlib
 import json
 import os
 import re
+import shutil
+import subprocess
 from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -113,6 +115,14 @@ def file_sha256(path: Path) -> str:
 
 
 def _pdf_pages(path: Path) -> int:
+    pdfinfo = shutil.which("pdfinfo")
+    if pdfinfo:
+        result = subprocess.run(
+            [pdfinfo, str(path)], capture_output=True, text=True, check=False
+        )
+        match = re.search(r"^Pages:\s+(\d+)\s*$", result.stdout, re.MULTILINE)
+        if result.returncode == 0 and match:
+            return int(match.group(1))
     data = path.read_bytes()
     return len(re.findall(rb"/Type\s*/Page(?!s)", data))
 
