@@ -1321,10 +1321,19 @@ def test_negative_per_test_gap_return_before_admit_is_rejected() -> None:
 def test_negative_stale_version_accepted_is_rejected() -> None:
     errors = _contract(_mutate(
         "ALG-CLTAV-07",
-        r"\lIf{$\xi.\mathrm{historyVersion}\neq\eta.\mathrm{version}$}{\Return UpdateResult$(\mathrm{status}=\texttt{SPEC-ERROR},\eta,H,\Gamma',\mathrm{reason}=\text{history version mismatch})$\;}",
+        r"\lIf{$\xi.\mathrm{historyVersion}\neq\eta.\mathrm{version}$}{\Return UpdateResult$(\mathrm{status}=\texttt{SPEC-ERROR},\eta,H,\Gamma',\mathrm{reason}=\text{history version mismatch})$}",
         "",
     ))
     assert any("stale snapshot version" in item for item in errors)
+
+
+def test_negative_tcp_then_empty_statement_is_rejected() -> None:
+    errors = _contract(_mutate(
+        "ALG-CLTAV-01",
+        r"$\Gamma\leftarrow\textsc{ChargeOnce}(\Gamma,\xi)$\;",
+        r"$\Gamma\leftarrow\textsc{ChargeOnce}(\Gamma,\xi)$\;\tcp{billed once}\;",
+    ))
+    assert any("tcp comment with an extra empty statement" in item for item in errors)
 
 
 def test_negative_charge_once_as_tcp_is_rejected() -> None:

@@ -1609,6 +1609,48 @@ def _cltav_executable_errors(algorithms: dict[str, str]) -> list[str]:
         errors.append("history update must fail closed on a stale snapshot version")
     if r"\mathrm{status}=\texttt{SPEC-ERROR}" not in alg07:
         errors.append("history update must return a tagged SPEC-ERROR variant")
+    errors.extend(_cltav_typesetting_errors(algorithms))
+    return errors
+
+
+def _tcp_followed_by_semicolon(text: str) -> bool:
+    """True iff a line-ending \\tcp{...} is followed by an extra empty \\; statement."""
+    index = 0
+    while True:
+        match = re.search(r"\\tcp\{", text[index:])
+        if not match:
+            return False
+        brace = index + match.end() - 1
+        depth = 0
+        cursor = brace
+        while cursor < len(text):
+            if text[cursor] == "{":
+                depth += 1
+            elif text[cursor] == "}":
+                depth -= 1
+                if depth == 0:
+                    if re.match(r"\s*\\;", text[cursor + 1:]):
+                        return True
+                    break
+            cursor += 1
+        index = index + match.end()
+    return False
+
+
+def _cltav_typesetting_errors(algorithms: dict[str, str]) -> list[str]:
+    """Source-level publication gate: comment-then-empty-statement and empty numbered lines.
+
+    This does not require XeLaTeX. Isolated PDF semicolons are a local build check.
+    """
+    errors: list[str] = []
+    for module, text in algorithms.items():
+        if module == "ALG-CLTAV-APPENDIX":
+            continue
+        body = _algorithm_bodies(text)
+        if _tcp_followed_by_semicolon(body):
+            errors.append(f"{module} must not follow a tcp comment with an extra empty statement")
+        if re.search(r"\\lIf\{[^{}]*\}\{(?:[^{}]|\{[^{}]*\})*\\;\s*\}", body):
+            errors.append(f"{module} must not put an extra empty statement inside a one-line lIf")
     return errors
 
 

@@ -47,7 +47,7 @@ $(\Gamma,\eta,H)\leftarrow\textsc{Initialize}(H_0,L,U,\text{resourcePolicy})$\;
   \tcp{\textbf{S9} the S9 guard is an executable condition: a valid observation or a confirmed successor summary}
   \If{$z.I_z$ is a valid observation class or $z.\mathrm{summaryConfirmed}$ is true}{
     $(\textit{status},\eta,H,\Gamma)\leftarrow\textsc{CommitCompatibleUpdate}(\xi,z,\Gamma,\eta,H)$\;
-    \lIf{$\textit{status}=\texttt{SPEC-ERROR}$}{\Return $\textsc{Finish}(\text{history version or intersection mismatch},\Gamma,\eta,H)$\;}
+    \lIf{$\textit{status}=\texttt{SPEC-ERROR}$}{\Return $\textsc{Finish}(\text{history version or intersection mismatch},\Gamma,\eta,H)$}
   }
   \tcp{\textbf{S10} \textsc{PostUpdateStop}: existing post-update stop priority; otherwise the next iteration is S1}
   $\textit{stop}\leftarrow$ \IFres$(\Gamma,H,\eta)$ with \IFeq$(\Gamma,H,\eta)$\;

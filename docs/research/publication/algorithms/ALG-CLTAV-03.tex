@@ -21,13 +21,13 @@ $z.\mathrm{validity}\leftarrow\mathrm{timing}.\mathrm{verdict}$; $z.I_z\leftarro
 \tcp{Prep/Recover confirmation runs BEFORE the effect is finalized, so a confirmed actual successor is not overwritten by an earlier UNKNOWN}
 \If{$\xi.\mathrm{actionKind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$}{
   $z.\mathrm{prepResultEvaluated}\leftarrow\textbf{true}$; $(z.\mathrm{targetConfirmed},\textit{summaryConfirmed},z.\mathrm{prepErr},z.\mathrm{declaredTarget},z.\mathrm{evidence},\textit{postSummary})\leftarrow$ \IFprep$(\Gamma,\eta,\xi.\mathrm{actionId},\textit{er}.\mathrm{record})$\;
-  \tcp{\IFprep returns values only; it does not write $\Gamma$ or $\eta$}
+  \tcp{\IFprep{} returns values only; it does not write $\Gamma$ or $\eta$}
 }
 $z.\mathrm{summaryConfirmed}\leftarrow\textit{summaryConfirmed}$; $z.\mathrm{postSummary}\leftarrow\textit{postSummary}$\;
 \tcp{one effect decision table: propagate the interpretation effect class; an unconfirmed successor or target becomes UNKNOWN-EFFECT}
 \uIf{$\textit{effectClass}=\texttt{UNKNOWN-EFFECT}$ or $z.\mathrm{prepErr}$ or ($\xi.\mathrm{actionKind}$ is Prep and $z.\mathrm{prepResultEvaluated}$ and not $\textit{summaryConfirmed}$) or ($\xi.\mathrm{actionKind}$ is Recover and $z.\mathrm{prepResultEvaluated}$ and not $z.\mathrm{targetConfirmed}$) or ($\textit{effectClass}=\texttt{NONE}$ and not $\textit{summaryConfirmed}$)}{
   $z.\mathrm{effect}\leftarrow\texttt{UNKNOWN-EFFECT}$\;
 }
-\Else{$z.\mathrm{effect}\leftarrow\textit{effectClass}$; \tcp{a confirmed normal TEST/Prep/Recover keeps the interpretation effect class}\;}
-\Return $z$; \tcp{values only; all $\Gamma$/$\eta$ writes stay in ALG-CLTAV-04 and S9}
+\Else{$z.\mathrm{effect}\leftarrow\textit{effectClass}$\;\tcp{a confirmed normal TEST/Prep/Recover keeps the interpretation effect class}}
+\Return $z$\;\tcp{values only; all $\Gamma$/$\eta$ writes stay in ALG-CLTAV-04 and S9}
 \end{algorithm}
