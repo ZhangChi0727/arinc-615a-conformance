@@ -1,18 +1,17 @@
 \section{Results}
 \label{sec:results}
 
-This section is organised by research question. No effect direction,
-percentage, significance or superiority is reported. Each reserved panel
-states its axes, units, denominator and completion condition.
+No effect direction, percentage or superiority is reported.
 
 \subsection{CL-RQ2: verdict reliability}
 \begin{figure}[!t]
 \centering
-\phboxhigh{PH-RES-DETECT}{EXPERIMENT-RESULT}{Axes: arm \(\times\) miss / false-FAIL /
-abstain rate. Unit: proportion. Denominator: confirmed, non-equivalent
-attempts after IF-EXP-FILTER. Source: EXP-CLTAV-DETECT. Complete when a
-registered confirmatory run writes metric cells with attempt and answered
-subset counts.}
+\phboxhigh{PH-RES-DETECT}{EXPERIMENT-RESULT}{Separate cells, not one shared
+denominator: (i) attempt coverage on all registered attempts; (ii) refusal
+rate (abstain/INCONCLUSIVE/unconcluded among attempts); (iii) conditional
+error on the answered subset; (iv) miss and false-FAIL on the detection
+denominator after invalid and equivalent faults are removed. Abstain is not a
+PASS/FAIL. Source: EXP-CLTAV-DETECT.}
 \caption{Reserved detection panel. Not a result.}
 \label{fig:res-detect}
 \end{figure}
@@ -20,30 +19,33 @@ subset counts.}
 \subsection{CL-RQ2: isolation}
 \begin{figure}[!t]
 \centering
-\phboxhigh{PH-RES-LOCATE}{EXPERIMENT-RESULT}{Axes: arm \(\times\) final \(|H|\),
-true-fault retention, unanswered. Unit: count or proportion. Denominator:
-confirmed in-domain injections. Source: EXP-CLTAV-LOCATE. Complete when
-localization cells exist and no arm received evaluator truth.}
+\phboxhigh{PH-RES-LOCATE}{EXPERIMENT-RESULT}{Cells: final \(|H|\), true-fault
+exclusion, refusal, charged resource. Denominator: confirmed in-domain
+injections. Out-of-domain faults are reported separately. Singleton
+\(h_{\mathrm{normal}}\) is not protocol PASS. Source: EXP-CLTAV-LOCATE.}
 \caption{Reserved localization panel. Not a result.}
 \label{fig:res-locate}
 \end{figure}
 
 \subsection{CL-RQ3: cost and sensitivity}
 \begin{table}[!t]
-\caption{Reserved cost and ablation cells. Entries stay blank.}
+\caption{Reserved ablation cells. CL-A is computation-only; N/A cells are not
+silent omissions. FIND-abort waiver is a forbidden control.}
 \label{tab:res-ablation}
 \centering
-\begin{tabular}{@{}lccc@{}}
+\scriptsize
+\begin{tabular}{@{}lcccc@{}}
 \hline
-Cell & CL-T & CL-TA & CL-LOOP \\
+Cell & CL-T & CL-A & CL-TA & CL-LOOP \\
 \hline
-Charged actions & --- & --- & --- \\
-Prep/Recover/retry share & --- & --- & --- \\
-No-feedback ablation & --- & --- & --- \\
+Charged projection & \(c_{\mathrm{acq}}\) & \(c_{\mathrm{comp}}\) & split & actual \\
+No-feedback contrast & yes & N/A & yes & reference \\
+Prep/Recover uncharged & if run & N/A & if run & contrast \\
+Interval vs point stamp & --- & --- & --- & contrast \\
+FIND-abort waiver & forbidden & forbidden & forbidden & forbidden \\
 \hline
 \end{tabular}
 \end{table}
-\phbox{PH-RES-ABLATION}{EXPERIMENT-RESULT}{Table~\ref{tab:res-ablation} columns
-are arms; units are charged counts and shares of the selected resource mode.
-Source: EXP-CLTAV-ABLATION. Complete when ablation cells are filled from the
-same scenes as DETECT/LOCATE and common-error risks are named.}
+\phbox{PH-RES-ABLATION}{EXPERIMENT-RESULT}{Table~\ref{tab:res-ablation} uses the
+registered ablation factors, not a generic ``disable cost accounting.'' Complete
+when parent DETECT/LOCATE cells exist on the same scenes.}

@@ -24,6 +24,9 @@
   ],
   "algorithms": [
     {"paperLabel": "alg:cltav-01", "stableId": "ALG-CLTAV-01", "source": "alg_compact_01.tex", "authority": "docs/research/publication/algorithms/ALG-CLTAV-01.tex"},
+    {"paperLabel": "alg:cltav-02", "stableId": "ALG-CLTAV-02", "source": "docs/research/publication/algorithms/ALG-CLTAV-02.tex", "where": "supplement"},
+    {"paperLabel": "alg:cltav-03", "stableId": "ALG-CLTAV-03", "source": "docs/research/publication/algorithms/ALG-CLTAV-03.tex", "where": "supplement"},
+    {"paperLabel": "alg:cltav-04", "stableId": "ALG-CLTAV-04", "source": "docs/research/publication/algorithms/ALG-CLTAV-04.tex", "where": "supplement"},
     {"paperLabel": "alg:cltav-05", "stableId": "ALG-CLTAV-05", "source": "docs/research/publication/algorithms/ALG-CLTAV-05-selection.tex", "where": "supplement"},
     {"paperLabel": "alg:cltav-06", "stableId": "ALG-CLTAV-06", "source": "docs/research/publication/algorithms/ALG-CLTAV-06-timing.tex", "where": "supplement"},
     {"paperLabel": "alg:cltav-07", "stableId": "ALG-CLTAV-07", "source": "docs/research/publication/algorithms/ALG-CLTAV-07-history.tex", "where": "supplement"}

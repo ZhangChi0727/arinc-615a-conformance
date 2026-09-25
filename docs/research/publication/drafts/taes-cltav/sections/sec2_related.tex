@@ -2,50 +2,57 @@
 \label{sec:related}
 
 \subsection{Selective comparison}
-Table~\ref{tab:related} compares nearby methods on five attributes required by
-CL-RQ1--CL-RQ3. ``Not the stated object'' means the cited paper does not
-develop that contract; it is not a proof of impossibility. Full-text access
-gaps are listed as PH-LIT-ACCESS rather than turned into negative capability
-claims.
+Table~\ref{tab:related} scores five CL-RQ attributes against the cited paper's
+\emph{stated} object. ``NS'' means the attribute is not developed in that
+text. It is not a laboratory incapability claim. No paywalled method detail is
+used for a denial.
 
-\begin{table}[!t]
-\caption{Selective comparison. Entries are about the cited paper's stated object.}
+\begin{table}[!ht]
+\caption{CL-RQ attributes versus stated objects. NS: not the stated object.}
 \label{tab:related}
 \centering
-\begin{tabular}{@{}p{0.20\columnwidth}p{0.70\columnwidth}@{}}
+\scriptsize
+\setlength{\tabcolsep}{2.4pt}
+\begin{tabular}{@{}lccccc@{}}
 \hline
-Work & Stated object relative to this paper \\
+Work & FB & $U$ & Fin & P/R & E$\neq$F \\
 \hline
-Tretmans~\cite{tretmans1996} & Implementation relation and test generation from LTS; not residual isolation under a charged verification budget. \\
-Chow~\cite{chow1978}, Fujiwara~\textit{et al.}~\cite{fujiwara1991} & FSM covering sequences; no measurement-uncertainty partition shared by prediction and interpretation. \\
-Petrenko~\textit{et al.}~\cite{petrenko2016} & Constraint solving and mutant killing for FSMs. \\
-Jia and Harman~\cite{jia2011} & Mutation adequacy, not session-level Prep/Recover or \texttt{ERROR} versus IUT FAIL. \\
-Yang~\textit{et al.}~\cite{yang2025} & Requirements-based generation survey; obligation coverage is not a closed diagnostic loop. \\
-Li~\textit{et al.}~\cite{li2021} & Model-based testing of networked applications; not ARINC 615A integrity residuals. \\
-Alur and Dill~\cite{alur1994} & Timed automata theory used as a timing vocabulary, not as an implemented solver. \\
+Tretmans~\cite{tretmans1996} & NS & NS & NS & NS & NS \\
+Chow~\cite{chow1978} & NS & NS & NS & NS & NS \\
+Fujiwara~\textit{et al.}~\cite{fujiwara1991} & NS & NS & NS & NS & NS \\
+Petrenko~\textit{et al.}~\cite{petrenko2016} & NS & NS & NS & NS & NS \\
+Jia and Harman~\cite{jia2011} & NS & NS & NS & NS & NS \\
+Yang~\textit{et al.}~\cite{yang2025} & NS & NS & NS & NS & NS \\
+Li~\textit{et al.}~\cite{li2021} & NS & NS & NS & NS & NS \\
+Alur and Dill~\cite{alur1994} & NS & theory & NS & NS & NS \\
 \hline
 \end{tabular}
 \end{table}
 
-\phbox{PH-LIT-ACCESS}{LITERATURE-ACCESS}{If a later negative comparison needs a
-paywalled method detail that cannot be obtained through the institution, that
-citation stays unused for the specific denial.}
+Support for ``NS'': Tretmans develops an LTS implementation relation and test
+generation, not a charged isolation session~\cite{tretmans1996}. Chow and
+Fujiwara~\textit{et al.}\ develop FSM covering sequences~\cite{chow1978,fujiwara1991}.
+Petrenko~\textit{et al.}\ develop constraint solving and mutant killing~\cite{petrenko2016}.
+Jia and Harman survey mutation adequacy~\cite{jia2011}. Yang~\textit{et al.}\
+survey requirements-based generation~\cite{yang2025}. Li~\textit{et al.}\ treat
+model-based testing of networked applications~\cite{li2021}. Alur and Dill
+supply timed-automaton vocabulary used here as timing language, not as a
+deployed solver~\cite{alur1994}.
+\phbox{PH-LIT-ACCESS}{LITERATURE-ACCESS}{A later denial that needs a paywalled
+detail is not made until AUTH-LIT obtains that text.}
 
 \subsection{Verification objects}
-The implementation under test (IUT) is a 615A data-loading endpoint. The bound
-protocol model remains UPLOAD and INFORMATION~\cite{arinc615a3}. Research
-coverage of FIND, DOWNLOAD and conditional AFDX is a CRS fact; it is not
-implemented behaviour and not an experimental arm.
+The IUT is a 615A data-loading endpoint. The bound protocol model is UPLOAD
+and INFORMATION~\cite{arinc615a3}. FIND, DOWNLOAD and conditional AFDX appear
+in the CRS; they are not implemented behaviour and not an experimental arm.
 
-The first-version candidate set is
-\(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\).
+Candidates are \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\).
 An observable summary \(q\) is known or unknown. Observation classes are
-projected onto the current \(H\). Measurement uncertainty follows the GUM
-vocabulary~\cite{jcgm100,jcgm106}: a declared conservative outer set \(U\), not
-an estimated physical error model. Resource is exactly one mode:
-BUDGET\((c_{\min},B)\) or ROUNDS\((K_{\max})\), never a logical OR of both.
+projected onto current \(H\). Measurement uncertainty is a declared
+conservative outer set \(U\) in the GUM sense~\cite{jcgm100,jcgm106}, not an
+estimated physical error model. Resource is exactly one mode:
+BUDGET\((c_{\min},B)\) or ROUNDS\((K_{\max})\).
 
-A 615A-triggered 645 identity and semantic bind exists for CRC, check-value and
-naming leaves~\cite{arinc6451}. Four integrity capabilities remain
-not established. Stop-645 therefore names a remaining 645-dependent obligation,
-not a missing file.
+A 615A-triggered 645 bind covers CRC, check-value and naming
+leaves~\cite{arinc6451}. Integrity capabilities remain unestablished.
+Stop-645 names a remaining 645-dependent obligation, not a missing file.

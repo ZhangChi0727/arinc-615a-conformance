@@ -1,26 +1,37 @@
-% Compact display of ALG-CLTAV-01. Same duties and interfaces as the
-% authoritative module; not a second control algorithm.
+% Compact display of ALG-CLTAV-01. Typed calls and S9 wrapper are required.
+% This is an abstraction of the accepted module, not a second loop.
+% Mapping: paper Alg.~1 $\leftrightarrow$ ALG-CLTAV-01; wrappers in the supplement.
 \begin{algorithm}[t]
-\caption{CL-TAV top-level session (paper Alg.~1 = ALG-CLTAV-01)}
+\caption{CL-TAV top-level session (paper Alg.~1 $=$ ALG-CLTAV-01)}
 \label{alg:cltav-01}
+\SetAlgoLined
+\SetAlFnt{\scriptsize}
+\SetAlCapFnt{\scriptsize}
+\SetAlCapNameFnt{\scriptsize}
 \SetKwInput{KwIn}{Require}
 \SetKwInput{KwOut}{Ensure}
-\KwIn{\(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\); \(\Gamma\); \(\eta\); one mode BUDGET\((c_{\min},B)\) xor ROUNDS\((K_{\max})\); library \(L\); uncertainty \(U\)}
-\KwOut{stop class, final \(H\), \(\eta\), trace; singleton \(h_{\mathrm{normal}}\) is not protocol PASS}
-\textsc{Initialize}; \While{true}{
-  \lIf{\IFres{} already decided}{\Return that stop}
-  \(\textit{pred}\leftarrow\textsc{PredictCurrent}\) via \IFpred\;
-  \(\textit{dec}\leftarrow\textsc{SelectAndAdmit}\) via \IFsel\;
-  \lIf{\(\textit{dec}\) is EXIT or SPEC-ERROR}{\Return its reason}
-  freeze snapshot \(\xi\) (action, \(q_{\mathrm{used}}\), history version, classes)\;
-  charge \(\xi\) once; \(\textit{er}\leftarrow\) \IFexec\((\Gamma,\xi)\)\;
-  \(z\leftarrow\textsc{InterpretOutcome}\) via \IFobs{} and ALG-CLTAV-06\;
-  \(\delta\leftarrow\textsc{ResolveOutcome}\); adopt returned \((\Gamma,\eta,z)\)\;
-  \lIf{\(\delta=\texttt{STOP}\)}{\Return reason}
-  \lIf{\(\delta=\texttt{RETRY}\)}{\textbf{continue}}
-  \If{\(z\) has valid \(I_z\) or a confirmed successor summary}{
-    commit via \IFhist{} from \(\xi\), not from the post-effect \(q\)\;
+\KwIn{$H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}$; $\Gamma$; $\eta$; one mode BUDGET$(c_{\min},B)$ xor ROUNDS$(K_{\max})$; $L$; $U$}
+\KwOut{stop class, final $H$, $\eta$, trace; singleton $h_{\mathrm{normal}}$ is not protocol PASS}
+$(\Gamma,\eta,H)\leftarrow\textsc{Initialize}(H_0,L,U,\text{resourcePolicy})$\;
+\While{true}{
+  $\textit{stop}\leftarrow$ \IFres$(\Gamma,H,\eta)$ with \IFeq$(\Gamma,H,\eta)$\;
+  \lIf{$\textit{stop}\neq\texttt{undecided}$}{\Return $\textsc{Finish}(\textit{stop},\Gamma,\eta,H)$}
+  $\textit{pred}\leftarrow\textsc{PredictCurrent}(\Gamma,\eta,H,U,L)$\;
+  $\textit{dec}\leftarrow\textsc{SelectAndAdmit}(\Gamma,\eta,H,L,\textit{pred})$\;
+  \lIf{$\textit{dec}.\mathrm{kind}\in\{\texttt{EXIT},\texttt{SPEC-ERROR}\}$}{\Return $\textsc{Finish}(\textit{dec}.\mathrm{reason},\Gamma,\eta,H)$}
+  $\xi\leftarrow\textsc{SelectSnapshot}(\textit{dec}.\mathrm{actionId},$
+  $\textit{dec}.\mathrm{actionKind},\Gamma.\mathrm{currentSummary},\eta.\mathrm{version},\textit{dec}.\mathrm{classesUsed},U)$\;
+  $\Gamma\leftarrow\textsc{ChargeOnce}(\Gamma,\xi)$; $\textit{er}\leftarrow$ \IFexec$(\Gamma,\xi)$\;
+  $z\leftarrow\textsc{InterpretOutcome}(\textit{er},\xi,\Gamma,\eta,U)$\;
+  $\delta\leftarrow\textsc{ResolveOutcome}(z,\xi,\Gamma,\eta)$\;
+  $\Gamma\leftarrow\delta.\Gamma$; $\eta\leftarrow\delta.\eta$; $z\leftarrow\delta.\mathrm{outcome}$\;
+  \lIf{$\delta.\mathrm{control}=\texttt{STOP}$}{\Return $\textsc{Finish}(\delta.\mathrm{reason},\Gamma,\eta,H)$}
+  \lIf{$\delta.\mathrm{control}=\texttt{RETRY}$}{\textbf{continue} to S1 with adopted $\Gamma,\eta$}
+  \If{$z.I_z$ valid or $z.\mathrm{summaryConfirmed}$}{
+    $(\textit{status},\eta,H,\Gamma)\leftarrow\textsc{CommitCompatibleUpdate}(\xi,z,\Gamma,\eta,H)$\;
+    \lIf{$\textit{status}=\texttt{SPEC-ERROR}$}{\Return $\textsc{Finish}(\text{version/intersection mismatch},\Gamma,\eta,H)$}
   }
-  \lIf{a P-stop is set}{\Return it}
+  $\textit{stop}\leftarrow$ \IFres$(\Gamma,H,\eta)$ with \IFeq$(\Gamma,H,\eta)$\;
+  \lIf{$\textit{stop}\neq\texttt{undecided}$}{\Return $\textsc{Finish}(\textit{stop},\Gamma,\eta,H)$}
 }
 \end{algorithm}

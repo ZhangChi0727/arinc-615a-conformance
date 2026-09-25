@@ -2,48 +2,46 @@
 \label{sec:intro}
 
 Airborne software loaders exchange INFORMATION and UPLOAD traffic under declared
-timers, file identities and operator actions~\cite{arinc615a3}. A single missed
-or late acknowledgement, a mismatched Load File, or an unresolved integrity
-check can be read as a protocol failure, a measurement artefact, or an
-unconfirmed injection. The engineering problem is therefore not only whether a
-fixed suite eventually reports PASS, but whether a later legal action can be
-chosen from residual ambiguity under a finite resource.
+timers, file identities and operator actions~\cite{arinc615a3}. A missed or late
+acknowledgement, a mismatched Load File, or an unresolved integrity check can
+be a protocol failure, a measurement artefact, or an unconfirmed injection.
+The engineering question is whether a later legal action can be chosen from
+residual ambiguity under a finite resource.
+
+This paper studies Closed-Loop Test--Analysis Verification (CL-TAV). Three
+reader questions are used throughout:
+\begin{itemize}
+\item CL-RQ1 (loop consistency): do prediction, interpretation and candidate
+update stay mutually consistent under one uncertainty reference?
+\item CL-RQ2 (comparative effect): under the same budget and denominators, does
+the closed loop change detection or isolation relative to Test-only,
+Analysis-only and fixed Test-then-Analysis arms?
+\item CL-RQ3 (uncertainty and stopping): how do interval timing, \texttt{ERROR},
+Prep/Recover and exclusive stops affect those comparisons?
+\end{itemize}
+
+Two propositions are evaluated, not asserted as established results. C1 is
+uncertainty-aware interpretation, timing verdicts and compatible update
+(CL-RQ1). C2 is feeding residual ambiguity into the next exclusive action with
+explicit resource, Prep/Recover, \texttt{ERROR} and stop rules (CL-RQ2/3).
 
 Requirements-based generation organises stimuli from obligations~\cite{yang2025}.
 Conformance relations such as \emph{ioco} generate tests from labelled
-transition systems~\cite{tretmans1996}. FSM coverage and mutant killing select
+transition systems~\cite{tretmans1996}. FSM covering and mutant killing select
 discriminating sequences~\cite{chow1978,fujiwara1991,petrenko2016,jia2011}.
-Those methods address detection or selection. They do not, as stated, close an
-observation--update--select loop that treats preparatory actions, unknown-effect
-\texttt{ERROR}, and exclusive finite stops as first-class objects. That is a
-scope comparison, not a claim that those methods cannot be extended.
+Section~\ref{sec:related} compares those stated objects with CL-RQ1--CL-RQ3.
+The comparison is not a proof that those methods cannot be extended.
 
-This paper specifies Closed-Loop Test--Analysis Verification (CL-TAV) for
-ARINC~615A data loading under timing uncertainty. The question to be answered
-experimentally is: under a declared protocol, fault domain, measurement
-uncertainty and resource mode, does test--analysis feedback improve verdict
-reliability and isolation at an interpretable cost? Two propositions are
-evaluated, not asserted as established results:
-\begin{itemize}
-\item C1: uncertainty-aware interpretation, timing verdicts and compatible
-candidate update stay mutually consistent.
-\item C2: residual ambiguity feeds the next action with explicit resource,
-Prep/Recover, \texttt{ERROR} and stop rules.
-\end{itemize}
+The evaluation uses four arms (CL-T, CL-A, CL-TA, CL-LOOP) and three registered
+families (DETECT, LOCATE, ABLATION). Confirmatory numbers are not available.
+\phbox{PH-ABS-RESULT}{EXPERIMENT-RESULT}{Abstract and conclusion improvement
+statements remain empty until registered runs exist.}
 
-The evaluation plan uses four arms (CL-T, CL-A, CL-TA, CL-LOOP) and three
-registered families (DETECT, LOCATE, ABLATION). Confirmatory numbers are not
-available; Section~\ref{sec:results} reserves the result layout.
-\phbox{PH-ABS-RESULT}{AUTHOR-INPUT / EXPERIMENT-RESULT}{Abstract and conclusion
-improvement statements remain empty until registered runs exist.}
-
-Section~\ref{sec:related} states the problem objects.
-Section~\ref{sec:arch} separates protocol CRS, tool requirements and the two
-machines.
-Section~\ref{sec:method} gives the loop and conditional properties.
+Section~\ref{sec:related} defines the objects.
+Section~\ref{sec:arch} separates CRS layers and the two machines.
+Section~\ref{sec:method} gives the loop, update and T5 mathematics.
 Section~\ref{sec:setup} freezes the comparison contract.
-Sections~\ref{sec:results}--\ref{sec:concl} hold results, limits and the
-unfinished experimental sentence.
-The supplement records ALG-CLTAV-05/06/07, wrappers and the S0--S10 map.
-The paper Algorithm numbers are display labels; the stable repository IDs are
-unchanged.
+Sections~\ref{sec:results}--\ref{sec:concl} reserve results and limits.
+The separately compiled supplement typesets wrappers ALG-CLTAV-02/03/04, core
+mechanisms 05/06/07, typed records and the A/P decision tables. Paper Algorithm
+numbers are display labels; stable ALG-IDs are unchanged.
