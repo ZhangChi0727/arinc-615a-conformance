@@ -19,8 +19,9 @@ $(\Gamma,\eta,H)\leftarrow\textsc{Initialize}(H_0,L,U,\text{resourcePolicy})$\;
   $\textit{pred}\leftarrow\textsc{PredictCurrent}(\Gamma,\eta,H,U,L)$\;
   $\textit{dec}\leftarrow\textsc{SelectAndAdmit}(\Gamma,\eta,H,L,\textit{pred})$\;
   \lIf{$\textit{dec}.\mathrm{kind}\in\{\texttt{EXIT},\texttt{SPEC-ERROR}\}$}{\Return $\textsc{Finish}(\textit{dec}.\mathrm{reason},\Gamma,\eta,H)$}
-  $\xi\leftarrow\textsc{SelectSnapshot}(\textit{dec}.\mathrm{actionId},$
-  $\textit{dec}.\mathrm{actionKind},\Gamma.\mathrm{currentSummary},\eta.\mathrm{version},\textit{dec}.\mathrm{classesUsed},U)$\;
+  $\xi\leftarrow\textsc{SelectSnapshot}(\textit{dec};\Gamma,\eta,U)$\;
+  $\xi=(\mathrm{id},\mathrm{kind},q_{\mathrm{used}},v_\eta,C,U)$\;
+  $\mathrm{kind}=\xi.\mathrm{actionKind}$; $C=\xi.\mathrm{classesUsedAtSelect}$\;
   $\Gamma\leftarrow\textsc{ChargeOnce}(\Gamma,\xi)$; $\textit{er}\leftarrow$ \IFexec$(\Gamma,\xi)$\;
   $z\leftarrow\textsc{InterpretOutcome}(\textit{er},\xi,\Gamma,\eta,U)$\;
   $\delta\leftarrow\textsc{ResolveOutcome}(z,\xi,\Gamma,\eta)$\;
@@ -28,8 +29,9 @@ $(\Gamma,\eta,H)\leftarrow\textsc{Initialize}(H_0,L,U,\text{resourcePolicy})$\;
   \lIf{$\delta.\mathrm{control}=\texttt{STOP}$}{\Return $\textsc{Finish}(\delta.\mathrm{reason},\Gamma,\eta,H)$}
   \lIf{$\delta.\mathrm{control}=\texttt{RETRY}$}{\textbf{continue} to S1 with adopted $\Gamma,\eta$}
   \If{$z.I_z$ valid or $z.\mathrm{summaryConfirmed}$}{
-    $(\textit{status},\eta,H,\Gamma)\leftarrow\textsc{CommitCompatibleUpdate}(\xi,z,\Gamma,\eta,H)$\;
-    \lIf{$\textit{status}=\texttt{SPEC-ERROR}$}{\Return $\textsc{Finish}(\text{version/intersection mismatch},\Gamma,\eta,H)$}
+    $\textit{upd}\leftarrow\textsc{CommitCompatibleUpdate}(\xi,z;\chi)$\;
+    $(\textit{status},\eta,H,\Gamma)\leftarrow\textit{upd}$\;
+    \lIf{$\textit{status}=\texttt{SPEC-ERROR}$}{\Return \texttt{Stop-SpecError}}
   }
   $\textit{stop}\leftarrow$ \IFres$(\Gamma,H,\eta)$ with \IFeq$(\Gamma,H,\eta)$\;
   \lIf{$\textit{stop}\neq\texttt{undecided}$}{\Return $\textsc{Finish}(\textit{stop},\Gamma,\eta,H)$}

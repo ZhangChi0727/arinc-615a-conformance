@@ -3,7 +3,8 @@
 
 Protocol CRS, tool requirements and experiment requirements stay in separate
 layers. Row count does not prove a method. A concrete owned trace is source
-unit \texttt{SU-ARINC-615A-3-SECTION-6-3-2-SEQUENCE-CHART-A-E007-7726A816FFE7}
+unit \texttt{SU-ARINC-615A-3-SECTION-6-3-2-}\allowbreak
+\texttt{SEQUENCE-CHART-A-E007-7726A816FFE7}
 \(\to\) CRS-M1-00365/00366/00367 \(\to\) LUR write-order constraint \(\to\)
 planned Test/Analysis verification case \(\to\) later tool module. The IDs are
 real bound-M1 identifiers. \texttt{satisfy}/\texttt{verify} in the SysML view
@@ -17,7 +18,7 @@ port, produces the compatible class \(I_z\) and hypothesis survivors.
 
 \begin{figure}[!ht]
 \centering
-\begin{tikzpicture}[font=\scriptsize,box/.style={draw,align=center,inner sep=2pt,text width=0.88\columnwidth}]
+\begin{tikzpicture}[scale=0.76,transform shape,font=\scriptsize,box/.style={draw,align=center,inner sep=2pt,text width=0.88\columnwidth}]
 \node[box] (iut) at (0,4.4) {IUT / \(M_{\mathrm{prot}}\): UPLOAD + INFORMATION};
 \node[box] (adp) at (0,3.3) {adapter / clocks: stimulus out, raw record back};
 \node[box] (sess) at (0,2.2) {\(M_{\mathrm{sess}}\): predict, select, charge, execute};

@@ -16,7 +16,8 @@ TEST-scoped.
 Algorithm~\ref{alg:cltav-01} is a typed abstraction of ALG-CLTAV-01. Wrappers
 \textsc{PredictCurrent}, \textsc{InterpretOutcome} and
 \textsc{ResolveOutcome} are ALG-CLTAV-02/03/04 in the supplement. S9 calls
-\textsc{CommitCompatibleUpdate} (ALG-CLTAV-07), which validates the history
+\textsc{CommitCompatibleUpdate} (ALG-CLTAV-07), with
+\(\chi=(\Gamma,\eta,H)\), which validates the history
 version, applies \IFhist{} from \(\xi\), returns
 \((\textit{status},\eta,H,\Gamma)\) and commits a confirmed successor summary.
 A bare \IFhist{} call is not that wrapper. Resolution is branched on

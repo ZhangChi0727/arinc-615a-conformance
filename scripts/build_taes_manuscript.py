@@ -30,7 +30,13 @@ def _which(name: str) -> str | None:
 
 
 def _run(cmd: list[str], cwd: Path, env: dict, log: Path) -> None:
-    proc = subprocess.run(cmd, cwd=cwd, env=env, capture_output=True, text=True)
+    # TeX engines can emit UTF-8 diagnostics even when the Windows console
+    # default is cp1252.  Build logging must not turn a successful/failed TeX
+    # invocation into an unrelated decoder crash.
+    proc = subprocess.run(
+        cmd, cwd=cwd, env=env, capture_output=True, text=True,
+        encoding="utf-8", errors="replace",
+    )
     previous = log.read_text(encoding="utf-8") if log.is_file() else ""
     log.write_text(previous + (proc.stdout or "") + (proc.stderr or ""), encoding="utf-8")
     if proc.returncode != 0:
@@ -71,6 +77,27 @@ def _log_has_fatal(log: Path) -> list[str]:
     return errors
 
 
+def _final_layout_errors(cwd: Path, jobs: tuple[str, ...]) -> list[str]:
+    """Reject layout and reference diagnostics from the final TeX pass.
+
+    The combined command log contains expected first-pass citation work, so it
+    is not suitable for this check.  Each final ``<job>.log`` is overwritten by
+    its final pdflatex pass and is therefore the artifact-relevant diagnostic.
+    """
+    errors: list[str] = []
+    for job in jobs:
+        path = cwd / f"{job}.log"
+        text = path.read_text(encoding="utf-8", errors="replace") if path.is_file() else ""
+        if not text:
+            errors.append(f"final {job} TeX log is missing")
+            continue
+        if "Overfull \\hbox" in text or "Overfull \\vbox" in text:
+            errors.append(f"final {job} TeX log reports an overfull box")
+        if "There were undefined references" in text or "undefined citations" in text:
+            errors.append(f"final {job} TeX log reports unresolved references")
+    return errors
+
+
 def main() -> int:
     if not DRAFT.is_dir():
         raise SystemExit("manuscript directory is missing")
@@ -96,7 +123,7 @@ def main() -> int:
     _compile("supplementary", STAGE, log)
     staged_main = STAGE / "main.pdf"
     staged_supp = STAGE / "supplementary.pdf"
-    problems = _log_has_fatal(log)
+    problems = _log_has_fatal(log) + _final_layout_errors(STAGE, ("main", "supplementary"))
     if staged_main.stat().st_size < 1000 or staged_supp.stat().st_size < 1000:
         problems.append("compiled PDF is empty or truncated")
     if problems:
