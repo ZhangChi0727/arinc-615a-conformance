@@ -292,7 +292,7 @@ def _if_branch(text: str, required_condition: str) -> str | None:
                     break
             else:
                 break
-        if len(groups) == 2 and required_condition in groups[0]:
+        if len(groups) == 2 and re.sub(r"\s+", "", groups[0]) == required_condition:
             return groups[1]
         start = text.find(r"\If", start + 3)
     return None
@@ -301,7 +301,9 @@ def _if_branch(text: str, required_condition: str) -> str | None:
 def _display_errors(s2: str, s6: str) -> list[str]:
     errors: list[str] = []
     raw_s2 = _strip_comments(s2)
-    s2_branch = _if_branch(raw_s2, r"\xi.\mathrm{actionKind}\in")
+    s2_branch = _if_branch(
+        raw_s2, r"$\xi.\mathrm{actionKind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$"
+    )
     s2 = re.sub(r"\s+", "", raw_s2)
     raw_s6 = _strip_comments(s6)
     branches = _eif_branches(raw_s6)
