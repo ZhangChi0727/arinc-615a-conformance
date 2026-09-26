@@ -99,26 +99,29 @@ def _final_layout_errors(cwd: Path, jobs: tuple[str, ...]) -> list[str]:
     return errors
 
 
+def _stage_closure(stage: Path) -> None:
+    """Copy the checker-resolved closure using the paths TeX resolves in stage."""
+    for source in CHECK.source_closure():
+        try:
+            relative = source.relative_to(DRAFT)
+            target = stage / (source.name if relative.parts[0] == "vendor" else relative)
+        except ValueError:
+            try:
+                source.relative_to(ALG_DIR)
+                target = stage / source.name
+            except ValueError:
+                continue  # build-control files are hashed but not TeX inputs
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
+
+
 def main() -> int:
     if not DRAFT.is_dir():
         raise SystemExit("manuscript directory is missing")
     if STAGE.exists():
         shutil.rmtree(STAGE)
     STAGE.mkdir(parents=True)
-    for name in ("main.tex", "supplementary.tex", "references.bib", "macros.tex", "alg_compact_01.tex", "supp_alg03_display.tex", "supp_alg07_display.tex"):
-        shutil.copy2(DRAFT / name, STAGE / name)
-    shutil.copytree(DRAFT / "sections", STAGE / "sections")
-    shutil.copy2(VENDOR / "IEEEtaes.cls", STAGE / "IEEEtaes.cls")
-    shutil.copy2(VENDOR / "IEEEtaes.bst", STAGE / "IEEEtaes.bst")
-    for alg in (
-        "ALG-CLTAV-02.tex",
-        "ALG-CLTAV-03.tex",
-        "ALG-CLTAV-04.tex",
-        "ALG-CLTAV-05-selection.tex",
-        "ALG-CLTAV-06-timing.tex",
-        "ALG-CLTAV-07-history.tex",
-    ):
-        shutil.copy2(ALG_DIR / alg, STAGE / alg)
+    _stage_closure(STAGE)
     log = STAGE / "compile.log"
     _compile("main", STAGE, log)
     _compile("supplementary", STAGE, log)

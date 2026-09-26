@@ -199,7 +199,7 @@ def _display_errors(s2: str, s6: str) -> list[str]:
     errors: list[str] = []
     s2 = re.sub(r"\s+", "", _strip_comments(s2))
     s6 = re.sub(r"\s+", "", _strip_comments(s6))
-    if "\\eIf{" not in s6 or "H'\\leftarrowH" not in s6:
+    if "\\eIf{$z.I_z$isavalidcompatibleclass}{" not in s6 or "H'\\leftarrowH" not in s6:
         errors.append("derived S6 must preserve explicit valid/identity branches")
     if s6.count("\\IFhist") != 2:
         errors.append("derived S6 must invoke exactly one history update per branch")
