@@ -229,6 +229,15 @@ def test_rejects_s9_guard_inversion_and_display_contract_mutations() -> None:
     assert "derived S6 must preserve explicit valid/identity branches" in taes._display_errors(
         s2, s6.replace("is a valid compatible class", "is NOT a valid compatible class")
     )
+    assignment = r"$z.\mathrm{prepResultEvaluated}\leftarrow\textbf{true}$;"
+    for command in (r"\tcp", r"\tcp*"):
+        commented = s2.replace(assignment, f"{command}{{{assignment}}}")
+        assert "derived S2 must preserve the evaluated confirmation assignment tuple" in taes._display_errors(commented, s6)
+    moved = s2.replace(assignment, "").replace(
+        "\n}\nset $z.\\mathrm{summaryConfirmed}", "\n}\n" + assignment + "\nset $z.\\mathrm{summaryConfirmed}"
+    )
+    assert "derived S2 must preserve the evaluated confirmation assignment tuple" in taes._display_errors(moved, s6)
+    assert taes._display_errors(s2.replace("\n  ", "\n      "), s6) == []
 
 
 def test_publish_transaction_success_and_rollback(tmp_path: Path) -> None:

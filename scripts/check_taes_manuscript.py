@@ -41,7 +41,25 @@ def _load_json(path: Path) -> dict:
 
 def _strip_comments(text: str) -> str:
     without_percent = "\n".join(COMMENT_RE.sub("", line) for line in text.splitlines())
-    return re.sub(r"\\tcp\*?\{[^{}]*\}", "", without_percent)
+    result: list[str] = []
+    cursor = 0
+    while cursor < len(without_percent):
+        match = re.search(r"\\tcp\*?\{", without_percent[cursor:])
+        if not match:
+            result.append(without_percent[cursor:])
+            break
+        start = cursor + match.start()
+        brace = cursor + match.end() - 1
+        result.append(without_percent[cursor:start])
+        depth, end = 0, brace
+        while end < len(without_percent):
+            depth += without_percent[end] == "{"
+            depth -= without_percent[end] == "}"
+            end += 1
+            if depth == 0:
+                break
+        cursor = end
+    return "".join(result)
 
 
 def _rel(path: Path, root: Path) -> str:
@@ -254,9 +272,37 @@ def _eif_branches(text: str) -> tuple[str, str, str] | None:
     return tuple(groups)  # type: ignore[return-value]
 
 
+def _if_branch(text: str, required_condition: str) -> str | None:
+    start = text.find(r"\If")
+    while start >= 0:
+        cursor, groups = start + 3, []
+        for _ in range(2):
+            while cursor < len(text) and text[cursor].isspace():
+                cursor += 1
+            if cursor >= len(text) or text[cursor] != "{":
+                break
+            depth, end = 0, cursor
+            while end < len(text):
+                depth += text[end] == "{"
+                depth -= text[end] == "}"
+                end += 1
+                if depth == 0:
+                    groups.append(text[cursor + 1:end - 1])
+                    cursor = end
+                    break
+            else:
+                break
+        if len(groups) == 2 and required_condition in groups[0]:
+            return groups[1]
+        start = text.find(r"\If", start + 3)
+    return None
+
+
 def _display_errors(s2: str, s6: str) -> list[str]:
     errors: list[str] = []
-    s2 = re.sub(r"\s+", "", _strip_comments(s2))
+    raw_s2 = _strip_comments(s2)
+    s2_branch = _if_branch(raw_s2, r"\xi.\mathrm{actionKind}\in")
+    s2 = re.sub(r"\s+", "", raw_s2)
     raw_s6 = _strip_comments(s6)
     branches = _eif_branches(raw_s6)
     s6 = re.sub(r"\s+", "", raw_s6)
@@ -279,7 +325,8 @@ def _display_errors(s2: str, s6: str) -> list[str]:
         "z.\\mathrm{summaryConfirmed}\\leftarrows",
         "z.\\mathrm{postSummary}\\leftarrowp",
     )
-    if any(token not in s2 for token in required_s2):
+    branch_s2 = re.sub(r"\s+", "", s2_branch or "")
+    if any(token not in s2 for token in required_s2) or any(token not in branch_s2 for token in required_s2[3:5]):
         errors.append("derived S2 must preserve the evaluated confirmation assignment tuple")
     return errors
 
