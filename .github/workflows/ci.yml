@@ -26,6 +26,8 @@ jobs:
 
       - name: Install package and test deps
         run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends poppler-utils
           python -m pip install --upgrade pip
           python -m pip install -e ".[dev]"
 
