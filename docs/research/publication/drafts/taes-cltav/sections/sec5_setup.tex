@@ -1,0 +1,56 @@
+\section{Experimental Setup and Evaluation Protocol}
+\label{sec:setup}
+
+The comparison contract is the existing experiment plan. Four arms share the
+same information pool, action pool and fault domain. Direct numeric comparison
+is allowed only on the same denominator and the same charged projection of
+\(c=(c_{\mathrm{acq}},c_{\mathrm{comp}},c_{\mathrm{prep}},c_{\mathrm{retry}})\).
+
+\begin{itemize}
+\item CL-T: predetermined tests; projection \(c_{\mathrm{acq}}\) for tests that
+run.
+\item CL-A: analysis on pre-allowed records; projection \(c_{\mathrm{comp}}\)
+only; no invented sampling cost.
+\item CL-TA: frozen collect then analyse; \(c_{\mathrm{acq}}\) and
+\(c_{\mathrm{comp}}\) reported separately.
+\item CL-LOOP: the CL-TAV session; charge the components that actually run.
+\end{itemize}
+
+Truth is evaluator-only. It never enters \IFsel, \IFpred, \IFhist{} or
+\IFexec. Report four rates on every arm: attempt coverage (all registered
+attempts); refusal/no-answer among attempts; conditional error on the answered
+subset; miss on the detection denominator after invalid and equivalent faults
+are removed. Abstention is first-class refusal and is excluded from PASS/FAIL.
+
+\begin{figure}[!t]
+\centering
+\begin{tikzpicture}[font=\scriptsize,box/.style={draw,align=center,inner sep=2pt}]
+\node[box,text width=2.3cm] (scene) at (0,2.6) {scene / config};
+\node[box,text width=2.3cm] (truth) at (4.0,2.6) {evaluator truth};
+\node[box,text width=3.4cm] (arms) at (0,1.4) {CL-T / CL-A / CL-TA / CL-LOOP};
+\node[box,text width=2.6cm] (raw) at (0,0.3) {raw record};
+\node[box,text width=2.6cm] (iz) at (0,-0.8) {interpreted \(I_z\)};
+\node[box,text width=4.6cm] (filt) at (2.0,-2.0) {filter: unconfirmed / invalid / equivalent / abstain};
+\node[box,text width=4.6cm] (met) at (2.0,-3.1) {DETECT / LOCATE / ABLATION};
+\draw[->] (scene) -- (arms);
+\draw[->] (scene) -- (truth);
+\draw[->] (arms) -- (raw);
+\draw[->] (raw) -- (iz);
+\draw[->] (iz) -- (filt);
+\draw[->] (truth) -- (filt);
+\draw[->] (filt) -- (met);
+\end{tikzpicture}
+\caption{Experiment architecture from FIG-CL-TAV-09. Truth meets algorithm
+output only at the evaluator filter.}
+\label{fig:exp}
+\end{figure}
+
+DETECT compares miss and refusal under the same detection budget and the T5
+oracle; FIND abort does not waive the 2\,s / 3\,s clocks. LOCATE compares
+surviving \(|H|\) and true-fault exclusion on confirmed in-domain injections.
+ABLATION uses the registered factors: no feedback (CL-T or CL-TA); Prep/Recover
+uncharged; interval versus point-timestamp on the same traces with clocks
+fixed; and FIND-abort-as-waiver as a forbidden negative control, not an allowed
+algorithm. Sample size remains a named gap.
+\phbox{PH-STAT-N}{PUBLICATION-DECISION}{Numeric \(n\), repeats and interval
+method freeze at confirmatory registration, not in this draft.}

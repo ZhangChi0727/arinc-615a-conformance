@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "1.0",
+  "id": "CLTAV-TAES-MANUSCRIPT",
+  "authority": "Manuscript structure, resources and placeholders only. Not a second project status surface.",
+  "venueClass": "vendor/IEEEtaes.cls",
+  "bibliographyStyle": "vendor/IEEEtaes.bst",
+  "main": "main.tex",
+  "supplement": "supplementary.tex",
+  "bibliography": "references.bib",
+  "pageBudgetMain": 10,
+  "outputs": {
+    "main": "artifacts/publications/cltav/CLTAV_TAES_DRAFT.pdf",
+    "supplement": "artifacts/publications/cltav/CLTAV_TAES_SUPPLEMENT.pdf"
+  },
+  "sections": [
+    {"id": "sec:intro", "file": "sections/sec1_intro.tex", "title": "Introduction"},
+    {"id": "sec:related", "file": "sections/sec2_related.tex", "title": "Related Work and Problem Formulation"},
+    {"id": "sec:arch", "file": "sections/sec3_arch.tex", "title": "System Engineering and Verification Architecture"},
+    {"id": "sec:method", "file": "sections/sec4_method.tex", "title": "CL-TAV Method"},
+    {"id": "sec:setup", "file": "sections/sec5_setup.tex", "title": "Experimental Setup and Evaluation Protocol"},
+    {"id": "sec:results", "file": "sections/sec6_results.tex", "title": "Results"},
+    {"id": "sec:disc", "file": "sections/sec7_discussion.tex", "title": "Discussion and Limitations"},
+    {"id": "sec:concl", "file": "sections/sec8_conclusion.tex", "title": "Conclusion"}
+  ],
+  "algorithms": [
+    {"paperLabel": "alg:cltav-01", "stableId": "ALG-CLTAV-01", "source": "alg_compact_01.tex", "authority": "docs/research/publication/algorithms/ALG-CLTAV-01.tex"},
+    {"paperLabel": "alg:cltav-02", "stableId": "ALG-CLTAV-02", "source": "docs/research/publication/algorithms/ALG-CLTAV-02.tex", "where": "supplement"},
+    {"paperLabel": "alg:cltav-03", "stableId": "ALG-CLTAV-03", "source": "docs/research/publication/algorithms/ALG-CLTAV-03.tex", "where": "supplement"},
+    {"paperLabel": "alg:cltav-04", "stableId": "ALG-CLTAV-04", "source": "docs/research/publication/algorithms/ALG-CLTAV-04.tex", "where": "supplement"},
+    {"paperLabel": "alg:cltav-05", "stableId": "ALG-CLTAV-05", "source": "docs/research/publication/algorithms/ALG-CLTAV-05-selection.tex", "where": "supplement"},
+    {"paperLabel": "alg:cltav-06", "stableId": "ALG-CLTAV-06", "source": "docs/research/publication/algorithms/ALG-CLTAV-06-timing.tex", "where": "supplement"},
+    {"paperLabel": "alg:cltav-07", "stableId": "ALG-CLTAV-07", "source": "docs/research/publication/algorithms/ALG-CLTAV-07-history.tex", "where": "supplement"}
+  ],
+  "figures": [
+    {"id": "fig:arch", "section": "sec:arch", "derivedFrom": "FIG-CL-TAV-01", "status": "derived-notation"},
+    {"id": "fig:exp", "section": "sec:setup", "derivedFrom": "FIG-CL-TAV-09", "status": "derived-notation"},
+    {"id": "fig:res-detect", "section": "sec:results", "placeholder": "PH-RES-DETECT"},
+    {"id": "fig:res-locate", "section": "sec:results", "placeholder": "PH-RES-LOCATE"}
+  ],
+  "tables": [
+    {"id": "tab:related", "section": "sec:related"},
+    {"id": "tab:res-ablation", "section": "sec:results", "placeholder": "PH-RES-ABLATION"}
+  ],
+  "placeholders": [
+    {
+      "id": "PH-ABS-RESULT",
+      "category": "EXPERIMENT-RESULT",
+      "section": "sec:intro",
+      "clrq": ["CL-RQ2"],
+      "dependsOn": ["EXP-CLTAV-DETECT", "EXP-CLTAV-LOCATE"],
+      "completion": "Registered confirmatory cells exist; no percentage is written before that."
+    },
+    {
+      "id": "PH-LIT-ACCESS",
+      "category": "LITERATURE-ACCESS",
+      "section": "sec:related",
+      "clrq": ["CL-RQ1"],
+      "dependsOn": ["AUTH-LIT"],
+      "completion": "Either the full text is obtained through the institution or the specific negative comparison is not made."
+    },
+    {
+      "id": "PH-IMPL-KERNEL",
+      "category": "IMPLEMENTATION-DETAIL",
+      "section": "sec:arch",
+      "clrq": ["CL-RQ1"],
+      "dependsOn": ["development-ready kernel PR"],
+      "completion": "A later authorized PR implements the named interfaces."
+    },
+    {
+      "id": "PH-STAT-N",
+      "category": "PUBLICATION-DECISION",
+      "section": "sec:setup",
+      "clrq": ["CL-RQ2", "CL-RQ3"],
+      "dependsOn": ["confirmatory registration"],
+      "completion": "n, seeds and interval method are frozen in the experiment register."
+    },
+    {
+      "id": "PH-RES-DETECT",
+      "category": "EXPERIMENT-RESULT",
+      "section": "sec:results",
+      "clrq": ["CL-RQ2"],
+      "dependsOn": ["EXP-CLTAV-DETECT"],
+      "completion": "DETECT metric cells with attempt and answered-subset denominators."
+    },
+    {
+      "id": "PH-RES-LOCATE",
+      "category": "EXPERIMENT-RESULT",
+      "section": "sec:results",
+      "clrq": ["CL-RQ2"],
+      "dependsOn": ["EXP-CLTAV-LOCATE"],
+      "completion": "LOCATE metric cells; evaluator truth never entered arm inputs."
+    },
+    {
+      "id": "PH-RES-ABLATION",
+      "category": "EXPERIMENT-RESULT",
+      "section": "sec:results",
+      "clrq": ["CL-RQ3"],
+      "dependsOn": ["EXP-CLTAV-ABLATION"],
+      "completion": "Ablation cells from the same scenes; common-error risks named."
+    },
+    {
+      "id": "PH-RES-INTERPRET",
+      "category": "EXPERIMENT-RESULT",
+      "section": "sec:disc",
+      "clrq": ["CL-RQ2", "CL-RQ3"],
+      "dependsOn": ["PH-RES-DETECT", "PH-RES-LOCATE", "PH-RES-ABLATION"],
+      "completion": "Discussion of measured direction waits for the three result placeholders."
+    },
+    {
+      "id": "PH-CONC-RESULT",
+      "category": "EXPERIMENT-RESULT",
+      "section": "sec:concl",
+      "clrq": ["CL-RQ2", "CL-RQ3"],
+      "dependsOn": ["PH-RES-DETECT", "PH-RES-LOCATE", "PH-RES-ABLATION"],
+      "completion": "Concluding experimental sentence written only from filled result cells."
+    }
+  ],
+  "citations": [
+    "tretmans1996", "chow1978", "fujiwara1991", "petrenko2016", "jia2011",
+    "yang2025", "li2021", "alur1994", "jcgm100", "jcgm106", "arinc615a3", "arinc6451"
+  ]
+}

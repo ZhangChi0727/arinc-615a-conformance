@@ -1,0 +1,110 @@
+\documentclass[11pt,letterpaper]{article}
+% Supplementary technical package. Compiled separately from the TAES main text.
+\usepackage[margin=1in,bottom=1.2in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage[T1]{fontenc}
+\usepackage{tabularx}
+\SetKwRepeat{Do}{do}{while}
+\input{macros}
+
+\title{Supplementary Material: CL-TAV Contracts, Wrappers and Decision Tables}
+\author{Author Name (affiliation pending)}
+\date{}
+\begin{document}
+\renewcommand{\thealgocf}{S\arabic{algocf}}
+\maketitle
+
+\begin{abstract}
+\noindent This supplement is part of the delivered manuscript package. It
+typesets ALG-CLTAV-02/03/04 wrappers, ALG-CLTAV-05/06/07 cores, typed records
+and the A/P stop tables. It does not change ALG-CLTAV-01 and does not report
+experiments. Supplement algorithm numbers are S1, S2,~\ldots; they are not
+the main-text Algorithm~1.
+\end{abstract}
+
+\section{Scope and numbering}
+Main-text Algorithm~1 is ALG-CLTAV-01. Supplement Algorithms~S1--S6 are
+ALG-CLTAV-02, 03, 04, 05, 06 and 07. S9 in the main text calls
+\textsc{CommitCompatibleUpdate} (S6 / ALG-CLTAV-07), not a bare
+\IFhist{} invocation.
+
+\section{S0--S10 duty map}
+\begin{center}
+\small
+\begin{tabular}{@{}llp{0.52\linewidth}@{}}
+\hline
+Step & Call & Duty / exception \\
+\hline
+S0 & \textsc{Initialize} & \(\Gamma,\eta,H,U\); distinct \(k\), charges, retry \\
+S1 & \IFres{} with \IFeq & already decided Admit A2--A5 or P-stop \\
+S2 & \textsc{PredictCurrent} & ALG-CLTAV-02; TEST-scoped GAP \\
+S3 & \textsc{SelectAndAdmit} & ALG-CLTAV-05; freeze \(\xi\) including \(U\) \\
+S4 & \textsc{ChargeOnce} & one charge; retry cap \(\neq\) budget \\
+S5 & \IFexec & raw record and effect class \\
+S6 & \textsc{InterpretOutcome} & ALG-CLTAV-03 + timing ALG-CLTAV-06 \\
+S7--S8 & \textsc{ResolveOutcome} & ALG-CLTAV-04; adopt returned contexts \\
+S9 & \textsc{CommitCompatibleUpdate} & version/intersection; SPEC-ERROR; summary commit \\
+S10 & \IFres{} with \IFeq & P-stop or continue to S1 \\
+\hline
+\end{tabular}
+\end{center}
+
+\section{Typed records}
+\small
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\hline
+Record & Fields \\
+\hline
+PredictionResult & status OK$\vert$GAP; reason; classesByTest (OK); historyVersionUsed; uncertaintyRef \\
+Decision & kind ACTION$\vert$EXIT$\vert$SPEC-ERROR; actionKind; actionId; classesUsed; reason \\
+SelectSnapshot $\xi$ & actionId; actionKind; qUsedAtSelect; historyVersion; classesUsedAtSelect; uncertaintyRef \\
+ExecutionResult & attemptId; record; effect; correlationId \\
+Outcome $z$ & validity; effect; kind; actionId; \(I_z\) or NONE; prepResultEvaluated; targetConfirmed; summaryConfirmed; prepErr; declaredTarget; evidence; postSummary; timing \\
+Resolution $\delta$ & control COMMIT$\vert$RETRY$\vert$STOP; \(\Gamma'\); \(\eta'\); outcome; reason \\
+\hline
+\end{tabularx}
+
+\section{Admit and post-update stops}
+A1 selects one affordable, eligible, distinguishing action from the exclusive
+TEST, Prep or Recover alternatives. A2 is KNOWN with a
+distinguishing TEST or eligible Prep, but no such action affordable
+(Stop-Budget). A3 is KNOWN with no distinguishing TEST and no eligible Prep
+(Stop-NoDistinguisher). A4 is UNKNOWN with no eligible Recover (Stop-Error).
+A5 is UNKNOWN with Recover eligible but unaffordable (Stop-Budget). A TEST
+prediction GAP is handled independently: a KNOWN GAP without eligible Prep is
+SPEC-ERROR, not A3; retry-cap remains an independent Stop-Error condition.
+P1 Stop-Empty; P2 Stop-Singleton; P3 Stop-645; P4 Stop-Equivalent;
+P5 Stop-Budget after update. Stop-NoDistinguisher is exclusive with those
+P-stops when no remaining distinguisher exists and no P-stop already fired.
+Order is Empty, Singleton, 645, Equivalent, Budget. Singleton
+\(h_{\mathrm{normal}}\) is not protocol PASS.
+
+\section{Short arguments}
+Monotonicity, retention (R1)--(R5), one-step minimax and resource termination
+are stated in the main text. The algebraic details are the accepted method
+§3.9.1 arguments: update is intersection; \texttt{ERROR} does not exclude;
+minimax is a least element of a finite selectable set; billed executions are
+bounded by the selected mode. They are not global optimality and not
+independent mathematical approval.
+
+\section{AI disclosure fields}
+System: PENDING-USER (AUTH-AI). Scope (text/figures/code): PENDING-USER.
+Author verification: required; not completed by this sentence. IEEE AESS
+guidance is rechecked at submission.
+
+\section{Wrappers and core mechanisms}
+\sloppy
+\emergencystretch=3em
+{\normalsize
+\SetAlFnt{\normalsize}
+\setlength{\algomargin}{0pt}
+\input{ALG-CLTAV-02}
+\input{supp_alg03_display}
+\input{ALG-CLTAV-04}
+\input{ALG-CLTAV-05-selection}
+\input{ALG-CLTAV-06-timing}
+\input{supp_alg07_display}
+}
+
+\end{document}

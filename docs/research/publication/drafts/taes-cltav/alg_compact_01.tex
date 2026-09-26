@@ -1,0 +1,36 @@
+% Compact display of ALG-CLTAV-01. Typed calls and S9 wrapper are required.
+% This is an abstraction of the accepted module, not a second loop.
+% Mapping: paper Alg.~1 $\leftrightarrow$ ALG-CLTAV-01; wrappers in the supplement.
+\begin{algorithm}[t]
+\caption{CL-TAV top-level session (paper Alg.~1 $=$ ALG-CLTAV-01)}
+\label{alg:cltav-01}
+\SetAlgoLined
+\SetKwInput{KwIn}{Require}
+\SetKwInput{KwOut}{Ensure}
+\KwIn{$H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}$; $\Gamma$; $\eta$; one mode BUDGET$(c_{\min},B)$ xor ROUNDS$(K_{\max})$; $L$; $U$}
+\KwOut{stop class, final $H$, $\eta$, trace; singleton $h_{\mathrm{normal}}$ is not protocol PASS}
+$(\Gamma,\eta,H)\leftarrow\textsc{Initialize}(H_0,L,U,\text{resourcePolicy})$\;
+\While{true}{
+  $\textit{stop}\leftarrow$ \IFres$(\Gamma,H,\eta)$ with \IFeq$(\Gamma,H,\eta)$\;
+  \lIf{$\textit{stop}\neq\texttt{undecided}$}{\Return $\textsc{Finish}(\textit{stop},\Gamma,\eta,H)$}
+  $\textit{pred}\leftarrow\textsc{PredictCurrent}(\Gamma,\eta,H,U,L)$\;
+  $\textit{dec}\leftarrow\textsc{SelectAndAdmit}(\Gamma,\eta,H,L,\textit{pred})$\;
+  \lIf{$\textit{dec}.\mathrm{kind}\in\{\texttt{EXIT},\texttt{SPEC-ERROR}\}$}{\Return $\textsc{Finish}(\textit{dec}.\mathrm{reason},\Gamma,\eta,H)$}
+  $\xi\leftarrow\textsc{SelectSnapshot}(\textit{dec};\Gamma,\eta,U)$\;
+  $\xi=(\mathrm{id},\mathrm{kind},q_{\mathrm{used}},v_\eta,C,U)$\;
+  $\mathrm{kind}=\xi.\mathrm{actionKind}$; $C=\xi.\mathrm{classesUsedAtSelect}$\;
+  $\Gamma\leftarrow\textsc{ChargeOnce}(\Gamma,\xi)$; $\textit{er}\leftarrow$ \IFexec$(\Gamma,\xi)$\;
+  $z\leftarrow\textsc{InterpretOutcome}(\textit{er},\xi,\Gamma,\eta,U)$\;
+  $\delta\leftarrow\textsc{ResolveOutcome}(z,\xi,\Gamma,\eta)$\;
+  $\Gamma\leftarrow\delta.\Gamma$; $\eta\leftarrow\delta.\eta$; $z\leftarrow\delta.\mathrm{outcome}$\;
+  \lIf{$\delta.\mathrm{control}=\texttt{STOP}$}{\Return $\textsc{Finish}(\delta.\mathrm{reason},\Gamma,\eta,H)$}
+  \lIf{$\delta.\mathrm{control}=\texttt{RETRY}$}{\textbf{continue} to S1 with adopted $\Gamma,\eta$}
+  \If{$z.I_z$ valid or $z.\mathrm{summaryConfirmed}$}{
+    $\textit{upd}\leftarrow\textsc{CommitCompatibleUpdate}(\xi,z;\chi)$\;
+    $(\textit{status},\eta,H,\Gamma)\leftarrow\textit{upd}$\;
+    \lIf{$\textit{status}=\texttt{SPEC-ERROR}$}{\Return \texttt{Stop-SpecError}}
+  }
+  $\textit{stop}\leftarrow$ \IFres$(\Gamma,H,\eta)$ with \IFeq$(\Gamma,H,\eta)$\;
+  \lIf{$\textit{stop}\neq\texttt{undecided}$}{\Return $\textsc{Finish}(\textit{stop},\Gamma,\eta,H)$}
+}
+\end{algorithm}

@@ -1,0 +1,54 @@
+\section{Related Work and Problem Formulation}
+\label{sec:related}
+
+\subsection{Selective comparison}
+Table~\ref{tab:related} records the cited work's stated object and its limited
+role in this paper. It makes no absence or laboratory-capability claim, and no
+paywalled method detail is used for a denial.
+
+\begin{table}[!ht]
+\caption{Cited stated objects and their limited comparison role.}
+\label{tab:related}
+\centering
+\footnotesize
+\begin{tabular}{@{}p{0.25\columnwidth}p{0.60\columnwidth}@{}}
+\hline
+Work & Stated object / role here \\
+\hline
+Tretmans~\cite{tretmans1996} & LTS implementation relation and test generation \\
+Chow; Fujiwara~\textit{et al.}~\cite{chow1978,fujiwara1991} & FSM covering sequences \\
+Petrenko~\textit{et al.}~\cite{petrenko2016} & Constraint solving and mutant killing \\
+Jia and Harman~\cite{jia2011} & Mutation-adequacy survey \\
+Yang~\textit{et al.}; Li~\textit{et al.}~\cite{yang2025,li2021} & Requirements-based and networked-application testing \\
+Alur and Dill~\cite{alur1994} & Timed-automaton vocabulary used as timing language \\
+\hline
+\end{tabular}
+\end{table}
+
+Support for ``NS'': Tretmans develops an LTS implementation relation and test
+generation, not a charged isolation session~\cite{tretmans1996}. Chow and
+Fujiwara~\textit{et al.}\ develop FSM covering sequences~\cite{chow1978,fujiwara1991}.
+Petrenko~\textit{et al.}\ develop constraint solving and mutant killing~\cite{petrenko2016}.
+Jia and Harman survey mutation adequacy~\cite{jia2011}. Yang~\textit{et al.}\
+survey requirements-based generation~\cite{yang2025}. Li~\textit{et al.}\ treat
+model-based testing of networked applications~\cite{li2021}. Alur and Dill
+supply timed-automaton vocabulary used here as timing language, not as a
+deployed solver~\cite{alur1994}.
+\phbox{PH-LIT-ACCESS}{LITERATURE-ACCESS}{A later denial that needs a paywalled
+detail is not made until AUTH-LIT obtains that text.}
+
+\subsection{Verification objects}
+The IUT is a 615A data-loading endpoint. The bound protocol model is UPLOAD
+and INFORMATION~\cite{arinc615a3}. FIND, DOWNLOAD and conditional AFDX appear
+in the CRS; they are not implemented behaviour and not an experimental arm.
+
+Candidates are \(H_0=\{h_{\mathrm{normal}}\}\cup H_{\mathrm{single}}\).
+An observable summary \(q\) is known or unknown. Observation classes are
+projected onto current \(H\). Measurement uncertainty is a declared
+conservative outer set \(U\) in the GUM sense~\cite{jcgm100,jcgm106}, not an
+estimated physical error model. Resource is exactly one mode:
+BUDGET\((c_{\min},B)\) or ROUNDS\((K_{\max})\).
+
+A 615A-triggered 645 bind covers CRC, check-value and naming
+leaves~\cite{arinc6451}. Integrity capabilities remain unestablished.
+Stop-645 names a remaining 645-dependent obligation, not a missing file.

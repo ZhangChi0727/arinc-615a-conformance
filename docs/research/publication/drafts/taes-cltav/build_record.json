@@ -1,0 +1,15 @@
+{
+  "sourceHash": "3ff7188949b827a172abe8b9373e7a231d93933b46e3dce4bd7e55882b6d205e",
+  "mainPdf": "artifacts/publications/cltav/CLTAV_TAES_DRAFT.pdf",
+  "supplementPdf": "artifacts/publications/cltav/CLTAV_TAES_SUPPLEMENT.pdf",
+  "outputHashes": {
+    "main": "acd11e61f12b428f89d0fbd9ff778828a362d26c95492613c0ee957418107b0b",
+    "supplement": "ea32cbf6a9bd23f4ef27b026343f40275408b6fbd237d58f4d42d75235bd913f"
+  },
+  "pageCounts": {
+    "main": 6,
+    "supplement": 7
+  },
+  "engine": "MiKTeX-pdfTeX 4.21 (MiKTeX 25.2)",
+  "complete": true
+}

@@ -7,24 +7,24 @@
     "url": "https://github.com/ZhangChi0727/arinc-615a-conformance"
   },
   "currentIncrement": {
-    "title": "CL-TAV algorithm decomposition, authority-derived status inventory and persisted source-disposition regression",
-    "titleZh": "CL-TAV 算法分解、权威派生状态清单与来源处置回归持久化",
+    "title": "TAES Regular Paper first-draft manuscript",
+    "titleZh": "TAES Regular Paper 初稿",
     "summary": [
-      "Execute the two closure actions registered at the PR #16 acceptance. F-A derives the current CRS inventory in the status surface from the authoritative controlled package instead of a second hand-filled copy. F-B persists the PDF-30 adjacent-CRC source-disposition negatives and positive cases through the production checker.",
-      "Correct the CL-TAV presentation (F-C, review rounds R36/R37/R38/R39): the main text carries the top-level algorithm (ALG-CLTAV-01) and the three core mechanisms (selection ALG-CLTAV-05, timed observation ALG-CLTAV-06, history update ALG-CLTAV-07); the appendix carries the S2/S6/S7-S8 coordination wrappers (ALG-CLTAV-02/03/04), complete typed records, the responsibility map and the unresolved-kernel register. Admission scores only affordable distinguishing TESTs; global and local prediction gaps use the same Prep/Recover/A2-A5 admission table; the typeset package has no empty semicolon statements. Interfaces use explicit typed records and field access; the backend gap is branched on before projection; the timing kernel checks a nonempty measurement domain and distinct closed/open horizons; the S9 guard is an executable condition with total successor state; every Resolution variant adopts the returned context before branching and the history version is checked fail-closed. A bounded executable-call production model and an executable composition witness check the orchestration. The R40 finite fixture checks shared uncertainty input propagation through prediction, snapshot, interpretation and commit, including an interpretation-side mismatch rejection; it is not an implemented solver or physical uncertainty model. No candidate-update, stop, resource, retry or successor-summary semantics change.",
-      "Keep protocol CRS and M2 semantics unchanged: the CRS stays M1-CANDIDATE-25 with its declared inventory, the bound M2 stays UPLOAD/INFORMATION with 65 transitions and 30 observational timing rows, and the M2 input pin stays its recorded ancestor. No M3, no capability establishment, no Project Configuration, no baseline or tag."
+      "Convert the accepted CL-TAV method, algorithm contracts and experiment protocol into a compilable IEEE TAES Regular Paper first draft under CR-2026-015 / DD-037. The eight outline chapters become sections I–VIII. The project page budget is a main PDF of at most 10 pages including references, with reserved result layout; the supplement is compiled separately.",
+      "Keep C1/C2 and CL-RQ1–CL-RQ3. Do not invent confirmatory numbers. Placeholders carry unique IDs, categories, dependencies and completion conditions. Author, affiliation, funding, ranking and fees stay pending institutional inputs.",
+      "Do not change CRS, M2, src, source-audit semantics, accepted algorithm control logic, capabilities or Configuration. This increment is not submission, not M3 and not a tag."
     ],
     "summaryZh": [
-      "执行 PR #16 接受时登记的两项收尾动作。F-A 从权威受控包派生状态面的当前 CRS 清单，而不是第二份手填副本。F-B 经生产检查路径持久化 PDF 30 邻接 CRC 的来源处置负例与正例。",
-      "修正 CL-TAV 呈现（F-C，评审轮 R36／R37／R38／R39）：正文承载总体算法（ALG-CLTAV-01）与三个核心机制（选择 ALG-CLTAV-05、时序观测 ALG-CLTAV-06、历史更新 ALG-CLTAV-07）；附录承载 S2／S6／S7-S8 协调包装（ALG-CLTAV-02/03/04）、完整类型记录、责任表与未实现内核登记。准入只为可负担且有区分的 TEST 评分；全局和局部预测缺口走同一 Prep／Recover／A2-A5 准入表；排版包不含空分号语句。接口使用显式类型记录与字段访问；后端缺口先分支再投影；时序内核检查非空测量域与区分开／闭上界；S9 守卫是可执行条件且后继状态总定义；所有 Resolution 变体在分支前采用返回上下文，历史版本 fail-closed 校验。受限可执行调用生产模型与可执行组合见证检查编排。R40 有限 fixture 检查共同不确定性输入经预测、快照、解释与提交的传递，以及解释端错配拒绝；它不是已实现求解器或物理不确定性模型。候选更新、停止、资源、重试与后继摘要语义均不变。",
-      "协议 CRS 与 M2 语义不变：CRS 保持 M1-CANDIDATE-25 及其声明清单，绑定 M2 保持 UPLOAD／INFORMATION、65 迁移与 30 条观察时序，M2 输入钉保持既有祖先。不启动 M3，不建立能力，不建立 Project Configuration，不创建 baseline 或 tag。"
+      "在 CR-2026-015／DD-037 下，把已接受的 CL-TAV 方法、算法合同与实验方案转为可编译的 IEEE TAES Regular Paper 初稿。八节大纲对应第 I–VIII 节。项目页预算为主稿含参考文献不超过 10 页并预留结果版面；补充材料单独编译。",
+      "保持 C1／C2 与 CL-RQ1–CL-RQ3。不虚构确认性数字。占位具唯一 ID、类别、依赖与完成条件。作者、单位、基金、分区与费用保持待单位确认。",
+      "不修改 CRS、M2、src、来源审计语义、已接受算法控制逻辑、能力或 Configuration。本增量不是投稿、不是 M3、不是 tag。"
     ],
     "stateChanges": [
-      "F-A, F-B and F-C are delivered on one Draft PR under CR-2026-014 / DD-035 and DD-036; M3 remains blocked.",
+      "Writing increment on one Draft PR under CR-2026-015 / DD-037; M3 remains blocked.",
       "currentStop remains EXECUTABLE-FOUNDATION-GATE for M3 implementation."
     ],
     "stateChangesZh": [
-      "F-A、F-B、F-C 在唯一 Draft PR 上以 CR-2026-014／DD-035、DD-036 交付；M3 保持阻塞。",
+      "写作增量在唯一 Draft PR 上以 CR-2026-015／DD-037 交付；M3 保持阻塞。",
       "对 M3 实现而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。"
     ],
     "unchangedBoundaries": [
@@ -43,7 +43,7 @@
     ]
   },
   "development": {
-    "phase": "CL-TAV 645-bind / publication / algorithm-experiment specification under CR-2026-013; M3 still blocked",
+    "phase": "TAES Regular Paper first draft under CR-2026-015; M3 still blocked",
     "gates": {
       "SOURCE-TECHNICAL-DIRECTION-GATE": "COMPLETED-EXTERNALLY-VERIFIED",
       "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE": "COMPLETED-EXTERNALLY-VERIFIED",
@@ -63,11 +63,11 @@
       "objectiveZh": "本停点仍禁止 M3 实现。有界 M2 普通合并已记录；该批准不移植到扩大 CRS。CL-TAV Draft 候选为 M1-CANDIDATE-25，含 615A 触发的 645 来源／语义绑定、FIND 中止不豁免、已绑定的 RFC 1123／791、含 VL 求和 max_jitter 方程的 664-7 时延／抖动／MAC 及剩余交换机／附件 2 合同、4.7.3.2 过滤表来源成员、00519 第一条替代路径的 664P4-1 地址规则叶及组合后的 TFTP 结束条件，不是方法／论文／能力／扩大 CRS 批准。须通过独立评审，合并须明确授权。本增量不转 Ready、不合并、不打标签。2026-09-14 对 DD-029 的设计方向接受不是独立批准。"
     },
     "nextSteps": [
-      "Request complete-range RG0/RG1 and method/math/architecture/experiment review on the unique Draft PR. Keep independentMathematicalApproval and independentReviewApproval false. Do not Ready, merge, tag or start M3.",
+      "Request independent review of the TAES first draft and its placeholders on the unique Draft PR. Keep independentMathematicalApproval and independentReviewApproval false. Do not Ready, merge, tag, submit or start M3.",
       "Keep 665 section 2.3 emitted-not-closed in this PR. ARINC 645 SOURCE/SEMANTIC bind stays capability-open. Bound M2 stays UPLOAD/INFORMATION. FIND clock limited approval stays closed. Do not auto-select Part 4 or activate AFDX."
     ],
     "nextStepsZh": [
-      "在唯一 Draft PR 上请求完整范围 RG0／RG1 以及方法／数学／架构／实验评审。保持 independentMathematicalApproval 与 independentReviewApproval 为 false。不转 Ready、不合并、不打标签、不启动 M3。",
+      "在唯一 Draft PR 上请求对 TAES 初稿及其占位做独立评审。保持 independentMathematicalApproval 与 independentReviewApproval 为 false。不转 Ready、不合并、不打标签、不投稿、不启动 M3。",
       "665 §2.3 在本 PR 保持已发出未闭合。ARINC 645 来源／语义绑定保持能力未建立。绑定 M2 仍为 UPLOAD／INFORMATION。FIND 时钟有限批准保持关闭。不自动选定第 4 部分，也不激活 AFDX。"
     ],
     "blockedActions": [

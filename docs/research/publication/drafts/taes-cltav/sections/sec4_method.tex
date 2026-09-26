@@ -1,0 +1,82 @@
+\section{CL-TAV Method}
+\label{sec:method}
+
+\subsection{Notation and assumptions}
+S0--S10 are logical duties, not line numbers. The decision index \(k\), the
+billed charge count and the retry counter are distinct. SessionContext
+\(\Gamma\) is the unique session state. HistoryHandle \(\eta\) carries
+whole-history compatibility. The select-time snapshot \(\xi\) freezes
+\texttt{actionId}, \texttt{actionKind}, \(q_{\mathrm{used}}\), history version,
+classes used at select, and uncertainty reference \(U\). A later confirmed
+successor summary is a different field. Effect classes are
+\texttt{CONFIRMED-NOT-SENT} and \texttt{UNKNOWN-EFFECT}. PredictionGapError is
+TEST-scoped.
+
+\subsection{Overall closed loop}
+Algorithm~\ref{alg:cltav-01} is a typed abstraction of ALG-CLTAV-01. Wrappers
+\textsc{PredictCurrent}, \textsc{InterpretOutcome} and
+\textsc{ResolveOutcome} are ALG-CLTAV-02/03/04 in the supplement. S9 calls
+\textsc{CommitCompatibleUpdate} (ALG-CLTAV-07), with
+\(\chi=(\Gamma,\eta,H)\), which validates the history
+version, applies \IFhist{} from \(\xi\), returns
+\((\textit{status},\eta,H,\Gamma)\) and commits a confirmed successor summary.
+A bare \IFhist{} call is not that wrapper. Resolution is branched on
+\(\delta.\mathrm{control}\) after adopting \(\delta.\Gamma\), \(\delta.\eta\)
+and \(\delta.\mathrm{outcome}\).
+
+\input{alg_compact_01}
+
+\subsection{Interpretation, compatibility and selection}
+Prediction and interpretation share \(U\). Let \(O(h,t,q)\) be the conservative
+outer set of feasible observations of hypothesis \(h\), and let \(Z_k\) be the
+measured feasible-observation set after timing, ownership and pairing checks.
+The interpretation/whole-history bridge induces the compatible hypothesis
+class \(C_k\) (the accepted interface field \(z.I_z\)); \(C_k\) is not a
+measurement set. A currently valid class is the nonempty projection
+\(H\cap C_k\). Compatible update on a valid class is
+\begin{equation}
+\label{eq:update}
+H_{k+1}=H_k\cap C_k,\qquad H_{k+1}\subseteq H_k.
+\end{equation}
+\texttt{ERROR} and identity Prep/Recover leave \(H\) unchanged. The one-step
+score on currently valid nonempty classes of an affordable distinguishing
+TEST \(t\) is
+\begin{equation}
+\label{eq:score}
+s(t)=\max_{C\in\mathcal{C}_t}\lvert C\rvert.
+\end{equation}
+Empty \(S\) is never \(\arg\min\). Timing uses T5~\cite{jcgm106}:
+\(I_{\mathrm{obs}}\subseteq I_r\) is PASS; \(I_{\mathrm{obs}}\cap I_r=\varnothing\)
+is FAIL; otherwise INCONCLUSIVE. An ambiguous pair is \texttt{ERROR}, not IUT
+FAIL.
+
+\subsection{Conditional properties}
+\textbf{Monotonicity.} Equation~\eqref{eq:update} gives
+\(H_{k+1}\subseteq H_k\). Without a valid class there is no add or delete. An
+in-domain singleton is not protocol PASS.
+
+\textbf{Retention.} Assume (R1) \(h^\star\in H_0\); (R2) one state path is
+consistent with the executed history; (R3) \(O(h^\star,t_k,q_k)\) is a
+conservative outer set; (R4) the true observation belongs to both
+\(O(h^\star,t_k,q_k)\) and \(Z_k\); and (R5) ownership and pairing are valid.
+The declared interpretation and whole-history compatibility contract therefore
+places \(h^\star\) in \(C_k\). Thus \(h^\star\in H_k\cap C_k\), and induction
+retains it in \(H_{k+1}\). Out-of-domain faults may still mimic an in-domain
+survivor.
+
+\textbf{One-step minimax.} On nonempty finite \(T_{\mathrm{cur}}\), \(t^\star\)
+is a least element of \((s(t),\mathrm{cost}(t),\mathrm{id})\). This is not a
+global policy.
+
+\textbf{Termination.} Every charged TEST, Prep, Recover and \texttt{ERROR}
+spends the selected mode, hence at most \(\lfloor B/c_{\min}\rfloor\) or
+\(K_{\max}\) billed executions. Wall-clock waits still need their own timeouts;
+those timeouts are not claimed implemented.
+
+Exclusive named stops are Empty, Singleton, 645, Equivalent, Budget,
+Stop-Error and Stop-NoDistinguisher. Stop-Error is not Stop-Budget.
+Admit reasons A2--A5 and post-update P1--P5 are tabulated in the supplement.
+CONFIRMED-NOT-SENT does not assign UNKNOWN. UNKNOWN-EFFECT must not be read
+back as the previous KNOWN summary. Unconfirmed Recover with \(R_{\max}=1\)
+and remaining budget is Stop-Error. An executed empty \(H\) is Stop-Empty.
+Kernels remain unimplemented interfaces.
