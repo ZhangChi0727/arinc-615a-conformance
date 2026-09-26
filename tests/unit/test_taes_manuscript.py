@@ -209,6 +209,10 @@ def test_rejects_s9_guard_inversion_and_display_contract_mutations() -> None:
     assert "derived S6 valid branch must adopt the narrowed history and candidate set" in taes._display_errors(
         s2, s6.replace("H'\\leftarrow H_c", "H'\\leftarrow H")
     )
+    swapped = s6.replace("$\\eta'\\leftarrow\\eta_c$; $H'\\leftarrow H_c$", "TEMP").replace(
+        "$H'\\leftarrow H$", "$\\eta'\\leftarrow\\eta_c$; $H'\\leftarrow H_c$"
+    ).replace("TEMP", "$H'\\leftarrow H$")
+    assert "derived S6 valid branch must adopt the narrowed history and candidate set" in taes._display_errors(s2, swapped)
     assert "derived S6 must preserve explicit valid/identity branches" in taes._display_errors(
         s2, s6.replace("is a valid compatible class", "is NOT a valid compatible class")
     )

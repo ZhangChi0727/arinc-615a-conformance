@@ -67,11 +67,10 @@ def _hash_relative_files(root: Path, files: list[Path]) -> str:
     for path in sorted(files, key=lambda item: _rel(item, root)):
         digest.update(_rel(path, root).encode("utf-8"))
         digest.update(b"\0")
-        # Git may check these text inputs out with CRLF on Windows and LF on
-        # Linux.  The closure identity is the source text, not the checkout
-        # line-ending policy; normalizing here keeps a committed build record
-        # verifiable by both local and CI builders.
-        digest.update(path.read_bytes().replace(b"\r\n", b"\n"))
+        data = path.read_bytes()
+        if path.suffix.lower() in {".tex", ".bib", ".cls", ".bst", ".json", ".py"}:
+            data = data.replace(b"\r\n", b"\n")
+        digest.update(data)
     return digest.hexdigest()
 
 
@@ -94,6 +93,14 @@ def source_closure(root: Path | None = None, draft: Path | None = None) -> list[
     closure_errors: list[str] = []
     for entry in (draft / "main.tex", draft / "supplementary.tex"):
         files.extend(_collect_inputs(entry, draft, closure_errors, root))
+    for tex in tuple(files):
+        if tex.suffix != ".tex" or not tex.is_file():
+            continue
+        for raw in re.findall(r"\\includegraphics(?:\[[^]]*\])?\{([^}]+)\}", _strip_comments(tex.read_text(encoding="utf-8"))):
+            for candidate in _graphic_candidates(raw, tex.parent, draft):
+                if candidate.is_file():
+                    files.append(candidate)
+                    break
     # Missing dependencies are reported by manuscript_errors; do not silently
     # discard successfully resolved nested dependencies from the identity.
     return list(dict.fromkeys(path for path in files if path.is_file()))
@@ -187,25 +194,60 @@ def _graphic_errors(blob: str, draft: Path | None = None) -> list[str]:
     for raw in re.findall(r"\\includegraphics(?:\[[^]]*\])?\{([^}]+)\}", blob):
         _safe_rel(raw, errors, f"graphic {raw}")
         if draft is not None:
-            candidates = [draft / raw]
-            if not Path(raw).suffix:
-                candidates.extend(draft / f"{raw}{suffix}" for suffix in (".pdf", ".png", ".jpg", ".jpeg"))
+            candidates = _graphic_candidates(raw, draft, draft)
             if not any(candidate.is_file() for candidate in candidates):
                 errors.append(f"graphic is missing: {raw}")
     return errors
 
 
+def _graphic_candidates(raw: str, parent: Path, draft: Path) -> list[Path]:
+    candidates = [parent / raw, draft / raw]
+    if not Path(raw).suffix:
+        candidates.extend(parent / f"{raw}{suffix}" for suffix in (".pdf", ".png", ".jpg", ".jpeg"))
+        candidates.extend(draft / f"{raw}{suffix}" for suffix in (".pdf", ".png", ".jpg", ".jpeg"))
+    return list(dict.fromkeys(candidates))
+
+
+def _eif_branches(text: str) -> tuple[str, str, str] | None:
+    start = text.find(r"\eIf")
+    if start < 0:
+        return None
+    groups: list[str] = []
+    cursor = start + 4
+    while len(groups) < 3:
+        while cursor < len(text) and text[cursor].isspace():
+            cursor += 1
+        if cursor >= len(text) or text[cursor] != "{":
+            return None
+        depth, end = 0, cursor
+        while end < len(text):
+            depth += text[end] == "{"
+            depth -= text[end] == "}"
+            end += 1
+            if depth == 0:
+                groups.append(text[cursor + 1:end - 1])
+                cursor = end
+                break
+        else:
+            return None
+    return tuple(groups)  # type: ignore[return-value]
+
+
 def _display_errors(s2: str, s6: str) -> list[str]:
     errors: list[str] = []
     s2 = re.sub(r"\s+", "", _strip_comments(s2))
-    s6 = re.sub(r"\s+", "", _strip_comments(s6))
-    if "\\eIf{$z.I_z$isavalidcompatibleclass}{" not in s6 or "H'\\leftarrowH" not in s6:
+    raw_s6 = _strip_comments(s6)
+    branches = _eif_branches(raw_s6)
+    s6 = re.sub(r"\s+", "", raw_s6)
+    if not branches or "$z.I_z$ is a valid compatible class" not in branches[0]:
         errors.append("derived S6 must preserve explicit valid/identity branches")
-    if s6.count("\\IFhist") != 2:
+        return errors
+    valid, identity = (re.sub(r"\s+", "", part) for part in branches[1:])
+    if valid.count("\\IFhist") != 1 or identity.count("\\IFhist") != 1:
         errors.append("derived S6 must invoke exactly one history update per branch")
-    if "$\\eta'\\leftarrow\\eta_c$;$H'\\leftarrowH_c$" not in s6:
+    if "$\\eta'\\leftarrow\\eta_c$;$H'\\leftarrowH_c$" not in valid:
         errors.append("derived S6 valid branch must adopt the narrowed history and candidate set")
-    if "NONE,and$z.\\mathrm{postSummary}$" not in s6 or "$H'\\leftarrowH$" not in s6:
+    if "NONE,and$z.\\mathrm{postSummary}$" not in identity or "$H'\\leftarrowH$" not in identity:
         errors.append("derived S6 identity branch must preserve H with the NONE update")
     required_s2 = (
         "z.\\mathrm{effect}\\leftarrower.\\mathrm{effect}",
