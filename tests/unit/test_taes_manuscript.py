@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import subprocess
 from pathlib import Path
 from shutil import copytree
 
@@ -19,7 +20,16 @@ def _load():
     return module
 
 
+def _load_build():
+    spec = importlib.util.spec_from_file_location("build_taes_manuscript", ROOT / "scripts/build_taes_manuscript.py")
+    assert spec and spec.loader
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 taes = _load()
+builder = _load_build()
 MANIFEST = json.loads(
     (ROOT / "docs/research/publication/drafts/taes-cltav/manuscript_manifest.json").read_text(
         encoding="utf-8"
@@ -34,6 +44,8 @@ def _fixture_record(tmp_path: Path, mutate: str) -> tuple[Path, dict]:
     fixture_draft = fixture_root / "docs/research/publication/drafts/taes-cltav"
     fixture_draft.parent.mkdir(parents=True, exist_ok=True)
     copytree(DRAFT, fixture_draft, dirs_exist_ok=True)
+    subprocess.run(["git", "init", "-q"], cwd=fixture_root, check=True)
+    subprocess.run(["git", "add", "."], cwd=fixture_root, check=True)
     main = fixture_draft / "main.tex"
     main.write_text(main.read_text(encoding="utf-8") + "\n" + mutate + "\n", encoding="utf-8")
     record = json.loads((DRAFT / "build_record.json").read_text(encoding="utf-8"))
@@ -187,6 +199,7 @@ def test_recursive_input_is_hashed_and_detects_its_own_change(tmp_path: Path) ->
     extra = fixture_draft / "r45_extra.tex"
     extra.write_text("First included text.\n", encoding="utf-8")
     fixture_root = tmp_path / "repo"
+    subprocess.run(["git", "add", "docs/research/publication/drafts/taes-cltav/r45_extra.tex"], cwd=fixture_root, check=True)
     first = taes.source_hash(fixture_root, fixture_draft)
     assert extra in taes.source_closure(fixture_root, fixture_draft)
     record["sourceHash"] = first
@@ -216,3 +229,51 @@ def test_rejects_s9_guard_inversion_and_display_contract_mutations() -> None:
     assert "derived S6 must preserve explicit valid/identity branches" in taes._display_errors(
         s2, s6.replace("is a valid compatible class", "is NOT a valid compatible class")
     )
+
+
+def test_publish_transaction_success_and_rollback(tmp_path: Path) -> None:
+    old = tuple(tmp_path / name for name in ("main.pdf", "supp.pdf", "record.json"))
+    staged = tuple(tmp_path / f"new-{name}" for name in ("main.pdf", "supp.pdf", "record.json"))
+    for path, data in zip(old, (b"old-main", b"old-supp", b"old-record"), strict=True):
+        path.write_bytes(data)
+    for path, data in zip(staged, (b"new-main", b"new-supp", b"new-record"), strict=True):
+        path.write_bytes(data)
+    builder._publish(tuple(zip(staged, old, strict=True)))
+    assert [path.read_bytes() for path in old] == [b"new-main", b"new-supp", b"new-record"]
+    for path, data in zip(staged, (b"again-main", b"again-supp", b"again-record"), strict=True):
+        path.write_bytes(data)
+    calls = 0
+    def fail_second(source: Path, target: Path) -> None:
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise OSError("injected replace failure")
+        source.replace(target)
+    try:
+        builder._publish(tuple(zip(staged, old, strict=True)), replace=fail_second)
+    except SystemExit:
+        pass
+    else:
+        raise AssertionError("injected replacement failure was accepted")
+    assert [path.read_bytes() for path in old] == [b"new-main", b"new-supp", b"new-record"]
+
+
+def test_first_publish_failure_leaves_no_partial_targets(tmp_path: Path) -> None:
+    staged = tuple(tmp_path / f"new-{name}" for name in ("main.pdf", "supp.pdf", "record.json"))
+    targets = tuple(tmp_path / name for name in ("main.pdf", "supp.pdf", "record.json"))
+    for path in staged:
+        path.write_bytes(b"new")
+    calls = 0
+    def fail_second(source: Path, target: Path) -> None:
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise OSError("injected first-publication failure")
+        source.replace(target)
+    try:
+        builder._publish(tuple(zip(staged, targets, strict=True)), replace=fail_second)
+    except SystemExit:
+        pass
+    else:
+        raise AssertionError("injected first-publication failure was accepted")
+    assert not any(path.exists() for path in targets)

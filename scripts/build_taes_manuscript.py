@@ -115,6 +115,35 @@ def _stage_closure(stage: Path) -> None:
         shutil.copy2(source, target)
 
 
+def _publish(targets: tuple[tuple[Path, Path], ...], replace: object | None = None) -> None:
+    """Install a complete artifact set or restore every prior target byte-for-byte."""
+    mover = replace or (lambda staged, target: staged.replace(target))
+    backups: list[tuple[Path, Path]] = []
+    installed: list[tuple[Path, bool]] = []
+    try:
+        for _, target in targets:
+            existed = target.exists()
+            installed.append((target, existed))
+            if existed:
+                backup = target.with_suffix(target.suffix + ".previous")
+                shutil.copy2(target, backup)
+                backups.append((target, backup))
+        for staged, target in targets:
+            mover(staged, target)
+    except OSError as exc:
+        for target, backup in backups:
+            if backup.exists():
+                backup.replace(target)
+        for target, existed in installed:
+            if not existed and target.exists():
+                target.unlink()
+        raise SystemExit(f"publication transaction failed; prior outputs restored: {exc}") from exc
+    finally:
+        for _, backup in backups:
+            if backup.exists():
+                backup.unlink()
+
+
 def main() -> int:
     if not DRAFT.is_dir():
         raise SystemExit("manuscript directory is missing")
@@ -173,24 +202,7 @@ def main() -> int:
     shutil.copy2(staged_supp, tmp_supp)
     tmp_record.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
     targets = ((tmp_main, OUT_MAIN), (tmp_supp, OUT_SUPP), (tmp_record, RECORD_PATH))
-    backups: list[tuple[Path, Path]] = []
-    try:
-        for _, target in targets:
-            if target.exists():
-                backup = target.with_suffix(target.suffix + ".previous")
-                shutil.copy2(target, backup)
-                backups.append((target, backup))
-        for staged, target in targets:
-            staged.replace(target)
-    except OSError as exc:
-        for target, backup in backups:
-            if backup.exists():
-                backup.replace(target)
-        raise SystemExit(f"publication transaction failed; prior outputs restored: {exc}") from exc
-    finally:
-        for _, backup in backups:
-            if backup.exists():
-                backup.unlink()
+    _publish(targets)
     print(json.dumps(record, indent=2))
     return 0
 

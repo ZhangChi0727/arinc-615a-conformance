@@ -40,7 +40,8 @@ def _load_json(path: Path) -> dict:
 
 
 def _strip_comments(text: str) -> str:
-    return "\n".join(COMMENT_RE.sub("", line) for line in text.splitlines())
+    without_percent = "\n".join(COMMENT_RE.sub("", line) for line in text.splitlines())
+    return re.sub(r"\\tcp\*?\{[^{}]*\}", "", without_percent)
 
 
 def _rel(path: Path, root: Path) -> str:
@@ -60,6 +61,26 @@ def _safe_rel(raw: str, errors: list[str], label: str) -> str | None:
         errors.append(f"{label} escapes with ..: {text}")
         return None
     return text
+
+
+def _dependency_errors(root: Path, files: list[Path]) -> list[str]:
+    errors: list[str] = []
+    for path in files:
+        if not path.is_file() or path.is_symlink():
+            errors.append(f"dependency is not an ordinary file: {path}")
+            continue
+        try:
+            rel = path.resolve().relative_to(root.resolve()).as_posix()
+        except ValueError:
+            errors.append(f"dependency leaves repository: {path}")
+            continue
+        tracked = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "--error-unmatch", rel],
+            capture_output=True, text=True, check=False,
+        )
+        if tracked.returncode:
+            errors.append(f"dependency is not tracked: {rel}")
+    return errors
 
 
 def _hash_relative_files(root: Path, files: list[Path]) -> str:
@@ -403,6 +424,7 @@ def manuscript_errors(
             record = None
             errors.append("build record is unreadable")
     expected_hash = source_hash(root, draft)
+    errors.extend(_dependency_errors(root, source_closure(root, draft)))
     if not isinstance(record, dict):
         errors.append("build record is missing")
     else:
