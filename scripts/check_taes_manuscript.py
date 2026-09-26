@@ -145,9 +145,14 @@ def _collect_inputs(start: Path, draft: Path, errors: list[str]) -> list[Path]:
                 continue
             target = (current.parent / rel).resolve()
             if not target.is_file():
+                target = (draft / rel).resolve()
+            if not target.is_file():
                 alg_hit = (ROOT / "docs/research/publication/algorithms" / Path(rel).name).resolve()
                 if alg_hit.is_file():
                     target = alg_hit
+            if not target.is_file():
+                errors.append(f"input is missing: {raw}")
+                continue
             try:
                 target.relative_to(draft.resolve())
             except ValueError:
@@ -173,7 +178,9 @@ def _duty_errors(compact: str) -> list[str]:
         errors.append("S9 must call CommitCompatibleUpdate, not a bare IF-HIST-UPDATE")
     if "commit via" in body and "IF-HIST-UPDATE" in body and "CommitCompatibleUpdate" not in body:
         errors.append("S9 reduced to a bare history-interface call")
-    if not re.search(r"status[^\n]*SPEC-ERROR[\s\S]{0,180}(?:Finish|Stop-SpecError)", body):
+    normalized = re.sub(r"\s+", "", body)
+    required_guard = r"\lIf{$\textit{status}=\texttt{SPEC-ERROR}$}{\Return\texttt{Stop-SpecError}}"
+    if required_guard not in normalized:
         errors.append("S9 must stop on CommitCompatibleUpdate SPEC-ERROR")
     for token in DUTY_TOKENS:
         if token not in body:
@@ -183,10 +190,33 @@ def _duty_errors(compact: str) -> list[str]:
     return errors
 
 
-def _graphic_errors(blob: str) -> list[str]:
+def _graphic_errors(blob: str, draft: Path | None = None) -> list[str]:
     errors: list[str] = []
     for raw in re.findall(r"\\includegraphics(?:\[[^]]*\])?\{([^}]+)\}", blob):
         _safe_rel(raw, errors, f"graphic {raw}")
+        if draft is not None:
+            candidates = [draft / raw]
+            if not Path(raw).suffix:
+                candidates.extend(draft / f"{raw}{suffix}" for suffix in (".pdf", ".png", ".jpg", ".jpeg"))
+            if not any(candidate.is_file() for candidate in candidates):
+                errors.append(f"graphic is missing: {raw}")
+    return errors
+
+
+def _display_errors(s2: str, s6: str) -> list[str]:
+    errors: list[str] = []
+    if "\\eIf{" not in s6 or "H'\\leftarrow H" not in s6:
+        errors.append("derived S6 must preserve explicit valid/identity branches")
+    if s6.count("\\IFhist") != 2:
+        errors.append("derived S6 must invoke exactly one history update per branch")
+    required_s2 = (
+        "z.\\mathrm{kind}", "z.\\mathrm{actionId}", "z.\\mathrm{prepResultEvaluated}",
+        "z.\\mathrm{targetConfirmed}", "z.\\mathrm{summaryConfirmed}", "z.\\mathrm{prepErr}",
+        "z.\\mathrm{declaredTarget}", "z.\\mathrm{evidence}", "z.\\mathrm{postSummary}",
+    )
+    for token in required_s2:
+        if token not in s2:
+            errors.append(f"derived S2 is missing resolver field {token}")
     return errors
 
 
@@ -292,7 +322,13 @@ def manuscript_errors(
         for item in (label for label in used_labels if label.startswith(prefix)):
             if item not in declared:
                 errors.append(f"used {kind[:-1]} label is not registered: {item}")
-    errors.extend(_graphic_errors(blob))
+    errors.extend(_graphic_errors(blob, draft))
+    s2_path = draft / "supp_alg03_display.tex"
+    s6_path = draft / "supp_alg07_display.tex"
+    if not s2_path.is_file() or not s6_path.is_file():
+        errors.append("derived display module is missing")
+    else:
+        errors.extend(_display_errors(s2_path.read_text(encoding="utf-8"), s6_path.read_text(encoding="utf-8")))
     fig_src = "".join(
         text for key, text in executable.items() if key.endswith("sec3_arch.tex") or key.endswith("sec5_setup.tex")
     )
@@ -357,7 +393,7 @@ def manuscript_errors(
             if label == "main" and pages > budget:
                 errors.append(f"main PDF exceeds project page budget: {pages}")
             recorded_pages = (record.get("pageCounts") or {}).get(label)
-            if recorded_pages not in (None, pages):
+            if recorded_pages != pages:
                 errors.append(f"{label} PDF page count does not match the build record")
     return errors
 

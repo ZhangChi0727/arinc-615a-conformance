@@ -60,13 +60,14 @@ PredictionResult & status OK$\vert$GAP; reason; classesByTest (OK); historyVersi
 Decision & kind ACTION$\vert$EXIT$\vert$SPEC-ERROR; actionKind; actionId; classesUsed; reason \\
 SelectSnapshot $\xi$ & actionId; actionKind; qUsedAtSelect; historyVersion; classesUsedAtSelect; uncertaintyRef \\
 ExecutionResult & attemptId; record; effect; correlationId \\
-Outcome $z$ & validity; effect; \(I_z\) or NONE; summaryConfirmed; postSummary; timing \\
+Outcome $z$ & validity; effect; kind; actionId; \(I_z\) or NONE; prepResultEvaluated; targetConfirmed; summaryConfirmed; prepErr; declaredTarget; evidence; postSummary; timing \\
 Resolution $\delta$ & control COMMIT$\vert$RETRY$\vert$STOP; \(\Gamma'\); \(\eta'\); outcome; reason \\
 \hline
 \end{tabularx}
 
 \section{Admit and post-update stops}
-A1 selects an affordable distinguishing TEST. A2 is KNOWN with a
+A1 selects one affordable, eligible, distinguishing action from the exclusive
+TEST, Prep or Recover alternatives. A2 is KNOWN with a
 distinguishing TEST or eligible Prep, but no such action affordable
 (Stop-Budget). A3 is KNOWN with no distinguishing TEST and no eligible Prep
 (Stop-NoDistinguisher). A4 is UNKNOWN with no eligible Recover (Stop-Error).

@@ -4,6 +4,7 @@ import copy
 import importlib.util
 import json
 from pathlib import Path
+from shutil import copytree
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -25,6 +26,19 @@ MANIFEST = json.loads(
     )
 )
 COMPACT = ROOT / "docs/research/publication/drafts/taes-cltav/alg_compact_01.tex"
+DRAFT = ROOT / "docs/research/publication/drafts/taes-cltav"
+
+
+def _fixture_record(tmp_path: Path, mutate: str) -> tuple[Path, dict]:
+    fixture_root = tmp_path / "repo"
+    fixture_draft = fixture_root / "docs/research/publication/drafts/taes-cltav"
+    fixture_draft.parent.mkdir(parents=True, exist_ok=True)
+    copytree(DRAFT, fixture_draft, dirs_exist_ok=True)
+    main = fixture_draft / "main.tex"
+    main.write_text(main.read_text(encoding="utf-8") + "\n" + mutate + "\n", encoding="utf-8")
+    record = json.loads((DRAFT / "build_record.json").read_text(encoding="utf-8"))
+    record["sourceHash"] = taes.source_hash(fixture_root, fixture_draft)
+    return fixture_draft, record
 
 
 def test_manifest_placeholders_are_complete() -> None:
@@ -157,3 +171,23 @@ def test_pdf_page_parser_capability_failure(monkeypatch: object, tmp_path: Path)
     pdf.write_bytes(b"%PDF-1.4\n/Type /Page\n")
     monkeypatch.setattr(taes.shutil, "which", lambda _: None)  # type: ignore[attr-defined]
     assert taes._pdf_pages(pdf) == 0
+
+
+def test_production_entry_rejects_missing_input_and_graphic_after_hash_refresh(tmp_path: Path) -> None:
+    fixture_draft, record = _fixture_record(tmp_path, r"\input{r44_missing_input}")
+    errors = taes.manuscript_errors(root=tmp_path / "repo", draft=fixture_draft, record=record)
+    assert "input is missing: r44_missing_input" in errors
+    fixture_draft, record = _fixture_record(tmp_path, r"\includegraphics{r44_missing.pdf}")
+    errors = taes.manuscript_errors(root=tmp_path / "repo", draft=fixture_draft, record=record)
+    assert "graphic is missing: r44_missing.pdf" in errors
+
+
+def test_rejects_s9_guard_inversion_and_display_contract_mutations() -> None:
+    inverted = COMPACT.read_text(encoding="utf-8").replace(
+        "\\textit{status}=\\texttt{SPEC-ERROR}", "\\textit{status}\\neq\\texttt{SPEC-ERROR}"
+    )
+    assert "S9 must stop on CommitCompatibleUpdate SPEC-ERROR" in taes._duty_errors(inverted)
+    s2 = (DRAFT / "supp_alg03_display.tex").read_text(encoding="utf-8")
+    s6 = (DRAFT / "supp_alg07_display.tex").read_text(encoding="utf-8")
+    assert any("resolver field" in item for item in taes._display_errors(s2.replace("z.\\mathrm{evidence}", ""), s6))
+    assert "derived S6 must preserve explicit valid/identity branches" in taes._display_errors(s2, s6.replace("\\eIf", "\\uIf"))

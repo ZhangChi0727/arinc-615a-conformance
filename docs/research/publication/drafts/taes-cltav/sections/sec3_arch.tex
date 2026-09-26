@@ -18,7 +18,7 @@ port, produces the compatible class \(I_z\) and hypothesis survivors.
 
 \begin{figure}[!ht]
 \centering
-\begin{tikzpicture}[scale=0.76,transform shape,font=\scriptsize,box/.style={draw,align=center,inner sep=2pt,text width=0.88\columnwidth}]
+\begin{tikzpicture}[font=\footnotesize,box/.style={draw,align=center,inner sep=3pt,text width=0.92\columnwidth}]
 \node[box] (iut) at (0,4.4) {IUT / \(M_{\mathrm{prot}}\): UPLOAD + INFORMATION};
 \node[box] (adp) at (0,3.3) {adapter / clocks: stimulus out, raw record back};
 \node[box] (sess) at (0,2.2) {\(M_{\mathrm{sess}}\): predict, select, charge, execute};
@@ -26,10 +26,11 @@ port, produces the compatible class \(I_z\) and hypothesis survivors.
 \node[box] (filt) at (0,0.0) {evaluator filter: algorithm result + truth};
 \node[box] (truth) at (0,-1.1) {evaluator truth (filter only)};
 \draw[->] (sess) -- (adp);
-\draw[->] (adp) -- (iut);
-\draw[->] (iut.east) to[out=0,in=0,looseness=1.6] node[right,font=\tiny] {raw rec.} (adp.east);
-\draw[->] (adp.west) to[out=180,in=180,looseness=1.6] node[left,font=\tiny] {raw rec.} (sess.west);
-\draw[->] (sess) -- (interp);
+\draw[->] ([xshift=-3pt]adp.north) -- ([xshift=-3pt]iut.south) node[midway,left,font=\scriptsize] {stimulus};
+\draw[->] ([xshift=3pt]iut.south) -- ([xshift=3pt]adp.north) node[midway,right,font=\scriptsize] {raw record};
+\draw[->] ([xshift=-3pt]adp.south) -- ([xshift=-3pt]sess.north) node[midway,left,font=\scriptsize] {raw record};
+\draw[->] ([xshift=-3pt]sess.south) -- ([xshift=-3pt]interp.north);
+\draw[->] ([xshift=3pt]interp.north) -- ([xshift=3pt]sess.south) node[midway,right,font=\scriptsize] {update};
 \draw[->] (interp) -- (filt);
 \draw[->] (truth) -- (filt);
 \end{tikzpicture}
