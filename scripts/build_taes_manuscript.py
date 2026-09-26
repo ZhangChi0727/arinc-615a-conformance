@@ -11,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DRAFT = ROOT / "docs/research/publication/drafts/taes-cltav"
+RECORD_PATH = DRAFT / "build_record.json"
 ALG_DIR = ROOT / "docs/research/publication/algorithms"
 STAGE = DRAFT / "build"
 VENDOR = DRAFT / "vendor"
@@ -104,7 +105,7 @@ def main() -> int:
     if STAGE.exists():
         shutil.rmtree(STAGE)
     STAGE.mkdir(parents=True)
-    for name in ("main.tex", "supplementary.tex", "references.bib", "macros.tex", "alg_compact_01.tex"):
+    for name in ("main.tex", "supplementary.tex", "references.bib", "macros.tex", "alg_compact_01.tex", "supp_alg03_display.tex", "supp_alg07_display.tex"):
         shutil.copy2(DRAFT / name, STAGE / name)
     shutil.copytree(DRAFT / "sections", STAGE / "sections")
     shutil.copy2(VENDOR / "IEEEtaes.cls", STAGE / "IEEEtaes.cls")
@@ -142,23 +143,51 @@ def main() -> int:
             "supplement": CHECK._pdf_pages(staged_supp),
         },
         "engine": engine,
-        "complete": True,
+        # This state is deliberately not publishable.  It becomes complete
+        # only after the staged artifacts pass the same checker used in CI.
+        "complete": False,
     }
     (STAGE / "build_record.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
-    preview_errors = CHECK.manuscript_errors(record=record)
-    # The published files are not yet copied; ignore missing-published-hash by
-    # validating against staged hashes already in the record after copy.
+    preview_errors = CHECK.manuscript_errors(
+        record=record,
+        artifact_paths={"main": staged_main, "supplement": staged_supp},
+        allow_incomplete_record=True,
+    )
+    if preview_errors:
+        raise SystemExit("staged validation failed:\n  - " + "\n  - ".join(preview_errors))
+    record["complete"] = True
+    complete_errors = CHECK.manuscript_errors(
+        record=record, artifact_paths={"main": staged_main, "supplement": staged_supp}
+    )
+    if complete_errors:
+        raise SystemExit("completed staged validation failed:\n  - " + "\n  - ".join(complete_errors))
+    # Only a fully validated pair is eligible for publication.
     OUT_MAIN.parent.mkdir(parents=True, exist_ok=True)
     tmp_main = OUT_MAIN.with_suffix(".pdf.staging")
     tmp_supp = OUT_SUPP.with_suffix(".pdf.staging")
+    tmp_record = RECORD_PATH.with_suffix(".json.staging")
     shutil.copy2(staged_main, tmp_main)
     shutil.copy2(staged_supp, tmp_supp)
-    tmp_main.replace(OUT_MAIN)
-    tmp_supp.replace(OUT_SUPP)
-    (DRAFT / "build_record.json").write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
-    errors = CHECK.manuscript_errors()
-    if errors:
-        raise SystemExit("post-publish validation failed:\n  - " + "\n  - ".join(errors))
+    tmp_record.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
+    targets = ((tmp_main, OUT_MAIN), (tmp_supp, OUT_SUPP), (tmp_record, RECORD_PATH))
+    backups: list[tuple[Path, Path]] = []
+    try:
+        for _, target in targets:
+            if target.exists():
+                backup = target.with_suffix(target.suffix + ".previous")
+                shutil.copy2(target, backup)
+                backups.append((target, backup))
+        for staged, target in targets:
+            staged.replace(target)
+    except OSError as exc:
+        for target, backup in backups:
+            if backup.exists():
+                backup.replace(target)
+        raise SystemExit(f"publication transaction failed; prior outputs restored: {exc}") from exc
+    finally:
+        for _, backup in backups:
+            if backup.exists():
+                backup.unlink()
     print(json.dumps(record, indent=2))
     return 0
 

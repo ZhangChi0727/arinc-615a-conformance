@@ -78,6 +78,15 @@ def test_rejects_compact_bypass_and_bare_s9() -> None:
     assert any("CommitCompatibleUpdate" in item or "bare" in item for item in errors)
 
 
+def test_rejects_removed_s9_error_handler() -> None:
+    body = COMPACT.read_text(encoding="utf-8")
+    defective = body.replace(
+        "\\lIf{$\\textit{status}=\\texttt{SPEC-ERROR}$}{\\Return \\texttt{Stop-SpecError}}", ""
+    )
+    errors = taes._duty_errors(defective)
+    assert "S9 must stop on CommitCompatibleUpdate SPEC-ERROR" in errors
+
+
 def test_rejects_missing_citation_key() -> None:
     bad = copy.deepcopy(MANIFEST)
     bad["citations"] = list(bad["citations"]) + ["not-a-real-paper-1999"]
@@ -113,3 +122,38 @@ def test_source_hash_normalizes_checkout_line_endings(tmp_path: Path) -> None:
     lf_hash = taes._hash_relative_files(tmp_path, [source])
     source.write_bytes(b"alpha\r\nbeta\r\n")
     assert taes._hash_relative_files(tmp_path, [source]) == lf_hash
+
+
+def test_rejects_duplicate_and_pruned_registered_figures() -> None:
+    duplicate = copy.deepcopy(MANIFEST)
+    duplicate["figures"].append(dict(duplicate["figures"][0]))
+    errors = taes.manuscript_errors(duplicate)
+    assert "duplicate figure registry entry" in errors
+    pruned = copy.deepcopy(MANIFEST)
+    pruned["figures"] = pruned["figures"][1:]
+    errors = taes.manuscript_errors(pruned)
+    assert any("used figure label is not registered: fig:arch" == item for item in errors)
+
+
+def test_rejects_incomplete_or_conflicting_build_record() -> None:
+    record = json.loads((ROOT / "docs/research/publication/drafts/taes-cltav/build_record.json").read_text(encoding="utf-8"))
+    incomplete = dict(record)
+    incomplete["complete"] = False
+    errors = taes.manuscript_errors(copy.deepcopy(MANIFEST), record=incomplete)
+    assert "build record is not complete" in errors
+    conflict = dict(record)
+    conflict["mainPdf"] = "README.md"
+    errors = taes.manuscript_errors(copy.deepcopy(MANIFEST), record=conflict)
+    assert "main PDF path disagrees with the manifest" in errors
+
+
+def test_rejects_unsafe_graphic_dependency() -> None:
+    errors = taes._graphic_errors(r"\includegraphics{../../outside.pdf}")
+    assert "graphic ../../outside.pdf escapes with ..: ../../outside.pdf" in errors
+
+
+def test_pdf_page_parser_capability_failure(monkeypatch: object, tmp_path: Path) -> None:
+    pdf = tmp_path / "document.pdf"
+    pdf.write_bytes(b"%PDF-1.4\n/Type /Page\n")
+    monkeypatch.setattr(taes.shutil, "which", lambda _: None)  # type: ignore[attr-defined]
+    assert taes._pdf_pages(pdf) == 0

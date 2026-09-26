@@ -28,11 +28,15 @@ and \(\delta.\mathrm{outcome}\).
 
 \subsection{Interpretation, compatibility and selection}
 Prediction and interpretation share \(U\). Let \(O(h,t,q)\) be the conservative
-outer observation set of hypothesis \(h\). A currently valid class \(C\) is a
-nonempty projection \(H\cap C'\). Compatible update on a valid class is
+outer set of feasible observations of hypothesis \(h\), and let \(Z_k\) be the
+measured feasible-observation set after timing, ownership and pairing checks.
+The interpretation/whole-history bridge induces the compatible hypothesis
+class \(C_k\) (the accepted interface field \(z.I_z\)); \(C_k\) is not a
+measurement set. A currently valid class is the nonempty projection
+\(H\cap C_k\). Compatible update on a valid class is
 \begin{equation}
 \label{eq:update}
-H_{k+1}=H_k\cap I_{z_k},\qquad H_{k+1}\subseteq H_k.
+H_{k+1}=H_k\cap C_k,\qquad H_{k+1}\subseteq H_k.
 \end{equation}
 \texttt{ERROR} and identity Prep/Recover leave \(H\) unchanged. The one-step
 score on currently valid nonempty classes of an affordable distinguishing
@@ -53,10 +57,12 @@ in-domain singleton is not protocol PASS.
 
 \textbf{Retention.} Assume (R1) \(h^\star\in H_0\); (R2) one state path is
 consistent with the executed history; (R3) \(O(h^\star,t_k,q_k)\) is a
-conservative outer set; (R4) \(I_{z_k}\) contains the true observation; (R5)
-ownership and pairing are valid. Then
-\(O(h^\star,t_k,q_k)\cap I_{z_k}\neq\varnothing\), so a valid update retains
-\(h^\star\). Out-of-domain faults may still mimic an in-domain survivor.
+conservative outer set; (R4) the true observation belongs to both
+\(O(h^\star,t_k,q_k)\) and \(Z_k\); and (R5) ownership and pairing are valid.
+The declared interpretation and whole-history compatibility contract therefore
+places \(h^\star\) in \(C_k\). Thus \(h^\star\in H_k\cap C_k\), and induction
+retains it in \(H_{k+1}\). Out-of-domain faults may still mimic an in-domain
+survivor.
 
 \textbf{One-step minimax.} On nonempty finite \(T_{\mathrm{cur}}\), \(t^\star\)
 is a least element of \((s(t),\mathrm{cost}(t),\mathrm{id})\). This is not a

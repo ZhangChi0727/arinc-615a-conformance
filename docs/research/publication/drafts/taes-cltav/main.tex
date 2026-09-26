@@ -8,10 +8,6 @@
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 \usepackage[T1]{fontenc}
 \usepackage{textcomp}
-\usepackage{balance}
-% Keep the draft bibliography with the manuscript rather than leaving an
-% orphaned final reference page; the template default is 8/10 pt.
-\def\bibliofont{\fontfamily{\rmdefault}\fontsize{7}{8}\selectfont}
 
 \SetKwRepeat{Do}{do}{while}
 
@@ -65,10 +61,7 @@ uncertainty, closed-loop verification.
 \input{sections/sec7_discussion}
 \input{sections/sec8_conclusion}
 
-\balance
-{\scriptsize
 \bibliographystyle{IEEEtaes}
 \bibliography{references}
-}
 
 \end{document}

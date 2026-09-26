@@ -83,6 +83,8 @@ def source_closure(root: Path | None = None, draft: Path | None = None) -> list[
         draft / "supplementary.tex",
         draft / "macros.tex",
         draft / "alg_compact_01.tex",
+        draft / "supp_alg03_display.tex",
+        draft / "supp_alg07_display.tex",
         draft / "references.bib",
         draft / "manuscript_manifest.json",
         root / "scripts/build_taes_manuscript.py",
@@ -116,22 +118,13 @@ def file_sha256(path: Path) -> str:
 
 def _pdf_pages(path: Path) -> int:
     pdfinfo = shutil.which("pdfinfo")
-    if pdfinfo:
-        result = subprocess.run(
-            [pdfinfo, str(path)], capture_output=True, text=True, check=False
-        )
-        match = re.search(r"^Pages:\s+(\d+)\s*$", result.stdout, re.MULTILINE)
-        if result.returncode == 0 and match:
-            return int(match.group(1))
-    data = path.read_bytes()
-    direct_pages = len(re.findall(rb"/Type\s*/Page(?!s)", data))
-    if direct_pages:
-        return direct_pages
-    # Some pdfTeX versions use object streams, which hide individual Page
-    # dictionaries from the byte-level fallback.  The page-tree count remains
-    # an uncompressed catalog value in those files.
-    counts = [int(value) for value in re.findall(rb"/Count\s+(\d+)", data)]
-    return max(counts, default=0)
+    if not pdfinfo:
+        return 0
+    result = subprocess.run(
+        [pdfinfo, str(path)], capture_output=True, text=True, check=False
+    )
+    match = re.search(r"^Pages:\s+(\d+)\s*$", result.stdout, re.MULTILINE)
+    return int(match.group(1)) if result.returncode == 0 and match else 0
 
 
 def _collect_inputs(start: Path, draft: Path, errors: list[str]) -> list[Path]:
@@ -180,6 +173,8 @@ def _duty_errors(compact: str) -> list[str]:
         errors.append("S9 must call CommitCompatibleUpdate, not a bare IF-HIST-UPDATE")
     if "commit via" in body and "IF-HIST-UPDATE" in body and "CommitCompatibleUpdate" not in body:
         errors.append("S9 reduced to a bare history-interface call")
+    if not re.search(r"status[^\n]*SPEC-ERROR[\s\S]{0,180}(?:Finish|Stop-SpecError)", body):
+        errors.append("S9 must stop on CommitCompatibleUpdate SPEC-ERROR")
     for token in DUTY_TOKENS:
         if token not in body:
             errors.append(f"compact algorithm is missing duty token {token}")
@@ -188,11 +183,20 @@ def _duty_errors(compact: str) -> list[str]:
     return errors
 
 
+def _graphic_errors(blob: str) -> list[str]:
+    errors: list[str] = []
+    for raw in re.findall(r"\\includegraphics(?:\[[^]]*\])?\{([^}]+)\}", blob):
+        _safe_rel(raw, errors, f"graphic {raw}")
+    return errors
+
+
 def manuscript_errors(
     manifest: dict | None = None,
     root: Path | None = None,
     draft: Path | None = None,
     record: dict | None = None,
+    artifact_paths: dict[str, Path] | None = None,
+    allow_incomplete_record: bool = False,
 ) -> list[str]:
     errors: list[str] = []
     root = ROOT if root is None else root
@@ -280,9 +284,15 @@ def manuscript_errors(
         declared = [row.get("id") or row.get("paperLabel") for row in manifest.get(kind) or [] if isinstance(row, dict)]
         if not declared:
             continue
+        if len(declared) != len(set(declared)):
+            errors.append(f"duplicate {kind[:-1]} registry entry")
         for item in declared:
             if item not in used_labels:
                 errors.append(f"registered {kind[:-1]} label unused: {item}")
+        for item in (label for label in used_labels if label.startswith(prefix)):
+            if item not in declared:
+                errors.append(f"used {kind[:-1]} label is not registered: {item}")
+    errors.extend(_graphic_errors(blob))
     fig_src = "".join(
         text for key, text in executable.items() if key.endswith("sec3_arch.tex") or key.endswith("sec5_setup.tex")
     )
@@ -317,14 +327,19 @@ def manuscript_errors(
     if not isinstance(record, dict):
         errors.append("build record is missing")
     else:
+        if record.get("complete") is not True and not allow_incomplete_record:
+            errors.append("build record is not complete")
         if record.get("sourceHash") != expected_hash:
             errors.append("build record source hash does not match the current closure")
         for label, key in (("main", "mainPdf"), ("supplement", "supplementPdf")):
-            rel = record.get(key) or outputs.get("main" if label == "main" else "supplement")
+            manifest_rel = outputs.get("main" if label == "main" else "supplement")
+            rel = record.get(key) or manifest_rel
+            if manifest_rel and record.get(key) and record.get(key) != manifest_rel:
+                errors.append(f"{label} PDF path disagrees with the manifest")
             if not rel:
                 errors.append(f"{label} PDF path missing")
                 continue
-            path = root / str(rel)
+            path = (artifact_paths or {}).get(label, root / str(rel))
             if not path.is_file() or path.stat().st_size < 1000:
                 errors.append(f"{label} PDF missing or truncated")
                 continue

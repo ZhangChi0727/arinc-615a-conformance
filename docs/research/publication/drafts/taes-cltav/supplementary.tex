@@ -1,6 +1,6 @@
 \documentclass[11pt,letterpaper]{article}
 % Supplementary technical package. Compiled separately from the TAES main text.
-\usepackage[margin=1.05in,bottom=1.2in]{geometry}
+\usepackage[margin=1in,bottom=1.2in]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage[ruled,vlined,linesnumbered]{algorithm2e}
 \usepackage[T1]{fontenc}
@@ -66,10 +66,13 @@ Resolution $\delta$ & control COMMIT$\vert$RETRY$\vert$STOP; \(\Gamma'\); \(\eta
 \end{tabularx}
 
 \section{Admit and post-update stops}
-A2 no affordable distinguishing TEST and no eligible Prep/Recover.
-A3 named prediction-gap when Recover/Prep are ineligible.
-A4 retry-cap is not used here; retry-cap is Stop-Error.
-A5 Recover eligible but unaffordable (Stop-Budget).
+A1 selects an affordable distinguishing TEST. A2 is KNOWN with a
+distinguishing TEST or eligible Prep, but no such action affordable
+(Stop-Budget). A3 is KNOWN with no distinguishing TEST and no eligible Prep
+(Stop-NoDistinguisher). A4 is UNKNOWN with no eligible Recover (Stop-Error).
+A5 is UNKNOWN with Recover eligible but unaffordable (Stop-Budget). A TEST
+prediction GAP is handled independently: a KNOWN GAP without eligible Prep is
+SPEC-ERROR, not A3; retry-cap remains an independent Stop-Error condition.
 P1 Stop-Empty; P2 Stop-Singleton; P3 Stop-645; P4 Stop-Equivalent;
 P5 Stop-Budget after update. Stop-NoDistinguisher is exclusive with those
 P-stops when no remaining distinguisher exists and no P-stop already fired.
@@ -92,14 +95,15 @@ guidance is rechecked at submission.
 \section{Wrappers and core mechanisms}
 \sloppy
 \emergencystretch=3em
-{\fontsize{7}{8}\selectfont
-\SetAlFnt{\fontsize{7}{8}\selectfont}
+{\normalsize
+\SetAlFnt{\normalsize}
+\setlength{\algomargin}{0pt}
 \input{ALG-CLTAV-02}
-\input{ALG-CLTAV-03}
+\input{supp_alg03_display}
 \input{ALG-CLTAV-04}
 \input{ALG-CLTAV-05-selection}
 \input{ALG-CLTAV-06-timing}
-\input{ALG-CLTAV-07-history}
+\input{supp_alg07_display}
 }
 
 \end{document}

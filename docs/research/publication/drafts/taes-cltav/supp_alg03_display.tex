@@ -1,0 +1,19 @@
+% Readable derived display of ALG-CLTAV-03; the accepted source remains unchanged.
+\begin{algorithm}[H]
+\caption{\textsc{InterpretOutcome}: execution and observation coordination (ALG-CLTAV-03, S6)}
+\label{alg:cltav-03}
+\KwIn{ExecutionResult $er$; SelectSnapshot $\xi$; $\Gamma,\eta$; uncertainty reference $U$}
+\KwOut{total Outcome $z$, including effect, validity, $I_z$, and confirmation status}
+$z\leftarrow\textsc{NewOutcome}()$; copy $er.\mathrm{effect}$, $\xi.\mathrm{actionKind}$ and $\xi.\mathrm{actionId}$ to $z$\;
+\If{$er.\mathrm{effect}\in\{\texttt{CONFIRMED-NOT-SENT},\texttt{UNKNOWN-EFFECT}\}$}{\Return $z$\;}
+$(I_z,e,s,p,o,m)\leftarrow\IFobs(\Gamma,er.\mathrm{record},\mathrm{clocks},\varepsilon)$\;
+\If{$o$ is invalid}{set $z.\mathrm{validity}\leftarrow\mathrm{ERROR}$ and $z.\mathrm{effect}\leftarrow\texttt{UNKNOWN-EFFECT}$; \Return $z$\;}
+$\mathrm{timing}\leftarrow\textsc{InterpretTimedObservation}(o,m,\xi,N_r,D_r,\mathrm{Match}_r)$\;
+\If{$\mathrm{timing}.\mathrm{verdict}=\mathrm{ERROR}$}{set $z.\mathrm{validity}\leftarrow\mathrm{ERROR}$ and $z.\mathrm{effect}\leftarrow\texttt{UNKNOWN-EFFECT}$; \Return $z$\;}
+set $z.\mathrm{validity}\leftarrow\mathrm{timing}.\mathrm{verdict}$ and $z.I_z\leftarrow I_z$\;
+\If{$\xi.\mathrm{actionKind}\in\{\mathrm{PREP},\mathrm{RECOVER}\}$}{evaluate \IFprep$(\Gamma,\eta,\xi.\mathrm{actionId},er.\mathrm{record})$ into target, summary, error, target declaration, evidence and $p$; \tcp*{returns values only}}
+set $z.\mathrm{summaryConfirmed}\leftarrow s$ and $z.\mathrm{postSummary}\leftarrow p$\;
+\If{$e=\texttt{UNKNOWN-EFFECT}$, prep error, an unconfirmed Prep/Recover result, or $e=\texttt{NONE}$ with no confirmed summary}{set $z.\mathrm{effect}\leftarrow\texttt{UNKNOWN-EFFECT}$\;}
+\Else{set $z.\mathrm{effect}\leftarrow e$\;}
+\Return $z$\; \tcp*{all $\Gamma$/$\eta$ writes stay in ALG-CLTAV-04 and S9}
+\end{algorithm}
