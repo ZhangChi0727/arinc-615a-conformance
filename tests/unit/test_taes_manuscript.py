@@ -182,6 +182,19 @@ def test_production_entry_rejects_missing_input_and_graphic_after_hash_refresh(t
     assert "graphic is missing: r44_missing.pdf" in errors
 
 
+def test_recursive_input_is_hashed_and_detects_its_own_change(tmp_path: Path) -> None:
+    fixture_draft, record = _fixture_record(tmp_path, r"\input{r45_extra}")
+    extra = fixture_draft / "r45_extra.tex"
+    extra.write_text("First included text.\n", encoding="utf-8")
+    fixture_root = tmp_path / "repo"
+    first = taes.source_hash(fixture_root, fixture_draft)
+    assert extra in taes.source_closure(fixture_root, fixture_draft)
+    record["sourceHash"] = first
+    assert not any("source hash" in item for item in taes.manuscript_errors(root=fixture_root, draft=fixture_draft, record=record))
+    extra.write_text("Changed included text.\n", encoding="utf-8")
+    assert taes.source_hash(fixture_root, fixture_draft) != first
+
+
 def test_rejects_s9_guard_inversion_and_display_contract_mutations() -> None:
     inverted = COMPACT.read_text(encoding="utf-8").replace(
         "\\textit{status}=\\texttt{SPEC-ERROR}", "\\textit{status}\\neq\\texttt{SPEC-ERROR}"
@@ -189,5 +202,10 @@ def test_rejects_s9_guard_inversion_and_display_contract_mutations() -> None:
     assert "S9 must stop on CommitCompatibleUpdate SPEC-ERROR" in taes._duty_errors(inverted)
     s2 = (DRAFT / "supp_alg03_display.tex").read_text(encoding="utf-8")
     s6 = (DRAFT / "supp_alg07_display.tex").read_text(encoding="utf-8")
-    assert any("resolver field" in item for item in taes._display_errors(s2.replace("z.\\mathrm{evidence}", ""), s6))
+    assert "derived S2 must preserve the evaluated confirmation assignment tuple" in taes._display_errors(
+        s2.replace("z.\\mathrm{prepResultEvaluated}\\leftarrow\\textbf{true}", "z.\\mathrm{prepResultEvaluated}\\leftarrow\\textbf{false}"), s6
+    )
     assert "derived S6 must preserve explicit valid/identity branches" in taes._display_errors(s2, s6.replace("\\eIf", "\\uIf"))
+    assert "derived S6 valid branch must adopt the narrowed history and candidate set" in taes._display_errors(
+        s2, s6.replace("H'\\leftarrow H_c", "H'\\leftarrow H")
+    )

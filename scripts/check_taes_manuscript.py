@@ -90,21 +90,13 @@ def source_closure(root: Path | None = None, draft: Path | None = None) -> list[
         root / "scripts/build_taes_manuscript.py",
         root / "scripts/check_taes_manuscript.py",
     ]
-    files.extend(sorted((draft / "sections").glob("*.tex")))
     files.extend(sorted((draft / "vendor").glob("IEEEtaes.*")))
-    alg = root / "docs/research/publication/algorithms"
-    files.extend(
-        alg / name
-        for name in (
-            "ALG-CLTAV-02.tex",
-            "ALG-CLTAV-03.tex",
-            "ALG-CLTAV-04.tex",
-            "ALG-CLTAV-05-selection.tex",
-            "ALG-CLTAV-06-timing.tex",
-            "ALG-CLTAV-07-history.tex",
-        )
-    )
-    return [path for path in files if path.is_file()]
+    closure_errors: list[str] = []
+    for entry in (draft / "main.tex", draft / "supplementary.tex"):
+        files.extend(_collect_inputs(entry, draft, closure_errors, root))
+    # Missing dependencies are reported by manuscript_errors; do not silently
+    # discard successfully resolved nested dependencies from the identity.
+    return list(dict.fromkeys(path for path in files if path.is_file()))
 
 
 def source_hash(root: Path | None = None, draft: Path | None = None) -> str:
@@ -127,7 +119,7 @@ def _pdf_pages(path: Path) -> int:
     return int(match.group(1)) if result.returncode == 0 and match else 0
 
 
-def _collect_inputs(start: Path, draft: Path, errors: list[str]) -> list[Path]:
+def _collect_inputs(start: Path, draft: Path, errors: list[str], root: Path = ROOT) -> list[Path]:
     seen: list[Path] = []
     stack = [start]
     while stack:
@@ -147,7 +139,7 @@ def _collect_inputs(start: Path, draft: Path, errors: list[str]) -> list[Path]:
             if not target.is_file():
                 target = (draft / rel).resolve()
             if not target.is_file():
-                alg_hit = (ROOT / "docs/research/publication/algorithms" / Path(rel).name).resolve()
+                alg_hit = (root / "docs/research/publication/algorithms" / Path(rel).name).resolve()
                 if alg_hit.is_file():
                     target = alg_hit
             if not target.is_file():
@@ -156,7 +148,7 @@ def _collect_inputs(start: Path, draft: Path, errors: list[str]) -> list[Path]:
             try:
                 target.relative_to(draft.resolve())
             except ValueError:
-                alg = (ROOT / "docs/research/publication/algorithms").resolve()
+                alg = (root / "docs/research/publication/algorithms").resolve()
                 try:
                     target.relative_to(alg)
                 except ValueError:
@@ -205,18 +197,27 @@ def _graphic_errors(blob: str, draft: Path | None = None) -> list[str]:
 
 def _display_errors(s2: str, s6: str) -> list[str]:
     errors: list[str] = []
-    if "\\eIf{" not in s6 or "H'\\leftarrow H" not in s6:
+    s2 = re.sub(r"\s+", "", _strip_comments(s2))
+    s6 = re.sub(r"\s+", "", _strip_comments(s6))
+    if "\\eIf{" not in s6 or "H'\\leftarrowH" not in s6:
         errors.append("derived S6 must preserve explicit valid/identity branches")
     if s6.count("\\IFhist") != 2:
         errors.append("derived S6 must invoke exactly one history update per branch")
+    if "$\\eta'\\leftarrow\\eta_c$;$H'\\leftarrowH_c$" not in s6:
+        errors.append("derived S6 valid branch must adopt the narrowed history and candidate set")
+    if "NONE,and$z.\\mathrm{postSummary}$" not in s6 or "$H'\\leftarrowH$" not in s6:
+        errors.append("derived S6 identity branch must preserve H with the NONE update")
     required_s2 = (
-        "z.\\mathrm{kind}", "z.\\mathrm{actionId}", "z.\\mathrm{prepResultEvaluated}",
-        "z.\\mathrm{targetConfirmed}", "z.\\mathrm{summaryConfirmed}", "z.\\mathrm{prepErr}",
-        "z.\\mathrm{declaredTarget}", "z.\\mathrm{evidence}", "z.\\mathrm{postSummary}",
+        "z.\\mathrm{effect}\\leftarrower.\\mathrm{effect}",
+        "z.\\mathrm{kind}\\leftarrow\\xi.\\mathrm{actionKind}",
+        "z.\\mathrm{actionId}\\leftarrow\\xi.\\mathrm{actionId}",
+        "z.\\mathrm{prepResultEvaluated}\\leftarrow\\textbf{true}",
+        "(z.\\mathrm{targetConfirmed},s,z.\\mathrm{prepErr},z.\\mathrm{declaredTarget},z.\\mathrm{evidence},p)\\leftarrow",
+        "z.\\mathrm{summaryConfirmed}\\leftarrows",
+        "z.\\mathrm{postSummary}\\leftarrowp",
     )
-    for token in required_s2:
-        if token not in s2:
-            errors.append(f"derived S2 is missing resolver field {token}")
+    if any(token not in s2 for token in required_s2):
+        errors.append("derived S2 must preserve the evaluated confirmation assignment tuple")
     return errors
 
 
@@ -267,7 +268,7 @@ def manuscript_errors(
         path = draft / rel
         if path.is_file():
             _index(path)
-            for dep in _collect_inputs(path, draft, errors):
+            for dep in _collect_inputs(path, draft, errors, root):
                 _index(dep)
     for row in manifest.get("sections") or []:
         if not isinstance(row, dict):
