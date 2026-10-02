@@ -7,24 +7,24 @@
     "url": "https://github.com/ZhangChi0727/arinc-615a-conformance"
   },
   "currentIncrement": {
-    "title": "TAES Regular Paper first-draft manuscript",
-    "titleZh": "TAES Regular Paper 初稿",
+    "title": "CL-TAV first-slice development-readiness specification",
+    "titleZh": "CL-TAV 首轮开发就绪规格",
     "summary": [
-      "Convert the accepted CL-TAV method, algorithm contracts and experiment protocol into a compilable IEEE TAES Regular Paper first draft under CR-2026-015 / DD-037. The eight outline chapters become sections I–VIII. The project page budget is a main PDF of at most 10 pages including references, with reserved result layout; the supplement is compiled separately.",
-      "Keep C1/C2 and CL-RQ1–CL-RQ3. Do not invent confirmatory numbers. Placeholders carry unique IDs, categories, dependencies and completion conditions. Author, affiliation, funding, ranking and fees stay pending institutional inputs.",
-      "Do not change CRS, M2, src, source-audit semantics, accepted algorithm control logic, capabilities or Configuration. This increment is not submission, not M3 and not a tag."
+      "Specify the first offline UPLOAD/INFORMATION development slice under CR-2026-016 / DD-038–040: capture identity, reconstruction records, ownership, observation interpretation, bounded history compatibility and traceable reporting.",
+      "Register the local historical corpus as exploratory development input only; file annotation is not wire outcome, independent case conclusion or experimental truth, and unknown metadata remains explicit.",
+      "This increment is a Draft specification, not a tool implementation, confirmation experiment, Configuration, M3 activation, capability or conformance claim."
     ],
     "summaryZh": [
-      "在 CR-2026-015／DD-037 下，把已接受的 CL-TAV 方法、算法合同与实验方案转为可编译的 IEEE TAES Regular Paper 初稿。八节大纲对应第 I–VIII 节。项目页预算为主稿含参考文献不超过 10 页并预留结果版面；补充材料单独编译。",
-      "保持 C1／C2 与 CL-RQ1–CL-RQ3。不虚构确认性数字。占位具唯一 ID、类别、依赖与完成条件。作者、单位、基金、分区与费用保持待单位确认。",
-      "不修改 CRS、M2、src、来源审计语义、已接受算法控制逻辑、能力或 Configuration。本增量不是投稿、不是 M3、不是 tag。"
+      "在 CR-2026-016／DD-038～040 下规格化首轮离线 UPLOAD／INFORMATION 开发切片：捕获身份、重建记录、所有权、观测解释、有界历史相容更新和可追踪报告。",
+      "本地历史语料仅登记为探索性开发输入；文件注释不等于线上结果、独立案例结论或实验真值，未知元数据保持显式。",
+      "本增量是 Draft 规格，不是工具实现、确认性实验、Configuration、M3 激活、能力或符合性主张。"
     ],
     "stateChanges": [
-      "Writing increment on one Draft PR under CR-2026-015 / DD-037; M3 remains blocked.",
+      "One Draft PR under CR-2026-016 / DD-038–040; M3 remains blocked.",
       "currentStop remains EXECUTABLE-FOUNDATION-GATE for M3 implementation."
     ],
     "stateChangesZh": [
-      "写作增量在唯一 Draft PR 上以 CR-2026-015／DD-037 交付；M3 保持阻塞。",
+      "在唯一 Draft PR 上以 CR-2026-016／DD-038～040 交付；M3 保持阻塞。",
       "对 M3 实现而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。"
     ],
     "unchangedBoundaries": [
@@ -43,7 +43,7 @@
     ]
   },
   "development": {
-    "phase": "TAES Regular Paper first draft under CR-2026-015; M3 still blocked",
+    "phase": "CL-TAV first-slice development-readiness specification under CR-2026-016; M3 still blocked",
     "gates": {
       "SOURCE-TECHNICAL-DIRECTION-GATE": "COMPLETED-EXTERNALLY-VERIFIED",
       "CONFORMANCE-REQUIREMENTS-SPECIFICATION-GATE": "COMPLETED-EXTERNALLY-VERIFIED",
