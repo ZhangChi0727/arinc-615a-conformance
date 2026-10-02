@@ -76,8 +76,8 @@ Unchanged boundaries:
 
 ## Next development steps
 
-- Request independent review of the TAES first draft and its placeholders on the unique Draft PR. Keep independentMathematicalApproval and independentReviewApproval false. Do not Ready, merge, tag, submit or start M3.
-- Keep 665 section 2.3 emitted-not-closed in this PR. ARINC 645 SOURCE/SEMANTIC bind stays capability-open. Bound M2 stays UPLOAD/INFORMATION. FIND clock limited approval stays closed. Do not auto-select Part 4 or activate AFDX.
+- Complete the first-slice authoritative contract, generated review view, finite acceptance fixtures and production readiness gate on the unique Draft PR. Request independent review only at an unchanged final Head; do not Ready, merge, tag, submit or start M3.
+- Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth.
 
 ## 当前开发图景
 
@@ -126,8 +126,8 @@ Unchanged boundaries:
 
 ## 下一步开发计划
 
-- 在唯一 Draft PR 上请求对 TAES 初稿及其占位做独立评审。保持 independentMathematicalApproval 与 independentReviewApproval 为 false。不转 Ready、不合并、不打标签、不投稿、不启动 M3。
-- 665 §2.3 在本 PR 保持已发出未闭合。ARINC 645 来源／语义绑定保持能力未建立。绑定 M2 仍为 UPLOAD／INFORMATION。FIND 时钟有限批准保持关闭。不自动选定第 4 部分，也不激活 AFDX。
+- 在唯一 Draft PR 上完成首轮权威合同、生成评审视图、有限验收夹具和生产就绪门禁。仅在最终 Head 不变时请求独立评审；不转 Ready、不合并、不打标签、不投稿、不启动 M3。
+- 保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。
 <!-- project-status:end -->
 
 ## Read by role / 按角色继续阅读

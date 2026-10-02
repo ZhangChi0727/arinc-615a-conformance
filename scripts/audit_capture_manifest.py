@@ -51,6 +51,7 @@ def audit_errors(manifest: dict, corpus_root: Path, schema: dict) -> list[str]:
         return ["captures must be a nonempty array"]
     seen: set[str] = set()
     declared_paths: set[PurePosixPath] = set()
+    resolved_identities: set[tuple[int, int]] = set()
     for row in captures:
         ident = row.get("captureId") if isinstance(row, dict) else None
         relative = row.get("relativePath") if isinstance(row, dict) else None
@@ -71,14 +72,21 @@ def audit_errors(manifest: dict, corpus_root: Path, schema: dict) -> list[str]:
         declared_paths.add(pure)
         candidate = root.joinpath(*pure.parts)
         try:
-            candidate.resolve(strict=True).relative_to(root)
+            resolved = candidate.resolve(strict=True)
+            resolved.relative_to(root)
         except (OSError, ValueError):
             errors.append(f"{ident}: resolved path escapes corpus root")
             continue
-        if not candidate.is_file():
+        if not resolved.is_file():
             errors.append(f"{ident}: capture is missing")
             continue
-        if candidate.stat().st_size != row.get("byteCount"):
+        stat = resolved.stat()
+        file_identity = (stat.st_dev, stat.st_ino)
+        if file_identity in resolved_identities:
+            errors.append(f"{ident}: resolved file identity is repeated")
+            continue
+        resolved_identities.add(file_identity)
+        if stat.st_size != row.get("byteCount"):
             errors.append(f"{ident}: byteCount differs")
         if _digest(candidate) != row.get("sha256"):
             errors.append(f"{ident}: sha256 differs")
