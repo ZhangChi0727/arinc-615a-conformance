@@ -10,6 +10,7 @@ baseline.
 | Folder | Use |
 |---|---|
 | `drafts/` | Manuscript sections |
+| `drafts/taes-cltav/` | TAES Regular Paper first draft (CR-2026-015 / DD-037) |
 | `notes/` | Annotated literature and exploratory notes |
 | `figures/` | Reproducibly generated publication figures |
 | `models/` | SysML 1.6 notation-based PlantUML sources (FIG-CL-TAV-01..09) |
@@ -67,14 +68,14 @@ These are notation-based views, not an executable SysML metamodel.
 Reader SVG exports are in `artifacts/publications/cltav/figures/` and must match
 the PlantUML sources in `models/`.
 
-## Tentative venue (verified 2026-09-20; not institutional selection)
+## Tentative venue (re-checked 2026-09-25; not institutional selection)
 
 This is a **writing target**, not an acceptance, not a CAS-quartile confirmation,
 and not a reason to change protocol facts or add experiment promises.
 
 ### IEEE Transactions on Aerospace and Electronic Systems (TAES) — primary target
 
-Accessed 2026-09-20:
+Accessed 2026-09-20; format and fee items re-checked 2026-09-25 against the same author-information page:
 
 - Author information: https://ieee-aess.org/publications/transactions-aes/author-information
 - Technical areas: https://ieee-aess.org/publications/transactions-aes/technical-areas-editors/descriptions
@@ -93,10 +94,10 @@ framework evolution). The Editor-in-Chief may reassign the area.
 Format constraints that affect this draft (re-check before submission):
 
 - Regular Paper type in https://ieee.atyponrex.com/journal/taes
-- Two-column/single-spaced 10 pt estimate for over-length charges; IEEE LaTeX
-  template via the IEEE Author Center
+- Two-column/single-spaced 10 pt; 1 in top/bottom and 0.7 in left/right margins
+  (class `IEEEtaes`, original-research zip)
 - Over-length: USD 200 per printed page beyond 10 for Regular Papers (author
-  information page, 2026-09-20)
+  information page, re-checked 2026-09-25). OA fees do not waive over-length.
 - Avoid “new”/“novel” in title and abstract (AESS recommendation)
 - Originality, single-anonymous review, minimum two reviewers
 - IEEE Author Center governs AI-use disclosure; this increment does not
@@ -185,6 +186,7 @@ step labels S0–S10, not volatile typeset line numbers, protocol states, or tim
 | 目录 | 用途 |
 |---|---|
 | `drafts/` | 论文段落 |
+| `drafts/taes-cltav/` | TAES Regular Paper 初稿（CR-2026-015／DD-037） |
 | `notes/` | 文献批注与探索性笔记 |
 | `figures/` | 可复现生成的出版图表 |
 | `models/` | SysML 1.6 记法 PlantUML 源（FIG-CL-TAV-01..09） |
@@ -234,13 +236,13 @@ CL-TAV 数学正确。保持 `independentMathematicalApproval` 与
 `satisfy` 与 `verify` 是模型关系，不是已执行验证。读者 SVG 导出位于
 `artifacts/publications/cltav/figures/`，须与 `models/` 中的 PlantUML 源对应。
 
-## 暂定投稿目标（2026-09-20 核验；不是学校正式选刊）
+## 暂定投稿目标（2026-09-25 复核；不是学校正式选刊）
 
 这是**写作靶标**，不是录用、不是中科院分区确认，也不得反过来修改协议事实或加实验承诺。
 
 ### IEEE Transactions on Aerospace and Electronic Systems（TAES）——第一靶标
 
-IEEE TAES Regular Paper 为第一靶标。官方作者信息与技术领域页于 2026-09-20 访问。范围包括航空电子等复杂系统；Regular Paper 是对问题域的完整处理。最接近的技术领域为 Aerospace Information Systems 与 Avionics Systems。超出 10 印刷页的 Regular Paper 按作者页所述每页 200 美元计超长页费。避免在题目／摘要使用 “new”／“novel”。IEEE Author Center 管辖 AI 使用声明；本增量不登记作者、不投稿。
+IEEE TAES Regular Paper 为第一靶标。官方作者信息与技术领域页于 2026-09-20 访问，版式与超页费于 2026-09-25 按同一作者页复核。范围包括航空电子等复杂系统；Regular Paper 是对问题域的完整处理。最接近的技术领域为 Aerospace Information Systems 与 Avionics Systems。版式为双栏 10 pt、上下 1 in、左右 0.7 in。超出 10 印刷页的 Regular Paper 按作者页所述每页 200 美元计超长页费；OA 费不抵超页费。避免在题目／摘要使用 “new”／“novel”。IEEE Author Center 管辖 AI 使用声明；本增量不登记作者、不投稿。初稿目录为 `drafts/taes-cltav/`。
 
 ### Aerospace Science and Technology（AST）——另一候选
 

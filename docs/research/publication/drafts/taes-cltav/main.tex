@@ -1,0 +1,67 @@
+\documentclass{IEEEtaes}
+% First draft. Not submission-ready. Do not treat template sample
+% authors, DOI, volume or 2020 dates as this manuscript.
+\usepackage{cite}
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+
+\SetKwRepeat{Do}{do}{while}
+
+\input{macros}
+
+\title{CL-TAV: Closed-Loop Test--Analysis Verification for ARINC 615A Data Loading under Timing Uncertainty}
+
+\author{Author~Name~\IEEEmembership{Membership pending}
+\thanks{Manuscript received date pending. Authors, affiliations, funding and
+IEEE membership are institutional inputs (AUTH-AUTHORS, AUTH-AFFIL, AUTH-FUND)
+and are not fabricated. Corresponding author, ORCID and clearance remain
+pending. AI disclosure remains incomplete (AUTH-AI): system name PENDING-USER;
+sections/figures/code touched PENDING-USER; verification duty remains with the
+authors. This sentence does not fulfill IEEE AESS AI disclosure
+(https://ieee-aess.org/publications/transactions-aes/author-information).
+No AI system is an author.}
+\thanks{Affiliation pending (AUTH-AFFIL).}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+ARINC 615A data loading must be judged under declared timers, file identities
+and measurement uncertainty. A fixed test suite that never uses residual
+ambiguity, or an analysis that never issues a later legal operation, can leave
+detection and isolation incomplete. This paper specifies Closed-Loop
+Test--Analysis Verification (CL-TAV): a charged session that predicts current
+observation classes, selects an exclusive TEST, Prep, Recover or Admit action,
+interprets timing with a shared uncertainty reference, and updates a
+single-fault candidate set only from a select-time snapshot. Unknown-effect
+\texttt{ERROR} is not implementation FAIL. Confirmed-not-sent leaves the known
+summary unchanged. The bound protocol model remains UPLOAD and INFORMATION;
+ARINC 645 identity is bound for triggered leaves, while integrity capabilities
+stay unestablished. Four comparison arms and three registered experiment
+families are defined. Confirmatory measurements are not yet obtained;
+improvement percentages are therefore not reported. The draft is a journalized
+method paper, not a solver implementation and not a certification argument.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Avionics, data loading, conformance testing, fault diagnosis, timing
+uncertainty, closed-loop verification.
+\end{IEEEkeywords}
+
+\input{sections/sec1_intro}
+\input{sections/sec2_related}
+\input{sections/sec3_arch}
+\input{sections/sec4_method}
+\input{sections/sec5_setup}
+\input{sections/sec6_results}
+\input{sections/sec7_discussion}
+\input{sections/sec8_conclusion}
+
+\bibliographystyle{IEEEtaes}
+\bibliography{references}
+
+\end{document}

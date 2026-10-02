@@ -1,6 +1,6 @@
 # CL-TAV Research Plan
 
-Reader entry for CR-2026-013. Authoritative files remain the method report, DD-028–034, `RESEARCH_OUTLINE.md`, SysML sources, ALG-CLTAV-01, and the protocol source-audit ledger. This page does not copy the CRS database.
+Reader entry for CR-2026-013 and the CR-2026-015 TAES first draft. Authoritative files remain the method report, DD-028–034, DD-037, `RESEARCH_OUTLINE.md`, SysML sources, ALG-CLTAV-01, and the protocol source-audit ledger. The journal draft lives in [`../../../docs/research/publication/drafts/taes-cltav/`](../../../docs/research/publication/drafts/taes-cltav/). This page does not copy the CRS database.
 
 ## Method change summary
 
@@ -8,7 +8,7 @@ Successor method: Closed-Loop Test–Analysis Verification (CL-TAV). First-versi
 
 ## Thesis outline
 
-Eight chapters. Each chapter in `docs/research/publication/RESEARCH_OUTLINE.md` states claim, CL-RQ, algorithm or architecture, required experiment, figures, what exists, and the gap. Chapter 6 is layout and metrics only; no unrun results.
+Eight chapters map to TAES sections I–VIII. Each chapter in `docs/research/publication/RESEARCH_OUTLINE.md` states claim, CL-RQ, algorithm or architecture, required experiment, figures, what exists, and the gap. Chapter 6 / Section VI reserves result layout; no unrun results. The first-draft PDFs, when built, are `CLTAV_TAES_DRAFT.pdf` and `CLTAV_TAES_SUPPLEMENT.pdf`.
 
 ## System-engineering views
 
@@ -46,7 +46,7 @@ The freeze-commit 94-block math check proves only that historical objects were n
 
 # 中文版
 
-CR-2026-013 的读者入口。权威文件仍是方法报告、DD-028～034、`RESEARCH_OUTLINE.md`、SysML 源、ALG-CLTAV-01 和协议来源审计清单。本页不另抄 CRS 数据库。
+CR-2026-013 与 CR-2026-015 TAES 初稿的读者入口。权威文件仍是方法报告、DD-028～034、DD-037、`RESEARCH_OUTLINE.md`、SysML 源、ALG-CLTAV-01 和协议来源审计清单。期刊初稿位于 [`../../../docs/research/publication/drafts/taes-cltav/`](../../../docs/research/publication/drafts/taes-cltav/)。本页不另抄 CRS 数据库。
 
 ## 方法变更摘要
 
@@ -54,7 +54,7 @@ CR-2026-013 的读者入口。权威文件仍是方法报告、DD-028～034、`R
 
 ## 论文大纲
 
-八章。`docs/research/publication/RESEARCH_OUTLINE.md` 中每章写明论点、CL-RQ、算法或架构、所需实验、图、已有材料和缺口。第6章只保留布局和指标，不填未跑结果。
+八章对应 TAES 第 I–VIII 节。`docs/research/publication/RESEARCH_OUTLINE.md` 中每章写明论点、CL-RQ、算法或架构、所需实验、图、已有材料和缺口。第6章／第 VI 节只保留结果版面，不填未跑结果。编译后的初稿 PDF 为 `CLTAV_TAES_DRAFT.pdf` 与 `CLTAV_TAES_SUPPLEMENT.pdf`。
 
 ## 系统工程视图
 

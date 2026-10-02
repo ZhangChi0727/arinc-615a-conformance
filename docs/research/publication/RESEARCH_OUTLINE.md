@@ -2,12 +2,13 @@
 
 | Field | Value |
 |---|---|
-| **Version** | 3.1-candidate under CR-2026-013 |
-| **Status** | CL-TAV thesis plan; design direction accepted 2026-09-14; 645 SOURCE/SEMANTIC bind is a candidate, not capability establishment; not independent mathematical or RG approval |
-| **Method** | [`../methodology/RR-2026-001_test_analysis_conformance_methodology.md`](../methodology/RR-2026-001_test_analysis_conformance_methodology.md), DD-028, DD-029, DD-030, DD-031–034 |
+| **Version** | 3.2-candidate under CR-2026-015 |
+| **Status** | CL-TAV thesis plan journalized as a TAES Regular Paper first draft; design direction accepted 2026-09-14; 645 SOURCE/SEMANTIC bind is a candidate, not capability establishment; not independent mathematical or RG approval; not submission-ready |
+| **Method** | [`../methodology/RR-2026-001_test_analysis_conformance_methodology.md`](../methodology/RR-2026-001_test_analysis_conformance_methodology.md), DD-028, DD-029, DD-030, DD-031–034, DD-037 |
 | **Reader entry** | [`../../../artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md`](../../../artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md) |
+| **Manuscript** | [`drafts/taes-cltav/`](drafts/taes-cltav/) under CR-2026-015 / DD-037 |
 
-Tentative writing target is IEEE TAES Regular Paper, with Aerospace Science and Technology as the alternate. Institutional CAS ranking remains `PENDING-INSTITUTIONAL-RANKING-CHECK`.
+Writing target is IEEE TAES Regular Paper (re-checked 2026-09-25: Regular Paper PDF, two-column 10 pt, 1 in top/bottom and 0.7 in left/right margins, no hard page cap, USD 200 per printed page beyond 10; OA fees do not waive over-length). Aerospace Science and Technology remains the alternate. Institutional CAS ranking remains `PENDING-INSTITUTIONAL-RANKING-CHECK`. Project budget for this draft is a main PDF of at most 10 pages including references, with reserved result layout; a separate supplement holds coordination wrappers and extended contracts. Chapters 1–8 map to manuscript sections I–VIII without changing C1/C2 or the experiment arms.
 
 ## Working title
 
@@ -156,12 +157,13 @@ The check that the freeze commit still hashes to 94 display-math blocks proves *
 
 | 字段 | 值 |
 |---|---|
-| **版本** | CR-2026-013 下的 3.1-candidate |
-| **状态** | CL-TAV 论文计划；2026-09-14 接受设计方向；645 来源／语义绑定为候选，不是能力成立；不是独立数学或 RG 批准 |
-| **方法** | [`../methodology/RR-2026-001_test_analysis_conformance_methodology.md`](../methodology/RR-2026-001_test_analysis_conformance_methodology.md)，DD-028、DD-029、DD-030、DD-031～034 |
+| **版本** | CR-2026-015 下的 3.2-candidate |
+| **状态** | CL-TAV 论文计划已期刊化为 TAES Regular Paper 初稿；2026-09-14 接受设计方向；645 来源／语义绑定为候选，不是能力成立；不是独立数学或 RG 批准；不是投稿就绪 |
+| **方法** | [`../methodology/RR-2026-001_test_analysis_conformance_methodology.md`](../methodology/RR-2026-001_test_analysis_conformance_methodology.md)，DD-028、DD-029、DD-030、DD-031～034、DD-037 |
 | **读者入口** | [`../../../artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md`](../../../artifacts/publications/cltav/CLTAV_RESEARCH_PLAN.md) |
+| **稿件** | [`drafts/taes-cltav/`](drafts/taes-cltav/)，受 CR-2026-015／DD-037 管辖 |
 
-暂定写作靶标为 IEEE TAES Regular Paper，AST 为另一候选。学校中科院分区保持 `PENDING-INSTITUTIONAL-RANKING-CHECK`。
+暂定写作靶标为 IEEE TAES Regular Paper（2026-09-25 复核：Regular Paper PDF，双栏 10 pt，上下 1 in、左右 0.7 in，无硬页上限，超过 10 印刷页每页 200 美元；OA 费不抵超页费）。AST 为另一候选。学校中科院分区保持 `PENDING-INSTITUTIONAL-RANKING-CHECK`。本初稿项目预算为主稿含参考文献不超过 10 页并预留结果版面；补充材料单独编译。第 1–8 章对应稿件第 I–VIII 节，不改变 C1／C2 或实验臂。
 
 ## 工作题目
 

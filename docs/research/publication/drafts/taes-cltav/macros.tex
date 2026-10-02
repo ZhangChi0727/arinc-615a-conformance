@@ -1,0 +1,39 @@
+% Shared manuscript macros. Do not alter accepted algorithm semantics.
+\newcommand{\IFpred}{\texttt{IF-PRED-OBS}}
+\newcommand{\IFhist}{\texttt{IF-HIST-UPDATE}}
+\newcommand{\IFobs}{\texttt{IF-OBS-INTERPRET}}
+\newcommand{\IFsel}{\texttt{IF-SELECT-ADMIT}}
+\newcommand{\IFexec}{\texttt{IF-EXECUTE-RECORD}}
+\newcommand{\IFprep}{\texttt{IF-PREP-RECOVER}}
+\newcommand{\IFeq}{\texttt{IF-EQUIV}}
+\newcommand{\IFres}{\texttt{IF-RESOURCE-STOP}}
+
+% Visible evidence placeholder. Never used to draw fake data.
+\newcommand{\phboxhigh}[3]{%
+  \begin{center}
+  \fbox{%
+    \begin{minipage}{0.92\linewidth}
+      \vspace{28mm}
+      \centering
+      \textbf{Placeholder #1} (#2)\\[0.4em]
+      {\small #3}\\[0.3em]
+      {\scriptsize Data are not obtained. This framed panel reserves a single-column result figure. It is not a curve, a mean, or a significance test.}
+      \vspace{28mm}
+    \end{minipage}}
+  \end{center}
+  \label{ph:#1}%
+}
+\newcommand{\phbox}[3]{%
+  \begin{center}
+  \fbox{%
+    \begin{minipage}{0.92\linewidth}
+      \vspace{1.15em}
+      \centering
+      \textbf{Placeholder #1} (#2)\\[0.35em]
+      {\small #3}\\[0.25em]
+      {\scriptsize Data are not obtained. This box reserves layout. It is not a result.}
+      \vspace{1.15em}
+    \end{minipage}}
+  \end{center}
+  \label{ph:#1}%
+}
