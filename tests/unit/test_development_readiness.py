@@ -231,6 +231,31 @@ def test_review_view_escapes_table_rationales_without_losing_row_structure():
     assert sum(char == "|" and (index == 0 or chinese_row[index - 1] != "\\") for index, char in enumerate(chinese_row)) == 8
 
 
+def test_review_generator_normalizes_free_text_before_write_check_round_trip(monkeypatch, tmp_path):
+    candidate = copy.deepcopy(PACKAGE)
+    candidate["inputBindings"][0]["purpose"] = "English purpose\r\n# not a heading"
+    candidate["inputBindings"][0]["purposeZh"] = "中文用途\r\n# 不是标题"
+    candidate["implementationSlices"][0]["scope"] = "English scope\r\n# not a heading"
+    candidate["implementationSlices"][0]["scopeZh"] = "中文范围\r\n# 不是标题"
+    view = SYNC.render(candidate)
+    assert "English purpose<br># not a heading" in view
+    assert "中文用途<br># 不是标题" in view
+    assert "English scope<br># not a heading" in view
+    assert "中文范围<br># 不是标题" in view
+    assert "\n# not a heading" not in view
+    assert "\n# 不是标题" not in view
+
+    package = tmp_path / "package.json"
+    review = tmp_path / "review.md"
+    package.write_text(json.dumps(candidate), encoding="utf-8")
+    monkeypatch.setattr(SYNC, "PACKAGE", package)
+    monkeypatch.setattr(SYNC, "VIEW", review)
+    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--write"])
+    assert SYNC.main() == 0
+    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--check"])
+    assert SYNC.main() == 0
+
+
 def test_review_view_detects_nonfirst_disposition_and_slice_relation_changes():
     baseline = SYNC.render(copy.deepcopy(PACKAGE))
     candidate = copy.deepcopy(PACKAGE)
