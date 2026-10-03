@@ -1,0 +1,12 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "type":"object","additionalProperties":false,
+  "required":["identity","control","inputBindings","implementationSlices","protocolInputDispositions","toolRequirements","recordContracts","moduleContracts","algorithmRefinements","runtimeParameterContracts","acceptanceCases","implementationDependencies","paperTrace","reviewBoundary"],
+  "properties":{
+    "identity":{"type":"object","required":["artifactId","version"],"properties":{"artifactId":{"const":"CLTAV-DEVELOPMENT-CONTRACTS"},"version":{"const":"1.0"}}},
+    "control":{"type":"object","required":["changeRequest","decisions","baseCommit"],"properties":{"changeRequest":{"const":"CR-2026-016"},"decisions":{"type":"array","minItems":3},"baseCommit":{"type":"string","pattern":"^[0-9a-f]{40}$"}}},
+    "inputBindings":{"type":"array","minItems":2},"implementationSlices":{"type":"array","minItems":1},"toolRequirements":{"type":"array","minItems":1},"recordContracts":{"type":"array","minItems":10},"moduleContracts":{"type":"array","minItems":5},"algorithmRefinements":{"type":"array","minItems":1},"runtimeParameterContracts":{"type":"array","minItems":1},"acceptanceCases":{"type":"array","minItems":1},"implementationDependencies":{"type":"array","minItems":1},"paperTrace":{"type":"array","minItems":1},
+    "protocolInputDispositions":{"type":"array","minItems":1,"items":{"type":"object","required":["inputRequirementId","disposition","rationale","firstSliceRequired"],"properties":{"inputRequirementId":{"type":"string"},"disposition":{"enum":["FIRST-SLICE-IMPLEMENTATION","OBSERVER-ONLY","DEPENDENCY-BLOCKED","LATER-SERVICE","CONDITIONAL-VARIANT","NOT-TOOL-OBLIGATION"]},"rationale":{"type":"string","minLength":1},"firstSliceRequired":{"type":"boolean"},"moduleId":{"type":"string"},"recordId":{"type":"string"},"acceptanceCaseId":{"type":"string"}}}},
+    "reviewBoundary":{"type":"object","required":["readiness","claims"],"properties":{"readiness":{"enum":["READINESS-BLOCKED","CANDIDATE","READY"]},"claims":{"const":"SPECIFICATION-ONLY"}}}
+  }
+}
