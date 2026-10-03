@@ -13,6 +13,11 @@ PACKAGE = ROOT / "configs/engineering/cltav_development_contracts.json"
 VIEW = ROOT / "docs/engineering/CLTAV_DEVELOPMENT_REVIEW_VIEW.md"
 
 
+def table_cell(value: object) -> str:
+    """Render arbitrary controlled text as one safe Markdown table cell."""
+    return str(value).replace("\r\n", "\n").replace("\r", "\n").replace("|", "\\|").replace("\n", "<br>")
+
+
 def render(data: dict) -> str:
     rows = data["protocolInputDispositions"]
     counts = {name: sum(row["disposition"] == name for row in rows) for name in sorted({row["disposition"] for row in rows})}
@@ -23,7 +28,7 @@ def render(data: dict) -> str:
         f"- Bound M1 requirements: {len(rows)}; disposition total: {sum(counts.values())}; readiness: `{data['reviewBoundary']['readiness']}`; claim: `{data['reviewBoundary']['claims']}`",
         "", "## Inputs", "",
     ]
-    lines += [f"- `{item['artifactId']}` — `{item['path']}` — SHA-256 `{item['sha256']}` — {item['purposeZh']}" for item in data["inputBindings"]]
+    lines += [f"- `{item['artifactId']}` — `{item['path']}` — SHA-256 `{item['sha256']}` — {item['purpose']}" for item in data["inputBindings"]]
     lines += ["", "## Slices and dependencies", ""]
     lines += [f"- `{item['id']}` — {item['scope']} — {len(item['requirementIds'])} requirement uses" for item in data["implementationSlices"]]
     lines += [f"- dependency `{item['id']}`: `{item['status']}`" for item in data["implementationDependencies"]]
@@ -35,9 +40,9 @@ def render(data: dict) -> str:
     ]
     lines += [f"| `{name}` | {count} |" for name, count in counts.items()]
     lines += ["", "## All requirement dispositions", "", "| Requirement | Disposition | First slice | Module | Record | Acceptance | Rationale |", "|---|---|---|---|---|---|---|"]
-    lines += [f"| `{row['inputRequirementId']}` | `{row['disposition']}` | `{row['firstSliceRequired']}` | `{row.get('moduleId','—')}` | `{row.get('recordId','—')}` | `{row.get('acceptanceCaseId','—')}` | {row['rationale']} |" for row in rows]
-    lines += ["", "# 中文版", "", "# CL-TAV 开发就绪评审视图", "", "> 由同一权威 JSON 生成，禁止手工修改。", "", f"- 绑定 M1 需求：{len(rows)}；处置合计：{sum(counts.values())}；就绪状态：`{data['reviewBoundary']['readiness']}`；主张边界：`{data['reviewBoundary']['claims']}`", "", "## 输入身份", ""]
-    lines += [f"- `{item['artifactId']}` — `{item['path']}` — SHA-256 `{item['sha256']}` — {item['purpose']}" for item in data["inputBindings"]]
+    lines += [f"| `{row['inputRequirementId']}` | `{row['disposition']}` | `{row['firstSliceRequired']}` | `{row.get('moduleId','—')}` | `{row.get('recordId','—')}` | `{row.get('acceptanceCaseId','—')}` | {table_cell(row['rationale'])} |" for row in rows]
+    lines += ["", "# 中文版", "", "# CL-TAV 开发就绪评审视图", "", "> 由同一权威 JSON 生成，禁止手工修改。", "", f"- 控制：`{data['control']['changeRequest']}`；设计决策：{', '.join(f'`{decision}`' for decision in data['control']['decisions'])}", f"- 绑定 M1 需求：{len(rows)}；处置合计：{sum(counts.values())}；就绪状态：`{data['reviewBoundary']['readiness']}`；主张边界：`{data['reviewBoundary']['claims']}`", "", "## 输入身份", ""]
+    lines += [f"- `{item['artifactId']}` — `{item['path']}` — SHA-256 `{item['sha256']}` — {item['purposeZh']}" for item in data["inputBindings"]]
     lines += ["", "## 切片与依赖", ""]
     lines += [f"- `{item['id']}` — {item['scopeZh']} — {len(item['requirementIds'])} 条需求用途" for item in data["implementationSlices"]]
     lines += [f"- 依赖 `{item['id']}`：`{item['status']}`" for item in data["implementationDependencies"]]
@@ -46,7 +51,7 @@ def render(data: dict) -> str:
     lines += ["", "## 处置摘要", "", "| 处置 | 数量 |", "|---|---:|"]
     lines += [f"| `{name}` | {count} |" for name, count in counts.items()]
     lines += ["", "## 全部需求处置", "", "| 需求 | 处置 | 首轮 | 模块 | 记录 | 验收 | 理由 |", "|---|---|---|---|---|---|---|"]
-    lines += [f"| `{row['inputRequirementId']}` | `{row['disposition']}` | `{row['firstSliceRequired']}` | `{row.get('moduleId','—')}` | `{row.get('recordId','—')}` | `{row.get('acceptanceCaseId','—')}` | {row['rationaleZh']} |" for row in rows]
+    lines += [f"| `{row['inputRequirementId']}` | `{row['disposition']}` | `{row['firstSliceRequired']}` | `{row.get('moduleId','—')}` | `{row.get('recordId','—')}` | `{row.get('acceptanceCaseId','—')}` | {table_cell(row['rationaleZh'])} |" for row in rows]
     return "\n".join(lines) + "\n"
 
 

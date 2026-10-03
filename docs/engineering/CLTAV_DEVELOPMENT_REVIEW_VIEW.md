@@ -7,8 +7,8 @@
 
 ## Inputs
 
-- `ARINC615A3-M1-CRS` — `configs/requirements/arinc_615a3_m1_crs.json` — SHA-256 `7f35f538fff2d9f8204360f650a1b5c794f9969497ad9ef3f1dfe114248a315f` — 受控协议需求全集
-- `CLTAV-INTERFACE-REGISTRY` — `configs/research/cltav_interface_registry.json` — SHA-256 `a65679b902cf51d31aa613c133919c3cd2c66dbc6c65eb3cc58d9bf3530d329d` — 已接受的接口词汇表
+- `ARINC615A3-M1-CRS` — `configs/requirements/arinc_615a3_m1_crs.json` — SHA-256 `7f35f538fff2d9f8204360f650a1b5c794f9969497ad9ef3f1dfe114248a315f` — Bound protocol requirement universe
+- `CLTAV-INTERFACE-REGISTRY` — `configs/research/cltav_interface_registry.json` — SHA-256 `a65679b902cf51d31aa613c133919c3cd2c66dbc6c65eb3cc58d9bf3530d329d` — Accepted interface vocabulary
 
 ## Slices and dependencies
 
@@ -1079,12 +1079,13 @@
 
 > 由同一权威 JSON 生成，禁止手工修改。
 
+- 控制：`CR-2026-016`；设计决策：`DD-038`, `DD-039`, `DD-040`
 - 绑定 M1 需求：863；处置合计：863；就绪状态：`READINESS-BLOCKED`；主张边界：`SPECIFICATION-ONLY`
 
 ## 输入身份
 
-- `ARINC615A3-M1-CRS` — `configs/requirements/arinc_615a3_m1_crs.json` — SHA-256 `7f35f538fff2d9f8204360f650a1b5c794f9969497ad9ef3f1dfe114248a315f` — Bound protocol requirement universe
-- `CLTAV-INTERFACE-REGISTRY` — `configs/research/cltav_interface_registry.json` — SHA-256 `a65679b902cf51d31aa613c133919c3cd2c66dbc6c65eb3cc58d9bf3530d329d` — Accepted interface vocabulary
+- `ARINC615A3-M1-CRS` — `configs/requirements/arinc_615a3_m1_crs.json` — SHA-256 `7f35f538fff2d9f8204360f650a1b5c794f9969497ad9ef3f1dfe114248a315f` — 受控协议需求全集
+- `CLTAV-INTERFACE-REGISTRY` — `configs/research/cltav_interface_registry.json` — SHA-256 `a65679b902cf51d31aa613c133919c3cd2c66dbc6c65eb3cc58d9bf3530d329d` — 已接受的接口词汇表
 
 ## 切片与依赖
 
