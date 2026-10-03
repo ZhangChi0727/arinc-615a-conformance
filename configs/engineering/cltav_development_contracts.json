@@ -4398,9 +4398,12 @@
     },
     {
       "inputRequirementId": "CRS-M1-00618",
-      "disposition": "NOT-TOOL-OBLIGATION",
-      "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction.",
+      "firstSliceRequired": true,
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "PROTOCOL-EVENT",
+      "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00619",
@@ -4425,9 +4428,12 @@
     },
     {
       "inputRequirementId": "CRS-M1-00622",
-      "disposition": "NOT-TOOL-OBLIGATION",
-      "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction.",
+      "firstSliceRequired": true,
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "PROTOCOL-EVENT",
+      "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00623",
@@ -4485,9 +4491,12 @@
     },
     {
       "inputRequirementId": "CRS-M1-00632",
-      "disposition": "NOT-TOOL-OBLIGATION",
-      "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction.",
+      "firstSliceRequired": true,
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "PROTOCOL-EVENT",
+      "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00633",
@@ -4563,21 +4572,30 @@
     },
     {
       "inputRequirementId": "CRS-M1-00645",
-      "disposition": "NOT-TOOL-OBLIGATION",
-      "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction.",
+      "firstSliceRequired": true,
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "PROTOCOL-EVENT",
+      "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00646",
-      "disposition": "NOT-TOOL-OBLIGATION",
-      "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction.",
+      "firstSliceRequired": true,
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "PROTOCOL-EVENT",
+      "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00647",
-      "disposition": "NOT-TOOL-OBLIGATION",
-      "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction.",
+      "firstSliceRequired": true,
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "PROTOCOL-EVENT",
+      "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00648",

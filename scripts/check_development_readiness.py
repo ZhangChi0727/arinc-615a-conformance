@@ -21,6 +21,11 @@ def _git_blob_sha256(relative: str) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 
+def _git_blob_json(relative: str) -> dict:
+    raw = subprocess.check_output(["git", "show", f"HEAD:{relative}"], cwd=ROOT)
+    return json.loads(raw.decode("utf-8"))
+
+
 def package_errors(data: dict) -> list[str]:
     errors: list[str] = []
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
@@ -56,13 +61,23 @@ def package_errors(data: dict) -> list[str]:
         elif binding["sha256"] != _git_blob_sha256(relative):
             errors.append(f"input binding content identity differs: {artifact_id}")
     try:
-        json.loads((ROOT / required_bindings["CLTAV-INTERFACE-REGISTRY"]).read_text(encoding="utf-8"))
+        registry = _git_blob_json(required_bindings["CLTAV-INTERFACE-REGISTRY"])
+        if not isinstance(registry.get("interfaces"), list) or not registry["interfaces"]:
+            errors.append("CL-TAV interface registry lacks interfaces")
     except (OSError, json.JSONDecodeError):
         errors.append("CL-TAV interface registry is unreadable")
-    m1 = json.loads(M1_PATH.read_text(encoding="utf-8"))
+    try:
+        m1 = _git_blob_json(required_bindings["ARINC615A3-M1-CRS"])
+    except (OSError, json.JSONDecodeError):
+        return errors + ["bound M1 CRS is unreadable"]
     expected = {row["id"] for row in m1["requirements"]}
     source_by_id = {row["id"]: row for row in m1["requirements"]}
     first_slice_ids = {item for slice_ in data["implementationSlices"] for item in slice_.get("requirementIds", [])}
+    flattened = [item for slice_ in data["implementationSlices"] for item in slice_.get("requirementIds", [])]
+    if len(flattened) != len(set(flattened)):
+        errors.append("implementationSlices repeats a requirement use")
+    if not first_slice_ids.issubset(expected):
+        errors.append("implementationSlices contains a non-M1 requirement ID")
     rows = data["protocolInputDispositions"]
     actual = [row["inputRequirementId"] for row in rows]
     if len(actual) != len(set(actual)):
@@ -86,10 +101,14 @@ def package_errors(data: dict) -> list[str]:
             for key, known, label in (("moduleId", modules, "module"), ("recordId", records, "record"), ("acceptanceCaseId", cases, "acceptance case")):
                 if row.get(key) not in known:
                     errors.append(f"{row['inputRequirementId']} lacks a valid first-slice {label}")
+        if row["firstSliceRequired"] and row["disposition"] == "FIRST-SLICE-IMPLEMENTATION":
+            if not all(row.get(key) for key in ("moduleId", "recordId", "acceptanceCaseId")):
+                errors.append(f"{row['inputRequirementId']} lacks a consumer/acceptance closure")
     blocked = [row for row in rows if row["disposition"] == "DEPENDENCY-BLOCKED" and row.get("firstSliceRequired")]
     if blocked and data["reviewBoundary"]["readiness"] != "READINESS-BLOCKED":
         errors.append("required blocked input requires READINESS-BLOCKED")
     if data["reviewBoundary"]["readiness"] == "READY":
+        errors.append("READY is prohibited until the complete readiness gate is implemented")
         if blocked or not all(isinstance(item, str) and item.strip() for item in data["reviewBoundary"]["completionEvidence"]):
             errors.append("READY requires no required blocks and nonempty completion evidence")
         if any(row["disposition"] != "FIRST-SLICE-IMPLEMENTATION" and row["firstSliceRequired"] for row in rows):
