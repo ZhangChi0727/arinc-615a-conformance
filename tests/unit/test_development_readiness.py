@@ -16,6 +16,14 @@ def errors(data):
     return MODULE.package_errors(data)
 
 
+def run_main(monkeypatch, tmp_path, capsys, data):
+    package = tmp_path / "package.json"
+    package.write_text(json.dumps(data), encoding="utf-8")
+    monkeypatch.setattr(MODULE, "PACKAGE_PATH", package)
+    code = MODULE.main()
+    return code, capsys.readouterr()
+
+
 def test_current_candidate_is_blocked_but_valid():
     assert PACKAGE["reviewBoundary"]["readiness"] == "READINESS-BLOCKED"
     assert errors(copy.deepcopy(PACKAGE)) == []
@@ -62,3 +70,29 @@ def test_ready_is_stage_locked_even_with_trimmed_relations_or_evidence():
         mutated = copy.deepcopy(PACKAGE)
         mutated["reviewBoundary"] = {"readiness": "READY", "claims": "SPECIFICATION-ONLY", "completionEvidence": evidence}
         assert any("READY is prohibited" in item for item in errors(mutated))
+
+
+def test_ready_lock_survives_actual_pruning(monkeypatch, tmp_path, capsys):
+    mutated = copy.deepcopy(PACKAGE)
+    removed = {row["inputRequirementId"] for row in mutated["protocolInputDispositions"] if row["firstSliceRequired"] and row["disposition"] == "DEPENDENCY-BLOCKED"}
+    assert removed
+    for slice_ in mutated["implementationSlices"]:
+        slice_["requirementIds"] = [item for item in slice_["requirementIds"] if item not in removed]
+    for row in mutated["protocolInputDispositions"]:
+        if row["inputRequirementId"] in removed:
+            row["firstSliceRequired"] = False
+    mutated["reviewBoundary"] = {"readiness": "READY", "claims": "SPECIFICATION-ONLY", "completionEvidence": ["README.md"]}
+    code, captured = run_main(monkeypatch, tmp_path, capsys, mutated)
+    assert code == 1
+    assert "READY is prohibited" in captured.err
+
+
+def test_main_returns_exit_codes_for_candidate_and_bad_binding(monkeypatch, tmp_path, capsys):
+    code, captured = run_main(monkeypatch, tmp_path, capsys, copy.deepcopy(PACKAGE))
+    assert code == 0
+    assert "readiness=READINESS-BLOCKED" in captured.out
+    bad = copy.deepcopy(PACKAGE)
+    bad["inputBindings"][0]["sha256"] = "0" * 64
+    code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
+    assert code == 1
+    assert "content identity differs" in captured.err
