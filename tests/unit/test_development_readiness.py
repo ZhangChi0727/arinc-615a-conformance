@@ -96,3 +96,50 @@ def test_main_returns_exit_codes_for_candidate_and_bad_binding(monkeypatch, tmp_
     code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
     assert code == 1
     assert "content identity differs" in captured.err
+
+
+def test_bound_inputs_are_consumed_once_from_git_blobs_not_worktree(monkeypatch):
+    bound_paths = {ROOT / item["path"] for item in PACKAGE["inputBindings"]}
+    original_read_text = Path.read_text
+    original_check_output = MODULE.subprocess.check_output
+    reads = []
+
+    def reject_bound_worktree_reads(path, *args, **kwargs):
+        if path in bound_paths:
+            raise AssertionError("bound input was consumed from the worktree")
+        return original_read_text(path, *args, **kwargs)
+
+    def count_blob_reads(command, *args, **kwargs):
+        if command[:2] == ["git", "show"]:
+            reads.append(command[2])
+        return original_check_output(command, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_text", reject_bound_worktree_reads)
+    monkeypatch.setattr(MODULE.subprocess, "check_output", count_blob_reads)
+    assert errors(copy.deepcopy(PACKAGE)) == []
+    expected = {f"HEAD:{item['path']}" for item in PACKAGE["inputBindings"]}
+    assert set(reads) == expected
+    assert len(reads) == len(expected)
+
+
+def test_missing_and_forged_references_report_the_target_contract():
+    row = next(item for item in PACKAGE["protocolInputDispositions"] if item["disposition"] == "FIRST-SLICE-IMPLEMENTATION")
+    for field, label in (("moduleId", "module"), ("recordId", "record"), ("acceptanceCaseId", "acceptance case")):
+        for value in (None, "MISSING-REFERENCE"):
+            mutated = copy.deepcopy(PACKAGE)
+            target = next(item for item in mutated["protocolInputDispositions"] if item["inputRequirementId"] == row["inputRequirementId"])
+            if value is None:
+                target.pop(field)
+            else:
+                target[field] = value
+            assert any(label in item for item in errors(mutated))
+
+
+def test_legal_new_use_then_isolated_downgrade():
+    candidate = copy.deepcopy(PACKAGE)
+    extra = next(row for row in candidate["protocolInputDispositions"] if not row["firstSliceRequired"])
+    candidate["implementationSlices"][0]["requirementIds"].append(extra["inputRequirementId"])
+    extra.update(firstSliceRequired=True, disposition="FIRST-SLICE-IMPLEMENTATION", rationale="Synthetic legal first-slice extension.", moduleId="MOD-TRANSFER", recordId="PROTOCOL-EVENT", acceptanceCaseId="AC-SYN-TRANSFER")
+    assert errors(candidate) == []
+    extra["disposition"] = "NOT-TOOL-OBLIGATION"
+    assert any("required use has no implementation" in item for item in errors(candidate))
