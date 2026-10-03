@@ -105,7 +105,17 @@ def package_errors(data: dict) -> list[str]:
     if len(tool_ids) != len(set(tool_ids)):
         errors.append("toolRequirements repeats an ID")
     interface_ids = {row.get("id") for row in registry["interfaces"]}
+    control_docs = {
+        "DD": (ROOT / "docs/control/decisions/DESIGN_DECISIONS.md").read_text(encoding="utf-8"),
+        "CR": (ROOT / "docs/control/changes/CR-2026-016.md").read_text(encoding="utf-8"),
+        "T5": (ROOT / "docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md").read_text(encoding="utf-8"),
+    }
     for tool in data["toolRequirements"]:
+        for field in ("title", "titleZh", "trigger", "triggerZh", "action", "actionZh", "errorUnknown", "errorUnknownZh", "evidence", "evidenceZh"):
+            if not tool[field].strip():
+                errors.append(f"{tool['id']} has blank {field}")
+        if any(not item.strip() for field in ("preconditions", "preconditionsZh") for item in tool[field]):
+            errors.append(f"{tool['id']} has a blank precondition")
         if tool["ownerModuleId"] not in modules:
             errors.append(f"{tool['id']} has an unknown owner module")
         for record_id in [*tool["inputRecordIds"], *tool["outputRecordIds"]]:
@@ -117,6 +127,17 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{tool['id']} has an unknown interface reference")
         if any(requirement_id not in expected for requirement_id in tool["protocolRequirementIds"]):
             errors.append(f"{tool['id']} has an unknown protocol requirement reference")
+        if tool["sourceRelationship"] == "PROTOCOL-DERIVED" and not tool["protocolRequirementIds"]:
+            errors.append(f"{tool['id']} protocol-derived contract lacks protocol evidence")
+        for reference in tool["traceability"]:
+            if reference.startswith("DD-") and reference not in control_docs["DD"]:
+                errors.append(f"{tool['id']} has an unknown DD traceability reference")
+            elif reference.startswith("CR-") and reference.split(" ", 1)[0] not in control_docs["CR"]:
+                errors.append(f"{tool['id']} has an unknown CR traceability reference")
+            elif reference == "T5" and "\\tag{T5}" not in control_docs["T5"]:
+                errors.append(f"{tool['id']} has an unknown method traceability reference")
+            elif reference.startswith("IF-") and reference not in interface_ids:
+                errors.append(f"{tool['id']} has an unknown interface traceability reference")
     for row in rows:
         source = source_by_id.get(row["inputRequirementId"])
         if source and row["firstSliceRequired"] != (row["inputRequirementId"] in first_slice_ids):

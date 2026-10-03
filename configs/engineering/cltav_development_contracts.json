@@ -6808,7 +6808,7 @@
       "title": "Reconstruct only provenance-consistent IPv4 datagrams",
       "titleZh": "仅重组来源一致的 IPv4 数据报",
       "ownerModuleId": "MOD-REASSEMBLY",
-      "sourceRelationship": "PROTOCOL-DERIVED",
+      "sourceRelationship": "ENGINEERING-DECISION",
       "trigger": "PacketRef records contain IPv4 fragmentation metadata.",
       "preconditions": [
         "All fragments retain capture, section and interface scope."
@@ -6834,7 +6834,7 @@
       "preconditionsZh": [
         "所有分片保留 capture、section 与 interface 作用域。"
       ],
-      "actionZh": "按作用域身份分组，保留全部来源并分类缺失或冲突覆盖。",
+      "actionZh": "按作用域身份分组，保留全部来源并分类缺失或冲突覆盖；不得以后片覆盖先前数据。",
       "errorUnknownZh": "缺片、截断或重叠产生不完整或冲突记录，不产生完整 UDP 载荷。",
       "evidenceZh": "DatagramRecord 分片引用与覆盖分类。"
     },
@@ -6855,7 +6855,7 @@
       "outputRecordIds": [
         "TRANSFER-RECORD"
       ],
-      "errorUnknown": "A rejected option uses its protocol default (including default block size); only missing or insufficient confirmation evidence yields UNKNOWN, and block-wrap beyond the declared bound yields UNSUPPORTED.",
+      "errorUnknown": "A confirmed accepted option uses its confirmed value. Sufficient, consistent evidence that an option was not accepted, including a complete basic transfer without option confirmation, uses the protocol default; missing, conflicting or uncorrelated evidence remains UNKNOWN; block-wrap beyond the declared bound is UNSUPPORTED.",
       "evidence": "TransferRecord endpoint, TID, option and completion evidence.",
       "traceability": [
         "CRS-M1-00021",
@@ -6869,14 +6869,18 @@
       "protocolRequirementIds": [
         "CRS-M1-00021",
         "CRS-M1-00025",
-        "CRS-M1-00032"
+        "CRS-M1-00032",
+        "CRS-M1-00620",
+        "CRS-M1-00635",
+        "CRS-M1-00646",
+        "CRS-M1-00647"
       ],
       "triggerZh": "存在完整或已分类不完整的 UDP 数据报。",
       "preconditionsZh": [
         "初始请求与动态 TID 证据可同普通 UDP 区分。"
       ],
       "actionZh": "关联请求、选项协商、DATA/ACK、WAIT、ERROR 与 ABORT，保留歧义和块大小确认状态。",
-      "errorUnknownZh": "显式拒绝选项采用协议默认值；仅确认信息不足为 UNKNOWN；超出块回绕界为 UNSUPPORTED。",
+      "errorUnknownZh": "已确认接受的选项使用确认值。充分且一致地确认选项未被接受（包括完整基本传输而无选项确认）时采用协议默认值；缺失、冲突或无法关联的证据保持 UNKNOWN；超出块回绕界为 UNSUPPORTED。",
       "evidenceZh": "TransferRecord 的端点、TID、选项与完成证据。"
     },
     {
@@ -6985,7 +6989,7 @@
         "测量区间、声明域和误差依据可用或已明确无效。"
       ],
       "actionZh": "以区间拓扑和声明符合性域产生四值评估。",
-      "errorUnknownZh": "测量域交集为空为 ERROR；边界重叠为 INCONCLUSIVE。",
+      "errorUnknownZh": "测量域交集为空或时间链无效为 ERROR；边界重叠为 INCONCLUSIVE。",
       "evidenceZh": "ObservationAssessment 区间、域和不确定性引用。"
     },
     {

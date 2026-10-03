@@ -15,7 +15,7 @@
 | ID | Owner | Source relation | Acceptance | Requirement |
 |---|---|---|---|---|
 | `TR-CAPTURE-INTAKE` | `MOD-CAPTURE` | `ENGINEERING-DECISION` | `AC-SYN-TRANSFER` | Preserve capture identity and clock scope |
-| `TR-DATAGRAM-REASSEMBLY` | `MOD-REASSEMBLY` | `PROTOCOL-DERIVED` | `AC-SYN-TRANSFER` | Reconstruct only provenance-consistent IPv4 datagrams |
+| `TR-DATAGRAM-REASSEMBLY` | `MOD-REASSEMBLY` | `ENGINEERING-DECISION` | `AC-SYN-TRANSFER` | Reconstruct only provenance-consistent IPv4 datagrams |
 | `TR-TRANSFER-RECONSTRUCTION` | `MOD-TRANSFER` | `PROTOCOL-DERIVED` | `AC-SYN-TRANSFER` | Reconstruct bounded TFTP transfer candidates |
 | `TR-PROTOCOL-EVENT` | `MOD-TRANSFER` | `METHOD-DERIVED` | `AC-SYN-TRANSFER` | Derive typed protocol events without inventing application facts |
 | `TR-OWNERSHIP` | `MOD-OWNERSHIP` | `METHOD-DERIVED` | `AC-SYN-TRANSFER` | Resolve response ownership conservatively |
@@ -30,7 +30,7 @@
 - Action: Create a capture-scoped identity; retain section, interface and raw-tick provenance without inferring clock accuracy.
 - Error/unknown: Unreadable blocks, unsupported link types and unknown clock accuracy are explicit decode or UNKNOWN metadata outcomes, never IUT FAIL.
 - Evidence: CaptureIdentity and PacketRef raw provenance fields.
-- Interfaces: `IF-EXECUTE-RECORD`; CRS: —
+- Interfaces: `IF-EXECUTE-RECORD`; CRS: —; control/method: `DD-040`, `CR-2026-016 AC-03`
 
 ### `TR-DATAGRAM-REASSEMBLY` — Reconstruct only provenance-consistent IPv4 datagrams
 - Trigger: PacketRef records contain IPv4 fragmentation metadata.
@@ -39,16 +39,16 @@
 - Action: Group fragments by scoped identity, retain every source reference, and classify missing or conflicting coverage without last-fragment overwrite.
 - Error/unknown: Missing, truncated or overlapping fragments yield an incomplete or conflict record; they do not yield a complete UDP payload.
 - Evidence: DatagramRecord fragment references and coverage classification.
-- Interfaces: `IF-EXECUTE-RECORD`; CRS: —
+- Interfaces: `IF-EXECUTE-RECORD`; CRS: —; control/method: `CR-2026-016 AC-03`
 
 ### `TR-TRANSFER-RECONSTRUCTION` — Reconstruct bounded TFTP transfer candidates
 - Trigger: A complete or classified-incomplete UDP datagram is available.
 - Preconditions: Initial request and dynamic TID evidence are distinguishable from ordinary UDP traffic.
 - Inputs: `DATAGRAM-RECORD`; outputs: `TRANSFER-RECORD`
 - Action: Associate request, option negotiation, DATA/ACK, WAIT, ERROR and ABORT evidence while preserving ambiguity and block-size confirmation state.
-- Error/unknown: A rejected option uses its protocol default (including default block size); only missing or insufficient confirmation evidence yields UNKNOWN, and block-wrap beyond the declared bound yields UNSUPPORTED.
+- Error/unknown: A confirmed accepted option uses its confirmed value. Sufficient, consistent evidence that an option was not accepted, including a complete basic transfer without option confirmation, uses the protocol default; missing, conflicting or uncorrelated evidence remains UNKNOWN; block-wrap beyond the declared bound is UNSUPPORTED.
 - Evidence: TransferRecord endpoint, TID, option and completion evidence.
-- Interfaces: `IF-EXECUTE-RECORD`; CRS: `CRS-M1-00021`, `CRS-M1-00025`, `CRS-M1-00032`
+- Interfaces: `IF-EXECUTE-RECORD`; CRS: `CRS-M1-00021`, `CRS-M1-00025`, `CRS-M1-00032`, `CRS-M1-00620`, `CRS-M1-00635`, `CRS-M1-00646`, `CRS-M1-00647`; control/method: `CRS-M1-00021`, `CRS-M1-00025`, `CRS-M1-00032`
 
 ### `TR-PROTOCOL-EVENT` — Derive typed protocol events without inventing application facts
 - Trigger: A TransferRecord has usable wire evidence.
@@ -57,7 +57,7 @@
 - Action: Emit typed events with correlation keys, full raw references and a parse-confidence boundary.
 - Error/unknown: Unobservable application decisions remain absent or UNKNOWN; they are not inferred from model state.
 - Evidence: ProtocolEvent correlation key and raw PacketRef chain.
-- Interfaces: `IF-OBS-INTERPRET`; CRS: —
+- Interfaces: `IF-OBS-INTERPRET`; CRS: —; control/method: `DD-039`, `CR-2026-016 AC-03`
 
 ### `TR-OWNERSHIP` — Resolve response ownership conservatively
 - Trigger: A ProtocolEvent may answer a declared request instance.
@@ -66,7 +66,7 @@
 - Action: Apply the declared UNIQUE-KEY, FIFO or MOST-RECENT policy and preserve cancellation, supersession and ambiguity evidence.
 - Error/unknown: A response with incompatible possible owners is ambiguous and cannot be consumed as a unique response.
 - Evidence: OwnershipResult policy, request instance and supporting event references.
-- Interfaces: `IF-OBS-INTERPRET`; CRS: —
+- Interfaces: `IF-OBS-INTERPRET`; CRS: —; control/method: `IF-OBS-INTERPRET`, `CR-2026-016 AC-03`
 
 ### `TR-OBSERVATION-ASSESSMENT` — Assess observations with explicit timing uncertainty
 - Trigger: A uniquely owned or explicitly incomplete observation is available.
@@ -75,7 +75,7 @@
 - Action: Apply interval topology and the declared conformance domain to produce a four-valued assessment.
 - Error/unknown: Empty measurement-domain intersection or invalid time chain is ERROR; boundary overlap is INCONCLUSIVE.
 - Evidence: ObservationAssessment interval, domain and uncertainty references.
-- Interfaces: `IF-OBS-INTERPRET`; CRS: —
+- Interfaces: `IF-OBS-INTERPRET`; CRS: —; control/method: `IF-OBS-INTERPRET`, `T5`
 
 ### `TR-HISTORY-COMPATIBILITY` — Update finite compatibility history conservatively
 - Trigger: ObservationAssessment returns a normalized admissible outcome.
@@ -84,7 +84,7 @@
 - Action: Intersect only an accepted compatible set with the current hypothesis set and preserve per-hypothesis history.
 - Error/unknown: ERROR, UNKNOWN-EFFECT and resource exhaustion do not exclude hypotheses or revive excluded hypotheses.
 - Evidence: HistoryHandle version and compatible-state frontier references.
-- Interfaces: `IF-HIST-UPDATE`; CRS: —
+- Interfaces: `IF-HIST-UPDATE`; CRS: —; control/method: `DD-039`, `IF-OBS-INTERPRET`
 
 ### `TR-TRACEABLE-FINDING` — Report bounded findings without fault-truth claims
 - Trigger: A completed assessment or a named blocked/unknown condition is available.
@@ -93,7 +93,7 @@
 - Action: Emit observation facts, judgment basis, scope and unresolved assumptions separately from root-cause labels.
 - Error/unknown: Unknown topology, clock, configuration or root cause remains explicit and cannot become a fault label.
 - Evidence: FindingRecord evidence links and applicability scope.
-- Interfaces: `IF-OBS-INTERPRET`; CRS: —
+- Interfaces: `IF-OBS-INTERPRET`; CRS: —; control/method: `DD-040`, `CR-2026-016 AC-03`
 
 ## Slices and dependencies
 
@@ -1177,7 +1177,7 @@
 | ID | 责任模块 | 来源关系 | 验收 | 需求 |
 |---|---|---|---|---|
 | `TR-CAPTURE-INTAKE` | `MOD-CAPTURE` | `ENGINEERING-DECISION` | `AC-SYN-TRANSFER` | 保留捕获身份与时钟作用域 |
-| `TR-DATAGRAM-REASSEMBLY` | `MOD-REASSEMBLY` | `PROTOCOL-DERIVED` | `AC-SYN-TRANSFER` | 仅重组来源一致的 IPv4 数据报 |
+| `TR-DATAGRAM-REASSEMBLY` | `MOD-REASSEMBLY` | `ENGINEERING-DECISION` | `AC-SYN-TRANSFER` | 仅重组来源一致的 IPv4 数据报 |
 | `TR-TRANSFER-RECONSTRUCTION` | `MOD-TRANSFER` | `PROTOCOL-DERIVED` | `AC-SYN-TRANSFER` | 重建有界 TFTP 传输候选 |
 | `TR-PROTOCOL-EVENT` | `MOD-TRANSFER` | `METHOD-DERIVED` | `AC-SYN-TRANSFER` | 在不虚构应用事实的前提下派生带类型协议事件 |
 | `TR-OWNERSHIP` | `MOD-OWNERSHIP` | `METHOD-DERIVED` | `AC-SYN-TRANSFER` | 保守解析响应所有权 |
@@ -1192,25 +1192,25 @@
 - 动作：建立捕获作用域身份，保留 section、interface 与原始 ticks 来源，不推断时钟精度。
 - 错误／未知：不可读块、未支持链路类型和未知时钟精度返回解码或 UNKNOWN 元数据，不是 IUT FAIL。
 - 证据：CaptureIdentity 与 PacketRef 的原始来源字段。
-- 接口：`IF-EXECUTE-RECORD`；CRS：—
+- 接口：`IF-EXECUTE-RECORD`；CRS：—；控制／方法：`DD-040`, `CR-2026-016 AC-03`
 
 ### `TR-DATAGRAM-REASSEMBLY` — 仅重组来源一致的 IPv4 数据报
 - 触发：PacketRef 含 IPv4 分片元数据。
 - 前置条件：所有分片保留 capture、section 与 interface 作用域。
 - 输入：`PACKET-REF`；输出：`DATAGRAM-RECORD`
-- 动作：按作用域身份分组，保留全部来源并分类缺失或冲突覆盖。
+- 动作：按作用域身份分组，保留全部来源并分类缺失或冲突覆盖；不得以后片覆盖先前数据。
 - 错误／未知：缺片、截断或重叠产生不完整或冲突记录，不产生完整 UDP 载荷。
 - 证据：DatagramRecord 分片引用与覆盖分类。
-- 接口：`IF-EXECUTE-RECORD`；CRS：—
+- 接口：`IF-EXECUTE-RECORD`；CRS：—；控制／方法：`CR-2026-016 AC-03`
 
 ### `TR-TRANSFER-RECONSTRUCTION` — 重建有界 TFTP 传输候选
 - 触发：存在完整或已分类不完整的 UDP 数据报。
 - 前置条件：初始请求与动态 TID 证据可同普通 UDP 区分。
 - 输入：`DATAGRAM-RECORD`；输出：`TRANSFER-RECORD`
 - 动作：关联请求、选项协商、DATA/ACK、WAIT、ERROR 与 ABORT，保留歧义和块大小确认状态。
-- 错误／未知：显式拒绝选项采用协议默认值；仅确认信息不足为 UNKNOWN；超出块回绕界为 UNSUPPORTED。
+- 错误／未知：已确认接受的选项使用确认值。充分且一致地确认选项未被接受（包括完整基本传输而无选项确认）时采用协议默认值；缺失、冲突或无法关联的证据保持 UNKNOWN；超出块回绕界为 UNSUPPORTED。
 - 证据：TransferRecord 的端点、TID、选项与完成证据。
-- 接口：`IF-EXECUTE-RECORD`；CRS：`CRS-M1-00021`, `CRS-M1-00025`, `CRS-M1-00032`
+- 接口：`IF-EXECUTE-RECORD`；CRS：`CRS-M1-00021`, `CRS-M1-00025`, `CRS-M1-00032`, `CRS-M1-00620`, `CRS-M1-00635`, `CRS-M1-00646`, `CRS-M1-00647`；控制／方法：`CRS-M1-00021`, `CRS-M1-00025`, `CRS-M1-00032`
 
 ### `TR-PROTOCOL-EVENT` — 在不虚构应用事实的前提下派生带类型协议事件
 - 触发：TransferRecord 含可用线上证据。
@@ -1219,7 +1219,7 @@
 - 动作：产生带关联键、完整原始引用和解析可信边界的类型化事件。
 - 错误／未知：不可观察的应用决定保持缺失或 UNKNOWN，不从模型状态推断。
 - 证据：ProtocolEvent 关联键及原始 PacketRef 链。
-- 接口：`IF-OBS-INTERPRET`；CRS：—
+- 接口：`IF-OBS-INTERPRET`；CRS：—；控制／方法：`DD-039`, `CR-2026-016 AC-03`
 
 ### `TR-OWNERSHIP` — 保守解析响应所有权
 - 触发：ProtocolEvent 可能响应已声明的请求实例。
@@ -1228,16 +1228,16 @@
 - 动作：应用 UNIQUE-KEY、FIFO 或 MOST-RECENT，并保留取消、替代和歧义证据。
 - 错误／未知：可能所有者不相容时为歧义，不能作为唯一响应消费。
 - 证据：OwnershipResult 的策略、请求实例和支持事件引用。
-- 接口：`IF-OBS-INTERPRET`；CRS：—
+- 接口：`IF-OBS-INTERPRET`；CRS：—；控制／方法：`IF-OBS-INTERPRET`, `CR-2026-016 AC-03`
 
 ### `TR-OBSERVATION-ASSESSMENT` — 以显式时序不确定性评估观测
 - 触发：存在唯一归属或明确不完整的观测。
 - 前置条件：测量区间、声明域和误差依据可用或已明确无效。
 - 输入：`OWNERSHIP-RESULT`, `PROTOCOL-EVENT`；输出：`OBSERVATION-ASSESSMENT`
 - 动作：以区间拓扑和声明符合性域产生四值评估。
-- 错误／未知：测量域交集为空为 ERROR；边界重叠为 INCONCLUSIVE。
+- 错误／未知：测量域交集为空或时间链无效为 ERROR；边界重叠为 INCONCLUSIVE。
 - 证据：ObservationAssessment 区间、域和不确定性引用。
-- 接口：`IF-OBS-INTERPRET`；CRS：—
+- 接口：`IF-OBS-INTERPRET`；CRS：—；控制／方法：`IF-OBS-INTERPRET`, `T5`
 
 ### `TR-HISTORY-COMPATIBILITY` — 保守更新有限相容历史
 - 触发：ObservationAssessment 返回规范化可接纳结果。
@@ -1246,7 +1246,7 @@
 - 动作：仅将接纳的相容集合与当前假设集合相交，并保留逐假设历史。
 - 错误／未知：ERROR、UNKNOWN-EFFECT 和资源耗尽不排除或复活假设。
 - 证据：HistoryHandle 版本及相容状态前沿引用。
-- 接口：`IF-HIST-UPDATE`；CRS：—
+- 接口：`IF-HIST-UPDATE`；CRS：—；控制／方法：`DD-039`, `IF-OBS-INTERPRET`
 
 ### `TR-TRACEABLE-FINDING` — 在不作故障真值主张的前提下报告有界发现
 - 触发：存在完成评估或具名 blocked/unknown 条件。
@@ -1255,7 +1255,7 @@
 - 动作：输出观测事实、判断依据、范围和未决假设，并与根因标签分离。
 - 错误／未知：未知拓扑、时钟、配置或根因保持显式，不能成为故障标签。
 - 证据：FindingRecord 证据链接和适用范围。
-- 接口：`IF-OBS-INTERPRET`；CRS：—
+- 接口：`IF-OBS-INTERPRET`；CRS：—；控制／方法：`DD-040`, `CR-2026-016 AC-03`
 
 ## 切片与依赖
 
