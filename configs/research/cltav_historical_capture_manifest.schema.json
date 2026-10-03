@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:arinc615a:cltav-historical-capture-manifest:1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifestId", "manifestVersion", "purpose", "captureCount", "captures", "truthBoundary"],
+  "properties": {
+    "manifestId": {"const": "CLTAV-HISTORICAL-CAPTURES"},
+    "manifestVersion": {"const": "1.0"},
+    "purpose": {"const": "EXPLORATORY-DEVELOPMENT-ONLY"},
+    "captureCount": {"type": "integer", "minimum": 1},
+    "truthBoundary": {"type": "string", "minLength": 1},
+    "captures": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["captureId", "relativePath", "byteCount", "sha256", "observationQuality", "labelSource", "rootCause"], "properties": {"captureId": {"type": "string", "pattern": "^HC-[0-9]{2}$"}, "relativePath": {"type": "string", "pattern": "^(?!/)(?!.*\\.\\.).+\\.pcapng$"}, "byteCount": {"type": "integer", "minimum": 1}, "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "observationQuality": {"const": "UNASSESSED-EXPLORATORY"}, "labelSource": {"const": "FILE-ANNOTATION-NONTRUTH"}, "rootCause": {"const": "UNKNOWN"}}}}
+  }
+}

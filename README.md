@@ -51,15 +51,15 @@ silently redefine the Core.
 
 ## Current increment
 
-**TAES Regular Paper first-draft manuscript**
+**CL-TAV first-slice development-readiness specification**
 
-- Convert the accepted CL-TAV method, algorithm contracts and experiment protocol into a compilable IEEE TAES Regular Paper first draft under CR-2026-015 / DD-037. The eight outline chapters become sections I–VIII. The project page budget is a main PDF of at most 10 pages including references, with reserved result layout; the supplement is compiled separately.
-- Keep C1/C2 and CL-RQ1–CL-RQ3. Do not invent confirmatory numbers. Placeholders carry unique IDs, categories, dependencies and completion conditions. Author, affiliation, funding, ranking and fees stay pending institutional inputs.
-- Do not change CRS, M2, src, source-audit semantics, accepted algorithm control logic, capabilities or Configuration. This increment is not submission, not M3 and not a tag.
+- Specify the first offline UPLOAD/INFORMATION development slice under CR-2026-016 / DD-038–040: capture identity, reconstruction records, ownership, observation interpretation, bounded history compatibility and traceable reporting.
+- Register the local historical corpus as exploratory development input only; file annotation is not wire outcome, independent case conclusion or experimental truth, and unknown metadata remains explicit.
+- This increment is a Draft specification, not a tool implementation, confirmation experiment, Configuration, M3 activation, capability or conformance claim.
 
 State changes:
 
-- Writing increment on one Draft PR under CR-2026-015 / DD-037; M3 remains blocked.
+- One Draft PR under CR-2026-016 / DD-038–040; M3 remains blocked.
 - currentStop remains EXECUTABLE-FOUNDATION-GATE for M3 implementation.
 
 Unchanged boundaries:
@@ -76,8 +76,8 @@ Unchanged boundaries:
 
 ## Next development steps
 
-- Request independent review of the TAES first draft and its placeholders on the unique Draft PR. Keep independentMathematicalApproval and independentReviewApproval false. Do not Ready, merge, tag, submit or start M3.
-- Keep 665 section 2.3 emitted-not-closed in this PR. ARINC 645 SOURCE/SEMANTIC bind stays capability-open. Bound M2 stays UPLOAD/INFORMATION. FIND clock limited approval stays closed. Do not auto-select Part 4 or activate AFDX.
+- Complete the first-slice authoritative contract, generated review view, finite acceptance fixtures and production readiness gate on the unique Draft PR. Request independent review only at an unchanged final Head; do not Ready, merge, tag, submit or start M3.
+- Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth.
 
 ## 当前开发图景
 
@@ -101,15 +101,15 @@ Unchanged boundaries:
 
 ## 本次集成增量
 
-**TAES Regular Paper 初稿**
+**CL-TAV 首轮开发就绪规格**
 
-- 在 CR-2026-015／DD-037 下，把已接受的 CL-TAV 方法、算法合同与实验方案转为可编译的 IEEE TAES Regular Paper 初稿。八节大纲对应第 I–VIII 节。项目页预算为主稿含参考文献不超过 10 页并预留结果版面；补充材料单独编译。
-- 保持 C1／C2 与 CL-RQ1–CL-RQ3。不虚构确认性数字。占位具唯一 ID、类别、依赖与完成条件。作者、单位、基金、分区与费用保持待单位确认。
-- 不修改 CRS、M2、src、来源审计语义、已接受算法控制逻辑、能力或 Configuration。本增量不是投稿、不是 M3、不是 tag。
+- 在 CR-2026-016／DD-038～040 下规格化首轮离线 UPLOAD／INFORMATION 开发切片：捕获身份、重建记录、所有权、观测解释、有界历史相容更新和可追踪报告。
+- 本地历史语料仅登记为探索性开发输入；文件注释不等于线上结果、独立案例结论或实验真值，未知元数据保持显式。
+- 本增量是 Draft 规格，不是工具实现、确认性实验、Configuration、M3 激活、能力或符合性主张。
 
 状态变化：
 
-- 写作增量在唯一 Draft PR 上以 CR-2026-015／DD-037 交付；M3 保持阻塞。
+- 在唯一 Draft PR 上以 CR-2026-016／DD-038～040 交付；M3 保持阻塞。
 - 对 M3 实现而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。
 
 保持不变的边界：
@@ -126,8 +126,8 @@ Unchanged boundaries:
 
 ## 下一步开发计划
 
-- 在唯一 Draft PR 上请求对 TAES 初稿及其占位做独立评审。保持 independentMathematicalApproval 与 independentReviewApproval 为 false。不转 Ready、不合并、不打标签、不投稿、不启动 M3。
-- 665 §2.3 在本 PR 保持已发出未闭合。ARINC 645 来源／语义绑定保持能力未建立。绑定 M2 仍为 UPLOAD／INFORMATION。FIND 时钟有限批准保持关闭。不自动选定第 4 部分，也不激活 AFDX。
+- 在唯一 Draft PR 上完成首轮权威合同、生成评审视图、有限验收夹具和生产就绪门禁。仅在最终 Head 不变时请求独立评审；不转 Ready、不合并、不打标签、不投稿、不启动 M3。
+- 保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。
 <!-- project-status:end -->
 
 ## Read by role / 按角色继续阅读
