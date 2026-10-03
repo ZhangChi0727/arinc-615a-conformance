@@ -3,8 +3,9 @@ from __future__ import annotations
 
 import json
 import hashlib
+import subprocess
 import sys
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 from jsonschema import Draft202012Validator
 
@@ -13,22 +14,11 @@ PACKAGE_PATH = ROOT / "configs/engineering/cltav_development_contracts.json"
 SCHEMA_PATH = ROOT / "configs/engineering/cltav_development_contracts.schema.json"
 M1_PATH = ROOT / "configs/requirements/arinc_615a3_m1_crs.json"
 
-FIRST_SLICE_COMMON_IDS = {"CRS-M1-00021", "CRS-M1-00025", "CRS-M1-00032", "CRS-M1-00186", "CRS-M1-00620"}
 
 
-def _sha256(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def _first_slice_requirement(requirement: dict) -> bool:
-    semantic = requirement["semantic"]
-    objects = set(semantic.get("objects") or [])
-    return (
-        requirement["id"] in FIRST_SLICE_COMMON_IDS
-        or semantic.get("operation") in {"UPLOAD", "INFORMATION"}
-        or bool(objects.intersection({"LCI", "LCL", "LCS", "LUI", "LUR", "LUS"}))
-        or semantic.get("action") == "WAIT"
-    )
+def _git_blob_sha256(relative: str) -> str:
+    raw = subprocess.check_output(["git", "show", f"HEAD:{relative}"], cwd=ROOT)
+    return hashlib.sha256(raw).hexdigest()
 
 
 def package_errors(data: dict) -> list[str]:
@@ -52,9 +42,18 @@ def package_errors(data: dict) -> list[str]:
     for artifact_id, binding in bindings.items():
         relative = binding["path"]
         target = ROOT / relative
-        if not target.is_file():
+        windows = PureWindowsPath(relative)
+        if Path(relative).is_absolute() or windows.is_absolute() or windows.drive or ".." in Path(relative).parts:
+            errors.append(f"input binding path is unsafe: {artifact_id}")
+            continue
+        try:
+            target.resolve(strict=True).relative_to(ROOT.resolve())
+            tracked = subprocess.run(["git", "ls-files", "--error-unmatch", relative], cwd=ROOT, capture_output=True).returncode == 0
+        except OSError:
+            tracked = False
+        if not target.is_file() or not tracked or target.is_symlink():
             errors.append(f"input binding is missing: {artifact_id}")
-        elif binding["sha256"] != _sha256(target):
+        elif binding["sha256"] != _git_blob_sha256(relative):
             errors.append(f"input binding content identity differs: {artifact_id}")
     try:
         json.loads((ROOT / required_bindings["CLTAV-INTERFACE-REGISTRY"]).read_text(encoding="utf-8"))
@@ -63,6 +62,7 @@ def package_errors(data: dict) -> list[str]:
     m1 = json.loads(M1_PATH.read_text(encoding="utf-8"))
     expected = {row["id"] for row in m1["requirements"]}
     source_by_id = {row["id"]: row for row in m1["requirements"]}
+    first_slice_ids = {item for slice_ in data["implementationSlices"] for item in slice_.get("requirementIds", [])}
     rows = data["protocolInputDispositions"]
     actual = [row["inputRequirementId"] for row in rows]
     if len(actual) != len(set(actual)):
@@ -78,9 +78,9 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{label} repeats an ID")
     for row in rows:
         source = source_by_id.get(row["inputRequirementId"])
-        if source and row["firstSliceRequired"] != _first_slice_requirement(source):
+        if source and row["firstSliceRequired"] != (row["inputRequirementId"] in first_slice_ids):
             errors.append(f"{row['inputRequirementId']} has an incorrect firstSliceRequired classification")
-        if source and _first_slice_requirement(source) and "CRC" in set(source["semantic"].get("objects") or []) and row["disposition"] != "DEPENDENCY-BLOCKED":
+        if source and row["inputRequirementId"] in first_slice_ids and "CRC" in set(source["semantic"].get("objects") or []) and row["disposition"] != "DEPENDENCY-BLOCKED":
             errors.append(f"{row['inputRequirementId']} must remain dependency-blocked")
         if row["disposition"] == "FIRST-SLICE-IMPLEMENTATION":
             for key, known, label in (("moduleId", modules, "module"), ("recordId", records, "record"), ("acceptanceCaseId", cases, "acceptance case")):
