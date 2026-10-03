@@ -186,6 +186,24 @@ def test_legal_new_use_then_isolated_downgrade():
     assert any("required use has no implementation" in item for item in errors(candidate))
 
 
+def test_typed_tool_contracts_have_closed_module_record_case_and_interface_references():
+    assert len(PACKAGE["toolRequirements"]) >= 8
+    assert errors(copy.deepcopy(PACKAGE)) == []
+    for field, value, diagnostic in (
+        ("ownerModuleId", "UNKNOWN-MODULE", "owner module"),
+        ("acceptanceCaseId", "UNKNOWN-CASE", "acceptance case"),
+    ):
+        candidate = copy.deepcopy(PACKAGE)
+        candidate["toolRequirements"][0][field] = value
+        assert any(diagnostic in item for item in errors(candidate))
+    candidate = copy.deepcopy(PACKAGE)
+    candidate["toolRequirements"][0]["inputRecordIds"] = ["UNKNOWN-RECORD"]
+    assert any("record reference" in item for item in errors(candidate))
+    candidate = copy.deepcopy(PACKAGE)
+    candidate["toolRequirements"][4]["interfaceIds"] = ["UNKNOWN-INTERFACE"]
+    assert any("interface reference" in item for item in errors(candidate))
+
+
 def test_review_view_renders_every_disposition_and_bilingual_authority_fields():
     view = SYNC.render(copy.deepcopy(PACKAGE))
     assert "## All requirement dispositions" in view
