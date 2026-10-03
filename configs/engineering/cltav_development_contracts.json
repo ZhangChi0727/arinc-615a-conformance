@@ -15,11 +15,13 @@
   "inputBindings": [
     {
       "artifactId": "ARINC615A3-M1-CRS",
-      "path": "configs/requirements/arinc_615a3_m1_crs.json"
+      "path": "configs/requirements/arinc_615a3_m1_crs.json",
+      "purpose": "Bound protocol requirement universe"
     },
     {
       "artifactId": "CLTAV-INTERFACE-REGISTRY",
-      "path": "configs/research/cltav_interface_registry.json"
+      "path": "configs/research/cltav_interface_registry.json",
+      "purpose": "Accepted interface vocabulary"
     }
   ],
   "implementationSlices": [
@@ -277,9 +279,9 @@
     },
     {
       "inputRequirementId": "CRS-M1-00042",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00043",
@@ -289,9 +291,9 @@
     },
     {
       "inputRequirementId": "CRS-M1-00044",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00045",
@@ -301,15 +303,15 @@
     },
     {
       "inputRequirementId": "CRS-M1-00046",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00047",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00048",
@@ -319,9 +321,9 @@
     },
     {
       "inputRequirementId": "CRS-M1-00049",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00050",
@@ -349,21 +351,21 @@
     },
     {
       "inputRequirementId": "CRS-M1-00054",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00055",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00056",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00057",
@@ -452,175 +454,175 @@
     {
       "inputRequirementId": "CRS-M1-00071",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00072",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00073",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00074",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00075",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00076",
       "disposition": "DEPENDENCY-BLOCKED",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "First-slice input requires a separately established integrity dependency.",
       "firstSliceRequired": true
     },
     {
       "inputRequirementId": "CRS-M1-00077",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00078",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00079",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00080",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00081",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00082",
       "disposition": "DEPENDENCY-BLOCKED",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "First-slice input requires a separately established integrity dependency.",
       "firstSliceRequired": true
     },
     {
       "inputRequirementId": "CRS-M1-00083",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00084",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00085",
       "disposition": "DEPENDENCY-BLOCKED",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "First-slice input requires a separately established integrity dependency.",
       "firstSliceRequired": true
     },
     {
       "inputRequirementId": "CRS-M1-00086",
       "disposition": "DEPENDENCY-BLOCKED",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "First-slice input requires a separately established integrity dependency.",
       "firstSliceRequired": true
     },
     {
       "inputRequirementId": "CRS-M1-00087",
       "disposition": "DEPENDENCY-BLOCKED",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "First-slice input requires a separately established integrity dependency.",
       "firstSliceRequired": true
     },
     {
       "inputRequirementId": "CRS-M1-00088",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00089",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00090",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00091",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
@@ -632,151 +634,151 @@
     {
       "inputRequirementId": "CRS-M1-00093",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00094",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00095",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00096",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00097",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00098",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00099",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00100",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00101",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00102",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00103",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00104",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00105",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00106",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00107",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00108",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00109",
       "disposition": "DEPENDENCY-BLOCKED",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "First-slice input requires a separately established integrity dependency.",
       "firstSliceRequired": true
     },
     {
@@ -866,388 +868,388 @@
     {
       "inputRequirementId": "CRS-M1-00124",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00125",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00126",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00127",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00128",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00129",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00130",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00131",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00132",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00133",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00134",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00135",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00136",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00137",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00138",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00139",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00140",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00141",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00142",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00143",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00144",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00145",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00146",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00147",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00148",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00149",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00150",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00151",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00152",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00153",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00154",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00155",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00156",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00157",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00158",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00159",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00160",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00161",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00162",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00163",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00164",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00165",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00166",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
@@ -1636,27 +1638,27 @@
     },
     {
       "inputRequirementId": "CRS-M1-00231",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00232",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00233",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00234",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00235",
@@ -1678,21 +1680,21 @@
     },
     {
       "inputRequirementId": "CRS-M1-00238",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00239",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00240",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00241",
@@ -1708,51 +1710,51 @@
     },
     {
       "inputRequirementId": "CRS-M1-00243",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00244",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00245",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00246",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00247",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00248",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00249",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00250",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00251",
@@ -1943,469 +1945,469 @@
     {
       "inputRequirementId": "CRS-M1-00282",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00283",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00284",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00285",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00286",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00287",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00288",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00289",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00290",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00291",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00292",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00293",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00294",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00295",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00296",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00297",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00298",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00299",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00300",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00301",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00302",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00303",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00304",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00305",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00306",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00307",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00308",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00309",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00310",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00311",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00312",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00313",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00314",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00315",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00316",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00317",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00318",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00319",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00320",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00321",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00322",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00323",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00324",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00325",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00326",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00327",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00328",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00329",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00330",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00331",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00332",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00333",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
@@ -2483,280 +2485,280 @@
     {
       "inputRequirementId": "CRS-M1-00346",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00347",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00348",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00349",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00350",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00351",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00352",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00353",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00354",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00355",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00356",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00357",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00358",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00359",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00360",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00361",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00362",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00363",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00364",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00365",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00366",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00367",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00368",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00369",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00370",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00371",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00372",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00373",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00374",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00375",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00376",
       "disposition": "FIRST-SLICE-IMPLEMENTATION",
-      "rationale": "Bounded offline UPLOAD/INFORMATION record and observation specification.",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
       "firstSliceRequired": true,
       "moduleId": "MOD-TRANSFER",
-      "recordId": "ProtocolEvent",
+      "recordId": "PROTOCOL-EVENT",
       "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
@@ -2767,9 +2769,12 @@
     },
     {
       "inputRequirementId": "CRS-M1-00378",
-      "disposition": "NOT-TOOL-OBLIGATION",
-      "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": false
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input.",
+      "firstSliceRequired": true,
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "PROTOCOL-EVENT",
+      "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00379",
@@ -3019,9 +3024,9 @@
     },
     {
       "inputRequirementId": "CRS-M1-00420",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "LATER-SERVICE",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00421",
@@ -5425,9 +5430,9 @@
     },
     {
       "inputRequirementId": "CRS-M1-00822",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00823",
@@ -5503,9 +5508,9 @@
     },
     {
       "inputRequirementId": "CRS-M1-00835",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00836",
@@ -5635,39 +5640,39 @@
     },
     {
       "inputRequirementId": "CRS-M1-00857",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00858",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00859",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00860",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00861",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00862",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     },
     {
       "inputRequirementId": "CRS-M1-00863",
@@ -5677,9 +5682,9 @@
     },
     {
       "inputRequirementId": "CRS-M1-00864",
-      "disposition": "DEPENDENCY-BLOCKED",
+      "disposition": "NOT-TOOL-OBLIGATION",
       "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": true
+      "firstSliceRequired": false
     }
   ],
   "toolRequirements": [
@@ -5690,34 +5695,34 @@
   ],
   "recordContracts": [
     {
-      "id": "CaptureIdentity"
+      "id": "CAPTURE-IDENTITY"
     },
     {
-      "id": "PacketRef"
+      "id": "PACKET-REF"
     },
     {
-      "id": "DatagramRecord"
+      "id": "DATAGRAM-RECORD"
     },
     {
-      "id": "TransferRecord"
+      "id": "TRANSFER-RECORD"
     },
     {
-      "id": "ProtocolEvent"
+      "id": "PROTOCOL-EVENT"
     },
     {
-      "id": "OwnershipResult"
+      "id": "OWNERSHIP-RESULT"
     },
     {
-      "id": "ObservationAssessment"
+      "id": "OBSERVATION-ASSESSMENT"
     },
     {
-      "id": "IntakeMetadata"
+      "id": "INTAKE-METADATA"
     },
     {
-      "id": "FindingRecord"
+      "id": "FINDING-RECORD"
     },
     {
-      "id": "HistoryHandle"
+      "id": "HISTORY-HANDLE"
     }
   ],
   "moduleContracts": [
@@ -5769,6 +5774,7 @@
   ],
   "reviewBoundary": {
     "readiness": "READINESS-BLOCKED",
-    "claims": "SPECIFICATION-ONLY"
+    "claims": "SPECIFICATION-ONLY",
+    "completionEvidence": []
   }
 }

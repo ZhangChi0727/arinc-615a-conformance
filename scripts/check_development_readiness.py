@@ -19,6 +19,16 @@ def package_errors(data: dict) -> list[str]:
     errors.extend(f"schema: {item.message}" for item in Draft202012Validator(schema).iter_errors(data))
     if errors:
         return errors
+    bindings = {row["artifactId"]: row["path"] for row in data["inputBindings"]}
+    required_bindings = {
+        "ARINC615A3-M1-CRS": "configs/requirements/arinc_615a3_m1_crs.json",
+        "CLTAV-INTERFACE-REGISTRY": "configs/research/cltav_interface_registry.json",
+    }
+    if bindings != required_bindings:
+        errors.append("inputBindings must exactly bind M1 CRS and CL-TAV interface registry")
+    for artifact_id, relative in bindings.items():
+        if not (ROOT / relative).is_file():
+            errors.append(f"input binding is missing: {artifact_id}")
     m1 = json.loads(M1_PATH.read_text(encoding="utf-8"))
     expected = {row["id"] for row in m1["requirements"]}
     rows = data["protocolInputDispositions"]
@@ -30,6 +40,10 @@ def package_errors(data: dict) -> list[str]:
     modules = {row["id"] for row in data["moduleContracts"]}
     records = {row["id"] for row in data["recordContracts"]}
     cases = {row["id"] for row in data["acceptanceCases"]}
+    for label, items in (("moduleContracts", data["moduleContracts"]), ("recordContracts", data["recordContracts"]), ("acceptanceCases", data["acceptanceCases"])):
+        values = [row["id"] for row in items]
+        if len(values) != len(set(values)):
+            errors.append(f"{label} repeats an ID")
     for row in rows:
         if row["disposition"] == "FIRST-SLICE-IMPLEMENTATION":
             for key, known, label in (("moduleId", modules, "module"), ("recordId", records, "record"), ("acceptanceCaseId", cases, "acceptance case")):
@@ -38,8 +52,11 @@ def package_errors(data: dict) -> list[str]:
     blocked = [row for row in rows if row["disposition"] == "DEPENDENCY-BLOCKED" and row.get("firstSliceRequired")]
     if blocked and data["reviewBoundary"]["readiness"] != "READINESS-BLOCKED":
         errors.append("required blocked input requires READINESS-BLOCKED")
-    if data["reviewBoundary"]["readiness"] == "READY" and blocked:
-        errors.append("READY cannot retain required dependency blocks")
+    if data["reviewBoundary"]["readiness"] == "READY":
+        if blocked or not data["reviewBoundary"]["completionEvidence"]:
+            errors.append("READY requires no required blocks and nonempty completion evidence")
+        if any(row["disposition"] != "FIRST-SLICE-IMPLEMENTATION" and row["firstSliceRequired"] for row in rows):
+            errors.append("READY cannot retain a required non-implementation disposition")
     if data["reviewBoundary"]["claims"] != "SPECIFICATION-ONLY":
         errors.append("review boundary must remain SPECIFICATION-ONLY")
     return errors
