@@ -42,6 +42,12 @@ M2_SYNC_SPEC = importlib.util.spec_from_file_location(
 assert M2_SYNC_SPEC and M2_SYNC_SPEC.loader
 m2_sync = importlib.util.module_from_spec(M2_SYNC_SPEC)
 M2_SYNC_SPEC.loader.exec_module(m2_sync)
+DEV_SPEC = importlib.util.spec_from_file_location(
+    "check_development_readiness", ROOT / "scripts/check_development_readiness.py"
+)
+assert DEV_SPEC and DEV_SPEC.loader
+development_readiness = importlib.util.module_from_spec(DEV_SPEC)
+DEV_SPEC.loader.exec_module(development_readiness)
 STATUS = sync.load_status(STATUS_PATH)
 SOURCE_REGISTER_PATH = ROOT / STATUS["technicalDirection"]["sourceRegisterPath"]
 CONTROLLED_SOURCES = sync.load_source_register(SOURCE_REGISTER_PATH)
@@ -3924,6 +3930,11 @@ def main() -> int:
         errors.append(f"subdirectory README is prohibited: {path.relative_to(ROOT)}")
 
     errors.extend(governed_status_errors(STATUS, read(ROOT / "README.md"), CONTROLLED_SOURCES))
+    try:
+        development_package = json.loads(development_readiness.PACKAGE_PATH.read_text(encoding="utf-8"))
+        errors.extend(f"development readiness: {item}" for item in development_readiness.package_errors(development_package))
+    except (OSError, json.JSONDecodeError) as exc:
+        errors.append(f"development readiness package validation failed: {exc}")
     try:
         m1_package = m1_sync.load_package()
     except (OSError, json.JSONDecodeError, m1_sync.M1Error) as exc:
