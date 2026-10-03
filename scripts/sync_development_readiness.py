@@ -31,6 +31,8 @@ def render(data: dict) -> str:
         "", "## Inputs", "",
     ]
     lines += [f"- `{item['artifactId']}` — `{item['path']}` — SHA-256 `{item['sha256']}` — {plain_text(item['purpose'])}" for item in data["inputBindings"]]
+    lines += ["", "## Tool requirements", "", "| ID | Owner | Source relation | Acceptance | Requirement |", "|---|---|---|---|---|"]
+    lines += [f"| `{item['id']}` | `{item['ownerModuleId']}` | `{item['sourceRelationship']}` | `{item['acceptanceCaseId']}` | {plain_text(item['title'])} |" for item in data["toolRequirements"]]
     lines += ["", "## Slices and dependencies", ""]
     lines += [f"- `{item['id']}` — {plain_text(item['scope'])} — {len(item['requirementIds'])} requirement uses" for item in data["implementationSlices"]]
     lines += [f"- dependency `{item['id']}`: `{item['status']}`" for item in data["implementationDependencies"]]
@@ -45,6 +47,8 @@ def render(data: dict) -> str:
     lines += [f"| `{row['inputRequirementId']}` | `{row['disposition']}` | `{row['firstSliceRequired']}` | `{row.get('moduleId','—')}` | `{row.get('recordId','—')}` | `{row.get('acceptanceCaseId','—')}` | {plain_text(row['rationale'])} |" for row in rows]
     lines += ["", "# 中文版", "", "# CL-TAV 开发就绪评审视图", "", "> 由同一权威 JSON 生成，禁止手工修改。", "", f"- 控制：`{data['control']['changeRequest']}`；设计决策：{', '.join(f'`{decision}`' for decision in data['control']['decisions'])}", f"- 绑定 M1 需求：{len(rows)}；处置合计：{sum(counts.values())}；就绪状态：`{data['reviewBoundary']['readiness']}`；主张边界：`{data['reviewBoundary']['claims']}`", "", "## 输入身份", ""]
     lines += [f"- `{item['artifactId']}` — `{item['path']}` — SHA-256 `{item['sha256']}` — {plain_text(item['purposeZh'])}" for item in data["inputBindings"]]
+    lines += ["", "## 工具需求", "", "| ID | 责任模块 | 来源关系 | 验收 | 需求 |", "|---|---|---|---|---|"]
+    lines += [f"| `{item['id']}` | `{item['ownerModuleId']}` | `{item['sourceRelationship']}` | `{item['acceptanceCaseId']}` | {plain_text(item['titleZh'])} |" for item in data["toolRequirements"]]
     lines += ["", "## 切片与依赖", ""]
     lines += [f"- `{item['id']}` — {plain_text(item['scopeZh'])} — {len(item['requirementIds'])} 条需求用途" for item in data["implementationSlices"]]
     lines += [f"- 依赖 `{item['id']}`：`{item['status']}`" for item in data["implementationDependencies"]]

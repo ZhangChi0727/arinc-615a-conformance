@@ -10,6 +10,19 @@
 - `ARINC615A3-M1-CRS` — `configs/requirements/arinc_615a3_m1_crs.json` — SHA-256 `7f35f538fff2d9f8204360f650a1b5c794f9969497ad9ef3f1dfe114248a315f` — Bound protocol requirement universe
 - `CLTAV-INTERFACE-REGISTRY` — `configs/research/cltav_interface_registry.json` — SHA-256 `a65679b902cf51d31aa613c133919c3cd2c66dbc6c65eb3cc58d9bf3530d329d` — Accepted interface vocabulary
 
+## Tool requirements
+
+| ID | Owner | Source relation | Acceptance | Requirement |
+|---|---|---|---|---|
+| `TR-CAPTURE-INTAKE` | `MOD-CAPTURE` | `ENGINEERING-DECISION` | `AC-SYN-TRANSFER` | Preserve capture identity and clock scope |
+| `TR-DATAGRAM-REASSEMBLY` | `MOD-REASSEMBLY` | `PROTOCOL-DERIVED` | `AC-SYN-TRANSFER` | Reconstruct only provenance-consistent IPv4 datagrams |
+| `TR-TRANSFER-RECONSTRUCTION` | `MOD-TRANSFER` | `PROTOCOL-DERIVED` | `AC-SYN-TRANSFER` | Reconstruct bounded TFTP transfer candidates |
+| `TR-PROTOCOL-EVENT` | `MOD-TRANSFER` | `METHOD-DERIVED` | `AC-SYN-TRANSFER` | Derive typed protocol events without inventing application facts |
+| `TR-OWNERSHIP` | `MOD-OWNERSHIP` | `METHOD-DERIVED` | `AC-SYN-TRANSFER` | Resolve response ownership conservatively |
+| `TR-OBSERVATION-ASSESSMENT` | `MOD-OBSERVATION` | `METHOD-DERIVED` | `AC-SYN-TRANSFER` | Assess observations with explicit timing uncertainty |
+| `TR-HISTORY-COMPATIBILITY` | `MOD-OBSERVATION` | `METHOD-DERIVED` | `AC-SYN-TRANSFER` | Update finite compatibility history conservatively |
+| `TR-TRACEABLE-FINDING` | `MOD-OBSERVATION` | `ENGINEERING-DECISION` | `AC-SYN-TRANSFER` | Report bounded findings without fault-truth claims |
+
 ## Slices and dependencies
 
 - `SLICE-OFFLINE-UPLOAD-INFORMATION` — offline capture to traceable report — 176 requirement uses
@@ -1086,6 +1099,19 @@
 
 - `ARINC615A3-M1-CRS` — `configs/requirements/arinc_615a3_m1_crs.json` — SHA-256 `7f35f538fff2d9f8204360f650a1b5c794f9969497ad9ef3f1dfe114248a315f` — 受控协议需求全集
 - `CLTAV-INTERFACE-REGISTRY` — `configs/research/cltav_interface_registry.json` — SHA-256 `a65679b902cf51d31aa613c133919c3cd2c66dbc6c65eb3cc58d9bf3530d329d` — 已接受的接口词汇表
+
+## 工具需求
+
+| ID | 责任模块 | 来源关系 | 验收 | 需求 |
+|---|---|---|---|---|
+| `TR-CAPTURE-INTAKE` | `MOD-CAPTURE` | `ENGINEERING-DECISION` | `AC-SYN-TRANSFER` | 保留捕获身份与时钟作用域 |
+| `TR-DATAGRAM-REASSEMBLY` | `MOD-REASSEMBLY` | `PROTOCOL-DERIVED` | `AC-SYN-TRANSFER` | 仅重组来源一致的 IPv4 数据报 |
+| `TR-TRANSFER-RECONSTRUCTION` | `MOD-TRANSFER` | `PROTOCOL-DERIVED` | `AC-SYN-TRANSFER` | 重建有界 TFTP 传输候选 |
+| `TR-PROTOCOL-EVENT` | `MOD-TRANSFER` | `METHOD-DERIVED` | `AC-SYN-TRANSFER` | 在不虚构应用事实的前提下派生带类型协议事件 |
+| `TR-OWNERSHIP` | `MOD-OWNERSHIP` | `METHOD-DERIVED` | `AC-SYN-TRANSFER` | 保守解析响应所有权 |
+| `TR-OBSERVATION-ASSESSMENT` | `MOD-OBSERVATION` | `METHOD-DERIVED` | `AC-SYN-TRANSFER` | 以显式时序不确定性评估观测 |
+| `TR-HISTORY-COMPATIBILITY` | `MOD-OBSERVATION` | `METHOD-DERIVED` | `AC-SYN-TRANSFER` | 保守更新有限相容历史 |
+| `TR-TRACEABLE-FINDING` | `MOD-OBSERVATION` | `ENGINEERING-DECISION` | `AC-SYN-TRANSFER` | 在不作故障真值主张的前提下报告有界发现 |
 
 ## 切片与依赖
 

@@ -101,6 +101,20 @@ def package_errors(data: dict) -> list[str]:
         values = [row["id"] for row in items]
         if len(values) != len(set(values)):
             errors.append(f"{label} repeats an ID")
+    tool_ids = [row["id"] for row in data["toolRequirements"]]
+    if len(tool_ids) != len(set(tool_ids)):
+        errors.append("toolRequirements repeats an ID")
+    interface_ids = {row.get("id") for row in registry["interfaces"]}
+    for tool in data["toolRequirements"]:
+        if tool["ownerModuleId"] not in modules:
+            errors.append(f"{tool['id']} has an unknown owner module")
+        for record_id in [*tool["inputRecordIds"], *tool["outputRecordIds"]]:
+            if record_id not in records:
+                errors.append(f"{tool['id']} has an unknown record reference")
+        if tool["acceptanceCaseId"] not in cases:
+            errors.append(f"{tool['id']} has an unknown acceptance case")
+        if any(interface_id not in interface_ids for interface_id in tool.get("interfaceIds", [])):
+            errors.append(f"{tool['id']} has an unknown interface reference")
     for row in rows:
         source = source_by_id.get(row["inputRequirementId"])
         if source and row["firstSliceRequired"] != (row["inputRequirementId"] in first_slice_ids):
