@@ -202,6 +202,11 @@ def test_typed_tool_contracts_have_closed_module_record_case_and_interface_refer
     candidate = copy.deepcopy(PACKAGE)
     candidate["toolRequirements"][4]["interfaceIds"] = ["UNKNOWN-INTERFACE"]
     assert any("interface reference" in item for item in errors(candidate))
+    candidate = copy.deepcopy(PACKAGE)
+    candidate["toolRequirements"][2]["protocolRequirementIds"] = ["CRS-M1-99999"]
+    assert any("protocol requirement reference" in item for item in errors(candidate))
+    history = next(item for item in PACKAGE["toolRequirements"] if item["id"] == "TR-HISTORY-COMPATIBILITY")
+    assert history["interfaceIds"] == ["IF-HIST-UPDATE"]
 
 
 def test_review_view_renders_every_disposition_and_bilingual_authority_fields():
@@ -231,6 +236,15 @@ def test_review_view_renders_every_disposition_and_bilingual_authority_fields():
         assert slice_["scopeZh"] in view
         for requirement_id in slice_["requirementIds"]:
             assert f"| `{slice_['id']}` | `{requirement_id}` |" in view
+    tool = PACKAGE["toolRequirements"][2]
+    english_tool = view.split(f"### `{tool['id']}` — {tool['title']}", 1)[1].split("# 中文版", 1)[0]
+    assert tool["trigger"] in english_tool
+    assert tool["action"] in english_tool
+    assert tool["errorUnknown"] in english_tool
+    chinese_tool = view.split(f"### `{tool['id']}` — {tool['titleZh']}", 1)[1]
+    assert tool["triggerZh"] in chinese_tool
+    assert tool["actionZh"] in chinese_tool
+    assert tool["errorUnknownZh"] in chinese_tool
 
 
 def test_review_view_escapes_table_rationales_without_losing_row_structure():
