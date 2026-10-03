@@ -115,6 +115,8 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{tool['id']} has an unknown acceptance case")
         if any(interface_id not in interface_ids for interface_id in tool.get("interfaceIds", [])):
             errors.append(f"{tool['id']} has an unknown interface reference")
+        if any(requirement_id not in expected for requirement_id in tool["protocolRequirementIds"]):
+            errors.append(f"{tool['id']} has an unknown protocol requirement reference")
     for row in rows:
         source = source_by_id.get(row["inputRequirementId"])
         if source and row["firstSliceRequired"] != (row["inputRequirementId"] in first_slice_ids):

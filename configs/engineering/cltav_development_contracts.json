@@ -6774,14 +6774,34 @@
       "ownerModuleId": "MOD-CAPTURE",
       "sourceRelationship": "ENGINEERING-DECISION",
       "trigger": "A caller supplies one manifest-bound capture reference.",
-      "preconditions": ["The manifest audit has established a matching relative path, byte size and SHA-256."],
-      "inputRecordIds": ["CAPTURE-IDENTITY"],
+      "preconditions": [
+        "The manifest audit has established a matching relative path, byte size and SHA-256."
+      ],
+      "inputRecordIds": [
+        "CAPTURE-IDENTITY"
+      ],
       "action": "Create a capture-scoped identity; retain section, interface and raw-tick provenance without inferring clock accuracy.",
-      "outputRecordIds": ["PACKET-REF"],
+      "outputRecordIds": [
+        "PACKET-REF"
+      ],
       "errorUnknown": "Unreadable blocks, unsupported link types and unknown clock accuracy are explicit decode or UNKNOWN metadata outcomes, never IUT FAIL.",
       "evidence": "CaptureIdentity and PacketRef raw provenance fields.",
-      "traceability": ["DD-040", "CR-2026-016 AC-03"],
-      "acceptanceCaseId": "AC-SYN-TRANSFER"
+      "traceability": [
+        "DD-040",
+        "CR-2026-016 AC-03"
+      ],
+      "acceptanceCaseId": "AC-SYN-TRANSFER",
+      "interfaceIds": [
+        "IF-EXECUTE-RECORD"
+      ],
+      "protocolRequirementIds": [],
+      "triggerZh": "调用方提供清单绑定的捕获引用。",
+      "preconditionsZh": [
+        "清单审计已确认相对路径、大小和 SHA-256。"
+      ],
+      "actionZh": "建立捕获作用域身份，保留 section、interface 与原始 ticks 来源，不推断时钟精度。",
+      "errorUnknownZh": "不可读块、未支持链路类型和未知时钟精度返回解码或 UNKNOWN 元数据，不是 IUT FAIL。",
+      "evidenceZh": "CaptureIdentity 与 PacketRef 的原始来源字段。"
     },
     {
       "id": "TR-DATAGRAM-REASSEMBLY",
@@ -6790,14 +6810,33 @@
       "ownerModuleId": "MOD-REASSEMBLY",
       "sourceRelationship": "PROTOCOL-DERIVED",
       "trigger": "PacketRef records contain IPv4 fragmentation metadata.",
-      "preconditions": ["All fragments retain capture, section and interface scope."],
-      "inputRecordIds": ["PACKET-REF"],
+      "preconditions": [
+        "All fragments retain capture, section and interface scope."
+      ],
+      "inputRecordIds": [
+        "PACKET-REF"
+      ],
       "action": "Group fragments by scoped identity, retain every source reference, and classify missing or conflicting coverage without last-fragment overwrite.",
-      "outputRecordIds": ["DATAGRAM-RECORD"],
+      "outputRecordIds": [
+        "DATAGRAM-RECORD"
+      ],
       "errorUnknown": "Missing, truncated or overlapping fragments yield an incomplete or conflict record; they do not yield a complete UDP payload.",
       "evidence": "DatagramRecord fragment references and coverage classification.",
-      "traceability": ["CR-2026-016 AC-03"],
-      "acceptanceCaseId": "AC-SYN-TRANSFER"
+      "traceability": [
+        "CR-2026-016 AC-03"
+      ],
+      "acceptanceCaseId": "AC-SYN-TRANSFER",
+      "interfaceIds": [
+        "IF-EXECUTE-RECORD"
+      ],
+      "protocolRequirementIds": [],
+      "triggerZh": "PacketRef 含 IPv4 分片元数据。",
+      "preconditionsZh": [
+        "所有分片保留 capture、section 与 interface 作用域。"
+      ],
+      "actionZh": "按作用域身份分组，保留全部来源并分类缺失或冲突覆盖。",
+      "errorUnknownZh": "缺片、截断或重叠产生不完整或冲突记录，不产生完整 UDP 载荷。",
+      "evidenceZh": "DatagramRecord 分片引用与覆盖分类。"
     },
     {
       "id": "TR-TRANSFER-RECONSTRUCTION",
@@ -6806,14 +6845,39 @@
       "ownerModuleId": "MOD-TRANSFER",
       "sourceRelationship": "PROTOCOL-DERIVED",
       "trigger": "A complete or classified-incomplete UDP datagram is available.",
-      "preconditions": ["Initial request and dynamic TID evidence are distinguishable from ordinary UDP traffic."],
-      "inputRecordIds": ["DATAGRAM-RECORD"],
+      "preconditions": [
+        "Initial request and dynamic TID evidence are distinguishable from ordinary UDP traffic."
+      ],
+      "inputRecordIds": [
+        "DATAGRAM-RECORD"
+      ],
       "action": "Associate request, option negotiation, DATA/ACK, WAIT, ERROR and ABORT evidence while preserving ambiguity and block-size confirmation state.",
-      "outputRecordIds": ["TRANSFER-RECORD"],
-      "errorUnknown": "Unconfirmed options, block-wrap beyond the declared bound or ambiguous TIDs yield named unknown or unsupported outcomes.",
+      "outputRecordIds": [
+        "TRANSFER-RECORD"
+      ],
+      "errorUnknown": "A rejected option uses its protocol default (including default block size); only missing or insufficient confirmation evidence yields UNKNOWN, and block-wrap beyond the declared bound yields UNSUPPORTED.",
       "evidence": "TransferRecord endpoint, TID, option and completion evidence.",
-      "traceability": ["CRS-M1-00021", "CRS-M1-00025", "CRS-M1-00032"],
-      "acceptanceCaseId": "AC-SYN-TRANSFER"
+      "traceability": [
+        "CRS-M1-00021",
+        "CRS-M1-00025",
+        "CRS-M1-00032"
+      ],
+      "acceptanceCaseId": "AC-SYN-TRANSFER",
+      "interfaceIds": [
+        "IF-EXECUTE-RECORD"
+      ],
+      "protocolRequirementIds": [
+        "CRS-M1-00021",
+        "CRS-M1-00025",
+        "CRS-M1-00032"
+      ],
+      "triggerZh": "存在完整或已分类不完整的 UDP 数据报。",
+      "preconditionsZh": [
+        "初始请求与动态 TID 证据可同普通 UDP 区分。"
+      ],
+      "actionZh": "关联请求、选项协商、DATA/ACK、WAIT、ERROR 与 ABORT，保留歧义和块大小确认状态。",
+      "errorUnknownZh": "显式拒绝选项采用协议默认值；仅确认信息不足为 UNKNOWN；超出块回绕界为 UNSUPPORTED。",
+      "evidenceZh": "TransferRecord 的端点、TID、选项与完成证据。"
     },
     {
       "id": "TR-PROTOCOL-EVENT",
@@ -6822,14 +6886,34 @@
       "ownerModuleId": "MOD-TRANSFER",
       "sourceRelationship": "METHOD-DERIVED",
       "trigger": "A TransferRecord has usable wire evidence.",
-      "preconditions": ["The event layer is explicitly WIRE, PARSE-RESULT, APPLICATION or ENVIRONMENT."],
-      "inputRecordIds": ["TRANSFER-RECORD"],
+      "preconditions": [
+        "The event layer is explicitly WIRE, PARSE-RESULT, APPLICATION or ENVIRONMENT."
+      ],
+      "inputRecordIds": [
+        "TRANSFER-RECORD"
+      ],
       "action": "Emit typed events with correlation keys, full raw references and a parse-confidence boundary.",
-      "outputRecordIds": ["PROTOCOL-EVENT"],
+      "outputRecordIds": [
+        "PROTOCOL-EVENT"
+      ],
       "errorUnknown": "Unobservable application decisions remain absent or UNKNOWN; they are not inferred from model state.",
       "evidence": "ProtocolEvent correlation key and raw PacketRef chain.",
-      "traceability": ["DD-039", "CR-2026-016 AC-03"],
-      "acceptanceCaseId": "AC-SYN-TRANSFER"
+      "traceability": [
+        "DD-039",
+        "CR-2026-016 AC-03"
+      ],
+      "acceptanceCaseId": "AC-SYN-TRANSFER",
+      "interfaceIds": [
+        "IF-OBS-INTERPRET"
+      ],
+      "protocolRequirementIds": [],
+      "triggerZh": "TransferRecord 含可用线上证据。",
+      "preconditionsZh": [
+        "事件层已明确为 WIRE、PARSE-RESULT、APPLICATION 或 ENVIRONMENT。"
+      ],
+      "actionZh": "产生带关联键、完整原始引用和解析可信边界的类型化事件。",
+      "errorUnknownZh": "不可观察的应用决定保持缺失或 UNKNOWN，不从模型状态推断。",
+      "evidenceZh": "ProtocolEvent 关联键及原始 PacketRef 链。"
     },
     {
       "id": "TR-OWNERSHIP",
@@ -6838,14 +6922,34 @@
       "ownerModuleId": "MOD-OWNERSHIP",
       "sourceRelationship": "METHOD-DERIVED",
       "trigger": "A ProtocolEvent may answer a declared request instance.",
-      "preconditions": ["Matching policy and event order are available for the candidate instance set."],
-      "inputRecordIds": ["PROTOCOL-EVENT"],
+      "preconditions": [
+        "Matching policy and event order are available for the candidate instance set."
+      ],
+      "inputRecordIds": [
+        "PROTOCOL-EVENT"
+      ],
       "action": "Apply the declared UNIQUE-KEY, FIFO or MOST-RECENT policy and preserve cancellation, supersession and ambiguity evidence.",
-      "outputRecordIds": ["OWNERSHIP-RESULT"],
+      "outputRecordIds": [
+        "OWNERSHIP-RESULT"
+      ],
       "errorUnknown": "A response with incompatible possible owners is ambiguous and cannot be consumed as a unique response.",
       "evidence": "OwnershipResult policy, request instance and supporting event references.",
-      "traceability": ["IF-OBS-INTERPRET", "CR-2026-016 AC-03"],
-      "acceptanceCaseId": "AC-SYN-TRANSFER"
+      "traceability": [
+        "IF-OBS-INTERPRET",
+        "CR-2026-016 AC-03"
+      ],
+      "acceptanceCaseId": "AC-SYN-TRANSFER",
+      "interfaceIds": [
+        "IF-OBS-INTERPRET"
+      ],
+      "protocolRequirementIds": [],
+      "triggerZh": "ProtocolEvent 可能响应已声明的请求实例。",
+      "preconditionsZh": [
+        "候选实例集合具匹配策略和事件顺序。"
+      ],
+      "actionZh": "应用 UNIQUE-KEY、FIFO 或 MOST-RECENT，并保留取消、替代和歧义证据。",
+      "errorUnknownZh": "可能所有者不相容时为歧义，不能作为唯一响应消费。",
+      "evidenceZh": "OwnershipResult 的策略、请求实例和支持事件引用。"
     },
     {
       "id": "TR-OBSERVATION-ASSESSMENT",
@@ -6854,14 +6958,35 @@
       "ownerModuleId": "MOD-OBSERVATION",
       "sourceRelationship": "METHOD-DERIVED",
       "trigger": "A uniquely owned or explicitly incomplete observation is available.",
-      "preconditions": ["Measurement interval, declared domain and error basis are available or explicitly invalid."],
-      "inputRecordIds": ["OWNERSHIP-RESULT", "PROTOCOL-EVENT"],
+      "preconditions": [
+        "Measurement interval, declared domain and error basis are available or explicitly invalid."
+      ],
+      "inputRecordIds": [
+        "OWNERSHIP-RESULT",
+        "PROTOCOL-EVENT"
+      ],
       "action": "Apply interval topology and the declared conformance domain to produce a four-valued assessment.",
-      "outputRecordIds": ["OBSERVATION-ASSESSMENT"],
+      "outputRecordIds": [
+        "OBSERVATION-ASSESSMENT"
+      ],
       "errorUnknown": "Empty measurement-domain intersection or invalid time chain is ERROR; boundary overlap is INCONCLUSIVE.",
       "evidence": "ObservationAssessment interval, domain and uncertainty references.",
-      "traceability": ["IF-OBS-INTERPRET", "T5"],
-      "acceptanceCaseId": "AC-SYN-TRANSFER"
+      "traceability": [
+        "IF-OBS-INTERPRET",
+        "T5"
+      ],
+      "acceptanceCaseId": "AC-SYN-TRANSFER",
+      "interfaceIds": [
+        "IF-OBS-INTERPRET"
+      ],
+      "protocolRequirementIds": [],
+      "triggerZh": "存在唯一归属或明确不完整的观测。",
+      "preconditionsZh": [
+        "测量区间、声明域和误差依据可用或已明确无效。"
+      ],
+      "actionZh": "以区间拓扑和声明符合性域产生四值评估。",
+      "errorUnknownZh": "测量域交集为空为 ERROR；边界重叠为 INCONCLUSIVE。",
+      "evidenceZh": "ObservationAssessment 区间、域和不确定性引用。"
     },
     {
       "id": "TR-HISTORY-COMPATIBILITY",
@@ -6870,14 +6995,35 @@
       "ownerModuleId": "MOD-OBSERVATION",
       "sourceRelationship": "METHOD-DERIVED",
       "trigger": "ObservationAssessment returns a normalized admissible outcome.",
-      "preconditions": ["The HistoryHandle belongs to the SessionContext and retains its versioned frontiers."],
-      "inputRecordIds": ["OBSERVATION-ASSESSMENT", "HISTORY-HANDLE"],
+      "preconditions": [
+        "The HistoryHandle belongs to the SessionContext and retains its versioned frontiers."
+      ],
+      "inputRecordIds": [
+        "OBSERVATION-ASSESSMENT",
+        "HISTORY-HANDLE"
+      ],
       "action": "Intersect only an accepted compatible set with the current hypothesis set and preserve per-hypothesis history.",
-      "outputRecordIds": ["HISTORY-HANDLE"],
+      "outputRecordIds": [
+        "HISTORY-HANDLE"
+      ],
       "errorUnknown": "ERROR, UNKNOWN-EFFECT and resource exhaustion do not exclude hypotheses or revive excluded hypotheses.",
       "evidence": "HistoryHandle version and compatible-state frontier references.",
-      "traceability": ["DD-039", "IF-OBS-INTERPRET"],
-      "acceptanceCaseId": "AC-SYN-TRANSFER"
+      "traceability": [
+        "DD-039",
+        "IF-OBS-INTERPRET"
+      ],
+      "acceptanceCaseId": "AC-SYN-TRANSFER",
+      "interfaceIds": [
+        "IF-HIST-UPDATE"
+      ],
+      "protocolRequirementIds": [],
+      "triggerZh": "ObservationAssessment 返回规范化可接纳结果。",
+      "preconditionsZh": [
+        "HistoryHandle 属于 SessionContext 并保留有版本前沿。"
+      ],
+      "actionZh": "仅将接纳的相容集合与当前假设集合相交，并保留逐假设历史。",
+      "errorUnknownZh": "ERROR、UNKNOWN-EFFECT 和资源耗尽不排除或复活假设。",
+      "evidenceZh": "HistoryHandle 版本及相容状态前沿引用。"
     },
     {
       "id": "TR-TRACEABLE-FINDING",
@@ -6886,14 +7032,35 @@
       "ownerModuleId": "MOD-OBSERVATION",
       "sourceRelationship": "ENGINEERING-DECISION",
       "trigger": "A completed assessment or a named blocked/unknown condition is available.",
-      "preconditions": ["All supporting records retain their capture and interpretation provenance."],
-      "inputRecordIds": ["OBSERVATION-ASSESSMENT", "INTAKE-METADATA"],
+      "preconditions": [
+        "All supporting records retain their capture and interpretation provenance."
+      ],
+      "inputRecordIds": [
+        "OBSERVATION-ASSESSMENT",
+        "INTAKE-METADATA"
+      ],
       "action": "Emit observation facts, judgment basis, scope and unresolved assumptions separately from root-cause labels.",
-      "outputRecordIds": ["FINDING-RECORD"],
+      "outputRecordIds": [
+        "FINDING-RECORD"
+      ],
       "errorUnknown": "Unknown topology, clock, configuration or root cause remains explicit and cannot become a fault label.",
       "evidence": "FindingRecord evidence links and applicability scope.",
-      "traceability": ["DD-040", "CR-2026-016 AC-03"],
-      "acceptanceCaseId": "AC-SYN-TRANSFER"
+      "traceability": [
+        "DD-040",
+        "CR-2026-016 AC-03"
+      ],
+      "acceptanceCaseId": "AC-SYN-TRANSFER",
+      "interfaceIds": [
+        "IF-OBS-INTERPRET"
+      ],
+      "protocolRequirementIds": [],
+      "triggerZh": "存在完成评估或具名 blocked/unknown 条件。",
+      "preconditionsZh": [
+        "所有支持记录保留捕获和解释来源。"
+      ],
+      "actionZh": "输出观测事实、判断依据、范围和未决假设，并与根因标签分离。",
+      "errorUnknownZh": "未知拓扑、时钟、配置或根因保持显式，不能成为故障标签。",
+      "evidenceZh": "FindingRecord 证据链接和适用范围。"
     }
   ],
   "recordContracts": [
