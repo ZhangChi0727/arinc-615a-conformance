@@ -192,9 +192,18 @@ def test_review_view_renders_every_disposition_and_bilingual_authority_fields():
     assert "## 全部需求处置" in view
     assert "## Slice membership relations" in view
     assert "## 切片成员关系" in view
+    english_inputs = view.split("## Inputs\n", 1)[1].split("## Slices and dependencies", 1)[0]
+    chinese_inputs = view.split("## 输入身份\n", 1)[1].split("## 切片与依赖", 1)[0]
+    chinese_control = view.split("# CL-TAV 开发就绪评审视图", 1)[1].split("## 输入身份", 1)[0]
+    assert f"Control: `{PACKAGE['control']['changeRequest']}`" in view
+    assert f"控制：`{PACKAGE['control']['changeRequest']}`" in chinese_control
+    for decision in PACKAGE["control"]["decisions"]:
+        assert f"`{decision}`" in chinese_control
     for binding in PACKAGE["inputBindings"]:
-        assert binding["purpose"] in view
-        assert binding["purposeZh"] in view
+        assert binding["purpose"] in english_inputs
+        assert binding["purposeZh"] not in english_inputs
+        assert binding["purposeZh"] in chinese_inputs
+        assert binding["purpose"] not in chinese_inputs
     for row in PACKAGE["protocolInputDispositions"]:
         assert row["inputRequirementId"] in view
         assert row["rationale"] in view
@@ -204,6 +213,22 @@ def test_review_view_renders_every_disposition_and_bilingual_authority_fields():
         assert slice_["scopeZh"] in view
         for requirement_id in slice_["requirementIds"]:
             assert f"| `{slice_['id']}` | `{requirement_id}` |" in view
+
+
+def test_review_view_escapes_table_rationales_without_losing_row_structure():
+    candidate = copy.deepcopy(PACKAGE)
+    row = candidate["protocolInputDispositions"][0]
+    row["rationale"] = "English left | right\nnext line"
+    row["rationaleZh"] = "中文左侧 | 右侧\n下一行"
+    view = SYNC.render(candidate)
+    english = view.split("## All requirement dispositions\n", 1)[1].split("# 中文版", 1)[0]
+    chinese = view.split("## 全部需求处置\n", 1)[1]
+    english_row = next(line for line in english.splitlines() if f"`{row['inputRequirementId']}`" in line)
+    chinese_row = next(line for line in chinese.splitlines() if f"`{row['inputRequirementId']}`" in line)
+    assert english_row.endswith("English left \\| right<br>next line |")
+    assert chinese_row.endswith("中文左侧 \\| 右侧<br>下一行 |")
+    assert sum(char == "|" and (index == 0 or english_row[index - 1] != "\\") for index, char in enumerate(english_row)) == 8
+    assert sum(char == "|" and (index == 0 or chinese_row[index - 1] != "\\") for index, char in enumerate(chinese_row)) == 8
 
 
 def test_review_view_detects_nonfirst_disposition_and_slice_relation_changes():
