@@ -15,21 +15,34 @@ VIEW = ROOT / "docs/engineering/CLTAV_DEVELOPMENT_REVIEW_VIEW.md"
 
 def render(data: dict) -> str:
     rows = data["protocolInputDispositions"]
-    counts = {name: sum(row["disposition"] == name for row in rows) for name in (
-        "FIRST-SLICE-IMPLEMENTATION", "DEPENDENCY-BLOCKED", "LATER-SERVICE", "NOT-TOOL-OBLIGATION")}
+    counts = {name: sum(row["disposition"] == name for row in rows) for name in sorted({row["disposition"] for row in rows})}
     lines = [
         "# CL-TAV Development Readiness Review View", "",
         "> Generated from `configs/engineering/cltav_development_contracts.json`; do not edit.", "",
         f"- Control: `{data['control']['changeRequest']}`; decisions {', '.join(data['control']['decisions'])}",
-        f"- Bound M1 requirements: {len(rows)}; readiness: `{data['reviewBoundary']['readiness']}`; claim: `{data['reviewBoundary']['claims']}`",
+        f"- Bound M1 requirements: {len(rows)}; disposition total: {sum(counts.values())}; readiness: `{data['reviewBoundary']['readiness']}`; claim: `{data['reviewBoundary']['claims']}`",
+        "", "## Inputs", "",
+    ]
+    lines += [f"- `{item['artifactId']}` — `{item['path']}` — SHA-256 `{item['sha256']}` — {item['purpose']}" for item in data["inputBindings"]]
+    lines += ["", "## Slices and dependencies", ""]
+    lines += [f"- `{item['id']}` — {item['scope']} — {len(item['requirementIds'])} requirement uses" for item in data["implementationSlices"]]
+    lines += [f"- dependency `{item['id']}`: `{item['status']}`" for item in data["implementationDependencies"]]
+    lines += [
         "", "## Disposition summary", "",
         "| Disposition | Count |", "|---|---:|",
     ]
     lines += [f"| `{name}` | {count} |" for name, count in counts.items()]
-    lines += ["", "## First-slice uses", "", "| Requirement | Module | Record | Acceptance |", "|---|---|---|---|"]
-    lines += [f"| `{row['inputRequirementId']}` | `{row.get('moduleId','—')}` | `{row.get('recordId','—')}` | `{row.get('acceptanceCaseId','—')}` |" for row in rows if row["firstSliceRequired"]]
-    lines += ["", "# 中文版", "", "# CL-TAV 开发就绪评审视图", "", "> 由同一权威 JSON 生成，禁止手工修改。", "", f"- 绑定 M1 需求：{len(rows)}；就绪状态：`{data['reviewBoundary']['readiness']}`；主张边界：`{data['reviewBoundary']['claims']}`", "", "## 处置摘要", "", "| 处置 | 数量 |", "|---|---:|"]
+    lines += ["", "## First-slice uses", "", "| Requirement | Module | Record | Acceptance | Rationale |", "|---|---|---|---|---|"]
+    lines += [f"| `{row['inputRequirementId']}` | `{row.get('moduleId','—')}` | `{row.get('recordId','—')}` | `{row.get('acceptanceCaseId','—')}` | {row['rationale']} |" for row in rows if row["firstSliceRequired"]]
+    lines += ["", "# 中文版", "", "# CL-TAV 开发就绪评审视图", "", "> 由同一权威 JSON 生成，禁止手工修改。", "", f"- 绑定 M1 需求：{len(rows)}；处置合计：{sum(counts.values())}；就绪状态：`{data['reviewBoundary']['readiness']}`；主张边界：`{data['reviewBoundary']['claims']}`", "", "## 输入身份", ""]
+    lines += [f"- `{item['artifactId']}` — `{item['path']}` — SHA-256 `{item['sha256']}` — {item['purpose']}" for item in data["inputBindings"]]
+    lines += ["", "## 切片与依赖", ""]
+    lines += [f"- `{item['id']}` — {item['scope']} — {len(item['requirementIds'])} 条需求用途" for item in data["implementationSlices"]]
+    lines += [f"- 依赖 `{item['id']}`：`{item['status']}`" for item in data["implementationDependencies"]]
+    lines += ["", "## 处置摘要", "", "| 处置 | 数量 |", "|---|---:|"]
     lines += [f"| `{name}` | {count} |" for name, count in counts.items()]
+    lines += ["", "## 首轮用途", "", "| 需求 | 模块 | 记录 | 验收 | 理由 |", "|---|---|---|---|---|"]
+    lines += [f"| `{row['inputRequirementId']}` | `{row.get('moduleId','—')}` | `{row.get('recordId','—')}` | `{row.get('acceptanceCaseId','—')}` | {row['rationale']} |" for row in rows if row["firstSliceRequired"]]
     return "\n".join(lines) + "\n"
 
 
