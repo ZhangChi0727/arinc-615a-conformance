@@ -23,26 +23,30 @@ def render(data: dict) -> str:
         f"- Bound M1 requirements: {len(rows)}; disposition total: {sum(counts.values())}; readiness: `{data['reviewBoundary']['readiness']}`; claim: `{data['reviewBoundary']['claims']}`",
         "", "## Inputs", "",
     ]
-    lines += [f"- `{item['artifactId']}` — `{item['path']}` — SHA-256 `{item['sha256']}` — {item['purpose']}" for item in data["inputBindings"]]
+    lines += [f"- `{item['artifactId']}` — `{item['path']}` — SHA-256 `{item['sha256']}` — {item['purposeZh']}" for item in data["inputBindings"]]
     lines += ["", "## Slices and dependencies", ""]
     lines += [f"- `{item['id']}` — {item['scope']} — {len(item['requirementIds'])} requirement uses" for item in data["implementationSlices"]]
     lines += [f"- dependency `{item['id']}`: `{item['status']}`" for item in data["implementationDependencies"]]
+    lines += ["", "## Slice membership relations", "", "| Slice | Requirement |", "|---|---|"]
+    lines += [f"| `{item['id']}` | `{requirement_id}` |" for item in data["implementationSlices"] for requirement_id in item["requirementIds"]]
     lines += [
         "", "## Disposition summary", "",
         "| Disposition | Count |", "|---|---:|",
     ]
     lines += [f"| `{name}` | {count} |" for name, count in counts.items()]
-    lines += ["", "## First-slice uses", "", "| Requirement | Module | Record | Acceptance | Rationale |", "|---|---|---|---|---|"]
-    lines += [f"| `{row['inputRequirementId']}` | `{row.get('moduleId','—')}` | `{row.get('recordId','—')}` | `{row.get('acceptanceCaseId','—')}` | {row['rationale']} |" for row in rows if row["firstSliceRequired"]]
+    lines += ["", "## All requirement dispositions", "", "| Requirement | Disposition | First slice | Module | Record | Acceptance | Rationale |", "|---|---|---|---|---|---|---|"]
+    lines += [f"| `{row['inputRequirementId']}` | `{row['disposition']}` | `{row['firstSliceRequired']}` | `{row.get('moduleId','—')}` | `{row.get('recordId','—')}` | `{row.get('acceptanceCaseId','—')}` | {row['rationale']} |" for row in rows]
     lines += ["", "# 中文版", "", "# CL-TAV 开发就绪评审视图", "", "> 由同一权威 JSON 生成，禁止手工修改。", "", f"- 绑定 M1 需求：{len(rows)}；处置合计：{sum(counts.values())}；就绪状态：`{data['reviewBoundary']['readiness']}`；主张边界：`{data['reviewBoundary']['claims']}`", "", "## 输入身份", ""]
     lines += [f"- `{item['artifactId']}` — `{item['path']}` — SHA-256 `{item['sha256']}` — {item['purpose']}" for item in data["inputBindings"]]
     lines += ["", "## 切片与依赖", ""]
-    lines += [f"- `{item['id']}` — {item['scope']} — {len(item['requirementIds'])} 条需求用途" for item in data["implementationSlices"]]
+    lines += [f"- `{item['id']}` — {item['scopeZh']} — {len(item['requirementIds'])} 条需求用途" for item in data["implementationSlices"]]
     lines += [f"- 依赖 `{item['id']}`：`{item['status']}`" for item in data["implementationDependencies"]]
+    lines += ["", "## 切片成员关系", "", "| 切片 | 需求 |", "|---|---|"]
+    lines += [f"| `{item['id']}` | `{requirement_id}` |" for item in data["implementationSlices"] for requirement_id in item["requirementIds"]]
     lines += ["", "## 处置摘要", "", "| 处置 | 数量 |", "|---|---:|"]
     lines += [f"| `{name}` | {count} |" for name, count in counts.items()]
-    lines += ["", "## 首轮用途", "", "| 需求 | 模块 | 记录 | 验收 | 理由 |", "|---|---|---|---|---|"]
-    lines += [f"| `{row['inputRequirementId']}` | `{row.get('moduleId','—')}` | `{row.get('recordId','—')}` | `{row.get('acceptanceCaseId','—')}` | {row['rationale']} |" for row in rows if row["firstSliceRequired"]]
+    lines += ["", "## 全部需求处置", "", "| 需求 | 处置 | 首轮 | 模块 | 记录 | 验收 | 理由 |", "|---|---|---|---|---|---|---|"]
+    lines += [f"| `{row['inputRequirementId']}` | `{row['disposition']}` | `{row['firstSliceRequired']}` | `{row.get('moduleId','—')}` | `{row.get('recordId','—')}` | `{row.get('acceptanceCaseId','—')}` | {row['rationaleZh']} |" for row in rows]
     return "\n".join(lines) + "\n"
 
 
