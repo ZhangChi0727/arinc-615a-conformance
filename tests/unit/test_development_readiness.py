@@ -138,6 +138,9 @@ def test_bound_git_snapshot_survives_bad_worktree_inputs(monkeypatch, tmp_path):
         "configs/requirements/arinc_615a3_m1_crs.json",
         "configs/research/cltav_interface_registry.json",
         "configs/engineering/cltav_development_contracts.schema.json",
+        "docs/control/decisions/DESIGN_DECISIONS.md",
+        "docs/control/changes/CR-2026-016.md",
+        "docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md",
     ):
         source = ROOT / relative
         target = repo / relative
@@ -207,6 +210,19 @@ def test_typed_tool_contracts_have_closed_module_record_case_and_interface_refer
     assert any("protocol requirement reference" in item for item in errors(candidate))
     history = next(item for item in PACKAGE["toolRequirements"] if item["id"] == "TR-HISTORY-COMPATIBILITY")
     assert history["interfaceIds"] == ["IF-HIST-UPDATE"]
+
+
+def test_tool_contracts_reject_blank_text_and_unresolved_traceability():
+    candidate = copy.deepcopy(PACKAGE)
+    candidate["toolRequirements"][0]["triggerZh"] = " \r\n "
+    assert any("blank triggerZh" in item for item in errors(candidate))
+    candidate = copy.deepcopy(PACKAGE)
+    candidate["toolRequirements"][0]["traceability"] = ["DD-999"]
+    assert any("unknown DD traceability" in item for item in errors(candidate))
+    candidate = copy.deepcopy(PACKAGE)
+    protocol = next(item for item in candidate["toolRequirements"] if item["id"] == "TR-TRANSFER-RECONSTRUCTION")
+    protocol["protocolRequirementIds"] = []
+    assert any("lacks protocol evidence" in item for item in errors(candidate))
 
 
 def test_review_view_renders_every_disposition_and_bilingual_authority_fields():
