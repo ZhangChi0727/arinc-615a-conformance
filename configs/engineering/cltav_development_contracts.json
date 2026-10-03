@@ -16,12 +16,14 @@
     {
       "artifactId": "ARINC615A3-M1-CRS",
       "path": "configs/requirements/arinc_615a3_m1_crs.json",
-      "purpose": "Bound protocol requirement universe"
+      "purpose": "Bound protocol requirement universe",
+      "sha256": "a75b811e873965b65983afee08686ae9ba51faf228edc73d73403bece86e88be"
     },
     {
       "artifactId": "CLTAV-INTERFACE-REGISTRY",
       "path": "configs/research/cltav_interface_registry.json",
-      "purpose": "Accepted interface vocabulary"
+      "purpose": "Accepted interface vocabulary",
+      "sha256": "a1b08e6527c2b1f369156f4fb022d7cbfe0c116ce7e9cba06be488ebdda53077"
     }
   ],
   "implementationSlices": [
@@ -153,9 +155,12 @@
     },
     {
       "inputRequirementId": "CRS-M1-00021",
-      "disposition": "NOT-TOOL-OBLIGATION",
-      "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": false
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "First-slice COMMON timing, TFTP transport, or final-block observation contract.",
+      "firstSliceRequired": true,
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "PROTOCOL-EVENT",
+      "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00022",
@@ -177,9 +182,12 @@
     },
     {
       "inputRequirementId": "CRS-M1-00025",
-      "disposition": "NOT-TOOL-OBLIGATION",
-      "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": false
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "First-slice COMMON timing, TFTP transport, or final-block observation contract.",
+      "firstSliceRequired": true,
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "PROTOCOL-EVENT",
+      "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00026",
@@ -219,9 +227,12 @@
     },
     {
       "inputRequirementId": "CRS-M1-00032",
-      "disposition": "NOT-TOOL-OBLIGATION",
-      "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": false
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "First-slice COMMON timing, TFTP transport, or final-block observation contract.",
+      "firstSliceRequired": true,
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "PROTOCOL-EVENT",
+      "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00033",
@@ -1368,9 +1379,12 @@
     },
     {
       "inputRequirementId": "CRS-M1-00186",
-      "disposition": "NOT-TOOL-OBLIGATION",
-      "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": false
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "First-slice COMMON timing, TFTP transport, or final-block observation contract.",
+      "firstSliceRequired": true,
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "PROTOCOL-EVENT",
+      "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00187",
@@ -4218,9 +4232,12 @@
     },
     {
       "inputRequirementId": "CRS-M1-00620",
-      "disposition": "NOT-TOOL-OBLIGATION",
-      "rationale": "Outside the first offline UPLOAD/INFORMATION slice.",
-      "firstSliceRequired": false
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "First-slice COMMON timing, TFTP transport, or final-block observation contract.",
+      "firstSliceRequired": true,
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "PROTOCOL-EVENT",
+      "acceptanceCaseId": "AC-SYN-TRANSFER"
     },
     {
       "inputRequirementId": "CRS-M1-00621",
