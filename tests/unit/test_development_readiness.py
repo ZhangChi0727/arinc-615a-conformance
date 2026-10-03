@@ -2,6 +2,9 @@ import copy
 import importlib.util
 import json
 from pathlib import Path
+import hashlib
+import shutil
+import subprocess
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -120,6 +123,38 @@ def test_bound_inputs_are_consumed_once_from_git_blobs_not_worktree(monkeypatch)
     expected = {f"HEAD:{item['path']}" for item in PACKAGE["inputBindings"]}
     assert set(reads) == expected
     assert len(reads) == len(expected)
+
+
+def test_bound_git_snapshot_survives_bad_worktree_inputs(monkeypatch, tmp_path):
+    """The verifier must consume committed bytes, not any worktree read API."""
+    repo = tmp_path / "snapshot-repo"
+    for relative in (
+        "configs/requirements/arinc_615a3_m1_crs.json",
+        "configs/research/cltav_interface_registry.json",
+        "configs/engineering/cltav_development_contracts.schema.json",
+    ):
+        source = ROOT / relative
+        target = repo / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+    subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=repo, check=True)
+    subprocess.run(["git", "config", "user.name", "test"], cwd=repo, check=True)
+    subprocess.run(["git", "add", "configs"], cwd=repo, check=True)
+    subprocess.run(["git", "commit", "-qm", "snapshot"], cwd=repo, check=True)
+
+    candidate = copy.deepcopy(PACKAGE)
+    for binding in candidate["inputBindings"]:
+        raw = subprocess.check_output(["git", "show", f"HEAD:{binding['path']}"], cwd=repo)
+        binding["sha256"] = hashlib.sha256(raw).hexdigest()
+
+    # Deliberately invalid worktree bytes after the immutable snapshot exists.
+    (repo / "configs/requirements/arinc_615a3_m1_crs.json").write_text("{}", encoding="utf-8")
+    (repo / "configs/research/cltav_interface_registry.json").write_text("{}", encoding="utf-8")
+    monkeypatch.setattr(MODULE, "ROOT", repo)
+    monkeypatch.setattr(MODULE, "SCHEMA_PATH", repo / "configs/engineering/cltav_development_contracts.schema.json")
+    monkeypatch.setattr(MODULE, "M1_PATH", repo / "configs/requirements/arinc_615a3_m1_crs.json")
+    assert errors(candidate) == []
 
 
 def test_missing_and_forged_references_report_the_target_contract():
