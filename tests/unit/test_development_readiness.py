@@ -5,6 +5,7 @@ from pathlib import Path
 import hashlib
 import shutil
 import subprocess
+import sys
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -12,6 +13,11 @@ SPEC = importlib.util.spec_from_file_location("development_readiness", ROOT / "s
 assert SPEC and SPEC.loader
 MODULE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODULE)
+sys.path.insert(0, str(ROOT / "scripts"))
+SYNC_SPEC = importlib.util.spec_from_file_location("sync_development_readiness", ROOT / "scripts" / "sync_development_readiness.py")
+assert SYNC_SPEC and SYNC_SPEC.loader
+SYNC = importlib.util.module_from_spec(SYNC_SPEC)
+SYNC_SPEC.loader.exec_module(SYNC)
 PACKAGE = json.loads((ROOT / "configs" / "engineering" / "cltav_development_contracts.json").read_text(encoding="utf-8"))
 
 
@@ -34,7 +40,7 @@ def test_current_candidate_is_blocked_but_valid():
 
 def test_slice_identity_and_edge_rules():
     duplicate_id = copy.deepcopy(PACKAGE)
-    duplicate_id["implementationSlices"].append({"id": duplicate_id["implementationSlices"][0]["id"], "scope": "different", "requirementIds": ["CRS-M1-00420"]})
+    duplicate_id["implementationSlices"].append({"id": duplicate_id["implementationSlices"][0]["id"], "scope": "different", "scopeZh": "不同", "requirementIds": ["CRS-M1-00420"]})
     assert any("repeats a slice ID" in item for item in errors(duplicate_id))
 
     duplicate_edge = copy.deepcopy(PACKAGE)
@@ -42,7 +48,7 @@ def test_slice_identity_and_edge_rules():
     assert any("repeats a requirement use" in item for item in errors(duplicate_edge))
 
     shared = copy.deepcopy(PACKAGE)
-    shared["implementationSlices"].append({"id": "SLICE-SHARED", "scope": "legal shared consumer", "requirementIds": [shared["implementationSlices"][0]["requirementIds"][0]]})
+    shared["implementationSlices"].append({"id": "SLICE-SHARED", "scope": "legal shared consumer", "scopeZh": "合法共享消费者", "requirementIds": [shared["implementationSlices"][0]["requirementIds"][0]]})
     assert errors(shared) == []
 
 
@@ -178,3 +184,70 @@ def test_legal_new_use_then_isolated_downgrade():
     assert errors(candidate) == []
     extra["disposition"] = "NOT-TOOL-OBLIGATION"
     assert any("required use has no implementation" in item for item in errors(candidate))
+
+
+def test_review_view_renders_every_disposition_and_bilingual_authority_fields():
+    view = SYNC.render(copy.deepcopy(PACKAGE))
+    assert "## All requirement dispositions" in view
+    assert "## 全部需求处置" in view
+    assert "## Slice membership relations" in view
+    assert "## 切片成员关系" in view
+    for binding in PACKAGE["inputBindings"]:
+        assert binding["purpose"] in view
+        assert binding["purposeZh"] in view
+    for row in PACKAGE["protocolInputDispositions"]:
+        assert row["inputRequirementId"] in view
+        assert row["rationale"] in view
+        assert row["rationaleZh"] in view
+    for slice_ in PACKAGE["implementationSlices"]:
+        assert slice_["scope"] in view
+        assert slice_["scopeZh"] in view
+        for requirement_id in slice_["requirementIds"]:
+            assert f"| `{slice_['id']}` | `{requirement_id}` |" in view
+
+
+def test_review_view_detects_nonfirst_disposition_and_slice_relation_changes():
+    baseline = SYNC.render(copy.deepcopy(PACKAGE))
+    candidate = copy.deepcopy(PACKAGE)
+    nonfirst = next(row for row in candidate["protocolInputDispositions"] if not row["firstSliceRequired"])
+    nonfirst["rationale"] = "Changed non-first-slice rationale."
+    nonfirst["rationaleZh"] = "已变更的非首轮理由。"
+    assert SYNC.render(candidate) != baseline
+
+    candidate = copy.deepcopy(PACKAGE)
+    first_ids = candidate["implementationSlices"][0]["requirementIds"]
+    moved, retained = first_ids[0], first_ids[1]
+    candidate["implementationSlices"][0]["requirementIds"].remove(moved)
+    candidate["implementationSlices"].append({"id": "SLICE-SECOND", "scope": "legal partition", "scopeZh": "合法分区", "requirementIds": [moved]})
+    assert errors(candidate) == []
+    partitioned = SYNC.render(candidate)
+    candidate["implementationSlices"][0]["requirementIds"].remove(retained)
+    candidate["implementationSlices"][0]["requirementIds"].append(moved)
+    candidate["implementationSlices"][1]["requirementIds"] = [retained]
+    assert errors(candidate) == []
+    assert SYNC.render(candidate) != partitioned
+
+
+def test_review_generator_refuses_invalid_authority_and_detects_stale_view(monkeypatch, tmp_path, capsys):
+    package = tmp_path / "package.json"
+    view = tmp_path / "review.md"
+    package.write_text(json.dumps(PACKAGE), encoding="utf-8")
+    view.write_text("preserve this failed-publication marker\n", encoding="utf-8")
+    monkeypatch.setattr(SYNC, "PACKAGE", package)
+    monkeypatch.setattr(SYNC, "VIEW", view)
+    invalid = copy.deepcopy(PACKAGE)
+    invalid["protocolInputDispositions"][0].pop("rationaleZh")
+    package.write_text(json.dumps(invalid), encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--write"])
+    assert SYNC.main() == 1
+    assert view.read_text(encoding="utf-8") == "preserve this failed-publication marker\n"
+
+    package.write_text(json.dumps(PACKAGE), encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--write"])
+    assert SYNC.main() == 0
+    changed = copy.deepcopy(PACKAGE)
+    changed["implementationSlices"][0]["scopeZh"] = "已变更的中文范围"
+    package.write_text(json.dumps(changed), encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--check"])
+    assert SYNC.main() == 1
+    assert "stale" in capsys.readouterr().err
