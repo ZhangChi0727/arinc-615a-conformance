@@ -120,6 +120,11 @@ def test_main_returns_exit_codes_for_candidate_and_bad_binding(monkeypatch, tmp_
     code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
     assert code == 1
     assert "example is invalid" in captured.err
+    bad = copy.deepcopy(PACKAGE)
+    bad["recordContracts"][0]["fieldDefinitions"]["sha256"]["pattern"] = "a{4294967296}"
+    code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
+    assert code == 1
+    assert "valid regular expression" in captured.err
 
 
 def test_bound_inputs_are_consumed_once_from_git_blobs_not_worktree(monkeypatch):
@@ -264,14 +269,14 @@ def test_all_record_examples_are_typed_and_invalid_diagnostics_are_bound():
         assert MODULE.validate_record_instance(record, record["example"]) == [], record["id"]
         violations = MODULE.validate_record_instance(record, record["invalidExample"])
         expected = record["invalidExpected"]
-        assert any(code == expected["constraintId"] and path == expected["path"] for code, path, _ in violations), record["id"]
+        assert any(code == expected["constraintId"] and list(path) == expected["path"] for code, path, _ in violations), record["id"]
         assert not any(isinstance(value, str) and value.startswith("example-") for value in record["example"].values())
         rendered = SYNC.render(copy.deepcopy(PACKAGE))
         assert json.dumps(record["invalidExpected"], ensure_ascii=False, sort_keys=True) in rendered
 
     candidate = copy.deepcopy(PACKAGE)
     capture = candidate["recordContracts"][0]
-    capture["invalidExpected"] = {"constraintId": "RC-CAPTURE-BYTE-SIZE", "path": "byteSize"}
+    capture["invalidExpected"] = {"constraintId": "RC-CAPTURE-BYTE-SIZE", "path": ["byteSize"]}
     assert any("does not match invalidExpected" in item for item in errors(candidate))
 
 
@@ -286,6 +291,7 @@ def test_record_definition_language_is_closed_and_executable():
         ({"type": ["integer"], "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True}, "unsupported type"),
         ({"type": "banana", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "oneOf": [{"type": "integer", "constraintId": "RC-INNER"}]}, "cannot combine"),
         ({"type": "string", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "pattern": "["}, "valid regular expression"),
+        ({"type": "string", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "pattern": "a{4294967296}"}, "valid regular expression"),
         ({"type": "array", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "minItems": -1, "maxItems": "x", "uniqueItems": "yes", "items": True}, "items must be"),
         ({"type": "object", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "properties": [], "requiredProperties": "x", "additionalProperties": "yes"}, "properties must be"),
         ({"type": "string", "constraintId": "bad", "required": True, "enum": []}, "constraintId"),
@@ -313,7 +319,7 @@ def test_record_definition_language_is_closed_and_executable():
 def test_nested_diagnostics_resolve_full_paths_and_declared_constraints():
     packet = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "PACKET-REF"))
     packet["example"]["resolution"] = {}
-    assert ("RC-PACKET-TICKS-PER-SECOND", "resolution.ticksPerSecond") == MODULE.validate_record_instance(packet, packet["example"])[0][:2]
+    assert ("RC-PACKET-TICKS-PER-SECOND", ("resolution", "ticksPerSecond")) == MODULE.validate_record_instance(packet, packet["example"])[0][:2]
 
     candidate = copy.deepcopy(PACKAGE)
     capture = candidate["recordContracts"][0]
@@ -322,17 +328,45 @@ def test_nested_diagnostics_resolve_full_paths_and_declared_constraints():
     capture["example"]["meta"] = {"byteSize": 1}
     capture["invalidExample"] = copy.deepcopy(capture["example"])
     capture["invalidExample"]["meta"] = {}
-    capture["invalidExpected"] = {"constraintId": "RC-CAPTURE-META-BYTE-SIZE", "path": "meta.byteSize"}
+    capture["invalidExpected"] = {"constraintId": "RC-CAPTURE-META-BYTE-SIZE", "path": ["meta", "byteSize"]}
     assert errors(candidate) == []
-    capture["invalidExpected"] = {"constraintId": "RC-CAPTURE-BYTE-SIZE", "path": "byteSize"}
+    capture["invalidExpected"] = {"constraintId": "RC-CAPTURE-BYTE-SIZE", "path": ["byteSize"]}
     assert any("invalidExpected" in item for item in errors(candidate))
 
     protocol = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "PROTOCOL-EVENT"))
     protocol["example"]["payload"]["extra"] = True
-    assert ("RC-UNKNOWN-FIELD", "payload.extra") == MODULE.validate_record_instance(protocol, protocol["example"])[0][:2]
+    assert ("RC-UNKNOWN-FIELD", ("payload", "extra")) == MODULE.validate_record_instance(protocol, protocol["example"])[0][:2]
     datagram = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "DATAGRAM-RECORD"))
     datagram["example"]["fragmentRefs"] = ["bad-ref"]
-    assert ("RC-PACKET-REF-ID", "fragmentRefs.0") == MODULE.validate_record_instance(datagram, datagram["example"])[0][:2]
+    assert ("RC-PACKET-REF-ID", ("fragmentRefs", 0)) == MODULE.validate_record_instance(datagram, datagram["example"])[0][:2]
+
+    datagram["example"]["coverage"] = [{}]
+    missing = {(code, path) for code, path, _ in MODULE.validate_record_instance(datagram, datagram["example"])}
+    assert ("RC-DATAGRAM-RANGE-START", ("coverage", 0, "start")) in missing
+    assert ("RC-DATAGRAM-RANGE-END", ("coverage", 0, "endExclusive")) in missing
+    for constraint_id, path in (
+        ("RC-DATAGRAM-RANGE-START", ["coverage", 0, "start"]),
+        ("RC-DATAGRAM-RANGE-END", ["coverage", 0, "endExclusive"]),
+    ):
+        candidate = copy.deepcopy(PACKAGE)
+        target = next(item for item in candidate["recordContracts"] if item["id"] == "DATAGRAM-RECORD")
+        target["invalidExample"] = copy.deepcopy(target["example"])
+        target["invalidExample"]["coverage"] = [{}]
+        target["invalidExpected"] = {"constraintId": constraint_id, "path": path}
+        assert errors(candidate) == []
+
+    candidate = copy.deepcopy(PACKAGE)
+    transfer = next(item for item in candidate["recordContracts"] if item["id"] == "TRANSFER-RECORD")
+    transfer["invalidExample"] = copy.deepcopy(transfer["example"])
+    transfer["invalidExample"]["blockMap"] = {"1": "bad-ref"}
+    transfer["invalidExpected"] = {"constraintId": "RC-PACKET-REF-ID", "path": ["blockMap", "1"]}
+    assert errors(candidate) == []
+
+    candidate = copy.deepcopy(PACKAGE)
+    history = next(item for item in candidate["recordContracts"] if item["id"] == "HISTORY-HANDLE")
+    history["invalidExample"] = {"H": ["h0.a"], "compatibleStateByHypothesis": {"h0.a": "frontier-syn-0"}, "statusByHypothesis": {"h0.a": "BANANA"}, "version": 0}
+    history["invalidExpected"] = {"constraintId": "RC-HISTORY-STATUS-VALUE", "path": ["statusByHypothesis", "h0.a"]}
+    assert errors(candidate) == []
 
 
 def test_record_vocabularies_match_consumers_and_capture_references_are_generic():
@@ -398,6 +432,16 @@ def test_numeric_hash_enum_collection_and_interval_boundaries_are_enforced():
     assert any(code == "RC-PACKET-CAPLEN" for code, _, _ in MODULE.validate_record_instance(packet, packet["example"]))
     observation["example"].update(measurementInterval={"lower": 5, "upper": 4, "lowerClosed": True, "upperClosed": True, "unit": "us"}, domain="MONOTONIC-CAPTURE", verdict="PASS")
     assert any(code == "RC-OBS-INTERVAL" for code, _, _ in MODULE.validate_record_instance(observation, observation["example"]))
+    for lower, upper in ((5.0, 4.0), (5, 4.0), (5.0, 4)):
+        observation["example"]["measurementInterval"].update(lower=lower, upper=upper)
+        assert any(code == "RC-OBS-INTERVAL" for code, _, _ in MODULE.validate_record_instance(observation, observation["example"]))
+    for lower, upper in ((4, 5), (4.0, 5.0), (4, 5.0)):
+        observation["example"]["measurementInterval"].update(lower=lower, upper=upper)
+        assert MODULE.validate_record_instance(observation, observation["example"]) == []
+    observation["example"]["measurementInterval"].update(lower=4.5, upper=5)
+    assert MODULE.validate_record_instance(observation, observation["example"])
+    observation["example"]["measurementInterval"].update(lower=True, upper=5)
+    assert MODULE.validate_record_instance(observation, observation["example"])
     intake = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "INTAKE-METADATA"))
     intake["example"]["clockAccuracy"] = {"state": "UNKNOWN", "boundNs": 0, "source": "not supplied"}
     assert MODULE.validate_record_instance(intake, intake["example"])
@@ -411,16 +455,27 @@ def test_numeric_hash_enum_collection_and_interval_boundaries_are_enforced():
     assert MODULE.validate_record_instance(datagram, datagram["example"])
 
     transfer = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "TRANSFER-RECORD"))
-    for mode in ("ACCEPTED", "DEFAULTED"):
-        transfer["example"]["optionState"] = {"mode": mode, "values": {"blksize": 512}}
-        assert MODULE.validate_record_instance(transfer, transfer["example"]) == []
+    transfer["example"]["optionState"] = {"mode": "DEFAULTED", "values": {"blksize": 512}}
+    assert MODULE.validate_record_instance(transfer, transfer["example"]) == []
+    for blksize in (256, 1024):
+        transfer["example"]["optionState"] = {"mode": "DEFAULTED", "values": {"blksize": blksize}}
+        assert any(code == "RC-OPTION-BLKSIZE" for code, _, _ in MODULE.validate_record_instance(transfer, transfer["example"]))
+    transfer["example"]["optionState"] = {"mode": "ACCEPTED", "values": {"blksize": 1024}}
+    assert MODULE.validate_record_instance(transfer, transfer["example"]) == []
     transfer["example"]["optionState"] = {"mode": "UNKNOWN", "values": {}}
     assert MODULE.validate_record_instance(transfer, transfer["example"]) == []
+    transfer["example"]["optionState"] = {"mode": "UNKNOWN", "values": {"blksize": 512}}
+    assert MODULE.validate_record_instance(transfer, transfer["example"])
     transfer["example"]["optionState"] = {"mode": "DEFAULTED", "values": {"blksize": "banana"}}
     assert MODULE.validate_record_instance(transfer, transfer["example"])
     transfer["example"]["optionState"] = {"mode": "UNKNOWN", "values": {}}
     transfer["example"]["blockMap"] = {"banana": "cap-syn-001:0:0:1"}
     assert MODULE.validate_record_instance(transfer, transfer["example"])
+    authoritative_transfer = next(item for item in PACKAGE["recordContracts"] if item["id"] == "TRANSFER-RECORD")
+    assert authoritative_transfer["sourceRequirementIds"] == ["CRS-M1-00646", "CRS-M1-00647"]
+    view = SYNC.render(copy.deepcopy(PACKAGE))
+    assert "DEFAULTED blksize" in view and "DEFAULTED 的 blksize" in view
+    assert "`CRS-M1-00646`, `CRS-M1-00647`" in view
 
 
 def test_history_handle_reuses_bound_status_vocabulary_and_scope():
@@ -572,6 +627,12 @@ def test_review_generator_refuses_invalid_authority_and_detects_stale_view(monke
 
     invalid = copy.deepcopy(PACKAGE)
     invalid["recordContracts"][0]["fieldDefinitions"]["relativePath"]["minLength"] = -1
+    package.write_text(json.dumps(invalid), encoding="utf-8")
+    assert SYNC.main() == 1
+    assert view.read_text(encoding="utf-8") == "preserve this failed-publication marker\n"
+
+    invalid = copy.deepcopy(PACKAGE)
+    invalid["recordContracts"][0]["fieldDefinitions"]["sha256"]["pattern"] = "a{4294967296}"
     package.write_text(json.dumps(invalid), encoding="utf-8")
     assert SYNC.main() == 1
     assert view.read_text(encoding="utf-8") == "preserve this failed-publication marker\n"
