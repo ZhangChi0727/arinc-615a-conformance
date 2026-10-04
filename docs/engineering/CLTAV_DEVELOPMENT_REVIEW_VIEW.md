@@ -220,6 +220,79 @@
 - Evidence: FindingRecord evidence links and applicability scope.
 - Interfaces: `IF-OBS-INTERPRET`; CRS: —; control/method: `DD-040`, `CR-2026-016 AC-03`
 
+## Module contracts
+
+### `MOD-CAPTURE` — Capture intake and packet provenance
+- Responsibility: Verify a manifest-bound capture identity and emit immutable packet references without inferring clock accuracy or field truth.
+- Preconditions: CaptureIdentity matches the audited manifest bytes.; Intake metadata is explicitly declared or UNKNOWN.
+- Inputs: `CAPTURE-IDENTITY`, `INTAKE-METADATA`; outputs: `PACKET-REF`
+- Requirements: `TR-CAPTURE-INTAKE`; interfaces: `IF-EXECUTE-RECORD`
+- Acceptance: `AC-SYN-TRANSFER`; runtime parameters: `RP-RESOURCE`; upstream: None
+- Steps:
+  - `S1`: Verify capture identity before parsing any block.
+  - `S2`: Parse supported section and interface declarations while retaining their scope.
+  - `S3`: Emit PacketRef values with exact raw ticks, resolution and length provenance.
+- Invariants: Interface identity is scoped by capture and section.; Clock resolution never implies clock accuracy.; Unsupported blocks never produce an empty-success capture.
+- Failure outcomes:
+  - `IDENTITY-ERROR` — when Manifest identity does not match the supplied bytes. Result: Reject intake before block parsing and emit no PacketRef.
+  - `UNSUPPORTED-CAPTURE` — when A required block or link type is unsupported. Result: Return a named unsupported outcome, not IUT FAIL.
+### `MOD-REASSEMBLY` — Provenance-preserving datagram reconstruction
+- Responsibility: Build bounded datagram candidates from scoped packet fragments while preserving gaps, overlap conflicts and every source reference.
+- Preconditions: Every fragment has a scoped PacketRef.; Resource bounds are available before buffering.
+- Inputs: `PACKET-REF`; outputs: `DATAGRAM-RECORD`
+- Requirements: `TR-DATAGRAM-REASSEMBLY`; interfaces: `IF-EXECUTE-RECORD`
+- Acceptance: `AC-SYN-TRANSFER`; runtime parameters: `RP-RESOURCE`; upstream: `MOD-CAPTURE`
+- Steps:
+  - `S1`: Group fragments only by the declared scoped reconstruction identity.
+  - `S2`: Compute coverage, missing ranges and overlaps without overwriting earlier bytes.
+  - `S3`: Emit COMPLETE, INCOMPLETE or CONFLICT reconstruction with all PacketRef values.
+- Invariants: Fragments never cross capture, section or interface scope.; A first fragment is never treated as a complete datagram without complete coverage.
+- Failure outcomes:
+  - `INCOMPLETE-DATAGRAM` — when Coverage contains a gap or truncation. Result: Emit an incomplete record and no complete UDP payload.
+  - `OVERLAP-CONFLICT` — when Overlapping ranges contain different bytes. Result: Preserve both sources and emit conflict, not last-write-wins data.
+### `MOD-TRANSFER` — TFTP transfer and protocol-event reconstruction
+- Responsibility: Associate bounded TFTP transfer candidates and derive typed protocol events without inventing application-layer facts.
+- Preconditions: Datagram completeness is classified.; Initial request and dynamic TID evidence remain distinguishable.
+- Inputs: `DATAGRAM-RECORD`, `TRANSFER-RECORD`; outputs: `TRANSFER-RECORD`, `PROTOCOL-EVENT`
+- Requirements: `TR-TRANSFER-RECONSTRUCTION`, `TR-PROTOCOL-EVENT`; interfaces: `IF-EXECUTE-RECORD`, `IF-OBS-INTERPRET`
+- Acceptance: `AC-SYN-TRANSFER`; runtime parameters: `RP-RESOURCE`; upstream: `MOD-REASSEMBLY`
+- Steps:
+  - `S1`: Open or retain transfer candidates from request and endpoint evidence.
+  - `S2`: Apply option, block and terminal rules while retaining retransmission and ambiguity evidence.
+  - `S3`: Emit typed wire or derived events with complete raw-reference chains.
+- Invariants: Unknown option evidence never becomes an accepted or defaulted value.; Dynamic TID association is not replaced by a fixed port assumption.; Application facts are not inferred from wire-only evidence.
+- Failure outcomes:
+  - `AMBIGUOUS-TRANSFER` — when Evidence is compatible with multiple transfer candidates. Result: Retain ambiguity and withhold unique ownership claims.
+  - `UNSUPPORTED-BLOCK-RANGE` — when Block progression exceeds the declared bounded range. Result: Return UNSUPPORTED without merging wrapped block identities.
+### `MOD-OWNERSHIP` — Request-instance ownership resolution
+- Responsibility: Resolve response ownership under the declared matching policy while preserving cancellation, supersession and ambiguity.
+- Preconditions: Candidate request instances and event order are explicit.; The matching policy is UNIQUE-KEY, FIFO or MOST-RECENT.
+- Inputs: `PROTOCOL-EVENT`; outputs: `OWNERSHIP-RESULT`
+- Requirements: `TR-OWNERSHIP`; interfaces: `IF-OBS-INTERPRET`
+- Acceptance: `AC-SYN-TRANSFER`; runtime parameters: `RP-RESOURCE`; upstream: `MOD-TRANSFER`
+- Steps:
+  - `S1`: Discard candidates terminated by a valid cancellation or superseding trigger.
+  - `S2`: Apply the declared policy to the remaining compatible candidates.
+  - `S3`: Emit unique, unmatched or ambiguous ownership with supporting references.
+- Invariants: One response is never silently consumed by two incompatible request instances.; Cancellation before a deadline prevents a later no-response failure for that obligation.
+- Failure outcomes:
+  - `AMBIGUOUS-OWNERSHIP` — when More than one incompatible owner remains. Result: Emit AMBIGUOUS and prohibit unique-response consumption.
+### `MOD-OBSERVATION` — Observation assessment, history update and bounded reporting
+- Responsibility: Produce four-valued assessments, conservatively advance compatible histories and report bounded findings without root-cause claims.
+- Preconditions: Ownership status and measurement provenance are explicit.; HistoryHandle belongs to the current session and version.
+- Inputs: `OWNERSHIP-RESULT`, `PROTOCOL-EVENT`, `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `INTAKE-METADATA`; outputs: `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `FINDING-RECORD`
+- Requirements: `TR-OBSERVATION-ASSESSMENT`, `TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`; interfaces: `IF-OBS-INTERPRET`, `IF-HIST-UPDATE`
+- Acceptance: `AC-SYN-TRANSFER`; runtime parameters: `RP-RESOURCE`; upstream: `MOD-TRANSFER`, `MOD-OWNERSHIP`
+- Steps:
+  - `S1`: Intersect measurement and requirement domains using exact interval topology.
+  - `S2`: Produce PASS, FAIL, INCONCLUSIVE or ERROR without collapsing unknown evidence.
+  - `S3`: Advance history only through IF-HIST-UPDATE and never revive excluded hypotheses.
+  - `S4`: Emit a bounded finding with facts, scope, assumptions and evidence separated.
+- Invariants: PASS requires every possible true value to satisfy the requirement.; FAIL requires every possible true value to violate the requirement.; ERROR and INCONCLUSIVE are never downgraded to FAIL.; Equal hypothesis sets may retain different compatible histories.
+- Failure outcomes:
+  - `INVALID-MEASUREMENT` — when The time chain, error budget or measurement-domain intersection is invalid. Result: Emit ERROR and do not exclude hypotheses.
+  - `RESOURCE-UNKNOWN` — when The bounded history operation cannot complete within declared resources. Result: Retain the prior history with conservative-unknown status, not IUT FAIL.
+
 ## Slices and dependencies
 
 - `SLICE-OFFLINE-UPLOAD-INFORMATION` — offline capture to traceable report — 176 requirement uses
@@ -1506,6 +1579,79 @@
 - 错误／未知：未知拓扑、时钟、配置或根因保持显式，不能成为故障标签。
 - 证据：FindingRecord 证据链接和适用范围。
 - 接口：`IF-OBS-INTERPRET`；CRS：—；控制／方法：`DD-040`, `CR-2026-016 AC-03`
+
+## 模块合同
+
+### `MOD-CAPTURE` — 捕获接入与数据包来源
+- 职责：核验清单绑定的捕获身份并产生不可变数据包引用，不推断时钟精度或字段真值。
+- 前置条件：CaptureIdentity 与已审计清单字节一致。；接入元数据已明确声明或标为 UNKNOWN。
+- 输入：`CAPTURE-IDENTITY`, `INTAKE-METADATA`；输出：`PACKET-REF`
+- 需求：`TR-CAPTURE-INTAKE`；接口：`IF-EXECUTE-RECORD`
+- 验收：`AC-SYN-TRANSFER`；运行参数：`RP-RESOURCE`；上游：无
+- 步骤：
+  - `S1`：解析任何块之前先核验捕获身份。
+  - `S2`：解析受支持的 section 与 interface 声明并保留其作用域。
+  - `S3`：产生含精确原始 ticks、分辨率和长度来源的 PacketRef。
+- 不变量：接口身份受捕获和 section 作用域约束。；时钟分辨率绝不隐含时钟精度。；未支持块不得产生空成功捕获。
+- 失败结果：
+  - `IDENTITY-ERROR` — 条件：清单身份与提供字节不一致。 结果：在块解析前拒绝接入且不产生 PacketRef。
+  - `UNSUPPORTED-CAPTURE` — 条件：所需块或链路类型不受支持。 结果：返回具名不支持结果，而非 IUT FAIL。
+### `MOD-REASSEMBLY` — 保留来源的数据报重建
+- 职责：从有作用域的数据包分片建立有界数据报候选，同时保留缺口、重叠冲突和全部来源引用。
+- 前置条件：每个分片都有具作用域的 PacketRef。；缓冲前已有资源界。
+- 输入：`PACKET-REF`；输出：`DATAGRAM-RECORD`
+- 需求：`TR-DATAGRAM-REASSEMBLY`；接口：`IF-EXECUTE-RECORD`
+- 验收：`AC-SYN-TRANSFER`；运行参数：`RP-RESOURCE`；上游：`MOD-CAPTURE`
+- 步骤：
+  - `S1`：仅按声明的作用域重建身份对分片分组。
+  - `S2`：计算覆盖、缺失范围和重叠，不得覆盖先前字节。
+  - `S3`：产生 COMPLETE、INCOMPLETE 或 CONFLICT 重建并保留全部 PacketRef。
+- 不变量：分片绝不跨捕获、section 或 interface 作用域。；覆盖不完整时绝不把首片视为完整数据报。
+- 失败结果：
+  - `INCOMPLETE-DATAGRAM` — 条件：覆盖存在缺口或截断。 结果：产生不完整记录且不产生完整 UDP 载荷。
+  - `OVERLAP-CONFLICT` — 条件：重叠范围含不同字节。 结果：保留双方来源并产生冲突，不采用后写覆盖。
+### `MOD-TRANSFER` — TFTP 传输与协议事件重建
+- 职责：关联有界 TFTP 传输候选并派生带类型协议事件，不虚构应用层事实。
+- 前置条件：数据报完整性已经分类。；初始请求与动态 TID 证据仍可区分。
+- 输入：`DATAGRAM-RECORD`, `TRANSFER-RECORD`；输出：`TRANSFER-RECORD`, `PROTOCOL-EVENT`
+- 需求：`TR-TRANSFER-RECONSTRUCTION`, `TR-PROTOCOL-EVENT`；接口：`IF-EXECUTE-RECORD`, `IF-OBS-INTERPRET`
+- 验收：`AC-SYN-TRANSFER`；运行参数：`RP-RESOURCE`；上游：`MOD-REASSEMBLY`
+- 步骤：
+  - `S1`：依据请求与端点证据建立或保留传输候选。
+  - `S2`：应用选项、块和终止规则，同时保留重传与歧义证据。
+  - `S3`：产生带完整原始引用链的线上或派生类型事件。
+- 不变量：未知选项证据绝不变成已接受值或默认值。；动态 TID 关联不得由固定端口假设替代。；不得从仅线上证据推断应用事实。
+- 失败结果：
+  - `AMBIGUOUS-TRANSFER` — 条件：证据与多个传输候选相容。 结果：保留歧义且不作唯一所有权主张。
+  - `UNSUPPORTED-BLOCK-RANGE` — 条件：块推进超出声明的有界范围。 结果：返回 UNSUPPORTED，且不合并回绕后的块身份。
+### `MOD-OWNERSHIP` — 请求实例所有权解析
+- 职责：按声明的匹配策略解析响应所有权，同时保留取消、替代和歧义。
+- 前置条件：候选请求实例和事件顺序均明确。；匹配策略为 UNIQUE-KEY、FIFO 或 MOST-RECENT。
+- 输入：`PROTOCOL-EVENT`；输出：`OWNERSHIP-RESULT`
+- 需求：`TR-OWNERSHIP`；接口：`IF-OBS-INTERPRET`
+- 验收：`AC-SYN-TRANSFER`；运行参数：`RP-RESOURCE`；上游：`MOD-TRANSFER`
+- 步骤：
+  - `S1`：移除被有效取消或替代触发终止的候选。
+  - `S2`：对剩余相容候选应用声明的策略。
+  - `S3`：产生唯一、未匹配或歧义所有权及其支持引用。
+- 不变量：一个响应绝不被两个不相容请求实例静默消费。；截止前的合法取消阻止该义务随后产生无响应失败。
+- 失败结果：
+  - `AMBIGUOUS-OWNERSHIP` — 条件：仍存在多个不相容所有者。 结果：产生 AMBIGUOUS 并禁止作为唯一响应消费。
+### `MOD-OBSERVATION` — 观测评估、历史更新与有界报告
+- 职责：产生四值评估、保守推进相容历史，并在不作根因主张的前提下报告有界发现。
+- 前置条件：所有权状态与测量来源均明确。；HistoryHandle 属于当前会话和版本。
+- 输入：`OWNERSHIP-RESULT`, `PROTOCOL-EVENT`, `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `INTAKE-METADATA`；输出：`OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `FINDING-RECORD`
+- 需求：`TR-OBSERVATION-ASSESSMENT`, `TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`；接口：`IF-OBS-INTERPRET`, `IF-HIST-UPDATE`
+- 验收：`AC-SYN-TRANSFER`；运行参数：`RP-RESOURCE`；上游：`MOD-TRANSFER`, `MOD-OWNERSHIP`
+- 步骤：
+  - `S1`：使用精确区间拓扑求测量域与要求域的交集。
+  - `S2`：产生 PASS、FAIL、INCONCLUSIVE 或 ERROR，不折叠未知证据。
+  - `S3`：仅通过 IF-HIST-UPDATE 推进历史，且绝不复活已排除假设。
+  - `S4`：产生将事实、范围、假设和证据分离的有界发现。
+- 不变量：PASS 要求所有可能真值均满足要求。；FAIL 要求所有可能真值均违反要求。；ERROR 和 INCONCLUSIVE 绝不降级为 FAIL。；相同假设集合可以保留不同的相容历史。
+- 失败结果：
+  - `INVALID-MEASUREMENT` — 条件：时间链、误差预算或测量域交集无效。 结果：产生 ERROR 且不排除假设。
+  - `RESOURCE-UNKNOWN` — 条件：有界历史操作无法在声明资源内完成。 结果：保留先前历史并标为保守未知，而非 IUT FAIL。
 
 ## 切片与依赖
 

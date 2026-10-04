@@ -8281,19 +8281,139 @@
   ],
   "moduleContracts": [
     {
-      "id": "MOD-CAPTURE"
+      "id": "MOD-CAPTURE",
+      "title": "Capture intake and packet provenance",
+      "titleZh": "捕获接入与数据包来源",
+      "responsibility": "Verify a manifest-bound capture identity and emit immutable packet references without inferring clock accuracy or field truth.",
+      "responsibilityZh": "核验清单绑定的捕获身份并产生不可变数据包引用，不推断时钟精度或字段真值。",
+      "inputRecordIds": ["CAPTURE-IDENTITY", "INTAKE-METADATA"],
+      "outputRecordIds": ["PACKET-REF"],
+      "toolRequirementIds": ["TR-CAPTURE-INTAKE"],
+      "interfaceIds": ["IF-EXECUTE-RECORD"],
+      "preconditions": ["CaptureIdentity matches the audited manifest bytes.", "Intake metadata is explicitly declared or UNKNOWN."],
+      "preconditionsZh": ["CaptureIdentity 与已审计清单字节一致。", "接入元数据已明确声明或标为 UNKNOWN。"],
+      "steps": [
+        {"id": "S1", "action": "Verify capture identity before parsing any block.", "actionZh": "解析任何块之前先核验捕获身份。"},
+        {"id": "S2", "action": "Parse supported section and interface declarations while retaining their scope.", "actionZh": "解析受支持的 section 与 interface 声明并保留其作用域。"},
+        {"id": "S3", "action": "Emit PacketRef values with exact raw ticks, resolution and length provenance.", "actionZh": "产生含精确原始 ticks、分辨率和长度来源的 PacketRef。"}
+      ],
+      "invariants": ["Interface identity is scoped by capture and section.", "Clock resolution never implies clock accuracy.", "Unsupported blocks never produce an empty-success capture."],
+      "invariantsZh": ["接口身份受捕获和 section 作用域约束。", "时钟分辨率绝不隐含时钟精度。", "未支持块不得产生空成功捕获。"],
+      "failureOutcomes": [
+        {"code": "IDENTITY-ERROR", "condition": "Manifest identity does not match the supplied bytes.", "conditionZh": "清单身份与提供字节不一致。", "result": "Reject intake before block parsing and emit no PacketRef.", "resultZh": "在块解析前拒绝接入且不产生 PacketRef。"},
+        {"code": "UNSUPPORTED-CAPTURE", "condition": "A required block or link type is unsupported.", "conditionZh": "所需块或链路类型不受支持。", "result": "Return a named unsupported outcome, not IUT FAIL.", "resultZh": "返回具名不支持结果，而非 IUT FAIL。"}
+      ],
+      "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
+      "runtimeParameterIds": ["RP-RESOURCE"],
+      "upstreamModuleIds": []
     },
     {
-      "id": "MOD-REASSEMBLY"
+      "id": "MOD-REASSEMBLY",
+      "title": "Provenance-preserving datagram reconstruction",
+      "titleZh": "保留来源的数据报重建",
+      "responsibility": "Build bounded datagram candidates from scoped packet fragments while preserving gaps, overlap conflicts and every source reference.",
+      "responsibilityZh": "从有作用域的数据包分片建立有界数据报候选，同时保留缺口、重叠冲突和全部来源引用。",
+      "inputRecordIds": ["PACKET-REF"],
+      "outputRecordIds": ["DATAGRAM-RECORD"],
+      "toolRequirementIds": ["TR-DATAGRAM-REASSEMBLY"],
+      "interfaceIds": ["IF-EXECUTE-RECORD"],
+      "preconditions": ["Every fragment has a scoped PacketRef.", "Resource bounds are available before buffering."],
+      "preconditionsZh": ["每个分片都有具作用域的 PacketRef。", "缓冲前已有资源界。"],
+      "steps": [
+        {"id": "S1", "action": "Group fragments only by the declared scoped reconstruction identity.", "actionZh": "仅按声明的作用域重建身份对分片分组。"},
+        {"id": "S2", "action": "Compute coverage, missing ranges and overlaps without overwriting earlier bytes.", "actionZh": "计算覆盖、缺失范围和重叠，不得覆盖先前字节。"},
+        {"id": "S3", "action": "Emit COMPLETE, INCOMPLETE or CONFLICT reconstruction with all PacketRef values.", "actionZh": "产生 COMPLETE、INCOMPLETE 或 CONFLICT 重建并保留全部 PacketRef。"}
+      ],
+      "invariants": ["Fragments never cross capture, section or interface scope.", "A first fragment is never treated as a complete datagram without complete coverage."],
+      "invariantsZh": ["分片绝不跨捕获、section 或 interface 作用域。", "覆盖不完整时绝不把首片视为完整数据报。"],
+      "failureOutcomes": [
+        {"code": "INCOMPLETE-DATAGRAM", "condition": "Coverage contains a gap or truncation.", "conditionZh": "覆盖存在缺口或截断。", "result": "Emit an incomplete record and no complete UDP payload.", "resultZh": "产生不完整记录且不产生完整 UDP 载荷。"},
+        {"code": "OVERLAP-CONFLICT", "condition": "Overlapping ranges contain different bytes.", "conditionZh": "重叠范围含不同字节。", "result": "Preserve both sources and emit conflict, not last-write-wins data.", "resultZh": "保留双方来源并产生冲突，不采用后写覆盖。"}
+      ],
+      "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
+      "runtimeParameterIds": ["RP-RESOURCE"],
+      "upstreamModuleIds": ["MOD-CAPTURE"]
     },
     {
-      "id": "MOD-TRANSFER"
+      "id": "MOD-TRANSFER",
+      "title": "TFTP transfer and protocol-event reconstruction",
+      "titleZh": "TFTP 传输与协议事件重建",
+      "responsibility": "Associate bounded TFTP transfer candidates and derive typed protocol events without inventing application-layer facts.",
+      "responsibilityZh": "关联有界 TFTP 传输候选并派生带类型协议事件，不虚构应用层事实。",
+      "inputRecordIds": ["DATAGRAM-RECORD", "TRANSFER-RECORD"],
+      "outputRecordIds": ["TRANSFER-RECORD", "PROTOCOL-EVENT"],
+      "toolRequirementIds": ["TR-TRANSFER-RECONSTRUCTION", "TR-PROTOCOL-EVENT"],
+      "interfaceIds": ["IF-EXECUTE-RECORD", "IF-OBS-INTERPRET"],
+      "preconditions": ["Datagram completeness is classified.", "Initial request and dynamic TID evidence remain distinguishable."],
+      "preconditionsZh": ["数据报完整性已经分类。", "初始请求与动态 TID 证据仍可区分。"],
+      "steps": [
+        {"id": "S1", "action": "Open or retain transfer candidates from request and endpoint evidence.", "actionZh": "依据请求与端点证据建立或保留传输候选。"},
+        {"id": "S2", "action": "Apply option, block and terminal rules while retaining retransmission and ambiguity evidence.", "actionZh": "应用选项、块和终止规则，同时保留重传与歧义证据。"},
+        {"id": "S3", "action": "Emit typed wire or derived events with complete raw-reference chains.", "actionZh": "产生带完整原始引用链的线上或派生类型事件。"}
+      ],
+      "invariants": ["Unknown option evidence never becomes an accepted or defaulted value.", "Dynamic TID association is not replaced by a fixed port assumption.", "Application facts are not inferred from wire-only evidence."],
+      "invariantsZh": ["未知选项证据绝不变成已接受值或默认值。", "动态 TID 关联不得由固定端口假设替代。", "不得从仅线上证据推断应用事实。"],
+      "failureOutcomes": [
+        {"code": "AMBIGUOUS-TRANSFER", "condition": "Evidence is compatible with multiple transfer candidates.", "conditionZh": "证据与多个传输候选相容。", "result": "Retain ambiguity and withhold unique ownership claims.", "resultZh": "保留歧义且不作唯一所有权主张。"},
+        {"code": "UNSUPPORTED-BLOCK-RANGE", "condition": "Block progression exceeds the declared bounded range.", "conditionZh": "块推进超出声明的有界范围。", "result": "Return UNSUPPORTED without merging wrapped block identities.", "resultZh": "返回 UNSUPPORTED，且不合并回绕后的块身份。"}
+      ],
+      "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
+      "runtimeParameterIds": ["RP-RESOURCE"],
+      "upstreamModuleIds": ["MOD-REASSEMBLY"]
     },
     {
-      "id": "MOD-OWNERSHIP"
+      "id": "MOD-OWNERSHIP",
+      "title": "Request-instance ownership resolution",
+      "titleZh": "请求实例所有权解析",
+      "responsibility": "Resolve response ownership under the declared matching policy while preserving cancellation, supersession and ambiguity.",
+      "responsibilityZh": "按声明的匹配策略解析响应所有权，同时保留取消、替代和歧义。",
+      "inputRecordIds": ["PROTOCOL-EVENT"],
+      "outputRecordIds": ["OWNERSHIP-RESULT"],
+      "toolRequirementIds": ["TR-OWNERSHIP"],
+      "interfaceIds": ["IF-OBS-INTERPRET"],
+      "preconditions": ["Candidate request instances and event order are explicit.", "The matching policy is UNIQUE-KEY, FIFO or MOST-RECENT."],
+      "preconditionsZh": ["候选请求实例和事件顺序均明确。", "匹配策略为 UNIQUE-KEY、FIFO 或 MOST-RECENT。"],
+      "steps": [
+        {"id": "S1", "action": "Discard candidates terminated by a valid cancellation or superseding trigger.", "actionZh": "移除被有效取消或替代触发终止的候选。"},
+        {"id": "S2", "action": "Apply the declared policy to the remaining compatible candidates.", "actionZh": "对剩余相容候选应用声明的策略。"},
+        {"id": "S3", "action": "Emit unique, unmatched or ambiguous ownership with supporting references.", "actionZh": "产生唯一、未匹配或歧义所有权及其支持引用。"}
+      ],
+      "invariants": ["One response is never silently consumed by two incompatible request instances.", "Cancellation before a deadline prevents a later no-response failure for that obligation."],
+      "invariantsZh": ["一个响应绝不被两个不相容请求实例静默消费。", "截止前的合法取消阻止该义务随后产生无响应失败。"],
+      "failureOutcomes": [
+        {"code": "AMBIGUOUS-OWNERSHIP", "condition": "More than one incompatible owner remains.", "conditionZh": "仍存在多个不相容所有者。", "result": "Emit AMBIGUOUS and prohibit unique-response consumption.", "resultZh": "产生 AMBIGUOUS 并禁止作为唯一响应消费。"}
+      ],
+      "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
+      "runtimeParameterIds": ["RP-RESOURCE"],
+      "upstreamModuleIds": ["MOD-TRANSFER"]
     },
     {
-      "id": "MOD-OBSERVATION"
+      "id": "MOD-OBSERVATION",
+      "title": "Observation assessment, history update and bounded reporting",
+      "titleZh": "观测评估、历史更新与有界报告",
+      "responsibility": "Produce four-valued assessments, conservatively advance compatible histories and report bounded findings without root-cause claims.",
+      "responsibilityZh": "产生四值评估、保守推进相容历史，并在不作根因主张的前提下报告有界发现。",
+      "inputRecordIds": ["OWNERSHIP-RESULT", "PROTOCOL-EVENT", "OBSERVATION-ASSESSMENT", "HISTORY-HANDLE", "INTAKE-METADATA"],
+      "outputRecordIds": ["OBSERVATION-ASSESSMENT", "HISTORY-HANDLE", "FINDING-RECORD"],
+      "toolRequirementIds": ["TR-OBSERVATION-ASSESSMENT", "TR-HISTORY-COMPATIBILITY", "TR-TRACEABLE-FINDING"],
+      "interfaceIds": ["IF-OBS-INTERPRET", "IF-HIST-UPDATE"],
+      "preconditions": ["Ownership status and measurement provenance are explicit.", "HistoryHandle belongs to the current session and version."],
+      "preconditionsZh": ["所有权状态与测量来源均明确。", "HistoryHandle 属于当前会话和版本。"],
+      "steps": [
+        {"id": "S1", "action": "Intersect measurement and requirement domains using exact interval topology.", "actionZh": "使用精确区间拓扑求测量域与要求域的交集。"},
+        {"id": "S2", "action": "Produce PASS, FAIL, INCONCLUSIVE or ERROR without collapsing unknown evidence.", "actionZh": "产生 PASS、FAIL、INCONCLUSIVE 或 ERROR，不折叠未知证据。"},
+        {"id": "S3", "action": "Advance history only through IF-HIST-UPDATE and never revive excluded hypotheses.", "actionZh": "仅通过 IF-HIST-UPDATE 推进历史，且绝不复活已排除假设。"},
+        {"id": "S4", "action": "Emit a bounded finding with facts, scope, assumptions and evidence separated.", "actionZh": "产生将事实、范围、假设和证据分离的有界发现。"}
+      ],
+      "invariants": ["PASS requires every possible true value to satisfy the requirement.", "FAIL requires every possible true value to violate the requirement.", "ERROR and INCONCLUSIVE are never downgraded to FAIL.", "Equal hypothesis sets may retain different compatible histories."],
+      "invariantsZh": ["PASS 要求所有可能真值均满足要求。", "FAIL 要求所有可能真值均违反要求。", "ERROR 和 INCONCLUSIVE 绝不降级为 FAIL。", "相同假设集合可以保留不同的相容历史。"],
+      "failureOutcomes": [
+        {"code": "INVALID-MEASUREMENT", "condition": "The time chain, error budget or measurement-domain intersection is invalid.", "conditionZh": "时间链、误差预算或测量域交集无效。", "result": "Emit ERROR and do not exclude hypotheses.", "resultZh": "产生 ERROR 且不排除假设。"},
+        {"code": "RESOURCE-UNKNOWN", "condition": "The bounded history operation cannot complete within declared resources.", "conditionZh": "有界历史操作无法在声明资源内完成。", "result": "Retain the prior history with conservative-unknown status, not IUT FAIL.", "resultZh": "保留先前历史并标为保守未知，而非 IUT FAIL。"}
+      ],
+      "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
+      "runtimeParameterIds": ["RP-RESOURCE"],
+      "upstreamModuleIds": ["MOD-TRANSFER", "MOD-OWNERSHIP"]
     }
   ],
   "algorithmRefinements": [

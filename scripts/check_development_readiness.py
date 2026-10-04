@@ -418,6 +418,71 @@ def package_errors(data: dict) -> list[str]:
     if len(tool_ids) != len(set(tool_ids)):
         errors.append("toolRequirements repeats an ID")
     interface_ids = {row.get("id") for row in registry["interfaces"]}
+    tool_by_id = {row["id"]: row for row in data["toolRequirements"]}
+    record_by_id = {row["id"]: row for row in data["recordContracts"]}
+    runtime_parameter_ids = {row["id"] for row in data["runtimeParameterContracts"]}
+    module_by_id = {row["id"]: row for row in data["moduleContracts"]}
+    upstream_graph: dict[str, set[str]] = {}
+    for module in data["moduleContracts"]:
+        for field in ("title", "titleZh", "responsibility", "responsibilityZh"):
+            if not module[field].strip():
+                errors.append(f"{module['id']} has blank {field}")
+        for field in ("preconditions", "preconditionsZh", "invariants", "invariantsZh"):
+            if any(not item.strip() for item in module[field]):
+                errors.append(f"{module['id']} has blank {field}")
+        if len(module["steps"]) != len({step["id"] for step in module["steps"]}):
+            errors.append(f"{module['id']} repeats a step ID")
+        for step in module["steps"]:
+            if not step["action"].strip() or not step["actionZh"].strip():
+                errors.append(f"{module['id']} has a blank step action")
+        if len(module["failureOutcomes"]) != len({outcome["code"] for outcome in module["failureOutcomes"]}):
+            errors.append(f"{module['id']} repeats a failure outcome code")
+        for outcome in module["failureOutcomes"]:
+            if any(not outcome[field].strip() for field in ("condition", "conditionZh", "result", "resultZh")):
+                errors.append(f"{module['id']} has a blank failure outcome")
+        referenced_records = set(module["inputRecordIds"]) | set(module["outputRecordIds"])
+        if not referenced_records.issubset(records):
+            errors.append(f"{module['id']} has an unknown record reference")
+        if any(record_by_id[record_id]["ownerModuleId"] != module["id"] for record_id in module["outputRecordIds"] if record_id in record_by_id):
+            errors.append(f"{module['id']} claims an output owned by another module")
+        if not set(module["toolRequirementIds"]).issubset(tool_by_id):
+            errors.append(f"{module['id']} has an unknown tool requirement")
+        owned_tools = {tool_id for tool_id, tool in tool_by_id.items() if tool["ownerModuleId"] == module["id"]}
+        if set(module["toolRequirementIds"]) != owned_tools:
+            errors.append(f"{module['id']} tool requirements differ from owned requirements")
+        for tool_id in set(module["toolRequirementIds"]) & set(tool_by_id):
+            tool = tool_by_id[tool_id]
+            if not set(tool["inputRecordIds"]).issubset(module["inputRecordIds"]):
+                errors.append(f"{module['id']} omits an owned requirement input")
+            if not set(tool["outputRecordIds"]).issubset(module["outputRecordIds"]):
+                errors.append(f"{module['id']} omits an owned requirement output")
+            if not set(tool["interfaceIds"]).issubset(module["interfaceIds"]):
+                errors.append(f"{module['id']} omits an owned requirement interface")
+        if not set(module["interfaceIds"]).issubset(interface_ids):
+            errors.append(f"{module['id']} has an unknown interface reference")
+        if not set(module["acceptanceCaseIds"]).issubset(cases):
+            errors.append(f"{module['id']} has an unknown acceptance case")
+        if not set(module["runtimeParameterIds"]).issubset(runtime_parameter_ids):
+            errors.append(f"{module['id']} has an unknown runtime parameter")
+        upstream = set(module["upstreamModuleIds"])
+        if module["id"] in upstream or not upstream.issubset(modules):
+            errors.append(f"{module['id']} has an invalid upstream module")
+        upstream_graph[module["id"]] = upstream
+    for record in data["recordContracts"]:
+        owner = module_by_id.get(record["ownerModuleId"])
+        if owner and record["id"] not in set(owner["inputRecordIds"]) | set(owner["outputRecordIds"]):
+            errors.append(f"{record['id']} is absent from its owner module boundary")
+    for start in modules:
+        pending = list(upstream_graph.get(start, set()))
+        visited: set[str] = set()
+        while pending:
+            current = pending.pop()
+            if current == start:
+                errors.append(f"{start} participates in an upstream dependency cycle")
+                break
+            if current not in visited:
+                visited.add(current)
+                pending.extend(upstream_graph.get(current, set()))
     control_docs = {
         "DD": (ROOT / "docs/control/decisions/DESIGN_DECISIONS.md").read_text(encoding="utf-8"),
         "CR": (ROOT / "docs/control/changes/CR-2026-016.md").read_text(encoding="utf-8"),
