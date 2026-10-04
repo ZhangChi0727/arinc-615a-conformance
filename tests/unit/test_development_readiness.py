@@ -229,6 +229,21 @@ def test_tool_contracts_reject_blank_text_and_unresolved_traceability():
     assert any("lacks protocol evidence" in item for item in errors(candidate))
 
 
+def test_record_contract_examples_and_history_handle_are_enforced():
+    assert errors(copy.deepcopy(PACKAGE)) == []
+    candidate = copy.deepcopy(PACKAGE)
+    candidate["recordContracts"][0]["invalidExample"] = copy.deepcopy(candidate["recordContracts"][0]["example"])
+    assert any("invalid example" in item for item in errors(candidate))
+    candidate = copy.deepcopy(PACKAGE)
+    candidate["recordContracts"][0]["example"].pop("captureId")
+    assert any("example is invalid" in item for item in errors(candidate))
+    history = next(item for item in PACKAGE["recordContracts"] if item["id"] == "HISTORY-HANDLE")
+    assert history["fields"] == ["H", "compatibleStateByHypothesis", "statusByHypothesis", "version"]
+    candidate = copy.deepcopy(PACKAGE)
+    next(item for item in candidate["recordContracts"] if item["id"] == "HISTORY-HANDLE")["fields"][0] = "hypotheses"
+    assert any("interface HistoryHandle" in item for item in errors(candidate))
+
+
 def test_review_view_renders_every_disposition_and_bilingual_authority_fields():
     view = SYNC.render(copy.deepcopy(PACKAGE))
     assert "## All requirement dispositions" in view
