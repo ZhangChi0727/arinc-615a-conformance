@@ -219,6 +219,10 @@ def test_tool_contracts_reject_blank_text_and_unresolved_traceability():
     candidate = copy.deepcopy(PACKAGE)
     candidate["toolRequirements"][0]["traceability"] = ["DD-999"]
     assert any("unknown DD traceability" in item for item in errors(candidate))
+    for reference in ("DD-04", "CR-2026-016 AC-99", "T999", "CRS-M1-99999"):
+        candidate = copy.deepcopy(PACKAGE)
+        candidate["toolRequirements"][0]["traceability"] = [reference]
+        assert errors(candidate), reference
     candidate = copy.deepcopy(PACKAGE)
     protocol = next(item for item in candidate["toolRequirements"] if item["id"] == "TR-TRANSFER-RECONSTRUCTION")
     protocol["protocolRequirementIds"] = []
