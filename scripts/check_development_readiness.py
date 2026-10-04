@@ -15,6 +15,121 @@ PACKAGE_PATH = ROOT / "configs/engineering/cltav_development_contracts.json"
 SCHEMA_PATH = ROOT / "configs/engineering/cltav_development_contracts.schema.json"
 M1_PATH = ROOT / "configs/requirements/arinc_615a3_m1_crs.json"
 
+FIELD_SCHEMA_KEYS = {
+    "type", "constraintId", "required", "enum", "const", "pattern", "minLength",
+    "minimum", "maximum", "minItems", "maxItems", "uniqueItems", "items",
+    "properties", "requiredProperties", "additionalProperties", "oneOf",
+}
+FIELD_SCHEMA_TYPES = {"string", "integer", "number", "boolean", "array", "object", "null"}
+
+
+def _field_definition_errors(definition: object, path: str) -> list[str]:
+    if not isinstance(definition, dict) or not definition:
+        return [f"{path} field definition must be a nonempty object"]
+    errors: list[str] = []
+    unknown = set(definition) - FIELD_SCHEMA_KEYS
+    if unknown:
+        errors.append(f"{path} field definition has unsupported keywords: {sorted(unknown)}")
+    if definition.get("type") not in FIELD_SCHEMA_TYPES and "oneOf" not in definition:
+        errors.append(f"{path} field definition has unsupported type")
+    if not isinstance(definition.get("constraintId"), str) or not re.fullmatch(r"RC-[A-Z0-9-]+", definition.get("constraintId", "")):
+        errors.append(f"{path} field definition lacks a valid constraintId")
+    if "required" in definition and not isinstance(definition["required"], bool):
+        errors.append(f"{path} field definition required must be boolean")
+    if "requiredProperties" in definition and (
+        not isinstance(definition["requiredProperties"], list)
+        or not all(isinstance(item, str) and item for item in definition["requiredProperties"])
+    ):
+        errors.append(f"{path} requiredProperties must be a string array")
+    if "properties" in definition:
+        if not isinstance(definition["properties"], dict):
+            errors.append(f"{path} properties must be an object")
+        else:
+            for key, child in definition["properties"].items():
+                errors.extend(_field_definition_errors(child, f"{path}.{key}"))
+    for key in ("items", "additionalProperties"):
+        value = definition.get(key)
+        if isinstance(value, dict):
+            errors.extend(_field_definition_errors(value, f"{path}.{key}"))
+        elif key in definition and key == "items":
+            errors.append(f"{path} items must be a field definition")
+        elif key in definition and not isinstance(value, bool):
+            errors.append(f"{path} additionalProperties must be boolean or a field definition")
+    if "oneOf" in definition:
+        if not isinstance(definition["oneOf"], list) or not definition["oneOf"]:
+            errors.append(f"{path} oneOf must be a nonempty array")
+        else:
+            for index, child in enumerate(definition["oneOf"]):
+                errors.extend(_field_definition_errors(child, f"{path}.oneOf[{index}]"))
+    return errors
+
+
+def _json_schema(definition: dict) -> dict:
+    schema = {key: value for key, value in definition.items() if key not in {"required", "constraintId", "requiredProperties"}}
+    if "items" in schema:
+        schema["items"] = _json_schema(schema["items"])
+    if isinstance(schema.get("additionalProperties"), dict):
+        schema["additionalProperties"] = _json_schema(schema["additionalProperties"])
+    if "properties" in schema:
+        schema["properties"] = {key: _json_schema(value) for key, value in schema["properties"].items()}
+    if "oneOf" in schema:
+        schema["oneOf"] = [_json_schema(value) for value in schema["oneOf"]]
+    if "requiredProperties" in definition:
+        schema["required"] = definition["requiredProperties"]
+    return schema
+
+
+def validate_record_instance(record: dict, payload: object) -> list[tuple[str, str, str]]:
+    """Return stable (constraint ID, field path, diagnostic) tuples."""
+    if not isinstance(payload, dict):
+        return [("RC-RECORD-TYPE", "$", "record must be an object")]
+    schema = {
+        "type": "object",
+        "properties": {field: _json_schema(record["fieldDefinitions"][field]) for field in record["fields"]},
+        "required": [field for field in record["fields"] if record["fieldDefinitions"][field].get("required")],
+        "additionalProperties": False,
+    }
+    results: list[tuple[str, str, str]] = []
+    for error in Draft202012Validator(schema).iter_errors(payload):
+        parts = [str(item) for item in error.absolute_path]
+        if error.validator == "required":
+            missing = re.search(r"'([^']+)' is a required property", error.message)
+            field = missing.group(1) if missing else "?"
+            path = field
+        elif error.validator == "additionalProperties":
+            field = "?"
+            path = "$"
+        else:
+            field = parts[0] if parts else "?"
+            path = ".".join(parts) or "$"
+        definition = record["fieldDefinitions"].get(field, {})
+        results.append((definition.get("constraintId", "RC-UNKNOWN-FIELD"), path, error.message))
+    if record["id"] == "PACKET-REF" and isinstance(payload.get("caplen"), int) and isinstance(payload.get("origlen"), int) and payload["caplen"] > payload["origlen"]:
+        results.append(("RC-PACKET-CAPLEN", "caplen", "captured length exceeds original length"))
+    if record["id"] == "OBSERVATION-ASSESSMENT" and isinstance(payload.get("measurementInterval"), dict):
+        interval = payload["measurementInterval"]
+        if isinstance(interval.get("lower"), int) and isinstance(interval.get("upper"), int) and interval["lower"] > interval["upper"]:
+            results.append(("RC-OBS-INTERVAL", "measurementInterval", "lower endpoint exceeds upper endpoint"))
+    if record["id"] == "INTAKE-METADATA" and isinstance(payload.get("clockAccuracy"), dict):
+        clock = payload["clockAccuracy"]
+        if clock.get("state") == "DECLARED" and "boundNs" not in clock:
+            results.append(("RC-INTAKE-CLOCK", "clockAccuracy", "declared clock accuracy lacks boundNs"))
+        if clock.get("state") == "UNKNOWN" and "boundNs" in clock:
+            results.append(("RC-INTAKE-CLOCK", "clockAccuracy", "unknown clock accuracy must not invent boundNs"))
+    if record["id"] == "TRANSFER-RECORD" and isinstance(payload.get("optionState"), dict):
+        option_state = payload["optionState"]
+        if option_state.get("mode") == "UNKNOWN" and option_state.get("values"):
+            results.append(("RC-TRANSFER-OPTION-STATE", "optionState", "unknown option state must not claim negotiated values"))
+    if record["id"] == "HISTORY-HANDLE" and isinstance(payload.get("H"), list):
+        hypotheses = set(payload["H"])
+        compatible = payload.get("compatibleStateByHypothesis")
+        statuses = payload.get("statusByHypothesis", {})
+        if isinstance(compatible, dict) and set(compatible) != hypotheses:
+            results.append(("RC-HISTORY-COMPATIBLE", "compatibleStateByHypothesis", "compatible histories must exactly cover H"))
+        if isinstance(statuses, dict) and not set(statuses).issubset(hypotheses):
+            results.append(("RC-HISTORY-STATUS", "statusByHypothesis", "status refers to a hypothesis outside H"))
+    return results
+
 
 
 def _git_blob_sha256(relative: str) -> str:
@@ -114,40 +229,32 @@ def package_errors(data: dict) -> list[str]:
                 if record["fields"] != handle.get("fields"):
                     errors.append("HISTORY-HANDLE fields differ from interface HistoryHandle")
             continue
-        def instance_errors(payload: dict) -> list[str]:
-            instance_errors_: list[str] = []
-            for field in record["fields"]:
-                definition = record["fieldDefinitions"][field]
-                if definition.get("required") and field not in payload:
-                    instance_errors_.append(f"missing required {field}")
-                    continue
-                value = payload.get(field)
-                expected_type = definition.get("type")
-                if field in payload and expected_type == "integer" and (not isinstance(value, int) or isinstance(value, bool) or value < definition.get("minimum", -sys.maxsize)):
-                    instance_errors_.append(f"invalid {field}")
-                if field in payload and expected_type == "string" and not isinstance(value, str):
-                    instance_errors_.append(f"invalid {field}")
-                if field in payload and expected_type == "array" and not isinstance(value, list):
-                    instance_errors_.append(f"invalid {field}")
-                if field in payload and expected_type == "object" and not isinstance(value, dict):
-                    instance_errors_.append(f"invalid {field}")
-            unknown = set(payload) - set(record["fields"])
-            if unknown:
-                instance_errors_.append("unknown fields")
-            return instance_errors_
-
-        example_errors = instance_errors(record["example"])
+        definition_errors = [
+            item
+            for field, definition in record["fieldDefinitions"].items()
+            for item in _field_definition_errors(definition, f"{record['id']}.{field}")
+        ]
+        if definition_errors:
+            errors.extend(definition_errors)
+            continue
+        example_errors = validate_record_instance(record, record["example"])
         if example_errors:
-            errors.append(f"{record['id']} example is invalid: {', '.join(example_errors)}")
-        invalid_errors = instance_errors(record["invalidExample"])
+            errors.append(f"{record['id']} example is invalid: {example_errors}")
+        invalid_errors = validate_record_instance(record, record["invalidExample"])
         if not invalid_errors:
             errors.append(f"{record['id']} invalid example violates no field constraint")
+        expected_error = record["invalidExpected"]
+        if not any(code == expected_error["constraintId"] and path == expected_error["path"] for code, path, _ in invalid_errors):
+            errors.append(f"{record['id']} invalid example does not match invalidExpected")
         if record["example"] == record["invalidExample"]:
             errors.append(f"{record['id']} invalid example equals example")
         if record.get("interfaceHandle") == "HistoryHandle":
             handle = registry.get("sessionHandles", {}).get("HistoryHandle", {})
             if record["fields"] != handle.get("fields"):
                 errors.append("HISTORY-HANDLE fields differ from interface HistoryHandle")
+            status_definition = record["fieldDefinitions"]["statusByHypothesis"].get("additionalProperties", {})
+            if status_definition.get("enum") != handle.get("statusByHypothesisValues"):
+                errors.append("HISTORY-HANDLE statuses differ from interface HistoryHandle")
         elif record["id"] == "HISTORY-HANDLE":
             errors.append("HISTORY-HANDLE lacks interfaceHandle binding")
     tool_ids = [row["id"] for row in data["toolRequirements"]]

@@ -7084,45 +7084,60 @@
       "uncertainty": "Exploratory use only; unknown metadata remains UNKNOWN.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "captureId": "example-captureId",
-        "relativePath": "example-relativePath",
-        "sha256": "example-sha256",
-        "byteSize": "example-byteSize",
-        "manifestVersion": "example-manifestVersion"
+        "captureId": "cap-syn-001",
+        "relativePath": "synthetic/cap-syn-001.pcapng",
+        "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+        "byteSize": 128,
+        "manifestVersion": "1.0"
       },
       "invalidExample": {
-        "relativePath": "example-relativePath",
-        "sha256": "example-sha256",
-        "byteSize": "example-byteSize",
-        "manifestVersion": "example-manifestVersion"
+        "captureId": "cap-syn-001",
+        "relativePath": "synthetic/cap-syn-001.pcapng",
+        "sha256": "not-a-hash",
+        "byteSize": 128,
+        "manifestVersion": "1.0"
       },
       "uncertaintyZh": "仅作探索用途；未知元数据保持 UNKNOWN。",
       "fieldDefinitions": {
         "captureId": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-CAPTURE-ID",
+          "required": true,
+          "pattern": "^cap-[a-z0-9][a-z0-9-]*$"
         },
         "relativePath": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-CAPTURE-PATH",
+          "required": true,
+          "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
         },
         "sha256": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-CAPTURE-SHA256",
+          "required": true,
+          "pattern": "^[0-9a-f]{64}$"
         },
         "byteSize": {
-          "type": "string",
-          "required": true
+          "type": "integer",
+          "constraintId": "RC-CAPTURE-BYTE-SIZE",
+          "required": true,
+          "minimum": 0
         },
         "manifestVersion": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-CAPTURE-MANIFEST-VERSION",
+          "required": true,
+          "pattern": "^[1-9][0-9]*\\.[0-9]+$"
         }
       },
-      "invalidReason": "missing required captureId",
+      "invalidReason": "sha256 must contain exactly 64 lowercase hexadecimal characters",
       "ownershipZh": "捕获模块或接入边界拥有该记录。",
       "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
-      "invalidReasonZh": "缺少必填字段 captureId"
+      "invalidReasonZh": "sha256 必须为 64 个小写十六进制字符",
+      "invalidExpected": {
+        "constraintId": "RC-CAPTURE-SHA256",
+        "path": "sha256"
+      }
     },
     {
       "id": "PACKET-REF",
@@ -7144,69 +7159,110 @@
       "uncertainty": "Clock accuracy is distinct from resolution.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "captureId": "example-captureId",
-        "sectionId": "example-sectionId",
-        "interfaceId": "example-interfaceId",
-        "packetNumber": "example-packetNumber",
-        "rawTicks": "example-rawTicks",
-        "resolution": "example-resolution",
-        "caplen": "example-caplen",
-        "origlen": "example-origlen",
-        "decodeStatus": "example-decodeStatus"
+        "captureId": "cap-syn-001",
+        "sectionId": 0,
+        "interfaceId": 0,
+        "packetNumber": 1,
+        "rawTicks": 125000,
+        "resolution": {
+          "ticksPerSecond": 1000000
+        },
+        "caplen": 96,
+        "origlen": 96,
+        "decodeStatus": "FULL"
       },
       "invalidExample": {
-        "sectionId": "example-sectionId",
-        "interfaceId": "example-interfaceId",
-        "packetNumber": "example-packetNumber",
-        "rawTicks": "example-rawTicks",
-        "resolution": "example-resolution",
-        "caplen": "example-caplen",
-        "origlen": "example-origlen",
-        "decodeStatus": "example-decodeStatus"
+        "captureId": "cap-syn-001",
+        "sectionId": 0,
+        "interfaceId": 0,
+        "packetNumber": 1,
+        "rawTicks": 125000,
+        "resolution": {
+          "ticksPerSecond": 0
+        },
+        "caplen": 96,
+        "origlen": 96,
+        "decodeStatus": "FULL"
       },
       "uncertaintyZh": "时钟精度与分辨率不同。",
       "fieldDefinitions": {
         "captureId": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-PACKET-CAPTURE-ID",
+          "required": true,
+          "pattern": "^cap-[a-z0-9][a-z0-9-]*$"
         },
         "sectionId": {
-          "type": "string",
-          "required": true
+          "type": "integer",
+          "constraintId": "RC-PACKET-SECTION",
+          "required": true,
+          "minimum": 0
         },
         "interfaceId": {
-          "type": "string",
-          "required": true
+          "type": "integer",
+          "constraintId": "RC-PACKET-INTERFACE",
+          "required": true,
+          "minimum": 0
         },
         "packetNumber": {
-          "type": "string",
-          "required": true
+          "type": "integer",
+          "constraintId": "RC-PACKET-NUMBER",
+          "required": true,
+          "minimum": 1
         },
         "rawTicks": {
-          "type": "string",
-          "required": true
+          "type": "integer",
+          "constraintId": "RC-PACKET-TICKS",
+          "required": true,
+          "minimum": 0
         },
         "resolution": {
-          "type": "string",
-          "required": true
+          "type": "object",
+          "constraintId": "RC-PACKET-RESOLUTION",
+          "required": true,
+          "properties": {
+            "ticksPerSecond": {
+              "type": "integer",
+              "constraintId": "RC-PACKET-TICKS-PER-SECOND",
+              "minimum": 1
+            }
+          },
+          "requiredProperties": [
+            "ticksPerSecond"
+          ],
+          "additionalProperties": false
         },
         "caplen": {
-          "type": "string",
-          "required": true
+          "type": "integer",
+          "constraintId": "RC-PACKET-CAPLEN",
+          "required": true,
+          "minimum": 0
         },
         "origlen": {
-          "type": "string",
-          "required": true
+          "type": "integer",
+          "constraintId": "RC-PACKET-ORIGLEN",
+          "required": true,
+          "minimum": 0
         },
         "decodeStatus": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-PACKET-DECODE-STATUS",
+          "required": true,
+          "enum": [
+            "FULL",
+            "TRUNCATED",
+            "UNDECODED"
+          ]
         }
       },
-      "invalidReason": "missing required captureId",
+      "invalidReason": "resolution must contain a positive ticksPerSecond value",
       "ownershipZh": "捕获模块或接入边界拥有该记录。",
       "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
-      "invalidReasonZh": "缺少必填字段 captureId"
+      "invalidReasonZh": "resolution 必须包含正数 ticksPerSecond",
+      "invalidExpected": {
+        "constraintId": "RC-PACKET-RESOLUTION",
+        "path": "resolution.ticksPerSecond"
+      }
     },
     {
       "id": "DATAGRAM-RECORD",
@@ -7223,39 +7279,102 @@
       "uncertainty": "Missing or conflicting fragments remain explicit.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "fragmentRefs": "example-fragmentRefs",
-        "coverage": "example-coverage",
-        "overlapStatus": "example-overlapStatus",
-        "reassemblyStatus": "example-reassemblyStatus"
+        "fragmentRefs": [
+          "cap-syn-001:0:0:1",
+          "cap-syn-001:0:0:2"
+        ],
+        "coverage": [
+          {
+            "start": 0,
+            "endExclusive": 512
+          }
+        ],
+        "overlapStatus": "NONE",
+        "reassemblyStatus": "COMPLETE"
       },
       "invalidExample": {
-        "coverage": "example-coverage",
-        "overlapStatus": "example-overlapStatus",
-        "reassemblyStatus": "example-reassemblyStatus"
+        "fragmentRefs": [],
+        "coverage": [
+          {
+            "start": 0,
+            "endExclusive": 512
+          }
+        ],
+        "overlapStatus": "NONE",
+        "reassemblyStatus": "COMPLETE"
       },
       "uncertaintyZh": "缺失或冲突分片保持显式。",
       "fieldDefinitions": {
         "fragmentRefs": {
-          "type": "string",
-          "required": true
+          "type": "array",
+          "constraintId": "RC-DATAGRAM-FRAGMENTS",
+          "required": true,
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "constraintId": "RC-PACKET-REF-ID",
+            "pattern": "^cap-syn-001:[0-9]+:[0-9]+:[1-9][0-9]*$"
+          }
         },
         "coverage": {
-          "type": "string",
-          "required": true
+          "type": "array",
+          "constraintId": "RC-DATAGRAM-COVERAGE",
+          "required": true,
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "constraintId": "RC-DATAGRAM-RANGE",
+            "properties": {
+              "start": {
+                "type": "integer",
+                "constraintId": "RC-DATAGRAM-RANGE-START",
+                "minimum": 0
+              },
+              "endExclusive": {
+                "type": "integer",
+                "constraintId": "RC-DATAGRAM-RANGE-END",
+                "minimum": 1
+              }
+            },
+            "requiredProperties": [
+              "start",
+              "endExclusive"
+            ],
+            "additionalProperties": false
+          }
         },
         "overlapStatus": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-DATAGRAM-OVERLAP",
+          "required": true,
+          "enum": [
+            "NONE",
+            "DUPLICATE",
+            "CONFLICT",
+            "UNKNOWN"
+          ]
         },
         "reassemblyStatus": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-DATAGRAM-STATUS",
+          "required": true,
+          "enum": [
+            "COMPLETE",
+            "GAPPED",
+            "CONFLICT",
+            "UNKNOWN"
+          ]
         }
       },
-      "invalidReason": "missing required fragmentRefs",
+      "invalidReason": "fragmentRefs must contain at least one scoped packet reference",
       "ownershipZh": "重组模块拥有派生记录，原始包引用不可改写。",
       "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
-      "invalidReasonZh": "缺少必填字段 fragmentRefs"
+      "invalidReasonZh": "fragmentRefs 必须至少包含一个有作用域的数据包引用",
+      "invalidExpected": {
+        "constraintId": "RC-DATAGRAM-FRAGMENTS",
+        "path": "fragmentRefs"
+      }
     },
     {
       "id": "TRANSFER-RECORD",
@@ -7275,57 +7394,170 @@
       "uncertainty": "Ambiguous TID or option state remains UNKNOWN.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "direction": "example-direction",
-        "endpoints": "example-endpoints",
-        "tid": "example-tid",
-        "request": "example-request",
-        "optionState": "example-optionState",
-        "blockMap": "example-blockMap",
-        "completionEvidence": "example-completionEvidence"
+        "direction": "SERVER-TO-CLIENT",
+        "endpoints": {
+          "client": "192.0.2.10",
+          "server": "192.0.2.20"
+        },
+        "tid": {
+          "clientPort": 40000,
+          "serverPort": 69
+        },
+        "request": "event-rrq-001",
+        "optionState": {
+          "mode": "DEFAULTED",
+          "values": {
+            "blksize": "512"
+          }
+        },
+        "blockMap": {
+          "1": "cap-syn-001:0:0:2"
+        },
+        "completionEvidence": [
+          "pkt-cap-syn-001:2"
+        ]
       },
       "invalidExample": {
-        "endpoints": "example-endpoints",
-        "tid": "example-tid",
-        "request": "example-request",
-        "optionState": "example-optionState",
-        "blockMap": "example-blockMap",
-        "completionEvidence": "example-completionEvidence"
+        "direction": "SIDEWAYS",
+        "endpoints": {
+          "client": "192.0.2.10",
+          "server": "192.0.2.20"
+        },
+        "tid": {
+          "clientPort": 40000,
+          "serverPort": 69
+        },
+        "request": "event-rrq-001",
+        "optionState": {
+          "mode": "DEFAULTED",
+          "values": {}
+        },
+        "blockMap": {},
+        "completionEvidence": []
       },
       "uncertaintyZh": "歧义 TID 或选项状态保持 UNKNOWN。",
       "fieldDefinitions": {
         "direction": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-TRANSFER-DIRECTION",
+          "required": true,
+          "enum": [
+            "CLIENT-TO-SERVER",
+            "SERVER-TO-CLIENT"
+          ]
         },
         "endpoints": {
-          "type": "string",
-          "required": true
+          "type": "object",
+          "constraintId": "RC-TRANSFER-ENDPOINTS",
+          "required": true,
+          "properties": {
+            "client": {
+              "type": "string",
+              "constraintId": "RC-TRANSFER-CLIENT",
+              "minLength": 1
+            },
+            "server": {
+              "type": "string",
+              "constraintId": "RC-TRANSFER-SERVER",
+              "minLength": 1
+            }
+          },
+          "requiredProperties": [
+            "client",
+            "server"
+          ],
+          "additionalProperties": false
         },
         "tid": {
-          "type": "string",
-          "required": true
+          "type": "object",
+          "constraintId": "RC-TRANSFER-TID",
+          "required": true,
+          "properties": {
+            "clientPort": {
+              "type": "integer",
+              "constraintId": "RC-TID-CLIENT",
+              "minimum": 1,
+              "maximum": 65535
+            },
+            "serverPort": {
+              "type": "integer",
+              "constraintId": "RC-TID-SERVER",
+              "minimum": 1,
+              "maximum": 65535
+            }
+          },
+          "requiredProperties": [
+            "clientPort",
+            "serverPort"
+          ],
+          "additionalProperties": false
         },
         "request": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-TRANSFER-REQUEST",
+          "required": true,
+          "pattern": "^event-[A-Za-z0-9._:-]+$"
         },
         "optionState": {
-          "type": "string",
-          "required": true
+          "type": "object",
+          "constraintId": "RC-TRANSFER-OPTION-STATE",
+          "required": true,
+          "properties": {
+            "mode": {
+              "type": "string",
+              "constraintId": "RC-OPTION-MODE",
+              "enum": [
+                "ACCEPTED",
+                "DEFAULTED",
+                "UNKNOWN"
+              ]
+            },
+            "values": {
+              "type": "object",
+              "constraintId": "RC-OPTION-VALUES",
+              "additionalProperties": {
+                "type": "string",
+                "constraintId": "RC-OPTION-VALUE",
+                "minLength": 1
+              }
+            }
+          },
+          "requiredProperties": [
+            "mode",
+            "values"
+          ],
+          "additionalProperties": false
         },
         "blockMap": {
-          "type": "string",
-          "required": true
+          "type": "object",
+          "constraintId": "RC-TRANSFER-BLOCK-MAP",
+          "required": true,
+          "additionalProperties": {
+            "type": "string",
+            "constraintId": "RC-PACKET-REF-ID",
+            "pattern": "^cap-syn-001:[0-9]+:[0-9]+:[1-9][0-9]*$"
+          }
         },
         "completionEvidence": {
-          "type": "string",
-          "required": true
+          "type": "array",
+          "constraintId": "RC-TRANSFER-COMPLETION",
+          "required": true,
+          "items": {
+            "type": "string",
+            "constraintId": "RC-EVIDENCE-REF",
+            "pattern": "^(cap|pkt|dgram|transfer|event)-[A-Za-z0-9._:-]+$"
+          },
+          "uniqueItems": true
         }
       },
-      "invalidReason": "missing required direction",
+      "invalidReason": "direction must use the controlled client/server vocabulary",
       "ownershipZh": "传输模块拥有派生的传输或事件记录。",
       "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
-      "invalidReasonZh": "缺少必填字段 direction"
+      "invalidReasonZh": "direction 必须使用受控的客户端/服务器词汇",
+      "invalidExpected": {
+        "constraintId": "RC-TRANSFER-DIRECTION",
+        "path": "direction"
+      }
     },
     {
       "id": "PROTOCOL-EVENT",
@@ -7344,51 +7576,110 @@
       "uncertainty": "Application facts are not inferred from wire evidence.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "eventLayer": "example-eventLayer",
-        "role": "example-role",
-        "payload": "example-payload",
-        "correlationKey": "example-correlationKey",
-        "rawRefs": "example-rawRefs",
-        "parseBoundary": "example-parseBoundary"
+        "eventLayer": "TFTP",
+        "role": "CLIENT",
+        "payload": {
+          "type": "RRQ",
+          "ref": "payload-rrq-001"
+        },
+        "correlationKey": "corr-transfer-001",
+        "rawRefs": [
+          "cap-syn-001:0:0:1"
+        ],
+        "parseBoundary": "COMPLETE"
       },
       "invalidExample": {
-        "role": "example-role",
-        "payload": "example-payload",
-        "correlationKey": "example-correlationKey",
-        "rawRefs": "example-rawRefs",
-        "parseBoundary": "example-parseBoundary"
+        "eventLayer": "TFTP",
+        "role": "CLIENT",
+        "payload": {
+          "type": "RRQ",
+          "ref": "payload-rrq-001"
+        },
+        "correlationKey": "corr-transfer-001",
+        "rawRefs": [],
+        "parseBoundary": "COMPLETE"
       },
       "uncertaintyZh": "不从线上证据推断应用事实。",
       "fieldDefinitions": {
         "eventLayer": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-EVENT-LAYER",
+          "required": true,
+          "enum": [
+            "TFTP",
+            "ARINC615A"
+          ]
         },
         "role": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-EVENT-ROLE",
+          "required": true,
+          "enum": [
+            "CLIENT",
+            "SERVER",
+            "UNKNOWN"
+          ]
         },
         "payload": {
-          "type": "string",
-          "required": true
+          "type": "object",
+          "constraintId": "RC-EVENT-PAYLOAD",
+          "required": true,
+          "properties": {
+            "type": {
+              "type": "string",
+              "constraintId": "RC-PAYLOAD-TYPE",
+              "pattern": "^[A-Z][A-Z0-9-]*$"
+            },
+            "ref": {
+              "type": "string",
+              "constraintId": "RC-PAYLOAD-REF",
+              "pattern": "^payload-[A-Za-z0-9._:-]+$"
+            }
+          },
+          "requiredProperties": [
+            "type",
+            "ref"
+          ],
+          "additionalProperties": false
         },
         "correlationKey": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-EVENT-CORRELATION",
+          "required": true,
+          "pattern": "^corr-[A-Za-z0-9._:-]+$"
         },
         "rawRefs": {
-          "type": "string",
-          "required": true
+          "type": "array",
+          "constraintId": "RC-EVENT-RAW-REFS",
+          "required": true,
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "constraintId": "RC-PACKET-REF-ID",
+            "pattern": "^cap-syn-001:[0-9]+:[0-9]+:[1-9][0-9]*$"
+          }
         },
         "parseBoundary": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-EVENT-PARSE-BOUNDARY",
+          "required": true,
+          "enum": [
+            "COMPLETE",
+            "PARTIAL",
+            "OPAQUE",
+            "ERROR"
+          ]
         }
       },
-      "invalidReason": "missing required eventLayer",
+      "invalidReason": "rawRefs must retain at least one source packet",
       "ownershipZh": "传输模块拥有派生的传输或事件记录。",
       "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
-      "invalidReasonZh": "缺少必填字段 eventLayer"
+      "invalidReasonZh": "rawRefs 必须保留至少一个源数据包",
+      "invalidExpected": {
+        "constraintId": "RC-EVENT-RAW-REFS",
+        "path": "rawRefs"
+      }
     },
     {
       "id": "OWNERSHIP-RESULT",
@@ -7405,39 +7696,67 @@
       "uncertainty": "Multiple possible owners remain AMBIGUOUS.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "requestInstance": "example-requestInstance",
-        "policy": "example-policy",
-        "status": "example-status",
-        "evidenceRefs": "example-evidenceRefs"
+        "requestInstance": "event-rrq-001",
+        "policy": "REQUEST-CORRELATION",
+        "status": "UNIQUE",
+        "evidenceRefs": [
+          "pkt-cap-syn-001:1"
+        ]
       },
       "invalidExample": {
-        "policy": "example-policy",
-        "status": "example-status",
-        "evidenceRefs": "example-evidenceRefs"
+        "requestInstance": "event-rrq-001",
+        "policy": "REQUEST-CORRELATION",
+        "status": "CERTAIN",
+        "evidenceRefs": []
       },
       "uncertaintyZh": "多个可能所有者保持 AMBIGUOUS。",
       "fieldDefinitions": {
         "requestInstance": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-OWNERSHIP-REQUEST",
+          "required": true,
+          "pattern": "^event-[A-Za-z0-9._:-]+$"
         },
         "policy": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-OWNERSHIP-POLICY",
+          "required": true,
+          "enum": [
+            "ENDPOINT-TID",
+            "REQUEST-CORRELATION"
+          ]
         },
         "status": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-OWNERSHIP-STATUS",
+          "required": true,
+          "enum": [
+            "UNIQUE",
+            "AMBIGUOUS",
+            "UNMATCHED",
+            "UNKNOWN"
+          ]
         },
         "evidenceRefs": {
-          "type": "string",
-          "required": true
+          "type": "array",
+          "constraintId": "RC-OWNERSHIP-EVIDENCE",
+          "required": true,
+          "items": {
+            "type": "string",
+            "constraintId": "RC-EVIDENCE-REF",
+            "pattern": "^(cap|pkt|dgram|transfer|event)-[A-Za-z0-9._:-]+$"
+          },
+          "uniqueItems": true
         }
       },
-      "invalidReason": "missing required requestInstance",
+      "invalidReason": "status must use the controlled ownership vocabulary",
       "ownershipZh": "所有权模块拥有匹配结果。",
       "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
-      "invalidReasonZh": "缺少必填字段 requestInstance"
+      "invalidReasonZh": "status 必须使用受控所有权词汇",
+      "invalidExpected": {
+        "constraintId": "RC-OWNERSHIP-STATUS",
+        "path": "status"
+      }
     },
     {
       "id": "OBSERVATION-ASSESSMENT",
@@ -7455,45 +7774,95 @@
       "uncertainty": "Invalid time chain is ERROR; boundary overlap is INCONCLUSIVE.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "measurementInterval": "example-measurementInterval",
-        "domain": "example-domain",
-        "errorBasis": "example-errorBasis",
-        "verdict": "example-verdict",
-        "reason": "example-reason"
+        "measurementInterval": {
+          "lower": 100,
+          "upper": 104,
+          "lowerClosed": true,
+          "upperClosed": true,
+          "unit": "us"
+        },
+        "domain": "MONOTONIC-CAPTURE",
+        "errorBasis": "EB-SYN-001",
+        "verdict": "PASS",
+        "reason": "entire interval lies within the closed requirement interval"
       },
       "invalidExample": {
-        "domain": "example-domain",
-        "errorBasis": "example-errorBasis",
-        "verdict": "example-verdict",
-        "reason": "example-reason"
+        "measurementInterval": {
+          "lower": 100,
+          "upper": 104,
+          "lowerClosed": true,
+          "upperClosed": true,
+          "unit": "seconds"
+        },
+        "domain": "MONOTONIC-CAPTURE",
+        "errorBasis": "EB-SYN-001",
+        "verdict": "PASS",
+        "reason": "bad unit"
       },
       "uncertaintyZh": "时间链无效为 ERROR，边界重叠为 INCONCLUSIVE。",
       "fieldDefinitions": {
         "measurementInterval": {
-          "type": "string",
-          "required": true
+          "constraintId": "RC-OBS-INTERVAL",
+          "required": true,
+          "oneOf": [
+            {
+              "type": "object",
+              "constraintId": "RC-OBS-INTERVAL-VALUE",
+              "properties": {
+                "lower": {"type": "integer", "constraintId": "RC-OBS-LOWER"},
+                "upper": {"type": "integer", "constraintId": "RC-OBS-UPPER"},
+                "lowerClosed": {"type": "boolean", "constraintId": "RC-OBS-LOWER-CLOSED"},
+                "upperClosed": {"type": "boolean", "constraintId": "RC-OBS-UPPER-CLOSED"},
+                "unit": {"type": "string", "constraintId": "RC-OBS-UNIT", "enum": ["tick", "ns", "us"]}
+              },
+              "requiredProperties": ["lower", "upper", "lowerClosed", "upperClosed", "unit"],
+              "additionalProperties": false
+            },
+            {"type": "null", "constraintId": "RC-OBS-INTERVAL-ABSENT"}
+          ]
         },
         "domain": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-OBS-DOMAIN",
+          "required": true,
+          "enum": [
+            "MONOTONIC-CAPTURE",
+            "SYNCHRONIZED-UTC",
+            "UNKNOWN"
+          ]
         },
         "errorBasis": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-OBS-ERROR-BASIS",
+          "required": true,
+          "pattern": "^EB-[A-Za-z0-9._-]+$"
         },
         "verdict": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-OBS-VERDICT",
+          "required": true,
+          "enum": [
+            "PASS",
+            "FAIL",
+            "INCONCLUSIVE",
+            "ERROR"
+          ]
         },
         "reason": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-OBS-REASON",
+          "required": true,
+          "minLength": 1
         }
       },
-      "invalidReason": "missing required measurementInterval",
+      "invalidReason": "measurement interval unit must use the controlled exact-time vocabulary",
       "ownershipZh": "观测模块拥有评估、发现或历史更新记录。",
       "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
-      "invalidReasonZh": "缺少必填字段 measurementInterval"
+      "invalidReasonZh": "测量区间单位必须使用受控的精确时间词汇",
+      "invalidExpected": {
+        "constraintId": "RC-OBS-INTERVAL",
+        "path": "measurementInterval"
+      }
     },
     {
       "id": "INTAKE-METADATA",
@@ -7511,45 +7880,166 @@
       "uncertainty": "Unknown values are not algorithm priors.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "operatorNote": "example-operatorNote",
-        "topology": "example-topology",
-        "clockAccuracy": "example-clockAccuracy",
-        "configuration": "example-configuration",
-        "rootCause": "example-rootCause"
+        "operatorNote": "synthetic intake only",
+        "topology": {
+          "state": "UNKNOWN",
+          "source": "not supplied"
+        },
+        "clockAccuracy": {
+          "state": "UNKNOWN",
+          "source": "not supplied"
+        },
+        "configuration": {
+          "state": "DECLARED",
+          "source": "synthetic fixture cfg-1"
+        },
+        "rootCause": {
+          "state": "UNKNOWN",
+          "source": "not claimed"
+        }
       },
       "invalidExample": {
-        "topology": "example-topology",
-        "clockAccuracy": "example-clockAccuracy",
-        "configuration": "example-configuration",
-        "rootCause": "example-rootCause"
+        "operatorNote": "synthetic intake only",
+        "topology": {
+          "state": "UNKNOWN",
+          "source": "not supplied"
+        },
+        "clockAccuracy": {
+          "state": "DECLARED",
+          "boundNs": 0,
+          "source": "bad bound"
+        },
+        "configuration": {
+          "state": "DECLARED",
+          "source": "synthetic fixture cfg-1"
+        },
+        "rootCause": {
+          "state": "UNKNOWN",
+          "source": "not claimed"
+        }
       },
       "uncertaintyZh": "未知值不能作为算法先验。",
       "fieldDefinitions": {
         "operatorNote": {
           "type": "string",
-          "required": true
+          "constraintId": "RC-INTAKE-NOTE",
+          "required": true,
+          "minLength": 1
         },
         "topology": {
-          "type": "string",
-          "required": true
+          "type": "object",
+          "constraintId": "RC-INTAKE-TOPOLOGY",
+          "required": true,
+          "properties": {
+            "state": {
+              "type": "string",
+              "constraintId": "RC-INTAKE-TOPOLOGY-STATE",
+              "enum": [
+                "DECLARED",
+                "UNKNOWN"
+              ]
+            },
+            "source": {
+              "type": "string",
+              "constraintId": "RC-INTAKE-TOPOLOGY-SOURCE",
+              "minLength": 1
+            }
+          },
+          "requiredProperties": [
+            "state",
+            "source"
+          ],
+          "additionalProperties": false
         },
         "clockAccuracy": {
-          "type": "string",
-          "required": true
+          "type": "object",
+          "constraintId": "RC-INTAKE-CLOCK",
+          "required": true,
+          "properties": {
+            "state": {
+              "type": "string",
+              "constraintId": "RC-INTAKE-CLOCK-STATE",
+              "enum": [
+                "DECLARED",
+                "UNKNOWN"
+              ]
+            },
+            "boundNs": {
+              "type": "integer",
+              "constraintId": "RC-INTAKE-CLOCK-BOUND",
+              "minimum": 1
+            },
+            "source": {
+              "type": "string",
+              "constraintId": "RC-INTAKE-CLOCK-SOURCE",
+              "minLength": 1
+            }
+          },
+          "requiredProperties": [
+            "state",
+            "source"
+          ],
+          "additionalProperties": false
         },
         "configuration": {
-          "type": "string",
-          "required": true
+          "type": "object",
+          "constraintId": "RC-INTAKE-CONFIG",
+          "required": true,
+          "properties": {
+            "state": {
+              "type": "string",
+              "constraintId": "RC-INTAKE-CONFIG-STATE",
+              "enum": [
+                "DECLARED",
+                "UNKNOWN"
+              ]
+            },
+            "source": {
+              "type": "string",
+              "constraintId": "RC-INTAKE-CONFIG-SOURCE",
+              "minLength": 1
+            }
+          },
+          "requiredProperties": [
+            "state",
+            "source"
+          ],
+          "additionalProperties": false
         },
         "rootCause": {
-          "type": "string",
-          "required": true
+          "type": "object",
+          "constraintId": "RC-INTAKE-ROOT-CAUSE",
+          "required": true,
+          "properties": {
+            "state": {
+              "type": "string",
+              "constraintId": "RC-INTAKE-ROOT-STATE",
+              "enum": [
+                "DECLARED",
+                "UNKNOWN"
+              ]
+            },
+            "source": {
+              "type": "string",
+              "constraintId": "RC-INTAKE-ROOT-SOURCE",
+              "minLength": 1
+            }
+          },
+          "requiredProperties": [
+            "state",
+            "source"
+          ],
+          "additionalProperties": false
         }
       },
-      "invalidReason": "missing required operatorNote",
+      "invalidReason": "a declared clock bound must be positive; UNKNOWN does not use a zero bound",
       "ownershipZh": "捕获模块或接入边界拥有该记录。",
       "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
-      "invalidReasonZh": "缺少必填字段 operatorNote"
+      "invalidReasonZh": "已声明的时钟界必须为正数；UNKNOWN 不得以零界表示",
+      "invalidExpected": {
+        "constraintId": "RC-INTAKE-CLOCK",
+        "path": "clockAccuracy.boundNs"
+      }
     },
     {
       "id": "FINDING-RECORD",
@@ -7567,45 +8057,129 @@
       "uncertainty": "Finding is not a root-cause label.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "facts": "example-facts",
-        "judgmentBasis": "example-judgmentBasis",
-        "scope": "example-scope",
-        "assumptions": "example-assumptions",
-        "evidenceRefs": "example-evidenceRefs"
+        "facts": [
+          "synthetic DATA block observed"
+        ],
+        "judgmentBasis": [
+          "pkt-cap-syn-001:2"
+        ],
+        "scope": {
+          "captureIds": [
+            "cap-syn-001"
+          ],
+          "requirementIds": [
+            "CRS-M1-00021"
+          ]
+        },
+        "assumptions": [
+          "capture ordering preserved"
+        ],
+        "evidenceRefs": [
+          "pkt-cap-syn-001:2"
+        ]
       },
       "invalidExample": {
-        "judgmentBasis": "example-judgmentBasis",
-        "scope": "example-scope",
-        "assumptions": "example-assumptions",
-        "evidenceRefs": "example-evidenceRefs"
+        "facts": [],
+        "judgmentBasis": [
+          "pkt-cap-syn-001:2"
+        ],
+        "scope": {
+          "captureIds": [
+            "cap-syn-001"
+          ],
+          "requirementIds": []
+        },
+        "assumptions": [],
+        "evidenceRefs": [
+          "pkt-cap-syn-001:2"
+        ]
       },
       "uncertaintyZh": "发现记录不是根因标签。",
       "fieldDefinitions": {
         "facts": {
-          "type": "string",
-          "required": true
+          "type": "array",
+          "constraintId": "RC-FINDING-FACTS",
+          "required": true,
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "constraintId": "RC-FINDING-FACT",
+            "minLength": 1
+          }
         },
         "judgmentBasis": {
-          "type": "string",
-          "required": true
+          "type": "array",
+          "constraintId": "RC-FINDING-BASIS",
+          "required": true,
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "constraintId": "RC-EVIDENCE-REF",
+            "pattern": "^(cap|pkt|dgram|transfer|event)-[A-Za-z0-9._:-]+$"
+          }
         },
         "scope": {
-          "type": "string",
-          "required": true
+          "type": "object",
+          "constraintId": "RC-FINDING-SCOPE",
+          "required": true,
+          "properties": {
+            "captureIds": {
+              "type": "array",
+              "constraintId": "RC-FINDING-CAPTURES",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "constraintId": "RC-FINDING-CAPTURE",
+                "pattern": "^cap-[a-z0-9][a-z0-9-]*$"
+              }
+            },
+            "requirementIds": {
+              "type": "array",
+              "constraintId": "RC-FINDING-REQUIREMENTS",
+              "items": {
+                "type": "string",
+                "constraintId": "RC-FINDING-REQUIREMENT",
+                "pattern": "^CRS-M1-[0-9]{5}$"
+              }
+            }
+          },
+          "requiredProperties": [
+            "captureIds",
+            "requirementIds"
+          ],
+          "additionalProperties": false
         },
         "assumptions": {
-          "type": "string",
-          "required": true
+          "type": "array",
+          "constraintId": "RC-FINDING-ASSUMPTIONS",
+          "required": true,
+          "items": {
+            "type": "string",
+            "constraintId": "RC-FINDING-ASSUMPTION",
+            "minLength": 1
+          }
         },
         "evidenceRefs": {
-          "type": "string",
-          "required": true
+          "type": "array",
+          "constraintId": "RC-FINDING-EVIDENCE",
+          "required": true,
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "constraintId": "RC-EVIDENCE-REF",
+            "pattern": "^(cap|pkt|dgram|transfer|event)-[A-Za-z0-9._:-]+$"
+          }
         }
       },
-      "invalidReason": "missing required facts",
+      "invalidReason": "a finding must contain at least one bounded fact and is not a root-cause assertion",
       "ownershipZh": "观测模块拥有评估、发现或历史更新记录。",
       "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
-      "invalidReasonZh": "缺少必填字段 facts"
+      "invalidReasonZh": "发现必须至少包含一个有界事实，且不得冒充根因断言",
+      "invalidExpected": {
+        "constraintId": "RC-FINDING-FACTS",
+        "path": "facts"
+      }
     },
     {
       "id": "HISTORY-HANDLE",
@@ -7618,15 +8192,18 @@
         "statusByHypothesis",
         "version"
       ],
-      "ownership": "Observation module owns versioned compatible history.",
-      "uncertainty": "UNKNOWN-EFFECT never excludes or revives hypotheses.",
-      "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
+      "ownership": "The session holds HistoryHandle; the observation/history-update module alone advances its versioned compatible histories.",
+      "uncertainty": "UNKNOWN-EFFECT and unconfirmed Recover retain H and mark affected status CONSERVATIVE-UNKNOWN; CONFIRMED-NOT-SENT preserves history; equal H sets may retain different compatible histories.",
+      "errorBehavior": "Reject out-of-scope hypotheses and unknown status values; return a named error without converting it to IUT FAIL.",
       "example": {
         "H": [
           "h0"
         ],
         "compatibleStateByHypothesis": {
-          "h0": "frontier0"
+          "h0": "frontier-syn-0"
+        },
+        "statusByHypothesis": {
+          "h0": "CONSERVATIVE-UNKNOWN"
         },
         "version": 0
       },
@@ -7634,34 +8211,67 @@
         "H": [
           "h0"
         ],
-        "compatibleStateByHypothesis": {},
-        "version": -1
+        "compatibleStateByHypothesis": {
+          "h0": "frontier-syn-0"
+        },
+        "statusByHypothesis": {
+          "h0": "BANANA"
+        },
+        "version": 0
       },
-      "uncertaintyZh": "UNKNOWN-EFFECT 不排除或复活假设。",
+      "uncertaintyZh": "UNKNOWN-EFFECT 与未确认 Recover 保留 H，并将受影响状态标为 CONSERVATIVE-UNKNOWN；CONFIRMED-NOT-SENT 保留历史；相同 H 集合可以保留不同的相容历史。",
       "fieldDefinitions": {
         "H": {
           "type": "array",
-          "required": true
+          "constraintId": "RC-HISTORY-H",
+          "required": true,
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "constraintId": "RC-HYPOTHESIS-ID",
+            "pattern": "^h[A-Za-z0-9._-]+$"
+          }
         },
         "compatibleStateByHypothesis": {
           "type": "object",
-          "required": true
+          "constraintId": "RC-HISTORY-COMPATIBLE",
+          "required": true,
+          "additionalProperties": {
+            "type": "string",
+            "constraintId": "RC-HISTORY-FRONTIER",
+            "pattern": "^frontier-[A-Za-z0-9._:-]+$"
+          }
         },
         "statusByHypothesis": {
           "type": "object",
-          "required": false
+          "constraintId": "RC-HISTORY-STATUS",
+          "required": false,
+          "additionalProperties": {
+            "type": "string",
+            "constraintId": "RC-HISTORY-STATUS-VALUE",
+            "enum": [
+              "KNOWN",
+              "CONSERVATIVE-UNKNOWN"
+            ]
+          }
         },
         "version": {
           "type": "integer",
+          "constraintId": "RC-HISTORY-VERSION",
           "required": true,
           "minimum": 0
         }
       },
-      "invalidReason": "version must be a non-negative integer",
+      "invalidReason": "status must reuse KNOWN or CONSERVATIVE-UNKNOWN from the bound HistoryHandle",
       "interfaceHandle": "HistoryHandle",
-      "ownershipZh": "观测模块拥有评估、发现或历史更新记录。",
-      "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
-      "invalidReasonZh": "version 必须是非负整数"
+      "ownershipZh": "会话持有 HistoryHandle；仅观测/历史更新模块推进其带版本的相容历史。",
+      "errorBehaviorZh": "拒绝超出作用域的假设和未知状态值；返回具名错误且不得转换为 IUT FAIL。",
+      "invalidReasonZh": "状态必须复用所绑定 HistoryHandle 的 KNOWN 或 CONSERVATIVE-UNKNOWN",
+      "invalidExpected": {
+        "constraintId": "RC-HISTORY-STATUS",
+        "path": "statusByHypothesis.h0"
+      }
     }
   ],
   "moduleContracts": [
