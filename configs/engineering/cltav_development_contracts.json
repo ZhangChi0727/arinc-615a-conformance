@@ -7136,7 +7136,7 @@
       "invalidReasonZh": "sha256 必须为 64 个小写十六进制字符",
       "invalidExpected": {
         "constraintId": "RC-CAPTURE-SHA256",
-        "path": "sha256"
+        "path": ["sha256"]
       }
     },
     {
@@ -7261,7 +7261,7 @@
       "invalidReasonZh": "resolution 必须包含正数 ticksPerSecond",
       "invalidExpected": {
         "constraintId": "RC-PACKET-TICKS-PER-SECOND",
-        "path": "resolution.ticksPerSecond"
+        "path": ["resolution", "ticksPerSecond"]
       }
     },
     {
@@ -7373,7 +7373,7 @@
       "invalidReasonZh": "fragmentRefs 必须至少包含一个有作用域的数据包引用",
       "invalidExpected": {
         "constraintId": "RC-DATAGRAM-FRAGMENTS",
-        "path": "fragmentRefs"
+        "path": ["fragmentRefs"]
       }
     },
     {
@@ -7391,8 +7391,9 @@
         "completionEvidence"
       ],
       "ownership": "Transfer module owns candidate association.",
-      "uncertainty": "Ambiguous TID or option state remains UNKNOWN.",
-      "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
+      "uncertainty": "Ambiguous TID or option state remains UNKNOWN. UNKNOWN carries no effective option values. DEFAULTED blksize, when present, is exactly 512; omission means blksize was not established, not an implicit value. ACCEPTED carries the confirmed negotiated value.",
+      "errorBehavior": "Reject a DEFAULTED blksize other than 512 and any UNKNOWN effective value; return a named error or conservative unknown without emitting IUT FAIL.",
+      "sourceRequirementIds": ["CRS-M1-00646", "CRS-M1-00647"],
       "example": {
         "direction": "SERVER-TO-CLIENT",
         "endpoints": {
@@ -7435,7 +7436,7 @@
         "blockMap": {},
         "completionEvidence": []
       },
-      "uncertaintyZh": "歧义 TID 或选项状态保持 UNKNOWN。",
+      "uncertaintyZh": "歧义 TID 或选项状态保持 UNKNOWN。UNKNOWN 不携带生效选项值。DEFAULTED 的 blksize 若出现则必须恰为 512；省略表示尚未建立 blksize，而非隐含默认值。ACCEPTED 携带已确认的协商值。",
       "fieldDefinitions": {
         "direction": {
           "type": "string",
@@ -7553,11 +7554,11 @@
       },
       "invalidReason": "direction must use the controlled client/server vocabulary",
       "ownershipZh": "传输模块拥有派生的传输或事件记录。",
-      "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
+      "errorBehaviorZh": "拒绝非 512 的 DEFAULTED blksize 和任何 UNKNOWN 生效值；返回具名错误或保守未知，且不得输出 IUT FAIL。",
       "invalidReasonZh": "direction 必须使用受控的客户端/服务器词汇",
       "invalidExpected": {
         "constraintId": "RC-TRANSFER-DIRECTION",
-        "path": "direction"
+        "path": ["direction"]
       }
     },
     {
@@ -7681,7 +7682,7 @@
       "invalidReasonZh": "rawRefs 必须保留至少一个源数据包",
       "invalidExpected": {
         "constraintId": "RC-EVENT-RAW-REFS",
-        "path": "rawRefs"
+        "path": ["rawRefs"]
       }
     },
     {
@@ -7759,7 +7760,7 @@
       "invalidReasonZh": "status 必须使用受控所有权词汇",
       "invalidExpected": {
         "constraintId": "RC-OWNERSHIP-STATUS",
-        "path": "status"
+        "path": ["status"]
       }
     },
     {
@@ -7865,7 +7866,7 @@
       "invalidReasonZh": "测量区间单位必须使用受控的精确时间词汇",
       "invalidExpected": {
         "constraintId": "RC-OBS-INTERVAL",
-        "path": "measurementInterval"
+        "path": ["measurementInterval"]
       }
     },
     {
@@ -8042,7 +8043,7 @@
       "invalidReasonZh": "已声明的时钟界必须为正数；UNKNOWN 不得以零界表示",
       "invalidExpected": {
         "constraintId": "RC-INTAKE-CLOCK-BOUND",
-        "path": "clockAccuracy.boundNs"
+        "path": ["clockAccuracy", "boundNs"]
       }
     },
     {
@@ -8182,7 +8183,7 @@
       "invalidReasonZh": "发现必须至少包含一个有界事实，且不得冒充根因断言",
       "invalidExpected": {
         "constraintId": "RC-FINDING-FACTS",
-        "path": "facts"
+        "path": ["facts"]
       }
     },
     {
@@ -8274,7 +8275,7 @@
       "invalidReasonZh": "状态必须复用所绑定 HistoryHandle 的 KNOWN 或 CONSERVATIVE-UNKNOWN",
       "invalidExpected": {
         "constraintId": "RC-HISTORY-STATUS-VALUE",
-        "path": "statusByHypothesis.h0"
+        "path": ["statusByHypothesis", "h0"]
       }
     }
   ],

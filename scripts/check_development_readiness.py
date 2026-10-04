@@ -66,7 +66,7 @@ def _field_definition_errors(definition: object, path: str, *, allow_required: b
         else:
             try:
                 re.compile(definition["pattern"])
-            except re.error:
+            except (re.error, OverflowError):
                 errors.append(f"{path} pattern is not a valid regular expression")
     keyword_types = {
         "minLength": {"string"}, "pattern": {"string"},
@@ -129,21 +129,46 @@ def _definition_for_path(record: dict, parts: list[object]) -> dict:
         return {}
     definition = record["fieldDefinitions"].get(parts[0], {})
     for part in parts[1:]:
-        if isinstance(part, int):
+        if definition.get("type") == "array" and isinstance(part, int):
             definition = definition.get("items", {})
-        elif part in definition.get("properties", {}):
+        elif definition.get("type") == "object" and part in definition.get("properties", {}):
             definition = definition["properties"][part]
-        elif isinstance(definition.get("additionalProperties"), dict):
+        elif definition.get("type") == "object" and isinstance(definition.get("additionalProperties"), dict):
             definition = definition["additionalProperties"]
         else:
             return {}
     return definition
 
 
-def validate_record_instance(record: dict, payload: object) -> list[tuple[str, str, str]]:
+def _required_instance_errors(record: dict, definition: dict, value: object, parts: list[object]) -> list[tuple[str, tuple[object, ...], str]]:
+    results: list[tuple[str, tuple[object, ...], str]] = []
+    candidates = definition.get("oneOf", [])
+    if candidates:
+        matching = [item for item in candidates if item.get("type") == ("null" if value is None else "object" if isinstance(value, dict) else "array" if isinstance(value, list) else "string" if isinstance(value, str) else "boolean" if isinstance(value, bool) else "integer" if isinstance(value, int) else "number" if isinstance(value, float) else None)]
+        for item in matching[:1]:
+            results.extend(_required_instance_errors(record, item, value, parts))
+        return results
+    if definition.get("type") == "object" and isinstance(value, dict):
+        for name in definition.get("requiredProperties", []):
+            if name not in value:
+                child = definition.get("properties", {}).get(name, {})
+                results.append((child.get("constraintId", "RC-UNKNOWN-FIELD"), tuple([*parts, name]), f"required property {name!r} is missing"))
+        for name, child_value in value.items():
+            child = definition.get("properties", {}).get(name)
+            if child is None and isinstance(definition.get("additionalProperties"), dict):
+                child = definition["additionalProperties"]
+            if child is not None:
+                results.extend(_required_instance_errors(record, child, child_value, [*parts, name]))
+    elif definition.get("type") == "array" and isinstance(value, list) and isinstance(definition.get("items"), dict):
+        for index, child_value in enumerate(value):
+            results.extend(_required_instance_errors(record, definition["items"], child_value, [*parts, index]))
+    return results
+
+
+def validate_record_instance(record: dict, payload: object) -> list[tuple[str, tuple[object, ...], str]]:
     """Return stable (constraint ID, field path, diagnostic) tuples."""
     if not isinstance(payload, dict):
-        return [("RC-RECORD-TYPE", "$", "record must be an object")]
+        return [("RC-RECORD-TYPE", (), "record must be an object")]
     try:
         schema = {
             "type": "object",
@@ -152,15 +177,19 @@ def validate_record_instance(record: dict, payload: object) -> list[tuple[str, s
             "additionalProperties": False,
         }
         Draft202012Validator.check_schema(schema)
-    except (KeyError, TypeError, SchemaError, re.error) as exc:
-        return [("RC-DEFINITION-INVALID", "$", f"record definition is invalid: {exc}")]
-    results: list[tuple[str, str, str]] = []
+    except (KeyError, TypeError, SchemaError, re.error, OverflowError) as exc:
+        return [("RC-DEFINITION-INVALID", (), f"record definition is invalid: {exc}")]
+    results: list[tuple[str, tuple[object, ...], str]] = []
+    for field in schema["required"]:
+        if field not in payload:
+            results.append((record["fieldDefinitions"][field]["constraintId"], (field,), f"required property {field!r} is missing"))
+    for field, value in payload.items():
+        if field in record["fieldDefinitions"]:
+            results.extend(_required_instance_errors(record, record["fieldDefinitions"][field], value, [field]))
     for error in Draft202012Validator(schema).iter_errors(payload):
         parts: list[object] = list(error.absolute_path)
         if error.validator == "required":
-            missing = next((item for item in error.validator_value if item not in error.instance), "?")
-            parts.append(missing)
-            definition = _definition_for_path(record, parts)
+            continue
         elif error.validator == "additionalProperties":
             known = set(error.schema.get("properties", {}))
             extra = sorted(set(error.instance) - known)[0] if isinstance(error.instance, dict) and set(error.instance) - known else "?"
@@ -168,47 +197,48 @@ def validate_record_instance(record: dict, payload: object) -> list[tuple[str, s
             definition = {}
         else:
             definition = _definition_for_path(record, parts)
-        path = ".".join(str(item) for item in parts) or "$"
-        results.append((definition.get("constraintId", "RC-UNKNOWN-FIELD"), path, error.message))
+        results.append((definition.get("constraintId", "RC-UNKNOWN-FIELD"), tuple(parts), error.message))
     if results:
         return results
     if record["id"] == "PACKET-REF" and payload["caplen"] > payload["origlen"]:
-        results.append(("RC-PACKET-CAPLEN", "caplen", "captured length exceeds original length"))
+        results.append(("RC-PACKET-CAPLEN", ("caplen",), "captured length exceeds original length"))
     if record["id"] == "OBSERVATION-ASSESSMENT" and isinstance(payload.get("measurementInterval"), dict):
         interval = payload["measurementInterval"]
-        if isinstance(interval.get("lower"), int) and isinstance(interval.get("upper"), int) and interval["lower"] > interval["upper"]:
-            results.append(("RC-OBS-INTERVAL", "measurementInterval", "lower endpoint exceeds upper endpoint"))
+        if interval["lower"] > interval["upper"]:
+            results.append(("RC-OBS-INTERVAL", ("measurementInterval",), "lower endpoint exceeds upper endpoint"))
         if interval["lower"] == interval["upper"] and not (interval["lowerClosed"] and interval["upperClosed"]):
-            results.append(("RC-OBS-INTERVAL", "measurementInterval", "equal endpoints require a closed point interval"))
+            results.append(("RC-OBS-INTERVAL", ("measurementInterval",), "equal endpoints require a closed point interval"))
     if record["id"] == "OBSERVATION-ASSESSMENT" and payload.get("measurementInterval") is None and payload.get("verdict") != "ERROR":
-        results.append(("RC-OBS-INTERVAL", "measurementInterval", "an absent measurement interval requires ERROR"))
+        results.append(("RC-OBS-INTERVAL", ("measurementInterval",), "an absent measurement interval requires ERROR"))
     if record["id"] == "DATAGRAM-RECORD":
         for index, coverage in enumerate(payload["coverage"]):
             if coverage["start"] >= coverage["endExclusive"]:
-                results.append(("RC-DATAGRAM-RANGE", f"coverage.{index}", "coverage requires start < endExclusive"))
+                results.append(("RC-DATAGRAM-RANGE", ("coverage", index), "coverage requires start < endExclusive"))
     if record["id"] == "INTAKE-METADATA" and isinstance(payload.get("clockAccuracy"), dict):
         clock = payload["clockAccuracy"]
         if clock.get("state") == "DECLARED" and "boundNs" not in clock:
-            results.append(("RC-INTAKE-CLOCK", "clockAccuracy", "declared clock accuracy lacks boundNs"))
+            results.append(("RC-INTAKE-CLOCK", ("clockAccuracy",), "declared clock accuracy lacks boundNs"))
         if clock.get("state") == "UNKNOWN" and "boundNs" in clock:
-            results.append(("RC-INTAKE-CLOCK", "clockAccuracy", "unknown clock accuracy must not invent boundNs"))
+            results.append(("RC-INTAKE-CLOCK", ("clockAccuracy",), "unknown clock accuracy must not invent boundNs"))
     if record["id"] == "TRANSFER-RECORD" and isinstance(payload.get("optionState"), dict):
         option_state = payload["optionState"]
         if option_state.get("mode") == "UNKNOWN" and option_state.get("values"):
-            results.append(("RC-TRANSFER-OPTION-STATE", "optionState", "unknown option state must not claim negotiated values"))
+            results.append(("RC-TRANSFER-OPTION-STATE", ("optionState",), "unknown option state must not claim negotiated values"))
         if option_state.get("mode") in {"ACCEPTED", "DEFAULTED"} and not option_state.get("values"):
-            results.append(("RC-TRANSFER-OPTION-STATE", "optionState", "accepted or defaulted option state requires effective values"))
+            results.append(("RC-TRANSFER-OPTION-STATE", ("optionState",), "accepted or defaulted option state requires effective values"))
+        if option_state.get("mode") == "DEFAULTED" and "blksize" in option_state.get("values", {}) and option_state["values"]["blksize"] != 512:
+            results.append(("RC-OPTION-BLKSIZE", ("optionState", "values", "blksize"), "DEFAULTED blksize must equal the bound default 512"))
         for block_id in payload["blockMap"]:
             if not re.fullmatch(r"(?:0|[1-9][0-9]{0,4})", block_id) or int(block_id) > 65535:
-                results.append(("RC-TRANSFER-BLOCK-MAP", f"blockMap.{block_id}", "block identity must be decimal 0..65535"))
+                results.append(("RC-TRANSFER-BLOCK-MAP", ("blockMap", block_id), "block identity must be decimal 0..65535"))
     if record["id"] == "HISTORY-HANDLE":
         hypotheses = set(payload["H"])
         compatible = payload.get("compatibleStateByHypothesis")
         statuses = payload.get("statusByHypothesis", {})
         if isinstance(compatible, dict) and set(compatible) != hypotheses:
-            results.append(("RC-HISTORY-COMPATIBLE", "compatibleStateByHypothesis", "compatible histories must exactly cover H"))
+            results.append(("RC-HISTORY-COMPATIBLE", ("compatibleStateByHypothesis",), "compatible histories must exactly cover H"))
         if isinstance(statuses, dict) and not set(statuses).issubset(hypotheses):
-            results.append(("RC-HISTORY-STATUS", "statusByHypothesis", "status refers to a hypothesis outside H"))
+            results.append(("RC-HISTORY-STATUS", ("statusByHypothesis",), "status refers to a hypothesis outside H"))
     return results
 
 
@@ -301,6 +331,8 @@ def package_errors(data: dict) -> list[str]:
     for record in data["recordContracts"]:
         if record["ownerModuleId"] not in modules:
             errors.append(f"{record['id']} has an unknown owner module")
+        if any(requirement_id not in expected for requirement_id in record.get("sourceRequirementIds", [])):
+            errors.append(f"{record['id']} has an unknown source requirement")
         if len(record["fields"]) != len(set(record["fields"])):
             errors.append(f"{record['id']} repeats a field")
         if set(record["fieldDefinitions"]) != set(record["fields"]):
@@ -325,11 +357,11 @@ def package_errors(data: dict) -> list[str]:
         if not invalid_errors:
             errors.append(f"{record['id']} invalid example violates no field constraint")
         expected_error = record["invalidExpected"]
-        expected_parts: list[object] = [int(item) if item.isdigit() else item for item in expected_error["path"].split(".")]
+        expected_parts: list[object] = expected_error["path"]
         expected_definition = _definition_for_path(record, expected_parts)
         if expected_definition.get("constraintId") != expected_error["constraintId"]:
             errors.append(f"{record['id']} invalidExpected does not resolve to its declared constraint")
-        if not any(code == expected_error["constraintId"] and path == expected_error["path"] for code, path, _ in invalid_errors):
+        if not any(code == expected_error["constraintId"] and list(path) == expected_error["path"] for code, path, _ in invalid_errors):
             errors.append(f"{record['id']} invalid example does not match invalidExpected")
         if record["example"] == record["invalidExample"]:
             errors.append(f"{record['id']} invalid example equals example")
