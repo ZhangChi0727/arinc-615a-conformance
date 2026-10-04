@@ -125,6 +125,11 @@ def test_main_returns_exit_codes_for_candidate_and_bad_binding(monkeypatch, tmp_
     code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
     assert code == 1
     assert "valid regular expression" in captured.err
+    bad = copy.deepcopy(PACKAGE)
+    bad["moduleContracts"][0]["upstreamModuleIds"] = ["MISSING-MODULE"]
+    code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
+    assert code == 1
+    assert "invalid upstream module" in captured.err
 
 
 def test_bound_inputs_are_consumed_once_from_git_blobs_not_worktree(monkeypatch):
@@ -247,6 +252,73 @@ def test_tool_contracts_reject_blank_text_and_unresolved_traceability():
     protocol = next(item for item in candidate["toolRequirements"] if item["id"] == "TR-TRANSFER-RECONSTRUCTION")
     protocol["protocolRequirementIds"] = []
     assert any("lacks protocol evidence" in item for item in errors(candidate))
+
+
+def test_module_contracts_close_requirements_records_interfaces_and_dependencies():
+    modules = {item["id"]: item for item in PACKAGE["moduleContracts"]}
+    tools = {item["id"]: item for item in PACKAGE["toolRequirements"]}
+    records = {item["id"]: item for item in PACKAGE["recordContracts"]}
+    assert set(modules) == {"MOD-CAPTURE", "MOD-REASSEMBLY", "MOD-TRANSFER", "MOD-OWNERSHIP", "MOD-OBSERVATION"}
+    for module_id, module in modules.items():
+        assert set(module["toolRequirementIds"]) == {tool_id for tool_id, tool in tools.items() if tool["ownerModuleId"] == module_id}
+        assert all(records[record_id]["ownerModuleId"] == module_id for record_id in module["outputRecordIds"])
+        assert module["steps"] and module["failureOutcomes"] and module["invariants"] and module["invariantsZh"]
+
+    mutations = []
+    for field, value in (
+        ("inputRecordIds", ["MISSING-RECORD"]),
+        ("toolRequirementIds", ["MISSING-TOOL"]),
+        ("interfaceIds", ["MISSING-INTERFACE"]),
+        ("acceptanceCaseIds", ["MISSING-CASE"]),
+        ("runtimeParameterIds", ["MISSING-PARAMETER"]),
+        ("upstreamModuleIds", ["MOD-CAPTURE"]),
+    ):
+        candidate = copy.deepcopy(PACKAGE)
+        candidate["moduleContracts"][0][field] = value
+        mutations.append(candidate)
+    blank = copy.deepcopy(PACKAGE)
+    blank["moduleContracts"][0]["responsibility"] = "   "
+    mutations.append(blank)
+    repeated_step = copy.deepcopy(PACKAGE)
+    repeated_step["moduleContracts"][0]["steps"][1]["id"] = repeated_step["moduleContracts"][0]["steps"][0]["id"]
+    mutations.append(repeated_step)
+    repeated_outcome = copy.deepcopy(PACKAGE)
+    repeated_outcome["moduleContracts"][0]["failureOutcomes"].append(copy.deepcopy(repeated_outcome["moduleContracts"][0]["failureOutcomes"][0]))
+    mutations.append(repeated_outcome)
+    wrong_output_owner = copy.deepcopy(PACKAGE)
+    wrong_output_owner["moduleContracts"][0]["outputRecordIds"] = ["DATAGRAM-RECORD"]
+    mutations.append(wrong_output_owner)
+    missing_owned_input = copy.deepcopy(PACKAGE)
+    missing_owned_input["moduleContracts"][0]["inputRecordIds"] = ["INTAKE-METADATA"]
+    mutations.append(missing_owned_input)
+    missing_owned_tool = copy.deepcopy(PACKAGE)
+    missing_owned_tool["moduleContracts"][0]["toolRequirementIds"] = ["TR-DATAGRAM-REASSEMBLY"]
+    mutations.append(missing_owned_tool)
+    cycle = copy.deepcopy(PACKAGE)
+    cycle["moduleContracts"][0]["upstreamModuleIds"] = ["MOD-OBSERVATION"]
+    mutations.append(cycle)
+    unknown_property = copy.deepcopy(PACKAGE)
+    unknown_property["moduleContracts"][0]["unexpected"] = True
+    mutations.append(unknown_property)
+    for candidate in mutations:
+        assert errors(candidate)
+
+
+def test_module_contracts_are_fully_rendered_in_both_languages():
+    view = SYNC.render(copy.deepcopy(PACKAGE))
+    english = view.split("# 中文版", 1)[0]
+    chinese = view.split("# 中文版", 1)[1]
+    for module in PACKAGE["moduleContracts"]:
+        assert module["title"] in english and module["responsibility"] in english
+        assert module["titleZh"] in chinese and module["responsibilityZh"] in chinese
+        for step in module["steps"]:
+            assert step["action"] in english and step["actionZh"] in chinese
+        for outcome in module["failureOutcomes"]:
+            assert outcome["condition"] in english and outcome["result"] in english
+            assert outcome["conditionZh"] in chinese and outcome["resultZh"] in chinese
+    changed = copy.deepcopy(PACKAGE)
+    changed["moduleContracts"][0]["steps"][0]["action"] = "Changed executable module step."
+    assert SYNC.render(changed) != view
 
 
 def test_record_contract_examples_and_history_handle_are_enforced():
@@ -437,6 +509,14 @@ def test_nested_oneof_uses_complete_schema_semantics_at_every_depth(monkeypatch,
 
     a, b = branch("a"), branch("b")
     null = {"type": "null", "constraintId": "RC-META-NULL"}
+
+    def assert_schema_and_production_agree(candidate, value):
+        record = candidate["recordContracts"][0]
+        definition = record["fieldDefinitions"]["meta"]
+        schema_accepts = MODULE.Draft202012Validator(MODULE._json_schema(definition)).is_valid(value)
+        production_accepts = not MODULE.validate_record_instance(record, record["example"])
+        assert production_accepts == schema_accepts
+
     for outer_order in ("direct-first", "nested-first"):
         for inner in ([b, null], [null, b]):
             nested = {"constraintId": "RC-META-NESTED", "oneOf": copy.deepcopy(inner)}
@@ -447,6 +527,7 @@ def test_nested_oneof_uses_complete_schema_semantics_at_every_depth(monkeypatch,
                 capture["fields"].append("meta")
                 capture["fieldDefinitions"]["meta"] = {"constraintId": "RC-META", "required": False, "oneOf": copy.deepcopy(outer)}
                 capture["example"]["meta"] = value
+                assert_schema_and_production_agree(candidate, value)
                 assert MODULE.validate_record_instance(capture, capture["example"]) == []
                 assert errors(candidate) == []
                 code, captured = run_main(monkeypatch, tmp_path, capsys, candidate)
@@ -466,6 +547,7 @@ def test_nested_oneof_uses_complete_schema_semantics_at_every_depth(monkeypatch,
 
     zero = copy.deepcopy(wrapped)
     zero["recordContracts"][0]["example"]["meta"] = {"c": 1}
+    assert_schema_and_production_agree(zero, {"c": 1})
     assert errors(zero)
     code, captured = run_main(monkeypatch, tmp_path, capsys, zero)
     assert code == 1
@@ -473,6 +555,7 @@ def test_nested_oneof_uses_complete_schema_semantics_at_every_depth(monkeypatch,
     duplicate = copy.deepcopy(wrapped)
     duplicate["recordContracts"][0]["fieldDefinitions"]["meta"]["oneOf"] = [a, copy.deepcopy(a)]
     duplicate["recordContracts"][0]["example"]["meta"] = {"a": 1}
+    assert_schema_and_production_agree(duplicate, {"a": 1})
     assert errors(duplicate)
     code, captured = run_main(monkeypatch, tmp_path, capsys, duplicate)
     assert code == 1
@@ -800,6 +883,16 @@ def test_review_generator_refuses_invalid_authority_and_detects_stale_view(monke
 
     changed = copy.deepcopy(legal)
     changed["recordContracts"][0]["fieldDefinitions"]["meta"]["oneOf"][0]["oneOf"][0]["properties"]["b"]["minimum"] = 0
+    package.write_text(json.dumps(changed), encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--check"])
+    assert SYNC.main() == 1
+    assert "stale" in capsys.readouterr().err
+
+    package.write_text(json.dumps(PACKAGE), encoding="utf-8")
+    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--write"])
+    assert SYNC.main() == 0
+    changed = copy.deepcopy(PACKAGE)
+    changed["moduleContracts"][0]["steps"][0]["action"] = "Changed executable module step."
     package.write_text(json.dumps(changed), encoding="utf-8")
     monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--check"])
     assert SYNC.main() == 1
