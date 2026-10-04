@@ -102,6 +102,11 @@ def package_errors(data: dict) -> list[str]:
         values = [row["id"] for row in items]
         if len(values) != len(set(values)):
             errors.append(f"{label} repeats an ID")
+    for record in data["recordContracts"]:
+        if record["ownerModuleId"] not in modules:
+            errors.append(f"{record['id']} has an unknown owner module")
+        if len(record["fields"]) != len(set(record["fields"])):
+            errors.append(f"{record['id']} repeats a field")
     tool_ids = [row["id"] for row in data["toolRequirements"]]
     if len(tool_ids) != len(set(tool_ids)):
         errors.append("toolRequirements repeats an ID")

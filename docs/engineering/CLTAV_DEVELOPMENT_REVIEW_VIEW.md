@@ -10,6 +10,21 @@
 - `ARINC615A3-M1-CRS` — `configs/requirements/arinc_615a3_m1_crs.json` — SHA-256 `7f35f538fff2d9f8204360f650a1b5c794f9969497ad9ef3f1dfe114248a315f` — Bound protocol requirement universe
 - `CLTAV-INTERFACE-REGISTRY` — `configs/research/cltav_interface_registry.json` — SHA-256 `a65679b902cf51d31aa613c133919c3cd2c66dbc6c65eb3cc58d9bf3530d329d` — Accepted interface vocabulary
 
+## Record contracts
+
+| ID | Owner | Fields | Uncertainty |
+|---|---|---|---|
+| `CAPTURE-IDENTITY` | `MOD-CAPTURE` | `captureId`, `relativePath`, `sha256`, `byteSize`, `manifestVersion` | Exploratory use only; unknown metadata remains UNKNOWN. |
+| `PACKET-REF` | `MOD-CAPTURE` | `captureId`, `sectionId`, `interfaceId`, `packetNumber`, `rawTicks`, `resolution`, `caplen`, `origlen`, `decodeStatus` | Clock accuracy is distinct from resolution. |
+| `DATAGRAM-RECORD` | `MOD-REASSEMBLY` | `fragmentRefs`, `coverage`, `overlapStatus`, `reassemblyStatus` | Missing or conflicting fragments remain explicit. |
+| `TRANSFER-RECORD` | `MOD-TRANSFER` | `direction`, `endpoints`, `tid`, `request`, `optionState`, `blockMap`, `completionEvidence` | Ambiguous TID or option state remains UNKNOWN. |
+| `PROTOCOL-EVENT` | `MOD-TRANSFER` | `eventLayer`, `role`, `payload`, `correlationKey`, `rawRefs`, `parseBoundary` | Application facts are not inferred from wire evidence. |
+| `OWNERSHIP-RESULT` | `MOD-OWNERSHIP` | `requestInstance`, `policy`, `status`, `evidenceRefs` | Multiple possible owners remain AMBIGUOUS. |
+| `OBSERVATION-ASSESSMENT` | `MOD-OBSERVATION` | `measurementInterval`, `domain`, `errorBasis`, `verdict`, `reason` | Invalid time chain is ERROR; boundary overlap is INCONCLUSIVE. |
+| `INTAKE-METADATA` | `MOD-CAPTURE` | `operatorNote`, `topology`, `clockAccuracy`, `configuration`, `rootCause` | Unknown values are not algorithm priors. |
+| `FINDING-RECORD` | `MOD-OBSERVATION` | `facts`, `judgmentBasis`, `scope`, `assumptions`, `evidenceRefs` | Finding is not a root-cause label. |
+| `HISTORY-HANDLE` | `MOD-OBSERVATION` | `hypotheses`, `frontiers`, `statusByHypothesis`, `version` | UNKNOWN-EFFECT never excludes or revives hypotheses. |
+
 ## Tool requirements
 
 | ID | Owner | Source relation | Acceptance | Requirement |
@@ -1171,6 +1186,21 @@
 
 - `ARINC615A3-M1-CRS` — `configs/requirements/arinc_615a3_m1_crs.json` — SHA-256 `7f35f538fff2d9f8204360f650a1b5c794f9969497ad9ef3f1dfe114248a315f` — 受控协议需求全集
 - `CLTAV-INTERFACE-REGISTRY` — `configs/research/cltav_interface_registry.json` — SHA-256 `a65679b902cf51d31aa613c133919c3cd2c66dbc6c65eb3cc58d9bf3530d329d` — 已接受的接口词汇表
+
+## 记录合同
+
+| ID | 责任模块 | 字段 | 不确定性 |
+|---|---|---|---|
+| `CAPTURE-IDENTITY` | `MOD-CAPTURE` | `captureId`, `relativePath`, `sha256`, `byteSize`, `manifestVersion` | 仅作探索用途；未知元数据保持 UNKNOWN。 |
+| `PACKET-REF` | `MOD-CAPTURE` | `captureId`, `sectionId`, `interfaceId`, `packetNumber`, `rawTicks`, `resolution`, `caplen`, `origlen`, `decodeStatus` | 时钟精度与分辨率不同。 |
+| `DATAGRAM-RECORD` | `MOD-REASSEMBLY` | `fragmentRefs`, `coverage`, `overlapStatus`, `reassemblyStatus` | 缺失或冲突分片保持显式。 |
+| `TRANSFER-RECORD` | `MOD-TRANSFER` | `direction`, `endpoints`, `tid`, `request`, `optionState`, `blockMap`, `completionEvidence` | 歧义 TID 或选项状态保持 UNKNOWN。 |
+| `PROTOCOL-EVENT` | `MOD-TRANSFER` | `eventLayer`, `role`, `payload`, `correlationKey`, `rawRefs`, `parseBoundary` | 不从线上证据推断应用事实。 |
+| `OWNERSHIP-RESULT` | `MOD-OWNERSHIP` | `requestInstance`, `policy`, `status`, `evidenceRefs` | 多个可能所有者保持 AMBIGUOUS。 |
+| `OBSERVATION-ASSESSMENT` | `MOD-OBSERVATION` | `measurementInterval`, `domain`, `errorBasis`, `verdict`, `reason` | 时间链无效为 ERROR，边界重叠为 INCONCLUSIVE。 |
+| `INTAKE-METADATA` | `MOD-CAPTURE` | `operatorNote`, `topology`, `clockAccuracy`, `configuration`, `rootCause` | 未知值不能作为算法先验。 |
+| `FINDING-RECORD` | `MOD-OBSERVATION` | `facts`, `judgmentBasis`, `scope`, `assumptions`, `evidenceRefs` | 发现记录不是根因标签。 |
+| `HISTORY-HANDLE` | `MOD-OBSERVATION` | `hypotheses`, `frontiers`, `statusByHypothesis`, `version` | UNKNOWN-EFFECT 不排除或复活假设。 |
 
 ## 工具需求
 

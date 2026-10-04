@@ -7069,34 +7069,258 @@
   ],
   "recordContracts": [
     {
-      "id": "CAPTURE-IDENTITY"
+      "id": "CAPTURE-IDENTITY",
+      "title": "Capture identity",
+      "titleZh": "捕获身份",
+      "ownerModuleId": "MOD-CAPTURE",
+      "fields": [
+        "captureId",
+        "relativePath",
+        "sha256",
+        "byteSize",
+        "manifestVersion"
+      ],
+      "ownership": "The intake boundary owns immutable file identity.",
+      "uncertainty": "Exploratory use only; unknown metadata remains UNKNOWN.",
+      "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
+      "example": {
+        "recordId": "CAPTURE-IDENTITY",
+        "status": "VALID"
+      },
+      "invalidExample": {
+        "recordId": "CAPTURE-IDENTITY",
+        "status": "INVALID"
+      },
+      "uncertaintyZh": "仅作探索用途；未知元数据保持 UNKNOWN。"
     },
     {
-      "id": "PACKET-REF"
+      "id": "PACKET-REF",
+      "title": "Packet reference",
+      "titleZh": "数据包引用",
+      "ownerModuleId": "MOD-CAPTURE",
+      "fields": [
+        "captureId",
+        "sectionId",
+        "interfaceId",
+        "packetNumber",
+        "rawTicks",
+        "resolution",
+        "caplen",
+        "origlen",
+        "decodeStatus"
+      ],
+      "ownership": "Capture module owns raw packet provenance.",
+      "uncertainty": "Clock accuracy is distinct from resolution.",
+      "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
+      "example": {
+        "recordId": "PACKET-REF",
+        "status": "VALID"
+      },
+      "invalidExample": {
+        "recordId": "PACKET-REF",
+        "status": "INVALID"
+      },
+      "uncertaintyZh": "时钟精度与分辨率不同。"
     },
     {
-      "id": "DATAGRAM-RECORD"
+      "id": "DATAGRAM-RECORD",
+      "title": "Datagram reconstruction",
+      "titleZh": "数据报重组",
+      "ownerModuleId": "MOD-REASSEMBLY",
+      "fields": [
+        "fragmentRefs",
+        "coverage",
+        "overlapStatus",
+        "reassemblyStatus"
+      ],
+      "ownership": "Reassembly owns derived coverage, never source packets.",
+      "uncertainty": "Missing or conflicting fragments remain explicit.",
+      "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
+      "example": {
+        "recordId": "DATAGRAM-RECORD",
+        "status": "VALID"
+      },
+      "invalidExample": {
+        "recordId": "DATAGRAM-RECORD",
+        "status": "INVALID"
+      },
+      "uncertaintyZh": "缺失或冲突分片保持显式。"
     },
     {
-      "id": "TRANSFER-RECORD"
+      "id": "TRANSFER-RECORD",
+      "title": "Transfer candidate",
+      "titleZh": "传输候选",
+      "ownerModuleId": "MOD-TRANSFER",
+      "fields": [
+        "direction",
+        "endpoints",
+        "tid",
+        "request",
+        "optionState",
+        "blockMap",
+        "completionEvidence"
+      ],
+      "ownership": "Transfer module owns candidate association.",
+      "uncertainty": "Ambiguous TID or option state remains UNKNOWN.",
+      "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
+      "example": {
+        "recordId": "TRANSFER-RECORD",
+        "status": "VALID"
+      },
+      "invalidExample": {
+        "recordId": "TRANSFER-RECORD",
+        "status": "INVALID"
+      },
+      "uncertaintyZh": "歧义 TID 或选项状态保持 UNKNOWN。"
     },
     {
-      "id": "PROTOCOL-EVENT"
+      "id": "PROTOCOL-EVENT",
+      "title": "Protocol event",
+      "titleZh": "协议事件",
+      "ownerModuleId": "MOD-TRANSFER",
+      "fields": [
+        "eventLayer",
+        "role",
+        "payload",
+        "correlationKey",
+        "rawRefs",
+        "parseBoundary"
+      ],
+      "ownership": "Transfer module owns derived event identity.",
+      "uncertainty": "Application facts are not inferred from wire evidence.",
+      "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
+      "example": {
+        "recordId": "PROTOCOL-EVENT",
+        "status": "VALID"
+      },
+      "invalidExample": {
+        "recordId": "PROTOCOL-EVENT",
+        "status": "INVALID"
+      },
+      "uncertaintyZh": "不从线上证据推断应用事实。"
     },
     {
-      "id": "OWNERSHIP-RESULT"
+      "id": "OWNERSHIP-RESULT",
+      "title": "Ownership result",
+      "titleZh": "所有权结果",
+      "ownerModuleId": "MOD-OWNERSHIP",
+      "fields": [
+        "requestInstance",
+        "policy",
+        "status",
+        "evidenceRefs"
+      ],
+      "ownership": "Ownership module owns matching result.",
+      "uncertainty": "Multiple possible owners remain AMBIGUOUS.",
+      "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
+      "example": {
+        "recordId": "OWNERSHIP-RESULT",
+        "status": "VALID"
+      },
+      "invalidExample": {
+        "recordId": "OWNERSHIP-RESULT",
+        "status": "INVALID"
+      },
+      "uncertaintyZh": "多个可能所有者保持 AMBIGUOUS。"
     },
     {
-      "id": "OBSERVATION-ASSESSMENT"
+      "id": "OBSERVATION-ASSESSMENT",
+      "title": "Observation assessment",
+      "titleZh": "观测评估",
+      "ownerModuleId": "MOD-OBSERVATION",
+      "fields": [
+        "measurementInterval",
+        "domain",
+        "errorBasis",
+        "verdict",
+        "reason"
+      ],
+      "ownership": "Observation module owns verdict interpretation.",
+      "uncertainty": "Invalid time chain is ERROR; boundary overlap is INCONCLUSIVE.",
+      "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
+      "example": {
+        "recordId": "OBSERVATION-ASSESSMENT",
+        "status": "VALID"
+      },
+      "invalidExample": {
+        "recordId": "OBSERVATION-ASSESSMENT",
+        "status": "INVALID"
+      },
+      "uncertaintyZh": "时间链无效为 ERROR，边界重叠为 INCONCLUSIVE。"
     },
     {
-      "id": "INTAKE-METADATA"
+      "id": "INTAKE-METADATA",
+      "title": "Intake metadata",
+      "titleZh": "接入元数据",
+      "ownerModuleId": "MOD-CAPTURE",
+      "fields": [
+        "operatorNote",
+        "topology",
+        "clockAccuracy",
+        "configuration",
+        "rootCause"
+      ],
+      "ownership": "Intake boundary owns declared context only.",
+      "uncertainty": "Unknown values are not algorithm priors.",
+      "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
+      "example": {
+        "recordId": "INTAKE-METADATA",
+        "status": "VALID"
+      },
+      "invalidExample": {
+        "recordId": "INTAKE-METADATA",
+        "status": "INVALID"
+      },
+      "uncertaintyZh": "未知值不能作为算法先验。"
     },
     {
-      "id": "FINDING-RECORD"
+      "id": "FINDING-RECORD",
+      "title": "Finding record",
+      "titleZh": "发现记录",
+      "ownerModuleId": "MOD-OBSERVATION",
+      "fields": [
+        "facts",
+        "judgmentBasis",
+        "scope",
+        "assumptions",
+        "evidenceRefs"
+      ],
+      "ownership": "Reporting owns the bounded finding.",
+      "uncertainty": "Finding is not a root-cause label.",
+      "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
+      "example": {
+        "recordId": "FINDING-RECORD",
+        "status": "VALID"
+      },
+      "invalidExample": {
+        "recordId": "FINDING-RECORD",
+        "status": "INVALID"
+      },
+      "uncertaintyZh": "发现记录不是根因标签。"
     },
     {
-      "id": "HISTORY-HANDLE"
+      "id": "HISTORY-HANDLE",
+      "title": "History handle",
+      "titleZh": "历史句柄",
+      "ownerModuleId": "MOD-OBSERVATION",
+      "fields": [
+        "hypotheses",
+        "frontiers",
+        "statusByHypothesis",
+        "version"
+      ],
+      "ownership": "Observation module owns versioned compatible history.",
+      "uncertainty": "UNKNOWN-EFFECT never excludes or revives hypotheses.",
+      "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
+      "example": {
+        "recordId": "HISTORY-HANDLE",
+        "status": "VALID"
+      },
+      "invalidExample": {
+        "recordId": "HISTORY-HANDLE",
+        "status": "INVALID"
+      },
+      "uncertaintyZh": "UNKNOWN-EFFECT 不排除或复活假设。"
     }
   ],
   "moduleContracts": [
