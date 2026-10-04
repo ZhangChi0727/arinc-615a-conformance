@@ -254,7 +254,7 @@ def test_tool_contracts_reject_blank_text_and_unresolved_traceability():
     assert any("lacks protocol evidence" in item for item in errors(candidate))
 
 
-def test_module_contracts_close_requirements_records_interfaces_and_dependencies():
+def test_module_contracts_close_requirements_records_interfaces_and_dependencies(monkeypatch, tmp_path, capsys):
     modules = {item["id"]: item for item in PACKAGE["moduleContracts"]}
     tools = {item["id"]: item for item in PACKAGE["toolRequirements"]}
     records = {item["id"]: item for item in PACKAGE["recordContracts"]}
@@ -303,6 +303,53 @@ def test_module_contracts_close_requirements_records_interfaces_and_dependencies
     for candidate in mutations:
         assert errors(candidate)
 
+    reassembly = modules["MOD-REASSEMBLY"]
+    assert reassembly["outputValueMappings"] == [{
+        "recordId": "DATAGRAM-RECORD",
+        "field": "reassemblyStatus",
+        "emittedValues": ["COMPLETE", "GAPPED", "CONFLICT"],
+        "meaning": "A coverage gap maps to GAPPED; INCOMPLETE-DATAGRAM is a failure code, not a record-field value.",
+        "meaningZh": "覆盖缺口映射为 GAPPED；INCOMPLETE-DATAGRAM 是失败码，不是记录字段值。",
+    }]
+    datagram = copy.deepcopy(records["DATAGRAM-RECORD"])
+    datagram["example"]["reassemblyStatus"] = "GAPPED"
+    assert MODULE.validate_record_instance(datagram, datagram["example"]) == []
+    datagram["example"]["reassemblyStatus"] = "INCOMPLETE"
+    assert any(code == "RC-DATAGRAM-STATUS" for code, _, _ in MODULE.validate_record_instance(datagram, datagram["example"]))
+    invalid_mapping = copy.deepcopy(PACKAGE)
+    next(item for item in invalid_mapping["moduleContracts"] if item["id"] == "MOD-REASSEMBLY")["outputValueMappings"][0]["emittedValues"] = ["INCOMPLETE"]
+    assert any("emits invalid DATAGRAM-RECORD.reassemblyStatus" in item for item in errors(invalid_mapping))
+    code, captured = run_main(monkeypatch, tmp_path, capsys, invalid_mapping)
+    assert code == 1 and "emits invalid DATAGRAM-RECORD.reassemblyStatus" in captured.err
+
+    missing_producer = copy.deepcopy(PACKAGE)
+    next(item for item in missing_producer["moduleContracts"] if item["id"] == "MOD-REASSEMBLY")["upstreamModuleIds"] = []
+    assert any("MOD-REASSEMBLY input PACKET-REF lacks producer dependency on MOD-CAPTURE" in item for item in errors(missing_producer))
+    code, captured = run_main(monkeypatch, tmp_path, capsys, missing_producer)
+    assert code == 1 and "MOD-REASSEMBLY input PACKET-REF lacks producer dependency on MOD-CAPTURE" in captured.err
+    reversed_dependency = copy.deepcopy(missing_producer)
+    next(item for item in reversed_dependency["moduleContracts"] if item["id"] == "MOD-CAPTURE")["upstreamModuleIds"] = ["MOD-REASSEMBLY"]
+    assert any("MOD-REASSEMBLY input PACKET-REF lacks producer dependency on MOD-CAPTURE" in item for item in errors(reversed_dependency))
+
+    unrelated_case = copy.deepcopy(PACKAGE)
+    unrelated_case["acceptanceCases"].append({"id": "AC-SYN-UNRELATED", "kind": "SYNTHETIC-NONTRUTH"})
+    next(item for item in unrelated_case["moduleContracts"] if item["id"] == "MOD-CAPTURE")["acceptanceCaseIds"] = ["AC-SYN-UNRELATED"]
+    diagnostic = "MOD-CAPTURE omits acceptance case AC-SYN-TRANSFER required by ['TR-CAPTURE-INTAKE']"
+    assert diagnostic in errors(unrelated_case)
+    code, captured = run_main(monkeypatch, tmp_path, capsys, unrelated_case)
+    assert code == 1 and diagnostic in captured.err
+
+    legal_extra_case = copy.deepcopy(PACKAGE)
+    legal_extra_case["acceptanceCases"].append({"id": "AC-SYN-EXTRA", "kind": "SYNTHETIC-NONTRUTH"})
+    next(item for item in legal_extra_case["moduleContracts"] if item["id"] == "MOD-CAPTURE")["acceptanceCaseIds"].append("AC-SYN-EXTRA")
+    assert errors(legal_extra_case) == []
+    legal_extra_dependency = copy.deepcopy(PACKAGE)
+    next(item for item in legal_extra_dependency["moduleContracts"] if item["id"] == "MOD-OBSERVATION")["upstreamModuleIds"].append("MOD-CAPTURE")
+    assert errors(legal_extra_dependency) == []
+    reordered = copy.deepcopy(PACKAGE)
+    reordered["moduleContracts"] = list(reversed(reordered["moduleContracts"]))
+    assert errors(reordered) == []
+
 
 def test_module_contracts_are_fully_rendered_in_both_languages():
     view = SYNC.render(copy.deepcopy(PACKAGE))
@@ -316,6 +363,10 @@ def test_module_contracts_are_fully_rendered_in_both_languages():
         for outcome in module["failureOutcomes"]:
             assert outcome["condition"] in english and outcome["result"] in english
             assert outcome["conditionZh"] in chinese and outcome["resultZh"] in chinese
+        for mapping in module["outputValueMappings"]:
+            assert mapping["meaning"] in english and mapping["meaningZh"] in chinese
+    assert "every cross-module input producer" in english
+    assert "每个跨模块输入的生产者" in chinese
     changed = copy.deepcopy(PACKAGE)
     changed["moduleContracts"][0]["steps"][0]["action"] = "Changed executable module step."
     assert SYNC.render(changed) != view
@@ -854,6 +905,24 @@ def test_review_generator_refuses_invalid_authority_and_detects_stale_view(monke
     package.write_text(json.dumps(invalid), encoding="utf-8")
     assert SYNC.main() == 1
     assert view.read_text(encoding="utf-8") == "preserve this failed-publication marker\n"
+
+    invalid_modules = []
+    invalid = copy.deepcopy(PACKAGE)
+    next(item for item in invalid["moduleContracts"] if item["id"] == "MOD-REASSEMBLY")["outputValueMappings"][0]["emittedValues"] = ["INCOMPLETE"]
+    invalid_modules.append(invalid)
+    invalid = copy.deepcopy(PACKAGE)
+    next(item for item in invalid["moduleContracts"] if item["id"] == "MOD-REASSEMBLY")["upstreamModuleIds"] = []
+    invalid_modules.append(invalid)
+    invalid = copy.deepcopy(PACKAGE)
+    invalid["acceptanceCases"].append({"id": "AC-SYN-UNRELATED", "kind": "SYNTHETIC-NONTRUTH"})
+    next(item for item in invalid["moduleContracts"] if item["id"] == "MOD-CAPTURE")["acceptanceCaseIds"] = ["AC-SYN-UNRELATED"]
+    invalid_modules.append(invalid)
+    for invalid in invalid_modules:
+        package.write_text(json.dumps(invalid), encoding="utf-8")
+        for mode in ("--write", "--check"):
+            monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", mode])
+            assert SYNC.main() == 1
+            assert view.read_text(encoding="utf-8") == "preserve this failed-publication marker\n"
 
     a = {"type": "object", "constraintId": "RC-META-A", "properties": {"a": {"type": "integer", "constraintId": "RC-META-A-VALUE"}}, "requiredProperties": ["a"], "additionalProperties": False}
     b = {"type": "object", "constraintId": "RC-META-B", "properties": {"b": {"type": "integer", "constraintId": "RC-META-B-VALUE"}}, "requiredProperties": ["b"], "additionalProperties": False}
