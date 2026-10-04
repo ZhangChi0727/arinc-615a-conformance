@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 import hashlib
+import re
 import subprocess
 import sys
 from pathlib import Path, PureWindowsPath
@@ -130,14 +131,24 @@ def package_errors(data: dict) -> list[str]:
         if tool["sourceRelationship"] == "PROTOCOL-DERIVED" and not tool["protocolRequirementIds"]:
             errors.append(f"{tool['id']} protocol-derived contract lacks protocol evidence")
         for reference in tool["traceability"]:
-            if reference.startswith("DD-") and reference not in control_docs["DD"]:
-                errors.append(f"{tool['id']} has an unknown DD traceability reference")
-            elif reference.startswith("CR-") and reference.split(" ", 1)[0] not in control_docs["CR"]:
-                errors.append(f"{tool['id']} has an unknown CR traceability reference")
-            elif reference == "T5" and "\\tag{T5}" not in control_docs["T5"]:
-                errors.append(f"{tool['id']} has an unknown method traceability reference")
-            elif reference.startswith("IF-") and reference not in interface_ids:
-                errors.append(f"{tool['id']} has an unknown interface traceability reference")
+            if re.fullmatch(r"DD-\d{3}", reference):
+                if f"## {reference} " not in control_docs["DD"]:
+                    errors.append(f"{tool['id']} has an unknown DD traceability reference")
+            elif match := re.fullmatch(r"(CR-\d{4}-\d{3}) (AC-\d{2})", reference):
+                change_id, acceptance_id = match.groups()
+                if f"# {change_id} " not in control_docs["CR"] or f"| {acceptance_id} |" not in control_docs["CR"]:
+                    errors.append(f"{tool['id']} has an unknown CR traceability reference")
+            elif re.fullmatch(r"T\d+", reference):
+                if f"\\tag{{{reference}}}" not in control_docs["T5"]:
+                    errors.append(f"{tool['id']} has an unknown method traceability reference")
+            elif re.fullmatch(r"IF-[A-Z-]+", reference):
+                if reference not in interface_ids:
+                    errors.append(f"{tool['id']} has an unknown interface traceability reference")
+            elif re.fullmatch(r"CRS-M1-\d{5}", reference):
+                if reference not in expected:
+                    errors.append(f"{tool['id']} has an unknown protocol traceability reference")
+            else:
+                errors.append(f"{tool['id']} has an unsupported traceability reference")
     for row in rows:
         source = source_by_id.get(row["inputRequirementId"])
         if source and row["firstSliceRequired"] != (row["inputRequirementId"] in first_slice_ids):
