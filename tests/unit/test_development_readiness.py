@@ -369,6 +369,62 @@ def test_nested_diagnostics_resolve_full_paths_and_declared_constraints():
     assert errors(candidate) == []
 
 
+def test_oneof_branch_selection_and_leaf_diagnostics_are_order_independent(monkeypatch, tmp_path, capsys):
+    branches = [
+        {"type": "object", "constraintId": "RC-META-A", "properties": {"a": {"type": "integer", "constraintId": "RC-META-A-VALUE"}}, "requiredProperties": ["a"], "additionalProperties": False},
+        {"type": "object", "constraintId": "RC-META-B", "properties": {"b": {"type": "integer", "constraintId": "RC-META-B-VALUE"}}, "requiredProperties": ["b"], "additionalProperties": False},
+    ]
+    for ordered in (branches, list(reversed(branches))):
+        for value in ({"a": 1}, {"b": 1}):
+            candidate = copy.deepcopy(PACKAGE)
+            capture = candidate["recordContracts"][0]
+            capture["fields"].append("meta")
+            capture["fieldDefinitions"]["meta"] = {"constraintId": "RC-META", "required": False, "oneOf": copy.deepcopy(ordered)}
+            capture["example"]["meta"] = value
+            assert MODULE.validate_record_instance(capture, capture["example"]) == []
+            assert errors(candidate) == []
+            code, captured = run_main(monkeypatch, tmp_path, capsys, candidate)
+            assert code == 0
+            assert "readiness=READINESS-BLOCKED" in captured.out
+
+    record = copy.deepcopy(PACKAGE["recordContracts"][0])
+    record["fields"].append("meta")
+    record["fieldDefinitions"]["meta"] = {"constraintId": "RC-META", "required": False, "oneOf": copy.deepcopy(branches)}
+    record["example"]["meta"] = {"c": 1}
+    assert MODULE.validate_record_instance(record, record["example"])
+    candidate = copy.deepcopy(PACKAGE)
+    candidate["recordContracts"][0] = copy.deepcopy(record)
+    code, captured = run_main(monkeypatch, tmp_path, capsys, candidate)
+    assert code == 1
+    assert "example is invalid" in captured.err
+    record["fieldDefinitions"]["meta"] = {"constraintId": "RC-META", "required": False, "oneOf": [
+        {"type": "object", "constraintId": "RC-META-OPEN-A", "properties": {}, "additionalProperties": False},
+        {"type": "object", "constraintId": "RC-META-OPEN-B", "properties": {}, "additionalProperties": False},
+    ]}
+    record["example"]["meta"] = {}
+    assert MODULE.validate_record_instance(record, record["example"])
+    candidate["recordContracts"][0] = copy.deepcopy(record)
+    code, captured = run_main(monkeypatch, tmp_path, capsys, candidate)
+    assert code == 1
+    assert "example is invalid" in captured.err
+
+    for missing_fields in (("lower",), ("upper",), ("lower", "upper")):
+        for expected_field, constraint_id in (("lower", "RC-OBS-LOWER"), ("upper", "RC-OBS-UPPER")):
+            if expected_field not in missing_fields:
+                continue
+            candidate = copy.deepcopy(PACKAGE)
+            observation = next(item for item in candidate["recordContracts"] if item["id"] == "OBSERVATION-ASSESSMENT")
+            observation["invalidExample"] = copy.deepcopy(observation["example"])
+            for field in missing_fields:
+                observation["invalidExample"]["measurementInterval"].pop(field)
+            observation["invalidExpected"] = {"constraintId": constraint_id, "path": ["measurementInterval", expected_field]}
+            assert errors(candidate) == []
+            wrong = copy.deepcopy(candidate)
+            target = next(item for item in wrong["recordContracts"] if item["id"] == "OBSERVATION-ASSESSMENT")
+            target["invalidExpected"]["constraintId"] = "RC-OBS-UPPER" if expected_field == "lower" else "RC-OBS-LOWER"
+            assert any("invalidExpected" in item for item in errors(wrong))
+
+
 def test_record_vocabularies_match_consumers_and_capture_references_are_generic():
     protocol = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "PROTOCOL-EVENT"))
     for layer in ("WIRE", "PARSE-RESULT", "APPLICATION", "ENVIRONMENT"):
@@ -637,18 +693,24 @@ def test_review_generator_refuses_invalid_authority_and_detects_stale_view(monke
     assert SYNC.main() == 1
     assert view.read_text(encoding="utf-8") == "preserve this failed-publication marker\n"
 
-    legal = copy.deepcopy(PACKAGE)
-    capture = legal["recordContracts"][0]
-    capture["fields"].append("label")
-    capture["fieldDefinitions"]["label"] = {"type": "string", "constraintId": "RC-CAPTURE-LABEL", "required": False, "minLength": 1}
-    capture["example"]["label"] = "synthetic"
-    package.write_text(json.dumps(legal), encoding="utf-8")
-    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--write"])
-    assert SYNC.main() == 0
-    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--check"])
-    assert SYNC.main() == 0
+    branches = [
+        {"type": "object", "constraintId": "RC-META-A", "properties": {"a": {"type": "integer", "constraintId": "RC-META-A-VALUE"}}, "requiredProperties": ["a"], "additionalProperties": False},
+        {"type": "object", "constraintId": "RC-META-B", "properties": {"b": {"type": "integer", "constraintId": "RC-META-B-VALUE"}}, "requiredProperties": ["b"], "additionalProperties": False},
+    ]
+    for ordered in (branches, list(reversed(branches))):
+        legal = copy.deepcopy(PACKAGE)
+        capture = legal["recordContracts"][0]
+        capture["fields"].append("meta")
+        capture["fieldDefinitions"]["meta"] = {"constraintId": "RC-META", "required": False, "oneOf": copy.deepcopy(ordered)}
+        capture["example"]["meta"] = {"b": 1}
+        package.write_text(json.dumps(legal), encoding="utf-8")
+        monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--write"])
+        assert SYNC.main() == 0
+        monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--check"])
+        assert SYNC.main() == 0
+
     changed = copy.deepcopy(legal)
-    changed["recordContracts"][0]["fieldDefinitions"]["label"]["minLength"] = 2
+    changed["recordContracts"][0]["fieldDefinitions"]["meta"]["oneOf"][0]["properties"]["b"]["minimum"] = 0
     package.write_text(json.dumps(changed), encoding="utf-8")
     monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--check"])
     assert SYNC.main() == 1
