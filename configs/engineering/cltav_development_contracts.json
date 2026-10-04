@@ -8303,6 +8303,7 @@
         {"code": "IDENTITY-ERROR", "condition": "Manifest identity does not match the supplied bytes.", "conditionZh": "清单身份与提供字节不一致。", "result": "Reject intake before block parsing and emit no PacketRef.", "resultZh": "在块解析前拒绝接入且不产生 PacketRef。"},
         {"code": "UNSUPPORTED-CAPTURE", "condition": "A required block or link type is unsupported.", "conditionZh": "所需块或链路类型不受支持。", "result": "Return a named unsupported outcome, not IUT FAIL.", "resultZh": "返回具名不支持结果，而非 IUT FAIL。"}
       ],
+      "outputValueMappings": [],
       "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
       "runtimeParameterIds": ["RP-RESOURCE"],
       "upstreamModuleIds": []
@@ -8322,13 +8323,16 @@
       "steps": [
         {"id": "S1", "action": "Group fragments only by the declared scoped reconstruction identity.", "actionZh": "仅按声明的作用域重建身份对分片分组。"},
         {"id": "S2", "action": "Compute coverage, missing ranges and overlaps without overwriting earlier bytes.", "actionZh": "计算覆盖、缺失范围和重叠，不得覆盖先前字节。"},
-        {"id": "S3", "action": "Emit COMPLETE, INCOMPLETE or CONFLICT reconstruction with all PacketRef values.", "actionZh": "产生 COMPLETE、INCOMPLETE 或 CONFLICT 重建并保留全部 PacketRef。"}
+        {"id": "S3", "action": "Emit COMPLETE, GAPPED or CONFLICT reconstruction with all PacketRef values.", "actionZh": "产生 COMPLETE、GAPPED 或 CONFLICT 重建并保留全部 PacketRef。"}
       ],
       "invariants": ["Fragments never cross capture, section or interface scope.", "A first fragment is never treated as a complete datagram without complete coverage."],
       "invariantsZh": ["分片绝不跨捕获、section 或 interface 作用域。", "覆盖不完整时绝不把首片视为完整数据报。"],
       "failureOutcomes": [
-        {"code": "INCOMPLETE-DATAGRAM", "condition": "Coverage contains a gap or truncation.", "conditionZh": "覆盖存在缺口或截断。", "result": "Emit an incomplete record and no complete UDP payload.", "resultZh": "产生不完整记录且不产生完整 UDP 载荷。"},
+        {"code": "INCOMPLETE-DATAGRAM", "condition": "Coverage contains a gap or truncation.", "conditionZh": "覆盖存在缺口或截断。", "result": "Emit reassemblyStatus=GAPPED and no complete UDP payload.", "resultZh": "产生 reassemblyStatus=GAPPED 且不产生完整 UDP 载荷。"},
         {"code": "OVERLAP-CONFLICT", "condition": "Overlapping ranges contain different bytes.", "conditionZh": "重叠范围含不同字节。", "result": "Preserve both sources and emit conflict, not last-write-wins data.", "resultZh": "保留双方来源并产生冲突，不采用后写覆盖。"}
+      ],
+      "outputValueMappings": [
+        {"recordId": "DATAGRAM-RECORD", "field": "reassemblyStatus", "emittedValues": ["COMPLETE", "GAPPED", "CONFLICT"], "meaning": "A coverage gap maps to GAPPED; INCOMPLETE-DATAGRAM is a failure code, not a record-field value.", "meaningZh": "覆盖缺口映射为 GAPPED；INCOMPLETE-DATAGRAM 是失败码，不是记录字段值。"}
       ],
       "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
       "runtimeParameterIds": ["RP-RESOURCE"],
@@ -8357,6 +8361,7 @@
         {"code": "AMBIGUOUS-TRANSFER", "condition": "Evidence is compatible with multiple transfer candidates.", "conditionZh": "证据与多个传输候选相容。", "result": "Retain ambiguity and withhold unique ownership claims.", "resultZh": "保留歧义且不作唯一所有权主张。"},
         {"code": "UNSUPPORTED-BLOCK-RANGE", "condition": "Block progression exceeds the declared bounded range.", "conditionZh": "块推进超出声明的有界范围。", "result": "Return UNSUPPORTED without merging wrapped block identities.", "resultZh": "返回 UNSUPPORTED，且不合并回绕后的块身份。"}
       ],
+      "outputValueMappings": [],
       "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
       "runtimeParameterIds": ["RP-RESOURCE"],
       "upstreamModuleIds": ["MOD-REASSEMBLY"]
@@ -8383,6 +8388,7 @@
       "failureOutcomes": [
         {"code": "AMBIGUOUS-OWNERSHIP", "condition": "More than one incompatible owner remains.", "conditionZh": "仍存在多个不相容所有者。", "result": "Emit AMBIGUOUS and prohibit unique-response consumption.", "resultZh": "产生 AMBIGUOUS 并禁止作为唯一响应消费。"}
       ],
+      "outputValueMappings": [],
       "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
       "runtimeParameterIds": ["RP-RESOURCE"],
       "upstreamModuleIds": ["MOD-TRANSFER"]
@@ -8411,6 +8417,7 @@
         {"code": "INVALID-MEASUREMENT", "condition": "The time chain, error budget or measurement-domain intersection is invalid.", "conditionZh": "时间链、误差预算或测量域交集无效。", "result": "Emit ERROR and do not exclude hypotheses.", "resultZh": "产生 ERROR 且不排除假设。"},
         {"code": "RESOURCE-UNKNOWN", "condition": "The bounded history operation cannot complete within declared resources.", "conditionZh": "有界历史操作无法在声明资源内完成。", "result": "Retain the prior history with conservative-unknown status, not IUT FAIL.", "resultZh": "保留先前历史并标为保守未知，而非 IUT FAIL。"}
       ],
+      "outputValueMappings": [],
       "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
       "runtimeParameterIds": ["RP-RESOURCE"],
       "upstreamModuleIds": ["MOD-TRANSFER", "MOD-OWNERSHIP"]

@@ -1,6 +1,7 @@
 """Validate the authoritative CL-TAV first-slice development contract."""
 from __future__ import annotations
 
+import copy
 import json
 import hashlib
 import re
@@ -462,8 +463,30 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{module['id']} has an unknown interface reference")
         if not set(module["acceptanceCaseIds"]).issubset(cases):
             errors.append(f"{module['id']} has an unknown acceptance case")
+        required_cases = {tool_by_id[tool_id]["acceptanceCaseId"] for tool_id in module["toolRequirementIds"] if tool_id in tool_by_id}
+        for missing_case in sorted(required_cases - set(module["acceptanceCaseIds"])):
+            requiring_tools = sorted(tool_id for tool_id in module["toolRequirementIds"] if tool_id in tool_by_id and tool_by_id[tool_id]["acceptanceCaseId"] == missing_case)
+            errors.append(f"{module['id']} omits acceptance case {missing_case} required by {requiring_tools}")
         if not set(module["runtimeParameterIds"]).issubset(runtime_parameter_ids):
             errors.append(f"{module['id']} has an unknown runtime parameter")
+        mapping_keys = [(mapping["recordId"], mapping["field"]) for mapping in module["outputValueMappings"]]
+        if len(mapping_keys) != len(set(mapping_keys)):
+            errors.append(f"{module['id']} repeats an output value mapping")
+        for mapping in module["outputValueMappings"]:
+            record = record_by_id.get(mapping["recordId"])
+            if mapping["recordId"] not in module["outputRecordIds"] or record is None:
+                errors.append(f"{module['id']} output mapping references a non-output record")
+                continue
+            if mapping["field"] not in record["fieldDefinitions"]:
+                errors.append(f"{module['id']} output mapping references an unknown field")
+                continue
+            if not mapping["meaning"].strip() or not mapping["meaningZh"].strip():
+                errors.append(f"{module['id']} has a blank output mapping meaning")
+            for value in mapping["emittedValues"]:
+                witness = copy.deepcopy(record["example"])
+                witness[mapping["field"]] = value
+                if validate_record_instance(record, witness):
+                    errors.append(f"{module['id']} output mapping emits invalid {mapping['recordId']}.{mapping['field']} value {value!r}")
         upstream = set(module["upstreamModuleIds"])
         if module["id"] in upstream or not upstream.issubset(modules):
             errors.append(f"{module['id']} has an invalid upstream module")
@@ -483,6 +506,18 @@ def package_errors(data: dict) -> list[str]:
             if current not in visited:
                 visited.add(current)
                 pending.extend(upstream_graph.get(current, set()))
+    for consumer_id, module in module_by_id.items():
+        reachable: set[str] = set()
+        pending = list(upstream_graph.get(consumer_id, set()))
+        while pending:
+            current = pending.pop()
+            if current not in reachable:
+                reachable.add(current)
+                pending.extend(upstream_graph.get(current, set()))
+        for record_id in module["inputRecordIds"]:
+            producers = {producer_id for producer_id, producer in module_by_id.items() if producer_id != consumer_id and record_id in producer["outputRecordIds"]}
+            for producer_id in sorted(producers - reachable):
+                errors.append(f"{consumer_id} input {record_id} lacks producer dependency on {producer_id}")
     control_docs = {
         "DD": (ROOT / "docs/control/decisions/DESIGN_DECISIONS.md").read_text(encoding="utf-8"),
         "CR": (ROOT / "docs/control/changes/CR-2026-016.md").read_text(encoding="utf-8"),

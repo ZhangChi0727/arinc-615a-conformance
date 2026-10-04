@@ -39,7 +39,7 @@ def render(data: dict) -> str:
     lines += [f"| `{item['id']}` | `{item['ownerModuleId']}` | `{item['sourceRelationship']}` | `{item['acceptanceCaseId']}` | {plain_text(item['title'])} |" for item in data["toolRequirements"]]
     for item in data["toolRequirements"]:
         lines += ["", f"### `{item['id']}` — {plain_text(item['title'])}", f"- Trigger: {plain_text(item['trigger'])}", f"- Preconditions: {plain_text('; '.join(item['preconditions']))}", f"- Inputs: {', '.join(f'`{value}`' for value in item['inputRecordIds'])}; outputs: {', '.join(f'`{value}`' for value in item['outputRecordIds'])}", f"- Action: {plain_text(item['action'])}", f"- Error/unknown: {plain_text(item['errorUnknown'])}", f"- Evidence: {plain_text(item['evidence'])}", f"- Interfaces: {', '.join(f'`{value}`' for value in item['interfaceIds'])}; CRS: {', '.join(f'`{value}`' for value in item['protocolRequirementIds']) or '—'}; control/method: {', '.join(f'`{value}`' for value in item['traceability'])}"]
-    lines += ["", "## Module contracts", ""]
+    lines += ["", "## Module contracts", "", "Upstream policy: every cross-module input producer must be directly or transitively reachable through `upstreamModuleIds`; external inputs and records produced by the consuming module itself require no upstream edge.", ""]
     for item in data["moduleContracts"]:
         lines += [
             f"### `{item['id']}` — {plain_text(item['title'])}",
@@ -53,6 +53,8 @@ def render(data: dict) -> str:
         lines += [f"  - `{step['id']}`: {plain_text(step['action'])}" for step in item["steps"]]
         lines += [f"- Invariants: {plain_text('; '.join(item['invariants']))}", "- Failure outcomes:"]
         lines += [f"  - `{outcome['code']}` — when {plain_text(outcome['condition'])} Result: {plain_text(outcome['result'])}" for outcome in item["failureOutcomes"]]
+        lines += ["- Output value mappings:"]
+        lines += [f"  - `{mapping['recordId']}.{mapping['field']}` → {', '.join(f'`{value}`' for value in mapping['emittedValues'])}: {plain_text(mapping['meaning'])}" for mapping in item["outputValueMappings"]] or ["  - None"]
     lines += ["", "## Slices and dependencies", ""]
     lines += [f"- `{item['id']}` — {plain_text(item['scope'])} — {len(item['requirementIds'])} requirement uses" for item in data["implementationSlices"]]
     lines += [f"- dependency `{item['id']}`: `{item['status']}`" for item in data["implementationDependencies"]]
@@ -75,7 +77,7 @@ def render(data: dict) -> str:
     lines += [f"| `{item['id']}` | `{item['ownerModuleId']}` | `{item['sourceRelationship']}` | `{item['acceptanceCaseId']}` | {plain_text(item['titleZh'])} |" for item in data["toolRequirements"]]
     for item in data["toolRequirements"]:
         lines += ["", f"### `{item['id']}` — {plain_text(item['titleZh'])}", f"- 触发：{plain_text(item['triggerZh'])}", f"- 前置条件：{plain_text('；'.join(item['preconditionsZh']))}", f"- 输入：{', '.join(f'`{value}`' for value in item['inputRecordIds'])}；输出：{', '.join(f'`{value}`' for value in item['outputRecordIds'])}", f"- 动作：{plain_text(item['actionZh'])}", f"- 错误／未知：{plain_text(item['errorUnknownZh'])}", f"- 证据：{plain_text(item['evidenceZh'])}", f"- 接口：{', '.join(f'`{value}`' for value in item['interfaceIds'])}；CRS：{', '.join(f'`{value}`' for value in item['protocolRequirementIds']) or '—'}；控制／方法：{', '.join(f'`{value}`' for value in item['traceability'])}"]
-    lines += ["", "## 模块合同", ""]
+    lines += ["", "## 模块合同", "", "上游策略：每个跨模块输入的生产者必须能通过 `upstreamModuleIds` 直接或传递到达；外部输入以及由消费模块自身产生的记录无需上游边。", ""]
     for item in data["moduleContracts"]:
         lines += [
             f"### `{item['id']}` — {plain_text(item['titleZh'])}",
@@ -89,6 +91,8 @@ def render(data: dict) -> str:
         lines += [f"  - `{step['id']}`：{plain_text(step['actionZh'])}" for step in item["steps"]]
         lines += [f"- 不变量：{plain_text('；'.join(item['invariantsZh']))}", "- 失败结果："]
         lines += [f"  - `{outcome['code']}` — 条件：{plain_text(outcome['conditionZh'])} 结果：{plain_text(outcome['resultZh'])}" for outcome in item["failureOutcomes"]]
+        lines += ["- 输出值映射："]
+        lines += [f"  - `{mapping['recordId']}.{mapping['field']}` → {', '.join(f'`{value}`' for value in mapping['emittedValues'])}：{plain_text(mapping['meaningZh'])}" for mapping in item["outputValueMappings"]] or ["  - 无"]
     lines += ["", "## 切片与依赖", ""]
     lines += [f"- `{item['id']}` — {plain_text(item['scopeZh'])} — {len(item['requirementIds'])} 条需求用途" for item in data["implementationSlices"]]
     lines += [f"- 依赖 `{item['id']}`：`{item['status']}`" for item in data["implementationDependencies"]]
