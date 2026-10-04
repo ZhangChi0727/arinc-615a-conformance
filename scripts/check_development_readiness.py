@@ -124,6 +124,35 @@ def _json_schema(definition: dict) -> dict:
     return schema
 
 
+def _oneof_leaves(definition: dict) -> list[dict]:
+    candidates = definition.get("oneOf")
+    if not candidates:
+        return [definition]
+    return [leaf for candidate in candidates for leaf in _oneof_leaves(candidate)]
+
+
+def _type_compatible(definition: dict, value: object) -> bool:
+    candidates = definition.get("oneOf")
+    if candidates:
+        return any(_type_compatible(candidate, value) for candidate in candidates)
+    expected = definition.get("type")
+    if expected == "null":
+        return value is None
+    if expected == "object":
+        return isinstance(value, dict)
+    if expected == "array":
+        return isinstance(value, list)
+    if expected == "string":
+        return isinstance(value, str)
+    if expected == "boolean":
+        return isinstance(value, bool)
+    if expected == "integer":
+        return isinstance(value, int) and not isinstance(value, bool)
+    if expected == "number":
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
+    return False
+
+
 def _definitions_for_path(record: dict, parts: list[object]) -> list[dict]:
     if not parts or not isinstance(parts[0], str):
         return []
@@ -131,8 +160,7 @@ def _definitions_for_path(record: dict, parts: list[object]) -> list[dict]:
     for part in parts[1:]:
         advanced: list[dict] = []
         for definition in definitions:
-            candidates = definition.get("oneOf", [definition])
-            for candidate in candidates:
+            for candidate in _oneof_leaves(definition):
                 if candidate.get("type") == "array" and isinstance(part, int):
                     advanced.append(candidate.get("items", {}))
                 elif candidate.get("type") == "object" and isinstance(part, str) and part in candidate.get("properties", {}):
@@ -154,9 +182,8 @@ def _required_instance_errors(record: dict, definition: dict, value: object, par
     results: list[tuple[str, tuple[object, ...], str]] = []
     candidates = definition.get("oneOf", [])
     if candidates:
-        instance_type = "null" if value is None else "object" if isinstance(value, dict) else "array" if isinstance(value, list) else "string" if isinstance(value, str) else "boolean" if isinstance(value, bool) else "integer" if isinstance(value, int) else "number" if isinstance(value, float) else None
-        type_compatible = [item for item in candidates if item.get("type") == instance_type]
-        valid = [item for item in type_compatible if Draft202012Validator(_json_schema(item)).is_valid(value)]
+        valid = [item for item in candidates if Draft202012Validator(_json_schema(item)).is_valid(value)]
+        type_compatible = [item for item in candidates if _type_compatible(item, value)]
         selected = valid if len(valid) == 1 else type_compatible if not valid and len(type_compatible) == 1 else []
         for item in selected:
             results.extend(_required_instance_errors(record, item, value, parts))
