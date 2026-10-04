@@ -107,6 +107,49 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{record['id']} has an unknown owner module")
         if len(record["fields"]) != len(set(record["fields"])):
             errors.append(f"{record['id']} repeats a field")
+        if set(record["fieldDefinitions"]) != set(record["fields"]):
+            errors.append(f"{record['id']} field definitions do not match fields")
+            if record.get("interfaceHandle") == "HistoryHandle":
+                handle = registry.get("sessionHandles", {}).get("HistoryHandle", {})
+                if record["fields"] != handle.get("fields"):
+                    errors.append("HISTORY-HANDLE fields differ from interface HistoryHandle")
+            continue
+        def instance_errors(payload: dict) -> list[str]:
+            instance_errors_: list[str] = []
+            for field in record["fields"]:
+                definition = record["fieldDefinitions"][field]
+                if definition.get("required") and field not in payload:
+                    instance_errors_.append(f"missing required {field}")
+                    continue
+                value = payload.get(field)
+                expected_type = definition.get("type")
+                if field in payload and expected_type == "integer" and (not isinstance(value, int) or isinstance(value, bool) or value < definition.get("minimum", -sys.maxsize)):
+                    instance_errors_.append(f"invalid {field}")
+                if field in payload and expected_type == "string" and not isinstance(value, str):
+                    instance_errors_.append(f"invalid {field}")
+                if field in payload and expected_type == "array" and not isinstance(value, list):
+                    instance_errors_.append(f"invalid {field}")
+                if field in payload and expected_type == "object" and not isinstance(value, dict):
+                    instance_errors_.append(f"invalid {field}")
+            unknown = set(payload) - set(record["fields"])
+            if unknown:
+                instance_errors_.append("unknown fields")
+            return instance_errors_
+
+        example_errors = instance_errors(record["example"])
+        if example_errors:
+            errors.append(f"{record['id']} example is invalid: {', '.join(example_errors)}")
+        invalid_errors = instance_errors(record["invalidExample"])
+        if not invalid_errors:
+            errors.append(f"{record['id']} invalid example violates no field constraint")
+        if record["example"] == record["invalidExample"]:
+            errors.append(f"{record['id']} invalid example equals example")
+        if record.get("interfaceHandle") == "HistoryHandle":
+            handle = registry.get("sessionHandles", {}).get("HistoryHandle", {})
+            if record["fields"] != handle.get("fields"):
+                errors.append("HISTORY-HANDLE fields differ from interface HistoryHandle")
+        elif record["id"] == "HISTORY-HANDLE":
+            errors.append("HISTORY-HANDLE lacks interfaceHandle binding")
     tool_ids = [row["id"] for row in data["toolRequirements"]]
     if len(tool_ids) != len(set(tool_ids)):
         errors.append("toolRequirements repeats an ID")

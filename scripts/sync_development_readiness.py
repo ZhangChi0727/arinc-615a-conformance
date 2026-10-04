@@ -33,6 +33,8 @@ def render(data: dict) -> str:
     lines += [f"- `{item['artifactId']}` — `{item['path']}` — SHA-256 `{item['sha256']}` — {plain_text(item['purpose'])}" for item in data["inputBindings"]]
     lines += ["", "## Record contracts", "", "| ID | Owner | Fields | Uncertainty |", "|---|---|---|---|"]
     lines += [f"| `{item['id']}` | `{item['ownerModuleId']}` | {', '.join(f'`{field}`' for field in item['fields'])} | {plain_text(item['uncertainty'])} |" for item in data["recordContracts"]]
+    for item in data["recordContracts"]:
+        lines += ["", f"### `{item['id']}` — {plain_text(item['title'])}", f"- Ownership: {plain_text(item['ownership'])}", f"- Error behavior: {plain_text(item['errorBehavior'])}", f"- Field definitions: `{json.dumps(item['fieldDefinitions'], ensure_ascii=False, sort_keys=True)}`", f"- Valid example: `{json.dumps(item['example'], ensure_ascii=False, sort_keys=True)}`", f"- Invalid example: `{json.dumps(item['invalidExample'], ensure_ascii=False, sort_keys=True)}`", f"- Rejection reason: {plain_text(item['invalidReason'])}"]
     lines += ["", "## Tool requirements", "", "| ID | Owner | Source relation | Acceptance | Requirement |", "|---|---|---|---|---|"]
     lines += [f"| `{item['id']}` | `{item['ownerModuleId']}` | `{item['sourceRelationship']}` | `{item['acceptanceCaseId']}` | {plain_text(item['title'])} |" for item in data["toolRequirements"]]
     for item in data["toolRequirements"]:
@@ -53,6 +55,8 @@ def render(data: dict) -> str:
     lines += [f"- `{item['artifactId']}` — `{item['path']}` — SHA-256 `{item['sha256']}` — {plain_text(item['purposeZh'])}" for item in data["inputBindings"]]
     lines += ["", "## 记录合同", "", "| ID | 责任模块 | 字段 | 不确定性 |", "|---|---|---|---|"]
     lines += [f"| `{item['id']}` | `{item['ownerModuleId']}` | {', '.join(f'`{field}`' for field in item['fields'])} | {plain_text(item['uncertaintyZh'])} |" for item in data["recordContracts"]]
+    for item in data["recordContracts"]:
+        lines += ["", f"### `{item['id']}` — {plain_text(item['titleZh'])}", f"- 所有权：{plain_text(item['ownershipZh'])}", f"- 错误行为：{plain_text(item['errorBehaviorZh'])}", f"- 字段定义：`{json.dumps(item['fieldDefinitions'], ensure_ascii=False, sort_keys=True)}`", f"- 有效示例：`{json.dumps(item['example'], ensure_ascii=False, sort_keys=True)}`", f"- 无效示例：`{json.dumps(item['invalidExample'], ensure_ascii=False, sort_keys=True)}`", f"- 拒绝理由：{plain_text(item['invalidReasonZh'])}"]
     lines += ["", "## 工具需求", "", "| ID | 责任模块 | 来源关系 | 验收 | 需求 |", "|---|---|---|---|---|"]
     lines += [f"| `{item['id']}` | `{item['ownerModuleId']}` | `{item['sourceRelationship']}` | `{item['acceptanceCaseId']}` | {plain_text(item['titleZh'])} |" for item in data["toolRequirements"]]
     for item in data["toolRequirements"]:

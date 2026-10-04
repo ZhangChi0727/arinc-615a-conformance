@@ -7084,14 +7084,45 @@
       "uncertainty": "Exploratory use only; unknown metadata remains UNKNOWN.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "recordId": "CAPTURE-IDENTITY",
-        "status": "VALID"
+        "captureId": "example-captureId",
+        "relativePath": "example-relativePath",
+        "sha256": "example-sha256",
+        "byteSize": "example-byteSize",
+        "manifestVersion": "example-manifestVersion"
       },
       "invalidExample": {
-        "recordId": "CAPTURE-IDENTITY",
-        "status": "INVALID"
+        "relativePath": "example-relativePath",
+        "sha256": "example-sha256",
+        "byteSize": "example-byteSize",
+        "manifestVersion": "example-manifestVersion"
       },
-      "uncertaintyZh": "仅作探索用途；未知元数据保持 UNKNOWN。"
+      "uncertaintyZh": "仅作探索用途；未知元数据保持 UNKNOWN。",
+      "fieldDefinitions": {
+        "captureId": {
+          "type": "string",
+          "required": true
+        },
+        "relativePath": {
+          "type": "string",
+          "required": true
+        },
+        "sha256": {
+          "type": "string",
+          "required": true
+        },
+        "byteSize": {
+          "type": "string",
+          "required": true
+        },
+        "manifestVersion": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "invalidReason": "missing required captureId",
+      "ownershipZh": "捕获模块或接入边界拥有该记录。",
+      "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
+      "invalidReasonZh": "缺少必填字段 captureId"
     },
     {
       "id": "PACKET-REF",
@@ -7113,14 +7144,69 @@
       "uncertainty": "Clock accuracy is distinct from resolution.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "recordId": "PACKET-REF",
-        "status": "VALID"
+        "captureId": "example-captureId",
+        "sectionId": "example-sectionId",
+        "interfaceId": "example-interfaceId",
+        "packetNumber": "example-packetNumber",
+        "rawTicks": "example-rawTicks",
+        "resolution": "example-resolution",
+        "caplen": "example-caplen",
+        "origlen": "example-origlen",
+        "decodeStatus": "example-decodeStatus"
       },
       "invalidExample": {
-        "recordId": "PACKET-REF",
-        "status": "INVALID"
+        "sectionId": "example-sectionId",
+        "interfaceId": "example-interfaceId",
+        "packetNumber": "example-packetNumber",
+        "rawTicks": "example-rawTicks",
+        "resolution": "example-resolution",
+        "caplen": "example-caplen",
+        "origlen": "example-origlen",
+        "decodeStatus": "example-decodeStatus"
       },
-      "uncertaintyZh": "时钟精度与分辨率不同。"
+      "uncertaintyZh": "时钟精度与分辨率不同。",
+      "fieldDefinitions": {
+        "captureId": {
+          "type": "string",
+          "required": true
+        },
+        "sectionId": {
+          "type": "string",
+          "required": true
+        },
+        "interfaceId": {
+          "type": "string",
+          "required": true
+        },
+        "packetNumber": {
+          "type": "string",
+          "required": true
+        },
+        "rawTicks": {
+          "type": "string",
+          "required": true
+        },
+        "resolution": {
+          "type": "string",
+          "required": true
+        },
+        "caplen": {
+          "type": "string",
+          "required": true
+        },
+        "origlen": {
+          "type": "string",
+          "required": true
+        },
+        "decodeStatus": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "invalidReason": "missing required captureId",
+      "ownershipZh": "捕获模块或接入边界拥有该记录。",
+      "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
+      "invalidReasonZh": "缺少必填字段 captureId"
     },
     {
       "id": "DATAGRAM-RECORD",
@@ -7137,14 +7223,39 @@
       "uncertainty": "Missing or conflicting fragments remain explicit.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "recordId": "DATAGRAM-RECORD",
-        "status": "VALID"
+        "fragmentRefs": "example-fragmentRefs",
+        "coverage": "example-coverage",
+        "overlapStatus": "example-overlapStatus",
+        "reassemblyStatus": "example-reassemblyStatus"
       },
       "invalidExample": {
-        "recordId": "DATAGRAM-RECORD",
-        "status": "INVALID"
+        "coverage": "example-coverage",
+        "overlapStatus": "example-overlapStatus",
+        "reassemblyStatus": "example-reassemblyStatus"
       },
-      "uncertaintyZh": "缺失或冲突分片保持显式。"
+      "uncertaintyZh": "缺失或冲突分片保持显式。",
+      "fieldDefinitions": {
+        "fragmentRefs": {
+          "type": "string",
+          "required": true
+        },
+        "coverage": {
+          "type": "string",
+          "required": true
+        },
+        "overlapStatus": {
+          "type": "string",
+          "required": true
+        },
+        "reassemblyStatus": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "invalidReason": "missing required fragmentRefs",
+      "ownershipZh": "重组模块拥有派生记录，原始包引用不可改写。",
+      "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
+      "invalidReasonZh": "缺少必填字段 fragmentRefs"
     },
     {
       "id": "TRANSFER-RECORD",
@@ -7164,14 +7275,57 @@
       "uncertainty": "Ambiguous TID or option state remains UNKNOWN.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "recordId": "TRANSFER-RECORD",
-        "status": "VALID"
+        "direction": "example-direction",
+        "endpoints": "example-endpoints",
+        "tid": "example-tid",
+        "request": "example-request",
+        "optionState": "example-optionState",
+        "blockMap": "example-blockMap",
+        "completionEvidence": "example-completionEvidence"
       },
       "invalidExample": {
-        "recordId": "TRANSFER-RECORD",
-        "status": "INVALID"
+        "endpoints": "example-endpoints",
+        "tid": "example-tid",
+        "request": "example-request",
+        "optionState": "example-optionState",
+        "blockMap": "example-blockMap",
+        "completionEvidence": "example-completionEvidence"
       },
-      "uncertaintyZh": "歧义 TID 或选项状态保持 UNKNOWN。"
+      "uncertaintyZh": "歧义 TID 或选项状态保持 UNKNOWN。",
+      "fieldDefinitions": {
+        "direction": {
+          "type": "string",
+          "required": true
+        },
+        "endpoints": {
+          "type": "string",
+          "required": true
+        },
+        "tid": {
+          "type": "string",
+          "required": true
+        },
+        "request": {
+          "type": "string",
+          "required": true
+        },
+        "optionState": {
+          "type": "string",
+          "required": true
+        },
+        "blockMap": {
+          "type": "string",
+          "required": true
+        },
+        "completionEvidence": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "invalidReason": "missing required direction",
+      "ownershipZh": "传输模块拥有派生的传输或事件记录。",
+      "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
+      "invalidReasonZh": "缺少必填字段 direction"
     },
     {
       "id": "PROTOCOL-EVENT",
@@ -7190,14 +7344,51 @@
       "uncertainty": "Application facts are not inferred from wire evidence.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "recordId": "PROTOCOL-EVENT",
-        "status": "VALID"
+        "eventLayer": "example-eventLayer",
+        "role": "example-role",
+        "payload": "example-payload",
+        "correlationKey": "example-correlationKey",
+        "rawRefs": "example-rawRefs",
+        "parseBoundary": "example-parseBoundary"
       },
       "invalidExample": {
-        "recordId": "PROTOCOL-EVENT",
-        "status": "INVALID"
+        "role": "example-role",
+        "payload": "example-payload",
+        "correlationKey": "example-correlationKey",
+        "rawRefs": "example-rawRefs",
+        "parseBoundary": "example-parseBoundary"
       },
-      "uncertaintyZh": "不从线上证据推断应用事实。"
+      "uncertaintyZh": "不从线上证据推断应用事实。",
+      "fieldDefinitions": {
+        "eventLayer": {
+          "type": "string",
+          "required": true
+        },
+        "role": {
+          "type": "string",
+          "required": true
+        },
+        "payload": {
+          "type": "string",
+          "required": true
+        },
+        "correlationKey": {
+          "type": "string",
+          "required": true
+        },
+        "rawRefs": {
+          "type": "string",
+          "required": true
+        },
+        "parseBoundary": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "invalidReason": "missing required eventLayer",
+      "ownershipZh": "传输模块拥有派生的传输或事件记录。",
+      "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
+      "invalidReasonZh": "缺少必填字段 eventLayer"
     },
     {
       "id": "OWNERSHIP-RESULT",
@@ -7214,14 +7405,39 @@
       "uncertainty": "Multiple possible owners remain AMBIGUOUS.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "recordId": "OWNERSHIP-RESULT",
-        "status": "VALID"
+        "requestInstance": "example-requestInstance",
+        "policy": "example-policy",
+        "status": "example-status",
+        "evidenceRefs": "example-evidenceRefs"
       },
       "invalidExample": {
-        "recordId": "OWNERSHIP-RESULT",
-        "status": "INVALID"
+        "policy": "example-policy",
+        "status": "example-status",
+        "evidenceRefs": "example-evidenceRefs"
       },
-      "uncertaintyZh": "多个可能所有者保持 AMBIGUOUS。"
+      "uncertaintyZh": "多个可能所有者保持 AMBIGUOUS。",
+      "fieldDefinitions": {
+        "requestInstance": {
+          "type": "string",
+          "required": true
+        },
+        "policy": {
+          "type": "string",
+          "required": true
+        },
+        "status": {
+          "type": "string",
+          "required": true
+        },
+        "evidenceRefs": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "invalidReason": "missing required requestInstance",
+      "ownershipZh": "所有权模块拥有匹配结果。",
+      "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
+      "invalidReasonZh": "缺少必填字段 requestInstance"
     },
     {
       "id": "OBSERVATION-ASSESSMENT",
@@ -7239,14 +7455,45 @@
       "uncertainty": "Invalid time chain is ERROR; boundary overlap is INCONCLUSIVE.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "recordId": "OBSERVATION-ASSESSMENT",
-        "status": "VALID"
+        "measurementInterval": "example-measurementInterval",
+        "domain": "example-domain",
+        "errorBasis": "example-errorBasis",
+        "verdict": "example-verdict",
+        "reason": "example-reason"
       },
       "invalidExample": {
-        "recordId": "OBSERVATION-ASSESSMENT",
-        "status": "INVALID"
+        "domain": "example-domain",
+        "errorBasis": "example-errorBasis",
+        "verdict": "example-verdict",
+        "reason": "example-reason"
       },
-      "uncertaintyZh": "时间链无效为 ERROR，边界重叠为 INCONCLUSIVE。"
+      "uncertaintyZh": "时间链无效为 ERROR，边界重叠为 INCONCLUSIVE。",
+      "fieldDefinitions": {
+        "measurementInterval": {
+          "type": "string",
+          "required": true
+        },
+        "domain": {
+          "type": "string",
+          "required": true
+        },
+        "errorBasis": {
+          "type": "string",
+          "required": true
+        },
+        "verdict": {
+          "type": "string",
+          "required": true
+        },
+        "reason": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "invalidReason": "missing required measurementInterval",
+      "ownershipZh": "观测模块拥有评估、发现或历史更新记录。",
+      "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
+      "invalidReasonZh": "缺少必填字段 measurementInterval"
     },
     {
       "id": "INTAKE-METADATA",
@@ -7264,14 +7511,45 @@
       "uncertainty": "Unknown values are not algorithm priors.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "recordId": "INTAKE-METADATA",
-        "status": "VALID"
+        "operatorNote": "example-operatorNote",
+        "topology": "example-topology",
+        "clockAccuracy": "example-clockAccuracy",
+        "configuration": "example-configuration",
+        "rootCause": "example-rootCause"
       },
       "invalidExample": {
-        "recordId": "INTAKE-METADATA",
-        "status": "INVALID"
+        "topology": "example-topology",
+        "clockAccuracy": "example-clockAccuracy",
+        "configuration": "example-configuration",
+        "rootCause": "example-rootCause"
       },
-      "uncertaintyZh": "未知值不能作为算法先验。"
+      "uncertaintyZh": "未知值不能作为算法先验。",
+      "fieldDefinitions": {
+        "operatorNote": {
+          "type": "string",
+          "required": true
+        },
+        "topology": {
+          "type": "string",
+          "required": true
+        },
+        "clockAccuracy": {
+          "type": "string",
+          "required": true
+        },
+        "configuration": {
+          "type": "string",
+          "required": true
+        },
+        "rootCause": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "invalidReason": "missing required operatorNote",
+      "ownershipZh": "捕获模块或接入边界拥有该记录。",
+      "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
+      "invalidReasonZh": "缺少必填字段 operatorNote"
     },
     {
       "id": "FINDING-RECORD",
@@ -7289,14 +7567,45 @@
       "uncertainty": "Finding is not a root-cause label.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "recordId": "FINDING-RECORD",
-        "status": "VALID"
+        "facts": "example-facts",
+        "judgmentBasis": "example-judgmentBasis",
+        "scope": "example-scope",
+        "assumptions": "example-assumptions",
+        "evidenceRefs": "example-evidenceRefs"
       },
       "invalidExample": {
-        "recordId": "FINDING-RECORD",
-        "status": "INVALID"
+        "judgmentBasis": "example-judgmentBasis",
+        "scope": "example-scope",
+        "assumptions": "example-assumptions",
+        "evidenceRefs": "example-evidenceRefs"
       },
-      "uncertaintyZh": "发现记录不是根因标签。"
+      "uncertaintyZh": "发现记录不是根因标签。",
+      "fieldDefinitions": {
+        "facts": {
+          "type": "string",
+          "required": true
+        },
+        "judgmentBasis": {
+          "type": "string",
+          "required": true
+        },
+        "scope": {
+          "type": "string",
+          "required": true
+        },
+        "assumptions": {
+          "type": "string",
+          "required": true
+        },
+        "evidenceRefs": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "invalidReason": "missing required facts",
+      "ownershipZh": "观测模块拥有评估、发现或历史更新记录。",
+      "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
+      "invalidReasonZh": "缺少必填字段 facts"
     },
     {
       "id": "HISTORY-HANDLE",
@@ -7304,8 +7613,8 @@
       "titleZh": "历史句柄",
       "ownerModuleId": "MOD-OBSERVATION",
       "fields": [
-        "hypotheses",
-        "frontiers",
+        "H",
+        "compatibleStateByHypothesis",
         "statusByHypothesis",
         "version"
       ],
@@ -7313,14 +7622,46 @@
       "uncertainty": "UNKNOWN-EFFECT never excludes or revives hypotheses.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "recordId": "HISTORY-HANDLE",
-        "status": "VALID"
+        "H": [
+          "h0"
+        ],
+        "compatibleStateByHypothesis": {
+          "h0": "frontier0"
+        },
+        "version": 0
       },
       "invalidExample": {
-        "recordId": "HISTORY-HANDLE",
-        "status": "INVALID"
+        "H": [
+          "h0"
+        ],
+        "compatibleStateByHypothesis": {},
+        "version": -1
       },
-      "uncertaintyZh": "UNKNOWN-EFFECT 不排除或复活假设。"
+      "uncertaintyZh": "UNKNOWN-EFFECT 不排除或复活假设。",
+      "fieldDefinitions": {
+        "H": {
+          "type": "array",
+          "required": true
+        },
+        "compatibleStateByHypothesis": {
+          "type": "object",
+          "required": true
+        },
+        "statusByHypothesis": {
+          "type": "object",
+          "required": false
+        },
+        "version": {
+          "type": "integer",
+          "required": true,
+          "minimum": 0
+        }
+      },
+      "invalidReason": "version must be a non-negative integer",
+      "interfaceHandle": "HistoryHandle",
+      "ownershipZh": "观测模块拥有评估、发现或历史更新记录。",
+      "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
+      "invalidReasonZh": "version 必须是非负整数"
     }
   ],
   "moduleContracts": [

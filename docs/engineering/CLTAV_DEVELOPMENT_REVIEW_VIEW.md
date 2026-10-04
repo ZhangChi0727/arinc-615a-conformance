@@ -23,7 +23,87 @@
 | `OBSERVATION-ASSESSMENT` | `MOD-OBSERVATION` | `measurementInterval`, `domain`, `errorBasis`, `verdict`, `reason` | Invalid time chain is ERROR; boundary overlap is INCONCLUSIVE. |
 | `INTAKE-METADATA` | `MOD-CAPTURE` | `operatorNote`, `topology`, `clockAccuracy`, `configuration`, `rootCause` | Unknown values are not algorithm priors. |
 | `FINDING-RECORD` | `MOD-OBSERVATION` | `facts`, `judgmentBasis`, `scope`, `assumptions`, `evidenceRefs` | Finding is not a root-cause label. |
-| `HISTORY-HANDLE` | `MOD-OBSERVATION` | `hypotheses`, `frontiers`, `statusByHypothesis`, `version` | UNKNOWN-EFFECT never excludes or revives hypotheses. |
+| `HISTORY-HANDLE` | `MOD-OBSERVATION` | `H`, `compatibleStateByHypothesis`, `statusByHypothesis`, `version` | UNKNOWN-EFFECT never excludes or revives hypotheses. |
+
+### `CAPTURE-IDENTITY` — Capture identity
+- Ownership: The intake boundary owns immutable file identity.
+- Error behavior: Return a named error or conservative unknown; do not emit IUT FAIL.
+- Field definitions: `{"byteSize": {"required": true, "type": "string"}, "captureId": {"required": true, "type": "string"}, "manifestVersion": {"required": true, "type": "string"}, "relativePath": {"required": true, "type": "string"}, "sha256": {"required": true, "type": "string"}}`
+- Valid example: `{"byteSize": "example-byteSize", "captureId": "example-captureId", "manifestVersion": "example-manifestVersion", "relativePath": "example-relativePath", "sha256": "example-sha256"}`
+- Invalid example: `{"byteSize": "example-byteSize", "manifestVersion": "example-manifestVersion", "relativePath": "example-relativePath", "sha256": "example-sha256"}`
+- Rejection reason: missing required captureId
+
+### `PACKET-REF` — Packet reference
+- Ownership: Capture module owns raw packet provenance.
+- Error behavior: Return a named error or conservative unknown; do not emit IUT FAIL.
+- Field definitions: `{"caplen": {"required": true, "type": "string"}, "captureId": {"required": true, "type": "string"}, "decodeStatus": {"required": true, "type": "string"}, "interfaceId": {"required": true, "type": "string"}, "origlen": {"required": true, "type": "string"}, "packetNumber": {"required": true, "type": "string"}, "rawTicks": {"required": true, "type": "string"}, "resolution": {"required": true, "type": "string"}, "sectionId": {"required": true, "type": "string"}}`
+- Valid example: `{"caplen": "example-caplen", "captureId": "example-captureId", "decodeStatus": "example-decodeStatus", "interfaceId": "example-interfaceId", "origlen": "example-origlen", "packetNumber": "example-packetNumber", "rawTicks": "example-rawTicks", "resolution": "example-resolution", "sectionId": "example-sectionId"}`
+- Invalid example: `{"caplen": "example-caplen", "decodeStatus": "example-decodeStatus", "interfaceId": "example-interfaceId", "origlen": "example-origlen", "packetNumber": "example-packetNumber", "rawTicks": "example-rawTicks", "resolution": "example-resolution", "sectionId": "example-sectionId"}`
+- Rejection reason: missing required captureId
+
+### `DATAGRAM-RECORD` — Datagram reconstruction
+- Ownership: Reassembly owns derived coverage, never source packets.
+- Error behavior: Return a named error or conservative unknown; do not emit IUT FAIL.
+- Field definitions: `{"coverage": {"required": true, "type": "string"}, "fragmentRefs": {"required": true, "type": "string"}, "overlapStatus": {"required": true, "type": "string"}, "reassemblyStatus": {"required": true, "type": "string"}}`
+- Valid example: `{"coverage": "example-coverage", "fragmentRefs": "example-fragmentRefs", "overlapStatus": "example-overlapStatus", "reassemblyStatus": "example-reassemblyStatus"}`
+- Invalid example: `{"coverage": "example-coverage", "overlapStatus": "example-overlapStatus", "reassemblyStatus": "example-reassemblyStatus"}`
+- Rejection reason: missing required fragmentRefs
+
+### `TRANSFER-RECORD` — Transfer candidate
+- Ownership: Transfer module owns candidate association.
+- Error behavior: Return a named error or conservative unknown; do not emit IUT FAIL.
+- Field definitions: `{"blockMap": {"required": true, "type": "string"}, "completionEvidence": {"required": true, "type": "string"}, "direction": {"required": true, "type": "string"}, "endpoints": {"required": true, "type": "string"}, "optionState": {"required": true, "type": "string"}, "request": {"required": true, "type": "string"}, "tid": {"required": true, "type": "string"}}`
+- Valid example: `{"blockMap": "example-blockMap", "completionEvidence": "example-completionEvidence", "direction": "example-direction", "endpoints": "example-endpoints", "optionState": "example-optionState", "request": "example-request", "tid": "example-tid"}`
+- Invalid example: `{"blockMap": "example-blockMap", "completionEvidence": "example-completionEvidence", "endpoints": "example-endpoints", "optionState": "example-optionState", "request": "example-request", "tid": "example-tid"}`
+- Rejection reason: missing required direction
+
+### `PROTOCOL-EVENT` — Protocol event
+- Ownership: Transfer module owns derived event identity.
+- Error behavior: Return a named error or conservative unknown; do not emit IUT FAIL.
+- Field definitions: `{"correlationKey": {"required": true, "type": "string"}, "eventLayer": {"required": true, "type": "string"}, "parseBoundary": {"required": true, "type": "string"}, "payload": {"required": true, "type": "string"}, "rawRefs": {"required": true, "type": "string"}, "role": {"required": true, "type": "string"}}`
+- Valid example: `{"correlationKey": "example-correlationKey", "eventLayer": "example-eventLayer", "parseBoundary": "example-parseBoundary", "payload": "example-payload", "rawRefs": "example-rawRefs", "role": "example-role"}`
+- Invalid example: `{"correlationKey": "example-correlationKey", "parseBoundary": "example-parseBoundary", "payload": "example-payload", "rawRefs": "example-rawRefs", "role": "example-role"}`
+- Rejection reason: missing required eventLayer
+
+### `OWNERSHIP-RESULT` — Ownership result
+- Ownership: Ownership module owns matching result.
+- Error behavior: Return a named error or conservative unknown; do not emit IUT FAIL.
+- Field definitions: `{"evidenceRefs": {"required": true, "type": "string"}, "policy": {"required": true, "type": "string"}, "requestInstance": {"required": true, "type": "string"}, "status": {"required": true, "type": "string"}}`
+- Valid example: `{"evidenceRefs": "example-evidenceRefs", "policy": "example-policy", "requestInstance": "example-requestInstance", "status": "example-status"}`
+- Invalid example: `{"evidenceRefs": "example-evidenceRefs", "policy": "example-policy", "status": "example-status"}`
+- Rejection reason: missing required requestInstance
+
+### `OBSERVATION-ASSESSMENT` — Observation assessment
+- Ownership: Observation module owns verdict interpretation.
+- Error behavior: Return a named error or conservative unknown; do not emit IUT FAIL.
+- Field definitions: `{"domain": {"required": true, "type": "string"}, "errorBasis": {"required": true, "type": "string"}, "measurementInterval": {"required": true, "type": "string"}, "reason": {"required": true, "type": "string"}, "verdict": {"required": true, "type": "string"}}`
+- Valid example: `{"domain": "example-domain", "errorBasis": "example-errorBasis", "measurementInterval": "example-measurementInterval", "reason": "example-reason", "verdict": "example-verdict"}`
+- Invalid example: `{"domain": "example-domain", "errorBasis": "example-errorBasis", "reason": "example-reason", "verdict": "example-verdict"}`
+- Rejection reason: missing required measurementInterval
+
+### `INTAKE-METADATA` — Intake metadata
+- Ownership: Intake boundary owns declared context only.
+- Error behavior: Return a named error or conservative unknown; do not emit IUT FAIL.
+- Field definitions: `{"clockAccuracy": {"required": true, "type": "string"}, "configuration": {"required": true, "type": "string"}, "operatorNote": {"required": true, "type": "string"}, "rootCause": {"required": true, "type": "string"}, "topology": {"required": true, "type": "string"}}`
+- Valid example: `{"clockAccuracy": "example-clockAccuracy", "configuration": "example-configuration", "operatorNote": "example-operatorNote", "rootCause": "example-rootCause", "topology": "example-topology"}`
+- Invalid example: `{"clockAccuracy": "example-clockAccuracy", "configuration": "example-configuration", "rootCause": "example-rootCause", "topology": "example-topology"}`
+- Rejection reason: missing required operatorNote
+
+### `FINDING-RECORD` — Finding record
+- Ownership: Reporting owns the bounded finding.
+- Error behavior: Return a named error or conservative unknown; do not emit IUT FAIL.
+- Field definitions: `{"assumptions": {"required": true, "type": "string"}, "evidenceRefs": {"required": true, "type": "string"}, "facts": {"required": true, "type": "string"}, "judgmentBasis": {"required": true, "type": "string"}, "scope": {"required": true, "type": "string"}}`
+- Valid example: `{"assumptions": "example-assumptions", "evidenceRefs": "example-evidenceRefs", "facts": "example-facts", "judgmentBasis": "example-judgmentBasis", "scope": "example-scope"}`
+- Invalid example: `{"assumptions": "example-assumptions", "evidenceRefs": "example-evidenceRefs", "judgmentBasis": "example-judgmentBasis", "scope": "example-scope"}`
+- Rejection reason: missing required facts
+
+### `HISTORY-HANDLE` — History handle
+- Ownership: Observation module owns versioned compatible history.
+- Error behavior: Return a named error or conservative unknown; do not emit IUT FAIL.
+- Field definitions: `{"H": {"required": true, "type": "array"}, "compatibleStateByHypothesis": {"required": true, "type": "object"}, "statusByHypothesis": {"required": false, "type": "object"}, "version": {"minimum": 0, "required": true, "type": "integer"}}`
+- Valid example: `{"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier0"}, "version": 0}`
+- Invalid example: `{"H": ["h0"], "compatibleStateByHypothesis": {}, "version": -1}`
+- Rejection reason: version must be a non-negative integer
 
 ## Tool requirements
 
@@ -1200,7 +1280,87 @@
 | `OBSERVATION-ASSESSMENT` | `MOD-OBSERVATION` | `measurementInterval`, `domain`, `errorBasis`, `verdict`, `reason` | 时间链无效为 ERROR，边界重叠为 INCONCLUSIVE。 |
 | `INTAKE-METADATA` | `MOD-CAPTURE` | `operatorNote`, `topology`, `clockAccuracy`, `configuration`, `rootCause` | 未知值不能作为算法先验。 |
 | `FINDING-RECORD` | `MOD-OBSERVATION` | `facts`, `judgmentBasis`, `scope`, `assumptions`, `evidenceRefs` | 发现记录不是根因标签。 |
-| `HISTORY-HANDLE` | `MOD-OBSERVATION` | `hypotheses`, `frontiers`, `statusByHypothesis`, `version` | UNKNOWN-EFFECT 不排除或复活假设。 |
+| `HISTORY-HANDLE` | `MOD-OBSERVATION` | `H`, `compatibleStateByHypothesis`, `statusByHypothesis`, `version` | UNKNOWN-EFFECT 不排除或复活假设。 |
+
+### `CAPTURE-IDENTITY` — 捕获身份
+- 所有权：捕获模块或接入边界拥有该记录。
+- 错误行为：返回具名错误或保守未知；不得输出 IUT FAIL。
+- 字段定义：`{"byteSize": {"required": true, "type": "string"}, "captureId": {"required": true, "type": "string"}, "manifestVersion": {"required": true, "type": "string"}, "relativePath": {"required": true, "type": "string"}, "sha256": {"required": true, "type": "string"}}`
+- 有效示例：`{"byteSize": "example-byteSize", "captureId": "example-captureId", "manifestVersion": "example-manifestVersion", "relativePath": "example-relativePath", "sha256": "example-sha256"}`
+- 无效示例：`{"byteSize": "example-byteSize", "manifestVersion": "example-manifestVersion", "relativePath": "example-relativePath", "sha256": "example-sha256"}`
+- 拒绝理由：缺少必填字段 captureId
+
+### `PACKET-REF` — 数据包引用
+- 所有权：捕获模块或接入边界拥有该记录。
+- 错误行为：返回具名错误或保守未知；不得输出 IUT FAIL。
+- 字段定义：`{"caplen": {"required": true, "type": "string"}, "captureId": {"required": true, "type": "string"}, "decodeStatus": {"required": true, "type": "string"}, "interfaceId": {"required": true, "type": "string"}, "origlen": {"required": true, "type": "string"}, "packetNumber": {"required": true, "type": "string"}, "rawTicks": {"required": true, "type": "string"}, "resolution": {"required": true, "type": "string"}, "sectionId": {"required": true, "type": "string"}}`
+- 有效示例：`{"caplen": "example-caplen", "captureId": "example-captureId", "decodeStatus": "example-decodeStatus", "interfaceId": "example-interfaceId", "origlen": "example-origlen", "packetNumber": "example-packetNumber", "rawTicks": "example-rawTicks", "resolution": "example-resolution", "sectionId": "example-sectionId"}`
+- 无效示例：`{"caplen": "example-caplen", "decodeStatus": "example-decodeStatus", "interfaceId": "example-interfaceId", "origlen": "example-origlen", "packetNumber": "example-packetNumber", "rawTicks": "example-rawTicks", "resolution": "example-resolution", "sectionId": "example-sectionId"}`
+- 拒绝理由：缺少必填字段 captureId
+
+### `DATAGRAM-RECORD` — 数据报重组
+- 所有权：重组模块拥有派生记录，原始包引用不可改写。
+- 错误行为：返回具名错误或保守未知；不得输出 IUT FAIL。
+- 字段定义：`{"coverage": {"required": true, "type": "string"}, "fragmentRefs": {"required": true, "type": "string"}, "overlapStatus": {"required": true, "type": "string"}, "reassemblyStatus": {"required": true, "type": "string"}}`
+- 有效示例：`{"coverage": "example-coverage", "fragmentRefs": "example-fragmentRefs", "overlapStatus": "example-overlapStatus", "reassemblyStatus": "example-reassemblyStatus"}`
+- 无效示例：`{"coverage": "example-coverage", "overlapStatus": "example-overlapStatus", "reassemblyStatus": "example-reassemblyStatus"}`
+- 拒绝理由：缺少必填字段 fragmentRefs
+
+### `TRANSFER-RECORD` — 传输候选
+- 所有权：传输模块拥有派生的传输或事件记录。
+- 错误行为：返回具名错误或保守未知；不得输出 IUT FAIL。
+- 字段定义：`{"blockMap": {"required": true, "type": "string"}, "completionEvidence": {"required": true, "type": "string"}, "direction": {"required": true, "type": "string"}, "endpoints": {"required": true, "type": "string"}, "optionState": {"required": true, "type": "string"}, "request": {"required": true, "type": "string"}, "tid": {"required": true, "type": "string"}}`
+- 有效示例：`{"blockMap": "example-blockMap", "completionEvidence": "example-completionEvidence", "direction": "example-direction", "endpoints": "example-endpoints", "optionState": "example-optionState", "request": "example-request", "tid": "example-tid"}`
+- 无效示例：`{"blockMap": "example-blockMap", "completionEvidence": "example-completionEvidence", "endpoints": "example-endpoints", "optionState": "example-optionState", "request": "example-request", "tid": "example-tid"}`
+- 拒绝理由：缺少必填字段 direction
+
+### `PROTOCOL-EVENT` — 协议事件
+- 所有权：传输模块拥有派生的传输或事件记录。
+- 错误行为：返回具名错误或保守未知；不得输出 IUT FAIL。
+- 字段定义：`{"correlationKey": {"required": true, "type": "string"}, "eventLayer": {"required": true, "type": "string"}, "parseBoundary": {"required": true, "type": "string"}, "payload": {"required": true, "type": "string"}, "rawRefs": {"required": true, "type": "string"}, "role": {"required": true, "type": "string"}}`
+- 有效示例：`{"correlationKey": "example-correlationKey", "eventLayer": "example-eventLayer", "parseBoundary": "example-parseBoundary", "payload": "example-payload", "rawRefs": "example-rawRefs", "role": "example-role"}`
+- 无效示例：`{"correlationKey": "example-correlationKey", "parseBoundary": "example-parseBoundary", "payload": "example-payload", "rawRefs": "example-rawRefs", "role": "example-role"}`
+- 拒绝理由：缺少必填字段 eventLayer
+
+### `OWNERSHIP-RESULT` — 所有权结果
+- 所有权：所有权模块拥有匹配结果。
+- 错误行为：返回具名错误或保守未知；不得输出 IUT FAIL。
+- 字段定义：`{"evidenceRefs": {"required": true, "type": "string"}, "policy": {"required": true, "type": "string"}, "requestInstance": {"required": true, "type": "string"}, "status": {"required": true, "type": "string"}}`
+- 有效示例：`{"evidenceRefs": "example-evidenceRefs", "policy": "example-policy", "requestInstance": "example-requestInstance", "status": "example-status"}`
+- 无效示例：`{"evidenceRefs": "example-evidenceRefs", "policy": "example-policy", "status": "example-status"}`
+- 拒绝理由：缺少必填字段 requestInstance
+
+### `OBSERVATION-ASSESSMENT` — 观测评估
+- 所有权：观测模块拥有评估、发现或历史更新记录。
+- 错误行为：返回具名错误或保守未知；不得输出 IUT FAIL。
+- 字段定义：`{"domain": {"required": true, "type": "string"}, "errorBasis": {"required": true, "type": "string"}, "measurementInterval": {"required": true, "type": "string"}, "reason": {"required": true, "type": "string"}, "verdict": {"required": true, "type": "string"}}`
+- 有效示例：`{"domain": "example-domain", "errorBasis": "example-errorBasis", "measurementInterval": "example-measurementInterval", "reason": "example-reason", "verdict": "example-verdict"}`
+- 无效示例：`{"domain": "example-domain", "errorBasis": "example-errorBasis", "reason": "example-reason", "verdict": "example-verdict"}`
+- 拒绝理由：缺少必填字段 measurementInterval
+
+### `INTAKE-METADATA` — 接入元数据
+- 所有权：捕获模块或接入边界拥有该记录。
+- 错误行为：返回具名错误或保守未知；不得输出 IUT FAIL。
+- 字段定义：`{"clockAccuracy": {"required": true, "type": "string"}, "configuration": {"required": true, "type": "string"}, "operatorNote": {"required": true, "type": "string"}, "rootCause": {"required": true, "type": "string"}, "topology": {"required": true, "type": "string"}}`
+- 有效示例：`{"clockAccuracy": "example-clockAccuracy", "configuration": "example-configuration", "operatorNote": "example-operatorNote", "rootCause": "example-rootCause", "topology": "example-topology"}`
+- 无效示例：`{"clockAccuracy": "example-clockAccuracy", "configuration": "example-configuration", "rootCause": "example-rootCause", "topology": "example-topology"}`
+- 拒绝理由：缺少必填字段 operatorNote
+
+### `FINDING-RECORD` — 发现记录
+- 所有权：观测模块拥有评估、发现或历史更新记录。
+- 错误行为：返回具名错误或保守未知；不得输出 IUT FAIL。
+- 字段定义：`{"assumptions": {"required": true, "type": "string"}, "evidenceRefs": {"required": true, "type": "string"}, "facts": {"required": true, "type": "string"}, "judgmentBasis": {"required": true, "type": "string"}, "scope": {"required": true, "type": "string"}}`
+- 有效示例：`{"assumptions": "example-assumptions", "evidenceRefs": "example-evidenceRefs", "facts": "example-facts", "judgmentBasis": "example-judgmentBasis", "scope": "example-scope"}`
+- 无效示例：`{"assumptions": "example-assumptions", "evidenceRefs": "example-evidenceRefs", "judgmentBasis": "example-judgmentBasis", "scope": "example-scope"}`
+- 拒绝理由：缺少必填字段 facts
+
+### `HISTORY-HANDLE` — 历史句柄
+- 所有权：观测模块拥有评估、发现或历史更新记录。
+- 错误行为：返回具名错误或保守未知；不得输出 IUT FAIL。
+- 字段定义：`{"H": {"required": true, "type": "array"}, "compatibleStateByHypothesis": {"required": true, "type": "object"}, "statusByHypothesis": {"required": false, "type": "object"}, "version": {"minimum": 0, "required": true, "type": "integer"}}`
+- 有效示例：`{"H": ["h0"], "compatibleStateByHypothesis": {"h0": "frontier0"}, "version": 0}`
+- 无效示例：`{"H": ["h0"], "compatibleStateByHypothesis": {}, "version": -1}`
+- 拒绝理由：version 必须是非负整数
 
 ## 工具需求
 
