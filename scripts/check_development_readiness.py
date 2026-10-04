@@ -124,28 +124,41 @@ def _json_schema(definition: dict) -> dict:
     return schema
 
 
-def _definition_for_path(record: dict, parts: list[object]) -> dict:
+def _definitions_for_path(record: dict, parts: list[object]) -> list[dict]:
     if not parts or not isinstance(parts[0], str):
-        return {}
-    definition = record["fieldDefinitions"].get(parts[0], {})
+        return []
+    definitions = [record["fieldDefinitions"].get(parts[0], {})]
     for part in parts[1:]:
-        if definition.get("type") == "array" and isinstance(part, int):
-            definition = definition.get("items", {})
-        elif definition.get("type") == "object" and part in definition.get("properties", {}):
-            definition = definition["properties"][part]
-        elif definition.get("type") == "object" and isinstance(definition.get("additionalProperties"), dict):
-            definition = definition["additionalProperties"]
-        else:
-            return {}
-    return definition
+        advanced: list[dict] = []
+        for definition in definitions:
+            candidates = definition.get("oneOf", [definition])
+            for candidate in candidates:
+                if candidate.get("type") == "array" and isinstance(part, int):
+                    advanced.append(candidate.get("items", {}))
+                elif candidate.get("type") == "object" and isinstance(part, str) and part in candidate.get("properties", {}):
+                    advanced.append(candidate["properties"][part])
+                elif candidate.get("type") == "object" and isinstance(part, str) and isinstance(candidate.get("additionalProperties"), dict):
+                    advanced.append(candidate["additionalProperties"])
+        definitions = [definition for definition in advanced if definition]
+        if not definitions:
+            break
+    return definitions
+
+
+def _definition_for_path(record: dict, parts: list[object]) -> dict:
+    definitions = _definitions_for_path(record, parts)
+    return definitions[0] if len(definitions) == 1 else {}
 
 
 def _required_instance_errors(record: dict, definition: dict, value: object, parts: list[object]) -> list[tuple[str, tuple[object, ...], str]]:
     results: list[tuple[str, tuple[object, ...], str]] = []
     candidates = definition.get("oneOf", [])
     if candidates:
-        matching = [item for item in candidates if item.get("type") == ("null" if value is None else "object" if isinstance(value, dict) else "array" if isinstance(value, list) else "string" if isinstance(value, str) else "boolean" if isinstance(value, bool) else "integer" if isinstance(value, int) else "number" if isinstance(value, float) else None)]
-        for item in matching[:1]:
+        instance_type = "null" if value is None else "object" if isinstance(value, dict) else "array" if isinstance(value, list) else "string" if isinstance(value, str) else "boolean" if isinstance(value, bool) else "integer" if isinstance(value, int) else "number" if isinstance(value, float) else None
+        type_compatible = [item for item in candidates if item.get("type") == instance_type]
+        valid = [item for item in type_compatible if Draft202012Validator(_json_schema(item)).is_valid(value)]
+        selected = valid if len(valid) == 1 else type_compatible if not valid and len(type_compatible) == 1 else []
+        for item in selected:
             results.extend(_required_instance_errors(record, item, value, parts))
         return results
     if definition.get("type") == "object" and isinstance(value, dict):
@@ -358,8 +371,8 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{record['id']} invalid example violates no field constraint")
         expected_error = record["invalidExpected"]
         expected_parts: list[object] = expected_error["path"]
-        expected_definition = _definition_for_path(record, expected_parts)
-        if expected_definition.get("constraintId") != expected_error["constraintId"]:
+        expected_definitions = _definitions_for_path(record, expected_parts)
+        if expected_error["constraintId"] not in {definition.get("constraintId") for definition in expected_definitions}:
             errors.append(f"{record['id']} invalidExpected does not resolve to its declared constraint")
         if not any(code == expected_error["constraintId"] and list(path) == expected_error["path"] for code, path, _ in invalid_errors):
             errors.append(f"{record['id']} invalid example does not match invalidExpected")
