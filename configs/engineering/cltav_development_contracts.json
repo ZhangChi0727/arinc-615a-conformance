@@ -7260,7 +7260,7 @@
       "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
       "invalidReasonZh": "resolution 必须包含正数 ticksPerSecond",
       "invalidExpected": {
-        "constraintId": "RC-PACKET-RESOLUTION",
+        "constraintId": "RC-PACKET-TICKS-PER-SECOND",
         "path": "resolution.ticksPerSecond"
       }
     },
@@ -7314,7 +7314,7 @@
           "items": {
             "type": "string",
             "constraintId": "RC-PACKET-REF-ID",
-            "pattern": "^cap-syn-001:[0-9]+:[0-9]+:[1-9][0-9]*$"
+            "pattern": "^cap-[a-z0-9][a-z0-9-]*:[0-9]+:[0-9]+:[1-9][0-9]*$"
           }
         },
         "coverage": {
@@ -7407,7 +7407,7 @@
         "optionState": {
           "mode": "DEFAULTED",
           "values": {
-            "blksize": "512"
+            "blksize": 512
           }
         },
         "blockMap": {
@@ -7515,11 +7515,12 @@
             "values": {
               "type": "object",
               "constraintId": "RC-OPTION-VALUES",
-              "additionalProperties": {
-                "type": "string",
-                "constraintId": "RC-OPTION-VALUE",
-                "minLength": 1
-              }
+              "properties": {
+                "blksize": {"type": "integer", "constraintId": "RC-OPTION-BLKSIZE", "minimum": 8, "maximum": 65464},
+                "timeout": {"type": "integer", "constraintId": "RC-OPTION-TIMEOUT", "minimum": 1, "maximum": 255},
+                "tsize": {"type": "integer", "constraintId": "RC-OPTION-TSIZE", "minimum": 0}
+              },
+              "additionalProperties": false
             }
           },
           "requiredProperties": [
@@ -7535,7 +7536,7 @@
           "additionalProperties": {
             "type": "string",
             "constraintId": "RC-PACKET-REF-ID",
-            "pattern": "^cap-syn-001:[0-9]+:[0-9]+:[1-9][0-9]*$"
+            "pattern": "^cap-[a-z0-9][a-z0-9-]*:[0-9]+:[0-9]+:[1-9][0-9]*$"
           }
         },
         "completionEvidence": {
@@ -7576,7 +7577,7 @@
       "uncertainty": "Application facts are not inferred from wire evidence.",
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
-        "eventLayer": "TFTP",
+        "eventLayer": "WIRE",
         "role": "CLIENT",
         "payload": {
           "type": "RRQ",
@@ -7589,7 +7590,7 @@
         "parseBoundary": "COMPLETE"
       },
       "invalidExample": {
-        "eventLayer": "TFTP",
+        "eventLayer": "WIRE",
         "role": "CLIENT",
         "payload": {
           "type": "RRQ",
@@ -7606,8 +7607,10 @@
           "constraintId": "RC-EVENT-LAYER",
           "required": true,
           "enum": [
-            "TFTP",
-            "ARINC615A"
+            "WIRE",
+            "PARSE-RESULT",
+            "APPLICATION",
+            "ENVIRONMENT"
           ]
         },
         "role": {
@@ -7657,7 +7660,7 @@
           "items": {
             "type": "string",
             "constraintId": "RC-PACKET-REF-ID",
-            "pattern": "^cap-syn-001:[0-9]+:[0-9]+:[1-9][0-9]*$"
+            "pattern": "^cap-[a-z0-9][a-z0-9-]*:[0-9]+:[0-9]+:[1-9][0-9]*$"
           }
         },
         "parseBoundary": {
@@ -7697,7 +7700,7 @@
       "errorBehavior": "Return a named error or conservative unknown; do not emit IUT FAIL.",
       "example": {
         "requestInstance": "event-rrq-001",
-        "policy": "REQUEST-CORRELATION",
+        "policy": "UNIQUE-KEY",
         "status": "UNIQUE",
         "evidenceRefs": [
           "pkt-cap-syn-001:1"
@@ -7705,7 +7708,7 @@
       },
       "invalidExample": {
         "requestInstance": "event-rrq-001",
-        "policy": "REQUEST-CORRELATION",
+        "policy": "UNIQUE-KEY",
         "status": "CERTAIN",
         "evidenceRefs": []
       },
@@ -7722,8 +7725,9 @@
           "constraintId": "RC-OWNERSHIP-POLICY",
           "required": true,
           "enum": [
-            "ENDPOINT-TID",
-            "REQUEST-CORRELATION"
+            "UNIQUE-KEY",
+            "FIFO",
+            "MOST-RECENT"
           ]
         },
         "status": {
@@ -8037,7 +8041,7 @@
       "errorBehaviorZh": "返回具名错误或保守未知；不得输出 IUT FAIL。",
       "invalidReasonZh": "已声明的时钟界必须为正数；UNKNOWN 不得以零界表示",
       "invalidExpected": {
-        "constraintId": "RC-INTAKE-CLOCK",
+        "constraintId": "RC-INTAKE-CLOCK-BOUND",
         "path": "clockAccuracy.boundNs"
       }
     },
@@ -8269,7 +8273,7 @@
       "errorBehaviorZh": "拒绝超出作用域的假设和未知状态值；返回具名错误且不得转换为 IUT FAIL。",
       "invalidReasonZh": "状态必须复用所绑定 HistoryHandle 的 KNOWN 或 CONSERVATIVE-UNKNOWN",
       "invalidExpected": {
-        "constraintId": "RC-HISTORY-STATUS",
+        "constraintId": "RC-HISTORY-STATUS-VALUE",
         "path": "statusByHypothesis.h0"
       }
     }
