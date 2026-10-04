@@ -425,6 +425,85 @@ def test_oneof_branch_selection_and_leaf_diagnostics_are_order_independent(monke
             assert any("invalidExpected" in item for item in errors(wrong))
 
 
+def test_nested_oneof_uses_complete_schema_semantics_at_every_depth(monkeypatch, tmp_path, capsys):
+    def branch(name):
+        return {
+            "type": "object",
+            "constraintId": f"RC-META-{name.upper()}",
+            "properties": {name: {"type": "integer", "constraintId": f"RC-META-{name.upper()}-VALUE"}},
+            "requiredProperties": [name],
+            "additionalProperties": False,
+        }
+
+    a, b = branch("a"), branch("b")
+    null = {"type": "null", "constraintId": "RC-META-NULL"}
+    for outer_order in ("direct-first", "nested-first"):
+        for inner in ([b, null], [null, b]):
+            nested = {"constraintId": "RC-META-NESTED", "oneOf": copy.deepcopy(inner)}
+            outer = [a, nested] if outer_order == "direct-first" else [nested, a]
+            for value in ({"a": 1}, {"b": 1}, None):
+                candidate = copy.deepcopy(PACKAGE)
+                capture = candidate["recordContracts"][0]
+                capture["fields"].append("meta")
+                capture["fieldDefinitions"]["meta"] = {"constraintId": "RC-META", "required": False, "oneOf": copy.deepcopy(outer)}
+                capture["example"]["meta"] = value
+                assert MODULE.validate_record_instance(capture, capture["example"]) == []
+                assert errors(candidate) == []
+                code, captured = run_main(monkeypatch, tmp_path, capsys, candidate)
+                assert code == 0
+                assert "readiness=READINESS-BLOCKED" in captured.out
+
+    wrapped = copy.deepcopy(PACKAGE)
+    capture = wrapped["recordContracts"][0]
+    capture["fields"].append("meta")
+    capture["fieldDefinitions"]["meta"] = {
+        "constraintId": "RC-META",
+        "required": False,
+        "oneOf": [a, {"constraintId": "RC-META-WRAPPER", "oneOf": [{"constraintId": "RC-META-NESTED", "oneOf": [b, null]}]}],
+    }
+    capture["example"]["meta"] = {"b": 1}
+    assert errors(wrapped) == []
+
+    zero = copy.deepcopy(wrapped)
+    zero["recordContracts"][0]["example"]["meta"] = {"c": 1}
+    assert errors(zero)
+    code, captured = run_main(monkeypatch, tmp_path, capsys, zero)
+    assert code == 1
+    assert "example is invalid" in captured.err
+    duplicate = copy.deepcopy(wrapped)
+    duplicate["recordContracts"][0]["fieldDefinitions"]["meta"]["oneOf"] = [a, copy.deepcopy(a)]
+    duplicate["recordContracts"][0]["example"]["meta"] = {"a": 1}
+    assert errors(duplicate)
+    code, captured = run_main(monkeypatch, tmp_path, capsys, duplicate)
+    assert code == 1
+    assert "example is invalid" in captured.err
+
+    nested_ambiguous_but_outer_unique = copy.deepcopy(wrapped)
+    nested_ambiguous_but_outer_unique["recordContracts"][0]["fieldDefinitions"]["meta"]["oneOf"] = [
+        a,
+        {"constraintId": "RC-META-NESTED", "oneOf": [copy.deepcopy(a), copy.deepcopy(a)]},
+    ]
+    nested_ambiguous_but_outer_unique["recordContracts"][0]["example"]["meta"] = {"a": 1}
+    assert errors(nested_ambiguous_but_outer_unique) == []
+
+    leaf = copy.deepcopy(PACKAGE)
+    capture = leaf["recordContracts"][0]
+    capture["fields"].append("meta")
+    capture["fieldDefinitions"]["meta"] = {
+        "constraintId": "RC-META",
+        "required": False,
+        "oneOf": [null, {"constraintId": "RC-META-NESTED", "oneOf": [b, {"type": "string", "constraintId": "RC-META-STRING", "minLength": 1}]}],
+    }
+    capture["example"]["meta"] = None
+    capture["invalidExample"] = copy.deepcopy(capture["example"])
+    capture["invalidExample"]["meta"] = {}
+    capture["invalidExpected"] = {"constraintId": "RC-META-B-VALUE", "path": ["meta", "b"]}
+    assert errors(leaf) == []
+    wrong_leaf = copy.deepcopy(leaf)
+    wrong_leaf["recordContracts"][0]["invalidExpected"]["constraintId"] = "RC-META-A-VALUE"
+    assert any("invalidExpected" in item for item in errors(wrong_leaf))
+
+
 def test_record_vocabularies_match_consumers_and_capture_references_are_generic():
     protocol = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "PROTOCOL-EVENT"))
     for layer in ("WIRE", "PARSE-RESULT", "APPLICATION", "ENVIRONMENT"):
@@ -693,11 +772,21 @@ def test_review_generator_refuses_invalid_authority_and_detects_stale_view(monke
     assert SYNC.main() == 1
     assert view.read_text(encoding="utf-8") == "preserve this failed-publication marker\n"
 
-    branches = [
-        {"type": "object", "constraintId": "RC-META-A", "properties": {"a": {"type": "integer", "constraintId": "RC-META-A-VALUE"}}, "requiredProperties": ["a"], "additionalProperties": False},
-        {"type": "object", "constraintId": "RC-META-B", "properties": {"b": {"type": "integer", "constraintId": "RC-META-B-VALUE"}}, "requiredProperties": ["b"], "additionalProperties": False},
-    ]
-    for ordered in (branches, list(reversed(branches))):
+    a = {"type": "object", "constraintId": "RC-META-A", "properties": {"a": {"type": "integer", "constraintId": "RC-META-A-VALUE"}}, "requiredProperties": ["a"], "additionalProperties": False}
+    b = {"type": "object", "constraintId": "RC-META-B", "properties": {"b": {"type": "integer", "constraintId": "RC-META-B-VALUE"}}, "requiredProperties": ["b"], "additionalProperties": False}
+    nested = {"constraintId": "RC-META-NESTED", "oneOf": [b, {"type": "null", "constraintId": "RC-META-NULL"}]}
+    invalid = copy.deepcopy(PACKAGE)
+    capture = invalid["recordContracts"][0]
+    capture["fields"].append("meta")
+    capture["fieldDefinitions"]["meta"] = {"constraintId": "RC-META", "required": False, "oneOf": [a, nested]}
+    capture["example"]["meta"] = {"c": 1}
+    package.write_text(json.dumps(invalid), encoding="utf-8")
+    for mode in ("--write", "--check"):
+        monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", mode])
+        assert SYNC.main() == 1
+        assert view.read_text(encoding="utf-8") == "preserve this failed-publication marker\n"
+
+    for ordered in ([a, nested], [nested, a]):
         legal = copy.deepcopy(PACKAGE)
         capture = legal["recordContracts"][0]
         capture["fields"].append("meta")
@@ -710,7 +799,7 @@ def test_review_generator_refuses_invalid_authority_and_detects_stale_view(monke
         assert SYNC.main() == 0
 
     changed = copy.deepcopy(legal)
-    changed["recordContracts"][0]["fieldDefinitions"]["meta"]["oneOf"][0]["properties"]["b"]["minimum"] = 0
+    changed["recordContracts"][0]["fieldDefinitions"]["meta"]["oneOf"][0]["oneOf"][0]["properties"]["b"]["minimum"] = 0
     package.write_text(json.dumps(changed), encoding="utf-8")
     monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--check"])
     assert SYNC.main() == 1
