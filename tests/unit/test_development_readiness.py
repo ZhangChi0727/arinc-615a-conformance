@@ -110,6 +110,16 @@ def test_main_returns_exit_codes_for_candidate_and_bad_binding(monkeypatch, tmp_
     code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
     assert code == 1
     assert "unsupported type" in captured.err
+    bad = copy.deepcopy(PACKAGE)
+    bad["recordContracts"][0]["fieldDefinitions"]["relativePath"]["minLength"] = -1
+    code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
+    assert code == 1
+    assert "non-negative integer" in captured.err
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["recordContracts"] if item["id"] == "HISTORY-HANDLE")["example"]["H"] = [{}]
+    code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
+    assert code == 1
+    assert "example is invalid" in captured.err
 
 
 def test_bound_inputs_are_consumed_once_from_git_blobs_not_worktree(monkeypatch):
@@ -267,15 +277,24 @@ def test_all_record_examples_are_typed_and_invalid_diagnostics_are_bound():
 
 def test_record_definition_language_is_closed_and_executable():
     mutations = [
-        {"type": "banana", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True},
-        {},
-        {"type": "integer", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": "yes"},
-        {"type": "integer", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "mysteryLimit": 4},
+        ({"type": "banana", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True}, "unsupported type"),
+        ({}, "nonempty object"),
+        ({"type": "integer", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": "yes"}, "required must be boolean"),
+        ({"type": "integer", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "mysteryLimit": 4}, "unsupported keywords"),
+        ({"type": "string", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "minLength": -1}, "non-negative integer"),
+        ({"type": "integer", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "minimum": "0"}, "must be a number"),
+        ({"type": ["integer"], "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True}, "unsupported type"),
+        ({"type": "banana", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "oneOf": [{"type": "integer", "constraintId": "RC-INNER"}]}, "cannot combine"),
+        ({"type": "string", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "pattern": "["}, "valid regular expression"),
+        ({"type": "array", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "minItems": -1, "maxItems": "x", "uniqueItems": "yes", "items": True}, "items must be"),
+        ({"type": "object", "constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "properties": [], "requiredProperties": "x", "additionalProperties": "yes"}, "properties must be"),
+        ({"type": "string", "constraintId": "bad", "required": True, "enum": []}, "constraintId"),
+        ({"constraintId": "RC-CAPTURE-BYTE-SIZE", "required": True, "oneOf": []}, "oneOf must be"),
     ]
-    for definition in mutations:
+    for definition, diagnostic in mutations:
         candidate = copy.deepcopy(PACKAGE)
         candidate["recordContracts"][0]["fieldDefinitions"]["byteSize"] = definition
-        assert errors(candidate), definition
+        assert any(diagnostic in item for item in errors(candidate)), definition
 
     candidate = copy.deepcopy(PACKAGE)
     capture = candidate["recordContracts"][0]
@@ -283,6 +302,68 @@ def test_record_definition_language_is_closed_and_executable():
     capture["fieldDefinitions"]["label"] = {"type": "string", "constraintId": "RC-CAPTURE-LABEL", "required": False, "minLength": 1}
     capture["example"]["label"] = "synthetic"
     assert errors(candidate) == []
+
+    candidate = copy.deepcopy(PACKAGE)
+    capture = candidate["recordContracts"][0]
+    capture["fields"].append("meta")
+    capture["fieldDefinitions"]["meta"] = {"type": "object", "constraintId": "RC-CAPTURE-META", "required": False, "properties": {"byteSize": {"type": "integer", "constraintId": "RC-CAPTURE-META-BYTE-SIZE", "required": True}}, "additionalProperties": False}
+    assert any("nested required is unsupported" in item for item in errors(candidate))
+
+
+def test_nested_diagnostics_resolve_full_paths_and_declared_constraints():
+    packet = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "PACKET-REF"))
+    packet["example"]["resolution"] = {}
+    assert ("RC-PACKET-TICKS-PER-SECOND", "resolution.ticksPerSecond") == MODULE.validate_record_instance(packet, packet["example"])[0][:2]
+
+    candidate = copy.deepcopy(PACKAGE)
+    capture = candidate["recordContracts"][0]
+    capture["fields"].append("meta")
+    capture["fieldDefinitions"]["meta"] = {"type": "object", "constraintId": "RC-CAPTURE-META", "required": True, "properties": {"byteSize": {"type": "integer", "constraintId": "RC-CAPTURE-META-BYTE-SIZE"}}, "requiredProperties": ["byteSize"], "additionalProperties": False}
+    capture["example"]["meta"] = {"byteSize": 1}
+    capture["invalidExample"] = copy.deepcopy(capture["example"])
+    capture["invalidExample"]["meta"] = {}
+    capture["invalidExpected"] = {"constraintId": "RC-CAPTURE-META-BYTE-SIZE", "path": "meta.byteSize"}
+    assert errors(candidate) == []
+    capture["invalidExpected"] = {"constraintId": "RC-CAPTURE-BYTE-SIZE", "path": "byteSize"}
+    assert any("invalidExpected" in item for item in errors(candidate))
+
+    protocol = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "PROTOCOL-EVENT"))
+    protocol["example"]["payload"]["extra"] = True
+    assert ("RC-UNKNOWN-FIELD", "payload.extra") == MODULE.validate_record_instance(protocol, protocol["example"])[0][:2]
+    datagram = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "DATAGRAM-RECORD"))
+    datagram["example"]["fragmentRefs"] = ["bad-ref"]
+    assert ("RC-PACKET-REF-ID", "fragmentRefs.0") == MODULE.validate_record_instance(datagram, datagram["example"])[0][:2]
+
+
+def test_record_vocabularies_match_consumers_and_capture_references_are_generic():
+    protocol = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "PROTOCOL-EVENT"))
+    for layer in ("WIRE", "PARSE-RESULT", "APPLICATION", "ENVIRONMENT"):
+        protocol["example"]["eventLayer"] = layer
+        assert MODULE.validate_record_instance(protocol, protocol["example"]) == []
+    protocol["example"]["eventLayer"] = "TFTP"
+    assert MODULE.validate_record_instance(protocol, protocol["example"])
+
+    ownership = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "OWNERSHIP-RESULT"))
+    for policy in ("UNIQUE-KEY", "FIFO", "MOST-RECENT"):
+        ownership["example"]["policy"] = policy
+        assert MODULE.validate_record_instance(ownership, ownership["example"]) == []
+    ownership["example"]["policy"] = "REQUEST-CORRELATION"
+    assert MODULE.validate_record_instance(ownership, ownership["example"])
+
+    packet = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "PACKET-REF"))
+    packet["example"].update(captureId="cap-syn-002", sectionId=0, interfaceId=1, packetNumber=7)
+    assert MODULE.validate_record_instance(packet, packet["example"]) == []
+
+    for record_id, field, value in (
+        ("DATAGRAM-RECORD", "fragmentRefs", ["cap-syn-002:0:1:7"]),
+        ("TRANSFER-RECORD", "blockMap", {"7": "cap-syn-002:0:1:7"}),
+        ("PROTOCOL-EVENT", "rawRefs", ["cap-syn-002:0:1:7"]),
+    ):
+        record = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == record_id))
+        record["example"][field] = value
+        assert MODULE.validate_record_instance(record, record["example"]) == []
+        record["example"][field] = ["bad-ref"] if isinstance(value, list) else {"7": "bad-ref"}
+        assert MODULE.validate_record_instance(record, record["example"])
 
 
 def test_numeric_hash_enum_collection_and_interval_boundaries_are_enforced():
@@ -305,6 +386,13 @@ def test_numeric_hash_enum_collection_and_interval_boundaries_are_enforced():
     observation = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "OBSERVATION-ASSESSMENT"))
     observation["example"].update(measurementInterval=None, domain="UNKNOWN", verdict="ERROR", reason="invalid timestamp chain")
     assert MODULE.validate_record_instance(observation, observation["example"]) == []
+    for verdict in ("PASS", "FAIL"):
+        observation["example"]["verdict"] = verdict
+        assert MODULE.validate_record_instance(observation, observation["example"])
+    observation["example"].update(measurementInterval={"lower": 100, "upper": 100, "lowerClosed": True, "upperClosed": True, "unit": "us"}, verdict="PASS")
+    assert MODULE.validate_record_instance(observation, observation["example"]) == []
+    observation["example"]["measurementInterval"]["lowerClosed"] = False
+    assert MODULE.validate_record_instance(observation, observation["example"])
     packet = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "PACKET-REF"))
     packet["example"].update(caplen=97, origlen=96)
     assert any(code == "RC-PACKET-CAPLEN" for code, _, _ in MODULE.validate_record_instance(packet, packet["example"]))
@@ -313,6 +401,26 @@ def test_numeric_hash_enum_collection_and_interval_boundaries_are_enforced():
     intake = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "INTAKE-METADATA"))
     intake["example"]["clockAccuracy"] = {"state": "UNKNOWN", "boundNs": 0, "source": "not supplied"}
     assert MODULE.validate_record_instance(intake, intake["example"])
+
+    datagram = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "DATAGRAM-RECORD"))
+    datagram["example"]["coverage"] = [{"start": 0, "endExclusive": 1}]
+    assert MODULE.validate_record_instance(datagram, datagram["example"]) == []
+    datagram["example"]["coverage"] = [{"start": 100, "endExclusive": 1}]
+    assert MODULE.validate_record_instance(datagram, datagram["example"])
+    datagram["example"]["coverage"] = []
+    assert MODULE.validate_record_instance(datagram, datagram["example"])
+
+    transfer = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "TRANSFER-RECORD"))
+    for mode in ("ACCEPTED", "DEFAULTED"):
+        transfer["example"]["optionState"] = {"mode": mode, "values": {"blksize": 512}}
+        assert MODULE.validate_record_instance(transfer, transfer["example"]) == []
+    transfer["example"]["optionState"] = {"mode": "UNKNOWN", "values": {}}
+    assert MODULE.validate_record_instance(transfer, transfer["example"]) == []
+    transfer["example"]["optionState"] = {"mode": "DEFAULTED", "values": {"blksize": "banana"}}
+    assert MODULE.validate_record_instance(transfer, transfer["example"])
+    transfer["example"]["optionState"] = {"mode": "UNKNOWN", "values": {}}
+    transfer["example"]["blockMap"] = {"banana": "cap-syn-001:0:0:1"}
+    assert MODULE.validate_record_instance(transfer, transfer["example"])
 
 
 def test_history_handle_reuses_bound_status_vocabulary_and_scope():
@@ -336,6 +444,9 @@ def test_history_handle_reuses_bound_status_vocabulary_and_scope():
     target = next(item for item in bad["recordContracts"] if item["id"] == "HISTORY-HANDLE")
     target["fieldDefinitions"]["statusByHypothesis"]["additionalProperties"]["enum"] = ["KNOWN", "BANANA"]
     assert any("statuses differ" in item for item in errors(bad))
+    malformed = copy.deepcopy(history["example"])
+    malformed["H"] = [{}]
+    assert MODULE.validate_record_instance(history, malformed)
 
 
 def test_review_view_renders_every_disposition_and_bilingual_authority_fields():
@@ -459,11 +570,24 @@ def test_review_generator_refuses_invalid_authority_and_detects_stale_view(monke
     assert SYNC.main() == 1
     assert view.read_text(encoding="utf-8") == "preserve this failed-publication marker\n"
 
-    package.write_text(json.dumps(PACKAGE), encoding="utf-8")
+    invalid = copy.deepcopy(PACKAGE)
+    invalid["recordContracts"][0]["fieldDefinitions"]["relativePath"]["minLength"] = -1
+    package.write_text(json.dumps(invalid), encoding="utf-8")
+    assert SYNC.main() == 1
+    assert view.read_text(encoding="utf-8") == "preserve this failed-publication marker\n"
+
+    legal = copy.deepcopy(PACKAGE)
+    capture = legal["recordContracts"][0]
+    capture["fields"].append("label")
+    capture["fieldDefinitions"]["label"] = {"type": "string", "constraintId": "RC-CAPTURE-LABEL", "required": False, "minLength": 1}
+    capture["example"]["label"] = "synthetic"
+    package.write_text(json.dumps(legal), encoding="utf-8")
     monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--write"])
     assert SYNC.main() == 0
-    changed = copy.deepcopy(PACKAGE)
-    changed["implementationSlices"][0]["scopeZh"] = "已变更的中文范围"
+    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--check"])
+    assert SYNC.main() == 0
+    changed = copy.deepcopy(legal)
+    changed["recordContracts"][0]["fieldDefinitions"]["label"]["minLength"] = 2
     package.write_text(json.dumps(changed), encoding="utf-8")
     monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--check"])
     assert SYNC.main() == 1
