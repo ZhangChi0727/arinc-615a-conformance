@@ -59,10 +59,12 @@ def render(data: dict) -> str:
     for refinement in data["algorithmRefinements"]:
         lines += [f"### `{refinement['id']}` — {plain_text(refinement['title'])}", f"- Boundary: {plain_text(refinement['boundary'])}", f"- Representation: {plain_text(refinement['representation'])}", f"- Conservative behavior: {plain_text(refinement['conservatism'])}", f"- Complexity boundary: {plain_text(refinement['complexity'])}", "- Interface bindings:"]
         lines += [f"  - `{binding['interfaceId']}` — inputs {', '.join(f'`{value}`' for value in binding['inputTypes'])}; outputs {', '.join(f'`{value}`' for value in binding['outputTypes'])}; read: {plain_text(binding['readOwnership'])}; write: {plain_text(binding['writeOwnership'])}; failures: {', '.join(f'`{value}`' for value in binding['failureTags'])}; parameters: {', '.join(f'`{value}`' for value in binding['runtimeParameterIds'])}; time: {plain_text(binding['timeContract'])}; acceptance: {', '.join(f'`{value}`' for value in binding['acceptanceCaseIds'])}; location: `{binding['implementationLocation']}`" for binding in refinement["interfaceBindings"]]
-    lines += ["", "## Runtime parameter contracts", "", "| ID | Unit/domain | Owner scope | Exhaustion behavior |", "|---|---|---|---|"]
-    lines += [f"| `{item['id']}` | {plain_text(item['unit'])} / `{item['domain']}` | {plain_text(item['ownerScope'])} | {plain_text(item['exhaustionBehavior'])} |" for item in data["runtimeParameterContracts"]]
-    lines += ["", "## Acceptance cases", "", "| ID | Inputs | Expected / prohibited | Runtime status |", "|---|---|---|---|"]
-    lines += [f"| `{item['id']}` | {', '.join(f'`{value}`' for value in item['inputRecordIds'])} | {plain_text(item['expectedContractOutput'])}<br>Prohibited: {plain_text(item['prohibitedOutput'])} | `{item['runtimeExecutionStatus']}` |" for item in data["acceptanceCases"]]
+    lines += ["", "## Runtime parameter contracts", ""]
+    for item in data["runtimeParameterContracts"]:
+        lines += [f"### `{item['id']}` — {plain_text(item['title'])}", f"- Unit/domain: {plain_text(item['unit'])} / `{item['domain']}`", f"- Configuration: {plain_text(item['configurationRequirement'])}", f"- Owner scope: {plain_text(item['ownerScope'])}", f"- Exhaustion: {plain_text(item['exhaustionBehavior'])}", f"- Acceptance: {', '.join(f'`{value}`' for value in item['acceptanceCaseIds'])}"]
+    lines += ["", "## Acceptance cases", ""]
+    for item in data["acceptanceCases"]:
+        lines += [f"### `{item['id']}` — {plain_text(item['title'])}", f"- Inputs: {', '.join(f'`{value}`' for value in item['inputRecordIds'])}", f"- Tools: {', '.join(f'`{value}`' for value in item['toolRequirementIds'])}; modules: {', '.join(f'`{value}`' for value in item['moduleIds'])}; interfaces: {', '.join(f'`{value}`' for value in item['algorithmInterfaceIds'])}", f"- Expected: {plain_text(item['expectedContractOutput'])}", f"- Prohibited: {plain_text(item['prohibitedOutput'])}", f"- Basis: {plain_text(item['basis'])}; witness: `{item['witnessLevel']}`; runtime: `{item['runtimeExecutionStatus']}`"]
     lines += ["", "## Slices and dependencies", ""]
     lines += [f"- `{item['id']}` — {plain_text(item['scope'])} — {len(item['requirementIds'])} requirement uses" for item in data["implementationSlices"]]
     lines += [f"- dependency `{item['id']}`: `{item['status']}`" for item in data["implementationDependencies"]]
@@ -105,10 +107,12 @@ def render(data: dict) -> str:
     for refinement in data["algorithmRefinements"]:
         lines += [f"### `{refinement['id']}` — {plain_text(refinement['titleZh'])}", f"- 边界：{plain_text(refinement['boundaryZh'])}", f"- 表示：{plain_text(refinement['representationZh'])}", f"- 保守行为：{plain_text(refinement['conservatismZh'])}", f"- 复杂度边界：{plain_text(refinement['complexityZh'])}", "- 接口绑定："]
         lines += [f"  - `{binding['interfaceId']}` — 输入：{', '.join(f'`{value}`' for value in binding['inputTypes'])}；输出：{', '.join(f'`{value}`' for value in binding['outputTypes'])}；读取：{plain_text(binding['readOwnership'])}；写入：{plain_text(binding['writeOwnership'])}；失败：{', '.join(f'`{value}`' for value in binding['failureTags'])}；参数：{', '.join(f'`{value}`' for value in binding['runtimeParameterIds'])}；时序：{plain_text(binding['timeContractZh'])}；验收：{', '.join(f'`{value}`' for value in binding['acceptanceCaseIds'])}；位置：`{binding['implementationLocation']}`" for binding in refinement["interfaceBindings"]]
-    lines += ["", "## 运行参数合同", "", "| ID | 单位／域 | 责任范围 | 耗尽行为 |", "|---|---|---|---|"]
-    lines += [f"| `{item['id']}` | {plain_text(item['unit'])} / `{item['domain']}` | {plain_text(item['ownerScope'])} | {plain_text(item['exhaustionBehaviorZh'])} |" for item in data["runtimeParameterContracts"]]
-    lines += ["", "## 验收案例", "", "| ID | 输入 | 预期／禁止 | 运行状态 |", "|---|---|---|---|"]
-    lines += [f"| `{item['id']}` | {', '.join(f'`{value}`' for value in item['inputRecordIds'])} | {plain_text(item['expectedContractOutput'])}<br>禁止：{plain_text(item['prohibitedOutput'])} | `{item['runtimeExecutionStatus']}` |" for item in data["acceptanceCases"]]
+    lines += ["", "## 运行参数合同", ""]
+    for item in data["runtimeParameterContracts"]:
+        lines += [f"### `{item['id']}` — {plain_text(item['titleZh'])}", f"- 单位／域：{plain_text(item['unit'])} / `{item['domain']}`", f"- 配置条件：{plain_text(item['configurationRequirementZh'])}", f"- 责任范围：{plain_text(item['ownerScope'])}", f"- 耗尽行为：{plain_text(item['exhaustionBehaviorZh'])}", f"- 验收：{', '.join(f'`{value}`' for value in item['acceptanceCaseIds'])}"]
+    lines += ["", "## 验收案例", ""]
+    for item in data["acceptanceCases"]:
+        lines += [f"### `{item['id']}` — {plain_text(item['titleZh'])}", f"- 输入：{', '.join(f'`{value}`' for value in item['inputRecordIds'])}", f"- 工具：{', '.join(f'`{value}`' for value in item['toolRequirementIds'])}；模块：{', '.join(f'`{value}`' for value in item['moduleIds'])}；接口：{', '.join(f'`{value}`' for value in item['algorithmInterfaceIds'])}", f"- 预期：{plain_text(item['expectedContractOutput'])}", f"- 禁止：{plain_text(item['prohibitedOutput'])}", f"- 依据：{plain_text(item['basisZh'])}；见证：`{item['witnessLevel']}`；运行：`{item['runtimeExecutionStatus']}`"]
     lines += ["", "## 切片与依赖", ""]
     lines += [f"- `{item['id']}` — {plain_text(item['scopeZh'])} — {len(item['requirementIds'])} 条需求用途" for item in data["implementationSlices"]]
     lines += [f"- 依赖 `{item['id']}`：`{item['status']}`" for item in data["implementationDependencies"]]

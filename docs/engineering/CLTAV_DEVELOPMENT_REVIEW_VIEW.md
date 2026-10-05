@@ -314,7 +314,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Complexity boundary: Work is bounded by the configured hypothesis count, actions, observation classes, path length and frontier states; no polynomial or completeness claim is made.
 - Interface bindings:
   - `IF-PRED-OBS` — inputs `SessionContext`, `HistoryHandle`, `H`, `measurementUncertainty`, `actionLibrary`; outputs `currentlyValidNonemptyClasses`, `PredictionGapError`; read: Reads the versioned HistoryHandle and current session only.; write: Read-only; does not charge or write Γ/η.; failures: `PredictionGapError`, `RESOURCE-UNKNOWN`; parameters: `RP-HYPOTHESIS-COUNT`, `RP-FRONTIER-STATE-COUNT`, `RP-OBSERVATION-CLASS-COUNT`; time: Uses the session U and declared measurement uncertainty without changing either.; acceptance: `AC-SYN-PREDICTION`; location: `future/reference_kernel/prediction.py`
-  - `IF-SELECT-ADMIT` — inputs `A`, `q`, `currentlyValidNonemptyClasses`, `SessionContext`, `HistoryHandle`, `H`; outputs `kind`, `tStar`, `S`, `admitA2A5`; read: Reads select-time inputs and candidate actions.; write: Writes only the immutable final SelectSnapshot before execution.; failures: `PredictionGapError`, `SPEC-ERROR`, `ADMIT-REFUSED`; parameters: `RP-ACTION-COUNT`, `RP-OBSERVATION-CLASS-COUNT`, `RP-RESOURCE-MODE`; time: Uses the same U identity as prediction and later interpretation.; acceptance: `AC-SYN-SELECT`; location: `future/reference_kernel/selection.py`
+  - `IF-SELECT-ADMIT` — inputs `A`, `q`, `currentlyValidNonemptyClasses`, `SessionContext`, `HistoryHandle`, `H`; outputs `kind`, `tStar`, `S`, `admitA2A5`; read: Reads select-time inputs and candidate actions.; write: Read-only; S3-SNAP constructs the immutable final SelectSnapshot after this interface returns.; failures: `PredictionGapError`, `SPEC-ERROR`, `ADMIT-REFUSED`; parameters: `RP-ACTION-COUNT`, `RP-OBSERVATION-CLASS-COUNT`, `RP-RESOURCE-MODE`; time: Uses the same U identity as prediction and later interpretation.; acceptance: `AC-SYN-SELECT`; location: `future/reference_kernel/selection.py`
   - `IF-EXECUTE-RECORD` — inputs `SessionContext`, `admitted tStar`; outputs `record`, `effectClass`, `correlationId`; read: Reads an admitted final snapshot only.; write: Writes one session-log execution record after the single charge.; failures: `CONFIRMED-NOT-SENT`, `UNKNOWN-EFFECT`; parameters: `RP-RESOURCE-MODE`, `RP-RETRY-CAP`; time: Execution cannot replace the select-time snapshot or U.; acceptance: `AC-SYN-TRANSFER`; location: `future/offline_adapter/execution_record.py`
   - `IF-OBS-INTERPRET` — inputs `SessionContext`, `executionRecord`, `clocks`, `epsilon`; outputs `Iz`, `effectClass`, `summaryConfirmed`, `postSummary`, `ownershipResult`, `measurementInterval`; read: Reads owned event evidence and declared clock/error sources.; write: Returns interpretation values only; does not exclude H.; failures: `ERROR`, `INCONCLUSIVE`, `UNKNOWN-EFFECT`; parameters: `RP-OBSERVATION-CLASS-COUNT`; time: Preserves interval topology and U identity; invalid timing evidence returns ERROR.; acceptance: `AC-SYN-OBSERVATION`; location: `future/reference_kernel/interpretation.py`
   - `IF-PREP-RECOVER` — inputs `SessionContext`, `HistoryHandle`, `tStar`, `record`; outputs `targetConfirmed`, `summaryConfirmed`, `prepError`, `ineligible`, `declaredTarget`, `evidence`, `postSummary`; read: Reads session, history and the admitted action record.; write: Returns values only; S8/S9 retain the sole Γ writers.; failures: `UNKNOWN-EFFECT`, `PREP-ERROR`, `CONFIRMED-NOT-SENT`; parameters: `RP-RETRY-CAP`, `RP-RESOURCE-MODE`; time: A confirmation is evaluated before retry accounting and does not rewrite U.; acceptance: `AC-SYN-PREP-RECOVER`; location: `future/reference_kernel/recovery.py`
@@ -324,29 +324,105 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 
 ## Runtime parameter contracts
 
-| ID | Unit/domain | Owner scope | Exhaustion behavior |
-|---|---|---|---|
-| `RP-RESOURCE` | bytes and records / `POSITIVE-INTEGER` | offline capture and reconstruction modules | Return a bounded resource/decode outcome, retain provenance and do not report protocol PASS/FAIL. |
-| `RP-HYPOTHESIS-COUNT` | hypotheses / `POSITIVE-INTEGER` | bounded reference kernel | Return conservative unknown without eliminating a hypothesis. |
-| `RP-PATH-LENGTH` | transitions / `POSITIVE-INTEGER` | bounded reference kernel | Return unknown; exceeding the horizon is not proof of infeasibility. |
-| `RP-FRONTIER-STATE-COUNT` | states per hypothesis / `POSITIVE-INTEGER` | history propagation | Retain prior compatible history with conservative-unknown status. |
-| `RP-ACTION-COUNT` | actions / `POSITIVE-INTEGER` | selection and equivalence | Refuse unenumerated actions; do not silently score them. |
-| `RP-OBSERVATION-CLASS-COUNT` | classes / `POSITIVE-INTEGER` | prediction, selection and interpretation | Return named GAP or conservative unknown, never a zero score. |
-| `RP-RETRY-CAP` | attempts / `NONNEGATIVE-INTEGER` | recovery and stopping | Return Stop-Error; do not convert it to Stop-Budget. |
-| `RP-RESOURCE-MODE` | BUDGET or ROUNDS / `EXCLUSIVE-RESOURCE-MODE` | selection, execution, recovery and stopping | An unadmitted action is not issued or charged; inability to afford recovery differs from ineligibility. |
+### `RP-RESOURCE` — Offline buffering resource bound
+- Unit/domain: bytes and records / `POSITIVE-INTEGER`
+- Configuration: A concrete value is required before buffering; it is not inferred from a capture.
+- Owner scope: offline capture and reconstruction modules
+- Exhaustion: Return a bounded resource/decode outcome, retain provenance and do not report protocol PASS/FAIL.
+- Acceptance: `AC-SYN-TRANSFER`
+### `RP-HYPOTHESIS-COUNT` — Hypothesis count bound
+- Unit/domain: hypotheses / `POSITIVE-INTEGER`
+- Configuration: A finite H0 cardinality is configured for the declared model domain.
+- Owner scope: bounded reference kernel
+- Exhaustion: Return conservative unknown without eliminating a hypothesis.
+- Acceptance: `AC-SYN-PREDICTION`, `AC-SYN-HISTORY`
+### `RP-PATH-LENGTH` — Feasible path length bound
+- Unit/domain: transitions / `POSITIVE-INTEGER`
+- Configuration: The bounded horizon is declared per reference-kernel invocation.
+- Owner scope: bounded reference kernel
+- Exhaustion: Return unknown; exceeding the horizon is not proof of infeasibility.
+- Acceptance: `AC-SYN-HISTORY`, `AC-SYN-EQUIVALENCE`
+### `RP-FRONTIER-STATE-COUNT` — Per-hypothesis frontier bound
+- Unit/domain: states per hypothesis / `POSITIVE-INTEGER`
+- Configuration: A finite frontier capacity is configured before propagation.
+- Owner scope: history propagation
+- Exhaustion: Retain prior compatible history with conservative-unknown status.
+- Acceptance: `AC-SYN-PREDICTION`, `AC-SYN-HISTORY`
+### `RP-ACTION-COUNT` — Action-library bound
+- Unit/domain: actions / `POSITIVE-INTEGER`
+- Configuration: The admitted candidate action library is finite and identified.
+- Owner scope: selection and equivalence
+- Exhaustion: Refuse unenumerated actions; do not silently score them.
+- Acceptance: `AC-SYN-SELECT`, `AC-SYN-EQUIVALENCE`
+### `RP-OBSERVATION-CLASS-COUNT` — Observation-class bound
+- Unit/domain: classes / `POSITIVE-INTEGER`
+- Configuration: A finite current projection is declared before scoring.
+- Owner scope: prediction, selection and interpretation
+- Exhaustion: Return named GAP or conservative unknown, never a zero score.
+- Acceptance: `AC-SYN-PREDICTION`, `AC-SYN-SELECT`, `AC-SYN-OBSERVATION`
+### `RP-RETRY-CAP` — Retry cap
+- Unit/domain: attempts / `POSITIVE-INTEGER`
+- Configuration: The retry cap is an explicit positive integer and is separate from charged resource mode.
+- Owner scope: recovery and stopping
+- Exhaustion: Return Stop-Error; do not convert it to Stop-Budget.
+- Acceptance: `AC-SYN-PREP-RECOVER`, `AC-SYN-RESOURCE-STOP`
+### `RP-RESOURCE-MODE` — Exclusive resource mode
+- Unit/domain: BUDGET or ROUNDS / `EXCLUSIVE-RESOURCE-MODE`
+- Configuration: Exactly one declared mode is selected for a session.
+- Owner scope: selection, execution, recovery and stopping
+- Exhaustion: An unadmitted action is not issued or charged; inability to afford recovery differs from ineligibility.
+- Acceptance: `AC-SYN-SELECT`, `AC-SYN-PREP-RECOVER`, `AC-SYN-RESOURCE-STOP`
 
 ## Acceptance cases
 
-| ID | Inputs | Expected / prohibited | Runtime status |
-|---|---|---|---|
-| `AC-SYN-TRANSFER` | `CAPTURE-IDENTITY`, `PACKET-REF`, `DATAGRAM-RECORD`, `TRANSFER-RECORD`, `OWNERSHIP-RESULT`, `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `FINDING-RECORD` | A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence.<br>Prohibited: No protocol PASS/FAIL, root-cause label or invented accepted option is emitted. | `NOT-EXECUTED` |
-| `AC-SYN-PREDICTION` | `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT` | A finite current projection is tagged OK or GAP before any TEST score is read.<br>Prohibited: An empty projection is not scored as zero and no history is written. | `NOT-EXECUTED` |
-| `AC-SYN-SELECT` | `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT` | Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID.<br>Prohibited: An uninformative TEST is not A2 and Prep/Recover are not TEST-scored. | `NOT-EXECUTED` |
-| `AC-SYN-OBSERVATION` | `OWNERSHIP-RESULT`, `PROTOCOL-EVENT`, `OBSERVATION-ASSESSMENT` | Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR.<br>Prohibited: ERROR or INCONCLUSIVE is not downgraded to FAIL. | `NOT-EXECUTED` |
-| `AC-SYN-PREP-RECOVER` | `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT` | Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary.<br>Prohibited: An unconfirmed successor cannot retain stale known state or become a direct Γ write. | `NOT-EXECUTED` |
-| `AC-SYN-HISTORY` | `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT` | A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses.<br>Prohibited: H prime is never replaced by Iz and resource exhaustion is not incompatibility. | `NOT-EXECUTED` |
-| `AC-SYN-EQUIVALENCE` | `HISTORY-HANDLE` | An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished.<br>Prohibited: No immediately distinguishing TEST is not treated as proof of equivalence. | `NOT-EXECUTED` |
-| `AC-SYN-RESOURCE-STOP` | `HISTORY-HANDLE`, `FINDING-RECORD` | Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error.<br>Prohibited: Retry exhaustion is not Stop-Budget and a normal singleton is not protocol PASS. | `NOT-EXECUTED` |
+### `AC-SYN-TRANSFER` — Scoped transfer reconstruction witness
+- Inputs: `CAPTURE-IDENTITY`, `PACKET-REF`, `DATAGRAM-RECORD`, `TRANSFER-RECORD`, `OWNERSHIP-RESULT`, `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `FINDING-RECORD`
+- Tools: `TR-CAPTURE-INTAKE`, `TR-DATAGRAM-REASSEMBLY`, `TR-TRANSFER-RECONSTRUCTION`, `TR-PROTOCOL-EVENT`, `TR-OWNERSHIP`, `TR-OBSERVATION-ASSESSMENT`, `TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`; modules: `MOD-CAPTURE`, `MOD-REASSEMBLY`, `MOD-TRANSFER`, `MOD-OWNERSHIP`, `MOD-OBSERVATION`; interfaces: `IF-EXECUTE-RECORD`, `IF-OBS-INTERPRET`, `IF-HIST-UPDATE`
+- Expected: A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence.
+- Prohibited: No protocol PASS/FAIL, root-cause label or invented accepted option is emitted.
+- Basis: Synthetic specification witness for the declared offline first slice; it is not historical truth or a parser execution.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
+### `AC-SYN-PREDICTION` — Finite prediction boundary witness
+- Inputs: `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
+- Tools: `TR-HISTORY-COMPATIBILITY`; modules: `MOD-OBSERVATION`; interfaces: `IF-PRED-OBS`
+- Expected: A finite current projection is tagged OK or GAP before any TEST score is read.
+- Prohibited: An empty projection is not scored as zero and no history is written.
+- Basis: Synthetic specification witness for finite current-class propagation.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
+### `AC-SYN-SELECT` — Admitted action selection witness
+- Inputs: `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
+- Tools: `TR-HISTORY-COMPATIBILITY`; modules: `MOD-OBSERVATION`; interfaces: `IF-SELECT-ADMIT`
+- Expected: Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID.
+- Prohibited: An uninformative TEST is not A2 and Prep/Recover are not TEST-scored.
+- Basis: Synthetic specification witness for the declared one-step decision table.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
+### `AC-SYN-OBSERVATION` — Four-valued timing interpretation witness
+- Inputs: `OWNERSHIP-RESULT`, `PROTOCOL-EVENT`, `OBSERVATION-ASSESSMENT`
+- Tools: `TR-OBSERVATION-ASSESSMENT`; modules: `MOD-OBSERVATION`; interfaces: `IF-OBS-INTERPRET`
+- Expected: Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR.
+- Prohibited: ERROR or INCONCLUSIVE is not downgraded to FAIL.
+- Basis: Synthetic specification witness for T5 interval and ownership preconditions.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
+### `AC-SYN-PREP-RECOVER` — Confirmed recovery handoff witness
+- Inputs: `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
+- Tools: `TR-HISTORY-COMPATIBILITY`; modules: `MOD-OBSERVATION`; interfaces: `IF-PREP-RECOVER`
+- Expected: Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary.
+- Prohibited: An unconfirmed successor cannot retain stale known state or become a direct Γ write.
+- Basis: Synthetic specification witness for S8/S9 ownership boundaries.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
+### `AC-SYN-HISTORY` — Whole-history update witness
+- Inputs: `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
+- Tools: `TR-HISTORY-COMPATIBILITY`; modules: `MOD-OBSERVATION`; interfaces: `IF-HIST-UPDATE`
+- Expected: A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses.
+- Prohibited: H prime is never replaced by Iz and resource exhaustion is not incompatibility.
+- Basis: Synthetic specification witness for conservative history propagation.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
+### `AC-SYN-EQUIVALENCE` — Bounded equivalence abstention witness
+- Inputs: `HISTORY-HANDLE`
+- Tools: `TR-HISTORY-COMPATIBILITY`; modules: `MOD-OBSERVATION`; interfaces: `IF-EQUIV`
+- Expected: An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished.
+- Prohibited: No immediately distinguishing TEST is not treated as proof of equivalence.
+- Basis: Synthetic specification witness for bounded equivalence semantics.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
+### `AC-SYN-RESOURCE-STOP` — Resource and stop ordering witness
+- Inputs: `HISTORY-HANDLE`, `FINDING-RECORD`
+- Tools: `TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`; modules: `MOD-OBSERVATION`; interfaces: `IF-RESOURCE-STOP`
+- Expected: Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error.
+- Prohibited: Retry exhaustion is not Stop-Budget and a normal singleton is not protocol PASS.
+- Basis: Synthetic specification witness for resource and stop contracts.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 
 ## Slices and dependencies
 
@@ -1729,7 +1805,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 复杂度边界：工作量受配置的假设数、动作数、观测类数、路径长度和前沿状态数约束；不作多项式或完备性主张。
 - 接口绑定：
   - `IF-PRED-OBS` — 输入：`SessionContext`, `HistoryHandle`, `H`, `measurementUncertainty`, `actionLibrary`；输出：`currentlyValidNonemptyClasses`, `PredictionGapError`；读取：Reads the versioned HistoryHandle and current session only.；写入：Read-only; does not charge or write Γ/η.；失败：`PredictionGapError`, `RESOURCE-UNKNOWN`；参数：`RP-HYPOTHESIS-COUNT`, `RP-FRONTIER-STATE-COUNT`, `RP-OBSERVATION-CLASS-COUNT`；时序：使用会话 U 和声明的测量不确定性，不修改二者。；验收：`AC-SYN-PREDICTION`；位置：`future/reference_kernel/prediction.py`
-  - `IF-SELECT-ADMIT` — 输入：`A`, `q`, `currentlyValidNonemptyClasses`, `SessionContext`, `HistoryHandle`, `H`；输出：`kind`, `tStar`, `S`, `admitA2A5`；读取：Reads select-time inputs and candidate actions.；写入：Writes only the immutable final SelectSnapshot before execution.；失败：`PredictionGapError`, `SPEC-ERROR`, `ADMIT-REFUSED`；参数：`RP-ACTION-COUNT`, `RP-OBSERVATION-CLASS-COUNT`, `RP-RESOURCE-MODE`；时序：使用与预测和后续解释相同身份的 U。；验收：`AC-SYN-SELECT`；位置：`future/reference_kernel/selection.py`
+  - `IF-SELECT-ADMIT` — 输入：`A`, `q`, `currentlyValidNonemptyClasses`, `SessionContext`, `HistoryHandle`, `H`；输出：`kind`, `tStar`, `S`, `admitA2A5`；读取：Reads select-time inputs and candidate actions.；写入：Read-only; S3-SNAP constructs the immutable final SelectSnapshot after this interface returns.；失败：`PredictionGapError`, `SPEC-ERROR`, `ADMIT-REFUSED`；参数：`RP-ACTION-COUNT`, `RP-OBSERVATION-CLASS-COUNT`, `RP-RESOURCE-MODE`；时序：使用与预测和后续解释相同身份的 U。；验收：`AC-SYN-SELECT`；位置：`future/reference_kernel/selection.py`
   - `IF-EXECUTE-RECORD` — 输入：`SessionContext`, `admitted tStar`；输出：`record`, `effectClass`, `correlationId`；读取：Reads an admitted final snapshot only.；写入：Writes one session-log execution record after the single charge.；失败：`CONFIRMED-NOT-SENT`, `UNKNOWN-EFFECT`；参数：`RP-RESOURCE-MODE`, `RP-RETRY-CAP`；时序：执行不得替换选择时快照或 U。；验收：`AC-SYN-TRANSFER`；位置：`future/offline_adapter/execution_record.py`
   - `IF-OBS-INTERPRET` — 输入：`SessionContext`, `executionRecord`, `clocks`, `epsilon`；输出：`Iz`, `effectClass`, `summaryConfirmed`, `postSummary`, `ownershipResult`, `measurementInterval`；读取：Reads owned event evidence and declared clock/error sources.；写入：Returns interpretation values only; does not exclude H.；失败：`ERROR`, `INCONCLUSIVE`, `UNKNOWN-EFFECT`；参数：`RP-OBSERVATION-CLASS-COUNT`；时序：保留区间拓扑和 U 身份；无效时序证据返回 ERROR。；验收：`AC-SYN-OBSERVATION`；位置：`future/reference_kernel/interpretation.py`
   - `IF-PREP-RECOVER` — 输入：`SessionContext`, `HistoryHandle`, `tStar`, `record`；输出：`targetConfirmed`, `summaryConfirmed`, `prepError`, `ineligible`, `declaredTarget`, `evidence`, `postSummary`；读取：Reads session, history and the admitted action record.；写入：Returns values only; S8/S9 retain the sole Γ writers.；失败：`UNKNOWN-EFFECT`, `PREP-ERROR`, `CONFIRMED-NOT-SENT`；参数：`RP-RETRY-CAP`, `RP-RESOURCE-MODE`；时序：在重试计数前评估确认，且不改写 U。；验收：`AC-SYN-PREP-RECOVER`；位置：`future/reference_kernel/recovery.py`
@@ -1739,29 +1815,105 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 
 ## 运行参数合同
 
-| ID | 单位／域 | 责任范围 | 耗尽行为 |
-|---|---|---|---|
-| `RP-RESOURCE` | bytes and records / `POSITIVE-INTEGER` | offline capture and reconstruction modules | 返回有界资源／解码结果，保留来源且不报告协议 PASS/FAIL。 |
-| `RP-HYPOTHESIS-COUNT` | hypotheses / `POSITIVE-INTEGER` | bounded reference kernel | 返回保守未知，不排除任何假设。 |
-| `RP-PATH-LENGTH` | transitions / `POSITIVE-INTEGER` | bounded reference kernel | 返回未知；超过视界不是不可行性的证明。 |
-| `RP-FRONTIER-STATE-COUNT` | states per hypothesis / `POSITIVE-INTEGER` | history propagation | 保留先前相容历史并标记保守未知。 |
-| `RP-ACTION-COUNT` | actions / `POSITIVE-INTEGER` | selection and equivalence | 拒绝未枚举动作；不得静默评分。 |
-| `RP-OBSERVATION-CLASS-COUNT` | classes / `POSITIVE-INTEGER` | prediction, selection and interpretation | 返回具名 GAP 或保守未知，绝不返回零评分。 |
-| `RP-RETRY-CAP` | attempts / `NONNEGATIVE-INTEGER` | recovery and stopping | 返回 Stop-Error；不得转换为 Stop-Budget。 |
-| `RP-RESOURCE-MODE` | BUDGET or ROUNDS / `EXCLUSIVE-RESOURCE-MODE` | selection, execution, recovery and stopping | 未接纳动作不得执行或计费；无力承担恢复不同于不具资格。 |
+### `RP-RESOURCE` — 离线缓冲资源界
+- 单位／域：bytes and records / `POSITIVE-INTEGER`
+- 配置条件：缓冲前必须有具体值；不得从抓包推断。
+- 责任范围：offline capture and reconstruction modules
+- 耗尽行为：返回有界资源／解码结果，保留来源且不报告协议 PASS/FAIL。
+- 验收：`AC-SYN-TRANSFER`
+### `RP-HYPOTHESIS-COUNT` — 假设数量界
+- 单位／域：hypotheses / `POSITIVE-INTEGER`
+- 配置条件：为声明模型域配置有限 H0 基数。
+- 责任范围：bounded reference kernel
+- 耗尽行为：返回保守未知，不排除任何假设。
+- 验收：`AC-SYN-PREDICTION`, `AC-SYN-HISTORY`
+### `RP-PATH-LENGTH` — 可行路径长度界
+- 单位／域：transitions / `POSITIVE-INTEGER`
+- 配置条件：每次参考内核调用均声明有界视界。
+- 责任范围：bounded reference kernel
+- 耗尽行为：返回未知；超过视界不是不可行性的证明。
+- 验收：`AC-SYN-HISTORY`, `AC-SYN-EQUIVALENCE`
+### `RP-FRONTIER-STATE-COUNT` — 每假设前沿状态界
+- 单位／域：states per hypothesis / `POSITIVE-INTEGER`
+- 配置条件：传播前配置有限前沿容量。
+- 责任范围：history propagation
+- 耗尽行为：保留先前相容历史并标记保守未知。
+- 验收：`AC-SYN-PREDICTION`, `AC-SYN-HISTORY`
+### `RP-ACTION-COUNT` — 动作库界
+- 单位／域：actions / `POSITIVE-INTEGER`
+- 配置条件：被接纳的候选动作库有限且有身份。
+- 责任范围：selection and equivalence
+- 耗尽行为：拒绝未枚举动作；不得静默评分。
+- 验收：`AC-SYN-SELECT`, `AC-SYN-EQUIVALENCE`
+### `RP-OBSERVATION-CLASS-COUNT` — 观测类界
+- 单位／域：classes / `POSITIVE-INTEGER`
+- 配置条件：评分前声明有限当前投影。
+- 责任范围：prediction, selection and interpretation
+- 耗尽行为：返回具名 GAP 或保守未知，绝不返回零评分。
+- 验收：`AC-SYN-PREDICTION`, `AC-SYN-SELECT`, `AC-SYN-OBSERVATION`
+### `RP-RETRY-CAP` — 重试上限
+- 单位／域：attempts / `POSITIVE-INTEGER`
+- 配置条件：重试上限是明确的正整数，且与计费资源模式分开。
+- 责任范围：recovery and stopping
+- 耗尽行为：返回 Stop-Error；不得转换为 Stop-Budget。
+- 验收：`AC-SYN-PREP-RECOVER`, `AC-SYN-RESOURCE-STOP`
+### `RP-RESOURCE-MODE` — 互斥资源模式
+- 单位／域：BUDGET or ROUNDS / `EXCLUSIVE-RESOURCE-MODE`
+- 配置条件：每个会话恰选一个声明模式。
+- 责任范围：selection, execution, recovery and stopping
+- 耗尽行为：未接纳动作不得执行或计费；无力承担恢复不同于不具资格。
+- 验收：`AC-SYN-SELECT`, `AC-SYN-PREP-RECOVER`, `AC-SYN-RESOURCE-STOP`
 
 ## 验收案例
 
-| ID | 输入 | 预期／禁止 | 运行状态 |
-|---|---|---|---|
-| `AC-SYN-TRANSFER` | `CAPTURE-IDENTITY`, `PACKET-REF`, `DATAGRAM-RECORD`, `TRANSFER-RECORD`, `OWNERSHIP-RESULT`, `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `FINDING-RECORD` | A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence.<br>禁止：No protocol PASS/FAIL, root-cause label or invented accepted option is emitted. | `NOT-EXECUTED` |
-| `AC-SYN-PREDICTION` | `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT` | A finite current projection is tagged OK or GAP before any TEST score is read.<br>禁止：An empty projection is not scored as zero and no history is written. | `NOT-EXECUTED` |
-| `AC-SYN-SELECT` | `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT` | Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID.<br>禁止：An uninformative TEST is not A2 and Prep/Recover are not TEST-scored. | `NOT-EXECUTED` |
-| `AC-SYN-OBSERVATION` | `OWNERSHIP-RESULT`, `PROTOCOL-EVENT`, `OBSERVATION-ASSESSMENT` | Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR.<br>禁止：ERROR or INCONCLUSIVE is not downgraded to FAIL. | `NOT-EXECUTED` |
-| `AC-SYN-PREP-RECOVER` | `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT` | Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary.<br>禁止：An unconfirmed successor cannot retain stale known state or become a direct Γ write. | `NOT-EXECUTED` |
-| `AC-SYN-HISTORY` | `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT` | A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses.<br>禁止：H prime is never replaced by Iz and resource exhaustion is not incompatibility. | `NOT-EXECUTED` |
-| `AC-SYN-EQUIVALENCE` | `HISTORY-HANDLE` | An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished.<br>禁止：No immediately distinguishing TEST is not treated as proof of equivalence. | `NOT-EXECUTED` |
-| `AC-SYN-RESOURCE-STOP` | `HISTORY-HANDLE`, `FINDING-RECORD` | Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error.<br>禁止：Retry exhaustion is not Stop-Budget and a normal singleton is not protocol PASS. | `NOT-EXECUTED` |
+### `AC-SYN-TRANSFER` — 有作用域传输重建见证
+- 输入：`CAPTURE-IDENTITY`, `PACKET-REF`, `DATAGRAM-RECORD`, `TRANSFER-RECORD`, `OWNERSHIP-RESULT`, `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `FINDING-RECORD`
+- 工具：`TR-CAPTURE-INTAKE`, `TR-DATAGRAM-REASSEMBLY`, `TR-TRANSFER-RECONSTRUCTION`, `TR-PROTOCOL-EVENT`, `TR-OWNERSHIP`, `TR-OBSERVATION-ASSESSMENT`, `TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`；模块：`MOD-CAPTURE`, `MOD-REASSEMBLY`, `MOD-TRANSFER`, `MOD-OWNERSHIP`, `MOD-OBSERVATION`；接口：`IF-EXECUTE-RECORD`, `IF-OBS-INTERPRET`, `IF-HIST-UPDATE`
+- 预期：A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence.
+- 禁止：No protocol PASS/FAIL, root-cause label or invented accepted option is emitted.
+- 依据：针对声明离线首轮切片的合成规格见证；它不是历史真值或解析器执行。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
+### `AC-SYN-PREDICTION` — 有限预测边界见证
+- 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
+- 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-PRED-OBS`
+- 预期：A finite current projection is tagged OK or GAP before any TEST score is read.
+- 禁止：An empty projection is not scored as zero and no history is written.
+- 依据：有限当前类传播的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
+### `AC-SYN-SELECT` — 接纳动作选择见证
+- 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
+- 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-SELECT-ADMIT`
+- 预期：Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID.
+- 禁止：An uninformative TEST is not A2 and Prep/Recover are not TEST-scored.
+- 依据：声明单步决策表的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
+### `AC-SYN-OBSERVATION` — 四值时序解释见证
+- 输入：`OWNERSHIP-RESULT`, `PROTOCOL-EVENT`, `OBSERVATION-ASSESSMENT`
+- 工具：`TR-OBSERVATION-ASSESSMENT`；模块：`MOD-OBSERVATION`；接口：`IF-OBS-INTERPRET`
+- 预期：Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR.
+- 禁止：ERROR or INCONCLUSIVE is not downgraded to FAIL.
+- 依据：T5 区间和所有权前提的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
+### `AC-SYN-PREP-RECOVER` — 确认恢复交接见证
+- 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
+- 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-PREP-RECOVER`
+- 预期：Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary.
+- 禁止：An unconfirmed successor cannot retain stale known state or become a direct Γ write.
+- 依据：S8/S9 所有权边界的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
+### `AC-SYN-HISTORY` — 完整历史更新见证
+- 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
+- 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-HIST-UPDATE`
+- 预期：A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses.
+- 禁止：H prime is never replaced by Iz and resource exhaustion is not incompatibility.
+- 依据：保守历史传播的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
+### `AC-SYN-EQUIVALENCE` — 有界等价弃权见证
+- 输入：`HISTORY-HANDLE`
+- 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-EQUIV`
+- 预期：An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished.
+- 禁止：No immediately distinguishing TEST is not treated as proof of equivalence.
+- 依据：有界等价语义的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
+### `AC-SYN-RESOURCE-STOP` — 资源与停止顺序见证
+- 输入：`HISTORY-HANDLE`, `FINDING-RECORD`
+- 工具：`TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`；模块：`MOD-OBSERVATION`；接口：`IF-RESOURCE-STOP`
+- 预期：Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error.
+- 禁止：Retry exhaustion is not Stop-Budget and a normal singleton is not protocol PASS.
+- 依据：资源和停止合同的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 
 ## 切片与依赖
 

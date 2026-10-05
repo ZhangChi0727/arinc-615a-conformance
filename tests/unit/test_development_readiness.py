@@ -177,6 +177,30 @@ def test_bounded_algorithm_bindings_parameters_and_acceptance_cases_are_closed()
         assert parameter["exhaustionBehaviorZh"] in stale
 
 
+def test_algorithm_acceptance_edges_and_retry_domain_are_not_substitutable():
+    assert errors(copy.deepcopy(PACKAGE)) == []
+    bad = copy.deepcopy(PACKAGE)
+    select = next(item for item in bad["algorithmRefinements"][0]["interfaceBindings"] if item["interfaceId"] == "IF-SELECT-ADMIT")
+    select["writeOwnership"] = "Writes SelectSnapshot."
+    assert "IF-SELECT-ADMIT must remain read-only; S3-SNAP constructs the final SelectSnapshot" in errors(bad)
+
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["runtimeParameterContracts"] if item["id"] == "RP-RETRY-CAP")["domain"] = "NONNEGATIVE-INTEGER"
+    assert "RP-RETRY-CAP must retain the existing positive-integer domain" in errors(bad)
+
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["acceptanceCases"] if item["id"] == "AC-SYN-HISTORY")["moduleIds"] = ["MOD-CAPTURE"]
+    assert "AC-SYN-HISTORY tool TR-HISTORY-COMPATIBILITY omits owner module MOD-OBSERVATION" in errors(bad)
+
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["algorithmRefinements"][0]["interfaceBindings"] if item["interfaceId"] == "IF-PRED-OBS")["acceptanceCaseIds"] = ["AC-SYN-RESOURCE-STOP"]
+    assert "IF-PRED-OBS acceptance case AC-SYN-RESOURCE-STOP omits that interface" in errors(bad)
+
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["runtimeParameterContracts"] if item["id"] == "RP-RETRY-CAP")["acceptanceCaseIds"] = ["AC-SYN-PREDICTION"]
+    assert "RP-RETRY-CAP acceptance case AC-SYN-PREDICTION has no parameter consumer" in errors(bad)
+
+
 def test_bound_inputs_are_consumed_once_from_git_blobs_not_worktree(monkeypatch):
     bound_paths = {ROOT / item["path"] for item in PACKAGE["inputBindings"]}
     original_read_text = Path.read_text

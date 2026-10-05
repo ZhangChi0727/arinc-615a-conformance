@@ -445,6 +445,9 @@ def package_errors(data: dict) -> list[str]:
                 errors.append(f"{binding['interfaceId']} input types differ from interface registry")
             if binding["outputTypes"] != source["outputs"]:
                 errors.append(f"{binding['interfaceId']} output types differ from interface registry")
+            if binding["interfaceId"] == "IF-SELECT-ADMIT":
+                if binding["writeOwnership"] != "Read-only; S3-SNAP constructs the immutable final SelectSnapshot after this interface returns.":
+                    errors.append("IF-SELECT-ADMIT must remain read-only; S3-SNAP constructs the final SelectSnapshot")
             if not set(binding["runtimeParameterIds"]).issubset(runtime_parameter_ids):
                 errors.append(f"{binding['interfaceId']} has an unknown runtime parameter")
             if not set(binding["acceptanceCaseIds"]).issubset(cases):
@@ -472,6 +475,10 @@ def package_errors(data: dict) -> list[str]:
         for field in ("title", "titleZh", "expectedContractOutput", "prohibitedOutput", "basis", "basisZh"):
             if not case[field].strip():
                 errors.append(f"{case['id']} has blank {field}")
+        for tool_id in case["toolRequirementIds"]:
+            tool = tool_by_id.get(tool_id)
+            if tool is not None and tool["ownerModuleId"] not in case["moduleIds"]:
+                errors.append(f"{case['id']} tool {tool_id} omits owner module {tool['ownerModuleId']}")
     for tool in data["toolRequirements"]:
         case = case_by_id.get(tool["acceptanceCaseId"])
         if case is not None:
@@ -481,6 +488,33 @@ def package_errors(data: dict) -> list[str]:
                 errors.append(f"{tool['id']} acceptance case omits its owner module")
             if not set(tool["interfaceIds"]).intersection(case["algorithmInterfaceIds"]):
                 errors.append(f"{tool['id']} acceptance case omits its interface")
+    for refinement in data["algorithmRefinements"]:
+        for binding in refinement["interfaceBindings"]:
+            for case_id in binding["acceptanceCaseIds"]:
+                case = case_by_id.get(case_id)
+                if case is not None and binding["interfaceId"] not in case["algorithmInterfaceIds"]:
+                    errors.append(f"{binding['interfaceId']} acceptance case {case_id} omits that interface")
+    parameter_consumers: dict[str, set[tuple[str, str]]] = {parameter_id: set() for parameter_id in runtime_parameter_ids}
+    for refinement in data["algorithmRefinements"]:
+        for binding in refinement["interfaceBindings"]:
+            for parameter_id in binding["runtimeParameterIds"]:
+                parameter_consumers.setdefault(parameter_id, set()).add(("interface", binding["interfaceId"]))
+    for module in data["moduleContracts"]:
+        for parameter_id in module["runtimeParameterIds"]:
+            parameter_consumers.setdefault(parameter_id, set()).add(("module", module["id"]))
+    for parameter in data["runtimeParameterContracts"]:
+        for case_id in parameter["acceptanceCaseIds"]:
+            case = case_by_id.get(case_id)
+            if case is None:
+                continue
+            consumers = parameter_consumers.get(parameter["id"], set())
+            covered = (("interface", interface_id) in consumers for interface_id in case["algorithmInterfaceIds"])
+            covered_module = (("module", module_id) in consumers for module_id in case["moduleIds"])
+            if not any(covered) and not any(covered_module):
+                errors.append(f"{parameter['id']} acceptance case {case_id} has no parameter consumer")
+    retry_cap = next((parameter for parameter in data["runtimeParameterContracts"] if parameter["id"] == "RP-RETRY-CAP"), None)
+    if retry_cap is not None and retry_cap["domain"] != "POSITIVE-INTEGER":
+        errors.append("RP-RETRY-CAP must retain the existing positive-integer domain")
     upstream_graph: dict[str, set[str]] = {}
     for module in data["moduleContracts"]:
         for field in ("title", "titleZh", "responsibility", "responsibilityZh"):
