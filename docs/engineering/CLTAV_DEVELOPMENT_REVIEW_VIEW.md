@@ -1804,63 +1804,63 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 保守行为：不支持的语法、资源限额或不可判定的可行路径结果均返回具名接口 UNKNOWN、GAP、SPEC-ERROR 或受控错误路径，绝不排除假设或证明等价。
 - 复杂度边界：工作量受配置的假设数、动作数、观测类数、路径长度和前沿状态数约束；不作多项式或完备性主张。
 - 接口绑定：
-  - `IF-PRED-OBS` — 输入：`SessionContext`, `HistoryHandle`, `H`, `measurementUncertainty`, `actionLibrary`；输出：`currentlyValidNonemptyClasses`, `PredictionGapError`；读取：Reads the versioned HistoryHandle and current session only.；写入：Read-only; does not charge or write Γ/η.；失败：`PredictionGapError`, `RESOURCE-UNKNOWN`；参数：`RP-HYPOTHESIS-COUNT`, `RP-FRONTIER-STATE-COUNT`, `RP-OBSERVATION-CLASS-COUNT`；时序：使用会话 U 和声明的测量不确定性，不修改二者。；验收：`AC-SYN-PREDICTION`；位置：`future/reference_kernel/prediction.py`
-  - `IF-SELECT-ADMIT` — 输入：`A`, `q`, `currentlyValidNonemptyClasses`, `SessionContext`, `HistoryHandle`, `H`；输出：`kind`, `tStar`, `S`, `admitA2A5`；读取：Reads select-time inputs and candidate actions.；写入：Read-only; S3-SNAP constructs the immutable final SelectSnapshot after this interface returns.；失败：`PredictionGapError`, `SPEC-ERROR`, `ADMIT-REFUSED`；参数：`RP-ACTION-COUNT`, `RP-OBSERVATION-CLASS-COUNT`, `RP-RESOURCE-MODE`；时序：使用与预测和后续解释相同身份的 U。；验收：`AC-SYN-SELECT`；位置：`future/reference_kernel/selection.py`
-  - `IF-EXECUTE-RECORD` — 输入：`SessionContext`, `admitted tStar`；输出：`record`, `effectClass`, `correlationId`；读取：Reads an admitted final snapshot only.；写入：Writes one session-log execution record after the single charge.；失败：`CONFIRMED-NOT-SENT`, `UNKNOWN-EFFECT`；参数：`RP-RESOURCE-MODE`, `RP-RETRY-CAP`；时序：执行不得替换选择时快照或 U。；验收：`AC-SYN-TRANSFER`；位置：`future/offline_adapter/execution_record.py`
-  - `IF-OBS-INTERPRET` — 输入：`SessionContext`, `executionRecord`, `clocks`, `epsilon`；输出：`Iz`, `effectClass`, `summaryConfirmed`, `postSummary`, `ownershipResult`, `measurementInterval`；读取：Reads owned event evidence and declared clock/error sources.；写入：Returns interpretation values only; does not exclude H.；失败：`ERROR`, `INCONCLUSIVE`, `UNKNOWN-EFFECT`；参数：`RP-OBSERVATION-CLASS-COUNT`；时序：保留区间拓扑和 U 身份；无效时序证据返回 ERROR。；验收：`AC-SYN-OBSERVATION`；位置：`future/reference_kernel/interpretation.py`
-  - `IF-PREP-RECOVER` — 输入：`SessionContext`, `HistoryHandle`, `tStar`, `record`；输出：`targetConfirmed`, `summaryConfirmed`, `prepError`, `ineligible`, `declaredTarget`, `evidence`, `postSummary`；读取：Reads session, history and the admitted action record.；写入：Returns values only; S8/S9 retain the sole Γ writers.；失败：`UNKNOWN-EFFECT`, `PREP-ERROR`, `CONFIRMED-NOT-SENT`；参数：`RP-RETRY-CAP`, `RP-RESOURCE-MODE`；时序：在重试计数前评估确认，且不改写 U。；验收：`AC-SYN-PREP-RECOVER`；位置：`future/reference_kernel/recovery.py`
-  - `IF-HIST-UPDATE` — 输入：`HistoryHandle`, `H`, `tStar`, `qUsedAtSelect`, `classesUsedAtSelect`, `historyVersion`, `valid Iz`, `postSummary`；输出：`HistoryHandlePrime`, `Hprime`, `Stop-Empty`；读取：Reads the select-time snapshot and whole-history frontier.；写入：Writes the next versioned HistoryHandle only through normalized outcomes.；失败：`Stop-Empty`, `RESOURCE-UNKNOWN`, `CONSERVATIVE-UNKNOWN`；参数：`RP-HYPOTHESIS-COUNT`, `RP-PATH-LENGTH`, `RP-FRONTIER-STATE-COUNT`；时序：携带选择时 U 身份，绝不以效果后的摘要替代 qUsedAtSelect。；验收：`AC-SYN-HISTORY`；位置：`future/reference_kernel/history.py`
-  - `IF-EQUIV` — 输入：`SessionContext`, `H`, `HistoryHandle`, `remainingTests`；输出：`established`, `notEstablished`, `unknown`；读取：Reads finite-domain state only.；写入：Read-only; does not alter H or history.；失败：`UNKNOWN`, `RESOURCE-UNKNOWN`；参数：`RP-HYPOTHESIS-COUNT`, `RP-PATH-LENGTH`, `RP-ACTION-COUNT`；时序：仅使用声明的有界视界；没有可用单步测试不构成等价证明。；验收：`AC-SYN-EQUIVALENCE`；位置：`future/reference_kernel/equivalence.py`
-  - `IF-RESOURCE-STOP` — 输入：`SessionContext`, `H`, `HistoryHandle`, `named645Residuals`, `equivalenceStatus`；输出：`stopClass`, `finalH`, `trace`；读取：Reads charged resources, retained history and named residuals.；写入：Writes an auditable stop trace only.；失败：`Stop-Budget`, `Stop-Error`, `Stop-645`；参数：`RP-RESOURCE-MODE`, `RP-RETRY-CAP`；时序：保持互斥停止顺序，绝不把重试耗尽转换为预算耗尽。；验收：`AC-SYN-RESOURCE-STOP`；位置：`future/reference_kernel/stopping.py`
+  - `IF-PRED-OBS` — 输入：`SessionContext`, `HistoryHandle`, `H`, `measurementUncertainty`, `actionLibrary`；输出：`currentlyValidNonemptyClasses`, `PredictionGapError`；读取：仅读取带版本的 HistoryHandle 和当前会话。；写入：只读；不计费，也不写入 Γ/η。；失败：`PredictionGapError`, `RESOURCE-UNKNOWN`；参数：`RP-HYPOTHESIS-COUNT`, `RP-FRONTIER-STATE-COUNT`, `RP-OBSERVATION-CLASS-COUNT`；时序：使用会话 U 和声明的测量不确定性，不修改二者。；验收：`AC-SYN-PREDICTION`；位置：`future/reference_kernel/prediction.py`
+  - `IF-SELECT-ADMIT` — 输入：`A`, `q`, `currentlyValidNonemptyClasses`, `SessionContext`, `HistoryHandle`, `H`；输出：`kind`, `tStar`, `S`, `admitA2A5`；读取：仅读取选择时输入和候选动作。；写入：只读；接口返回后由 S3-SNAP 构造不可变最终 SelectSnapshot。；失败：`PredictionGapError`, `SPEC-ERROR`, `ADMIT-REFUSED`；参数：`RP-ACTION-COUNT`, `RP-OBSERVATION-CLASS-COUNT`, `RP-RESOURCE-MODE`；时序：使用与预测和后续解释相同身份的 U。；验收：`AC-SYN-SELECT`；位置：`future/reference_kernel/selection.py`
+  - `IF-EXECUTE-RECORD` — 输入：`SessionContext`, `admitted tStar`；输出：`record`, `effectClass`, `correlationId`；读取：仅读取已接纳的最终快照。；写入：单次计费后写入一条会话日志执行记录。；失败：`CONFIRMED-NOT-SENT`, `UNKNOWN-EFFECT`；参数：`RP-RESOURCE-MODE`, `RP-RETRY-CAP`；时序：执行不得替换选择时快照或 U。；验收：`AC-SYN-TRANSFER`；位置：`future/offline_adapter/execution_record.py`
+  - `IF-OBS-INTERPRET` — 输入：`SessionContext`, `executionRecord`, `clocks`, `epsilon`；输出：`Iz`, `effectClass`, `summaryConfirmed`, `postSummary`, `ownershipResult`, `measurementInterval`；读取：仅读取已归属事件证据及声明的时钟和误差来源。；写入：仅返回解释值；不排除 H。；失败：`ERROR`, `INCONCLUSIVE`, `UNKNOWN-EFFECT`；参数：`RP-OBSERVATION-CLASS-COUNT`；时序：保留区间拓扑和 U 身份；无效时序证据返回 ERROR。；验收：`AC-SYN-OBSERVATION`；位置：`future/reference_kernel/interpretation.py`
+  - `IF-PREP-RECOVER` — 输入：`SessionContext`, `HistoryHandle`, `tStar`, `record`；输出：`targetConfirmed`, `summaryConfirmed`, `prepError`, `ineligible`, `declaredTarget`, `evidence`, `postSummary`；读取：仅读取会话、历史和已接纳动作记录。；写入：仅返回值；S8/S9 保留 Γ 的唯一写入权。；失败：`UNKNOWN-EFFECT`, `PREP-ERROR`, `CONFIRMED-NOT-SENT`；参数：`RP-RETRY-CAP`, `RP-RESOURCE-MODE`；时序：在重试计数前评估确认，且不改写 U。；验收：`AC-SYN-PREP-RECOVER`；位置：`future/reference_kernel/recovery.py`
+  - `IF-HIST-UPDATE` — 输入：`HistoryHandle`, `H`, `tStar`, `qUsedAtSelect`, `classesUsedAtSelect`, `historyVersion`, `valid Iz`, `postSummary`；输出：`HistoryHandlePrime`, `Hprime`, `Stop-Empty`；读取：仅读取选择时快照和完整历史前沿。；写入：仅通过规范化结果写入下一版本的 HistoryHandle。；失败：`Stop-Empty`, `RESOURCE-UNKNOWN`, `CONSERVATIVE-UNKNOWN`；参数：`RP-HYPOTHESIS-COUNT`, `RP-PATH-LENGTH`, `RP-FRONTIER-STATE-COUNT`；时序：携带选择时 U 身份，绝不以效果后的摘要替代 qUsedAtSelect。；验收：`AC-SYN-HISTORY`；位置：`future/reference_kernel/history.py`
+  - `IF-EQUIV` — 输入：`SessionContext`, `H`, `HistoryHandle`, `remainingTests`；输出：`established`, `notEstablished`, `unknown`；读取：仅读取有限域状态。；写入：只读；不改变 H 或历史。；失败：`UNKNOWN`, `RESOURCE-UNKNOWN`；参数：`RP-HYPOTHESIS-COUNT`, `RP-PATH-LENGTH`, `RP-ACTION-COUNT`；时序：仅使用声明的有界视界；没有可用单步测试不构成等价证明。；验收：`AC-SYN-EQUIVALENCE`；位置：`future/reference_kernel/equivalence.py`
+  - `IF-RESOURCE-STOP` — 输入：`SessionContext`, `H`, `HistoryHandle`, `named645Residuals`, `equivalenceStatus`；输出：`stopClass`, `finalH`, `trace`；读取：仅读取已计费资源、保留历史和具名残余。；写入：仅写入可审计停止追踪。；失败：`Stop-Budget`, `Stop-Error`, `Stop-645`；参数：`RP-RESOURCE-MODE`, `RP-RETRY-CAP`；时序：保持互斥停止顺序，绝不把重试耗尽转换为预算耗尽。；验收：`AC-SYN-RESOURCE-STOP`；位置：`future/reference_kernel/stopping.py`
 
 ## 运行参数合同
 
 ### `RP-RESOURCE` — 离线缓冲资源界
 - 单位／域：bytes and records / `POSITIVE-INTEGER`
 - 配置条件：缓冲前必须有具体值；不得从抓包推断。
-- 责任范围：offline capture and reconstruction modules
+- 责任范围：离线捕获与重建模块
 - 耗尽行为：返回有界资源／解码结果，保留来源且不报告协议 PASS/FAIL。
 - 验收：`AC-SYN-TRANSFER`
 ### `RP-HYPOTHESIS-COUNT` — 假设数量界
 - 单位／域：hypotheses / `POSITIVE-INTEGER`
 - 配置条件：为声明模型域配置有限 H0 基数。
-- 责任范围：bounded reference kernel
+- 责任范围：有界参考内核
 - 耗尽行为：返回保守未知，不排除任何假设。
 - 验收：`AC-SYN-PREDICTION`, `AC-SYN-HISTORY`
 ### `RP-PATH-LENGTH` — 可行路径长度界
 - 单位／域：transitions / `POSITIVE-INTEGER`
 - 配置条件：每次参考内核调用均声明有界视界。
-- 责任范围：bounded reference kernel
+- 责任范围：有界参考内核
 - 耗尽行为：返回未知；超过视界不是不可行性的证明。
 - 验收：`AC-SYN-HISTORY`, `AC-SYN-EQUIVALENCE`
 ### `RP-FRONTIER-STATE-COUNT` — 每假设前沿状态界
 - 单位／域：states per hypothesis / `POSITIVE-INTEGER`
 - 配置条件：传播前配置有限前沿容量。
-- 责任范围：history propagation
+- 责任范围：历史传播
 - 耗尽行为：保留先前相容历史并标记保守未知。
 - 验收：`AC-SYN-PREDICTION`, `AC-SYN-HISTORY`
 ### `RP-ACTION-COUNT` — 动作库界
 - 单位／域：actions / `POSITIVE-INTEGER`
 - 配置条件：被接纳的候选动作库有限且有身份。
-- 责任范围：selection and equivalence
+- 责任范围：选择与等价
 - 耗尽行为：拒绝未枚举动作；不得静默评分。
 - 验收：`AC-SYN-SELECT`, `AC-SYN-EQUIVALENCE`
 ### `RP-OBSERVATION-CLASS-COUNT` — 观测类界
 - 单位／域：classes / `POSITIVE-INTEGER`
 - 配置条件：评分前声明有限当前投影。
-- 责任范围：prediction, selection and interpretation
+- 责任范围：预测、选择与解释
 - 耗尽行为：返回具名 GAP 或保守未知，绝不返回零评分。
 - 验收：`AC-SYN-PREDICTION`, `AC-SYN-SELECT`, `AC-SYN-OBSERVATION`
 ### `RP-RETRY-CAP` — 重试上限
 - 单位／域：attempts / `POSITIVE-INTEGER`
 - 配置条件：重试上限是明确的正整数，且与计费资源模式分开。
-- 责任范围：recovery and stopping
+- 责任范围：恢复与停止
 - 耗尽行为：返回 Stop-Error；不得转换为 Stop-Budget。
 - 验收：`AC-SYN-PREP-RECOVER`, `AC-SYN-RESOURCE-STOP`
 ### `RP-RESOURCE-MODE` — 互斥资源模式
 - 单位／域：BUDGET or ROUNDS / `EXCLUSIVE-RESOURCE-MODE`
 - 配置条件：每个会话恰选一个声明模式。
-- 责任范围：selection, execution, recovery and stopping
+- 责任范围：选择、执行、恢复与停止
 - 耗尽行为：未接纳动作不得执行或计费；无力承担恢复不同于不具资格。
 - 验收：`AC-SYN-SELECT`, `AC-SYN-PREP-RECOVER`, `AC-SYN-RESOURCE-STOP`
 
@@ -1869,50 +1869,50 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 ### `AC-SYN-TRANSFER` — 有作用域传输重建见证
 - 输入：`CAPTURE-IDENTITY`, `PACKET-REF`, `DATAGRAM-RECORD`, `TRANSFER-RECORD`, `OWNERSHIP-RESULT`, `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `FINDING-RECORD`
 - 工具：`TR-CAPTURE-INTAKE`, `TR-DATAGRAM-REASSEMBLY`, `TR-TRANSFER-RECONSTRUCTION`, `TR-PROTOCOL-EVENT`, `TR-OWNERSHIP`, `TR-OBSERVATION-ASSESSMENT`, `TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`；模块：`MOD-CAPTURE`, `MOD-REASSEMBLY`, `MOD-TRANSFER`, `MOD-OWNERSHIP`, `MOD-OBSERVATION`；接口：`IF-EXECUTE-RECORD`, `IF-OBS-INTERPRET`, `IF-HIST-UPDATE`
-- 预期：A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence.
-- 禁止：No protocol PASS/FAIL, root-cause label or invented accepted option is emitted.
+- 预期：保留来源的传输候选和带类型事件保留缺口、重传与选项证据。
+- 禁止：不得产生协议 PASS/FAIL、根因标签或虚构的已接受选项。
 - 依据：针对声明离线首轮切片的合成规格见证；它不是历史真值或解析器执行。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-PREDICTION` — 有限预测边界见证
 - 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
 - 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-PRED-OBS`
-- 预期：A finite current projection is tagged OK or GAP before any TEST score is read.
-- 禁止：An empty projection is not scored as zero and no history is written.
+- 预期：在读取任何 TEST 评分前，将有限当前投影标记为 OK 或 GAP。
+- 禁止：空投影不得记为零分，也不得写入历史。
 - 依据：有限当前类传播的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-SELECT` — 接纳动作选择见证
 - 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
 - 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-SELECT-ADMIT`
-- 预期：Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID.
-- 禁止：An uninformative TEST is not A2 and Prep/Recover are not TEST-scored.
+- 预期：仅对可负担且有区分力的 TEST 作 minimax 评分，然后按成本和稳定 action ID 决胜。
+- 禁止：无信息 TEST 不得成为 A2，Prep/Recover 不得按 TEST 评分。
 - 依据：声明单步决策表的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-OBSERVATION` — 四值时序解释见证
 - 输入：`OWNERSHIP-RESULT`, `PROTOCOL-EVENT`, `OBSERVATION-ASSESSMENT`
 - 工具：`TR-OBSERVATION-ASSESSMENT`；模块：`MOD-OBSERVATION`；接口：`IF-OBS-INTERPRET`
-- 预期：Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR.
-- 禁止：ERROR or INCONCLUSIVE is not downgraded to FAIL.
+- 预期：有效区间产生 PASS、FAIL 或 INCONCLUSIVE；无效时序证据产生 ERROR。
+- 禁止：不得将 ERROR 或 INCONCLUSIVE 降级为 FAIL。
 - 依据：T5 区间和所有权前提的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-PREP-RECOVER` — 确认恢复交接见证
 - 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
 - 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-PREP-RECOVER`
-- 预期：Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary.
-- 禁止：An unconfirmed successor cannot retain stale known state or become a direct Γ write.
+- 预期：Prep/Recover 返回确认字段；只有 S8/S9 可提交已知状态或后继摘要。
+- 禁止：未确认后继不得保留陈旧已知状态或直接写入 Γ。
 - 依据：S8/S9 所有权边界的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-HISTORY` — 完整历史更新见证
 - 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
 - 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-HIST-UPDATE`
-- 预期：A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses.
-- 禁止：H prime is never replaced by Iz and resource exhaustion is not incompatibility.
+- 预期：规范化有效结果推进带版本完整历史前沿，且不复活已排除假设。
+- 禁止：H prime 不得替换为 Iz，资源耗尽不得视为不相容。
 - 依据：保守历史传播的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-EQUIVALENCE` — 有界等价弃权见证
 - 输入：`HISTORY-HANDLE`
 - 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-EQUIV`
-- 预期：An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished.
-- 禁止：No immediately distinguishing TEST is not treated as proof of equivalence.
+- 预期：established 需要声明有限域的证明依据；否则结果为 unknown 或 notEstablished。
+- 禁止：没有即时可区分 TEST 不得视为等价证明。
 - 依据：有界等价语义的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-RESOURCE-STOP` — 资源与停止顺序见证
 - 输入：`HISTORY-HANDLE`, `FINDING-RECORD`
 - 工具：`TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`；模块：`MOD-OBSERVATION`；接口：`IF-RESOURCE-STOP`
-- 预期：Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error.
-- 禁止：Retry exhaustion is not Stop-Budget and a normal singleton is not protocol PASS.
+- 预期：互斥停止顺序保留具名 645 残余，并将重试耗尽报告为 Stop-Error。
+- 禁止：重试耗尽不得成为 Stop-Budget，normal 单例不得成为协议 PASS。
 - 依据：资源和停止合同的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 
 ## 切片与依赖

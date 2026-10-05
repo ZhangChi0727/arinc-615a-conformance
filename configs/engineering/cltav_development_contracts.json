@@ -7136,7 +7136,9 @@
       "invalidReasonZh": "sha256 必须为 64 个小写十六进制字符",
       "invalidExpected": {
         "constraintId": "RC-CAPTURE-SHA256",
-        "path": ["sha256"]
+        "path": [
+          "sha256"
+        ]
       }
     },
     {
@@ -7261,7 +7263,10 @@
       "invalidReasonZh": "resolution 必须包含正数 ticksPerSecond",
       "invalidExpected": {
         "constraintId": "RC-PACKET-TICKS-PER-SECOND",
-        "path": ["resolution", "ticksPerSecond"]
+        "path": [
+          "resolution",
+          "ticksPerSecond"
+        ]
       }
     },
     {
@@ -7373,7 +7378,9 @@
       "invalidReasonZh": "fragmentRefs 必须至少包含一个有作用域的数据包引用",
       "invalidExpected": {
         "constraintId": "RC-DATAGRAM-FRAGMENTS",
-        "path": ["fragmentRefs"]
+        "path": [
+          "fragmentRefs"
+        ]
       }
     },
     {
@@ -7393,7 +7400,10 @@
       "ownership": "Transfer module owns candidate association.",
       "uncertainty": "Ambiguous TID or option state remains UNKNOWN. UNKNOWN carries no effective option values. DEFAULTED blksize, when present, is exactly 512; omission means blksize was not established, not an implicit value. ACCEPTED carries the confirmed negotiated value.",
       "errorBehavior": "Reject a DEFAULTED blksize other than 512 and any UNKNOWN effective value; return a named error or conservative unknown without emitting IUT FAIL.",
-      "sourceRequirementIds": ["CRS-M1-00646", "CRS-M1-00647"],
+      "sourceRequirementIds": [
+        "CRS-M1-00646",
+        "CRS-M1-00647"
+      ],
       "example": {
         "direction": "SERVER-TO-CLIENT",
         "endpoints": {
@@ -7517,9 +7527,23 @@
               "type": "object",
               "constraintId": "RC-OPTION-VALUES",
               "properties": {
-                "blksize": {"type": "integer", "constraintId": "RC-OPTION-BLKSIZE", "minimum": 8, "maximum": 65464},
-                "timeout": {"type": "integer", "constraintId": "RC-OPTION-TIMEOUT", "minimum": 1, "maximum": 255},
-                "tsize": {"type": "integer", "constraintId": "RC-OPTION-TSIZE", "minimum": 0}
+                "blksize": {
+                  "type": "integer",
+                  "constraintId": "RC-OPTION-BLKSIZE",
+                  "minimum": 8,
+                  "maximum": 65464
+                },
+                "timeout": {
+                  "type": "integer",
+                  "constraintId": "RC-OPTION-TIMEOUT",
+                  "minimum": 1,
+                  "maximum": 255
+                },
+                "tsize": {
+                  "type": "integer",
+                  "constraintId": "RC-OPTION-TSIZE",
+                  "minimum": 0
+                }
               },
               "additionalProperties": false
             }
@@ -7558,7 +7582,9 @@
       "invalidReasonZh": "direction 必须使用受控的客户端/服务器词汇",
       "invalidExpected": {
         "constraintId": "RC-TRANSFER-DIRECTION",
-        "path": ["direction"]
+        "path": [
+          "direction"
+        ]
       }
     },
     {
@@ -7682,7 +7708,9 @@
       "invalidReasonZh": "rawRefs 必须保留至少一个源数据包",
       "invalidExpected": {
         "constraintId": "RC-EVENT-RAW-REFS",
-        "path": ["rawRefs"]
+        "path": [
+          "rawRefs"
+        ]
       }
     },
     {
@@ -7760,7 +7788,9 @@
       "invalidReasonZh": "status 必须使用受控所有权词汇",
       "invalidExpected": {
         "constraintId": "RC-OWNERSHIP-STATUS",
-        "path": ["status"]
+        "path": [
+          "status"
+        ]
       }
     },
     {
@@ -7814,16 +7844,45 @@
               "type": "object",
               "constraintId": "RC-OBS-INTERVAL-VALUE",
               "properties": {
-                "lower": {"type": "integer", "constraintId": "RC-OBS-LOWER"},
-                "upper": {"type": "integer", "constraintId": "RC-OBS-UPPER"},
-                "lowerClosed": {"type": "boolean", "constraintId": "RC-OBS-LOWER-CLOSED"},
-                "upperClosed": {"type": "boolean", "constraintId": "RC-OBS-UPPER-CLOSED"},
-                "unit": {"type": "string", "constraintId": "RC-OBS-UNIT", "enum": ["tick", "ns", "us"]}
+                "lower": {
+                  "type": "integer",
+                  "constraintId": "RC-OBS-LOWER"
+                },
+                "upper": {
+                  "type": "integer",
+                  "constraintId": "RC-OBS-UPPER"
+                },
+                "lowerClosed": {
+                  "type": "boolean",
+                  "constraintId": "RC-OBS-LOWER-CLOSED"
+                },
+                "upperClosed": {
+                  "type": "boolean",
+                  "constraintId": "RC-OBS-UPPER-CLOSED"
+                },
+                "unit": {
+                  "type": "string",
+                  "constraintId": "RC-OBS-UNIT",
+                  "enum": [
+                    "tick",
+                    "ns",
+                    "us"
+                  ]
+                }
               },
-              "requiredProperties": ["lower", "upper", "lowerClosed", "upperClosed", "unit"],
+              "requiredProperties": [
+                "lower",
+                "upper",
+                "lowerClosed",
+                "upperClosed",
+                "unit"
+              ],
               "additionalProperties": false
             },
-            {"type": "null", "constraintId": "RC-OBS-INTERVAL-ABSENT"}
+            {
+              "type": "null",
+              "constraintId": "RC-OBS-INTERVAL-ABSENT"
+            }
           ]
         },
         "domain": {
@@ -7866,7 +7925,9 @@
       "invalidReasonZh": "测量区间单位必须使用受控的精确时间词汇",
       "invalidExpected": {
         "constraintId": "RC-OBS-INTERVAL",
-        "path": ["measurementInterval"]
+        "path": [
+          "measurementInterval"
+        ]
       }
     },
     {
@@ -8043,7 +8104,10 @@
       "invalidReasonZh": "已声明的时钟界必须为正数；UNKNOWN 不得以零界表示",
       "invalidExpected": {
         "constraintId": "RC-INTAKE-CLOCK-BOUND",
-        "path": ["clockAccuracy", "boundNs"]
+        "path": [
+          "clockAccuracy",
+          "boundNs"
+        ]
       }
     },
     {
@@ -8183,7 +8247,9 @@
       "invalidReasonZh": "发现必须至少包含一个有界事实，且不得冒充根因断言",
       "invalidExpected": {
         "constraintId": "RC-FINDING-FACTS",
-        "path": ["facts"]
+        "path": [
+          "facts"
+        ]
       }
     },
     {
@@ -8275,7 +8341,10 @@
       "invalidReasonZh": "状态必须复用所绑定 HistoryHandle 的 KNOWN 或 CONSERVATIVE-UNKNOWN",
       "invalidExpected": {
         "constraintId": "RC-HISTORY-STATUS-VALUE",
-        "path": ["statusByHypothesis", "h0"]
+        "path": [
+          "statusByHypothesis",
+          "h0"
+        ]
       }
     }
   ],
@@ -8286,26 +8355,77 @@
       "titleZh": "捕获接入与数据包来源",
       "responsibility": "Verify a manifest-bound capture identity and emit immutable packet references without inferring clock accuracy or field truth.",
       "responsibilityZh": "核验清单绑定的捕获身份并产生不可变数据包引用，不推断时钟精度或字段真值。",
-      "inputRecordIds": ["CAPTURE-IDENTITY", "INTAKE-METADATA"],
-      "outputRecordIds": ["PACKET-REF"],
-      "toolRequirementIds": ["TR-CAPTURE-INTAKE"],
-      "interfaceIds": ["IF-EXECUTE-RECORD"],
-      "preconditions": ["CaptureIdentity matches the audited manifest bytes.", "Intake metadata is explicitly declared or UNKNOWN."],
-      "preconditionsZh": ["CaptureIdentity 与已审计清单字节一致。", "接入元数据已明确声明或标为 UNKNOWN。"],
-      "steps": [
-        {"id": "S1", "action": "Verify capture identity before parsing any block.", "actionZh": "解析任何块之前先核验捕获身份。"},
-        {"id": "S2", "action": "Parse supported section and interface declarations while retaining their scope.", "actionZh": "解析受支持的 section 与 interface 声明并保留其作用域。"},
-        {"id": "S3", "action": "Emit PacketRef values with exact raw ticks, resolution and length provenance.", "actionZh": "产生含精确原始 ticks、分辨率和长度来源的 PacketRef。"}
+      "inputRecordIds": [
+        "CAPTURE-IDENTITY",
+        "INTAKE-METADATA"
       ],
-      "invariants": ["Interface identity is scoped by capture and section.", "Clock resolution never implies clock accuracy.", "Unsupported blocks never produce an empty-success capture."],
-      "invariantsZh": ["接口身份受捕获和 section 作用域约束。", "时钟分辨率绝不隐含时钟精度。", "未支持块不得产生空成功捕获。"],
+      "outputRecordIds": [
+        "PACKET-REF"
+      ],
+      "toolRequirementIds": [
+        "TR-CAPTURE-INTAKE"
+      ],
+      "interfaceIds": [
+        "IF-EXECUTE-RECORD"
+      ],
+      "preconditions": [
+        "CaptureIdentity matches the audited manifest bytes.",
+        "Intake metadata is explicitly declared or UNKNOWN."
+      ],
+      "preconditionsZh": [
+        "CaptureIdentity 与已审计清单字节一致。",
+        "接入元数据已明确声明或标为 UNKNOWN。"
+      ],
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Verify capture identity before parsing any block.",
+          "actionZh": "解析任何块之前先核验捕获身份。"
+        },
+        {
+          "id": "S2",
+          "action": "Parse supported section and interface declarations while retaining their scope.",
+          "actionZh": "解析受支持的 section 与 interface 声明并保留其作用域。"
+        },
+        {
+          "id": "S3",
+          "action": "Emit PacketRef values with exact raw ticks, resolution and length provenance.",
+          "actionZh": "产生含精确原始 ticks、分辨率和长度来源的 PacketRef。"
+        }
+      ],
+      "invariants": [
+        "Interface identity is scoped by capture and section.",
+        "Clock resolution never implies clock accuracy.",
+        "Unsupported blocks never produce an empty-success capture."
+      ],
+      "invariantsZh": [
+        "接口身份受捕获和 section 作用域约束。",
+        "时钟分辨率绝不隐含时钟精度。",
+        "未支持块不得产生空成功捕获。"
+      ],
       "failureOutcomes": [
-        {"code": "IDENTITY-ERROR", "condition": "Manifest identity does not match the supplied bytes.", "conditionZh": "清单身份与提供字节不一致。", "result": "Reject intake before block parsing and emit no PacketRef.", "resultZh": "在块解析前拒绝接入且不产生 PacketRef。"},
-        {"code": "UNSUPPORTED-CAPTURE", "condition": "A required block or link type is unsupported.", "conditionZh": "所需块或链路类型不受支持。", "result": "Return a named unsupported outcome, not IUT FAIL.", "resultZh": "返回具名不支持结果，而非 IUT FAIL。"}
+        {
+          "code": "IDENTITY-ERROR",
+          "condition": "Manifest identity does not match the supplied bytes.",
+          "conditionZh": "清单身份与提供字节不一致。",
+          "result": "Reject intake before block parsing and emit no PacketRef.",
+          "resultZh": "在块解析前拒绝接入且不产生 PacketRef。"
+        },
+        {
+          "code": "UNSUPPORTED-CAPTURE",
+          "condition": "A required block or link type is unsupported.",
+          "conditionZh": "所需块或链路类型不受支持。",
+          "result": "Return a named unsupported outcome, not IUT FAIL.",
+          "resultZh": "返回具名不支持结果，而非 IUT FAIL。"
+        }
       ],
       "outputValueMappings": [],
-      "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
-      "runtimeParameterIds": ["RP-RESOURCE"],
+      "acceptanceCaseIds": [
+        "AC-SYN-TRANSFER"
+      ],
+      "runtimeParameterIds": [
+        "RP-RESOURCE"
+      ],
       "upstreamModuleIds": []
     },
     {
@@ -8314,29 +8434,89 @@
       "titleZh": "保留来源的数据报重建",
       "responsibility": "Build bounded datagram candidates from scoped packet fragments while preserving gaps, overlap conflicts and every source reference.",
       "responsibilityZh": "从有作用域的数据包分片建立有界数据报候选，同时保留缺口、重叠冲突和全部来源引用。",
-      "inputRecordIds": ["PACKET-REF"],
-      "outputRecordIds": ["DATAGRAM-RECORD"],
-      "toolRequirementIds": ["TR-DATAGRAM-REASSEMBLY"],
-      "interfaceIds": ["IF-EXECUTE-RECORD"],
-      "preconditions": ["Every fragment has a scoped PacketRef.", "Resource bounds are available before buffering."],
-      "preconditionsZh": ["每个分片都有具作用域的 PacketRef。", "缓冲前已有资源界。"],
-      "steps": [
-        {"id": "S1", "action": "Group fragments only by the declared scoped reconstruction identity.", "actionZh": "仅按声明的作用域重建身份对分片分组。"},
-        {"id": "S2", "action": "Compute coverage, missing ranges and overlaps without overwriting earlier bytes.", "actionZh": "计算覆盖、缺失范围和重叠，不得覆盖先前字节。"},
-        {"id": "S3", "action": "Emit COMPLETE, GAPPED or CONFLICT reconstruction with all PacketRef values.", "actionZh": "产生 COMPLETE、GAPPED 或 CONFLICT 重建并保留全部 PacketRef。"}
+      "inputRecordIds": [
+        "PACKET-REF"
       ],
-      "invariants": ["Fragments never cross capture, section or interface scope.", "A first fragment is never treated as a complete datagram without complete coverage."],
-      "invariantsZh": ["分片绝不跨捕获、section 或 interface 作用域。", "覆盖不完整时绝不把首片视为完整数据报。"],
+      "outputRecordIds": [
+        "DATAGRAM-RECORD"
+      ],
+      "toolRequirementIds": [
+        "TR-DATAGRAM-REASSEMBLY"
+      ],
+      "interfaceIds": [
+        "IF-EXECUTE-RECORD"
+      ],
+      "preconditions": [
+        "Every fragment has a scoped PacketRef.",
+        "Resource bounds are available before buffering."
+      ],
+      "preconditionsZh": [
+        "每个分片都有具作用域的 PacketRef。",
+        "缓冲前已有资源界。"
+      ],
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Group fragments only by the declared scoped reconstruction identity.",
+          "actionZh": "仅按声明的作用域重建身份对分片分组。"
+        },
+        {
+          "id": "S2",
+          "action": "Compute coverage, missing ranges and overlaps without overwriting earlier bytes.",
+          "actionZh": "计算覆盖、缺失范围和重叠，不得覆盖先前字节。"
+        },
+        {
+          "id": "S3",
+          "action": "Emit COMPLETE, GAPPED or CONFLICT reconstruction with all PacketRef values.",
+          "actionZh": "产生 COMPLETE、GAPPED 或 CONFLICT 重建并保留全部 PacketRef。"
+        }
+      ],
+      "invariants": [
+        "Fragments never cross capture, section or interface scope.",
+        "A first fragment is never treated as a complete datagram without complete coverage."
+      ],
+      "invariantsZh": [
+        "分片绝不跨捕获、section 或 interface 作用域。",
+        "覆盖不完整时绝不把首片视为完整数据报。"
+      ],
       "failureOutcomes": [
-        {"code": "INCOMPLETE-DATAGRAM", "condition": "Coverage contains a gap or truncation.", "conditionZh": "覆盖存在缺口或截断。", "result": "Emit reassemblyStatus=GAPPED and no complete UDP payload.", "resultZh": "产生 reassemblyStatus=GAPPED 且不产生完整 UDP 载荷。"},
-        {"code": "OVERLAP-CONFLICT", "condition": "Overlapping ranges contain different bytes.", "conditionZh": "重叠范围含不同字节。", "result": "Preserve both sources and emit conflict, not last-write-wins data.", "resultZh": "保留双方来源并产生冲突，不采用后写覆盖。"}
+        {
+          "code": "INCOMPLETE-DATAGRAM",
+          "condition": "Coverage contains a gap or truncation.",
+          "conditionZh": "覆盖存在缺口或截断。",
+          "result": "Emit reassemblyStatus=GAPPED and no complete UDP payload.",
+          "resultZh": "产生 reassemblyStatus=GAPPED 且不产生完整 UDP 载荷。"
+        },
+        {
+          "code": "OVERLAP-CONFLICT",
+          "condition": "Overlapping ranges contain different bytes.",
+          "conditionZh": "重叠范围含不同字节。",
+          "result": "Preserve both sources and emit conflict, not last-write-wins data.",
+          "resultZh": "保留双方来源并产生冲突，不采用后写覆盖。"
+        }
       ],
       "outputValueMappings": [
-        {"recordId": "DATAGRAM-RECORD", "field": "reassemblyStatus", "emittedValues": ["COMPLETE", "GAPPED", "CONFLICT"], "meaning": "A coverage gap maps to GAPPED; INCOMPLETE-DATAGRAM is a failure code, not a record-field value.", "meaningZh": "覆盖缺口映射为 GAPPED；INCOMPLETE-DATAGRAM 是失败码，不是记录字段值。"}
+        {
+          "recordId": "DATAGRAM-RECORD",
+          "field": "reassemblyStatus",
+          "emittedValues": [
+            "COMPLETE",
+            "GAPPED",
+            "CONFLICT"
+          ],
+          "meaning": "A coverage gap maps to GAPPED; INCOMPLETE-DATAGRAM is a failure code, not a record-field value.",
+          "meaningZh": "覆盖缺口映射为 GAPPED；INCOMPLETE-DATAGRAM 是失败码，不是记录字段值。"
+        }
       ],
-      "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
-      "runtimeParameterIds": ["RP-RESOURCE"],
-      "upstreamModuleIds": ["MOD-CAPTURE"]
+      "acceptanceCaseIds": [
+        "AC-SYN-TRANSFER"
+      ],
+      "runtimeParameterIds": [
+        "RP-RESOURCE"
+      ],
+      "upstreamModuleIds": [
+        "MOD-CAPTURE"
+      ]
     },
     {
       "id": "MOD-TRANSFER",
@@ -8344,27 +8524,83 @@
       "titleZh": "TFTP 传输与协议事件重建",
       "responsibility": "Associate bounded TFTP transfer candidates and derive typed protocol events without inventing application-layer facts.",
       "responsibilityZh": "关联有界 TFTP 传输候选并派生带类型协议事件，不虚构应用层事实。",
-      "inputRecordIds": ["DATAGRAM-RECORD", "TRANSFER-RECORD"],
-      "outputRecordIds": ["TRANSFER-RECORD", "PROTOCOL-EVENT"],
-      "toolRequirementIds": ["TR-TRANSFER-RECONSTRUCTION", "TR-PROTOCOL-EVENT"],
-      "interfaceIds": ["IF-EXECUTE-RECORD", "IF-OBS-INTERPRET"],
-      "preconditions": ["Datagram completeness is classified.", "Initial request and dynamic TID evidence remain distinguishable."],
-      "preconditionsZh": ["数据报完整性已经分类。", "初始请求与动态 TID 证据仍可区分。"],
-      "steps": [
-        {"id": "S1", "action": "Open or retain transfer candidates from request and endpoint evidence.", "actionZh": "依据请求与端点证据建立或保留传输候选。"},
-        {"id": "S2", "action": "Apply option, block and terminal rules while retaining retransmission and ambiguity evidence.", "actionZh": "应用选项、块和终止规则，同时保留重传与歧义证据。"},
-        {"id": "S3", "action": "Emit typed wire or derived events with complete raw-reference chains.", "actionZh": "产生带完整原始引用链的线上或派生类型事件。"}
+      "inputRecordIds": [
+        "DATAGRAM-RECORD",
+        "TRANSFER-RECORD"
       ],
-      "invariants": ["Unknown option evidence never becomes an accepted or defaulted value.", "Dynamic TID association is not replaced by a fixed port assumption.", "Application facts are not inferred from wire-only evidence."],
-      "invariantsZh": ["未知选项证据绝不变成已接受值或默认值。", "动态 TID 关联不得由固定端口假设替代。", "不得从仅线上证据推断应用事实。"],
+      "outputRecordIds": [
+        "TRANSFER-RECORD",
+        "PROTOCOL-EVENT"
+      ],
+      "toolRequirementIds": [
+        "TR-TRANSFER-RECONSTRUCTION",
+        "TR-PROTOCOL-EVENT"
+      ],
+      "interfaceIds": [
+        "IF-EXECUTE-RECORD",
+        "IF-OBS-INTERPRET"
+      ],
+      "preconditions": [
+        "Datagram completeness is classified.",
+        "Initial request and dynamic TID evidence remain distinguishable."
+      ],
+      "preconditionsZh": [
+        "数据报完整性已经分类。",
+        "初始请求与动态 TID 证据仍可区分。"
+      ],
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Open or retain transfer candidates from request and endpoint evidence.",
+          "actionZh": "依据请求与端点证据建立或保留传输候选。"
+        },
+        {
+          "id": "S2",
+          "action": "Apply option, block and terminal rules while retaining retransmission and ambiguity evidence.",
+          "actionZh": "应用选项、块和终止规则，同时保留重传与歧义证据。"
+        },
+        {
+          "id": "S3",
+          "action": "Emit typed wire or derived events with complete raw-reference chains.",
+          "actionZh": "产生带完整原始引用链的线上或派生类型事件。"
+        }
+      ],
+      "invariants": [
+        "Unknown option evidence never becomes an accepted or defaulted value.",
+        "Dynamic TID association is not replaced by a fixed port assumption.",
+        "Application facts are not inferred from wire-only evidence."
+      ],
+      "invariantsZh": [
+        "未知选项证据绝不变成已接受值或默认值。",
+        "动态 TID 关联不得由固定端口假设替代。",
+        "不得从仅线上证据推断应用事实。"
+      ],
       "failureOutcomes": [
-        {"code": "AMBIGUOUS-TRANSFER", "condition": "Evidence is compatible with multiple transfer candidates.", "conditionZh": "证据与多个传输候选相容。", "result": "Retain ambiguity and withhold unique ownership claims.", "resultZh": "保留歧义且不作唯一所有权主张。"},
-        {"code": "UNSUPPORTED-BLOCK-RANGE", "condition": "Block progression exceeds the declared bounded range.", "conditionZh": "块推进超出声明的有界范围。", "result": "Return UNSUPPORTED without merging wrapped block identities.", "resultZh": "返回 UNSUPPORTED，且不合并回绕后的块身份。"}
+        {
+          "code": "AMBIGUOUS-TRANSFER",
+          "condition": "Evidence is compatible with multiple transfer candidates.",
+          "conditionZh": "证据与多个传输候选相容。",
+          "result": "Retain ambiguity and withhold unique ownership claims.",
+          "resultZh": "保留歧义且不作唯一所有权主张。"
+        },
+        {
+          "code": "UNSUPPORTED-BLOCK-RANGE",
+          "condition": "Block progression exceeds the declared bounded range.",
+          "conditionZh": "块推进超出声明的有界范围。",
+          "result": "Return UNSUPPORTED without merging wrapped block identities.",
+          "resultZh": "返回 UNSUPPORTED，且不合并回绕后的块身份。"
+        }
       ],
       "outputValueMappings": [],
-      "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
-      "runtimeParameterIds": ["RP-RESOURCE"],
-      "upstreamModuleIds": ["MOD-REASSEMBLY"]
+      "acceptanceCaseIds": [
+        "AC-SYN-TRANSFER"
+      ],
+      "runtimeParameterIds": [
+        "RP-RESOURCE"
+      ],
+      "upstreamModuleIds": [
+        "MOD-REASSEMBLY"
+      ]
     },
     {
       "id": "MOD-OWNERSHIP",
@@ -8372,26 +8608,70 @@
       "titleZh": "请求实例所有权解析",
       "responsibility": "Resolve response ownership under the declared matching policy while preserving cancellation, supersession and ambiguity.",
       "responsibilityZh": "按声明的匹配策略解析响应所有权，同时保留取消、替代和歧义。",
-      "inputRecordIds": ["PROTOCOL-EVENT"],
-      "outputRecordIds": ["OWNERSHIP-RESULT"],
-      "toolRequirementIds": ["TR-OWNERSHIP"],
-      "interfaceIds": ["IF-OBS-INTERPRET"],
-      "preconditions": ["Candidate request instances and event order are explicit.", "The matching policy is UNIQUE-KEY, FIFO or MOST-RECENT."],
-      "preconditionsZh": ["候选请求实例和事件顺序均明确。", "匹配策略为 UNIQUE-KEY、FIFO 或 MOST-RECENT。"],
-      "steps": [
-        {"id": "S1", "action": "Discard candidates terminated by a valid cancellation or superseding trigger.", "actionZh": "移除被有效取消或替代触发终止的候选。"},
-        {"id": "S2", "action": "Apply the declared policy to the remaining compatible candidates.", "actionZh": "对剩余相容候选应用声明的策略。"},
-        {"id": "S3", "action": "Emit unique, unmatched or ambiguous ownership with supporting references.", "actionZh": "产生唯一、未匹配或歧义所有权及其支持引用。"}
+      "inputRecordIds": [
+        "PROTOCOL-EVENT"
       ],
-      "invariants": ["One response is never silently consumed by two incompatible request instances.", "Cancellation before a deadline prevents a later no-response failure for that obligation."],
-      "invariantsZh": ["一个响应绝不被两个不相容请求实例静默消费。", "截止前的合法取消阻止该义务随后产生无响应失败。"],
+      "outputRecordIds": [
+        "OWNERSHIP-RESULT"
+      ],
+      "toolRequirementIds": [
+        "TR-OWNERSHIP"
+      ],
+      "interfaceIds": [
+        "IF-OBS-INTERPRET"
+      ],
+      "preconditions": [
+        "Candidate request instances and event order are explicit.",
+        "The matching policy is UNIQUE-KEY, FIFO or MOST-RECENT."
+      ],
+      "preconditionsZh": [
+        "候选请求实例和事件顺序均明确。",
+        "匹配策略为 UNIQUE-KEY、FIFO 或 MOST-RECENT。"
+      ],
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Discard candidates terminated by a valid cancellation or superseding trigger.",
+          "actionZh": "移除被有效取消或替代触发终止的候选。"
+        },
+        {
+          "id": "S2",
+          "action": "Apply the declared policy to the remaining compatible candidates.",
+          "actionZh": "对剩余相容候选应用声明的策略。"
+        },
+        {
+          "id": "S3",
+          "action": "Emit unique, unmatched or ambiguous ownership with supporting references.",
+          "actionZh": "产生唯一、未匹配或歧义所有权及其支持引用。"
+        }
+      ],
+      "invariants": [
+        "One response is never silently consumed by two incompatible request instances.",
+        "Cancellation before a deadline prevents a later no-response failure for that obligation."
+      ],
+      "invariantsZh": [
+        "一个响应绝不被两个不相容请求实例静默消费。",
+        "截止前的合法取消阻止该义务随后产生无响应失败。"
+      ],
       "failureOutcomes": [
-        {"code": "AMBIGUOUS-OWNERSHIP", "condition": "More than one incompatible owner remains.", "conditionZh": "仍存在多个不相容所有者。", "result": "Emit AMBIGUOUS and prohibit unique-response consumption.", "resultZh": "产生 AMBIGUOUS 并禁止作为唯一响应消费。"}
+        {
+          "code": "AMBIGUOUS-OWNERSHIP",
+          "condition": "More than one incompatible owner remains.",
+          "conditionZh": "仍存在多个不相容所有者。",
+          "result": "Emit AMBIGUOUS and prohibit unique-response consumption.",
+          "resultZh": "产生 AMBIGUOUS 并禁止作为唯一响应消费。"
+        }
       ],
       "outputValueMappings": [],
-      "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
-      "runtimeParameterIds": ["RP-RESOURCE"],
-      "upstreamModuleIds": ["MOD-TRANSFER"]
+      "acceptanceCaseIds": [
+        "AC-SYN-TRANSFER"
+      ],
+      "runtimeParameterIds": [
+        "RP-RESOURCE"
+      ],
+      "upstreamModuleIds": [
+        "MOD-TRANSFER"
+      ]
     },
     {
       "id": "MOD-OBSERVATION",
@@ -8399,28 +8679,96 @@
       "titleZh": "观测评估、历史更新与有界报告",
       "responsibility": "Produce four-valued assessments, conservatively advance compatible histories and report bounded findings without root-cause claims.",
       "responsibilityZh": "产生四值评估、保守推进相容历史，并在不作根因主张的前提下报告有界发现。",
-      "inputRecordIds": ["OWNERSHIP-RESULT", "PROTOCOL-EVENT", "OBSERVATION-ASSESSMENT", "HISTORY-HANDLE", "INTAKE-METADATA"],
-      "outputRecordIds": ["OBSERVATION-ASSESSMENT", "HISTORY-HANDLE", "FINDING-RECORD"],
-      "toolRequirementIds": ["TR-OBSERVATION-ASSESSMENT", "TR-HISTORY-COMPATIBILITY", "TR-TRACEABLE-FINDING"],
-      "interfaceIds": ["IF-OBS-INTERPRET", "IF-HIST-UPDATE"],
-      "preconditions": ["Ownership status and measurement provenance are explicit.", "HistoryHandle belongs to the current session and version."],
-      "preconditionsZh": ["所有权状态与测量来源均明确。", "HistoryHandle 属于当前会话和版本。"],
-      "steps": [
-        {"id": "S1", "action": "Intersect measurement and requirement domains using exact interval topology.", "actionZh": "使用精确区间拓扑求测量域与要求域的交集。"},
-        {"id": "S2", "action": "Produce PASS, FAIL, INCONCLUSIVE or ERROR without collapsing unknown evidence.", "actionZh": "产生 PASS、FAIL、INCONCLUSIVE 或 ERROR，不折叠未知证据。"},
-        {"id": "S3", "action": "Advance history only through IF-HIST-UPDATE and never revive excluded hypotheses.", "actionZh": "仅通过 IF-HIST-UPDATE 推进历史，且绝不复活已排除假设。"},
-        {"id": "S4", "action": "Emit a bounded finding with facts, scope, assumptions and evidence separated.", "actionZh": "产生将事实、范围、假设和证据分离的有界发现。"}
+      "inputRecordIds": [
+        "OWNERSHIP-RESULT",
+        "PROTOCOL-EVENT",
+        "OBSERVATION-ASSESSMENT",
+        "HISTORY-HANDLE",
+        "INTAKE-METADATA"
       ],
-      "invariants": ["PASS requires every possible true value to satisfy the requirement.", "FAIL requires every possible true value to violate the requirement.", "ERROR and INCONCLUSIVE are never downgraded to FAIL.", "Equal hypothesis sets may retain different compatible histories."],
-      "invariantsZh": ["PASS 要求所有可能真值均满足要求。", "FAIL 要求所有可能真值均违反要求。", "ERROR 和 INCONCLUSIVE 绝不降级为 FAIL。", "相同假设集合可以保留不同的相容历史。"],
+      "outputRecordIds": [
+        "OBSERVATION-ASSESSMENT",
+        "HISTORY-HANDLE",
+        "FINDING-RECORD"
+      ],
+      "toolRequirementIds": [
+        "TR-OBSERVATION-ASSESSMENT",
+        "TR-HISTORY-COMPATIBILITY",
+        "TR-TRACEABLE-FINDING"
+      ],
+      "interfaceIds": [
+        "IF-OBS-INTERPRET",
+        "IF-HIST-UPDATE"
+      ],
+      "preconditions": [
+        "Ownership status and measurement provenance are explicit.",
+        "HistoryHandle belongs to the current session and version."
+      ],
+      "preconditionsZh": [
+        "所有权状态与测量来源均明确。",
+        "HistoryHandle 属于当前会话和版本。"
+      ],
+      "steps": [
+        {
+          "id": "S1",
+          "action": "Intersect measurement and requirement domains using exact interval topology.",
+          "actionZh": "使用精确区间拓扑求测量域与要求域的交集。"
+        },
+        {
+          "id": "S2",
+          "action": "Produce PASS, FAIL, INCONCLUSIVE or ERROR without collapsing unknown evidence.",
+          "actionZh": "产生 PASS、FAIL、INCONCLUSIVE 或 ERROR，不折叠未知证据。"
+        },
+        {
+          "id": "S3",
+          "action": "Advance history only through IF-HIST-UPDATE and never revive excluded hypotheses.",
+          "actionZh": "仅通过 IF-HIST-UPDATE 推进历史，且绝不复活已排除假设。"
+        },
+        {
+          "id": "S4",
+          "action": "Emit a bounded finding with facts, scope, assumptions and evidence separated.",
+          "actionZh": "产生将事实、范围、假设和证据分离的有界发现。"
+        }
+      ],
+      "invariants": [
+        "PASS requires every possible true value to satisfy the requirement.",
+        "FAIL requires every possible true value to violate the requirement.",
+        "ERROR and INCONCLUSIVE are never downgraded to FAIL.",
+        "Equal hypothesis sets may retain different compatible histories."
+      ],
+      "invariantsZh": [
+        "PASS 要求所有可能真值均满足要求。",
+        "FAIL 要求所有可能真值均违反要求。",
+        "ERROR 和 INCONCLUSIVE 绝不降级为 FAIL。",
+        "相同假设集合可以保留不同的相容历史。"
+      ],
       "failureOutcomes": [
-        {"code": "INVALID-MEASUREMENT", "condition": "The time chain, error budget or measurement-domain intersection is invalid.", "conditionZh": "时间链、误差预算或测量域交集无效。", "result": "Emit ERROR and do not exclude hypotheses.", "resultZh": "产生 ERROR 且不排除假设。"},
-        {"code": "RESOURCE-UNKNOWN", "condition": "The bounded history operation cannot complete within declared resources.", "conditionZh": "有界历史操作无法在声明资源内完成。", "result": "Retain the prior history with conservative-unknown status, not IUT FAIL.", "resultZh": "保留先前历史并标为保守未知，而非 IUT FAIL。"}
+        {
+          "code": "INVALID-MEASUREMENT",
+          "condition": "The time chain, error budget or measurement-domain intersection is invalid.",
+          "conditionZh": "时间链、误差预算或测量域交集无效。",
+          "result": "Emit ERROR and do not exclude hypotheses.",
+          "resultZh": "产生 ERROR 且不排除假设。"
+        },
+        {
+          "code": "RESOURCE-UNKNOWN",
+          "condition": "The bounded history operation cannot complete within declared resources.",
+          "conditionZh": "有界历史操作无法在声明资源内完成。",
+          "result": "Retain the prior history with conservative-unknown status, not IUT FAIL.",
+          "resultZh": "保留先前历史并标为保守未知，而非 IUT FAIL。"
+        }
       ],
       "outputValueMappings": [],
-      "acceptanceCaseIds": ["AC-SYN-TRANSFER"],
-      "runtimeParameterIds": ["RP-RESOURCE"],
-      "upstreamModuleIds": ["MOD-TRANSFER", "MOD-OWNERSHIP"]
+      "acceptanceCaseIds": [
+        "AC-SYN-TRANSFER"
+      ],
+      "runtimeParameterIds": [
+        "RP-RESOURCE"
+      ],
+      "upstreamModuleIds": [
+        "MOD-TRANSFER",
+        "MOD-OWNERSHIP"
+      ]
     }
   ],
   "algorithmRefinements": [
@@ -8437,40 +8785,662 @@
       "complexity": "Work is bounded by the configured hypothesis count, actions, observation classes, path length and frontier states; no polynomial or completeness claim is made.",
       "complexityZh": "工作量受配置的假设数、动作数、观测类数、路径长度和前沿状态数约束；不作多项式或完备性主张。",
       "interfaceBindings": [
-        {"interfaceId":"IF-PRED-OBS","inputTypes":["SessionContext","HistoryHandle","H","measurementUncertainty","actionLibrary"],"outputTypes":["currentlyValidNonemptyClasses","PredictionGapError"],"readOwnership":"Reads the versioned HistoryHandle and current session only.","writeOwnership":"Read-only; does not charge or write Γ/η.","failureTags":["PredictionGapError","RESOURCE-UNKNOWN"],"runtimeParameterIds":["RP-HYPOTHESIS-COUNT","RP-FRONTIER-STATE-COUNT","RP-OBSERVATION-CLASS-COUNT"],"timeContract":"Uses the session U and declared measurement uncertainty without changing either.","timeContractZh":"使用会话 U 和声明的测量不确定性，不修改二者。","acceptanceCaseIds":["AC-SYN-PREDICTION"],"implementationLocation":"future/reference_kernel/prediction.py"},
-        {"interfaceId":"IF-SELECT-ADMIT","inputTypes":["A","q","currentlyValidNonemptyClasses","SessionContext","HistoryHandle","H"],"outputTypes":["kind","tStar","S","admitA2A5"],"readOwnership":"Reads select-time inputs and candidate actions.","writeOwnership":"Read-only; S3-SNAP constructs the immutable final SelectSnapshot after this interface returns.","failureTags":["PredictionGapError","SPEC-ERROR","ADMIT-REFUSED"],"runtimeParameterIds":["RP-ACTION-COUNT","RP-OBSERVATION-CLASS-COUNT","RP-RESOURCE-MODE"],"timeContract":"Uses the same U identity as prediction and later interpretation.","timeContractZh":"使用与预测和后续解释相同身份的 U。","acceptanceCaseIds":["AC-SYN-SELECT"],"implementationLocation":"future/reference_kernel/selection.py"},
-        {"interfaceId":"IF-EXECUTE-RECORD","inputTypes":["SessionContext","admitted tStar"],"outputTypes":["record","effectClass","correlationId"],"readOwnership":"Reads an admitted final snapshot only.","writeOwnership":"Writes one session-log execution record after the single charge.","failureTags":["CONFIRMED-NOT-SENT","UNKNOWN-EFFECT"],"runtimeParameterIds":["RP-RESOURCE-MODE","RP-RETRY-CAP"],"timeContract":"Execution cannot replace the select-time snapshot or U.","timeContractZh":"执行不得替换选择时快照或 U。","acceptanceCaseIds":["AC-SYN-TRANSFER"],"implementationLocation":"future/offline_adapter/execution_record.py"},
-        {"interfaceId":"IF-OBS-INTERPRET","inputTypes":["SessionContext","executionRecord","clocks","epsilon"],"outputTypes":["Iz","effectClass","summaryConfirmed","postSummary","ownershipResult","measurementInterval"],"readOwnership":"Reads owned event evidence and declared clock/error sources.","writeOwnership":"Returns interpretation values only; does not exclude H.","failureTags":["ERROR","INCONCLUSIVE","UNKNOWN-EFFECT"],"runtimeParameterIds":["RP-OBSERVATION-CLASS-COUNT"],"timeContract":"Preserves interval topology and U identity; invalid timing evidence returns ERROR.","timeContractZh":"保留区间拓扑和 U 身份；无效时序证据返回 ERROR。","acceptanceCaseIds":["AC-SYN-OBSERVATION"],"implementationLocation":"future/reference_kernel/interpretation.py"},
-        {"interfaceId":"IF-PREP-RECOVER","inputTypes":["SessionContext","HistoryHandle","tStar","record"],"outputTypes":["targetConfirmed","summaryConfirmed","prepError","ineligible","declaredTarget","evidence","postSummary"],"readOwnership":"Reads session, history and the admitted action record.","writeOwnership":"Returns values only; S8/S9 retain the sole Γ writers.","failureTags":["UNKNOWN-EFFECT","PREP-ERROR","CONFIRMED-NOT-SENT"],"runtimeParameterIds":["RP-RETRY-CAP","RP-RESOURCE-MODE"],"timeContract":"A confirmation is evaluated before retry accounting and does not rewrite U.","timeContractZh":"在重试计数前评估确认，且不改写 U。","acceptanceCaseIds":["AC-SYN-PREP-RECOVER"],"implementationLocation":"future/reference_kernel/recovery.py"},
-        {"interfaceId":"IF-HIST-UPDATE","inputTypes":["HistoryHandle","H","tStar","qUsedAtSelect","classesUsedAtSelect","historyVersion","valid Iz","postSummary"],"outputTypes":["HistoryHandlePrime","Hprime","Stop-Empty"],"readOwnership":"Reads the select-time snapshot and whole-history frontier.","writeOwnership":"Writes the next versioned HistoryHandle only through normalized outcomes.","failureTags":["Stop-Empty","RESOURCE-UNKNOWN","CONSERVATIVE-UNKNOWN"],"runtimeParameterIds":["RP-HYPOTHESIS-COUNT","RP-PATH-LENGTH","RP-FRONTIER-STATE-COUNT"],"timeContract":"Carries the select-time U identity and never substitutes post-effect summary for qUsedAtSelect.","timeContractZh":"携带选择时 U 身份，绝不以效果后的摘要替代 qUsedAtSelect。","acceptanceCaseIds":["AC-SYN-HISTORY"],"implementationLocation":"future/reference_kernel/history.py"},
-        {"interfaceId":"IF-EQUIV","inputTypes":["SessionContext","H","HistoryHandle","remainingTests"],"outputTypes":["established","notEstablished","unknown"],"readOwnership":"Reads finite-domain state only.","writeOwnership":"Read-only; does not alter H or history.","failureTags":["UNKNOWN","RESOURCE-UNKNOWN"],"runtimeParameterIds":["RP-HYPOTHESIS-COUNT","RP-PATH-LENGTH","RP-ACTION-COUNT"],"timeContract":"Uses only declared bounded horizons; no available one-step test is not proof of equivalence.","timeContractZh":"仅使用声明的有界视界；没有可用单步测试不构成等价证明。","acceptanceCaseIds":["AC-SYN-EQUIVALENCE"],"implementationLocation":"future/reference_kernel/equivalence.py"},
-        {"interfaceId":"IF-RESOURCE-STOP","inputTypes":["SessionContext","H","HistoryHandle","named645Residuals","equivalenceStatus"],"outputTypes":["stopClass","finalH","trace"],"readOwnership":"Reads charged resources, retained history and named residuals.","writeOwnership":"Writes an auditable stop trace only.","failureTags":["Stop-Budget","Stop-Error","Stop-645"],"runtimeParameterIds":["RP-RESOURCE-MODE","RP-RETRY-CAP"],"timeContract":"Preserves exclusive stop order and never converts retry exhaustion into budget exhaustion.","timeContractZh":"保持互斥停止顺序，绝不把重试耗尽转换为预算耗尽。","acceptanceCaseIds":["AC-SYN-RESOURCE-STOP"],"implementationLocation":"future/reference_kernel/stopping.py"}
+        {
+          "interfaceId": "IF-PRED-OBS",
+          "inputTypes": [
+            "SessionContext",
+            "HistoryHandle",
+            "H",
+            "measurementUncertainty",
+            "actionLibrary"
+          ],
+          "outputTypes": [
+            "currentlyValidNonemptyClasses",
+            "PredictionGapError"
+          ],
+          "readOwnership": "Reads the versioned HistoryHandle and current session only.",
+          "writeOwnership": "Read-only; does not charge or write Γ/η.",
+          "failureTags": [
+            "PredictionGapError",
+            "RESOURCE-UNKNOWN"
+          ],
+          "runtimeParameterIds": [
+            "RP-HYPOTHESIS-COUNT",
+            "RP-FRONTIER-STATE-COUNT",
+            "RP-OBSERVATION-CLASS-COUNT"
+          ],
+          "timeContract": "Uses the session U and declared measurement uncertainty without changing either.",
+          "timeContractZh": "使用会话 U 和声明的测量不确定性，不修改二者。",
+          "acceptanceCaseIds": [
+            "AC-SYN-PREDICTION"
+          ],
+          "implementationLocation": "future/reference_kernel/prediction.py",
+          "readOwnershipZh": "仅读取带版本的 HistoryHandle 和当前会话。",
+          "writeOwnershipZh": "只读；不计费，也不写入 Γ/η。"
+        },
+        {
+          "interfaceId": "IF-SELECT-ADMIT",
+          "inputTypes": [
+            "A",
+            "q",
+            "currentlyValidNonemptyClasses",
+            "SessionContext",
+            "HistoryHandle",
+            "H"
+          ],
+          "outputTypes": [
+            "kind",
+            "tStar",
+            "S",
+            "admitA2A5"
+          ],
+          "readOwnership": "Reads select-time inputs and candidate actions.",
+          "writeOwnership": "Read-only; S3-SNAP constructs the immutable final SelectSnapshot after this interface returns.",
+          "failureTags": [
+            "PredictionGapError",
+            "SPEC-ERROR",
+            "ADMIT-REFUSED"
+          ],
+          "runtimeParameterIds": [
+            "RP-ACTION-COUNT",
+            "RP-OBSERVATION-CLASS-COUNT",
+            "RP-RESOURCE-MODE"
+          ],
+          "timeContract": "Uses the same U identity as prediction and later interpretation.",
+          "timeContractZh": "使用与预测和后续解释相同身份的 U。",
+          "acceptanceCaseIds": [
+            "AC-SYN-SELECT"
+          ],
+          "implementationLocation": "future/reference_kernel/selection.py",
+          "readOwnershipZh": "仅读取选择时输入和候选动作。",
+          "writeOwnershipZh": "只读；接口返回后由 S3-SNAP 构造不可变最终 SelectSnapshot。"
+        },
+        {
+          "interfaceId": "IF-EXECUTE-RECORD",
+          "inputTypes": [
+            "SessionContext",
+            "admitted tStar"
+          ],
+          "outputTypes": [
+            "record",
+            "effectClass",
+            "correlationId"
+          ],
+          "readOwnership": "Reads an admitted final snapshot only.",
+          "writeOwnership": "Writes one session-log execution record after the single charge.",
+          "failureTags": [
+            "CONFIRMED-NOT-SENT",
+            "UNKNOWN-EFFECT"
+          ],
+          "runtimeParameterIds": [
+            "RP-RESOURCE-MODE",
+            "RP-RETRY-CAP"
+          ],
+          "timeContract": "Execution cannot replace the select-time snapshot or U.",
+          "timeContractZh": "执行不得替换选择时快照或 U。",
+          "acceptanceCaseIds": [
+            "AC-SYN-TRANSFER"
+          ],
+          "implementationLocation": "future/offline_adapter/execution_record.py",
+          "readOwnershipZh": "仅读取已接纳的最终快照。",
+          "writeOwnershipZh": "单次计费后写入一条会话日志执行记录。"
+        },
+        {
+          "interfaceId": "IF-OBS-INTERPRET",
+          "inputTypes": [
+            "SessionContext",
+            "executionRecord",
+            "clocks",
+            "epsilon"
+          ],
+          "outputTypes": [
+            "Iz",
+            "effectClass",
+            "summaryConfirmed",
+            "postSummary",
+            "ownershipResult",
+            "measurementInterval"
+          ],
+          "readOwnership": "Reads owned event evidence and declared clock/error sources.",
+          "writeOwnership": "Returns interpretation values only; does not exclude H.",
+          "failureTags": [
+            "ERROR",
+            "INCONCLUSIVE",
+            "UNKNOWN-EFFECT"
+          ],
+          "runtimeParameterIds": [
+            "RP-OBSERVATION-CLASS-COUNT"
+          ],
+          "timeContract": "Preserves interval topology and U identity; invalid timing evidence returns ERROR.",
+          "timeContractZh": "保留区间拓扑和 U 身份；无效时序证据返回 ERROR。",
+          "acceptanceCaseIds": [
+            "AC-SYN-OBSERVATION"
+          ],
+          "implementationLocation": "future/reference_kernel/interpretation.py",
+          "readOwnershipZh": "仅读取已归属事件证据及声明的时钟和误差来源。",
+          "writeOwnershipZh": "仅返回解释值；不排除 H。"
+        },
+        {
+          "interfaceId": "IF-PREP-RECOVER",
+          "inputTypes": [
+            "SessionContext",
+            "HistoryHandle",
+            "tStar",
+            "record"
+          ],
+          "outputTypes": [
+            "targetConfirmed",
+            "summaryConfirmed",
+            "prepError",
+            "ineligible",
+            "declaredTarget",
+            "evidence",
+            "postSummary"
+          ],
+          "readOwnership": "Reads session, history and the admitted action record.",
+          "writeOwnership": "Returns values only; S8/S9 retain the sole Γ writers.",
+          "failureTags": [
+            "UNKNOWN-EFFECT",
+            "PREP-ERROR",
+            "CONFIRMED-NOT-SENT"
+          ],
+          "runtimeParameterIds": [
+            "RP-RETRY-CAP",
+            "RP-RESOURCE-MODE"
+          ],
+          "timeContract": "A confirmation is evaluated before retry accounting and does not rewrite U.",
+          "timeContractZh": "在重试计数前评估确认，且不改写 U。",
+          "acceptanceCaseIds": [
+            "AC-SYN-PREP-RECOVER"
+          ],
+          "implementationLocation": "future/reference_kernel/recovery.py",
+          "readOwnershipZh": "仅读取会话、历史和已接纳动作记录。",
+          "writeOwnershipZh": "仅返回值；S8/S9 保留 Γ 的唯一写入权。"
+        },
+        {
+          "interfaceId": "IF-HIST-UPDATE",
+          "inputTypes": [
+            "HistoryHandle",
+            "H",
+            "tStar",
+            "qUsedAtSelect",
+            "classesUsedAtSelect",
+            "historyVersion",
+            "valid Iz",
+            "postSummary"
+          ],
+          "outputTypes": [
+            "HistoryHandlePrime",
+            "Hprime",
+            "Stop-Empty"
+          ],
+          "readOwnership": "Reads the select-time snapshot and whole-history frontier.",
+          "writeOwnership": "Writes the next versioned HistoryHandle only through normalized outcomes.",
+          "failureTags": [
+            "Stop-Empty",
+            "RESOURCE-UNKNOWN",
+            "CONSERVATIVE-UNKNOWN"
+          ],
+          "runtimeParameterIds": [
+            "RP-HYPOTHESIS-COUNT",
+            "RP-PATH-LENGTH",
+            "RP-FRONTIER-STATE-COUNT"
+          ],
+          "timeContract": "Carries the select-time U identity and never substitutes post-effect summary for qUsedAtSelect.",
+          "timeContractZh": "携带选择时 U 身份，绝不以效果后的摘要替代 qUsedAtSelect。",
+          "acceptanceCaseIds": [
+            "AC-SYN-HISTORY"
+          ],
+          "implementationLocation": "future/reference_kernel/history.py",
+          "readOwnershipZh": "仅读取选择时快照和完整历史前沿。",
+          "writeOwnershipZh": "仅通过规范化结果写入下一版本的 HistoryHandle。"
+        },
+        {
+          "interfaceId": "IF-EQUIV",
+          "inputTypes": [
+            "SessionContext",
+            "H",
+            "HistoryHandle",
+            "remainingTests"
+          ],
+          "outputTypes": [
+            "established",
+            "notEstablished",
+            "unknown"
+          ],
+          "readOwnership": "Reads finite-domain state only.",
+          "writeOwnership": "Read-only; does not alter H or history.",
+          "failureTags": [
+            "UNKNOWN",
+            "RESOURCE-UNKNOWN"
+          ],
+          "runtimeParameterIds": [
+            "RP-HYPOTHESIS-COUNT",
+            "RP-PATH-LENGTH",
+            "RP-ACTION-COUNT"
+          ],
+          "timeContract": "Uses only declared bounded horizons; no available one-step test is not proof of equivalence.",
+          "timeContractZh": "仅使用声明的有界视界；没有可用单步测试不构成等价证明。",
+          "acceptanceCaseIds": [
+            "AC-SYN-EQUIVALENCE"
+          ],
+          "implementationLocation": "future/reference_kernel/equivalence.py",
+          "readOwnershipZh": "仅读取有限域状态。",
+          "writeOwnershipZh": "只读；不改变 H 或历史。"
+        },
+        {
+          "interfaceId": "IF-RESOURCE-STOP",
+          "inputTypes": [
+            "SessionContext",
+            "H",
+            "HistoryHandle",
+            "named645Residuals",
+            "equivalenceStatus"
+          ],
+          "outputTypes": [
+            "stopClass",
+            "finalH",
+            "trace"
+          ],
+          "readOwnership": "Reads charged resources, retained history and named residuals.",
+          "writeOwnership": "Writes an auditable stop trace only.",
+          "failureTags": [
+            "Stop-Budget",
+            "Stop-Error",
+            "Stop-645"
+          ],
+          "runtimeParameterIds": [
+            "RP-RESOURCE-MODE",
+            "RP-RETRY-CAP"
+          ],
+          "timeContract": "Preserves exclusive stop order and never converts retry exhaustion into budget exhaustion.",
+          "timeContractZh": "保持互斥停止顺序，绝不把重试耗尽转换为预算耗尽。",
+          "acceptanceCaseIds": [
+            "AC-SYN-RESOURCE-STOP"
+          ],
+          "implementationLocation": "future/reference_kernel/stopping.py",
+          "readOwnershipZh": "仅读取已计费资源、保留历史和具名残余。",
+          "writeOwnershipZh": "仅写入可审计停止追踪。"
+        }
       ]
     }
   ],
   "runtimeParameterContracts": [
     {
       "id": "RP-RESOURCE",
-      "title":"Offline buffering resource bound","titleZh":"离线缓冲资源界","unit":"bytes and records","domain":"POSITIVE-INTEGER","configurationRequirement":"A concrete value is required before buffering; it is not inferred from a capture.","configurationRequirementZh":"缓冲前必须有具体值；不得从抓包推断。","exhaustionBehavior":"Return a bounded resource/decode outcome, retain provenance and do not report protocol PASS/FAIL.","exhaustionBehaviorZh":"返回有界资源／解码结果，保留来源且不报告协议 PASS/FAIL。","ownerScope":"offline capture and reconstruction modules","acceptanceCaseIds":["AC-SYN-TRANSFER"]},
-    {"id":"RP-HYPOTHESIS-COUNT","title":"Hypothesis count bound","titleZh":"假设数量界","unit":"hypotheses","domain":"POSITIVE-INTEGER","configurationRequirement":"A finite H0 cardinality is configured for the declared model domain.","configurationRequirementZh":"为声明模型域配置有限 H0 基数。","exhaustionBehavior":"Return conservative unknown without eliminating a hypothesis.","exhaustionBehaviorZh":"返回保守未知，不排除任何假设。","ownerScope":"bounded reference kernel","acceptanceCaseIds":["AC-SYN-PREDICTION","AC-SYN-HISTORY"]},
-    {"id":"RP-PATH-LENGTH","title":"Feasible path length bound","titleZh":"可行路径长度界","unit":"transitions","domain":"POSITIVE-INTEGER","configurationRequirement":"The bounded horizon is declared per reference-kernel invocation.","configurationRequirementZh":"每次参考内核调用均声明有界视界。","exhaustionBehavior":"Return unknown; exceeding the horizon is not proof of infeasibility.","exhaustionBehaviorZh":"返回未知；超过视界不是不可行性的证明。","ownerScope":"bounded reference kernel","acceptanceCaseIds":["AC-SYN-HISTORY","AC-SYN-EQUIVALENCE"]},
-    {"id":"RP-FRONTIER-STATE-COUNT","title":"Per-hypothesis frontier bound","titleZh":"每假设前沿状态界","unit":"states per hypothesis","domain":"POSITIVE-INTEGER","configurationRequirement":"A finite frontier capacity is configured before propagation.","configurationRequirementZh":"传播前配置有限前沿容量。","exhaustionBehavior":"Retain prior compatible history with conservative-unknown status.","exhaustionBehaviorZh":"保留先前相容历史并标记保守未知。","ownerScope":"history propagation","acceptanceCaseIds":["AC-SYN-PREDICTION","AC-SYN-HISTORY"]},
-    {"id":"RP-ACTION-COUNT","title":"Action-library bound","titleZh":"动作库界","unit":"actions","domain":"POSITIVE-INTEGER","configurationRequirement":"The admitted candidate action library is finite and identified.","configurationRequirementZh":"被接纳的候选动作库有限且有身份。","exhaustionBehavior":"Refuse unenumerated actions; do not silently score them.","exhaustionBehaviorZh":"拒绝未枚举动作；不得静默评分。","ownerScope":"selection and equivalence","acceptanceCaseIds":["AC-SYN-SELECT","AC-SYN-EQUIVALENCE"]},
-    {"id":"RP-OBSERVATION-CLASS-COUNT","title":"Observation-class bound","titleZh":"观测类界","unit":"classes","domain":"POSITIVE-INTEGER","configurationRequirement":"A finite current projection is declared before scoring.","configurationRequirementZh":"评分前声明有限当前投影。","exhaustionBehavior":"Return named GAP or conservative unknown, never a zero score.","exhaustionBehaviorZh":"返回具名 GAP 或保守未知，绝不返回零评分。","ownerScope":"prediction, selection and interpretation","acceptanceCaseIds":["AC-SYN-PREDICTION","AC-SYN-SELECT","AC-SYN-OBSERVATION"]},
-    {"id":"RP-RETRY-CAP","title":"Retry cap","titleZh":"重试上限","unit":"attempts","domain":"POSITIVE-INTEGER","configurationRequirement":"The retry cap is an explicit positive integer and is separate from charged resource mode.","configurationRequirementZh":"重试上限是明确的正整数，且与计费资源模式分开。","exhaustionBehavior":"Return Stop-Error; do not convert it to Stop-Budget.","exhaustionBehaviorZh":"返回 Stop-Error；不得转换为 Stop-Budget。","ownerScope":"recovery and stopping","acceptanceCaseIds":["AC-SYN-PREP-RECOVER","AC-SYN-RESOURCE-STOP"]},
-    {"id":"RP-RESOURCE-MODE","title":"Exclusive resource mode","titleZh":"互斥资源模式","unit":"BUDGET or ROUNDS","domain":"EXCLUSIVE-RESOURCE-MODE","configurationRequirement":"Exactly one declared mode is selected for a session.","configurationRequirementZh":"每个会话恰选一个声明模式。","exhaustionBehavior":"An unadmitted action is not issued or charged; inability to afford recovery differs from ineligibility.","exhaustionBehaviorZh":"未接纳动作不得执行或计费；无力承担恢复不同于不具资格。","ownerScope":"selection, execution, recovery and stopping","acceptanceCaseIds":["AC-SYN-SELECT","AC-SYN-PREP-RECOVER","AC-SYN-RESOURCE-STOP"]}
+      "title": "Offline buffering resource bound",
+      "titleZh": "离线缓冲资源界",
+      "unit": "bytes and records",
+      "domain": "POSITIVE-INTEGER",
+      "configurationRequirement": "A concrete value is required before buffering; it is not inferred from a capture.",
+      "configurationRequirementZh": "缓冲前必须有具体值；不得从抓包推断。",
+      "exhaustionBehavior": "Return a bounded resource/decode outcome, retain provenance and do not report protocol PASS/FAIL.",
+      "exhaustionBehaviorZh": "返回有界资源／解码结果，保留来源且不报告协议 PASS/FAIL。",
+      "ownerScope": "offline capture and reconstruction modules",
+      "acceptanceCaseIds": [
+        "AC-SYN-TRANSFER"
+      ],
+      "ownerScopeZh": "离线捕获与重建模块"
+    },
+    {
+      "id": "RP-HYPOTHESIS-COUNT",
+      "title": "Hypothesis count bound",
+      "titleZh": "假设数量界",
+      "unit": "hypotheses",
+      "domain": "POSITIVE-INTEGER",
+      "configurationRequirement": "A finite H0 cardinality is configured for the declared model domain.",
+      "configurationRequirementZh": "为声明模型域配置有限 H0 基数。",
+      "exhaustionBehavior": "Return conservative unknown without eliminating a hypothesis.",
+      "exhaustionBehaviorZh": "返回保守未知，不排除任何假设。",
+      "ownerScope": "bounded reference kernel",
+      "acceptanceCaseIds": [
+        "AC-SYN-PREDICTION",
+        "AC-SYN-HISTORY"
+      ],
+      "ownerScopeZh": "有界参考内核"
+    },
+    {
+      "id": "RP-PATH-LENGTH",
+      "title": "Feasible path length bound",
+      "titleZh": "可行路径长度界",
+      "unit": "transitions",
+      "domain": "POSITIVE-INTEGER",
+      "configurationRequirement": "The bounded horizon is declared per reference-kernel invocation.",
+      "configurationRequirementZh": "每次参考内核调用均声明有界视界。",
+      "exhaustionBehavior": "Return unknown; exceeding the horizon is not proof of infeasibility.",
+      "exhaustionBehaviorZh": "返回未知；超过视界不是不可行性的证明。",
+      "ownerScope": "bounded reference kernel",
+      "acceptanceCaseIds": [
+        "AC-SYN-HISTORY",
+        "AC-SYN-EQUIVALENCE"
+      ],
+      "ownerScopeZh": "有界参考内核"
+    },
+    {
+      "id": "RP-FRONTIER-STATE-COUNT",
+      "title": "Per-hypothesis frontier bound",
+      "titleZh": "每假设前沿状态界",
+      "unit": "states per hypothesis",
+      "domain": "POSITIVE-INTEGER",
+      "configurationRequirement": "A finite frontier capacity is configured before propagation.",
+      "configurationRequirementZh": "传播前配置有限前沿容量。",
+      "exhaustionBehavior": "Retain prior compatible history with conservative-unknown status.",
+      "exhaustionBehaviorZh": "保留先前相容历史并标记保守未知。",
+      "ownerScope": "history propagation",
+      "acceptanceCaseIds": [
+        "AC-SYN-PREDICTION",
+        "AC-SYN-HISTORY"
+      ],
+      "ownerScopeZh": "历史传播"
+    },
+    {
+      "id": "RP-ACTION-COUNT",
+      "title": "Action-library bound",
+      "titleZh": "动作库界",
+      "unit": "actions",
+      "domain": "POSITIVE-INTEGER",
+      "configurationRequirement": "The admitted candidate action library is finite and identified.",
+      "configurationRequirementZh": "被接纳的候选动作库有限且有身份。",
+      "exhaustionBehavior": "Refuse unenumerated actions; do not silently score them.",
+      "exhaustionBehaviorZh": "拒绝未枚举动作；不得静默评分。",
+      "ownerScope": "selection and equivalence",
+      "acceptanceCaseIds": [
+        "AC-SYN-SELECT",
+        "AC-SYN-EQUIVALENCE"
+      ],
+      "ownerScopeZh": "选择与等价"
+    },
+    {
+      "id": "RP-OBSERVATION-CLASS-COUNT",
+      "title": "Observation-class bound",
+      "titleZh": "观测类界",
+      "unit": "classes",
+      "domain": "POSITIVE-INTEGER",
+      "configurationRequirement": "A finite current projection is declared before scoring.",
+      "configurationRequirementZh": "评分前声明有限当前投影。",
+      "exhaustionBehavior": "Return named GAP or conservative unknown, never a zero score.",
+      "exhaustionBehaviorZh": "返回具名 GAP 或保守未知，绝不返回零评分。",
+      "ownerScope": "prediction, selection and interpretation",
+      "acceptanceCaseIds": [
+        "AC-SYN-PREDICTION",
+        "AC-SYN-SELECT",
+        "AC-SYN-OBSERVATION"
+      ],
+      "ownerScopeZh": "预测、选择与解释"
+    },
+    {
+      "id": "RP-RETRY-CAP",
+      "title": "Retry cap",
+      "titleZh": "重试上限",
+      "unit": "attempts",
+      "domain": "POSITIVE-INTEGER",
+      "configurationRequirement": "The retry cap is an explicit positive integer and is separate from charged resource mode.",
+      "configurationRequirementZh": "重试上限是明确的正整数，且与计费资源模式分开。",
+      "exhaustionBehavior": "Return Stop-Error; do not convert it to Stop-Budget.",
+      "exhaustionBehaviorZh": "返回 Stop-Error；不得转换为 Stop-Budget。",
+      "ownerScope": "recovery and stopping",
+      "acceptanceCaseIds": [
+        "AC-SYN-PREP-RECOVER",
+        "AC-SYN-RESOURCE-STOP"
+      ],
+      "ownerScopeZh": "恢复与停止"
+    },
+    {
+      "id": "RP-RESOURCE-MODE",
+      "title": "Exclusive resource mode",
+      "titleZh": "互斥资源模式",
+      "unit": "BUDGET or ROUNDS",
+      "domain": "EXCLUSIVE-RESOURCE-MODE",
+      "configurationRequirement": "Exactly one declared mode is selected for a session.",
+      "configurationRequirementZh": "每个会话恰选一个声明模式。",
+      "exhaustionBehavior": "An unadmitted action is not issued or charged; inability to afford recovery differs from ineligibility.",
+      "exhaustionBehaviorZh": "未接纳动作不得执行或计费；无力承担恢复不同于不具资格。",
+      "ownerScope": "selection, execution, recovery and stopping",
+      "acceptanceCaseIds": [
+        "AC-SYN-SELECT",
+        "AC-SYN-PREP-RECOVER",
+        "AC-SYN-RESOURCE-STOP"
+      ],
+      "ownerScopeZh": "选择、执行、恢复与停止"
+    }
   ],
   "acceptanceCases": [
     {
       "id": "AC-SYN-TRANSFER",
-      "kind":"SYNTHETIC-NONTRUTH","title":"Scoped transfer reconstruction witness","titleZh":"有作用域传输重建见证","inputRecordIds":["CAPTURE-IDENTITY","PACKET-REF","DATAGRAM-RECORD","TRANSFER-RECORD","OWNERSHIP-RESULT","OBSERVATION-ASSESSMENT","HISTORY-HANDLE","FINDING-RECORD"],"expectedContractOutput":"A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence.","prohibitedOutput":"No protocol PASS/FAIL, root-cause label or invented accepted option is emitted.","toolRequirementIds":["TR-CAPTURE-INTAKE","TR-DATAGRAM-REASSEMBLY","TR-TRANSFER-RECONSTRUCTION","TR-PROTOCOL-EVENT","TR-OWNERSHIP","TR-OBSERVATION-ASSESSMENT","TR-HISTORY-COMPATIBILITY","TR-TRACEABLE-FINDING"],"moduleIds":["MOD-CAPTURE","MOD-REASSEMBLY","MOD-TRANSFER","MOD-OWNERSHIP","MOD-OBSERVATION"],"algorithmInterfaceIds":["IF-EXECUTE-RECORD","IF-OBS-INTERPRET","IF-HIST-UPDATE"],"basis":"Synthetic specification witness for the declared offline first slice; it is not historical truth or a parser execution.","basisZh":"针对声明离线首轮切片的合成规格见证；它不是历史真值或解析器执行。","witnessLevel":"SPECIFICATION-WITNESS","runtimeExecutionStatus":"NOT-EXECUTED"},
-    {"id":"AC-SYN-PREDICTION","kind":"SYNTHETIC-NONTRUTH","title":"Finite prediction boundary witness","titleZh":"有限预测边界见证","inputRecordIds":["HISTORY-HANDLE","OBSERVATION-ASSESSMENT"],"expectedContractOutput":"A finite current projection is tagged OK or GAP before any TEST score is read.","prohibitedOutput":"An empty projection is not scored as zero and no history is written.","toolRequirementIds":["TR-HISTORY-COMPATIBILITY"],"moduleIds":["MOD-OBSERVATION"],"algorithmInterfaceIds":["IF-PRED-OBS"],"basis":"Synthetic specification witness for finite current-class propagation.","basisZh":"有限当前类传播的合成规格见证。","witnessLevel":"SPECIFICATION-WITNESS","runtimeExecutionStatus":"NOT-EXECUTED"},
-    {"id":"AC-SYN-SELECT","kind":"SYNTHETIC-NONTRUTH","title":"Admitted action selection witness","titleZh":"接纳动作选择见证","inputRecordIds":["HISTORY-HANDLE","OBSERVATION-ASSESSMENT"],"expectedContractOutput":"Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID.","prohibitedOutput":"An uninformative TEST is not A2 and Prep/Recover are not TEST-scored.","toolRequirementIds":["TR-HISTORY-COMPATIBILITY"],"moduleIds":["MOD-OBSERVATION"],"algorithmInterfaceIds":["IF-SELECT-ADMIT"],"basis":"Synthetic specification witness for the declared one-step decision table.","basisZh":"声明单步决策表的合成规格见证。","witnessLevel":"SPECIFICATION-WITNESS","runtimeExecutionStatus":"NOT-EXECUTED"},
-    {"id":"AC-SYN-OBSERVATION","kind":"SYNTHETIC-NONTRUTH","title":"Four-valued timing interpretation witness","titleZh":"四值时序解释见证","inputRecordIds":["OWNERSHIP-RESULT","PROTOCOL-EVENT","OBSERVATION-ASSESSMENT"],"expectedContractOutput":"Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR.","prohibitedOutput":"ERROR or INCONCLUSIVE is not downgraded to FAIL.","toolRequirementIds":["TR-OBSERVATION-ASSESSMENT"],"moduleIds":["MOD-OBSERVATION"],"algorithmInterfaceIds":["IF-OBS-INTERPRET"],"basis":"Synthetic specification witness for T5 interval and ownership preconditions.","basisZh":"T5 区间和所有权前提的合成规格见证。","witnessLevel":"SPECIFICATION-WITNESS","runtimeExecutionStatus":"NOT-EXECUTED"},
-    {"id":"AC-SYN-PREP-RECOVER","kind":"SYNTHETIC-NONTRUTH","title":"Confirmed recovery handoff witness","titleZh":"确认恢复交接见证","inputRecordIds":["HISTORY-HANDLE","OBSERVATION-ASSESSMENT"],"expectedContractOutput":"Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary.","prohibitedOutput":"An unconfirmed successor cannot retain stale known state or become a direct Γ write.","toolRequirementIds":["TR-HISTORY-COMPATIBILITY"],"moduleIds":["MOD-OBSERVATION"],"algorithmInterfaceIds":["IF-PREP-RECOVER"],"basis":"Synthetic specification witness for S8/S9 ownership boundaries.","basisZh":"S8/S9 所有权边界的合成规格见证。","witnessLevel":"SPECIFICATION-WITNESS","runtimeExecutionStatus":"NOT-EXECUTED"},
-    {"id":"AC-SYN-HISTORY","kind":"SYNTHETIC-NONTRUTH","title":"Whole-history update witness","titleZh":"完整历史更新见证","inputRecordIds":["HISTORY-HANDLE","OBSERVATION-ASSESSMENT"],"expectedContractOutput":"A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses.","prohibitedOutput":"H prime is never replaced by Iz and resource exhaustion is not incompatibility.","toolRequirementIds":["TR-HISTORY-COMPATIBILITY"],"moduleIds":["MOD-OBSERVATION"],"algorithmInterfaceIds":["IF-HIST-UPDATE"],"basis":"Synthetic specification witness for conservative history propagation.","basisZh":"保守历史传播的合成规格见证。","witnessLevel":"SPECIFICATION-WITNESS","runtimeExecutionStatus":"NOT-EXECUTED"},
-    {"id":"AC-SYN-EQUIVALENCE","kind":"SYNTHETIC-NONTRUTH","title":"Bounded equivalence abstention witness","titleZh":"有界等价弃权见证","inputRecordIds":["HISTORY-HANDLE"],"expectedContractOutput":"An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished.","prohibitedOutput":"No immediately distinguishing TEST is not treated as proof of equivalence.","toolRequirementIds":["TR-HISTORY-COMPATIBILITY"],"moduleIds":["MOD-OBSERVATION"],"algorithmInterfaceIds":["IF-EQUIV"],"basis":"Synthetic specification witness for bounded equivalence semantics.","basisZh":"有界等价语义的合成规格见证。","witnessLevel":"SPECIFICATION-WITNESS","runtimeExecutionStatus":"NOT-EXECUTED"},
-    {"id":"AC-SYN-RESOURCE-STOP","kind":"SYNTHETIC-NONTRUTH","title":"Resource and stop ordering witness","titleZh":"资源与停止顺序见证","inputRecordIds":["HISTORY-HANDLE","FINDING-RECORD"],"expectedContractOutput":"Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error.","prohibitedOutput":"Retry exhaustion is not Stop-Budget and a normal singleton is not protocol PASS.","toolRequirementIds":["TR-HISTORY-COMPATIBILITY","TR-TRACEABLE-FINDING"],"moduleIds":["MOD-OBSERVATION"],"algorithmInterfaceIds":["IF-RESOURCE-STOP"],"basis":"Synthetic specification witness for resource and stop contracts.","basisZh":"资源和停止合同的合成规格见证。","witnessLevel":"SPECIFICATION-WITNESS","runtimeExecutionStatus":"NOT-EXECUTED"}
+      "kind": "SYNTHETIC-NONTRUTH",
+      "title": "Scoped transfer reconstruction witness",
+      "titleZh": "有作用域传输重建见证",
+      "inputRecordIds": [
+        "CAPTURE-IDENTITY",
+        "PACKET-REF",
+        "DATAGRAM-RECORD",
+        "TRANSFER-RECORD",
+        "OWNERSHIP-RESULT",
+        "OBSERVATION-ASSESSMENT",
+        "HISTORY-HANDLE",
+        "FINDING-RECORD"
+      ],
+      "expectedContractOutput": "A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence.",
+      "prohibitedOutput": "No protocol PASS/FAIL, root-cause label or invented accepted option is emitted.",
+      "toolRequirementIds": [
+        "TR-CAPTURE-INTAKE",
+        "TR-DATAGRAM-REASSEMBLY",
+        "TR-TRANSFER-RECONSTRUCTION",
+        "TR-PROTOCOL-EVENT",
+        "TR-OWNERSHIP",
+        "TR-OBSERVATION-ASSESSMENT",
+        "TR-HISTORY-COMPATIBILITY",
+        "TR-TRACEABLE-FINDING"
+      ],
+      "moduleIds": [
+        "MOD-CAPTURE",
+        "MOD-REASSEMBLY",
+        "MOD-TRANSFER",
+        "MOD-OWNERSHIP",
+        "MOD-OBSERVATION"
+      ],
+      "algorithmInterfaceIds": [
+        "IF-EXECUTE-RECORD",
+        "IF-OBS-INTERPRET",
+        "IF-HIST-UPDATE"
+      ],
+      "basis": "Synthetic specification witness for the declared offline first slice; it is not historical truth or a parser execution.",
+      "basisZh": "针对声明离线首轮切片的合成规格见证；它不是历史真值或解析器执行。",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "expectedContractOutputZh": "保留来源的传输候选和带类型事件保留缺口、重传与选项证据。",
+      "prohibitedOutputZh": "不得产生协议 PASS/FAIL、根因标签或虚构的已接受选项。"
+    },
+    {
+      "id": "AC-SYN-PREDICTION",
+      "kind": "SYNTHETIC-NONTRUTH",
+      "title": "Finite prediction boundary witness",
+      "titleZh": "有限预测边界见证",
+      "inputRecordIds": [
+        "HISTORY-HANDLE",
+        "OBSERVATION-ASSESSMENT"
+      ],
+      "expectedContractOutput": "A finite current projection is tagged OK or GAP before any TEST score is read.",
+      "prohibitedOutput": "An empty projection is not scored as zero and no history is written.",
+      "toolRequirementIds": [
+        "TR-HISTORY-COMPATIBILITY"
+      ],
+      "moduleIds": [
+        "MOD-OBSERVATION"
+      ],
+      "algorithmInterfaceIds": [
+        "IF-PRED-OBS"
+      ],
+      "basis": "Synthetic specification witness for finite current-class propagation.",
+      "basisZh": "有限当前类传播的合成规格见证。",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "expectedContractOutputZh": "在读取任何 TEST 评分前，将有限当前投影标记为 OK 或 GAP。",
+      "prohibitedOutputZh": "空投影不得记为零分，也不得写入历史。"
+    },
+    {
+      "id": "AC-SYN-SELECT",
+      "kind": "SYNTHETIC-NONTRUTH",
+      "title": "Admitted action selection witness",
+      "titleZh": "接纳动作选择见证",
+      "inputRecordIds": [
+        "HISTORY-HANDLE",
+        "OBSERVATION-ASSESSMENT"
+      ],
+      "expectedContractOutput": "Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID.",
+      "prohibitedOutput": "An uninformative TEST is not A2 and Prep/Recover are not TEST-scored.",
+      "toolRequirementIds": [
+        "TR-HISTORY-COMPATIBILITY"
+      ],
+      "moduleIds": [
+        "MOD-OBSERVATION"
+      ],
+      "algorithmInterfaceIds": [
+        "IF-SELECT-ADMIT"
+      ],
+      "basis": "Synthetic specification witness for the declared one-step decision table.",
+      "basisZh": "声明单步决策表的合成规格见证。",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "expectedContractOutputZh": "仅对可负担且有区分力的 TEST 作 minimax 评分，然后按成本和稳定 action ID 决胜。",
+      "prohibitedOutputZh": "无信息 TEST 不得成为 A2，Prep/Recover 不得按 TEST 评分。"
+    },
+    {
+      "id": "AC-SYN-OBSERVATION",
+      "kind": "SYNTHETIC-NONTRUTH",
+      "title": "Four-valued timing interpretation witness",
+      "titleZh": "四值时序解释见证",
+      "inputRecordIds": [
+        "OWNERSHIP-RESULT",
+        "PROTOCOL-EVENT",
+        "OBSERVATION-ASSESSMENT"
+      ],
+      "expectedContractOutput": "Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR.",
+      "prohibitedOutput": "ERROR or INCONCLUSIVE is not downgraded to FAIL.",
+      "toolRequirementIds": [
+        "TR-OBSERVATION-ASSESSMENT"
+      ],
+      "moduleIds": [
+        "MOD-OBSERVATION"
+      ],
+      "algorithmInterfaceIds": [
+        "IF-OBS-INTERPRET"
+      ],
+      "basis": "Synthetic specification witness for T5 interval and ownership preconditions.",
+      "basisZh": "T5 区间和所有权前提的合成规格见证。",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "expectedContractOutputZh": "有效区间产生 PASS、FAIL 或 INCONCLUSIVE；无效时序证据产生 ERROR。",
+      "prohibitedOutputZh": "不得将 ERROR 或 INCONCLUSIVE 降级为 FAIL。"
+    },
+    {
+      "id": "AC-SYN-PREP-RECOVER",
+      "kind": "SYNTHETIC-NONTRUTH",
+      "title": "Confirmed recovery handoff witness",
+      "titleZh": "确认恢复交接见证",
+      "inputRecordIds": [
+        "HISTORY-HANDLE",
+        "OBSERVATION-ASSESSMENT"
+      ],
+      "expectedContractOutput": "Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary.",
+      "prohibitedOutput": "An unconfirmed successor cannot retain stale known state or become a direct Γ write.",
+      "toolRequirementIds": [
+        "TR-HISTORY-COMPATIBILITY"
+      ],
+      "moduleIds": [
+        "MOD-OBSERVATION"
+      ],
+      "algorithmInterfaceIds": [
+        "IF-PREP-RECOVER"
+      ],
+      "basis": "Synthetic specification witness for S8/S9 ownership boundaries.",
+      "basisZh": "S8/S9 所有权边界的合成规格见证。",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "expectedContractOutputZh": "Prep/Recover 返回确认字段；只有 S8/S9 可提交已知状态或后继摘要。",
+      "prohibitedOutputZh": "未确认后继不得保留陈旧已知状态或直接写入 Γ。"
+    },
+    {
+      "id": "AC-SYN-HISTORY",
+      "kind": "SYNTHETIC-NONTRUTH",
+      "title": "Whole-history update witness",
+      "titleZh": "完整历史更新见证",
+      "inputRecordIds": [
+        "HISTORY-HANDLE",
+        "OBSERVATION-ASSESSMENT"
+      ],
+      "expectedContractOutput": "A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses.",
+      "prohibitedOutput": "H prime is never replaced by Iz and resource exhaustion is not incompatibility.",
+      "toolRequirementIds": [
+        "TR-HISTORY-COMPATIBILITY"
+      ],
+      "moduleIds": [
+        "MOD-OBSERVATION"
+      ],
+      "algorithmInterfaceIds": [
+        "IF-HIST-UPDATE"
+      ],
+      "basis": "Synthetic specification witness for conservative history propagation.",
+      "basisZh": "保守历史传播的合成规格见证。",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "expectedContractOutputZh": "规范化有效结果推进带版本完整历史前沿，且不复活已排除假设。",
+      "prohibitedOutputZh": "H prime 不得替换为 Iz，资源耗尽不得视为不相容。"
+    },
+    {
+      "id": "AC-SYN-EQUIVALENCE",
+      "kind": "SYNTHETIC-NONTRUTH",
+      "title": "Bounded equivalence abstention witness",
+      "titleZh": "有界等价弃权见证",
+      "inputRecordIds": [
+        "HISTORY-HANDLE"
+      ],
+      "expectedContractOutput": "An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished.",
+      "prohibitedOutput": "No immediately distinguishing TEST is not treated as proof of equivalence.",
+      "toolRequirementIds": [
+        "TR-HISTORY-COMPATIBILITY"
+      ],
+      "moduleIds": [
+        "MOD-OBSERVATION"
+      ],
+      "algorithmInterfaceIds": [
+        "IF-EQUIV"
+      ],
+      "basis": "Synthetic specification witness for bounded equivalence semantics.",
+      "basisZh": "有界等价语义的合成规格见证。",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "expectedContractOutputZh": "established 需要声明有限域的证明依据；否则结果为 unknown 或 notEstablished。",
+      "prohibitedOutputZh": "没有即时可区分 TEST 不得视为等价证明。"
+    },
+    {
+      "id": "AC-SYN-RESOURCE-STOP",
+      "kind": "SYNTHETIC-NONTRUTH",
+      "title": "Resource and stop ordering witness",
+      "titleZh": "资源与停止顺序见证",
+      "inputRecordIds": [
+        "HISTORY-HANDLE",
+        "FINDING-RECORD"
+      ],
+      "expectedContractOutput": "Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error.",
+      "prohibitedOutput": "Retry exhaustion is not Stop-Budget and a normal singleton is not protocol PASS.",
+      "toolRequirementIds": [
+        "TR-HISTORY-COMPATIBILITY",
+        "TR-TRACEABLE-FINDING"
+      ],
+      "moduleIds": [
+        "MOD-OBSERVATION"
+      ],
+      "algorithmInterfaceIds": [
+        "IF-RESOURCE-STOP"
+      ],
+      "basis": "Synthetic specification witness for resource and stop contracts.",
+      "basisZh": "资源和停止合同的合成规格见证。",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "expectedContractOutputZh": "互斥停止顺序保留具名 645 残余，并将重试耗尽报告为 Stop-Error。",
+      "prohibitedOutputZh": "重试耗尽不得成为 Stop-Budget，normal 单例不得成为协议 PASS。"
+    }
   ],
   "implementationDependencies": [
     {
