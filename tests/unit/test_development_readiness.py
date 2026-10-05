@@ -201,6 +201,24 @@ def test_algorithm_acceptance_edges_and_retry_domain_are_not_substitutable():
     assert "RP-RETRY-CAP acceptance case AC-SYN-PREDICTION has no parameter consumer" in errors(bad)
 
 
+def test_bilingual_algorithm_contract_fields_are_rendered_by_section_and_detect_staleness():
+    rendered = SYNC.render(copy.deepcopy(PACKAGE))
+    english, chinese = rendered.split("# 中文版", 1)
+    binding = PACKAGE["algorithmRefinements"][0]["interfaceBindings"][0]
+    parameter = PACKAGE["runtimeParameterContracts"][0]
+    case = PACKAGE["acceptanceCases"][0]
+    assert binding["readOwnership"] in english and binding["writeOwnership"] in english
+    assert binding["readOwnershipZh"] in chinese and binding["writeOwnershipZh"] in chinese
+    assert parameter["ownerScope"] in english and parameter["ownerScopeZh"] in chinese
+    assert case["expectedContractOutput"] in english and case["prohibitedOutput"] in english
+    assert case["expectedContractOutputZh"] in chinese and case["prohibitedOutputZh"] in chinese
+    for target, field in ((binding, "readOwnershipZh"), (parameter, "ownerScopeZh"), (case, "expectedContractOutputZh"), (case, "prohibitedOutputZh")):
+        changed = copy.deepcopy(PACKAGE)
+        changed_target = next(item for item in changed["algorithmRefinements"][0]["interfaceBindings"] if item["interfaceId"] == binding["interfaceId"]) if target is binding else next(item for item in changed["runtimeParameterContracts"] if item["id"] == parameter["id"]) if target is parameter else next(item for item in changed["acceptanceCases"] if item["id"] == case["id"])
+        changed_target[field] += " drift"
+        assert SYNC.render(changed) != rendered
+
+
 def test_bound_inputs_are_consumed_once_from_git_blobs_not_worktree(monkeypatch):
     bound_paths = {ROOT / item["path"] for item in PACKAGE["inputBindings"]}
     original_read_text = Path.read_text
