@@ -455,12 +455,15 @@ def package_errors(data: dict) -> list[str]:
             for field in ("readOwnership", "writeOwnership", "timeContract", "timeContractZh", "implementationLocation"):
                 if not binding[field].strip():
                     errors.append(f"{binding['interfaceId']} has blank {field}")
+            for field in ("readOwnershipZh", "writeOwnershipZh"):
+                if not binding[field].strip():
+                    errors.append(f"{binding['interfaceId']} has blank {field}")
     if set(bound_interface_ids) != interface_ids:
         errors.append("algorithm interface bindings must equal the interface registry")
     for parameter in data["runtimeParameterContracts"]:
         if not set(parameter["acceptanceCaseIds"]).issubset(cases):
             errors.append(f"{parameter['id']} has an unknown acceptance case")
-        for field in ("title", "titleZh", "unit", "configurationRequirement", "configurationRequirementZh", "exhaustionBehavior", "exhaustionBehaviorZh", "ownerScope"):
+        for field in ("title", "titleZh", "unit", "configurationRequirement", "configurationRequirementZh", "exhaustionBehavior", "exhaustionBehaviorZh", "ownerScope", "ownerScopeZh"):
             if not parameter[field].strip():
                 errors.append(f"{parameter['id']} has blank {field}")
     for case in data["acceptanceCases"]:
@@ -472,7 +475,7 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{case['id']} has an unknown module")
         if not set(case["algorithmInterfaceIds"]).issubset(interface_ids):
             errors.append(f"{case['id']} has an unknown algorithm interface")
-        for field in ("title", "titleZh", "expectedContractOutput", "prohibitedOutput", "basis", "basisZh"):
+        for field in ("title", "titleZh", "expectedContractOutput", "expectedContractOutputZh", "prohibitedOutput", "prohibitedOutputZh", "basis", "basisZh"):
             if not case[field].strip():
                 errors.append(f"{case['id']} has blank {field}")
         for tool_id in case["toolRequirementIds"]:

@@ -219,6 +219,26 @@ def test_bilingual_algorithm_contract_fields_are_rendered_by_section_and_detect_
         assert SYNC.render(changed) != rendered
 
 
+def test_blank_bilingual_algorithm_contract_fields_are_rejected_without_publishing(monkeypatch, tmp_path, capsys):
+    mutations = (
+        ("interfaceBindings", "readOwnershipZh"),
+        ("interfaceBindings", "writeOwnershipZh"),
+        ("runtimeParameterContracts", "ownerScopeZh"),
+        ("acceptanceCases", "expectedContractOutputZh"),
+        ("acceptanceCases", "prohibitedOutputZh"),
+    )
+    for collection, field in mutations:
+        bad = copy.deepcopy(PACKAGE)
+        if collection == "interfaceBindings":
+            item = bad["algorithmRefinements"][0][collection][0]
+        else:
+            item = bad[collection][0]
+        item[field] = " \t\n "
+        assert any(f"blank {field}" in error for error in errors(bad))
+        code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
+        assert code == 1 and f"blank {field}" in captured.err
+
+
 def test_bound_inputs_are_consumed_once_from_git_blobs_not_worktree(monkeypatch):
     bound_paths = {ROOT / item["path"] for item in PACKAGE["inputBindings"]}
     original_read_text = Path.read_text
