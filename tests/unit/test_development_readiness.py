@@ -132,6 +132,17 @@ def test_main_returns_exit_codes_for_candidate_and_bad_binding(monkeypatch, tmp_
     assert "invalid upstream module" in captured.err
 
 
+def test_invalid_output_record_definition_has_named_diagnostic_not_mapping_exception(monkeypatch, tmp_path, capsys):
+    for malformed in (None, "not-a-field-definition"):
+        bad = copy.deepcopy(PACKAGE)
+        datagram = next(item for item in bad["recordContracts"] if item["id"] == "DATAGRAM-RECORD")
+        datagram["fieldDefinitions"]["reassemblyStatus"] = malformed
+        code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
+        assert code == 1
+        assert "DATAGRAM-RECORD.reassemblyStatus field definition must be a nonempty object" in captured.err
+        assert "AttributeError" not in captured.err
+
+
 def test_bound_inputs_are_consumed_once_from_git_blobs_not_worktree(monkeypatch):
     bound_paths = {ROOT / item["path"] for item in PACKAGE["inputBindings"]}
     original_read_text = Path.read_text

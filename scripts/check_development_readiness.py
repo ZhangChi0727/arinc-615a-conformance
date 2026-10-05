@@ -218,7 +218,7 @@ def validate_record_instance(record: dict, payload: object) -> list[tuple[str, t
             "additionalProperties": False,
         }
         Draft202012Validator.check_schema(schema)
-    except (KeyError, TypeError, SchemaError, re.error, OverflowError) as exc:
+    except (AttributeError, KeyError, TypeError, SchemaError, re.error, OverflowError) as exc:
         return [("RC-DEFINITION-INVALID", (), f"record definition is invalid: {exc}")]
     results: list[tuple[str, tuple[object, ...], str]] = []
     for field in schema["required"]:
@@ -369,6 +369,7 @@ def package_errors(data: dict) -> list[str]:
         values = [row["id"] for row in items]
         if len(values) != len(set(values)):
             errors.append(f"{label} repeats an ID")
+    valid_record_definitions: set[str] = set()
     for record in data["recordContracts"]:
         if record["ownerModuleId"] not in modules:
             errors.append(f"{record['id']} has an unknown owner module")
@@ -391,6 +392,7 @@ def package_errors(data: dict) -> list[str]:
         if definition_errors:
             errors.extend(definition_errors)
             continue
+        valid_record_definitions.add(record["id"])
         example_errors = validate_record_instance(record, record["example"])
         if example_errors:
             errors.append(f"{record['id']} example is invalid: {example_errors}")
@@ -482,6 +484,12 @@ def package_errors(data: dict) -> list[str]:
                 continue
             if not mapping["meaning"].strip() or not mapping["meaningZh"].strip():
                 errors.append(f"{module['id']} has a blank output mapping meaning")
+            # A malformed record contract already has a named definition
+            # diagnostic above.  Do not re-enter instance validation here:
+            # mapping checks must remain deterministic and must not turn that
+            # contract error into an AttributeError.
+            if mapping["recordId"] not in valid_record_definitions:
+                continue
             for value in mapping["emittedValues"]:
                 witness = copy.deepcopy(record["example"])
                 witness[mapping["field"]] = value
