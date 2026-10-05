@@ -143,6 +143,40 @@ def test_invalid_output_record_definition_has_named_diagnostic_not_mapping_excep
         assert "AttributeError" not in captured.err
 
 
+def test_bounded_algorithm_bindings_parameters_and_acceptance_cases_are_closed():
+    candidate = copy.deepcopy(PACKAGE)
+    refinement = candidate["algorithmRefinements"][0]
+    registry = json.loads((ROOT / "configs" / "research" / "cltav_interface_registry.json").read_text(encoding="utf-8"))
+    registry_ids = {row["id"] for row in registry["interfaces"]}
+    assert {binding["interfaceId"] for binding in refinement["interfaceBindings"]} == registry_ids
+    assert {case["runtimeExecutionStatus"] for case in candidate["acceptanceCases"]} == {"NOT-EXECUTED"}
+    assert errors(candidate) == []
+
+    missing = copy.deepcopy(candidate)
+    missing["algorithmRefinements"][0]["interfaceBindings"] = missing["algorithmRefinements"][0]["interfaceBindings"][1:]
+    assert errors(missing)
+
+    wrong_io = copy.deepcopy(candidate)
+    wrong_io["algorithmRefinements"][0]["interfaceBindings"][0]["outputTypes"] = ["fabricated"]
+    assert any("output types differ" in item for item in errors(wrong_io))
+
+    bad_case = copy.deepcopy(candidate)
+    bad_case["acceptanceCases"][0]["toolRequirementIds"] = []
+    assert errors(bad_case)
+
+    detached = copy.deepcopy(candidate)
+    detached["acceptanceCases"][0]["toolRequirementIds"].remove("TR-CAPTURE-INTAKE")
+    assert any("TR-CAPTURE-INTAKE is absent from its acceptance case" in item for item in errors(detached))
+
+    stale = SYNC.render(candidate)
+    for binding in refinement["interfaceBindings"]:
+        assert binding["timeContract"] in stale
+        assert binding["timeContractZh"] in stale
+    for parameter in candidate["runtimeParameterContracts"]:
+        assert parameter["exhaustionBehavior"] in stale
+        assert parameter["exhaustionBehaviorZh"] in stale
+
+
 def test_bound_inputs_are_consumed_once_from_git_blobs_not_worktree(monkeypatch):
     bound_paths = {ROOT / item["path"] for item in PACKAGE["inputBindings"]}
     original_read_text = Path.read_text
@@ -343,7 +377,9 @@ def test_module_contracts_close_requirements_records_interfaces_and_dependencies
     assert any("MOD-REASSEMBLY input PACKET-REF lacks producer dependency on MOD-CAPTURE" in item for item in errors(reversed_dependency))
 
     unrelated_case = copy.deepcopy(PACKAGE)
-    unrelated_case["acceptanceCases"].append({"id": "AC-SYN-UNRELATED", "kind": "SYNTHETIC-NONTRUTH"})
+    unrelated = copy.deepcopy(unrelated_case["acceptanceCases"][0])
+    unrelated["id"] = "AC-SYN-UNRELATED"
+    unrelated_case["acceptanceCases"].append(unrelated)
     next(item for item in unrelated_case["moduleContracts"] if item["id"] == "MOD-CAPTURE")["acceptanceCaseIds"] = ["AC-SYN-UNRELATED"]
     diagnostic = "MOD-CAPTURE omits acceptance case AC-SYN-TRANSFER required by ['TR-CAPTURE-INTAKE']"
     assert diagnostic in errors(unrelated_case)
@@ -351,7 +387,9 @@ def test_module_contracts_close_requirements_records_interfaces_and_dependencies
     assert code == 1 and diagnostic in captured.err
 
     legal_extra_case = copy.deepcopy(PACKAGE)
-    legal_extra_case["acceptanceCases"].append({"id": "AC-SYN-EXTRA", "kind": "SYNTHETIC-NONTRUTH"})
+    extra = copy.deepcopy(legal_extra_case["acceptanceCases"][0])
+    extra["id"] = "AC-SYN-EXTRA"
+    legal_extra_case["acceptanceCases"].append(extra)
     next(item for item in legal_extra_case["moduleContracts"] if item["id"] == "MOD-CAPTURE")["acceptanceCaseIds"].append("AC-SYN-EXTRA")
     assert errors(legal_extra_case) == []
     legal_extra_dependency = copy.deepcopy(PACKAGE)

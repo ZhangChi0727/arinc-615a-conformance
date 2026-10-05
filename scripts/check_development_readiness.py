@@ -425,6 +425,62 @@ def package_errors(data: dict) -> list[str]:
     record_by_id = {row["id"]: row for row in data["recordContracts"]}
     runtime_parameter_ids = {row["id"] for row in data["runtimeParameterContracts"]}
     module_by_id = {row["id"]: row for row in data["moduleContracts"]}
+    parameter_ids = [row["id"] for row in data["runtimeParameterContracts"]]
+    if len(parameter_ids) != len(set(parameter_ids)):
+        errors.append("runtimeParameterContracts repeats an ID")
+    case_by_id = {row["id"]: row for row in data["acceptanceCases"]}
+    registry_by_id = {row["id"]: row for row in registry["interfaces"]}
+    bound_interface_ids: list[str] = []
+    for refinement in data["algorithmRefinements"]:
+        binding_ids = [binding["interfaceId"] for binding in refinement["interfaceBindings"]]
+        if len(binding_ids) != len(set(binding_ids)):
+            errors.append(f"{refinement['id']} repeats an interface binding")
+        bound_interface_ids.extend(binding_ids)
+        for binding in refinement["interfaceBindings"]:
+            source = registry_by_id.get(binding["interfaceId"])
+            if source is None:
+                errors.append(f"{refinement['id']} has an unknown algorithm interface binding")
+                continue
+            if binding["inputTypes"] != source["inputs"]:
+                errors.append(f"{binding['interfaceId']} input types differ from interface registry")
+            if binding["outputTypes"] != source["outputs"]:
+                errors.append(f"{binding['interfaceId']} output types differ from interface registry")
+            if not set(binding["runtimeParameterIds"]).issubset(runtime_parameter_ids):
+                errors.append(f"{binding['interfaceId']} has an unknown runtime parameter")
+            if not set(binding["acceptanceCaseIds"]).issubset(cases):
+                errors.append(f"{binding['interfaceId']} has an unknown acceptance case")
+            for field in ("readOwnership", "writeOwnership", "timeContract", "timeContractZh", "implementationLocation"):
+                if not binding[field].strip():
+                    errors.append(f"{binding['interfaceId']} has blank {field}")
+    if set(bound_interface_ids) != interface_ids:
+        errors.append("algorithm interface bindings must equal the interface registry")
+    for parameter in data["runtimeParameterContracts"]:
+        if not set(parameter["acceptanceCaseIds"]).issubset(cases):
+            errors.append(f"{parameter['id']} has an unknown acceptance case")
+        for field in ("title", "titleZh", "unit", "configurationRequirement", "configurationRequirementZh", "exhaustionBehavior", "exhaustionBehaviorZh", "ownerScope"):
+            if not parameter[field].strip():
+                errors.append(f"{parameter['id']} has blank {field}")
+    for case in data["acceptanceCases"]:
+        if not set(case["inputRecordIds"]).issubset(records):
+            errors.append(f"{case['id']} has an unknown input record")
+        if not set(case["toolRequirementIds"]).issubset(tool_by_id):
+            errors.append(f"{case['id']} has an unknown tool requirement")
+        if not set(case["moduleIds"]).issubset(modules):
+            errors.append(f"{case['id']} has an unknown module")
+        if not set(case["algorithmInterfaceIds"]).issubset(interface_ids):
+            errors.append(f"{case['id']} has an unknown algorithm interface")
+        for field in ("title", "titleZh", "expectedContractOutput", "prohibitedOutput", "basis", "basisZh"):
+            if not case[field].strip():
+                errors.append(f"{case['id']} has blank {field}")
+    for tool in data["toolRequirements"]:
+        case = case_by_id.get(tool["acceptanceCaseId"])
+        if case is not None:
+            if tool["id"] not in case["toolRequirementIds"]:
+                errors.append(f"{tool['id']} is absent from its acceptance case")
+            if tool["ownerModuleId"] not in case["moduleIds"]:
+                errors.append(f"{tool['id']} acceptance case omits its owner module")
+            if not set(tool["interfaceIds"]).intersection(case["algorithmInterfaceIds"]):
+                errors.append(f"{tool['id']} acceptance case omits its interface")
     upstream_graph: dict[str, set[str]] = {}
     for module in data["moduleContracts"]:
         for field in ("title", "titleZh", "responsibility", "responsibilityZh"):
