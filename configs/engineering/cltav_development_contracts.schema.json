@@ -754,23 +754,240 @@
           "finiteKernelContract": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["modelDomain", "guardSyntax", "updateSyntax", "frontierEntryFields", "propagationSteps", "propagationStepsZh", "mergeKey", "limitBehavior", "resultMapping", "complexityFactors", "modelInstanceSchema", "propagationRules", "internalResults", "witnessVectors", "totalReturnMapping"],
+            "required": [
+              "modelDomain",
+              "guardSyntax",
+              "updateSyntax",
+              "frontierEntryFields",
+              "propagationSteps",
+              "propagationStepsZh",
+              "mergeKey",
+              "limitBehavior",
+              "resultMapping",
+              "complexityFactors",
+              "modelInstanceSchema",
+              "propagationRules",
+              "internalResults",
+              "witnessVectors",
+              "totalReturnMapping"
+            ],
             "properties": {
-              "modelDomain": {"type": "object", "minProperties": 4, "additionalProperties": {"type": "string", "minLength": 1}},
-              "guardSyntax": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-              "updateSyntax": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-              "frontierEntryFields": {"type": "array", "minItems": 6, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-              "propagationSteps": {"type": "array", "minItems": 5, "items": {"type": "string", "minLength": 1}},
-              "propagationStepsZh": {"type": "array", "minItems": 5, "items": {"type": "string", "minLength": 1}},
-              "mergeKey": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-              "limitBehavior": {"type": "object", "minProperties": 5, "additionalProperties": {"type": "string", "minLength": 1}},
-              "resultMapping": {"type": "object", "minProperties": 8, "additionalProperties": {"type": "object", "required": ["success", "failure"], "properties": {"success": {"type": "array", "minItems": 1}, "failure": {"type": "array", "minItems": 1}}, "additionalProperties": false}},
-              "complexityFactors": {"type": "array", "minItems": 5, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-              "modelInstanceSchema": {"type": "object", "required": ["transition", "clockConstraint", "typedStore"], "additionalProperties": true},
-              "propagationRules": {"type": "array", "minItems": 6, "items": {"type": "object", "required": ["id", "rule"], "additionalProperties": false, "properties": {"id": {"$ref": "#/$defs/id"}, "rule": {"type": "string", "minLength": 1}}}},
-              "internalResults": {"type": "array", "minItems": 6, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-              "witnessVectors": {"type": "array", "minItems": 5, "items": {"type": "object", "required": ["id", "input", "expected"], "additionalProperties": false, "properties": {"id": {"$ref": "#/$defs/id"}, "input": {"type": "object"}, "expected": {"type": "object"}}}},
-              "totalReturnMapping": {"type": "array", "minItems": 48, "items": {"type": "object", "required": ["interfaceId", "internalResult", "output", "condition", "payload"], "additionalProperties": false, "properties": {"interfaceId": {"$ref": "#/$defs/id"}, "internalResult": {"type": "string", "minLength": 1}, "output": {"type": "string", "minLength": 1}, "condition": {"type": "string", "minLength": 1}, "payload": {"type": "string", "minLength": 1}}}}
+              "modelDomain": {
+                "type": "object",
+                "minProperties": 4,
+                "additionalProperties": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "guardSyntax": {
+                "type": "array",
+                "minItems": 3,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "updateSyntax": {
+                "type": "array",
+                "minItems": 2,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "frontierEntryFields": {
+                "type": "array",
+                "minItems": 6,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "propagationSteps": {
+                "type": "array",
+                "minItems": 5,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "propagationStepsZh": {
+                "type": "array",
+                "minItems": 5,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "mergeKey": {
+                "type": "array",
+                "minItems": 4,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "limitBehavior": {
+                "type": "object",
+                "minProperties": 5,
+                "additionalProperties": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "resultMapping": {
+                "type": "object",
+                "minProperties": 8,
+                "additionalProperties": {
+                  "type": "object",
+                  "required": [
+                    "success",
+                    "failure"
+                  ],
+                  "properties": {
+                    "success": {
+                      "type": "array",
+                      "minItems": 1
+                    },
+                    "failure": {
+                      "type": "array",
+                      "minItems": 1
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "complexityFactors": {
+                "type": "array",
+                "minItems": 5,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "modelInstanceSchema": {
+                "type": "object",
+                "required": [
+                  "transition",
+                  "clockConstraint",
+                  "typedStore"
+                ],
+                "additionalProperties": true
+              },
+              "propagationRules": {
+                "type": "array",
+                "minItems": 6,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "rule"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "$ref": "#/$defs/id"
+                    },
+                    "rule": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              },
+              "internalResults": {
+                "type": "array",
+                "minItems": 6,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "witnessVectors": {
+                "type": "array",
+                "minItems": 5,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "input",
+                    "expected"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "$ref": "#/$defs/id"
+                    },
+                    "input": {
+                      "type": "object"
+                    },
+                    "expected": {
+                      "type": "object"
+                    }
+                  }
+                }
+              },
+              "totalReturnMapping": {
+                "type": "array",
+                "minItems": 48,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "interfaceId",
+                    "internalResult",
+                    "reachable",
+                    "condition",
+                    "historyEffect",
+                    "summaryEffect",
+                    "chargeEffect"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "interfaceId": {
+                      "$ref": "#/$defs/id"
+                    },
+                    "internalResult": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "reachable": {
+                      "type": "boolean"
+                    },
+                    "output": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "rejectionReason": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "condition": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "historyEffect": {
+                      "enum": [
+                        "PRESERVE",
+                        "INTERSECT-PROVEN",
+                        "EMPTY-PROVEN"
+                      ]
+                    },
+                    "summaryEffect": {
+                      "const": "PRESERVE"
+                    },
+                    "chargeEffect": {
+                      "const": "NONE"
+                    }
+                  }
+                }
+              }
             }
           },
           "interfaceBindings": {
@@ -881,21 +1098,85 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["interfaceId", "inputTypes", "outputTypes", "readOwnership", "readOwnershipZh", "writeOwnership", "writeOwnershipZh", "failureBehavior", "failureBehaviorZh", "resourceContract", "resourceContractZh", "acceptanceCaseIds", "implementationLocation"],
+        "required": [
+          "interfaceId",
+          "inputTypes",
+          "outputTypes",
+          "readOwnership",
+          "readOwnershipZh",
+          "writeOwnership",
+          "writeOwnershipZh",
+          "failureBehavior",
+          "failureBehaviorZh",
+          "resourceContract",
+          "resourceContractZh",
+          "acceptanceCaseIds",
+          "implementationLocation"
+        ],
         "properties": {
-          "interfaceId": {"$ref": "#/$defs/id"},
-          "inputTypes": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
-          "outputTypes": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
-          "readOwnership": {"type": "string", "minLength": 1},
-          "readOwnershipZh": {"type": "string", "minLength": 1},
-          "writeOwnership": {"type": "string", "minLength": 1},
-          "writeOwnershipZh": {"type": "string", "minLength": 1},
-          "failureBehavior": {"type": "string", "minLength": 1},
-          "failureBehaviorZh": {"type": "string", "minLength": 1},
-          "resourceContract": {"type": "string", "minLength": 1},
-          "resourceContractZh": {"type": "string", "minLength": 1},
-          "acceptanceCaseIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
-          "implementationLocation": {"type": "string", "minLength": 1}
+          "interfaceId": {
+            "$ref": "#/$defs/id"
+          },
+          "inputTypes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "outputTypes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "readOwnership": {
+            "type": "string",
+            "minLength": 1
+          },
+          "readOwnershipZh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "writeOwnership": {
+            "type": "string",
+            "minLength": 1
+          },
+          "writeOwnershipZh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "failureBehavior": {
+            "type": "string",
+            "minLength": 1
+          },
+          "failureBehaviorZh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "resourceContract": {
+            "type": "string",
+            "minLength": 1
+          },
+          "resourceContractZh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "acceptanceCaseIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/id"
+            }
+          },
+          "implementationLocation": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
@@ -1000,8 +1281,11 @@
           "witnessLevel",
           "runtimeExecutionStatus",
           "expectedContractOutputZh",
-          "prohibitedOutputZh"
-          ,"inputFixture", "expectedOutputFixture", "prohibitedOutputPaths", "negativeVariants"
+          "prohibitedOutputZh",
+          "inputFixture",
+          "expectedOutputFixture",
+          "prohibitedOutputPaths",
+          "negativeVariants"
         ],
         "properties": {
           "id": {
@@ -1083,43 +1367,265 @@
           "experimentInterfaceIds": {
             "type": "array",
             "uniqueItems": true,
-            "items": {"$ref": "#/$defs/id"}
+            "items": {
+              "$ref": "#/$defs/id"
+            }
           },
-          "inputFixture": {"type": "object", "minProperties": 3},
-          "expectedOutputFixture": {"type": "object", "minProperties": 2},
-          "prohibitedOutputPaths": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+          "inputFixture": {
+            "type": "object",
+            "minProperties": 3
+          },
+          "expectedOutputFixture": {
+            "type": "object",
+            "minProperties": 2
+          },
+          "prohibitedOutputPaths": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
           "negativeVariants": {
-            "type": "array", "minItems": 1,
-            "items": {"type": "object", "additionalProperties": false, "required": ["id", "mutation", "expectedRejection"], "properties": {"id": {"$ref": "#/$defs/id"}, "mutation": {"type": "string", "minLength": 1}, "expectedRejection": {"type": "string", "minLength": 1}}}
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "mutation",
+                "expectedRejection"
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "#/$defs/id"
+                },
+                "mutation": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "expectedRejection": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
           }
         }
       }
     },
     "acceptanceMatrix": {
-      "type": "array", "minItems": 14,
-      "items": {"type": "object", "additionalProperties": false,
-        "required": ["id", "category", "categoryZh", "positiveInput", "positiveInputZh", "expectedOutput", "expectedOutputZh", "negativeMutation", "negativeMutationZh", "expectedRejection", "expectedRejectionZh", "witnessLevel", "runtimeExecutionStatus"],
+      "type": "array",
+      "minItems": 14,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "category",
+          "categoryZh",
+          "positiveInput",
+          "positiveInputZh",
+          "expectedOutput",
+          "expectedOutputZh",
+          "negativeMutation",
+          "negativeMutationZh",
+          "expectedRejection",
+          "expectedRejectionZh",
+          "witnessLevel",
+          "runtimeExecutionStatus",
+          "caseIds",
+          "caseIds"
+        ],
         "properties": {
-          "id": {"$ref": "#/$defs/id"}, "category": {"type": "string", "minLength": 1}, "categoryZh": {"type": "string", "minLength": 1},
-          "positiveInput": {"type": "string", "minLength": 1}, "positiveInputZh": {"type": "string", "minLength": 1}, "expectedOutput": {"type": "string", "minLength": 1}, "expectedOutputZh": {"type": "string", "minLength": 1},
-          "negativeMutation": {"type": "string", "minLength": 1}, "negativeMutationZh": {"type": "string", "minLength": 1}, "expectedRejection": {"type": "string", "minLength": 1}, "expectedRejectionZh": {"type": "string", "minLength": 1},
-          "witnessLevel": {"const": "SPECIFICATION-WITNESS"}, "runtimeExecutionStatus": {"const": "NOT-EXECUTED"}
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "category": {
+            "type": "string",
+            "minLength": 1
+          },
+          "categoryZh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "positiveInput": {
+            "type": "string",
+            "minLength": 1
+          },
+          "positiveInputZh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expectedOutput": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expectedOutputZh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "negativeMutation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "negativeMutationZh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expectedRejection": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expectedRejectionZh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "witnessLevel": {
+            "const": "SPECIFICATION-WITNESS"
+          },
+          "runtimeExecutionStatus": {
+            "const": "NOT-EXECUTED"
+          },
+          "caseIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/id"
+            }
+          }
         }
       }
     },
     "experimentScenarios": {
-      "type": "array", "minItems": 8,
-      "items": {"type": "object", "additionalProperties": false,
-        "required": ["id", "title", "titleZh", "serviceScope", "preconditions", "controllableAction", "faultConfirmation", "algorithmVisibleFields", "independentTruthSource", "resetContract", "timingContract", "resourceContract", "supportedQuestions", "blockedBy", "executionStatus"],
+      "type": "array",
+      "minItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "titleZh",
+          "serviceScope",
+          "preconditions",
+          "controllableAction",
+          "faultConfirmation",
+          "algorithmVisibleFields",
+          "independentTruthSource",
+          "resetContract",
+          "timingContract",
+          "resourceContract",
+          "supportedQuestions",
+          "blockedBy",
+          "executionStatus",
+          "dependencyIds",
+          "acceptanceCaseIds",
+          "dependencyIds",
+          "acceptanceCaseIds"
+        ],
         "properties": {
-          "id": {"$ref": "#/$defs/id"}, "title": {"type": "string", "minLength": 1}, "titleZh": {"type": "string", "minLength": 1},
-          "serviceScope": {"type": "string", "minLength": 1}, "preconditions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
-          "controllableAction": {"type": "string", "minLength": 1}, "faultConfirmation": {"type": "string", "minLength": 1},
-          "algorithmVisibleFields": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
-          "independentTruthSource": {"type": "string", "minLength": 1}, "resetContract": {"type": "string", "minLength": 1},
-          "timingContract": {"type": "string", "minLength": 1}, "resourceContract": {"type": "string", "minLength": 1},
-          "supportedQuestions": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["CL-RQ1", "CL-RQ2", "CL-RQ3"]}},
-          "blockedBy": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}, "executionStatus": {"const": "NOT-EXECUTED"}
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "titleZh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "serviceScope": {
+            "enum": [
+              "UPLOAD",
+              "INFORMATION"
+            ]
+          },
+          "preconditions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "controllableAction": {
+            "type": "string",
+            "minLength": 1
+          },
+          "faultConfirmation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "algorithmVisibleFields": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "independentTruthSource": {
+            "type": "string",
+            "minLength": 1
+          },
+          "resetContract": {
+            "type": "string",
+            "minLength": 1
+          },
+          "timingContract": {
+            "type": "string",
+            "minLength": 1
+          },
+          "resourceContract": {
+            "type": "string",
+            "minLength": 1
+          },
+          "supportedQuestions": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "CL-RQ1",
+                "CL-RQ2",
+                "CL-RQ3"
+              ]
+            }
+          },
+          "blockedBy": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "executionStatus": {
+            "const": "NOT-EXECUTED"
+          },
+          "dependencyIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "acceptanceCaseIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/id"
+            }
+          }
         }
       }
     },
@@ -1130,26 +1636,165 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "id", "title", "titleZh", "specificationStatus", "runtimeStatus", "affectsSpecificationReadiness", "requirementIds", "moduleIds", "recordIds", "acceptanceCaseIds", "sourceBindings", "affectedJudgments", "affectedJudgmentsZh", "specificationContract", "specificationContractZh", "runtimeClosureCriteria", "runtimeClosureCriteriaZh", "closureEvidence", "failureBehavior", "failureBehaviorZh"
+          "id",
+          "title",
+          "titleZh",
+          "specificationStatus",
+          "runtimeStatus",
+          "affectsSpecificationReadiness",
+          "requirementIds",
+          "moduleIds",
+          "recordIds",
+          "acceptanceCaseIds",
+          "sourceBindings",
+          "affectedJudgments",
+          "affectedJudgmentsZh",
+          "specificationContract",
+          "specificationContractZh",
+          "runtimeClosureCriteria",
+          "runtimeClosureCriteriaZh",
+          "closureEvidence",
+          "failureBehavior",
+          "failureBehaviorZh"
         ],
         "properties": {
           "id": {
             "$ref": "#/$defs/id"
           },
-          "title": {"type": "string", "minLength": 1}, "titleZh": {"type": "string", "minLength": 1},
-          "specificationStatus": {"enum": ["CLOSED", "OPEN"]}, "runtimeStatus": {"enum": ["NOT-ESTABLISHED", "ESTABLISHED"]},
-          "affectsSpecificationReadiness": {"type": "boolean"},
-          "requirementIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^CRS-M1-[0-9]{5}$"}},
-          "moduleIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
-          "recordIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
-          "acceptanceCaseIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
-          "sourceBindings": {"type": "array", "minItems": 2, "items": {"type": "object", "additionalProperties": false, "required": ["requirementId", "sourceUnitId", "contract"], "properties": {"requirementId": {"$ref": "#/$defs/id"}, "sourceUnitId": {"$ref": "#/$defs/id"}, "contract": {"type": "string", "minLength": 1}}}},
-          "affectedJudgments": {"type": "string", "minLength": 1}, "affectedJudgmentsZh": {"type": "string", "minLength": 1},
-          "specificationContract": {"type": "string", "minLength": 1}, "specificationContractZh": {"type": "string", "minLength": 1},
-          "runtimeClosureCriteria": {"type": "array", "minItems": 3, "items": {"type": "string", "minLength": 1}},
-          "runtimeClosureCriteriaZh": {"type": "array", "minItems": 3, "items": {"type": "string", "minLength": 1}},
-          "closureEvidence": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-          "failureBehavior": {"type": "string", "minLength": 1}, "failureBehaviorZh": {"type": "string", "minLength": 1}
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "titleZh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "specificationStatus": {
+            "enum": [
+              "CLOSED",
+              "OPEN"
+            ]
+          },
+          "runtimeStatus": {
+            "enum": [
+              "NOT-ESTABLISHED",
+              "ESTABLISHED"
+            ]
+          },
+          "affectsSpecificationReadiness": {
+            "type": "boolean"
+          },
+          "requirementIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^CRS-M1-[0-9]{5}$"
+            }
+          },
+          "moduleIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/id"
+            }
+          },
+          "recordIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/id"
+            }
+          },
+          "acceptanceCaseIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/id"
+            }
+          },
+          "sourceBindings": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "requirementId",
+                "sourceUnitId",
+                "contract",
+                "contractId"
+              ],
+              "properties": {
+                "requirementId": {
+                  "$ref": "#/$defs/id"
+                },
+                "sourceUnitId": {
+                  "$ref": "#/$defs/id"
+                },
+                "contract": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "contractId": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            }
+          },
+          "affectedJudgments": {
+            "type": "string",
+            "minLength": 1
+          },
+          "affectedJudgmentsZh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "specificationContract": {
+            "type": "string",
+            "minLength": 1
+          },
+          "specificationContractZh": {
+            "type": "string",
+            "minLength": 1
+          },
+          "runtimeClosureCriteria": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "runtimeClosureCriteriaZh": {
+            "type": "array",
+            "minItems": 3,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "closureEvidence": {
+            "type": "array",
+            "minItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "failureBehavior": {
+            "type": "string",
+            "minLength": 1
+          },
+          "failureBehaviorZh": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
@@ -1159,10 +1804,23 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["dependencyId", "requirementIds"],
+        "required": [
+          "dependencyId",
+          "requirementIds"
+        ],
         "properties": {
-          "dependencyId": {"$ref": "#/$defs/id"},
-          "requirementIds": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^CRS-M1-[0-9]{5}$"}}
+          "dependencyId": {
+            "$ref": "#/$defs/id"
+          },
+          "requirementIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^CRS-M1-[0-9]{5}$"
+            }
+          }
         }
       }
     },
@@ -1173,7 +1831,10 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "id", "section", "contractRefs", "claimBoundary"
+          "id",
+          "section",
+          "contractRefs",
+          "claimBoundary"
         ],
         "properties": {
           "id": {
@@ -1183,8 +1844,19 @@
             "type": "string",
             "minLength": 1
           },
-          "contractRefs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
-          "claimBoundary": {"type": "string", "minLength": 1}
+          "contractRefs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "claimBoundary": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
@@ -1227,7 +1899,13 @@
           "firstSliceRequired": {
             "type": "boolean"
           },
-          "dependencyIds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}},
+          "dependencyIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/id"
+            }
+          },
           "moduleId": {
             "$ref": "#/$defs/id"
           },

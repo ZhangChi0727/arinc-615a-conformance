@@ -309,6 +309,7 @@ def package_errors(data: dict) -> list[str]:
     required_bindings = {
         "ARINC615A3-M1-CRS": "configs/requirements/arinc_615a3_m1_crs.json",
         "CLTAV-INTERFACE-REGISTRY": "configs/research/cltav_interface_registry.json",
+        "CLTAV-INTEGRITY-OBLIGATION-BASELINE": "configs/engineering/cltav_integrity_obligation_baseline.json",
     }
     if {key: row["path"] for key, row in bindings.items()} != required_bindings:
         errors.append("inputBindings must exactly bind M1 CRS and CL-TAV interface registry")
@@ -346,6 +347,18 @@ def package_errors(data: dict) -> list[str]:
         return errors + ["bound M1 CRS is unreadable"]
     expected = {row["id"] for row in m1["requirements"]}
     source_by_id = {row["id"]: row for row in m1["requirements"]}
+    try:
+        integrity_baseline = _git_blob_json(required_bindings["CLTAV-INTEGRITY-OBLIGATION-BASELINE"], blobs)
+        integrity_rows = integrity_baseline["obligations"]
+        integrity_by_requirement = {row["requirementId"]: row for row in integrity_rows}
+        if len(integrity_by_requirement) != len(integrity_rows):
+            errors.append("integrity obligation baseline repeats a requirement")
+        required_integrity_fields = {"requirementId", "service", "sourceUnitId", "contractId", "subject", "condition", "requiredObservation", "acceptanceCaseId"}
+        if any(set(row) != required_integrity_fields or any(not str(value).strip() for value in row.values()) for row in integrity_rows):
+            errors.append("integrity obligation baseline has an incomplete obligation contract")
+    except (OSError, json.JSONDecodeError, KeyError, TypeError):
+        integrity_by_requirement = {}
+        errors.append("bound integrity obligation baseline is unreadable")
     slice_ids = [slice_["id"] for slice_ in data["implementationSlices"]]
     if len(slice_ids) != len(set(slice_ids)):
         errors.append("implementationSlices repeats a slice ID")
@@ -498,10 +511,31 @@ def package_errors(data: dict) -> list[str]:
         expected_total = {(binding["interfaceId"], result) for binding in refinement["interfaceBindings"] for result in expected_internal}
         if len(total_keys) != len(set(total_keys)) or set(total_keys) != expected_total:
             errors.append(f"{refinement['id']} total finite-result return mapping is incomplete or duplicated")
-        allowed_by_interface = {binding["interfaceId"]: set(binding["outputTypes"]) | set(binding["failureTags"]) for binding in refinement["interfaceBindings"]}
+        controlled_outputs = {
+            "IF-PRED-OBS": {"FEASIBLE":"currentlyValidNonemptyClasses","INFEASIBLE":"PredictionGapError","COMPUTATION-UNKNOWN":"RESOURCE-UNKNOWN","UNSUPPORTED-SYNTAX":"PredictionGapError","LIMIT-REACHED":"RESOURCE-UNKNOWN","EMPTY-HISTORY":"PredictionGapError"},
+            "IF-SELECT-ADMIT": {"FEASIBLE":"admitA2A5","INFEASIBLE":"PredictionGapError","COMPUTATION-UNKNOWN":"ADMIT-REFUSED","UNSUPPORTED-SYNTAX":"SPEC-ERROR","LIMIT-REACHED":"ADMIT-REFUSED","EMPTY-HISTORY":"PredictionGapError"},
+            "IF-HIST-UPDATE": {"FEASIBLE":"Hprime","INFEASIBLE":"Hprime","COMPUTATION-UNKNOWN":"CONSERVATIVE-UNKNOWN","UNSUPPORTED-SYNTAX":"CONSERVATIVE-UNKNOWN","LIMIT-REACHED":"CONSERVATIVE-UNKNOWN","EMPTY-HISTORY":"Stop-Empty"},
+            "IF-EQUIV": {"FEASIBLE":"notEstablished","INFEASIBLE":"notEstablished","COMPUTATION-UNKNOWN":"unknown","UNSUPPORTED-SYNTAX":"unknown","LIMIT-REACHED":"unknown","EMPTY-HISTORY":"notEstablished"},
+            "IF-RESOURCE-STOP": {"EMPTY-HISTORY":"stopClass=Stop-Empty"},
+        }
         for row in total:
-            if row["output"] not in allowed_by_interface.get(row["interfaceId"], set()):
-                errors.append(f"{refinement['id']} maps {row['internalResult']} to an undeclared output for {row['interfaceId']}")
+            expected_output = controlled_outputs.get(row["interfaceId"], {}).get(row["internalResult"])
+            if row["reachable"] != (expected_output is not None):
+                errors.append(f"{refinement['id']} has an incorrect reachable result for {row['interfaceId']}/{row['internalResult']}")
+            if expected_output is not None and row.get("output") != expected_output:
+                errors.append(f"{refinement['id']} has an unsafe output for {row['interfaceId']}/{row['internalResult']}")
+            if expected_output is None and (row.get("output") is not None or row.get("rejectionReason") != "UNREACHABLE-IN-THIS-INTERFACE"):
+                errors.append(f"{refinement['id']} must mark {row['interfaceId']}/{row['internalResult']} unreachable")
+            expected_history = "EMPTY-PROVEN" if row["interfaceId"] == "IF-HIST-UPDATE" and row["internalResult"] == "EMPTY-HISTORY" else "INTERSECT-PROVEN" if row["interfaceId"] == "IF-HIST-UPDATE" and row["internalResult"] in {"FEASIBLE", "INFEASIBLE"} else "PRESERVE"
+            if row["historyEffect"] != expected_history or row["summaryEffect"] != "PRESERVE" or row["chargeEffect"] != "NONE":
+                errors.append(f"{refinement['id']} has unsafe side effects for {row['interfaceId']}/{row['internalResult']}")
+        model_schema = finite["modelInstanceSchema"]
+        if set(model_schema.get("guardAst", {}).get("supported", [])) != {"TRUE", "AND", "STATE-EQUALS", "RATIONAL-INTERVAL-CONTAINS", "TYPED-FIELD-EQUALS"} or set(model_schema.get("guardAst", {}).get("unsupported", [])) != {"OR", "NOT", "CALL"}:
+            errors.append(f"{refinement['id']} finite guard AST support boundary is ambiguous")
+        first_witness = next((row for row in finite["witnessVectors"] if row["id"] == "FK-W1-FEASIBLE"), {})
+        transition = first_witness.get("input", {}).get("transition", {})
+        if transition.get("source") != "q0" or transition.get("target") != first_witness.get("expected", {}).get("state"):
+            errors.append(f"{refinement['id']} feasible witness lacks its q0-to-q1 transition")
         witness_ids = {row["id"] for row in finite["witnessVectors"]}
         if witness_ids != {"FK-W1-FEASIBLE","FK-W2-INFEASIBLE","FK-W3-UNKNOWN","FK-W4-HISTORY","FK-W5-CLOCK"}:
             errors.append(f"{refinement['id']} finite-kernel witness set is incomplete")
@@ -562,12 +596,38 @@ def package_errors(data: dict) -> list[str]:
             tool = tool_by_id.get(tool_id)
             if tool is not None and tool["ownerModuleId"] not in case["moduleIds"]:
                 errors.append(f"{case['id']} tool {tool_id} omits owner module {tool['ownerModuleId']}")
+    case_values = {case["id"]: case["inputFixture"]["values"] for case in data["acceptanceCases"]}
+    prediction = case_values.get("AC-SYN-PREDICTION", {})
+    if not prediction.get("model", {}).get("transitions") or not prediction.get("H") or not prediction.get("eligibleActions") or not prediction.get("resource"):
+        errors.append("AC-SYN-PREDICTION lacks model, H, eligibility, or resource inputs")
+    selection = case_values.get("AC-SYN-SELECT", {})
+    if not selection.get("H") or not selection.get("eligibleActions") or not selection.get("distinguishingClasses") or not selection.get("resource"):
+        errors.append("AC-SYN-SELECT lacks H, eligibility, distinguishing classes, or resource inputs")
+    stop_case = next((case for case in data["acceptanceCases"] if case["id"] == "AC-SYN-RESOURCE-STOP"), None)
+    if stop_case is not None:
+        values = stop_case["inputFixture"]["values"]
+        expected_values = stop_case["expectedOutputFixture"]["values"]
+        if expected_values.get("stop") == "Stop-Error" and not (values.get("lastOutcome") == "ADAPTER-ERROR" and values.get("consecutiveErrorCount") == values.get("retryCap")):
+            errors.append("AC-SYN-RESOURCE-STOP expects Stop-Error without an exhausted error premise")
+        if expected_values.get("charges") != values.get("attemptsIssued"):
+            errors.append("AC-SYN-RESOURCE-STOP charges must equal issued attempts exactly once")
+    scene_case = case_values.get("AC-EXP-SCENE", {})
+    if not {"sceneId","configurationId","iutId","resetId","resourceMode","faultPlan","armId","sessionContext"}.issubset(scene_case):
+        errors.append("AC-EXP-SCENE lacks a runnable scene or run-interface input")
+    causal = case_values.get("AC-EXP-CAUSAL", {})
+    if causal.get("arm") not in {"CL-T", "CL-A", "CL-TA", "CL-LOOP"}:
+        errors.append("AC-EXP-CAUSAL uses an uncontrolled experiment arm")
+    if any("truth" in str(item).lower() for item in causal.get("visiblePrefix", [])):
+        errors.append("AC-EXP-CAUSAL exposes evaluator truth")
     required_matrix_categories = {"corpus identity", "label boundary", "capture format", "IP reassembly", "TFTP reconstruction", "field contracts", "matching and no response", "timing and U", "prediction and admission", "history update", "state and return", "resource accounting", "experiment boundary", "controlled drift"}
     matrix_ids = [item["id"] for item in data["acceptanceMatrix"]]
     if len(matrix_ids) != len(set(matrix_ids)) or {item["category"] for item in data["acceptanceMatrix"]} != required_matrix_categories:
         errors.append("acceptanceMatrix must cover each controlled category exactly once")
     if any(not item[field].strip() for item in data["acceptanceMatrix"] for field in ("category", "categoryZh", "positiveInput", "positiveInputZh", "expectedOutput", "expectedOutputZh", "negativeMutation", "negativeMutationZh", "expectedRejection", "expectedRejectionZh")):
         errors.append("acceptanceMatrix contains a blank executable specification")
+    for item in data["acceptanceMatrix"]:
+        if not item["caseIds"] or not set(item["caseIds"]).issubset(case_by_id):
+            errors.append(f"{item['id']} has an unknown or empty acceptance-vector reference")
     scenario_ids = [item["id"] for item in data["experimentScenarios"]]
     if len(scenario_ids) != len(set(scenario_ids)) or len(scenario_ids) < 8:
         errors.append("experimentScenarios must contain eight unique first-batch scenes")
@@ -578,6 +638,10 @@ def package_errors(data: dict) -> list[str]:
         visible = " ".join(scenario["algorithmVisibleFields"]).lower()
         if "truth" in visible or "injection plan" in visible:
             errors.append(f"{scenario['id']} leaks evaluator truth into algorithm-visible fields")
+        if scenario["serviceScope"] not in {"UPLOAD", "INFORMATION"}:
+            errors.append(f"{scenario['id']} uses an uncontrolled service")
+        if not scenario["dependencyIds"] or not scenario["acceptanceCaseIds"] or not set(scenario["acceptanceCaseIds"]).issubset(case_by_id):
+            errors.append(f"{scenario['id']} lacks controlled dependency or acceptance bindings")
     for tool in data["toolRequirements"]:
         case = case_by_id.get(tool["acceptanceCaseId"])
         if case is not None:
@@ -776,16 +840,28 @@ def package_errors(data: dict) -> list[str]:
         if dependency["runtimeStatus"] == "ESTABLISHED":
             errors.append(f"{dependency['id']} runtime capability cannot be established by this specification-only package")
         source_bindings = {row.get("requirementId"): row for row in dependency["sourceBindings"]}
-        if set(source_bindings) != set(dependency["requirementIds"]):
+        if len(source_bindings) != len(dependency["sourceBindings"]) or set(source_bindings) != set(dependency["requirementIds"]):
             errors.append(f"{dependency['id']} source bindings must exactly cover its requirements")
+        if dependency["id"] == "DEP-INTEGRITY-RUNTIME" and set(dependency["requirementIds"]) != set(integrity_by_requirement):
+            errors.append(f"{dependency['id']} requirements differ from the independent obligation baseline")
         for requirement_id, binding in source_bindings.items():
             source = source_by_id.get(requirement_id, {})
             if binding.get("sourceUnitId") != source.get("sourceUnitId"):
                 errors.append(f"{dependency['id']} has a forged source binding for {requirement_id}")
+            baseline = integrity_by_requirement.get(requirement_id)
+            if dependency["id"] == "DEP-INTEGRITY-RUNTIME" and (baseline is None or binding.get("sourceUnitId") != baseline.get("sourceUnitId") or binding.get("contractId") != baseline.get("contractId")):
+                errors.append(f"{dependency['id']} has a forged obligation contract for {requirement_id}")
+            if not binding.get("contract", "").strip() or (baseline and baseline["requiredObservation"] not in binding["contract"]):
+                errors.append(f"{dependency['id']} lacks concrete obligation semantics for {requirement_id}")
         for evidence in dependency["closureEvidence"]:
             evidence_path = ROOT / evidence
             if Path(evidence).is_absolute() or ".." in Path(evidence).parts or not evidence_path.is_file():
                 errors.append(f"{dependency['id']} has unsafe or missing closure evidence {evidence}")
+        if dependency["id"] == "DEP-INTEGRITY-RUNTIME" and set(dependency["closureEvidence"]) != {
+            "configs/engineering/cltav_integrity_obligation_baseline.json",
+            "configs/requirements/arinc_615a3_m1_crs.json",
+        }:
+            errors.append(f"{dependency['id']} closure evidence is not content-bound and relevant")
         for requirement_id in dependency["requirementIds"]:
             row = next((item for item in rows if item["inputRequirementId"] == requirement_id), None)
             if row is None or dependency["id"] not in row.get("dependencyIds", []):

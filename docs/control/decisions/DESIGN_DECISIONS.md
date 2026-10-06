@@ -1043,7 +1043,7 @@ submission, implementation and unrun numbers would reverse the evidence order.
 
 **Why:** A bound implementation contract can be reviewable without turning capture-derived observations into protocol requirements or treating an inventory count as readiness.
 
-**Scope:** Development-package structure and first-slice boundary only; no CRS or M2 semantic change.
+**Scope:** Development-package structure and first-slice boundary. The narrow source correction authorized by CR-2026-016 changes field encoding/shared-table metadata and re-pins M2 input identity only; it does not change M2 transitions, timing, migration, service selection, or approval status.
 
 **Status:** Candidate under CR-2026-016; independent review required.
 
@@ -1558,7 +1558,7 @@ ARINC 615A 数据加载是合法操作、观测和实验场景的来源。CL-TAV
 
 **理由：** 绑定的实现合同可以在不把抓包观察变成协议需求、也不把清单计数当作就绪的情况下接受评审。
 
-**范围：** 仅开发包结构与首轮边界；不改变 CRS 或 M2 语义。
+**范围：** 开发包结构与首轮边界。本 CR 授权的窄范围来源修正仅改变字段编码／共享表元数据并重钉 M2 输入身份；不改变 M2 迁移、时序、迁移政策、服务选择或批准状态。
 
 **状态：** 在 CR-2026-016 下为候选；需要独立评审。
 

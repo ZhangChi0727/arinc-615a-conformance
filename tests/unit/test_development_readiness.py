@@ -387,7 +387,8 @@ def test_bound_git_snapshot_survives_bad_worktree_inputs(monkeypatch, tmp_path):
     repo = tmp_path / "snapshot-repo"
     for relative in (
         "configs/requirements/arinc_615a3_m1_crs.json",
-        "configs/research/cltav_interface_registry.json",
+            "configs/research/cltav_interface_registry.json",
+            "configs/engineering/cltav_integrity_obligation_baseline.json",
             "configs/engineering/cltav_development_contracts.schema.json",
             "configs/engineering/cltav_development_contracts.json",
             "tests/unit/test_development_readiness.py",
@@ -977,6 +978,92 @@ def test_numeric_hash_enum_collection_and_interval_boundaries_are_enforced():
     view = SYNC.render(copy.deepcopy(PACKAGE))
     assert "DEFAULTED blksize" in view and "DEFAULTED 的 blksize" in view
     assert "`CRS-M1-00646`, `CRS-M1-00647`" in view
+
+
+def test_all_manifest_capture_ids_flow_through_the_complete_record_chain():
+    manifest = json.loads((ROOT / "configs" / "research" / "cltav_historical_capture_manifest.json").read_text(encoding="utf-8"))
+    records = {item["id"]: item for item in PACKAGE["recordContracts"]}
+    capture_ids = [item["captureId"] for item in manifest["captures"]]
+    assert len(capture_ids) == 23
+    for capture_id in capture_ids:
+        packet_ref = f"{capture_id}:0:0:1"
+        patches = {
+            "DATAGRAM-RECORD": {"fragmentRefs": [packet_ref]},
+            "TRANSFER-RECORD": {"blockMap": {"1": packet_ref}},
+            "PROTOCOL-EVENT": {"rawRefs": [packet_ref]},
+            "FINDING-RECORD": {"scope": {**records["FINDING-RECORD"]["example"]["scope"], "captureIds": [capture_id]}},
+        }
+        for record_id, patch in patches.items():
+            record = records[record_id]
+            instance = copy.deepcopy(record["example"])
+            instance.update(patch)
+            assert MODULE.validate_record_instance(record, instance) == [], (record_id, capture_id)
+
+
+def test_capture_reference_vocabulary_rejects_unsafe_or_malformed_aliases():
+    record = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "DATAGRAM-RECORD"))
+    for bad_ref in ("../HC-01:0:0:1", "C:/HC-01:0:0:1", "HC-1:0:0:1", "HC-01:0:0:0"):
+        instance = copy.deepcopy(record["example"])
+        instance["fragmentRefs"] = [bad_ref]
+        assert MODULE.validate_record_instance(record, instance)
+
+
+def test_rr86_finite_kernel_return_semantics_and_witness_are_not_substitutable():
+    mutations = []
+    for interface_id, result, output in (
+        ("IF-HIST-UPDATE", "UNSUPPORTED-SYNTAX", "Stop-Empty"),
+        ("IF-EQUIV", "FEASIBLE", "established"),
+        ("IF-RESOURCE-STOP", "EMPTY-HISTORY", "Stop-Budget"),
+    ):
+        bad = copy.deepcopy(PACKAGE)
+        row = next(item for item in bad["algorithmRefinements"][0]["finiteKernelContract"]["totalReturnMapping"] if item["interfaceId"] == interface_id and item["internalResult"] == result)
+        row.update(reachable=True, output=output)
+        row.pop("rejectionReason", None)
+        mutations.append(bad)
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["algorithmRefinements"][0]["finiteKernelContract"]["totalReturnMapping"] if item["interfaceId"] == "IF-HIST-UPDATE" and item["internalResult"] == "LIMIT-REACHED")["historyEffect"] = "EMPTY-PROVEN"
+    mutations.append(bad)
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["algorithmRefinements"][0]["finiteKernelContract"]["witnessVectors"] if item["id"] == "FK-W1-FEASIBLE")["input"].pop("transition")
+    mutations.append(bad)
+    for bad in mutations:
+        assert errors(bad)
+
+
+def test_rr86_acceptance_inputs_matrix_and_scenarios_are_closed():
+    mutations = []
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["acceptanceCases"] if item["id"] == "AC-EXP-CAUSAL")["inputFixture"]["values"]["arm"] = "CL-TAV"
+    mutations.append(bad)
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["acceptanceCases"] if item["id"] == "AC-SYN-RESOURCE-STOP")["inputFixture"]["values"].pop("lastOutcome")
+    mutations.append(bad)
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["acceptanceCases"] if item["id"] == "AC-EXP-SCENE")["inputFixture"]["values"].pop("resetId")
+    mutations.append(bad)
+    bad = copy.deepcopy(PACKAGE)
+    bad["acceptanceMatrix"][0]["caseIds"] = ["AC-NOT-REAL"]
+    mutations.append(bad)
+    bad = copy.deepcopy(PACKAGE)
+    bad["experimentScenarios"][0]["serviceScope"] = "DOWNLOAD"
+    mutations.append(bad)
+    for bad in mutations:
+        assert errors(bad)
+
+
+def test_rr86_integrity_obligations_come_from_independent_bound_baseline():
+    dependency = PACKAGE["implementationDependencies"][0]
+    assert len({row["contractId"] for row in dependency["sourceBindings"]}) == 6
+    bad = copy.deepcopy(PACKAGE)
+    bad["implementationDependencies"][0]["requirementIds"].pop()
+    bad["implementationDependencies"][0]["sourceBindings"].pop()
+    assert any("independent obligation baseline" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["implementationDependencies"][0]["sourceBindings"][1] = copy.deepcopy(bad["implementationDependencies"][0]["sourceBindings"][0])
+    assert any("exactly cover" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["implementationDependencies"][0]["closureEvidence"] = ["README.md", "project-status.json"]
+    assert any("content-bound and relevant" in item for item in errors(bad))
 
 
 def test_history_handle_reuses_bound_status_vocabulary_and_scope():
