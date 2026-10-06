@@ -91308,7 +91308,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -93422,10 +93422,12 @@
         "ordinal": 7,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [],
+        "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "inactiveRequiredValue": "0x0000"
       },
       "timing": {
         "timingFamily": "STATUS-EXCEPTION-SILENCE-DEADLINE",
@@ -93557,9 +93559,11 @@
         "widthBitsExpression": "24",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [],
+        "alignment": "RIGHT",
+        "padding": "LEADING-SPACE"
       }
     },
     {
@@ -93879,9 +93883,11 @@
         "widthBitsExpression": "24",
         "repeatScope": "PER-PRECEDING-COUNT-FIELD",
         "presenceCondition": "PER-REPETITION-OF-ENCLOSING-BLOCK",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [],
+        "alignment": "RIGHT",
+        "padding": "LEADING-SPACE"
       }
     },
     {
@@ -120505,7 +120511,7 @@
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "7c05988c91bc32a5d728a65dd2a67c29e26d64a85ad0c0ee7b96d8a7664a075a",
+    "semanticAssertionFingerprint": "d7c551da8a84b506e9d75be69762afdd88da1c7a3cf58d2659ee42fc4701e252",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
@@ -120516,7 +120522,7 @@
     "dependencyCount": 15,
     "gapCount": 1,
     "coverageFingerprint": "db1c91a23d53f4edc2a0136fb2ccda5f27dfad09750e27f65b6361301f217883",
-    "requirementsFingerprint": "c77fc41d494f9390ce2cab600047a6e8da9077e97111f429f26f8599854a4a1e"
+    "requirementsFingerprint": "64593241815f9b50dde6faa8ed35ffaf256675b3987ce972d73a4453ecbc79c7"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

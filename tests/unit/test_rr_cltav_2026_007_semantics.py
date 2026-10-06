@@ -194,3 +194,31 @@ def test_unresolved_note_ref_fails() -> None:
     refresh_m1(data)
     found = m1_errors(data)
     assert any("LNR-FILE-NAME-REPEAT" in item and "fieldNoteRegistry" in item for item in found)
+
+
+def test_upload_first_slice_ascii_and_timer_contracts_are_source_bound() -> None:
+    data = m1_package()
+    version = req(data, "CRS-M1-00283")["fieldConstraint"]
+    timer = req(data, "CRS-M1-00322")["fieldConstraint"]
+    list_ratio = req(data, "CRS-M1-00324")["fieldConstraint"]
+    item_ratio = req(data, "CRS-M1-00330")["fieldConstraint"]
+    assert version["encodingRule"] == "FIXED-WIDTH-ASCII" and version["widthBitsExpression"] == "16"
+    for ratio in (list_ratio, item_ratio):
+        assert ratio["encodingRule"] == "FIXED-WIDTH-ASCII"
+        assert ratio["widthBitsExpression"] == "24"
+        assert ratio["alignment"] == "RIGHT" and ratio["padding"] == "LEADING-SPACE"
+    assert timer["presenceCondition"] == "ALWAYS"
+    assert timer["useCondition"] == "WHEN-STATUS-CODE-0002-OR-0004"
+    assert timer["inactiveRequiredValue"] == "0x0000"
+
+
+def test_upload_first_slice_integer_and_presence_regressions_fail() -> None:
+    for rid in ("CRS-M1-00283", "CRS-M1-00324", "CRS-M1-00330"):
+        data = m1_package()
+        req(data, rid)["fieldConstraint"]["encodingRule"] = "UNSIGNED-INT-BIG-ENDIAN"
+        refresh_m1(data)
+        assert any(rid in item or "ASCII" in item for item in m1_errors(data))
+    data = m1_package()
+    req(data, "CRS-M1-00322")["fieldConstraint"]["presenceCondition"] = "WHEN-STATUS-CODE-0002-OR-0004"
+    refresh_m1(data)
+    assert any("RC-LUS-EXCEPTION-TIMER" in item or "physically present" in item for item in m1_errors(data))
