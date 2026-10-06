@@ -4726,7 +4726,7 @@
         "m1RequirementId": "CRS-M1-00288",
         "ordinal": 2,
         "widthBitsExpression": "16",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
@@ -4978,7 +4978,7 @@
         "m1RequirementId": "CRS-M1-00302",
         "ordinal": 2,
         "widthBitsExpression": "16",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
@@ -5122,7 +5122,7 @@
         "m1RequirementId": "CRS-M1-00310",
         "ordinal": 2,
         "widthBitsExpression": "16",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
@@ -5248,7 +5248,7 @@
         "m1RequirementId": "CRS-M1-00317",
         "ordinal": 2,
         "widthBitsExpression": "16",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
@@ -10685,6 +10685,41 @@
         "predicateEn": "If AFDX is chosen, default transmission configuration includes maximum Total Ethernet Line size s max. Bound M2 does not execute that table.",
         "predicateZh": "若选择 AFDX，缺省发送配置含最大以太网行长 s max。绑定 M2 不执行该表。",
         "checkLocation": "ARINC-664-NETWORK-CONSTRAINT"
+      },
+      {
+        "id": "OC-LUI-SHARED-INITIALIZATION-FIELDS",
+        "m1RequirementId": "CRS-M1-00362",
+        "objects": [
+          "LUI",
+          "FIELD-PROTOCOL-VERSION",
+          "FIELD-OPERATION-ACCEPTANCE-STATUS-CODE",
+          "FIELD-STATUS-DESCRIPTION-LENGTH",
+          "FIELD-STATUS-DESCRIPTION"
+        ],
+        "action": "DECODE-SHARED-INITIALIZATION-LAYOUT",
+        "kind": "SHARED-FIELD-MAPPING",
+        "sourceFileRole": "LCI",
+        "targetFileRole": "LUI",
+        "sourceRequirementIds": [
+          "CRS-M1-00283",
+          "CRS-M1-00284",
+          "CRS-M1-00285",
+          "CRS-M1-00286"
+        ],
+        "targetSequenceRequirementIds": [
+          "CRS-M1-00360",
+          "CRS-M1-00361",
+          "CRS-M1-00362"
+        ],
+        "fieldIds": [
+          "FIELD-PROTOCOL-VERSION",
+          "FIELD-OPERATION-ACCEPTANCE-STATUS-CODE",
+          "FIELD-STATUS-DESCRIPTION-LENGTH",
+          "FIELD-STATUS-DESCRIPTION"
+        ],
+        "predicateEn": "Decode LUI initialization response fields using the shared LCI initialization layout, preserving ASCII version, acceptance/rejection status, and bounded description bytes.",
+        "predicateZh": "按共享 LCI 初始化布局解码 LUI 初始化响应字段，保留 ASCII 版本、接受／拒绝状态及有界描述字节。",
+        "checkLocation": "LUI-FILE-BYTES-BEFORE-INITIALIZATION-RESPONSE"
       }
     ],
     "interfaces": {
@@ -33993,14 +34028,20 @@
     },
     {
       "id": "LUI-FIELD-TABLE-GAP",
-      "status": "KNOWN-GAP-NO-DEDICATED-TABLE",
-      "ownerRole": "M1-EXPANDED",
-      "deadlineGate": "EXECUTABLE-FOUNDATION-GATE",
+      "status": "CLOSED-BY-SHARED-INITIALIZATION-FIELD-MAPPING",
+      "ownerRole": "M2-MODEL",
+      "deadlineGate": "FIRST-SLICE-DEVELOPMENT-GATE",
       "evidence": [
-        "CR-2026-011"
+        "CRS-M1-00283",
+        "CRS-M1-00284",
+        "CRS-M1-00285",
+        "CRS-M1-00286",
+        "CRS-M1-00360",
+        "CRS-M1-00361",
+        "CRS-M1-00362"
       ],
-      "noteEn": "After 6.4.4→LUR there is no dedicated LUI field table. LUI remains a sequence file. Fields are not invented.",
-      "noteZh": "6.4.4 改为 LUR 后没有专用 LUI 字段表。LUI 仍是序列文件。不编造字段。"
+      "noteEn": "LUI reuses the shared initialization response layout: protocol version, acceptance status, and status-description length/text. The mapping references the LCI field contracts and the LUI analysis sequence; it does not invent a second table.",
+      "noteZh": "LUI 复用共享初始化响应布局：协议版本、接受状态及状态描述长度／文本。该映射引用 LCI 字段合同和 LUI 分析序列，不另造第二张表。"
     }
   ],
   "analysisScope": {
@@ -34018,8 +34059,7 @@
     "unproven": [
       "timed reachability",
       "implementation conformance",
-      "network-stack conformance",
-      "LUI field-table predicates"
+      "network-stack conformance"
     ]
   },
   "discreteWitnesses": [
@@ -34457,11 +34497,11 @@
     "timingCount": 30,
     "fieldConstraintCount": 108,
     "dispositionsFingerprint": "9c07be25fc8aa42ff08cc647d1135179cc6a6e03f07f9202c21a3128bcc5b7e8",
-    "modelFingerprint": "c240d8a602494452e6cc684b829670409fb76e47f1830c460a9d5654d1f39376",
+    "modelFingerprint": "59b3dc9b413a155ac6fa389a97ce9723c1bd3dd411685bb831499831cd043928",
     "timingFingerprint": "cd8a13f203f6d2c2f9c82e65646bf9d5b920200a509af92d461096e54f7e6810",
     "inputFingerprint": "4893f239ac6752a110e4f5ab832288245c5679d984eba0d790321667fc55d5e4",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
-    "actionFingerprint": "85451d645713f4665cb35e5b91d7dfd534479bf1af5bd8f3513e0b59f6850c37",
+    "actionFingerprint": "bf5d034d35ac50efb9703fd67192a1a08492a82b4b563a8b23ccc1e889638dc3",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
     "witnessFingerprint": "3de3d3bf3b1b9c6eb9ee0e6ab65234ec5957762185e51093aeb10534986e6643",
     "blockingFingerprint": "ed1c2d23ae210315decd37ee16af46d55b7e8eb29359bbd7f1a6d42ca0444aa6",

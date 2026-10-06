@@ -7298,7 +7298,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -7756,7 +7756,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -8042,7 +8042,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -8270,7 +8270,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -23447,6 +23447,24 @@
         "presenceCondition": "ALWAYS",
         "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
         "inactiveRequiredValue": "0x0000"
+      }
+    },
+    {
+      "id": "RC-UPLOAD-VERSION-FAMILY-ASCII",
+      "kind": "FIELD-ENCODING",
+      "requirementIds": [
+        "CRS-M1-00283",
+        "CRS-M1-00288",
+        "CRS-M1-00302",
+        "CRS-M1-00310",
+        "CRS-M1-00317"
+      ],
+      "expected": {
+        "fieldId": "FIELD-PROTOCOL-VERSION",
+        "encodingRule": "FIXED-WIDTH-ASCII",
+        "widthBitsExpression": "16",
+        "repeatScope": "ONCE",
+        "presenceCondition": "ALWAYS"
       }
     }
   ]

@@ -91575,7 +91575,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -92327,7 +92327,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -92781,7 +92781,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -93156,7 +93156,7 @@
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
         "presenceCondition": "ALWAYS",
-        "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
+        "encodingRule": "FIXED-WIDTH-ASCII",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
         "noteRefs": []
       }
@@ -120511,7 +120511,7 @@
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "d7c551da8a84b506e9d75be69762afdd88da1c7a3cf58d2659ee42fc4701e252",
+    "semanticAssertionFingerprint": "bfa406ffcb182b04ff30014787029678e908095d94ede502406131bbc53c00e4",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
@@ -120522,7 +120522,7 @@
     "dependencyCount": 15,
     "gapCount": 1,
     "coverageFingerprint": "db1c91a23d53f4edc2a0136fb2ccda5f27dfad09750e27f65b6361301f217883",
-    "requirementsFingerprint": "64593241815f9b50dde6faa8ed35ffaf256675b3987ce972d73a4453ecbc79c7"
+    "requirementsFingerprint": "cacd56dca07c0a2c3e8f26b50b80216d45e24e1ebdbd5e7f03c190580c56e44e"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

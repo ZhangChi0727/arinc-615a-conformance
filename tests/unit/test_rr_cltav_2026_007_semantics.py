@@ -222,3 +222,24 @@ def test_upload_first_slice_integer_and_presence_regressions_fail() -> None:
     req(data, "CRS-M1-00322")["fieldConstraint"]["presenceCondition"] = "WHEN-STATUS-CODE-0002-OR-0004"
     refresh_m1(data)
     assert any("RC-LUS-EXCEPTION-TIMER" in item or "physically present" in item for item in m1_errors(data))
+
+
+def test_all_first_slice_protocol_versions_are_fixed_width_ascii() -> None:
+    data = m1_package()
+    ids = ("CRS-M1-00283", "CRS-M1-00288", "CRS-M1-00302", "CRS-M1-00310", "CRS-M1-00317")
+    assert {req(data, rid)["fieldConstraint"]["protocolFile"] for rid in ids} == {"LCI", "LCL", "LCS", "LUR", "LUS"}
+    assert all(req(data, rid)["fieldConstraint"]["encodingRule"] == "FIXED-WIDTH-ASCII" for rid in ids)
+    for rid in ids:
+        changed = m1_package()
+        req(changed, rid)["fieldConstraint"]["encodingRule"] = "UNSIGNED-INT-BIG-ENDIAN"
+        refresh_m1(changed)
+        assert any("RC-UPLOAD-VERSION-FAMILY-ASCII" in item or rid in item for item in m1_errors(changed))
+
+
+def test_lui_shared_initialization_mapping_is_explicit() -> None:
+    model = m2_package()
+    mapping = next(row for row in model["model"]["objectConstraints"] if row["id"] == "OC-LUI-SHARED-INITIALIZATION-FIELDS")
+    assert mapping["sourceFileRole"] == "LCI" and mapping["targetFileRole"] == "LUI"
+    assert mapping["fieldIds"] == ["FIELD-PROTOCOL-VERSION", "FIELD-OPERATION-ACCEPTANCE-STATUS-CODE", "FIELD-STATUS-DESCRIPTION-LENGTH", "FIELD-STATUS-DESCRIPTION"]
+    assert set(mapping["sourceRequirementIds"]) == {"CRS-M1-00283", "CRS-M1-00284", "CRS-M1-00285", "CRS-M1-00286"}
+    assert set(mapping["targetSequenceRequirementIds"]) == {"CRS-M1-00360", "CRS-M1-00361", "CRS-M1-00362"}
