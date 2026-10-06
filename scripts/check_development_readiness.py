@@ -415,6 +415,18 @@ def package_errors(data: dict) -> list[str]:
             status_definition = record["fieldDefinitions"]["statusByHypothesis"].get("additionalProperties", {})
             if status_definition.get("enum") != handle.get("statusByHypothesisValues"):
                 errors.append("HISTORY-HANDLE statuses differ from interface HistoryHandle")
+            example = record["example"]
+            if not example.get("H"):
+                errors.append("HISTORY-HANDLE initialization example must retain a nonempty H0")
+            for label, instance in (("example", record["example"]), ("invalidExample", record["invalidExample"])):
+                raw_hypotheses = instance.get("H", [])
+                if not all(isinstance(item, str) for item in raw_hypotheses):
+                    continue
+                hypotheses = set(raw_hypotheses)
+                compatible = set(instance.get("compatibleStateByHypothesis", {}))
+                statuses = set(instance.get("statusByHypothesis", {}))
+                if compatible != hypotheses or (statuses and statuses != hypotheses):
+                    errors.append(f"HISTORY-HANDLE {label} maps must exactly cover H")
         elif record["id"] == "HISTORY-HANDLE":
             errors.append("HISTORY-HANDLE lacks interfaceHandle binding")
     tool_ids = [row["id"] for row in data["toolRequirements"]]
@@ -465,8 +477,15 @@ def package_errors(data: dict) -> list[str]:
         required_frontier = {"hypothesisId", "controlStateId", "clockConstraint", "typedStore", "pathLength", "historyProvenance", "status"}
         if set(finite["frontierEntryFields"]) != required_frontier:
             errors.append(f"{refinement['id']} finite frontier fields are incomplete")
-        if not set(finite["mergeKey"]).issubset(required_frontier) or "historyProvenance" not in finite["mergeKey"]:
-            errors.append(f"{refinement['id']} merge key may lose whole-history provenance")
+        required_merge = {"hypothesisId", "controlStateId", "clockConstraint", "typedStore", "historyProvenance"}
+        if set(finite["mergeKey"]) != required_merge:
+            errors.append(f"{refinement['id']} merge key must preserve state, clock, store, and whole-history provenance")
+        expected_limits = {"pathLength":"CONSERVATIVE-UNKNOWN", "frontierStates":"CONSERVATIVE-UNKNOWN", "hypotheses":"SPEC-ERROR", "actions":"ADMIT-REFUSED", "observationClasses":"PredictionGapError"}
+        if finite["limitBehavior"] != expected_limits:
+            errors.append(f"{refinement['id']} finite limit behavior differs from the controlled conservative mapping")
+        expected_internal = {"FEASIBLE","INFEASIBLE","COMPUTATION-UNKNOWN","UNSUPPORTED-SYNTAX","LIMIT-REACHED","EMPTY-HISTORY"}
+        if set(finite["internalResults"]) != expected_internal:
+            errors.append(f"{refinement['id']} finite internal result vocabulary is incomplete")
         expected_mapping = {binding["interfaceId"] for binding in refinement["interfaceBindings"]}
         if set(finite["resultMapping"]) != expected_mapping:
             errors.append(f"{refinement['id']} result mapping differs from its algorithm interfaces")
@@ -474,6 +493,18 @@ def package_errors(data: dict) -> list[str]:
             mapping = finite["resultMapping"].get(binding["interfaceId"], {})
             if mapping.get("success") != binding["outputTypes"] or mapping.get("failure") != binding["failureTags"]:
                 errors.append(f"{refinement['id']} result mapping is stale for {binding['interfaceId']}")
+        total = finite["totalReturnMapping"]
+        total_keys = [(row["interfaceId"], row["internalResult"]) for row in total]
+        expected_total = {(binding["interfaceId"], result) for binding in refinement["interfaceBindings"] for result in expected_internal}
+        if len(total_keys) != len(set(total_keys)) or set(total_keys) != expected_total:
+            errors.append(f"{refinement['id']} total finite-result return mapping is incomplete or duplicated")
+        allowed_by_interface = {binding["interfaceId"]: set(binding["outputTypes"]) | set(binding["failureTags"]) for binding in refinement["interfaceBindings"]}
+        for row in total:
+            if row["output"] not in allowed_by_interface.get(row["interfaceId"], set()):
+                errors.append(f"{refinement['id']} maps {row['internalResult']} to an undeclared output for {row['interfaceId']}")
+        witness_ids = {row["id"] for row in finite["witnessVectors"]}
+        if witness_ids != {"FK-W1-FEASIBLE","FK-W2-INFEASIBLE","FK-W3-UNKNOWN","FK-W4-HISTORY","FK-W5-CLOCK"}:
+            errors.append(f"{refinement['id']} finite-kernel witness set is incomplete")
     experiment_registry = {item["id"]: item for item in registry.get("experimentInterfaces", [])}
     experiment_bindings = data["experimentInterfaceBindings"]
     experiment_binding_ids = [item["interfaceId"] for item in experiment_bindings]
@@ -492,6 +523,10 @@ def package_errors(data: dict) -> list[str]:
         for field in ("readOwnership", "readOwnershipZh", "writeOwnership", "writeOwnershipZh", "failureBehaviorZh", "resourceContractZh", "implementationLocation"):
             if not binding[field].strip():
                 errors.append(f"{binding['interfaceId']} has blank {field}")
+        for case_id in binding["acceptanceCaseIds"]:
+            case = case_by_id.get(case_id)
+            if case is not None and binding["interfaceId"] not in case.get("experimentInterfaceIds", []):
+                errors.append(f"{binding['interfaceId']} acceptance case {case_id} omits that experiment interface")
     for parameter in data["runtimeParameterContracts"]:
         if not set(parameter["acceptanceCaseIds"]).issubset(cases):
             errors.append(f"{parameter['id']} has an unknown acceptance case")
@@ -507,6 +542,8 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{case['id']} has an unknown module")
         if not set(case["algorithmInterfaceIds"]).issubset(interface_ids):
             errors.append(f"{case['id']} has an unknown algorithm interface")
+        if not set(case.get("experimentInterfaceIds", [])).issubset(experiment_registry):
+            errors.append(f"{case['id']} has an unknown experiment interface")
         for field in ("title", "titleZh", "expectedContractOutput", "expectedContractOutputZh", "prohibitedOutput", "prohibitedOutputZh", "basis", "basisZh"):
             if not case[field].strip():
                 errors.append(f"{case['id']} has blank {field}")
@@ -516,6 +553,11 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{case['id']} expected fixture differs from the controlled expected output")
         if not case["prohibitedOutputPaths"] or not case["negativeVariants"]:
             errors.append(f"{case['id']} lacks concrete prohibited outputs or negative variants")
+        if case["inputFixture"].get("values") in (None, {}, []) or case["expectedOutputFixture"].get("values") in (None, {}, []):
+            errors.append(f"{case['id']} lacks concrete typed input or expected output values")
+        for variant in case["negativeVariants"]:
+            if variant["mutation"] in {"violate the named precondition", "remove required identity or precondition", "NO-MUTATION"} or variant["expectedRejection"] == "ACCEPT":
+                errors.append(f"{case['id']} has a non-executable negative variant")
         for tool_id in case["toolRequirementIds"]:
             tool = tool_by_id.get(tool_id)
             if tool is not None and tool["ownerModuleId"] not in case["moduleIds"]:
@@ -731,6 +773,19 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{dependency['id']} closed specification status is inconsistent")
         if dependency["runtimeStatus"] == "NOT-ESTABLISHED" and "NOT-EVALUATED" not in dependency["failureBehavior"]:
             errors.append(f"{dependency['id']} must preserve the runtime not-evaluated boundary")
+        if dependency["runtimeStatus"] == "ESTABLISHED":
+            errors.append(f"{dependency['id']} runtime capability cannot be established by this specification-only package")
+        source_bindings = {row.get("requirementId"): row for row in dependency["sourceBindings"]}
+        if set(source_bindings) != set(dependency["requirementIds"]):
+            errors.append(f"{dependency['id']} source bindings must exactly cover its requirements")
+        for requirement_id, binding in source_bindings.items():
+            source = source_by_id.get(requirement_id, {})
+            if binding.get("sourceUnitId") != source.get("sourceUnitId"):
+                errors.append(f"{dependency['id']} has a forged source binding for {requirement_id}")
+        for evidence in dependency["closureEvidence"]:
+            evidence_path = ROOT / evidence
+            if Path(evidence).is_absolute() or ".." in Path(evidence).parts or not evidence_path.is_file():
+                errors.append(f"{dependency['id']} has unsafe or missing closure evidence {evidence}")
         for requirement_id in dependency["requirementIds"]:
             row = next((item for item in rows if item["inputRequirementId"] == requirement_id), None)
             if row is None or dependency["id"] not in row.get("dependencyIds", []):
@@ -752,6 +807,19 @@ def package_errors(data: dict) -> list[str]:
         if row["firstSliceRequired"] and row["disposition"] == "FIRST-SLICE-IMPLEMENTATION":
             if not all(row.get(key) for key in ("moduleId", "recordId", "acceptanceCaseId")):
                 errors.append(f"{row['inputRequirementId']} lacks a consumer/acceptance closure")
+    required_relations = data["requiredDependencyRelations"]
+    relation_ids = [row["dependencyId"] for row in required_relations]
+    if len(relation_ids) != len(set(relation_ids)):
+        errors.append("requiredDependencyRelations repeats a dependency")
+    for relation in required_relations:
+        dependency = dependency_by_id.get(relation["dependencyId"])
+        if dependency is None or set(dependency["requirementIds"]) != set(relation["requirementIds"]):
+            errors.append(f"required dependency relation {relation['dependencyId']} was pruned or changed")
+            continue
+        for requirement_id in relation["requirementIds"]:
+            disposition = next((row for row in rows if row["inputRequirementId"] == requirement_id), None)
+            if disposition is None or relation["dependencyId"] not in disposition.get("dependencyIds", []):
+                errors.append(f"required dependency relation {relation['dependencyId']} lost {requirement_id}")
     blocked = [row for row in rows if row["disposition"] == "DEPENDENCY-BLOCKED" and row.get("firstSliceRequired")]
     if blocked and data["reviewBoundary"]["readiness"] != "READINESS-BLOCKED":
         errors.append("required blocked input requires READINESS-BLOCKED")
@@ -769,6 +837,7 @@ def package_errors(data: dict) -> list[str]:
             errors.append("READY requires no required blocks and nonempty completion evidence")
         if any(row["disposition"] != "FIRST-SLICE-IMPLEMENTATION" and row["firstSliceRequired"] for row in rows):
             errors.append("READY cannot retain a required non-implementation disposition")
+        errors.append("READY activation is outside this Draft specification package and requires an independent acceptance gate")
     if data["reviewBoundary"]["claims"] != "SPECIFICATION-ONLY":
         errors.append("review boundary must remain SPECIFICATION-ONLY")
     return errors

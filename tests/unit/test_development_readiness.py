@@ -38,6 +38,74 @@ def test_current_candidate_has_closed_specification_gate():
     assert errors(copy.deepcopy(PACKAGE)) == []
 
 
+def test_rr85_capture_manifest_rows_enter_capture_and_packet_records() -> None:
+    manifest = json.loads((ROOT / "configs/research/cltav_historical_capture_manifest.json").read_text(encoding="utf-8"))
+    records = {row["id"]: row for row in PACKAGE["recordContracts"]}
+    for row in manifest["captures"]:
+        identity = {"captureId": row["captureId"], "relativePath": row["relativePath"], "sha256": row["sha256"], "byteSize": row["byteCount"], "manifestVersion": manifest["manifestVersion"]}
+        assert MODULE.validate_record_instance(records["CAPTURE-IDENTITY"], identity) == []
+        packet = copy.deepcopy(records["PACKET-REF"]["example"])
+        packet["captureId"] = row["captureId"]
+        assert MODULE.validate_record_instance(records["PACKET-REF"], packet) == []
+    for attack in ("../escape.pcapng", "/absolute.pcapng", "C" + ":/outside.pcapng", "safe\\alias.pcapng"):
+        payload = copy.deepcopy(records["CAPTURE-IDENTITY"]["example"])
+        payload["relativePath"] = attack
+        assert MODULE.validate_record_instance(records["CAPTURE-IDENTITY"], payload)
+
+
+def test_rr85_empty_history_is_terminal_only_and_never_resurrects() -> None:
+    history = next(row for row in PACKAGE["recordContracts"] if row["id"] == "HISTORY-HANDLE")
+    terminal = {"H": [], "compatibleStateByHypothesis": {}, "statusByHypothesis": {}, "version": 1}
+    assert MODULE.validate_record_instance(history, terminal) == []
+    case = next(row for row in PACKAGE["acceptanceCases"] if row["id"] == "AC-SYN-HISTORY")
+    assert case["inputFixture"]["values"]["history"]["H"] == ["h0"]
+    assert case["expectedOutputFixture"]["values"]["history"]["H"] == []
+    assert case["expectedOutputFixture"]["values"]["stop"] == "Stop-Empty"
+
+
+def test_rr85_kernel_relations_reject_coordinated_mutations() -> None:
+    bad = copy.deepcopy(PACKAGE)
+    bad["algorithmRefinements"][0]["finiteKernelContract"]["mergeKey"].remove("clockConstraint")
+    assert any("merge key" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["algorithmRefinements"][0]["finiteKernelContract"]["limitBehavior"]["pathLength"] = "Stop-Empty"
+    assert any("limit behavior" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["algorithmRefinements"][0]["finiteKernelContract"]["totalReturnMapping"].pop()
+    assert any("total finite-result" in item or "is too short" in item for item in errors(bad))
+
+
+def test_rr85_experiment_cases_are_bidirectional_and_concrete() -> None:
+    case_by_id = {row["id"]: row for row in PACKAGE["acceptanceCases"]}
+    for binding in PACKAGE["experimentInterfaceBindings"]:
+        for case_id in binding["acceptanceCaseIds"]:
+            case = case_by_id[case_id]
+            assert binding["interfaceId"] in case["experimentInterfaceIds"]
+            assert case["inputFixture"]["values"] and case["expectedOutputFixture"]["values"]
+    bad = copy.deepcopy(PACKAGE)
+    binding = bad["experimentInterfaceBindings"][0]
+    binding["acceptanceCaseIds"] = ["AC-SYN-TRANSFER"]
+    assert any("experiment interface" in item for item in errors(bad))
+
+
+def test_rr85_dependency_and_activation_gates_reject_joint_forgery() -> None:
+    bad = copy.deepcopy(PACKAGE)
+    dependency = bad["implementationDependencies"][0]
+    removed = dependency["requirementIds"].pop()
+    dependency["sourceBindings"] = [row for row in dependency["sourceBindings"] if row["requirementId"] != removed]
+    next(row for row in bad["protocolInputDispositions"] if row["inputRequirementId"] == removed)["dependencyIds"] = []
+    assert any("required dependency relation" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["implementationDependencies"][0]["sourceBindings"][0]["sourceUnitId"] = "SU-NOT-REAL"
+    assert any("forged source binding" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["implementationDependencies"][0]["runtimeStatus"] = "ESTABLISHED"
+    assert any("cannot be established" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["reviewBoundary"]["readiness"] = "READY"
+    assert any("outside this Draft" in item for item in errors(bad))
+
+
 def test_finite_kernel_and_experiment_bindings_are_relationally_closed():
     assert len(PACKAGE["experimentInterfaceBindings"]) == 7
     bad = copy.deepcopy(PACKAGE)
@@ -320,7 +388,9 @@ def test_bound_git_snapshot_survives_bad_worktree_inputs(monkeypatch, tmp_path):
     for relative in (
         "configs/requirements/arinc_615a3_m1_crs.json",
         "configs/research/cltav_interface_registry.json",
-        "configs/engineering/cltav_development_contracts.schema.json",
+            "configs/engineering/cltav_development_contracts.schema.json",
+            "configs/engineering/cltav_development_contracts.json",
+            "tests/unit/test_development_readiness.py",
         "docs/control/decisions/DESIGN_DECISIONS.md",
         "docs/control/changes/CR-2026-016.md",
         "docs/research/methodology/RR-2026-001_test_analysis_conformance_methodology.md",
@@ -332,7 +402,7 @@ def test_bound_git_snapshot_survives_bad_worktree_inputs(monkeypatch, tmp_path):
     subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
     subprocess.run(["git", "config", "user.email", "test@example.invalid"], cwd=repo, check=True)
     subprocess.run(["git", "config", "user.name", "test"], cwd=repo, check=True)
-    subprocess.run(["git", "add", "configs"], cwd=repo, check=True)
+    subprocess.run(["git", "add", "."], cwd=repo, check=True)
     subprocess.run(["git", "commit", "-qm", "snapshot"], cwd=repo, check=True)
 
     candidate = copy.deepcopy(PACKAGE)

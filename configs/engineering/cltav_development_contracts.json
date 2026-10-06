@@ -17,7 +17,7 @@
       "artifactId": "ARINC615A3-M1-CRS",
       "path": "configs/requirements/arinc_615a3_m1_crs.json",
       "purpose": "Bound protocol requirement universe",
-      "sha256": "7f35f538fff2d9f8204360f650a1b5c794f9969497ad9ef3f1dfe114248a315f",
+      "sha256": "24635f9bfb485e80921fe0dae8585b0abfc670e68390d93f21b78635477d3cac",
       "purposeZh": "受控协议需求全集"
     },
     {
@@ -7139,13 +7139,13 @@
           "type": "string",
           "constraintId": "RC-CAPTURE-ID",
           "required": true,
-          "pattern": "^cap-[a-z0-9][a-z0-9-]*$"
+          "pattern": "^(?:cap-[a-z0-9][a-z0-9-]*|HC-[0-9]{2})$"
         },
         "relativePath": {
           "type": "string",
           "constraintId": "RC-CAPTURE-PATH",
           "required": true,
-          "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
+          "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\x00-\\x1f\\\\]+$"
         },
         "sha256": {
           "type": "string",
@@ -7228,7 +7228,7 @@
           "type": "string",
           "constraintId": "RC-PACKET-CAPTURE-ID",
           "required": true,
-          "pattern": "^cap-[a-z0-9][a-z0-9-]*$"
+          "pattern": "^(?:cap-[a-z0-9][a-z0-9-]*|HC-[0-9]{2})$"
         },
         "sectionId": {
           "type": "integer",
@@ -8332,7 +8332,7 @@
           "type": "array",
           "constraintId": "RC-HISTORY-H",
           "required": true,
-          "minItems": 1,
+          "minItems": 0,
           "uniqueItems": true,
           "items": {
             "type": "string",
@@ -9272,6 +9272,476 @@
           "observation-class-count",
           "path-length",
           "frontier-state-count"
+        ],
+        "modelInstanceSchema": {
+          "transition": {
+            "required": [
+              "id",
+              "source",
+              "target",
+              "guard",
+              "updates"
+            ],
+            "guardAst": "M2-compatible COMPARE/BINARY/CLOCK/SYMBOL/LITERAL subset; OR and NOT are represented by BINARY or normalized branches",
+            "updates": [
+              "STATE-ASSIGN",
+              "CLOCK-RESET-TO-ZERO",
+              "TYPED-FIELD-ASSIGN"
+            ]
+          },
+          "clockConstraint": {
+            "representation": "canonical conjunction of exact rational lower/upper difference bounds",
+            "timeAdvance": "add the same nonnegative rational delta to all non-reset clocks while preserving difference constraints",
+            "reset": "substitute zero for the named clock before canonicalization",
+            "feasibility": "FEASIBLE, INFEASIBLE, or COMPUTATION-UNKNOWN"
+          },
+          "typedStore": "finite map from declared variable IDs to values in their declared scalar domains"
+        },
+        "propagationRules": [
+          {
+            "id": "FK-VALIDATE",
+            "rule": "Reject unsupported AST nodes or ill-typed operands as SPEC-ERROR before expansion."
+          },
+          {
+            "id": "FK-ADVANCE",
+            "rule": "Advance all clocks by one shared nonnegative rational delta and retain difference correlations."
+          },
+          {
+            "id": "FK-INTERSECT",
+            "rule": "Conjoin transition guard, observation class, and timing interval; canonicalize before feasibility classification."
+          },
+          {
+            "id": "FK-UPDATE",
+            "rule": "Apply state/clock/store updates simultaneously, then canonicalize the successor constraint."
+          },
+          {
+            "id": "FK-MERGE",
+            "rule": "Merge only entries identical on hypothesisId, controlStateId, clockConstraint, typedStore, and historyProvenance."
+          },
+          {
+            "id": "FK-LIMIT",
+            "rule": "Path/frontier limits return CONSERVATIVE-UNKNOWN without deleting hypotheses; they never produce Stop-Empty or equivalence."
+          }
+        ],
+        "internalResults": [
+          "FEASIBLE",
+          "INFEASIBLE",
+          "COMPUTATION-UNKNOWN",
+          "UNSUPPORTED-SYNTAX",
+          "LIMIT-REACHED",
+          "EMPTY-HISTORY"
+        ],
+        "witnessVectors": [
+          {
+            "id": "FK-W1-FEASIBLE",
+            "input": {
+              "state": "q0",
+              "clockConstraint": "0<=x<=1",
+              "guard": "x<=2",
+              "observation": "response"
+            },
+            "expected": {
+              "result": "FEASIBLE",
+              "state": "q1",
+              "clockConstraint": "0<=x<=1"
+            }
+          },
+          {
+            "id": "FK-W2-INFEASIBLE",
+            "input": {
+              "state": "q0",
+              "clockConstraint": "x>=3",
+              "guard": "x<=2",
+              "observation": "response"
+            },
+            "expected": {
+              "result": "INFEASIBLE",
+              "successorCount": 0
+            }
+          },
+          {
+            "id": "FK-W3-UNKNOWN",
+            "input": {
+              "state": "q0",
+              "clockConstraint": "0<=x<=1",
+              "guard": "unsupported-call()",
+              "observation": "response"
+            },
+            "expected": {
+              "result": "COMPUTATION-UNKNOWN",
+              "preserveHypotheses": true
+            }
+          },
+          {
+            "id": "FK-W4-HISTORY",
+            "input": {
+              "sameH": [
+                "h0"
+              ],
+              "frontiers": [
+                "frontier-a",
+                "frontier-b"
+              ]
+            },
+            "expected": {
+              "merge": false,
+              "reason": "historyProvenance differs"
+            }
+          },
+          {
+            "id": "FK-W5-CLOCK",
+            "input": {
+              "sameH": [
+                "h0"
+              ],
+              "clockConstraints": [
+                "x<=1",
+                "x<=2"
+              ]
+            },
+            "expected": {
+              "merge": false,
+              "reason": "clockConstraint differs"
+            }
+          }
+        ],
+        "totalReturnMapping": [
+          {
+            "interfaceId": "IF-PRED-OBS",
+            "internalResult": "FEASIBLE",
+            "output": "currentlyValidNonemptyClasses",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-PRED-OBS",
+            "internalResult": "INFEASIBLE",
+            "output": "PredictionGapError",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-PRED-OBS",
+            "internalResult": "COMPUTATION-UNKNOWN",
+            "output": "RESOURCE-UNKNOWN",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-PRED-OBS",
+            "internalResult": "UNSUPPORTED-SYNTAX",
+            "output": "PredictionGapError",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-PRED-OBS",
+            "internalResult": "LIMIT-REACHED",
+            "output": "RESOURCE-UNKNOWN",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-PRED-OBS",
+            "internalResult": "EMPTY-HISTORY",
+            "output": "PredictionGapError",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-SELECT-ADMIT",
+            "internalResult": "FEASIBLE",
+            "output": "kind",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-SELECT-ADMIT",
+            "internalResult": "INFEASIBLE",
+            "output": "PredictionGapError",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-SELECT-ADMIT",
+            "internalResult": "COMPUTATION-UNKNOWN",
+            "output": "PredictionGapError",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-SELECT-ADMIT",
+            "internalResult": "UNSUPPORTED-SYNTAX",
+            "output": "PredictionGapError",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-SELECT-ADMIT",
+            "internalResult": "LIMIT-REACHED",
+            "output": "PredictionGapError",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-SELECT-ADMIT",
+            "internalResult": "EMPTY-HISTORY",
+            "output": "PredictionGapError",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-EXECUTE-RECORD",
+            "internalResult": "FEASIBLE",
+            "output": "record",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-EXECUTE-RECORD",
+            "internalResult": "INFEASIBLE",
+            "output": "CONFIRMED-NOT-SENT",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-EXECUTE-RECORD",
+            "internalResult": "COMPUTATION-UNKNOWN",
+            "output": "UNKNOWN-EFFECT",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-EXECUTE-RECORD",
+            "internalResult": "UNSUPPORTED-SYNTAX",
+            "output": "CONFIRMED-NOT-SENT",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-EXECUTE-RECORD",
+            "internalResult": "LIMIT-REACHED",
+            "output": "UNKNOWN-EFFECT",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-EXECUTE-RECORD",
+            "internalResult": "EMPTY-HISTORY",
+            "output": "CONFIRMED-NOT-SENT",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-OBS-INTERPRET",
+            "internalResult": "FEASIBLE",
+            "output": "Iz",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-OBS-INTERPRET",
+            "internalResult": "INFEASIBLE",
+            "output": "ERROR",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-OBS-INTERPRET",
+            "internalResult": "COMPUTATION-UNKNOWN",
+            "output": "UNKNOWN-EFFECT",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-OBS-INTERPRET",
+            "internalResult": "UNSUPPORTED-SYNTAX",
+            "output": "ERROR",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-OBS-INTERPRET",
+            "internalResult": "LIMIT-REACHED",
+            "output": "UNKNOWN-EFFECT",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-OBS-INTERPRET",
+            "internalResult": "EMPTY-HISTORY",
+            "output": "ERROR",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-PREP-RECOVER",
+            "internalResult": "FEASIBLE",
+            "output": "targetConfirmed",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-PREP-RECOVER",
+            "internalResult": "INFEASIBLE",
+            "output": "UNKNOWN-EFFECT",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-PREP-RECOVER",
+            "internalResult": "COMPUTATION-UNKNOWN",
+            "output": "UNKNOWN-EFFECT",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-PREP-RECOVER",
+            "internalResult": "UNSUPPORTED-SYNTAX",
+            "output": "UNKNOWN-EFFECT",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-PREP-RECOVER",
+            "internalResult": "LIMIT-REACHED",
+            "output": "UNKNOWN-EFFECT",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-PREP-RECOVER",
+            "internalResult": "EMPTY-HISTORY",
+            "output": "UNKNOWN-EFFECT",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-HIST-UPDATE",
+            "internalResult": "FEASIBLE",
+            "output": "HistoryHandlePrime",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-HIST-UPDATE",
+            "internalResult": "INFEASIBLE",
+            "output": "Stop-Empty",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-HIST-UPDATE",
+            "internalResult": "COMPUTATION-UNKNOWN",
+            "output": "RESOURCE-UNKNOWN",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-HIST-UPDATE",
+            "internalResult": "UNSUPPORTED-SYNTAX",
+            "output": "Stop-Empty",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-HIST-UPDATE",
+            "internalResult": "LIMIT-REACHED",
+            "output": "RESOURCE-UNKNOWN",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-HIST-UPDATE",
+            "internalResult": "EMPTY-HISTORY",
+            "output": "Stop-Empty",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-EQUIV",
+            "internalResult": "FEASIBLE",
+            "output": "established",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-EQUIV",
+            "internalResult": "INFEASIBLE",
+            "output": "UNKNOWN",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-EQUIV",
+            "internalResult": "COMPUTATION-UNKNOWN",
+            "output": "UNKNOWN",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-EQUIV",
+            "internalResult": "UNSUPPORTED-SYNTAX",
+            "output": "UNKNOWN",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-EQUIV",
+            "internalResult": "LIMIT-REACHED",
+            "output": "UNKNOWN",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-EQUIV",
+            "internalResult": "EMPTY-HISTORY",
+            "output": "UNKNOWN",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-RESOURCE-STOP",
+            "internalResult": "FEASIBLE",
+            "output": "stopClass",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-RESOURCE-STOP",
+            "internalResult": "INFEASIBLE",
+            "output": "Stop-Budget",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-RESOURCE-STOP",
+            "internalResult": "COMPUTATION-UNKNOWN",
+            "output": "Stop-Budget",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-RESOURCE-STOP",
+            "internalResult": "UNSUPPORTED-SYNTAX",
+            "output": "Stop-Budget",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-RESOURCE-STOP",
+            "internalResult": "LIMIT-REACHED",
+            "output": "Stop-Budget",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          },
+          {
+            "interfaceId": "IF-RESOURCE-STOP",
+            "internalResult": "EMPTY-HISTORY",
+            "output": "Stop-Budget",
+            "condition": "when this interface consumes the finite-kernel result",
+            "payload": "preserve HistoryHandle/version and named evidence; never synthesize IUT FAIL"
+          }
         ]
       }
     }
@@ -9473,11 +9943,39 @@
           "HISTORY-HANDLE",
           "FINDING-RECORD"
         ],
-        "condition": "declared-positive"
+        "values": {
+          "captureId": "HC-01",
+          "packetRefs": [
+            1,
+            2,
+            3
+          ],
+          "tid": {
+            "client": 12000,
+            "server": 69
+          },
+          "blocks": [
+            1,
+            2
+          ],
+          "terminal": {
+            "block": 2,
+            "payloadBytes": 0
+          },
+          "gaps": []
+        }
       },
       "expectedOutputFixture": {
         "outcome": "CONTRACT-EXPECTED",
-        "statement": "A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence."
+        "statement": "A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence.",
+        "values": {
+          "status": "COMPLETE",
+          "orderedBlocks": [
+            1,
+            2
+          ],
+          "terminalConfirmed": true
+        }
       },
       "prohibitedOutputPaths": [
         "protocolVerdictWithoutMeasurement",
@@ -9486,10 +9984,11 @@
       "negativeVariants": [
         {
           "id": "AC-SYN-TRANSFER-NEG",
-          "mutation": "violate the named precondition",
-          "expectedRejection": "SPEC-ERROR"
+          "mutation": "remove terminal evidence",
+          "expectedRejection": "RC-TRANSFER-TERMINAL at inputFixture.values.terminal"
         }
-      ]
+      ],
+      "experimentInterfaceIds": []
     },
     {
       "id": "AC-SYN-PREDICTION",
@@ -9523,11 +10022,34 @@
           "HISTORY-HANDLE",
           "OBSERVATION-ASSESSMENT"
         ],
-        "condition": "declared-positive"
+        "values": {
+          "H": [
+            "h0",
+            "h1"
+          ],
+          "frontiers": [
+            {
+              "hypothesisId": "h0",
+              "state": "q0"
+            },
+            {
+              "hypothesisId": "h1",
+              "state": "q1"
+            }
+          ],
+          "actionId": "test-a"
+        }
       },
       "expectedOutputFixture": {
         "outcome": "CONTRACT-EXPECTED",
-        "statement": "A finite current projection is tagged OK or GAP before any TEST score is read."
+        "statement": "A finite current projection is tagged OK or GAP before any TEST score is read.",
+        "values": {
+          "predictionStatus": "OK",
+          "classes": [
+            "response-a",
+            "response-b"
+          ]
+        }
       },
       "prohibitedOutputPaths": [
         "protocolVerdictWithoutMeasurement",
@@ -9536,10 +10058,11 @@
       "negativeVariants": [
         {
           "id": "AC-SYN-PREDICTION-NEG",
-          "mutation": "violate the named precondition",
-          "expectedRejection": "SPEC-ERROR"
+          "mutation": "replace classes with an empty list while status is OK",
+          "expectedRejection": "RC-PREDICTION-NONEMPTY at expectedOutputFixture.values.classes"
         }
-      ]
+      ],
+      "experimentInterfaceIds": []
     },
     {
       "id": "AC-SYN-SELECT",
@@ -9573,11 +10096,34 @@
           "HISTORY-HANDLE",
           "OBSERVATION-ASSESSMENT"
         ],
-        "condition": "declared-positive"
+        "values": {
+          "actions": [
+            {
+              "id": "test-b",
+              "kind": "TEST",
+              "cost": 1,
+              "worstClass": 2
+            },
+            {
+              "id": "test-a",
+              "kind": "TEST",
+              "cost": 1,
+              "worstClass": 2
+            }
+          ]
+        }
       },
       "expectedOutputFixture": {
         "outcome": "CONTRACT-EXPECTED",
-        "statement": "Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID."
+        "statement": "Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID.",
+        "values": {
+          "selectedActionId": "test-a",
+          "tieBreak": [
+            "worstClass",
+            "cost",
+            "stable-id"
+          ]
+        }
       },
       "prohibitedOutputPaths": [
         "protocolVerdictWithoutMeasurement",
@@ -9586,10 +10132,11 @@
       "negativeVariants": [
         {
           "id": "AC-SYN-SELECT-NEG",
-          "mutation": "violate the named precondition",
-          "expectedRejection": "SPEC-ERROR"
+          "mutation": "select test-b with equal score and cost",
+          "expectedRejection": "RC-SELECT-STABLE-ID at expectedOutputFixture.values.selectedActionId"
         }
-      ]
+      ],
+      "experimentInterfaceIds": []
     },
     {
       "id": "AC-SYN-OBSERVATION",
@@ -9625,11 +10172,24 @@
           "PROTOCOL-EVENT",
           "OBSERVATION-ASSESSMENT"
         ],
-        "condition": "declared-positive"
+        "values": {
+          "interval": {
+            "lower": 5.0,
+            "upper": 5.2
+          },
+          "requirementWindow": {
+            "lower": 4.0,
+            "upper": 5.1
+          },
+          "clockValid": true
+        }
       },
       "expectedOutputFixture": {
         "outcome": "CONTRACT-EXPECTED",
-        "statement": "Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR."
+        "statement": "Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR.",
+        "values": {
+          "verdict": "INCONCLUSIVE"
+        }
       },
       "prohibitedOutputPaths": [
         "protocolVerdictWithoutMeasurement",
@@ -9638,10 +10198,11 @@
       "negativeVariants": [
         {
           "id": "AC-SYN-OBSERVATION-NEG",
-          "mutation": "violate the named precondition",
-          "expectedRejection": "SPEC-ERROR"
+          "mutation": "change verdict to PASS for a boundary-overlapping interval",
+          "expectedRejection": "RC-VERDICT-WHOLE-INTERVAL at expectedOutputFixture.values.verdict"
         }
-      ]
+      ],
+      "experimentInterfaceIds": []
     },
     {
       "id": "AC-SYN-PREP-RECOVER",
@@ -9675,11 +10236,20 @@
           "HISTORY-HANDLE",
           "OBSERVATION-ASSESSMENT"
         ],
-        "condition": "declared-positive"
+        "values": {
+          "actionKind": "PREP",
+          "targetConfirmed": true,
+          "summaryConfirmed": true,
+          "postSummary": "q1"
+        }
       },
       "expectedOutputFixture": {
         "outcome": "CONTRACT-EXPECTED",
-        "statement": "Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary."
+        "statement": "Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary.",
+        "values": {
+          "commitSummary": "q1",
+          "historyVersion": 1
+        }
       },
       "prohibitedOutputPaths": [
         "protocolVerdictWithoutMeasurement",
@@ -9688,10 +10258,11 @@
       "negativeVariants": [
         {
           "id": "AC-SYN-PREP-RECOVER-NEG",
-          "mutation": "violate the named precondition",
-          "expectedRejection": "SPEC-ERROR"
+          "mutation": "set summaryConfirmed false while committing q1",
+          "expectedRejection": "RC-SUMMARY-CONFIRMATION at inputFixture.values.summaryConfirmed"
         }
-      ]
+      ],
+      "experimentInterfaceIds": []
     },
     {
       "id": "AC-SYN-HISTORY",
@@ -9725,11 +10296,34 @@
           "HISTORY-HANDLE",
           "OBSERVATION-ASSESSMENT"
         ],
-        "condition": "declared-positive"
+        "values": {
+          "history": {
+            "H": [
+              "h0"
+            ],
+            "compatibleStateByHypothesis": {
+              "h0": "frontier-syn-0"
+            },
+            "statusByHypothesis": {
+              "h0": "KNOWN"
+            },
+            "version": 0
+          },
+          "compatibleObservationHypotheses": []
+        }
       },
       "expectedOutputFixture": {
         "outcome": "CONTRACT-EXPECTED",
-        "statement": "A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses."
+        "statement": "A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses.",
+        "values": {
+          "history": {
+            "H": [],
+            "compatibleStateByHypothesis": {},
+            "statusByHypothesis": {},
+            "version": 1
+          },
+          "stop": "Stop-Empty"
+        }
       },
       "prohibitedOutputPaths": [
         "protocolVerdictWithoutMeasurement",
@@ -9738,10 +10332,11 @@
       "negativeVariants": [
         {
           "id": "AC-SYN-HISTORY-NEG",
-          "mutation": "violate the named precondition",
-          "expectedRejection": "SPEC-ERROR"
+          "mutation": "return the old h0 after the empty intersection",
+          "expectedRejection": "RC-HISTORY-NO-RESURRECTION at expectedOutputFixture.values.history.H"
         }
-      ]
+      ],
+      "experimentInterfaceIds": []
     },
     {
       "id": "AC-SYN-EQUIVALENCE",
@@ -9773,11 +10368,20 @@
         "recordIds": [
           "HISTORY-HANDLE"
         ],
-        "condition": "declared-positive"
+        "values": {
+          "H": [
+            "h0",
+            "h1"
+          ],
+          "finiteDomainProof": "absent"
+        }
       },
       "expectedOutputFixture": {
         "outcome": "CONTRACT-EXPECTED",
-        "statement": "An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished."
+        "statement": "An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished.",
+        "values": {
+          "result": "unknown"
+        }
       },
       "prohibitedOutputPaths": [
         "protocolVerdictWithoutMeasurement",
@@ -9786,10 +10390,11 @@
       "negativeVariants": [
         {
           "id": "AC-SYN-EQUIVALENCE-NEG",
-          "mutation": "violate the named precondition",
-          "expectedRejection": "SPEC-ERROR"
+          "mutation": "return established without finite-domain proof",
+          "expectedRejection": "RC-EQUIV-EVIDENCE at expectedOutputFixture.values.result"
         }
-      ]
+      ],
+      "experimentInterfaceIds": []
     },
     {
       "id": "AC-SYN-RESOURCE-STOP",
@@ -9824,11 +10429,20 @@
           "HISTORY-HANDLE",
           "FINDING-RECORD"
         ],
-        "condition": "declared-positive"
+        "values": {
+          "mode": "ROUNDS",
+          "remaining": 0,
+          "retryCap": 1,
+          "attemptsIssued": 1
+        }
       },
       "expectedOutputFixture": {
         "outcome": "CONTRACT-EXPECTED",
-        "statement": "Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error."
+        "statement": "Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error.",
+        "values": {
+          "stop": "Stop-Error",
+          "charges": 1
+        }
       },
       "prohibitedOutputPaths": [
         "protocolVerdictWithoutMeasurement",
@@ -9837,10 +10451,11 @@
       "negativeVariants": [
         {
           "id": "AC-SYN-RESOURCE-STOP-NEG",
-          "mutation": "violate the named precondition",
-          "expectedRejection": "SPEC-ERROR"
+          "mutation": "charge the single issued attempt twice",
+          "expectedRejection": "RC-RESOURCE-ONCE at expectedOutputFixture.values.charges"
         }
-      ]
+      ],
+      "experimentInterfaceIds": []
     },
     {
       "id": "AC-SYN-INTEGRITY",
@@ -9872,11 +10487,17 @@
         "recordIds": [
           "TRANSFER-RECORD"
         ],
-        "condition": "declared-positive"
+        "values": {
+          "requirementId": "CRS-M1-00076",
+          "runtimeEvidence": "NOT-ESTABLISHED"
+        }
       },
       "expectedOutputFixture": {
         "outcome": "CONTRACT-EXPECTED",
-        "statement": "CRC-bearing inputs retain source parameters and yield NOT-EVALUATED until implementation, configuration and execution evidence exist."
+        "statement": "CRC-bearing inputs retain source parameters and yield NOT-EVALUATED until implementation, configuration and execution evidence exist.",
+        "values": {
+          "judgment": "NOT-EVALUATED"
+        }
       },
       "prohibitedOutputPaths": [
         "runtimeResultClaim",
@@ -9885,10 +10506,11 @@
       "negativeVariants": [
         {
           "id": "AC-SYN-INTEGRITY-NEG",
-          "mutation": "remove required identity or precondition",
-          "expectedRejection": "SPEC-ERROR"
+          "mutation": "return PASS without qualified runtime evidence",
+          "expectedRejection": "RC-INTEGRITY-RUNTIME at expectedOutputFixture.values.judgment"
         }
-      ]
+      ],
+      "experimentInterfaceIds": []
     },
     {
       "id": "AC-EXP-SCENE",
@@ -9920,11 +10542,20 @@
         "recordIds": [
           "INTAKE-METADATA"
         ],
-        "condition": "declared-positive"
+        "values": {
+          "sceneId": "scene-001",
+          "configurationId": "cfg-001",
+          "iutId": "iut-001",
+          "resetId": "reset-001"
+        }
       },
       "expectedOutputFixture": {
         "outcome": "CONTRACT-EXPECTED",
-        "statement": "A runnable scene has stable scene, configuration, IUT and resource identities."
+        "statement": "A runnable scene has stable scene, configuration, IUT and resource identities.",
+        "values": {
+          "registration": "ACCEPTED",
+          "executionStatus": "NOT-EXECUTED"
+        }
       },
       "prohibitedOutputPaths": [
         "runtimeResultClaim",
@@ -9933,9 +10564,13 @@
       "negativeVariants": [
         {
           "id": "AC-EXP-SCENE-NEG",
-          "mutation": "remove required identity or precondition",
-          "expectedRejection": "SPEC-ERROR"
+          "mutation": "remove resetId",
+          "expectedRejection": "RC-SCENE-RESET-ID at inputFixture.values.resetId"
         }
+      ],
+      "experimentInterfaceIds": [
+        "IF-EXP-SCENE",
+        "IF-EXP-RUN"
       ]
     },
     {
@@ -9968,11 +10603,20 @@
         "recordIds": [
           "FINDING-RECORD"
         ],
-        "condition": "declared-positive"
+        "values": {
+          "injectionId": "inj-001",
+          "injectionConfirmed": true,
+          "generatorId": "truth-gen-001",
+          "algorithmVisible": false
+        }
       },
       "expectedOutputFixture": {
         "outcome": "CONTRACT-EXPECTED",
-        "statement": "Only confirmed injection plus an independent generator creates truth, with shared-component risk named."
+        "statement": "Only confirmed injection plus an independent generator creates truth, with shared-component risk named.",
+        "values": {
+          "truthStatus": "CONFIRMED",
+          "sharedComponentRisk": "DECLARED"
+        }
       },
       "prohibitedOutputPaths": [
         "runtimeResultClaim",
@@ -9981,9 +10625,13 @@
       "negativeVariants": [
         {
           "id": "AC-EXP-TRUTH-NEG",
-          "mutation": "remove required identity or precondition",
-          "expectedRejection": "SPEC-ERROR"
+          "mutation": "set algorithmVisible true",
+          "expectedRejection": "RC-TRUTH-ISOLATION at inputFixture.values.algorithmVisible"
         }
+      ],
+      "experimentInterfaceIds": [
+        "IF-EXP-INJECT",
+        "IF-EXP-TRUTH"
       ]
     },
     {
@@ -10016,11 +10664,25 @@
         "recordIds": [
           "OBSERVATION-ASSESSMENT"
         ],
-        "condition": "declared-positive"
+        "values": {
+          "arm": "CL-TAV",
+          "visiblePrefix": [
+            "trigger",
+            "response"
+          ],
+          "costVector": {
+            "actions": 1,
+            "bytes": 64
+          }
+        }
       },
       "expectedOutputFixture": {
         "outcome": "CONTRACT-EXPECTED",
-        "statement": "Each arm sees only its causal prefix and pays the same declared cost vector."
+        "statement": "Each arm sees only its causal prefix and pays the same declared cost vector.",
+        "values": {
+          "causalVisibility": "PREFIX-ONLY",
+          "costComparable": true
+        }
       },
       "prohibitedOutputPaths": [
         "runtimeResultClaim",
@@ -10029,9 +10691,13 @@
       "negativeVariants": [
         {
           "id": "AC-EXP-CAUSAL-NEG",
-          "mutation": "remove required identity or precondition",
-          "expectedRejection": "SPEC-ERROR"
+          "mutation": "add evaluator truth to visiblePrefix",
+          "expectedRejection": "RC-CAUSAL-PREFIX at inputFixture.values.visiblePrefix"
         }
+      ],
+      "experimentInterfaceIds": [
+        "IF-EXP-COLLECT",
+        "IF-EXP-FILTER"
       ]
     },
     {
@@ -10064,11 +10730,22 @@
         "recordIds": [
           "FINDING-RECORD"
         ],
-        "condition": "declared-positive"
+        "values": {
+          "attempts": [
+            "PASS",
+            "INCONCLUSIVE",
+            "ERROR",
+            "UNCONFIRMED"
+          ]
+        }
       },
       "expectedOutputFixture": {
         "outcome": "CONTRACT-EXPECTED",
-        "statement": "Attempt and answered-subset denominators retain abstain, invalid, equivalent and unconfirmed membership."
+        "statement": "Attempt and answered-subset denominators retain abstain, invalid, equivalent and unconfirmed membership.",
+        "values": {
+          "attemptDenominator": 4,
+          "answeredDenominator": 1
+        }
       },
       "prohibitedOutputPaths": [
         "runtimeResultClaim",
@@ -10077,9 +10754,12 @@
       "negativeVariants": [
         {
           "id": "AC-EXP-DENOMINATOR-NEG",
-          "mutation": "remove required identity or precondition",
-          "expectedRejection": "SPEC-ERROR"
+          "mutation": "drop abstentions from the attempt denominator",
+          "expectedRejection": "RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.attemptDenominator"
         }
+      ],
+      "experimentInterfaceIds": [
+        "IF-EXP-EVAL"
       ]
     }
   ],
@@ -10109,12 +10789,36 @@
         "AC-SYN-INTEGRITY"
       ],
       "sourceBindings": [
-        "CONTROLLED-SOURCE-ARINC-645-1-2021",
-        "PROCESS-CRC-FILE-BYTES-IN-OCCURRENCE-ORDER",
-        "CRC-8-CHECK-VECTOR",
-        "CRC-16-CHECK-VECTOR",
-        "CRC-32-CHECK-VECTOR",
-        "CRC-64-CHECK-VECTOR"
+        {
+          "requirementId": "CRS-M1-00076",
+          "sourceUnitId": "SU-ARINC-615A-3-5-4-2-P047-PROSE-SENTENCE-025-3CF28DC21423",
+          "contract": "retain bytes/status behavior and report integrity-dependent judgment NOT-EVALUATED until runtime evidence"
+        },
+        {
+          "requirementId": "CRS-M1-00082",
+          "sourceUnitId": "SU-ARINC-615A-3-5-4-3-P048-PROSE-SENTENCE-026-F38D018C4499",
+          "contract": "retain bytes/status behavior and report integrity-dependent judgment NOT-EVALUATED until runtime evidence"
+        },
+        {
+          "requirementId": "CRS-M1-00085",
+          "sourceUnitId": "SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-007-F209ABE1376B",
+          "contract": "retain bytes/status behavior and report integrity-dependent judgment NOT-EVALUATED until runtime evidence"
+        },
+        {
+          "requirementId": "CRS-M1-00086",
+          "sourceUnitId": "SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-008-CDA43D6568CC",
+          "contract": "retain bytes/status behavior and report integrity-dependent judgment NOT-EVALUATED until runtime evidence"
+        },
+        {
+          "requirementId": "CRS-M1-00087",
+          "sourceUnitId": "SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-010-F4624AC8DCB4",
+          "contract": "retain bytes/status behavior and report integrity-dependent judgment NOT-EVALUATED until runtime evidence"
+        },
+        {
+          "requirementId": "CRS-M1-00109",
+          "sourceUnitId": "SU-ARINC-615A-3-6-3-2-P068-PROSE-SENTENCE-042-4C1D759A6B9A",
+          "contract": "retain bytes/status behavior and report integrity-dependent judgment NOT-EVALUATED until runtime evidence"
+        }
       ],
       "affectedJudgments": "CRC-dependent validation and equality judgments remain unavailable at runtime; transport/reconstruction may preserve bytes and provenance only.",
       "affectedJudgmentsZh": "依赖 CRC 的验证和相等判断在运行时仍不可用；传输／重建只能保留字节与来源。",
@@ -10133,9 +10837,9 @@
         "独立门禁记录"
       ],
       "closureEvidence": [
-        "configs/research/cltav_protocol_source_audit.json",
-        "configs/requirements/m1_semantic_review_assertions.json",
-        "configs/engineering/cltav_development_contracts.json"
+        "configs/requirements/arinc_615a3_m1_crs.json",
+        "configs/engineering/cltav_development_contracts.json",
+        "tests/unit/test_development_readiness.py"
       ],
       "failureBehavior": "Missing runtime evidence yields NOT-EVALUATED or named dependency status, never PASS, FAIL, or capability established.",
       "failureBehaviorZh": "缺少运行证据时产生 NOT-EVALUATED 或具名依赖状态，绝不产生 PASS、FAIL 或能力已建立。"
@@ -10319,7 +11023,7 @@
       "resourceContract": "one declared mode; no gifted CL-LOOP records",
       "resourceContractZh": "沿用注册表资源口径，不向实验臂赠送记录或成本。",
       "acceptanceCaseIds": [
-        "AC-EXP-CAUSAL"
+        "AC-EXP-SCENE"
       ],
       "implementationLocation": "future/experiment/run.py"
     },
@@ -10346,7 +11050,7 @@
       "resourceContract": "not a second charge",
       "resourceContractZh": "沿用注册表资源口径，不向实验臂赠送记录或成本。",
       "acceptanceCaseIds": [
-        "AC-EXP-DENOMINATOR"
+        "AC-EXP-CAUSAL"
       ],
       "implementationLocation": "future/experiment/filter.py"
     },
@@ -10392,9 +11096,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：corpus identity",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "唯一且受跟踪的清单条目及解析后文件身份。",
+      "expectedOutputZh": "仅允许探索性接入并保留原始身份。",
+      "negativeMutationZh": "增删条目、改散列/长度/路径、链接别名或重复身份。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     },
     {
@@ -10407,9 +11111,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：label boundary",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "线缆记录与操作员注释、评价真值严格分离。",
+      "expectedOutputZh": "算法仅接收协议可见字段。",
+      "negativeMutationZh": "把文件名结果或评价标签复制进算法记录。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     },
     {
@@ -10422,9 +11126,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：capture format",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "含 section、interface、ticks、caplen 边界的捕获记录。",
+      "expectedOutputZh": "输出保留 section/interface 身份的类型化数据包。",
+      "negativeMutationZh": "截断块、未知链路类型、缺接口或混淆局部接口编号。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     },
     {
@@ -10437,9 +11141,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：IP reassembly",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "带 PacketRef 来源的完整有限分片集。",
+      "expectedOutputZh": "输出完整数据报或 GAPPED/CONFLICT。",
+      "negativeMutationZh": "把缺片、乱序、重叠或 epoch 复用误作完整 UDP。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     },
     {
@@ -10452,9 +11156,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：TFTP reconstruction",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "动态 TID、已接受/默认选项及联合终块条件。",
+      "expectedOutputZh": "保留重传、回绕上限和终止证据的传输记录。",
+      "negativeMutationZh": "盲目去重、固定 TID、虚构选项或错误终块。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     },
     {
@@ -10467,9 +11171,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：field contracts",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "带计数和合法扩展的类型化条件字段。",
+      "expectedOutputZh": "接受并保留扩展及来源。",
+      "negativeMutationZh": "ASCII/整数互换、计数不符、哨兵误用或未知枚举。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     },
     {
@@ -10482,9 +11186,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：matching and no response",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "含顺序、取消、替代关系的活动请求实例。",
+      "expectedOutputZh": "唯一归属响应或明确歧义/未完成观测期。",
+      "negativeMutationZh": "复用响应、错键、忽略取消或把捕获结束当超时。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     },
     {
@@ -10497,9 +11201,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：timing and U",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "区间、拓扑、时钟链、误差界及不可变 U 身份。",
+      "expectedOutputZh": "按 T5 输出四值判定和无响应边界。",
+      "negativeMutationZh": "改成点估计、默认零误差或更换 U 提交。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     },
     {
@@ -10512,9 +11216,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：prediction and admission",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "有限当前类与合格且可负担动作。",
+      "expectedOutputZh": "TEST 按 minimax/成本/稳定 ID 选择，或进入合法 Prep/Recover/A2-A5。",
+      "negativeMutationZh": "把 GAP 计零、把无信息 TEST 当 A2 或给 Prep 打分。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     },
     {
@@ -10527,9 +11231,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：history update",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "带版本的全历史前沿和规范化有效结果。",
+      "expectedOutputZh": "H' 等于 H 与 Iz 交集且不复活。",
+      "negativeMutationZh": "用 Iz 替换 H、丢历史相关或把限额当不相容。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     },
     {
@@ -10542,9 +11246,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：state and return",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "含 S8/S9 确认字段的完整 Outcome/Resolution。",
+      "expectedOutputZh": "重试/提交/停止保留已采用上下文和写入所有权。",
+      "negativeMutationZh": "提交陈旧摘要、缺确认或返回未定义上下文。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     },
     {
@@ -10557,9 +11261,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：resource accounting",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "互斥 BUDGET/ROUNDS 及正有限成本/上限。",
+      "expectedOutputZh": "每次已发动作只计费一次并具名耗尽。",
+      "negativeMutationZh": "拒绝动作重复计费或接受 NaN/负数/非整数。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     },
     {
@@ -10572,9 +11276,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：experiment boundary",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "已登记场景、已确认注入和仅评价者可见的独立真值。",
+      "expectedOutputZh": "形成因果四臂记录及显式有效性分母。",
+      "negativeMutationZh": "泄漏真值、未确认即标真、隐藏成本或把探索抓包当留出集。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     },
     {
@@ -10587,9 +11291,9 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：controlled drift",
-      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
-      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
-      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "positiveInputZh": "同一已验证快照上的权威对象和生成视图。",
+      "expectedOutputZh": "检查器与生成器一致，失败时不发布。",
+      "negativeMutationZh": "删除关系、伪造引用、仅刷新计数/散列或保留陈旧视图。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
     }
   ],
@@ -10833,6 +11537,19 @@
         "confirmatory registration"
       ],
       "executionStatus": "NOT-EXECUTED"
+    }
+  ],
+  "requiredDependencyRelations": [
+    {
+      "dependencyId": "DEP-INTEGRITY-RUNTIME",
+      "requirementIds": [
+        "CRS-M1-00076",
+        "CRS-M1-00082",
+        "CRS-M1-00085",
+        "CRS-M1-00086",
+        "CRS-M1-00087",
+        "CRS-M1-00109"
+      ]
     }
   ]
 }
