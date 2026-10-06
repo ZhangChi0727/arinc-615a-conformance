@@ -15,6 +15,16 @@ No confirmatory numbers are filled here. Formal sample size and effect
 thresholds are frozen only after a declared pilot or external justification.
 Passing unit tests does not show that CL-TAV outperforms any arm.
 
+## Controlled experiment interface contract
+
+The seven interfaces `IF-EXP-SCENE`, `IF-EXP-INJECT`, `IF-EXP-TRUTH`,
+`IF-EXP-COLLECT`, `IF-EXP-RUN`, `IF-EXP-FILTER`, and `IF-EXP-EVAL` are bound
+in `configs/engineering/cltav_development_contracts.json` to exact registry
+inputs/outputs, ownership, failure, resource, acceptance and successor
+implementation locations. Historical captures are exploratory offline inputs,
+not runnable scenes or independent truth. No interactive IUT, confirmed
+injection, qualified reset/clock chain or confirmatory execution is claimed.
+
 ## Fair comparison arms
 
 All arms use the same information pool, action pool, basic verdicts and declared
@@ -230,6 +240,15 @@ non-default comparison model.
 # 中文版
 
 本文件是 CL-TAV 增量的**活动**实验方案。RR-2026-001 v4.2 下的 EXP-001～007 只作为冻结登记保留，不再作为当前对照设计。本 PR 不填确认性数字；正式样本量与效应阈值须在声明的 pilot 或外部依据之后冻结。单元测试通过不表示 CL-TAV 优于任一对照臂。
+
+## 受控实验接口合同
+
+七个接口 `IF-EXP-SCENE`、`IF-EXP-INJECT`、`IF-EXP-TRUTH`、
+`IF-EXP-COLLECT`、`IF-EXP-RUN`、`IF-EXP-FILTER` 和 `IF-EXP-EVAL`
+在 `configs/engineering/cltav_development_contracts.json` 中绑定到注册表的
+精确输入／输出、所有权、失败、资源、验收和后继实现位置。历史捕获仅是
+探索性离线输入，不是可运行场景或独立真值。本增量不声称已有交互 IUT、
+已确认注入、合格复位／时钟链或确认性执行。
 
 ## 公平对照臂
 

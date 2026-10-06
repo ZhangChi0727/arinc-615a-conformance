@@ -71,16 +71,16 @@ Each chapter below states the claim it must carry, the CL-RQ it answers, the alg
 - **Uses:** DD-029; method report §3.9–§3.9.2 and §4.11; ALG-CLTAV-01. Termination is \(c_{\min}>0\) plus finite \(B\), or finite \(K_{\max}\); `ERROR` spends the same resource.
 - **Needs:** worked examples (already in DD-029), not confirmatory runs. Independent math review still open.
 - **Figures:** FIG-CL-TAV-05 activity, 06 diagnostic sequence, 08 parametric constraints; typeset ALG-CLTAV-01.
-- **Have / gap:** algorithm text, interface contracts IF-PRED-OBS…IF-RESOURCE-STOP, and author-supplied conditional arguments in method §3.9.1. Gap is independent mathematical review, core sub-algorithm implementation, and the absence of experimental confirmation; remaining-set minimax is not claimed globally optimal.
+- **Have / gap:** algorithm text, eight interface contracts, and a finite explicit-path reference-kernel specification with restricted AST, rational intervals, whole-history frontier, merge key and conservative limit mapping. Gap is independent mathematical review, runtime implementation, and experimental confirmation; remaining-set minimax is not claimed globally optimal.
 
 ### Chapter 5 Instrument plan and experiment design
 
-- **Claim:** A later development-ready PR can implement the loop; this chapter only plans modules, oracles, comparison arms, isolation and metrics.
+- **Claim:** The controlled package binds seven experiment interfaces and concrete specification witnesses so a later implementation can build the loop without inventing ownership, truth, resource or denominator rules.
 - **Answers:** CL-RQ2 (what will be compared) and the engineering half of CL-RQ1.
 - **Uses:** four arms CL-T / CL-A / CL-TA / CL-LOOP in `EXPERIMENT_PLAN.md` (EXP-CLTAV-DETECT / LOCATE / ABLATION); no shared secretly-stronger oracle.
 - **Needs:** registered experiment protocol before any confirmatory run. No Configuration, no live load.
 - **Figures:** FIG-CL-TAV-09 experiment architecture; reuse FIG-CL-TAV-04 ports as the future tool boundary.
-- **Have / gap:** method report §8.1 and EXPERIMENT_PLAN contracts. Gap is executable experiment configuration, independent truth tooling and confirmatory registration, which belong to a later authorized PR.
+- **Have / gap:** method report §8.1, EXPERIMENT_PLAN and seven interface bindings. Gap is executable experiment configuration, an interactive IUT, independent truth tooling and confirmatory registration, which belong to a later authorized PR.
 
 ### Chapter 6 Results
 

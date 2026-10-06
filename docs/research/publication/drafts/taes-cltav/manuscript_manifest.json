@@ -59,14 +59,6 @@
       "completion": "Either the full text is obtained through the institution or the specific negative comparison is not made."
     },
     {
-      "id": "PH-IMPL-KERNEL",
-      "category": "IMPLEMENTATION-DETAIL",
-      "section": "sec:arch",
-      "clrq": ["CL-RQ1"],
-      "dependsOn": ["development-ready kernel PR"],
-      "completion": "A later authorized PR implements the named interfaces."
-    },
-    {
       "id": "PH-STAT-N",
       "category": "PUBLICATION-DECISION",
       "section": "sec:setup",
