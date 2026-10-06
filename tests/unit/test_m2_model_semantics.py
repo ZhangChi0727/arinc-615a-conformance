@@ -714,7 +714,7 @@ def test_successor_m2_identity_binds_the_actual_corrected_m1_snapshot() -> None:
     assert subprocess.run(["git", "merge-base", "--is-ancestor", commit, "HEAD"], cwd=ROOT).returncode == 0
     assert errors(data) == []
     stale = copy.deepcopy(data)
-    stale["inputAcceptance"]["successorDelta"]["currentInputBlobs"][0]["gitBlobOid"] = ZERO_OID
+    stale["inputAcceptance"]["inputs"][0]["gitBlobOid"] = ZERO_OID
     refresh_summary(stale)
     assert any("current input blob" in item for item in errors(stale))
 

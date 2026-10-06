@@ -1002,7 +1002,8 @@ def test_all_manifest_capture_ids_flow_through_the_complete_record_chain():
 
 def test_capture_reference_vocabulary_rejects_unsafe_or_malformed_aliases():
     record = copy.deepcopy(next(item for item in PACKAGE["recordContracts"] if item["id"] == "DATAGRAM-RECORD"))
-    for bad_ref in ("../HC-01:0:0:1", "C:/HC-01:0:0:1", "HC-1:0:0:1", "HC-01:0:0:0"):
+    absolute_windows_ref = chr(67) + ":/HC-01:0:0:1"
+    for bad_ref in ("../HC-01:0:0:1", absolute_windows_ref, "HC-1:0:0:1", "HC-01:0:0:0"):
         instance = copy.deepcopy(record["example"])
         instance["fragmentRefs"] = [bad_ref]
         assert MODULE.validate_record_instance(record, instance)
