@@ -3,7 +3,7 @@
 > Generated from `configs/engineering/cltav_development_contracts.json`; do not edit.
 
 - Control: `CR-2026-016`; decisions DD-038, DD-039, DD-040
-- Bound M1 requirements: 863; disposition total: 863; readiness: `READINESS-BLOCKED`; claim: `SPECIFICATION-ONLY`
+- Bound M1 requirements: 863; disposition total: 863; readiness: `CANDIDATE`; claim: `SPECIFICATION-ONLY`
 
 ## Inputs
 
@@ -229,7 +229,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Preconditions: CaptureIdentity matches the audited manifest bytes.; Intake metadata is explicitly declared or UNKNOWN.
 - Inputs: `CAPTURE-IDENTITY`, `INTAKE-METADATA`; outputs: `PACKET-REF`
 - Requirements: `TR-CAPTURE-INTAKE`; interfaces: `IF-EXECUTE-RECORD`
-- Acceptance: `AC-SYN-TRANSFER`; runtime parameters: `RP-RESOURCE`; upstream: None
+- Acceptance: `AC-SYN-TRANSFER`, `AC-EXP-SCENE`; runtime parameters: `RP-RESOURCE`; upstream: None
 - Steps:
   - `S1`: Verify capture identity before parsing any block.
   - `S2`: Parse supported section and interface declarations while retaining their scope.
@@ -261,7 +261,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Preconditions: Datagram completeness is classified.; Initial request and dynamic TID evidence remain distinguishable.
 - Inputs: `DATAGRAM-RECORD`, `TRANSFER-RECORD`; outputs: `TRANSFER-RECORD`, `PROTOCOL-EVENT`
 - Requirements: `TR-TRANSFER-RECONSTRUCTION`, `TR-PROTOCOL-EVENT`; interfaces: `IF-EXECUTE-RECORD`, `IF-OBS-INTERPRET`
-- Acceptance: `AC-SYN-TRANSFER`; runtime parameters: `RP-RESOURCE`; upstream: `MOD-REASSEMBLY`
+- Acceptance: `AC-SYN-TRANSFER`, `AC-SYN-INTEGRITY`; runtime parameters: `RP-RESOURCE`; upstream: `MOD-REASSEMBLY`
 - Steps:
   - `S1`: Open or retain transfer candidates from request and endpoint evidence.
   - `S2`: Apply option, block and terminal rules while retaining retransmission and ambiguity evidence.
@@ -292,7 +292,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Preconditions: Ownership status and measurement provenance are explicit.; HistoryHandle belongs to the current session and version.
 - Inputs: `OWNERSHIP-RESULT`, `PROTOCOL-EVENT`, `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `INTAKE-METADATA`; outputs: `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `FINDING-RECORD`
 - Requirements: `TR-OBSERVATION-ASSESSMENT`, `TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`; interfaces: `IF-OBS-INTERPRET`, `IF-HIST-UPDATE`
-- Acceptance: `AC-SYN-TRANSFER`; runtime parameters: `RP-RESOURCE`; upstream: `MOD-TRANSFER`, `MOD-OWNERSHIP`
+- Acceptance: `AC-SYN-TRANSFER`, `AC-EXP-TRUTH`, `AC-EXP-CAUSAL`, `AC-EXP-DENOMINATOR`; runtime parameters: `RP-RESOURCE`; upstream: `MOD-TRANSFER`, `MOD-OWNERSHIP`
 - Steps:
   - `S1`: Intersect measurement and requirement domains using exact interval topology.
   - `S2`: Produce PASS, FAIL, INCONCLUSIVE or ERROR without collapsing unknown evidence.
@@ -312,6 +312,17 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Representation: A stable finite hypothesis-ID set maps each hypothesis to versioned explicit path frontiers. Guards use the existing restricted AST and exact rational interval constraints; updates are declared finite assignments. Frontiers may merge only when hypothesis, control state, clock constraints and whole-history provenance are identical.
 - Conservative behavior: Unsupported syntax, a resource limit, or an undecidable feasible-path result returns the named interface UNKNOWN, GAP, SPEC-ERROR or controlled error path and never eliminates a hypothesis or proves equivalence.
 - Complexity boundary: Work is bounded by the configured hypothesis count, actions, observation classes, path length and frontier states; no polynomial or completeness claim is made.
+- Guard syntax: `TRUE`, `AND`, `OR`, `NOT`, `STATE-EQUALS`, `RATIONAL-INTERVAL-CONTAINS`, `TYPED-FIELD-EQUALS`; update syntax: `STATE-ASSIGN`, `CLOCK-RESET-TO-ZERO`, `TYPED-FIELD-ASSIGN`
+- Frontier: `hypothesisId`, `controlStateId`, `clockConstraint`, `typedStore`, `pathLength`, `historyProvenance`, `status`; merge key: `hypothesisId`, `controlStateId`, `clockConstraint`, `typedStore`, `historyProvenance`
+- Propagation:
+  - Validate the model and select-time snapshot.
+  - Expand enabled transitions without dropping correlation constraints.
+  - Intersect observation and timing constraints.
+  - Retain each feasible successor with whole-history provenance.
+  - Merge only entries with an identical merge key.
+  - Return conservative unknown on unsupported syntax or any configured limit.
+- Limit behavior: `{"actions": "ADMIT-REFUSED", "frontierStates": "CONSERVATIVE-UNKNOWN", "hypotheses": "SPEC-ERROR", "observationClasses": "PredictionGapError", "pathLength": "CONSERVATIVE-UNKNOWN"}`
+- Result mapping: `{"IF-EQUIV": {"failure": ["UNKNOWN", "RESOURCE-UNKNOWN"], "success": ["established", "notEstablished", "unknown"]}, "IF-EXECUTE-RECORD": {"failure": ["CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"], "success": ["record", "effectClass", "correlationId"]}, "IF-HIST-UPDATE": {"failure": ["Stop-Empty", "RESOURCE-UNKNOWN", "CONSERVATIVE-UNKNOWN"], "success": ["HistoryHandlePrime", "Hprime", "Stop-Empty"]}, "IF-OBS-INTERPRET": {"failure": ["ERROR", "INCONCLUSIVE", "UNKNOWN-EFFECT"], "success": ["Iz", "effectClass", "summaryConfirmed", "postSummary", "ownershipResult", "measurementInterval"]}, "IF-PRED-OBS": {"failure": ["PredictionGapError", "RESOURCE-UNKNOWN"], "success": ["currentlyValidNonemptyClasses", "PredictionGapError"]}, "IF-PREP-RECOVER": {"failure": ["UNKNOWN-EFFECT", "PREP-ERROR", "CONFIRMED-NOT-SENT"], "success": ["targetConfirmed", "summaryConfirmed", "prepError", "ineligible", "declaredTarget", "evidence", "postSummary"]}, "IF-RESOURCE-STOP": {"failure": ["Stop-Budget", "Stop-Error", "Stop-645"], "success": ["stopClass", "finalH", "trace"]}, "IF-SELECT-ADMIT": {"failure": ["PredictionGapError", "SPEC-ERROR", "ADMIT-REFUSED"], "success": ["kind", "tStar", "S", "admitA2A5"]}}`
 - Interface bindings:
   - `IF-PRED-OBS` — inputs `SessionContext`, `HistoryHandle`, `H`, `measurementUncertainty`, `actionLibrary`; outputs `currentlyValidNonemptyClasses`, `PredictionGapError`; read: Reads the versioned HistoryHandle and current session only.; write: Read-only; does not charge or write Γ/η.; failures: `PredictionGapError`, `RESOURCE-UNKNOWN`; parameters: `RP-HYPOTHESIS-COUNT`, `RP-FRONTIER-STATE-COUNT`, `RP-OBSERVATION-CLASS-COUNT`; time: Uses the session U and declared measurement uncertainty without changing either.; acceptance: `AC-SYN-PREDICTION`; location: `future/reference_kernel/prediction.py`
   - `IF-SELECT-ADMIT` — inputs `A`, `q`, `currentlyValidNonemptyClasses`, `SessionContext`, `HistoryHandle`, `H`; outputs `kind`, `tStar`, `S`, `admitA2A5`; read: Reads select-time inputs and candidate actions.; write: Read-only; S3-SNAP constructs the immutable final SelectSnapshot after this interface returns.; failures: `PredictionGapError`, `SPEC-ERROR`, `ADMIT-REFUSED`; parameters: `RP-ACTION-COUNT`, `RP-OBSERVATION-CLASS-COUNT`, `RP-RESOURCE-MODE`; time: Uses the same U identity as prediction and later interpretation.; acceptance: `AC-SYN-SELECT`; location: `future/reference_kernel/selection.py`
@@ -321,6 +332,16 @@ Upstream policy: every cross-module input producer must be directly or transitiv
   - `IF-HIST-UPDATE` — inputs `HistoryHandle`, `H`, `tStar`, `qUsedAtSelect`, `classesUsedAtSelect`, `historyVersion`, `valid Iz`, `postSummary`; outputs `HistoryHandlePrime`, `Hprime`, `Stop-Empty`; read: Reads the select-time snapshot and whole-history frontier.; write: Writes the next versioned HistoryHandle only through normalized outcomes.; failures: `Stop-Empty`, `RESOURCE-UNKNOWN`, `CONSERVATIVE-UNKNOWN`; parameters: `RP-HYPOTHESIS-COUNT`, `RP-PATH-LENGTH`, `RP-FRONTIER-STATE-COUNT`; time: Carries the select-time U identity and never substitutes post-effect summary for qUsedAtSelect.; acceptance: `AC-SYN-HISTORY`; location: `future/reference_kernel/history.py`
   - `IF-EQUIV` — inputs `SessionContext`, `H`, `HistoryHandle`, `remainingTests`; outputs `established`, `notEstablished`, `unknown`; read: Reads finite-domain state only.; write: Read-only; does not alter H or history.; failures: `UNKNOWN`, `RESOURCE-UNKNOWN`; parameters: `RP-HYPOTHESIS-COUNT`, `RP-PATH-LENGTH`, `RP-ACTION-COUNT`; time: Uses only declared bounded horizons; no available one-step test is not proof of equivalence.; acceptance: `AC-SYN-EQUIVALENCE`; location: `future/reference_kernel/equivalence.py`
   - `IF-RESOURCE-STOP` — inputs `SessionContext`, `H`, `HistoryHandle`, `named645Residuals`, `equivalenceStatus`; outputs `stopClass`, `finalH`, `trace`; read: Reads charged resources, retained history and named residuals.; write: Writes an auditable stop trace only.; failures: `Stop-Budget`, `Stop-Error`, `Stop-645`; parameters: `RP-RESOURCE-MODE`, `RP-RETRY-CAP`; time: Preserves exclusive stop order and never converts retry exhaustion into budget exhaustion.; acceptance: `AC-SYN-RESOURCE-STOP`; location: `future/reference_kernel/stopping.py`
+
+## Experiment interface bindings
+
+- `IF-EXP-SCENE` — inputs `sceneId`, `configId`, `IUT`, `faultPlan`, `resourceMode`; outputs `sceneRecord`, `unconfirmed`; read: evaluator-and-operator; write: Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.; failure: missing identity is not a runnable scene; resource: declared mode only; acceptance: `AC-EXP-SCENE`; location: `future/experiment/scene.py`
+- `IF-EXP-INJECT` — inputs `sceneId`, `injectionPlan`; outputs `injectionAttempt`, `injectionConfirmed`, `injectionUnconfirmed`; read: evaluator-only confirmation; write: Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.; failure: planned is not confirmed; unconfirmed is not valid truth; resource: injection wall-clock is evaluator metadata; acceptance: `AC-EXP-TRUTH`; location: `future/experiment/inject.py`
+- `IF-EXP-TRUTH` — inputs `sceneId`, `injectionConfirmed`, `independentGeneratorId`; outputs `truthRecord`, `sharedComponentRisk`; read: evaluator-only; never an algorithm input; write: Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.; failure: unconfirmed injection cannot default to valid truth; separate store is not independence; resource: not charged to arms; acceptance: `AC-EXP-TRUTH`; location: `future/experiment/truth.py`
+- `IF-EXP-COLLECT` — inputs `sceneId`, `armId`, `algorithmVisibleRecord`; outputs `observationLog`, `resourceLog`; read: algorithm-visible only; write: Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.; failure: missing correlation id is invalid observation; resource: same charged vector as ALG-CLTAV-01; acceptance: `AC-EXP-CAUSAL`; location: `future/experiment/collect.py`
+- `IF-EXP-RUN` — inputs `sceneId`, `armId`, `SessionContext`; outputs `runId`, `stopClass`, `traceRef`; read: algorithm-visible plus evaluator run id; write: Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.; failure: arm abort is ERROR, not PASS; resource: one declared mode; no gifted CL-LOOP records; acceptance: `AC-EXP-CAUSAL`; location: `future/experiment/run.py`
+- `IF-EXP-FILTER` — inputs `runId`, `truthRecord`, `observationLog`, `sceneId`, `attemptId`, `injectionUnconfirmed`; outputs `validityClass`, `filterReason`; read: evaluator-only labels; algorithm does not see the class name as a select input; write: Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.; failure: unconfirmed, invalid, equivalent, or abstain are not detection PASS/FAIL; resource: not a second charge; acceptance: `AC-EXP-DENOMINATOR`; location: `future/experiment/filter.py`
+- `IF-EXP-EVAL` — inputs `runId`, `validityClass`, `denominators`, `truthRecord`, `algorithmResultRef`, `chargedCost`, `sceneId`, `attemptId`; outputs `metricCells`, `attemptDenominator`, `answeredSubsetDenominator`; read: evaluator-only metrics; write: Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.; failure: missing denominator definition or missing declared record/ref is not a result; resource: report charged cost; do not hide Prep/Recover/retry; acceptance: `AC-EXP-DENOMINATOR`; location: `future/experiment/eval.py`
 
 ## Runtime parameter contracts
 
@@ -378,56 +399,169 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 ### `AC-SYN-TRANSFER` — Scoped transfer reconstruction witness
 - Inputs: `CAPTURE-IDENTITY`, `PACKET-REF`, `DATAGRAM-RECORD`, `TRANSFER-RECORD`, `OWNERSHIP-RESULT`, `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `FINDING-RECORD`
 - Tools: `TR-CAPTURE-INTAKE`, `TR-DATAGRAM-REASSEMBLY`, `TR-TRANSFER-RECONSTRUCTION`, `TR-PROTOCOL-EVENT`, `TR-OWNERSHIP`, `TR-OBSERVATION-ASSESSMENT`, `TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`; modules: `MOD-CAPTURE`, `MOD-REASSEMBLY`, `MOD-TRANSFER`, `MOD-OWNERSHIP`, `MOD-OBSERVATION`; interfaces: `IF-EXECUTE-RECORD`, `IF-OBS-INTERPRET`, `IF-HIST-UPDATE`
+- Input fixture: `{"caseId": "AC-SYN-TRANSFER", "condition": "declared-positive", "recordIds": ["CAPTURE-IDENTITY", "PACKET-REF", "DATAGRAM-RECORD", "TRANSFER-RECORD", "OWNERSHIP-RESULT", "OBSERVATION-ASSESSMENT", "HISTORY-HANDLE", "FINDING-RECORD"]}`
+- Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence."}`
 - Expected: A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence.
-- Prohibited: No protocol PASS/FAIL, root-cause label or invented accepted option is emitted.
+- Prohibited: No protocol PASS/FAIL, root-cause label or invented accepted option is emitted.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- Negative variants: `[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-TRANSFER-NEG", "mutation": "violate the named precondition"}]`
 - Basis: Synthetic specification witness for the declared offline first slice; it is not historical truth or a parser execution.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-PREDICTION` — Finite prediction boundary witness
 - Inputs: `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
 - Tools: `TR-HISTORY-COMPATIBILITY`; modules: `MOD-OBSERVATION`; interfaces: `IF-PRED-OBS`
+- Input fixture: `{"caseId": "AC-SYN-PREDICTION", "condition": "declared-positive", "recordIds": ["HISTORY-HANDLE", "OBSERVATION-ASSESSMENT"]}`
+- Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "A finite current projection is tagged OK or GAP before any TEST score is read."}`
 - Expected: A finite current projection is tagged OK or GAP before any TEST score is read.
-- Prohibited: An empty projection is not scored as zero and no history is written.
+- Prohibited: An empty projection is not scored as zero and no history is written.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- Negative variants: `[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-PREDICTION-NEG", "mutation": "violate the named precondition"}]`
 - Basis: Synthetic specification witness for finite current-class propagation.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-SELECT` — Admitted action selection witness
 - Inputs: `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
 - Tools: `TR-HISTORY-COMPATIBILITY`; modules: `MOD-OBSERVATION`; interfaces: `IF-SELECT-ADMIT`
+- Input fixture: `{"caseId": "AC-SYN-SELECT", "condition": "declared-positive", "recordIds": ["HISTORY-HANDLE", "OBSERVATION-ASSESSMENT"]}`
+- Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID."}`
 - Expected: Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID.
-- Prohibited: An uninformative TEST is not A2 and Prep/Recover are not TEST-scored.
+- Prohibited: An uninformative TEST is not A2 and Prep/Recover are not TEST-scored.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- Negative variants: `[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-SELECT-NEG", "mutation": "violate the named precondition"}]`
 - Basis: Synthetic specification witness for the declared one-step decision table.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-OBSERVATION` — Four-valued timing interpretation witness
 - Inputs: `OWNERSHIP-RESULT`, `PROTOCOL-EVENT`, `OBSERVATION-ASSESSMENT`
 - Tools: `TR-OBSERVATION-ASSESSMENT`; modules: `MOD-OBSERVATION`; interfaces: `IF-OBS-INTERPRET`
+- Input fixture: `{"caseId": "AC-SYN-OBSERVATION", "condition": "declared-positive", "recordIds": ["OWNERSHIP-RESULT", "PROTOCOL-EVENT", "OBSERVATION-ASSESSMENT"]}`
+- Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR."}`
 - Expected: Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR.
-- Prohibited: ERROR or INCONCLUSIVE is not downgraded to FAIL.
+- Prohibited: ERROR or INCONCLUSIVE is not downgraded to FAIL.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- Negative variants: `[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-OBSERVATION-NEG", "mutation": "violate the named precondition"}]`
 - Basis: Synthetic specification witness for T5 interval and ownership preconditions.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-PREP-RECOVER` — Confirmed recovery handoff witness
 - Inputs: `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
 - Tools: `TR-HISTORY-COMPATIBILITY`; modules: `MOD-OBSERVATION`; interfaces: `IF-PREP-RECOVER`
+- Input fixture: `{"caseId": "AC-SYN-PREP-RECOVER", "condition": "declared-positive", "recordIds": ["HISTORY-HANDLE", "OBSERVATION-ASSESSMENT"]}`
+- Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary."}`
 - Expected: Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary.
-- Prohibited: An unconfirmed successor cannot retain stale known state or become a direct Γ write.
+- Prohibited: An unconfirmed successor cannot retain stale known state or become a direct Γ write.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- Negative variants: `[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-PREP-RECOVER-NEG", "mutation": "violate the named precondition"}]`
 - Basis: Synthetic specification witness for S8/S9 ownership boundaries.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-HISTORY` — Whole-history update witness
 - Inputs: `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
 - Tools: `TR-HISTORY-COMPATIBILITY`; modules: `MOD-OBSERVATION`; interfaces: `IF-HIST-UPDATE`
+- Input fixture: `{"caseId": "AC-SYN-HISTORY", "condition": "declared-positive", "recordIds": ["HISTORY-HANDLE", "OBSERVATION-ASSESSMENT"]}`
+- Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses."}`
 - Expected: A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses.
-- Prohibited: H prime is never replaced by Iz and resource exhaustion is not incompatibility.
+- Prohibited: H prime is never replaced by Iz and resource exhaustion is not incompatibility.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- Negative variants: `[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-HISTORY-NEG", "mutation": "violate the named precondition"}]`
 - Basis: Synthetic specification witness for conservative history propagation.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-EQUIVALENCE` — Bounded equivalence abstention witness
 - Inputs: `HISTORY-HANDLE`
 - Tools: `TR-HISTORY-COMPATIBILITY`; modules: `MOD-OBSERVATION`; interfaces: `IF-EQUIV`
+- Input fixture: `{"caseId": "AC-SYN-EQUIVALENCE", "condition": "declared-positive", "recordIds": ["HISTORY-HANDLE"]}`
+- Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished."}`
 - Expected: An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished.
-- Prohibited: No immediately distinguishing TEST is not treated as proof of equivalence.
+- Prohibited: No immediately distinguishing TEST is not treated as proof of equivalence.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- Negative variants: `[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-EQUIVALENCE-NEG", "mutation": "violate the named precondition"}]`
 - Basis: Synthetic specification witness for bounded equivalence semantics.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-RESOURCE-STOP` — Resource and stop ordering witness
 - Inputs: `HISTORY-HANDLE`, `FINDING-RECORD`
 - Tools: `TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`; modules: `MOD-OBSERVATION`; interfaces: `IF-RESOURCE-STOP`
+- Input fixture: `{"caseId": "AC-SYN-RESOURCE-STOP", "condition": "declared-positive", "recordIds": ["HISTORY-HANDLE", "FINDING-RECORD"]}`
+- Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error."}`
 - Expected: Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error.
-- Prohibited: Retry exhaustion is not Stop-Budget and a normal singleton is not protocol PASS.
+- Prohibited: Retry exhaustion is not Stop-Budget and a normal singleton is not protocol PASS.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- Negative variants: `[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-RESOURCE-STOP-NEG", "mutation": "violate the named precondition"}]`
 - Basis: Synthetic specification witness for resource and stop contracts.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
+### `AC-SYN-INTEGRITY` — Bounded integrity specification witness
+- Inputs: `TRANSFER-RECORD`
+- Tools: `TR-PROTOCOL-EVENT`; modules: `MOD-TRANSFER`; interfaces: `IF-OBS-INTERPRET`
+- Input fixture: `{"caseId": "AC-SYN-INTEGRITY", "condition": "declared-positive", "recordIds": ["TRANSFER-RECORD"]}`
+- Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "CRC-bearing inputs retain source parameters and yield NOT-EVALUATED until implementation, configuration and execution evidence exist."}`
+- Expected: CRC-bearing inputs retain source parameters and yield NOT-EVALUATED until implementation, configuration and execution evidence exist.
+- Prohibited: No CRC PASS/FAIL or capability establishment is inferred from source binding.; paths: `runtimeResultClaim`, `truthLeakage`
+- Negative variants: `[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-INTEGRITY-NEG", "mutation": "remove required identity or precondition"}]`
+- Basis: Controlled specification witness; no parser, solver, IUT or experiment was executed.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
+### `AC-EXP-SCENE` — Runnable scene identity witness
+- Inputs: `INTAKE-METADATA`
+- Tools: `TR-CAPTURE-INTAKE`; modules: `MOD-CAPTURE`; interfaces: `IF-EXECUTE-RECORD`
+- Input fixture: `{"caseId": "AC-EXP-SCENE", "condition": "declared-positive", "recordIds": ["INTAKE-METADATA"]}`
+- Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "A runnable scene has stable scene, configuration, IUT and resource identities."}`
+- Expected: A runnable scene has stable scene, configuration, IUT and resource identities.
+- Prohibited: A historical capture or missing identity is not promoted to a runnable scene.; paths: `runtimeResultClaim`, `truthLeakage`
+- Negative variants: `[{"expectedRejection": "SPEC-ERROR", "id": "AC-EXP-SCENE-NEG", "mutation": "remove required identity or precondition"}]`
+- Basis: Controlled specification witness; no parser, solver, IUT or experiment was executed.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
+### `AC-EXP-TRUTH` — Independent truth boundary witness
+- Inputs: `FINDING-RECORD`
+- Tools: `TR-TRACEABLE-FINDING`; modules: `MOD-OBSERVATION`; interfaces: `IF-OBS-INTERPRET`
+- Input fixture: `{"caseId": "AC-EXP-TRUTH", "condition": "declared-positive", "recordIds": ["FINDING-RECORD"]}`
+- Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Only confirmed injection plus an independent generator creates truth, with shared-component risk named."}`
+- Expected: Only confirmed injection plus an independent generator creates truth, with shared-component risk named.
+- Prohibited: Planned or unconfirmed injection and field labels are not truth.; paths: `runtimeResultClaim`, `truthLeakage`
+- Negative variants: `[{"expectedRejection": "SPEC-ERROR", "id": "AC-EXP-TRUTH-NEG", "mutation": "remove required identity or precondition"}]`
+- Basis: Controlled specification witness; no parser, solver, IUT or experiment was executed.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
+### `AC-EXP-CAUSAL` — Causal collection and arm fairness witness
+- Inputs: `OBSERVATION-ASSESSMENT`
+- Tools: `TR-OBSERVATION-ASSESSMENT`; modules: `MOD-OBSERVATION`; interfaces: `IF-EXECUTE-RECORD`
+- Input fixture: `{"caseId": "AC-EXP-CAUSAL", "condition": "declared-positive", "recordIds": ["OBSERVATION-ASSESSMENT"]}`
+- Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Each arm sees only its causal prefix and pays the same declared cost vector."}`
+- Expected: Each arm sees only its causal prefix and pays the same declared cost vector.
+- Prohibited: Future events, evaluator labels and gifted CL-LOOP records are prohibited.; paths: `runtimeResultClaim`, `truthLeakage`
+- Negative variants: `[{"expectedRejection": "SPEC-ERROR", "id": "AC-EXP-CAUSAL-NEG", "mutation": "remove required identity or precondition"}]`
+- Basis: Controlled specification witness; no parser, solver, IUT or experiment was executed.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
+### `AC-EXP-DENOMINATOR` — Evaluation denominator witness
+- Inputs: `FINDING-RECORD`
+- Tools: `TR-TRACEABLE-FINDING`; modules: `MOD-OBSERVATION`; interfaces: `IF-RESOURCE-STOP`
+- Input fixture: `{"caseId": "AC-EXP-DENOMINATOR", "condition": "declared-positive", "recordIds": ["FINDING-RECORD"]}`
+- Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Attempt and answered-subset denominators retain abstain, invalid, equivalent and unconfirmed membership."}`
+- Expected: Attempt and answered-subset denominators retain abstain, invalid, equivalent and unconfirmed membership.
+- Prohibited: Excluded or unanswered cases are not silently removed from denominators.; paths: `runtimeResultClaim`, `truthLeakage`
+- Negative variants: `[{"expectedRejection": "SPEC-ERROR", "id": "AC-EXP-DENOMINATOR-NEG", "mutation": "remove required identity or precondition"}]`
+- Basis: Controlled specification witness; no parser, solver, IUT or experiment was executed.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
+
+## Cross-path acceptance matrix
+
+| ID | Category | Positive input | Expected output | Negative mutation | Expected rejection |
+|---|---|---|---|---|---|
+| `AM-IDENTITY` | corpus identity | tracked manifest entry with unique resolved file identity | identity accepted for exploratory intake | add/remove/hash/length/path/link/duplicate identity | `MANIFEST-ERROR` |
+| `AM-LABEL` | label boundary | wire record separated from operator annotation and evaluator truth | only protocol-visible fields reach algorithm input | copy filename outcome or evaluator label into algorithm-visible record | `LABEL-LEAKAGE` |
+| `AM-FORMAT` | capture format | bounded section/interface/ticks/caplen record | typed packet record preserving section and interface identity | truncate block, unknown link type, missing interface or mix section-local interface zero | `DECODE-ERROR` |
+| `AM-IP` | IP reassembly | complete finite fragment set with PacketRef provenance | complete datagram or GAPPED/CONFLICT record | missing, reordered, overlapping or epoch-reused fragments treated as complete UDP | `REASSEMBLY-ERROR` |
+| `AM-TFTP` | TFTP reconstruction | dynamic TID and accepted/default option evidence with combined end condition | transfer record preserving repeats, wrap limit and terminal evidence | blind deduplication, fixed TID, invented option or wrong final block | `TRANSFER-ERROR` |
+| `AM-FIELDS` | field contracts | typed conditional fields with declared counts and legal extension | record accepted with extension/provenance retained | ASCII/integer swap, count mismatch, sentinel misuse or unknown enum | `FIELD-ERROR` |
+| `AM-OWNERSHIP` | matching and no response | active request instances with event order, cancellation and supersession | one owned response or explicit ambiguity/incomplete horizon | reuse response, wrong key, ignore cancellation or treat capture end as timeout | `OWNERSHIP-ERROR` |
+| `AM-TIMING` | timing and U | interval, topology, clock chain, epsilon and immutable U identity | PASS/FAIL/INCONCLUSIVE/ERROR per T5 and no-response boundary | point-estimate rewrite, epsilon zero default or changed U commit | `TIMING-ERROR` |
+| `AM-ADMIT` | prediction and admission | finite current classes plus eligible/affordable actions | TEST minimax cost/id tie or Prep/Recover/A2-A5 decision | score GAP as zero, classify uninformative TEST as A2 or score Prep | `SPEC-ERROR` |
+| `AM-HISTORY` | history update | versioned whole-history frontier and normalized valid outcome | H prime equals H intersect Iz without resurrection | replace H by Iz, drop history correlation or treat frontier limit as incompatibility | `HISTORY-ERROR` |
+| `AM-STATE` | state and return | total Outcome/Resolution with S8/S9 confirmation fields | retry/commit/stop preserves adopted contexts and writer ownership | stale summary commit, missing confirmation or undefined returned context | `STATE-ERROR` |
+| `AM-RESOURCE` | resource accounting | exclusive BUDGET/ROUNDS and positive finite costs/caps | one charge per issued attempt and named exhaustion | charge refused action twice or accept NaN/negative/noninteger | `RESOURCE-ERROR` |
+| `AM-EXPERIMENT` | experiment boundary | registered scene, confirmed injection and evaluator-only independent truth | causal four-arm record with explicit validity denominators | truth leakage, unconfirmed truth, hidden cost or exploratory capture as held-out | `EXPERIMENT-ERROR` |
+| `AM-DRIFT` | controlled drift | authority plus generated view at same validated snapshot | checker and generator agree or fail without publishing | delete relation, forge reference, refresh count/hash or retain stale view | `CONTROL-ERROR` |
+
+## First-batch experiment scenarios
+
+- `SC-NORMAL-UPLOAD` — normal single upload; service `UPLOAD`; action normal operation; truth confirmed controlled generator; reset reset IUT/session/budget; timing qualified monotonic clock and declared epsilon; resource same declared cost vector and one exclusive resource mode across arms; blocked by interactive IUT, confirmatory registration; `NOT-EXECUTED`
+- `SC-WAIT-CONTINUE` — WAIT then continue; service `UPLOAD`; action controlled WAIT followed by continuation; truth confirmed event script; reset reset loader state and session; timing qualified monotonic clock and declared epsilon; resource same declared cost vector and one exclusive resource mode across arms; blocked by interactive IUT, confirmatory registration; `NOT-EXECUTED`
+- `SC-NO-RESPONSE` — request without matching response; service `INFORMATION`; action controlled suppression with complete observation horizon; truth confirmed suppression controller; reset reset endpoint and capture horizon; timing qualified clock, open/closed deadline recorded; resource same declared cost vector and one exclusive resource mode across arms; blocked by interactive IUT, confirmatory registration; `NOT-EXECUTED`
+- `SC-ABORT` — explicit abort; service `UPLOAD`; action confirmed abort event; truth independent controller log; reset reset transfer and session; timing qualified event order and clocks; resource same declared cost vector and one exclusive resource mode across arms; blocked by interactive IUT, confirmatory registration; `NOT-EXECUTED`
+- `SC-INVALID-OBS` — invalid or missing observation; service `UPLOAD/INFORMATION`; action capture/clock evidence deliberately incomplete; truth evaluator construction record; reset fresh capture and session; timing invalid chain remains ERROR; resource same declared cost vector and one exclusive resource mode across arms; blocked by interactive IUT, confirmatory registration; `NOT-EXECUTED`
+- `SC-SAME-KEY` — multiple same-key requests; service `INFORMATION`; action controlled overlapping requests; truth independent request schedule; reset reset correlation state; timing event order retained even for equal timestamps; resource same declared cost vector and one exclusive resource mode across arms; blocked by interactive IUT, confirmatory registration; `NOT-EXECUTED`
+- `SC-SINGLE-BATCH` — single versus batch context; service `UPLOAD`; action paired declared contexts, not historical causal inference; truth controlled scene definitions; reset full IUT reset between scenes; timing same qualified clock/configuration; resource same declared cost vector and one exclusive resource mode across arms; blocked by interactive IUT, confirmatory registration; `NOT-EXECUTED`
+- `SC-RESOURCE-ERROR` — resource exhaustion and consecutive error; service `UPLOAD/INFORMATION`; action configured bound and injected adapter error; truth configuration plus controller record; reset reset resource/retry counters; timing clock evidence retained but not converted to verdict; resource same declared cost vector and one exclusive resource mode across arms; blocked by interactive IUT, confirmatory registration; `NOT-EXECUTED`
 
 ## Slices and dependencies
 
 - `SLICE-OFFLINE-UPLOAD-INFORMATION` — offline capture to traceable report — 176 requirement uses
-- dependency `DEP-INTEGRITY`: `BLOCKED`
+### Dependency `DEP-INTEGRITY-RUNTIME` — ARINC 645 integrity runtime qualification
+- Specification/runtime: `CLOSED` / `NOT-ESTABLISHED`; affects specification readiness: `False`
+- Requirements: `CRS-M1-00076`, `CRS-M1-00082`, `CRS-M1-00085`, `CRS-M1-00086`, `CRS-M1-00087`, `CRS-M1-00109`; modules: `MOD-TRANSFER`; records: `TRANSFER-RECORD`; acceptance: `AC-SYN-INTEGRITY`
+- Contract: Use the bound ARINC 645 parameter leaves, occurrence-order byte stream and exact algorithm identity; emit NOT-EVALUATED unless all runtime qualification evidence is present.
+- Affected judgments: CRC-dependent validation and equality judgments remain unavailable at runtime; transport/reconstruction may preserve bytes and provenance only.
+- Runtime closure: implementation identity and tests; project-specific algorithm/configuration binding; execution evidence on controlled vectors; independent gate record
+- Failure: Missing runtime evidence yields NOT-EVALUATED or named dependency status, never PASS, FAIL, or capability established.; evidence: `configs/research/cltav_protocol_source_audit.json`, `configs/requirements/m1_semantic_review_assertions.json`, `configs/engineering/cltav_development_contracts.json`
+
+## Paper trace
+
+- `PT-ARCH` / III — `toolRequirements`, `moduleContracts`, `recordContracts`, `experimentInterfaceBindings`: Layered requirements and responsibility interfaces; no implementation claim.
+- `PT-METHOD` / IV — `algorithmRefinements`, `runtimeParameterContracts`: Bounded reference-kernel specification; no general solver or completeness claim.
+- `PT-EXPERIMENT` / V — `experimentInterfaceBindings`, `acceptanceCases`: Historical exploratory and future controlled evidence lines remain separate.
+- `PT-RESULTS` / VI — `reviewBoundary`: No confirmatory result is reported.
+- `PT-LIMITS` / VII — `implementationDependencies`: Runtime integrity, IUT, clock and independent-truth dependencies remain explicit.
 
 ## Slice membership relations
 
@@ -614,8 +748,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 
 | Disposition | Count |
 |---|---:|
-| `DEPENDENCY-BLOCKED` | 6 |
-| `FIRST-SLICE-IMPLEMENTATION` | 170 |
+| `FIRST-SLICE-IMPLEMENTATION` | 176 |
 | `LATER-SERVICE` | 137 |
 | `NOT-TOOL-OBLIGATION` | 550 |
 
@@ -623,869 +756,869 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 
 | Requirement | Disposition | First slice | Module | Record | Acceptance | Rationale |
 |---|---|---|---|---|---|---|
-| `CRS-M1-00001` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00002` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00003` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00004` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00005` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00006` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00007` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00008` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00009` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00010` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00011` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00012` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00013` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00014` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00015` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00016` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00017` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00018` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00019` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00020` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00021` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice COMMON timing, TFTP transport, or final-block observation contract. |
-| `CRS-M1-00022` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00023` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00024` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00025` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice COMMON timing, TFTP transport, or final-block observation contract. |
-| `CRS-M1-00026` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00027` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00028` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00029` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00030` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00031` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00032` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice COMMON timing, TFTP transport, or final-block observation contract. |
-| `CRS-M1-00033` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00034` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00035` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00036` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00037` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00038` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00039` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00040` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00041` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00042` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00043` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00044` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00045` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00046` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00047` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00048` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00049` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00050` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00051` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00052` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00053` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00054` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00055` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00056` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00057` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00058` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00059` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00060` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00061` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00062` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00063` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00064` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00065` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00066` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00067` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00068` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00069` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00070` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00071` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00072` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00073` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00074` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00075` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00076` | `DEPENDENCY-BLOCKED` | `True` | `—` | `—` | `—` | First-slice input requires a separately established integrity dependency. |
-| `CRS-M1-00077` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00078` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00079` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00080` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00081` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00082` | `DEPENDENCY-BLOCKED` | `True` | `—` | `—` | `—` | First-slice input requires a separately established integrity dependency. |
-| `CRS-M1-00083` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00084` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00085` | `DEPENDENCY-BLOCKED` | `True` | `—` | `—` | `—` | First-slice input requires a separately established integrity dependency. |
-| `CRS-M1-00086` | `DEPENDENCY-BLOCKED` | `True` | `—` | `—` | `—` | First-slice input requires a separately established integrity dependency. |
-| `CRS-M1-00087` | `DEPENDENCY-BLOCKED` | `True` | `—` | `—` | `—` | First-slice input requires a separately established integrity dependency. |
-| `CRS-M1-00088` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00089` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00090` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00091` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00092` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00093` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00094` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00095` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00096` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00097` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00098` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00099` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00100` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00101` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00102` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00103` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00104` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00105` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00106` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00107` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00108` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00109` | `DEPENDENCY-BLOCKED` | `True` | `—` | `—` | `—` | First-slice input requires a separately established integrity dependency. |
-| `CRS-M1-00110` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00111` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00112` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00113` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00114` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00115` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00116` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00117` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00118` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00119` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00120` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00121` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00122` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00123` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00124` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00125` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00126` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00127` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00128` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00129` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00130` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00131` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00132` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00133` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00134` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00135` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00136` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00137` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00138` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00139` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00140` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00141` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00142` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00143` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00144` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00145` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00146` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00147` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00148` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00149` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00150` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00151` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00152` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00153` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00154` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00155` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00156` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00157` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00158` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00159` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00160` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00161` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00162` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00163` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00164` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00165` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00166` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00167` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00168` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00169` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00170` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00171` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00172` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00173` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00174` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00175` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00176` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00177` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00178` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00179` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00180` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00181` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00182` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00183` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00184` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00185` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00186` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice COMMON timing, TFTP transport, or final-block observation contract. |
-| `CRS-M1-00187` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00188` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00189` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00190` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00191` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00192` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00193` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00194` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00195` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00196` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00197` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00198` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00199` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00200` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00201` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00202` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00203` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00204` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00205` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00206` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00207` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00208` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00209` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00210` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00211` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00212` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00213` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00214` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00215` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00216` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00217` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00218` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00219` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00220` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00221` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00222` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00223` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00224` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00225` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00226` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00227` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00228` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00229` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00230` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00231` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00232` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00233` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00234` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00235` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00236` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00237` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00238` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00239` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00240` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00241` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00242` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00243` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00244` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00245` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00246` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00247` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00248` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00249` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00250` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00251` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00252` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00253` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00254` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00255` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00256` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00257` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00258` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00259` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00260` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00261` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00262` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00263` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00264` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00265` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00266` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00267` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00268` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00269` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00270` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00271` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00272` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00273` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00274` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00275` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00276` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00277` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00278` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00279` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00280` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00281` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00282` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00283` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00284` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00285` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00286` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00287` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00288` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00289` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00290` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00291` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00292` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00293` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00294` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00295` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00296` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00297` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00298` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00299` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00300` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00301` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00302` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00303` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00304` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00305` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00306` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00307` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00308` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00309` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00310` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00311` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00312` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00313` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00314` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00315` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00316` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00317` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00318` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00319` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00320` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00321` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00322` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00323` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00324` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00325` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00326` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00327` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00328` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00329` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00330` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00331` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00332` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00333` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00334` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00335` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00336` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00337` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00338` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00339` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00340` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00341` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00342` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00343` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00344` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00345` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00346` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00347` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00348` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00349` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00350` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00351` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00352` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00353` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00354` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00355` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00356` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00357` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00358` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00359` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00360` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00361` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00362` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00363` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00364` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00365` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00366` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00367` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00368` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00369` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00370` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00371` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00372` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00373` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00374` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00375` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00376` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00377` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00378` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. |
-| `CRS-M1-00379` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00380` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00381` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00382` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00383` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00384` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00385` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00386` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00387` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00388` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00389` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00390` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00391` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00392` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00393` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00394` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00395` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00396` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00397` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00398` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00399` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00400` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00401` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00402` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00403` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00404` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00405` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00406` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00407` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00408` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00409` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00410` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00411` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00412` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00413` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00414` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00415` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00416` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00417` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00418` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00419` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00420` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00421` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00422` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00423` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00424` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00426` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00427` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00428` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00429` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00430` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00431` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00432` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00433` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00434` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00435` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00436` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00437` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00438` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00439` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00440` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00441` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00442` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00443` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00444` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00445` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00446` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00447` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00448` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00449` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00450` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00451` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00452` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00453` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00454` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00455` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00456` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00457` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00458` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00459` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00460` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00461` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00462` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00463` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00464` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00465` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00466` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00467` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00468` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00469` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00470` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00471` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00472` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00473` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00474` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00475` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00476` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00477` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00478` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00479` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00480` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00481` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00482` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00483` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00484` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00485` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00486` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00487` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00488` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00489` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00490` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00491` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00492` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00493` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00494` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00495` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00496` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00497` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00498` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00499` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00500` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00501` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00502` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00503` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00504` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00505` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00506` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00507` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00508` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00509` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00510` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00511` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00512` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00513` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00514` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00515` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00516` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00517` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00518` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00519` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00520` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00521` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00522` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00523` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00524` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00525` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00526` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00527` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00528` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00529` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00530` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00531` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00532` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00533` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00534` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00535` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00536` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00537` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00538` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00539` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00540` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00541` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00542` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00543` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00544` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00545` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00546` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00547` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00548` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00549` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00550` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00551` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00552` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00553` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00554` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00555` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00556` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00557` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00558` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00559` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00560` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00561` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00562` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00563` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00564` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00565` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00566` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00567` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00568` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00569` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00570` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00571` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00572` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00573` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00574` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00575` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00576` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00577` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00578` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00579` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00580` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00581` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00582` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00583` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00584` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00585` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00586` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00587` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00588` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00589` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00590` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00591` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00592` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00593` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00594` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00595` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00596` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00597` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00598` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00599` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00600` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00601` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00602` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00603` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00604` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00605` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00606` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00607` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00608` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00609` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00610` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00611` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00612` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00613` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00614` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00615` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00616` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00617` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00618` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction. |
-| `CRS-M1-00619` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00620` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice COMMON timing, TFTP transport, or final-block observation contract. |
-| `CRS-M1-00621` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00622` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction. |
-| `CRS-M1-00623` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00624` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00625` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00626` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00627` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00628` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00629` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00630` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00631` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00632` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction. |
-| `CRS-M1-00633` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00634` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00635` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00636` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00637` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00638` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00639` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00640` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00641` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00642` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00643` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00644` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00645` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction. |
-| `CRS-M1-00646` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction. |
-| `CRS-M1-00647` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction. |
-| `CRS-M1-00648` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00649` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00650` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00651` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00652` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00653` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00654` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00655` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00656` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00657` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00658` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00659` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00660` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00661` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00662` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00663` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00664` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00665` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00666` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00667` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00668` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00669` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00670` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00671` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00672` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00673` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00674` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00675` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00676` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00677` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00678` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00679` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00680` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00681` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00682` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00683` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00684` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00685` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00686` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00687` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00688` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00689` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00690` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00691` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00692` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00693` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00694` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00695` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00696` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00697` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00698` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00699` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00700` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00701` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00702` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00703` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00704` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00705` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00706` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00707` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00708` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00709` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00710` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00711` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00712` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00713` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00714` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00715` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00716` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00717` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00718` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00719` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00720` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00721` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00722` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00723` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00724` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00725` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00726` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00727` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00728` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00729` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00730` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00731` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00732` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00733` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00734` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00735` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00736` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00737` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00738` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00739` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00740` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00741` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00742` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00743` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00744` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00745` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00746` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00747` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00748` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00749` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00750` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00751` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00752` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00753` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00754` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00755` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00756` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00757` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00758` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00759` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00760` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00761` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00762` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00763` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00764` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00765` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00766` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00767` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00768` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00769` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00770` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00771` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00772` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00773` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00774` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00775` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00776` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00777` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00778` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00779` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00780` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00781` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00782` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00783` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00784` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00785` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00786` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00787` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00788` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00789` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00790` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00791` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00792` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00793` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00794` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00795` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00796` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00797` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00798` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00799` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00800` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00801` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00802` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00803` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00804` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00805` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00806` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00807` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00808` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00809` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00810` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00811` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00812` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00813` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00814` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00815` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00816` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00817` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00818` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00819` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00820` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00821` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00822` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00823` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00824` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00825` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00826` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00827` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00828` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00829` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00830` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00831` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00832` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00833` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00834` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00835` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00836` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00837` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00838` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00839` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00840` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00841` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00842` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00843` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00844` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00845` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00846` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00847` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00848` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00849` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00850` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00851` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00852` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00853` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00854` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00855` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00856` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00857` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00858` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00859` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00860` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00861` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00862` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00863` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
-| `CRS-M1-00864` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. |
+| `CRS-M1-00001` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00002` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00003` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00004` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00005` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00006` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00007` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00008` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00009` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00010` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00011` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00012` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00013` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00014` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00015` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00016` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00017` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00018` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00019` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00020` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00021` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice COMMON timing, TFTP transport, or final-block observation contract. Dependencies: none |
+| `CRS-M1-00022` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00023` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00024` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00025` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice COMMON timing, TFTP transport, or final-block observation contract. Dependencies: none |
+| `CRS-M1-00026` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00027` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00028` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00029` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00030` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00031` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00032` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice COMMON timing, TFTP transport, or final-block observation contract. Dependencies: none |
+| `CRS-M1-00033` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00034` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00035` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00036` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00037` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00038` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00039` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00040` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00041` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00042` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00043` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00044` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00045` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00046` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00047` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00048` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00049` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00050` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00051` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00052` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00053` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00054` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00055` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00056` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00057` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00058` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00059` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00060` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00061` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00062` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00063` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00064` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00065` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00066` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00067` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00068` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00069` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00070` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00071` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00072` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00073` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00074` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00075` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00076` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `TRANSFER-RECORD` | `AC-SYN-INTEGRITY` | The first-slice specification preserves the CRC-bearing protocol obligation and source parameters; runtime validation remains explicitly not established pending implementation, configuration and execution evidence. Dependencies: `DEP-INTEGRITY-RUNTIME` |
+| `CRS-M1-00077` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00078` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00079` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00080` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00081` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00082` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `TRANSFER-RECORD` | `AC-SYN-INTEGRITY` | The first-slice specification preserves the CRC-bearing protocol obligation and source parameters; runtime validation remains explicitly not established pending implementation, configuration and execution evidence. Dependencies: `DEP-INTEGRITY-RUNTIME` |
+| `CRS-M1-00083` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00084` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00085` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `TRANSFER-RECORD` | `AC-SYN-INTEGRITY` | The first-slice specification preserves the CRC-bearing protocol obligation and source parameters; runtime validation remains explicitly not established pending implementation, configuration and execution evidence. Dependencies: `DEP-INTEGRITY-RUNTIME` |
+| `CRS-M1-00086` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `TRANSFER-RECORD` | `AC-SYN-INTEGRITY` | The first-slice specification preserves the CRC-bearing protocol obligation and source parameters; runtime validation remains explicitly not established pending implementation, configuration and execution evidence. Dependencies: `DEP-INTEGRITY-RUNTIME` |
+| `CRS-M1-00087` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `TRANSFER-RECORD` | `AC-SYN-INTEGRITY` | The first-slice specification preserves the CRC-bearing protocol obligation and source parameters; runtime validation remains explicitly not established pending implementation, configuration and execution evidence. Dependencies: `DEP-INTEGRITY-RUNTIME` |
+| `CRS-M1-00088` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00089` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00090` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00091` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00092` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00093` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00094` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00095` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00096` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00097` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00098` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00099` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00100` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00101` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00102` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00103` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00104` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00105` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00106` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00107` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00108` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00109` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `TRANSFER-RECORD` | `AC-SYN-INTEGRITY` | The first-slice specification preserves the CRC-bearing protocol obligation and source parameters; runtime validation remains explicitly not established pending implementation, configuration and execution evidence. Dependencies: `DEP-INTEGRITY-RUNTIME` |
+| `CRS-M1-00110` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00111` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00112` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00113` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00114` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00115` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00116` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00117` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00118` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00119` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00120` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00121` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00122` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00123` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00124` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00125` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00126` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00127` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00128` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00129` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00130` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00131` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00132` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00133` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00134` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00135` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00136` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00137` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00138` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00139` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00140` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00141` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00142` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00143` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00144` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00145` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00146` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00147` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00148` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00149` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00150` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00151` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00152` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00153` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00154` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00155` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00156` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00157` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00158` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00159` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00160` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00161` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00162` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00163` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00164` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00165` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00166` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00167` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00168` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00169` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00170` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00171` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00172` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00173` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00174` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00175` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00176` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00177` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00178` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00179` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00180` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00181` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00182` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00183` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00184` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00185` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00186` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice COMMON timing, TFTP transport, or final-block observation contract. Dependencies: none |
+| `CRS-M1-00187` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00188` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00189` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00190` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00191` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00192` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00193` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00194` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00195` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00196` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00197` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00198` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00199` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00200` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00201` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00202` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00203` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00204` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00205` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00206` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00207` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00208` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00209` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00210` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00211` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00212` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00213` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00214` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00215` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00216` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00217` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00218` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00219` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00220` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00221` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00222` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00223` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00224` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00225` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00226` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00227` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00228` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00229` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00230` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00231` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00232` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00233` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00234` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00235` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00236` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00237` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00238` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00239` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00240` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00241` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00242` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00243` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00244` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00245` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00246` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00247` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00248` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00249` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00250` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00251` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00252` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00253` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00254` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00255` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00256` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00257` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00258` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00259` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00260` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00261` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00262` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00263` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00264` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00265` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00266` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00267` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00268` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00269` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00270` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00271` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00272` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00273` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00274` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00275` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00276` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00277` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00278` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00279` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00280` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00281` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00282` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00283` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00284` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00285` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00286` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00287` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00288` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00289` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00290` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00291` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00292` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00293` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00294` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00295` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00296` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00297` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00298` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00299` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00300` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00301` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00302` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00303` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00304` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00305` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00306` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00307` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00308` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00309` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00310` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00311` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00312` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00313` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00314` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00315` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00316` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00317` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00318` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00319` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00320` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00321` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00322` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00323` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00324` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00325` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00326` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00327` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00328` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00329` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00330` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00331` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00332` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00333` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00334` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00335` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00336` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00337` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00338` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00339` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00340` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00341` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00342` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00343` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00344` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00345` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00346` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00347` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00348` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00349` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00350` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00351` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00352` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00353` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00354` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00355` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00356` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00357` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00358` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00359` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00360` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00361` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00362` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00363` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00364` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00365` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00366` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00367` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00368` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00369` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00370` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00371` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00372` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00373` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00374` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00375` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00376` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00377` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00378` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | Bounded offline UPLOAD/INFORMATION reconstruction, timing, ownership or transfer input. Dependencies: none |
+| `CRS-M1-00379` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00380` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00381` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00382` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00383` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00384` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00385` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00386` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00387` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00388` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00389` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00390` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00391` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00392` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00393` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00394` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00395` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00396` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00397` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00398` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00399` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00400` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00401` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00402` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00403` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00404` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00405` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00406` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00407` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00408` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00409` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00410` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00411` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00412` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00413` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00414` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00415` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00416` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00417` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00418` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00419` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00420` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00421` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00422` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00423` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00424` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00426` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00427` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00428` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00429` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00430` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00431` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00432` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00433` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00434` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00435` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00436` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00437` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00438` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00439` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00440` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00441` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00442` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00443` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00444` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00445` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00446` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00447` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00448` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00449` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00450` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00451` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00452` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00453` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00454` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00455` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00456` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00457` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00458` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00459` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00460` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00461` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00462` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00463` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00464` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00465` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00466` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00467` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00468` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00469` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00470` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00471` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00472` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00473` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00474` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00475` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00476` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00477` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00478` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00479` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00480` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00481` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00482` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00483` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00484` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00485` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00486` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00487` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00488` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00489` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00490` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00491` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00492` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00493` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00494` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00495` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00496` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00497` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00498` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00499` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00500` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00501` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00502` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00503` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00504` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00505` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00506` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00507` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00508` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00509` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00510` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00511` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00512` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00513` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00514` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00515` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00516` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00517` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00518` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00519` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00520` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00521` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00522` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00523` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00524` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00525` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00526` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00527` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00528` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00529` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00530` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00531` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00532` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00533` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00534` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00535` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00536` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00537` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00538` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00539` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00540` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00541` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00542` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00543` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00544` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00545` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00546` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00547` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00548` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00549` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00550` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00551` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00552` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00553` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00554` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00555` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00556` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00557` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00558` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00559` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00560` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00561` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00562` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00563` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00564` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00565` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00566` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00567` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00568` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00569` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00570` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00571` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00572` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00573` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00574` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00575` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00576` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00577` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00578` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00579` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00580` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00581` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00582` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00583` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00584` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00585` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00586` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00587` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00588` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00589` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00590` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00591` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00592` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00593` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00594` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00595` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00596` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00597` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00598` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00599` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00600` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00601` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00602` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00603` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00604` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00605` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00606` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00607` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00608` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00609` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00610` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00611` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00612` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00613` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00614` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00615` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00616` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00617` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00618` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction. Dependencies: none |
+| `CRS-M1-00619` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00620` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice COMMON timing, TFTP transport, or final-block observation contract. Dependencies: none |
+| `CRS-M1-00621` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00622` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction. Dependencies: none |
+| `CRS-M1-00623` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00624` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00625` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00626` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00627` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00628` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00629` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00630` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00631` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00632` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction. Dependencies: none |
+| `CRS-M1-00633` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00634` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00635` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00636` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00637` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00638` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00639` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00640` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00641` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00642` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00643` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00644` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00645` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction. Dependencies: none |
+| `CRS-M1-00646` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction. Dependencies: none |
+| `CRS-M1-00647` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | First-slice TFTP transport identity, option confirmation, request layout, or termination reconstruction. Dependencies: none |
+| `CRS-M1-00648` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00649` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00650` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00651` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00652` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00653` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00654` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00655` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00656` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00657` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00658` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00659` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00660` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00661` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00662` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00663` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00664` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00665` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00666` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00667` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00668` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00669` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00670` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00671` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00672` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00673` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00674` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00675` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00676` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00677` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00678` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00679` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00680` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00681` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00682` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00683` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00684` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00685` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00686` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00687` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00688` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00689` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00690` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00691` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00692` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00693` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00694` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00695` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00696` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00697` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00698` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00699` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00700` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00701` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00702` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00703` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00704` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00705` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00706` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00707` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00708` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00709` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00710` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00711` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00712` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00713` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00714` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00715` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00716` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00717` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00718` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00719` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00720` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00721` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00722` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00723` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00724` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00725` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00726` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00727` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00728` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00729` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00730` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00731` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00732` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00733` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00734` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00735` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00736` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00737` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00738` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00739` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00740` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00741` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00742` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00743` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00744` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00745` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00746` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00747` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00748` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00749` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00750` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00751` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00752` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00753` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00754` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00755` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00756` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00757` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00758` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00759` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00760` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00761` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00762` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00763` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00764` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00765` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00766` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00767` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00768` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00769` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00770` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00771` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00772` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00773` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00774` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00775` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00776` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00777` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00778` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00779` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00780` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00781` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00782` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00783` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00784` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00785` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00786` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00787` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00788` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00789` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00790` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00791` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00792` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00793` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00794` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00795` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00796` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00797` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00798` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00799` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00800` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00801` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00802` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00803` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00804` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00805` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00806` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00807` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00808` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00809` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00810` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00811` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00812` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00813` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00814` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00815` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00816` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00817` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00818` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00819` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00820` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00821` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00822` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00823` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00824` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00825` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00826` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00827` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00828` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00829` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00830` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00831` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00832` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00833` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00834` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00835` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00836` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00837` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00838` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00839` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00840` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00841` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00842` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00843` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00844` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00845` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00846` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00847` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00848` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00849` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00850` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00851` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00852` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00853` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00854` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00855` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00856` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00857` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00858` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00859` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00860` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00861` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00862` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00863` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
+| `CRS-M1-00864` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | Outside the first offline UPLOAD/INFORMATION slice. Dependencies: none |
 
 # 中文版
 
@@ -1494,7 +1627,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 > 由同一权威 JSON 生成，禁止手工修改。
 
 - 控制：`CR-2026-016`；设计决策：`DD-038`, `DD-039`, `DD-040`
-- 绑定 M1 需求：863；处置合计：863；就绪状态：`READINESS-BLOCKED`；主张边界：`SPECIFICATION-ONLY`
+- 绑定 M1 需求：863；处置合计：863；就绪状态：`CANDIDATE`；主张边界：`SPECIFICATION-ONLY`
 
 ## 输入身份
 
@@ -1720,7 +1853,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 前置条件：CaptureIdentity 与已审计清单字节一致。；接入元数据已明确声明或标为 UNKNOWN。
 - 输入：`CAPTURE-IDENTITY`, `INTAKE-METADATA`；输出：`PACKET-REF`
 - 需求：`TR-CAPTURE-INTAKE`；接口：`IF-EXECUTE-RECORD`
-- 验收：`AC-SYN-TRANSFER`；运行参数：`RP-RESOURCE`；上游：无
+- 验收：`AC-SYN-TRANSFER`, `AC-EXP-SCENE`；运行参数：`RP-RESOURCE`；上游：无
 - 步骤：
   - `S1`：解析任何块之前先核验捕获身份。
   - `S2`：解析受支持的 section 与 interface 声明并保留其作用域。
@@ -1752,7 +1885,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 前置条件：数据报完整性已经分类。；初始请求与动态 TID 证据仍可区分。
 - 输入：`DATAGRAM-RECORD`, `TRANSFER-RECORD`；输出：`TRANSFER-RECORD`, `PROTOCOL-EVENT`
 - 需求：`TR-TRANSFER-RECONSTRUCTION`, `TR-PROTOCOL-EVENT`；接口：`IF-EXECUTE-RECORD`, `IF-OBS-INTERPRET`
-- 验收：`AC-SYN-TRANSFER`；运行参数：`RP-RESOURCE`；上游：`MOD-REASSEMBLY`
+- 验收：`AC-SYN-TRANSFER`, `AC-SYN-INTEGRITY`；运行参数：`RP-RESOURCE`；上游：`MOD-REASSEMBLY`
 - 步骤：
   - `S1`：依据请求与端点证据建立或保留传输候选。
   - `S2`：应用选项、块和终止规则，同时保留重传与歧义证据。
@@ -1783,7 +1916,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 前置条件：所有权状态与测量来源均明确。；HistoryHandle 属于当前会话和版本。
 - 输入：`OWNERSHIP-RESULT`, `PROTOCOL-EVENT`, `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `INTAKE-METADATA`；输出：`OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `FINDING-RECORD`
 - 需求：`TR-OBSERVATION-ASSESSMENT`, `TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`；接口：`IF-OBS-INTERPRET`, `IF-HIST-UPDATE`
-- 验收：`AC-SYN-TRANSFER`；运行参数：`RP-RESOURCE`；上游：`MOD-TRANSFER`, `MOD-OWNERSHIP`
+- 验收：`AC-SYN-TRANSFER`, `AC-EXP-TRUTH`, `AC-EXP-CAUSAL`, `AC-EXP-DENOMINATOR`；运行参数：`RP-RESOURCE`；上游：`MOD-TRANSFER`, `MOD-OWNERSHIP`
 - 步骤：
   - `S1`：使用精确区间拓扑求测量域与要求域的交集。
   - `S2`：产生 PASS、FAIL、INCONCLUSIVE 或 ERROR，不折叠未知证据。
@@ -1803,6 +1936,17 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 表示：稳定有限的假设 ID 集合将每个假设映射到带版本的显式路径前沿。守卫使用既有受限 AST 和精确有理区间约束；更新是声明的有限赋值。仅当假设、控制状态、时钟约束和完整历史来源相同时才可合并前沿。
 - 保守行为：不支持的语法、资源限额或不可判定的可行路径结果均返回具名接口 UNKNOWN、GAP、SPEC-ERROR 或受控错误路径，绝不排除假设或证明等价。
 - 复杂度边界：工作量受配置的假设数、动作数、观测类数、路径长度和前沿状态数约束；不作多项式或完备性主张。
+- 守卫语法：`TRUE`, `AND`, `OR`, `NOT`, `STATE-EQUALS`, `RATIONAL-INTERVAL-CONTAINS`, `TYPED-FIELD-EQUALS`；更新语法：`STATE-ASSIGN`, `CLOCK-RESET-TO-ZERO`, `TYPED-FIELD-ASSIGN`
+- 前沿：`hypothesisId`, `controlStateId`, `clockConstraint`, `typedStore`, `pathLength`, `historyProvenance`, `status`；合并键：`hypothesisId`, `controlStateId`, `clockConstraint`, `typedStore`, `historyProvenance`
+- 传播步骤：
+  - 校验模型和选择时快照。
+  - 展开已启用转换且不丢失相关约束。
+  - 求交观测与时序约束。
+  - 保留每个可行后继及完整历史来源。
+  - 仅合并键完全相同的条目。
+  - 遇到不支持语法或任一配置限额时返回保守未知。
+- 限额行为：`{"actions": "ADMIT-REFUSED", "frontierStates": "CONSERVATIVE-UNKNOWN", "hypotheses": "SPEC-ERROR", "observationClasses": "PredictionGapError", "pathLength": "CONSERVATIVE-UNKNOWN"}`
+- 结果映射：`{"IF-EQUIV": {"failure": ["UNKNOWN", "RESOURCE-UNKNOWN"], "success": ["established", "notEstablished", "unknown"]}, "IF-EXECUTE-RECORD": {"failure": ["CONFIRMED-NOT-SENT", "UNKNOWN-EFFECT"], "success": ["record", "effectClass", "correlationId"]}, "IF-HIST-UPDATE": {"failure": ["Stop-Empty", "RESOURCE-UNKNOWN", "CONSERVATIVE-UNKNOWN"], "success": ["HistoryHandlePrime", "Hprime", "Stop-Empty"]}, "IF-OBS-INTERPRET": {"failure": ["ERROR", "INCONCLUSIVE", "UNKNOWN-EFFECT"], "success": ["Iz", "effectClass", "summaryConfirmed", "postSummary", "ownershipResult", "measurementInterval"]}, "IF-PRED-OBS": {"failure": ["PredictionGapError", "RESOURCE-UNKNOWN"], "success": ["currentlyValidNonemptyClasses", "PredictionGapError"]}, "IF-PREP-RECOVER": {"failure": ["UNKNOWN-EFFECT", "PREP-ERROR", "CONFIRMED-NOT-SENT"], "success": ["targetConfirmed", "summaryConfirmed", "prepError", "ineligible", "declaredTarget", "evidence", "postSummary"]}, "IF-RESOURCE-STOP": {"failure": ["Stop-Budget", "Stop-Error", "Stop-645"], "success": ["stopClass", "finalH", "trace"]}, "IF-SELECT-ADMIT": {"failure": ["PredictionGapError", "SPEC-ERROR", "ADMIT-REFUSED"], "success": ["kind", "tStar", "S", "admitA2A5"]}}`
 - 接口绑定：
   - `IF-PRED-OBS` — 输入：`SessionContext`, `HistoryHandle`, `H`, `measurementUncertainty`, `actionLibrary`；输出：`currentlyValidNonemptyClasses`, `PredictionGapError`；读取：仅读取带版本的 HistoryHandle 和当前会话。；写入：只读；不计费，也不写入 Γ/η。；失败：`PredictionGapError`, `RESOURCE-UNKNOWN`；参数：`RP-HYPOTHESIS-COUNT`, `RP-FRONTIER-STATE-COUNT`, `RP-OBSERVATION-CLASS-COUNT`；时序：使用会话 U 和声明的测量不确定性，不修改二者。；验收：`AC-SYN-PREDICTION`；位置：`future/reference_kernel/prediction.py`
   - `IF-SELECT-ADMIT` — 输入：`A`, `q`, `currentlyValidNonemptyClasses`, `SessionContext`, `HistoryHandle`, `H`；输出：`kind`, `tStar`, `S`, `admitA2A5`；读取：仅读取选择时输入和候选动作。；写入：只读；接口返回后由 S3-SNAP 构造不可变最终 SelectSnapshot。；失败：`PredictionGapError`, `SPEC-ERROR`, `ADMIT-REFUSED`；参数：`RP-ACTION-COUNT`, `RP-OBSERVATION-CLASS-COUNT`, `RP-RESOURCE-MODE`；时序：使用与预测和后续解释相同身份的 U。；验收：`AC-SYN-SELECT`；位置：`future/reference_kernel/selection.py`
@@ -1812,6 +1956,16 @@ Upstream policy: every cross-module input producer must be directly or transitiv
   - `IF-HIST-UPDATE` — 输入：`HistoryHandle`, `H`, `tStar`, `qUsedAtSelect`, `classesUsedAtSelect`, `historyVersion`, `valid Iz`, `postSummary`；输出：`HistoryHandlePrime`, `Hprime`, `Stop-Empty`；读取：仅读取选择时快照和完整历史前沿。；写入：仅通过规范化结果写入下一版本的 HistoryHandle。；失败：`Stop-Empty`, `RESOURCE-UNKNOWN`, `CONSERVATIVE-UNKNOWN`；参数：`RP-HYPOTHESIS-COUNT`, `RP-PATH-LENGTH`, `RP-FRONTIER-STATE-COUNT`；时序：携带选择时 U 身份，绝不以效果后的摘要替代 qUsedAtSelect。；验收：`AC-SYN-HISTORY`；位置：`future/reference_kernel/history.py`
   - `IF-EQUIV` — 输入：`SessionContext`, `H`, `HistoryHandle`, `remainingTests`；输出：`established`, `notEstablished`, `unknown`；读取：仅读取有限域状态。；写入：只读；不改变 H 或历史。；失败：`UNKNOWN`, `RESOURCE-UNKNOWN`；参数：`RP-HYPOTHESIS-COUNT`, `RP-PATH-LENGTH`, `RP-ACTION-COUNT`；时序：仅使用声明的有界视界；没有可用单步测试不构成等价证明。；验收：`AC-SYN-EQUIVALENCE`；位置：`future/reference_kernel/equivalence.py`
   - `IF-RESOURCE-STOP` — 输入：`SessionContext`, `H`, `HistoryHandle`, `named645Residuals`, `equivalenceStatus`；输出：`stopClass`, `finalH`, `trace`；读取：仅读取已计费资源、保留历史和具名残余。；写入：仅写入可审计停止追踪。；失败：`Stop-Budget`, `Stop-Error`, `Stop-645`；参数：`RP-RESOURCE-MODE`, `RP-RETRY-CAP`；时序：保持互斥停止顺序，绝不把重试耗尽转换为预算耗尽。；验收：`AC-SYN-RESOURCE-STOP`；位置：`future/reference_kernel/stopping.py`
+
+## 实验接口绑定
+
+- `IF-EXP-SCENE` — 输入：`sceneId`, `configId`, `IUT`, `faultPlan`, `resourceMode`；输出：`sceneRecord`, `unconfirmed`；读取：按受控实验注册表的可见性读取；算法不得读取评价者真值。；写入：仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。；失败：按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。；资源：沿用注册表资源口径，不向实验臂赠送记录或成本。；验收：`AC-EXP-SCENE`；位置：`future/experiment/scene.py`
+- `IF-EXP-INJECT` — 输入：`sceneId`, `injectionPlan`；输出：`injectionAttempt`, `injectionConfirmed`, `injectionUnconfirmed`；读取：按受控实验注册表的可见性读取；算法不得读取评价者真值。；写入：仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。；失败：按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。；资源：沿用注册表资源口径，不向实验臂赠送记录或成本。；验收：`AC-EXP-TRUTH`；位置：`future/experiment/inject.py`
+- `IF-EXP-TRUTH` — 输入：`sceneId`, `injectionConfirmed`, `independentGeneratorId`；输出：`truthRecord`, `sharedComponentRisk`；读取：按受控实验注册表的可见性读取；算法不得读取评价者真值。；写入：仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。；失败：按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。；资源：沿用注册表资源口径，不向实验臂赠送记录或成本。；验收：`AC-EXP-TRUTH`；位置：`future/experiment/truth.py`
+- `IF-EXP-COLLECT` — 输入：`sceneId`, `armId`, `algorithmVisibleRecord`；输出：`observationLog`, `resourceLog`；读取：按受控实验注册表的可见性读取；算法不得读取评价者真值。；写入：仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。；失败：按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。；资源：沿用注册表资源口径，不向实验臂赠送记录或成本。；验收：`AC-EXP-CAUSAL`；位置：`future/experiment/collect.py`
+- `IF-EXP-RUN` — 输入：`sceneId`, `armId`, `SessionContext`；输出：`runId`, `stopClass`, `traceRef`；读取：按受控实验注册表的可见性读取；算法不得读取评价者真值。；写入：仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。；失败：按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。；资源：沿用注册表资源口径，不向实验臂赠送记录或成本。；验收：`AC-EXP-CAUSAL`；位置：`future/experiment/run.py`
+- `IF-EXP-FILTER` — 输入：`runId`, `truthRecord`, `observationLog`, `sceneId`, `attemptId`, `injectionUnconfirmed`；输出：`validityClass`, `filterReason`；读取：按受控实验注册表的可见性读取；算法不得读取评价者真值。；写入：仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。；失败：按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。；资源：沿用注册表资源口径，不向实验臂赠送记录或成本。；验收：`AC-EXP-DENOMINATOR`；位置：`future/experiment/filter.py`
+- `IF-EXP-EVAL` — 输入：`runId`, `validityClass`, `denominators`, `truthRecord`, `algorithmResultRef`, `chargedCost`, `sceneId`, `attemptId`；输出：`metricCells`, `attemptDenominator`, `answeredSubsetDenominator`；读取：按受控实验注册表的可见性读取；算法不得读取评价者真值。；写入：仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。；失败：按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。；资源：沿用注册表资源口径，不向实验臂赠送记录或成本。；验收：`AC-EXP-DENOMINATOR`；位置：`future/experiment/eval.py`
 
 ## 运行参数合同
 
@@ -1869,56 +2023,169 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 ### `AC-SYN-TRANSFER` — 有作用域传输重建见证
 - 输入：`CAPTURE-IDENTITY`, `PACKET-REF`, `DATAGRAM-RECORD`, `TRANSFER-RECORD`, `OWNERSHIP-RESULT`, `OBSERVATION-ASSESSMENT`, `HISTORY-HANDLE`, `FINDING-RECORD`
 - 工具：`TR-CAPTURE-INTAKE`, `TR-DATAGRAM-REASSEMBLY`, `TR-TRANSFER-RECONSTRUCTION`, `TR-PROTOCOL-EVENT`, `TR-OWNERSHIP`, `TR-OBSERVATION-ASSESSMENT`, `TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`；模块：`MOD-CAPTURE`, `MOD-REASSEMBLY`, `MOD-TRANSFER`, `MOD-OWNERSHIP`, `MOD-OBSERVATION`；接口：`IF-EXECUTE-RECORD`, `IF-OBS-INTERPRET`, `IF-HIST-UPDATE`
+- 输入夹具：`{"caseId": "AC-SYN-TRANSFER", "condition": "declared-positive", "recordIds": ["CAPTURE-IDENTITY", "PACKET-REF", "DATAGRAM-RECORD", "TRANSFER-RECORD", "OWNERSHIP-RESULT", "OBSERVATION-ASSESSMENT", "HISTORY-HANDLE", "FINDING-RECORD"]}`
+- 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence."}`
 - 预期：保留来源的传输候选和带类型事件保留缺口、重传与选项证据。
-- 禁止：不得产生协议 PASS/FAIL、根因标签或虚构的已接受选项。
+- 禁止：不得产生协议 PASS/FAIL、根因标签或虚构的已接受选项。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- 负例：`[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-TRANSFER-NEG", "mutation": "violate the named precondition"}]`
 - 依据：针对声明离线首轮切片的合成规格见证；它不是历史真值或解析器执行。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-PREDICTION` — 有限预测边界见证
 - 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
 - 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-PRED-OBS`
+- 输入夹具：`{"caseId": "AC-SYN-PREDICTION", "condition": "declared-positive", "recordIds": ["HISTORY-HANDLE", "OBSERVATION-ASSESSMENT"]}`
+- 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "A finite current projection is tagged OK or GAP before any TEST score is read."}`
 - 预期：在读取任何 TEST 评分前，将有限当前投影标记为 OK 或 GAP。
-- 禁止：空投影不得记为零分，也不得写入历史。
+- 禁止：空投影不得记为零分，也不得写入历史。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- 负例：`[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-PREDICTION-NEG", "mutation": "violate the named precondition"}]`
 - 依据：有限当前类传播的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-SELECT` — 接纳动作选择见证
 - 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
 - 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-SELECT-ADMIT`
+- 输入夹具：`{"caseId": "AC-SYN-SELECT", "condition": "declared-positive", "recordIds": ["HISTORY-HANDLE", "OBSERVATION-ASSESSMENT"]}`
+- 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID."}`
 - 预期：仅对可负担且有区分力的 TEST 作 minimax 评分，然后按成本和稳定 action ID 决胜。
-- 禁止：无信息 TEST 不得成为 A2，Prep/Recover 不得按 TEST 评分。
+- 禁止：无信息 TEST 不得成为 A2，Prep/Recover 不得按 TEST 评分。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- 负例：`[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-SELECT-NEG", "mutation": "violate the named precondition"}]`
 - 依据：声明单步决策表的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-OBSERVATION` — 四值时序解释见证
 - 输入：`OWNERSHIP-RESULT`, `PROTOCOL-EVENT`, `OBSERVATION-ASSESSMENT`
 - 工具：`TR-OBSERVATION-ASSESSMENT`；模块：`MOD-OBSERVATION`；接口：`IF-OBS-INTERPRET`
+- 输入夹具：`{"caseId": "AC-SYN-OBSERVATION", "condition": "declared-positive", "recordIds": ["OWNERSHIP-RESULT", "PROTOCOL-EVENT", "OBSERVATION-ASSESSMENT"]}`
+- 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR."}`
 - 预期：有效区间产生 PASS、FAIL 或 INCONCLUSIVE；无效时序证据产生 ERROR。
-- 禁止：不得将 ERROR 或 INCONCLUSIVE 降级为 FAIL。
+- 禁止：不得将 ERROR 或 INCONCLUSIVE 降级为 FAIL。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- 负例：`[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-OBSERVATION-NEG", "mutation": "violate the named precondition"}]`
 - 依据：T5 区间和所有权前提的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-PREP-RECOVER` — 确认恢复交接见证
 - 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
 - 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-PREP-RECOVER`
+- 输入夹具：`{"caseId": "AC-SYN-PREP-RECOVER", "condition": "declared-positive", "recordIds": ["HISTORY-HANDLE", "OBSERVATION-ASSESSMENT"]}`
+- 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary."}`
 - 预期：Prep/Recover 返回确认字段；只有 S8/S9 可提交已知状态或后继摘要。
-- 禁止：未确认后继不得保留陈旧已知状态或直接写入 Γ。
+- 禁止：未确认后继不得保留陈旧已知状态或直接写入 Γ。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- 负例：`[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-PREP-RECOVER-NEG", "mutation": "violate the named precondition"}]`
 - 依据：S8/S9 所有权边界的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-HISTORY` — 完整历史更新见证
 - 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
 - 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-HIST-UPDATE`
+- 输入夹具：`{"caseId": "AC-SYN-HISTORY", "condition": "declared-positive", "recordIds": ["HISTORY-HANDLE", "OBSERVATION-ASSESSMENT"]}`
+- 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses."}`
 - 预期：规范化有效结果推进带版本完整历史前沿，且不复活已排除假设。
-- 禁止：H prime 不得替换为 Iz，资源耗尽不得视为不相容。
+- 禁止：H prime 不得替换为 Iz，资源耗尽不得视为不相容。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- 负例：`[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-HISTORY-NEG", "mutation": "violate the named precondition"}]`
 - 依据：保守历史传播的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-EQUIVALENCE` — 有界等价弃权见证
 - 输入：`HISTORY-HANDLE`
 - 工具：`TR-HISTORY-COMPATIBILITY`；模块：`MOD-OBSERVATION`；接口：`IF-EQUIV`
+- 输入夹具：`{"caseId": "AC-SYN-EQUIVALENCE", "condition": "declared-positive", "recordIds": ["HISTORY-HANDLE"]}`
+- 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished."}`
 - 预期：established 需要声明有限域的证明依据；否则结果为 unknown 或 notEstablished。
-- 禁止：没有即时可区分 TEST 不得视为等价证明。
+- 禁止：没有即时可区分 TEST 不得视为等价证明。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- 负例：`[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-EQUIVALENCE-NEG", "mutation": "violate the named precondition"}]`
 - 依据：有界等价语义的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-RESOURCE-STOP` — 资源与停止顺序见证
 - 输入：`HISTORY-HANDLE`, `FINDING-RECORD`
 - 工具：`TR-HISTORY-COMPATIBILITY`, `TR-TRACEABLE-FINDING`；模块：`MOD-OBSERVATION`；接口：`IF-RESOURCE-STOP`
+- 输入夹具：`{"caseId": "AC-SYN-RESOURCE-STOP", "condition": "declared-positive", "recordIds": ["HISTORY-HANDLE", "FINDING-RECORD"]}`
+- 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error."}`
 - 预期：互斥停止顺序保留具名 645 残余，并将重试耗尽报告为 Stop-Error。
-- 禁止：重试耗尽不得成为 Stop-Budget，normal 单例不得成为协议 PASS。
+- 禁止：重试耗尽不得成为 Stop-Budget，normal 单例不得成为协议 PASS。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
+- 负例：`[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-RESOURCE-STOP-NEG", "mutation": "violate the named precondition"}]`
 - 依据：资源和停止合同的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
+### `AC-SYN-INTEGRITY` — 有界完整性规格见证
+- 输入：`TRANSFER-RECORD`
+- 工具：`TR-PROTOCOL-EVENT`；模块：`MOD-TRANSFER`；接口：`IF-OBS-INTERPRET`
+- 输入夹具：`{"caseId": "AC-SYN-INTEGRITY", "condition": "declared-positive", "recordIds": ["TRANSFER-RECORD"]}`
+- 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "CRC-bearing inputs retain source parameters and yield NOT-EVALUATED until implementation, configuration and execution evidence exist."}`
+- 预期：产生声明的类型化合同结果并保留证据边界。
+- 禁止：不得伪造运行结果、独立真值或符合性判定。；路径：`runtimeResultClaim`, `truthLeakage`
+- 负例：`[{"expectedRejection": "SPEC-ERROR", "id": "AC-SYN-INTEGRITY-NEG", "mutation": "remove required identity or precondition"}]`
+- 依据：受控规格见证；未执行解析器、求解器、IUT 或实验。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
+### `AC-EXP-SCENE` — 可运行场景身份见证
+- 输入：`INTAKE-METADATA`
+- 工具：`TR-CAPTURE-INTAKE`；模块：`MOD-CAPTURE`；接口：`IF-EXECUTE-RECORD`
+- 输入夹具：`{"caseId": "AC-EXP-SCENE", "condition": "declared-positive", "recordIds": ["INTAKE-METADATA"]}`
+- 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "A runnable scene has stable scene, configuration, IUT and resource identities."}`
+- 预期：产生声明的类型化合同结果并保留证据边界。
+- 禁止：不得伪造运行结果、独立真值或符合性判定。；路径：`runtimeResultClaim`, `truthLeakage`
+- 负例：`[{"expectedRejection": "SPEC-ERROR", "id": "AC-EXP-SCENE-NEG", "mutation": "remove required identity or precondition"}]`
+- 依据：受控规格见证；未执行解析器、求解器、IUT 或实验。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
+### `AC-EXP-TRUTH` — 独立真值边界见证
+- 输入：`FINDING-RECORD`
+- 工具：`TR-TRACEABLE-FINDING`；模块：`MOD-OBSERVATION`；接口：`IF-OBS-INTERPRET`
+- 输入夹具：`{"caseId": "AC-EXP-TRUTH", "condition": "declared-positive", "recordIds": ["FINDING-RECORD"]}`
+- 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Only confirmed injection plus an independent generator creates truth, with shared-component risk named."}`
+- 预期：产生声明的类型化合同结果并保留证据边界。
+- 禁止：不得伪造运行结果、独立真值或符合性判定。；路径：`runtimeResultClaim`, `truthLeakage`
+- 负例：`[{"expectedRejection": "SPEC-ERROR", "id": "AC-EXP-TRUTH-NEG", "mutation": "remove required identity or precondition"}]`
+- 依据：受控规格见证；未执行解析器、求解器、IUT 或实验。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
+### `AC-EXP-CAUSAL` — 因果采集与实验臂公平性见证
+- 输入：`OBSERVATION-ASSESSMENT`
+- 工具：`TR-OBSERVATION-ASSESSMENT`；模块：`MOD-OBSERVATION`；接口：`IF-EXECUTE-RECORD`
+- 输入夹具：`{"caseId": "AC-EXP-CAUSAL", "condition": "declared-positive", "recordIds": ["OBSERVATION-ASSESSMENT"]}`
+- 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Each arm sees only its causal prefix and pays the same declared cost vector."}`
+- 预期：产生声明的类型化合同结果并保留证据边界。
+- 禁止：不得伪造运行结果、独立真值或符合性判定。；路径：`runtimeResultClaim`, `truthLeakage`
+- 负例：`[{"expectedRejection": "SPEC-ERROR", "id": "AC-EXP-CAUSAL-NEG", "mutation": "remove required identity or precondition"}]`
+- 依据：受控规格见证；未执行解析器、求解器、IUT 或实验。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
+### `AC-EXP-DENOMINATOR` — 评价分母见证
+- 输入：`FINDING-RECORD`
+- 工具：`TR-TRACEABLE-FINDING`；模块：`MOD-OBSERVATION`；接口：`IF-RESOURCE-STOP`
+- 输入夹具：`{"caseId": "AC-EXP-DENOMINATOR", "condition": "declared-positive", "recordIds": ["FINDING-RECORD"]}`
+- 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Attempt and answered-subset denominators retain abstain, invalid, equivalent and unconfirmed membership."}`
+- 预期：产生声明的类型化合同结果并保留证据边界。
+- 禁止：不得伪造运行结果、独立真值或符合性判定。；路径：`runtimeResultClaim`, `truthLeakage`
+- 负例：`[{"expectedRejection": "SPEC-ERROR", "id": "AC-EXP-DENOMINATOR-NEG", "mutation": "remove required identity or precondition"}]`
+- 依据：受控规格见证；未执行解析器、求解器、IUT 或实验。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
+
+## 跨路径验收矩阵
+
+| ID | 类别 | 正向输入 | 预期输出 | 负向变异 | 预期拒绝 |
+|---|---|---|---|---|---|
+| `AM-IDENTITY` | 受控类别：corpus identity | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+| `AM-LABEL` | 受控类别：label boundary | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+| `AM-FORMAT` | 受控类别：capture format | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+| `AM-IP` | 受控类别：IP reassembly | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+| `AM-TFTP` | 受控类别：TFTP reconstruction | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+| `AM-FIELDS` | 受控类别：field contracts | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+| `AM-OWNERSHIP` | 受控类别：matching and no response | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+| `AM-TIMING` | 受控类别：timing and U | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+| `AM-ADMIT` | 受控类别：prediction and admission | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+| `AM-HISTORY` | 受控类别：history update | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+| `AM-STATE` | 受控类别：state and return | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+| `AM-RESOURCE` | 受控类别：resource accounting | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+| `AM-EXPERIMENT` | 受控类别：experiment boundary | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+| `AM-DRIFT` | 受控类别：controlled drift | 符合该类别声明前置条件的正向类型化输入。 | 产生具名合同输出并保留来源与不确定性。 | 施加该行登记的关系、边界或身份破坏。 | 生产入口必须以具名诊断拒绝，且不得发布派生视图。 |
+
+## 首批实验场景
+
+- `SC-NORMAL-UPLOAD` — 受控场景：normal single upload；服务 `UPLOAD`；可控动作 normal operation；真值 confirmed controlled generator；复位 reset IUT/session/budget；计时 qualified monotonic clock and declared epsilon；资源 same declared cost vector and one exclusive resource mode across arms；阻塞于 interactive IUT、confirmatory registration；`NOT-EXECUTED`
+- `SC-WAIT-CONTINUE` — 受控场景：WAIT then continue；服务 `UPLOAD`；可控动作 controlled WAIT followed by continuation；真值 confirmed event script；复位 reset loader state and session；计时 qualified monotonic clock and declared epsilon；资源 same declared cost vector and one exclusive resource mode across arms；阻塞于 interactive IUT、confirmatory registration；`NOT-EXECUTED`
+- `SC-NO-RESPONSE` — 受控场景：request without matching response；服务 `INFORMATION`；可控动作 controlled suppression with complete observation horizon；真值 confirmed suppression controller；复位 reset endpoint and capture horizon；计时 qualified clock, open/closed deadline recorded；资源 same declared cost vector and one exclusive resource mode across arms；阻塞于 interactive IUT、confirmatory registration；`NOT-EXECUTED`
+- `SC-ABORT` — 受控场景：explicit abort；服务 `UPLOAD`；可控动作 confirmed abort event；真值 independent controller log；复位 reset transfer and session；计时 qualified event order and clocks；资源 same declared cost vector and one exclusive resource mode across arms；阻塞于 interactive IUT、confirmatory registration；`NOT-EXECUTED`
+- `SC-INVALID-OBS` — 受控场景：invalid or missing observation；服务 `UPLOAD/INFORMATION`；可控动作 capture/clock evidence deliberately incomplete；真值 evaluator construction record；复位 fresh capture and session；计时 invalid chain remains ERROR；资源 same declared cost vector and one exclusive resource mode across arms；阻塞于 interactive IUT、confirmatory registration；`NOT-EXECUTED`
+- `SC-SAME-KEY` — 受控场景：multiple same-key requests；服务 `INFORMATION`；可控动作 controlled overlapping requests；真值 independent request schedule；复位 reset correlation state；计时 event order retained even for equal timestamps；资源 same declared cost vector and one exclusive resource mode across arms；阻塞于 interactive IUT、confirmatory registration；`NOT-EXECUTED`
+- `SC-SINGLE-BATCH` — 受控场景：single versus batch context；服务 `UPLOAD`；可控动作 paired declared contexts, not historical causal inference；真值 controlled scene definitions；复位 full IUT reset between scenes；计时 same qualified clock/configuration；资源 same declared cost vector and one exclusive resource mode across arms；阻塞于 interactive IUT、confirmatory registration；`NOT-EXECUTED`
+- `SC-RESOURCE-ERROR` — 受控场景：resource exhaustion and consecutive error；服务 `UPLOAD/INFORMATION`；可控动作 configured bound and injected adapter error；真值 configuration plus controller record；复位 reset resource/retry counters；计时 clock evidence retained but not converted to verdict；资源 same declared cost vector and one exclusive resource mode across arms；阻塞于 interactive IUT、confirmatory registration；`NOT-EXECUTED`
 
 ## 切片与依赖
 
 - `SLICE-OFFLINE-UPLOAD-INFORMATION` — 离线捕获至可追踪报告 — 176 条需求用途
-- 依赖 `DEP-INTEGRITY`：`BLOCKED`
+### 依赖 `DEP-INTEGRITY-RUNTIME` — ARINC 645 完整性运行时资格
+- 规格／运行：`CLOSED` / `NOT-ESTABLISHED`；影响规格就绪：`False`
+- 需求：`CRS-M1-00076`, `CRS-M1-00082`, `CRS-M1-00085`, `CRS-M1-00086`, `CRS-M1-00087`, `CRS-M1-00109`；模块：`MOD-TRANSFER`；记录：`TRANSFER-RECORD`；验收：`AC-SYN-INTEGRITY`
+- 合同：使用已绑定的 ARINC 645 参数叶、出现顺序字节流和精确算法身份；除非运行资格证据齐全，否则输出 NOT-EVALUATED。
+- 受影响判断：依赖 CRC 的验证和相等判断在运行时仍不可用；传输／重建只能保留字节与来源。
+- 运行关闭：实现身份与测试；项目特定算法／配置绑定；受控向量执行证据；独立门禁记录
+- 失败：缺少运行证据时产生 NOT-EVALUATED 或具名依赖状态，绝不产生 PASS、FAIL 或能力已建立。；证据：`configs/research/cltav_protocol_source_audit.json`, `configs/requirements/m1_semantic_review_assertions.json`, `configs/engineering/cltav_development_contracts.json`
+
+## 论文追踪
+
+- `PT-ARCH` / III — `toolRequirements`, `moduleContracts`, `recordContracts`, `experimentInterfaceBindings`：Layered requirements and responsibility interfaces; no implementation claim.
+- `PT-METHOD` / IV — `algorithmRefinements`, `runtimeParameterContracts`：Bounded reference-kernel specification; no general solver or completeness claim.
+- `PT-EXPERIMENT` / V — `experimentInterfaceBindings`, `acceptanceCases`：Historical exploratory and future controlled evidence lines remain separate.
+- `PT-RESULTS` / VI — `reviewBoundary`：No confirmatory result is reported.
+- `PT-LIMITS` / VII — `implementationDependencies`：Runtime integrity, IUT, clock and independent-truth dependencies remain explicit.
 
 ## 切片成员关系
 
@@ -2105,8 +2372,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 
 | 处置 | 数量 |
 |---|---:|
-| `DEPENDENCY-BLOCKED` | 6 |
-| `FIRST-SLICE-IMPLEMENTATION` | 170 |
+| `FIRST-SLICE-IMPLEMENTATION` | 176 |
 | `LATER-SERVICE` | 137 |
 | `NOT-TOOL-OBLIGATION` | 550 |
 
@@ -2114,866 +2380,866 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 
 | 需求 | 处置 | 首轮 | 模块 | 记录 | 验收 | 理由 |
 |---|---|---|---|---|---|---|
-| `CRS-M1-00001` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00002` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00003` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00004` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00005` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00006` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00007` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00008` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00009` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00010` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00011` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00012` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00013` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00014` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00015` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00016` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00017` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00018` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00019` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00020` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00021` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 COMMON 时序、TFTP 传输或末块观测合同。 |
-| `CRS-M1-00022` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00023` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00024` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00025` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 COMMON 时序、TFTP 传输或末块观测合同。 |
-| `CRS-M1-00026` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00027` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00028` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00029` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00030` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00031` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00032` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 COMMON 时序、TFTP 传输或末块观测合同。 |
-| `CRS-M1-00033` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00034` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00035` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00036` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00037` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00038` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00039` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00040` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00041` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00042` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00043` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00044` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00045` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00046` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00047` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00048` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00049` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00050` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00051` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00052` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00053` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00054` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00055` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00056` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00057` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00058` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00059` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00060` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00061` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00062` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00063` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00064` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00065` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00066` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00067` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00068` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00069` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00070` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00071` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00072` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00073` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00074` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00075` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00076` | `DEPENDENCY-BLOCKED` | `True` | `—` | `—` | `—` | 首轮输入需要单独建立的完整性依赖。 |
-| `CRS-M1-00077` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00078` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00079` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00080` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00081` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00082` | `DEPENDENCY-BLOCKED` | `True` | `—` | `—` | `—` | 首轮输入需要单独建立的完整性依赖。 |
-| `CRS-M1-00083` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00084` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00085` | `DEPENDENCY-BLOCKED` | `True` | `—` | `—` | `—` | 首轮输入需要单独建立的完整性依赖。 |
-| `CRS-M1-00086` | `DEPENDENCY-BLOCKED` | `True` | `—` | `—` | `—` | 首轮输入需要单独建立的完整性依赖。 |
-| `CRS-M1-00087` | `DEPENDENCY-BLOCKED` | `True` | `—` | `—` | `—` | 首轮输入需要单独建立的完整性依赖。 |
-| `CRS-M1-00088` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00089` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00090` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00091` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00092` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00093` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00094` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00095` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00096` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00097` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00098` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00099` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00100` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00101` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00102` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00103` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00104` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00105` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00106` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00107` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00108` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00109` | `DEPENDENCY-BLOCKED` | `True` | `—` | `—` | `—` | 首轮输入需要单独建立的完整性依赖。 |
-| `CRS-M1-00110` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00111` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00112` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00113` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00114` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00115` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00116` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00117` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00118` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00119` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00120` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00121` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00122` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00123` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00124` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00125` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00126` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00127` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00128` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00129` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00130` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00131` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00132` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00133` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00134` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00135` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00136` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00137` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00138` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00139` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00140` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00141` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00142` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00143` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00144` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00145` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00146` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00147` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00148` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00149` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00150` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00151` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00152` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00153` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00154` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00155` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00156` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00157` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00158` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00159` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00160` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00161` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00162` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00163` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00164` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00165` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00166` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00167` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00168` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00169` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00170` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00171` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00172` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00173` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00174` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00175` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00176` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00177` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00178` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00179` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00180` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00181` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00182` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00183` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00184` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00185` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00186` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 COMMON 时序、TFTP 传输或末块观测合同。 |
-| `CRS-M1-00187` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00188` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00189` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00190` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00191` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00192` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00193` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00194` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00195` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00196` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00197` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00198` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00199` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00200` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00201` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00202` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00203` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00204` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00205` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00206` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00207` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00208` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00209` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00210` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00211` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00212` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00213` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00214` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00215` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00216` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00217` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00218` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00219` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00220` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00221` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00222` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00223` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00224` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00225` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00226` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00227` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00228` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00229` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00230` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00231` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00232` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00233` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00234` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00235` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00236` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00237` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00238` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00239` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00240` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00241` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00242` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00243` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00244` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00245` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00246` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00247` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00248` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00249` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00250` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00251` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00252` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00253` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00254` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00255` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00256` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00257` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00258` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00259` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00260` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00261` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00262` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00263` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00264` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00265` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00266` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00267` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00268` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00269` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00270` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00271` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00272` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00273` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00274` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00275` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00276` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00277` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00278` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00279` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00280` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00281` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00282` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00283` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00284` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00285` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00286` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00287` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00288` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00289` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00290` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00291` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00292` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00293` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00294` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00295` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00296` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00297` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00298` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00299` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00300` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00301` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00302` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00303` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00304` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00305` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00306` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00307` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00308` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00309` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00310` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00311` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00312` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00313` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00314` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00315` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00316` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00317` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00318` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00319` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00320` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00321` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00322` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00323` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00324` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00325` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00326` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00327` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00328` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00329` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00330` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00331` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00332` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00333` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00334` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00335` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00336` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00337` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00338` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00339` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00340` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00341` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00342` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00343` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00344` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00345` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00346` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00347` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00348` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00349` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00350` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00351` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00352` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00353` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00354` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00355` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00356` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00357` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00358` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00359` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00360` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00361` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00362` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00363` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00364` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00365` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00366` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00367` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00368` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00369` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00370` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00371` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00372` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00373` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00374` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00375` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00376` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00377` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00378` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 |
-| `CRS-M1-00379` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00380` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00381` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00382` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00383` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00384` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00385` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00386` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00387` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00388` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00389` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00390` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00391` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00392` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00393` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00394` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00395` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00396` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00397` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00398` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00399` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00400` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00401` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00402` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00403` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00404` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00405` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00406` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00407` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00408` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00409` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00410` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00411` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00412` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00413` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00414` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00415` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00416` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00417` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00418` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00419` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00420` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00421` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00422` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00423` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00424` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00426` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00427` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00428` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00429` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00430` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00431` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00432` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00433` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00434` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00435` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00436` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00437` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00438` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00439` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00440` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00441` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00442` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00443` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00444` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00445` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00446` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00447` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00448` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00449` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00450` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00451` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00452` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00453` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00454` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00455` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00456` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00457` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00458` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00459` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00460` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00461` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00462` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00463` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00464` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00465` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00466` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00467` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00468` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00469` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00470` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00471` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00472` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00473` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00474` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00475` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00476` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00477` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00478` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00479` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00480` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00481` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00482` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00483` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00484` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00485` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00486` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00487` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00488` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00489` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00490` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00491` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00492` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00493` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00494` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00495` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00496` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00497` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00498` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00499` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00500` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00501` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00502` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00503` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00504` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00505` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00506` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00507` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00508` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00509` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00510` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00511` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00512` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00513` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00514` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00515` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00516` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00517` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00518` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00519` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00520` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00521` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00522` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00523` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00524` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00525` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00526` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00527` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00528` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00529` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00530` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00531` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00532` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00533` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00534` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00535` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00536` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00537` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00538` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00539` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00540` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00541` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00542` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00543` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00544` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00545` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00546` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00547` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00548` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00549` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00550` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00551` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00552` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00553` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00554` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00555` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00556` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00557` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00558` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00559` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00560` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00561` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00562` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00563` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00564` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00565` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00566` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00567` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00568` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00569` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00570` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00571` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00572` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00573` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00574` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00575` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00576` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00577` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00578` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00579` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00580` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00581` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00582` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00583` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00584` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00585` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00586` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00587` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00588` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00589` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00590` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00591` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00592` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00593` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00594` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00595` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00596` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00597` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00598` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00599` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00600` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00601` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00602` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00603` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00604` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00605` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00606` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00607` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00608` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00609` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00610` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00611` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00612` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00613` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00614` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00615` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00616` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00617` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00618` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 TFTP 传输身份、选项确认、请求布局或终止重建。 |
-| `CRS-M1-00619` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00620` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 COMMON 时序、TFTP 传输或末块观测合同。 |
-| `CRS-M1-00621` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00622` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 TFTP 传输身份、选项确认、请求布局或终止重建。 |
-| `CRS-M1-00623` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00624` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00625` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00626` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00627` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00628` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00629` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00630` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00631` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00632` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 TFTP 传输身份、选项确认、请求布局或终止重建。 |
-| `CRS-M1-00633` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00634` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00635` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00636` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00637` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00638` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00639` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00640` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00641` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00642` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00643` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00644` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00645` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 TFTP 传输身份、选项确认、请求布局或终止重建。 |
-| `CRS-M1-00646` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 TFTP 传输身份、选项确认、请求布局或终止重建。 |
-| `CRS-M1-00647` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 TFTP 传输身份、选项确认、请求布局或终止重建。 |
-| `CRS-M1-00648` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00649` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00650` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00651` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00652` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00653` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00654` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00655` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00656` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00657` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00658` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00659` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00660` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00661` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00662` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00663` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00664` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00665` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00666` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00667` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00668` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00669` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00670` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00671` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00672` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00673` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00674` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00675` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00676` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00677` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00678` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00679` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00680` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00681` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00682` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00683` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00684` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00685` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00686` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00687` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00688` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00689` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00690` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00691` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00692` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00693` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00694` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00695` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00696` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00697` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00698` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00699` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00700` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00701` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00702` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00703` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00704` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00705` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00706` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00707` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00708` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00709` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00710` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00711` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00712` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00713` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00714` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00715` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00716` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00717` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00718` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00719` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00720` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00721` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00722` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00723` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00724` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00725` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00726` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00727` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00728` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00729` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00730` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00731` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00732` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00733` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00734` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00735` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00736` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00737` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00738` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00739` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00740` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00741` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00742` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00743` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00744` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00745` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00746` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00747` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00748` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00749` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00750` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00751` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00752` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00753` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00754` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00755` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00756` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00757` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00758` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00759` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00760` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00761` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00762` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00763` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00764` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00765` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00766` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00767` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00768` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00769` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00770` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00771` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00772` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00773` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00774` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00775` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00776` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00777` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00778` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00779` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00780` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00781` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00782` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00783` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00784` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00785` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00786` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00787` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00788` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00789` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00790` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00791` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00792` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00793` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00794` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00795` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00796` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00797` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00798` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00799` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00800` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00801` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00802` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00803` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00804` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00805` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00806` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00807` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00808` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00809` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00810` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00811` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00812` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00813` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00814` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00815` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00816` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00817` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00818` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00819` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00820` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00821` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00822` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00823` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00824` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00825` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00826` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00827` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00828` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00829` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00830` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00831` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00832` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00833` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00834` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00835` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00836` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00837` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00838` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00839` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00840` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00841` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00842` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00843` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00844` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00845` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00846` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00847` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00848` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00849` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00850` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00851` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00852` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00853` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00854` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00855` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00856` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00857` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00858` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00859` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00860` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00861` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00862` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00863` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
-| `CRS-M1-00864` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 |
+| `CRS-M1-00001` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00002` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00003` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00004` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00005` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00006` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00007` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00008` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00009` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00010` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00011` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00012` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00013` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00014` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00015` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00016` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00017` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00018` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00019` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00020` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00021` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 COMMON 时序、TFTP 传输或末块观测合同。 依赖：无 |
+| `CRS-M1-00022` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00023` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00024` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00025` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 COMMON 时序、TFTP 传输或末块观测合同。 依赖：无 |
+| `CRS-M1-00026` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00027` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00028` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00029` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00030` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00031` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00032` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 COMMON 时序、TFTP 传输或末块观测合同。 依赖：无 |
+| `CRS-M1-00033` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00034` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00035` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00036` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00037` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00038` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00039` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00040` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00041` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00042` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00043` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00044` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00045` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00046` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00047` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00048` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00049` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00050` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00051` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00052` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00053` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00054` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00055` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00056` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00057` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00058` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00059` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00060` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00061` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00062` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00063` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00064` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00065` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00066` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00067` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00068` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00069` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00070` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00071` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00072` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00073` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00074` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00075` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00076` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `TRANSFER-RECORD` | `AC-SYN-INTEGRITY` | 首轮规格保留带 CRC 的协议义务和来源参数；运行时验证仍明确为未建立，等待实现、配置和执行证据。 依赖：`DEP-INTEGRITY-RUNTIME` |
+| `CRS-M1-00077` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00078` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00079` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00080` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00081` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00082` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `TRANSFER-RECORD` | `AC-SYN-INTEGRITY` | 首轮规格保留带 CRC 的协议义务和来源参数；运行时验证仍明确为未建立，等待实现、配置和执行证据。 依赖：`DEP-INTEGRITY-RUNTIME` |
+| `CRS-M1-00083` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00084` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00085` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `TRANSFER-RECORD` | `AC-SYN-INTEGRITY` | 首轮规格保留带 CRC 的协议义务和来源参数；运行时验证仍明确为未建立，等待实现、配置和执行证据。 依赖：`DEP-INTEGRITY-RUNTIME` |
+| `CRS-M1-00086` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `TRANSFER-RECORD` | `AC-SYN-INTEGRITY` | 首轮规格保留带 CRC 的协议义务和来源参数；运行时验证仍明确为未建立，等待实现、配置和执行证据。 依赖：`DEP-INTEGRITY-RUNTIME` |
+| `CRS-M1-00087` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `TRANSFER-RECORD` | `AC-SYN-INTEGRITY` | 首轮规格保留带 CRC 的协议义务和来源参数；运行时验证仍明确为未建立，等待实现、配置和执行证据。 依赖：`DEP-INTEGRITY-RUNTIME` |
+| `CRS-M1-00088` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00089` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00090` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00091` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00092` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00093` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00094` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00095` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00096` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00097` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00098` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00099` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00100` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00101` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00102` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00103` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00104` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00105` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00106` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00107` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00108` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00109` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `TRANSFER-RECORD` | `AC-SYN-INTEGRITY` | 首轮规格保留带 CRC 的协议义务和来源参数；运行时验证仍明确为未建立，等待实现、配置和执行证据。 依赖：`DEP-INTEGRITY-RUNTIME` |
+| `CRS-M1-00110` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00111` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00112` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00113` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00114` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00115` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00116` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00117` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00118` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00119` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00120` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00121` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00122` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00123` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00124` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00125` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00126` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00127` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00128` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00129` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00130` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00131` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00132` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00133` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00134` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00135` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00136` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00137` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00138` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00139` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00140` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00141` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00142` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00143` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00144` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00145` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00146` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00147` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00148` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00149` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00150` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00151` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00152` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00153` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00154` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00155` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00156` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00157` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00158` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00159` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00160` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00161` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00162` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00163` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00164` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00165` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00166` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00167` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00168` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00169` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00170` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00171` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00172` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00173` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00174` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00175` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00176` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00177` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00178` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00179` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00180` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00181` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00182` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00183` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00184` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00185` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00186` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 COMMON 时序、TFTP 传输或末块观测合同。 依赖：无 |
+| `CRS-M1-00187` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00188` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00189` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00190` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00191` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00192` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00193` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00194` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00195` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00196` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00197` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00198` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00199` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00200` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00201` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00202` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00203` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00204` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00205` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00206` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00207` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00208` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00209` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00210` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00211` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00212` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00213` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00214` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00215` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00216` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00217` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00218` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00219` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00220` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00221` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00222` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00223` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00224` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00225` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00226` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00227` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00228` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00229` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00230` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00231` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00232` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00233` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00234` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00235` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00236` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00237` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00238` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00239` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00240` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00241` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00242` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00243` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00244` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00245` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00246` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00247` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00248` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00249` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00250` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00251` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00252` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00253` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00254` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00255` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00256` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00257` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00258` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00259` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00260` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00261` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00262` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00263` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00264` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00265` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00266` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00267` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00268` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00269` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00270` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00271` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00272` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00273` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00274` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00275` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00276` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00277` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00278` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00279` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00280` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00281` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00282` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00283` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00284` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00285` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00286` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00287` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00288` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00289` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00290` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00291` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00292` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00293` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00294` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00295` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00296` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00297` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00298` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00299` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00300` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00301` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00302` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00303` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00304` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00305` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00306` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00307` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00308` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00309` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00310` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00311` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00312` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00313` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00314` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00315` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00316` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00317` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00318` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00319` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00320` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00321` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00322` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00323` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00324` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00325` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00326` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00327` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00328` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00329` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00330` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00331` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00332` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00333` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00334` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00335` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00336` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00337` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00338` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00339` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00340` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00341` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00342` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00343` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00344` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00345` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00346` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00347` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00348` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00349` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00350` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00351` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00352` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00353` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00354` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00355` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00356` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00357` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00358` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00359` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00360` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00361` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00362` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00363` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00364` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00365` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00366` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00367` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00368` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00369` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00370` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00371` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00372` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00373` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00374` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00375` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00376` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00377` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00378` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 有界离线 UPLOAD／INFORMATION 重建、时序、所有权或传输输入。 依赖：无 |
+| `CRS-M1-00379` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00380` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00381` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00382` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00383` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00384` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00385` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00386` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00387` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00388` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00389` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00390` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00391` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00392` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00393` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00394` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00395` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00396` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00397` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00398` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00399` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00400` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00401` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00402` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00403` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00404` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00405` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00406` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00407` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00408` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00409` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00410` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00411` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00412` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00413` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00414` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00415` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00416` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00417` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00418` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00419` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00420` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00421` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00422` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00423` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00424` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00426` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00427` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00428` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00429` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00430` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00431` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00432` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00433` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00434` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00435` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00436` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00437` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00438` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00439` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00440` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00441` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00442` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00443` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00444` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00445` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00446` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00447` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00448` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00449` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00450` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00451` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00452` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00453` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00454` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00455` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00456` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00457` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00458` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00459` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00460` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00461` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00462` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00463` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00464` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00465` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00466` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00467` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00468` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00469` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00470` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00471` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00472` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00473` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00474` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00475` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00476` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00477` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00478` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00479` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00480` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00481` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00482` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00483` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00484` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00485` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00486` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00487` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00488` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00489` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00490` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00491` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00492` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00493` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00494` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00495` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00496` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00497` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00498` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00499` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00500` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00501` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00502` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00503` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00504` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00505` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00506` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00507` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00508` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00509` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00510` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00511` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00512` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00513` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00514` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00515` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00516` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00517` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00518` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00519` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00520` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00521` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00522` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00523` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00524` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00525` | `LATER-SERVICE` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00526` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00527` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00528` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00529` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00530` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00531` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00532` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00533` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00534` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00535` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00536` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00537` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00538` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00539` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00540` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00541` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00542` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00543` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00544` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00545` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00546` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00547` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00548` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00549` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00550` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00551` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00552` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00553` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00554` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00555` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00556` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00557` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00558` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00559` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00560` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00561` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00562` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00563` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00564` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00565` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00566` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00567` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00568` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00569` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00570` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00571` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00572` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00573` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00574` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00575` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00576` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00577` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00578` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00579` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00580` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00581` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00582` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00583` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00584` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00585` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00586` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00587` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00588` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00589` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00590` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00591` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00592` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00593` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00594` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00595` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00596` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00597` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00598` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00599` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00600` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00601` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00602` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00603` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00604` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00605` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00606` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00607` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00608` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00609` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00610` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00611` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00612` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00613` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00614` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00615` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00616` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00617` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00618` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 TFTP 传输身份、选项确认、请求布局或终止重建。 依赖：无 |
+| `CRS-M1-00619` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00620` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 COMMON 时序、TFTP 传输或末块观测合同。 依赖：无 |
+| `CRS-M1-00621` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00622` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 TFTP 传输身份、选项确认、请求布局或终止重建。 依赖：无 |
+| `CRS-M1-00623` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00624` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00625` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00626` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00627` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00628` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00629` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00630` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00631` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00632` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 TFTP 传输身份、选项确认、请求布局或终止重建。 依赖：无 |
+| `CRS-M1-00633` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00634` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00635` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00636` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00637` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00638` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00639` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00640` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00641` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00642` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00643` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00644` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00645` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 TFTP 传输身份、选项确认、请求布局或终止重建。 依赖：无 |
+| `CRS-M1-00646` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 TFTP 传输身份、选项确认、请求布局或终止重建。 依赖：无 |
+| `CRS-M1-00647` | `FIRST-SLICE-IMPLEMENTATION` | `True` | `MOD-TRANSFER` | `PROTOCOL-EVENT` | `AC-SYN-TRANSFER` | 首轮 TFTP 传输身份、选项确认、请求布局或终止重建。 依赖：无 |
+| `CRS-M1-00648` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00649` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00650` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00651` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00652` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00653` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00654` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00655` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00656` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00657` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00658` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00659` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00660` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00661` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00662` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00663` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00664` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00665` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00666` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00667` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00668` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00669` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00670` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00671` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00672` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00673` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00674` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00675` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00676` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00677` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00678` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00679` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00680` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00681` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00682` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00683` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00684` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00685` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00686` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00687` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00688` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00689` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00690` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00691` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00692` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00693` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00694` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00695` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00696` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00697` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00698` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00699` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00700` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00701` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00702` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00703` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00704` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00705` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00706` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00707` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00708` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00709` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00710` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00711` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00712` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00713` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00714` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00715` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00716` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00717` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00718` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00719` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00720` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00721` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00722` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00723` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00724` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00725` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00726` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00727` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00728` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00729` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00730` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00731` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00732` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00733` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00734` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00735` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00736` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00737` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00738` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00739` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00740` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00741` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00742` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00743` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00744` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00745` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00746` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00747` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00748` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00749` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00750` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00751` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00752` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00753` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00754` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00755` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00756` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00757` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00758` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00759` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00760` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00761` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00762` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00763` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00764` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00765` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00766` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00767` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00768` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00769` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00770` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00771` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00772` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00773` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00774` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00775` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00776` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00777` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00778` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00779` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00780` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00781` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00782` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00783` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00784` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00785` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00786` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00787` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00788` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00789` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00790` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00791` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00792` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00793` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00794` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00795` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00796` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00797` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00798` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00799` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00800` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00801` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00802` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00803` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00804` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00805` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00806` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00807` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00808` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00809` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00810` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00811` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00812` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00813` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00814` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00815` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00816` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00817` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00818` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00819` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00820` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00821` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00822` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00823` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00824` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00825` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00826` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00827` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00828` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00829` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00830` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00831` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00832` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00833` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00834` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00835` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00836` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00837` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00838` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00839` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00840` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00841` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00842` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00843` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00844` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00845` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00846` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00847` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00848` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00849` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00850` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00851` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00852` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00853` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00854` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00855` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00856` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00857` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00858` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00859` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00860` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00861` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00862` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00863` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |
+| `CRS-M1-00864` | `NOT-TOOL-OBLIGATION` | `False` | `—` | `—` | `—` | 不属于首轮离线 UPLOAD／INFORMATION 切片。 依赖：无 |

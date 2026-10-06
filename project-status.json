@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0",
-  "updatedAt": "2026-09-25",
+  "updatedAt": "2026-10-06",
   "repository": {
     "role": "instance",
     "displayRole": "ARINC 615A Profile / Binding / Configuration / instance engineering and evidence owner",
@@ -12,11 +12,13 @@
     "summary": [
       "Specify the first offline UPLOAD/INFORMATION development slice under CR-2026-016 / DD-038–040: capture identity, reconstruction records, ownership, observation interpretation, bounded history compatibility and traceable reporting.",
       "Register the local historical corpus as exploratory development input only; file annotation is not wire outcome, independent case conclusion or experimental truth, and unknown metadata remains explicit.",
+      "Bind a finite explicit-path kernel, eight algorithm interfaces, seven experiment interfaces, concrete synthetic contract witnesses and a specification-closed/runtime-unestablished integrity dependency.",
       "This increment is a Draft specification, not a tool implementation, confirmation experiment, Configuration, M3 activation, capability or conformance claim."
     ],
     "summaryZh": [
       "在 CR-2026-016／DD-038～040 下规格化首轮离线 UPLOAD／INFORMATION 开发切片：捕获身份、重建记录、所有权、观测解释、有界历史相容更新和可追踪报告。",
       "本地历史语料仅登记为探索性开发输入；文件注释不等于线上结果、独立案例结论或实验真值，未知元数据保持显式。",
+      "绑定有限显式路径内核、八个算法接口、七个实验接口、具体合成合同见证，以及规格已关闭但运行能力未建立的完整性依赖。",
       "本增量是 Draft 规格，不是工具实现、确认性实验、Configuration、M3 激活、能力或符合性主张。"
     ],
     "stateChanges": [

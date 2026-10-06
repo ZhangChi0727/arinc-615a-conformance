@@ -33,9 +33,53 @@ def run_main(monkeypatch, tmp_path, capsys, data):
     return code, capsys.readouterr()
 
 
-def test_current_candidate_is_blocked_but_valid():
-    assert PACKAGE["reviewBoundary"]["readiness"] == "READINESS-BLOCKED"
+def test_current_candidate_has_closed_specification_gate():
+    assert PACKAGE["reviewBoundary"]["readiness"] == "CANDIDATE"
     assert errors(copy.deepcopy(PACKAGE)) == []
+
+
+def test_finite_kernel_and_experiment_bindings_are_relationally_closed():
+    assert len(PACKAGE["experimentInterfaceBindings"]) == 7
+    bad = copy.deepcopy(PACKAGE)
+    bad["algorithmRefinements"][0]["finiteKernelContract"]["mergeKey"].remove("historyProvenance")
+    assert any("whole-history provenance" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["experimentInterfaceBindings"][0]["inputTypes"] = ["fabricated"]
+    assert any("experiment I/O differs" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["experimentInterfaceBindings"][0]["failureBehavior"] = "fabricated"
+    assert any("failure/resource" in item for item in errors(bad))
+
+
+def test_integrity_specification_closure_does_not_claim_runtime_capability():
+    dependency = PACKAGE["implementationDependencies"][0]
+    assert dependency["specificationStatus"] == "CLOSED"
+    assert dependency["runtimeStatus"] == "NOT-ESTABLISHED"
+    assert dependency["affectsSpecificationReadiness"] is False
+    assert len(dependency["requirementIds"]) == 6
+    bad = copy.deepcopy(PACKAGE)
+    bad["implementationDependencies"][0]["failureBehavior"] = "return PASS"
+    assert any("runtime not-evaluated boundary" in item for item in errors(bad))
+
+
+def test_acceptance_fixtures_cannot_drift_from_controlled_cases():
+    bad = copy.deepcopy(PACKAGE)
+    bad["acceptanceCases"][0]["inputFixture"]["recordIds"] = ["PACKET-REF"]
+    assert any("fixture record identities differ" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["acceptanceCases"][0]["expectedOutputFixture"]["statement"] = "fabricated"
+    assert any("expected fixture differs" in item for item in errors(bad))
+
+
+def test_cross_path_matrix_and_first_batch_scenarios_are_production_checked():
+    assert len(PACKAGE["acceptanceMatrix"]) == 14
+    assert len(PACKAGE["experimentScenarios"]) == 8
+    bad = copy.deepcopy(PACKAGE)
+    bad["acceptanceMatrix"][0]["category"] = bad["acceptanceMatrix"][1]["category"]
+    assert any("each controlled category exactly once" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["experimentScenarios"][0]["algorithmVisibleFields"].append("truthRecord")
+    assert any("leaks evaluator truth" in item for item in errors(bad))
 
 
 def test_slice_identity_and_edge_rules():
@@ -74,32 +118,30 @@ def test_all_first_slice_references_are_closed_independently():
         assert errors(mutated), field
 
 
-def test_ready_is_stage_locked_even_with_trimmed_relations_or_evidence():
-    for evidence in ([], [""], ["   "], ["README.md"]):
+def test_candidate_requires_completion_evidence_and_closed_dependencies():
+    for evidence in ([], [""], ["   "]):
         mutated = copy.deepcopy(PACKAGE)
-        mutated["reviewBoundary"] = {"readiness": "READY", "claims": "SPECIFICATION-ONLY", "completionEvidence": evidence}
-        assert any("READY is prohibited" in item for item in errors(mutated))
-
-
-def test_ready_lock_survives_actual_pruning(monkeypatch, tmp_path, capsys):
+        mutated["reviewBoundary"]["completionEvidence"] = evidence
+        assert any("candidate readiness requires" in item for item in errors(mutated))
     mutated = copy.deepcopy(PACKAGE)
-    removed = {row["inputRequirementId"] for row in mutated["protocolInputDispositions"] if row["firstSliceRequired"] and row["disposition"] == "DEPENDENCY-BLOCKED"}
-    assert removed
-    for slice_ in mutated["implementationSlices"]:
-        slice_["requirementIds"] = [item for item in slice_["requirementIds"] if item not in removed]
-    for row in mutated["protocolInputDispositions"]:
-        if row["inputRequirementId"] in removed:
-            row["firstSliceRequired"] = False
-    mutated["reviewBoundary"] = {"readiness": "READY", "claims": "SPECIFICATION-ONLY", "completionEvidence": ["README.md"]}
+    mutated["implementationDependencies"][0]["specificationStatus"] = "OPEN"
+    mutated["implementationDependencies"][0]["affectsSpecificationReadiness"] = True
+    assert any("READINESS-BLOCKED" in item for item in errors(mutated))
+
+
+def test_candidate_gate_survives_actual_relation_pruning(monkeypatch, tmp_path, capsys):
+    mutated = copy.deepcopy(PACKAGE)
+    target = next(row for row in mutated["protocolInputDispositions"] if row["inputRequirementId"] == "CRS-M1-00076")
+    target["dependencyIds"] = []
     code, captured = run_main(monkeypatch, tmp_path, capsys, mutated)
     assert code == 1
-    assert "READY is prohibited" in captured.err
+    assert "dependency" in captured.err
 
 
 def test_main_returns_exit_codes_for_candidate_and_bad_binding(monkeypatch, tmp_path, capsys):
     code, captured = run_main(monkeypatch, tmp_path, capsys, copy.deepcopy(PACKAGE))
     assert code == 0
-    assert "readiness=READINESS-BLOCKED" in captured.out
+    assert "readiness=CANDIDATE" in captured.out
     bad = copy.deepcopy(PACKAGE)
     bad["inputBindings"][0]["sha256"] = "0" * 64
     code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
@@ -227,6 +269,11 @@ def test_blank_bilingual_algorithm_contract_fields_are_rejected_without_publishi
         ("acceptanceCases", "expectedContractOutputZh"),
         ("acceptanceCases", "prohibitedOutputZh"),
     )
+    package = tmp_path / "blank-package.json"
+    view = tmp_path / "blank-review.md"
+    monkeypatch.setattr(SYNC, "PACKAGE", package)
+    monkeypatch.setattr(SYNC, "VIEW", view)
+    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--write"])
     for collection, field in mutations:
         bad = copy.deepcopy(PACKAGE)
         if collection == "interfaceBindings":
@@ -237,6 +284,10 @@ def test_blank_bilingual_algorithm_contract_fields_are_rejected_without_publishi
         assert any(f"blank {field}" in error for error in errors(bad))
         code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
         assert code == 1 and f"blank {field}" in captured.err
+        package.write_text(json.dumps(bad), encoding="utf-8")
+        view.write_text("preserve-view\n", encoding="utf-8")
+        assert SYNC.main() == 1
+        assert view.read_text(encoding="utf-8") == "preserve-view\n"
 
 
 def test_bound_inputs_are_consumed_once_from_git_blobs_not_worktree(monkeypatch):
@@ -619,7 +670,7 @@ def test_oneof_branch_selection_and_leaf_diagnostics_are_order_independent(monke
             assert errors(candidate) == []
             code, captured = run_main(monkeypatch, tmp_path, capsys, candidate)
             assert code == 0
-            assert "readiness=READINESS-BLOCKED" in captured.out
+            assert "readiness=CANDIDATE" in captured.out
 
     record = copy.deepcopy(PACKAGE["recordContracts"][0])
     record["fields"].append("meta")
@@ -694,7 +745,7 @@ def test_nested_oneof_uses_complete_schema_semantics_at_every_depth(monkeypatch,
                 assert errors(candidate) == []
                 code, captured = run_main(monkeypatch, tmp_path, capsys, candidate)
                 assert code == 0
-                assert "readiness=READINESS-BLOCKED" in captured.out
+                assert "readiness=CANDIDATE" in captured.out
 
     wrapped = copy.deepcopy(PACKAGE)
     capture = wrapped["recordContracts"][0]
@@ -932,8 +983,8 @@ def test_review_view_escapes_table_rationales_without_losing_row_structure():
     chinese = view.split("## 全部需求处置\n", 1)[1]
     english_row = next(line for line in english.splitlines() if f"`{row['inputRequirementId']}`" in line)
     chinese_row = next(line for line in chinese.splitlines() if f"`{row['inputRequirementId']}`" in line)
-    assert english_row.endswith("English left \\| right<br>next line |")
-    assert chinese_row.endswith("中文左侧 \\| 右侧<br>下一行 |")
+    assert english_row.endswith("English left \\| right<br>next line Dependencies: none |")
+    assert chinese_row.endswith("中文左侧 \\| 右侧<br>下一行 依赖：无 |")
     assert sum(char == "|" and (index == 0 or english_row[index - 1] != "\\") for index, char in enumerate(english_row)) == 8
     assert sum(char == "|" and (index == 0 or chinese_row[index - 1] != "\\") for index, char in enumerate(chinese_row)) == 8
 

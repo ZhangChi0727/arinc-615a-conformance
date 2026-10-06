@@ -460,6 +460,38 @@ def package_errors(data: dict) -> list[str]:
                     errors.append(f"{binding['interfaceId']} has blank {field}")
     if set(bound_interface_ids) != interface_ids:
         errors.append("algorithm interface bindings must equal the interface registry")
+    for refinement in data["algorithmRefinements"]:
+        finite = refinement["finiteKernelContract"]
+        required_frontier = {"hypothesisId", "controlStateId", "clockConstraint", "typedStore", "pathLength", "historyProvenance", "status"}
+        if set(finite["frontierEntryFields"]) != required_frontier:
+            errors.append(f"{refinement['id']} finite frontier fields are incomplete")
+        if not set(finite["mergeKey"]).issubset(required_frontier) or "historyProvenance" not in finite["mergeKey"]:
+            errors.append(f"{refinement['id']} merge key may lose whole-history provenance")
+        expected_mapping = {binding["interfaceId"] for binding in refinement["interfaceBindings"]}
+        if set(finite["resultMapping"]) != expected_mapping:
+            errors.append(f"{refinement['id']} result mapping differs from its algorithm interfaces")
+        for binding in refinement["interfaceBindings"]:
+            mapping = finite["resultMapping"].get(binding["interfaceId"], {})
+            if mapping.get("success") != binding["outputTypes"] or mapping.get("failure") != binding["failureTags"]:
+                errors.append(f"{refinement['id']} result mapping is stale for {binding['interfaceId']}")
+    experiment_registry = {item["id"]: item for item in registry.get("experimentInterfaces", [])}
+    experiment_bindings = data["experimentInterfaceBindings"]
+    experiment_binding_ids = [item["interfaceId"] for item in experiment_bindings]
+    if len(experiment_binding_ids) != len(set(experiment_binding_ids)) or set(experiment_binding_ids) != set(experiment_registry):
+        errors.append("experiment interface bindings must equal the controlled registry")
+    for binding in experiment_bindings:
+        source = experiment_registry.get(binding["interfaceId"])
+        if source is None:
+            continue
+        if binding["inputTypes"] != source["inputs"] or binding["outputTypes"] != source["outputs"]:
+            errors.append(f"{binding['interfaceId']} experiment I/O differs from the registry")
+        if binding["failureBehavior"] != source["failure"] or binding["resourceContract"] != source["resourceBasis"]:
+            errors.append(f"{binding['interfaceId']} experiment failure/resource contract differs from the registry")
+        if not set(binding["acceptanceCaseIds"]).issubset(cases):
+            errors.append(f"{binding['interfaceId']} has an unknown experiment acceptance case")
+        for field in ("readOwnership", "readOwnershipZh", "writeOwnership", "writeOwnershipZh", "failureBehaviorZh", "resourceContractZh", "implementationLocation"):
+            if not binding[field].strip():
+                errors.append(f"{binding['interfaceId']} has blank {field}")
     for parameter in data["runtimeParameterContracts"]:
         if not set(parameter["acceptanceCaseIds"]).issubset(cases):
             errors.append(f"{parameter['id']} has an unknown acceptance case")
@@ -478,10 +510,32 @@ def package_errors(data: dict) -> list[str]:
         for field in ("title", "titleZh", "expectedContractOutput", "expectedContractOutputZh", "prohibitedOutput", "prohibitedOutputZh", "basis", "basisZh"):
             if not case[field].strip():
                 errors.append(f"{case['id']} has blank {field}")
+        if case["inputFixture"].get("recordIds") != case["inputRecordIds"]:
+            errors.append(f"{case['id']} fixture record identities differ from the case inputs")
+        if case["expectedOutputFixture"].get("statement") != case["expectedContractOutput"]:
+            errors.append(f"{case['id']} expected fixture differs from the controlled expected output")
+        if not case["prohibitedOutputPaths"] or not case["negativeVariants"]:
+            errors.append(f"{case['id']} lacks concrete prohibited outputs or negative variants")
         for tool_id in case["toolRequirementIds"]:
             tool = tool_by_id.get(tool_id)
             if tool is not None and tool["ownerModuleId"] not in case["moduleIds"]:
                 errors.append(f"{case['id']} tool {tool_id} omits owner module {tool['ownerModuleId']}")
+    required_matrix_categories = {"corpus identity", "label boundary", "capture format", "IP reassembly", "TFTP reconstruction", "field contracts", "matching and no response", "timing and U", "prediction and admission", "history update", "state and return", "resource accounting", "experiment boundary", "controlled drift"}
+    matrix_ids = [item["id"] for item in data["acceptanceMatrix"]]
+    if len(matrix_ids) != len(set(matrix_ids)) or {item["category"] for item in data["acceptanceMatrix"]} != required_matrix_categories:
+        errors.append("acceptanceMatrix must cover each controlled category exactly once")
+    if any(not item[field].strip() for item in data["acceptanceMatrix"] for field in ("category", "categoryZh", "positiveInput", "positiveInputZh", "expectedOutput", "expectedOutputZh", "negativeMutation", "negativeMutationZh", "expectedRejection", "expectedRejectionZh")):
+        errors.append("acceptanceMatrix contains a blank executable specification")
+    scenario_ids = [item["id"] for item in data["experimentScenarios"]]
+    if len(scenario_ids) != len(set(scenario_ids)) or len(scenario_ids) < 8:
+        errors.append("experimentScenarios must contain eight unique first-batch scenes")
+    for scenario in data["experimentScenarios"]:
+        for field in ("title", "titleZh", "serviceScope", "controllableAction", "faultConfirmation", "independentTruthSource", "resetContract", "timingContract", "resourceContract"):
+            if not scenario[field].strip():
+                errors.append(f"{scenario['id']} has blank {field}")
+        visible = " ".join(scenario["algorithmVisibleFields"]).lower()
+        if "truth" in visible or "injection plan" in visible:
+            errors.append(f"{scenario['id']} leaks evaluator truth into algorithm-visible fields")
     for tool in data["toolRequirements"]:
         case = case_by_id.get(tool["acceptanceCaseId"])
         if case is not None:
@@ -662,12 +716,33 @@ def package_errors(data: dict) -> list[str]:
                     errors.append(f"{tool['id']} has an unknown protocol traceability reference")
             else:
                 errors.append(f"{tool['id']} has an unsupported traceability reference")
+    dependency_by_id = {item["id"]: item for item in data["implementationDependencies"]}
+    if len(dependency_by_id) != len(data["implementationDependencies"]):
+        errors.append("implementationDependencies repeats an ID")
+    for dependency in data["implementationDependencies"]:
+        if not set(dependency["requirementIds"]).issubset(expected):
+            errors.append(f"{dependency['id']} has an unknown requirement")
+        if not set(dependency["moduleIds"]).issubset(modules) or not set(dependency["recordIds"]).issubset(records) or not set(dependency["acceptanceCaseIds"]).issubset(cases):
+            errors.append(f"{dependency['id']} has an unknown contract closure reference")
+        for field in ("title", "titleZh", "affectedJudgments", "affectedJudgmentsZh", "specificationContract", "specificationContractZh", "failureBehavior", "failureBehaviorZh"):
+            if not dependency[field].strip():
+                errors.append(f"{dependency['id']} has blank {field}")
+        if dependency["specificationStatus"] == "CLOSED" and (not dependency["closureEvidence"] or dependency["affectsSpecificationReadiness"]):
+            errors.append(f"{dependency['id']} closed specification status is inconsistent")
+        if dependency["runtimeStatus"] == "NOT-ESTABLISHED" and "NOT-EVALUATED" not in dependency["failureBehavior"]:
+            errors.append(f"{dependency['id']} must preserve the runtime not-evaluated boundary")
+        for requirement_id in dependency["requirementIds"]:
+            row = next((item for item in rows if item["inputRequirementId"] == requirement_id), None)
+            if row is None or dependency["id"] not in row.get("dependencyIds", []):
+                errors.append(f"{dependency['id']} requirement {requirement_id} lacks its dependency relation")
     for row in rows:
         source = source_by_id.get(row["inputRequirementId"])
         if source and row["firstSliceRequired"] != (row["inputRequirementId"] in first_slice_ids):
             errors.append(f"{row['inputRequirementId']} has an incorrect firstSliceRequired classification")
-        if source and row["inputRequirementId"] in first_slice_ids and "CRC" in set(source["semantic"].get("objects") or []) and row["disposition"] != "DEPENDENCY-BLOCKED":
-            errors.append(f"{row['inputRequirementId']} must remain dependency-blocked")
+        for dependency_id in row.get("dependencyIds", []):
+            dependency = dependency_by_id.get(dependency_id)
+            if dependency is None or row["inputRequirementId"] not in dependency["requirementIds"]:
+                errors.append(f"{row['inputRequirementId']} has an invalid dependency relation")
         if row["firstSliceRequired"] and row["disposition"] not in {"FIRST-SLICE-IMPLEMENTATION", "DEPENDENCY-BLOCKED"}:
             errors.append(f"{row['inputRequirementId']} required use has no implementation or dependency disposition")
         if row["disposition"] == "FIRST-SLICE-IMPLEMENTATION":
@@ -680,8 +755,16 @@ def package_errors(data: dict) -> list[str]:
     blocked = [row for row in rows if row["disposition"] == "DEPENDENCY-BLOCKED" and row.get("firstSliceRequired")]
     if blocked and data["reviewBoundary"]["readiness"] != "READINESS-BLOCKED":
         errors.append("required blocked input requires READINESS-BLOCKED")
+    open_spec_dependencies = [item for item in data["implementationDependencies"] if item["specificationStatus"] != "CLOSED" or item["affectsSpecificationReadiness"]]
+    if open_spec_dependencies and data["reviewBoundary"]["readiness"] != "READINESS-BLOCKED":
+        errors.append("open specification dependency requires READINESS-BLOCKED")
+    if data["reviewBoundary"]["readiness"] in {"CANDIDATE", "READY"}:
+        evidence = data["reviewBoundary"]["completionEvidence"]
+        if blocked or open_spec_dependencies or not evidence or not all(isinstance(item, str) and item.strip() for item in evidence):
+            errors.append("candidate readiness requires closed specification dependencies and completion evidence")
+        if any(row["disposition"] != "FIRST-SLICE-IMPLEMENTATION" and row["firstSliceRequired"] for row in rows):
+            errors.append("candidate readiness cannot retain a required non-implementation disposition")
     if data["reviewBoundary"]["readiness"] == "READY":
-        errors.append("READY is prohibited until the complete readiness gate is implemented")
         if blocked or not all(isinstance(item, str) and item.strip() for item in data["reviewBoundary"]["completionEvidence"]):
             errors.append("READY requires no required blocks and nonempty completion evidence")
         if any(row["disposition"] != "FIRST-SLICE-IMPLEMENTATION" and row["firstSliceRequired"] for row in rows):

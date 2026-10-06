@@ -765,10 +765,16 @@
     },
     {
       "inputRequirementId": "CRS-M1-00076",
-      "disposition": "DEPENDENCY-BLOCKED",
-      "rationale": "First-slice input requires a separately established integrity dependency.",
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "The first-slice specification preserves the CRC-bearing protocol obligation and source parameters; runtime validation remains explicitly not established pending implementation, configuration and execution evidence.",
       "firstSliceRequired": true,
-      "rationaleZh": "首轮输入需要单独建立的完整性依赖。"
+      "rationaleZh": "首轮规格保留带 CRC 的协议义务和来源参数；运行时验证仍明确为未建立，等待实现、配置和执行证据。",
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "TRANSFER-RECORD",
+      "acceptanceCaseId": "AC-SYN-INTEGRITY",
+      "dependencyIds": [
+        "DEP-INTEGRITY-RUNTIME"
+      ]
     },
     {
       "inputRequirementId": "CRS-M1-00077",
@@ -822,10 +828,16 @@
     },
     {
       "inputRequirementId": "CRS-M1-00082",
-      "disposition": "DEPENDENCY-BLOCKED",
-      "rationale": "First-slice input requires a separately established integrity dependency.",
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "The first-slice specification preserves the CRC-bearing protocol obligation and source parameters; runtime validation remains explicitly not established pending implementation, configuration and execution evidence.",
       "firstSliceRequired": true,
-      "rationaleZh": "首轮输入需要单独建立的完整性依赖。"
+      "rationaleZh": "首轮规格保留带 CRC 的协议义务和来源参数；运行时验证仍明确为未建立，等待实现、配置和执行证据。",
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "TRANSFER-RECORD",
+      "acceptanceCaseId": "AC-SYN-INTEGRITY",
+      "dependencyIds": [
+        "DEP-INTEGRITY-RUNTIME"
+      ]
     },
     {
       "inputRequirementId": "CRS-M1-00083",
@@ -849,24 +861,42 @@
     },
     {
       "inputRequirementId": "CRS-M1-00085",
-      "disposition": "DEPENDENCY-BLOCKED",
-      "rationale": "First-slice input requires a separately established integrity dependency.",
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "The first-slice specification preserves the CRC-bearing protocol obligation and source parameters; runtime validation remains explicitly not established pending implementation, configuration and execution evidence.",
       "firstSliceRequired": true,
-      "rationaleZh": "首轮输入需要单独建立的完整性依赖。"
+      "rationaleZh": "首轮规格保留带 CRC 的协议义务和来源参数；运行时验证仍明确为未建立，等待实现、配置和执行证据。",
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "TRANSFER-RECORD",
+      "acceptanceCaseId": "AC-SYN-INTEGRITY",
+      "dependencyIds": [
+        "DEP-INTEGRITY-RUNTIME"
+      ]
     },
     {
       "inputRequirementId": "CRS-M1-00086",
-      "disposition": "DEPENDENCY-BLOCKED",
-      "rationale": "First-slice input requires a separately established integrity dependency.",
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "The first-slice specification preserves the CRC-bearing protocol obligation and source parameters; runtime validation remains explicitly not established pending implementation, configuration and execution evidence.",
       "firstSliceRequired": true,
-      "rationaleZh": "首轮输入需要单独建立的完整性依赖。"
+      "rationaleZh": "首轮规格保留带 CRC 的协议义务和来源参数；运行时验证仍明确为未建立，等待实现、配置和执行证据。",
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "TRANSFER-RECORD",
+      "acceptanceCaseId": "AC-SYN-INTEGRITY",
+      "dependencyIds": [
+        "DEP-INTEGRITY-RUNTIME"
+      ]
     },
     {
       "inputRequirementId": "CRS-M1-00087",
-      "disposition": "DEPENDENCY-BLOCKED",
-      "rationale": "First-slice input requires a separately established integrity dependency.",
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "The first-slice specification preserves the CRC-bearing protocol obligation and source parameters; runtime validation remains explicitly not established pending implementation, configuration and execution evidence.",
       "firstSliceRequired": true,
-      "rationaleZh": "首轮输入需要单独建立的完整性依赖。"
+      "rationaleZh": "首轮规格保留带 CRC 的协议义务和来源参数；运行时验证仍明确为未建立，等待实现、配置和执行证据。",
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "TRANSFER-RECORD",
+      "acceptanceCaseId": "AC-SYN-INTEGRITY",
+      "dependencyIds": [
+        "DEP-INTEGRITY-RUNTIME"
+      ]
     },
     {
       "inputRequirementId": "CRS-M1-00088",
@@ -1077,10 +1107,16 @@
     },
     {
       "inputRequirementId": "CRS-M1-00109",
-      "disposition": "DEPENDENCY-BLOCKED",
-      "rationale": "First-slice input requires a separately established integrity dependency.",
+      "disposition": "FIRST-SLICE-IMPLEMENTATION",
+      "rationale": "The first-slice specification preserves the CRC-bearing protocol obligation and source parameters; runtime validation remains explicitly not established pending implementation, configuration and execution evidence.",
       "firstSliceRequired": true,
-      "rationaleZh": "首轮输入需要单独建立的完整性依赖。"
+      "rationaleZh": "首轮规格保留带 CRC 的协议义务和来源参数；运行时验证仍明确为未建立，等待实现、配置和执行证据。",
+      "moduleId": "MOD-TRANSFER",
+      "recordId": "TRANSFER-RECORD",
+      "acceptanceCaseId": "AC-SYN-INTEGRITY",
+      "dependencyIds": [
+        "DEP-INTEGRITY-RUNTIME"
+      ]
     },
     {
       "inputRequirementId": "CRS-M1-00110",
@@ -8421,7 +8457,8 @@
       ],
       "outputValueMappings": [],
       "acceptanceCaseIds": [
-        "AC-SYN-TRANSFER"
+        "AC-SYN-TRANSFER",
+        "AC-EXP-SCENE"
       ],
       "runtimeParameterIds": [
         "RP-RESOURCE"
@@ -8593,7 +8630,8 @@
       ],
       "outputValueMappings": [],
       "acceptanceCaseIds": [
-        "AC-SYN-TRANSFER"
+        "AC-SYN-TRANSFER",
+        "AC-SYN-INTEGRITY"
       ],
       "runtimeParameterIds": [
         "RP-RESOURCE"
@@ -8760,7 +8798,10 @@
       ],
       "outputValueMappings": [],
       "acceptanceCaseIds": [
-        "AC-SYN-TRANSFER"
+        "AC-SYN-TRANSFER",
+        "AC-EXP-TRUTH",
+        "AC-EXP-CAUSAL",
+        "AC-EXP-DENOMINATOR"
       ],
       "runtimeParameterIds": [
         "RP-RESOURCE"
@@ -9062,7 +9103,177 @@
           "readOwnershipZh": "仅读取已计费资源、保留历史和具名残余。",
           "writeOwnershipZh": "仅写入可审计停止追踪。"
         }
-      ]
+      ],
+      "finiteKernelContract": {
+        "modelDomain": {
+          "hypotheses": "finite stable IDs",
+          "controlStates": "finite stable IDs",
+          "clocks": "finite named clocks with exact rational bounds",
+          "variables": "finite typed scalar domains"
+        },
+        "guardSyntax": [
+          "TRUE",
+          "AND",
+          "OR",
+          "NOT",
+          "STATE-EQUALS",
+          "RATIONAL-INTERVAL-CONTAINS",
+          "TYPED-FIELD-EQUALS"
+        ],
+        "updateSyntax": [
+          "STATE-ASSIGN",
+          "CLOCK-RESET-TO-ZERO",
+          "TYPED-FIELD-ASSIGN"
+        ],
+        "frontierEntryFields": [
+          "hypothesisId",
+          "controlStateId",
+          "clockConstraint",
+          "typedStore",
+          "pathLength",
+          "historyProvenance",
+          "status"
+        ],
+        "propagationSteps": [
+          "Validate the model and select-time snapshot.",
+          "Expand enabled transitions without dropping correlation constraints.",
+          "Intersect observation and timing constraints.",
+          "Retain each feasible successor with whole-history provenance.",
+          "Merge only entries with an identical merge key.",
+          "Return conservative unknown on unsupported syntax or any configured limit."
+        ],
+        "propagationStepsZh": [
+          "校验模型和选择时快照。",
+          "展开已启用转换且不丢失相关约束。",
+          "求交观测与时序约束。",
+          "保留每个可行后继及完整历史来源。",
+          "仅合并键完全相同的条目。",
+          "遇到不支持语法或任一配置限额时返回保守未知。"
+        ],
+        "mergeKey": [
+          "hypothesisId",
+          "controlStateId",
+          "clockConstraint",
+          "typedStore",
+          "historyProvenance"
+        ],
+        "limitBehavior": {
+          "pathLength": "CONSERVATIVE-UNKNOWN",
+          "frontierStates": "CONSERVATIVE-UNKNOWN",
+          "hypotheses": "SPEC-ERROR",
+          "actions": "ADMIT-REFUSED",
+          "observationClasses": "PredictionGapError"
+        },
+        "resultMapping": {
+          "IF-PRED-OBS": {
+            "success": [
+              "currentlyValidNonemptyClasses",
+              "PredictionGapError"
+            ],
+            "failure": [
+              "PredictionGapError",
+              "RESOURCE-UNKNOWN"
+            ]
+          },
+          "IF-SELECT-ADMIT": {
+            "success": [
+              "kind",
+              "tStar",
+              "S",
+              "admitA2A5"
+            ],
+            "failure": [
+              "PredictionGapError",
+              "SPEC-ERROR",
+              "ADMIT-REFUSED"
+            ]
+          },
+          "IF-EXECUTE-RECORD": {
+            "success": [
+              "record",
+              "effectClass",
+              "correlationId"
+            ],
+            "failure": [
+              "CONFIRMED-NOT-SENT",
+              "UNKNOWN-EFFECT"
+            ]
+          },
+          "IF-OBS-INTERPRET": {
+            "success": [
+              "Iz",
+              "effectClass",
+              "summaryConfirmed",
+              "postSummary",
+              "ownershipResult",
+              "measurementInterval"
+            ],
+            "failure": [
+              "ERROR",
+              "INCONCLUSIVE",
+              "UNKNOWN-EFFECT"
+            ]
+          },
+          "IF-PREP-RECOVER": {
+            "success": [
+              "targetConfirmed",
+              "summaryConfirmed",
+              "prepError",
+              "ineligible",
+              "declaredTarget",
+              "evidence",
+              "postSummary"
+            ],
+            "failure": [
+              "UNKNOWN-EFFECT",
+              "PREP-ERROR",
+              "CONFIRMED-NOT-SENT"
+            ]
+          },
+          "IF-HIST-UPDATE": {
+            "success": [
+              "HistoryHandlePrime",
+              "Hprime",
+              "Stop-Empty"
+            ],
+            "failure": [
+              "Stop-Empty",
+              "RESOURCE-UNKNOWN",
+              "CONSERVATIVE-UNKNOWN"
+            ]
+          },
+          "IF-EQUIV": {
+            "success": [
+              "established",
+              "notEstablished",
+              "unknown"
+            ],
+            "failure": [
+              "UNKNOWN",
+              "RESOURCE-UNKNOWN"
+            ]
+          },
+          "IF-RESOURCE-STOP": {
+            "success": [
+              "stopClass",
+              "finalH",
+              "trace"
+            ],
+            "failure": [
+              "Stop-Budget",
+              "Stop-Error",
+              "Stop-645"
+            ]
+          }
+        },
+        "complexityFactors": [
+          "hypothesis-count",
+          "action-count",
+          "observation-class-count",
+          "path-length",
+          "frontier-state-count"
+        ]
+      }
     }
   ],
   "runtimeParameterContracts": [
@@ -9249,7 +9460,36 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "expectedContractOutputZh": "保留来源的传输候选和带类型事件保留缺口、重传与选项证据。",
-      "prohibitedOutputZh": "不得产生协议 PASS/FAIL、根因标签或虚构的已接受选项。"
+      "prohibitedOutputZh": "不得产生协议 PASS/FAIL、根因标签或虚构的已接受选项。",
+      "inputFixture": {
+        "caseId": "AC-SYN-TRANSFER",
+        "recordIds": [
+          "CAPTURE-IDENTITY",
+          "PACKET-REF",
+          "DATAGRAM-RECORD",
+          "TRANSFER-RECORD",
+          "OWNERSHIP-RESULT",
+          "OBSERVATION-ASSESSMENT",
+          "HISTORY-HANDLE",
+          "FINDING-RECORD"
+        ],
+        "condition": "declared-positive"
+      },
+      "expectedOutputFixture": {
+        "outcome": "CONTRACT-EXPECTED",
+        "statement": "A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence."
+      },
+      "prohibitedOutputPaths": [
+        "protocolVerdictWithoutMeasurement",
+        "independentTruthFromExploratoryInput"
+      ],
+      "negativeVariants": [
+        {
+          "id": "AC-SYN-TRANSFER-NEG",
+          "mutation": "violate the named precondition",
+          "expectedRejection": "SPEC-ERROR"
+        }
+      ]
     },
     {
       "id": "AC-SYN-PREDICTION",
@@ -9276,7 +9516,30 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "expectedContractOutputZh": "在读取任何 TEST 评分前，将有限当前投影标记为 OK 或 GAP。",
-      "prohibitedOutputZh": "空投影不得记为零分，也不得写入历史。"
+      "prohibitedOutputZh": "空投影不得记为零分，也不得写入历史。",
+      "inputFixture": {
+        "caseId": "AC-SYN-PREDICTION",
+        "recordIds": [
+          "HISTORY-HANDLE",
+          "OBSERVATION-ASSESSMENT"
+        ],
+        "condition": "declared-positive"
+      },
+      "expectedOutputFixture": {
+        "outcome": "CONTRACT-EXPECTED",
+        "statement": "A finite current projection is tagged OK or GAP before any TEST score is read."
+      },
+      "prohibitedOutputPaths": [
+        "protocolVerdictWithoutMeasurement",
+        "independentTruthFromExploratoryInput"
+      ],
+      "negativeVariants": [
+        {
+          "id": "AC-SYN-PREDICTION-NEG",
+          "mutation": "violate the named precondition",
+          "expectedRejection": "SPEC-ERROR"
+        }
+      ]
     },
     {
       "id": "AC-SYN-SELECT",
@@ -9303,7 +9566,30 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "expectedContractOutputZh": "仅对可负担且有区分力的 TEST 作 minimax 评分，然后按成本和稳定 action ID 决胜。",
-      "prohibitedOutputZh": "无信息 TEST 不得成为 A2，Prep/Recover 不得按 TEST 评分。"
+      "prohibitedOutputZh": "无信息 TEST 不得成为 A2，Prep/Recover 不得按 TEST 评分。",
+      "inputFixture": {
+        "caseId": "AC-SYN-SELECT",
+        "recordIds": [
+          "HISTORY-HANDLE",
+          "OBSERVATION-ASSESSMENT"
+        ],
+        "condition": "declared-positive"
+      },
+      "expectedOutputFixture": {
+        "outcome": "CONTRACT-EXPECTED",
+        "statement": "Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID."
+      },
+      "prohibitedOutputPaths": [
+        "protocolVerdictWithoutMeasurement",
+        "independentTruthFromExploratoryInput"
+      ],
+      "negativeVariants": [
+        {
+          "id": "AC-SYN-SELECT-NEG",
+          "mutation": "violate the named precondition",
+          "expectedRejection": "SPEC-ERROR"
+        }
+      ]
     },
     {
       "id": "AC-SYN-OBSERVATION",
@@ -9331,7 +9617,31 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "expectedContractOutputZh": "有效区间产生 PASS、FAIL 或 INCONCLUSIVE；无效时序证据产生 ERROR。",
-      "prohibitedOutputZh": "不得将 ERROR 或 INCONCLUSIVE 降级为 FAIL。"
+      "prohibitedOutputZh": "不得将 ERROR 或 INCONCLUSIVE 降级为 FAIL。",
+      "inputFixture": {
+        "caseId": "AC-SYN-OBSERVATION",
+        "recordIds": [
+          "OWNERSHIP-RESULT",
+          "PROTOCOL-EVENT",
+          "OBSERVATION-ASSESSMENT"
+        ],
+        "condition": "declared-positive"
+      },
+      "expectedOutputFixture": {
+        "outcome": "CONTRACT-EXPECTED",
+        "statement": "Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR."
+      },
+      "prohibitedOutputPaths": [
+        "protocolVerdictWithoutMeasurement",
+        "independentTruthFromExploratoryInput"
+      ],
+      "negativeVariants": [
+        {
+          "id": "AC-SYN-OBSERVATION-NEG",
+          "mutation": "violate the named precondition",
+          "expectedRejection": "SPEC-ERROR"
+        }
+      ]
     },
     {
       "id": "AC-SYN-PREP-RECOVER",
@@ -9358,7 +9668,30 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "expectedContractOutputZh": "Prep/Recover 返回确认字段；只有 S8/S9 可提交已知状态或后继摘要。",
-      "prohibitedOutputZh": "未确认后继不得保留陈旧已知状态或直接写入 Γ。"
+      "prohibitedOutputZh": "未确认后继不得保留陈旧已知状态或直接写入 Γ。",
+      "inputFixture": {
+        "caseId": "AC-SYN-PREP-RECOVER",
+        "recordIds": [
+          "HISTORY-HANDLE",
+          "OBSERVATION-ASSESSMENT"
+        ],
+        "condition": "declared-positive"
+      },
+      "expectedOutputFixture": {
+        "outcome": "CONTRACT-EXPECTED",
+        "statement": "Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary."
+      },
+      "prohibitedOutputPaths": [
+        "protocolVerdictWithoutMeasurement",
+        "independentTruthFromExploratoryInput"
+      ],
+      "negativeVariants": [
+        {
+          "id": "AC-SYN-PREP-RECOVER-NEG",
+          "mutation": "violate the named precondition",
+          "expectedRejection": "SPEC-ERROR"
+        }
+      ]
     },
     {
       "id": "AC-SYN-HISTORY",
@@ -9385,7 +9718,30 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "expectedContractOutputZh": "规范化有效结果推进带版本完整历史前沿，且不复活已排除假设。",
-      "prohibitedOutputZh": "H prime 不得替换为 Iz，资源耗尽不得视为不相容。"
+      "prohibitedOutputZh": "H prime 不得替换为 Iz，资源耗尽不得视为不相容。",
+      "inputFixture": {
+        "caseId": "AC-SYN-HISTORY",
+        "recordIds": [
+          "HISTORY-HANDLE",
+          "OBSERVATION-ASSESSMENT"
+        ],
+        "condition": "declared-positive"
+      },
+      "expectedOutputFixture": {
+        "outcome": "CONTRACT-EXPECTED",
+        "statement": "A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses."
+      },
+      "prohibitedOutputPaths": [
+        "protocolVerdictWithoutMeasurement",
+        "independentTruthFromExploratoryInput"
+      ],
+      "negativeVariants": [
+        {
+          "id": "AC-SYN-HISTORY-NEG",
+          "mutation": "violate the named precondition",
+          "expectedRejection": "SPEC-ERROR"
+        }
+      ]
     },
     {
       "id": "AC-SYN-EQUIVALENCE",
@@ -9411,7 +9767,29 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "expectedContractOutputZh": "established 需要声明有限域的证明依据；否则结果为 unknown 或 notEstablished。",
-      "prohibitedOutputZh": "没有即时可区分 TEST 不得视为等价证明。"
+      "prohibitedOutputZh": "没有即时可区分 TEST 不得视为等价证明。",
+      "inputFixture": {
+        "caseId": "AC-SYN-EQUIVALENCE",
+        "recordIds": [
+          "HISTORY-HANDLE"
+        ],
+        "condition": "declared-positive"
+      },
+      "expectedOutputFixture": {
+        "outcome": "CONTRACT-EXPECTED",
+        "statement": "An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished."
+      },
+      "prohibitedOutputPaths": [
+        "protocolVerdictWithoutMeasurement",
+        "independentTruthFromExploratoryInput"
+      ],
+      "negativeVariants": [
+        {
+          "id": "AC-SYN-EQUIVALENCE-NEG",
+          "mutation": "violate the named precondition",
+          "expectedRejection": "SPEC-ERROR"
+        }
+      ]
     },
     {
       "id": "AC-SYN-RESOURCE-STOP",
@@ -9439,24 +9817,1022 @@
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "expectedContractOutputZh": "互斥停止顺序保留具名 645 残余，并将重试耗尽报告为 Stop-Error。",
-      "prohibitedOutputZh": "重试耗尽不得成为 Stop-Budget，normal 单例不得成为协议 PASS。"
+      "prohibitedOutputZh": "重试耗尽不得成为 Stop-Budget，normal 单例不得成为协议 PASS。",
+      "inputFixture": {
+        "caseId": "AC-SYN-RESOURCE-STOP",
+        "recordIds": [
+          "HISTORY-HANDLE",
+          "FINDING-RECORD"
+        ],
+        "condition": "declared-positive"
+      },
+      "expectedOutputFixture": {
+        "outcome": "CONTRACT-EXPECTED",
+        "statement": "Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error."
+      },
+      "prohibitedOutputPaths": [
+        "protocolVerdictWithoutMeasurement",
+        "independentTruthFromExploratoryInput"
+      ],
+      "negativeVariants": [
+        {
+          "id": "AC-SYN-RESOURCE-STOP-NEG",
+          "mutation": "violate the named precondition",
+          "expectedRejection": "SPEC-ERROR"
+        }
+      ]
+    },
+    {
+      "id": "AC-SYN-INTEGRITY",
+      "kind": "SYNTHETIC-NONTRUTH",
+      "title": "Bounded integrity specification witness",
+      "titleZh": "有界完整性规格见证",
+      "inputRecordIds": [
+        "TRANSFER-RECORD"
+      ],
+      "expectedContractOutput": "CRC-bearing inputs retain source parameters and yield NOT-EVALUATED until implementation, configuration and execution evidence exist.",
+      "prohibitedOutput": "No CRC PASS/FAIL or capability establishment is inferred from source binding.",
+      "toolRequirementIds": [
+        "TR-PROTOCOL-EVENT"
+      ],
+      "moduleIds": [
+        "MOD-TRANSFER"
+      ],
+      "algorithmInterfaceIds": [
+        "IF-OBS-INTERPRET"
+      ],
+      "basis": "Controlled specification witness; no parser, solver, IUT or experiment was executed.",
+      "basisZh": "受控规格见证；未执行解析器、求解器、IUT 或实验。",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "expectedContractOutputZh": "产生声明的类型化合同结果并保留证据边界。",
+      "prohibitedOutputZh": "不得伪造运行结果、独立真值或符合性判定。",
+      "inputFixture": {
+        "caseId": "AC-SYN-INTEGRITY",
+        "recordIds": [
+          "TRANSFER-RECORD"
+        ],
+        "condition": "declared-positive"
+      },
+      "expectedOutputFixture": {
+        "outcome": "CONTRACT-EXPECTED",
+        "statement": "CRC-bearing inputs retain source parameters and yield NOT-EVALUATED until implementation, configuration and execution evidence exist."
+      },
+      "prohibitedOutputPaths": [
+        "runtimeResultClaim",
+        "truthLeakage"
+      ],
+      "negativeVariants": [
+        {
+          "id": "AC-SYN-INTEGRITY-NEG",
+          "mutation": "remove required identity or precondition",
+          "expectedRejection": "SPEC-ERROR"
+        }
+      ]
+    },
+    {
+      "id": "AC-EXP-SCENE",
+      "kind": "SYNTHETIC-NONTRUTH",
+      "title": "Runnable scene identity witness",
+      "titleZh": "可运行场景身份见证",
+      "inputRecordIds": [
+        "INTAKE-METADATA"
+      ],
+      "expectedContractOutput": "A runnable scene has stable scene, configuration, IUT and resource identities.",
+      "prohibitedOutput": "A historical capture or missing identity is not promoted to a runnable scene.",
+      "toolRequirementIds": [
+        "TR-CAPTURE-INTAKE"
+      ],
+      "moduleIds": [
+        "MOD-CAPTURE"
+      ],
+      "algorithmInterfaceIds": [
+        "IF-EXECUTE-RECORD"
+      ],
+      "basis": "Controlled specification witness; no parser, solver, IUT or experiment was executed.",
+      "basisZh": "受控规格见证；未执行解析器、求解器、IUT 或实验。",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "expectedContractOutputZh": "产生声明的类型化合同结果并保留证据边界。",
+      "prohibitedOutputZh": "不得伪造运行结果、独立真值或符合性判定。",
+      "inputFixture": {
+        "caseId": "AC-EXP-SCENE",
+        "recordIds": [
+          "INTAKE-METADATA"
+        ],
+        "condition": "declared-positive"
+      },
+      "expectedOutputFixture": {
+        "outcome": "CONTRACT-EXPECTED",
+        "statement": "A runnable scene has stable scene, configuration, IUT and resource identities."
+      },
+      "prohibitedOutputPaths": [
+        "runtimeResultClaim",
+        "truthLeakage"
+      ],
+      "negativeVariants": [
+        {
+          "id": "AC-EXP-SCENE-NEG",
+          "mutation": "remove required identity or precondition",
+          "expectedRejection": "SPEC-ERROR"
+        }
+      ]
+    },
+    {
+      "id": "AC-EXP-TRUTH",
+      "kind": "SYNTHETIC-NONTRUTH",
+      "title": "Independent truth boundary witness",
+      "titleZh": "独立真值边界见证",
+      "inputRecordIds": [
+        "FINDING-RECORD"
+      ],
+      "expectedContractOutput": "Only confirmed injection plus an independent generator creates truth, with shared-component risk named.",
+      "prohibitedOutput": "Planned or unconfirmed injection and field labels are not truth.",
+      "toolRequirementIds": [
+        "TR-TRACEABLE-FINDING"
+      ],
+      "moduleIds": [
+        "MOD-OBSERVATION"
+      ],
+      "algorithmInterfaceIds": [
+        "IF-OBS-INTERPRET"
+      ],
+      "basis": "Controlled specification witness; no parser, solver, IUT or experiment was executed.",
+      "basisZh": "受控规格见证；未执行解析器、求解器、IUT 或实验。",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "expectedContractOutputZh": "产生声明的类型化合同结果并保留证据边界。",
+      "prohibitedOutputZh": "不得伪造运行结果、独立真值或符合性判定。",
+      "inputFixture": {
+        "caseId": "AC-EXP-TRUTH",
+        "recordIds": [
+          "FINDING-RECORD"
+        ],
+        "condition": "declared-positive"
+      },
+      "expectedOutputFixture": {
+        "outcome": "CONTRACT-EXPECTED",
+        "statement": "Only confirmed injection plus an independent generator creates truth, with shared-component risk named."
+      },
+      "prohibitedOutputPaths": [
+        "runtimeResultClaim",
+        "truthLeakage"
+      ],
+      "negativeVariants": [
+        {
+          "id": "AC-EXP-TRUTH-NEG",
+          "mutation": "remove required identity or precondition",
+          "expectedRejection": "SPEC-ERROR"
+        }
+      ]
+    },
+    {
+      "id": "AC-EXP-CAUSAL",
+      "kind": "SYNTHETIC-NONTRUTH",
+      "title": "Causal collection and arm fairness witness",
+      "titleZh": "因果采集与实验臂公平性见证",
+      "inputRecordIds": [
+        "OBSERVATION-ASSESSMENT"
+      ],
+      "expectedContractOutput": "Each arm sees only its causal prefix and pays the same declared cost vector.",
+      "prohibitedOutput": "Future events, evaluator labels and gifted CL-LOOP records are prohibited.",
+      "toolRequirementIds": [
+        "TR-OBSERVATION-ASSESSMENT"
+      ],
+      "moduleIds": [
+        "MOD-OBSERVATION"
+      ],
+      "algorithmInterfaceIds": [
+        "IF-EXECUTE-RECORD"
+      ],
+      "basis": "Controlled specification witness; no parser, solver, IUT or experiment was executed.",
+      "basisZh": "受控规格见证；未执行解析器、求解器、IUT 或实验。",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "expectedContractOutputZh": "产生声明的类型化合同结果并保留证据边界。",
+      "prohibitedOutputZh": "不得伪造运行结果、独立真值或符合性判定。",
+      "inputFixture": {
+        "caseId": "AC-EXP-CAUSAL",
+        "recordIds": [
+          "OBSERVATION-ASSESSMENT"
+        ],
+        "condition": "declared-positive"
+      },
+      "expectedOutputFixture": {
+        "outcome": "CONTRACT-EXPECTED",
+        "statement": "Each arm sees only its causal prefix and pays the same declared cost vector."
+      },
+      "prohibitedOutputPaths": [
+        "runtimeResultClaim",
+        "truthLeakage"
+      ],
+      "negativeVariants": [
+        {
+          "id": "AC-EXP-CAUSAL-NEG",
+          "mutation": "remove required identity or precondition",
+          "expectedRejection": "SPEC-ERROR"
+        }
+      ]
+    },
+    {
+      "id": "AC-EXP-DENOMINATOR",
+      "kind": "SYNTHETIC-NONTRUTH",
+      "title": "Evaluation denominator witness",
+      "titleZh": "评价分母见证",
+      "inputRecordIds": [
+        "FINDING-RECORD"
+      ],
+      "expectedContractOutput": "Attempt and answered-subset denominators retain abstain, invalid, equivalent and unconfirmed membership.",
+      "prohibitedOutput": "Excluded or unanswered cases are not silently removed from denominators.",
+      "toolRequirementIds": [
+        "TR-TRACEABLE-FINDING"
+      ],
+      "moduleIds": [
+        "MOD-OBSERVATION"
+      ],
+      "algorithmInterfaceIds": [
+        "IF-RESOURCE-STOP"
+      ],
+      "basis": "Controlled specification witness; no parser, solver, IUT or experiment was executed.",
+      "basisZh": "受控规格见证；未执行解析器、求解器、IUT 或实验。",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "expectedContractOutputZh": "产生声明的类型化合同结果并保留证据边界。",
+      "prohibitedOutputZh": "不得伪造运行结果、独立真值或符合性判定。",
+      "inputFixture": {
+        "caseId": "AC-EXP-DENOMINATOR",
+        "recordIds": [
+          "FINDING-RECORD"
+        ],
+        "condition": "declared-positive"
+      },
+      "expectedOutputFixture": {
+        "outcome": "CONTRACT-EXPECTED",
+        "statement": "Attempt and answered-subset denominators retain abstain, invalid, equivalent and unconfirmed membership."
+      },
+      "prohibitedOutputPaths": [
+        "runtimeResultClaim",
+        "truthLeakage"
+      ],
+      "negativeVariants": [
+        {
+          "id": "AC-EXP-DENOMINATOR-NEG",
+          "mutation": "remove required identity or precondition",
+          "expectedRejection": "SPEC-ERROR"
+        }
+      ]
     }
   ],
   "implementationDependencies": [
     {
-      "id": "DEP-INTEGRITY",
-      "status": "BLOCKED"
+      "id": "DEP-INTEGRITY-RUNTIME",
+      "title": "ARINC 645 integrity runtime qualification",
+      "titleZh": "ARINC 645 完整性运行时资格",
+      "specificationStatus": "CLOSED",
+      "runtimeStatus": "NOT-ESTABLISHED",
+      "affectsSpecificationReadiness": false,
+      "requirementIds": [
+        "CRS-M1-00076",
+        "CRS-M1-00082",
+        "CRS-M1-00085",
+        "CRS-M1-00086",
+        "CRS-M1-00087",
+        "CRS-M1-00109"
+      ],
+      "moduleIds": [
+        "MOD-TRANSFER"
+      ],
+      "recordIds": [
+        "TRANSFER-RECORD"
+      ],
+      "acceptanceCaseIds": [
+        "AC-SYN-INTEGRITY"
+      ],
+      "sourceBindings": [
+        "CONTROLLED-SOURCE-ARINC-645-1-2021",
+        "PROCESS-CRC-FILE-BYTES-IN-OCCURRENCE-ORDER",
+        "CRC-8-CHECK-VECTOR",
+        "CRC-16-CHECK-VECTOR",
+        "CRC-32-CHECK-VECTOR",
+        "CRC-64-CHECK-VECTOR"
+      ],
+      "affectedJudgments": "CRC-dependent validation and equality judgments remain unavailable at runtime; transport/reconstruction may preserve bytes and provenance only.",
+      "affectedJudgmentsZh": "依赖 CRC 的验证和相等判断在运行时仍不可用；传输／重建只能保留字节与来源。",
+      "specificationContract": "Use the bound ARINC 645 parameter leaves, occurrence-order byte stream and exact algorithm identity; emit NOT-EVALUATED unless all runtime qualification evidence is present.",
+      "specificationContractZh": "使用已绑定的 ARINC 645 参数叶、出现顺序字节流和精确算法身份；除非运行资格证据齐全，否则输出 NOT-EVALUATED。",
+      "runtimeClosureCriteria": [
+        "implementation identity and tests",
+        "project-specific algorithm/configuration binding",
+        "execution evidence on controlled vectors",
+        "independent gate record"
+      ],
+      "runtimeClosureCriteriaZh": [
+        "实现身份与测试",
+        "项目特定算法／配置绑定",
+        "受控向量执行证据",
+        "独立门禁记录"
+      ],
+      "closureEvidence": [
+        "configs/research/cltav_protocol_source_audit.json",
+        "configs/requirements/m1_semantic_review_assertions.json",
+        "configs/engineering/cltav_development_contracts.json"
+      ],
+      "failureBehavior": "Missing runtime evidence yields NOT-EVALUATED or named dependency status, never PASS, FAIL, or capability established.",
+      "failureBehaviorZh": "缺少运行证据时产生 NOT-EVALUATED 或具名依赖状态，绝不产生 PASS、FAIL 或能力已建立。"
     }
   ],
   "paperTrace": [
     {
       "id": "PT-ARCH",
-      "section": "III"
+      "section": "III",
+      "contractRefs": [
+        "toolRequirements",
+        "moduleContracts",
+        "recordContracts",
+        "experimentInterfaceBindings"
+      ],
+      "claimBoundary": "Layered requirements and responsibility interfaces; no implementation claim."
+    },
+    {
+      "id": "PT-METHOD",
+      "section": "IV",
+      "contractRefs": [
+        "algorithmRefinements",
+        "runtimeParameterContracts"
+      ],
+      "claimBoundary": "Bounded reference-kernel specification; no general solver or completeness claim."
+    },
+    {
+      "id": "PT-EXPERIMENT",
+      "section": "V",
+      "contractRefs": [
+        "experimentInterfaceBindings",
+        "acceptanceCases"
+      ],
+      "claimBoundary": "Historical exploratory and future controlled evidence lines remain separate."
+    },
+    {
+      "id": "PT-RESULTS",
+      "section": "VI",
+      "contractRefs": [
+        "reviewBoundary"
+      ],
+      "claimBoundary": "No confirmatory result is reported."
+    },
+    {
+      "id": "PT-LIMITS",
+      "section": "VII",
+      "contractRefs": [
+        "implementationDependencies"
+      ],
+      "claimBoundary": "Runtime integrity, IUT, clock and independent-truth dependencies remain explicit."
     }
   ],
   "reviewBoundary": {
-    "readiness": "READINESS-BLOCKED",
+    "readiness": "CANDIDATE",
     "claims": "SPECIFICATION-ONLY",
-    "completionEvidence": []
-  }
+    "completionEvidence": [
+      "configs/engineering/cltav_development_contracts.json",
+      "docs/engineering/CLTAV_DEVELOPMENT_REVIEW_VIEW.md",
+      "tests/unit/test_development_readiness.py",
+      "docs/research/EXPERIMENT_PLAN.md",
+      "docs/research/CLAIM_EVIDENCE_MATRIX.md"
+    ]
+  },
+  "experimentInterfaceBindings": [
+    {
+      "interfaceId": "IF-EXP-SCENE",
+      "inputTypes": [
+        "sceneId",
+        "configId",
+        "IUT",
+        "faultPlan",
+        "resourceMode"
+      ],
+      "outputTypes": [
+        "sceneRecord",
+        "unconfirmed"
+      ],
+      "readOwnership": "evaluator-and-operator",
+      "readOwnershipZh": "按受控实验注册表的可见性读取；算法不得读取评价者真值。",
+      "writeOwnership": "Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.",
+      "writeOwnershipZh": "仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。",
+      "failureBehavior": "missing identity is not a runnable scene",
+      "failureBehaviorZh": "按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。",
+      "resourceContract": "declared mode only",
+      "resourceContractZh": "沿用注册表资源口径，不向实验臂赠送记录或成本。",
+      "acceptanceCaseIds": [
+        "AC-EXP-SCENE"
+      ],
+      "implementationLocation": "future/experiment/scene.py"
+    },
+    {
+      "interfaceId": "IF-EXP-INJECT",
+      "inputTypes": [
+        "sceneId",
+        "injectionPlan"
+      ],
+      "outputTypes": [
+        "injectionAttempt",
+        "injectionConfirmed",
+        "injectionUnconfirmed"
+      ],
+      "readOwnership": "evaluator-only confirmation",
+      "readOwnershipZh": "按受控实验注册表的可见性读取；算法不得读取评价者真值。",
+      "writeOwnership": "Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.",
+      "writeOwnershipZh": "仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。",
+      "failureBehavior": "planned is not confirmed; unconfirmed is not valid truth",
+      "failureBehaviorZh": "按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。",
+      "resourceContract": "injection wall-clock is evaluator metadata",
+      "resourceContractZh": "沿用注册表资源口径，不向实验臂赠送记录或成本。",
+      "acceptanceCaseIds": [
+        "AC-EXP-TRUTH"
+      ],
+      "implementationLocation": "future/experiment/inject.py"
+    },
+    {
+      "interfaceId": "IF-EXP-TRUTH",
+      "inputTypes": [
+        "sceneId",
+        "injectionConfirmed",
+        "independentGeneratorId"
+      ],
+      "outputTypes": [
+        "truthRecord",
+        "sharedComponentRisk"
+      ],
+      "readOwnership": "evaluator-only; never an algorithm input",
+      "readOwnershipZh": "按受控实验注册表的可见性读取；算法不得读取评价者真值。",
+      "writeOwnership": "Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.",
+      "writeOwnershipZh": "仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。",
+      "failureBehavior": "unconfirmed injection cannot default to valid truth; separate store is not independence",
+      "failureBehaviorZh": "按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。",
+      "resourceContract": "not charged to arms",
+      "resourceContractZh": "沿用注册表资源口径，不向实验臂赠送记录或成本。",
+      "acceptanceCaseIds": [
+        "AC-EXP-TRUTH"
+      ],
+      "implementationLocation": "future/experiment/truth.py"
+    },
+    {
+      "interfaceId": "IF-EXP-COLLECT",
+      "inputTypes": [
+        "sceneId",
+        "armId",
+        "algorithmVisibleRecord"
+      ],
+      "outputTypes": [
+        "observationLog",
+        "resourceLog"
+      ],
+      "readOwnership": "algorithm-visible only",
+      "readOwnershipZh": "按受控实验注册表的可见性读取；算法不得读取评价者真值。",
+      "writeOwnership": "Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.",
+      "writeOwnershipZh": "仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。",
+      "failureBehavior": "missing correlation id is invalid observation",
+      "failureBehaviorZh": "按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。",
+      "resourceContract": "same charged vector as ALG-CLTAV-01",
+      "resourceContractZh": "沿用注册表资源口径，不向实验臂赠送记录或成本。",
+      "acceptanceCaseIds": [
+        "AC-EXP-CAUSAL"
+      ],
+      "implementationLocation": "future/experiment/collect.py"
+    },
+    {
+      "interfaceId": "IF-EXP-RUN",
+      "inputTypes": [
+        "sceneId",
+        "armId",
+        "SessionContext"
+      ],
+      "outputTypes": [
+        "runId",
+        "stopClass",
+        "traceRef"
+      ],
+      "readOwnership": "algorithm-visible plus evaluator run id",
+      "readOwnershipZh": "按受控实验注册表的可见性读取；算法不得读取评价者真值。",
+      "writeOwnership": "Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.",
+      "writeOwnershipZh": "仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。",
+      "failureBehavior": "arm abort is ERROR, not PASS",
+      "failureBehaviorZh": "按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。",
+      "resourceContract": "one declared mode; no gifted CL-LOOP records",
+      "resourceContractZh": "沿用注册表资源口径，不向实验臂赠送记录或成本。",
+      "acceptanceCaseIds": [
+        "AC-EXP-CAUSAL"
+      ],
+      "implementationLocation": "future/experiment/run.py"
+    },
+    {
+      "interfaceId": "IF-EXP-FILTER",
+      "inputTypes": [
+        "runId",
+        "truthRecord",
+        "observationLog",
+        "sceneId",
+        "attemptId",
+        "injectionUnconfirmed"
+      ],
+      "outputTypes": [
+        "validityClass",
+        "filterReason"
+      ],
+      "readOwnership": "evaluator-only labels; algorithm does not see the class name as a select input",
+      "readOwnershipZh": "按受控实验注册表的可见性读取；算法不得读取评价者真值。",
+      "writeOwnership": "Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.",
+      "writeOwnershipZh": "仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。",
+      "failureBehavior": "unconfirmed, invalid, equivalent, or abstain are not detection PASS/FAIL",
+      "failureBehaviorZh": "按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。",
+      "resourceContract": "not a second charge",
+      "resourceContractZh": "沿用注册表资源口径，不向实验臂赠送记录或成本。",
+      "acceptanceCaseIds": [
+        "AC-EXP-DENOMINATOR"
+      ],
+      "implementationLocation": "future/experiment/filter.py"
+    },
+    {
+      "interfaceId": "IF-EXP-EVAL",
+      "inputTypes": [
+        "runId",
+        "validityClass",
+        "denominators",
+        "truthRecord",
+        "algorithmResultRef",
+        "chargedCost",
+        "sceneId",
+        "attemptId"
+      ],
+      "outputTypes": [
+        "metricCells",
+        "attemptDenominator",
+        "answeredSubsetDenominator"
+      ],
+      "readOwnership": "evaluator-only metrics",
+      "readOwnershipZh": "按受控实验注册表的可见性读取；算法不得读取评价者真值。",
+      "writeOwnership": "Writes only the named experiment record in the evaluator or algorithm-visible store declared by visibility.",
+      "writeOwnershipZh": "仅在可见性声明的评价者存储或算法可见存储中写入具名实验记录。",
+      "failureBehavior": "missing denominator definition or missing declared record/ref is not a result",
+      "failureBehaviorZh": "按注册表失败条件拒绝或分类；不得转换为符合性 PASS/FAIL。",
+      "resourceContract": "report charged cost; do not hide Prep/Recover/retry",
+      "resourceContractZh": "沿用注册表资源口径，不向实验臂赠送记录或成本。",
+      "acceptanceCaseIds": [
+        "AC-EXP-DENOMINATOR"
+      ],
+      "implementationLocation": "future/experiment/eval.py"
+    }
+  ],
+  "acceptanceMatrix": [
+    {
+      "id": "AM-IDENTITY",
+      "category": "corpus identity",
+      "positiveInput": "tracked manifest entry with unique resolved file identity",
+      "expectedOutput": "identity accepted for exploratory intake",
+      "negativeMutation": "add/remove/hash/length/path/link/duplicate identity",
+      "expectedRejection": "MANIFEST-ERROR",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：corpus identity",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    },
+    {
+      "id": "AM-LABEL",
+      "category": "label boundary",
+      "positiveInput": "wire record separated from operator annotation and evaluator truth",
+      "expectedOutput": "only protocol-visible fields reach algorithm input",
+      "negativeMutation": "copy filename outcome or evaluator label into algorithm-visible record",
+      "expectedRejection": "LABEL-LEAKAGE",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：label boundary",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    },
+    {
+      "id": "AM-FORMAT",
+      "category": "capture format",
+      "positiveInput": "bounded section/interface/ticks/caplen record",
+      "expectedOutput": "typed packet record preserving section and interface identity",
+      "negativeMutation": "truncate block, unknown link type, missing interface or mix section-local interface zero",
+      "expectedRejection": "DECODE-ERROR",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：capture format",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    },
+    {
+      "id": "AM-IP",
+      "category": "IP reassembly",
+      "positiveInput": "complete finite fragment set with PacketRef provenance",
+      "expectedOutput": "complete datagram or GAPPED/CONFLICT record",
+      "negativeMutation": "missing, reordered, overlapping or epoch-reused fragments treated as complete UDP",
+      "expectedRejection": "REASSEMBLY-ERROR",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：IP reassembly",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    },
+    {
+      "id": "AM-TFTP",
+      "category": "TFTP reconstruction",
+      "positiveInput": "dynamic TID and accepted/default option evidence with combined end condition",
+      "expectedOutput": "transfer record preserving repeats, wrap limit and terminal evidence",
+      "negativeMutation": "blind deduplication, fixed TID, invented option or wrong final block",
+      "expectedRejection": "TRANSFER-ERROR",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：TFTP reconstruction",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    },
+    {
+      "id": "AM-FIELDS",
+      "category": "field contracts",
+      "positiveInput": "typed conditional fields with declared counts and legal extension",
+      "expectedOutput": "record accepted with extension/provenance retained",
+      "negativeMutation": "ASCII/integer swap, count mismatch, sentinel misuse or unknown enum",
+      "expectedRejection": "FIELD-ERROR",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：field contracts",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    },
+    {
+      "id": "AM-OWNERSHIP",
+      "category": "matching and no response",
+      "positiveInput": "active request instances with event order, cancellation and supersession",
+      "expectedOutput": "one owned response or explicit ambiguity/incomplete horizon",
+      "negativeMutation": "reuse response, wrong key, ignore cancellation or treat capture end as timeout",
+      "expectedRejection": "OWNERSHIP-ERROR",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：matching and no response",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    },
+    {
+      "id": "AM-TIMING",
+      "category": "timing and U",
+      "positiveInput": "interval, topology, clock chain, epsilon and immutable U identity",
+      "expectedOutput": "PASS/FAIL/INCONCLUSIVE/ERROR per T5 and no-response boundary",
+      "negativeMutation": "point-estimate rewrite, epsilon zero default or changed U commit",
+      "expectedRejection": "TIMING-ERROR",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：timing and U",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    },
+    {
+      "id": "AM-ADMIT",
+      "category": "prediction and admission",
+      "positiveInput": "finite current classes plus eligible/affordable actions",
+      "expectedOutput": "TEST minimax cost/id tie or Prep/Recover/A2-A5 decision",
+      "negativeMutation": "score GAP as zero, classify uninformative TEST as A2 or score Prep",
+      "expectedRejection": "SPEC-ERROR",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：prediction and admission",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    },
+    {
+      "id": "AM-HISTORY",
+      "category": "history update",
+      "positiveInput": "versioned whole-history frontier and normalized valid outcome",
+      "expectedOutput": "H prime equals H intersect Iz without resurrection",
+      "negativeMutation": "replace H by Iz, drop history correlation or treat frontier limit as incompatibility",
+      "expectedRejection": "HISTORY-ERROR",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：history update",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    },
+    {
+      "id": "AM-STATE",
+      "category": "state and return",
+      "positiveInput": "total Outcome/Resolution with S8/S9 confirmation fields",
+      "expectedOutput": "retry/commit/stop preserves adopted contexts and writer ownership",
+      "negativeMutation": "stale summary commit, missing confirmation or undefined returned context",
+      "expectedRejection": "STATE-ERROR",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：state and return",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    },
+    {
+      "id": "AM-RESOURCE",
+      "category": "resource accounting",
+      "positiveInput": "exclusive BUDGET/ROUNDS and positive finite costs/caps",
+      "expectedOutput": "one charge per issued attempt and named exhaustion",
+      "negativeMutation": "charge refused action twice or accept NaN/negative/noninteger",
+      "expectedRejection": "RESOURCE-ERROR",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：resource accounting",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    },
+    {
+      "id": "AM-EXPERIMENT",
+      "category": "experiment boundary",
+      "positiveInput": "registered scene, confirmed injection and evaluator-only independent truth",
+      "expectedOutput": "causal four-arm record with explicit validity denominators",
+      "negativeMutation": "truth leakage, unconfirmed truth, hidden cost or exploratory capture as held-out",
+      "expectedRejection": "EXPERIMENT-ERROR",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：experiment boundary",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    },
+    {
+      "id": "AM-DRIFT",
+      "category": "controlled drift",
+      "positiveInput": "authority plus generated view at same validated snapshot",
+      "expectedOutput": "checker and generator agree or fail without publishing",
+      "negativeMutation": "delete relation, forge reference, refresh count/hash or retain stale view",
+      "expectedRejection": "CONTROL-ERROR",
+      "witnessLevel": "SPECIFICATION-WITNESS",
+      "runtimeExecutionStatus": "NOT-EXECUTED",
+      "categoryZh": "受控类别：controlled drift",
+      "positiveInputZh": "符合该类别声明前置条件的正向类型化输入。",
+      "expectedOutputZh": "产生具名合同输出并保留来源与不确定性。",
+      "negativeMutationZh": "施加该行登记的关系、边界或身份破坏。",
+      "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。"
+    }
+  ],
+  "experimentScenarios": [
+    {
+      "id": "SC-NORMAL-UPLOAD",
+      "title": "normal single upload",
+      "titleZh": "受控场景：normal single upload",
+      "serviceScope": "UPLOAD",
+      "preconditions": [
+        "interactive IUT available",
+        "scene and configuration identities frozen"
+      ],
+      "controllableAction": "normal operation",
+      "faultConfirmation": "confirmed controlled generator",
+      "algorithmVisibleFields": [
+        "protocol records",
+        "declared clocks",
+        "resource state"
+      ],
+      "independentTruthSource": "confirmed controlled generator",
+      "resetContract": "reset IUT/session/budget",
+      "timingContract": "qualified monotonic clock and declared epsilon",
+      "resourceContract": "same declared cost vector and one exclusive resource mode across arms",
+      "supportedQuestions": [
+        "CL-RQ2",
+        "CL-RQ3"
+      ],
+      "blockedBy": [
+        "interactive IUT",
+        "confirmatory registration"
+      ],
+      "executionStatus": "NOT-EXECUTED"
+    },
+    {
+      "id": "SC-WAIT-CONTINUE",
+      "title": "WAIT then continue",
+      "titleZh": "受控场景：WAIT then continue",
+      "serviceScope": "UPLOAD",
+      "preconditions": [
+        "interactive IUT available",
+        "scene and configuration identities frozen"
+      ],
+      "controllableAction": "controlled WAIT followed by continuation",
+      "faultConfirmation": "confirmed event script",
+      "algorithmVisibleFields": [
+        "protocol records",
+        "declared clocks",
+        "resource state"
+      ],
+      "independentTruthSource": "confirmed event script",
+      "resetContract": "reset loader state and session",
+      "timingContract": "qualified monotonic clock and declared epsilon",
+      "resourceContract": "same declared cost vector and one exclusive resource mode across arms",
+      "supportedQuestions": [
+        "CL-RQ2",
+        "CL-RQ3"
+      ],
+      "blockedBy": [
+        "interactive IUT",
+        "confirmatory registration"
+      ],
+      "executionStatus": "NOT-EXECUTED"
+    },
+    {
+      "id": "SC-NO-RESPONSE",
+      "title": "request without matching response",
+      "titleZh": "受控场景：request without matching response",
+      "serviceScope": "INFORMATION",
+      "preconditions": [
+        "interactive IUT available",
+        "scene and configuration identities frozen"
+      ],
+      "controllableAction": "controlled suppression with complete observation horizon",
+      "faultConfirmation": "confirmed suppression controller",
+      "algorithmVisibleFields": [
+        "protocol records",
+        "declared clocks",
+        "resource state"
+      ],
+      "independentTruthSource": "confirmed suppression controller",
+      "resetContract": "reset endpoint and capture horizon",
+      "timingContract": "qualified clock, open/closed deadline recorded",
+      "resourceContract": "same declared cost vector and one exclusive resource mode across arms",
+      "supportedQuestions": [
+        "CL-RQ2",
+        "CL-RQ3"
+      ],
+      "blockedBy": [
+        "interactive IUT",
+        "confirmatory registration"
+      ],
+      "executionStatus": "NOT-EXECUTED"
+    },
+    {
+      "id": "SC-ABORT",
+      "title": "explicit abort",
+      "titleZh": "受控场景：explicit abort",
+      "serviceScope": "UPLOAD",
+      "preconditions": [
+        "interactive IUT available",
+        "scene and configuration identities frozen"
+      ],
+      "controllableAction": "confirmed abort event",
+      "faultConfirmation": "independent controller log",
+      "algorithmVisibleFields": [
+        "protocol records",
+        "declared clocks",
+        "resource state"
+      ],
+      "independentTruthSource": "independent controller log",
+      "resetContract": "reset transfer and session",
+      "timingContract": "qualified event order and clocks",
+      "resourceContract": "same declared cost vector and one exclusive resource mode across arms",
+      "supportedQuestions": [
+        "CL-RQ2",
+        "CL-RQ3"
+      ],
+      "blockedBy": [
+        "interactive IUT",
+        "confirmatory registration"
+      ],
+      "executionStatus": "NOT-EXECUTED"
+    },
+    {
+      "id": "SC-INVALID-OBS",
+      "title": "invalid or missing observation",
+      "titleZh": "受控场景：invalid or missing observation",
+      "serviceScope": "UPLOAD/INFORMATION",
+      "preconditions": [
+        "interactive IUT available",
+        "scene and configuration identities frozen"
+      ],
+      "controllableAction": "capture/clock evidence deliberately incomplete",
+      "faultConfirmation": "evaluator construction record",
+      "algorithmVisibleFields": [
+        "protocol records",
+        "declared clocks",
+        "resource state"
+      ],
+      "independentTruthSource": "evaluator construction record",
+      "resetContract": "fresh capture and session",
+      "timingContract": "invalid chain remains ERROR",
+      "resourceContract": "same declared cost vector and one exclusive resource mode across arms",
+      "supportedQuestions": [
+        "CL-RQ2",
+        "CL-RQ3"
+      ],
+      "blockedBy": [
+        "interactive IUT",
+        "confirmatory registration"
+      ],
+      "executionStatus": "NOT-EXECUTED"
+    },
+    {
+      "id": "SC-SAME-KEY",
+      "title": "multiple same-key requests",
+      "titleZh": "受控场景：multiple same-key requests",
+      "serviceScope": "INFORMATION",
+      "preconditions": [
+        "interactive IUT available",
+        "scene and configuration identities frozen"
+      ],
+      "controllableAction": "controlled overlapping requests",
+      "faultConfirmation": "independent request schedule",
+      "algorithmVisibleFields": [
+        "protocol records",
+        "declared clocks",
+        "resource state"
+      ],
+      "independentTruthSource": "independent request schedule",
+      "resetContract": "reset correlation state",
+      "timingContract": "event order retained even for equal timestamps",
+      "resourceContract": "same declared cost vector and one exclusive resource mode across arms",
+      "supportedQuestions": [
+        "CL-RQ2",
+        "CL-RQ3"
+      ],
+      "blockedBy": [
+        "interactive IUT",
+        "confirmatory registration"
+      ],
+      "executionStatus": "NOT-EXECUTED"
+    },
+    {
+      "id": "SC-SINGLE-BATCH",
+      "title": "single versus batch context",
+      "titleZh": "受控场景：single versus batch context",
+      "serviceScope": "UPLOAD",
+      "preconditions": [
+        "interactive IUT available",
+        "scene and configuration identities frozen"
+      ],
+      "controllableAction": "paired declared contexts, not historical causal inference",
+      "faultConfirmation": "controlled scene definitions",
+      "algorithmVisibleFields": [
+        "protocol records",
+        "declared clocks",
+        "resource state"
+      ],
+      "independentTruthSource": "controlled scene definitions",
+      "resetContract": "full IUT reset between scenes",
+      "timingContract": "same qualified clock/configuration",
+      "resourceContract": "same declared cost vector and one exclusive resource mode across arms",
+      "supportedQuestions": [
+        "CL-RQ2",
+        "CL-RQ3"
+      ],
+      "blockedBy": [
+        "interactive IUT",
+        "confirmatory registration"
+      ],
+      "executionStatus": "NOT-EXECUTED"
+    },
+    {
+      "id": "SC-RESOURCE-ERROR",
+      "title": "resource exhaustion and consecutive error",
+      "titleZh": "受控场景：resource exhaustion and consecutive error",
+      "serviceScope": "UPLOAD/INFORMATION",
+      "preconditions": [
+        "interactive IUT available",
+        "scene and configuration identities frozen"
+      ],
+      "controllableAction": "configured bound and injected adapter error",
+      "faultConfirmation": "configuration plus controller record",
+      "algorithmVisibleFields": [
+        "protocol records",
+        "declared clocks",
+        "resource state"
+      ],
+      "independentTruthSource": "configuration plus controller record",
+      "resetContract": "reset resource/retry counters",
+      "timingContract": "clock evidence retained but not converted to verdict",
+      "resourceContract": "same declared cost vector and one exclusive resource mode across arms",
+      "supportedQuestions": [
+        "CL-RQ2",
+        "CL-RQ3"
+      ],
+      "blockedBy": [
+        "interactive IUT",
+        "confirmatory registration"
+      ],
+      "executionStatus": "NOT-EXECUTED"
+    }
+  ]
 }
