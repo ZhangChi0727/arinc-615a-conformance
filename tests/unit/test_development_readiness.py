@@ -6,6 +6,7 @@ import hashlib
 import shutil
 import subprocess
 import sys
+from jsonschema import Draft202012Validator
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -1065,6 +1066,88 @@ def test_rr86_integrity_obligations_come_from_independent_bound_baseline():
     bad = copy.deepcopy(PACKAGE)
     bad["implementationDependencies"][0]["closureEvidence"] = ["README.md", "project-status.json"]
     assert any("content-bound and relevant" in item for item in errors(bad))
+
+
+def test_rr87_kernel_uses_canonical_rationals_complete_returns_and_separate_histories():
+    bad = copy.deepcopy(PACKAGE)
+    witness = next(row for row in bad["algorithmRefinements"][0]["finiteKernelContract"]["witnessVectors"] if row["id"] == "FK-W1-FEASIBLE")
+    witness["input"]["guard"]["lower"] = {"numerator": 3, "positiveDenominator": 1}
+    assert any("reversed interval" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    witness = next(row for row in bad["algorithmRefinements"][0]["finiteKernelContract"]["witnessVectors"] if row["id"] == "FK-W5-CLOCK")
+    witness["expected"]["merge"] = True
+    assert any("clock-correlation witness" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    row = next(row for row in bad["algorithmRefinements"][0]["finiteKernelContract"]["totalReturnMapping"] if row["interfaceId"] == "IF-PRED-OBS" and row["internalResult"] == "COMPUTATION-UNKNOWN")
+    row["returnContract"]["requiredFields"].remove("historyVersionUsed")
+    assert any("return contract is incomplete" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    row = next(row for row in bad["algorithmRefinements"][0]["finiteKernelContract"]["totalReturnMapping"] if row["interfaceId"] == "IF-SELECT-ADMIT" and row["internalResult"] == "LIMIT-REACHED")
+    row["returnContract"]["adapter"] = "reject every action"
+    assert any("TEST-scoped GAP" in item for item in errors(bad))
+
+
+def test_rr87_acceptance_relations_reject_semantic_drift():
+    mutations = []
+    bad = copy.deepcopy(PACKAGE)
+    next(x for x in bad["acceptanceCases"] if x["id"] == "AC-SYN-OBSERVATION")["expectedOutputFixture"]["values"]["verdict"] = "PASS"
+    mutations.append(bad)
+    bad = copy.deepcopy(PACKAGE)
+    case = next(x for x in bad["acceptanceCases"] if x["id"] == "AC-SYN-HISTORY")
+    case["expectedOutputFixture"]["values"]["history"] = copy.deepcopy(case["inputFixture"]["values"]["history"])
+    mutations.append(bad)
+    bad = copy.deepcopy(PACKAGE)
+    next(x for x in bad["acceptanceCases"] if x["id"] == "AC-SYN-PREP-RECOVER")["inputFixture"]["values"]["summaryConfirmed"] = False
+    mutations.append(bad)
+    bad = copy.deepcopy(PACKAGE)
+    next(x for x in bad["acceptanceCases"] if x["id"] == "AC-EXP-TRUTH")["inputFixture"]["values"]["algorithmVisible"] = True
+    mutations.append(bad)
+    bad = copy.deepcopy(PACKAGE)
+    next(x for x in bad["acceptanceCases"] if x["id"] == "AC-SYN-SELECT")["inputFixture"]["values"]["resource"]["remaining"] = 0
+    mutations.append(bad)
+    bad = copy.deepcopy(PACKAGE)
+    bad["experimentScenarios"][0]["dependencyIds"] = ["NO-SUCH-DEPENDENCY"]
+    mutations.append(bad)
+    for bad in mutations:
+        assert errors(bad)
+
+
+def test_rr87_matrix_scenarios_and_integrity_witnesses_are_not_labels_only():
+    bad = copy.deepcopy(PACKAGE)
+    next(x for x in bad["acceptanceMatrix"] if x["category"] == "corpus identity")["coverageAxes"] = ["armId", "truth", "cost"]
+    assert any("category-specific coverage axes" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["experimentScenarios"][1]["scenarioValues"]["eventSequence"] = ["WAIT"]
+    assert errors(bad)
+    bad = copy.deepcopy(PACKAGE)
+    dep = bad["implementationDependencies"][0]
+    dep["id"] = "DEP-INTEGRITY-RENAMED"
+    removed = "CRS-M1-00109"
+    dep["requirementIds"].remove(removed)
+    dep["sourceBindings"] = [x for x in dep["sourceBindings"] if x["requirementId"] != removed]
+    dep["obligationWitnesses"] = [x for x in dep["obligationWitnesses"] if x["requirementId"] != removed]
+    dep["closureEvidence"] = ["README.md", "project-status.json"]
+    for row in bad["protocolInputDispositions"]:
+        row["dependencyIds"] = ["DEP-INTEGRITY-RENAMED" if x == "DEP-INTEGRITY-RUNTIME" else x for x in row.get("dependencyIds", []) if row["inputRequirementId"] != removed]
+    bad["requiredDependencyRelations"][0]["dependencyId"] = "DEP-INTEGRITY-RENAMED"
+    bad["requiredDependencyRelations"][0]["requirementIds"].remove(removed)
+    assert any("independently bound integrity obligations" in item or "independent obligation baseline" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    witness = next(x for x in bad["implementationDependencies"][0]["obligationWitnesses"] if x["requirementId"] == "CRS-M1-00087")
+    witness["inputs"]["crcB"] = "0x9999"
+    assert any("same-part-number files" in item for item in errors(bad))
+
+
+def test_rr87_schema_is_standard_valid_and_invalid_schema_is_fail_closed(monkeypatch, tmp_path):
+    schema = json.loads(MODULE.SCHEMA_PATH.read_text(encoding="utf-8"))
+    Draft202012Validator.check_schema(schema)
+    Draft202012Validator(schema).validate(PACKAGE)
+    broken = copy.deepcopy(schema)
+    broken["properties"]["acceptanceMatrix"]["items"]["required"].append("caseIds")
+    path = tmp_path / "broken.schema.json"
+    path.write_text(json.dumps(broken), encoding="utf-8")
+    monkeypatch.setattr(MODULE, "SCHEMA_PATH", path)
+    assert any("schema is invalid" in item for item in errors(copy.deepcopy(PACKAGE)))
 
 
 def test_history_handle_reuses_bound_status_vocabulary_and_scope():

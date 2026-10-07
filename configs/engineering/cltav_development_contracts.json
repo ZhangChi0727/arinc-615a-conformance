@@ -17,7 +17,7 @@
       "artifactId": "ARINC615A3-M1-CRS",
       "path": "configs/requirements/arinc_615a3_m1_crs.json",
       "purpose": "Bound protocol requirement universe",
-      "sha256": "1511cb5caabe843ff20b412456aab5538cd6485f00e51b3056e77438db4fb0d9",
+      "sha256": "56e214f089e6563e53e3991e7a8e7892f163840bb2c1d7d39f4a9ce92fc16758",
       "purposeZh": "受控协议需求全集"
     },
     {
@@ -32,7 +32,7 @@
       "path": "configs/engineering/cltav_integrity_obligation_baseline.json",
       "purpose": "Independent required integrity-obligation set and contract identity",
       "purposeZh": "独立的完整性必需义务集合与合同身份",
-      "sha256": "8e612ce109999496ee031aa33640d31358234947a3579f03b2d48c18d8a77ac5"
+      "sha256": "e0dcae023a2e4ad8bc649c3b8a002a7320ceda397751165d0538c67f4325a02e"
     }
   ],
   "implementationSlices": [
@@ -9285,7 +9285,7 @@
               "numerator",
               "positiveDenominator"
             ],
-            "semantics": "exact reduced rational; denominator > 0"
+            "canonical": "gcd(abs(numerator),positiveDenominator)=1 and positiveDenominator>0"
           },
           "guardAst": {
             "type": "tagged-tree",
@@ -9296,6 +9296,7 @@
               "RATIONAL-INTERVAL-CONTAINS",
               "TYPED-FIELD-EQUALS"
             ],
+            "operandRepresentation": "RATIONAL-INTERVAL-CONTAINS uses a declared clock ID and one structured rational interval; strings are display-only",
             "unsupported": [
               "OR",
               "NOT",
@@ -9370,8 +9371,30 @@
             "id": "FK-W1-FEASIBLE",
             "input": {
               "state": "q0",
-              "clockConstraint": "0<=x<=1",
-              "guard": "x<=2",
+              "clockConstraint": {
+                "lower": {
+                  "numerator": 0,
+                  "positiveDenominator": 1
+                },
+                "upper": {
+                  "numerator": 1,
+                  "positiveDenominator": 1
+                },
+                "lowerClosed": true,
+                "upperClosed": true
+              },
+              "guard": {
+                "lower": {
+                  "numerator": 0,
+                  "positiveDenominator": 1
+                },
+                "upper": {
+                  "numerator": 2,
+                  "positiveDenominator": 1
+                },
+                "lowerClosed": true,
+                "upperClosed": true
+              },
               "observation": "response",
               "transition": {
                 "id": "t01",
@@ -9380,24 +9403,72 @@
                 "guardAst": {
                   "tag": "RATIONAL-INTERVAL-CONTAINS",
                   "clock": "x",
-                  "lower": "0/1",
-                  "upper": "2/1"
+                  "interval": {
+                    "lower": {
+                      "numerator": 0,
+                      "positiveDenominator": 1
+                    },
+                    "upper": {
+                      "numerator": 2,
+                      "positiveDenominator": 1
+                    },
+                    "lowerClosed": true,
+                    "upperClosed": true
+                  }
                 },
                 "simultaneousUpdates": []
+              },
+              "quantifier": "EXISTS-DELTA",
+              "delta": {
+                "numerator": 0,
+                "positiveDenominator": 1
               }
             },
             "expected": {
               "result": "FEASIBLE",
               "state": "q1",
-              "clockConstraint": "0<=x<=1"
+              "clockConstraint": {
+                "lower": {
+                  "numerator": 0,
+                  "positiveDenominator": 1
+                },
+                "upper": {
+                  "numerator": 1,
+                  "positiveDenominator": 1
+                },
+                "lowerClosed": true,
+                "upperClosed": true
+              }
             }
           },
           {
             "id": "FK-W2-INFEASIBLE",
             "input": {
               "state": "q0",
-              "clockConstraint": "x>=3",
-              "guard": "x<=2",
+              "clockConstraint": {
+                "lower": {
+                  "numerator": 3,
+                  "positiveDenominator": 1
+                },
+                "upper": {
+                  "numerator": 4,
+                  "positiveDenominator": 1
+                },
+                "lowerClosed": true,
+                "upperClosed": true
+              },
+              "guard": {
+                "lower": {
+                  "numerator": 0,
+                  "positiveDenominator": 1
+                },
+                "upper": {
+                  "numerator": 2,
+                  "positiveDenominator": 1
+                },
+                "lowerClosed": true,
+                "upperClosed": true
+              },
               "observation": "response"
             },
             "expected": {
@@ -9442,8 +9513,30 @@
                 "h0"
               ],
               "clockConstraints": [
-                "x<=1",
-                "x<=2"
+                {
+                  "lower": {
+                    "numerator": 0,
+                    "positiveDenominator": 1
+                  },
+                  "upper": {
+                    "numerator": 1,
+                    "positiveDenominator": 1
+                  },
+                  "lowerClosed": true,
+                  "upperClosed": true
+                },
+                {
+                  "lower": {
+                    "numerator": 0,
+                    "positiveDenominator": 1
+                  },
+                  "upper": {
+                    "numerator": 2,
+                    "positiveDenominator": 1
+                  },
+                  "lowerClosed": true,
+                  "upperClosed": true
+                }
               ]
             },
             "expected": {
@@ -9461,7 +9554,18 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "currentlyValidNonemptyClasses"
+            "output": "currentlyValidNonemptyClasses",
+            "returnContract": {
+              "recordType": "PredictionResult",
+              "requiredFields": [
+                "status",
+                "reason",
+                "classesByTest",
+                "historyVersionUsed",
+                "uncertaintyRef"
+              ],
+              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason"
+            }
           },
           {
             "interfaceId": "IF-PRED-OBS",
@@ -9471,7 +9575,18 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "PredictionGapError"
+            "output": "PredictionGapError",
+            "returnContract": {
+              "recordType": "PredictionResult",
+              "requiredFields": [
+                "status",
+                "reason",
+                "classesByTest",
+                "historyVersionUsed",
+                "uncertaintyRef"
+              ],
+              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason"
+            }
           },
           {
             "interfaceId": "IF-PRED-OBS",
@@ -9481,7 +9596,18 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "RESOURCE-UNKNOWN"
+            "output": "RESOURCE-UNKNOWN",
+            "returnContract": {
+              "recordType": "PredictionResult",
+              "requiredFields": [
+                "status",
+                "reason",
+                "classesByTest",
+                "historyVersionUsed",
+                "uncertaintyRef"
+              ],
+              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason"
+            }
           },
           {
             "interfaceId": "IF-PRED-OBS",
@@ -9491,7 +9617,18 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "PredictionGapError"
+            "output": "PredictionGapError",
+            "returnContract": {
+              "recordType": "PredictionResult",
+              "requiredFields": [
+                "status",
+                "reason",
+                "classesByTest",
+                "historyVersionUsed",
+                "uncertaintyRef"
+              ],
+              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason"
+            }
           },
           {
             "interfaceId": "IF-PRED-OBS",
@@ -9501,7 +9638,18 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "RESOURCE-UNKNOWN"
+            "output": "RESOURCE-UNKNOWN",
+            "returnContract": {
+              "recordType": "PredictionResult",
+              "requiredFields": [
+                "status",
+                "reason",
+                "classesByTest",
+                "historyVersionUsed",
+                "uncertaintyRef"
+              ],
+              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason"
+            }
           },
           {
             "interfaceId": "IF-PRED-OBS",
@@ -9511,7 +9659,18 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "PredictionGapError"
+            "output": "PredictionGapError",
+            "returnContract": {
+              "recordType": "PredictionResult",
+              "requiredFields": [
+                "status",
+                "reason",
+                "classesByTest",
+                "historyVersionUsed",
+                "uncertaintyRef"
+              ],
+              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason"
+            }
           },
           {
             "interfaceId": "IF-SELECT-ADMIT",
@@ -9521,7 +9680,18 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "admitA2A5"
+            "output": "admitA2A5",
+            "returnContract": {
+              "recordType": "Decision",
+              "requiredFields": [
+                "kind",
+                "actionKind",
+                "actionId",
+                "classesUsed",
+                "reason"
+              ],
+              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission"
+            }
           },
           {
             "interfaceId": "IF-SELECT-ADMIT",
@@ -9531,7 +9701,18 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "PredictionGapError"
+            "output": "PredictionGapError",
+            "returnContract": {
+              "recordType": "Decision",
+              "requiredFields": [
+                "kind",
+                "actionKind",
+                "actionId",
+                "classesUsed",
+                "reason"
+              ],
+              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission"
+            }
           },
           {
             "interfaceId": "IF-SELECT-ADMIT",
@@ -9541,7 +9722,18 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "ADMIT-REFUSED"
+            "output": "ADMIT-REFUSED",
+            "returnContract": {
+              "recordType": "Decision",
+              "requiredFields": [
+                "kind",
+                "actionKind",
+                "actionId",
+                "classesUsed",
+                "reason"
+              ],
+              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission"
+            }
           },
           {
             "interfaceId": "IF-SELECT-ADMIT",
@@ -9551,7 +9743,18 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "SPEC-ERROR"
+            "output": "SPEC-ERROR",
+            "returnContract": {
+              "recordType": "Decision",
+              "requiredFields": [
+                "kind",
+                "actionKind",
+                "actionId",
+                "classesUsed",
+                "reason"
+              ],
+              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission"
+            }
           },
           {
             "interfaceId": "IF-SELECT-ADMIT",
@@ -9561,7 +9764,18 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "ADMIT-REFUSED"
+            "output": "ADMIT-REFUSED",
+            "returnContract": {
+              "recordType": "Decision",
+              "requiredFields": [
+                "kind",
+                "actionKind",
+                "actionId",
+                "classesUsed",
+                "reason"
+              ],
+              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission"
+            }
           },
           {
             "interfaceId": "IF-SELECT-ADMIT",
@@ -9571,7 +9785,18 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "PredictionGapError"
+            "output": "PredictionGapError",
+            "returnContract": {
+              "recordType": "Decision",
+              "requiredFields": [
+                "kind",
+                "actionKind",
+                "actionId",
+                "classesUsed",
+                "reason"
+              ],
+              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission"
+            }
           },
           {
             "interfaceId": "IF-EXECUTE-RECORD",
@@ -9581,7 +9806,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-EXECUTE-RECORD",
@@ -9591,7 +9821,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-EXECUTE-RECORD",
@@ -9601,7 +9836,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-EXECUTE-RECORD",
@@ -9611,7 +9851,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-EXECUTE-RECORD",
@@ -9621,7 +9866,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-EXECUTE-RECORD",
@@ -9631,7 +9881,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-OBS-INTERPRET",
@@ -9641,7 +9896,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-OBS-INTERPRET",
@@ -9651,7 +9911,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-OBS-INTERPRET",
@@ -9661,7 +9926,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-OBS-INTERPRET",
@@ -9671,7 +9941,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-OBS-INTERPRET",
@@ -9681,7 +9956,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-OBS-INTERPRET",
@@ -9691,7 +9971,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-PREP-RECOVER",
@@ -9701,7 +9986,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-PREP-RECOVER",
@@ -9711,7 +10001,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-PREP-RECOVER",
@@ -9721,7 +10016,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-PREP-RECOVER",
@@ -9731,7 +10031,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-PREP-RECOVER",
@@ -9741,7 +10046,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-PREP-RECOVER",
@@ -9751,7 +10061,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-HIST-UPDATE",
@@ -9761,7 +10076,17 @@
             "historyEffect": "INTERSECT-PROVEN",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "Hprime"
+            "output": "Hprime",
+            "returnContract": {
+              "recordType": "UpdateResult",
+              "requiredFields": [
+                "status",
+                "Hprime",
+                "historyVersion",
+                "summaryEffect"
+              ],
+              "adapter": "Only complete compatible intersection may shrink H; empty proven intersection yields Stop-Empty"
+            }
           },
           {
             "interfaceId": "IF-HIST-UPDATE",
@@ -9771,7 +10096,17 @@
             "historyEffect": "INTERSECT-PROVEN",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "Hprime"
+            "output": "Hprime",
+            "returnContract": {
+              "recordType": "UpdateResult",
+              "requiredFields": [
+                "status",
+                "Hprime",
+                "historyVersion",
+                "summaryEffect"
+              ],
+              "adapter": "Only complete compatible intersection may shrink H; empty proven intersection yields Stop-Empty"
+            }
           },
           {
             "interfaceId": "IF-HIST-UPDATE",
@@ -9781,7 +10116,17 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "CONSERVATIVE-UNKNOWN"
+            "output": "CONSERVATIVE-UNKNOWN",
+            "returnContract": {
+              "recordType": "UpdateResult",
+              "requiredFields": [
+                "status",
+                "Hprime",
+                "historyVersion",
+                "summaryEffect"
+              ],
+              "adapter": "Only complete compatible intersection may shrink H; empty proven intersection yields Stop-Empty"
+            }
           },
           {
             "interfaceId": "IF-HIST-UPDATE",
@@ -9791,7 +10136,17 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "CONSERVATIVE-UNKNOWN"
+            "output": "CONSERVATIVE-UNKNOWN",
+            "returnContract": {
+              "recordType": "UpdateResult",
+              "requiredFields": [
+                "status",
+                "Hprime",
+                "historyVersion",
+                "summaryEffect"
+              ],
+              "adapter": "Only complete compatible intersection may shrink H; empty proven intersection yields Stop-Empty"
+            }
           },
           {
             "interfaceId": "IF-HIST-UPDATE",
@@ -9801,7 +10156,17 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "CONSERVATIVE-UNKNOWN"
+            "output": "CONSERVATIVE-UNKNOWN",
+            "returnContract": {
+              "recordType": "UpdateResult",
+              "requiredFields": [
+                "status",
+                "Hprime",
+                "historyVersion",
+                "summaryEffect"
+              ],
+              "adapter": "Only complete compatible intersection may shrink H; empty proven intersection yields Stop-Empty"
+            }
           },
           {
             "interfaceId": "IF-HIST-UPDATE",
@@ -9811,7 +10176,17 @@
             "historyEffect": "EMPTY-PROVEN",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "Stop-Empty"
+            "output": "Stop-Empty",
+            "returnContract": {
+              "recordType": "UpdateResult",
+              "requiredFields": [
+                "status",
+                "Hprime",
+                "historyVersion",
+                "summaryEffect"
+              ],
+              "adapter": "Only complete compatible intersection may shrink H; empty proven intersection yields Stop-Empty"
+            }
           },
           {
             "interfaceId": "IF-EQUIV",
@@ -9821,7 +10196,15 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "notEstablished"
+            "output": "notEstablished",
+            "returnContract": {
+              "recordType": "EquivalenceResult",
+              "requiredFields": [
+                "status",
+                "proofBasis"
+              ],
+              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists"
+            }
           },
           {
             "interfaceId": "IF-EQUIV",
@@ -9831,7 +10214,15 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "notEstablished"
+            "output": "notEstablished",
+            "returnContract": {
+              "recordType": "EquivalenceResult",
+              "requiredFields": [
+                "status",
+                "proofBasis"
+              ],
+              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists"
+            }
           },
           {
             "interfaceId": "IF-EQUIV",
@@ -9841,7 +10232,15 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "unknown"
+            "output": "unknown",
+            "returnContract": {
+              "recordType": "EquivalenceResult",
+              "requiredFields": [
+                "status",
+                "proofBasis"
+              ],
+              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists"
+            }
           },
           {
             "interfaceId": "IF-EQUIV",
@@ -9851,7 +10250,15 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "unknown"
+            "output": "unknown",
+            "returnContract": {
+              "recordType": "EquivalenceResult",
+              "requiredFields": [
+                "status",
+                "proofBasis"
+              ],
+              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists"
+            }
           },
           {
             "interfaceId": "IF-EQUIV",
@@ -9861,7 +10268,15 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "unknown"
+            "output": "unknown",
+            "returnContract": {
+              "recordType": "EquivalenceResult",
+              "requiredFields": [
+                "status",
+                "proofBasis"
+              ],
+              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists"
+            }
           },
           {
             "interfaceId": "IF-EQUIV",
@@ -9871,7 +10286,15 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "notEstablished"
+            "output": "notEstablished",
+            "returnContract": {
+              "recordType": "EquivalenceResult",
+              "requiredFields": [
+                "status",
+                "proofBasis"
+              ],
+              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists"
+            }
           },
           {
             "interfaceId": "IF-RESOURCE-STOP",
@@ -9881,7 +10304,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-RESOURCE-STOP",
@@ -9891,7 +10319,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-RESOURCE-STOP",
@@ -9901,7 +10334,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-RESOURCE-STOP",
@@ -9911,7 +10349,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-RESOURCE-STOP",
@@ -9921,7 +10364,12 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE"
+            "rejectionReason": "UNREACHABLE-IN-THIS-INTERFACE",
+            "returnContract": {
+              "recordType": "UNREACHABLE",
+              "requiredFields": [],
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+            }
           },
           {
             "interfaceId": "IF-RESOURCE-STOP",
@@ -9931,7 +10379,16 @@
             "historyEffect": "PRESERVE",
             "summaryEffect": "PRESERVE",
             "chargeEffect": "NONE",
-            "output": "stopClass=Stop-Empty"
+            "output": "stopClass=Stop-Empty",
+            "returnContract": {
+              "recordType": "StopResult",
+              "requiredFields": [
+                "stopClass",
+                "finalH",
+                "trace"
+              ],
+              "adapter": "Apply Empty, Singleton, 645, Equivalent, Budget ordering; retry exhaustion remains Stop-Error"
+            }
           }
         ]
       }
@@ -10330,7 +10787,8 @@
             "h1"
           ],
           "eligibleActions": [
-            "test-a"
+            "test-a",
+            "test-b"
           ],
           "distinguishingClasses": [
             "response-a",
@@ -11054,8 +11512,8 @@
         {
           "requirementId": "CRS-M1-00087",
           "sourceUnitId": "SU-ARINC-615A-3-5-4-3-1-P049-PROSE-SENTENCE-010-F4624AC8DCB4",
-          "contractId": "INT-PART-CRC-EQUALITY",
-          "contract": "part number and CRC pair: when both independently derived values are available, retain part-number identity, expected CRC and computed CRC equality; without qualified runtime evidence report NOT-EVALUATED."
+          "contractId": "INT-SAME-PART-NUMBER-CRC-EQUALITY",
+          "contract": "two files with the same part number: when two distinct file identities declare the same part number, retain both file identities, their common part number, CRC A, CRC B, and CRC-A-equals-CRC-B relation; without qualified runtime evidence report NOT-EVALUATED."
         },
         {
           "requirementId": "CRS-M1-00109",
@@ -11085,7 +11543,71 @@
         "configs/requirements/arinc_615a3_m1_crs.json"
       ],
       "failureBehavior": "Missing runtime evidence yields NOT-EVALUATED or named dependency status, never PASS, FAIL, or capability established.",
-      "failureBehaviorZh": "缺少运行证据时产生 NOT-EVALUATED 或具名依赖状态，绝不产生 PASS、FAIL 或能力已建立。"
+      "failureBehaviorZh": "缺少运行证据时产生 NOT-EVALUATED 或具名依赖状态，绝不产生 PASS、FAIL 或能力已建立。",
+      "obligationWitnesses": [
+        {
+          "requirementId": "CRS-M1-00076",
+          "inputs": {
+            "service": "INFORMATION",
+            "receiverSupport": true,
+            "optionSelected": true
+          },
+          "expectedRelation": "receiver supports selected INFORMATION integrity option"
+        },
+        {
+          "requirementId": "CRS-M1-00082",
+          "inputs": {
+            "service": "UPLOAD",
+            "receiverSupport": true,
+            "optionSelected": true
+          },
+          "expectedRelation": "receiver supports selected UPLOAD integrity option"
+        },
+        {
+          "requirementId": "CRS-M1-00085",
+          "inputs": {
+            "finalImageId": "image-A",
+            "lspId": "lsp-A",
+            "orderedBytesPresent": true,
+            "checkValuePresent": true
+          },
+          "expectedRelation": "final image and LSP check-value inputs are jointly identified"
+        },
+        {
+          "requirementId": "CRS-M1-00086",
+          "inputs": {
+            "comparisonSelected": true,
+            "oldFileId": "old-A",
+            "newFileId": "new-A"
+          },
+          "expectedRelation": "optional old/new file comparison retains both identities"
+        },
+        {
+          "requirementId": "CRS-M1-00087",
+          "inputs": {
+            "fileAId": "file-A",
+            "fileBId": "file-B",
+            "partNumberA": "PN-1",
+            "partNumberB": "PN-1",
+            "crcA": "0x1234",
+            "crcB": "0x1234"
+          },
+          "expectedRelation": "same part number implies crcA equals crcB"
+        },
+        {
+          "requirementId": "CRS-M1-00109",
+          "inputs": {
+            "finalDataSeen": true,
+            "calculationInProgress": true,
+            "events": [
+              "FINAL-DATA",
+              "STATUS",
+              "STATUS"
+            ]
+          },
+          "expectedRelation": "status files continue after final DATA while calculation is in progress"
+        }
+      ]
     }
   ],
   "paperTrace": [
@@ -11345,6 +11867,13 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-EXP-TRUTH"
+      ],
+      "coverageAxes": [
+        "captureId",
+        "relativePath",
+        "byteCount",
+        "sha256",
+        "resolvedFileIdentity"
       ]
     },
     {
@@ -11363,6 +11892,11 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-EXP-TRUTH"
+      ],
+      "coverageAxes": [
+        "annotation",
+        "wireOutcome",
+        "independentTruth"
       ]
     },
     {
@@ -11381,6 +11915,12 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-SYN-TRANSFER"
+      ],
+      "coverageAxes": [
+        "sectionId",
+        "interfaceId",
+        "packetNumber",
+        "capturedLength"
       ]
     },
     {
@@ -11399,6 +11939,12 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-SYN-TRANSFER"
+      ],
+      "coverageAxes": [
+        "fragmentOffsets",
+        "coverageRanges",
+        "overlapPolicy",
+        "gapPolicy"
       ]
     },
     {
@@ -11417,6 +11963,12 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-SYN-TRANSFER"
+      ],
+      "coverageAxes": [
+        "tidPair",
+        "blockNumbers",
+        "terminalBlock",
+        "optionState"
       ]
     },
     {
@@ -11435,6 +11987,12 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-SYN-TRANSFER"
+      ],
+      "coverageAxes": [
+        "fieldId",
+        "ordinal",
+        "widthBits",
+        "encodingRule"
       ]
     },
     {
@@ -11453,6 +12011,12 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-SYN-OBSERVATION"
+      ],
+      "coverageAxes": [
+        "triggerId",
+        "responseId",
+        "ownership",
+        "silenceHorizon"
       ]
     },
     {
@@ -11471,6 +12035,12 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-SYN-OBSERVATION"
+      ],
+      "coverageAxes": [
+        "measurementInterval",
+        "requirementWindow",
+        "clockValidity",
+        "boundaryClosure"
       ]
     },
     {
@@ -11489,6 +12059,12 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-SYN-PREDICTION"
+      ],
+      "coverageAxes": [
+        "H",
+        "eligibleActions",
+        "distinguishingClasses",
+        "resource"
       ]
     },
     {
@@ -11507,6 +12083,12 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-SYN-HISTORY"
+      ],
+      "coverageAxes": [
+        "H",
+        "compatibleObservationHypotheses",
+        "historyVersion",
+        "summaryConfirmed"
       ]
     },
     {
@@ -11525,6 +12107,12 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-SYN-RESOURCE-STOP"
+      ],
+      "coverageAxes": [
+        "internalResult",
+        "interfaceId",
+        "returnRecord",
+        "sideEffects"
       ]
     },
     {
@@ -11543,6 +12131,12 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-SYN-RESOURCE-STOP"
+      ],
+      "coverageAxes": [
+        "resourceMode",
+        "remaining",
+        "attemptsIssued",
+        "retryCount"
       ]
     },
     {
@@ -11561,6 +12155,12 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-EXP-SCENE"
+      ],
+      "coverageAxes": [
+        "armId",
+        "algorithmVisibleFields",
+        "truthSource",
+        "resetId"
       ]
     },
     {
@@ -11579,6 +12179,12 @@
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
         "AC-EXP-CAUSAL"
+      ],
+      "coverageAxes": [
+        "authorityHash",
+        "viewHash",
+        "publicationMode",
+        "failurePreservesOldView"
       ]
     }
   ],
@@ -11613,13 +12219,22 @@
       ],
       "executionStatus": "NOT-EXECUTED",
       "dependencyIds": [
-        "interactive IUT",
-        "confirmatory registration"
+        "EXP-PREQ-IUT",
+        "EXP-PREQ-REGISTRATION"
       ],
       "acceptanceCaseIds": [
         "AC-EXP-SCENE",
         "AC-EXP-CAUSAL"
-      ]
+      ],
+      "scenarioValues": {
+        "eventSequence": [
+          "LUI",
+          "LUR",
+          "DATA",
+          "LUS"
+        ],
+        "expectedBoundary": "normal completion only after declared terminal status"
+      }
     },
     {
       "id": "SC-WAIT-CONTINUE",
@@ -11651,13 +12266,21 @@
       ],
       "executionStatus": "NOT-EXECUTED",
       "dependencyIds": [
-        "interactive IUT",
-        "confirmatory registration"
+        "EXP-PREQ-IUT",
+        "EXP-PREQ-REGISTRATION"
       ],
       "acceptanceCaseIds": [
         "AC-EXP-SCENE",
         "AC-EXP-CAUSAL"
-      ]
+      ],
+      "scenarioValues": {
+        "eventSequence": [
+          "WAIT",
+          "WAIT-END",
+          "CONTINUE"
+        ],
+        "expectedBoundary": "WAIT preserves the active obligation until continuation"
+      }
     },
     {
       "id": "SC-NO-RESPONSE",
@@ -11689,13 +12312,20 @@
       ],
       "executionStatus": "NOT-EXECUTED",
       "dependencyIds": [
-        "interactive IUT",
-        "confirmatory registration"
+        "EXP-PREQ-IUT",
+        "EXP-PREQ-REGISTRATION"
       ],
       "acceptanceCaseIds": [
         "AC-EXP-SCENE",
         "AC-EXP-CAUSAL"
-      ]
+      ],
+      "scenarioValues": {
+        "eventSequence": [
+          "TRIGGER",
+          "SILENCE-HORIZON"
+        ],
+        "expectedBoundary": "no-response only when earliest admissible elapsed horizon exceeds U"
+      }
     },
     {
       "id": "SC-ABORT",
@@ -11727,13 +12357,20 @@
       ],
       "executionStatus": "NOT-EXECUTED",
       "dependencyIds": [
-        "interactive IUT",
-        "confirmatory registration"
+        "EXP-PREQ-IUT",
+        "EXP-PREQ-REGISTRATION"
       ],
       "acceptanceCaseIds": [
         "AC-EXP-SCENE",
         "AC-EXP-CAUSAL"
-      ]
+      ],
+      "scenarioValues": {
+        "eventSequence": [
+          "TRIGGER",
+          "ABORT"
+        ],
+        "expectedBoundary": "abort cancels the active obligation"
+      }
     },
     {
       "id": "SC-INVALID-OBS",
@@ -11765,13 +12402,20 @@
       ],
       "executionStatus": "NOT-EXECUTED",
       "dependencyIds": [
-        "interactive IUT",
-        "confirmatory registration"
+        "EXP-PREQ-IUT",
+        "EXP-PREQ-REGISTRATION"
       ],
       "acceptanceCaseIds": [
         "AC-EXP-SCENE",
         "AC-EXP-CAUSAL"
-      ]
+      ],
+      "scenarioValues": {
+        "eventSequence": [
+          "TRIGGER",
+          "INVALID-TIMESTAMP"
+        ],
+        "expectedBoundary": "invalid timestamp chain yields ERROR"
+      }
     },
     {
       "id": "SC-SAME-KEY",
@@ -11803,13 +12447,21 @@
       ],
       "executionStatus": "NOT-EXECUTED",
       "dependencyIds": [
-        "interactive IUT",
-        "confirmatory registration"
+        "EXP-PREQ-IUT",
+        "EXP-PREQ-REGISTRATION"
       ],
       "acceptanceCaseIds": [
         "AC-EXP-SCENE",
         "AC-EXP-CAUSAL"
-      ]
+      ],
+      "scenarioValues": {
+        "eventSequence": [
+          "REQUEST-A",
+          "REQUEST-B",
+          "RESPONSE-B"
+        ],
+        "expectedBoundary": "ownership policy identifies exactly one response owner"
+      }
     },
     {
       "id": "SC-SINGLE-BATCH",
@@ -11841,13 +12493,22 @@
       ],
       "executionStatus": "NOT-EXECUTED",
       "dependencyIds": [
-        "interactive IUT",
-        "confirmatory registration"
+        "EXP-PREQ-IUT",
+        "EXP-PREQ-REGISTRATION"
       ],
       "acceptanceCaseIds": [
         "AC-EXP-SCENE",
         "AC-EXP-CAUSAL"
-      ]
+      ],
+      "scenarioValues": {
+        "eventSequence": [
+          "RESET",
+          "SINGLE",
+          "RESET",
+          "BATCH"
+        ],
+        "expectedBoundary": "full reset separates the two contexts"
+      }
     },
     {
       "id": "SC-RESOURCE-ERROR",
@@ -11879,13 +12540,22 @@
       ],
       "executionStatus": "NOT-EXECUTED",
       "dependencyIds": [
-        "interactive IUT",
-        "confirmatory registration"
+        "EXP-PREQ-IUT",
+        "EXP-PREQ-REGISTRATION"
       ],
       "acceptanceCaseIds": [
         "AC-EXP-SCENE",
         "AC-EXP-CAUSAL"
-      ]
+      ],
+      "scenarioValues": {
+        "eventSequence": [
+          "ACTION",
+          "ADAPTER-ERROR",
+          "RETRY",
+          "ADAPTER-ERROR"
+        ],
+        "expectedBoundary": "retry exhaustion is Stop-Error, not Stop-Budget"
+      }
     }
   ],
   "requiredDependencyRelations": [
@@ -11899,6 +12569,18 @@
         "CRS-M1-00087",
         "CRS-M1-00109"
       ]
+    }
+  ],
+  "experimentPrerequisites": [
+    {
+      "id": "EXP-PREQ-IUT",
+      "responsibility": "Provide an interactive IUT with frozen identity and configuration.",
+      "closureCondition": "registered IUT/configuration plus operator availability; not established in this PR"
+    },
+    {
+      "id": "EXP-PREQ-REGISTRATION",
+      "responsibility": "Register confirmatory scene, truth, reset, clock and cost contracts.",
+      "closureCondition": "independent confirmatory gate record; not established in this PR"
     }
   ]
 }

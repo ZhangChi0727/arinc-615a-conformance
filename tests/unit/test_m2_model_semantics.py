@@ -719,6 +719,18 @@ def test_successor_m2_identity_binds_the_actual_corrected_m1_snapshot() -> None:
     assert any("current input blob" in item for item in errors(stale))
 
 
+def test_new_model_rejects_a_complete_old_but_self_consistent_input_snapshot() -> None:
+    stale = copy.deepcopy(package())
+    old = "c32008e32bc4701df27e2f25f74b01465c9e2bf2"
+    successor = stale["inputAcceptance"]["successorDelta"]
+    successor["currentInputArtifactCommit"] = old
+    successor["currentInputArtifactTree"] = subprocess.check_output(["git", "rev-parse", f"{old}^{{tree}}"], cwd=ROOT, text=True).strip()
+    for item in stale["inputAcceptance"]["inputs"]:
+        item["gitBlobOid"] = subprocess.check_output(["git", "rev-parse", f"{old}:{item['path']}"], cwd=ROOT, text=True).strip()
+    refresh_summary(stale)
+    assert any("declared input snapshot is inconsistent with derived model" in item for item in errors(stale))
+
+
 def _first_clock_ge(node: dict) -> dict:
     for item in m2.walk_nodes(node):
         if (

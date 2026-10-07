@@ -1558,6 +1558,31 @@ def package_errors(
     errors.extend(timeout_guard_errors(model))
     errors.extend(clock_reset_errors(model))
     errors.extend(field_axis_errors(model, m1_by_id))
+    lui_mapping = next((row for row in model.get("objectConstraints", []) if row.get("id") == "OC-LUI-SHARED-INITIALIZATION-FIELDS"), None)
+    expected_lui_fields = ["FIELD-FILE-LENGTH", "FIELD-PROTOCOL-VERSION", "FIELD-OPERATION-ACCEPTANCE-STATUS-CODE", "FIELD-STATUS-DESCRIPTION-LENGTH", "FIELD-STATUS-DESCRIPTION"]
+    expected_lui_sources = ["CRS-M1-00282", "CRS-M1-00283", "CRS-M1-00284", "CRS-M1-00285", "CRS-M1-00286"]
+    if lui_mapping is None or lui_mapping.get("fieldIds") != expected_lui_fields or lui_mapping.get("sourceRequirementIds") != expected_lui_sources:
+        errors.append("LUI shared initialization mapping must cover the complete five-field LCI layout")
+    successor = data.get("inputAcceptance", {}).get("successorDelta") or {}
+    declared_commit = successor.get("currentInputArtifactCommit")
+    if declared_commit and git_root:
+        try:
+            declared_raw = subprocess.check_output(
+                ["git", "show", f"{declared_commit}:configs/requirements/arinc_615a3_m1_crs.json"],
+                cwd=git_root,
+            ).decode("utf-8")
+        except (subprocess.CalledProcessError, UnicodeDecodeError):
+            declared_raw = None
+        if declared_raw is None:
+            errors.append("declared current M1 snapshot cannot be read")
+        else:
+            try:
+                declared_m1 = json.loads(declared_raw)
+                declared_by_id = {row["id"]: row for row in declared_m1["requirements"]}
+                snapshot_errors = field_axis_errors(model, declared_by_id)
+                errors.extend(f"declared input snapshot is inconsistent with derived model: {item}" for item in snapshot_errors)
+            except (ValueError, KeyError, TypeError):
+                errors.append("declared current M1 snapshot is invalid")
     errors.extend(replay_witness_errors(data))
     errors.extend(list_readiness_errors(model))
 

@@ -7,6 +7,7 @@ import hashlib
 import re
 import subprocess
 import sys
+from fractions import Fraction
 from pathlib import Path, PureWindowsPath
 
 from jsonschema import Draft202012Validator
@@ -297,6 +298,10 @@ def _git_blob_json(relative: str, blobs: dict[str, bytes]) -> dict:
 def package_errors(data: dict) -> list[str]:
     errors: list[str] = []
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    try:
+        Draft202012Validator.check_schema(schema)
+    except SchemaError as exc:
+        return [f"schema is invalid: {exc.message}"]
     errors.extend(f"schema: {item.message}" for item in Draft202012Validator(schema).iter_errors(data))
     if errors:
         return errors
@@ -529,6 +534,18 @@ def package_errors(data: dict) -> list[str]:
             expected_history = "EMPTY-PROVEN" if row["interfaceId"] == "IF-HIST-UPDATE" and row["internalResult"] == "EMPTY-HISTORY" else "INTERSECT-PROVEN" if row["interfaceId"] == "IF-HIST-UPDATE" and row["internalResult"] in {"FEASIBLE", "INFEASIBLE"} else "PRESERVE"
             if row["historyEffect"] != expected_history or row["summaryEffect"] != "PRESERVE" or row["chargeEffect"] != "NONE":
                 errors.append(f"{refinement['id']} has unsafe side effects for {row['interfaceId']}/{row['internalResult']}")
+            contract = row.get("returnContract", {})
+            required_contract_fields = {
+                "IF-PRED-OBS": {"status","reason","classesByTest","historyVersionUsed","uncertaintyRef"},
+                "IF-SELECT-ADMIT": {"kind","actionKind","actionId","classesUsed","reason"},
+                "IF-HIST-UPDATE": {"status","Hprime","historyVersion","summaryEffect"},
+                "IF-EQUIV": {"status","proofBasis"},
+                "IF-RESOURCE-STOP": {"stopClass","finalH","trace"},
+            }.get(row["interfaceId"], set()) if row["reachable"] else set()
+            if set(contract.get("requiredFields", [])) != required_contract_fields:
+                errors.append(f"{refinement['id']} return contract is incomplete for {row['interfaceId']}/{row['internalResult']}")
+            if row["interfaceId"] == "IF-SELECT-ADMIT" and row["reachable"] and "TEST-scoped" not in contract.get("adapter", ""):
+                errors.append(f"{refinement['id']} selection adapter loses TEST-scoped GAP semantics")
         model_schema = finite["modelInstanceSchema"]
         if set(model_schema.get("guardAst", {}).get("supported", [])) != {"TRUE", "AND", "STATE-EQUALS", "RATIONAL-INTERVAL-CONTAINS", "TYPED-FIELD-EQUALS"} or set(model_schema.get("guardAst", {}).get("unsupported", [])) != {"OR", "NOT", "CALL"}:
             errors.append(f"{refinement['id']} finite guard AST support boundary is ambiguous")
@@ -536,6 +553,25 @@ def package_errors(data: dict) -> list[str]:
         transition = first_witness.get("input", {}).get("transition", {})
         if transition.get("source") != "q0" or transition.get("target") != first_witness.get("expected", {}).get("state"):
             errors.append(f"{refinement['id']} feasible witness lacks its q0-to-q1 transition")
+        def rational(value: object) -> Fraction | None:
+            if not isinstance(value, dict) or set(value) != {"numerator", "positiveDenominator"}:
+                return None
+            n, q = value.get("numerator"), value.get("positiveDenominator")
+            if not isinstance(n, int) or isinstance(n, bool) or not isinstance(q, int) or isinstance(q, bool) or q <= 0:
+                return None
+            return Fraction(n, q)
+        def valid_interval(value: object) -> bool:
+            if not isinstance(value, dict) or set(value) != {"lower","upper","lowerClosed","upperClosed"}:
+                return False
+            lo, hi = rational(value["lower"]), rational(value["upper"])
+            return lo is not None and hi is not None and lo <= hi and isinstance(value["lowerClosed"], bool) and isinstance(value["upperClosed"], bool)
+        for witness_id in ("FK-W1-FEASIBLE", "FK-W2-INFEASIBLE"):
+            witness = next(row for row in finite["witnessVectors"] if row["id"] == witness_id)
+            if not valid_interval(witness["input"].get("clockConstraint")) or not valid_interval(witness["input"].get("guard")):
+                errors.append(f"{refinement['id']} {witness_id} has a noncanonical or reversed interval")
+        clock_witness = next(row for row in finite["witnessVectors"] if row["id"] == "FK-W5-CLOCK")
+        if clock_witness.get("expected", {}).get("merge") is not False or not all(valid_interval(value) for value in clock_witness.get("input", {}).get("clockConstraints", [])):
+            errors.append(f"{refinement['id']} clock-correlation witness must remain separate")
         witness_ids = {row["id"] for row in finite["witnessVectors"]}
         if witness_ids != {"FK-W1-FEASIBLE","FK-W2-INFEASIBLE","FK-W3-UNKNOWN","FK-W4-HISTORY","FK-W5-CLOCK"}:
             errors.append(f"{refinement['id']} finite-kernel witness set is incomplete")
@@ -619,6 +655,37 @@ def package_errors(data: dict) -> list[str]:
         errors.append("AC-EXP-CAUSAL uses an uncontrolled experiment arm")
     if any("truth" in str(item).lower() for item in causal.get("visiblePrefix", [])):
         errors.append("AC-EXP-CAUSAL exposes evaluator truth")
+    observation_case = next((case for case in data["acceptanceCases"] if case["id"] == "AC-SYN-OBSERVATION"), None)
+    if observation_case:
+        iv = observation_case["inputFixture"]["values"]["interval"]
+        rw = observation_case["inputFixture"]["values"]["requirementWindow"]
+        verdict = observation_case["expectedOutputFixture"]["values"].get("verdict")
+        expected_verdict = "PASS" if iv["lower"] >= rw["lower"] and iv["upper"] <= rw["upper"] else "FAIL" if iv["upper"] < rw["lower"] or iv["lower"] > rw["upper"] else "INCONCLUSIVE"
+        if verdict != expected_verdict:
+            errors.append("AC-SYN-OBSERVATION verdict differs from the whole-interval relation")
+    history_case = next((case for case in data["acceptanceCases"] if case["id"] == "AC-SYN-HISTORY"), None)
+    if history_case:
+        old = history_case["inputFixture"]["values"]["history"]
+        compatible = set(history_case["inputFixture"]["values"]["compatibleObservationHypotheses"])
+        new = history_case["expectedOutputFixture"]["values"]["history"]
+        if set(new["H"]) != set(old["H"]) & compatible or new["version"] != old["version"] + 1:
+            errors.append("AC-SYN-HISTORY violates intersection, no-resurrection, or version advancement")
+    prep_case = next((case for case in data["acceptanceCases"] if case["id"] == "AC-SYN-PREP-RECOVER"), None)
+    if prep_case:
+        pv = prep_case["inputFixture"]["values"]; po = prep_case["expectedOutputFixture"]["values"]
+        if po.get("commitSummary") and not pv.get("summaryConfirmed"):
+            errors.append("AC-SYN-PREP-RECOVER commits an unconfirmed summary")
+    truth_case = case_values.get("AC-EXP-TRUTH", {})
+    if truth_case.get("algorithmVisible") is not False:
+        errors.append("AC-EXP-TRUTH leaks evaluator truth to the algorithm")
+    if selection.get("expectedOutputFixture"):
+        pass
+    select_case = next((case for case in data["acceptanceCases"] if case["id"] == "AC-SYN-SELECT"), None)
+    if select_case:
+        sv=select_case["inputFixture"]["values"]; affordable=[a for a in sv["actions"] if a["id"] in sv["eligibleActions"] and a["cost"] <= sv["resource"]["remaining"]]
+        chosen=select_case["expectedOutputFixture"]["values"].get("selectedActionId")
+        if len(affordable) < 2 or chosen != min(affordable,key=lambda a:(a["worstClass"],a["cost"],a["id"]))["id"]:
+            errors.append("AC-SYN-SELECT does not exercise the controlled affordable stable-ID tie")
     required_matrix_categories = {"corpus identity", "label boundary", "capture format", "IP reassembly", "TFTP reconstruction", "field contracts", "matching and no response", "timing and U", "prediction and admission", "history update", "state and return", "resource accounting", "experiment boundary", "controlled drift"}
     matrix_ids = [item["id"] for item in data["acceptanceMatrix"]]
     if len(matrix_ids) != len(set(matrix_ids)) or {item["category"] for item in data["acceptanceMatrix"]} != required_matrix_categories:
@@ -628,9 +695,19 @@ def package_errors(data: dict) -> list[str]:
     for item in data["acceptanceMatrix"]:
         if not item["caseIds"] or not set(item["caseIds"]).issubset(case_by_id):
             errors.append(f"{item['id']} has an unknown or empty acceptance-vector reference")
+        required_axes = {
+            "corpus identity":{"captureId","relativePath","byteCount","sha256","resolvedFileIdentity"}, "IP reassembly":{"fragmentOffsets","coverageRanges","overlapPolicy","gapPolicy"},
+            "TFTP reconstruction":{"tidPair","blockNumbers","terminalBlock","optionState"}, "timing and U":{"measurementInterval","requirementWindow","clockValidity","boundaryClosure"},
+            "history update":{"H","compatibleObservationHypotheses","historyVersion","summaryConfirmed"}, "controlled drift":{"authorityHash","viewHash","publicationMode","failurePreservesOldView"},
+        }.get(item["category"])
+        if required_axes and set(item.get("coverageAxes", [])) != required_axes:
+            errors.append(f"{item['id']} lacks category-specific coverage axes")
     scenario_ids = [item["id"] for item in data["experimentScenarios"]]
     if len(scenario_ids) != len(set(scenario_ids)) or len(scenario_ids) < 8:
         errors.append("experimentScenarios must contain eight unique first-batch scenes")
+    prerequisite_ids = [item["id"] for item in data["experimentPrerequisites"]]
+    if len(prerequisite_ids) != len(set(prerequisite_ids)) or any(not item["responsibility"].strip() or not item["closureCondition"].strip() for item in data["experimentPrerequisites"]):
+        errors.append("experiment prerequisites are duplicated or incomplete")
     for scenario in data["experimentScenarios"]:
         for field in ("title", "titleZh", "serviceScope", "controllableAction", "faultConfirmation", "independentTruthSource", "resetContract", "timingContract", "resourceContract"):
             if not scenario[field].strip():
@@ -642,6 +719,8 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{scenario['id']} uses an uncontrolled service")
         if not scenario["dependencyIds"] or not scenario["acceptanceCaseIds"] or not set(scenario["acceptanceCaseIds"]).issubset(case_by_id):
             errors.append(f"{scenario['id']} lacks controlled dependency or acceptance bindings")
+        if not set(scenario["dependencyIds"]).issubset(prerequisite_ids) or len(scenario.get("scenarioValues", {}).get("eventSequence", [])) < 2:
+            errors.append(f"{scenario['id']} has unresolved prerequisites or an incomplete scenario vector")
     for tool in data["toolRequirements"]:
         case = case_by_id.get(tool["acceptanceCaseId"])
         if case is not None:
@@ -825,6 +904,9 @@ def package_errors(data: dict) -> list[str]:
     dependency_by_id = {item["id"]: item for item in data["implementationDependencies"]}
     if len(dependency_by_id) != len(data["implementationDependencies"]):
         errors.append("implementationDependencies repeats an ID")
+    integrity_dependencies = [dependency for dependency in data["implementationDependencies"] if set(dependency.get("requirementIds", [])) & set(integrity_by_requirement)]
+    if len(integrity_dependencies) != 1:
+        errors.append("exactly one dependency must cover the independently bound integrity obligations")
     for dependency in data["implementationDependencies"]:
         if not set(dependency["requirementIds"]).issubset(expected):
             errors.append(f"{dependency['id']} has an unknown requirement")
@@ -842,14 +924,26 @@ def package_errors(data: dict) -> list[str]:
         source_bindings = {row.get("requirementId"): row for row in dependency["sourceBindings"]}
         if len(source_bindings) != len(dependency["sourceBindings"]) or set(source_bindings) != set(dependency["requirementIds"]):
             errors.append(f"{dependency['id']} source bindings must exactly cover its requirements")
-        if dependency["id"] == "DEP-INTEGRITY-RUNTIME" and set(dependency["requirementIds"]) != set(integrity_by_requirement):
+        is_integrity_dependency = dependency in integrity_dependencies
+        if is_integrity_dependency and set(dependency["requirementIds"]) != set(integrity_by_requirement):
             errors.append(f"{dependency['id']} requirements differ from the independent obligation baseline")
+        if is_integrity_dependency:
+            witnesses = {row.get("requirementId"): row for row in dependency.get("obligationWitnesses", [])}
+            if len(witnesses) != len(dependency.get("obligationWitnesses", [])) or set(witnesses) != set(integrity_by_requirement):
+                errors.append(f"{dependency['id']} obligation witnesses must exactly cover the independent baseline")
+            same_part = witnesses.get("CRS-M1-00087", {}).get("inputs", {})
+            if not (same_part.get("fileAId") != same_part.get("fileBId") and same_part.get("partNumberA") == same_part.get("partNumberB") and same_part.get("crcA") == same_part.get("crcB")):
+                errors.append(f"{dependency['id']} 00087 witness must compare CRCs of two same-part-number files")
+            status = witnesses.get("CRS-M1-00109", {}).get("inputs", {})
+            events = status.get("events", [])
+            if not (status.get("finalDataSeen") and status.get("calculationInProgress") and events[:1] == ["FINAL-DATA"] and "STATUS" in events[1:]):
+                errors.append(f"{dependency['id']} 00109 witness lacks post-DATA status continuation")
         for requirement_id, binding in source_bindings.items():
             source = source_by_id.get(requirement_id, {})
             if binding.get("sourceUnitId") != source.get("sourceUnitId"):
                 errors.append(f"{dependency['id']} has a forged source binding for {requirement_id}")
             baseline = integrity_by_requirement.get(requirement_id)
-            if dependency["id"] == "DEP-INTEGRITY-RUNTIME" and (baseline is None or binding.get("sourceUnitId") != baseline.get("sourceUnitId") or binding.get("contractId") != baseline.get("contractId")):
+            if is_integrity_dependency and (baseline is None or binding.get("sourceUnitId") != baseline.get("sourceUnitId") or binding.get("contractId") != baseline.get("contractId")):
                 errors.append(f"{dependency['id']} has a forged obligation contract for {requirement_id}")
             if not binding.get("contract", "").strip() or (baseline and baseline["requiredObservation"] not in binding["contract"]):
                 errors.append(f"{dependency['id']} lacks concrete obligation semantics for {requirement_id}")
@@ -857,7 +951,7 @@ def package_errors(data: dict) -> list[str]:
             evidence_path = ROOT / evidence
             if Path(evidence).is_absolute() or ".." in Path(evidence).parts or not evidence_path.is_file():
                 errors.append(f"{dependency['id']} has unsafe or missing closure evidence {evidence}")
-        if dependency["id"] == "DEP-INTEGRITY-RUNTIME" and set(dependency["closureEvidence"]) != {
+        if is_integrity_dependency and set(dependency["closureEvidence"]) != {
             "configs/engineering/cltav_integrity_obligation_baseline.json",
             "configs/requirements/arinc_615a3_m1_crs.json",
         }:
