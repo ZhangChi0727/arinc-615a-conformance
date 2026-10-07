@@ -297,8 +297,7 @@ def _git_blob_json(relative: str, blobs: dict[str, bytes]) -> dict:
 
 def _acceptance_relation_errors(case: dict) -> list[str]:
     """Evaluate the closed deterministic relation declared by a specification witness."""
-    variants = case.get("negativeVariants", [])
-    relation = variants[0].get("expectedRejection", "").split(" at ", 1)[0] if variants else ""
+    relation = case.get("relationId", "")
     inputs = case.get("inputFixture", {}).get("values", {})
     outputs = case.get("expectedOutputFixture", {}).get("values", {})
     errors: list[str] = []
@@ -340,7 +339,7 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
         if outputs.get("charges") != inputs.get("attemptsIssued"):
             errors.append("RC-RESOURCE-ONCE at expectedOutputFixture.values.charges")
     elif relation == "RC-INTEGRITY-RUNTIME":
-        if outputs.get("judgment") == "PASS" and inputs.get("runtimeEvidence") != "ESTABLISHED":
+        if outputs.get("judgment") != "NOT-EVALUATED" and inputs.get("runtimeEvidence") != "ESTABLISHED":
             errors.append("RC-INTEGRITY-RUNTIME at expectedOutputFixture.values.judgment")
     elif relation == "RC-SCENE-RESET-ID":
         if not inputs.get("resetId"):
@@ -645,6 +644,16 @@ def package_errors(data: dict) -> list[str]:
             witness = next(row for row in finite["witnessVectors"] if row["id"] == witness_id)
             if not valid_interval(witness["input"].get("clockConstraint")) or not valid_interval(witness["input"].get("guard")):
                 errors.append(f"{refinement['id']} {witness_id} has a noncanonical or reversed interval")
+            actual_guard = witness["input"].get("transition", {}).get("guardAst", {}).get("interval", witness["input"].get("guard"))
+            if not valid_interval(actual_guard) or actual_guard != witness["input"].get("guard"):
+                errors.append(f"{refinement['id']} {witness_id} transition guard differs from the authoritative guard")
+        w1 = next(row for row in finite["witnessVectors"] if row["id"] == "FK-W1-FEASIBLE")
+        delta = rational(w1["input"].get("delta"))
+        if delta is None or delta < 0 or w1["input"].get("quantifier") != "EXISTS-DELTA":
+            errors.append(f"{refinement['id']} feasible witness has an invalid shared delta")
+        w2 = next(row for row in finite["witnessVectors"] if row["id"] == "FK-W2-INFEASIBLE")
+        if w2.get("expected", {}).get("result") != "INFEASIBLE":
+            errors.append(f"{refinement['id']} disjoint constraint witness must be INFEASIBLE")
         clock_witness = next(row for row in finite["witnessVectors"] if row["id"] == "FK-W5-CLOCK")
         if clock_witness.get("expected", {}).get("merge") is not False or not all(valid_interval(value) for value in clock_witness.get("input", {}).get("clockConstraints", [])):
             errors.append(f"{refinement['id']} clock-correlation witness must remain separate")
@@ -710,7 +719,7 @@ def package_errors(data: dict) -> list[str]:
             except (KeyError, IndexError, TypeError):
                 errors.append(f"{case['id']} negative variant {variant['id']} has an invalid executable path")
                 continue
-            if variant["expectedRejection"] not in variant_errors:
+            if not variant["expectedRejection"].startswith(case["relationId"] + " at ") or not any(item.startswith(case["relationId"] + " at ") for item in variant_errors):
                 errors.append(f"{case['id']} negative variant {variant['id']} does not hit its named relation")
         for tool_id in case["toolRequirementIds"]:
             tool = tool_by_id.get(tool_id)
@@ -1019,9 +1028,15 @@ def package_errors(data: dict) -> list[str]:
             same_part = witnesses.get("CRS-M1-00087", {}).get("inputs", {})
             if not (same_part.get("fileAId") != same_part.get("fileBId") and same_part.get("partNumberA") == same_part.get("partNumberB") and same_part.get("crcA") == same_part.get("crcB")):
                 errors.append(f"{dependency['id']} 00087 witness must compare CRCs of two same-part-number files")
+            image = witnesses.get("CRS-M1-00085", {}).get("inputs", {})
+            if not (image.get("orderedBytesPresent") and image.get("checkValuePresent") and image.get("relation") == "EQUALS" and image.get("finalImageCheckValue") == image.get("lspCheckValue")):
+                errors.append(f"{dependency['id']} 00085 witness lacks final-image/LSP check-value relation")
+            comparison = witnesses.get("CRS-M1-00086", {}).get("inputs", {})
+            if not (comparison.get("comparisonSelected") and comparison.get("oldFileId") != comparison.get("newFileId") and comparison.get("comparisonResult") == ("EQUAL" if comparison.get("oldCheckValue") == comparison.get("newCheckValue") else "DIFFERENT")):
+                errors.append(f"{dependency['id']} 00086 witness lacks declared old/new comparison result")
             status = witnesses.get("CRS-M1-00109", {}).get("inputs", {})
             events = status.get("events", [])
-            if not (status.get("finalDataSeen") and status.get("calculationInProgress") and events[:1] == ["FINAL-DATA"] and "STATUS" in events[1:]):
+            if not (status.get("finalDataSeen") and status.get("calculationInProgress") and events and events[0].get("kind") == "FINAL-DATA" and any(event.get("kind") == "STATUS" and event.get("at", 0) > events[0].get("at", 0) for event in events[1:])):
                 errors.append(f"{dependency['id']} 00109 witness lacks post-DATA status continuation")
         for requirement_id, binding in source_bindings.items():
             source = source_by_id.get(requirement_id, {})

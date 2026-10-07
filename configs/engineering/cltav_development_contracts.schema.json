@@ -1314,7 +1314,8 @@
           "inputFixture",
           "expectedOutputFixture",
           "prohibitedOutputPaths",
-          "negativeVariants"
+          "negativeVariants",
+          "relationId"
         ],
         "properties": {
           "id": {
@@ -1467,6 +1468,10 @@
                 "value": {}
               }
             }
+          },
+          "relationId": {
+            "type": "string",
+            "pattern": "^RC-[A-Z0-9-]+$"
           }
         }
       }

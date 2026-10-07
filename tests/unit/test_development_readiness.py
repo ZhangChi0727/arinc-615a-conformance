@@ -1123,6 +1123,21 @@ def test_rr87_registered_negative_variants_execute_and_hit_the_named_relation():
     assert any("does not hit its named relation" in item for item in errors(bad))
 
 
+def test_rr88_relations_are_not_selected_by_negative_expectations_and_guard_is_consumed():
+    bad = copy.deepcopy(PACKAGE)
+    case = next(x for x in bad["acceptanceCases"] if x["id"] == "AC-SYN-EQUIVALENCE")
+    case["expectedOutputFixture"]["values"]["result"] = "established"
+    case["negativeVariants"][0]["expectedRejection"] = "RC-RESOURCE-ONCE at expectedOutputFixture.values.charges"
+    assert any("RC-EQUIV-EVIDENCE" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    w1 = next(x for x in bad["algorithmRefinements"][0]["finiteKernelContract"]["witnessVectors"] if x["id"] == "FK-W1-FEASIBLE")
+    w1["input"]["transition"]["guardAst"]["interval"]["lower"] = {"numerator": 3, "positiveDenominator": 1}
+    assert any("transition guard differs" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    next(x for x in bad["acceptanceCases"] if x["id"] == "AC-SYN-INTEGRITY")["expectedOutputFixture"]["values"]["judgment"] = "FAIL"
+    assert any("RC-INTEGRITY-RUNTIME" in item for item in errors(bad))
+
+
 def test_rr87_matrix_scenarios_and_integrity_witnesses_are_not_labels_only():
     bad = copy.deepcopy(PACKAGE)
     next(x for x in bad["acceptanceMatrix"] if x["category"] == "corpus identity")["coverageAxes"] = ["armId", "truth", "cost"]

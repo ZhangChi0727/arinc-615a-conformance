@@ -10642,7 +10642,8 @@
           ]
         }
       ],
-      "experimentInterfaceIds": []
+      "experimentInterfaceIds": [],
+      "relationId": "RC-TRANSFER-TERMINAL"
     },
     {
       "id": "AC-SYN-PREDICTION",
@@ -10746,7 +10747,8 @@
           "value": []
         }
       ],
-      "experimentInterfaceIds": []
+      "experimentInterfaceIds": [],
+      "relationId": "RC-PREDICTION-NONEMPTY"
     },
     {
       "id": "AC-SYN-SELECT",
@@ -10843,7 +10845,8 @@
           "value": "test-b"
         }
       ],
-      "experimentInterfaceIds": []
+      "experimentInterfaceIds": [],
+      "relationId": "RC-SELECT-STABLE-ID"
     },
     {
       "id": "AC-SYN-OBSERVATION",
@@ -10916,7 +10919,8 @@
           "value": "PASS"
         }
       ],
-      "experimentInterfaceIds": []
+      "experimentInterfaceIds": [],
+      "relationId": "RC-VERDICT-WHOLE-INTERVAL"
     },
     {
       "id": "AC-SYN-PREP-RECOVER",
@@ -10983,7 +10987,8 @@
           "value": false
         }
       ],
-      "experimentInterfaceIds": []
+      "experimentInterfaceIds": [],
+      "relationId": "RC-SUMMARY-CONFIRMATION"
     },
     {
       "id": "AC-SYN-HISTORY",
@@ -11067,7 +11072,8 @@
           ]
         }
       ],
-      "experimentInterfaceIds": []
+      "experimentInterfaceIds": [],
+      "relationId": "RC-HISTORY-NO-RESURRECTION"
     },
     {
       "id": "AC-SYN-EQUIVALENCE",
@@ -11132,7 +11138,8 @@
           "value": "established"
         }
       ],
-      "experimentInterfaceIds": []
+      "experimentInterfaceIds": [],
+      "relationId": "RC-EQUIV-EVIDENCE"
     },
     {
       "id": "AC-SYN-RESOURCE-STOP",
@@ -11202,7 +11209,8 @@
           "value": 2
         }
       ],
-      "experimentInterfaceIds": []
+      "experimentInterfaceIds": [],
+      "relationId": "RC-RESOURCE-ONCE"
     },
     {
       "id": "AC-SYN-INTEGRITY",
@@ -11264,7 +11272,8 @@
           "value": "PASS"
         }
       ],
-      "experimentInterfaceIds": []
+      "experimentInterfaceIds": [],
+      "relationId": "RC-INTEGRITY-RUNTIME"
     },
     {
       "id": "AC-EXP-SCENE",
@@ -11338,7 +11347,8 @@
       "experimentInterfaceIds": [
         "IF-EXP-SCENE",
         "IF-EXP-RUN"
-      ]
+      ],
+      "relationId": "RC-SCENE-RESET-ID"
     },
     {
       "id": "AC-EXP-TRUTH",
@@ -11406,7 +11416,8 @@
       "experimentInterfaceIds": [
         "IF-EXP-INJECT",
         "IF-EXP-TRUTH"
-      ]
+      ],
+      "relationId": "RC-TRUTH-ISOLATION"
     },
     {
       "id": "AC-EXP-CAUSAL",
@@ -11482,7 +11493,8 @@
       "experimentInterfaceIds": [
         "IF-EXP-COLLECT",
         "IF-EXP-FILTER"
-      ]
+      ],
+      "relationId": "RC-CAUSAL-PREFIX"
     },
     {
       "id": "AC-EXP-DENOMINATOR",
@@ -11551,7 +11563,8 @@
       ],
       "experimentInterfaceIds": [
         "IF-EXP-EVAL"
-      ]
+      ],
+      "relationId": "RC-DENOMINATOR-ATTEMPTS"
     }
   ],
   "implementationDependencies": [
@@ -11664,18 +11677,24 @@
             "finalImageId": "image-A",
             "lspId": "lsp-A",
             "orderedBytesPresent": true,
-            "checkValuePresent": true
+            "checkValuePresent": true,
+            "finalImageCheckValue": "0x1234",
+            "lspCheckValue": "0x1234",
+            "relation": "EQUALS"
           },
-          "expectedRelation": "final image and LSP check-value inputs are jointly identified"
+          "expectedRelation": "final-image check value equals the LSP check value"
         },
         {
           "requirementId": "CRS-M1-00086",
           "inputs": {
             "comparisonSelected": true,
             "oldFileId": "old-A",
-            "newFileId": "new-A"
+            "newFileId": "new-A",
+            "oldCheckValue": "0x1111",
+            "newCheckValue": "0x2222",
+            "comparisonResult": "DIFFERENT"
           },
-          "expectedRelation": "optional old/new file comparison retains both identities"
+          "expectedRelation": "optional old/new comparison retains both identities and its declared result"
         },
         {
           "requirementId": "CRS-M1-00087",
@@ -11695,12 +11714,21 @@
             "finalDataSeen": true,
             "calculationInProgress": true,
             "events": [
-              "FINAL-DATA",
-              "STATUS",
-              "STATUS"
+              {
+                "kind": "FINAL-DATA",
+                "at": 10
+              },
+              {
+                "kind": "STATUS",
+                "at": 11
+              },
+              {
+                "kind": "STATUS",
+                "at": 12
+              }
             ]
           },
-          "expectedRelation": "status files continue after final DATA while calculation is in progress"
+          "expectedRelation": "STATUS continues after FINAL-DATA while calculation is in progress"
         }
       ]
     }
