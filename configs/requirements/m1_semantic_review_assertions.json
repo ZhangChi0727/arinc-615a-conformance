@@ -7879,10 +7879,12 @@
         "ordinal": 5,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [],
+        "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "inactiveRequiredValue": "0x0000"
       }
     },
     {

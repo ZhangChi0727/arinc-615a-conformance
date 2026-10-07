@@ -92485,10 +92485,12 @@
         "ordinal": 5,
         "widthBitsExpression": "16",
         "repeatScope": "ONCE",
-        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "presenceCondition": "ALWAYS",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "noteRefs": []
+        "noteRefs": [],
+        "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "inactiveRequiredValue": "0x0000"
       },
       "timing": {
         "timingFamily": "STATUS-EXCEPTION-SILENCE-DEADLINE",
@@ -120511,7 +120513,7 @@
     "supplementDispositionPath": "configs/requirements/m1_supplement_dispositions.json",
     "supplementDispositionFingerprint": "0b49fdde26e4608eb050356691a282040a05c7a490c11870a0290845fd07f42b",
     "semanticAssertionPath": "configs/requirements/m1_semantic_review_assertions.json",
-    "semanticAssertionFingerprint": "bfa406ffcb182b04ff30014787029678e908095d94ede502406131bbc53c00e4",
+    "semanticAssertionFingerprint": "2599cc4b7a5d3ac8c8065ff22c250de6194189c0dc464e85dc8ca48ed3d8de36",
     "automaticValidationScope": "STRUCTURE-AND-CROSS-RECORD-CONSISTENCY-ONLY; SOURCE-FIDELITY-IS-NOT-AUTOMATED",
     "externalRg0Scope": "SOURCE-BOUNDARY-COMPLETENESS-HASH-FIDELITY-AND-SUPPLEMENT-DISPOSITION",
     "externalRg1Scope": "ACTOR-CONDITION-POLARITY-ACTION-OBJECT-OBSERVABLE-TIMING-AND-DEPENDENCY-SEMANTICS"
@@ -120522,7 +120524,7 @@
     "dependencyCount": 15,
     "gapCount": 1,
     "coverageFingerprint": "db1c91a23d53f4edc2a0136fb2ccda5f27dfad09750e27f65b6361301f217883",
-    "requirementsFingerprint": "cacd56dca07c0a2c3e8f26b50b80216d45e24e1ebdbd5e7f03c190580c56e44e"
+    "requirementsFingerprint": "b51e7838b143dc8d7f11488d758c4efdf72ef668bc6391517d267726a618175f"
   },
   "activation": {
     "formalApproval": "EXTERNAL-JOINT-CONDITION-NOT-YET-SATISFIED",

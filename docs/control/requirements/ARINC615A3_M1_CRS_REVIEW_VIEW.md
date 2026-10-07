@@ -17,7 +17,7 @@
 - Dependencies: 15
 - Gaps: 1
 - Coverage fingerprint: `db1c91a23d53f4edc2a0136fb2ccda5f27dfad09750e27f65b6361301f217883`
-- Requirements fingerprint: `cacd56dca07c0a2c3e8f26b50b80216d45e24e1ebdbd5e7f03c190580c56e44e`
+- Requirements fingerprint: `b51e7838b143dc8d7f11488d758c4efdf72ef668bc6391517d267726a618175f`
 - Source-unit fingerprint: `dabccee92617e8161b128d53c1cc151f3e5952419a8012c84c50d0f53646620d`
 - Automated checks cover structure and cross-record consistency only; proprietary-source completeness and fidelity require external RG0 review.
 - `generatedSemanticProjectionEn/Zh` are assertion-bound drift projections, not independent RG1 evidence.
@@ -1208,7 +1208,7 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 | `CRS-M1-00302` | `LCS` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `FIXED-WIDTH-ASCII` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00303` | `LCS` / `3` | `FIELD-COUNTER` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00304` | `LCS` / `4` | `FIELD-INFORMATION-OPERATION-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00305` | `LCS` / `5` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `WHEN-STATUS-CODE-0002-OR-0004` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00305` | `LCS` / `5` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `ALWAYS` / `WHEN-STATUS-CODE-0002-OR-0004` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00306` | `LCS` / `6` | `FIELD-ESTIMATED-TIME` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00307` | `LCS` / `7` | `FIELD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00308` | `LCS` / `8` | `FIELD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
@@ -2844,7 +2844,7 @@ M1 selects Compliant IPv4/UDP network services. P3 profiled exceptions and AFDX 
 - 依赖：15
 - 缺口：1
 - 覆盖指纹：`db1c91a23d53f4edc2a0136fb2ccda5f27dfad09750e27f65b6361301f217883`
-- 需求指纹：`cacd56dca07c0a2c3e8f26b50b80216d45e24e1ebdbd5e7f03c190580c56e44e`
+- 需求指纹：`b51e7838b143dc8d7f11488d758c4efdf72ef668bc6391517d267726a618175f`
 - 来源单元指纹：`dabccee92617e8161b128d53c1cc151f3e5952419a8012c84c50d0f53646620d`
 - 自动检查只覆盖结构与跨记录一致性；专有来源的完整性与忠实度仍须外部 RG0 评审。
 - `generatedSemanticProjectionEn/Zh` 是受断言约束的漂移投影，不是独立 RG1 证据。
@@ -4035,7 +4035,7 @@ M1 选择 Compliant IPv4/UDP 网络服务。P3 裁剪例外与 AFDX 继续延期
 | `CRS-M1-00302` | `LCS` / `2` | `FIELD-PROTOCOL-VERSION` | `16` | `ONCE` / `ALWAYS` / `—` | `FIXED-WIDTH-ASCII` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00303` | `LCS` / `3` | `FIELD-COUNTER` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00304` | `LCS` / `4` | `FIELD-INFORMATION-OPERATION-STATUS-CODE` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
-| `CRS-M1-00305` | `LCS` / `5` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `WHEN-STATUS-CODE-0002-OR-0004` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
+| `CRS-M1-00305` | `LCS` / `5` | `FIELD-EXCEPTION-TIMER` | `16` | `ONCE` / `ALWAYS` / `WHEN-STATUS-CODE-0002-OR-0004` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00306` | `LCS` / `6` | `FIELD-ESTIMATED-TIME` | `16` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00307` | `LCS` / `7` | `FIELD-STATUS-DESCRIPTION-LENGTH` | `8` | `ONCE` / `ALWAYS` / `—` | `UNSIGNED-INT-BIG-ENDIAN` / `NOT-APPLICABLE-OR-PROSE-DEFINED` | — |
 | `CRS-M1-00308` | `LCS` / `8` | `FIELD-STATUS-DESCRIPTION` | `0..2040` | `ONCE` / `WHEN-LENGTH-FIELD-POSITIVE` / `—` | `ZERO-TERMINATED-ASCII` / `ZERO-TERMINATED-PER-SECTION-6.4` | NOTE-1 |
