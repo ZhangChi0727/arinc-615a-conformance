@@ -1112,6 +1112,17 @@ def test_rr87_acceptance_relations_reject_semantic_drift():
         assert errors(bad)
 
 
+def test_rr87_registered_negative_variants_execute_and_hit_the_named_relation():
+    for case in PACKAGE["acceptanceCases"]:
+        for variant in case["negativeVariants"]:
+            mutated = MODULE._apply_acceptance_variant(case, variant)
+            assert variant["expectedRejection"] in MODULE._acceptance_relation_errors(mutated)
+    bad = copy.deepcopy(PACKAGE)
+    variant = next(x for x in bad["acceptanceCases"] if x["id"] == "AC-SYN-HISTORY")["negativeVariants"][0]
+    variant["path"] = ["expectedOutputFixture", "values", "NO-SUCH-FIELD"]
+    assert any("does not hit its named relation" in item for item in errors(bad))
+
+
 def test_rr87_matrix_scenarios_and_integrity_witnesses_are_not_labels_only():
     bad = copy.deepcopy(PACKAGE)
     next(x for x in bad["acceptanceMatrix"] if x["category"] == "corpus identity")["coverageAxes"] = ["armId", "truth", "cost"]

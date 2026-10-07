@@ -48,7 +48,8 @@ acceptance, and successor implementation locations.  The first slice also
 preserves six CRC-bearing protocol obligations and their ARINC~645 parameter
 leaves.  The six contracts remain distinct: INFORMATION and UPLOAD receiver
 support, final-image/LSP check value, optional old/new-file comparison,
-part-number/CRC equality, and status-file continuation after the final DATA
+equal CRC values for two distinct files sharing one part number, and
+status-file continuation after the final DATA
 while integrity calculation remains in progress.  This closes their
 specification dependency only: the runtime
 integrity capability remains \emph{not established} until implementation,

@@ -409,7 +409,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence.", "values": {"orderedBlocks": [1, 2], "status": "COMPLETE", "terminalConfirmed": true}}`
 - Expected: A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence.
 - Prohibited: No protocol PASS/FAIL, root-cause label or invented accepted option is emitted.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- Negative variants: `[{"expectedRejection": "RC-TRANSFER-TERMINAL at inputFixture.values.terminal", "id": "AC-SYN-TRANSFER-NEG", "mutation": "remove terminal evidence"}]`
+- Negative variants: `[{"expectedRejection": "RC-TRANSFER-TERMINAL at inputFixture.values.terminal", "id": "AC-SYN-TRANSFER-NEG", "mutation": "remove terminal evidence", "operation": "remove", "path": ["inputFixture", "values", "terminal"]}]`
 - Basis: Synthetic specification witness for the declared offline first slice; it is not historical truth or a parser execution.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-PREDICTION` — Finite prediction boundary witness
 - Inputs: `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
@@ -418,7 +418,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "A finite current projection is tagged OK or GAP before any TEST score is read.", "values": {"classes": ["response-a", "response-b"], "predictionStatus": "OK"}}`
 - Expected: A finite current projection is tagged OK or GAP before any TEST score is read.
 - Prohibited: An empty projection is not scored as zero and no history is written.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- Negative variants: `[{"expectedRejection": "RC-PREDICTION-NONEMPTY at expectedOutputFixture.values.classes", "id": "AC-SYN-PREDICTION-NEG", "mutation": "replace classes with an empty list while status is OK"}]`
+- Negative variants: `[{"expectedRejection": "RC-PREDICTION-NONEMPTY at expectedOutputFixture.values.classes", "id": "AC-SYN-PREDICTION-NEG", "mutation": "replace classes with an empty list while status is OK", "operation": "replace", "path": ["expectedOutputFixture", "values", "classes"], "value": []}]`
 - Basis: Synthetic specification witness for finite current-class propagation.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-SELECT` — Admitted action selection witness
 - Inputs: `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
@@ -427,7 +427,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID.", "values": {"selectedActionId": "test-a", "tieBreak": ["worstClass", "cost", "stable-id"]}}`
 - Expected: Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID.
 - Prohibited: An uninformative TEST is not A2 and Prep/Recover are not TEST-scored.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- Negative variants: `[{"expectedRejection": "RC-SELECT-STABLE-ID at expectedOutputFixture.values.selectedActionId", "id": "AC-SYN-SELECT-NEG", "mutation": "select test-b with equal score and cost"}]`
+- Negative variants: `[{"expectedRejection": "RC-SELECT-STABLE-ID at expectedOutputFixture.values.selectedActionId", "id": "AC-SYN-SELECT-NEG", "mutation": "select test-b with equal score and cost", "operation": "replace", "path": ["expectedOutputFixture", "values", "selectedActionId"], "value": "test-b"}]`
 - Basis: Synthetic specification witness for the declared one-step decision table.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-OBSERVATION` — Four-valued timing interpretation witness
 - Inputs: `OWNERSHIP-RESULT`, `PROTOCOL-EVENT`, `OBSERVATION-ASSESSMENT`
@@ -436,7 +436,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR.", "values": {"verdict": "INCONCLUSIVE"}}`
 - Expected: Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR.
 - Prohibited: ERROR or INCONCLUSIVE is not downgraded to FAIL.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- Negative variants: `[{"expectedRejection": "RC-VERDICT-WHOLE-INTERVAL at expectedOutputFixture.values.verdict", "id": "AC-SYN-OBSERVATION-NEG", "mutation": "change verdict to PASS for a boundary-overlapping interval"}]`
+- Negative variants: `[{"expectedRejection": "RC-VERDICT-WHOLE-INTERVAL at expectedOutputFixture.values.verdict", "id": "AC-SYN-OBSERVATION-NEG", "mutation": "change verdict to PASS for a boundary-overlapping interval", "operation": "replace", "path": ["expectedOutputFixture", "values", "verdict"], "value": "PASS"}]`
 - Basis: Synthetic specification witness for T5 interval and ownership preconditions.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-PREP-RECOVER` — Confirmed recovery handoff witness
 - Inputs: `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
@@ -445,7 +445,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary.", "values": {"commitSummary": "q1", "historyVersion": 1}}`
 - Expected: Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary.
 - Prohibited: An unconfirmed successor cannot retain stale known state or become a direct Γ write.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- Negative variants: `[{"expectedRejection": "RC-SUMMARY-CONFIRMATION at inputFixture.values.summaryConfirmed", "id": "AC-SYN-PREP-RECOVER-NEG", "mutation": "set summaryConfirmed false while committing q1"}]`
+- Negative variants: `[{"expectedRejection": "RC-SUMMARY-CONFIRMATION at inputFixture.values.summaryConfirmed", "id": "AC-SYN-PREP-RECOVER-NEG", "mutation": "set summaryConfirmed false while committing q1", "operation": "replace", "path": ["inputFixture", "values", "summaryConfirmed"], "value": false}]`
 - Basis: Synthetic specification witness for S8/S9 ownership boundaries.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-HISTORY` — Whole-history update witness
 - Inputs: `HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
@@ -454,7 +454,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses.", "values": {"history": {"H": [], "compatibleStateByHypothesis": {}, "statusByHypothesis": {}, "version": 1}, "stop": "Stop-Empty"}}`
 - Expected: A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses.
 - Prohibited: H prime is never replaced by Iz and resource exhaustion is not incompatibility.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- Negative variants: `[{"expectedRejection": "RC-HISTORY-NO-RESURRECTION at expectedOutputFixture.values.history.H", "id": "AC-SYN-HISTORY-NEG", "mutation": "return the old h0 after the empty intersection"}]`
+- Negative variants: `[{"expectedRejection": "RC-HISTORY-NO-RESURRECTION at expectedOutputFixture.values.history.H", "id": "AC-SYN-HISTORY-NEG", "mutation": "return the old h0 after the empty intersection", "operation": "replace", "path": ["expectedOutputFixture", "values", "history", "H"], "value": ["h0"]}]`
 - Basis: Synthetic specification witness for conservative history propagation.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-EQUIVALENCE` — Bounded equivalence abstention witness
 - Inputs: `HISTORY-HANDLE`
@@ -463,7 +463,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished.", "values": {"result": "unknown"}}`
 - Expected: An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished.
 - Prohibited: No immediately distinguishing TEST is not treated as proof of equivalence.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- Negative variants: `[{"expectedRejection": "RC-EQUIV-EVIDENCE at expectedOutputFixture.values.result", "id": "AC-SYN-EQUIVALENCE-NEG", "mutation": "return established without finite-domain proof"}]`
+- Negative variants: `[{"expectedRejection": "RC-EQUIV-EVIDENCE at expectedOutputFixture.values.result", "id": "AC-SYN-EQUIVALENCE-NEG", "mutation": "return established without finite-domain proof", "operation": "replace", "path": ["expectedOutputFixture", "values", "result"], "value": "established"}]`
 - Basis: Synthetic specification witness for bounded equivalence semantics.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-RESOURCE-STOP` — Resource and stop ordering witness
 - Inputs: `HISTORY-HANDLE`, `FINDING-RECORD`
@@ -472,7 +472,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error.", "values": {"charges": 1, "stop": "Stop-Error"}}`
 - Expected: Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error.
 - Prohibited: Retry exhaustion is not Stop-Budget and a normal singleton is not protocol PASS.; paths: `protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- Negative variants: `[{"expectedRejection": "RC-RESOURCE-ONCE at expectedOutputFixture.values.charges", "id": "AC-SYN-RESOURCE-STOP-NEG", "mutation": "charge the single issued attempt twice"}]`
+- Negative variants: `[{"expectedRejection": "RC-RESOURCE-ONCE at expectedOutputFixture.values.charges", "id": "AC-SYN-RESOURCE-STOP-NEG", "mutation": "charge the single issued attempt twice", "operation": "replace", "path": ["expectedOutputFixture", "values", "charges"], "value": 2}]`
 - Basis: Synthetic specification witness for resource and stop contracts.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-SYN-INTEGRITY` — Bounded integrity specification witness
 - Inputs: `TRANSFER-RECORD`
@@ -481,7 +481,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "CRC-bearing inputs retain source parameters and yield NOT-EVALUATED until implementation, configuration and execution evidence exist.", "values": {"judgment": "NOT-EVALUATED"}}`
 - Expected: CRC-bearing inputs retain source parameters and yield NOT-EVALUATED until implementation, configuration and execution evidence exist.
 - Prohibited: No CRC PASS/FAIL or capability establishment is inferred from source binding.; paths: `runtimeResultClaim`, `truthLeakage`
-- Negative variants: `[{"expectedRejection": "RC-INTEGRITY-RUNTIME at expectedOutputFixture.values.judgment", "id": "AC-SYN-INTEGRITY-NEG", "mutation": "return PASS without qualified runtime evidence"}]`
+- Negative variants: `[{"expectedRejection": "RC-INTEGRITY-RUNTIME at expectedOutputFixture.values.judgment", "id": "AC-SYN-INTEGRITY-NEG", "mutation": "return PASS without qualified runtime evidence", "operation": "replace", "path": ["expectedOutputFixture", "values", "judgment"], "value": "PASS"}]`
 - Basis: Controlled specification witness; no parser, solver, IUT or experiment was executed.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-EXP-SCENE` — Runnable scene identity witness
 - Inputs: `INTAKE-METADATA`
@@ -490,7 +490,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "A runnable scene has stable scene, configuration, IUT and resource identities.", "values": {"executionStatus": "NOT-EXECUTED", "registration": "ACCEPTED"}}`
 - Expected: A runnable scene has stable scene, configuration, IUT and resource identities.
 - Prohibited: A historical capture or missing identity is not promoted to a runnable scene.; paths: `runtimeResultClaim`, `truthLeakage`
-- Negative variants: `[{"expectedRejection": "RC-SCENE-RESET-ID at inputFixture.values.resetId", "id": "AC-EXP-SCENE-NEG", "mutation": "remove resetId"}]`
+- Negative variants: `[{"expectedRejection": "RC-SCENE-RESET-ID at inputFixture.values.resetId", "id": "AC-EXP-SCENE-NEG", "mutation": "remove resetId", "operation": "remove", "path": ["inputFixture", "values", "resetId"]}]`
 - Basis: Controlled specification witness; no parser, solver, IUT or experiment was executed.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-EXP-TRUTH` — Independent truth boundary witness
 - Inputs: `FINDING-RECORD`
@@ -499,7 +499,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Only confirmed injection plus an independent generator creates truth, with shared-component risk named.", "values": {"sharedComponentRisk": "DECLARED", "truthStatus": "CONFIRMED"}}`
 - Expected: Only confirmed injection plus an independent generator creates truth, with shared-component risk named.
 - Prohibited: Planned or unconfirmed injection and field labels are not truth.; paths: `runtimeResultClaim`, `truthLeakage`
-- Negative variants: `[{"expectedRejection": "RC-TRUTH-ISOLATION at inputFixture.values.algorithmVisible", "id": "AC-EXP-TRUTH-NEG", "mutation": "set algorithmVisible true"}]`
+- Negative variants: `[{"expectedRejection": "RC-TRUTH-ISOLATION at inputFixture.values.algorithmVisible", "id": "AC-EXP-TRUTH-NEG", "mutation": "set algorithmVisible true", "operation": "replace", "path": ["inputFixture", "values", "algorithmVisible"], "value": true}]`
 - Basis: Controlled specification witness; no parser, solver, IUT or experiment was executed.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-EXP-CAUSAL` — Causal collection and arm fairness witness
 - Inputs: `OBSERVATION-ASSESSMENT`
@@ -508,7 +508,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Each arm sees only its causal prefix and pays the same declared cost vector.", "values": {"causalVisibility": "PREFIX-ONLY", "costComparable": true}}`
 - Expected: Each arm sees only its causal prefix and pays the same declared cost vector.
 - Prohibited: Future events, evaluator labels and gifted CL-LOOP records are prohibited.; paths: `runtimeResultClaim`, `truthLeakage`
-- Negative variants: `[{"expectedRejection": "RC-CAUSAL-PREFIX at inputFixture.values.visiblePrefix", "id": "AC-EXP-CAUSAL-NEG", "mutation": "add evaluator truth to visiblePrefix"}]`
+- Negative variants: `[{"expectedRejection": "RC-CAUSAL-PREFIX at inputFixture.values.visiblePrefix", "id": "AC-EXP-CAUSAL-NEG", "mutation": "add evaluator truth to visiblePrefix", "operation": "replace", "path": ["inputFixture", "values", "visiblePrefix"], "value": ["trigger", "evaluator truth"]}]`
 - Basis: Controlled specification witness; no parser, solver, IUT or experiment was executed.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 ### `AC-EXP-DENOMINATOR` — Evaluation denominator witness
 - Inputs: `FINDING-RECORD`
@@ -517,7 +517,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - Expected fixture: `{"outcome": "CONTRACT-EXPECTED", "statement": "Attempt and answered-subset denominators retain abstain, invalid, equivalent and unconfirmed membership.", "values": {"answeredDenominator": 1, "attemptDenominator": 4}}`
 - Expected: Attempt and answered-subset denominators retain abstain, invalid, equivalent and unconfirmed membership.
 - Prohibited: Excluded or unanswered cases are not silently removed from denominators.; paths: `runtimeResultClaim`, `truthLeakage`
-- Negative variants: `[{"expectedRejection": "RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.attemptDenominator", "id": "AC-EXP-DENOMINATOR-NEG", "mutation": "drop abstentions from the attempt denominator"}]`
+- Negative variants: `[{"expectedRejection": "RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.attemptDenominator", "id": "AC-EXP-DENOMINATOR-NEG", "mutation": "drop abstentions from the attempt denominator", "operation": "replace", "path": ["expectedOutputFixture", "values", "attemptDenominator"], "value": 1}]`
 - Basis: Controlled specification witness; no parser, solver, IUT or experiment was executed.; witness: `SPECIFICATION-WITNESS`; runtime: `NOT-EXECUTED`
 
 ## Cross-path acceptance matrix
@@ -2040,7 +2040,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "A provenance-preserving transfer candidate and typed event retain gaps, retransmissions and option evidence.", "values": {"orderedBlocks": [1, 2], "status": "COMPLETE", "terminalConfirmed": true}}`
 - 预期：保留来源的传输候选和带类型事件保留缺口、重传与选项证据。
 - 禁止：不得产生协议 PASS/FAIL、根因标签或虚构的已接受选项。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- 负例：`[{"expectedRejection": "RC-TRANSFER-TERMINAL at inputFixture.values.terminal", "id": "AC-SYN-TRANSFER-NEG", "mutation": "remove terminal evidence"}]`
+- 负例：`[{"expectedRejection": "RC-TRANSFER-TERMINAL at inputFixture.values.terminal", "id": "AC-SYN-TRANSFER-NEG", "mutation": "remove terminal evidence", "operation": "remove", "path": ["inputFixture", "values", "terminal"]}]`
 - 依据：针对声明离线首轮切片的合成规格见证；它不是历史真值或解析器执行。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-PREDICTION` — 有限预测边界见证
 - 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
@@ -2049,7 +2049,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "A finite current projection is tagged OK or GAP before any TEST score is read.", "values": {"classes": ["response-a", "response-b"], "predictionStatus": "OK"}}`
 - 预期：在读取任何 TEST 评分前，将有限当前投影标记为 OK 或 GAP。
 - 禁止：空投影不得记为零分，也不得写入历史。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- 负例：`[{"expectedRejection": "RC-PREDICTION-NONEMPTY at expectedOutputFixture.values.classes", "id": "AC-SYN-PREDICTION-NEG", "mutation": "replace classes with an empty list while status is OK"}]`
+- 负例：`[{"expectedRejection": "RC-PREDICTION-NONEMPTY at expectedOutputFixture.values.classes", "id": "AC-SYN-PREDICTION-NEG", "mutation": "replace classes with an empty list while status is OK", "operation": "replace", "path": ["expectedOutputFixture", "values", "classes"], "value": []}]`
 - 依据：有限当前类传播的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-SELECT` — 接纳动作选择见证
 - 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
@@ -2058,7 +2058,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Only affordable distinguishing TEST actions are minimax-scored, then tie-broken by cost and stable action ID.", "values": {"selectedActionId": "test-a", "tieBreak": ["worstClass", "cost", "stable-id"]}}`
 - 预期：仅对可负担且有区分力的 TEST 作 minimax 评分，然后按成本和稳定 action ID 决胜。
 - 禁止：无信息 TEST 不得成为 A2，Prep/Recover 不得按 TEST 评分。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- 负例：`[{"expectedRejection": "RC-SELECT-STABLE-ID at expectedOutputFixture.values.selectedActionId", "id": "AC-SYN-SELECT-NEG", "mutation": "select test-b with equal score and cost"}]`
+- 负例：`[{"expectedRejection": "RC-SELECT-STABLE-ID at expectedOutputFixture.values.selectedActionId", "id": "AC-SYN-SELECT-NEG", "mutation": "select test-b with equal score and cost", "operation": "replace", "path": ["expectedOutputFixture", "values", "selectedActionId"], "value": "test-b"}]`
 - 依据：声明单步决策表的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-OBSERVATION` — 四值时序解释见证
 - 输入：`OWNERSHIP-RESULT`, `PROTOCOL-EVENT`, `OBSERVATION-ASSESSMENT`
@@ -2067,7 +2067,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Valid intervals produce PASS, FAIL or INCONCLUSIVE; invalid timing evidence produces ERROR.", "values": {"verdict": "INCONCLUSIVE"}}`
 - 预期：有效区间产生 PASS、FAIL 或 INCONCLUSIVE；无效时序证据产生 ERROR。
 - 禁止：不得将 ERROR 或 INCONCLUSIVE 降级为 FAIL。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- 负例：`[{"expectedRejection": "RC-VERDICT-WHOLE-INTERVAL at expectedOutputFixture.values.verdict", "id": "AC-SYN-OBSERVATION-NEG", "mutation": "change verdict to PASS for a boundary-overlapping interval"}]`
+- 负例：`[{"expectedRejection": "RC-VERDICT-WHOLE-INTERVAL at expectedOutputFixture.values.verdict", "id": "AC-SYN-OBSERVATION-NEG", "mutation": "change verdict to PASS for a boundary-overlapping interval", "operation": "replace", "path": ["expectedOutputFixture", "values", "verdict"], "value": "PASS"}]`
 - 依据：T5 区间和所有权前提的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-PREP-RECOVER` — 确认恢复交接见证
 - 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
@@ -2076,7 +2076,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Prep/Recover returns confirmation fields; only S8/S9 may commit known state or successor summary.", "values": {"commitSummary": "q1", "historyVersion": 1}}`
 - 预期：Prep/Recover 返回确认字段；只有 S8/S9 可提交已知状态或后继摘要。
 - 禁止：未确认后继不得保留陈旧已知状态或直接写入 Γ。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- 负例：`[{"expectedRejection": "RC-SUMMARY-CONFIRMATION at inputFixture.values.summaryConfirmed", "id": "AC-SYN-PREP-RECOVER-NEG", "mutation": "set summaryConfirmed false while committing q1"}]`
+- 负例：`[{"expectedRejection": "RC-SUMMARY-CONFIRMATION at inputFixture.values.summaryConfirmed", "id": "AC-SYN-PREP-RECOVER-NEG", "mutation": "set summaryConfirmed false while committing q1", "operation": "replace", "path": ["inputFixture", "values", "summaryConfirmed"], "value": false}]`
 - 依据：S8/S9 所有权边界的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-HISTORY` — 完整历史更新见证
 - 输入：`HISTORY-HANDLE`, `OBSERVATION-ASSESSMENT`
@@ -2085,7 +2085,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "A normalized valid outcome advances a versioned whole-history frontier without resurrecting excluded hypotheses.", "values": {"history": {"H": [], "compatibleStateByHypothesis": {}, "statusByHypothesis": {}, "version": 1}, "stop": "Stop-Empty"}}`
 - 预期：规范化有效结果推进带版本完整历史前沿，且不复活已排除假设。
 - 禁止：H prime 不得替换为 Iz，资源耗尽不得视为不相容。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- 负例：`[{"expectedRejection": "RC-HISTORY-NO-RESURRECTION at expectedOutputFixture.values.history.H", "id": "AC-SYN-HISTORY-NEG", "mutation": "return the old h0 after the empty intersection"}]`
+- 负例：`[{"expectedRejection": "RC-HISTORY-NO-RESURRECTION at expectedOutputFixture.values.history.H", "id": "AC-SYN-HISTORY-NEG", "mutation": "return the old h0 after the empty intersection", "operation": "replace", "path": ["expectedOutputFixture", "values", "history", "H"], "value": ["h0"]}]`
 - 依据：保守历史传播的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-EQUIVALENCE` — 有界等价弃权见证
 - 输入：`HISTORY-HANDLE`
@@ -2094,7 +2094,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "An established result requires declared finite-domain proof evidence; otherwise the result is unknown or notEstablished.", "values": {"result": "unknown"}}`
 - 预期：established 需要声明有限域的证明依据；否则结果为 unknown 或 notEstablished。
 - 禁止：没有即时可区分 TEST 不得视为等价证明。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- 负例：`[{"expectedRejection": "RC-EQUIV-EVIDENCE at expectedOutputFixture.values.result", "id": "AC-SYN-EQUIVALENCE-NEG", "mutation": "return established without finite-domain proof"}]`
+- 负例：`[{"expectedRejection": "RC-EQUIV-EVIDENCE at expectedOutputFixture.values.result", "id": "AC-SYN-EQUIVALENCE-NEG", "mutation": "return established without finite-domain proof", "operation": "replace", "path": ["expectedOutputFixture", "values", "result"], "value": "established"}]`
 - 依据：有界等价语义的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-RESOURCE-STOP` — 资源与停止顺序见证
 - 输入：`HISTORY-HANDLE`, `FINDING-RECORD`
@@ -2103,7 +2103,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Exclusive stop ordering retains named 645 residuals and reports retry exhaustion as Stop-Error.", "values": {"charges": 1, "stop": "Stop-Error"}}`
 - 预期：互斥停止顺序保留具名 645 残余，并将重试耗尽报告为 Stop-Error。
 - 禁止：重试耗尽不得成为 Stop-Budget，normal 单例不得成为协议 PASS。；路径：`protocolVerdictWithoutMeasurement`, `independentTruthFromExploratoryInput`
-- 负例：`[{"expectedRejection": "RC-RESOURCE-ONCE at expectedOutputFixture.values.charges", "id": "AC-SYN-RESOURCE-STOP-NEG", "mutation": "charge the single issued attempt twice"}]`
+- 负例：`[{"expectedRejection": "RC-RESOURCE-ONCE at expectedOutputFixture.values.charges", "id": "AC-SYN-RESOURCE-STOP-NEG", "mutation": "charge the single issued attempt twice", "operation": "replace", "path": ["expectedOutputFixture", "values", "charges"], "value": 2}]`
 - 依据：资源和停止合同的合成规格见证。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-SYN-INTEGRITY` — 有界完整性规格见证
 - 输入：`TRANSFER-RECORD`
@@ -2112,7 +2112,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "CRC-bearing inputs retain source parameters and yield NOT-EVALUATED until implementation, configuration and execution evidence exist.", "values": {"judgment": "NOT-EVALUATED"}}`
 - 预期：产生声明的类型化合同结果并保留证据边界。
 - 禁止：不得伪造运行结果、独立真值或符合性判定。；路径：`runtimeResultClaim`, `truthLeakage`
-- 负例：`[{"expectedRejection": "RC-INTEGRITY-RUNTIME at expectedOutputFixture.values.judgment", "id": "AC-SYN-INTEGRITY-NEG", "mutation": "return PASS without qualified runtime evidence"}]`
+- 负例：`[{"expectedRejection": "RC-INTEGRITY-RUNTIME at expectedOutputFixture.values.judgment", "id": "AC-SYN-INTEGRITY-NEG", "mutation": "return PASS without qualified runtime evidence", "operation": "replace", "path": ["expectedOutputFixture", "values", "judgment"], "value": "PASS"}]`
 - 依据：受控规格见证；未执行解析器、求解器、IUT 或实验。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-EXP-SCENE` — 可运行场景身份见证
 - 输入：`INTAKE-METADATA`
@@ -2121,7 +2121,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "A runnable scene has stable scene, configuration, IUT and resource identities.", "values": {"executionStatus": "NOT-EXECUTED", "registration": "ACCEPTED"}}`
 - 预期：产生声明的类型化合同结果并保留证据边界。
 - 禁止：不得伪造运行结果、独立真值或符合性判定。；路径：`runtimeResultClaim`, `truthLeakage`
-- 负例：`[{"expectedRejection": "RC-SCENE-RESET-ID at inputFixture.values.resetId", "id": "AC-EXP-SCENE-NEG", "mutation": "remove resetId"}]`
+- 负例：`[{"expectedRejection": "RC-SCENE-RESET-ID at inputFixture.values.resetId", "id": "AC-EXP-SCENE-NEG", "mutation": "remove resetId", "operation": "remove", "path": ["inputFixture", "values", "resetId"]}]`
 - 依据：受控规格见证；未执行解析器、求解器、IUT 或实验。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-EXP-TRUTH` — 独立真值边界见证
 - 输入：`FINDING-RECORD`
@@ -2130,7 +2130,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Only confirmed injection plus an independent generator creates truth, with shared-component risk named.", "values": {"sharedComponentRisk": "DECLARED", "truthStatus": "CONFIRMED"}}`
 - 预期：产生声明的类型化合同结果并保留证据边界。
 - 禁止：不得伪造运行结果、独立真值或符合性判定。；路径：`runtimeResultClaim`, `truthLeakage`
-- 负例：`[{"expectedRejection": "RC-TRUTH-ISOLATION at inputFixture.values.algorithmVisible", "id": "AC-EXP-TRUTH-NEG", "mutation": "set algorithmVisible true"}]`
+- 负例：`[{"expectedRejection": "RC-TRUTH-ISOLATION at inputFixture.values.algorithmVisible", "id": "AC-EXP-TRUTH-NEG", "mutation": "set algorithmVisible true", "operation": "replace", "path": ["inputFixture", "values", "algorithmVisible"], "value": true}]`
 - 依据：受控规格见证；未执行解析器、求解器、IUT 或实验。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-EXP-CAUSAL` — 因果采集与实验臂公平性见证
 - 输入：`OBSERVATION-ASSESSMENT`
@@ -2139,7 +2139,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Each arm sees only its causal prefix and pays the same declared cost vector.", "values": {"causalVisibility": "PREFIX-ONLY", "costComparable": true}}`
 - 预期：产生声明的类型化合同结果并保留证据边界。
 - 禁止：不得伪造运行结果、独立真值或符合性判定。；路径：`runtimeResultClaim`, `truthLeakage`
-- 负例：`[{"expectedRejection": "RC-CAUSAL-PREFIX at inputFixture.values.visiblePrefix", "id": "AC-EXP-CAUSAL-NEG", "mutation": "add evaluator truth to visiblePrefix"}]`
+- 负例：`[{"expectedRejection": "RC-CAUSAL-PREFIX at inputFixture.values.visiblePrefix", "id": "AC-EXP-CAUSAL-NEG", "mutation": "add evaluator truth to visiblePrefix", "operation": "replace", "path": ["inputFixture", "values", "visiblePrefix"], "value": ["trigger", "evaluator truth"]}]`
 - 依据：受控规格见证；未执行解析器、求解器、IUT 或实验。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 ### `AC-EXP-DENOMINATOR` — 评价分母见证
 - 输入：`FINDING-RECORD`
@@ -2148,7 +2148,7 @@ Upstream policy: every cross-module input producer must be directly or transitiv
 - 预期夹具：`{"outcome": "CONTRACT-EXPECTED", "statement": "Attempt and answered-subset denominators retain abstain, invalid, equivalent and unconfirmed membership.", "values": {"answeredDenominator": 1, "attemptDenominator": 4}}`
 - 预期：产生声明的类型化合同结果并保留证据边界。
 - 禁止：不得伪造运行结果、独立真值或符合性判定。；路径：`runtimeResultClaim`, `truthLeakage`
-- 负例：`[{"expectedRejection": "RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.attemptDenominator", "id": "AC-EXP-DENOMINATOR-NEG", "mutation": "drop abstentions from the attempt denominator"}]`
+- 负例：`[{"expectedRejection": "RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.attemptDenominator", "id": "AC-EXP-DENOMINATOR-NEG", "mutation": "drop abstentions from the attempt denominator", "operation": "replace", "path": ["expectedOutputFixture", "values", "attemptDenominator"], "value": 1}]`
 - 依据：受控规格见证；未执行解析器、求解器、IUT 或实验。；见证：`SPECIFICATION-WITNESS`；运行：`NOT-EXECUTED`
 
 ## 跨路径验收矩阵

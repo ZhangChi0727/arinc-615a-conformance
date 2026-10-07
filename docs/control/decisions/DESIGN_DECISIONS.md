@@ -1043,7 +1043,7 @@ submission, implementation and unrun numbers would reverse the evidence order.
 
 **Why:** A bound implementation contract can be reviewable without turning capture-derived observations into protocol requirements or treating an inventory count as readiness.
 
-**Scope:** Development-package structure and first-slice boundary. The narrow source correction authorized by CR-2026-016 changes field encoding/shared-table metadata and re-pins M2 input identity only; it does not change M2 transitions, timing, migration, service selection, or approval status.
+**Scope:** Development-package structure and first-slice boundary. The narrow source correction authorized by CR-2026-016 covers fixed-width ASCII versions and ratios, the LCS/LUS present-versus-used timer distinction with inactive zero, and LUI reuse of the complete five-field initialization layout. M2 is re-pinned to the corrected source ancestor for these non-executing derived field constraints only; transitions, timing, migration, service selection, and approval status do not change.
 
 **Status:** Candidate under CR-2026-016; independent review required.
 
@@ -1558,7 +1558,7 @@ ARINC 615A 数据加载是合法操作、观测和实验场景的来源。CL-TAV
 
 **理由：** 绑定的实现合同可以在不把抓包观察变成协议需求、也不把清单计数当作就绪的情况下接受评审。
 
-**范围：** 开发包结构与首轮边界。本 CR 授权的窄范围来源修正仅改变字段编码／共享表元数据并重钉 M2 输入身份；不改变 M2 迁移、时序、迁移政策、服务选择或批准状态。
+**范围：** 开发包结构与首轮边界。本 CR 授权的窄范围来源修正包括定宽 ASCII 版本与比率、LCS／LUS 计时字段的“始终存在／条件使用／非活动为零”区分，以及 LUI 对完整五字段初始化布局的复用。M2 仅为这些非执行性派生字段约束重钉到修正来源祖先；不改变迁移、时序、服务选择或批准状态。
 
 **状态：** 在 CR-2026-016 下为候选；需要独立评审。
 

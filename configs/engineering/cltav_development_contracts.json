@@ -10633,7 +10633,13 @@
         {
           "id": "AC-SYN-TRANSFER-NEG",
           "mutation": "remove terminal evidence",
-          "expectedRejection": "RC-TRANSFER-TERMINAL at inputFixture.values.terminal"
+          "expectedRejection": "RC-TRANSFER-TERMINAL at inputFixture.values.terminal",
+          "operation": "remove",
+          "path": [
+            "inputFixture",
+            "values",
+            "terminal"
+          ]
         }
       ],
       "experimentInterfaceIds": []
@@ -10730,7 +10736,14 @@
         {
           "id": "AC-SYN-PREDICTION-NEG",
           "mutation": "replace classes with an empty list while status is OK",
-          "expectedRejection": "RC-PREDICTION-NONEMPTY at expectedOutputFixture.values.classes"
+          "expectedRejection": "RC-PREDICTION-NONEMPTY at expectedOutputFixture.values.classes",
+          "operation": "replace",
+          "path": [
+            "expectedOutputFixture",
+            "values",
+            "classes"
+          ],
+          "value": []
         }
       ],
       "experimentInterfaceIds": []
@@ -10820,7 +10833,14 @@
         {
           "id": "AC-SYN-SELECT-NEG",
           "mutation": "select test-b with equal score and cost",
-          "expectedRejection": "RC-SELECT-STABLE-ID at expectedOutputFixture.values.selectedActionId"
+          "expectedRejection": "RC-SELECT-STABLE-ID at expectedOutputFixture.values.selectedActionId",
+          "operation": "replace",
+          "path": [
+            "expectedOutputFixture",
+            "values",
+            "selectedActionId"
+          ],
+          "value": "test-b"
         }
       ],
       "experimentInterfaceIds": []
@@ -10886,7 +10906,14 @@
         {
           "id": "AC-SYN-OBSERVATION-NEG",
           "mutation": "change verdict to PASS for a boundary-overlapping interval",
-          "expectedRejection": "RC-VERDICT-WHOLE-INTERVAL at expectedOutputFixture.values.verdict"
+          "expectedRejection": "RC-VERDICT-WHOLE-INTERVAL at expectedOutputFixture.values.verdict",
+          "operation": "replace",
+          "path": [
+            "expectedOutputFixture",
+            "values",
+            "verdict"
+          ],
+          "value": "PASS"
         }
       ],
       "experimentInterfaceIds": []
@@ -10946,7 +10973,14 @@
         {
           "id": "AC-SYN-PREP-RECOVER-NEG",
           "mutation": "set summaryConfirmed false while committing q1",
-          "expectedRejection": "RC-SUMMARY-CONFIRMATION at inputFixture.values.summaryConfirmed"
+          "expectedRejection": "RC-SUMMARY-CONFIRMATION at inputFixture.values.summaryConfirmed",
+          "operation": "replace",
+          "path": [
+            "inputFixture",
+            "values",
+            "summaryConfirmed"
+          ],
+          "value": false
         }
       ],
       "experimentInterfaceIds": []
@@ -11020,7 +11054,17 @@
         {
           "id": "AC-SYN-HISTORY-NEG",
           "mutation": "return the old h0 after the empty intersection",
-          "expectedRejection": "RC-HISTORY-NO-RESURRECTION at expectedOutputFixture.values.history.H"
+          "expectedRejection": "RC-HISTORY-NO-RESURRECTION at expectedOutputFixture.values.history.H",
+          "operation": "replace",
+          "path": [
+            "expectedOutputFixture",
+            "values",
+            "history",
+            "H"
+          ],
+          "value": [
+            "h0"
+          ]
         }
       ],
       "experimentInterfaceIds": []
@@ -11078,7 +11122,14 @@
         {
           "id": "AC-SYN-EQUIVALENCE-NEG",
           "mutation": "return established without finite-domain proof",
-          "expectedRejection": "RC-EQUIV-EVIDENCE at expectedOutputFixture.values.result"
+          "expectedRejection": "RC-EQUIV-EVIDENCE at expectedOutputFixture.values.result",
+          "operation": "replace",
+          "path": [
+            "expectedOutputFixture",
+            "values",
+            "result"
+          ],
+          "value": "established"
         }
       ],
       "experimentInterfaceIds": []
@@ -11141,7 +11192,14 @@
         {
           "id": "AC-SYN-RESOURCE-STOP-NEG",
           "mutation": "charge the single issued attempt twice",
-          "expectedRejection": "RC-RESOURCE-ONCE at expectedOutputFixture.values.charges"
+          "expectedRejection": "RC-RESOURCE-ONCE at expectedOutputFixture.values.charges",
+          "operation": "replace",
+          "path": [
+            "expectedOutputFixture",
+            "values",
+            "charges"
+          ],
+          "value": 2
         }
       ],
       "experimentInterfaceIds": []
@@ -11196,7 +11254,14 @@
         {
           "id": "AC-SYN-INTEGRITY-NEG",
           "mutation": "return PASS without qualified runtime evidence",
-          "expectedRejection": "RC-INTEGRITY-RUNTIME at expectedOutputFixture.values.judgment"
+          "expectedRejection": "RC-INTEGRITY-RUNTIME at expectedOutputFixture.values.judgment",
+          "operation": "replace",
+          "path": [
+            "expectedOutputFixture",
+            "values",
+            "judgment"
+          ],
+          "value": "PASS"
         }
       ],
       "experimentInterfaceIds": []
@@ -11261,7 +11326,13 @@
         {
           "id": "AC-EXP-SCENE-NEG",
           "mutation": "remove resetId",
-          "expectedRejection": "RC-SCENE-RESET-ID at inputFixture.values.resetId"
+          "expectedRejection": "RC-SCENE-RESET-ID at inputFixture.values.resetId",
+          "operation": "remove",
+          "path": [
+            "inputFixture",
+            "values",
+            "resetId"
+          ]
         }
       ],
       "experimentInterfaceIds": [
@@ -11322,7 +11393,14 @@
         {
           "id": "AC-EXP-TRUTH-NEG",
           "mutation": "set algorithmVisible true",
-          "expectedRejection": "RC-TRUTH-ISOLATION at inputFixture.values.algorithmVisible"
+          "expectedRejection": "RC-TRUTH-ISOLATION at inputFixture.values.algorithmVisible",
+          "operation": "replace",
+          "path": [
+            "inputFixture",
+            "values",
+            "algorithmVisible"
+          ],
+          "value": true
         }
       ],
       "experimentInterfaceIds": [
@@ -11388,7 +11466,17 @@
         {
           "id": "AC-EXP-CAUSAL-NEG",
           "mutation": "add evaluator truth to visiblePrefix",
-          "expectedRejection": "RC-CAUSAL-PREFIX at inputFixture.values.visiblePrefix"
+          "expectedRejection": "RC-CAUSAL-PREFIX at inputFixture.values.visiblePrefix",
+          "operation": "replace",
+          "path": [
+            "inputFixture",
+            "values",
+            "visiblePrefix"
+          ],
+          "value": [
+            "trigger",
+            "evaluator truth"
+          ]
         }
       ],
       "experimentInterfaceIds": [
@@ -11451,7 +11539,14 @@
         {
           "id": "AC-EXP-DENOMINATOR-NEG",
           "mutation": "drop abstentions from the attempt denominator",
-          "expectedRejection": "RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.attemptDenominator"
+          "expectedRejection": "RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.attemptDenominator",
+          "operation": "replace",
+          "path": [
+            "expectedOutputFixture",
+            "values",
+            "attemptDenominator"
+          ],
+          "value": 1
         }
       ],
       "experimentInterfaceIds": [

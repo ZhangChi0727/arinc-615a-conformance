@@ -1426,7 +1426,9 @@
               "required": [
                 "id",
                 "mutation",
-                "expectedRejection"
+                "expectedRejection",
+                "operation",
+                "path"
               ],
               "properties": {
                 "id": {
@@ -1439,7 +1441,30 @@
                 "expectedRejection": {
                   "type": "string",
                   "minLength": 1
-                }
+                },
+                "operation": {
+                  "enum": [
+                    "replace",
+                    "remove"
+                  ]
+                },
+                "path": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      {
+                        "type": "integer",
+                        "minimum": 0
+                      }
+                    ]
+                  }
+                },
+                "value": {}
               }
             }
           }

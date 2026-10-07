@@ -295,6 +295,81 @@ def _git_blob_json(relative: str, blobs: dict[str, bytes]) -> dict:
     return json.loads(raw.decode("utf-8"))
 
 
+def _acceptance_relation_errors(case: dict) -> list[str]:
+    """Evaluate the closed deterministic relation declared by a specification witness."""
+    case_id = case.get("id", "<unknown-case>")
+    inputs = case.get("inputFixture", {}).get("values", {})
+    outputs = case.get("expectedOutputFixture", {}).get("values", {})
+    errors: list[str] = []
+    if case_id == "AC-SYN-TRANSFER":
+        if not isinstance(inputs.get("terminal"), dict) or outputs.get("terminalConfirmed") is not True:
+            errors.append("RC-TRANSFER-TERMINAL at inputFixture.values.terminal")
+    elif case_id == "AC-SYN-PREDICTION":
+        if outputs.get("predictionStatus") == "OK" and not outputs.get("classes"):
+            errors.append("RC-PREDICTION-NONEMPTY at expectedOutputFixture.values.classes")
+    elif case_id == "AC-SYN-SELECT":
+        actions = inputs.get("actions", [])
+        resource = inputs.get("resource", {})
+        affordable = [a for a in actions if a.get("id") in inputs.get("eligibleActions", []) and a.get("cost", 10**9) <= resource.get("remaining", -1)]
+        expected = min(affordable, key=lambda a: (a["worstClass"], a["cost"], a["id"]))["id"] if affordable else None
+        if len(affordable) < 2 or outputs.get("selectedActionId") != expected:
+            errors.append("RC-SELECT-STABLE-ID at expectedOutputFixture.values.selectedActionId")
+    elif case_id == "AC-SYN-OBSERVATION":
+        interval = inputs.get("interval", {})
+        window = inputs.get("requirementWindow", {})
+        try:
+            expected = "PASS" if interval["lower"] >= window["lower"] and interval["upper"] <= window["upper"] else "FAIL" if interval["upper"] < window["lower"] or interval["lower"] > window["upper"] else "INCONCLUSIVE"
+        except (KeyError, TypeError):
+            expected = None
+        if outputs.get("verdict") != expected:
+            errors.append("RC-VERDICT-WHOLE-INTERVAL at expectedOutputFixture.values.verdict")
+    elif case_id == "AC-SYN-PREP-RECOVER":
+        if outputs.get("commitSummary") and not inputs.get("summaryConfirmed"):
+            errors.append("RC-SUMMARY-CONFIRMATION at inputFixture.values.summaryConfirmed")
+    elif case_id == "AC-SYN-HISTORY":
+        old = inputs.get("history", {})
+        new = outputs.get("history", {})
+        compatible = set(inputs.get("compatibleObservationHypotheses", []))
+        if set(new.get("H", [])) != set(old.get("H", [])) & compatible or new.get("version") != old.get("version", -1) + 1:
+            errors.append("RC-HISTORY-NO-RESURRECTION at expectedOutputFixture.values.history.H")
+    elif case_id == "AC-SYN-EQUIVALENCE":
+        if outputs.get("result") == "established" and inputs.get("finiteDomainProof") != "present":
+            errors.append("RC-EQUIV-EVIDENCE at expectedOutputFixture.values.result")
+    elif case_id == "AC-SYN-RESOURCE-STOP":
+        if outputs.get("charges") != inputs.get("attemptsIssued"):
+            errors.append("RC-RESOURCE-ONCE at expectedOutputFixture.values.charges")
+    elif case_id == "AC-SYN-INTEGRITY":
+        if outputs.get("judgment") == "PASS" and inputs.get("runtimeEvidence") != "ESTABLISHED":
+            errors.append("RC-INTEGRITY-RUNTIME at expectedOutputFixture.values.judgment")
+    elif case_id == "AC-EXP-SCENE":
+        if not inputs.get("resetId"):
+            errors.append("RC-SCENE-RESET-ID at inputFixture.values.resetId")
+    elif case_id == "AC-EXP-TRUTH":
+        if inputs.get("algorithmVisible") is not False:
+            errors.append("RC-TRUTH-ISOLATION at inputFixture.values.algorithmVisible")
+    elif case_id == "AC-EXP-CAUSAL":
+        if any("truth" in str(item).lower() for item in inputs.get("visiblePrefix", [])):
+            errors.append("RC-CAUSAL-PREFIX at inputFixture.values.visiblePrefix")
+    elif case_id == "AC-EXP-DENOMINATOR":
+        if outputs.get("attemptDenominator") != len(inputs.get("attempts", [])):
+            errors.append("RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.attemptDenominator")
+    return errors
+
+
+def _apply_acceptance_variant(case: dict, variant: dict) -> dict:
+    mutated = copy.deepcopy(case)
+    target: object = mutated
+    path = variant["path"]
+    for part in path[:-1]:
+        target = target[part]
+    leaf = path[-1]
+    if variant["operation"] == "remove":
+        del target[leaf]
+    else:
+        target[leaf] = copy.deepcopy(variant.get("value"))
+    return mutated
+
+
 def package_errors(data: dict) -> list[str]:
     errors: list[str] = []
     schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
@@ -628,10 +703,19 @@ def package_errors(data: dict) -> list[str]:
         for variant in case["negativeVariants"]:
             if variant["mutation"] in {"violate the named precondition", "remove required identity or precondition", "NO-MUTATION"} or variant["expectedRejection"] == "ACCEPT":
                 errors.append(f"{case['id']} has a non-executable negative variant")
+                continue
+            try:
+                variant_errors = _acceptance_relation_errors(_apply_acceptance_variant(case, variant))
+            except (KeyError, IndexError, TypeError):
+                errors.append(f"{case['id']} negative variant {variant['id']} has an invalid executable path")
+                continue
+            if variant["expectedRejection"] not in variant_errors:
+                errors.append(f"{case['id']} negative variant {variant['id']} does not hit its named relation")
         for tool_id in case["toolRequirementIds"]:
             tool = tool_by_id.get(tool_id)
             if tool is not None and tool["ownerModuleId"] not in case["moduleIds"]:
                 errors.append(f"{case['id']} tool {tool_id} omits owner module {tool['ownerModuleId']}")
+        errors.extend(_acceptance_relation_errors(case))
     case_values = {case["id"]: case["inputFixture"]["values"] for case in data["acceptanceCases"]}
     prediction = case_values.get("AC-SYN-PREDICTION", {})
     if not prediction.get("model", {}).get("transitions") or not prediction.get("H") or not prediction.get("eligibleActions") or not prediction.get("resource"):
