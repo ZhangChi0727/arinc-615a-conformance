@@ -26,7 +26,7 @@
     "inputs": [
       {
         "path": "configs/requirements/arinc_615a3_m1_crs.json",
-        "gitBlobOid": "7e1c689e1151c4b662c78b07b4cb03ec05a9e809",
+        "gitBlobOid": "44b471aa25ceb6af0d0a6fdd610e25cd02f92b7b",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -36,12 +36,12 @@
       },
       {
         "path": "configs/requirements/m1_rg0_source_inventory_anchor.json",
-        "gitBlobOid": "aa048ca897071b5806a70ca686180fd239c229b5",
+        "gitBlobOid": "70e670492e104cb81dd70daa8dc85e664b0e0d99",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
         "path": "configs/requirements/m1_semantic_review_assertions.json",
-        "gitBlobOid": "dc401fe467b2a0af6278689416c46cae8fef7824",
+        "gitBlobOid": "332125ec6de8a634577bfb945789a4ec23a270da",
         "role": "SUCCESSOR-M1-DELTA"
       },
       {
@@ -56,7 +56,7 @@
       },
       {
         "path": "docs/control/requirements/ARINC615A3_M1_CRS_REVIEW_VIEW.md",
-        "gitBlobOid": "9e1107590dd8a063a649b9fa84e35a56020f4feb",
+        "gitBlobOid": "11574a317b7046cda33c3da856d14a8b964d59e2",
         "role": "SUCCESSOR-M1-DELTA"
       }
     ],
@@ -148,8 +148,8 @@
           "role": "M1-IMMUTABLE-INPUT"
         }
       ],
-      "currentInputArtifactCommit": "809ac78e454b32cd0032091d83cff156c0b76207",
-      "currentInputArtifactTree": "9ec2c8bb85e46508d19661fea6899ad13d2a4684"
+      "currentInputArtifactCommit": "47fbe1771736ce20a345f0e88b09be6b97e4370b",
+      "currentInputArtifactTree": "6e7280268663d46e5b9a851727d9049b7df97c33"
     }
   },
   "sequenceEndpointBindings": [
@@ -5034,14 +5034,16 @@
         "widthBitsExpression": "16",
         "encodingRule": "UNSIGNED-INT-BIG-ENDIAN",
         "terminationRule": "NOT-APPLICABLE-OR-PROSE-DEFINED",
-        "presenceCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "presenceCondition": "ALWAYS",
         "repeatScope": "ONCE",
         "checkLocation": "LCS-FILE-BYTES",
         "predicateEn": "The protocol-file producer shall encode FIELD-EXCEPTION-TIMER in position 5 with 16 bits, repeated once; termination is NOT-APPLICABLE-OR-PROSE-DEFINED.",
         "predicateZh": "协议文件生成方必须在第 5 个字段位置编码 FIELD-EXCEPTION-TIMER，位宽为 16 bit，重复范围为 ONCE；终止规则为 NOT-APPLICABLE-OR-PROSE-DEFINED。",
         "m1FileIdentityConflict": false,
         "conflictNoteEn": "",
-        "conflictNoteZh": ""
+        "conflictNoteZh": "",
+        "useCondition": "WHEN-STATUS-CODE-0002-OR-0004",
+        "inactiveRequiredValue": "0x0000"
       },
       {
         "id": "FC-LCS-FIELD-ESTIMATED-TIME",
@@ -10691,6 +10693,7 @@
         "m1RequirementId": "CRS-M1-00362",
         "objects": [
           "LUI",
+          "FIELD-FILE-LENGTH",
           "FIELD-PROTOCOL-VERSION",
           "FIELD-OPERATION-ACCEPTANCE-STATUS-CODE",
           "FIELD-STATUS-DESCRIPTION-LENGTH",
@@ -10701,6 +10704,7 @@
         "sourceFileRole": "LCI",
         "targetFileRole": "LUI",
         "sourceRequirementIds": [
+          "CRS-M1-00282",
           "CRS-M1-00283",
           "CRS-M1-00284",
           "CRS-M1-00285",
@@ -10712,13 +10716,14 @@
           "CRS-M1-00362"
         ],
         "fieldIds": [
+          "FIELD-FILE-LENGTH",
           "FIELD-PROTOCOL-VERSION",
           "FIELD-OPERATION-ACCEPTANCE-STATUS-CODE",
           "FIELD-STATUS-DESCRIPTION-LENGTH",
           "FIELD-STATUS-DESCRIPTION"
         ],
-        "predicateEn": "Decode LUI initialization response fields using the shared LCI initialization layout, preserving ASCII version, acceptance/rejection status, and bounded description bytes.",
-        "predicateZh": "按共享 LCI 初始化布局解码 LUI 初始化响应字段，保留 ASCII 版本、接受／拒绝状态及有界描述字节。",
+        "predicateEn": "Decode the complete LUI initialization response using the shared LCI layout: 32-bit File Length, ASCII Protocol Version, acceptance/rejection status, description length, and bounded description bytes.",
+        "predicateZh": "按共享 LCI 布局完整解码 LUI 初始化响应：32 位文件长度、ASCII 协议版本、接受／拒绝状态、描述长度及有界描述字节。",
         "checkLocation": "LUI-FILE-BYTES-BEFORE-INITIALIZATION-RESPONSE"
       }
     ],
@@ -34497,9 +34502,9 @@
     "timingCount": 30,
     "fieldConstraintCount": 108,
     "dispositionsFingerprint": "9c07be25fc8aa42ff08cc647d1135179cc6a6e03f07f9202c21a3128bcc5b7e8",
-    "modelFingerprint": "59b3dc9b413a155ac6fa389a97ce9723c1bd3dd411685bb831499831cd043928",
+    "modelFingerprint": "a12544576442f19dbb94521e5831be21eb4aa08fc73837c6813153bb91445693",
     "timingFingerprint": "cd8a13f203f6d2c2f9c82e65646bf9d5b920200a509af92d461096e54f7e6810",
-    "inputFingerprint": "5d41ab01a79a892e124dec30e325aae974a6438fde2ae183e7266402e316cd94",
+    "inputFingerprint": "0de0feb6db33aa5e0ec54ac085b3fcac318d9906d39c9f3b390d247a18e23e94",
     "refinementFingerprint": "d1a581122ec2422a7b461962b404f720a8a093b123334e77ccc181dfab83dc03",
     "actionFingerprint": "bf5d034d35ac50efb9703fd67192a1a08492a82b4b563a8b23ccc1e889638dc3",
     "premiseFingerprint": "507865400c99a1e09133ba965efb767a3bcb2bedb7b2e81a33b46f6b9ecac696",
