@@ -297,24 +297,25 @@ def _git_blob_json(relative: str, blobs: dict[str, bytes]) -> dict:
 
 def _acceptance_relation_errors(case: dict) -> list[str]:
     """Evaluate the closed deterministic relation declared by a specification witness."""
-    case_id = case.get("id", "<unknown-case>")
+    variants = case.get("negativeVariants", [])
+    relation = variants[0].get("expectedRejection", "").split(" at ", 1)[0] if variants else ""
     inputs = case.get("inputFixture", {}).get("values", {})
     outputs = case.get("expectedOutputFixture", {}).get("values", {})
     errors: list[str] = []
-    if case_id == "AC-SYN-TRANSFER":
+    if relation == "RC-TRANSFER-TERMINAL":
         if not isinstance(inputs.get("terminal"), dict) or outputs.get("terminalConfirmed") is not True:
             errors.append("RC-TRANSFER-TERMINAL at inputFixture.values.terminal")
-    elif case_id == "AC-SYN-PREDICTION":
+    elif relation == "RC-PREDICTION-NONEMPTY":
         if outputs.get("predictionStatus") == "OK" and not outputs.get("classes"):
             errors.append("RC-PREDICTION-NONEMPTY at expectedOutputFixture.values.classes")
-    elif case_id == "AC-SYN-SELECT":
+    elif relation == "RC-SELECT-STABLE-ID":
         actions = inputs.get("actions", [])
         resource = inputs.get("resource", {})
         affordable = [a for a in actions if a.get("id") in inputs.get("eligibleActions", []) and a.get("cost", 10**9) <= resource.get("remaining", -1)]
         expected = min(affordable, key=lambda a: (a["worstClass"], a["cost"], a["id"]))["id"] if affordable else None
         if len(affordable) < 2 or outputs.get("selectedActionId") != expected:
             errors.append("RC-SELECT-STABLE-ID at expectedOutputFixture.values.selectedActionId")
-    elif case_id == "AC-SYN-OBSERVATION":
+    elif relation == "RC-VERDICT-WHOLE-INTERVAL":
         interval = inputs.get("interval", {})
         window = inputs.get("requirementWindow", {})
         try:
@@ -323,34 +324,34 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
             expected = None
         if outputs.get("verdict") != expected:
             errors.append("RC-VERDICT-WHOLE-INTERVAL at expectedOutputFixture.values.verdict")
-    elif case_id == "AC-SYN-PREP-RECOVER":
+    elif relation == "RC-SUMMARY-CONFIRMATION":
         if outputs.get("commitSummary") and not inputs.get("summaryConfirmed"):
             errors.append("RC-SUMMARY-CONFIRMATION at inputFixture.values.summaryConfirmed")
-    elif case_id == "AC-SYN-HISTORY":
+    elif relation == "RC-HISTORY-NO-RESURRECTION":
         old = inputs.get("history", {})
         new = outputs.get("history", {})
         compatible = set(inputs.get("compatibleObservationHypotheses", []))
         if set(new.get("H", [])) != set(old.get("H", [])) & compatible or new.get("version") != old.get("version", -1) + 1:
             errors.append("RC-HISTORY-NO-RESURRECTION at expectedOutputFixture.values.history.H")
-    elif case_id == "AC-SYN-EQUIVALENCE":
+    elif relation == "RC-EQUIV-EVIDENCE":
         if outputs.get("result") == "established" and inputs.get("finiteDomainProof") != "present":
             errors.append("RC-EQUIV-EVIDENCE at expectedOutputFixture.values.result")
-    elif case_id == "AC-SYN-RESOURCE-STOP":
+    elif relation == "RC-RESOURCE-ONCE":
         if outputs.get("charges") != inputs.get("attemptsIssued"):
             errors.append("RC-RESOURCE-ONCE at expectedOutputFixture.values.charges")
-    elif case_id == "AC-SYN-INTEGRITY":
+    elif relation == "RC-INTEGRITY-RUNTIME":
         if outputs.get("judgment") == "PASS" and inputs.get("runtimeEvidence") != "ESTABLISHED":
             errors.append("RC-INTEGRITY-RUNTIME at expectedOutputFixture.values.judgment")
-    elif case_id == "AC-EXP-SCENE":
+    elif relation == "RC-SCENE-RESET-ID":
         if not inputs.get("resetId"):
             errors.append("RC-SCENE-RESET-ID at inputFixture.values.resetId")
-    elif case_id == "AC-EXP-TRUTH":
+    elif relation == "RC-TRUTH-ISOLATION":
         if inputs.get("algorithmVisible") is not False:
             errors.append("RC-TRUTH-ISOLATION at inputFixture.values.algorithmVisible")
-    elif case_id == "AC-EXP-CAUSAL":
+    elif relation == "RC-CAUSAL-PREFIX":
         if any("truth" in str(item).lower() for item in inputs.get("visiblePrefix", [])):
             errors.append("RC-CAUSAL-PREFIX at inputFixture.values.visiblePrefix")
-    elif case_id == "AC-EXP-DENOMINATOR":
+    elif relation == "RC-DENOMINATOR-ATTEMPTS":
         if outputs.get("attemptDenominator") != len(inputs.get("attempts", [])):
             errors.append("RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.attemptDenominator")
     return errors
