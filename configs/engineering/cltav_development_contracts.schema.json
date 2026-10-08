@@ -996,7 +996,9 @@
                       "required": [
                         "recordType",
                         "requiredFields",
-                        "adapter"
+                        "adapter",
+                        "branchTag",
+                        "fieldSources"
                       ],
                       "properties": {
                         "recordType": {
@@ -1014,6 +1016,16 @@
                         "adapter": {
                           "type": "string",
                           "minLength": 1
+                        },
+                        "branchTag": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "fieldSources": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "enum": ["KERNEL", "S9-WRAPPER"]
+                          }
                         }
                       }
                     }

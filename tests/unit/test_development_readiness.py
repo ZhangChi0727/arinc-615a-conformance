@@ -1664,3 +1664,14 @@ def test_rr91_acceptance_schedule_matrix_and_malformed_fixtures_are_consumed():
     case = next(item for item in bad["acceptanceCases"] if item["relationId"] == "RC-DENOMINATOR-ATTEMPTS")
     case["inputFixture"]["values"]["attempts"] = {"PASS": 1}
     assert any("requires a string attempt sequence" in item for item in errors(bad))
+
+
+def test_rr91_return_payloads_bind_each_branch_and_field_source():
+    bad = copy.deepcopy(PACKAGE)
+    row = next(item for item in bad["algorithmRefinements"][0]["finiteKernelContract"]["totalReturnMapping"] if item["interfaceId"] == "IF-HIST-UPDATE" and item["internalResult"] == "FEASIBLE")
+    row["returnContract"]["fieldSources"]["historyHandlePrime"] = "KERNEL"
+    assert any("return payload sources" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    row = next(item for item in bad["algorithmRefinements"][0]["finiteKernelContract"]["totalReturnMapping"] if item["interfaceId"] == "IF-PRED-OBS" and item["internalResult"] == "FEASIBLE")
+    row["returnContract"]["branchTag"] = "INFEASIBLE"
+    assert any("branch/source mapping" in item for item in errors(bad))

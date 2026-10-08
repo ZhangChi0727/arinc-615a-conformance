@@ -9651,7 +9651,15 @@
                 "historyVersionUsed",
                 "uncertaintyRef"
               ],
-              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason"
+              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason",
+              "branchTag": "FEASIBLE",
+              "fieldSources": {
+                "status": "KERNEL",
+                "reason": "KERNEL",
+                "classesByTest": "KERNEL",
+                "historyVersionUsed": "KERNEL",
+                "uncertaintyRef": "KERNEL"
+              }
             }
           },
           {
@@ -9671,7 +9679,14 @@
                 "historyVersionUsed",
                 "uncertaintyRef"
               ],
-              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason"
+              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason",
+              "branchTag": "INFEASIBLE",
+              "fieldSources": {
+                "status": "KERNEL",
+                "reason": "KERNEL",
+                "historyVersionUsed": "KERNEL",
+                "uncertaintyRef": "KERNEL"
+              }
             }
           },
           {
@@ -9691,7 +9706,14 @@
                 "historyVersionUsed",
                 "uncertaintyRef"
               ],
-              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason"
+              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason",
+              "branchTag": "COMPUTATION-UNKNOWN",
+              "fieldSources": {
+                "status": "KERNEL",
+                "reason": "KERNEL",
+                "historyVersionUsed": "KERNEL",
+                "uncertaintyRef": "KERNEL"
+              }
             }
           },
           {
@@ -9711,7 +9733,14 @@
                 "historyVersionUsed",
                 "uncertaintyRef"
               ],
-              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason"
+              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason",
+              "branchTag": "UNSUPPORTED-SYNTAX",
+              "fieldSources": {
+                "status": "KERNEL",
+                "reason": "KERNEL",
+                "historyVersionUsed": "KERNEL",
+                "uncertaintyRef": "KERNEL"
+              }
             }
           },
           {
@@ -9731,7 +9760,14 @@
                 "historyVersionUsed",
                 "uncertaintyRef"
               ],
-              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason"
+              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason",
+              "branchTag": "LIMIT-REACHED",
+              "fieldSources": {
+                "status": "KERNEL",
+                "reason": "KERNEL",
+                "historyVersionUsed": "KERNEL",
+                "uncertaintyRef": "KERNEL"
+              }
             }
           },
           {
@@ -9751,7 +9787,14 @@
                 "historyVersionUsed",
                 "uncertaintyRef"
               ],
-              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason"
+              "adapter": "OK for FEASIBLE nonempty projection; all conservative failures become GAP with a named reason",
+              "branchTag": "EMPTY-HISTORY",
+              "fieldSources": {
+                "status": "KERNEL",
+                "reason": "KERNEL",
+                "historyVersionUsed": "KERNEL",
+                "uncertaintyRef": "KERNEL"
+              }
             }
           },
           {
@@ -9772,7 +9815,15 @@
                 "classesUsed",
                 "reason"
               ],
-              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission"
+              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission",
+              "branchTag": "FEASIBLE",
+              "fieldSources": {
+                "kind": "KERNEL",
+                "actionKind": "KERNEL",
+                "actionId": "KERNEL",
+                "classesUsed": "KERNEL",
+                "reason": "KERNEL"
+              }
             }
           },
           {
@@ -9793,7 +9844,15 @@
                 "classesUsed",
                 "reason"
               ],
-              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission"
+              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission",
+              "branchTag": "INFEASIBLE",
+              "fieldSources": {
+                "kind": "KERNEL",
+                "actionKind": "KERNEL",
+                "actionId": "KERNEL",
+                "classesUsed": "KERNEL",
+                "reason": "KERNEL"
+              }
             }
           },
           {
@@ -9814,7 +9873,15 @@
                 "classesUsed",
                 "reason"
               ],
-              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission"
+              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission",
+              "branchTag": "COMPUTATION-UNKNOWN",
+              "fieldSources": {
+                "kind": "KERNEL",
+                "actionKind": "KERNEL",
+                "actionId": "KERNEL",
+                "classesUsed": "KERNEL",
+                "reason": "KERNEL"
+              }
             }
           },
           {
@@ -9835,7 +9902,15 @@
                 "classesUsed",
                 "reason"
               ],
-              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission"
+              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission",
+              "branchTag": "UNSUPPORTED-SYNTAX",
+              "fieldSources": {
+                "kind": "KERNEL",
+                "actionKind": "KERNEL",
+                "actionId": "KERNEL",
+                "classesUsed": "KERNEL",
+                "reason": "KERNEL"
+              }
             }
           },
           {
@@ -9856,7 +9931,15 @@
                 "classesUsed",
                 "reason"
               ],
-              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission"
+              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission",
+              "branchTag": "LIMIT-REACHED",
+              "fieldSources": {
+                "kind": "KERNEL",
+                "actionKind": "KERNEL",
+                "actionId": "KERNEL",
+                "classesUsed": "KERNEL",
+                "reason": "KERNEL"
+              }
             }
           },
           {
@@ -9877,7 +9960,15 @@
                 "classesUsed",
                 "reason"
               ],
-              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission"
+              "adapter": "Prediction GAP is TEST-scoped; eligible affordable Prep/Recover still pass A1-A5 admission",
+              "branchTag": "EMPTY-HISTORY",
+              "fieldSources": {
+                "kind": "KERNEL",
+                "actionKind": "KERNEL",
+                "actionId": "KERNEL",
+                "classesUsed": "KERNEL",
+                "reason": "KERNEL"
+              }
             }
           },
           {
@@ -9892,7 +9983,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "FEASIBLE",
+              "fieldSources": {}
             }
           },
           {
@@ -9907,7 +10000,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "INFEASIBLE",
+              "fieldSources": {}
             }
           },
           {
@@ -9922,7 +10017,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "COMPUTATION-UNKNOWN",
+              "fieldSources": {}
             }
           },
           {
@@ -9937,7 +10034,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "UNSUPPORTED-SYNTAX",
+              "fieldSources": {}
             }
           },
           {
@@ -9952,7 +10051,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "LIMIT-REACHED",
+              "fieldSources": {}
             }
           },
           {
@@ -9967,7 +10068,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "EMPTY-HISTORY",
+              "fieldSources": {}
             }
           },
           {
@@ -9982,7 +10085,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "FEASIBLE",
+              "fieldSources": {}
             }
           },
           {
@@ -9997,7 +10102,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "INFEASIBLE",
+              "fieldSources": {}
             }
           },
           {
@@ -10012,7 +10119,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "COMPUTATION-UNKNOWN",
+              "fieldSources": {}
             }
           },
           {
@@ -10027,7 +10136,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "UNSUPPORTED-SYNTAX",
+              "fieldSources": {}
             }
           },
           {
@@ -10042,7 +10153,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "LIMIT-REACHED",
+              "fieldSources": {}
             }
           },
           {
@@ -10057,7 +10170,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "EMPTY-HISTORY",
+              "fieldSources": {}
             }
           },
           {
@@ -10072,7 +10187,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "FEASIBLE",
+              "fieldSources": {}
             }
           },
           {
@@ -10087,7 +10204,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "INFEASIBLE",
+              "fieldSources": {}
             }
           },
           {
@@ -10102,7 +10221,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "COMPUTATION-UNKNOWN",
+              "fieldSources": {}
             }
           },
           {
@@ -10117,7 +10238,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "UNSUPPORTED-SYNTAX",
+              "fieldSources": {}
             }
           },
           {
@@ -10132,7 +10255,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "LIMIT-REACHED",
+              "fieldSources": {}
             }
           },
           {
@@ -10147,7 +10272,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "EMPTY-HISTORY",
+              "fieldSources": {}
             }
           },
           {
@@ -10169,7 +10296,16 @@
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary."
+              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary.",
+              "branchTag": "FEASIBLE",
+              "fieldSources": {
+                "status": "KERNEL",
+                "compatibleStateByHypothesis": "KERNEL",
+                "Hprime": "S9-WRAPPER",
+                "historyHandlePrime": "S9-WRAPPER",
+                "historyVersion": "KERNEL",
+                "summaryEffect": "KERNEL"
+              }
             }
           },
           {
@@ -10191,7 +10327,16 @@
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary."
+              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary.",
+              "branchTag": "INFEASIBLE",
+              "fieldSources": {
+                "status": "KERNEL",
+                "compatibleStateByHypothesis": "KERNEL",
+                "Hprime": "S9-WRAPPER",
+                "historyHandlePrime": "S9-WRAPPER",
+                "historyVersion": "KERNEL",
+                "summaryEffect": "KERNEL"
+              }
             }
           },
           {
@@ -10213,7 +10358,16 @@
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary."
+              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary.",
+              "branchTag": "COMPUTATION-UNKNOWN",
+              "fieldSources": {
+                "status": "KERNEL",
+                "compatibleStateByHypothesis": "KERNEL",
+                "Hprime": "S9-WRAPPER",
+                "historyHandlePrime": "S9-WRAPPER",
+                "historyVersion": "KERNEL",
+                "summaryEffect": "KERNEL"
+              }
             }
           },
           {
@@ -10235,7 +10389,16 @@
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary."
+              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary.",
+              "branchTag": "UNSUPPORTED-SYNTAX",
+              "fieldSources": {
+                "status": "KERNEL",
+                "compatibleStateByHypothesis": "KERNEL",
+                "Hprime": "S9-WRAPPER",
+                "historyHandlePrime": "S9-WRAPPER",
+                "historyVersion": "KERNEL",
+                "summaryEffect": "KERNEL"
+              }
             }
           },
           {
@@ -10257,7 +10420,16 @@
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary."
+              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary.",
+              "branchTag": "LIMIT-REACHED",
+              "fieldSources": {
+                "status": "KERNEL",
+                "compatibleStateByHypothesis": "KERNEL",
+                "Hprime": "S9-WRAPPER",
+                "historyHandlePrime": "S9-WRAPPER",
+                "historyVersion": "KERNEL",
+                "summaryEffect": "KERNEL"
+              }
             }
           },
           {
@@ -10279,7 +10451,16 @@
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary."
+              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary.",
+              "branchTag": "EMPTY-HISTORY",
+              "fieldSources": {
+                "status": "KERNEL",
+                "compatibleStateByHypothesis": "KERNEL",
+                "Hprime": "S9-WRAPPER",
+                "historyHandlePrime": "S9-WRAPPER",
+                "historyVersion": "KERNEL",
+                "summaryEffect": "KERNEL"
+              }
             }
           },
           {
@@ -10297,7 +10478,12 @@
                 "status",
                 "proofBasis"
               ],
-              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists"
+              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists",
+              "branchTag": "FEASIBLE",
+              "fieldSources": {
+                "status": "KERNEL",
+                "proofBasis": "KERNEL"
+              }
             }
           },
           {
@@ -10315,7 +10501,12 @@
                 "status",
                 "proofBasis"
               ],
-              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists"
+              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists",
+              "branchTag": "INFEASIBLE",
+              "fieldSources": {
+                "status": "KERNEL",
+                "proofBasis": "KERNEL"
+              }
             }
           },
           {
@@ -10333,7 +10524,12 @@
                 "status",
                 "proofBasis"
               ],
-              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists"
+              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists",
+              "branchTag": "COMPUTATION-UNKNOWN",
+              "fieldSources": {
+                "status": "KERNEL",
+                "proofBasis": "KERNEL"
+              }
             }
           },
           {
@@ -10351,7 +10547,12 @@
                 "status",
                 "proofBasis"
               ],
-              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists"
+              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists",
+              "branchTag": "UNSUPPORTED-SYNTAX",
+              "fieldSources": {
+                "status": "KERNEL",
+                "proofBasis": "KERNEL"
+              }
             }
           },
           {
@@ -10369,7 +10570,12 @@
                 "status",
                 "proofBasis"
               ],
-              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists"
+              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists",
+              "branchTag": "LIMIT-REACHED",
+              "fieldSources": {
+                "status": "KERNEL",
+                "proofBasis": "KERNEL"
+              }
             }
           },
           {
@@ -10387,7 +10593,12 @@
                 "status",
                 "proofBasis"
               ],
-              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists"
+              "adapter": "FEASIBLE is notEstablished unless a declared equivalence proof exists",
+              "branchTag": "EMPTY-HISTORY",
+              "fieldSources": {
+                "status": "KERNEL",
+                "proofBasis": "KERNEL"
+              }
             }
           },
           {
@@ -10402,7 +10613,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "FEASIBLE",
+              "fieldSources": {}
             }
           },
           {
@@ -10417,7 +10630,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "INFEASIBLE",
+              "fieldSources": {}
             }
           },
           {
@@ -10432,7 +10647,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "COMPUTATION-UNKNOWN",
+              "fieldSources": {}
             }
           },
           {
@@ -10447,7 +10664,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "UNSUPPORTED-SYNTAX",
+              "fieldSources": {}
             }
           },
           {
@@ -10462,7 +10681,9 @@
             "returnContract": {
               "recordType": "UNREACHABLE",
               "requiredFields": [],
-              "adapter": "UNREACHABLE-IN-THIS-INTERFACE"
+              "adapter": "UNREACHABLE-IN-THIS-INTERFACE",
+              "branchTag": "LIMIT-REACHED",
+              "fieldSources": {}
             }
           },
           {
@@ -10481,7 +10702,13 @@
                 "finalH",
                 "trace"
               ],
-              "adapter": "Apply Empty, Singleton, 645, Equivalent, Budget ordering; retry exhaustion remains Stop-Error"
+              "adapter": "Apply Empty, Singleton, 645, Equivalent, Budget ordering; retry exhaustion remains Stop-Error",
+              "branchTag": "EMPTY-HISTORY",
+              "fieldSources": {
+                "stopClass": "KERNEL",
+                "finalH": "KERNEL",
+                "trace": "KERNEL"
+              }
             }
           }
         ]
@@ -12855,9 +13082,24 @@
         "responseId": "RESPONSE-B",
         "expectedOwner": "REQUEST-B",
         "ownershipEvents": [
-          {"id": "REQUEST-A", "kind": "REQUEST", "key": "k1", "sequence": 1},
-          {"id": "REQUEST-B", "kind": "REQUEST", "key": "k1", "sequence": 2},
-          {"id": "RESPONSE-B", "kind": "RESPONSE", "key": "k1", "sequence": 3}
+          {
+            "id": "REQUEST-A",
+            "kind": "REQUEST",
+            "key": "k1",
+            "sequence": 1
+          },
+          {
+            "id": "REQUEST-B",
+            "kind": "REQUEST",
+            "key": "k1",
+            "sequence": 2
+          },
+          {
+            "id": "RESPONSE-B",
+            "kind": "RESPONSE",
+            "key": "k1",
+            "sequence": 3
+          }
         ]
       }
     },

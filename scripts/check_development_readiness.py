@@ -673,6 +673,14 @@ def package_errors(data: dict) -> list[str]:
                 required_contract_fields = required_contract_fields - {"classesByTest"}
             if set(contract.get("requiredFields", [])) != required_contract_fields:
                 errors.append(f"{refinement['id']} return contract is incomplete for {row['interfaceId']}/{row['internalResult']}")
+            if contract.get("branchTag") != row["internalResult"] or set(contract.get("fieldSources", {})) != required_contract_fields:
+                errors.append(f"{refinement['id']} return payload lacks a closed branch/source mapping for {row['interfaceId']}/{row['internalResult']}")
+            expected_sources = {field: "KERNEL" for field in required_contract_fields}
+            if row["interfaceId"] == "IF-HIST-UPDATE":
+                for field in {"Hprime", "historyHandlePrime"}.intersection(required_contract_fields):
+                    expected_sources[field] = "S9-WRAPPER"
+            if contract.get("fieldSources") != expected_sources:
+                errors.append(f"{refinement['id']} return payload sources are not controlled for {row['interfaceId']}/{row['internalResult']}")
             expected_record = {"IF-PRED-OBS": "PredictionResult", "IF-SELECT-ADMIT": "Decision", "IF-HIST-UPDATE": "HistoryUpdateBackendResult", "IF-EQUIV": "EquivalenceResult", "IF-RESOURCE-STOP": "StopResult"}.get(row["interfaceId"])
             if row["reachable"] and contract.get("recordType") != expected_record:
                 errors.append(f"{refinement['id']} return record type is not the controlled {expected_record} for {row['interfaceId']}/{row['internalResult']}")
