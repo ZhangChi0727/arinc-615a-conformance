@@ -1134,7 +1134,7 @@ def test_rr88_relations_are_not_selected_by_negative_expectations_and_guard_is_c
     bad = copy.deepcopy(PACKAGE)
     w1 = next(x for x in bad["algorithmRefinements"][0]["finiteKernelContract"]["witnessVectors"] if x["id"] == "FK-W1-FEASIBLE")
     w1["input"]["transition"]["guardAst"]["interval"]["lower"] = {"numerator": 3, "positiveDenominator": 1}
-    assert any("transition guard differs" in item for item in errors(bad))
+    assert any("unsupported guard" in item for item in errors(bad))
     bad = copy.deepcopy(PACKAGE)
     next(x for x in bad["acceptanceCases"] if x["id"] == "AC-SYN-INTEGRITY")["expectedOutputFixture"]["values"]["judgment"] = "FAIL"
     assert any("RC-INTEGRITY-RUNTIME" in item for item in errors(bad))
