@@ -613,12 +613,14 @@ def package_errors(data: dict) -> list[str]:
             required_contract_fields = {
                 "IF-PRED-OBS": {"status","reason","classesByTest","historyVersionUsed","uncertaintyRef"},
                 "IF-SELECT-ADMIT": {"kind","actionKind","actionId","classesUsed","reason"},
-                "IF-HIST-UPDATE": {"status","Hprime","historyVersion","summaryEffect"},
+                "IF-HIST-UPDATE": {"status","compatibleStateByHypothesis","Hprime","historyHandlePrime","historyVersion","summaryEffect"},
                 "IF-EQUIV": {"status","proofBasis"},
                 "IF-RESOURCE-STOP": {"stopClass","finalH","trace"},
             }.get(row["interfaceId"], set()) if row["reachable"] else set()
             if set(contract.get("requiredFields", [])) != required_contract_fields:
                 errors.append(f"{refinement['id']} return contract is incomplete for {row['interfaceId']}/{row['internalResult']}")
+            if row["interfaceId"] == "IF-HIST-UPDATE" and row["reachable"] and contract.get("recordType") != "HistoryUpdateBackendResult":
+                errors.append(f"{refinement['id']} history backend result is not distinct from the S9 wrapper result")
             if row["interfaceId"] == "IF-SELECT-ADMIT" and row["reachable"] and "TEST-scoped" not in contract.get("adapter", ""):
                 errors.append(f"{refinement['id']} selection adapter loses TEST-scoped GAP semantics")
         model_schema = finite["modelInstanceSchema"]

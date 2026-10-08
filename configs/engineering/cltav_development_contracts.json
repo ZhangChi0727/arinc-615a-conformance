@@ -10078,14 +10078,16 @@
             "chargeEffect": "NONE",
             "output": "Hprime",
             "returnContract": {
-              "recordType": "UpdateResult",
+              "recordType": "HistoryUpdateBackendResult",
               "requiredFields": [
                 "status",
+                "compatibleStateByHypothesis",
                 "Hprime",
+                "historyHandlePrime",
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Only complete compatible intersection may shrink H; empty proven intersection yields Stop-Empty"
+              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary."
             }
           },
           {
@@ -10098,14 +10100,16 @@
             "chargeEffect": "NONE",
             "output": "Hprime",
             "returnContract": {
-              "recordType": "UpdateResult",
+              "recordType": "HistoryUpdateBackendResult",
               "requiredFields": [
                 "status",
+                "compatibleStateByHypothesis",
                 "Hprime",
+                "historyHandlePrime",
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Only complete compatible intersection may shrink H; empty proven intersection yields Stop-Empty"
+              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary."
             }
           },
           {
@@ -10118,14 +10122,16 @@
             "chargeEffect": "NONE",
             "output": "CONSERVATIVE-UNKNOWN",
             "returnContract": {
-              "recordType": "UpdateResult",
+              "recordType": "HistoryUpdateBackendResult",
               "requiredFields": [
                 "status",
+                "compatibleStateByHypothesis",
                 "Hprime",
+                "historyHandlePrime",
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Only complete compatible intersection may shrink H; empty proven intersection yields Stop-Empty"
+              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary."
             }
           },
           {
@@ -10138,14 +10144,16 @@
             "chargeEffect": "NONE",
             "output": "CONSERVATIVE-UNKNOWN",
             "returnContract": {
-              "recordType": "UpdateResult",
+              "recordType": "HistoryUpdateBackendResult",
               "requiredFields": [
                 "status",
+                "compatibleStateByHypothesis",
                 "Hprime",
+                "historyHandlePrime",
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Only complete compatible intersection may shrink H; empty proven intersection yields Stop-Empty"
+              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary."
             }
           },
           {
@@ -10158,14 +10166,16 @@
             "chargeEffect": "NONE",
             "output": "CONSERVATIVE-UNKNOWN",
             "returnContract": {
-              "recordType": "UpdateResult",
+              "recordType": "HistoryUpdateBackendResult",
               "requiredFields": [
                 "status",
+                "compatibleStateByHypothesis",
                 "Hprime",
+                "historyHandlePrime",
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Only complete compatible intersection may shrink H; empty proven intersection yields Stop-Empty"
+              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary."
             }
           },
           {
@@ -10178,14 +10188,16 @@
             "chargeEffect": "NONE",
             "output": "Stop-Empty",
             "returnContract": {
-              "recordType": "UpdateResult",
+              "recordType": "HistoryUpdateBackendResult",
               "requiredFields": [
                 "status",
+                "compatibleStateByHypothesis",
                 "Hprime",
+                "historyHandlePrime",
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Only complete compatible intersection may shrink H; empty proven intersection yields Stop-Empty"
+              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary."
             }
           },
           {
