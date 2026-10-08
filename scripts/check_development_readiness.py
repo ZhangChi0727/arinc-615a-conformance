@@ -25,6 +25,25 @@ FIELD_SCHEMA_KEYS = {
 }
 FIELD_SCHEMA_TYPES = {"string", "integer", "number", "boolean", "array", "object", "null"}
 
+# A relation is selected by the typed consumer contract, never by a case ID or
+# by a free-text negative expectation.  This leaves room for new legal cases
+# while preventing an equivalence witness from claiming a resource relation.
+RELATION_CONTRACT_BINDINGS = {
+    "RC-TRANSFER-TERMINAL": ({"IF-EXECUTE-RECORD", "IF-OBS-INTERPRET", "IF-HIST-UPDATE"}, {"TR-CAPTURE-INTAKE", "TR-DATAGRAM-REASSEMBLY", "TR-TRANSFER-RECONSTRUCTION", "TR-PROTOCOL-EVENT", "TR-OWNERSHIP", "TR-OBSERVATION-ASSESSMENT", "TR-HISTORY-COMPATIBILITY", "TR-TRACEABLE-FINDING"}),
+    "RC-PREDICTION-NONEMPTY": ({"IF-PRED-OBS"}, {"TR-HISTORY-COMPATIBILITY"}),
+    "RC-SELECT-STABLE-ID": ({"IF-SELECT-ADMIT"}, {"TR-HISTORY-COMPATIBILITY"}),
+    "RC-VERDICT-WHOLE-INTERVAL": ({"IF-OBS-INTERPRET"}, {"TR-OBSERVATION-ASSESSMENT"}),
+    "RC-SUMMARY-CONFIRMATION": ({"IF-PREP-RECOVER"}, {"TR-HISTORY-COMPATIBILITY"}),
+    "RC-HISTORY-NO-RESURRECTION": ({"IF-HIST-UPDATE"}, {"TR-HISTORY-COMPATIBILITY"}),
+    "RC-EQUIV-EVIDENCE": ({"IF-EQUIV"}, {"TR-HISTORY-COMPATIBILITY"}),
+    "RC-RESOURCE-ONCE": ({"IF-RESOURCE-STOP"}, {"TR-HISTORY-COMPATIBILITY", "TR-TRACEABLE-FINDING"}),
+    "RC-INTEGRITY-RUNTIME": ({"IF-OBS-INTERPRET"}, {"TR-PROTOCOL-EVENT"}),
+    "RC-SCENE-RESET-ID": ({"IF-EXECUTE-RECORD"}, {"TR-CAPTURE-INTAKE"}),
+    "RC-TRUTH-ISOLATION": ({"IF-OBS-INTERPRET"}, {"TR-TRACEABLE-FINDING"}),
+    "RC-CAUSAL-PREFIX": ({"IF-EXECUTE-RECORD"}, {"TR-OBSERVATION-ASSESSMENT"}),
+    "RC-DENOMINATOR-ATTEMPTS": ({"IF-RESOURCE-STOP"}, {"TR-TRACEABLE-FINDING"}),
+}
+
 
 def _field_definition_errors(definition: object, path: str, *, allow_required: bool = True) -> list[str]:
     if not isinstance(definition, dict) or not definition:
@@ -305,8 +324,12 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
         if not isinstance(inputs.get("terminal"), dict) or outputs.get("terminalConfirmed") is not True:
             errors.append("RC-TRANSFER-TERMINAL at inputFixture.values.terminal")
     elif relation == "RC-PREDICTION-NONEMPTY":
-        if outputs.get("predictionStatus") == "OK" and not outputs.get("classes"):
-            errors.append("RC-PREDICTION-NONEMPTY at expectedOutputFixture.values.classes")
+        if outputs.get("predictionStatus") == "OK":
+            frontiers = inputs.get("frontiers", [])
+            states = {item.get("state") for item in frontiers if isinstance(item, dict) and item.get("hypothesisId") in set(inputs.get("H", []))}
+            derived = {item.get("observationClass") for item in inputs.get("model", {}).get("transitions", []) if isinstance(item, dict) and item.get("source") in states and item.get("actionId") == inputs.get("actionId") and isinstance(item.get("observationClass"), str)}
+            if not derived or set(outputs.get("classes", [])) != derived:
+                errors.append("RC-PREDICTION-NONEMPTY at expectedOutputFixture.values.classes")
     elif relation == "RC-SELECT-STABLE-ID":
         actions = inputs.get("actions", [])
         resource = inputs.get("resource", {})
@@ -332,6 +355,8 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
     elif relation == "RC-SUMMARY-CONFIRMATION":
         if outputs.get("commitSummary") and not inputs.get("summaryConfirmed"):
             errors.append("RC-SUMMARY-CONFIRMATION at inputFixture.values.summaryConfirmed")
+        elif outputs.get("commitSummary") != inputs.get("postSummary"):
+            errors.append("RC-SUMMARY-CONFIRMATION at expectedOutputFixture.values.commitSummary")
     elif relation == "RC-HISTORY-NO-RESURRECTION":
         old = inputs.get("history", {})
         new = outputs.get("history", {})
@@ -359,6 +384,8 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
     elif relation == "RC-DENOMINATOR-ATTEMPTS":
         if outputs.get("attemptDenominator") != len(inputs.get("attempts", [])):
             errors.append("RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.attemptDenominator")
+        if outputs.get("answeredDenominator") != sum(item == "PASS" for item in inputs.get("attempts", [])):
+            errors.append("RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.answeredDenominator")
     return errors
 
 
@@ -623,19 +650,24 @@ def package_errors(data: dict) -> list[str]:
                 "IF-EQUIV": {"status","proofBasis"},
                 "IF-RESOURCE-STOP": {"stopClass","finalH","trace"},
             }.get(row["interfaceId"], set()) if row["reachable"] else set()
+            if row["interfaceId"] == "IF-PRED-OBS" and row["reachable"] and row["internalResult"] != "FEASIBLE":
+                required_contract_fields = required_contract_fields - {"classesByTest"}
             if set(contract.get("requiredFields", [])) != required_contract_fields:
                 errors.append(f"{refinement['id']} return contract is incomplete for {row['interfaceId']}/{row['internalResult']}")
-            if row["interfaceId"] == "IF-HIST-UPDATE" and row["reachable"] and contract.get("recordType") != "HistoryUpdateBackendResult":
-                errors.append(f"{refinement['id']} history backend result is not distinct from the S9 wrapper result")
+            expected_record = {"IF-PRED-OBS": "PredictionResult", "IF-SELECT-ADMIT": "Decision", "IF-HIST-UPDATE": "HistoryUpdateBackendResult", "IF-EQUIV": "EquivalenceResult", "IF-RESOURCE-STOP": "StopResult"}.get(row["interfaceId"])
+            if row["reachable"] and contract.get("recordType") != expected_record:
+                errors.append(f"{refinement['id']} return record type is not the controlled {expected_record} for {row['interfaceId']}/{row['internalResult']}")
+            if row["interfaceId"] == "IF-HIST-UPDATE" and row["reachable"] and ("eta_c" not in contract.get("adapter", "") or "H_c" not in contract.get("adapter", "") or "S9" not in contract.get("adapter", "")):
+                errors.append(f"{refinement['id']} history backend adapter does not preserve eta_c/H_c through S9")
+            if row["interfaceId"] == "IF-PRED-OBS" and row["reachable"]:
+                expects_classes = row["internalResult"] == "FEASIBLE"
+                if ("classesByTest" in contract.get("requiredFields", [])) != expects_classes:
+                    errors.append(f"{refinement['id']} prediction return payload does not distinguish OK from GAP")
             if row["interfaceId"] == "IF-SELECT-ADMIT" and row["reachable"] and "TEST-scoped" not in contract.get("adapter", ""):
                 errors.append(f"{refinement['id']} selection adapter loses TEST-scoped GAP semantics")
         model_schema = finite["modelInstanceSchema"]
         if set(model_schema.get("guardAst", {}).get("supported", [])) != {"TRUE", "AND", "STATE-EQUALS", "RATIONAL-INTERVAL-CONTAINS", "TYPED-FIELD-EQUALS"} or set(model_schema.get("guardAst", {}).get("unsupported", [])) != {"OR", "NOT", "CALL"}:
             errors.append(f"{refinement['id']} finite guard AST support boundary is ambiguous")
-        first_witness = next((row for row in finite["witnessVectors"] if row["id"] == "FK-W1-FEASIBLE"), {})
-        transition = first_witness.get("input", {}).get("transition", {})
-        if transition.get("source") != "q0" or transition.get("target") != first_witness.get("expected", {}).get("state"):
-            errors.append(f"{refinement['id']} feasible witness lacks its q0-to-q1 transition")
         def rational(value: object) -> Fraction | None:
             if not isinstance(value, dict) or set(value) != {"numerator", "positiveDenominator"}:
                 return None
@@ -648,20 +680,86 @@ def package_errors(data: dict) -> list[str]:
                 return False
             lo, hi = rational(value["lower"]), rational(value["upper"])
             return lo is not None and hi is not None and lo <= hi and isinstance(value["lowerClosed"], bool) and isinstance(value["upperClosed"], bool)
+        def nonempty_intersection(left: dict, right: dict) -> bool:
+            left_lower, left_upper = rational(left["lower"]), rational(left["upper"])
+            right_lower, right_upper = rational(right["lower"]), rational(right["upper"])
+            assert left_lower is not None and left_upper is not None and right_lower is not None and right_upper is not None
+            lower, upper = max(left_lower, right_lower), min(left_upper, right_upper)
+            if lower < upper:
+                return True
+            if lower > upper:
+                return False
+            return (left["lowerClosed"] if left_lower == lower else left["upperClosed"]) and (right["lowerClosed"] if right_lower == lower else right["upperClosed"])
+        def advanced(interval: dict, delta: Fraction) -> dict:
+            def fraction_object(value: Fraction) -> dict[str, int]:
+                return {"numerator": value.numerator, "positiveDenominator": value.denominator}
+            return {"lower": fraction_object(rational(interval["lower"]) + delta), "upper": fraction_object(rational(interval["upper"]) + delta), "lowerClosed": interval["lowerClosed"], "upperClosed": interval["upperClosed"]}
+        def guard_errors(ast: object) -> list[str]:
+            if not isinstance(ast, dict) or not isinstance(ast.get("tag"), str):
+                return ["guard is not a typed AST"]
+            tag = ast["tag"]
+            if tag in {"OR", "NOT", "CALL"}:
+                return [f"unsupported guard tag {tag}"]
+            if tag == "TRUE":
+                return [] if set(ast) == {"tag"} else ["TRUE has unexpected operands"]
+            if tag == "AND":
+                children = ast.get("children")
+                if set(ast) != {"tag", "children"} or not isinstance(children, list) or not children:
+                    return ["AND lacks children"]
+                return [error for child in children for error in guard_errors(child)]
+            if tag == "STATE-EQUALS":
+                return [] if set(ast) == {"tag", "state"} and isinstance(ast.get("state"), str) and ast["state"] else ["STATE-EQUALS lacks state"]
+            if tag == "RATIONAL-INTERVAL-CONTAINS":
+                return [] if set(ast) == {"tag", "clock", "interval"} and isinstance(ast.get("clock"), str) and ast["clock"] and valid_interval(ast.get("interval")) else ["RATIONAL-INTERVAL-CONTAINS is malformed"]
+            if tag == "TYPED-FIELD-EQUALS":
+                return [] if set(ast) == {"tag", "field", "value"} and isinstance(ast.get("field"), str) and ast["field"] else ["TYPED-FIELD-EQUALS is malformed"]
+            return [f"unknown guard tag {tag}"]
+        def update_errors(updates: object) -> list[str]:
+            if not isinstance(updates, list):
+                return ["simultaneousUpdates is not a list"]
+            targets: set[tuple[str, str]] = set()
+            results: list[str] = []
+            for update in updates:
+                if not isinstance(update, dict):
+                    results.append("update is not an object"); continue
+                tag = update.get("tag")
+                if tag == "CLOCK-RESET-TO-ZERO" and set(update) == {"tag", "clock"} and isinstance(update.get("clock"), str) and update["clock"]:
+                    target = ("clock", update["clock"])
+                elif tag == "TYPED-FIELD-ASSIGN" and set(update) == {"tag", "field", "value"} and isinstance(update.get("field"), str) and update["field"]:
+                    target = ("field", update["field"])
+                elif tag == "STATE-ASSIGN" and set(update) == {"tag", "state"} and isinstance(update.get("state"), str) and update["state"]:
+                    target = ("state", "control")
+                else:
+                    results.append(f"unsupported or malformed update {tag}"); continue
+                if target in targets:
+                    results.append(f"conflicting simultaneous update {target[0]}:{target[1]}")
+                targets.add(target)
+            return results
         for witness_id in ("FK-W1-FEASIBLE", "FK-W2-INFEASIBLE"):
             witness = next(row for row in finite["witnessVectors"] if row["id"] == witness_id)
             if not valid_interval(witness["input"].get("clockConstraint")) or not valid_interval(witness["input"].get("guard")):
                 errors.append(f"{refinement['id']} {witness_id} has a noncanonical or reversed interval")
-            actual_guard = witness["input"].get("transition", {}).get("guardAst", {}).get("interval", witness["input"].get("guard"))
+            transition = witness["input"].get("transition", {})
+            actual_guard = transition.get("guardAst", {}).get("interval")
+            if transition.get("source") != witness["input"].get("state") or not isinstance(transition.get("target"), str) or not transition["target"]:
+                errors.append(f"{refinement['id']} {witness_id} transition endpoints are malformed")
+            if guard_errors(transition.get("guardAst")) or update_errors(transition.get("simultaneousUpdates")):
+                errors.append(f"{refinement['id']} {witness_id} has an unsupported guard or update")
             if not valid_interval(actual_guard) or actual_guard != witness["input"].get("guard"):
                 errors.append(f"{refinement['id']} {witness_id} transition guard differs from the authoritative guard")
-        w1 = next(row for row in finite["witnessVectors"] if row["id"] == "FK-W1-FEASIBLE")
-        delta = rational(w1["input"].get("delta"))
-        if delta is None or delta < 0 or w1["input"].get("quantifier") != "EXISTS-DELTA":
-            errors.append(f"{refinement['id']} feasible witness has an invalid shared delta")
-        w2 = next(row for row in finite["witnessVectors"] if row["id"] == "FK-W2-INFEASIBLE")
-        if w2.get("expected", {}).get("result") != "INFEASIBLE":
-            errors.append(f"{refinement['id']} disjoint constraint witness must be INFEASIBLE")
+            delta = rational(witness["input"].get("delta"))
+            if delta is None or delta < 0 or witness["input"].get("quantifier") != "EXISTS-DELTA":
+                errors.append(f"{refinement['id']} {witness_id} has an invalid time-advance witness")
+            elif valid_interval(witness["input"].get("clockConstraint")) and valid_interval(actual_guard):
+                computed = "FEASIBLE" if nonempty_intersection(advanced(witness["input"]["clockConstraint"], delta), actual_guard) else "INFEASIBLE"
+                if witness.get("expected", {}).get("result") != computed:
+                    errors.append(f"{refinement['id']} {witness_id} result does not follow its clock/guard constraint")
+                if computed == "FEASIBLE" and (witness["expected"].get("state") != transition.get("target") or witness["expected"].get("clockConstraint") != advanced(witness["input"]["clockConstraint"], delta)):
+                    errors.append(f"{refinement['id']} {witness_id} successor does not follow its transition/time advance")
+        w3 = next(row for row in finite["witnessVectors"] if row["id"] == "FK-W3-UNKNOWN")
+        w3_guard = w3.get("input", {}).get("transition", {}).get("guardAst")
+        if not guard_errors(w3_guard) or w3.get("expected", {}).get("result") != "UNSUPPORTED-SYNTAX":
+            errors.append(f"{refinement['id']} unsupported syntax witness is not a typed unsupported guard")
         clock_witness = next(row for row in finite["witnessVectors"] if row["id"] == "FK-W5-CLOCK")
         if clock_witness.get("expected", {}).get("merge") is not False or not all(valid_interval(value) for value in clock_witness.get("input", {}).get("clockConstraints", [])):
             errors.append(f"{refinement['id']} clock-correlation witness must remain separate")
@@ -697,6 +795,13 @@ def package_errors(data: dict) -> list[str]:
             if not parameter[field].strip():
                 errors.append(f"{parameter['id']} has blank {field}")
     for case in data["acceptanceCases"]:
+        relation_contract = RELATION_CONTRACT_BINDINGS.get(case.get("relationId"))
+        if relation_contract is None:
+            errors.append(f"{case['id']} has an unknown deterministic relation")
+        else:
+            required_interfaces, required_tools = relation_contract
+            if set(case["algorithmInterfaceIds"]) != required_interfaces or set(case["toolRequirementIds"]) != required_tools:
+                errors.append(f"{case['id']} relationId is incompatible with its typed consumer contract")
         if not set(case["inputRecordIds"]).issubset(records):
             errors.append(f"{case['id']} has an unknown input record")
         if not set(case["toolRequirementIds"]).issubset(tool_by_id):
@@ -729,7 +834,7 @@ def package_errors(data: dict) -> list[str]:
             except (KeyError, IndexError, TypeError):
                 errors.append(f"{case['id']} negative variant {variant['id']} has an invalid executable path")
                 continue
-            if not variant["expectedRejection"].startswith(case["relationId"] + " at ") or not any(item.startswith(case["relationId"] + " at ") for item in variant_errors):
+            if variant["expectedRejection"] not in variant_errors:
                 errors.append(f"{case['id']} negative variant {variant['id']} does not hit its named relation")
         for tool_id in case["toolRequirementIds"]:
             tool = tool_by_id.get(tool_id)
@@ -760,13 +865,8 @@ def package_errors(data: dict) -> list[str]:
     if any("truth" in str(item).lower() for item in causal.get("visiblePrefix", [])):
         errors.append("AC-EXP-CAUSAL exposes evaluator truth")
     observation_case = next((case for case in data["acceptanceCases"] if case["id"] == "AC-SYN-OBSERVATION"), None)
-    if observation_case:
-        iv = observation_case["inputFixture"]["values"]["interval"]
-        rw = observation_case["inputFixture"]["values"]["requirementWindow"]
-        verdict = observation_case["expectedOutputFixture"]["values"].get("verdict")
-        expected_verdict = "PASS" if iv["lower"] >= rw["lower"] and iv["upper"] <= rw["upper"] else "FAIL" if iv["upper"] < rw["lower"] or iv["lower"] > rw["upper"] else "INCONCLUSIVE"
-        if verdict != expected_verdict:
-            errors.append("AC-SYN-OBSERVATION verdict differs from the whole-interval relation")
+    if observation_case and _acceptance_relation_errors(observation_case):
+        errors.append("AC-SYN-OBSERVATION verdict differs from the controlled whole-interval relation")
     history_case = next((case for case in data["acceptanceCases"] if case["id"] == "AC-SYN-HISTORY"), None)
     if history_case:
         old = history_case["inputFixture"]["values"]["history"]
@@ -808,6 +908,27 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{item['id']} lacks category-specific coverage axes")
         if set(item.get("coverageValues", {})) != set(item.get("coverageAxes", [])):
             errors.append(f"{item['id']} coverage axes lack concrete values")
+        def has_missing(value: object) -> bool:
+            if value is None:
+                return True
+            if isinstance(value, dict):
+                return any(has_missing(child) for child in value.values())
+            if isinstance(value, list):
+                return any(has_missing(child) for child in value)
+            return False
+        if has_missing(item.get("coverageValues", {})):
+            errors.append(f"{item['id']} coverage axes contain an unconsumable null value")
+        expected_case = {
+            "corpus identity": "AC-EXP-TRUTH", "label boundary": "AC-EXP-TRUTH", "capture format": "AC-SYN-TRANSFER",
+            "IP reassembly": "AC-SYN-TRANSFER", "TFTP reconstruction": "AC-SYN-TRANSFER", "field contracts": "AC-SYN-TRANSFER",
+            "matching and no response": "AC-SYN-OBSERVATION", "timing and U": "AC-SYN-OBSERVATION", "prediction and admission": "AC-SYN-PREDICTION",
+            "history update": "AC-SYN-HISTORY", "state and return": "AC-SYN-RESOURCE-STOP", "resource accounting": "AC-SYN-RESOURCE-STOP",
+            "experiment boundary": "AC-EXP-SCENE", "controlled drift": "AC-EXP-CAUSAL",
+        }[item["category"]]
+        if expected_case not in item["caseIds"]:
+            errors.append(f"{item['id']} is not bound to its controlled acceptance consumer")
+        if item["category"] == "state and return" and item["coverageValues"] != {"internalResult": "EMPTY-HISTORY", "interfaceId": "IF-RESOURCE-STOP", "returnRecord": "StopResult", "sideEffects": "PRESERVE"}:
+            errors.append(f"{item['id']} has an unbound state/return coverage vector")
     scenario_ids = [item["id"] for item in data["experimentScenarios"]]
     if len(scenario_ids) != len(set(scenario_ids)) or len(scenario_ids) < 8:
         errors.append("experimentScenarios must contain eight unique first-batch scenes")
@@ -840,6 +961,12 @@ def package_errors(data: dict) -> list[str]:
             errors.append("SC-NO-RESPONSE does not establish the controlled elapsed-horizon relation")
         if scenario["id"] == "SC-SAME-KEY" and values.get("policy") not in {"UNIQUE-KEY","FIFO","MOST-RECENT"}:
             errors.append("SC-SAME-KEY has an uncontrolled ownership policy")
+        if scenario["id"] == "SC-NORMAL-UPLOAD" and values.get("eventSequence") != ["LUI", "LUR", "DATA", "LUS"]:
+            errors.append("SC-NORMAL-UPLOAD lacks the controlled UPLOAD event sequence")
+        if scenario["id"] == "SC-INVALID-OBS" and not (values.get("clockValid") is False and values.get("expectedVerdict") == "ERROR"):
+            errors.append("SC-INVALID-OBS does not preserve the invalid-clock ERROR relation")
+        if scenario["id"] == "SC-SAME-KEY" and values.get("policy") == "MOST-RECENT" and values.get("expectedOwner") != "REQUEST-B":
+            errors.append("SC-SAME-KEY MOST-RECENT does not select the latest request")
     for tool in data["toolRequirements"]:
         case = case_by_id.get(tool["acceptanceCaseId"])
         if case is not None:
@@ -1054,14 +1181,22 @@ def package_errors(data: dict) -> list[str]:
             if not (same_part.get("fileAId") != same_part.get("fileBId") and same_part.get("partNumberA") == same_part.get("partNumberB") and same_part.get("crcA") == same_part.get("crcB")):
                 errors.append(f"{dependency['id']} 00087 witness must compare CRCs of two same-part-number files")
             image = witnesses.get("CRS-M1-00085", {}).get("inputs", {})
-            if not (image.get("orderedBytesPresent") and image.get("checkValuePresent") and image.get("relation") == "EQUALS" and image.get("finalImageCheckValue") == image.get("lspCheckValue")):
+            image_values = (image.get("finalImageCheckValue"), image.get("lspCheckValue"))
+            if not (image.get("orderedBytesPresent") and image.get("checkValuePresent") and image.get("relation") == "EQUALS" and all(isinstance(value, str) and value for value in image_values) and image_values[0] == image_values[1]):
                 errors.append(f"{dependency['id']} 00085 witness lacks final-image/LSP check-value relation")
             comparison = witnesses.get("CRS-M1-00086", {}).get("inputs", {})
-            if not (comparison.get("comparisonSelected") and comparison.get("oldFileId") != comparison.get("newFileId") and comparison.get("comparisonResult") == ("EQUAL" if comparison.get("oldCheckValue") == comparison.get("newCheckValue") else "DIFFERENT")):
+            comparison_values = (comparison.get("oldCheckValue"), comparison.get("newCheckValue"))
+            if not (comparison.get("comparisonSelected") and isinstance(comparison.get("oldFileId"), str) and isinstance(comparison.get("newFileId"), str) and comparison.get("oldFileId") and comparison.get("newFileId") and comparison.get("oldFileId") != comparison.get("newFileId") and all(isinstance(value, str) and value for value in comparison_values) and comparison.get("comparisonResult") == ("EQUAL" if comparison_values[0] == comparison_values[1] else "DIFFERENT")):
                 errors.append(f"{dependency['id']} 00086 witness lacks declared old/new comparison result")
             status = witnesses.get("CRS-M1-00109", {}).get("inputs", {})
             events = status.get("events", [])
-            if not (status.get("finalDataSeen") and status.get("calculationInProgress") and events and events[0].get("kind") == "FINAL-DATA" and any(event.get("kind") == "STATUS" and event.get("at", 0) > events[0].get("at", 0) for event in events[1:])):
+            start, end = status.get("calculationStartAt"), status.get("calculationEndAt")
+            typed_events = isinstance(events, list) and all(isinstance(event, dict) and event.get("kind") in {"FINAL-DATA", "STATUS"} and isinstance(event.get("at"), int) and not isinstance(event.get("at"), bool) for event in events)
+            ordered = typed_events and all(events[index]["at"] < events[index + 1]["at"] for index in range(len(events) - 1))
+            final_indices = [index for index, event in enumerate(events) if event.get("kind") == "FINAL-DATA"] if typed_events else []
+            final_index = final_indices[-1] if final_indices else -1
+            continued = final_index >= 0 and any(event["kind"] == "STATUS" and start <= event["at"] <= end for event in events[final_index + 1:]) if isinstance(start, int) and isinstance(end, int) and typed_events else False
+            if not (status.get("finalDataSeen") and status.get("calculationInProgress") and isinstance(start, int) and isinstance(end, int) and start <= end and typed_events and ordered and final_index >= 0 and events[final_index]["at"] >= start and events[final_index]["at"] <= end and continued):
                 errors.append(f"{dependency['id']} 00109 witness lacks post-DATA status continuation")
         for requirement_id, binding in source_bindings.items():
             source = source_by_id.get(requirement_id, {})

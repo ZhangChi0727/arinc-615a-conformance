@@ -1405,7 +1405,116 @@ def test_review_generator_refuses_invalid_authority_and_detects_stale_view(monke
     assert SYNC.main() == 1
     assert "stale" in capsys.readouterr().err
 
+
+def test_rr89_finite_kernel_consumes_actual_ast_time_and_typed_returns():
+    def witness(candidate, identifier):
+        return next(item for item in candidate["algorithmRefinements"][0]["finiteKernelContract"]["witnessVectors"] if item["id"] == identifier)
+
+    bad = copy.deepcopy(PACKAGE)
+    witness(bad, "FK-W1-FEASIBLE")["input"]["transition"]["guardAst"] = {"tag": "CALL", "name": "unavailable"}
+    assert any("unsupported guard" in item or "authoritative guard" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    witness(bad, "FK-W1-FEASIBLE")["input"]["delta"] = {"numerator": 100, "positiveDenominator": 1}
+    assert any("result does not follow" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    witness(bad, "FK-W1-FEASIBLE")["input"]["transition"]["simultaneousUpdates"] = [{"tag": "DELETE-HYPOTHESES"}]
+    assert any("unsupported guard or update" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    w2 = witness(bad, "FK-W2-INFEASIBLE")
+    w2["input"]["clockConstraint"] = copy.deepcopy(w2["input"]["guard"])
+    assert any("result does not follow" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    row = next(item for item in bad["algorithmRefinements"][0]["finiteKernelContract"]["totalReturnMapping"] if item["interfaceId"] == "IF-PRED-OBS" and item["internalResult"] == "COMPUTATION-UNKNOWN")
+    row["returnContract"]["recordType"] = "ALIEN"
+    assert any("return record type" in item for item in errors(bad))
+
+
+def test_rr89_acceptance_relation_timing_and_summary_cannot_be_relabelled():
+    bad = copy.deepcopy(PACKAGE)
+    case = next(item for item in bad["acceptanceCases"] if item["id"] == "AC-SYN-EQUIVALENCE")
+    case["relationId"] = "RC-RESOURCE-ONCE"
+    case["inputFixture"]["values"]["attemptsIssued"] = 1
+    case["expectedOutputFixture"]["values"].update(result="established", charges=1)
+    assert any("typed consumer contract" in item for item in errors(bad))
+    legal = copy.deepcopy(PACKAGE)
+    observation = next(item for item in legal["acceptanceCases"] if item["id"] == "AC-SYN-OBSERVATION")
+    observation["inputFixture"]["values"].update(interval={"lower": 1, "upper": 1, "lowerClosed": True, "upperClosed": True}, requirementWindow={"lower": 0, "upper": 1, "lowerClosed": True, "upperClosed": False})
+    observation["expectedOutputFixture"]["values"]["verdict"] = "FAIL"
+    assert errors(legal) == []
+    legal = copy.deepcopy(PACKAGE)
+    observation = next(item for item in legal["acceptanceCases"] if item["id"] == "AC-SYN-OBSERVATION")
+    observation["inputFixture"]["values"]["clockValid"] = False
+    observation["expectedOutputFixture"]["values"]["verdict"] = "ERROR"
+    assert errors(legal) == []
+    bad = copy.deepcopy(PACKAGE)
+    prep = next(item for item in bad["acceptanceCases"] if item["id"] == "AC-SYN-PREP-RECOVER")
+    prep["expectedOutputFixture"]["values"]["commitSummary"] = "q999"
+    assert any("commitSummary" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    prediction = next(item for item in bad["acceptanceCases"] if item["id"] == "AC-SYN-PREDICTION")
+    prediction["expectedOutputFixture"]["values"]["classes"] = ["fake-one", "fake-two"]
+    assert any("classes" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    denominator = next(item for item in bad["acceptanceCases"] if item["id"] == "AC-EXP-DENOMINATOR")
+    denominator["expectedOutputFixture"]["values"]["answeredDenominator"] = 4
+    assert any("answeredDenominator" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["acceptanceMatrix"] if item["id"] == "AM-IDENTITY")["caseIds"] = ["AC-EXP-CAUSAL"]
+    assert any("controlled acceptance consumer" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["experimentScenarios"] if item["id"] == "SC-INVALID-OBS")["scenarioValues"]["expectedVerdict"] = "PASS"
+    assert any("invalid-clock ERROR" in item for item in errors(bad))
+
+
+def test_rr89_integrity_witnesses_reject_absence_and_render_in_both_languages():
+    bad = copy.deepcopy(PACKAGE)
+    witnesses = {item["requirementId"]: item for item in bad["implementationDependencies"][0]["obligationWitnesses"]}
+    witnesses["CRS-M1-00085"]["inputs"].pop("finalImageCheckValue")
+    witnesses["CRS-M1-00085"]["inputs"].pop("lspCheckValue")
+    assert any("00085 witness" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    witnesses = {item["requirementId"]: item for item in bad["implementationDependencies"][0]["obligationWitnesses"]}
+    witnesses["CRS-M1-00086"]["inputs"].pop("oldCheckValue")
+    witnesses["CRS-M1-00086"]["inputs"].pop("newCheckValue")
+    assert any("00086 witness" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    status = next(item for item in bad["implementationDependencies"][0]["obligationWitnesses"] if item["requirementId"] == "CRS-M1-00109")["inputs"]
+    status["events"] = [{"kind": "FINAL-DATA", "at": 10}, {"kind": "STATUS", "at": -99}]
+    assert any("00109 witness" in item for item in errors(bad))
+    baseline = SYNC.render(PACKAGE)
+    chinese = baseline.split("# 中文版", 1)[1]
+    assert "义务见证" in chinese
+    changed = copy.deepcopy(PACKAGE)
+    witness = next(item for item in changed["implementationDependencies"][0]["obligationWitnesses"] if item["requirementId"] == "CRS-M1-00087")
+    witness["inputs"].update(crcA="0x5678", crcB="0x5678")
+    assert errors(changed) == []
+    assert SYNC.render(changed).split("# 中文版", 1)[1] != chinese
+
+
+def test_rr89_invalid_relation_fails_checker_and_preserves_review_publication(monkeypatch, tmp_path, capsys):
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["acceptanceCases"] if item["id"] == "AC-SYN-EQUIVALENCE")["relationId"] = "RC-RESOURCE-ONCE"
+    code, captured = run_main(monkeypatch, tmp_path, capsys, bad)
+    assert code == 1
+    assert "typed consumer contract" in captured.err
+    package = tmp_path / "package.json"
+    review = tmp_path / "review.md"
+    package.write_text(json.dumps(bad), encoding="utf-8")
+    review.write_text("previous review publication\n", encoding="utf-8")
+    monkeypatch.setattr(SYNC, "PACKAGE", package)
+    monkeypatch.setattr(SYNC, "VIEW", review)
+    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--write"])
+    assert SYNC.main() == 1
+    assert review.read_text(encoding="utf-8") == "previous review publication\n"
+
+
+
+def test_review_generator_detects_executable_module_drift(monkeypatch, tmp_path, capsys):
+    package = tmp_path / "package.json"
+    view = tmp_path / "review.md"
     package.write_text(json.dumps(PACKAGE), encoding="utf-8")
+    monkeypatch.setattr(SYNC, "PACKAGE", package)
+    monkeypatch.setattr(SYNC, "VIEW", view)
     monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--write"])
     assert SYNC.main() == 0
     changed = copy.deepcopy(PACKAGE)

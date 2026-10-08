@@ -9469,7 +9469,34 @@
                 "lowerClosed": true,
                 "upperClosed": true
               },
-              "observation": "response"
+              "observation": "response",
+              "transition": {
+                "id": "t02",
+                "source": "q0",
+                "target": "q2",
+                "guardAst": {
+                  "tag": "RATIONAL-INTERVAL-CONTAINS",
+                  "clock": "x",
+                  "interval": {
+                    "lower": {
+                      "numerator": 0,
+                      "positiveDenominator": 1
+                    },
+                    "upper": {
+                      "numerator": 2,
+                      "positiveDenominator": 1
+                    },
+                    "lowerClosed": true,
+                    "upperClosed": true
+                  }
+                },
+                "simultaneousUpdates": []
+              },
+              "quantifier": "EXISTS-DELTA",
+              "delta": {
+                "numerator": 0,
+                "positiveDenominator": 1
+              }
             },
             "expected": {
               "result": "INFEASIBLE",
@@ -9480,9 +9507,46 @@
             "id": "FK-W3-UNKNOWN",
             "input": {
               "state": "q0",
-              "clockConstraint": "0<=x<=1",
-              "guard": "unsupported-call()",
-              "observation": "response"
+              "clockConstraint": {
+                "lower": {
+                  "numerator": 0,
+                  "positiveDenominator": 1
+                },
+                "upper": {
+                  "numerator": 1,
+                  "positiveDenominator": 1
+                },
+                "lowerClosed": true,
+                "upperClosed": true
+              },
+              "guard": {
+                "lower": {
+                  "numerator": 0,
+                  "positiveDenominator": 1
+                },
+                "upper": {
+                  "numerator": 1,
+                  "positiveDenominator": 1
+                },
+                "lowerClosed": true,
+                "upperClosed": true
+              },
+              "observation": "response",
+              "transition": {
+                "id": "t03",
+                "source": "q0",
+                "target": "q3",
+                "guardAst": {
+                  "tag": "CALL",
+                  "name": "unsupported"
+                },
+                "simultaneousUpdates": []
+              },
+              "quantifier": "EXISTS-DELTA",
+              "delta": {
+                "numerator": 0,
+                "positiveDenominator": 1
+              }
             },
             "expected": {
               "result": "UNSUPPORTED-SYNTAX",
@@ -9581,7 +9645,6 @@
               "requiredFields": [
                 "status",
                 "reason",
-                "classesByTest",
                 "historyVersionUsed",
                 "uncertaintyRef"
               ],
@@ -9602,7 +9665,6 @@
               "requiredFields": [
                 "status",
                 "reason",
-                "classesByTest",
                 "historyVersionUsed",
                 "uncertaintyRef"
               ],
@@ -9623,7 +9685,6 @@
               "requiredFields": [
                 "status",
                 "reason",
-                "classesByTest",
                 "historyVersionUsed",
                 "uncertaintyRef"
               ],
@@ -9644,7 +9705,6 @@
               "requiredFields": [
                 "status",
                 "reason",
-                "classesByTest",
                 "historyVersionUsed",
                 "uncertaintyRef"
               ],
@@ -9665,7 +9725,6 @@
               "requiredFields": [
                 "status",
                 "reason",
-                "classesByTest",
                 "historyVersionUsed",
                 "uncertaintyRef"
               ],
@@ -11742,7 +11801,9 @@
                 "kind": "STATUS",
                 "at": 12
               }
-            ]
+            ],
+            "calculationStartAt": 10,
+            "calculationEndAt": 12
           },
           "expectedRelation": "STATUS continues after FINAL-DATA while calculation is in progress"
         }
@@ -12353,7 +12414,7 @@
       ],
       "coverageValues": {
         "internalResult": "EMPTY-HISTORY",
-        "interfaceId": 0,
+        "interfaceId": "IF-RESOURCE-STOP",
         "returnRecord": "StopResult",
         "sideEffects": "PRESERVE"
       }
