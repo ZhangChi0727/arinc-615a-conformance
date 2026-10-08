@@ -33,6 +33,13 @@
       "purpose": "Independent required integrity-obligation set and contract identity",
       "purposeZh": "独立的完整性必需义务集合与合同身份",
       "sha256": "e0dcae023a2e4ad8bc649c3b8a002a7320ceda397751165d0538c67f4325a02e"
+    },
+    {
+      "artifactId": "CLTAV-HISTORICAL-CAPTURE-MANIFEST",
+      "path": "configs/research/cltav_historical_capture_manifest.json",
+      "sha256": "80cc6076e65d2639bd332406412e8895ca7c43722005f70f73426ef15eb8f747",
+      "purpose": "Pins exploratory capture identities for matrix identity witnesses; not independent truth.",
+      "purposeZh": "固定矩阵身份见证的探索性捕获身份；不是独立真值。"
     }
   ],
   "implementationSlices": [
@@ -9279,6 +9286,21 @@
           "frontier-state-count"
         ],
         "modelInstanceSchema": {
+          "stateIds": [
+            "q0",
+            "q1",
+            "q2",
+            "q3"
+          ],
+          "clockIds": [
+            "x"
+          ],
+          "typedVariables": {
+            "mode": [
+              "normal",
+              "recovery"
+            ]
+          },
           "rational": {
             "type": "object",
             "required": [
@@ -11733,18 +11755,30 @@
           "inputs": {
             "service": "INFORMATION",
             "receiverSupport": true,
-            "optionSelected": true
+            "optionSelected": true,
+            "optionIdentity": "integrity-option-synthetic",
+            "protectedBytesRef": "symbolic-transfer-bytes"
           },
-          "expectedRelation": "receiver supports selected INFORMATION integrity option"
+          "expectedRelation": "receiver supports selected INFORMATION integrity option",
+          "expected": {
+            "receiverSupportsSelectedOption": true,
+            "protectedBytesBound": true
+          }
         },
         {
           "requirementId": "CRS-M1-00082",
           "inputs": {
             "service": "UPLOAD",
             "receiverSupport": true,
-            "optionSelected": true
+            "optionSelected": true,
+            "optionIdentity": "integrity-option-synthetic",
+            "protectedBytesRef": "symbolic-transfer-bytes"
           },
-          "expectedRelation": "receiver supports selected UPLOAD integrity option"
+          "expectedRelation": "receiver supports selected UPLOAD integrity option",
+          "expected": {
+            "receiverSupportsSelectedOption": true,
+            "protectedBytesBound": true
+          }
         },
         {
           "requirementId": "CRS-M1-00085",
@@ -11757,7 +11791,10 @@
             "lspCheckValue": "0x1234",
             "relation": "EQUALS"
           },
-          "expectedRelation": "final-image check value equals the LSP check value"
+          "expectedRelation": "final-image check value equals the LSP check value",
+          "expected": {
+            "checkValueRelation": "EQUALS"
+          }
         },
         {
           "requirementId": "CRS-M1-00086",
@@ -11769,7 +11806,11 @@
             "newCheckValue": "0x2222",
             "comparisonResult": "DIFFERENT"
           },
-          "expectedRelation": "optional old/new comparison retains both identities and its declared result"
+          "expectedRelation": "optional old/new comparison retains both identities and its declared result",
+          "expected": {
+            "comparisonSelected": true,
+            "comparisonResult": "DIFFERENT"
+          }
         },
         {
           "requirementId": "CRS-M1-00087",
@@ -11781,7 +11822,10 @@
             "crcA": "0x1234",
             "crcB": "0x1234"
           },
-          "expectedRelation": "same part number implies crcA equals crcB"
+          "expectedRelation": "same part number implies crcA equals crcB",
+          "expected": {
+            "samePartNumberCheckValueRelation": "EQUALS"
+          }
         },
         {
           "requirementId": "CRS-M1-00109",
@@ -11803,9 +11847,15 @@
               }
             ],
             "calculationStartAt": 10,
-            "calculationEndAt": 12
+            "calculationEndAt": 12,
+            "statusObservationPoints": [
+              12
+            ]
           },
-          "expectedRelation": "STATUS continues after FINAL-DATA while calculation is in progress"
+          "expectedRelation": "STATUS continues after FINAL-DATA while calculation is in progress",
+          "expected": {
+            "statusContinuation": "AT-EACH-OBSERVATION-POINT"
+          }
         }
       ]
     }
@@ -12077,9 +12127,9 @@
       ],
       "coverageValues": {
         "captureId": "HC-01",
-        "relativePath": "session/one.pcapng",
-        "byteCount": 64,
-        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "relativePath": "OHMS数据加载CPM_L1_ACT40-FCPA-38AH,报fail,260820.pcapng",
+        "byteCount": 214877828,
+        "sha256": "0e9c160dc28f59502730e7bd860a69d095ed32671d761843bbadb18199cf103c",
         "resolvedFileIdentity": "git-tracked-regular-file"
       }
     },

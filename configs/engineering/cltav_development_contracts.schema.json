@@ -877,7 +877,10 @@
                 "required": [
                   "transition",
                   "clockConstraint",
-                  "typedStore"
+                  "typedStore",
+                  "stateIds",
+                  "clockIds",
+                  "typedVariables"
                 ],
                 "additionalProperties": true
               },
@@ -1919,7 +1922,8 @@
               "required": [
                 "requirementId",
                 "inputs",
-                "expectedRelation"
+                "expectedRelation",
+                "expected"
               ],
               "properties": {
                 "requirementId": {
@@ -1932,6 +1936,10 @@
                 "expectedRelation": {
                   "type": "string",
                   "minLength": 1
+                },
+                "expected": {
+                  "type": "object",
+                  "minProperties": 1
                 }
               }
             }

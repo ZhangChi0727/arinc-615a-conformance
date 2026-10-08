@@ -1523,3 +1523,78 @@ def test_review_generator_detects_executable_module_drift(monkeypatch, tmp_path,
     monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--check"])
     assert SYNC.main() == 1
     assert "stale" in capsys.readouterr().err
+
+
+def test_rr90_kernel_derives_intersection_reset_and_supported_ast_successors():
+    def w(candidate, identifier="FK-W1-FEASIBLE"):
+        return next(item for item in candidate["algorithmRefinements"][0]["finiteKernelContract"]["witnessVectors"] if item["id"] == identifier)
+
+    legal = copy.deepcopy(PACKAGE)
+    witness = w(legal)
+    witness["input"]["clockConstraint"]["upper"]["numerator"] = 3
+    witness["expected"]["clockConstraint"]["upper"]["numerator"] = 2
+    assert errors(legal) == []
+    bad = copy.deepcopy(legal)
+    w(bad)["expected"]["clockConstraint"]["upper"]["numerator"] = 3
+    assert any("successor does not follow" in item for item in errors(bad))
+    legal = copy.deepcopy(PACKAGE)
+    witness = w(legal)
+    witness["input"]["transition"]["simultaneousUpdates"] = [{"tag": "CLOCK-RESET-TO-ZERO", "clock": "x"}]
+    witness["expected"]["clockConstraint"] = {"lower": {"numerator": 0, "positiveDenominator": 1}, "upper": {"numerator": 0, "positiveDenominator": 1}, "lowerClosed": True, "upperClosed": True}
+    assert errors(legal) == []
+    bad = copy.deepcopy(legal)
+    w(bad)["expected"]["clockConstraint"]["upper"]["numerator"] = 1
+    assert any("successor does not follow" in item for item in errors(bad))
+    legal = copy.deepcopy(PACKAGE)
+    witness = w(legal)
+    base = copy.deepcopy(witness["input"]["transition"]["guardAst"])
+    witness["input"]["transition"]["guardAst"] = {"tag": "AND", "children": [base, {"tag": "TRUE"}]}
+    assert errors(legal) == []
+    bad = copy.deepcopy(PACKAGE)
+    w(bad)["input"]["clockConstraint"] = {"lower": {"numerator": 1, "positiveDenominator": 1}, "upper": {"numerator": 1, "positiveDenominator": 1}, "lowerClosed": True, "upperClosed": False}
+    assert any("noncanonical or reversed interval" in item for item in errors(bad))
+
+
+def test_rr90_answered_fixture_matrix_and_scenario_relations_are_executable():
+    legal = copy.deepcopy(PACKAGE)
+    denominator = next(item for item in legal["acceptanceCases"] if item["id"] == "AC-EXP-DENOMINATOR")
+    denominator["inputFixture"]["values"]["attempts"] = ["PASS", "FAIL", "ERROR", "UNCONFIRMED"]
+    denominator["expectedOutputFixture"]["values"]["answeredDenominator"] = 2
+    assert errors(legal) == []
+    bad = copy.deepcopy(legal)
+    next(item for item in bad["acceptanceCases"] if item["id"] == "AC-EXP-DENOMINATOR")["expectedOutputFixture"]["values"]["answeredDenominator"] = 1
+    assert any("answeredDenominator" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    history = next(item for item in bad["acceptanceCases"] if item["id"] == "AC-SYN-HISTORY")
+    history["expectedOutputFixture"]["values"]["history"].pop("H")
+    assert any("typed history fixture" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    matrix = next(item for item in bad["acceptanceMatrix"] if item["id"] == "AM-IDENTITY")
+    matrix["coverageValues"].update(relativePath="../escape.pcapng", byteCount=-1, sha256="invalid")
+    assert any("capture-manifest identity" in item for item in errors(bad))
+    legal = copy.deepcopy(PACKAGE)
+    scenario = next(item for item in legal["experimentScenarios"] if item["id"] == "SC-SAME-KEY")
+    scenario["scenarioValues"].update(policy="FIFO", expectedOwner="REQUEST-A")
+    assert errors(legal) == []
+    bad = copy.deepcopy(legal)
+    next(item for item in bad["experimentScenarios"] if item["id"] == "SC-SAME-KEY")["scenarioValues"]["expectedOwner"] = "REQUEST-B"
+    assert any("ownership result" in item for item in errors(bad))
+
+
+def test_rr90_integrity_witnesses_use_structured_support_and_continuation_relations():
+    bad = copy.deepcopy(PACKAGE)
+    witness = next(item for item in bad["implementationDependencies"][0]["obligationWitnesses"] if item["requirementId"] == "CRS-M1-00076")
+    witness["inputs"]["receiverSupport"] = False
+    assert any("00076 witness lacks selected-option" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    witness = next(item for item in bad["implementationDependencies"][0]["obligationWitnesses"] if item["requirementId"] == "CRS-M1-00109")
+    witness["expectedRelation"] = "stop immediately"
+    assert any("expectedRelation does not match" in item for item in errors(bad))
+    legal = copy.deepcopy(PACKAGE)
+    status = next(item for item in legal["implementationDependencies"][0]["obligationWitnesses"] if item["requirementId"] == "CRS-M1-00109")["inputs"]
+    status.update(calculationStartAt=11, calculationEndAt=13, statusObservationPoints=[12, 13], events=[{"kind": "FINAL-DATA", "at": 10}, {"kind": "STATUS", "at": 12}, {"kind": "STATUS", "at": 13}])
+    assert errors(legal) == []
+    bad = copy.deepcopy(legal)
+    status = next(item for item in bad["implementationDependencies"][0]["obligationWitnesses"] if item["requirementId"] == "CRS-M1-00109")["inputs"]
+    status["events"] = [{"kind": "FINAL-DATA", "at": 10}, {"kind": "STATUS", "at": 12}]
+    assert any("00109 witness" in item for item in errors(bad))

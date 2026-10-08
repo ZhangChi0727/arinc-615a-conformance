@@ -341,6 +341,9 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
         interval = inputs.get("interval", {})
         window = inputs.get("requirementWindow", {})
         try:
+            for candidate in (interval, window):
+                if not isinstance(candidate, dict) or set(candidate) != {"lower", "upper", "lowerClosed", "upperClosed"} or not isinstance(candidate["lower"], (int, float)) or isinstance(candidate["lower"], bool) or not isinstance(candidate["upper"], (int, float)) or isinstance(candidate["upper"], bool) or candidate["lower"] > candidate["upper"] or candidate["lower"] == candidate["upper"] and not (candidate["lowerClosed"] and candidate["upperClosed"]):
+                    raise ValueError("malformed interval")
             if inputs.get("clockValid") is not True:
                 expected = "ERROR"
             else:
@@ -348,7 +351,7 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
                 within_upper = interval["upper"] < window["upper"] or interval["upper"] == window["upper"] and (not interval["upperClosed"] or window["upperClosed"])
                 disjoint = interval["upper"] < window["lower"] or interval["lower"] > window["upper"] or interval["upper"] == window["lower"] and not (interval["upperClosed"] and window["lowerClosed"]) or interval["lower"] == window["upper"] and not (interval["lowerClosed"] and window["upperClosed"])
                 expected = "PASS" if within_lower and within_upper else "FAIL" if disjoint else "INCONCLUSIVE"
-        except (KeyError, TypeError):
+        except (KeyError, TypeError, ValueError):
             expected = None
         if outputs.get("verdict") != expected:
             errors.append("RC-VERDICT-WHOLE-INTERVAL at expectedOutputFixture.values.verdict")
@@ -384,7 +387,7 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
     elif relation == "RC-DENOMINATOR-ATTEMPTS":
         if outputs.get("attemptDenominator") != len(inputs.get("attempts", [])):
             errors.append("RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.attemptDenominator")
-        if outputs.get("answeredDenominator") != sum(item == "PASS" for item in inputs.get("attempts", [])):
+        if outputs.get("answeredDenominator") != sum(item in {"PASS", "FAIL"} for item in inputs.get("attempts", [])):
             errors.append("RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.answeredDenominator")
     return errors
 
@@ -423,9 +426,10 @@ def package_errors(data: dict) -> list[str]:
         "ARINC615A3-M1-CRS": "configs/requirements/arinc_615a3_m1_crs.json",
         "CLTAV-INTERFACE-REGISTRY": "configs/research/cltav_interface_registry.json",
         "CLTAV-INTEGRITY-OBLIGATION-BASELINE": "configs/engineering/cltav_integrity_obligation_baseline.json",
+        "CLTAV-HISTORICAL-CAPTURE-MANIFEST": "configs/research/cltav_historical_capture_manifest.json",
     }
     if {key: row["path"] for key, row in bindings.items()} != required_bindings:
-        errors.append("inputBindings must exactly bind M1 CRS and CL-TAV interface registry")
+        errors.append("inputBindings must exactly bind M1 CRS, CL-TAV registry, integrity baseline, and capture manifest")
     blobs: dict[str, bytes] = {}
     for artifact_id, binding in bindings.items():
         relative = binding["path"]
@@ -454,6 +458,14 @@ def package_errors(data: dict) -> list[str]:
             errors.append("CL-TAV interface registry lacks interfaces")
     except (OSError, json.JSONDecodeError):
         errors.append("CL-TAV interface registry is unreadable")
+    try:
+        capture_manifest = _git_blob_json(required_bindings["CLTAV-HISTORICAL-CAPTURE-MANIFEST"], blobs)
+        capture_by_id = {item["captureId"]: item for item in capture_manifest.get("captures", [])}
+        if not capture_by_id:
+            errors.append("historical capture manifest lacks captures")
+    except (OSError, json.JSONDecodeError, KeyError, TypeError):
+        capture_by_id = {}
+        errors.append("historical capture manifest is unreadable")
     try:
         m1 = _git_blob_json(required_bindings["ARINC615A3-M1-CRS"], blobs)
     except (OSError, json.JSONDecodeError):
@@ -679,21 +691,30 @@ def package_errors(data: dict) -> list[str]:
             if not isinstance(value, dict) or set(value) != {"lower","upper","lowerClosed","upperClosed"}:
                 return False
             lo, hi = rational(value["lower"]), rational(value["upper"])
-            return lo is not None and hi is not None and lo <= hi and isinstance(value["lowerClosed"], bool) and isinstance(value["upperClosed"], bool)
-        def nonempty_intersection(left: dict, right: dict) -> bool:
+            return lo is not None and hi is not None and lo <= hi and (lo != hi or value["lowerClosed"] and value["upperClosed"]) and isinstance(value["lowerClosed"], bool) and isinstance(value["upperClosed"], bool)
+        def intersection(left: dict, right: dict) -> dict | None:
             left_lower, left_upper = rational(left["lower"]), rational(left["upper"])
             right_lower, right_upper = rational(right["lower"]), rational(right["upper"])
             assert left_lower is not None and left_upper is not None and right_lower is not None and right_upper is not None
             lower, upper = max(left_lower, right_lower), min(left_upper, right_upper)
-            if lower < upper:
-                return True
             if lower > upper:
-                return False
-            return (left["lowerClosed"] if left_lower == lower else left["upperClosed"]) and (right["lowerClosed"] if right_lower == lower else right["upperClosed"])
+                return None
+            lower_closed = (left["lowerClosed"] if left_lower == lower else left["upperClosed"]) and (right["lowerClosed"] if right_lower == lower else right["upperClosed"])
+            upper_closed = (left["upperClosed"] if left_upper == upper else left["lowerClosed"]) and (right["upperClosed"] if right_upper == upper else right["lowerClosed"])
+            if lower == upper and not (lower_closed and upper_closed):
+                return None
+            def fraction_object(value: Fraction) -> dict[str, int]:
+                return {"numerator": value.numerator, "positiveDenominator": value.denominator}
+            return {"lower": fraction_object(lower), "upper": fraction_object(upper), "lowerClosed": lower_closed, "upperClosed": upper_closed}
         def advanced(interval: dict, delta: Fraction) -> dict:
             def fraction_object(value: Fraction) -> dict[str, int]:
                 return {"numerator": value.numerator, "positiveDenominator": value.denominator}
             return {"lower": fraction_object(rational(interval["lower"]) + delta), "upper": fraction_object(rational(interval["upper"]) + delta), "lowerClosed": interval["lowerClosed"], "upperClosed": interval["upperClosed"]}
+        declared_states = set(model_schema.get("stateIds", []))
+        declared_clocks = set(model_schema.get("clockIds", []))
+        declared_variables = model_schema.get("typedVariables", {})
+        if not declared_states or not declared_clocks or not isinstance(declared_variables, dict):
+            errors.append(f"{refinement['id']} model instance lacks finite state/clock/variable declarations")
         def guard_errors(ast: object) -> list[str]:
             if not isinstance(ast, dict) or not isinstance(ast.get("tag"), str):
                 return ["guard is not a typed AST"]
@@ -708,12 +729,42 @@ def package_errors(data: dict) -> list[str]:
                     return ["AND lacks children"]
                 return [error for child in children for error in guard_errors(child)]
             if tag == "STATE-EQUALS":
-                return [] if set(ast) == {"tag", "state"} and isinstance(ast.get("state"), str) and ast["state"] else ["STATE-EQUALS lacks state"]
+                return [] if set(ast) == {"tag", "state"} and ast.get("state") in declared_states else ["STATE-EQUALS lacks a declared state"]
             if tag == "RATIONAL-INTERVAL-CONTAINS":
-                return [] if set(ast) == {"tag", "clock", "interval"} and isinstance(ast.get("clock"), str) and ast["clock"] and valid_interval(ast.get("interval")) else ["RATIONAL-INTERVAL-CONTAINS is malformed"]
+                return [] if set(ast) == {"tag", "clock", "interval"} and ast.get("clock") in declared_clocks and valid_interval(ast.get("interval")) else ["RATIONAL-INTERVAL-CONTAINS is malformed"]
             if tag == "TYPED-FIELD-EQUALS":
-                return [] if set(ast) == {"tag", "field", "value"} and isinstance(ast.get("field"), str) and ast["field"] else ["TYPED-FIELD-EQUALS is malformed"]
+                domain = declared_variables.get(ast.get("field")) if isinstance(declared_variables, dict) else None
+                return [] if set(ast) == {"tag", "field", "value"} and isinstance(domain, list) and ast.get("value") in domain else ["TYPED-FIELD-EQUALS is malformed"]
             return [f"unknown guard tag {tag}"]
+        def guard_constraint(ast: dict, current: dict, state: object, store: object) -> dict | None:
+            tag = ast["tag"]
+            if tag == "TRUE":
+                return current
+            if tag == "STATE-EQUALS":
+                return current if state == ast["state"] else None
+            if tag == "RATIONAL-INTERVAL-CONTAINS":
+                return intersection(current, ast["interval"])
+            if tag == "TYPED-FIELD-EQUALS":
+                return current if isinstance(store, dict) and store.get(ast["field"]) == ast["value"] else None
+            if tag == "AND":
+                result = current
+                for child in ast["children"]:
+                    result = guard_constraint(child, result, state, store) if result is not None else None
+                return result
+            return None
+        def guard_interval(ast: dict) -> dict | None:
+            if ast.get("tag") == "RATIONAL-INTERVAL-CONTAINS":
+                return ast["interval"]
+            if ast.get("tag") == "TRUE":
+                return None
+            if ast.get("tag") == "AND":
+                result: dict | None = None
+                for child in ast["children"]:
+                    child_interval = guard_interval(child)
+                    if child_interval is not None:
+                        result = child_interval if result is None else intersection(result, child_interval)
+                return result
+            return None
         def update_errors(updates: object) -> list[str]:
             if not isinstance(updates, list):
                 return ["simultaneousUpdates is not a list"]
@@ -723,11 +774,11 @@ def package_errors(data: dict) -> list[str]:
                 if not isinstance(update, dict):
                     results.append("update is not an object"); continue
                 tag = update.get("tag")
-                if tag == "CLOCK-RESET-TO-ZERO" and set(update) == {"tag", "clock"} and isinstance(update.get("clock"), str) and update["clock"]:
+                if tag == "CLOCK-RESET-TO-ZERO" and set(update) == {"tag", "clock"} and update.get("clock") in declared_clocks:
                     target = ("clock", update["clock"])
-                elif tag == "TYPED-FIELD-ASSIGN" and set(update) == {"tag", "field", "value"} and isinstance(update.get("field"), str) and update["field"]:
+                elif tag == "TYPED-FIELD-ASSIGN" and set(update) == {"tag", "field", "value"} and update.get("field") in declared_variables and update.get("value") in declared_variables[update["field"]]:
                     target = ("field", update["field"])
-                elif tag == "STATE-ASSIGN" and set(update) == {"tag", "state"} and isinstance(update.get("state"), str) and update["state"]:
+                elif tag == "STATE-ASSIGN" and set(update) == {"tag", "state"} and update.get("state") in declared_states:
                     target = ("state", "control")
                 else:
                     results.append(f"unsupported or malformed update {tag}"); continue
@@ -740,7 +791,7 @@ def package_errors(data: dict) -> list[str]:
             if not valid_interval(witness["input"].get("clockConstraint")) or not valid_interval(witness["input"].get("guard")):
                 errors.append(f"{refinement['id']} {witness_id} has a noncanonical or reversed interval")
             transition = witness["input"].get("transition", {})
-            actual_guard = transition.get("guardAst", {}).get("interval")
+            actual_guard = guard_interval(transition.get("guardAst", {})) if isinstance(transition.get("guardAst"), dict) else None
             if transition.get("source") != witness["input"].get("state") or not isinstance(transition.get("target"), str) or not transition["target"]:
                 errors.append(f"{refinement['id']} {witness_id} transition endpoints are malformed")
             if guard_errors(transition.get("guardAst")) or update_errors(transition.get("simultaneousUpdates")):
@@ -751,10 +802,14 @@ def package_errors(data: dict) -> list[str]:
             if delta is None or delta < 0 or witness["input"].get("quantifier") != "EXISTS-DELTA":
                 errors.append(f"{refinement['id']} {witness_id} has an invalid time-advance witness")
             elif valid_interval(witness["input"].get("clockConstraint")) and valid_interval(actual_guard):
-                computed = "FEASIBLE" if nonempty_intersection(advanced(witness["input"]["clockConstraint"], delta), actual_guard) else "INFEASIBLE"
+                successor = guard_constraint(transition["guardAst"], advanced(witness["input"]["clockConstraint"], delta), witness["input"].get("state"), witness["input"].get("typedStore", {}))
+                computed = "FEASIBLE" if successor is not None else "INFEASIBLE"
                 if witness.get("expected", {}).get("result") != computed:
                     errors.append(f"{refinement['id']} {witness_id} result does not follow its clock/guard constraint")
-                if computed == "FEASIBLE" and (witness["expected"].get("state") != transition.get("target") or witness["expected"].get("clockConstraint") != advanced(witness["input"]["clockConstraint"], delta)):
+                reset = any(update.get("tag") == "CLOCK-RESET-TO-ZERO" and update.get("clock") == "x" for update in transition["simultaneousUpdates"])
+                if reset and successor is not None:
+                    successor = {"lower": {"numerator": 0, "positiveDenominator": 1}, "upper": {"numerator": 0, "positiveDenominator": 1}, "lowerClosed": True, "upperClosed": True}
+                if computed == "FEASIBLE" and (witness["expected"].get("state") != transition.get("target") or witness["expected"].get("clockConstraint") != successor):
                     errors.append(f"{refinement['id']} {witness_id} successor does not follow its transition/time advance")
         w3 = next(row for row in finite["witnessVectors"] if row["id"] == "FK-W3-UNKNOWN")
         w3_guard = w3.get("input", {}).get("transition", {}).get("guardAst")
@@ -869,10 +924,12 @@ def package_errors(data: dict) -> list[str]:
         errors.append("AC-SYN-OBSERVATION verdict differs from the controlled whole-interval relation")
     history_case = next((case for case in data["acceptanceCases"] if case["id"] == "AC-SYN-HISTORY"), None)
     if history_case:
-        old = history_case["inputFixture"]["values"]["history"]
-        compatible = set(history_case["inputFixture"]["values"]["compatibleObservationHypotheses"])
-        new = history_case["expectedOutputFixture"]["values"]["history"]
-        if set(new["H"]) != set(old["H"]) & compatible or new["version"] != old["version"] + 1:
+        old = history_case["inputFixture"].get("values", {}).get("history")
+        compatible_raw = history_case["inputFixture"].get("values", {}).get("compatibleObservationHypotheses")
+        new = history_case["expectedOutputFixture"].get("values", {}).get("history")
+        if not isinstance(old, dict) or not isinstance(new, dict) or not isinstance(old.get("H"), list) or not isinstance(new.get("H"), list) or not isinstance(compatible_raw, list) or not isinstance(old.get("version"), int) or not isinstance(new.get("version"), int):
+            errors.append("AC-SYN-HISTORY lacks a typed history fixture")
+        elif set(new["H"]) != set(old["H"]) & set(compatible_raw) or new["version"] != old["version"] + 1:
             errors.append("AC-SYN-HISTORY violates intersection, no-resurrection, or version advancement")
     prep_case = next((case for case in data["acceptanceCases"] if case["id"] == "AC-SYN-PREP-RECOVER"), None)
     if prep_case:
@@ -929,6 +986,11 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{item['id']} is not bound to its controlled acceptance consumer")
         if item["category"] == "state and return" and item["coverageValues"] != {"internalResult": "EMPTY-HISTORY", "interfaceId": "IF-RESOURCE-STOP", "returnRecord": "StopResult", "sideEffects": "PRESERVE"}:
             errors.append(f"{item['id']} has an unbound state/return coverage vector")
+        if item["category"] == "corpus identity":
+            vector = item["coverageValues"]
+            capture = capture_by_id.get(vector.get("captureId"))
+            if capture is None or any(vector.get(key) != capture.get(key) for key in ("relativePath", "byteCount", "sha256")) or vector.get("resolvedFileIdentity") != "git-tracked-regular-file":
+                errors.append(f"{item['id']} does not consume a bound capture-manifest identity")
     scenario_ids = [item["id"] for item in data["experimentScenarios"]]
     if len(scenario_ids) != len(set(scenario_ids)) or len(scenario_ids) < 8:
         errors.append("experimentScenarios must contain eight unique first-batch scenes")
@@ -965,8 +1027,10 @@ def package_errors(data: dict) -> list[str]:
             errors.append("SC-NORMAL-UPLOAD lacks the controlled UPLOAD event sequence")
         if scenario["id"] == "SC-INVALID-OBS" and not (values.get("clockValid") is False and values.get("expectedVerdict") == "ERROR"):
             errors.append("SC-INVALID-OBS does not preserve the invalid-clock ERROR relation")
-        if scenario["id"] == "SC-SAME-KEY" and values.get("policy") == "MOST-RECENT" and values.get("expectedOwner") != "REQUEST-B":
-            errors.append("SC-SAME-KEY MOST-RECENT does not select the latest request")
+        if scenario["id"] == "SC-SAME-KEY":
+            owner = {"FIFO": "REQUEST-A", "MOST-RECENT": "REQUEST-B", "UNIQUE-KEY": "AMBIGUOUS"}.get(values.get("policy"))
+            if values.get("expectedOwner") != owner:
+                errors.append("SC-SAME-KEY ownership result does not follow its declared policy")
     for tool in data["toolRequirements"]:
         case = case_by_id.get(tool["acceptanceCaseId"])
         if case is not None:
@@ -1177,16 +1241,34 @@ def package_errors(data: dict) -> list[str]:
             witnesses = {row.get("requirementId"): row for row in dependency.get("obligationWitnesses", [])}
             if len(witnesses) != len(dependency.get("obligationWitnesses", [])) or set(witnesses) != set(integrity_by_requirement):
                 errors.append(f"{dependency['id']} obligation witnesses must exactly cover the independent baseline")
+            for requirement_id, witness in witnesses.items():
+                if not isinstance(witness.get("expected"), dict) or not witness["expected"]:
+                    errors.append(f"{dependency['id']} {requirement_id} witness lacks a structured expected relation")
+                expected_text = {
+                    "CRS-M1-00076": "receiver supports selected INFORMATION integrity option",
+                    "CRS-M1-00082": "receiver supports selected UPLOAD integrity option",
+                    "CRS-M1-00085": "final-image check value equals the LSP check value",
+                    "CRS-M1-00086": "optional old/new comparison retains both identities and its declared result",
+                    "CRS-M1-00087": "same part number implies crcA equals crcB",
+                    "CRS-M1-00109": "STATUS continues after FINAL-DATA while calculation is in progress",
+                }.get(requirement_id)
+                if witness.get("expectedRelation") != expected_text:
+                    errors.append(f"{dependency['id']} {requirement_id} expectedRelation does not match its controlled structured contract")
+            for requirement_id in ("CRS-M1-00076", "CRS-M1-00082"):
+                option = witnesses.get(requirement_id, {})
+                option_inputs, option_expected = option.get("inputs", {}), option.get("expected", {})
+                if not (option_inputs.get("receiverSupport") is True and option_inputs.get("optionSelected") is True and isinstance(option_inputs.get("optionIdentity"), str) and option_inputs["optionIdentity"] and isinstance(option_inputs.get("protectedBytesRef"), str) and option_inputs["protectedBytesRef"] and option_expected == {"receiverSupportsSelectedOption": True, "protectedBytesBound": True}):
+                    errors.append(f"{dependency['id']} {requirement_id} witness lacks selected-option support/protected-byte relation")
             same_part = witnesses.get("CRS-M1-00087", {}).get("inputs", {})
-            if not (same_part.get("fileAId") != same_part.get("fileBId") and same_part.get("partNumberA") == same_part.get("partNumberB") and same_part.get("crcA") == same_part.get("crcB")):
+            if not (witnesses.get("CRS-M1-00087", {}).get("expected") == {"samePartNumberCheckValueRelation": "EQUALS"} and same_part.get("fileAId") != same_part.get("fileBId") and same_part.get("partNumberA") == same_part.get("partNumberB") and same_part.get("crcA") == same_part.get("crcB")):
                 errors.append(f"{dependency['id']} 00087 witness must compare CRCs of two same-part-number files")
             image = witnesses.get("CRS-M1-00085", {}).get("inputs", {})
             image_values = (image.get("finalImageCheckValue"), image.get("lspCheckValue"))
-            if not (image.get("orderedBytesPresent") and image.get("checkValuePresent") and image.get("relation") == "EQUALS" and all(isinstance(value, str) and value for value in image_values) and image_values[0] == image_values[1]):
+            if not (image.get("orderedBytesPresent") and image.get("checkValuePresent") and image.get("relation") == "EQUALS" and witnesses.get("CRS-M1-00085", {}).get("expected") == {"checkValueRelation": "EQUALS"} and all(isinstance(value, str) and value for value in image_values) and image_values[0] == image_values[1]):
                 errors.append(f"{dependency['id']} 00085 witness lacks final-image/LSP check-value relation")
             comparison = witnesses.get("CRS-M1-00086", {}).get("inputs", {})
             comparison_values = (comparison.get("oldCheckValue"), comparison.get("newCheckValue"))
-            if not (comparison.get("comparisonSelected") and isinstance(comparison.get("oldFileId"), str) and isinstance(comparison.get("newFileId"), str) and comparison.get("oldFileId") and comparison.get("newFileId") and comparison.get("oldFileId") != comparison.get("newFileId") and all(isinstance(value, str) and value for value in comparison_values) and comparison.get("comparisonResult") == ("EQUAL" if comparison_values[0] == comparison_values[1] else "DIFFERENT")):
+            if not (comparison.get("comparisonSelected") and witnesses.get("CRS-M1-00086", {}).get("expected") == {"comparisonSelected": True, "comparisonResult": "DIFFERENT"} and isinstance(comparison.get("oldFileId"), str) and isinstance(comparison.get("newFileId"), str) and comparison.get("oldFileId") and comparison.get("newFileId") and comparison.get("oldFileId") != comparison.get("newFileId") and all(isinstance(value, str) and value for value in comparison_values) and comparison.get("comparisonResult") == ("EQUAL" if comparison_values[0] == comparison_values[1] else "DIFFERENT")):
                 errors.append(f"{dependency['id']} 00086 witness lacks declared old/new comparison result")
             status = witnesses.get("CRS-M1-00109", {}).get("inputs", {})
             events = status.get("events", [])
@@ -1195,8 +1277,10 @@ def package_errors(data: dict) -> list[str]:
             ordered = typed_events and all(events[index]["at"] < events[index + 1]["at"] for index in range(len(events) - 1))
             final_indices = [index for index, event in enumerate(events) if event.get("kind") == "FINAL-DATA"] if typed_events else []
             final_index = final_indices[-1] if final_indices else -1
-            continued = final_index >= 0 and any(event["kind"] == "STATUS" and start <= event["at"] <= end for event in events[final_index + 1:]) if isinstance(start, int) and isinstance(end, int) and typed_events else False
-            if not (status.get("finalDataSeen") and status.get("calculationInProgress") and isinstance(start, int) and isinstance(end, int) and start <= end and typed_events and ordered and final_index >= 0 and events[final_index]["at"] >= start and events[final_index]["at"] <= end and continued):
+            points = status.get("statusObservationPoints")
+            status_times = {event["at"] for event in events[final_index + 1:] if event["kind"] == "STATUS"} if final_index >= 0 and typed_events else set()
+            continued = isinstance(points, list) and points and all(isinstance(point, int) and start <= point <= end and point in status_times for point in points) if isinstance(start, int) and isinstance(end, int) else False
+            if not (status.get("finalDataSeen") and status.get("calculationInProgress") and witnesses.get("CRS-M1-00109", {}).get("expected") == {"statusContinuation": "AT-EACH-OBSERVATION-POINT"} and isinstance(start, int) and isinstance(end, int) and start <= end and typed_events and ordered and final_index >= 0 and events[final_index]["at"] <= end and continued):
                 errors.append(f"{dependency['id']} 00109 witness lacks post-DATA status continuation")
         for requirement_id, binding in source_bindings.items():
             source = source_by_id.get(requirement_id, {})
