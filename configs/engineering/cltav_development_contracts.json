@@ -32,7 +32,7 @@
       "path": "configs/engineering/cltav_integrity_obligation_baseline.json",
       "purpose": "Independent required integrity-obligation set and contract identity",
       "purposeZh": "独立的完整性必需义务集合与合同身份",
-      "sha256": "e0dcae023a2e4ad8bc649c3b8a002a7320ceda397751165d0538c67f4325a02e"
+      "sha256": "85ec28689371bf557dfad5b9fc5ff80421198a896173ced603dc992e62a2dc57"
     },
     {
       "artifactId": "CLTAV-HISTORICAL-CAPTURE-MANIFEST",
@@ -8497,6 +8497,13 @@
       "interfaceIds": [
         "IF-EXECUTE-RECORD"
       ],
+      "reassemblyPolicy": {
+        "overlapPolicy": "IDENTICAL-ONLY",
+        "identicalOverlap": "DUPLICATE",
+        "differentOverlap": "CONFLICT",
+        "gapStatus": "GAPPED",
+        "overwriteEarlierBytes": false
+      },
       "preconditions": [
         "Every fragment has a scoped PacketRef.",
         "Resource bounds are available before buffering."
@@ -9340,6 +9347,8 @@
           "clockConstraint": {
             "type": "canonical-difference-bounds",
             "boundType": "rational",
+            "finiteWitnessProjection": "one declared clock ID plus its rational interval; W1/W2 have exact one-clock semantics",
+            "unsupportedProjection": "multi-clock or cross-clock relation without a named DBM projection is SPEC-ERROR, never a computed successor",
             "timeAdvance": "one shared nonnegative rational delta",
             "reset": "substitute exact zero before canonicalization",
             "feasibility": [
@@ -9393,6 +9402,8 @@
             "id": "FK-W1-FEASIBLE",
             "input": {
               "state": "q0",
+              "projectionClock": "x",
+              "typedStore": {"mode": "normal"},
               "clockConstraint": {
                 "lower": {
                   "numerator": 0,
@@ -9449,7 +9460,7 @@
             "expected": {
               "result": "FEASIBLE",
               "state": "q1",
-              "typedStore": {},
+              "typedStore": {"mode": "normal"},
               "clockConstraint": {
                 "lower": {
                   "numerator": 0,
@@ -9468,6 +9479,8 @@
             "id": "FK-W2-INFEASIBLE",
             "input": {
               "state": "q0",
+              "projectionClock": "x",
+              "typedStore": {"mode": "normal"},
               "clockConstraint": {
                 "lower": {
                   "numerator": 3,
@@ -9596,6 +9609,7 @@
           {
             "id": "FK-W5-CLOCK",
             "input": {
+              "clockId": "x",
               "sameH": [
                 "h0"
               ],
@@ -9632,6 +9646,48 @@
             }
           }
         ],
+        "historyReturnFlow": {
+          "backend": {
+            "eta_c": {"h0": "frontier-syn-1"},
+            "H_c": ["h0"],
+            "historyVersion": 1
+          },
+          "interface": {
+            "status": "KNOWN",
+            "Hprime": ["h0"],
+            "HistoryHandlePrime": {
+              "H": ["h0"],
+              "compatibleStateByHypothesis": {"h0": "frontier-syn-1"},
+              "statusByHypothesis": {"h0": "KNOWN"},
+              "version": 1
+            }
+          },
+          "s9": {
+            "status": "OK",
+            "etaPrime": {"h0": "frontier-syn-1"},
+            "Hprime": ["h0"],
+            "GammaPrime": {
+              "historyHandle": {
+                "H": ["h0"],
+                "compatibleStateByHypothesis": {"h0": "frontier-syn-1"},
+                "statusByHypothesis": {"h0": "KNOWN"},
+                "version": 1
+              },
+              "qStatus": "q1"
+            },
+            "summaryConfirmed": true,
+            "summaryCommitted": true
+          },
+          "sourceMap": {
+            "interface.Hprime": "backend.H_c",
+            "interface.HistoryHandlePrime.compatibleStateByHypothesis": "backend.eta_c",
+            "interface.HistoryHandlePrime.version": "backend.historyVersion",
+            "s9.etaPrime": "backend.eta_c",
+            "s9.Hprime": "interface.Hprime",
+            "s9.GammaPrime.historyHandle": "interface.HistoryHandlePrime",
+            "s9.GammaPrime.qStatus": "confirmed postSummary"
+          }
+        },
         "totalReturnMapping": [
           {
             "interfaceId": "IF-PRED-OBS",
@@ -10287,22 +10343,22 @@
             "chargeEffect": "NONE",
             "output": "Hprime",
             "returnContract": {
-              "recordType": "HistoryUpdateBackendResult",
+              "recordType": "HistoryUpdateResult",
               "requiredFields": [
                 "status",
                 "compatibleStateByHypothesis",
                 "Hprime",
-                "historyHandlePrime",
+                "HistoryHandlePrime",
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary.",
+              "adapter": "Backend returns eta_c and H_c; IF-HIST-UPDATE exposes their typed aliases; S9 alone constructs GammaPrime and commits a confirmed summary.",
               "branchTag": "FEASIBLE",
               "fieldSources": {
                 "status": "KERNEL",
                 "compatibleStateByHypothesis": "KERNEL",
-                "Hprime": "S9-WRAPPER",
-                "historyHandlePrime": "S9-WRAPPER",
+                "Hprime": "BACKEND-ALIAS",
+                "HistoryHandlePrime": "INTERFACE-ADAPTER",
                 "historyVersion": "KERNEL",
                 "summaryEffect": "KERNEL"
               }
@@ -10318,22 +10374,22 @@
             "chargeEffect": "NONE",
             "output": "Hprime",
             "returnContract": {
-              "recordType": "HistoryUpdateBackendResult",
+              "recordType": "HistoryUpdateResult",
               "requiredFields": [
                 "status",
                 "compatibleStateByHypothesis",
                 "Hprime",
-                "historyHandlePrime",
+                "HistoryHandlePrime",
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary.",
+              "adapter": "Backend returns eta_c and H_c; IF-HIST-UPDATE exposes their typed aliases; S9 alone constructs GammaPrime and commits a confirmed summary.",
               "branchTag": "INFEASIBLE",
               "fieldSources": {
                 "status": "KERNEL",
                 "compatibleStateByHypothesis": "KERNEL",
-                "Hprime": "S9-WRAPPER",
-                "historyHandlePrime": "S9-WRAPPER",
+                "Hprime": "BACKEND-ALIAS",
+                "HistoryHandlePrime": "INTERFACE-ADAPTER",
                 "historyVersion": "KERNEL",
                 "summaryEffect": "KERNEL"
               }
@@ -10349,22 +10405,22 @@
             "chargeEffect": "NONE",
             "output": "CONSERVATIVE-UNKNOWN",
             "returnContract": {
-              "recordType": "HistoryUpdateBackendResult",
+              "recordType": "HistoryUpdateResult",
               "requiredFields": [
                 "status",
                 "compatibleStateByHypothesis",
                 "Hprime",
-                "historyHandlePrime",
+                "HistoryHandlePrime",
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary.",
+              "adapter": "Backend returns eta_c and H_c; IF-HIST-UPDATE exposes their typed aliases; S9 alone constructs GammaPrime and commits a confirmed summary.",
               "branchTag": "COMPUTATION-UNKNOWN",
               "fieldSources": {
                 "status": "KERNEL",
                 "compatibleStateByHypothesis": "KERNEL",
-                "Hprime": "S9-WRAPPER",
-                "historyHandlePrime": "S9-WRAPPER",
+                "Hprime": "BACKEND-ALIAS",
+                "HistoryHandlePrime": "INTERFACE-ADAPTER",
                 "historyVersion": "KERNEL",
                 "summaryEffect": "KERNEL"
               }
@@ -10380,22 +10436,22 @@
             "chargeEffect": "NONE",
             "output": "CONSERVATIVE-UNKNOWN",
             "returnContract": {
-              "recordType": "HistoryUpdateBackendResult",
+              "recordType": "HistoryUpdateResult",
               "requiredFields": [
                 "status",
                 "compatibleStateByHypothesis",
                 "Hprime",
-                "historyHandlePrime",
+                "HistoryHandlePrime",
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary.",
+              "adapter": "Backend returns eta_c and H_c; IF-HIST-UPDATE exposes their typed aliases; S9 alone constructs GammaPrime and commits a confirmed summary.",
               "branchTag": "UNSUPPORTED-SYNTAX",
               "fieldSources": {
                 "status": "KERNEL",
                 "compatibleStateByHypothesis": "KERNEL",
-                "Hprime": "S9-WRAPPER",
-                "historyHandlePrime": "S9-WRAPPER",
+                "Hprime": "BACKEND-ALIAS",
+                "HistoryHandlePrime": "INTERFACE-ADAPTER",
                 "historyVersion": "KERNEL",
                 "summaryEffect": "KERNEL"
               }
@@ -10411,22 +10467,22 @@
             "chargeEffect": "NONE",
             "output": "CONSERVATIVE-UNKNOWN",
             "returnContract": {
-              "recordType": "HistoryUpdateBackendResult",
+              "recordType": "HistoryUpdateResult",
               "requiredFields": [
                 "status",
                 "compatibleStateByHypothesis",
                 "Hprime",
-                "historyHandlePrime",
+                "HistoryHandlePrime",
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary.",
+              "adapter": "Backend returns eta_c and H_c; IF-HIST-UPDATE exposes their typed aliases; S9 alone constructs GammaPrime and commits a confirmed summary.",
               "branchTag": "LIMIT-REACHED",
               "fieldSources": {
                 "status": "KERNEL",
                 "compatibleStateByHypothesis": "KERNEL",
-                "Hprime": "S9-WRAPPER",
-                "historyHandlePrime": "S9-WRAPPER",
+                "Hprime": "BACKEND-ALIAS",
+                "HistoryHandlePrime": "INTERFACE-ADAPTER",
                 "historyVersion": "KERNEL",
                 "summaryEffect": "KERNEL"
               }
@@ -10442,22 +10498,22 @@
             "chargeEffect": "NONE",
             "output": "Stop-Empty",
             "returnContract": {
-              "recordType": "HistoryUpdateBackendResult",
+              "recordType": "HistoryUpdateResult",
               "requiredFields": [
                 "status",
                 "compatibleStateByHypothesis",
                 "Hprime",
-                "historyHandlePrime",
+                "HistoryHandlePrime",
                 "historyVersion",
                 "summaryEffect"
               ],
-              "adapter": "Backend returns eta_c and H_c; S9 alone constructs wrapper (status, etaPrime, Hprime, GammaPrime) and commits a confirmed summary.",
+              "adapter": "Backend returns eta_c and H_c; IF-HIST-UPDATE exposes their typed aliases; S9 alone constructs GammaPrime and commits a confirmed summary.",
               "branchTag": "EMPTY-HISTORY",
               "fieldSources": {
                 "status": "KERNEL",
                 "compatibleStateByHypothesis": "KERNEL",
-                "Hprime": "S9-WRAPPER",
-                "historyHandlePrime": "S9-WRAPPER",
+                "Hprime": "BACKEND-ALIAS",
+                "HistoryHandlePrime": "INTERFACE-ADAPTER",
                 "historyVersion": "KERNEL",
                 "summaryEffect": "KERNEL"
               }
@@ -10919,6 +10975,20 @@
             2,
             3
           ],
+          "labelBoundary": {"annotation": "exploratory", "wireOutcome": "observed", "independentTruth": "not-claimed"},
+          "ownershipFixture": {
+            "key": "k1", "policy": "MOST-RECENT", "responseId": "RESPONSE-B", "expectedOwner": "REQUEST-B",
+            "ownershipEvents": [
+              {"id": "REQUEST-A", "kind": "REQUEST", "key": "k1", "sequence": 1},
+              {"id": "REQUEST-B", "kind": "REQUEST", "key": "k1", "sequence": 2},
+              {"id": "RESPONSE-B", "kind": "RESPONSE", "key": "k1", "sequence": 3}
+            ]
+          },
+          "noResponseFixture": {"earliestElapsed": 6, "deadline": 5, "cancelled": false},
+          "captureFormat": {"sectionId": 1, "interfaceId": 0, "packetNumber": 1, "capturedLength": 64},
+          "ipFragments": {"fragmentOffsets": [0, 8], "coverageRanges": [[0, 15]], "overlapPolicy": "IDENTICAL-ONLY", "gapPolicy": "GAPPED"},
+          "fieldLayout": {"fieldId": "protocolVersion", "ordinal": 1, "widthBits": 16, "encodingRule": "ASCII-2"},
+          "optionState": "DEFAULTED",
           "tid": {
             "client": 12000,
             "server": 69
@@ -10943,7 +11013,8 @@
             1,
             2
           ],
-          "terminalConfirmed": true
+          "terminalConfirmed": true,
+          "datagramStatus": "COMPLETE"
         }
       },
       "prohibitedOutputPaths": [
@@ -11216,7 +11287,13 @@
             "lowerClosed": true,
             "upperClosed": true
           },
-          "clockValid": true
+          "clockValid": true,
+          "matrixTimingFixture": {
+            "interval": {"lower": 5.0, "upper": 5.2, "lowerClosed": true, "upperClosed": true},
+            "requirementWindow": {"lower": 4.0, "upper": 5.1, "lowerClosed": true, "upperClosed": true},
+            "clockValid": true,
+            "expectedVerdict": "INCONCLUSIVE"
+          }
         }
       },
       "expectedOutputFixture": {
@@ -11360,7 +11437,8 @@
             },
             "version": 0
           },
-          "compatibleObservationHypotheses": []
+          "compatibleObservationHypotheses": [],
+          "summaryConfirmed": true
         }
       },
       "expectedOutputFixture": {
@@ -11638,6 +11716,8 @@
           "resourceMode": "ROUNDS",
           "faultPlan": "NONE",
           "armId": "CL-T",
+          "algorithmVisibleFields": ["rawRecord"],
+          "truthSource": "evaluator-only",
           "sessionContext": {
             "sessionId": "session-001",
             "state": "RESET"
@@ -11984,8 +12064,8 @@
             "service": "INFORMATION",
             "receiverSupport": true,
             "optionSelected": true,
-            "optionIdentity": "integrity-option-synthetic",
-            "protectedBytesRef": "symbolic-transfer-bytes"
+          "optionIdentity": "integrity-option-information",
+          "protectedBytesRef": "symbolic-information-bytes"
           },
           "expectedRelation": "receiver supports selected INFORMATION integrity option",
           "expected": {
@@ -11999,8 +12079,8 @@
             "service": "UPLOAD",
             "receiverSupport": true,
             "optionSelected": true,
-            "optionIdentity": "integrity-option-synthetic",
-            "protectedBytesRef": "symbolic-transfer-bytes"
+          "optionIdentity": "integrity-option-upload",
+          "protectedBytesRef": "symbolic-upload-bytes"
           },
           "expectedRelation": "receiver supports selected UPLOAD integrity option",
           "expected": {
@@ -12060,6 +12140,7 @@
           "inputs": {
             "finalDataSeen": true,
             "calculationInProgress": true,
+            "observationComplete": true,
             "events": [
               {
                 "kind": "FINAL-DATA",
@@ -12086,6 +12167,25 @@
             "statusContinuation": "AT-EACH-OBSERVATION-POINT"
           }
         }
+      ],
+      "obligationVariants": [
+        {"requirementId": "CRS-M1-00076", "branch": "VIOLATED", "changes": {"receiverSupport": false}},
+        {"requirementId": "CRS-M1-00076", "branch": "NOT-EVALUATED", "changes": {"receiverSupport": null}},
+        {"requirementId": "CRS-M1-00076", "branch": "NOT-APPLICABLE", "changes": {"optionSelected": false}},
+        {"requirementId": "CRS-M1-00082", "branch": "VIOLATED", "changes": {"receiverSupport": false}},
+        {"requirementId": "CRS-M1-00082", "branch": "NOT-EVALUATED", "changes": {"receiverSupport": null}},
+        {"requirementId": "CRS-M1-00082", "branch": "NOT-APPLICABLE", "changes": {"optionSelected": false}},
+        {"requirementId": "CRS-M1-00085", "branch": "VIOLATED", "changes": {"lspCheckValue": "0x5678"}},
+        {"requirementId": "CRS-M1-00085", "branch": "NOT-EVALUATED", "changes": {"checkValuePresent": false}},
+        {"requirementId": "CRS-M1-00086", "branch": "VIOLATED", "changes": {"oldCheckValue": "0x1111", "newCheckValue": "0x2222", "comparisonResult": "EQUAL"}},
+        {"requirementId": "CRS-M1-00086", "branch": "NOT-EVALUATED", "changes": {"oldCheckValue": null}},
+        {"requirementId": "CRS-M1-00086", "branch": "NOT-APPLICABLE", "changes": {"comparisonSelected": false}},
+        {"requirementId": "CRS-M1-00087", "branch": "VIOLATED", "changes": {"crcA": "0x1234", "crcB": "0x5678"}},
+        {"requirementId": "CRS-M1-00087", "branch": "NOT-EVALUATED", "changes": {"crcA": null}},
+        {"requirementId": "CRS-M1-00087", "branch": "NOT-APPLICABLE", "changes": {"partNumberB": "PN-2"}},
+        {"requirementId": "CRS-M1-00109", "branch": "VIOLATED", "changes": {"events": [{"kind": "FINAL-DATA", "at": 10}, {"kind": "STATUS", "at": 11}]}},
+        {"requirementId": "CRS-M1-00109", "branch": "NOT-EVALUATED", "changes": {"observationComplete": false}},
+        {"requirementId": "CRS-M1-00109", "branch": "NOT-APPLICABLE", "changes": {"calculationInProgress": false}}
       ]
     }
   ],
@@ -12333,19 +12433,19 @@
     {
       "id": "AM-IDENTITY",
       "category": "corpus identity",
-      "positiveInput": "tracked manifest entry with unique resolved file identity",
+      "positiveInput": "controlled manifest entry with unique externally inventoried file identity",
       "expectedOutput": "identity accepted for exploratory intake",
       "negativeMutation": "add/remove/hash/length/path/link/duplicate identity",
       "expectedRejection": "MANIFEST-ERROR",
       "witnessLevel": "SPECIFICATION-WITNESS",
       "runtimeExecutionStatus": "NOT-EXECUTED",
       "categoryZh": "受控类别：corpus identity",
-      "positiveInputZh": "唯一且受跟踪的清单条目及解析后文件身份。",
+      "positiveInputZh": "受控清单条目与唯一的外部盘点文件身份；不声称捕获文件已进入 Git 索引。",
       "expectedOutputZh": "仅允许探索性接入并保留原始身份。",
       "negativeMutationZh": "增删条目、改散列/长度/路径、链接别名或重复身份。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
-        "AC-EXP-TRUTH"
+        "AC-SYN-TRANSFER"
       ],
       "coverageAxes": [
         "captureId",
@@ -12359,7 +12459,7 @@
         "relativePath": "OHMS数据加载CPM_L1_ACT40-FCPA-38AH,报fail,260820.pcapng",
         "byteCount": 214877828,
         "sha256": "0e9c160dc28f59502730e7bd860a69d095ed32671d761843bbadb18199cf103c",
-        "resolvedFileIdentity": "git-tracked-regular-file"
+        "resolvedFileIdentity": "externally-inventoried-regular-file"
       }
     },
     {
@@ -12377,7 +12477,7 @@
       "negativeMutationZh": "把文件名结果或评价标签复制进算法记录。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
-        "AC-EXP-TRUTH"
+        "AC-SYN-TRANSFER"
       ],
       "coverageAxes": [
         "annotation",
@@ -12539,19 +12639,24 @@
       "negativeMutationZh": "复用响应、错键、忽略取消或把捕获结束当超时。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
-        "AC-SYN-OBSERVATION"
+        "AC-SYN-OBSERVATION",
+        "AC-SYN-TRANSFER"
       ],
       "coverageAxes": [
-        "triggerId",
         "responseId",
-        "ownership",
-        "silenceHorizon"
+        "key",
+        "policy",
+        "expectedOwner",
+        "earliestElapsed",
+        "deadline"
       ],
       "coverageValues": {
-        "triggerId": "tr-1",
-        "responseId": "rsp-1",
-        "ownership": "UNIQUE-KEY",
-        "silenceHorizon": 5.2
+        "responseId": "RESPONSE-B",
+        "key": "k1",
+        "policy": "MOST-RECENT",
+        "expectedOwner": "REQUEST-B",
+        "earliestElapsed": 6,
+        "deadline": 5
       }
     },
     {
@@ -12609,7 +12714,7 @@
       "negativeMutationZh": "把 GAP 计零、把无信息 TEST 当 A2 或给 Prep 打分。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
-        "AC-SYN-PREDICTION"
+        "AC-SYN-SELECT"
       ],
       "coverageAxes": [
         "H",
@@ -12660,8 +12765,7 @@
       ],
       "coverageValues": {
         "H": [
-          "h0",
-          "h1"
+          "h0"
         ],
         "compatibleObservationHypotheses": [],
         "historyVersion": 0,
@@ -12683,7 +12787,7 @@
       "negativeMutationZh": "提交陈旧摘要、缺确认或返回未定义上下文。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
       "caseIds": [
-        "AC-SYN-RESOURCE-STOP"
+        "AC-SYN-HISTORY"
       ],
       "coverageAxes": [
         "internalResult",
@@ -12774,19 +12878,18 @@
       "expectedOutputZh": "检查器与生成器一致，失败时不发布。",
       "negativeMutationZh": "删除关系、伪造引用、仅刷新计数/散列或保留陈旧视图。",
       "expectedRejectionZh": "生产入口必须以具名诊断拒绝，且不得发布派生视图。",
-      "caseIds": [
-        "AC-EXP-CAUSAL"
-      ],
+      "caseIds": [],
+      "testConsumer": "test_review_generator_refuses_invalid_authority_and_detects_stale_view",
       "coverageAxes": [
-        "authorityHash",
-        "viewHash",
+        "sourceMutation",
+        "viewMarker",
         "publicationMode",
         "failurePreservesOldView"
       ],
       "coverageValues": {
-        "authorityHash": "sha256:authority",
-        "viewHash": "sha256:view",
-        "publicationMode": "transactional",
+        "sourceMutation": "remove protocolInputDispositions[0].rationaleZh",
+        "viewMarker": "preserve this failed-publication marker\n",
+        "publicationMode": "--write",
         "failurePreservesOldView": true
       }
     }

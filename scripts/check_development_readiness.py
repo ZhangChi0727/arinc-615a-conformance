@@ -314,6 +314,45 @@ def _git_blob_json(relative: str, blobs: dict[str, bytes]) -> dict:
     return json.loads(raw.decode("utf-8"))
 
 
+def _resolve_ownership(values: dict) -> tuple[str | None, str | None]:
+    """Resolve one finite response using event identity, key, order and invalidation."""
+    if (not isinstance(values.get("policy"), str) or values["policy"] not in {"FIFO", "MOST-RECENT", "UNIQUE-KEY"}
+            or not isinstance(values.get("key"), str) or not values["key"]
+            or not isinstance(values.get("responseId"), str) or not values["responseId"]):
+        return "untyped ownership key, response or policy", None
+    events = values.get("ownershipEvents")
+    if (not isinstance(events, list) or not events
+            or not all(isinstance(event, dict)
+                       and set(event) == ({"id", "kind", "key", "sequence", "targetRequestId"} if event.get("kind") in {"CANCEL", "SUPERSEDE"} else {"id", "kind", "key", "sequence"})
+                       and event.get("kind") in {"REQUEST", "RESPONSE", "CANCEL", "SUPERSEDE"}
+                       and isinstance(event.get("id"), str) and bool(event["id"])
+                       and isinstance(event.get("key"), str) and bool(event["key"])
+                       and isinstance(event.get("sequence"), int) and not isinstance(event["sequence"], bool)
+                       and event["sequence"] >= 0 for event in events)):
+        return "untyped ownership event schedule", None
+    responses = [event for event in events if event["kind"] == "RESPONSE" and event["id"] == values.get("responseId")]
+    requests = {event["id"]: event for event in events if event["kind"] == "REQUEST"}
+    if (len({event["sequence"] for event in events}) != len(events)
+            or len({event["id"] for event in events}) != len(events) or len(responses) != 1
+            or any(event["targetRequestId"] not in requests
+                   or requests[event["targetRequestId"]]["sequence"] >= event["sequence"]
+                   or requests[event["targetRequestId"]]["key"] != event["key"]
+                   for event in events if event["kind"] in {"CANCEL", "SUPERSEDE"})):
+        return "invalid ownership event schedule", None
+    response = responses[0]
+    invalidated = {event["targetRequestId"] for event in events
+                   if event["kind"] in {"CANCEL", "SUPERSEDE"} and event["sequence"] < response["sequence"]}
+    candidates = sorted((event for event in events if event["kind"] == "REQUEST"
+                         and event["key"] == response["key"] == values.get("key")
+                         and event["sequence"] < response["sequence"] and event["id"] not in invalidated),
+                        key=lambda event: event["sequence"])
+    if not candidates:
+        return None, "UNMATCHED"
+    policy = values.get("policy")
+    return None, {"FIFO": candidates[0]["id"], "MOST-RECENT": candidates[-1]["id"],
+                  "UNIQUE-KEY": candidates[0]["id"] if len(candidates) == 1 else "AMBIGUOUS"}.get(policy)
+
+
 def _acceptance_relation_errors(case: dict) -> list[str]:
     """Evaluate the closed deterministic relation declared by a specification witness."""
     relation = case.get("relationId", "")
@@ -346,7 +385,7 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
         window = inputs.get("requirementWindow", {})
         try:
             for candidate in (interval, window):
-                if not isinstance(candidate, dict) or set(candidate) != {"lower", "upper", "lowerClosed", "upperClosed"} or not isinstance(candidate["lower"], (int, float)) or isinstance(candidate["lower"], bool) or not isinstance(candidate["upper"], (int, float)) or isinstance(candidate["upper"], bool) or candidate["lower"] > candidate["upper"] or candidate["lower"] == candidate["upper"] and not (candidate["lowerClosed"] and candidate["upperClosed"]):
+                if not isinstance(candidate, dict) or set(candidate) != {"lower", "upper", "lowerClosed", "upperClosed"} or not isinstance(candidate["lower"], (int, float)) or isinstance(candidate["lower"], bool) or not isinstance(candidate["upper"], (int, float)) or isinstance(candidate["upper"], bool) or not isinstance(candidate["lowerClosed"], bool) or not isinstance(candidate["upperClosed"], bool) or candidate["lower"] > candidate["upper"] or candidate["lower"] == candidate["upper"] and not (candidate["lowerClosed"] and candidate["upperClosed"]):
                     raise ValueError("malformed interval")
             if inputs.get("clockValid") is not True:
                 expected = "ERROR"
@@ -357,6 +396,7 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
                 expected = "PASS" if within_lower and within_upper else "FAIL" if disjoint else "INCONCLUSIVE"
         except (KeyError, TypeError, ValueError):
             expected = None
+            errors.append("RC-VERDICT-WHOLE-INTERVAL at inputFixture.values.interval: malformed interval")
         if outputs.get("verdict") != expected:
             errors.append("RC-VERDICT-WHOLE-INTERVAL at expectedOutputFixture.values.verdict")
     elif relation == "RC-SUMMARY-CONFIRMATION":
@@ -367,8 +407,13 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
     elif relation == "RC-HISTORY-NO-RESURRECTION":
         old = inputs.get("history", {})
         new = outputs.get("history", {})
-        compatible = set(inputs.get("compatibleObservationHypotheses", []))
-        if not isinstance(old, dict) or not isinstance(new, dict) or not isinstance(old.get("H"), list) or not isinstance(new.get("H"), list) or not isinstance(inputs.get("compatibleObservationHypotheses"), list) or not isinstance(old.get("version"), int) or not isinstance(new.get("version"), int) or set(new["H"]) != set(old["H"]) & compatible or new["version"] != old["version"] + 1:
+        compatible_raw = inputs.get("compatibleObservationHypotheses")
+        typed_lists = (isinstance(old, dict) and isinstance(new, dict)
+                       and all(isinstance(value, list) and all(isinstance(item, str) for item in value)
+                               for value in (old.get("H"), new.get("H"), compatible_raw)))
+        if (not typed_lists or not isinstance(old.get("version"), int) or isinstance(old.get("version"), bool)
+                or not isinstance(new.get("version"), int) or isinstance(new.get("version"), bool)
+                or set(new["H"]) != set(old["H"]) & set(compatible_raw) or new["version"] != old["version"] + 1):
             errors.append("RC-HISTORY-NO-RESURRECTION at expectedOutputFixture.values.history.H")
     elif relation == "RC-EQUIV-EVIDENCE":
         if outputs.get("result") == "established" and inputs.get("finiteDomainProof") != "present":
@@ -420,7 +465,7 @@ def package_errors(data: dict) -> list[str]:
         Draft202012Validator.check_schema(schema)
     except SchemaError as exc:
         return [f"schema is invalid: {exc.message}"]
-    errors.extend(f"schema: {item.message}" for item in Draft202012Validator(schema).iter_errors(data))
+    errors.extend(f"schema at {item.json_path}: {item.message}" for item in Draft202012Validator(schema).iter_errors(data))
     if errors:
         return errors
     binding_rows = data["inputBindings"]
@@ -488,8 +533,27 @@ def package_errors(data: dict) -> list[str]:
         required_integrity_fields = {"requirementId", "service", "sourceUnitId", "contractId", "subject", "condition", "requiredObservation", "acceptanceCaseId"}
         if any(set(row) != required_integrity_fields or any(not str(value).strip() for value in row.values()) for row in integrity_rows):
             errors.append("integrity obligation baseline has an incomplete obligation contract")
+        entities = integrity_baseline.get("symbolicEntities")
+        if (not isinstance(entities, list) or not entities
+                or any(not isinstance(row, dict) or set(row) != {"id", "kind", "service"}
+                       or not all(isinstance(value, str) and value for value in row.values())
+                       or row["kind"] not in {"OPTION", "PROTECTED-BYTES", "FILE", "ALGORITHM"}
+                       or row["service"] not in {"INFORMATION", "UPLOAD"} for row in entities)
+                or len({row["id"] for row in entities if isinstance(row, dict) and isinstance(row.get("id"), str)}) != len(entities)):
+            errors.append("integrity symbolic entity catalog is invalid")
+            symbolic_entities = {}
+        else:
+            symbolic_entities = {row["id"]: row for row in entities}
+        status_schedule = integrity_baseline.get("syntheticStatusSchedule")
+        if (not isinstance(status_schedule, dict)
+                or status_schedule.get("contractId") != "INT-POST-DATA-STATUS-CONTINUATION"
+                or status_schedule.get("scope") != "FINITE-SPECIFICATION-WITNESS-NOT-PROTOCOL-FREQUENCY"):
+            errors.append("integrity finite status schedule is missing or unbounded")
+            status_schedule = {}
     except (OSError, json.JSONDecodeError, KeyError, TypeError):
         integrity_by_requirement = {}
+        symbolic_entities = {}
+        status_schedule = {}
         errors.append("bound integrity obligation baseline is unreadable")
     slice_ids = [slice_["id"] for slice_ in data["implementationSlices"]]
     if len(slice_ids) != len(set(slice_ids)):
@@ -665,7 +729,7 @@ def package_errors(data: dict) -> list[str]:
             required_contract_fields = {
                 "IF-PRED-OBS": {"status","reason","classesByTest","historyVersionUsed","uncertaintyRef"},
                 "IF-SELECT-ADMIT": {"kind","actionKind","actionId","classesUsed","reason"},
-                "IF-HIST-UPDATE": {"status","compatibleStateByHypothesis","Hprime","historyHandlePrime","historyVersion","summaryEffect"},
+                "IF-HIST-UPDATE": {"status","compatibleStateByHypothesis","Hprime","HistoryHandlePrime","historyVersion","summaryEffect"},
                 "IF-EQUIV": {"status","proofBasis"},
                 "IF-RESOURCE-STOP": {"stopClass","finalH","trace"},
             }.get(row["interfaceId"], set()) if row["reachable"] else set()
@@ -677,14 +741,14 @@ def package_errors(data: dict) -> list[str]:
                 errors.append(f"{refinement['id']} return payload lacks a closed branch/source mapping for {row['interfaceId']}/{row['internalResult']}")
             expected_sources = {field: "KERNEL" for field in required_contract_fields}
             if row["interfaceId"] == "IF-HIST-UPDATE":
-                for field in {"Hprime", "historyHandlePrime"}.intersection(required_contract_fields):
-                    expected_sources[field] = "S9-WRAPPER"
+                expected_sources["Hprime"] = "BACKEND-ALIAS"
+                expected_sources["HistoryHandlePrime"] = "INTERFACE-ADAPTER"
             if contract.get("fieldSources") != expected_sources:
                 errors.append(f"{refinement['id']} return payload sources are not controlled for {row['interfaceId']}/{row['internalResult']}")
-            expected_record = {"IF-PRED-OBS": "PredictionResult", "IF-SELECT-ADMIT": "Decision", "IF-HIST-UPDATE": "HistoryUpdateBackendResult", "IF-EQUIV": "EquivalenceResult", "IF-RESOURCE-STOP": "StopResult"}.get(row["interfaceId"])
+            expected_record = {"IF-PRED-OBS": "PredictionResult", "IF-SELECT-ADMIT": "Decision", "IF-HIST-UPDATE": "HistoryUpdateResult", "IF-EQUIV": "EquivalenceResult", "IF-RESOURCE-STOP": "StopResult"}.get(row["interfaceId"])
             if row["reachable"] and contract.get("recordType") != expected_record:
                 errors.append(f"{refinement['id']} return record type is not the controlled {expected_record} for {row['interfaceId']}/{row['internalResult']}")
-            if row["interfaceId"] == "IF-HIST-UPDATE" and row["reachable"] and ("eta_c" not in contract.get("adapter", "") or "H_c" not in contract.get("adapter", "") or "S9" not in contract.get("adapter", "")):
+            if row["interfaceId"] == "IF-HIST-UPDATE" and row["reachable"] and contract.get("adapter") != "Backend returns eta_c and H_c; IF-HIST-UPDATE exposes their typed aliases; S9 alone constructs GammaPrime and commits a confirmed summary.":
                 errors.append(f"{refinement['id']} history backend adapter does not preserve eta_c/H_c through S9")
             if row["interfaceId"] == "IF-PRED-OBS" and row["reachable"]:
                 expects_classes = row["internalResult"] == "FEASIBLE"
@@ -692,7 +756,45 @@ def package_errors(data: dict) -> list[str]:
                     errors.append(f"{refinement['id']} prediction return payload does not distinguish OK from GAP")
             if row["interfaceId"] == "IF-SELECT-ADMIT" and row["reachable"] and "TEST-scoped" not in contract.get("adapter", ""):
                 errors.append(f"{refinement['id']} selection adapter loses TEST-scoped GAP semantics")
+        flow = finite["historyReturnFlow"]
+        backend, interface, s9 = flow.get("backend"), flow.get("interface"), flow.get("s9")
+        source_map = {
+            "interface.Hprime": "backend.H_c",
+            "interface.HistoryHandlePrime.compatibleStateByHypothesis": "backend.eta_c",
+            "interface.HistoryHandlePrime.version": "backend.historyVersion",
+            "s9.etaPrime": "backend.eta_c",
+            "s9.Hprime": "interface.Hprime",
+            "s9.GammaPrime.historyHandle": "interface.HistoryHandlePrime",
+            "s9.GammaPrime.qStatus": "confirmed postSummary",
+        }
+        history_record = next((record for record in data["recordContracts"] if record["id"] == "HISTORY-HANDLE"), None)
+        handle = interface.get("HistoryHandlePrime") if isinstance(interface, dict) else None
+        gamma = s9.get("GammaPrime") if isinstance(s9, dict) else None
+        if (not isinstance(backend, dict) or set(backend) != {"eta_c", "H_c", "historyVersion"}
+                or not isinstance(backend.get("eta_c"), dict) or not isinstance(backend.get("H_c"), list)
+                or not backend["H_c"] or any(not isinstance(hypothesis, str) for hypothesis in backend["H_c"])
+                or set(backend["eta_c"]) != set(backend["H_c"])
+                or not all(isinstance(frontier, str) and frontier.startswith("frontier-") for frontier in backend["eta_c"].values())
+                or not isinstance(backend.get("historyVersion"), int) or isinstance(backend.get("historyVersion"), bool)
+                or not isinstance(interface, dict) or set(interface) != {"status", "Hprime", "HistoryHandlePrime"}
+                or not isinstance(interface.get("status"), str) or interface["status"] not in {"KNOWN", "CONSERVATIVE-UNKNOWN"}
+                or interface.get("Hprime") != backend["H_c"] or not isinstance(handle, dict)
+                or history_record is None or validate_record_instance(history_record, handle)
+                or handle.get("compatibleStateByHypothesis") != backend["eta_c"]
+                or handle.get("version") != backend["historyVersion"]
+                or not isinstance(s9, dict) or set(s9) != {"status", "etaPrime", "Hprime", "GammaPrime", "summaryConfirmed", "summaryCommitted"}
+                or s9.get("status") != "OK" or s9.get("etaPrime") != backend["eta_c"]
+                or s9.get("Hprime") != interface["Hprime"] or not isinstance(gamma, dict)
+                or gamma.get("historyHandle") != handle or not isinstance(gamma.get("qStatus"), str) or not gamma["qStatus"]
+                or s9.get("summaryConfirmed") is not True or s9.get("summaryCommitted") is not True
+                or flow.get("sourceMap") != source_map):
+            errors.append(f"{refinement['id']} history backend/interface/S9 payload flow is invalid")
         model_schema = finite["modelInstanceSchema"]
+        clock_contract = model_schema.get("clockConstraint", {})
+        if (not isinstance(clock_contract, dict)
+                or clock_contract.get("finiteWitnessProjection") != "one declared clock ID plus its rational interval; W1/W2 have exact one-clock semantics"
+                or clock_contract.get("unsupportedProjection") != "multi-clock or cross-clock relation without a named DBM projection is SPEC-ERROR, never a computed successor"):
+            errors.append(f"{refinement['id']} finite clock projection boundary is not explicit")
         if set(model_schema.get("guardAst", {}).get("supported", [])) != {"TRUE", "AND", "STATE-EQUALS", "RATIONAL-INTERVAL-CONTAINS", "TYPED-FIELD-EQUALS"} or set(model_schema.get("guardAst", {}).get("unsupported", [])) != {"OR", "NOT", "CALL"}:
             errors.append(f"{refinement['id']} finite guard AST support boundary is ambiguous")
         def rational(value: object) -> Fraction | None:
@@ -706,7 +808,9 @@ def package_errors(data: dict) -> list[str]:
             if not isinstance(value, dict) or set(value) != {"lower","upper","lowerClosed","upperClosed"}:
                 return False
             lo, hi = rational(value["lower"]), rational(value["upper"])
-            return lo is not None and hi is not None and lo <= hi and (lo != hi or value["lowerClosed"] and value["upperClosed"]) and isinstance(value["lowerClosed"], bool) and isinstance(value["upperClosed"], bool)
+            return (isinstance(value["lowerClosed"], bool) and isinstance(value["upperClosed"], bool)
+                    and lo is not None and hi is not None and lo <= hi
+                    and (lo != hi or value["lowerClosed"] and value["upperClosed"]))
         def intersection(left: dict, right: dict) -> dict | None:
             left_lower, left_upper = rational(left["lower"]), rational(left["upper"])
             right_lower, right_upper = rational(right["lower"]), rational(right["upper"])
@@ -728,19 +832,31 @@ def package_errors(data: dict) -> list[str]:
             def fraction_object(value: Fraction) -> dict[str, int]:
                 return {"numerator": value.numerator, "positiveDenominator": value.denominator}
             return {"lower": fraction_object(rational(interval["lower"]) + delta), "upper": fraction_object(rational(interval["upper"]) + delta), "lowerClosed": interval["lowerClosed"], "upperClosed": interval["upperClosed"]}
-        declared_states = set(model_schema.get("stateIds", [])) if isinstance(model_schema.get("stateIds"), list) else set()
-        declared_clocks = set(model_schema.get("clockIds", [])) if isinstance(model_schema.get("clockIds"), list) else set()
+        def declared_ids(value: object) -> set[str] | None:
+            if not isinstance(value, list) or not value or any(not isinstance(item, str) or not item for item in value):
+                return None
+            result = set(value)
+            return result if len(result) == len(value) else None
+        declared_states = declared_ids(model_schema.get("stateIds"))
+        declared_clocks = declared_ids(model_schema.get("clockIds"))
         declared_variables = model_schema.get("typedVariables", {})
+        def finite_scalar(member: object) -> bool:
+            return (isinstance(member, (str, int, bool))
+                    or isinstance(member, float) and member == member and member not in (float("inf"), float("-inf")))
         declarations_valid = (
-            bool(declared_states) and bool(declared_clocks)
-            and all(isinstance(value, str) and value for value in declared_states | declared_clocks)
+            declared_states is not None and declared_clocks is not None
             and isinstance(declared_variables, dict)
             and bool(declared_variables)
-            and all(isinstance(field, str) and field and isinstance(domain, list) and domain and len(domain) == len(set(domain))
+            and all(isinstance(field, str) and field and isinstance(domain, list) and domain
+                    and all(finite_scalar(member) for member in domain)
+                    and len({(type(member).__name__, member) for member in domain}) == len(domain)
                     for field, domain in declared_variables.items())
         )
         if not declarations_valid:
             errors.append(f"{refinement['id']} model instance lacks finite state/clock/variable declarations")
+            declared_states = declared_states or set()
+            declared_clocks = declared_clocks or set()
+            declared_variables = declared_variables if isinstance(declared_variables, dict) else {}
         def guard_errors(ast: object) -> list[str]:
             if not isinstance(ast, dict) or not isinstance(ast.get("tag"), str):
                 return ["guard is not a typed AST"]
@@ -755,11 +871,11 @@ def package_errors(data: dict) -> list[str]:
                     return ["AND lacks children"]
                 return [error for child in children for error in guard_errors(child)]
             if tag == "STATE-EQUALS":
-                return [] if set(ast) == {"tag", "state"} and ast.get("state") in declared_states else ["STATE-EQUALS lacks a declared state"]
+                return [] if set(ast) == {"tag", "state"} and isinstance(ast.get("state"), str) and ast["state"] in declared_states else ["STATE-EQUALS lacks a declared state"]
             if tag == "RATIONAL-INTERVAL-CONTAINS":
-                return [] if set(ast) == {"tag", "clock", "interval"} and ast.get("clock") in declared_clocks and valid_interval(ast.get("interval")) else ["RATIONAL-INTERVAL-CONTAINS is malformed"]
+                return [] if set(ast) == {"tag", "clock", "interval"} and isinstance(ast.get("clock"), str) and ast["clock"] in declared_clocks and valid_interval(ast.get("interval")) else ["RATIONAL-INTERVAL-CONTAINS is malformed"]
             if tag == "TYPED-FIELD-EQUALS":
-                domain = declared_variables.get(ast.get("field")) if isinstance(declared_variables, dict) else None
+                domain = declared_variables.get(ast.get("field")) if isinstance(ast.get("field"), str) else None
                 return [] if set(ast) == {"tag", "field", "value"} and isinstance(domain, list) and ast.get("value") in domain else ["TYPED-FIELD-EQUALS is malformed"]
             return [f"unknown guard tag {tag}"]
         def guard_constraint(ast: dict, current: dict, state: object, store: object) -> dict | None:
@@ -800,11 +916,11 @@ def package_errors(data: dict) -> list[str]:
                 if not isinstance(update, dict):
                     results.append("update is not an object"); continue
                 tag = update.get("tag")
-                if tag == "CLOCK-RESET-TO-ZERO" and set(update) == {"tag", "clock"} and update.get("clock") in declared_clocks:
+                if tag == "CLOCK-RESET-TO-ZERO" and set(update) == {"tag", "clock"} and isinstance(update.get("clock"), str) and update["clock"] in declared_clocks:
                     target = ("clock", update["clock"])
-                elif tag == "TYPED-FIELD-ASSIGN" and set(update) == {"tag", "field", "value"} and update.get("field") in declared_variables and update.get("value") in declared_variables[update["field"]]:
+                elif tag == "TYPED-FIELD-ASSIGN" and set(update) == {"tag", "field", "value"} and isinstance(update.get("field"), str) and update["field"] in declared_variables and update.get("value") in declared_variables[update["field"]]:
                     target = ("field", update["field"])
-                elif tag == "STATE-ASSIGN" and set(update) == {"tag", "state"} and update.get("state") in declared_states:
+                elif tag == "STATE-ASSIGN" and set(update) == {"tag", "state"} and isinstance(update.get("state"), str) and update["state"] in declared_states:
                     target = ("state", "control")
                 else:
                     results.append(f"unsupported or malformed update {tag}"); continue
@@ -817,16 +933,16 @@ def package_errors(data: dict) -> list[str]:
             if not valid_interval(witness["input"].get("clockConstraint")) or not valid_interval(witness["input"].get("guard")):
                 errors.append(f"{refinement['id']} {witness_id} has a noncanonical or reversed interval")
             transition = witness["input"].get("transition", {})
-            actual_guard = guard_interval(transition.get("guardAst", {})) if isinstance(transition.get("guardAst"), dict) else None
             if transition.get("source") != witness["input"].get("state") or not isinstance(transition.get("target"), str) or not transition["target"]:
                 errors.append(f"{refinement['id']} {witness_id} transition endpoints are malformed")
             guard_ast = transition.get("guardAst")
             updates = transition.get("simultaneousUpdates")
             if guard_errors(guard_ast) or update_errors(updates):
-                errors.append(f"{refinement['id']} {witness_id} has an unsupported guard or update")
+                errors.append(f"{refinement['id']} {witness_id} input.transition.guardAst or simultaneousUpdates has an unsupported guard or update")
                 # A malformed negative witness is a validation result, never an
                 # excuse to execute below with missing AST/update members.
                 continue
+            actual_guard = guard_interval(guard_ast)
             # `guard` is a compatibility projection: TRUE and state/store guards do
             # not have an interval projection.  When the AST has one, it must agree.
             if actual_guard is not None and (not valid_interval(actual_guard) or actual_guard != witness["input"].get("guard")):
@@ -835,11 +951,37 @@ def package_errors(data: dict) -> list[str]:
             if delta is None or delta < 0 or witness["input"].get("quantifier") != "EXISTS-DELTA":
                 errors.append(f"{refinement['id']} {witness_id} has an invalid time-advance witness")
             elif valid_interval(witness["input"].get("clockConstraint")):
+                if not isinstance(witness["input"].get("state"), str) or witness["input"]["state"] not in declared_states:
+                    errors.append(f"{refinement['id']} {witness_id} input.state is outside the declared model")
+                    continue
+                if not isinstance(transition.get("target"), str) or transition["target"] not in declared_states:
+                    errors.append(f"{refinement['id']} {witness_id} input.transition.target is outside the declared model")
+                    continue
+                store = witness["input"].get("typedStore")
+                if (not isinstance(store, dict) or set(store) != set(declared_variables)
+                        or any(store[field] not in domain for field, domain in declared_variables.items())):
+                    errors.append(f"{refinement['id']} {witness_id} input.typedStore is outside the declared model")
+                    continue
+                expected_payload = witness.get("expected", {})
+                if "state" in expected_payload:
+                    computed_state = expected_payload["state"]
+                    if not isinstance(computed_state, str) or computed_state not in declared_states:
+                        errors.append(f"{refinement['id']} {witness_id} expected.state is outside the declared model")
+                        continue
+                if "typedStore" in expected_payload:
+                    expected_store_payload = expected_payload["typedStore"]
+                    if (not isinstance(expected_store_payload, dict) or set(expected_store_payload) != set(declared_variables)
+                            or any(expected_store_payload[field] not in domain for field, domain in declared_variables.items())):
+                        errors.append(f"{refinement['id']} {witness_id} expected.typedStore is outside the declared model")
+                        continue
+                if len(declared_clocks) != 1 or next(iter(declared_clocks)) != witness["input"].get("projectionClock"):
+                    errors.append(f"{refinement['id']} {witness_id} anonymous interval requires an explicit single-clock projection")
+                    continue
                 successor = guard_constraint(guard_ast, advanced(witness["input"]["clockConstraint"], delta), witness["input"].get("state"), witness["input"].get("typedStore", {}))
                 computed = "FEASIBLE" if successor is not None else "INFEASIBLE"
                 if witness.get("expected", {}).get("result") != computed:
                     errors.append(f"{refinement['id']} {witness_id} result does not follow its clock/guard constraint")
-                reset = any(update.get("tag") == "CLOCK-RESET-TO-ZERO" for update in updates)
+                reset = any(update.get("tag") == "CLOCK-RESET-TO-ZERO" and update.get("clock") == witness["input"]["projectionClock"] for update in updates)
                 if reset and successor is not None:
                     successor = {"lower": {"numerator": 0, "positiveDenominator": 1}, "upper": {"numerator": 0, "positiveDenominator": 1}, "lowerClosed": True, "upperClosed": True}
                 expected_store = dict(witness["input"].get("typedStore", {}))
@@ -857,7 +999,13 @@ def package_errors(data: dict) -> list[str]:
         if not guard_errors(w3_guard) or w3.get("expected", {}).get("result") != "UNSUPPORTED-SYNTAX":
             errors.append(f"{refinement['id']} unsupported syntax witness is not a typed unsupported guard")
         clock_witness = next(row for row in finite["witnessVectors"] if row["id"] == "FK-W5-CLOCK")
-        if clock_witness.get("expected", {}).get("merge") is not False or not all(valid_interval(value) for value in clock_witness.get("input", {}).get("clockConstraints", [])):
+        clock_constraints = clock_witness.get("input", {}).get("clockConstraints", [])
+        if (clock_witness.get("expected", {}).get("merge") is not False
+                or not isinstance(clock_witness.get("input", {}).get("clockId"), str)
+                or clock_witness["input"]["clockId"] not in declared_clocks
+                or not isinstance(clock_constraints, list) or len(clock_constraints) != 2
+                or not all(valid_interval(value) for value in clock_constraints)
+                or clock_constraints[0] == clock_constraints[1]):
             errors.append(f"{refinement['id']} clock-correlation witness must remain separate")
         witness_ids = {row["id"] for row in finite["witnessVectors"]}
         if witness_ids != {"FK-W1-FEASIBLE","FK-W2-INFEASIBLE","FK-W3-UNKNOWN","FK-W4-HISTORY","FK-W5-CLOCK"}:
@@ -968,7 +1116,11 @@ def package_errors(data: dict) -> list[str]:
         old = history_case["inputFixture"].get("values", {}).get("history")
         compatible_raw = history_case["inputFixture"].get("values", {}).get("compatibleObservationHypotheses")
         new = history_case["expectedOutputFixture"].get("values", {}).get("history")
-        if not isinstance(old, dict) or not isinstance(new, dict) or not isinstance(old.get("H"), list) or not isinstance(new.get("H"), list) or not isinstance(compatible_raw, list) or not isinstance(old.get("version"), int) or not isinstance(new.get("version"), int):
+        if (not isinstance(old, dict) or not isinstance(new, dict)
+                or any(not isinstance(value, list) or any(not isinstance(item, str) for item in value)
+                       for value in (old.get("H"), new.get("H"), compatible_raw))
+                or not isinstance(old.get("version"), int) or isinstance(old.get("version"), bool)
+                or not isinstance(new.get("version"), int) or isinstance(new.get("version"), bool)):
             errors.append("AC-SYN-HISTORY lacks a typed history fixture")
         elif set(new["H"]) != set(old["H"]) & set(compatible_raw) or new["version"] != old["version"] + 1:
             errors.append("AC-SYN-HISTORY violates intersection, no-resurrection, or version advancement")
@@ -995,12 +1147,12 @@ def package_errors(data: dict) -> list[str]:
     if any(not item[field].strip() for item in data["acceptanceMatrix"] for field in ("category", "categoryZh", "positiveInput", "positiveInputZh", "expectedOutput", "expectedOutputZh", "negativeMutation", "negativeMutationZh", "expectedRejection", "expectedRejectionZh")):
         errors.append("acceptanceMatrix contains a blank executable specification")
     for item in data["acceptanceMatrix"]:
-        if not item["caseIds"] or not set(item["caseIds"]).issubset(case_by_id):
+        if (not item["caseIds"] and item["category"] != "controlled drift") or not set(item["caseIds"]).issubset(case_by_id):
             errors.append(f"{item['id']} has an unknown or empty acceptance-vector reference")
         required_axes = {
             "corpus identity":{"captureId","relativePath","byteCount","sha256","resolvedFileIdentity"}, "IP reassembly":{"fragmentOffsets","coverageRanges","overlapPolicy","gapPolicy"},
             "TFTP reconstruction":{"tidPair","blockNumbers","terminalBlock","optionState"}, "timing and U":{"measurementInterval","requirementWindow","clockValidity","boundaryClosure"},
-            "history update":{"H","compatibleObservationHypotheses","historyVersion","summaryConfirmed"}, "controlled drift":{"authorityHash","viewHash","publicationMode","failurePreservesOldView"},
+            "history update":{"H","compatibleObservationHypotheses","historyVersion","summaryConfirmed"}, "controlled drift":{"sourceMutation","viewMarker","publicationMode","failurePreservesOldView"},
         }.get(item["category"])
         if required_axes and set(item.get("coverageAxes", [])) != required_axes:
             errors.append(f"{item['id']} lacks category-specific coverage axes")
@@ -1017,36 +1169,147 @@ def package_errors(data: dict) -> list[str]:
         if has_missing(item.get("coverageValues", {})):
             errors.append(f"{item['id']} coverage axes contain an unconsumable null value")
         expected_case = {
-            "corpus identity": "AC-EXP-TRUTH", "label boundary": "AC-EXP-TRUTH", "capture format": "AC-SYN-TRANSFER",
+            "corpus identity": "AC-SYN-TRANSFER", "label boundary": "AC-SYN-TRANSFER", "capture format": "AC-SYN-TRANSFER",
             "IP reassembly": "AC-SYN-TRANSFER", "TFTP reconstruction": "AC-SYN-TRANSFER", "field contracts": "AC-SYN-TRANSFER",
-            "matching and no response": "AC-SYN-OBSERVATION", "timing and U": "AC-SYN-OBSERVATION", "prediction and admission": "AC-SYN-PREDICTION",
-            "history update": "AC-SYN-HISTORY", "state and return": "AC-SYN-RESOURCE-STOP", "resource accounting": "AC-SYN-RESOURCE-STOP",
-            "experiment boundary": "AC-EXP-SCENE", "controlled drift": "AC-EXP-CAUSAL",
+            "matching and no response": "AC-SYN-OBSERVATION", "timing and U": "AC-SYN-OBSERVATION", "prediction and admission": "AC-SYN-SELECT",
+            "history update": "AC-SYN-HISTORY", "state and return": "AC-SYN-HISTORY", "resource accounting": "AC-SYN-RESOURCE-STOP",
+            "experiment boundary": "AC-EXP-SCENE", "controlled drift": None,
         }[item["category"]]
-        if expected_case not in item["caseIds"]:
+        if expected_case is not None and expected_case not in item["caseIds"]:
             errors.append(f"{item['id']} is not bound to its controlled acceptance consumer")
+        consumer = case_by_id.get(expected_case)
+        consumer_input = consumer.get("inputFixture", {}).get("values", {}) if consumer else {}
+        consumer_output = consumer.get("expectedOutputFixture", {}).get("values", {}) if consumer else {}
         if item["category"] == "state and return" and item["coverageValues"] != {"internalResult": "EMPTY-HISTORY", "interfaceId": "IF-RESOURCE-STOP", "returnRecord": "StopResult", "sideEffects": "PRESERVE"}:
             errors.append(f"{item['id']} has an unbound state/return coverage vector")
+        if item["category"] == "state and return":
+            finite_rows = data["algorithmRefinements"][0]["finiteKernelContract"]["totalReturnMapping"]
+            vector = item["coverageValues"]
+            mapped = next((row for row in finite_rows if row["interfaceId"] == vector.get("interfaceId")
+                           and row["internalResult"] == vector.get("internalResult")), None)
+            if (mapped is None or mapped.get("returnContract", {}).get("recordType") != vector.get("returnRecord")
+                    or mapped.get("historyEffect") != vector.get("sideEffects")
+                    or consumer_output.get("stop") != "Stop-Empty"):
+                errors.append(f"{item['id']} state/return vector has no finite-kernel and Stop-Empty consumer")
         if item["category"] == "corpus identity":
             vector = item["coverageValues"]
             capture = capture_by_id.get(vector.get("captureId"))
-            if capture is None or any(vector.get(key) != capture.get(key) for key in ("relativePath", "byteCount", "sha256")) or vector.get("resolvedFileIdentity") != "git-tracked-regular-file":
+            if capture is None or any(vector.get(key) != capture.get(key) for key in ("relativePath", "byteCount", "sha256")) or vector.get("resolvedFileIdentity") != "externally-inventoried-regular-file":
                 errors.append(f"{item['id']} does not consume a bound capture-manifest identity")
+            if consumer_input.get("captureId") != vector.get("captureId"):
+                errors.append(f"{item['id']} consumer does not use the inventoried capture")
+        if item["category"] == "capture format" and consumer_input.get("captureFormat") != item["coverageValues"]:
+            errors.append(f"{item['id']} capture format differs from its case fixture")
+        if item["category"] == "label boundary" and (consumer_input.get("labelBoundary") != item["coverageValues"]
+                                                      or item["coverageValues"].get("independentTruth") != "not-claimed"
+                                                      or any("truth" in key.lower() for key in consumer_output)):
+            errors.append(f"{item['id']} exploratory label boundary is not consumed without truth leakage")
         if item["category"] == "IP reassembly":
             vector = item["coverageValues"]
+            policy = module_by_id.get("MOD-REASSEMBLY", {}).get("reassemblyPolicy", {})
             offsets, ranges = vector.get("fragmentOffsets"), vector.get("coverageRanges")
             typed_offsets = isinstance(offsets, list) and offsets and all(isinstance(value, int) and not isinstance(value, bool) and value >= 0 for value in offsets)
             typed_ranges = isinstance(ranges, list) and ranges and all(isinstance(value, list) and len(value) == 2 and all(isinstance(bound, int) and not isinstance(bound, bool) and bound >= 0 for bound in value) and value[0] <= value[1] for value in ranges)
-            if not (typed_offsets and typed_ranges and vector.get("overlapPolicy") in {"CONFLICT", "FIRST-WINS", "LAST-WINS", "IDENTICAL-ONLY"} and vector.get("gapPolicy") in {"GAPPED", "REJECT"}):
+            if not (typed_offsets and typed_ranges and isinstance(policy, dict)
+                    and vector.get("overlapPolicy") == policy.get("overlapPolicy")
+                    and vector.get("gapPolicy") == policy.get("gapStatus")):
                 errors.append(f"{item['id']} has an unexecutable IP reassembly vector")
+            if consumer_input.get("ipFragments") != vector or consumer_output.get("datagramStatus") != "COMPLETE":
+                errors.append(f"{item['id']} IP vector is not consumed by its transfer case")
         if item["category"] == "TFTP reconstruction":
             vector = item["coverageValues"]
             blocks = vector.get("blockNumbers")
-            if not (isinstance(vector.get("tidPair"), list) and len(vector["tidPair"]) == 2 and all(isinstance(value, int) and value >= 0 for value in vector["tidPair"]) and isinstance(blocks, list) and blocks and all(isinstance(value, int) and value >= 0 for value in blocks) and isinstance(vector.get("terminalBlock"), int) and vector["terminalBlock"] in blocks and vector.get("optionState") in {"ACCEPTED", "DEFAULTED", "UNKNOWN"}):
+            tid_pair = vector.get("tidPair") if isinstance(vector.get("tidPair"), list) and len(vector["tidPair"]) == 2 else [None, None]
+            if not (isinstance(vector.get("tidPair"), list) and len(vector["tidPair"]) == 2 and all(isinstance(value, int) and not isinstance(value, bool) and 0 <= value <= 65535 for value in vector["tidPair"]) and isinstance(blocks, list) and blocks and all(isinstance(value, int) and not isinstance(value, bool) and 0 <= value <= 65535 for value in blocks) and isinstance(vector.get("terminalBlock"), int) and not isinstance(vector.get("terminalBlock"), bool) and vector["terminalBlock"] in blocks and vector.get("optionState") in {"ACCEPTED", "DEFAULTED", "UNKNOWN"}):
                 errors.append(f"{item['id']} has an unexecutable TFTP reconstruction vector")
+            if (consumer_input.get("tid") != {"client": tid_pair[0], "server": tid_pair[1]}
+                    or consumer_input.get("blocks") != blocks or consumer_input.get("terminal", {}).get("block") != vector.get("terminalBlock")
+                    or consumer_input.get("optionState") != vector.get("optionState")
+                    or consumer_output.get("orderedBlocks") != blocks):
+                errors.append(f"{item['id']} TFTP vector is not consumed by its transfer case")
+        if item["category"] == "field contracts":
+            vector = item["coverageValues"]
+            if (not isinstance(vector.get("ordinal"), int) or isinstance(vector.get("ordinal"), bool) or vector["ordinal"] < 0
+                    or not isinstance(vector.get("widthBits"), int) or isinstance(vector.get("widthBits"), bool) or vector["widthBits"] <= 0
+                    or not isinstance(vector.get("fieldId"), str) or not vector["fieldId"]
+                    or vector.get("encodingRule") not in {"ASCII-2", "ASCII-4", "UNSIGNED-BE", "OPAQUE-BYTES"}):
+                errors.append(f"{item['id']} has an unexecutable field-layout vector")
+            if consumer_input.get("fieldLayout") != vector:
+                errors.append(f"{item['id']} field layout is not consumed by its transfer case")
+        if item["category"] == "timing and U":
+            vector = item["coverageValues"]
+            timing_fixture = consumer_input.get("matrixTimingFixture", {})
+            pseudo_case = {"relationId": "RC-VERDICT-WHOLE-INTERVAL",
+                           "inputFixture": {"values": {"interval": timing_fixture.get("interval"),
+                                                       "requirementWindow": timing_fixture.get("requirementWindow"),
+                                                       "clockValid": timing_fixture.get("clockValid")}},
+                           "expectedOutputFixture": {"values": {"verdict": timing_fixture.get("expectedVerdict")}}} if isinstance(timing_fixture, dict) else {}
+            if (not isinstance(timing_fixture, dict)
+                    or vector.get("measurementInterval") != timing_fixture.get("interval")
+                    or vector.get("requirementWindow") != timing_fixture.get("requirementWindow")
+                    or vector.get("clockValidity") != timing_fixture.get("clockValid")
+                    or vector.get("boundaryClosure") != "UPPER-CLOSED"
+                    or timing_fixture.get("expectedVerdict") != "INCONCLUSIVE"
+                    or _acceptance_relation_errors(pseudo_case)):
+                errors.append(f"{item['id']} timing vector is not consumed by the observation relation")
+        if item["category"] == "prediction and admission":
+            vector = item["coverageValues"]
+            if (any(vector.get(key) != consumer_input.get(key) for key in ("H", "eligibleActions", "distinguishingClasses"))
+                    or vector.get("resource", {}).get("remaining") != consumer_input.get("resource", {}).get("remaining")
+                    or consumer_output.get("selectedActionId") not in vector.get("eligibleActions", [])):
+                errors.append(f"{item['id']} admission vector is not consumed by the select case")
+        if item["category"] == "history update":
+            vector = item["coverageValues"]
+            history = consumer_input.get("history", {})
+            if (vector.get("H") != history.get("H")
+                    or vector.get("compatibleObservationHypotheses") != consumer_input.get("compatibleObservationHypotheses")
+                    or vector.get("historyVersion") != history.get("version")
+                    or vector.get("summaryConfirmed") is not consumer_input.get("summaryConfirmed")
+                    or consumer_output.get("history", {}).get("H") != []):
+                errors.append(f"{item['id']} history vector is not consumed by the intersection case")
+        if item["category"] == "matching and no response":
+            vector = item["coverageValues"]
+            transfer_input = case_by_id.get("AC-SYN-TRANSFER", {}).get("inputFixture", {}).get("values", {})
+            owner_fixture = transfer_input.get("ownershipFixture", {})
+            no_response = transfer_input.get("noResponseFixture", {})
+            schedule_error, owner = _resolve_ownership(owner_fixture) if isinstance(owner_fixture, dict) else ("untyped fixture", None)
+            if (set(item["caseIds"]) != {"AC-SYN-OBSERVATION", "AC-SYN-TRANSFER"}
+                    or schedule_error or owner_fixture.get("expectedOwner") != owner
+                    or any(vector.get(field) != owner_fixture.get(field) for field in ("responseId", "key", "policy", "expectedOwner"))
+                    or not isinstance(no_response, dict) or no_response.get("cancelled") is not False
+                    or vector.get("earliestElapsed") != no_response.get("earliestElapsed")
+                    or vector.get("deadline") != no_response.get("deadline")
+                    or not isinstance(no_response.get("earliestElapsed"), (int, float))
+                    or not isinstance(no_response.get("deadline"), (int, float))
+                    or no_response["earliestElapsed"] <= no_response["deadline"]):
+                errors.append(f"{item['id']} ownership/no-response vector lacks its case fixture consumers")
+        if item["category"] == "resource accounting":
+            vector = item["coverageValues"]
+            if (vector.get("resourceMode") != consumer_input.get("mode")
+                    or vector.get("remaining") != consumer_input.get("remaining")
+                    or vector.get("attemptsIssued") != consumer_input.get("attemptsIssued")
+                    or vector.get("retryCount") != consumer_input.get("consecutiveErrorCount")
+                    or consumer_output.get("charges") != vector.get("attemptsIssued")):
+                errors.append(f"{item['id']} resource vector is not consumed by the charge case")
+        if item["category"] == "experiment boundary":
+            vector = item["coverageValues"]
+            if (any(vector.get(key) != consumer_input.get(key) for key in ("armId", "algorithmVisibleFields", "truthSource", "resetId"))
+                    or vector.get("truthSource") != "evaluator-only"
+                    or any("truth" in str(field).lower() for field in vector.get("algorithmVisibleFields", []))
+                    or consumer_output.get("executionStatus") != "NOT-EXECUTED"):
+                errors.append(f"{item['id']} experiment vector is not consumed by the registered scene")
         if item["category"] == "controlled drift":
             vector = item["coverageValues"]
-            if not (all(isinstance(vector.get(field), str) and vector[field].startswith("sha256:") and len(vector[field]) > len("sha256:") for field in ("authorityHash", "viewHash")) and vector.get("publicationMode") in {"transactional", "WRITE-CHECK", "CHECK"} and vector.get("failurePreservesOldView") is True):
+            expected_drift = {"sourceMutation": "remove protocolInputDispositions[0].rationaleZh",
+                              "viewMarker": "preserve this failed-publication marker\n",
+                              "publicationMode": "--write", "failurePreservesOldView": True}
+            if (vector != expected_drift or item["caseIds"]
+                    or item.get("testConsumer") != "test_review_generator_refuses_invalid_authority_and_detects_stale_view"):
+                errors.append(f"{item['id']} drift vector is not the generator failure-preservation fixture")
+        if item["category"] == "controlled drift":
+            vector = item["coverageValues"]
+            if not (isinstance(vector.get("sourceMutation"), str) and isinstance(vector.get("viewMarker"), str)
+                    and vector.get("publicationMode") == "--write" and vector.get("failurePreservesOldView") is True):
                 errors.append(f"{item['id']} has an unexecutable controlled-drift vector")
     scenario_ids = [item["id"] for item in data["experimentScenarios"]]
     if len(scenario_ids) != len(set(scenario_ids)) or len(scenario_ids) < 8:
@@ -1085,18 +1348,10 @@ def package_errors(data: dict) -> list[str]:
         if scenario["id"] == "SC-INVALID-OBS" and not (values.get("clockValid") is False and values.get("expectedVerdict") == "ERROR"):
             errors.append("SC-INVALID-OBS does not preserve the invalid-clock ERROR relation")
         if scenario["id"] == "SC-SAME-KEY":
-            events = values.get("ownershipEvents")
-            if not isinstance(events, list) or not events or not all(isinstance(event, dict) and set(event) == {"id", "kind", "key", "sequence"} and isinstance(event["id"], str) and isinstance(event["key"], str) and isinstance(event["sequence"], int) for event in events):
-                errors.append("SC-SAME-KEY lacks a typed ownership event schedule")
-                continue
-            responses = [event for event in events if event["kind"] == "RESPONSE" and event["id"] == values.get("responseId")]
-            candidates = [event for event in events if event["kind"] == "REQUEST" and event["key"] == values.get("key") and event["sequence"] < responses[0]["sequence"]] if len(responses) == 1 else []
-            if len({event["sequence"] for event in events}) != len(events) or not candidates:
-                errors.append("SC-SAME-KEY has an invalid ownership event schedule")
-                continue
-            ordered_candidates = sorted(candidates, key=lambda event: event["sequence"])
-            owner = {"FIFO": ordered_candidates[0]["id"], "MOST-RECENT": ordered_candidates[-1]["id"], "UNIQUE-KEY": ordered_candidates[0]["id"] if len(ordered_candidates) == 1 else "AMBIGUOUS"}.get(values.get("policy"))
-            if values.get("expectedOwner") != owner:
+            schedule_error, owner = _resolve_ownership(values)
+            if schedule_error:
+                errors.append(f"SC-SAME-KEY {schedule_error}")
+            elif values.get("expectedOwner") != owner:
                 errors.append("SC-SAME-KEY ownership result does not follow its declared policy")
     for tool in data["toolRequirements"]:
         case = case_by_id.get(tool["acceptanceCaseId"])
@@ -1139,6 +1394,11 @@ def package_errors(data: dict) -> list[str]:
         for field in ("title", "titleZh", "responsibility", "responsibilityZh"):
             if not module[field].strip():
                 errors.append(f"{module['id']} has blank {field}")
+        if module["id"] == "MOD-REASSEMBLY" and module.get("reassemblyPolicy") != {
+            "overlapPolicy": "IDENTICAL-ONLY", "identicalOverlap": "DUPLICATE",
+            "differentOverlap": "CONFLICT", "gapStatus": "GAPPED", "overwriteEarlierBytes": False,
+        }:
+            errors.append("MOD-REASSEMBLY structured overlap/gap policy is missing or unsafe")
         for field in ("preconditions", "preconditionsZh", "invariants", "invariantsZh"):
             if any(not item.strip() for item in module[field]):
                 errors.append(f"{module['id']} has blank {field}")
@@ -1324,20 +1584,41 @@ def package_errors(data: dict) -> list[str]:
             for requirement_id in ("CRS-M1-00076", "CRS-M1-00082"):
                 option = witnesses.get(requirement_id, {})
                 option_inputs, option_expected = option.get("inputs", {}), option.get("expected", {})
-                if not (option_inputs.get("receiverSupport") is True and option_inputs.get("optionSelected") is True and isinstance(option_inputs.get("optionIdentity"), str) and option_inputs["optionIdentity"] and isinstance(option_inputs.get("protectedBytesRef"), str) and option_inputs["protectedBytesRef"] and option_expected == {"receiverSupportsSelectedOption": True, "protectedBytesBound": True}):
+                service = integrity_by_requirement.get(requirement_id, {}).get("service")
+                option_entity = symbolic_entities.get(option_inputs.get("optionIdentity")) if isinstance(option_inputs.get("optionIdentity"), str) else None
+                bytes_entity = symbolic_entities.get(option_inputs.get("protectedBytesRef")) if isinstance(option_inputs.get("protectedBytesRef"), str) else None
+                if not (option_inputs.get("service") == service
+                        and option_entity == {"id": option_inputs.get("optionIdentity"), "kind": "OPTION", "service": service}
+                        and bytes_entity == {"id": option_inputs.get("protectedBytesRef"), "kind": "PROTECTED-BYTES", "service": service}
+                        and option_inputs.get("receiverSupport") is True and option_inputs.get("optionSelected") is True
+                        and option_expected == {"receiverSupportsSelectedOption": True, "protectedBytesBound": True}):
                     errors.append(f"{dependency['id']} {requirement_id} witness lacks selected-option support/protected-byte relation")
             same_part = witnesses.get("CRS-M1-00087", {}).get("inputs", {})
             crc_a, crc_b = same_part.get("crcA"), same_part.get("crcB")
-            if not (witnesses.get("CRS-M1-00087", {}).get("expected") == {"samePartNumberCheckValueRelation": "EQUALS"} and isinstance(same_part.get("fileAId"), str) and isinstance(same_part.get("fileBId"), str) and same_part.get("fileAId") and same_part.get("fileBId") and same_part.get("fileAId") != same_part.get("fileBId") and isinstance(same_part.get("partNumberA"), str) and same_part.get("partNumberA") and same_part.get("partNumberA") == same_part.get("partNumberB") and all(isinstance(value, str) and value for value in (crc_a, crc_b)) and crc_a == crc_b):
+            def upload_entity(reference: object, kind: str) -> bool:
+                return (isinstance(reference, str) and symbolic_entities.get(reference)
+                        == {"id": reference, "kind": kind, "service": "UPLOAD"})
+            if not (witnesses.get("CRS-M1-00087", {}).get("expected") == {"samePartNumberCheckValueRelation": "EQUALS"} and upload_entity(same_part.get("fileAId"), "FILE") and upload_entity(same_part.get("fileBId"), "FILE") and same_part.get("fileAId") != same_part.get("fileBId") and isinstance(same_part.get("partNumberA"), str) and same_part.get("partNumberA") and same_part.get("partNumberA") == same_part.get("partNumberB") and all(isinstance(value, str) and value for value in (crc_a, crc_b)) and crc_a == crc_b):
                 errors.append(f"{dependency['id']} 00087 witness must compare CRCs of two same-part-number files")
             image = witnesses.get("CRS-M1-00085", {}).get("inputs", {})
             image_values = (image.get("finalImageCheckValue"), image.get("lspCheckValue"))
-            if not (image.get("orderedBytesPresent") and image.get("checkValuePresent") and image.get("relation") == "EQUALS" and witnesses.get("CRS-M1-00085", {}).get("expected") == {"checkValueRelation": "EQUALS"} and all(isinstance(value, str) and value for value in image_values) and image_values[0] == image_values[1]):
+            if not (upload_entity(image.get("finalImageId"), "FILE") and upload_entity(image.get("lspId"), "FILE") and image.get("orderedBytesPresent") and image.get("checkValuePresent") and image.get("relation") == "EQUALS" and witnesses.get("CRS-M1-00085", {}).get("expected") == {"checkValueRelation": "EQUALS"} and all(isinstance(value, str) and value for value in image_values) and image_values[0] == image_values[1]):
                 errors.append(f"{dependency['id']} 00085 witness lacks final-image/LSP check-value relation")
             comparison = witnesses.get("CRS-M1-00086", {}).get("inputs", {})
             comparison_values = (comparison.get("oldCheckValue"), comparison.get("newCheckValue"))
-            computed_comparison = "EQUAL" if comparison_values[0] == comparison_values[1] else "DIFFERENT"
-            if not (comparison.get("comparisonSelected") is True and witnesses.get("CRS-M1-00086", {}).get("expected") == {"comparisonSelected": True, "comparisonResult": computed_comparison} and isinstance(comparison.get("oldFileId"), str) and isinstance(comparison.get("newFileId"), str) and comparison.get("oldFileId") and comparison.get("newFileId") and comparison.get("oldFileId") != comparison.get("newFileId") and all(isinstance(value, str) and value for value in comparison_values) and comparison.get("comparisonResult") == computed_comparison):
+            comparison_selected = comparison.get("comparisonSelected")
+            if comparison_selected is False:
+                comparison_valid = (comparison == {"comparisonSelected": False}
+                                    and witnesses.get("CRS-M1-00086", {}).get("expected") == {"comparisonSelected": False, "comparisonResult": "NOT-APPLICABLE"})
+            else:
+                computed_comparison = "EQUAL" if comparison_values[0] == comparison_values[1] else "DIFFERENT"
+                comparison_valid = (comparison_selected is True
+                                    and witnesses.get("CRS-M1-00086", {}).get("expected") == {"comparisonSelected": True, "comparisonResult": computed_comparison}
+                                    and upload_entity(comparison.get("oldFileId"), "FILE") and upload_entity(comparison.get("newFileId"), "FILE")
+                                    and comparison.get("oldFileId") != comparison.get("newFileId")
+                                    and all(isinstance(value, str) and value for value in comparison_values)
+                                    and comparison.get("comparisonResult") == computed_comparison)
+            if not comparison_valid:
                 errors.append(f"{dependency['id']} 00086 witness lacks declared old/new comparison result")
             status = witnesses.get("CRS-M1-00109", {}).get("inputs", {})
             events = status.get("events", [])
@@ -1351,9 +1632,85 @@ def package_errors(data: dict) -> list[str]:
             # being used to prove continuation.
             points = status.get("requiredStatusObservationPoints")
             status_times = {event["at"] for event in events[final_index + 1:] if event["kind"] == "STATUS"} if final_index >= 0 and typed_events else set()
-            continued = isinstance(points, list) and points and len(points) == len(set(points)) and all(isinstance(point, int) and start <= point <= end and point in status_times for point in points) if isinstance(start, int) and isinstance(end, int) else False
-            if not (status.get("finalDataSeen") and status.get("calculationInProgress") and witnesses.get("CRS-M1-00109", {}).get("expected") == {"statusContinuation": "AT-EACH-OBSERVATION-POINT"} and isinstance(start, int) and isinstance(end, int) and start <= end and typed_events and ordered and final_index >= 0 and events[final_index]["at"] <= end and continued):
+            windows = status_schedule.get("observationWindows")
+            origin = status_schedule.get("calculationStartAt")
+            shift = start - origin if isinstance(start, int) and not isinstance(start, bool) and isinstance(origin, int) and not isinstance(origin, bool) else None
+            schedule_valid = (isinstance(start, int) and not isinstance(start, bool) and isinstance(end, int) and not isinstance(end, bool)
+                              and shift is not None and end == status_schedule.get("calculationEndAt", -1) + shift
+                              and isinstance(windows, list) and bool(windows)
+                              and all(isinstance(window, dict) and set(window) == {"from", "through", "statusRequiredAt"}
+                                      and all(isinstance(window[key], int) and not isinstance(window[key], bool) for key in window)
+                                      and window["from"] < window["statusRequiredAt"] <= window["through"] for window in windows))
+            scheduled_points = [window["statusRequiredAt"] + shift for window in windows] if schedule_valid else []
+            continued = (schedule_valid and windows[0]["from"] + shift == start and windows[-1]["through"] + shift == end
+                         and all(windows[index]["through"] == windows[index + 1]["from"] for index in range(len(windows) - 1))
+                         and points == scheduled_points and all(point in status_times for point in scheduled_points))
+            if not (status.get("finalDataSeen") is True and status.get("calculationInProgress") is True
+                    and status.get("observationComplete") is True
+                    and witnesses.get("CRS-M1-00109", {}).get("expected") == {"statusContinuation": "AT-EACH-OBSERVATION-POINT"}
+                    and isinstance(start, int) and isinstance(end, int) and start <= end and typed_events and ordered
+                    and final_index >= 0 and events[final_index]["at"] <= end and continued):
                 errors.append(f"{dependency['id']} 00109 witness lacks post-DATA status continuation")
+            variant_rows = dependency.get("obligationVariants", [])
+            required_variants = {
+                (requirement_id, branch)
+                for requirement_id in ("CRS-M1-00076", "CRS-M1-00082", "CRS-M1-00086", "CRS-M1-00087", "CRS-M1-00109")
+                for branch in ("VIOLATED", "NOT-EVALUATED", "NOT-APPLICABLE")
+            } | {("CRS-M1-00085", "VIOLATED"), ("CRS-M1-00085", "NOT-EVALUATED")}
+            if (not isinstance(variant_rows, list) or len(variant_rows) != len(required_variants)
+                    or {(row.get("requirementId"), row.get("branch")) for row in variant_rows if isinstance(row, dict)} != required_variants):
+                errors.append(f"{dependency['id']} integrity variant classification matrix is incomplete")
+            for variant in variant_rows if isinstance(variant_rows, list) else []:
+                if not isinstance(variant, dict):
+                    continue
+                requirement_id = variant.get("requirementId")
+                base = witnesses.get(requirement_id, {}).get("inputs", {})
+                changes = variant.get("changes")
+                if not isinstance(base, dict) or not isinstance(changes, dict) or not changes or not set(changes).issubset(base):
+                    errors.append(f"{dependency['id']} {requirement_id} variant has unbound inputs")
+                    continue
+                values = dict(base)
+                values.update(changes)
+                classification = "INVALID-SPEC"
+                if requirement_id in {"CRS-M1-00076", "CRS-M1-00082"}:
+                    service = integrity_by_requirement.get(requirement_id, {}).get("service")
+                    option_ref, bytes_ref = values.get("optionIdentity"), values.get("protectedBytesRef")
+                    if (values.get("service") == service and isinstance(option_ref, str) and isinstance(bytes_ref, str)
+                            and symbolic_entities.get(option_ref) == {"id": option_ref, "kind": "OPTION", "service": service}
+                            and symbolic_entities.get(bytes_ref) == {"id": bytes_ref, "kind": "PROTECTED-BYTES", "service": service}):
+                        classification = ("NOT-APPLICABLE" if values.get("optionSelected") is False else
+                                          "NOT-EVALUATED" if values.get("receiverSupport") is None else
+                                          "SATISFIED" if values.get("receiverSupport") is True else
+                                          "VIOLATED" if values.get("receiverSupport") is False else "INVALID-SPEC")
+                elif requirement_id == "CRS-M1-00085":
+                    if upload_entity(values.get("finalImageId"), "FILE") and upload_entity(values.get("lspId"), "FILE"):
+                        classification = ("NOT-EVALUATED" if values.get("checkValuePresent") is not True or values.get("orderedBytesPresent") is not True else
+                                          "SATISFIED" if values.get("finalImageCheckValue") == values.get("lspCheckValue") else "VIOLATED")
+                elif requirement_id == "CRS-M1-00086":
+                    if values.get("comparisonSelected") is False:
+                        classification = "NOT-APPLICABLE"
+                    elif values.get("comparisonSelected") is True and upload_entity(values.get("oldFileId"), "FILE") and upload_entity(values.get("newFileId"), "FILE"):
+                        old, new = values.get("oldCheckValue"), values.get("newCheckValue")
+                        actual = "EQUAL" if old == new else "DIFFERENT"
+                        classification = ("NOT-EVALUATED" if not all(isinstance(value, str) and value for value in (old, new)) else
+                                          "SATISFIED" if values.get("comparisonResult") == actual else "VIOLATED")
+                elif requirement_id == "CRS-M1-00087":
+                    if upload_entity(values.get("fileAId"), "FILE") and upload_entity(values.get("fileBId"), "FILE"):
+                        classification = ("NOT-APPLICABLE" if values.get("partNumberA") != values.get("partNumberB") else
+                                          "NOT-EVALUATED" if not all(isinstance(values.get(key), str) and values[key] for key in ("crcA", "crcB")) else
+                                          "SATISFIED" if values.get("crcA") == values.get("crcB") else "VIOLATED")
+                elif requirement_id == "CRS-M1-00109":
+                    if values.get("calculationInProgress") is False:
+                        classification = "NOT-APPLICABLE"
+                    elif values.get("observationComplete") is False:
+                        classification = "NOT-EVALUATED"
+                    elif (values.get("calculationStartAt") == start
+                          and values.get("calculationEndAt") == end
+                          and values.get("requiredStatusObservationPoints") == scheduled_points):
+                        observed = {event.get("at") for event in values.get("events", []) if isinstance(event, dict) and event.get("kind") == "STATUS"}
+                        classification = "SATISFIED" if all(point in observed for point in scheduled_points) else "VIOLATED"
+                if classification != variant.get("branch"):
+                    errors.append(f"{dependency['id']} {requirement_id} variant expected {variant.get('branch')} but derives {classification}")
         for requirement_id, binding in source_bindings.items():
             source = source_by_id.get(requirement_id, {})
             if binding.get("sourceUnitId") != source.get("sourceUnitId"):

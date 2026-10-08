@@ -529,6 +529,18 @@
               "$ref": "#/$defs/id"
             }
           },
+          "reassemblyPolicy": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["overlapPolicy", "identicalOverlap", "differentOverlap", "gapStatus", "overwriteEarlierBytes"],
+            "properties": {
+              "overlapPolicy": {"type": "string"},
+              "identicalOverlap": {"type": "string"},
+              "differentOverlap": {"type": "string"},
+              "gapStatus": {"type": "string"},
+              "overwriteEarlierBytes": {"type": "boolean"}
+            }
+          },
           "preconditions": {
             "type": "array",
             "minItems": 1,
@@ -770,6 +782,7 @@
               "propagationRules",
               "internalResults",
               "witnessVectors",
+              "historyReturnFlow",
               "totalReturnMapping"
             ],
             "properties": {
@@ -882,7 +895,16 @@
                   "clockIds",
                   "typedVariables"
                 ],
-                "additionalProperties": true
+                "additionalProperties": true,
+                "properties": {
+                  "stateIds": {"type": "array", "minItems": 1, "uniqueItems": true,
+                    "items": {"type": "string", "minLength": 1}},
+                  "clockIds": {"type": "array", "minItems": 1, "uniqueItems": true,
+                    "items": {"type": "string", "minLength": 1}},
+                  "typedVariables": {"type": "object", "minProperties": 1,
+                    "additionalProperties": {"type": "array", "minItems": 1, "uniqueItems": true,
+                      "items": {"type": ["string", "integer", "number", "boolean"]}}}
+                }
               },
               "propagationRules": {
                 "type": "array",
@@ -936,6 +958,17 @@
                       "type": "object"
                     }
                   }
+                }
+              },
+              "historyReturnFlow": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["backend", "interface", "s9", "sourceMap"],
+                "properties": {
+                  "backend": {"type": "object"},
+                  "interface": {"type": "object"},
+                  "s9": {"type": "object"},
+                  "sourceMap": {"type": "object"}
                 }
               },
               "totalReturnMapping": {
@@ -1024,7 +1057,7 @@
                         "fieldSources": {
                           "type": "object",
                           "additionalProperties": {
-                            "enum": ["KERNEL", "S9-WRAPPER"]
+                            "enum": ["KERNEL", "BACKEND-ALIAS", "INTERFACE-ADAPTER"]
                           }
                         }
                       }
@@ -1567,7 +1600,7 @@
           },
           "caseIds": {
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "uniqueItems": true,
             "items": {
               "$ref": "#/$defs/id"
@@ -1585,6 +1618,10 @@
           "coverageValues": {
             "type": "object",
             "minProperties": 3
+          },
+          "testConsumer": {
+            "type": "string",
+            "minLength": 1
           }
         }
       }
@@ -1757,9 +1794,10 @@
                   "required": ["id", "kind", "key", "sequence"],
                   "properties": {
                     "id": {"type": "string", "minLength": 1},
-                    "kind": {"enum": ["REQUEST", "RESPONSE"]},
+                    "kind": {"enum": ["REQUEST", "RESPONSE", "CANCEL", "SUPERSEDE"]},
                     "key": {"type": "string", "minLength": 1},
-                    "sequence": {"type": "integer", "minimum": 0}
+                    "sequence": {"type": "integer", "minimum": 0},
+                    "targetRequestId": {"type": "string", "minLength": 1}
                   }
                 }
               },
@@ -1801,7 +1839,8 @@
           "closureEvidence",
           "failureBehavior",
           "failureBehaviorZh",
-          "obligationWitnesses"
+          "obligationWitnesses",
+          "obligationVariants"
         ],
         "properties": {
           "id": {
@@ -1941,6 +1980,20 @@
             "type": "string",
             "minLength": 1
           },
+          "obligationVariants": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["requirementId", "branch", "changes"],
+              "properties": {
+                "requirementId": {"type": "string", "pattern": "^CRS-M1-[0-9]{5}$"},
+                "branch": {"enum": ["VIOLATED", "NOT-EVALUATED", "NOT-APPLICABLE"]},
+                "changes": {"type": "object", "minProperties": 1}
+              }
+            }
+          },
           "obligationWitnesses": {
             "type": "array",
             "minItems": 1,
@@ -1959,7 +2012,7 @@
                 },
                 "inputs": {
                   "type": "object",
-                  "minProperties": 2
+                  "minProperties": 1
                 },
                 "expectedRelation": {
                   "type": "string",
