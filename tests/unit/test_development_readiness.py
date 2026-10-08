@@ -574,6 +574,7 @@ def test_module_contracts_close_requirements_records_interfaces_and_dependencies
     legal_extra_case = copy.deepcopy(PACKAGE)
     extra = copy.deepcopy(legal_extra_case["acceptanceCases"][0])
     extra["id"] = "AC-SYN-EXTRA"
+    extra["inputFixture"]["caseId"] = "AC-SYN-EXTRA"
     legal_extra_case["acceptanceCases"].append(extra)
     next(item for item in legal_extra_case["moduleContracts"] if item["id"] == "MOD-CAPTURE")["acceptanceCaseIds"].append("AC-SYN-EXTRA")
     assert errors(legal_extra_case) == []
