@@ -389,6 +389,7 @@ def test_bound_git_snapshot_survives_bad_worktree_inputs(monkeypatch, tmp_path):
     for relative in (
         "configs/requirements/arinc_615a3_m1_crs.json",
             "configs/research/cltav_interface_registry.json",
+            "configs/research/cltav_historical_capture_manifest.json",
             "configs/engineering/cltav_integrity_obligation_baseline.json",
             "configs/engineering/cltav_development_contracts.schema.json",
             "configs/engineering/cltav_development_contracts.json",
