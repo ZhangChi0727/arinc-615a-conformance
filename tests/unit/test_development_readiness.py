@@ -1138,6 +1138,24 @@ def test_rr88_relations_are_not_selected_by_negative_expectations_and_guard_is_c
     assert any("RC-INTEGRITY-RUNTIME" in item for item in errors(bad))
 
 
+def test_rr88_matrix_scenarios_and_view_are_value_bound():
+    bad = copy.deepcopy(PACKAGE)
+    bad["acceptanceMatrix"][0]["coverageValues"].pop("sha256")
+    assert any("coverage axes lack concrete values" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    scene = next(x for x in bad["experimentScenarios"] if x["id"] == "SC-NO-RESPONSE")
+    scene["scenarioValues"]["earliestElapsed"] = 4
+    assert any("elapsed-horizon relation" in item for item in errors(bad))
+    original = SYNC.render(copy.deepcopy(PACKAGE))
+    changed = copy.deepcopy(PACKAGE)
+    changed["acceptanceMatrix"][0]["coverageValues"]["sha256"] = "1" * 64
+    assert SYNC.render(changed) != original
+    changed = copy.deepcopy(PACKAGE)
+    changed["implementationDependencies"][0]["obligationWitnesses"][4]["inputs"]["crcA"] = "0x5678"
+    changed["implementationDependencies"][0]["obligationWitnesses"][4]["inputs"]["crcB"] = "0x5678"
+    assert SYNC.render(changed) != original
+
+
 def test_rr87_matrix_scenarios_and_integrity_witnesses_are_not_labels_only():
     bad = copy.deepcopy(PACKAGE)
     next(x for x in bad["acceptanceMatrix"] if x["category"] == "corpus identity")["coverageAxes"] = ["armId", "truth", "cost"]

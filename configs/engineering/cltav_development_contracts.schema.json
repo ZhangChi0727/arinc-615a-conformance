@@ -1497,7 +1497,8 @@
           "witnessLevel",
           "runtimeExecutionStatus",
           "caseIds",
-          "coverageAxes"
+          "coverageAxes",
+          "coverageValues"
         ],
         "properties": {
           "id": {
@@ -1565,6 +1566,10 @@
               "type": "string",
               "minLength": 1
             }
+          },
+          "coverageValues": {
+            "type": "object",
+            "minProperties": 3
           }
         }
       }
@@ -1712,7 +1717,27 @@
               "expectedBoundary": {
                 "type": "string",
                 "minLength": 1
-              }
+              },
+              "sessionId": {"type": "string"},
+              "terminalStatus": {"type": "string"},
+              "obligationId": {"type": "string"},
+              "waitActive": {"type": "boolean"},
+              "triggerAt": {"type": "number"},
+              "earliestElapsed": {"type": "number"},
+              "deadline": {"type": "number"},
+              "upperClosed": {"type": "boolean"},
+              "cancelled": {"type": "boolean"},
+              "clockValid": {"type": "boolean"},
+              "expectedVerdict": {"type": "string"},
+              "key": {"type": "string"},
+              "policy": {"enum": ["UNIQUE-KEY", "FIFO", "MOST-RECENT"]},
+              "expectedOwner": {"type": "string"},
+              "firstContext": {"type": "string"},
+              "secondContext": {"type": "string"},
+              "resetId": {"type": "string"},
+              "retryCap": {"type": "integer", "minimum": 1},
+              "consecutiveErrors": {"type": "integer", "minimum": 0},
+              "expectedStop": {"type": "string"}
             }
           }
         }

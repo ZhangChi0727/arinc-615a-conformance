@@ -10897,11 +10897,15 @@
         "values": {
           "interval": {
             "lower": 5.0,
-            "upper": 5.2
+            "upper": 5.2,
+            "lowerClosed": true,
+            "upperClosed": true
           },
           "requirementWindow": {
             "lower": 4.0,
-            "upper": 5.1
+            "upper": 5.1,
+            "lowerClosed": true,
+            "upperClosed": true
           },
           "clockValid": true
         }
@@ -12009,7 +12013,14 @@
         "byteCount",
         "sha256",
         "resolvedFileIdentity"
-      ]
+      ],
+      "coverageValues": {
+        "captureId": "HC-01",
+        "relativePath": "session/one.pcapng",
+        "byteCount": 64,
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "resolvedFileIdentity": "git-tracked-regular-file"
+      }
     },
     {
       "id": "AM-LABEL",
@@ -12032,7 +12043,12 @@
         "annotation",
         "wireOutcome",
         "independentTruth"
-      ]
+      ],
+      "coverageValues": {
+        "annotation": "exploratory",
+        "wireOutcome": "observed",
+        "independentTruth": "not-claimed"
+      }
     },
     {
       "id": "AM-FORMAT",
@@ -12056,7 +12072,13 @@
         "interfaceId",
         "packetNumber",
         "capturedLength"
-      ]
+      ],
+      "coverageValues": {
+        "sectionId": 1,
+        "interfaceId": 0,
+        "packetNumber": 1,
+        "capturedLength": 64
+      }
     },
     {
       "id": "AM-IP",
@@ -12080,7 +12102,21 @@
         "coverageRanges",
         "overlapPolicy",
         "gapPolicy"
-      ]
+      ],
+      "coverageValues": {
+        "fragmentOffsets": [
+          0,
+          8
+        ],
+        "coverageRanges": [
+          [
+            0,
+            15
+          ]
+        ],
+        "overlapPolicy": "IDENTICAL-ONLY",
+        "gapPolicy": "GAPPED"
+      }
     },
     {
       "id": "AM-TFTP",
@@ -12104,7 +12140,19 @@
         "blockNumbers",
         "terminalBlock",
         "optionState"
-      ]
+      ],
+      "coverageValues": {
+        "tidPair": [
+          12000,
+          69
+        ],
+        "blockNumbers": [
+          1,
+          2
+        ],
+        "terminalBlock": 2,
+        "optionState": "DEFAULTED"
+      }
     },
     {
       "id": "AM-FIELDS",
@@ -12128,7 +12176,13 @@
         "ordinal",
         "widthBits",
         "encodingRule"
-      ]
+      ],
+      "coverageValues": {
+        "fieldId": "protocolVersion",
+        "ordinal": 1,
+        "widthBits": 16,
+        "encodingRule": "ASCII-2"
+      }
     },
     {
       "id": "AM-OWNERSHIP",
@@ -12152,7 +12206,13 @@
         "responseId",
         "ownership",
         "silenceHorizon"
-      ]
+      ],
+      "coverageValues": {
+        "triggerId": "tr-1",
+        "responseId": "rsp-1",
+        "ownership": "UNIQUE-KEY",
+        "silenceHorizon": 5.2
+      }
     },
     {
       "id": "AM-TIMING",
@@ -12176,7 +12236,23 @@
         "requirementWindow",
         "clockValidity",
         "boundaryClosure"
-      ]
+      ],
+      "coverageValues": {
+        "measurementInterval": {
+          "lower": 5.0,
+          "upper": 5.2,
+          "lowerClosed": true,
+          "upperClosed": true
+        },
+        "requirementWindow": {
+          "lower": 4.0,
+          "upper": 5.1,
+          "lowerClosed": true,
+          "upperClosed": true
+        },
+        "clockValidity": true,
+        "boundaryClosure": "UPPER-CLOSED"
+      }
     },
     {
       "id": "AM-ADMIT",
@@ -12200,7 +12276,24 @@
         "eligibleActions",
         "distinguishingClasses",
         "resource"
-      ]
+      ],
+      "coverageValues": {
+        "H": [
+          "h0",
+          "h1"
+        ],
+        "eligibleActions": [
+          "test-a",
+          "test-b"
+        ],
+        "distinguishingClasses": [
+          "response-a",
+          "response-b"
+        ],
+        "resource": {
+          "remaining": 1
+        }
+      }
     },
     {
       "id": "AM-HISTORY",
@@ -12224,7 +12317,16 @@
         "compatibleObservationHypotheses",
         "historyVersion",
         "summaryConfirmed"
-      ]
+      ],
+      "coverageValues": {
+        "H": [
+          "h0",
+          "h1"
+        ],
+        "compatibleObservationHypotheses": [],
+        "historyVersion": 0,
+        "summaryConfirmed": true
+      }
     },
     {
       "id": "AM-STATE",
@@ -12248,7 +12350,13 @@
         "interfaceId",
         "returnRecord",
         "sideEffects"
-      ]
+      ],
+      "coverageValues": {
+        "internalResult": "EMPTY-HISTORY",
+        "interfaceId": 0,
+        "returnRecord": "StopResult",
+        "sideEffects": "PRESERVE"
+      }
     },
     {
       "id": "AM-RESOURCE",
@@ -12272,7 +12380,13 @@
         "remaining",
         "attemptsIssued",
         "retryCount"
-      ]
+      ],
+      "coverageValues": {
+        "resourceMode": "ROUNDS",
+        "remaining": 0,
+        "attemptsIssued": 1,
+        "retryCount": 1
+      }
     },
     {
       "id": "AM-EXPERIMENT",
@@ -12296,7 +12410,15 @@
         "algorithmVisibleFields",
         "truthSource",
         "resetId"
-      ]
+      ],
+      "coverageValues": {
+        "armId": "CL-T",
+        "algorithmVisibleFields": [
+          "rawRecord"
+        ],
+        "truthSource": "evaluator-only",
+        "resetId": "reset-001"
+      }
     },
     {
       "id": "AM-DRIFT",
@@ -12320,7 +12442,13 @@
         "viewHash",
         "publicationMode",
         "failurePreservesOldView"
-      ]
+      ],
+      "coverageValues": {
+        "authorityHash": "sha256:authority",
+        "viewHash": "sha256:view",
+        "publicationMode": "transactional",
+        "failurePreservesOldView": true
+      }
     }
   ],
   "experimentScenarios": [
@@ -12368,7 +12496,9 @@
           "DATA",
           "LUS"
         ],
-        "expectedBoundary": "normal completion only after declared terminal status"
+        "expectedBoundary": "normal completion only after declared terminal status",
+        "sessionId": "s1",
+        "terminalStatus": "COMPLETE"
       }
     },
     {
@@ -12414,7 +12544,9 @@
           "WAIT-END",
           "CONTINUE"
         ],
-        "expectedBoundary": "WAIT preserves the active obligation until continuation"
+        "expectedBoundary": "WAIT preserves the active obligation until continuation",
+        "obligationId": "o1",
+        "waitActive": true
       }
     },
     {
@@ -12459,7 +12591,12 @@
           "TRIGGER",
           "SILENCE-HORIZON"
         ],
-        "expectedBoundary": "no-response only when earliest admissible elapsed horizon exceeds U"
+        "expectedBoundary": "no-response only when earliest admissible elapsed horizon exceeds U",
+        "triggerAt": 0,
+        "earliestElapsed": 6,
+        "deadline": 5,
+        "upperClosed": true,
+        "cancelled": false
       }
     },
     {
@@ -12504,7 +12641,9 @@
           "TRIGGER",
           "ABORT"
         ],
-        "expectedBoundary": "abort cancels the active obligation"
+        "expectedBoundary": "abort cancels the active obligation",
+        "obligationId": "o2",
+        "cancelled": true
       }
     },
     {
@@ -12549,7 +12688,9 @@
           "TRIGGER",
           "INVALID-TIMESTAMP"
         ],
-        "expectedBoundary": "invalid timestamp chain yields ERROR"
+        "expectedBoundary": "invalid timestamp chain yields ERROR",
+        "clockValid": false,
+        "expectedVerdict": "ERROR"
       }
     },
     {
@@ -12595,7 +12736,10 @@
           "REQUEST-B",
           "RESPONSE-B"
         ],
-        "expectedBoundary": "ownership policy identifies exactly one response owner"
+        "expectedBoundary": "ownership policy identifies exactly one response owner",
+        "key": "k1",
+        "policy": "MOST-RECENT",
+        "expectedOwner": "REQUEST-B"
       }
     },
     {
@@ -12642,7 +12786,10 @@
           "RESET",
           "BATCH"
         ],
-        "expectedBoundary": "full reset separates the two contexts"
+        "expectedBoundary": "full reset separates the two contexts",
+        "firstContext": "single",
+        "secondContext": "batch",
+        "resetId": "reset-001"
       }
     },
     {
@@ -12689,7 +12836,10 @@
           "RETRY",
           "ADAPTER-ERROR"
         ],
-        "expectedBoundary": "retry exhaustion is Stop-Error, not Stop-Budget"
+        "expectedBoundary": "retry exhaustion is Stop-Error, not Stop-Budget",
+        "retryCap": 2,
+        "consecutiveErrors": 2,
+        "expectedStop": "Stop-Error"
       }
     }
   ],

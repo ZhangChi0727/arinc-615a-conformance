@@ -318,7 +318,13 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
         interval = inputs.get("interval", {})
         window = inputs.get("requirementWindow", {})
         try:
-            expected = "PASS" if interval["lower"] >= window["lower"] and interval["upper"] <= window["upper"] else "FAIL" if interval["upper"] < window["lower"] or interval["lower"] > window["upper"] else "INCONCLUSIVE"
+            if inputs.get("clockValid") is not True:
+                expected = "ERROR"
+            else:
+                within_lower = interval["lower"] > window["lower"] or interval["lower"] == window["lower"] and (not interval["lowerClosed"] or window["lowerClosed"])
+                within_upper = interval["upper"] < window["upper"] or interval["upper"] == window["upper"] and (not interval["upperClosed"] or window["upperClosed"])
+                disjoint = interval["upper"] < window["lower"] or interval["lower"] > window["upper"] or interval["upper"] == window["lower"] and not (interval["upperClosed"] and window["lowerClosed"]) or interval["lower"] == window["upper"] and not (interval["lowerClosed"] and window["upperClosed"])
+                expected = "PASS" if within_lower and within_upper else "FAIL" if disjoint else "INCONCLUSIVE"
         except (KeyError, TypeError):
             expected = None
         if outputs.get("verdict") != expected:
@@ -706,6 +712,8 @@ def package_errors(data: dict) -> list[str]:
                 errors.append(f"{case['id']} has blank {field}")
         if case["inputFixture"].get("recordIds") != case["inputRecordIds"]:
             errors.append(f"{case['id']} fixture record identities differ from the case inputs")
+        if case["inputFixture"].get("caseId") != case["id"]:
+            errors.append(f"{case['id']} fixture case identity differs from the controlled case")
         if case["expectedOutputFixture"].get("statement") != case["expectedContractOutput"]:
             errors.append(f"{case['id']} expected fixture differs from the controlled expected output")
         if not case["prohibitedOutputPaths"] or not case["negativeVariants"]:
@@ -798,6 +806,8 @@ def package_errors(data: dict) -> list[str]:
         }.get(item["category"])
         if required_axes and set(item.get("coverageAxes", [])) != required_axes:
             errors.append(f"{item['id']} lacks category-specific coverage axes")
+        if set(item.get("coverageValues", {})) != set(item.get("coverageAxes", [])):
+            errors.append(f"{item['id']} coverage axes lack concrete values")
     scenario_ids = [item["id"] for item in data["experimentScenarios"]]
     if len(scenario_ids) != len(set(scenario_ids)) or len(scenario_ids) < 8:
         errors.append("experimentScenarios must contain eight unique first-batch scenes")
@@ -817,6 +827,19 @@ def package_errors(data: dict) -> list[str]:
             errors.append(f"{scenario['id']} lacks controlled dependency or acceptance bindings")
         if not set(scenario["dependencyIds"]).issubset(prerequisite_ids) or len(scenario.get("scenarioValues", {}).get("eventSequence", [])) < 2:
             errors.append(f"{scenario['id']} has unresolved prerequisites or an incomplete scenario vector")
+        values = scenario.get("scenarioValues", {})
+        required_scene = {
+            "SC-NORMAL-UPLOAD":{"sessionId","terminalStatus"}, "SC-WAIT-CONTINUE":{"obligationId","waitActive"},
+            "SC-NO-RESPONSE":{"triggerAt","earliestElapsed","deadline","upperClosed","cancelled"}, "SC-ABORT":{"obligationId","cancelled"},
+            "SC-INVALID-OBS":{"clockValid","expectedVerdict"}, "SC-SAME-KEY":{"key","policy","expectedOwner"},
+            "SC-SINGLE-BATCH":{"firstContext","secondContext","resetId"}, "SC-RESOURCE-ERROR":{"retryCap","consecutiveErrors","expectedStop"},
+        }.get(scenario["id"], set())
+        if not required_scene.issubset(values):
+            errors.append(f"{scenario['id']} lacks its behavior-specific scenario values")
+        if scenario["id"] == "SC-NO-RESPONSE" and not (values.get("cancelled") is False and values.get("earliestElapsed", 0) > values.get("deadline", 0)):
+            errors.append("SC-NO-RESPONSE does not establish the controlled elapsed-horizon relation")
+        if scenario["id"] == "SC-SAME-KEY" and values.get("policy") not in {"UNIQUE-KEY","FIFO","MOST-RECENT"}:
+            errors.append("SC-SAME-KEY has an uncontrolled ownership policy")
     for tool in data["toolRequirements"]:
         case = case_by_id.get(tool["acceptanceCaseId"])
         if case is not None:
