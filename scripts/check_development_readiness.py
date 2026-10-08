@@ -812,8 +812,13 @@ def package_errors(data: dict) -> list[str]:
             actual_guard = guard_interval(transition.get("guardAst", {})) if isinstance(transition.get("guardAst"), dict) else None
             if transition.get("source") != witness["input"].get("state") or not isinstance(transition.get("target"), str) or not transition["target"]:
                 errors.append(f"{refinement['id']} {witness_id} transition endpoints are malformed")
-            if guard_errors(transition.get("guardAst")) or update_errors(transition.get("simultaneousUpdates")):
+            guard_ast = transition.get("guardAst")
+            updates = transition.get("simultaneousUpdates")
+            if guard_errors(guard_ast) or update_errors(updates):
                 errors.append(f"{refinement['id']} {witness_id} has an unsupported guard or update")
+                # A malformed negative witness is a validation result, never an
+                # excuse to execute below with missing AST/update members.
+                continue
             # `guard` is a compatibility projection: TRUE and state/store guards do
             # not have an interval projection.  When the AST has one, it must agree.
             if actual_guard is not None and (not valid_interval(actual_guard) or actual_guard != witness["input"].get("guard")):
@@ -822,18 +827,18 @@ def package_errors(data: dict) -> list[str]:
             if delta is None or delta < 0 or witness["input"].get("quantifier") != "EXISTS-DELTA":
                 errors.append(f"{refinement['id']} {witness_id} has an invalid time-advance witness")
             elif valid_interval(witness["input"].get("clockConstraint")):
-                successor = guard_constraint(transition["guardAst"], advanced(witness["input"]["clockConstraint"], delta), witness["input"].get("state"), witness["input"].get("typedStore", {}))
+                successor = guard_constraint(guard_ast, advanced(witness["input"]["clockConstraint"], delta), witness["input"].get("state"), witness["input"].get("typedStore", {}))
                 computed = "FEASIBLE" if successor is not None else "INFEASIBLE"
                 if witness.get("expected", {}).get("result") != computed:
                     errors.append(f"{refinement['id']} {witness_id} result does not follow its clock/guard constraint")
-                reset = any(update.get("tag") == "CLOCK-RESET-TO-ZERO" for update in transition["simultaneousUpdates"])
+                reset = any(update.get("tag") == "CLOCK-RESET-TO-ZERO" for update in updates)
                 if reset and successor is not None:
                     successor = {"lower": {"numerator": 0, "positiveDenominator": 1}, "upper": {"numerator": 0, "positiveDenominator": 1}, "lowerClosed": True, "upperClosed": True}
                 expected_store = dict(witness["input"].get("typedStore", {}))
-                for update in transition["simultaneousUpdates"]:
+                for update in updates:
                     if update.get("tag") == "TYPED-FIELD-ASSIGN":
                         expected_store[update["field"]] = update["value"]
-                state_updates = [update["state"] for update in transition["simultaneousUpdates"] if update.get("tag") == "STATE-ASSIGN"]
+                state_updates = [update["state"] for update in updates if update.get("tag") == "STATE-ASSIGN"]
                 expected_state = state_updates[0] if state_updates else transition.get("target")
                 if state_updates and expected_state != transition.get("target"):
                     errors.append(f"{refinement['id']} {witness_id} state update conflicts with transition target")
