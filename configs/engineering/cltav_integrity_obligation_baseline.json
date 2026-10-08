@@ -1,6 +1,29 @@
 {
   "artifactId": "CLTAV-INTEGRITY-OBLIGATION-BASELINE",
-  "version": "1.0",
+  "version": "1.1",
+  "symbolicEntities": [
+    {"id": "integrity-option-information", "kind": "OPTION", "service": "INFORMATION"},
+    {"id": "integrity-option-upload", "kind": "OPTION", "service": "UPLOAD"},
+    {"id": "symbolic-information-bytes", "kind": "PROTECTED-BYTES", "service": "INFORMATION"},
+    {"id": "symbolic-upload-bytes", "kind": "PROTECTED-BYTES", "service": "UPLOAD"},
+    {"id": "image-A", "kind": "FILE", "service": "UPLOAD"},
+    {"id": "lsp-A", "kind": "FILE", "service": "UPLOAD"},
+    {"id": "old-A", "kind": "FILE", "service": "UPLOAD"},
+    {"id": "new-A", "kind": "FILE", "service": "UPLOAD"},
+    {"id": "file-A", "kind": "FILE", "service": "UPLOAD"},
+    {"id": "file-B", "kind": "FILE", "service": "UPLOAD"},
+    {"id": "CRC-SYN", "kind": "ALGORITHM", "service": "UPLOAD"}
+  ],
+  "syntheticStatusSchedule": {
+    "contractId": "INT-POST-DATA-STATUS-CONTINUATION",
+    "scope": "FINITE-SPECIFICATION-WITNESS-NOT-PROTOCOL-FREQUENCY",
+    "calculationStartAt": 10,
+    "calculationEndAt": 12,
+    "observationWindows": [
+      {"from": 10, "through": 11, "statusRequiredAt": 11},
+      {"from": 11, "through": 12, "statusRequiredAt": 12}
+    ]
+  },
   "obligations": [
     {
       "requirementId": "CRS-M1-00076",
