@@ -320,6 +320,8 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
     inputs = case.get("inputFixture", {}).get("values", {})
     outputs = case.get("expectedOutputFixture", {}).get("values", {})
     errors: list[str] = []
+    if not isinstance(inputs, dict) or not isinstance(outputs, dict):
+        return [f"{relation or 'acceptance relation'} requires object fixture values"]
     if relation == "RC-TRANSFER-TERMINAL":
         if not isinstance(inputs.get("terminal"), dict) or outputs.get("terminalConfirmed") is not True:
             errors.append("RC-TRANSFER-TERMINAL at inputFixture.values.terminal")
@@ -333,7 +335,9 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
     elif relation == "RC-SELECT-STABLE-ID":
         actions = inputs.get("actions", [])
         resource = inputs.get("resource", {})
-        affordable = [a for a in actions if a.get("id") in inputs.get("eligibleActions", []) and a.get("cost", 10**9) <= resource.get("remaining", -1)]
+        if not isinstance(actions, list) or not isinstance(resource, dict) or not isinstance(inputs.get("eligibleActions"), list) or not isinstance(resource.get("remaining"), (int, float)):
+            return ["RC-SELECT-STABLE-ID requires typed actions, eligibleActions, and resource"]
+        affordable = [a for a in actions if isinstance(a, dict) and a.get("id") in inputs["eligibleActions"] and isinstance(a.get("cost"), (int, float)) and isinstance(a.get("worstClass"), (int, float)) and a["cost"] <= resource["remaining"]]
         expected = min(affordable, key=lambda a: (a["worstClass"], a["cost"], a["id"]))["id"] if affordable else None
         if len(affordable) < 2 or outputs.get("selectedActionId") != expected:
             errors.append("RC-SELECT-STABLE-ID at expectedOutputFixture.values.selectedActionId")
@@ -364,7 +368,7 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
         old = inputs.get("history", {})
         new = outputs.get("history", {})
         compatible = set(inputs.get("compatibleObservationHypotheses", []))
-        if set(new.get("H", [])) != set(old.get("H", [])) & compatible or new.get("version") != old.get("version", -1) + 1:
+        if not isinstance(old, dict) or not isinstance(new, dict) or not isinstance(old.get("H"), list) or not isinstance(new.get("H"), list) or not isinstance(inputs.get("compatibleObservationHypotheses"), list) or not isinstance(old.get("version"), int) or not isinstance(new.get("version"), int) or set(new["H"]) != set(old["H"]) & compatible or new["version"] != old["version"] + 1:
             errors.append("RC-HISTORY-NO-RESURRECTION at expectedOutputFixture.values.history.H")
     elif relation == "RC-EQUIV-EVIDENCE":
         if outputs.get("result") == "established" and inputs.get("finiteDomainProof") != "present":
@@ -385,9 +389,12 @@ def _acceptance_relation_errors(case: dict) -> list[str]:
         if any("truth" in str(item).lower() for item in inputs.get("visiblePrefix", [])):
             errors.append("RC-CAUSAL-PREFIX at inputFixture.values.visiblePrefix")
     elif relation == "RC-DENOMINATOR-ATTEMPTS":
-        if outputs.get("attemptDenominator") != len(inputs.get("attempts", [])):
+        attempts = inputs.get("attempts")
+        if not isinstance(attempts, list) or any(not isinstance(item, str) for item in attempts):
+            return ["RC-DENOMINATOR-ATTEMPTS requires a string attempt sequence"]
+        if outputs.get("attemptDenominator") != len(attempts):
             errors.append("RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.attemptDenominator")
-        if outputs.get("answeredDenominator") != sum(item in {"PASS", "FAIL"} for item in inputs.get("attempts", [])):
+        if outputs.get("answeredDenominator") != sum(item in {"PASS", "FAIL"} for item in attempts):
             errors.append("RC-DENOMINATOR-ATTEMPTS at expectedOutputFixture.values.answeredDenominator")
     return errors
 
@@ -699,8 +706,11 @@ def package_errors(data: dict) -> list[str]:
             lower, upper = max(left_lower, right_lower), min(left_upper, right_upper)
             if lower > upper:
                 return None
-            lower_closed = (left["lowerClosed"] if left_lower == lower else left["upperClosed"]) and (right["lowerClosed"] if right_lower == lower else right["upperClosed"])
-            upper_closed = (left["upperClosed"] if left_upper == upper else left["lowerClosed"]) and (right["upperClosed"] if right_upper == upper else right["lowerClosed"])
+            # An endpoint that lies strictly inside an input interval is included by
+            # that interval.  Only an input which contributes the endpoint may open
+            # it.  Do not borrow the opposite endpoint's closure flag here.
+            lower_closed = (left["lowerClosed"] if left_lower == lower else True) and (right["lowerClosed"] if right_lower == lower else True)
+            upper_closed = (left["upperClosed"] if left_upper == upper else True) and (right["upperClosed"] if right_upper == upper else True)
             if lower == upper and not (lower_closed and upper_closed):
                 return None
             def fraction_object(value: Fraction) -> dict[str, int]:
@@ -710,10 +720,18 @@ def package_errors(data: dict) -> list[str]:
             def fraction_object(value: Fraction) -> dict[str, int]:
                 return {"numerator": value.numerator, "positiveDenominator": value.denominator}
             return {"lower": fraction_object(rational(interval["lower"]) + delta), "upper": fraction_object(rational(interval["upper"]) + delta), "lowerClosed": interval["lowerClosed"], "upperClosed": interval["upperClosed"]}
-        declared_states = set(model_schema.get("stateIds", []))
-        declared_clocks = set(model_schema.get("clockIds", []))
+        declared_states = set(model_schema.get("stateIds", [])) if isinstance(model_schema.get("stateIds"), list) else set()
+        declared_clocks = set(model_schema.get("clockIds", [])) if isinstance(model_schema.get("clockIds"), list) else set()
         declared_variables = model_schema.get("typedVariables", {})
-        if not declared_states or not declared_clocks or not isinstance(declared_variables, dict):
+        declarations_valid = (
+            bool(declared_states) and bool(declared_clocks)
+            and all(isinstance(value, str) and value for value in declared_states | declared_clocks)
+            and isinstance(declared_variables, dict)
+            and bool(declared_variables)
+            and all(isinstance(field, str) and field and isinstance(domain, list) and domain and len(domain) == len(set(domain))
+                    for field, domain in declared_variables.items())
+        )
+        if not declarations_valid:
             errors.append(f"{refinement['id']} model instance lacks finite state/clock/variable declarations")
         def guard_errors(ast: object) -> list[str]:
             if not isinstance(ast, dict) or not isinstance(ast.get("tag"), str):
@@ -796,20 +814,30 @@ def package_errors(data: dict) -> list[str]:
                 errors.append(f"{refinement['id']} {witness_id} transition endpoints are malformed")
             if guard_errors(transition.get("guardAst")) or update_errors(transition.get("simultaneousUpdates")):
                 errors.append(f"{refinement['id']} {witness_id} has an unsupported guard or update")
-            if not valid_interval(actual_guard) or actual_guard != witness["input"].get("guard"):
+            # `guard` is a compatibility projection: TRUE and state/store guards do
+            # not have an interval projection.  When the AST has one, it must agree.
+            if actual_guard is not None and (not valid_interval(actual_guard) or actual_guard != witness["input"].get("guard")):
                 errors.append(f"{refinement['id']} {witness_id} transition guard differs from the authoritative guard")
             delta = rational(witness["input"].get("delta"))
             if delta is None or delta < 0 or witness["input"].get("quantifier") != "EXISTS-DELTA":
                 errors.append(f"{refinement['id']} {witness_id} has an invalid time-advance witness")
-            elif valid_interval(witness["input"].get("clockConstraint")) and valid_interval(actual_guard):
+            elif valid_interval(witness["input"].get("clockConstraint")):
                 successor = guard_constraint(transition["guardAst"], advanced(witness["input"]["clockConstraint"], delta), witness["input"].get("state"), witness["input"].get("typedStore", {}))
                 computed = "FEASIBLE" if successor is not None else "INFEASIBLE"
                 if witness.get("expected", {}).get("result") != computed:
                     errors.append(f"{refinement['id']} {witness_id} result does not follow its clock/guard constraint")
-                reset = any(update.get("tag") == "CLOCK-RESET-TO-ZERO" and update.get("clock") == "x" for update in transition["simultaneousUpdates"])
+                reset = any(update.get("tag") == "CLOCK-RESET-TO-ZERO" for update in transition["simultaneousUpdates"])
                 if reset and successor is not None:
                     successor = {"lower": {"numerator": 0, "positiveDenominator": 1}, "upper": {"numerator": 0, "positiveDenominator": 1}, "lowerClosed": True, "upperClosed": True}
-                if computed == "FEASIBLE" and (witness["expected"].get("state") != transition.get("target") or witness["expected"].get("clockConstraint") != successor):
+                expected_store = dict(witness["input"].get("typedStore", {}))
+                for update in transition["simultaneousUpdates"]:
+                    if update.get("tag") == "TYPED-FIELD-ASSIGN":
+                        expected_store[update["field"]] = update["value"]
+                state_updates = [update["state"] for update in transition["simultaneousUpdates"] if update.get("tag") == "STATE-ASSIGN"]
+                expected_state = state_updates[0] if state_updates else transition.get("target")
+                if state_updates and expected_state != transition.get("target"):
+                    errors.append(f"{refinement['id']} {witness_id} state update conflicts with transition target")
+                if computed == "FEASIBLE" and (witness["expected"].get("state") != expected_state or witness["expected"].get("clockConstraint") != successor or witness["expected"].get("typedStore") != expected_store):
                     errors.append(f"{refinement['id']} {witness_id} successor does not follow its transition/time advance")
         w3 = next(row for row in finite["witnessVectors"] if row["id"] == "FK-W3-UNKNOWN")
         w3_guard = w3.get("input", {}).get("transition", {}).get("guardAst")
@@ -991,6 +1019,22 @@ def package_errors(data: dict) -> list[str]:
             capture = capture_by_id.get(vector.get("captureId"))
             if capture is None or any(vector.get(key) != capture.get(key) for key in ("relativePath", "byteCount", "sha256")) or vector.get("resolvedFileIdentity") != "git-tracked-regular-file":
                 errors.append(f"{item['id']} does not consume a bound capture-manifest identity")
+        if item["category"] == "IP reassembly":
+            vector = item["coverageValues"]
+            offsets, ranges = vector.get("fragmentOffsets"), vector.get("coverageRanges")
+            typed_offsets = isinstance(offsets, list) and offsets and all(isinstance(value, int) and not isinstance(value, bool) and value >= 0 for value in offsets)
+            typed_ranges = isinstance(ranges, list) and ranges and all(isinstance(value, list) and len(value) == 2 and all(isinstance(bound, int) and not isinstance(bound, bool) and bound >= 0 for bound in value) and value[0] <= value[1] for value in ranges)
+            if not (typed_offsets and typed_ranges and vector.get("overlapPolicy") in {"CONFLICT", "FIRST-WINS", "LAST-WINS", "IDENTICAL-ONLY"} and vector.get("gapPolicy") in {"GAPPED", "REJECT"}):
+                errors.append(f"{item['id']} has an unexecutable IP reassembly vector")
+        if item["category"] == "TFTP reconstruction":
+            vector = item["coverageValues"]
+            blocks = vector.get("blockNumbers")
+            if not (isinstance(vector.get("tidPair"), list) and len(vector["tidPair"]) == 2 and all(isinstance(value, int) and value >= 0 for value in vector["tidPair"]) and isinstance(blocks, list) and blocks and all(isinstance(value, int) and value >= 0 for value in blocks) and isinstance(vector.get("terminalBlock"), int) and vector["terminalBlock"] in blocks and vector.get("optionState") in {"ACCEPTED", "DEFAULTED", "UNKNOWN"}):
+                errors.append(f"{item['id']} has an unexecutable TFTP reconstruction vector")
+        if item["category"] == "controlled drift":
+            vector = item["coverageValues"]
+            if not (all(isinstance(vector.get(field), str) and vector[field].startswith("sha256:") and len(vector[field]) > len("sha256:") for field in ("authorityHash", "viewHash")) and vector.get("publicationMode") in {"transactional", "WRITE-CHECK", "CHECK"} and vector.get("failurePreservesOldView") is True):
+                errors.append(f"{item['id']} has an unexecutable controlled-drift vector")
     scenario_ids = [item["id"] for item in data["experimentScenarios"]]
     if len(scenario_ids) != len(set(scenario_ids)) or len(scenario_ids) < 8:
         errors.append("experimentScenarios must contain eight unique first-batch scenes")
@@ -1014,7 +1058,7 @@ def package_errors(data: dict) -> list[str]:
         required_scene = {
             "SC-NORMAL-UPLOAD":{"sessionId","terminalStatus"}, "SC-WAIT-CONTINUE":{"obligationId","waitActive"},
             "SC-NO-RESPONSE":{"triggerAt","earliestElapsed","deadline","upperClosed","cancelled"}, "SC-ABORT":{"obligationId","cancelled"},
-            "SC-INVALID-OBS":{"clockValid","expectedVerdict"}, "SC-SAME-KEY":{"key","policy","expectedOwner"},
+            "SC-INVALID-OBS":{"clockValid","expectedVerdict"}, "SC-SAME-KEY":{"key","policy","expectedOwner","responseId","ownershipEvents"},
             "SC-SINGLE-BATCH":{"firstContext","secondContext","resetId"}, "SC-RESOURCE-ERROR":{"retryCap","consecutiveErrors","expectedStop"},
         }.get(scenario["id"], set())
         if not required_scene.issubset(values):
@@ -1028,7 +1072,17 @@ def package_errors(data: dict) -> list[str]:
         if scenario["id"] == "SC-INVALID-OBS" and not (values.get("clockValid") is False and values.get("expectedVerdict") == "ERROR"):
             errors.append("SC-INVALID-OBS does not preserve the invalid-clock ERROR relation")
         if scenario["id"] == "SC-SAME-KEY":
-            owner = {"FIFO": "REQUEST-A", "MOST-RECENT": "REQUEST-B", "UNIQUE-KEY": "AMBIGUOUS"}.get(values.get("policy"))
+            events = values.get("ownershipEvents")
+            if not isinstance(events, list) or not events or not all(isinstance(event, dict) and set(event) == {"id", "kind", "key", "sequence"} and isinstance(event["id"], str) and isinstance(event["key"], str) and isinstance(event["sequence"], int) for event in events):
+                errors.append("SC-SAME-KEY lacks a typed ownership event schedule")
+                continue
+            responses = [event for event in events if event["kind"] == "RESPONSE" and event["id"] == values.get("responseId")]
+            candidates = [event for event in events if event["kind"] == "REQUEST" and event["key"] == values.get("key") and event["sequence"] < responses[0]["sequence"]] if len(responses) == 1 else []
+            if len({event["sequence"] for event in events}) != len(events) or not candidates:
+                errors.append("SC-SAME-KEY has an invalid ownership event schedule")
+                continue
+            ordered_candidates = sorted(candidates, key=lambda event: event["sequence"])
+            owner = {"FIFO": ordered_candidates[0]["id"], "MOST-RECENT": ordered_candidates[-1]["id"], "UNIQUE-KEY": ordered_candidates[0]["id"] if len(ordered_candidates) == 1 else "AMBIGUOUS"}.get(values.get("policy"))
             if values.get("expectedOwner") != owner:
                 errors.append("SC-SAME-KEY ownership result does not follow its declared policy")
     for tool in data["toolRequirements"]:
@@ -1260,7 +1314,8 @@ def package_errors(data: dict) -> list[str]:
                 if not (option_inputs.get("receiverSupport") is True and option_inputs.get("optionSelected") is True and isinstance(option_inputs.get("optionIdentity"), str) and option_inputs["optionIdentity"] and isinstance(option_inputs.get("protectedBytesRef"), str) and option_inputs["protectedBytesRef"] and option_expected == {"receiverSupportsSelectedOption": True, "protectedBytesBound": True}):
                     errors.append(f"{dependency['id']} {requirement_id} witness lacks selected-option support/protected-byte relation")
             same_part = witnesses.get("CRS-M1-00087", {}).get("inputs", {})
-            if not (witnesses.get("CRS-M1-00087", {}).get("expected") == {"samePartNumberCheckValueRelation": "EQUALS"} and same_part.get("fileAId") != same_part.get("fileBId") and same_part.get("partNumberA") == same_part.get("partNumberB") and same_part.get("crcA") == same_part.get("crcB")):
+            crc_a, crc_b = same_part.get("crcA"), same_part.get("crcB")
+            if not (witnesses.get("CRS-M1-00087", {}).get("expected") == {"samePartNumberCheckValueRelation": "EQUALS"} and isinstance(same_part.get("fileAId"), str) and isinstance(same_part.get("fileBId"), str) and same_part.get("fileAId") and same_part.get("fileBId") and same_part.get("fileAId") != same_part.get("fileBId") and isinstance(same_part.get("partNumberA"), str) and same_part.get("partNumberA") and same_part.get("partNumberA") == same_part.get("partNumberB") and all(isinstance(value, str) and value for value in (crc_a, crc_b)) and crc_a == crc_b):
                 errors.append(f"{dependency['id']} 00087 witness must compare CRCs of two same-part-number files")
             image = witnesses.get("CRS-M1-00085", {}).get("inputs", {})
             image_values = (image.get("finalImageCheckValue"), image.get("lspCheckValue"))
@@ -1268,7 +1323,8 @@ def package_errors(data: dict) -> list[str]:
                 errors.append(f"{dependency['id']} 00085 witness lacks final-image/LSP check-value relation")
             comparison = witnesses.get("CRS-M1-00086", {}).get("inputs", {})
             comparison_values = (comparison.get("oldCheckValue"), comparison.get("newCheckValue"))
-            if not (comparison.get("comparisonSelected") and witnesses.get("CRS-M1-00086", {}).get("expected") == {"comparisonSelected": True, "comparisonResult": "DIFFERENT"} and isinstance(comparison.get("oldFileId"), str) and isinstance(comparison.get("newFileId"), str) and comparison.get("oldFileId") and comparison.get("newFileId") and comparison.get("oldFileId") != comparison.get("newFileId") and all(isinstance(value, str) and value for value in comparison_values) and comparison.get("comparisonResult") == ("EQUAL" if comparison_values[0] == comparison_values[1] else "DIFFERENT")):
+            computed_comparison = "EQUAL" if comparison_values[0] == comparison_values[1] else "DIFFERENT"
+            if not (comparison.get("comparisonSelected") is True and witnesses.get("CRS-M1-00086", {}).get("expected") == {"comparisonSelected": True, "comparisonResult": computed_comparison} and isinstance(comparison.get("oldFileId"), str) and isinstance(comparison.get("newFileId"), str) and comparison.get("oldFileId") and comparison.get("newFileId") and comparison.get("oldFileId") != comparison.get("newFileId") and all(isinstance(value, str) and value for value in comparison_values) and comparison.get("comparisonResult") == computed_comparison):
                 errors.append(f"{dependency['id']} 00086 witness lacks declared old/new comparison result")
             status = witnesses.get("CRS-M1-00109", {}).get("inputs", {})
             events = status.get("events", [])
@@ -1277,9 +1333,12 @@ def package_errors(data: dict) -> list[str]:
             ordered = typed_events and all(events[index]["at"] < events[index + 1]["at"] for index in range(len(events) - 1))
             final_indices = [index for index, event in enumerate(events) if event.get("kind") == "FINAL-DATA"] if typed_events else []
             final_index = final_indices[-1] if final_indices else -1
-            points = status.get("statusObservationPoints")
+            # The required observation schedule is a controlled witness input.  It
+            # must not be derived from, or silently reduced to, the STATUS events
+            # being used to prove continuation.
+            points = status.get("requiredStatusObservationPoints")
             status_times = {event["at"] for event in events[final_index + 1:] if event["kind"] == "STATUS"} if final_index >= 0 and typed_events else set()
-            continued = isinstance(points, list) and points and all(isinstance(point, int) and start <= point <= end and point in status_times for point in points) if isinstance(start, int) and isinstance(end, int) else False
+            continued = isinstance(points, list) and points and len(points) == len(set(points)) and all(isinstance(point, int) and start <= point <= end and point in status_times for point in points) if isinstance(start, int) and isinstance(end, int) else False
             if not (status.get("finalDataSeen") and status.get("calculationInProgress") and witnesses.get("CRS-M1-00109", {}).get("expected") == {"statusContinuation": "AT-EACH-OBSERVATION-POINT"} and isinstance(start, int) and isinstance(end, int) and start <= end and typed_events and ordered and final_index >= 0 and events[final_index]["at"] <= end and continued):
                 errors.append(f"{dependency['id']} 00109 witness lacks post-DATA status continuation")
         for requirement_id, binding in source_bindings.items():

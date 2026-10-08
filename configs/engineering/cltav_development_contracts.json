@@ -9449,6 +9449,7 @@
             "expected": {
               "result": "FEASIBLE",
               "state": "q1",
+              "typedStore": {},
               "clockConstraint": {
                 "lower": {
                   "numerator": 0,
@@ -11848,7 +11849,8 @@
             ],
             "calculationStartAt": 10,
             "calculationEndAt": 12,
-            "statusObservationPoints": [
+            "requiredStatusObservationPoints": [
+              11,
               12
             ]
           },
@@ -12850,7 +12852,13 @@
         "expectedBoundary": "ownership policy identifies exactly one response owner",
         "key": "k1",
         "policy": "MOST-RECENT",
-        "expectedOwner": "REQUEST-B"
+        "responseId": "RESPONSE-B",
+        "expectedOwner": "REQUEST-B",
+        "ownershipEvents": [
+          {"id": "REQUEST-A", "kind": "REQUEST", "key": "k1", "sequence": 1},
+          {"id": "REQUEST-B", "kind": "REQUEST", "key": "k1", "sequence": 2},
+          {"id": "RESPONSE-B", "kind": "RESPONSE", "key": "k1", "sequence": 3}
+        ]
       }
     },
     {

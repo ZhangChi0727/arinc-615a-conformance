@@ -1593,9 +1593,74 @@ def test_rr90_integrity_witnesses_use_structured_support_and_continuation_relati
     assert any("expectedRelation does not match" in item for item in errors(bad))
     legal = copy.deepcopy(PACKAGE)
     status = next(item for item in legal["implementationDependencies"][0]["obligationWitnesses"] if item["requirementId"] == "CRS-M1-00109")["inputs"]
-    status.update(calculationStartAt=11, calculationEndAt=13, statusObservationPoints=[12, 13], events=[{"kind": "FINAL-DATA", "at": 10}, {"kind": "STATUS", "at": 12}, {"kind": "STATUS", "at": 13}])
+    status.update(calculationStartAt=11, calculationEndAt=13, requiredStatusObservationPoints=[12, 13], events=[{"kind": "FINAL-DATA", "at": 10}, {"kind": "STATUS", "at": 12}, {"kind": "STATUS", "at": 13}])
     assert errors(legal) == []
     bad = copy.deepcopy(legal)
     status = next(item for item in bad["implementationDependencies"][0]["obligationWitnesses"] if item["requirementId"] == "CRS-M1-00109")["inputs"]
     status["events"] = [{"kind": "FINAL-DATA", "at": 10}, {"kind": "STATUS", "at": 12}]
     assert any("00109 witness" in item for item in errors(bad))
+
+
+def test_rr91_kernel_endpoint_named_reset_and_typed_successor_are_executable():
+    def witness(candidate):
+        return next(item for item in candidate["algorithmRefinements"][0]["finiteKernelContract"]["witnessVectors"] if item["id"] == "FK-W1-FEASIBLE")
+
+    legal = copy.deepcopy(PACKAGE)
+    row = witness(legal)
+    row["input"]["clockConstraint"]["lowerClosed"] = False
+    row["input"]["clockConstraint"]["lower"]["numerator"] = 0
+    row["input"]["transition"]["guardAst"]["interval"]["lower"]["numerator"] = 0
+    row["expected"]["clockConstraint"]["lowerClosed"] = False
+    assert errors(legal) == []
+
+    legal = copy.deepcopy(PACKAGE)
+    finite = legal["algorithmRefinements"][0]["finiteKernelContract"]
+    finite["modelInstanceSchema"]["clockIds"] = ["t"]
+    for candidate in finite["witnessVectors"]:
+        if candidate["id"] in {"FK-W1-FEASIBLE", "FK-W2-INFEASIBLE"}:
+            candidate["input"]["transition"]["guardAst"]["clock"] = "t"
+    row = witness(legal)
+    row["input"]["transition"]["simultaneousUpdates"] = [
+        {"tag": "CLOCK-RESET-TO-ZERO", "clock": "t"},
+        {"tag": "TYPED-FIELD-ASSIGN", "field": "mode", "value": "recovery"},
+    ]
+    row["expected"]["typedStore"] = {"mode": "recovery"}
+    row["expected"]["clockConstraint"] = {"lower": {"numerator": 0, "positiveDenominator": 1}, "upper": {"numerator": 0, "positiveDenominator": 1}, "lowerClosed": True, "upperClosed": True}
+    assert errors(legal) == []
+    row["expected"]["typedStore"] = {"mode": "normal"}
+    assert any("successor does not follow" in item for item in errors(legal))
+
+
+def test_rr91_integrity_comparison_and_observation_schedule_are_not_self_proving():
+    legal = copy.deepcopy(PACKAGE)
+    witnesses = {item["requirementId"]: item for item in legal["implementationDependencies"][0]["obligationWitnesses"]}
+    comparison = witnesses["CRS-M1-00086"]
+    comparison["inputs"].update(newCheckValue="0x1111", comparisonResult="EQUAL")
+    comparison["expected"] = {"comparisonSelected": True, "comparisonResult": "EQUAL"}
+    assert errors(legal) == []
+    bad = copy.deepcopy(legal)
+    next(item for item in bad["implementationDependencies"][0]["obligationWitnesses"] if item["requirementId"] == "CRS-M1-00087")["inputs"].pop("crcA")
+    assert any("00087 witness" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    status = next(item for item in bad["implementationDependencies"][0]["obligationWitnesses"] if item["requirementId"] == "CRS-M1-00109")["inputs"]
+    status["requiredStatusObservationPoints"] = [11, 12]
+    status["events"] = [{"kind": "FINAL-DATA", "at": 10}, {"kind": "STATUS", "at": 12}]
+    assert any("00109 witness" in item for item in errors(bad))
+
+
+def test_rr91_acceptance_schedule_matrix_and_malformed_fixtures_are_consumed():
+    legal = copy.deepcopy(PACKAGE)
+    scene = next(item for item in legal["experimentScenarios"] if item["id"] == "SC-SAME-KEY")["scenarioValues"]
+    scene.update(policy="FIFO", expectedOwner="REQUEST-A")
+    assert errors(legal) == []
+    bad = copy.deepcopy(legal)
+    events = next(item for item in bad["experimentScenarios"] if item["id"] == "SC-SAME-KEY")["scenarioValues"]["ownershipEvents"]
+    events[0]["sequence"], events[1]["sequence"] = events[1]["sequence"], events[0]["sequence"]
+    assert any("ownership result" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    next(item for item in bad["acceptanceMatrix"] if item["id"] == "AM-IP")["coverageValues"]["fragmentOffsets"] = [-8, -1]
+    assert any("unexecutable IP reassembly" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    case = next(item for item in bad["acceptanceCases"] if item["relationId"] == "RC-DENOMINATOR-ATTEMPTS")
+    case["inputFixture"]["values"]["attempts"] = {"PASS": 1}
+    assert any("requires a string attempt sequence" in item for item in errors(bad))
