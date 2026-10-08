@@ -39,6 +39,208 @@ def test_current_candidate_has_closed_specification_gate():
     assert errors(copy.deepcopy(PACKAGE)) == []
 
 
+def test_rr92_model_declarations_and_projection_fail_closed() -> None:
+    def model(data):
+        return data["algorithmRefinements"][0]["finiteKernelContract"]
+
+    for mutate, expected in (
+        (lambda f: f["witnessVectors"][0]["input"].update(state="q999"), "input.state"),
+        (lambda f: f["witnessVectors"][0]["input"]["typedStore"].update(mode="ALIEN"), "input.typedStore"),
+        (lambda f: f["modelInstanceSchema"].update(stateIds=[{}]), "modelInstanceSchema"),
+        (lambda f: f["witnessVectors"][0]["input"]["transition"]["guardAst"].pop("interval"), "unsupported guard"),
+        (lambda f: f["modelInstanceSchema"].update(clockIds=["x", "y"]), "single-clock projection"),
+    ):
+        bad = copy.deepcopy(PACKAGE)
+        mutate(model(bad))
+        assert any(expected in item for item in errors(bad))
+
+
+def test_rr92_ownership_and_matrix_values_reject_mutations() -> None:
+    def matrix(data, row_id):
+        return next(row for row in data["acceptanceMatrix"] if row["id"] == row_id)["coverageValues"]
+
+    changes = (
+        (lambda data: next(row for row in data["experimentScenarios"] if row["id"] == "SC-SAME-KEY")["scenarioValues"]["ownershipEvents"][-1].update(key="wrong-key"), "ownership"),
+        (lambda data: matrix(data, "AM-IP").update(overlapPolicy="LAST-WINS"), "IP reassembly"),
+        (lambda data: matrix(data, "AM-TFTP").update(tidPair=[12000, 999999]), "TFTP"),
+        (lambda data: matrix(data, "AM-FIELDS").update(widthBits=-1), "field-layout"),
+        (lambda data: matrix(data, "AM-IDENTITY").update(resolvedFileIdentity="git-tracked-regular-file"), "capture-manifest"),
+    )
+    for mutate, expected in changes:
+        bad = copy.deepcopy(PACKAGE)
+        mutate(bad)
+        assert any(expected in item for item in errors(bad))
+
+
+def test_rr92_integrity_schedule_and_symbolic_references() -> None:
+    def witness(data, requirement_id):
+        return next(row for row in data["implementationDependencies"][0]["obligationWitnesses"]
+                    if row["requirementId"] == requirement_id)
+
+    bad = copy.deepcopy(PACKAGE)
+    status = witness(bad, "CRS-M1-00109")["inputs"]
+    status["calculationEndAt"] = 100000
+    status["requiredStatusObservationPoints"] = [11]
+    status["events"] = status["events"][:2]
+    assert any("00109 witness" in item for item in errors(bad))
+
+    for key, value in (("service", "DOWNLOAD"), ("optionIdentity", "UNDECLARED"),
+                       ("protectedBytesRef", "UNDECLARED")):
+        bad = copy.deepcopy(PACKAGE)
+        witness(bad, "CRS-M1-00076")["inputs"][key] = value
+        assert any("00076 witness" in item for item in errors(bad))
+
+    optional = next(row for row in PACKAGE["implementationDependencies"][0]["obligationVariants"]
+                    if row["requirementId"] == "CRS-M1-00086" and row["branch"] == "NOT-APPLICABLE")
+    assert optional["changes"] == {"comparisonSelected": False}
+
+
+def test_rr92_history_return_layers_are_consumable() -> None:
+    finite = PACKAGE["algorithmRefinements"][0]["finiteKernelContract"]
+    flow = finite["historyReturnFlow"]
+    assert flow["interface"]["Hprime"] == flow["backend"]["H_c"]
+    assert flow["interface"]["HistoryHandlePrime"] == flow["s9"]["GammaPrime"]["historyHandle"]
+    bad = copy.deepcopy(PACKAGE)
+    bad["algorithmRefinements"][0]["finiteKernelContract"]["historyReturnFlow"]["backend"]["H_c"] = ["h999"]
+    assert any("payload flow" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    row = next(row for row in bad["algorithmRefinements"][0]["finiteKernelContract"]["totalReturnMapping"]
+               if row["interfaceId"] == "IF-HIST-UPDATE")
+    row["returnContract"]["adapter"] = "Discard eta_c and H_c at S9; return unrelated history."
+    assert any("backend adapter" in item for item in errors(bad))
+
+
+def test_rr92_cancel_supersede_and_unmatched_ownership() -> None:
+    def scene(data):
+        return next(row for row in data["experimentScenarios"] if row["id"] == "SC-SAME-KEY")["scenarioValues"]
+
+    for kind in ("CANCEL", "SUPERSEDE"):
+        legal = copy.deepcopy(PACKAGE)
+        values = scene(legal)
+        values["ownershipEvents"].insert(2, {"id": kind + "-A", "kind": kind, "key": "k1", "sequence": 3, "targetRequestId": "REQUEST-A"})
+        values["ownershipEvents"][-1]["sequence"] = 4
+        values["policy"] = "FIFO"
+        values["expectedOwner"] = "REQUEST-B"
+        assert errors(legal) == []
+
+    legal = copy.deepcopy(PACKAGE)
+    values = scene(legal)
+    values["ownershipEvents"][-1]["key"] = "other-key"
+    values["expectedOwner"] = "UNMATCHED"
+    assert errors(legal) == []
+
+
+def test_rr92_matrix_consumers_cannot_be_replaced_by_unrelated_cases() -> None:
+    for row_id, field in (("AM-IP", "ipFragments"), ("AM-TFTP", "optionState"),
+                          ("AM-FIELDS", "fieldLayout"), ("AM-FORMAT", "captureFormat")):
+        bad = copy.deepcopy(PACKAGE)
+        transfer = next(row for row in bad["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")
+        transfer["inputFixture"]["values"].pop(field)
+        assert any(row_id in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    identity = next(row for row in bad["acceptanceMatrix"] if row["id"] == "AM-IDENTITY")
+    identity["caseIds"] = ["AC-EXP-TRUTH"]
+    assert any("AM-IDENTITY" in item for item in errors(bad))
+
+
+def test_rr92_acceptance_relation_types_are_checked_before_set_or_comparison() -> None:
+    for case_id, mutate, expected in (
+        ("AC-SYN-HISTORY", lambda case: case["inputFixture"]["values"]["history"].update(H=[{}]), "RC-HISTORY-NO-RESURRECTION"),
+        ("AC-SYN-OBSERVATION", lambda case: case["inputFixture"]["values"]["interval"].update(lowerClosed="false"), "RC-VERDICT-WHOLE-INTERVAL"),
+    ):
+        bad = copy.deepcopy(PACKAGE)
+        case = next(row for row in bad["acceptanceCases"] if row["id"] == case_id)
+        mutate(case)
+        assert any(expected in item for item in errors(bad))
+
+
+def test_rr92_integrity_variants_are_derived_from_bound_witnesses() -> None:
+    variants = PACKAGE["implementationDependencies"][0]["obligationVariants"]
+    assert len(variants) == 17
+    for requirement_id in ("CRS-M1-00076", "CRS-M1-00082", "CRS-M1-00086", "CRS-M1-00087", "CRS-M1-00109"):
+        assert {row["branch"] for row in variants if row["requirementId"] == requirement_id} == {
+            "VIOLATED", "NOT-EVALUATED", "NOT-APPLICABLE"}
+    bad = copy.deepcopy(PACKAGE)
+    variant = next(row for row in bad["implementationDependencies"][0]["obligationVariants"]
+                   if row["requirementId"] == "CRS-M1-00109" and row["branch"] == "VIOLATED")
+    variant["changes"]["events"].append({"kind": "STATUS", "at": 12})
+    assert any("variant expected VIOLATED" in item for item in errors(bad))
+    bad = copy.deepcopy(PACKAGE)
+    bad["implementationDependencies"][0]["obligationVariants"].pop()
+    assert any("variant classification matrix" in item for item in errors(bad))
+
+
+def test_rr92_real_checker_and_generator_preserve_view_on_invalid_contract(monkeypatch, tmp_path, capsys) -> None:
+    package = tmp_path / "package.json"
+    view = tmp_path / "review.md"
+    marker = b"previous accepted review view\n"
+    view.write_bytes(marker)
+    monkeypatch.setattr(SYNC, "PACKAGE", package)
+    monkeypatch.setattr(SYNC, "VIEW", view)
+    monkeypatch.setattr(sys, "argv", ["sync_development_readiness.py", "--write"])
+    for mutation in ("wrong-response-key", "out-of-domain-state", "cropped-status"):
+        bad = copy.deepcopy(PACKAGE)
+        if mutation == "wrong-response-key":
+            next(row for row in bad["experimentScenarios"] if row["id"] == "SC-SAME-KEY")["scenarioValues"]["ownershipEvents"][-1]["key"] = "wrong"
+        elif mutation == "out-of-domain-state":
+            bad["algorithmRefinements"][0]["finiteKernelContract"]["witnessVectors"][0]["input"]["state"] = "q999"
+        else:
+            status = next(row for row in bad["implementationDependencies"][0]["obligationWitnesses"]
+                          if row["requirementId"] == "CRS-M1-00109")["inputs"]
+            status["events"].pop()
+            status["requiredStatusObservationPoints"].pop()
+        code, _ = run_main(monkeypatch, tmp_path, capsys, bad)
+        assert code == 1
+        package.write_text(json.dumps(bad), encoding="utf-8")
+        assert SYNC.main() == 1
+        assert view.read_bytes() == marker
+
+
+def test_rr92_every_matrix_category_has_a_checked_consumer() -> None:
+    def row(data, row_id):
+        return next(item for item in data["acceptanceMatrix"] if item["id"] == row_id)
+
+    mutations = (
+        ("AM-IDENTITY", lambda data: row(data, "AM-IDENTITY")["coverageValues"].update(captureId="HC-99")),
+        ("AM-LABEL", lambda data: row(data, "AM-LABEL")["coverageValues"].update(independentTruth="claimed")),
+        ("AM-FORMAT", lambda data: row(data, "AM-FORMAT")["coverageValues"].update(packetNumber=2)),
+        ("AM-IP", lambda data: row(data, "AM-IP")["coverageValues"].update(overlapPolicy="LAST-WINS")),
+        ("AM-TFTP", lambda data: row(data, "AM-TFTP")["coverageValues"].update(terminalBlock=3)),
+        ("AM-FIELDS", lambda data: row(data, "AM-FIELDS")["coverageValues"].update(widthBits=-1)),
+        ("AM-OWNERSHIP", lambda data: row(data, "AM-OWNERSHIP")["coverageValues"].update(expectedOwner="REQUEST-A")),
+        ("AM-TIMING", lambda data: row(data, "AM-TIMING")["coverageValues"].update(boundaryClosure="UPPER-OPEN")),
+        ("AM-ADMIT", lambda data: row(data, "AM-ADMIT")["coverageValues"].update(H=["h9"])),
+        ("AM-HISTORY", lambda data: row(data, "AM-HISTORY")["coverageValues"].update(H=["h9"])),
+        ("AM-STATE", lambda data: row(data, "AM-STATE")["coverageValues"].update(returnRecord="PredictionResult")),
+        ("AM-RESOURCE", lambda data: row(data, "AM-RESOURCE")["coverageValues"].update(retryCount=2)),
+        ("AM-EXPERIMENT", lambda data: row(data, "AM-EXPERIMENT")["coverageValues"].update(armId="CL-TA")),
+        ("AM-DRIFT", lambda data: row(data, "AM-DRIFT")["coverageValues"].update(viewMarker="new view")),
+    )
+    for row_id, mutate in mutations:
+        bad = copy.deepcopy(PACKAGE)
+        mutate(bad)
+        assert any(row_id in item for item in errors(bad)), row_id
+    bad = copy.deepcopy(PACKAGE)
+    module = next(item for item in bad["moduleContracts"] if item["id"] == "MOD-REASSEMBLY")
+    module["reassemblyPolicy"]["overwriteEarlierBytes"] = True
+    assert any("MOD-REASSEMBLY" in item for item in errors(bad))
+
+
+def test_rr92_bilingual_view_tracks_return_and_integrity_variant_changes() -> None:
+    baseline = SYNC.render(PACKAGE)
+    english, chinese = baseline.split("# 中文版", 1)
+    assert "History backend → interface → S9" in english
+    assert "历史后端 → 接口 → S9" in chinese
+    assert "Derived obligation variants" in english
+    assert "派生义务变体" in chinese
+    legal = copy.deepcopy(PACKAGE)
+    variant = next(row for row in legal["implementationDependencies"][0]["obligationVariants"]
+                   if row["requirementId"] == "CRS-M1-00087" and row["branch"] == "VIOLATED")
+    variant["changes"]["crcB"] = "0x9999"
+    assert errors(legal) == []
+    assert SYNC.render(legal) != baseline
+
+
 def test_rr85_capture_manifest_rows_enter_capture_and_packet_records() -> None:
     manifest = json.loads((ROOT / "configs/research/cltav_historical_capture_manifest.json").read_text(encoding="utf-8"))
     records = {row["id"]: row for row in PACKAGE["recordContracts"]}
@@ -1619,6 +1821,9 @@ def test_rr91_kernel_endpoint_named_reset_and_typed_successor_are_executable():
     for candidate in finite["witnessVectors"]:
         if candidate["id"] in {"FK-W1-FEASIBLE", "FK-W2-INFEASIBLE"}:
             candidate["input"]["transition"]["guardAst"]["clock"] = "t"
+            candidate["input"]["projectionClock"] = "t"
+        elif candidate["id"] == "FK-W5-CLOCK":
+            candidate["input"]["clockId"] = "t"
     row = witness(legal)
     row["input"]["transition"]["simultaneousUpdates"] = [
         {"tag": "CLOCK-RESET-TO-ZERO", "clock": "t"},
