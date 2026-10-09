@@ -316,6 +316,16 @@ def test_rr93_real_entrypoints_reject_without_replacing_view(monkeypatch, tmp_pa
             assert view.read_bytes() == marker
 
 
+def test_rr93_bilingual_view_explains_return_and_acceptance_premises() -> None:
+    english, chinese = SYNC.render(PACKAGE).split("# CL-TAV 开发就绪评审视图", 1)
+    for text in ("Γ and the versioned HistoryHandle η are separate", "derive IP coverage and conflict from fragment bytes",
+                 "Unknown option selection or part number"):
+        assert text in english
+    for text in ("会话 Γ 与带版本的历史句柄 η 是不同返回值", "从分片字节推导 IP 覆盖与冲突",
+                 "未知是否选择选项或未知件号"):
+        assert text in chinese
+
+
 def test_rr92_model_declarations_and_projection_fail_closed() -> None:
     def model(data):
         return data["algorithmRefinements"][0]["finiteKernelContract"]
