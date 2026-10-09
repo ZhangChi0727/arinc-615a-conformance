@@ -51,16 +51,16 @@ silently redefine the Core.
 
 ## Current increment
 
-**CL-TAV first-slice development-readiness specification**
+**Accepted CL-TAV first-slice development specification and post-merge input pin**
 
 - Specify the first offline UPLOAD/INFORMATION development slice under CR-2026-016 / DD-038–040: capture identity, reconstruction records, ownership, observation interpretation, bounded history compatibility and traceable reporting.
 - Register the local historical corpus as exploratory development input only; file annotation is not wire outcome, independent case conclusion or experimental truth, and unknown metadata remains explicit.
 - Bind a finite explicit-path kernel, eight algorithm interfaces, seven experiment interfaces, concrete synthetic contract witnesses and a specification-closed/runtime-unestablished integrity dependency.
-- This increment is a Draft specification, not a tool implementation, confirmation experiment, Configuration, M3 activation, capability or conformance claim.
+- PR #19 was accepted at c9ca381 and squash-merged as 324d832. This follow-up rebinds the M2 input identity to that exact merged tree; the specification is not a tool implementation, confirmation experiment, Configuration, M3 activation, capability or conformance claim.
 
 State changes:
 
-- One Draft PR under CR-2026-016 / DD-038–040; M3 remains blocked.
+- PR #19 under CR-2026-016 / DD-038–040 is merged; this follow-up corrects only the post-squash M2 input pin. M3 remains blocked.
 - currentStop remains EXECUTABLE-FOUNDATION-GATE for M3 implementation.
 
 Unchanged boundaries:
@@ -73,11 +73,11 @@ Unchanged boundaries:
 
 ## Current stop
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3 implementation. The bounded M2 ordinary merge is recorded; that approval is not transplanted onto expanded CRS. The CL-TAV Draft candidate is M1-CANDIDATE-25 with 615A-triggered 645 SOURCE/SEMANTIC bind, FIND abort non-waiver, bound RFC 1123/791, 664-7 latency/jitter/MAC and remaining P7 switch/Attachment-2 contracts including the VL-sum max_jitter equation, source-owned 4.7.3.2 filtering-table members, 664P4-1 address-rule leaves for the first 00519 alternative, and combined TFTP end conditions; it is not method/paper/capability/expanded-CRS approval. Independent review must pass, and merge requires explicit authorization. Do not Ready, merge or tag on this increment. The 2026-09-14 DD-029 design-direction acceptance is not independent approval.
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**: This stop still blocks M3 implementation. RR-CLTAV-2026-097 accepted the first-slice offline UPLOAD/INFORMATION development specification at PR #19 Head c9ca381, squash-merged as 324d832. That acceptance is not a tool implementation, runtime integrity result, confirmatory experiment, Project Configuration, expanded-CRS approval or M3 activation. M1-CANDIDATE-25 and its open source dependencies retain their controlled dispositions; the post-merge M2 pin correction changes artifact ancestry only. Further implementation requires separate authorization and evidence.
 
 ## Next development steps
 
-- Complete the first-slice authoritative contract, generated review view, finite acceptance fixtures and production readiness gate on the unique Draft PR. Request independent review only at an unchanged final Head; do not Ready, merge, tag, submit or start M3.
+- Use the accepted first-slice specification as controlled input for a separately authorized implementation increment. Establish runtime integrity and independent experimental truth before capability or conformance claims; do not start M3 from this specification alone.
 - Keep protocol capability and execution boundaries unchanged. The local corpus remains exploratory; unknown topology, clocks, configuration, version and root cause remain explicit, and no capture annotation becomes experimental truth.
 
 ## 当前开发图景
@@ -102,16 +102,16 @@ Unchanged boundaries:
 
 ## 本次集成增量
 
-**CL-TAV 首轮开发就绪规格**
+**已接受的 CL-TAV 首轮开发规格及合并后输入重钉**
 
 - 在 CR-2026-016／DD-038～040 下规格化首轮离线 UPLOAD／INFORMATION 开发切片：捕获身份、重建记录、所有权、观测解释、有界历史相容更新和可追踪报告。
 - 本地历史语料仅登记为探索性开发输入；文件注释不等于线上结果、独立案例结论或实验真值，未知元数据保持显式。
 - 绑定有限显式路径内核、八个算法接口、七个实验接口、具体合成合同见证，以及规格已关闭但运行能力未建立的完整性依赖。
-- 本增量是 Draft 规格，不是工具实现、确认性实验、Configuration、M3 激活、能力或符合性主张。
+- PR #19 在 c9ca381 获接受，并以 324d832 压缩合并。本次后处理将 M2 输入身份重钉至相同的合入树；该规格不是工具实现、确认性实验、Configuration、M3 激活、能力或符合性主张。
 
 状态变化：
 
-- 在唯一 Draft PR 上以 CR-2026-016／DD-038～040 交付；M3 保持阻塞。
+- CR-2026-016／DD-038～040 下的 PR #19 已合并；本次后处理仅修正压缩合并后的 M2 输入锚点。M3 保持阻塞。
 - 对 M3 实现而言 currentStop 仍为 EXECUTABLE-FOUNDATION-GATE。
 
 保持不变的边界：
@@ -124,11 +124,11 @@ Unchanged boundaries:
 
 ## 当前停点
 
-`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3 实现。有界 M2 普通合并已记录；该批准不移植到扩大 CRS。CL-TAV Draft 候选为 M1-CANDIDATE-25，含 615A 触发的 645 来源／语义绑定、FIND 中止不豁免、已绑定的 RFC 1123／791、含 VL 求和 max_jitter 方程的 664-7 时延／抖动／MAC 及剩余交换机／附件 2 合同、4.7.3.2 过滤表来源成员、00519 第一条替代路径的 664P4-1 地址规则叶及组合后的 TFTP 结束条件，不是方法／论文／能力／扩大 CRS 批准。须通过独立评审，合并须明确授权。本增量不转 Ready、不合并、不打标签。2026-09-14 对 DD-029 的设计方向接受不是独立批准。
+`EXECUTABLE-FOUNDATION-GATE` — **NOT YET ESTABLISHED**：本停点仍禁止 M3 实现。RR-CLTAV-2026-097 接受了 PR #19 Head c9ca381 的首轮离线 UPLOAD／INFORMATION 开发规格，随后以 324d832 压缩合并。该接受不等于工具实现、运行完整性结果、确认性实验、Project Configuration、扩大 CRS 批准或 M3 激活。M1-CANDIDATE-25 及其开放来源依赖保持受控处置；合并后的 M2 重钉只改变制品祖先身份。后续实现须单独授权并提供证据。
 
 ## 下一步开发计划
 
-- 在唯一 Draft PR 上完成首轮权威合同、生成评审视图、有限验收夹具和生产就绪门禁。仅在最终 Head 不变时请求独立评审；不转 Ready、不合并、不打标签、不投稿、不启动 M3。
+- 将已接受的首轮规格作为后续单独授权实现增量的受控输入。建立运行完整性与独立实验真值后方可提出能力或符合性主张；不得仅凭本规格启动 M3。
 - 保持协议能力与执行边界不变。本地语料继续仅作探索用途；未知拓扑、时钟、配置、版本和根因保持显式，任何捕获注释不得成为实验真值。
 <!-- project-status:end -->
 
