@@ -132,7 +132,7 @@ def test_rr93_matrix_outputs_are_derived_after_joint_mutation() -> None:
     layout = next(row for row in bad["acceptanceMatrix"] if row["id"] == "AM-FIELDS")["coverageValues"]
     layout["widthBits"] = 999
     next(row for row in bad["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")["inputFixture"]["values"]["fieldLayout"] = copy.deepcopy(layout)
-    assert any("ASCII field width" in item for item in errors(bad))
+    assert any("bound CRS fieldConstraint" in item for item in errors(bad))
 
 
 def test_rr93_terminal_and_test_selection_are_derived() -> None:
@@ -172,7 +172,8 @@ def test_rr93_legal_field_fragment_and_tftp_variants() -> None:
     legal = copy.deepcopy(PACKAGE)
     transfer = next(row for row in legal["acceptanceCases"] if row["id"] == "AC-SYN-TRANSFER")
     field = next(row for row in legal["acceptanceMatrix"] if row["id"] == "AM-FIELDS")["coverageValues"]
-    field.update(encodingRule="ASCII-4", widthBits=32)
+    field.update(sourceRequirementId="CRS-M1-00282", protocolFile="LCI", fieldId="FIELD-FILE-LENGTH",
+                 ordinal=1, encodingRule="UNSIGNED-BE", widthBits=32)
     transfer["inputFixture"]["values"]["fieldLayout"] = copy.deepcopy(field)
     assert errors(legal) == []
 
@@ -318,10 +319,10 @@ def test_rr93_real_entrypoints_reject_without_replacing_view(monkeypatch, tmp_pa
 
 def test_rr93_bilingual_view_explains_return_and_acceptance_premises() -> None:
     english, chinese = SYNC.render(PACKAGE).split("# CL-TAV 开发就绪评审视图", 1)
-    for text in ("Γ and the versioned HistoryHandle η are separate", "derive IP coverage and conflict from fragment bytes",
+    for text in ("Γ and the versioned HistoryHandle η are separate", "bound CRS fieldConstraint",
                  "Unknown option selection or part number"):
         assert text in english
-    for text in ("会话 Γ 与带版本的历史句柄 η 是不同返回值", "从分片字节推导 IP 覆盖与冲突",
+    for text in ("会话 Γ 与带版本的历史句柄 η 是不同返回值", "依据绑定的 CRS fieldConstraint",
                  "未知是否选择选项或未知件号"):
         assert text in chinese
 

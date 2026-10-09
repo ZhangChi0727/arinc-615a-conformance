@@ -11018,7 +11018,7 @@
           "noResponseFixture": {"requestId": "REQUEST-A", "earliestElapsed": 6, "deadline": 5, "upperClosed": true, "cancelled": false, "expectedDisposition": "FAIL-NO-RESPONSE"},
           "captureFormat": {"sectionId": 1, "interfaceId": 0, "packetNumber": 1, "capturedLength": 64},
           "ipFragments": {"fragmentOffsets": [0, 8], "fragments": [{"offset": 0, "bytesHex": "0001020304050607"}, {"offset": 8, "bytesHex": "08090a0b0c0d0e0f"}], "coverageRanges": [[0, 15]], "datagramLengthBytes": 16, "overlapConflict": false, "overlapPolicy": "IDENTICAL-ONLY", "gapPolicy": "GAPPED"},
-          "fieldLayout": {"fieldId": "protocolVersion", "ordinal": 1, "widthBits": 16, "encodingRule": "ASCII-2"},
+          "fieldLayout": {"sourceRequirementId": "CRS-M1-00283", "protocolFile": "LCI", "fieldId": "FIELD-PROTOCOL-VERSION", "ordinal": 2, "widthBits": 16, "encodingRule": "ASCII-2"},
           "optionState": "DEFAULTED",
           "acceptedBlockBytes": null,
           "tid": {
@@ -12654,14 +12654,18 @@
         "AC-SYN-TRANSFER"
       ],
       "coverageAxes": [
+        "sourceRequirementId",
+        "protocolFile",
         "fieldId",
         "ordinal",
         "widthBits",
         "encodingRule"
       ],
       "coverageValues": {
-        "fieldId": "protocolVersion",
-        "ordinal": 1,
+        "sourceRequirementId": "CRS-M1-00283",
+        "protocolFile": "LCI",
+        "fieldId": "FIELD-PROTOCOL-VERSION",
+        "ordinal": 2,
         "widthBits": 16,
         "encodingRule": "ASCII-2"
       }

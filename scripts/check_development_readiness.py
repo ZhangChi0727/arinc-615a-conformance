@@ -1482,13 +1482,22 @@ def package_errors(data: dict) -> list[str]:
                 errors.append(f"{item['id']} TFTP vector is not consumed by its transfer case")
         if item["category"] == "field contracts":
             vector = item["coverageValues"]
+            source = source_by_id.get(vector.get("sourceRequirementId"), {}) if isinstance(vector.get("sourceRequirementId"), str) else {}
+            field_constraint = source.get("fieldConstraint") if isinstance(source, dict) else None
+            source_width = field_constraint.get("widthBitsExpression") if isinstance(field_constraint, dict) else None
+            width = int(source_width) if isinstance(source_width, str) and source_width.isdecimal() else None
+            source_encoding = field_constraint.get("encodingRule") if isinstance(field_constraint, dict) else None
+            expected_encoding = (f"ASCII-{width // 8}" if source_encoding == "FIXED-WIDTH-ASCII" and width is not None and width % 8 == 0 else
+                                 "UNSIGNED-BE" if source_encoding == "UNSIGNED-INT-BIG-ENDIAN" else None)
             if (not isinstance(vector.get("ordinal"), int) or isinstance(vector.get("ordinal"), bool) or vector["ordinal"] < 0
                     or not isinstance(vector.get("widthBits"), int) or isinstance(vector.get("widthBits"), bool) or vector["widthBits"] <= 0
                     or not isinstance(vector.get("fieldId"), str) or not vector["fieldId"]
                     or vector.get("encodingRule") not in {"ASCII-2", "ASCII-4", "UNSIGNED-BE", "OPAQUE-BYTES"}):
                 errors.append(f"{item['id']} has an unexecutable field-layout vector")
-            if vector.get("encodingRule") in {"ASCII-2", "ASCII-4"} and vector.get("widthBits") != 8 * int(vector["encodingRule"][-1]):
-                errors.append(f"{item['id']} ASCII field width does not match its declared encoding")
+            if (not isinstance(field_constraint, dict) or width is None or expected_encoding is None
+                    or any(vector.get(field) != field_constraint.get(field) for field in ("protocolFile", "fieldId", "ordinal"))
+                    or vector.get("widthBits") != width or vector.get("encodingRule") != expected_encoding):
+                errors.append(f"{item['id']} field layout does not match its bound CRS fieldConstraint")
             if consumer_input.get("fieldLayout") != vector:
                 errors.append(f"{item['id']} field layout is not consumed by its transfer case")
         if item["category"] == "timing and U":
